@@ -6,10 +6,8 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns(
   'mn_prototype.mn_service.views',
-  # Example:
-  (r'^object/(\d+)-(\d+)$', 'object'),
   (
-    r'^object/(.*)$', 'guid'
+    r'^object/(.*)$', 'object'
   ),
 
   # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 

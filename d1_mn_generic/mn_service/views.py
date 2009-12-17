@@ -5,37 +5,61 @@ import os, sys, re, glob, time, datetime, stat
 import json
 import hashlib
 
-repository_path = '/home/roger/mn_docs'
+repository_path = '/home/roger/D1/repository.dataone.org/software/allsoftware/cicore/mn_service/mn_docs'
 
 
-def object(request, first, last):
+def object(request, guid):
   #return HttpResponse(request)
 
-  # Check if the requested format is something that we currently handle.
+  # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
+  # strings for formats the client would like to receive. We should be going
+  # through the list and pick the first one we know. If we don't know any of
+  # them, we return JSON.
+
   # Disabled for easy testing from web browser.
   #if request.META['HTTP_ACCEPT'] != 'application/json':
   #  raise Http404
 
+  # Determine if the request is for an object or for a list.
+  if len(guid):
+    return get_object(request, guid)
+  return get_list(request)
+
+
+def get_list(request):
+  try:
+    start = int(request.GET['start'])
+  except KeyError:
+    start = 0
+
+  try:
+    count = int(request.GET['count'])
+  except KeyError:
+    # -1 = all
+    count = -1
+
   res = {}
 
-  first = int(first)
-  last = int(last)
-
-  res['first_index'] = first
-  res['last_index'] = last
   res['data'] = {}
 
-  cnt = 0
-  for f_name in glob.glob(repository_path + '/*'):
-    # Limit return to requested range.
-    cnt += 1
-    if cnt < first:
+  object_total = 0
+  object_returned = 0
+  for f_name in glob.glob(os.path.join(repository_path, '*')):
+    # Limit return to requested range and count available objects.
+    object_total += 1
+    if object_total <= start or (count != -1 and object_total > start + count):
       continue
-    if cnt > last:
-      break
+
+    try:
+      f = open(f_name, 'r')
+    except IOError:
+      # Skip any file we can't get read access to.
+      continue
+
+    object_returned += 1
+
     # Get hash of file.
     hash = hashlib.sha1()
-    f = open(f_name, 'r')
     for line in f.readlines():
       hash.update(line)
 
@@ -47,6 +71,8 @@ def object(request, first, last):
     # Get size.
     size = os.stat(f_name)[stat.ST_SIZE]
 
+    f.close()
+
     # Build object for this file.
     o = {}
     o['oclass'] = 'metadata'
@@ -57,10 +83,14 @@ def object(request, first, last):
     # Append object to response.
     res['data'][os.path.basename(f_name)] = o
 
+  res['start'] = start
+  res['count'] = object_returned
+  res['total'] = object_total
+
   return HttpResponse('<pre>' + json.dumps(res, sort_keys=True, indent=2) + '</pre>')
 
 
-def guid(request, guid):
+def get_object(request, guid):
   try:
     f = open(os.path.join(repository_path, guid), 'r')
   except IOError:
