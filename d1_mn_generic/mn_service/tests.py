@@ -56,6 +56,10 @@ class SimpleTest(TestCase):
     self.failUnlessEqual(res['start'], 20)
     self.failUnlessEqual(res['total'], 100)
     self.failUnlessEqual(len(res['data']), 10)
+    # Check the first of the data objects for the correct format.
+    first_key = res['data'].keys()[0]
+    self.failUnlessEqual(res['data'][first_key]['oclass'], 'metadata')
+    self.failUnlessEqual(len(res['data'][first_key]['hash']), 40)
 
   def test_rest_call_get_object_by_guid(self):
     """
