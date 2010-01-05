@@ -7,7 +7,7 @@ import hashlib
 
 from mn_prototype.mn_service.models import *
 
-repository_path = '/home/roger/D1/repository.dataone.org/software/allsoftware/cicore/mn_service/mn_docs'
+repository_path = '/home/roger/D1/repository.dataone.org/software/cicore/trunk/mn_service/mn_docs'
 
 
 def update(request):
@@ -36,10 +36,17 @@ def update(request):
 
     f.close()
 
-    # For now, we support only one object class, "metadata" with id = 1
+    # We grab the object class from the filename.
     c = repository_object_class()
-    c.id = 1
-    c.name = 'metadata'
+    if re.search(r'_meta$', f_name):
+      c.id = 1
+      c.name = 'metadata'
+    elif re.search(r'_system$', f_name):
+      c.id = 2
+      c.name = 'system'
+    else:
+      c.id = 3
+      c.name = 'data'
     c.save()
 
     # How Django knows to UPDATE vs. INSERT
@@ -89,42 +96,66 @@ def object(request, guid):
 
 
 def get_list(request):
+  # select objects ordered by mtime desc.
+  query = repository_object.objects.order_by('-mtime')
+  # Create a copy of the query that we will not slice, for getting the total
+  # count for this type of objects.
+  query_unsliced = query
+
+  # Filter by oclass.
+  try:
+    oclass = request.GET['oclass']
+    query = query.filter(repository_object_class__name__contains=oclass)
+    query_unsliced = query
+  except KeyError:
+    pass
+
+  # Skip top 'start' objects.
   try:
     start = int(request.GET['start'])
   except KeyError:
     start = 0
 
+  # Limit the number objects returned to 'count'.
+  # None = All remaining objects.
+  # 0 = No objects
   try:
     count = int(request.GET['count'])
   except KeyError:
-    # -1 = all
-    count = -1
+    count = None
+
+  # If both start and count are present but set to 0, we just tweak that query
+  # so that it won't return any results.
+  if start == 0 and count == 0:
+    query = query.none()
+  # Handle variations of start and count. We need these because Python does not
+  # support three valued logic in expressions (which would cause an expression
+  # that includes None to be valid and evaluate to None). Note that a slice such
+  # as [value : None] is valid and equivalent to [value:]
+  elif start and count:
+    query = query[start:start + count]
+  elif start:
+    query = query[start:]
+  elif count:
+    query = query[:count]
 
   res = {}
   res['data'] = {}
-  object_total = 0
-  object_returned = 0
 
-  for o in repository_object.objects.all():
-    # Limit return to requested range and count available objects.
-    object_total += 1
-    if object_total <= start or (count != -1 and object_total > start + count):
-      continue
-    object_returned += 1
-
+  for row in query:
     ob = {}
-    ob['oclass'] = o.repository_object_class.name
-    ob['hash'] = o.hash
+    ob['oclass'] = row.repository_object_class.name
+    ob['hash'] = row.hash
     # Get modified date in an ISO 8601 string.
-    ob['modified'] = datetime.datetime.isoformat(o.mtime)
-    ob['size'] = o.size
+    ob['modified'] = datetime.datetime.isoformat(row.mtime)
+    ob['size'] = row.size
 
     # Append object to response.
-    res['data'][o.guid] = ob
+    res['data'][row.guid] = ob
 
   res['start'] = start
-  res['count'] = object_returned
-  res['total'] = object_total
+  res['count'] = query.count()
+  res['total'] = query_unsliced.count() #query.filt#repository_object.objects.count ()
 
   #return HttpResponse('<pre>' + json.dumps (res, indent = 2) + '</pre>')
   return HttpResponse(json.dumps(res))
@@ -141,3 +172,40 @@ def get_object(request, guid):
     ret += line
 
   return HttpResponse(ret)
+
+
+def object_meta(request, guid):
+  try:
+    f = open(os.path.join(repository_path, '%s_meta' % guid), 'r')
+  except IOError:
+    raise Http404
+
+  ret = ''
+  for line in f.readlines():
+    ret += line
+
+  return HttpResponse(ret)
+
+  #query = repository_object.objects.filter (repository_object_class__name__contains = oclass)
+  #
+  #if query.count () != 1:
+  #  raise Http404
+  #
+  #obj = query [0]
+  #
+  #  ob = {} 
+  #  ob ['oclass'] = row.repository_object_class.name
+  #  ob ['hash'] = row.hash
+  #  # Get modified date in an ISO 8601 string.
+  #  ob ['modified'] = datetime.datetime.isoformat (row.mtime)
+  #  ob ['size'] = row.size
+  #
+  #  # Append object to response.
+  #  res ['data'][row.guid] = ob
+  #
+  #res ['start'] = start
+  #res ['count'] = query.count ()
+  #res ['total'] = query_unsliced.count () #query.filt#repository_object.objects.count ()
+  #
+  ##return HttpResponse('<pre>' + json.dumps (res, indent = 2) + '</pre>')
+  #return HttpResponse(json.dumps (res))
