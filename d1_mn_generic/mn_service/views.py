@@ -36,6 +36,7 @@ def update(request):
   # We start by clearing out all data from the tables.
   repository_object.objects.all().delete()
   repository_object_class.objects.all().delete()
+  status.objects.all().delete()
 
   for f_name in glob.glob(os.path.join(repository_path, '*')):
     try:
@@ -98,6 +99,12 @@ def update(request):
     o.size = size
     o.save()
 
+  # Successfully updated the db, so put current datetime in status.mtime.
+  mtime = datetime.datetime.utcnow()
+  s = status()
+  s.mtime = mtime
+  s.save()
+
   return HttpResponse('ok')
 
 
@@ -114,10 +121,25 @@ def object(request, guid):
   #if request.META['HTTP_ACCEPT'] != 'application/json':
   #  raise Http404
 
-  # Determine if the request is for an object or for a list.
-  if len(guid):
-    return get_object(request, guid)
-  return get_list(request)
+  # If HEAD was requested, we just return the header.
+  if request.method == 'HEAD':
+    response = HttpResponse()
+    # Add Last-Modified header.
+    response['Last-Modified'] = datetime.datetime.isoformat(
+      repository_object.objects.all(
+      )[0].mtime
+    )
+    return response
+
+  if request.method == 'GET':
+    # Determine if the request is for an object or for a list.
+    if len(guid):
+      return get_object(request, guid)
+
+    return get_list(request)
+
+  # Any other request method is an error.
+  raise Http404
 
 
 def get_list(request):
@@ -183,8 +205,15 @@ def get_list(request):
   res['count'] = query.count()
   res['total'] = query_unsliced.count() #query.filt#repository_object.objects.count ()
 
-  #return HttpResponse('<pre>' + json.dumps (res, indent = 2) + '</pre>')
-  return HttpResponse(json.dumps(res))
+  # JSON encode the response.
+  response = HttpResponse(json.dumps(res))
+
+  # Add Last-Modified header.
+  response['Last-Modified'] = datetime.datetime.isoformat(
+    repository_object.objects.all(
+    )[0].mtime
+  )
+  return response
 
 
 def get_object(request, guid):

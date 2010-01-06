@@ -10,6 +10,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get('/mn/update/', HTTP_ACCEPT='application/json')
+    self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.content, 'ok')
 
   def test_rest_call_get_object_count(self):
@@ -18,6 +19,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     # {u'count': 0, u'start': 0, u'total': 195, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
@@ -33,6 +35,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'meta'}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
@@ -47,6 +50,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'system'}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     # {u'count': 0, u'start': 0, u'total': 195, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
@@ -62,6 +66,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get('/mn/object/', HTTP_ACCEPT='application/json')
+    self.failUnlessEqual(response.status_code, 200)
     #print response.content
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 195) # Total number of objects.
@@ -77,6 +82,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 10)
     self.failUnlessEqual(res['start'], 20)
@@ -95,6 +101,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'system'}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 5) # Number of objects returned.
     self.failUnlessEqual(res['start'], 10) # Starting object.
@@ -116,6 +123,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/', {'start': '15', 'count': '10', 'oclass': 'system'}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(
       res['count'], 5
@@ -136,6 +144,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef', {}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.content, '51')
 
   def test_rest_call_get_object_by_guid_404(self):
@@ -152,6 +161,7 @@ class mn_service_tests(TestCase):
     """
     c = Client()
     response = c.get ('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef/meta', {}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.content, '51 meta') # Check that this is a meta object.
 
   def test_rest_call_get_meta_by_object_guid_404(self):
@@ -161,3 +171,12 @@ class mn_service_tests(TestCase):
     c = Client()
     response = c.get ('/mn/object/a_non_existing_guid/meta', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 404)
+
+  def test_rest_call_last_modified_header(self):
+    """
+    curl -I http://mn1.dataone.org/object/
+    """
+    c = Client()
+    response = c.head('/mn/object/')
+    self.failUnlessEqual(response.status_code, 200)
+    self.failUnlessEqual(type(response['Last-Modified']), type(''))

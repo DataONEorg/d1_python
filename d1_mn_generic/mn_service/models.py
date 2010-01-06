@@ -14,3 +14,7 @@ class repository_object(models.Model):
   hash = models.CharField(max_length=100)
   mtime = models.DateTimeField()
   size = models.PositiveIntegerField()
+
+
+class status(models.Model):
+  mtime = models.DateTimeField()
