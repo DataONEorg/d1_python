@@ -19,10 +19,10 @@ class mn_service_tests(TestCase):
     c = Client()
     response = c.get ('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
     res = json.loads(response.content)
-    # {u'count': 0, u'start': 0, u'total': 199, u'data': {}}
+    # {u'count': 0, u'start': 0, u'total': 195, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
-    self.failUnlessEqual(res['total'], 199) # Total number of objects.
+    self.failUnlessEqual(res['total'], 195) # Total number of objects.
     self.failUnlessEqual(
       len(res['data']), res['count']
     ) # Check if results contains number of objects that header claims was returned.
@@ -36,7 +36,7 @@ class mn_service_tests(TestCase):
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
-    self.failUnlessEqual(res['total'], 79) # Number of meta objects.
+    self.failUnlessEqual(res['total'], 75) # Number of meta objects.
     self.failUnlessEqual(
       len(res['data']), res['count']
     ) # Check if results contains number of objects that header claims was returned.
@@ -48,7 +48,7 @@ class mn_service_tests(TestCase):
     c = Client()
     response = c.get ('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'system'}, HTTP_ACCEPT = 'application/json')
     res = json.loads(response.content)
-    # {u'count': 0, u'start': 0, u'total': 199, u'data': {}}
+    # {u'count': 0, u'start': 0, u'total': 195, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
     self.failUnlessEqual(res['total'], 20) # Number of system objects.
@@ -64,9 +64,9 @@ class mn_service_tests(TestCase):
     response = c.get('/mn/object/', HTTP_ACCEPT='application/json')
     #print response.content
     res = json.loads(response.content)
-    self.failUnlessEqual(res['count'], 199) # Total number of objects.
+    self.failUnlessEqual(res['count'], 195) # Total number of objects.
     self.failUnlessEqual(res['start'], 0)
-    self.failUnlessEqual(res['total'], 199) # Total number of objects.
+    self.failUnlessEqual(res['total'], 195) # Total number of objects.
     self.failUnlessEqual(
       len(res['data']), res['count']
     ) # Check if results contains number of objects that header claims was returned.
@@ -80,7 +80,7 @@ class mn_service_tests(TestCase):
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 10)
     self.failUnlessEqual(res['start'], 20)
-    self.failUnlessEqual(res['total'], 199) # Total number of objects.
+    self.failUnlessEqual(res['total'], 195) # Total number of objects.
     self.failUnlessEqual(
       len(res['data']), res['count']
     ) # Check if results contains number of objects that header claims was returned.
@@ -132,11 +132,11 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_get_object_by_guid(self):
     """
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/cabbe7b1-99c8-4d71-bb23-9e5c322b2af5
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef
     """
     c = Client()
-    response = c.get ('/mn/object/eb9d46f2-6260-41d6-b46e-abaf54320107', {}, HTTP_ACCEPT = 'application/json')
-    self.failUnlessEqual(response.content, '4')
+    response = c.get ('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef', {}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.content, '51')
 
   def test_rest_call_get_object_by_guid_404(self):
     """
@@ -148,11 +148,11 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_get_meta_by_object_guid(self):
     """
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/cabbe7b1-99c8-4d71-bb23-9e5c322b2af5/meta
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef/meta
     """
     c = Client()
-    response = c.get ('/mn/object/eb9d46f2-6260-41d6-b46e-abaf54320107/meta', {}, HTTP_ACCEPT = 'application/json')
-    self.failUnlessEqual(response.content, '4 meta') # Check that this is a meta object.
+    response = c.get ('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef/meta', {}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.content, '51 meta') # Check that this is a meta object.
 
   def test_rest_call_get_meta_by_object_guid_404(self):
     """
