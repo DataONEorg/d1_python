@@ -9,6 +9,7 @@ urlpatterns = patterns(
   (r'^object/(.*)/meta$', 'object_meta'),
   (r'^object/(.*)$', 'object'),
   (r'^update/$', 'update'),
+  (r'^log/$', 'log'),
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),
   (r'^admin/', include(admin.site.urls)),
 )

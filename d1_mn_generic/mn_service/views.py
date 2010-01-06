@@ -1,16 +1,37 @@
-#from mysite.polls.models import Poll
-from django.http import HttpResponse
-from django.http import Http404
-import os, sys, re, glob, time, datetime, stat
+import os
+import sys
+import re
+import glob
+import time
+import datetime
+import stat
 import json
 import hashlib
+import logging
+
+from django.http import HttpResponse
+from django.http import Http404
+from django.template import Context, loader
+from django.shortcuts import render_to_response
 
 from mn_prototype.mn_service.models import *
 
 repository_path = '/home/roger/D1/repository.dataone.org/software/cicore/trunk/mn_service/mn_docs'
+log_path = '/home/roger/D1/repository.dataone.org/software/cicore/trunk/mn_service/mn_service.log'
+
+# Set up logging.
+logging.getLogger('').setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+  '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+)
+file_logger = logging.FileHandler(log_path, 'a')
+file_logger.setFormatter(formatter)
+logging.getLogger('').addHandler(file_logger)
 
 
 def update(request):
+  logging.info('__update__')
+
   # We start by clearing out all data from the tables.
   repository_object.objects.all().delete()
   repository_object_class.objects.all().delete()
@@ -19,6 +40,7 @@ def update(request):
     try:
       f = open(f_name, 'r')
     except IOError:
+      logging.warning('Skipped file because it couldn\'t be opened: %s' % f_name)
       # Skip any file we can't get read access to.
       continue
 
@@ -78,6 +100,7 @@ def update(request):
 
 
 def object(request, guid):
+  logging.info('__object__')
   #return HttpResponse(request)
 
   # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
@@ -96,6 +119,7 @@ def object(request, guid):
 
 
 def get_list(request):
+  logging.info('__get_list__')
   # select objects ordered by mtime desc.
   query = repository_object.objects.order_by('-mtime')
   # Create a copy of the query that we will not slice, for getting the total
@@ -165,6 +189,7 @@ def get_object(request, guid):
   try:
     f = open(os.path.join(repository_path, guid), 'r')
   except IOError:
+    logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
   ret = ''
@@ -175,9 +200,12 @@ def get_object(request, guid):
 
 
 def object_meta(request, guid):
+  logging.info('__object_meta__')
+
   try:
     f = open(os.path.join(repository_path, '%s_meta' % guid), 'r')
   except IOError:
+    logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
   ret = ''
@@ -209,3 +237,10 @@ def object_meta(request, guid):
   #
   ##return HttpResponse('<pre>' + json.dumps (res, indent = 2) + '</pre>')
   #return HttpResponse(json.dumps (res))
+
+
+def log(request):
+  log_file = open(log_path, 'r')
+
+  log = repository_object.objects.all()
+  return render_to_response('log.html', {'log_file': log_file})

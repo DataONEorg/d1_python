@@ -3,7 +3,7 @@ from django.test.client import Client
 import json
 
 
-class SimpleTest(TestCase):
+class mn_service_tests(TestCase):
   def setUp(self):
     """
     Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/update/
