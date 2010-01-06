@@ -7,6 +7,7 @@ import datetime
 import stat
 import json
 import hashlib
+import settings
 import logging
 
 from django.http import HttpResponse
@@ -16,8 +17,8 @@ from django.shortcuts import render_to_response
 
 from mn_prototype.mn_service.models import *
 
-repository_path = '/home/roger/D1/repository.dataone.org/software/cicore/trunk/mn_service/mn_docs'
-log_path = '/home/roger/D1/repository.dataone.org/software/cicore/trunk/mn_service/mn_service.log'
+repository_path = settings.REPOSITORY_PATH
+log_path = settings.LOG_PATH
 
 # Set up logging.
 logging.getLogger('').setLevel(logging.DEBUG)

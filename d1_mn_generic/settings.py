@@ -1,5 +1,9 @@
 # Django settings for mn_prototype project.
 
+## Discover the path of this module
+import os
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -10,7 +14,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = '/home/roger/django_sqlite3' # Or path to database file if using sqlite3.
+DATABASE_NAME = _here('test_db.sq3')
 DATABASE_USER = '' # Not used with sqlite3.
 DATABASE_PASSWORD = '' # Not used with sqlite3.
 DATABASE_HOST = '' # Set to empty string for localhost. Not used with sqlite3.
@@ -65,9 +69,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'mn_prototype.urls'
 
-TEMPLATE_DIRS = (
-  '/home/roger/D1/repository.dataone.org/software/allsoftware/cicore/mn_service/mn_prototype/mn_service/templates'
-)
+TEMPLATE_DIRS = (_here('mn_service/templates'))
 
 INSTALLED_APPS = (
   'mn_prototype.mn_service',
@@ -78,3 +80,7 @@ INSTALLED_APPS = (
   'django.contrib.admin',
   'django.contrib.admindocs',
 )
+
+#Path to the test files.
+REPOSITORY_PATH = _here('../mn_docs')
+LOG_PATH = _here('../mn_service.log')
