@@ -41,8 +41,8 @@ def update(request):
     try:
       f = open(f_name, 'r')
     except IOError:
-      logging.warning('Skipped file because it couldn\'t be opened: %s' % f_name)
       # Skip any file we can't get read access to.
+      logging.warning('Skipped file because it couldn\'t be opened: %s' % f_name)
       continue
 
     # Get hash of file.
@@ -88,8 +88,9 @@ def update(request):
     # * If the object's primary key attribute is not set, or if it's set but a
     #   record doesn't exist, Django executes an INSERT.
 
-    # Build object for this file.
+    # Build object for this file and store it.
     o = repository_object()
+    o.path = f_name
     o.guid = os.path.basename(f_name)
     o.repository_object_class = c
     o.hash = hash.hexdigest()
@@ -215,33 +216,15 @@ def object_meta(request, guid):
 
   return HttpResponse(ret)
 
-  #query = repository_object.objects.filter (repository_object_class__name__contains = oclass)
-  #
-  #if query.count () != 1:
-  #  raise Http404
-  #
-  #obj = query [0]
-  #
-  #  ob = {} 
-  #  ob ['oclass'] = row.repository_object_class.name
-  #  ob ['hash'] = row.hash
-  #  # Get modified date in an ISO 8601 string.
-  #  ob ['modified'] = datetime.datetime.isoformat (row.mtime)
-  #  ob ['size'] = row.size
-  #
-  #  # Append object to response.
-  #  res ['data'][row.guid] = ob
-  #
-  #res ['start'] = start
-  #res ['count'] = query.count ()
-  #res ['total'] = query_unsliced.count () #query.filt#repository_object.objects.count ()
-  #
-  ##return HttpResponse('<pre>' + json.dumps (res, indent = 2) + '</pre>')
-  #return HttpResponse(json.dumps (res))
-
 
 def log(request):
-  log_file = open(log_path, 'r')
+  # We open the log file for reading. Don't know if it's already open for
+  # writing by the logging system, but for now, this works.
+  try:
+    log_file = open(log_path, 'r')
+  except IOError:
+    logging.warning('Not able to open log file: %s' % log_path)
+    raise Http404
 
-  log = repository_object.objects.all()
+  # Fill in a template with log file data and return it.
   return render_to_response('log.html', {'log_file': log_file})

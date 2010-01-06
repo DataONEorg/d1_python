@@ -9,6 +9,7 @@ class repository_object_class(models.Model):
 class repository_object(models.Model):
   # "id" serial NOT NULL PRIMARY KEY (created automatically)
   guid = models.CharField(max_length=200, unique=True)
+  path = models.CharField(max_length=1000, unique=True)
   repository_object_class = models.ForeignKey(repository_object_class)
   hash = models.CharField(max_length=100)
   mtime = models.DateTimeField()
