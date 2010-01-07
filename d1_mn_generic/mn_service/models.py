@@ -18,3 +18,4 @@ class repository_object(models.Model):
 
 class status(models.Model):
   mtime = models.DateTimeField()
+  status = models.CharField(max_length=100)

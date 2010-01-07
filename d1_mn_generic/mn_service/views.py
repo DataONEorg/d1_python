@@ -1,3 +1,4 @@
+# Stdlib.
 import os
 import sys
 import re
@@ -7,38 +8,30 @@ import datetime
 import stat
 import json
 import hashlib
-import settings
-import logging
 
+# Django.
 from django.http import HttpResponse
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
 
+# App.
+import settings
 from mn_prototype.mn_service.models import *
-
-repository_path = settings.REPOSITORY_PATH
-log_path = settings.LOG_PATH
-
-# Set up logging.
-logging.getLogger('').setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-  '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-)
-file_logger = logging.FileHandler(log_path, 'a')
-file_logger.setFormatter(formatter)
-logging.getLogger('').addHandler(file_logger)
+from auth import *
+from log import *
 
 
+@cn_check_required
 def update(request):
-  logging.info('__update__')
+  logging.info('/update/')
 
   # We start by clearing out all data from the tables.
   repository_object.objects.all().delete()
   repository_object_class.objects.all().delete()
   status.objects.all().delete()
 
-  for f_name in glob.glob(os.path.join(repository_path, '*')):
+  for f_name in glob.glob(os.path.join(settings.REPOSITORY_PATH, '*')):
     try:
       f = open(f_name, 'r')
     except IOError:
@@ -100,17 +93,17 @@ def update(request):
     o.save()
 
   # Successfully updated the db, so put current datetime in status.mtime.
-  mtime = datetime.datetime.utcnow()
   s = status()
-  s.mtime = mtime
+  s.mtime = datetime.datetime.utcnow()
+  s.status = 'update successful'
   s.save()
 
   return HttpResponse('ok')
 
 
+@cn_check_required
 def object(request, guid):
-  logging.info('__object__')
-  #return HttpResponse(request)
+  logging.info('/object/')
 
   # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
   # strings for formats the client would like to receive. We should be going
@@ -142,8 +135,9 @@ def object(request, guid):
   raise Http404
 
 
+@cn_check_required
 def get_list(request):
-  logging.info('__get_list__')
+  logging.info('/get_list/')
   # select objects ordered by mtime desc.
   query = repository_object.objects.order_by('-mtime')
   # Create a copy of the query that we will not slice, for getting the total
@@ -203,7 +197,7 @@ def get_list(request):
 
   res['start'] = start
   res['count'] = query.count()
-  res['total'] = query_unsliced.count() #query.filt#repository_object.objects.count ()
+  res['total'] = query_unsliced.count()
 
   # JSON encode the response.
   response = HttpResponse(json.dumps(res))
@@ -216,9 +210,10 @@ def get_list(request):
   return response
 
 
+@cn_check_required
 def get_object(request, guid):
   try:
-    f = open(os.path.join(repository_path, guid), 'r')
+    f = open(os.path.join(settings.REPOSITORY_PATH, guid), 'r')
   except IOError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
@@ -230,11 +225,12 @@ def get_object(request, guid):
   return HttpResponse(ret)
 
 
+@cn_check_required
 def object_meta(request, guid):
-  logging.info('__object_meta__')
+  logging.info('/object_meta/')
 
   try:
-    f = open(os.path.join(repository_path, '%s_meta' % guid), 'r')
+    f = open(os.path.join(settings.REPOSITORY_PATH, '%s_meta' % guid), 'r')
   except IOError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
@@ -246,14 +242,20 @@ def object_meta(request, guid):
   return HttpResponse(ret)
 
 
+@cn_check_required
 def log(request):
   # We open the log file for reading. Don't know if it's already open for
   # writing by the logging system, but for now, this works.
   try:
-    log_file = open(log_path, 'r')
+    log_file = open(settings.LOG_PATH, 'r')
   except IOError:
-    logging.warning('Not able to open log file: %s' % log_path)
+    logging.warning('Not able to open log file: %s' % settings.LOG_PATH)
     raise Http404
 
   # Fill in a template with log file data and return it.
   return render_to_response('log.html', {'log_file': log_file})
+
+
+@cn_check_required
+def get_ip(request):
+  return HttpResponse(request.META['REMOTE_ADDR'])

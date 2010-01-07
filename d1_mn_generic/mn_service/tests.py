@@ -179,4 +179,20 @@ class mn_service_tests(TestCase):
     c = Client()
     response = c.head('/mn/object/')
     self.failUnlessEqual(response.status_code, 200)
-    self.failUnlessEqual(type(response['Last-Modified']), type(''))
+    self.failUnlessEqual(type(response['Last-Modified']), type(str()))
+
+  def test_rest_call_cn_auth(self):
+    """
+    Check that CN is successfully authenticated if matching an IP in the CN_IP list.
+    """
+    c = Client()
+    response = c.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.200')
+    self.failUnlessEqual(response.status_code, 200)
+
+  def test_rest_call_cn_no_auth(self):
+    """
+    Check that client is blocekd if not matching an IP in the CN_IP list.
+    """
+    c = Client()
+    response = c.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.250')
+    self.failUnlessEqual(response.content[:9], 'Attempted')
