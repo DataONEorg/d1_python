@@ -1,6 +1,6 @@
 # Django settings for mn_prototype project.
 
-## Discover the path of this module
+# Discover the path of this module
 import os
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
@@ -84,3 +84,11 @@ INSTALLED_APPS = (
 #Path to the test files.
 REPOSITORY_PATH = _here('../mn_docs')
 LOG_PATH = _here('../mn_service.log')
+
+# CN IPs.
+CN_IP = [
+  '192.168.1.200', # CN1
+  '192.168.1.201', # CN2
+  '192.168.1.202', # CN3
+  '127.0.0.1'
+]

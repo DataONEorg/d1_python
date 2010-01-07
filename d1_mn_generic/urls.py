@@ -7,10 +7,9 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns(
   '',
   # Example:
+  (r'^mn/', include('mn_prototype.mn_service.urls')),
   (
-    r'^mn/', include(
-      'mn_prototype.mn_service.urls'
-    )
+    r'^accounts/login/$', 'django.contrib.auth.views.login'
   ),
 
   # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
