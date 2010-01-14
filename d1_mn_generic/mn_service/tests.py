@@ -196,3 +196,8 @@ class mn_service_tests(TestCase):
     c = Client()
     response = c.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.250')
     self.failUnlessEqual(response.content[:9], 'Attempted')
+
+  #def test_sysmeta (self):
+  #  """
+  #  """
+  #  gen_sysmeta ('test1', 'test2')

@@ -14,12 +14,14 @@ from django.http import HttpResponse
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
+from django.utils.html import escape
 
 # App.
 import settings
 from mn_prototype.mn_service.models import *
 from auth import *
 from log import *
+from sysmeta import *
 
 
 @cn_check_required
@@ -27,6 +29,7 @@ def update(request):
   logging.info('/update/')
 
   # We start by clearing out all data from the tables.
+  associations.objects.all().delete()
   repository_object.objects.all().delete()
   repository_object_class.objects.all().delete()
   status.objects.all().delete()
@@ -82,6 +85,22 @@ def update(request):
     # * If the object's primary key attribute is not set, or if it's set but a
     #   record doesn't exist, Django executes an INSERT.
 
+    # Create sysmeta for object.
+    res = gen_sysmeta(
+      f_name, os.path.join(
+        settings.SYSMETA_PATH, os.path.basename(
+          f_name
+        )
+      )
+    )
+    if not res:
+      # Skip any file we can't create sysmeta for.
+      logging.error(
+        'Skipped file because there was an error when creating System Metadata for it: %s'
+        % f_name
+      )
+      continue
+
     # Build object for this file and store it.
     o = repository_object()
     o.path = f_name
@@ -92,7 +111,7 @@ def update(request):
     o.size = size
     o.save()
 
-  # Successfully updated the db, so put current datetime in status.mtime.
+    # Successfully updated the db, so put current datetime in status.mtime.
   s = status()
   s.mtime = datetime.datetime.utcnow()
   s.status = 'update successful'
@@ -182,10 +201,11 @@ def get_list(request):
     query = query[:count]
 
   res = {}
-  res['data'] = {}
+  res['data'] = []
 
   for row in query:
     ob = {}
+    ob['guid'] = row.guid
     ob['oclass'] = row.repository_object_class.name
     ob['hash'] = row.hash
     # Get modified date in an ISO 8601 string.
@@ -193,14 +213,18 @@ def get_list(request):
     ob['size'] = row.size
 
     # Append object to response.
-    res['data'][row.guid] = ob
+    res['data'].append(ob)
 
   res['start'] = start
   res['count'] = query.count()
   res['total'] = query_unsliced.count()
 
   # JSON encode the response.
-  response = HttpResponse(json.dumps(res))
+  # The "pretty" parameter generates pretty printed JSON.
+  if 'pretty' in request.GET:
+    response = HttpResponse('<pre>' + json.dumps(res, indent=2) + '</pre>')
+  else:
+    response = HttpResponse(json.dumps(res))
 
   # Add Last-Modified header.
   response['Last-Modified'] = datetime.datetime.isoformat(
@@ -212,17 +236,24 @@ def get_list(request):
 
 @cn_check_required
 def get_object(request, guid):
+  logging.info('/get_object/')
+
   try:
-    f = open(os.path.join(settings.REPOSITORY_PATH, guid), 'r')
+    query = repository_object.objects.filter(guid__contains=guid)
+    path = query[0].path
+  except IndexError:
+    err = 'Non-existing metadata object was requested: %s' % guid
+    logging.warning(err)
+    return HttpResponse(err)
+
+  try:
+    f = open(os.path.join(settings.REPOSITORY_PATH, path), 'r')
   except IOError:
-    logging.warning('Non-existing metadata object was requested: %s' % guid)
+    err = 'Expected file was not present: %s' % path
+    logging.warning(err)
     raise Http404
 
-  ret = ''
-  for line in f.readlines():
-    ret += line
-
-  return HttpResponse(ret)
+  return HttpResponse(f.read())
 
 
 @cn_check_required
@@ -230,16 +261,29 @@ def object_meta(request, guid):
   logging.info('/object_meta/')
 
   try:
+    query = repository_object.objects.filter(guid__contains=guid)
+    path = query[0].path
+  except IndexError:
+    err = 'Non-existing metadata object was requested: %s' % guid
+    logging.warning(err)
+    return HttpResponse(err)
+
+  try:
+    f = open(os.path.join(settings.REPOSITORY_PATH, path), 'r')
+  except IOError:
+    err = 'Expected file was not present: %s' % path
+    logging.warning(err)
+    raise Http404
+
+  return HttpResponse(f.read())
+
+  try:
     f = open(os.path.join(settings.REPOSITORY_PATH, '%s_meta' % guid), 'r')
   except IOError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
-  ret = ''
-  for line in f.readlines():
-    ret += line
-
-  return HttpResponse(ret)
+  return HttpResponse(f.read())
 
 
 @cn_check_required
