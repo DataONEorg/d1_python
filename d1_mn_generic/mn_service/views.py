@@ -24,17 +24,16 @@ from log import *
 from sysmeta import *
 
 
-def add_header(response, row):
+def add_header(response, last_modified, content_length, content_type):
   """
-  Add Last-Modified, Size and Content-Type headers to page that returns
-  information about a specific object.
+  Add Last-Modified, Content-Length and Content-Type headers to page that
+  returns information about a specific object or that contains list of objects.
+  For a page that contains a list of objects, Size is the combined size of all
+  objects listed.
   """
-  # Add Last-Modified header.
-  response['Last-Modified'] = datetime.datetime.isoformat(row.mtime)
-  # Add Size
-  response['Size'] = datetime.datetime.isoformat(row.size)
-  # Add Content-Type
-  response['Content-Type'] = 'Some Content Type'
+  response['Last-Modified'] = last_modified
+  response['Content-Length'] = content_length
+  response['Content-Type'] = content_type
 
 
 @cn_check_required
@@ -133,30 +132,26 @@ def object(request, guid):
   #if request.META['HTTP_ACCEPT'] != 'application/json':
   #  raise Http404
 
-  # If HEAD was requested, we just return the header.
-  if request.method == 'HEAD':
-    response = HttpResponse()
-    # Add Last-Modified header.
-    response['Last-Modified'] = datetime.datetime.isoformat(status.objects.all()[0].mtime)
-    return response
+  # Determine if the request is for an object or for a list.
+  if len(guid):
+    return get_object(request, guid)
 
-  if request.method == 'GET':
-    # Determine if the request is for an object or for a list.
-    if len(guid):
-      return get_object(request, guid)
+  return get_collection(request)
 
-    return get_list(request)
-
-  # Any other request method is an error.
-  raise Http404
+  # Shouldn't get here.
+  logging.error('Internal server error: %s' % guid)
+  return HttpResponseServerError()
 
 
 @cn_check_required
-def get_list(request):
+def get_collection(request):
   """
   Get filtered list of objects.
   """
-  logging.info('/get_list/')
+  logging.info('/get_collection/')
+
+  response = HttpResponse()
+
   # select objects ordered by mtime desc.
   query = repository_object.objects.order_by('-mtime')
   # Create a copy of the query that we will not slice, for getting the total
@@ -222,12 +217,21 @@ def get_list(request):
   # JSON encode the response.
   # The "pretty" parameter generates pretty printed JSON.
   if 'pretty' in request.GET:
-    response = HttpResponse('<pre>' + json.dumps(res, indent=2) + '</pre>')
+    body = '<pre>' + json.dumps(res, indent=2) + '</pre>'
   else:
-    response = HttpResponse(json.dumps(res))
+    body = json.dumps(res)
 
-  # Add Last-Modified header. This is the timestamp for when /update/ was last called.
-  response['Last-Modified'] = status.objects.all()[0].mtime
+  # Add header info about collection.
+  db_status = status.objects.all()[0]
+  add_header(
+    response, datetime.datetime.isoformat(db_status.mtime), len(
+      body
+    ), 'Some Content Type'
+  )
+
+  # If HEAD was requested, we don't include the body.
+  if request.method != 'HEAD':
+    response.write(body)
 
   return response
 
@@ -239,6 +243,8 @@ def get_object(request, guid):
   """
   logging.info('/get_object/')
 
+  response = HttpResponse()
+
   try:
     query = repository_object.objects.filter(guid__contains=guid)
     path = query[0].path
@@ -246,13 +252,24 @@ def get_object(request, guid):
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
+    # Get bytes of object.
   try:
     f = open(os.path.join(settings.REPOSITORY_PATH, path), 'r')
   except IOError:
     logging.warning('Expected file was not present: %s' % path)
     raise Http404
+  body = f.read()
 
-  response = HttpResponse(f.read())
+  # Add header info about object.
+  add_header(
+    response, datetime.datetime.isoformat(query[0].mtime), len(
+      body
+    ), 'Some Content Type'
+  )
+
+  # If HEAD was requested, we don't include the body.
+  if request.method != 'HEAD':
+    response.write(body)
 
   return response
 
@@ -274,14 +291,32 @@ def object_meta(request, guid):
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
+  response = HttpResponse()
+
   # Create sysmeta for object.
   res = gen_sysmeta(os.path.join(settings.REPOSITORY_PATH, path))
   if not res:
     logging.error('System Metadata generation failed for object: %s' % guid)
     raise Http404
 
-    #return HttpResponse('<pre>' + escape (res) + '</pre>')
-  return HttpResponse(res)
+    # The "pretty" parameter generates pretty printed XML object for debugging.
+  if 'pretty' in request.GET:
+    body = '<pre>' + escape(res) + '</pre>'
+  else:
+    body = res
+
+  # Add header info about object.
+  add_header(
+    response, datetime.datetime.isoformat(query[0].mtime), len(
+      body
+    ), 'Some Content Type'
+  )
+
+  # If HEAD was requested, we don't include the body.
+  if request.method != 'HEAD':
+    response.write(body)
+
+  return response
 
 
 @cn_check_required
