@@ -20,14 +20,17 @@ from log import *
 # Input: MN object file
 # Output: SysMeta file
 
+# This call provides a CN with an initial system metadata object that contains
+# information about a MN object.
 
-def gen_sysmeta(object_path, meta_path):
+
+def gen_sysmeta(object_path):
   # Open the MN object.
   try:
     object_file = open(object_path)
   except IOErro:
     logging.error('MN object could not be opened: %s' % object_path)
-    return False
+    return
 
   # Set up the namespace for the sysmeta xml doc.
   SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
@@ -150,7 +153,7 @@ def gen_sysmeta(object_path, meta_path):
   # The name of the checksum algorithm used to calculate the checksum for this
   # object.
   checksum_algorithm = etree.SubElement(xml, 'ChecksumAlgorithm')
-  checksum_algorithm.text = 'Algo1'
+  checksum_algorithm.text = 'SHA-1'
 
   # Validate the generated doc.
 
@@ -158,18 +161,11 @@ def gen_sysmeta(object_path, meta_path):
     xsd_file = open(settings.XSD_PATH, 'r')
   except IOError:
     logging.error('XSD could not be opened: %s' % settings.XSD_PATH)
-    return False
+    return
 
   xmlschema_doc = etree.parse(settings.XSD_PATH)
   xmlschema = etree.XMLSchema(xmlschema_doc)
   xmlschema.assertValid(xml)
 
-  # Write SysMeta file.
-  try:
-    sysmeta_file = open(meta_path, 'w')
-    sysmeta_file.write(etree.tostring(xml, pretty_print=True))
-  except IOError:
-    logging.error('System Metadata file could not be opened for writing: %s' % meta_path)
-    return False
-
-  return True
+  return etree.tostring(xml)
+  #return etree.tostring (xml, pretty_print = True,  encoding = 'UTF-8', xml_declaration = True)

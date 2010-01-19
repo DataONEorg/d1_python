@@ -83,8 +83,6 @@ INSTALLED_APPS = (
 
 #Path to the test files.
 REPOSITORY_PATH = _here('../mn_docs')
-SYSMETA_PATH = _here('../mn_sysmeta')
-#SYSMETA_PATH = _here ('/sysmeta')
 LOG_PATH = _here('../mn_service.log')
 XSD_PATH = _here('../../schemas/coordinating_node_sysmeta.xsd')
 

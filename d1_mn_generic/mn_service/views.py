@@ -24,8 +24,24 @@ from log import *
 from sysmeta import *
 
 
+def add_header(response, row):
+  """
+  Add Last-Modified, Size and Content-Type headers to page that returns
+  information about a specific object.
+  """
+  # Add Last-Modified header.
+  response['Last-Modified'] = datetime.datetime.isoformat(row.mtime)
+  # Add Size
+  response['Size'] = datetime.datetime.isoformat(row.size)
+  # Add Content-Type
+  response['Content-Type'] = 'Some Content Type'
+
+
 @cn_check_required
 def update(request):
+  """
+  Update the database with the contents of the member node filesystem.
+  """
   logging.info('/update/')
 
   # We start by clearing out all data from the tables.
@@ -61,11 +77,8 @@ def update(request):
     if re.search(r'_meta$', f_name):
       c.id = 1
       c.name = 'metadata'
-    elif re.search(r'_system$', f_name):
-      c.id = 2
-      c.name = 'system'
     else:
-      c.id = 3
+      c.id = 2
       c.name = 'data'
     c.save()
 
@@ -84,22 +97,6 @@ def update(request):
     #   executes an UPDATE query.
     # * If the object's primary key attribute is not set, or if it's set but a
     #   record doesn't exist, Django executes an INSERT.
-
-    # Create sysmeta for object.
-    res = gen_sysmeta(
-      f_name, os.path.join(
-        settings.SYSMETA_PATH, os.path.basename(
-          f_name
-        )
-      )
-    )
-    if not res:
-      # Skip any file we can't create sysmeta for.
-      logging.error(
-        'Skipped file because there was an error when creating System Metadata for it: %s'
-        % f_name
-      )
-      continue
 
     # Build object for this file and store it.
     o = repository_object()
@@ -122,6 +119,9 @@ def update(request):
 
 @cn_check_required
 def object(request, guid):
+  """
+  Handle /object/ collection.
+  """
   logging.info('/object/')
 
   # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
@@ -137,10 +137,7 @@ def object(request, guid):
   if request.method == 'HEAD':
     response = HttpResponse()
     # Add Last-Modified header.
-    response['Last-Modified'] = datetime.datetime.isoformat(
-      repository_object.objects.all(
-      )[0].mtime
-    )
+    response['Last-Modified'] = datetime.datetime.isoformat(status.objects.all()[0].mtime)
     return response
 
   if request.method == 'GET':
@@ -156,6 +153,9 @@ def object(request, guid):
 
 @cn_check_required
 def get_list(request):
+  """
+  Get filtered list of objects.
+  """
   logging.info('/get_list/')
   # select objects ordered by mtime desc.
   query = repository_object.objects.order_by('-mtime')
@@ -226,68 +226,68 @@ def get_list(request):
   else:
     response = HttpResponse(json.dumps(res))
 
-  # Add Last-Modified header.
-  response['Last-Modified'] = datetime.datetime.isoformat(
-    repository_object.objects.all(
-    )[0].mtime
-  )
+  # Add Last-Modified header. This is the timestamp for when /update/ was last called.
+  response['Last-Modified'] = status.objects.all()[0].mtime
+
   return response
 
 
 @cn_check_required
 def get_object(request, guid):
+  """
+  Get a data or metadata object by guid.
+  """
   logging.info('/get_object/')
 
   try:
     query = repository_object.objects.filter(guid__contains=guid)
     path = query[0].path
   except IndexError:
-    err = 'Non-existing metadata object was requested: %s' % guid
-    logging.warning(err)
-    return HttpResponse(err)
+    logging.warning('Non-existing metadata object was requested: %s' % guid)
+    raise Http404
 
   try:
     f = open(os.path.join(settings.REPOSITORY_PATH, path), 'r')
   except IOError:
-    err = 'Expected file was not present: %s' % path
-    logging.warning(err)
+    logging.warning('Expected file was not present: %s' % path)
     raise Http404
 
-  return HttpResponse(f.read())
+  response = HttpResponse(f.read())
+
+  return response
 
 
 @cn_check_required
 def object_meta(request, guid):
+  """
+  Get a system metadata object by object guid.
+  
+  The system metadata object is generated on the fly and validated against the
+  coordinating node system metadata xsd.
+  """
   logging.info('/object_meta/')
 
   try:
     query = repository_object.objects.filter(guid__contains=guid)
     path = query[0].path
   except IndexError:
-    err = 'Non-existing metadata object was requested: %s' % guid
-    logging.warning(err)
-    return HttpResponse(err)
-
-  try:
-    f = open(os.path.join(settings.REPOSITORY_PATH, path), 'r')
-  except IOError:
-    err = 'Expected file was not present: %s' % path
-    logging.warning(err)
-    raise Http404
-
-  return HttpResponse(f.read())
-
-  try:
-    f = open(os.path.join(settings.REPOSITORY_PATH, '%s_meta' % guid), 'r')
-  except IOError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
-  return HttpResponse(f.read())
+  # Create sysmeta for object.
+  res = gen_sysmeta(os.path.join(settings.REPOSITORY_PATH, path))
+  if not res:
+    logging.error('System Metadata generation failed for object: %s' % guid)
+    raise Http404
+
+    #return HttpResponse('<pre>' + escape (res) + '</pre>')
+  return HttpResponse(res)
 
 
 @cn_check_required
 def log(request):
+  """
+  """
   # We open the log file for reading. Don't know if it's already open for
   # writing by the logging system, but for now, this works.
   try:
@@ -302,4 +302,6 @@ def log(request):
 
 @cn_check_required
 def get_ip(request):
+  """
+  """
   return HttpResponse(request.META['REMOTE_ADDR'])
