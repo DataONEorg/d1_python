@@ -76,8 +76,8 @@ class D1SystemMetadata(object):
     return True
 
   def _parse(self, xmldoc):
-    '''Parse the content and generate the internal "xobj" which is the lxml
-    objectify instance that results from parsing.
+    '''Parse the content and generate the internal "etree" which is the 
+    element tree instance that results from parsing.
     
     :param xmldoc: (Unicode) The system metadata document to parse.
     '''

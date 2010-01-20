@@ -5,6 +5,16 @@ Module pyd1.d1client
 :Created: 20100111
 :Author: vieglais
 
+:Dependencies:
+
+  - httplib2 is used for HTTP interactions.  This library offers many features
+    that extend the capabilities of the standard Python urllib2 that, especially
+    a well thought out, simple caching mechanism and a slew of common 
+    authentication mechanisms.  httplib2 can be found at:
+    
+      http://code.google.com/p/httplib2/ 
+
+
 .. autoclass:: D1Client
    :members:
 '''
@@ -207,8 +217,8 @@ class D1Client(httplib2.Http):
     :param start: Zero based index for first item to retrieve
     :param count: Number of items to retrieve
     :param oclass: Optional restriction for type of object to retrieve
-    
-    :rtype: (D1ObjectList) List of objects (guid, oclass, hash, modified, size) 
+    :rtype: (dictionary) Containing a list of objects (guid, oclass, hash, 
+            modified, size) 
     
     :raises: TargetNotAvailableException
     '''
@@ -230,6 +240,8 @@ class D1Client(httplib2.Http):
     Given an identifier, returns a list of URLs from which the object may be 
     retrieved.  In general, the first list entry is the preferred retrieval 
     option.
+    
+    Not Implemented.
     
     :param guid: Globally unique identifier known to the DataONE system.
     '''
