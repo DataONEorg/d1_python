@@ -1,0 +1,16 @@
+Installing PyD1
+===============
+
+PyD1 is in the early stages of development and will likely change significantly
+over time.  As such, it should be considered experimental.  
+
+Use it at your own risk of frustration.
+
+To install in your HOME::
+
+  python setup.py install --home=~
+
+To install in the default system location::
+
+  sudo python setup.py install
+

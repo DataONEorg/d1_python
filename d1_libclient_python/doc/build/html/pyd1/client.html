@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1. Module pyd1.d1client &mdash; PyD1 v0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/readable.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="PyD1 v0.0 documentation" href="../index.html" />
+    <link rel="up" title="2. Package pyd1" href="../pyd1.html" />
+    <link rel="next" title="2.2. Module pyd1.d1sysmeta" href="sysmeta.html" />
+    <link rel="prev" title="2. Package pyd1" href="../pyd1.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right">
+        <span id="searchbox" style="display: none; margin-right: 10px">
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" />
+              <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </span>
+        </li>
+        <script type="text/javascript">$('#searchbox').show(0);</script>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+           |</li>
+        <li class="right">
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a>
+           |</li>
+        <li class="right">
+          <a href="sysmeta.html" title="2.2. Module pyd1.d1sysmeta"
+             accesskey="N">next</a>
+           |</li>
+        <li class="right">
+          <a href="../pyd1.html" title="2. Package pyd1"
+             accesskey="P">previous</a>
+           |</li>
+        <li><a href="../index.html">PyD1 v0.0 documentation</a> &raquo;</li>
+          <li><a href="../pyd1.html" accesskey="U">2. Package pyd1</a> &raquo;</li> 
+      </ul>
+      
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-pyd1-d1client">
+<span id="module-pyd1.d1client"></span><h1>2.1. Module pyd1.d1client<a class="headerlink" href="#module-pyd1-d1client" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Created:</th><td class="field-body">20100111</td>
+</tr>
+<tr class="field"><th class="field-name">Author:</th><td class="field-body">vieglais</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="pyd1.d1client.D1Client">
+<em class="property">class </em><tt class="descclassname">pyd1.d1client.</tt><tt class="descname">D1Client</tt><big>(</big><em>introspection_target='http://cn.dataone.org/'</em>, <em>cache=None</em>, <em>timeout=None</em>, <em>proxy_info=None</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a basic client for interaction with the DataONE system.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyd1</span> <span class="kn">import</span> <span class="n">d1client</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8000/mn&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">d1client</span><span class="o">.</span><span class="n">D1Client</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">listObjects</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">[u&#39;count&#39;, u&#39;start&#39;, u&#39;total&#39;, u&#39;data&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span><span class="p">[</span><span class="s">&#39;count&#39;</span><span class="p">]</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">objects</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">{u&#39;guid&#39;: u&#39;02c3f67e-b2e1-4550-8fae-f6d90e9f15f6&#39;, </span>
+<span class="go"> u&#39;hash&#39;: u&#39;2e01e17467891f7c933dbaa00e1459d23db3fe4f&#39;, </span>
+<span class="go"> u&#39;modified&#39;: u&#39;2010-01-06T12:44:26&#39;, u&#39;oclass&#39;: u&#39;data&#39;, u&#39;size&#39;: 2}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;guid&#39;</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+<span class="go">&#39;49&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sysm</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">getSystemMetadata</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;guid&#39;</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">sysm</span><span class="p">)</span>
+<span class="go">[&#39;AccessRule&#39;, &#39;AuthoritativeMemberNode&#39;, &#39;Checksum&#39;, &#39;ChecksumAlgorthm&#39;, </span>
+<span class="go"> &#39;Created&#39;, &#39;DerivedFrome&#39;, &#39;DescribedBy&#39;, &#39;Describes&#39;, &#39;EmbargoExpires&#39;, </span>
+<span class="go"> &#39;Expires&#39;, &#39;Identifier&#39;, &#39;ObjectFormat&#39;, &#39;ObsoletedBy&#39;, &#39;Obsoletes&#39;, </span>
+<span class="go"> &#39;OriginMemberNode&#39;, &#39;Replica&#39;, &#39;RightsHolder&#39;, &#39;Size&#39;, &#39;Submitter&#39;, </span>
+<span class="go"> &#39;SysMetadataCreated&#39;, &#39;SysMetadataModified&#39;, &#39;__class__&#39;, &#39;__delattr__&#39;, </span>
+<span class="go"> &#39;__dict__&#39;, &#39;__doc__&#39;, &#39;__format__&#39;, &#39;__getattribute__&#39;, &#39;__hash__&#39;, </span>
+<span class="go"> &#39;__init__&#39;, &#39;__module__&#39;, &#39;__new__&#39;, &#39;__reduce__&#39;, &#39;__reduce_ex__&#39;, </span>
+<span class="go"> &#39;__repr__&#39;, &#39;__setattr__&#39;, &#39;__sizeof__&#39;, &#39;__str__&#39;, &#39;__subclasshook__&#39;, </span>
+<span class="go"> &#39;__weakref__&#39;, &#39;_getValues&#39;, &#39;_parse&#39;, &#39;etree&#39;, &#39;isValid&#39;, &#39;toXml&#39;, &#39;xmldoc&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sysm</span><span class="o">.</span><span class="n">Size</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sysm</span><span class="o">.</span><span class="n">created</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
+<span class="nc">AttributeError</span>: <span class="n-Identifier">&#39;D1SystemMetadata&#39; object has no attribute &#39;created&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sysm</span><span class="o">.</span><span class="n">Created</span>
+<span class="go">datetime.datetime(2010, 1, 6, 12, 44, 26)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>introspection_target</em> &#8211; Location of a service for discovering
+information about the DataONE system, such as the locations of resolvers, 
+coordinating nodes and member nodes.</li>
+<li><em>cache</em> &#8211; Either the name of a directory to be used as a flat file 
+cache, or it must an object that implements httlib2.FileCache interface</li>
+<li><em>timeout</em> &#8211; Socket level timeout (seconds)</li>
+<li><em>proxy_info</em> &#8211; httplib2.ProxyInfo instance</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.get">
+<tt class="descname">get</tt><big>(</big><em>guid</em>, <em>target=None</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the bytes of an object retrieved from the DataONE system.  If a
+target is not provided, then the location of the object is resolved first,
+and the bytes are retrieved from the resolved target.</p>
+<p>Note that the resulting object may be quite large.  If this is a concern,
+then check the system metadata for the object first.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>guid</em> &#8211; The globally unique identifier for the object</li>
+<li><em>target</em> &#8211; Optional host from which to retrieve the object.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(Bytes) The bytes of the object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.getObjectMetadataURL">
+<tt class="descname">getObjectMetadataURL</tt><big>(</big><em>target</em>, <em>guid</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.getObjectMetadataURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a host and object identifier, return a URL that can be used to 
+retrieve the system metadata about the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>target</em> &#8211; The host to which the request is being sent.</li>
+<li><em>guid</em> &#8211; The GUID for the object</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">URL for retrieving the system metadata about the object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.getObjectURL">
+<tt class="descname">getObjectURL</tt><big>(</big><em>target</em>, <em>guid</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.getObjectURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a host and object identifier, return a URL that can be used to 
+retrieve the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>target</em> &#8211; The host (e.g. <a class="reference external" href="http://mn1.dataone.org/base/">http://mn1.dataone.org/base/</a>)</li>
+<li><em>guid</em> &#8211; The GUID for the object</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">URL to retrieve the object bytes</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.getObjectsURL">
+<tt class="descname">getObjectsURL</tt><big>(</big><em>target</em>, <em>start=None</em>, <em>count=None</em>, <em>oclass=None</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.getObjectsURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path of the objects collection for the specified target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>target</em> &#8211; The URL of the service from which the collection is being 
+retrieved.</li>
+<li><em>start</em> &#8211; Zero based index of the first object to retrieve.</li>
+<li><em>count</em> &#8211; Maximum number of objects to be retrieved.</li>
+<li><em>oclass</em> &#8211; The type of object being requested.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">URL for retrieving the specified content.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.getSystemMetadata">
+<tt class="descname">getSystemMetadata</tt><big>(</big><em>guid</em>, <em>target=None</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.getSystemMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the DataONE system metadata describing the specified object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>guid</em> &#8211; The globally unique identifier for the object</li>
+<li><em>target</em> &#8211; Optional host from which to retrieve the object.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(SystemMetadata) instance representing the object&#8217;s system metadata</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.getSystemMetadataSchema">
+<tt class="descname">getSystemMetadataSchema</tt><big>(</big><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.getSystemMetadataSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function to retrieve the system metadata schema document.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">(Unicode) The system metadata document schema.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.lastResponse">
+<tt class="descname">lastResponse</tt><big>(</big><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.lastResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last response metadata returned from a Http request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">httplib2.Response</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.listObjects">
+<tt class="descname">listObjects</tt><big>(</big><em>target='http://cn.dataone.org/'</em>, <em>start=0</em>, <em>count=100</em>, <em>oclass=None</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.listObjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of objects available on target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>target</em> &#8211; The host being queried.  If none provided then objects from
+the DataONE root are listed, which should be a list of all
+objects in the DataONE system.</li>
+<li><em>start</em> &#8211; Zero based index for first item to retrieve</li>
+<li><em>count</em> &#8211; Number of items to retrieve</li>
+<li><em>oclass</em> &#8211; Optional restriction for type of object to retrieve</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">(D1ObjectList) List of objects (guid, oclass, hash, modified, size)</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TargetNotAvailableException</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.request">
+<tt class="descname">request</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>An oversight in httplib2 Http.request() means that when connecting to a
+valid host that isn&#8217;t connectable, the conn object within the Http class 
+is not tested for None before calling httplib.  This results in httplib
+raising an attribute error, which is a bit confusing.  Here the error
+is trapped and re-raised as a Httplib2.HttpLib2Error.</p>
+<p>The _last_response instance variable is updated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">Tuple of Response and data returned from the Http request</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyd1.d1client.D1Client.resolve">
+<tt class="descname">resolve</tt><big>(</big><em>guid</em><big>)</big><a class="headerlink" href="#pyd1.d1client.D1Client.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an identifier, returns a list of URLs from which the object may be 
+retrieved.  In general, the first list entry is the preferred retrieval 
+option.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>guid</em> &#8211; Globally unique identifier known to the DataONE system.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right">
+        <span id="searchbox" style="display: none; margin-right: 10px">
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" />
+              <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </span>
+        </li>
+        <script type="text/javascript">$('#searchbox').show(0);</script>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             >index</a>
+           |</li>
+        <li class="right">
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a>
+           |</li>
+        <li class="right">
+          <a href="sysmeta.html" title="2.2. Module pyd1.d1sysmeta"
+             >next</a>
+           |</li>
+        <li class="right">
+          <a href="../pyd1.html" title="2. Package pyd1"
+             >previous</a>
+           |</li>
+        <li><a href="../index.html">PyD1 v0.0 documentation</a> &raquo;</li>
+          <li><a href="../pyd1.html" >2. Package pyd1</a> &raquo;</li> 
+      </ul>
+      
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>

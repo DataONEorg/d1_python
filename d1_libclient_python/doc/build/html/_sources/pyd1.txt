@@ -1,0 +1,14 @@
+Package pyd1
+============
+
+This package contains a client tool in Python for working with the DataONE 
+system.
+
+.. toctree::
+   :numbered:
+   :maxdepth: 2
+
+   pyd1/client
+   pyd1/sysmeta
+   pyd1/const
+   pyd1/exceptions

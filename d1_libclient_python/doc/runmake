@@ -1,0 +1,10 @@
+#! /bin/bash
+SRCPATH=`dirname $PWD`/src
+if [[ -z $PYTHONPATH ]]; then
+  export PYTHONPATH=$SRCPATH
+elif [[ ! $PYTHONPATH == "*$SRCPATH*" ]]; then
+  export PYTHONPATH="$PYTHONPATH:$SRCPATH"
+fi
+echo "PYTHONPATH = $PYTHONPATH"
+make $1 $2 $3 $4 $5
+
