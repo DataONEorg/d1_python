@@ -255,10 +255,8 @@ class mn_service_tests(TestCase):
     xmlschema_doc = etree.parse(settings.XSD_PATH)
     xmlschema = etree.XMLSchema(xmlschema_doc)
     xml = etree.parse(StringIO.StringIO(response.content))
-    # Can't get the parsed doc to validate. See if Dave can help.
-    #xmlschema.assertValid(xml)
-    #print response.content
-    #self.failUnlessEqual(xmlschema.validate(xml), True)
+    xmlschema.assertValid(xml)
+    self.failUnlessEqual(xmlschema.validate(xml), True)
 
   def test_rest_call_metadata_by_object_guid_404_get(self):
     """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/a_non_existing_guid/meta

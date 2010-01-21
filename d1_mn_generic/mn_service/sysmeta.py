@@ -46,7 +46,7 @@ def gen_sysmeta(object_path, sysmeta_path):
   # Set up the namespace for the sysmeta xml doc.
   SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
   SYSMETA = '{%s}' % SYSMETA_NS
-  NSMAP = {None: SYSMETA_NS} # the default namespace
+  NSMAP = {'D1': SYSMETA_NS} # the default namespace
   xml = etree.Element(SYSMETA + 'SystemMetadata', nsmap=NSMAP)
 
   # Start building the sysmeta doc.
