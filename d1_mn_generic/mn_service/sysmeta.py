@@ -24,7 +24,7 @@ from log import *
 # information about a MN object.
 
 
-def gen_sysmeta(object_path):
+def gen_sysmeta(object_path, sysmeta_path):
   # Open the MN object.
   try:
     object_file = open(object_path)
@@ -53,7 +53,7 @@ def gen_sysmeta(object_path):
   identifier.text = 'Identifier0'
 
   # SystemMetadata.Created
-  # Date and time (UTC) that the object was created in the DataONE system. Note
+  # Date and time(UTC) that the object was created in the DataONE system. Note
   # this is independent of the publication or release date of the object.
   created = etree.SubElement(xml, 'Created')
   mtime = os.stat(object_path)[stat.ST_MTIME]
@@ -61,7 +61,7 @@ def gen_sysmeta(object_path):
   created.text = datetime.datetime.isoformat(mtime)
 
   # SystemMetadata.Expires
-  # Date and time (UTC) that the object expires in the DataONE system.
+  # Date and time(UTC) that the object expires in the DataONE system.
   # We set this to 100 days from now.
   created = etree.SubElement(xml, 'Expires')
   expire_time = datetime.datetime.utcnow() + datetime.timedelta(days=100)
@@ -167,5 +167,19 @@ def gen_sysmeta(object_path):
   xmlschema = etree.XMLSchema(xmlschema_doc)
   xmlschema.assertValid(xml)
 
-  return etree.tostring(xml)
-  #return etree.tostring (xml, pretty_print = True,  encoding = 'UTF-8', xml_declaration = True)
+  # Write SysMeta file.
+  try:
+    sysmeta_file = open(sysmeta_path, 'w')
+    sysmeta_file.write(
+      etree.tostring(
+        xml, pretty_print=True,
+        encoding='UTF-8', xml_declaration=True
+      )
+    )
+  except IOError:
+    logging.error(
+      'System Metadata file could not be opened for writing: %s' % sysmeta_path
+    )
+    return
+
+  return True

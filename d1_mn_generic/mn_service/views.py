@@ -8,9 +8,10 @@ import datetime
 import stat
 import json
 import hashlib
+import uuid
 
 # Django.
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -22,6 +23,91 @@ from mn_prototype.mn_service.models import *
 from auth import *
 from log import *
 from sysmeta import *
+from util import *
+
+
+def insert_association(guid1, guid2):
+  """
+  Create an association between two objects, given their guids.
+  """
+  try:
+    o1 = repository_object.objects.filter(guid__exact=guid1)[0]
+    o2 = repository_object.objects.filter(guid__exact=guid2)[0]
+  except IndexError:
+    logging.error(
+      'Internal server error: Missing object(s): %s and/or %s' % [guid1, guid2]
+    )
+    return HttpResponseServerError()
+
+  association = associations()
+  association.from_object = o1
+  association.to_object = o2
+  association.save()
+
+
+def insert_object(object_class, guid, path):
+  """
+  Insert object into db.
+  """
+  # How Django knows to UPDATE vs. INSERT
+  #
+  # You may have noticed Django database objects use the same save() method
+  # for creating and changing objects. Django abstracts the need to use INSERT
+  # or UPDATE SQL statements. Specifically, when you call save(), Django
+  # follows this algorithm:
+  #
+  # * If the object's primary key attribute is set to a value that evaluates
+  #   to True (i.e., a value other than None or the empty string), Django
+  #   executes a SELECT query to determine whether a record with the given
+  #   primary key already exists.
+  # * If the record with the given primary key does already exist, Django
+  #   executes an UPDATE query.
+  # * If the object's primary key attribute is not set, or if it's set but a
+  #   record doesn't exist, Django executes an INSERT.
+
+  try:
+    f = open(path, 'r')
+  except IOError, e:
+    # Skip any file we can't get read access to.
+    logging.warning(
+      'Skipped file because it couldn\'t be opened: %s\nException: %s' % [
+        path, e
+      ]
+    )
+    return
+
+  # Get hash of file.
+  hash = hashlib.sha1()
+  hash.update(f.read())
+
+  # Get mtime in datetime.datetime.
+  mtime = os.stat(path)[stat.ST_MTIME]
+  mtime = datetime.datetime.fromtimestamp(mtime)
+
+  # Get size.
+  size = os.stat(path)[stat.ST_SIZE]
+
+  f.close()
+
+  # Set up the object class.
+  c = repository_object_class()
+  try:
+    c.id = {'data': 1, 'metadata': 2, 'sysmeta': 3}[object_class]
+    c.name = object_class
+  except KeyError:
+    logging.error('Internal server error: Unknown object class: %s' % object_class)
+    return HttpResponseServerError()
+  c.save()
+
+  # Build object for this file and store it.
+  o = repository_object()
+  o.path = path
+  o.guid = guid
+  o.repository_object_class = c
+  o.hash = hash.hexdigest()
+  o.mtime = mtime
+  o.size = size
+  o.save()
 
 
 def add_header(response, last_modified, content_length, content_type):
@@ -49,63 +135,38 @@ def update(request):
   repository_object_class.objects.all().delete()
   status.objects.all().delete()
 
-  for f_name in glob.glob(os.path.join(settings.REPOSITORY_PATH, '*')):
-    try:
-      f = open(f_name, 'r')
-    except IOError:
-      # Skip any file we can't get read access to.
-      logging.warning('Skipped file because it couldn\'t be opened: %s' % f_name)
+  # We then remove the sysmeta objects.
+  for sysmeta_path in glob.glob(os.path.join(settings.REPOSITORY_SYSMETA_PATH, '*')):
+    os.remove(sysmeta_path)
+
+  # Loop through all the MN objects.
+  for object_path in glob.glob(os.path.join(settings.REPOSITORY_DOC_PATH, '*', '*')):
+    # Find type of object.
+    if object_path.count(settings.REPOSITORY_DATA_PATH + os.sep):
+      t = 'data'
+    elif object_path.count(settings.REPOSITORY_METADATA_PATH + os.sep):
+      t = 'metadata'
+    else:
+      # Skip sysmeta objects.
       continue
 
-    # Get hash of file.
-    hash = hashlib.sha1()
-    for line in f.readlines():
-      hash.update(line)
+    # Create db entry for object.
+    object_guid = os.path.basename(object_path)
+    insert_object(t, object_guid, object_path)
 
-    # Get mtime in datetime.datetime.
-    mtime = os.stat(f_name)[stat.ST_MTIME]
-    mtime = datetime.datetime.fromtimestamp(mtime)
+    # Create sysmeta for object.
+    sysmeta_guid = str(uuid.uuid4())
+    sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+    res = gen_sysmeta(object_path, sysmeta_path)
+    if not res:
+      logging.error('System Metadata generation failed for object: %s' % object_path)
+      raise Http404
 
-    # Get size.
-    size = os.stat(f_name)[stat.ST_SIZE]
+  # Create db entry for sysmeta object.
+    insert_object('sysmeta', sysmeta_guid, sysmeta_path)
 
-    f.close()
-
-    # We grab the object class from the filename.
-    c = repository_object_class()
-    if re.search(r'_meta$', f_name):
-      c.id = 1
-      c.name = 'metadata'
-    else:
-      c.id = 2
-      c.name = 'data'
-    c.save()
-
-    # How Django knows to UPDATE vs. INSERT
-    #
-    # You may have noticed Django database objects use the same save() method
-    # for creating and changing objects. Django abstracts the need to use INSERT
-    # or UPDATE SQL statements. Specifically, when you call save(), Django
-    # follows this algorithm:
-    #
-    # * If the object's primary key attribute is set to a value that evaluates
-    #   to True (i.e., a value other than None or the empty string), Django
-    #   executes a SELECT query to determine whether a record with the given
-    #   primary key already exists.
-    # * If the record with the given primary key does already exist, Django
-    #   executes an UPDATE query.
-    # * If the object's primary key attribute is not set, or if it's set but a
-    #   record doesn't exist, Django executes an INSERT.
-
-    # Build object for this file and store it.
-    o = repository_object()
-    o.path = f_name
-    o.guid = os.path.basename(f_name)
-    o.repository_object_class = c
-    o.hash = hash.hexdigest()
-    o.mtime = mtime
-    o.size = size
-    o.save()
+    # Create association between sysmeta and regular object.
+    insert_association(object_guid, sysmeta_guid)
 
     # Successfully updated the db, so put current datetime in status.mtime.
   s = status()
@@ -161,7 +222,7 @@ def get_collection(request):
   # Filter by oclass.
   try:
     oclass = request.GET['oclass']
-    query = query.filter(repository_object_class__name__contains=oclass)
+    query = query.filter(repository_object_class__name__exact=oclass)
     query_unsliced = query
   except KeyError:
     pass
@@ -185,7 +246,7 @@ def get_collection(request):
   if start == 0 and count == 0:
     query = query.none()
   # Handle variations of start and count. We need these because Python does not
-  # support three valued logic in expressions (which would cause an expression
+  # support three valued logic in expressions(which would cause an expression
   # that includes None to be valid and evaluate to None). Note that a slice such
   # as [value : None] is valid and equivalent to [value:]
   elif start and count:
@@ -224,9 +285,7 @@ def get_collection(request):
   # Add header info about collection.
   db_status = status.objects.all()[0]
   add_header(
-    response, datetime.datetime.isoformat(db_status.mtime), len(
-      body
-    ), 'Some Content Type'
+    response, datetime.datetime.isoformat(db_status.mtime), len(body), 'Some Content Type'
   )
 
   # If HEAD was requested, we don't include the body.
@@ -246,7 +305,7 @@ def get_object(request, guid):
   response = HttpResponse()
 
   try:
-    query = repository_object.objects.filter(guid__contains=guid)
+    query = repository_object.objects.filter(guid__exact=guid)
     path = query[0].path
   except IndexError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
@@ -254,17 +313,16 @@ def get_object(request, guid):
 
     # Get bytes of object.
   try:
-    f = open(os.path.join(settings.REPOSITORY_PATH, path), 'r')
-  except IOError:
-    logging.warning('Expected file was not present: %s' % path)
+    f = open(os.path.join(path), 'r')
+  except IOError, e:
+    logging.warning('Expected file was not present: %s\nException: %s' % [path, e])
     raise Http404
   body = f.read()
+  f.close()
 
   # Add header info about object.
   add_header(
-    response, datetime.datetime.isoformat(query[0].mtime), len(
-      body
-    ), 'Some Content Type'
+    response, datetime.datetime.isoformat(query[0].mtime), len(body), 'Some Content Type'
   )
 
   # If HEAD was requested, we don't include the body.
@@ -275,41 +333,43 @@ def get_object(request, guid):
 
 
 @cn_check_required
-def object_meta(request, guid):
+def object_metadata(request, guid):
   """
   Get a system metadata object by object guid.
-  
-  The system metadata object is generated on the fly and validated against the
-  coordinating node system metadata xsd.
   """
-  logging.info('/object_meta/')
+  logging.info('/object_metadata/')
 
   try:
-    query = repository_object.objects.filter(guid__contains=guid)
-    path = query[0].path
+    # repository_object_class__name__exact
+    query = repository_object.objects.filter(
+      associations_to__from_object__guid__exact=guid
+    )
+    sysmeta_path = query[0].path
   except IndexError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
 
   response = HttpResponse()
 
-  # Create sysmeta for object.
-  res = gen_sysmeta(os.path.join(settings.REPOSITORY_PATH, path))
-  if not res:
-    logging.error('System Metadata generation failed for object: %s' % guid)
+  # Read sysmeta object.
+  try:
+    f = open(sysmeta_path, 'r')
+  except IOError, e:
+    logging.warning(
+      'Not able to open system metadata file: %s\nException: %s' % [sysmeta_path, e]
+    )
     raise Http404
 
-    # The "pretty" parameter generates pretty printed XML object for debugging.
+  # The "pretty" parameter returns a pretty printed XML object for debugging.
   if 'pretty' in request.GET:
-    body = '<pre>' + escape(res) + '</pre>'
+    body = '<pre>' + escape(f.read()) + '</pre>'
   else:
-    body = res
+    body = f.read()
+  f.close()
 
   # Add header info about object.
   add_header(
-    response, datetime.datetime.isoformat(query[0].mtime), len(
-      body
-    ), 'Some Content Type'
+    response, datetime.datetime.isoformat(query[0].mtime), len(body), 'Some Content Type'
   )
 
   # If HEAD was requested, we don't include the body.
@@ -322,13 +382,16 @@ def object_meta(request, guid):
 @cn_check_required
 def log(request):
   """
+  Get the log file.
   """
   # We open the log file for reading. Don't know if it's already open for
   # writing by the logging system, but for now, this works.
   try:
     log_file = open(settings.LOG_PATH, 'r')
-  except IOError:
-    logging.warning('Not able to open log file: %s' % settings.LOG_PATH)
+  except IOError, e:
+    logging.warning(
+      'Not able to open log file: %s\nException: %s' % [settings.LOG_PATH, e]
+    )
     raise Http404
 
   # Fill in a template with log file data and return it.
@@ -338,5 +401,6 @@ def log(request):
 @cn_check_required
 def get_ip(request):
   """
+  Get the client IP as seen from the server.
   """
   return HttpResponse(request.META['REMOTE_ADDR'])

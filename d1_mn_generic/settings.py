@@ -81,8 +81,12 @@ INSTALLED_APPS = (
   'django.contrib.admindocs',
 )
 
-#Path to the test files.
-REPOSITORY_PATH = _here('../mn_docs')
+# Paths to the test files.
+REPOSITORY_DOC_PATH = _here(os.path.join('..', 'mn_docs'))
+REPOSITORY_DATA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'data'))
+REPOSITORY_METADATA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'metadata'))
+REPOSITORY_SYSMETA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'sysmeta'))
+
 LOG_PATH = _here('../mn_service.log')
 XSD_PATH = _here('../../schemas/coordinating_node_sysmeta.xsd')
 

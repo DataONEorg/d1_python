@@ -11,10 +11,15 @@ from lxml import etree
 
 # App.
 import settings
+from util import *
 
 # Constants related to simulated MN object collection.
-mn_objects_total = 195
-mn_objects_total_meta = 75
+mn_objects_total = 354
+mn_objects_total_data = 100
+mn_objects_total_metadata = 77
+mn_objects_total_sysmeta = 177
+
+#first_setup = True
 
 
 def check_response_headers_present(self, response):
@@ -30,7 +35,17 @@ class mn_service_tests(TestCase):
   def setUp(self):
     """
     Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/update/
+    
+    We only want this to happen before the first test, but Django calls it before each test.
+    So we fudge things with a global variable.
     """
+    #global first_setup
+    #
+    #if not first_setup:
+    #  return
+    #
+    #first_setup = False
+
     c = Client()
     response = c.get('/mn/update/', HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -47,7 +62,7 @@ class mn_service_tests(TestCase):
     Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0
     """
     c = Client()
-    response = c.get ('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     res = json.loads(response.content)
@@ -63,13 +78,13 @@ class mn_service_tests(TestCase):
     Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
     c = Client()
-    response = c.get ('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
-    self.failUnlessEqual(res['total'], mn_objects_total)
+    self.failUnlessEqual(res['total'], mn_objects_total_data)
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
 
@@ -78,14 +93,14 @@ class mn_service_tests(TestCase):
     Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=metadata
     """
     c = Client()
-    response = c.get ('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     res = json.loads(response.content)
     # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
-    self.failUnlessEqual(res['total'], mn_objects_total_meta)
+    self.failUnlessEqual(res['total'], mn_objects_total_metadata)
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
 
@@ -110,7 +125,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=20&count=10
     """
     c = Client()
-    response = c.get ('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     res = json.loads(response.content)
@@ -128,13 +143,13 @@ class mn_service_tests(TestCase):
     Example call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=10&count=5&oclass=metadata
     """
     c = Client()
-    response = c.get ('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 5) # Number of objects returned.
     self.failUnlessEqual(res['start'], 10) # Starting object.
-    self.failUnlessEqual(res['total'], mn_objects_total_meta)
+    self.failUnlessEqual(res['total'], mn_objects_total_metadata)
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
     # Check the first of the data objects for the correct format.
@@ -149,16 +164,16 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=15&count=10&oclass=metadata
     """
     c = Client()
-    response = c.get ('/mn/object/', {'start': mn_objects_total_meta - 5, 'count': '10', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/', {'start': mn_objects_total_metadata - 5, 'count': '10', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     res = json.loads(response.content)
     self.failUnlessEqual(
       res['count'], 5
     ) # We should get the 5 remaining objects even though we asked for 10.
-    self.failUnlessEqual(res['start'], mn_objects_total_meta - 5) # Starting object.
+    self.failUnlessEqual(res['start'], mn_objects_total_metadata - 5) # Starting object.
     self.failUnlessEqual(
-      res['total'], mn_objects_total_meta
+      res['total'], mn_objects_total_metadata
     ) # Total number of objects of type metadata.
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
@@ -186,7 +201,7 @@ class mn_service_tests(TestCase):
     Test call: curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
     c = Client()
-    response = c.head ('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = c.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
 
@@ -198,13 +213,16 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_by_guid_get(self):
     """
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2
     """
     c = Client()
-    response = c.get ('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef', {}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
-    self.failUnlessEqual(response.content, '51')
+    self.failUnlessEqual(
+      response.content,
+      'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n'
+    )
 
   def test_rest_call_object_by_guid_404_get(self):
     """
@@ -216,10 +234,10 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_metadata_by_object_guid_get(self):
     """
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef/meta
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2/meta
     """
     c = Client()
-    response = c.get ('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef/meta', {}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2/meta', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
     # Check that this metadata validates against the schema.
@@ -233,16 +251,16 @@ class mn_service_tests(TestCase):
     xmlschema = etree.XMLSchema(xmlschema_doc)
     xml = etree.parse(StringIO.StringIO(response.content))
     # Can't get the parsed doc to validate. See if Dave can help.
-    #xmlschema.assertValid (xml)
+    #xmlschema.assertValid(xml)
     #print response.content
-    #self.failUnlessEqual (xmlschema.validate (xml), True)
+    #self.failUnlessEqual(xmlschema.validate(xml), True)
 
   def test_rest_call_metadata_by_object_guid_404_get(self):
     """
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/a_non_existing_guid/meta
     """
     c = Client()
-    response = c.get ('/mn/object/a_non_existing_guid/meta', {}, HTTP_ACCEPT = 'application/json')
+    response = c.get('/mn/object/a_non_existing_guid/meta', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 404)
 
   #
@@ -253,10 +271,10 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_header_by_guid_head(self):
     """
-    curl -I http://127.0.0.1:8000/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef
+    curl -I http://127.0.0.1:8000/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2
     """
     c = Client()
-    response = c.head('/mn/object/fe7b4e24-dcbe-4b8c-b2a0-1802a05044ef')
+    response = c.head('/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2')
     self.failUnlessEqual(response.status_code, 200)
     check_response_headers_present(self, response)
 
