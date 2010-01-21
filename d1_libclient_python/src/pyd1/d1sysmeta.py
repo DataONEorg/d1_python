@@ -52,8 +52,9 @@ class D1SystemMetadata(object):
 
   def isValid(self, schemaDoc):
     '''This is kind of expensive as we're trying to minimize external 
-    dependencies.  Here we import lxml.etree, reparse the schema, reparse the 
-    document then check that the document is valid according to the schema.
+    dependencies (ie. lxml and libxml2). Here we import lxml.etree, parse the 
+    schema, reparse the document then check that the document is valid according 
+    to the schema.
     
     :param schemaDoc: unicode or open file containing the XML Schema
     :rtype: (bool) True if all good, otherwise an exception is raised.

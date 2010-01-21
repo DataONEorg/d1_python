@@ -8,7 +8,7 @@ Module pyd1.d1client
 :Dependencies:
 
   - httplib2 is used for HTTP interactions.  This library offers many features
-    that extend the capabilities of the standard Python urllib2 that, especially
+    that extend the capabilities of the standard Python urllib2, especially
     a well thought out, simple caching mechanism and a slew of common 
     authentication mechanisms.  httplib2 can be found at:
     
@@ -93,7 +93,7 @@ class D1Client(httplib2.Http):
     :param proxy_info: httplib2.ProxyInfo instance
     '''
     httplib2.Http.__init__(self, cache=cache, timeout=timeout, proxy_info=proxy_info)
-    self.logger = logging.getLogger('D1Client')
+    self.logger = logging.getLogger(self.__class__.__name__)
     self.d1root = introspection_target
     self.useragent = d1const.USER_AGENT
     self._last_response = None
@@ -132,7 +132,7 @@ class D1Client(httplib2.Http):
       self._last_response, data = super(D1Client, self).request(*args, **kwargs)
       return self._last_response, data
     except AttributeError, e:
-      message = "No socket connection could be created for Http target.\n"
+      message = u"No socket connection could be created for Http target.\n"
       raise httplib2.HttpLib2Error(message + str(e))
     return None
 
@@ -208,8 +208,7 @@ class D1Client(httplib2.Http):
     count=d1const.DEFAULT_LISTOBJECTS,
     oclass=None
   ):
-    '''
-    Retrieves a list of objects available on target.
+    '''Retrieves a list of objects available on target.
     
     :param target: The host being queried.  If none provided then objects from
                    the DataONE root are listed, which should be a list of all
@@ -226,9 +225,9 @@ class D1Client(httplib2.Http):
     headers = self._getHeaders()
     response, data = self.request(url, method='GET', headers=headers)
     if response.status not in d1const.HTTP_STATUS_OK:
-      message = "Error listing objects from target %s." % target
-      message += "\nStatus = %s" % str(response.status)
-      message += "\nFull URL=%s" % url
+      message = u"Error listing objects from target %s." % target
+      message += u"\nStatus = %s" % str(response.status)
+      message += u"\nFull URL=%s" % url
       raise d1exceptions.TargetNotAvailableException(response, message)
     #Try and convert JSON to python
     self.logger.debug("data = %s" % data)
@@ -244,6 +243,7 @@ class D1Client(httplib2.Http):
     Not Implemented.
     
     :param guid: Globally unique identifier known to the DataONE system.
+    :rtype: (list of string)  List of URLs for accessing <guid>
     '''
     raise NotImplementedError('Resolve method is not implemented.')
     pass
@@ -274,7 +274,8 @@ class D1Client(httplib2.Http):
 
     :param guid: The globally unique identifier for the object
     :param target: Optional host from which to retrieve the object.
-    :rtype: (SystemMetadata) instance representing the object's system metadata    
+    :rtype: (D1SystemMetadata) instance representing the object's system 
+            metadata    
     '''
     #resolve object
     if target is None:
@@ -283,10 +284,10 @@ class D1Client(httplib2.Http):
     headers = self._getHeaders()
     response, data = self.request(url, 'GET', headers=headers)
     if response.status not in d1const.HTTP_STATUS_OK:
-      message = "Error retrieving system metadata for %s." % guid
-      message += "\nStatus = %s" % str(response.status)
-      message += "\nFull URL=%s" % url
-      raise exceptions.TargetNotAvailableException(response, message)
+      message = u"Error retrieving system metadata for %s." % guid
+      message += u"\nStatus = %s" % str(response.status)
+      message += u"\nFull URL=%s" % url
+      raise d1exceptions.TargetNotAvailableException(response, message)
     self.logger.debug("getSystemMetadata data=%s" % data)
     return d1sysmeta.D1SystemMetadata(xmldoc=data)
 

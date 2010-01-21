@@ -55,7 +55,7 @@ TEST_EG_SYSMETA = '''<?xml version="1.0" encoding="UTF-8"?>
         <ReplicaVerified>2006-05-04T18:13:51.0Z</ReplicaVerified>
     </Replica>
     <Checksum>Checksum0</Checksum>
-    <ChecksumAlgorithm>Algo1</ChecksumAlgorithm>
+    <ChecksumAlgorithm>SHA-1</ChecksumAlgorithm>
     <EmbargoExpires>2006-05-04T18:13:51.0Z</EmbargoExpires>
     <AccessRule RuleType="Allow" Service="Read" Principal="Principal0"/>
     <AccessRule RuleType="Allow" Service="Read" Principal="Principal1"/>
@@ -98,7 +98,7 @@ TEST_BAD_EG_SYSMETA = '''<?xml version="1.0" encoding="UTF-8"?>
         <ReplicaVerified>2006-05-04T18:13:51.0Z</ReplicaVerified>
     </Replica>
     <Checksum>Checksum0</Checksum>
-    <ChecksumAlgorithm>Algo1</ChecksumAlgorithm>
+    <ChecksumAlgorithm>SHA-1</ChecksumAlgorithm>
     <EmbargoExpires>2006-05-04T18:13:51.0Z</EmbargoExpires>
     <AccessRule RuleType="Allow" Service="Read" Principal="Principal0"/>
     <AccessRule RuleType="Allow" Service="Read" Principal="Principal1"/>
@@ -308,22 +308,30 @@ class TestPyD1Client(unittest.TestCase):
     self.assertEqual(2006, sysm.Created.year)
 
   def testGetSystemMetadata(self):
-    '''Retrieve object id = '035cc1ae-c3f4-4c5a-8540-17ac0501733d'
+    '''Retrieve system metdata for the first object in listObjects'
     '''
     cli = d1client.D1Client()
-    sysm = cli.getSystemMetadata(
-      u'035cc1ae-c3f4-4c5a-8540-17ac0501733d',
-      target=self.target
+    url = cli.getObjectsURL(
+      self.target, start=0,
+      count=1, oclass=d1const.OBJECT_CLASSES[0]
     )
-    self.assertEqual(sysm.Checksum, u'c1dfd96eea8cc2b62785275bca38ac261256e278')
-    self.assertEqual(sysm.Size, 1)
+    objects = cli.listObjects(
+      self.target, start=0,
+      count=1, oclass=d1const.OBJECT_CLASSES[0]
+    )
+    guid = objects['data'][0]['guid']
+    sysm = cli.getSystemMetadata(guid, target=self.target)
+    self.assertEqual(sysm.Checksum, objects['data'][0]['hash'])
+    self.assertEqual(sysm.Size, objects['data'][0]['size'])
 
   def testGetObject(self):
-    '''Try getting object id = '0647ce5a-15ea-411a-9cb5-41f867a89553_meta'
+    '''Try getting the 5th object from listObjects'
     '''
     cli = d1client.D1Client()
-    res = cli.get('0647ce5a-15ea-411a-9cb5-41f867a89553_meta', self.target)
-    self.assertEqual(res, u'29 meta')
+    objects = cli.listObjects(self.target, start=4, count=1)
+    guid = objects['data'][0]['guid']
+    res = cli.get(guid, target=self.target)
+    self.assertTrue(len(res) > 0)
 
 
 if __name__ == "__main__":
