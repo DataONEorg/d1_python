@@ -2,9 +2,8 @@
 
 
 def file_to_dict(path):
-  """
-  Convert a sample MN object to dictionary.
-  """
+  """Convert a sample MN object to dictionary."""
+
   try:
     f = open(path, 'r')
   except IOError, e:

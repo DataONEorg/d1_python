@@ -16,15 +16,16 @@ from lxml import etree
 import settings
 from log import *
 
-# Generate system metadata object for a MN object.
-# Input: MN object file
-# Output: SysMeta file
-
-# This call provides a CN with an initial system metadata object that contains
-# information about a MN object.
-
 
 def gen_sysmeta(object_path, sysmeta_path):
+  """Generate system metadata object for a MN object.
+  Input: MN object file
+  Output: SysMeta file
+
+  This call provides a CN with an initial system metadata object that contains
+  information about a MN object.
+  """
+
   # Open the MN object.
   try:
     object_file = open(object_path)

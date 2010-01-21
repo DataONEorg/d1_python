@@ -6,14 +6,12 @@ from log import *
 
 
 def cn_check_required(f):
-  """
-  This is a function decorator that checks if the IP address of the client
-  matches a known CN IP and blocks acccess to the decorated function if there is
-  no match.
+  """Function decorator that checks if the IP address of the client matches a
+  known CN IP and blocks acccess to the decorated function if there is no match.
   
-  For now, it's not really necessary to tap into Django's authentication system
-  at all. We could just check the IP each time, but we set up a session because
-  it'll come in handy shortly.
+  For now, it's not really necessary to tap into Django's authentication system.
+  We could just check the IP each time, but we set up a session because it'll
+  come in handy shortly.
   """
 
   def wrap(request, *args, **kwargs):

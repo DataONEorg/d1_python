@@ -27,9 +27,8 @@ from util import *
 
 
 def insert_association(guid1, guid2):
-  """
-  Create an association between two objects, given their guids.
-  """
+  """Create an association between two objects, given their guids."""
+
   try:
     o1 = repository_object.objects.filter(guid__exact=guid1)[0]
     o2 = repository_object.objects.filter(guid__exact=guid2)[0]
@@ -46,9 +45,8 @@ def insert_association(guid1, guid2):
 
 
 def insert_object(object_class, guid, path):
-  """
-  Insert object into db.
-  """
+  """Insert object into db."""
+
   # How Django knows to UPDATE vs. INSERT
   #
   # You may have noticed Django database objects use the same save() method
@@ -111,12 +109,11 @@ def insert_object(object_class, guid, path):
 
 
 def add_header(response, last_modified, content_length, content_type):
-  """
-  Add Last-Modified, Content-Length and Content-Type headers to page that
+  """Add Last-Modified, Content-Length and Content-Type headers to page that
   returns information about a specific object or that contains list of objects.
   For a page that contains a list of objects, Size is the combined size of all
-  objects listed.
-  """
+  objects listed."""
+
   response['Last-Modified'] = last_modified
   response['Content-Length'] = content_length
   response['Content-Type'] = content_type
@@ -124,9 +121,8 @@ def add_header(response, last_modified, content_length, content_type):
 
 @cn_check_required
 def update(request):
-  """
-  Update the database with the contents of the member node filesystem.
-  """
+  """Update the database with the contents of the member node filesystem."""
+
   logging.info('/update/')
 
   # We start by clearing out all data from the tables.
@@ -179,9 +175,8 @@ def update(request):
 
 @cn_check_required
 def object(request, guid):
-  """
-  Handle /object/ collection.
-  """
+  """Handle /object/ collection."""
+
   logging.info('/object/')
 
   # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
@@ -206,9 +201,8 @@ def object(request, guid):
 
 @cn_check_required
 def get_collection(request):
-  """
-  Get filtered list of objects.
-  """
+  """Get filtered list of objects."""
+
   logging.info('/get_collection/')
 
   response = HttpResponse()
@@ -297,9 +291,8 @@ def get_collection(request):
 
 @cn_check_required
 def get_object(request, guid):
-  """
-  Get a data or metadata object by guid.
-  """
+  """Get a data or metadata object by guid."""
+
   logging.info('/get_object/')
 
   response = HttpResponse()
@@ -334,9 +327,8 @@ def get_object(request, guid):
 
 @cn_check_required
 def object_metadata(request, guid):
-  """
-  Get a system metadata object by object guid.
-  """
+  """Get a system metadata object by object guid."""
+
   logging.info('/object_metadata/')
 
   try:
@@ -381,9 +373,8 @@ def object_metadata(request, guid):
 
 @cn_check_required
 def log(request):
-  """
-  Get the log file.
-  """
+  """Get the log file."""
+
   # We open the log file for reading. Don't know if it's already open for
   # writing by the logging system, but for now, this works.
   try:
@@ -400,7 +391,6 @@ def log(request):
 
 @cn_check_required
 def get_ip(request):
-  """
-  Get the client IP as seen from the server.
-  """
+  """Get the client IP as seen from the server."""
+
   return HttpResponse(request.META['REMOTE_ADDR'])
