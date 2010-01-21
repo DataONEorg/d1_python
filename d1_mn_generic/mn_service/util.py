@@ -1,4 +1,13 @@
 #!/usr/bin/env python
+""":mod:`models` -- Utilities
+=============================
+
+:module: util
+:platform: Linux
+:synopsis: Utilities
+
+.. moduleauthor:: Roger Dahl
+"""
 
 
 def file_to_dict(path):

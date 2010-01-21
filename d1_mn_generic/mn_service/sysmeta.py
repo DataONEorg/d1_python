@@ -1,3 +1,13 @@
+""":mod:`models` -- System Metadata
+===================================
+
+:module: sysmeta
+:platform: Linux
+:synopsis: System Metadata
+
+.. moduleauthor:: Roger Dahl
+"""
+
 # Stdlib.
 import os
 import sys

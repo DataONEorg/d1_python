@@ -1,3 +1,13 @@
+""":mod:`views` -- Views
+========================
+
+:module: views
+:platform: Linux
+:synopsis: Views
+
+.. moduleauthor:: Roger Dahl
+"""
+
 # Stdlib.
 import os
 import sys

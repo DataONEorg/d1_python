@@ -1,3 +1,13 @@
+""":mod:`tests` -- Unit Tests
+=============================
+
+:module: tests
+:platform: Linux
+:synopsis: Unit Tests
+
+.. moduleauthor:: Roger Dahl
+"""
+
 # Stdlib.
 import json
 import StringIO

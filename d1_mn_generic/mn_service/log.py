@@ -1,3 +1,13 @@
+""":mod:`models` -- Logging
+===========================
+
+:module: log
+:platform: Linux
+:synopsis: Logging
+
+.. moduleauthor:: Roger Dahl
+"""
+
 import logging
 import settings
 

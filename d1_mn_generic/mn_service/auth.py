@@ -1,3 +1,13 @@
+""":mod:`models` -- Authentication
+==================================
+
+:module: auth
+:platform: Linux
+:synopsis: Authentication
+
+.. moduleauthor:: Roger Dahl
+"""
+
 import settings
 from django.http import Http404
 from django.http import HttpResponse

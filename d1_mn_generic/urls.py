@@ -1,3 +1,13 @@
+""":mod:`models` -- URLs
+========================
+
+:module: urls
+:platform: Linux
+:synopsis: URLs
+
+.. moduleauthor:: Roger Dahl
+"""
+
 from django.conf.urls.defaults import *
 
 # Uncomment the next two lines to enable the admin:

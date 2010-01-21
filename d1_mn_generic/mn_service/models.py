@@ -1,3 +1,13 @@
+""":mod:`models` -- Models
+==========================
+
+:module: models
+:platform: Linux
+:synopsis: Models
+
+.. moduleauthor:: Roger Dahl
+"""
+
 from django.db import models
 
 # Django creates automatically:

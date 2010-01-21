@@ -1,3 +1,13 @@
+""":mod:`models` -- Settings
+============================
+
+:module: settings
+:platform: Linux
+:synopsis: Settings
+
+.. moduleauthor:: Roger Dahl
+"""
+
 # Django settings for mn_prototype project.
 
 # Discover the path of this module
