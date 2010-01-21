@@ -41,10 +41,7 @@ class D1SystemMetadata(object):
   '''
 
   def __init__(self, xmldoc):
-    '''
-    :param xmldoc: (Unicode) The XML document to parse as system metadata.
-    :param validate: (Bool) If True, then validate the supplied document against
-                     the DataONE system metadata schema.
+    ''':param xmldoc: (Unicode) The XML document to parse as system metadata.
     '''
     self.etree = None
     self.xmldoc = xmldoc

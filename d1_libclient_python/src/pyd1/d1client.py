@@ -78,15 +78,14 @@ class D1Client(httplib2.Http):
   def __init__(
     self,
     introspection_target=d1const.URL_DATAONE_ROOT,
-    cache=None,
-    timeout=None,
+    cache=d1const.HTTP_RESPONSE_CACHE,
+    timeout=d1const.RESPONSE_TIMEOUT,
     proxy_info=None
   ):
     '''
     :param introspection_target: Location of a service for discovering
       information about the DataONE system, such as the locations of resolvers, 
       coordinating nodes and member nodes.
-
     :param cache: Either the name of a directory to be used as a flat file 
       cache, or it must an object that implements httlib2.FileCache interface
     :param timeout: Socket level timeout (seconds)

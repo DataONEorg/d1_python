@@ -7,9 +7,10 @@ Module pyd1.d1const
 
 Provides various constants for the PyD1 client.
 '''
+import pyd1
 
 #: :const: Version of this software
-VERSION = "0.0.0"
+VERSION = pyd1.__version__
 
 #: types of objects in the DataONE system
 OBJECT_CLASSES = ['data', 'metadata', 'system']
@@ -39,11 +40,6 @@ URL_SYSMETA_PATH = 'meta'
 #: Path to the DataONE system metadata schema
 SYSTEM_METADATA_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
                              "trunk/schemas/coordinating_node_sysmeta.xsd"
-
-#: Default setting for validating system metadata when retrieved.  Note that
-#: validating every sysmeta instance will likely be kind of slow, especially
-#: is a cache is not provided to the client.
-VALIDATE_SYSTEM_METADATA = False
 
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 301, 302]
