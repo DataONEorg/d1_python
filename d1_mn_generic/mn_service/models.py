@@ -15,14 +15,14 @@ from django.db import models
 
 
 class status(models.Model):
-  """Hold the status of the most recent database update attempt"""
+  """Status of the most recent database update attempt"""
 
-  mtime = models.DateTimeField()
+  mtime = models.DateTimeField(auto_now=True)
   status = models.CharField(max_length=100)
 
 
 class repository_object_class(models.Model):
-  """Hold the object class of objects"""
+  """Object class of objects"""
 
   name = models.CharField(max_length=10)
 
@@ -34,13 +34,22 @@ class repository_object(models.Model):
   path = models.CharField(max_length=1000, unique=True)
   repository_object_class = models.ForeignKey(repository_object_class)
   hash = models.CharField(max_length=100)
-  mtime = models.DateTimeField()
+  object_mtime = models.DateTimeField()
+  db_mtime = models.DateTimeField(auto_now=True)
   size = models.PositiveIntegerField()
 
 
 # TODO: Set up a unique index for the from_object / to_object combination.
 class associations(models.Model):
-  """Hold associations between MN objects"""
+  """Associations between MN objects"""
 
   from_object = models.ForeignKey(repository_object, related_name='associations_from')
   to_object = models.ForeignKey(repository_object, related_name='associations_to')
+
+
+class sync(models.Model):
+  """Synchronization status for MN objects"""
+
+  repository_object = models.ForeignKey(repository_object, related_name='sync')
+  mtime = models.DateTimeField(auto_now=True)
+  status = models.CharField(max_length=100)

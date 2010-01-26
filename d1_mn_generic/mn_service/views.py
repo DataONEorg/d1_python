@@ -40,11 +40,11 @@ def insert_association(guid1, guid2):
   """Create an association between two objects, given their guids."""
 
   try:
-    o1 = repository_object.objects.filter(guid__exact=guid1)[0]
-    o2 = repository_object.objects.filter(guid__exact=guid2)[0]
+    o1 = repository_object.objects.filter(guid=guid1)[0]
+    o2 = repository_object.objects.filter(guid=guid2)[0]
   except IndexError:
     logging.error(
-      'Internal server error: Missing object(s): %s and/or %s' % [guid1, guid2]
+      'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
     )
     return HttpResponseServerError()
 
@@ -78,9 +78,9 @@ def insert_object(object_class, guid, path):
   except IOError, e:
     # Skip any file we can't get read access to.
     logging.warning(
-      'Skipped file because it couldn\'t be opened: %s\nException: %s' % [
+      'Skipped file because it couldn\'t be opened: %s\nException: %s' % (
         path, e
-      ]
+      )
     )
     return
 
@@ -113,7 +113,7 @@ def insert_object(object_class, guid, path):
   o.guid = guid
   o.repository_object_class = c
   o.hash = hash.hexdigest()
-  o.mtime = mtime
+  o.object_mtime = mtime
   o.size = size
   o.save()
 
@@ -176,7 +176,8 @@ def update(request):
 
     # Successfully updated the db, so put current datetime in status.mtime.
   s = status()
-  s.mtime = datetime.datetime.utcnow()
+  # Converted to auto_now = True
+  # s.mtime = datetime.datetime.utcnow()
   s.status = 'update successful'
   s.save()
 
@@ -218,7 +219,7 @@ def get_collection(request):
   response = HttpResponse()
 
   # select objects ordered by mtime desc.
-  query = repository_object.objects.order_by('-mtime')
+  query = repository_object.objects.order_by('-object_mtime')
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
@@ -226,12 +227,16 @@ def get_collection(request):
   # Filter by oclass.
   try:
     oclass = request.GET['oclass']
-    query = query.filter(repository_object_class__name__exact=oclass)
+    query = query.filter(repository_object_class__name=oclass)
     query_unsliced = query
   except KeyError:
     pass
 
-  # Skip top 'start' objects.
+  # Filter by sync.
+  if 'sync' in request.GET:
+    query = query.filter(sync__isnull=False)
+
+    # Skip top 'start' objects.
   try:
     start = int(request.GET['start'])
   except KeyError:
@@ -245,7 +250,7 @@ def get_collection(request):
   except KeyError:
     count = None
 
-  # If both start and count are present but set to 0, we just tweak that query
+  # If both start and count are present but set to 0, we just tweak the query
   # so that it won't return any results.
   if start == 0 and count == 0:
     query = query.none()
@@ -269,7 +274,7 @@ def get_collection(request):
     ob['oclass'] = row.repository_object_class.name
     ob['hash'] = row.hash
     # Get modified date in an ISO 8601 string.
-    ob['modified'] = datetime.datetime.isoformat(row.mtime)
+    ob['modified'] = datetime.datetime.isoformat(row.object_mtime)
     ob['size'] = row.size
 
     # Append object to response.
@@ -308,7 +313,7 @@ def get_object(request, guid):
   response = HttpResponse()
 
   try:
-    query = repository_object.objects.filter(guid__exact=guid)
+    query = repository_object.objects.filter(guid=guid)
     path = query[0].path
   except IndexError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
@@ -318,14 +323,15 @@ def get_object(request, guid):
   try:
     f = open(os.path.join(path), 'r')
   except IOError, e:
-    logging.warning('Expected file was not present: %s\nException: %s' % [path, e])
+    logging.warning('Expected file was not present: %s\nException: %s' % (path, e))
     raise Http404
   body = f.read()
   f.close()
 
   # Add header info about object.
   add_header(
-    response, datetime.datetime.isoformat(query[0].mtime), len(body), 'Some Content Type'
+    response, datetime.datetime.isoformat(query[0].object_mtime), len(body),
+    'Some Content Type'
   )
 
   # If HEAD was requested, we don't include the body.
@@ -337,15 +343,22 @@ def get_object(request, guid):
 
 @cn_check_required
 def object_metadata(request, guid):
-  """Get a system metadata object by object guid."""
+  """GET: Get a system metadata object by object guid.
+  HEAD: Get header for a system metadata object by object guid.
+  PUT: Update system metadata with sync info (TODO: ONLY UPDATING DB)
+  """
 
   logging.info('/object_metadata/')
 
+  # Handle PUT in separate function.
+  if request.method == 'PUT':
+    return object_metadata_put(request, guid)
+
+  # Handle GET and HEAD. We handle these in the same function because they
+  # are almost identical.
+
   try:
-    # repository_object_class__name__exact
-    query = repository_object.objects.filter(
-      associations_to__from_object__guid__exact=guid
-    )
+    query = repository_object.objects.filter(associations_to__from_object__guid=guid)
     sysmeta_path = query[0].path
   except IndexError:
     logging.warning('Non-existing metadata object was requested: %s' % guid)
@@ -358,7 +371,7 @@ def object_metadata(request, guid):
     f = open(sysmeta_path, 'r')
   except IOError, e:
     logging.warning(
-      'Not able to open system metadata file: %s\nException: %s' % [sysmeta_path, e]
+      'Not able to open system metadata file: %s\nException: %s' % (sysmeta_path, e)
     )
     raise Http404
 
@@ -371,7 +384,8 @@ def object_metadata(request, guid):
 
   # Add header info about object.
   add_header(
-    response, datetime.datetime.isoformat(query[0].mtime), len(body), 'Some Content Type'
+    response, datetime.datetime.isoformat(query[0].object_mtime), len(body),
+    'Some Content Type'
   )
 
   # If HEAD was requested, we don't include the body.
@@ -379,6 +393,23 @@ def object_metadata(request, guid):
     response.write(body)
 
   return response
+
+
+# cn_check_required is not required.
+def object_metadata_put(request, guid):
+  """Mark object as having been synchronized."""
+
+  try:
+    o = repository_object.objects.filter(associations_to__from_object__guid=guid)[0]
+  except IndexError:
+    logging.warning('Non-existing metadata object was requested for update: %s' % guid)
+    raise Http404
+
+  s = sync()
+  s.repository_object = o
+  s.save()
+
+  return HttpResponse('ok')
 
 
 @cn_check_required
@@ -391,7 +422,7 @@ def log(request):
     log_file = open(settings.LOG_PATH, 'r')
   except IOError, e:
     logging.warning(
-      'Not able to open log file: %s\nException: %s' % [settings.LOG_PATH, e]
+      'Not able to open log file: %s\nException: %s' % (settings.LOG_PATH, e)
     )
     raise Http404
 

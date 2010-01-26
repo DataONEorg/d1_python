@@ -14,7 +14,7 @@ import StringIO
 
 # Django.
 from django.test import TestCase
-from django.test.client import Client
+#from django.test.client import Client
 
 # Lxml.
 from lxml import etree
@@ -29,36 +29,34 @@ mn_objects_total_data = 100
 mn_objects_total_metadata = 77
 mn_objects_total_sysmeta = 177
 
-#first_setup = True
-
-
-def check_response_headers_present(self, response):
-  """Check that required response headers are present."""
-
-  self.failUnlessEqual('Last-Modified' in response, True)
-  self.failUnlessEqual('Content-Length' in response, True)
-  self.failUnlessEqual('Content-Type' in response, True)
-
 
 class mn_service_tests(TestCase):
-  def setUp(self):
-    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/update/
+  fixtures = ['base.fixture.json']
+
+  #
+  # Helpers. The test runner will not run these because they don't start with
+  # the word "test".
+  #
+
+  def check_response_headers_present(self, response):
+    """Check that required response headers are present."""
+
+    self.failUnlessEqual('Last-Modified' in response, True)
+    self.failUnlessEqual('Content-Length' in response, True)
+    self.failUnlessEqual('Content-Type' in response, True)
+
+  def get_valid_guid(self, object_type):
+    """Get a valid GUID of a specific type from the db.
+
+    Current valid object types: data, metadata, sysmeta
     
-    We only want this to happen before the first test, but Django calls it before each test.
-    So we fudge things with a global variable.
+    Assumes that there are 3 valid objects of the given type in the db.
     """
 
-    #global first_setup
-    #
-    #if not first_setup:
-    #  return
-    #
-    #first_setup = False
-
-    c = Client()
-    response = c.get('/mn/update/', HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/', {'start': '3', 'count': '1', 'oclass': object_type}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    self.failUnlessEqual(response.content, 'ok')
+    res = json.loads(response.content)
+    return res['data'][0]['guid']
 
   #
   # /object/ collection calls.
@@ -66,13 +64,19 @@ class mn_service_tests(TestCase):
   # GET
   #
 
+  def test_rest_call_update_get(self):
+    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/update/"""
+
+    response = self.client.get('/mn/update/', HTTP_ACCEPT='application/json')
+    self.failUnlessEqual(response.status_code, 200)
+    self.failUnlessEqual(response.content, 'ok')
+
   def test_rest_call_object_count_get(self):
     """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
 
-    c = Client()
-    response = c.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     res = json.loads(response.content)
     # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
@@ -84,10 +88,9 @@ class mn_service_tests(TestCase):
   def test_rest_call_object_count_by_oclass_data_get(self):
     """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
 
-    c = Client()
-    response = c.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
@@ -98,10 +101,9 @@ class mn_service_tests(TestCase):
   def test_rest_call_object_count_by_oclass_metadata_get(self):
     """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=metadata"""
 
-    c = Client()
-    response = c.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     res = json.loads(response.content)
     # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
@@ -113,10 +115,9 @@ class mn_service_tests(TestCase):
   def test_rest_call_collection_of_objects_all_get(self):
     """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/"""
 
-    c = Client()
-    response = c.get('/mn/object/', HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/', HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     #print response.content
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], mn_objects_total)
@@ -128,10 +129,9 @@ class mn_service_tests(TestCase):
   def test_rest_call_collection_of_objects_section_get(self):
     """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=20&count=10"""
 
-    c = Client()
-    response = c.get('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 10)
     self.failUnlessEqual(res['start'], 20)
@@ -147,10 +147,9 @@ class mn_service_tests(TestCase):
     Example call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=10&count=5&oclass=metadata
     """
 
-    c = Client()
-    response = c.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 5) # Number of objects returned.
     self.failUnlessEqual(res['start'], 10) # Starting object.
@@ -168,10 +167,9 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=15&count=10&oclass=metadata
     """
 
-    c = Client()
-    response = c.get('/mn/object/', {'start': mn_objects_total_metadata - 5, 'count': '10', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': mn_objects_total_metadata - 5, 'count': '10', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
     res = json.loads(response.content)
     self.failUnlessEqual(
       res['count'], 5
@@ -196,56 +194,48 @@ class mn_service_tests(TestCase):
     """Test call: curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0
     """
 
-    c = Client()
-    response = c.head('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.head('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
 
   def test_rest_call_object_count_by_oclass_data_head(self):
     """Test call: curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
 
-    c = Client()
-    response = c.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
 
   #
   # /object/ specific object calls.
   #
-  # GET
+  # GET.
   #
 
   def test_rest_call_object_by_guid_get(self):
-    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2
+    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>
     """
 
-    c = Client()
-    response = c.get('/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2', {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/%s' % self.get_valid_guid('metadata'), {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
-    self.failUnlessEqual(
-      response.content,
-      'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n'
-    )
+    self.check_response_headers_present(response)
+    #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n')
 
   def test_rest_call_object_by_guid_404_get(self):
-    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/a_non_existing_guid
+    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
     """
 
-    c = Client()
-    response = c.get('/mn/object/a_non_existing_guid', {}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 404)
 
-  def test_rest_call_metadata_by_object_guid_get(self):
-    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2/meta
+  def test_rest_call_sysmeta_by_object_guid_get(self):
+    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
     """
 
-    c = Client()
-    response = c.get('/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2/meta', {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
-    # Check that this metadata validates against the schema.
+    self.check_response_headers_present(response)
+    # Check that this sysmeta validates against the schema.
     try:
       xsd_file = open(settings.XSD_PATH, 'r')
     except IOError:
@@ -258,12 +248,11 @@ class mn_service_tests(TestCase):
     xmlschema.assertValid(xml)
     self.failUnlessEqual(xmlschema.validate(xml), True)
 
-  def test_rest_call_metadata_by_object_guid_404_get(self):
-    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/a_non_existing_guid/meta
+  def test_rest_call_sysmeta_by_object_guid_404_get(self):
+    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
     """
 
-    c = Client()
-    response = c.get('/mn/object/a_non_existing_guid/meta', {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/invalid_guid/meta', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 404)
 
   #
@@ -273,22 +262,31 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_object_header_by_guid_head(self):
-    """curl -I http://127.0.0.1:8000/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2
+    """curl -I http://127.0.0.1:8000/mn/object/<valid guid>
     """
 
-    c = Client()
-    response = c.head('/mn/object/d19f2ee5-7611-4189-8ce3-0e4cc44b45d2')
+    response = self.client.head('/mn/object/%s' % self.get_valid_guid('data'))
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
 
   def test_rest_call_last_modified_head(self):
     """curl -I http://mn1.dataone.org/object/
     """
 
-    c = Client()
-    response = c.head('/mn/object/')
+    response = self.client.head('/mn/object/')
     self.failUnlessEqual(response.status_code, 200)
-    check_response_headers_present(self, response)
+    self.check_response_headers_present(response)
+
+  #
+  # PUT.
+  #
+
+  def test_rest_call_sysmeta_by_object_guid_put(self):
+    """curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+    """
+
+    response = self.client.put('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
+    self.failUnlessEqual(response.status_code, 200)
 
   #
   # Authentication.
@@ -298,14 +296,12 @@ class mn_service_tests(TestCase):
     """Check that CN is successfully authenticated if matching an IP in the CN_IP list.
     """
 
-    c = Client()
-    response = c.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.200')
+    response = self.client.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.200')
     self.failUnlessEqual(response.status_code, 200)
 
   def test_rest_call_cn_no_auth(self):
     """Check that client is blocked if not matching an IP in the CN_IP list.
     """
 
-    c = Client()
-    response = c.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.250')
+    response = self.client.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.250')
     self.failUnlessEqual(response.content[:9], 'Attempted')
