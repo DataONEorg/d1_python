@@ -99,6 +99,7 @@ REPOSITORY_SYSMETA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'sysmeta'))
 
 LOG_PATH = _here('../mn_service.log')
 XSD_PATH = _here('../../schemas/coordinating_node_sysmeta.xsd')
+ROOT_PATH = _here('./')
 
 # CN IPs.
 CN_IP = [

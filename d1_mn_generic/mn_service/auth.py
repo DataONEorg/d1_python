@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """:mod:`models` -- Authentication
 ==================================
 
@@ -12,7 +14,7 @@ import settings
 from django.http import Http404
 from django.http import HttpResponse
 
-from log import *
+import sys_log
 
 
 def cn_check_required(f):
@@ -27,18 +29,18 @@ def cn_check_required(f):
   def wrap(request, *args, **kwargs):
     # Check if we already have a session for this user.
     if 'cn_user' not in request.session.keys():
-      logging.info('Session not found for user at IP: %s' % request.META['REMOTE_ADDR'])
+      sys_log.info('Session not found for user at IP: %s' % request.META['REMOTE_ADDR'])
       # Check if IP belongs to a CN.
       if request.META['REMOTE_ADDR'] in settings.CN_IP:
         # This is a valid IP, so we create a session object.
-        logging.info('IP is valid CN IP: %s' % request.META['REMOTE_ADDR'])
+        sys_log.info('IP is valid CN IP: %s' % request.META['REMOTE_ADDR'])
         request.session['cn_user'] = True
       else:
         return HttpResponse(
           'Attempted to access functionality only available to Coordinating Nodes.'
         )
     else:
-      logging.info('User has session: %s' % request.META['REMOTE_ADDR'])
+      sys_log.info('User has session: %s' % request.META['REMOTE_ADDR'])
 
     return f(request, *args, **kwargs)
 

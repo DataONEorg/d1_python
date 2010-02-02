@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """:mod:`tests` -- Unit Tests
 =============================
 
@@ -14,14 +16,14 @@ import StringIO
 
 # Django.
 from django.test import TestCase
-#from django.test.client import Client
 
 # Lxml.
 from lxml import etree
 
 # App.
 import settings
-from util import *
+import util
+import sysmeta
 
 # Constants related to simulated MN object collection.
 mn_objects_total = 354
@@ -64,12 +66,7 @@ class mn_service_tests(TestCase):
   # GET
   #
 
-  def test_rest_call_update_get(self):
-    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/update/"""
-
-    response = self.client.get('/mn/update/', HTTP_ACCEPT='application/json')
-    self.failUnlessEqual(response.status_code, 200)
-    self.failUnlessEqual(response.content, 'ok')
+  # TODO: Set up test of update_db admin command.
 
   def test_rest_call_object_count_get(self):
     """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
@@ -230,6 +227,9 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_sysmeta_by_object_guid_get(self):
     """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+    
+    NOTE: This test fails if the /update/ call has not been run from outside the
+    test framework first.
     """
 
     response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
@@ -238,9 +238,13 @@ class mn_service_tests(TestCase):
     # Check that this sysmeta validates against the schema.
     try:
       xsd_file = open(settings.XSD_PATH, 'r')
-    except IOError:
-      logging.error('XSD could not be opened: %s' % settings.XSD_PATH)
+    except IOError as (errno, strerror):
+      sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
+      sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
       return
+    except:
+      sys_log.error('Unexpected error: ', sys.exc_info()[0])
+      raise
 
     xmlschema_doc = etree.parse(settings.XSD_PATH)
     xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -282,26 +286,37 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_sysmeta_by_object_guid_put(self):
-    """curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+    """curl -X PUT -H "Accept: application/json"
+    http://127.0.0.1:8000/mn/object/<valid guid>/meta
+    
+    
     """
 
     response = self.client.put('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
+
+  def test_s(self):
+    sysmeta.set_replication_status('fedd5f19-9ca3-45a6-91a4-c247322c98e9', 'test')
 
   #
   # Authentication.
   #
 
   def test_rest_call_cn_auth(self):
-    """Check that CN is successfully authenticated if matching an IP in the CN_IP list.
-    """
+    """Check that CN is successfully authenticated if matching an IP in the
+    CN_IP list.
+    
+    Test call: curl -X GET -H "Accept: application/json"
+    http://127.0.0.1:8000/mn/object/?start=0&count=0"""
 
-    response = self.client.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.200')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0'},
+                                REMOTE_ADDR = '192.168.1.200')
     self.failUnlessEqual(response.status_code, 200)
 
   def test_rest_call_cn_no_auth(self):
     """Check that client is blocked if not matching an IP in the CN_IP list.
     """
 
-    response = self.client.get('/mn/update/', {}, REMOTE_ADDR='192.168.1.250')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0'},
+                                REMOTE_ADDR = '111.111.111.111')
     self.failUnlessEqual(response.content[:9], 'Attempted')

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """:mod:`models` -- System Metadata
 ===================================
 
@@ -24,10 +26,91 @@ from lxml import etree
 
 # App
 import settings
-from log import *
+import sys_log
 
 
-def gen_sysmeta(object_path, sysmeta_path):
+def validate(sysmeta_etree):
+  """Validate sysmeta etree against sysmeta xsd.
+  """
+  xmlschema_doc = etree.parse(settings.XSD_PATH)
+  xmlschema = etree.XMLSchema(xmlschema_doc)
+  try:
+    xmlschema.assertValid(sysmeta_etree)
+  except DocumentInvalid, e:
+    sys_log.error('Invalid System Metadata: %s' % etree.tostring(sysmeta_etree))
+    raise
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+
+
+def write(sysmeta_etree, sysmeta_path):
+  """ Write SysMeta XML file.
+  """
+  try:
+    sysmeta_file = open(sysmeta_path, 'w')
+    sysmeta_file.write(
+      etree.tostring(
+        xml, pretty_print=True,
+        encoding='UTF-8', xml_declaration=True
+      )
+    )
+  except IOError as (errno, strerror):
+    sys_log.error(
+      'System Metadata file could not be opened for writing: %s' % sysmeta_path
+    )
+    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
+    raise
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+
+
+def set_replication_status(sysmeta_guid, replication_status):
+  """Update the replication status in a sysmeta xml file.
+  """
+  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+  try:
+    sysmeta_file = open(sysmeta_path, 'r')
+  except IOError as (errno, strerror):
+    sys_log.error('System Metadata XML file could not be opened: %s' % sysmeta_path)
+    sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
+    return
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+
+  # Parse XML file to etree.
+  sysmeta = etree.parse(sysmeta_file)
+
+  sysmeta_file.close()
+
+  # Validate the XML file on disk.
+  try:
+    validate(sysmeta)
+  except DocumentInvalid, e:
+    sys_log.error(
+      'Aborting update of replication status of %s. Cause: %s' % (
+        sysmeta_guid, e
+      )
+    )
+    return
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+
+    # Update the replication status.
+  sysmeta.xpath('Replica/ReplicationStatus')[0].text = replication_status
+  #print etree.tostring(sysmeta)
+
+  # Make sure the resulting XML still validates against our XSD.
+  validate(sysmeta)
+
+  # Write updated file.
+  write(sysmeta, sysmeta_path)
+
+
+def generate(object_path, sysmeta_path):
   """Generate system metadata object for a MN object.
   Input: MN object file
   Output: SysMeta file
@@ -40,8 +123,11 @@ def gen_sysmeta(object_path, sysmeta_path):
   try:
     object_file = open(object_path)
   except IOErro:
-    logging.error('MN object could not be opened: %s' % object_path)
+    sys_log.error('MN object could not be opened: %s' % object_path)
     return
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   # Set up the namespace for the sysmeta xml doc.
   SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
@@ -170,9 +256,13 @@ def gen_sysmeta(object_path, sysmeta_path):
 
   try:
     xsd_file = open(settings.XSD_PATH, 'r')
-  except IOError:
-    logging.error('XSD could not be opened: %s' % settings.XSD_PATH)
+  except IOError as (errno, strerror):
+    sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
+    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
     return
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   xmlschema_doc = etree.parse(settings.XSD_PATH)
   xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -187,10 +277,14 @@ def gen_sysmeta(object_path, sysmeta_path):
         encoding='UTF-8', xml_declaration=True
       )
     )
-  except IOError:
-    logging.error(
+  except IOError as (errno, strerror):
+    sys_log.error(
       'System Metadata file could not be opened for writing: %s' % sysmeta_path
     )
+    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
     return
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   return True

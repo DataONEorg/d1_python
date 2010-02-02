@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """:mod:`models` -- Models
 ==========================
 
@@ -53,3 +55,23 @@ class sync(models.Model):
   repository_object = models.ForeignKey(repository_object, related_name='sync')
   mtime = models.DateTimeField(auto_now=True)
   status = models.CharField(max_length=100)
+
+# Access Log
+
+
+class access_operation_type(models.Model):
+  """Operation type"""
+  operation_type = models.CharField(max_length=100)
+
+
+class access_requestor_identity(models.Model):
+  """Requestor identity"""
+  requestor_identity = models.CharField(max_length=100)
+
+
+class access_log(models.Model):
+  """Access log"""
+  repository_object = models.ForeignKey(repository_object)
+  operation_type = models.ForeignKey(access_operation_type)
+  requestor_identity = models.ForeignKey(access_requestor_identity)
+  access_time = models.DateTimeField(auto_now=True)

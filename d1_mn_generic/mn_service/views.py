@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """:mod:`views` -- Views
 ========================
 
@@ -28,173 +31,26 @@ from django.shortcuts import render_to_response
 from django.utils.html import escape
 
 # App.
+import models
 import settings
-from mn_prototype.mn_service.models import *
-from auth import *
-from log import *
-from sysmeta import *
-from util import *
+import auth
+import sys_log
+import util
+import sysmeta
+import access_log
 
-
-def insert_association(guid1, guid2):
-  """Create an association between two objects, given their guids."""
-
-  try:
-    o1 = repository_object.objects.filter(guid=guid1)[0]
-    o2 = repository_object.objects.filter(guid=guid2)[0]
-  except IndexError:
-    logging.error(
-      'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
-    )
-    return HttpResponseServerError()
-
-  association = associations()
-  association.from_object = o1
-  association.to_object = o2
-  association.save()
-
-
-def insert_object(object_class, guid, path):
-  """Insert object into db."""
-
-  # How Django knows to UPDATE vs. INSERT
-  #
-  # You may have noticed Django database objects use the same save() method
-  # for creating and changing objects. Django abstracts the need to use INSERT
-  # or UPDATE SQL statements. Specifically, when you call save(), Django
-  # follows this algorithm:
-  #
-  # * If the object's primary key attribute is set to a value that evaluates
-  #   to True (i.e., a value other than None or the empty string), Django
-  #   executes a SELECT query to determine whether a record with the given
-  #   primary key already exists.
-  # * If the record with the given primary key does already exist, Django
-  #   executes an UPDATE query.
-  # * If the object's primary key attribute is not set, or if it's set but a
-  #   record doesn't exist, Django executes an INSERT.
-
-  try:
-    f = open(path, 'r')
-  except IOError, e:
-    # Skip any file we can't get read access to.
-    logging.warning(
-      'Skipped file because it couldn\'t be opened: %s\nException: %s' % (
-        path, e
-      )
-    )
-    return
-
-  # Get hash of file.
-  hash = hashlib.sha1()
-  hash.update(f.read())
-
-  # Get mtime in datetime.datetime.
-  mtime = os.stat(path)[stat.ST_MTIME]
-  mtime = datetime.datetime.fromtimestamp(mtime)
-
-  # Get size.
-  size = os.stat(path)[stat.ST_SIZE]
-
-  f.close()
-
-  # Set up the object class.
-  c = repository_object_class()
-  try:
-    c.id = {'data': 1, 'metadata': 2, 'sysmeta': 3}[object_class]
-    c.name = object_class
-  except KeyError:
-    logging.error('Internal server error: Unknown object class: %s' % object_class)
-    return HttpResponseServerError()
-  c.save()
-
-  # Build object for this file and store it.
-  o = repository_object()
-  o.path = path
-  o.guid = guid
-  o.repository_object_class = c
-  o.hash = hash.hexdigest()
-  o.object_mtime = mtime
-  o.size = size
-  o.save()
-
-
-def add_header(response, last_modified, content_length, content_type):
-  """Add Last-Modified, Content-Length and Content-Type headers to page that
-  returns information about a specific object or that contains list of objects.
-  For a page that contains a list of objects, Size is the combined size of all
-  objects listed."""
-
-  response['Last-Modified'] = last_modified
-  response['Content-Length'] = content_length
-  response['Content-Type'] = content_type
-
-
-@cn_check_required
-def update(request):
-  """Update the database with the contents of the member node filesystem."""
-
-  logging.info('/update/')
-
-  # We start by clearing out all data from the tables.
-  associations.objects.all().delete()
-  repository_object.objects.all().delete()
-  repository_object_class.objects.all().delete()
-  status.objects.all().delete()
-
-  # We then remove the sysmeta objects.
-  for sysmeta_path in glob.glob(os.path.join(settings.REPOSITORY_SYSMETA_PATH, '*')):
-    os.remove(sysmeta_path)
-
-  # Loop through all the MN objects.
-  for object_path in glob.glob(os.path.join(settings.REPOSITORY_DOC_PATH, '*', '*')):
-    # Find type of object.
-    if object_path.count(settings.REPOSITORY_DATA_PATH + os.sep):
-      t = 'data'
-    elif object_path.count(settings.REPOSITORY_METADATA_PATH + os.sep):
-      t = 'metadata'
-    else:
-      # Skip sysmeta objects.
-      continue
-
-    # Create db entry for object.
-    object_guid = os.path.basename(object_path)
-    insert_object(t, object_guid, object_path)
-
-    # Create sysmeta for object.
-    sysmeta_guid = str(uuid.uuid4())
-    sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
-    res = gen_sysmeta(object_path, sysmeta_path)
-    if not res:
-      logging.error('System Metadata generation failed for object: %s' % object_path)
-      raise Http404
-
-  # Create db entry for sysmeta object.
-    insert_object('sysmeta', sysmeta_guid, sysmeta_path)
-
-    # Create association between sysmeta and regular object.
-    insert_association(object_guid, sysmeta_guid)
-
-    # Successfully updated the db, so put current datetime in status.mtime.
-  s = status()
-  # Converted to auto_now = True
-  # s.mtime = datetime.datetime.utcnow()
-  s.status = 'update successful'
-  s.save()
-
-  return HttpResponse('ok')
-
-
-@cn_check_required
-def object(request, guid):
+  
+@auth.cn_check_required
+def object(request, guid):  
   """Handle /object/ collection."""
-
-  logging.info('/object/')
+  
+  sys_log.info('/object/')
 
   # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
   # strings for formats the client would like to receive. We should be going
   # through the list and pick the first one we know. If we don't know any of
   # them, we return JSON.
-
+  
   # Disabled for easy testing from web browser.
   #if request.META['HTTP_ACCEPT'] != 'application/json':
   #  raise Http404
@@ -202,24 +58,23 @@ def object(request, guid):
   # Determine if the request is for an object or for a list.
   if len(guid):
     return get_object(request, guid)
-
+    
   return get_collection(request)
 
   # Shouldn't get here.
-  logging.error('Internal server error: %s' % guid)
+  sys_log.error('Internal server error: %s' % guid)
   return HttpResponseServerError()
 
-
-@cn_check_required
+@auth.cn_check_required
 def get_collection(request):
   """Get filtered list of objects."""
-
-  logging.info('/get_collection/')
-
+  
+  sys_log.info('/get_collection/')
+  
   response = HttpResponse()
 
   # select objects ordered by mtime desc.
-  query = repository_object.objects.order_by('-object_mtime')
+  query = models.repository_object.objects.order_by('-object_mtime')
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
@@ -227,20 +82,29 @@ def get_collection(request):
   # Filter by oclass.
   try:
     oclass = request.GET['oclass']
-    query = query.filter(repository_object_class__name=oclass)
+    query = query.filter(repository_object_class__name = oclass)
     query_unsliced = query
   except KeyError:
     pass
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   # Filter by sync.
   if 'sync' in request.GET:
-    query = query.filter(sync__isnull=False)
-
-    # Skip top 'start' objects.
+    query = query.filter(sync__isnull = False)
+    
+  # Skip top 'start' objects.
   try:
     start = int(request.GET['start'])
   except KeyError:
     start = 0
+  except ValueError:
+    # start must be an integer.
+    raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   # Limit the number objects returned to 'count'.
   # None = All remaining objects.
@@ -249,6 +113,12 @@ def get_collection(request):
     count = int(request.GET['count'])
   except KeyError:
     count = None
+  except ValueError:
+    # count must be an integer.
+    raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   # If both start and count are present but set to 0, we just tweak the query
   # so that it won't return any results.
@@ -259,15 +129,15 @@ def get_collection(request):
   # that includes None to be valid and evaluate to None). Note that a slice such
   # as [value : None] is valid and equivalent to [value:]
   elif start and count:
-    query = query[start:start + count]
+    query = query[start : start + count]
   elif start:
     query = query[start:]
   elif count:
     query = query[:count]
-
+  
   res = {}
   res['data'] = []
-
+    
   for row in query:
     ob = {}
     ob['guid'] = row.guid
@@ -287,15 +157,14 @@ def get_collection(request):
   # JSON encode the response.
   # The "pretty" parameter generates pretty printed JSON.
   if 'pretty' in request.GET:
-    body = '<pre>' + json.dumps(res, indent=2) + '</pre>'
+    body = '<pre>' + json.dumps(res, indent = 2) + '</pre>'
   else:
     body = json.dumps(res)
 
   # Add header info about collection.
-  db_status = status.objects.all()[0]
-  add_header(
-    response, datetime.datetime.isoformat(db_status.mtime), len(body), 'Some Content Type'
-  )
+  db_status = models.status.objects.all()[0]
+  util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
+              len(body), 'Some Content Type')
 
   # If HEAD was requested, we don't include the body.
   if request.method != 'HEAD':
@@ -303,77 +172,98 @@ def get_collection(request):
 
   return response
 
-
-@cn_check_required
+@auth.cn_check_required
 def get_object(request, guid):
-  """Get a data or metadata object by guid."""
-
-  logging.info('/get_object/')
+  """Get a data or metadata object by guid.
+  
+  get(token, GUID) → object
+  """
+  
+  sys_log.info('/get_object/')
 
   response = HttpResponse()
 
   try:
-    query = repository_object.objects.filter(guid=guid)
+    query = models.repository_object.objects.filter(guid = guid)
     path = query[0].path
   except IndexError:
-    logging.warning('Non-existing metadata object was requested: %s' % guid)
+    sys_log.warning('Non-existing metadata object was requested: %s' % guid)
     raise Http404
-
-    # Get bytes of object.
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+    
+  # Get bytes of object.
   try:
     f = open(os.path.join(path), 'r')
-  except IOError, e:
-    logging.warning('Expected file was not present: %s\nException: %s' % (path, e))
+  except IOError as (errno, strerror):
+    sys_log.warning('Expected file was not present: %s' % path, e)
+    sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
     raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
   body = f.read()
   f.close()
 
   # Add header info about object.
-  add_header(
-    response, datetime.datetime.isoformat(query[0].object_mtime), len(body),
-    'Some Content Type'
-  )
+  util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+              len(body), 'Some Content Type')
 
   # If HEAD was requested, we don't include the body.
   if request.method != 'HEAD':
+    # Log access
+    access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
     response.write(body)
+  else:
+    access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
 
   return response
 
+@auth.cn_check_required
+def object_sysmeta(request, guid):
+  """
+  MN_crud_0_3.getSystemMetadata(token, GUID) → system metadata
 
-@cn_check_required
-def object_metadata(request, guid):
-  """GET: Get a system metadata object by object guid.
+  log (typeOfOperation, targetGUID, requestorIdentity, dateOfRequest)
+
+  GET: Get a system metadata object by object guid.
   HEAD: Get header for a system metadata object by object guid.
   PUT: Update system metadata with sync info (TODO: ONLY UPDATING DB)
   """
 
-  logging.info('/object_metadata/')
+  sys_log.info('/object_sysmeta/')
 
   # Handle PUT in separate function.
   if request.method == 'PUT':
-    return object_metadata_put(request, guid)
+    return object_sysmeta_put(request, guid)  
 
   # Handle GET and HEAD. We handle these in the same function because they
   # are almost identical.
 
   try:
-    query = repository_object.objects.filter(associations_to__from_object__guid=guid)
+    query = models.repository_object.objects.filter(associations_to__from_object__guid = guid)
     sysmeta_path = query[0].path
   except IndexError:
-    logging.warning('Non-existing metadata object was requested: %s' % guid)
+    sys_log.warning('Non-existing metadata object was requested: %s' % guid)
+    # exception MN_crud_0_3.NotFound
     raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   response = HttpResponse()
 
   # Read sysmeta object.
   try:
     f = open(sysmeta_path, 'r')
-  except IOError, e:
-    logging.warning(
-      'Not able to open system metadata file: %s\nException: %s' % (sysmeta_path, e)
-    )
+  except IOError as (errno, strerror):
+    sys_log.warning('Not able to open system metadata file: %s' % sysmeta_path)
+    sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
     raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
 
   # The "pretty" parameter returns a pretty printed XML object for debugging.
   if 'pretty' in request.GET:
@@ -383,55 +273,139 @@ def object_metadata(request, guid):
   f.close()
 
   # Add header info about object.
-  add_header(
-    response, datetime.datetime.isoformat(query[0].object_mtime), len(body),
-    'Some Content Type'
-  )
+  util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+              len(body), 'Some Content Type')
 
   # If HEAD was requested, we don't include the body.
   if request.method != 'HEAD':
+    # Log access
+    access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
     response.write(body)
+  else:
+    # Log access
+    access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
 
   return response
 
-
 # cn_check_required is not required.
-def object_metadata_put(request, guid):
+def object_sysmeta_put(request, guid):
   """Mark object as having been synchronized."""
 
+  # Update db.
   try:
-    o = repository_object.objects.filter(associations_to__from_object__guid=guid)[0]
+    o = models.repository_object.objects.filter(associations_to__from_object__guid =
+                                         guid)[0]
   except IndexError:
-    logging.warning('Non-existing metadata object was requested for update: %s' % guid)
+    sys_log.warning('Non-existing metadata object was requested for update: %s'
+                    % guid)
     raise Http404
-
-  s = sync()
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+  
+  s = models.sync()
   s.repository_object = o
   s.save()
 
+  # Update sysmeta xml.
+  sysmeta.set_replication_status(guid, 'wer')
+
+  # Log access
+  access_log.log(guid, 'set_metadata', request.META['REMOTE_ADDR'])
+
   return HttpResponse('ok')
 
+@auth.cn_check_required
+def access_log_get(request):
+  """Get the access_log.
+  
+  getLogRecords(token, fromDate, toDate) → log
+  """
 
-@cn_check_required
-def log(request):
-  """Get the log file."""
+  sys_log.info('/access_log_get/')
+  
+  response = HttpResponse()
 
-  # We open the log file for reading. Don't know if it's already open for
-  # writing by the logging system, but for now, this works.
-  try:
-    log_file = open(settings.LOG_PATH, 'r')
-  except IOError, e:
-    logging.warning(
-      'Not able to open log file: %s\nException: %s' % (settings.LOG_PATH, e)
-    )
-    raise Http404
+  # select objects ordered by mtime desc.
+  query = models.access_log.objects.order_by('-access_time')
+  # Create a copy of the query that we will not slice, for getting the total
+  # count for this type of objects.
+  query_unsliced = query
 
-  # Fill in a template with log file data and return it.
-  return render_to_response('log.html', {'log_file': log_file})
+  # Filter by start datetime.
+  if 'from_date' in request.GET:
+    try:
+      query = query.filter(access_log__access_time >= request.GET['from_date'])
+      query_unsliced = query
+    except KeyError:
+      pass
+    except:
+      sys_log.error('Unexpected error: ', sys.exc_info()[0])
+      raise
 
+  # Filter by end datetime.
+  if 'to_date' in request.GET:
+    try:
+      print dir(models.access_log)
+      query = query.filter(access_time >= request.GET['to_date'])
+      query_unsliced = query
+    except KeyError:
+      pass
+    except:
+      sys_log.error('Unexpected error: ', sys.exc_info()[0])
+      raise
+  
+  # Filter by requestor.
+  if 'requestor' in request.GET:
+    try:
+      query = query.filter(requestor_identity == request.GET['requestor'])
+      query_unsliced = query
+    except KeyError:
+      pass
+    except:
+      sys_log.error('Unexpected error: ', sys.exc_info()[0])
+      raise
+  
+  res = {}
+  res['log'] = []
+    
+  for row in query:
+    print dir(row)
+    ob = {}
+    ob['guid'] = row.repository_object.guid
+    ob['operation_type'] = row.operation_type.operation_type
+    ob['requestor_identity'] = row.requestor_identity.requestor_identity
 
-@cn_check_required
+    # Append object to response.
+    res['log'].append(ob)
+
+  if 'from_date' in request.GET:
+    res['from_date'] = from_date
+  if 'to_date' in request.GET:
+    res['to_date'] = to_date
+  res['count'] = query.count()
+  res['total'] = query_unsliced.count()
+
+  # JSON encode the response.
+  # The "pretty" parameter generates pretty printed JSON.
+  if 'pretty' in request.GET:
+    body = '<pre>' + json.dumps(res, indent = 2) + '</pre>'
+  else:
+    body = json.dumps(res)
+
+  # Add header info about collection.
+  #db_status = status.objects.all()[0]
+  #util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
+  #            len(body), 'Some Content Type')
+
+  # If HEAD was requested, we don't include the body.
+  #if request.method != 'HEAD':
+  response.write(body)
+
+  return response
+
+@auth.cn_check_required
 def get_ip(request):
   """Get the client IP as seen from the server."""
-
+  
   return HttpResponse(request.META['REMOTE_ADDR'])
