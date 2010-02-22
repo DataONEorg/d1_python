@@ -81,6 +81,8 @@ ROOT_URLCONF = 'mn_prototype.urls'
 
 TEMPLATE_DIRS = (_here('mn_service/templates'))
 
+FIXTURE_DIRS = (_here('mn_service/fixtures'))
+
 INSTALLED_APPS = (
   'mn_prototype.mn_service',
   'django.contrib.auth',

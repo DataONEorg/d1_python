@@ -32,13 +32,10 @@ from django.shortcuts import render_to_response
 from django.utils.html import escape
 
 # App
-import models
 import settings
-import auth
-import sys_log
-import util
-import sysmeta
-import access_log
+import mn_service.sys_log
+import mn_service.util
+import mn_service.sysmeta
 
 
 def populate_db():
@@ -55,32 +52,27 @@ def populate_db():
 
     # Create db entry for object.
     object_guid = os.path.basename(object_path)
-    util.insert_object(t, object_guid, object_path)
+    mn_service.util.insert_object(t, object_guid, object_path)
 
     # Create sysmeta for object.
     sysmeta_guid = str(uuid.uuid4())
     sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
-    res = sysmeta.generate(object_path, sysmeta_path)
+    res = mn_service.sysmeta.generate(object_path, sysmeta_path)
     if not res:
       logging.error('System Metadata generation failed for object: %s' % object_path)
       raise Http404
 
   # Create db entry for sysmeta object.
-    util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+    mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
 
     # Create association between sysmeta and regular object.
-    util.insert_association(object_guid, sysmeta_guid)
+    mn_service.util.insert_association(object_guid, sysmeta_guid)
 
     # Successfully updated the db, so put current datetime in status.mtime.
-  s = status()
+  s = mn_service.models.Status()
   # Converted to auto_now = True
   # s.mtime = datetime.datetime.utcnow()
   s.status = 'update successful'
   s.save()
-
-  # Update the test fixture to match the new guids.\
-  cmd = 'cd %s; ./manage.py dumpdata mn_service >base.fixture.json' % settings.ROOT_PATH
-  sys_log.info(cmd)
-  os.system(cmd)
 
   return HttpResponse('ok')

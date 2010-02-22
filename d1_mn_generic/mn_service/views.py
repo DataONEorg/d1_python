@@ -30,6 +30,15 @@ from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
+# 3rd party.
+try:
+  import iso8601
+except ImportError, e:
+  print 'Import error: %s' % str(e)
+  print 'Try: sudo apt-get install python-setuptools'
+  print '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
+  sys.exit(1)
+
 # App.
 import models
 import settings
@@ -74,7 +83,7 @@ def get_collection(request):
   response = HttpResponse()
 
   # select objects ordered by mtime desc.
-  query = models.repository_object.objects.order_by('-object_mtime')
+  query = models.Repository_object.objects.order_by('-object_mtime')
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
@@ -162,7 +171,7 @@ def get_collection(request):
     body = json.dumps(res)
 
   # Add header info about collection.
-  db_status = models.status.objects.all()[0]
+  db_status = models.Status.objects.all()[0]
   util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
               len(body), 'Some Content Type')
 
@@ -184,7 +193,7 @@ def get_object(request, guid):
   response = HttpResponse()
 
   try:
-    query = models.repository_object.objects.filter(guid = guid)
+    query = models.Repository_object.objects.filter(guid = guid)
     path = query[0].path
   except IndexError:
     sys_log.warning('Non-existing metadata object was requested: %s' % guid)
@@ -242,7 +251,7 @@ def object_sysmeta(request, guid):
   # are almost identical.
 
   try:
-    query = models.repository_object.objects.filter(associations_to__from_object__guid = guid)
+    query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
     sysmeta_path = query[0].path
   except IndexError:
     sys_log.warning('Non-existing metadata object was requested: %s' % guid)
@@ -293,7 +302,7 @@ def object_sysmeta_put(request, guid):
 
   # Update db.
   try:
-    o = models.repository_object.objects.filter(associations_to__from_object__guid =
+    o = models.Repository_object.objects.filter(associations_to__from_object__guid =
                                          guid)[0]
   except IndexError:
     sys_log.warning('Non-existing metadata object was requested for update: %s'
@@ -303,7 +312,7 @@ def object_sysmeta_put(request, guid):
     sys_log.error('Unexpected error: ', sys.exc_info()[0])
     raise
   
-  s = models.sync()
+  s = models.Sync()
   s.repository_object = o
   s.save()
 
@@ -327,18 +336,23 @@ def access_log_get(request):
   response = HttpResponse()
 
   # select objects ordered by mtime desc.
-  query = models.access_log.objects.order_by('-access_time')
+  query = models.Access_log.objects.order_by('-access_time')
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
 
+  res = {}
+  res['log'] = []
+
   # Filter by start datetime.
   if 'from_date' in request.GET:
     try:
-      query = query.filter(access_log__access_time >= request.GET['from_date'])
-      query_unsliced = query
-    except KeyError:
-      pass
+      from_date = iso8601.parse_date(request.GET['from_date'])
+      query = query.filter(access_time__gte = from_date)
+      res['from_date'] = datetime.datetime.isoformat(from_date)
+    except TypeError, e:
+      sys_log.error('Invalid from_date: %s' % request.GET['from_date'])
+      raise Http404
     except:
       sys_log.error('Unexpected error: ', sys.exc_info()[0])
       raise
@@ -346,43 +360,44 @@ def access_log_get(request):
   # Filter by end datetime.
   if 'to_date' in request.GET:
     try:
-      print dir(models.access_log)
-      query = query.filter(access_time >= request.GET['to_date'])
-      query_unsliced = query
-    except KeyError:
-      pass
+      to_date = iso8601.parse_date(request.GET['to_date'])
+      query = query.filter(access_time__lte = to_date)
+      res['to_date'] = datetime.datetime.isoformat(to_date)
+    except TypeError, e:
+      sys_log.error('Invalid to_date: %s' % request.GET['to_date'])
+      raise Http404
     except:
       sys_log.error('Unexpected error: ', sys.exc_info()[0])
       raise
   
   # Filter by requestor.
+  #  query = query.filter(repository_object_class__name = oclass)
   if 'requestor' in request.GET:
     try:
-      query = query.filter(requestor_identity == request.GET['requestor'])
-      query_unsliced = query
-    except KeyError:
-      pass
+      query = query.filter(requestor_identity__requestor_identity = request.GET['requestor'])
     except:
       sys_log.error('Unexpected error: ', sys.exc_info()[0])
       raise
-  
-  res = {}
-  res['log'] = []
-    
+      
+  # Filter by operation type.
+  #  query = query.filter(repository_object_class__name = oclass)
+  if 'operation_type' in request.GET:
+    try:
+      query = query.filter(operation_type__operation_type = request.GET['operation_type'])
+    except:
+      sys_log.error('Unexpected error: ', sys.exc_info()[0])
+      raise
+
   for row in query:
-    print dir(row)
     ob = {}
     ob['guid'] = row.repository_object.guid
     ob['operation_type'] = row.operation_type.operation_type
     ob['requestor_identity'] = row.requestor_identity.requestor_identity
+    ob['access_time'] = datetime.datetime.isoformat(row.access_time)
 
     # Append object to response.
     res['log'].append(ob)
 
-  if 'from_date' in request.GET:
-    res['from_date'] = from_date
-  if 'to_date' in request.GET:
-    res['to_date'] = to_date
   res['count'] = query.count()
   res['total'] = query_unsliced.count()
 
@@ -393,13 +408,6 @@ def access_log_get(request):
   else:
     body = json.dumps(res)
 
-  # Add header info about collection.
-  #db_status = status.objects.all()[0]
-  #util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
-  #            len(body), 'Some Content Type')
-
-  # If HEAD was requested, we don't include the body.
-  #if request.method != 'HEAD':
   response.write(body)
 
   return response

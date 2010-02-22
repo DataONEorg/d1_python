@@ -79,8 +79,8 @@ def insert_association(guid1, guid2):
   """Create an association between two objects, given their guids."""
 
   try:
-    o1 = repository_object.objects.filter(guid=guid1)[0]
-    o2 = repository_object.objects.filter(guid=guid2)[0]
+    o1 = models.Repository_object.objects.filter(guid=guid1)[0]
+    o2 = models.Repository_object.objects.filter(guid=guid2)[0]
   except IndexError:
     sys_log.error(
       'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
@@ -90,7 +90,7 @@ def insert_association(guid1, guid2):
     sys_log.error('Unexpected error: ', sys.exc_info()[0])
     raise
 
-  association = associations()
+  association = models.Associations()
   association.from_object = o1
   association.to_object = o2
   association.save()
@@ -140,7 +140,7 @@ def insert_object(object_class, guid, path):
   f.close()
 
   # Set up the object class.
-  c = repository_object_class()
+  c = models.Repository_object_class()
   try:
     c.id = {'data': 1, 'metadata': 2, 'sysmeta': 3}[object_class]
     c.name = object_class
@@ -153,7 +153,7 @@ def insert_object(object_class, guid, path):
   c.save()
 
   # Build object for this file and store it.
-  o = repository_object()
+  o = models.Repository_object()
   o.path = path
   o.guid = guid
   o.repository_object_class = c

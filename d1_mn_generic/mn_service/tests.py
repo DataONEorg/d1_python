@@ -17,9 +17,6 @@ import StringIO
 # Django.
 from django.test import TestCase
 
-# Lxml.
-from lxml import etree
-
 # App.
 import settings
 import util
@@ -30,6 +27,13 @@ mn_objects_total = 354
 mn_objects_total_data = 100
 mn_objects_total_metadata = 77
 mn_objects_total_sysmeta = 177
+
+# Constants related to log.
+log_total = 2213
+log_total_requestor_1_1_1_1 = 538
+log_total_operation_get_bytes = 981
+log_total_requestor_1_1_1_1_and_operation_get_bytes = 240
+log_total_ = 19
 
 
 class mn_service_tests(TestCase):
@@ -320,3 +324,56 @@ class mn_service_tests(TestCase):
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0'},
                                 REMOTE_ADDR = '111.111.111.111')
     self.failUnlessEqual(response.content[:9], 'Attempted')
+
+  #
+  # /log/ specific object calls.
+  #
+  # GET.
+  #
+
+  def test_rest_call_log_get_unfiltered(self):
+    """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/
+    """
+
+    response = self.client.get('/mn/log/', {}, HTTP_ACCEPT='application/json')
+    self.failUnlessEqual(response.status_code, 200)
+    res = json.loads(response.content)
+    self.failUnlessEqual(res['count'], log_total)
+    self.failUnlessEqual(res['start'], 0)
+    self.failUnlessEqual(res['total'], log_total)
+
+    #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n')
+
+    #def test_rest_call_object_by_guid_404_get(self):
+    #  """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
+    #  """
+    #  
+    #  response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT = 'application/json')
+    #  self.failUnlessEqual(response.status_code, 404)
+    #
+    #def test_rest_call_sysmeta_by_object_guid_get(self):
+    #  """curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+    #  
+    #  NOTE: This test fails if the /update/ call has not been run from outside the
+    #  test framework first.
+    #  """
+    #  
+    #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
+    #  self.failUnlessEqual(response.status_code, 200)
+    #  self.check_response_headers_present(response)
+    #  # Check that this sysmeta validates against the schema.
+    #  try:
+    #    xsd_file = open(settings.XSD_PATH, 'r')
+    #  except IOError as (errno, strerror):
+    #    sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
+    #    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
+    #    return
+    #  except:
+    #    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    #    raise
+    #
+    #  xmlschema_doc = etree.parse(settings.XSD_PATH)
+    #  xmlschema = etree.XMLSchema(xmlschema_doc)
+    #  xml = etree.parse(StringIO.StringIO(response.content))
+    #  xmlschema.assertValid(xml)
+    #  self.failUnlessEqual(xmlschema.validate(xml), True)

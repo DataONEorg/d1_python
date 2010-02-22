@@ -21,8 +21,14 @@ import stat
 import json
 import hashlib
 
+# 3rd party.
 # Lxml
-from lxml import etree
+try:
+  from lxml import etree
+except ImportError, e:
+  print 'Import error: %s' % str(e)
+  print 'Try: sudo apt-get install python-lxml'
+  sys.exit(1)
 
 # App
 import settings
