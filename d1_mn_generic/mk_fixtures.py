@@ -36,3 +36,6 @@ print os.system(
     settings.FIXTURE_DIRS, 'base.fixture.json'
   )
 )
+
+if 'reset' in sys.argv:
+  print os.system('./manage.py insert_test_log')

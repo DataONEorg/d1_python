@@ -78,7 +78,9 @@ class Command(NoArgsCommand):
           mn_service.access_log.log(repository_object.guid, 'set_metadata', requestor)
 
         # Set up fixed datetimes.
-    query = mn_service.models.Access_log.objects.order_by('pk')
-    for access_log in query:
-      access_log.access_time = time.ctime(random.random() * 10000000)
-      access_log.save()
+    query = mn_service.models.Access_log.objects.all()
+    for row in query:
+      # We use auto_now_add for access_time so that we can modify it after it has
+      # been added if necessary.
+      row.access_time = datetime.datetime.fromtimestamp(random.random() * 10000000000)
+      row.save()

@@ -109,7 +109,7 @@ def get_collection(request):
   except KeyError:
     start = 0
   except ValueError:
-    # start must be an integer.
+    sys_log.warning('Invalid start value: %s' % request.GET['start'])
     raise Http404
   except:
     sys_log.error('Unexpected error: ', sys.exc_info()[0])
@@ -123,7 +123,7 @@ def get_collection(request):
   except KeyError:
     count = None
   except ValueError:
-    # count must be an integer.
+    sys_log.warning('Invalid count value: %s' % request.GET['count'])
     raise Http404
   except:
     sys_log.error('Unexpected error: ', sys.exc_info()[0])
@@ -341,52 +341,75 @@ def access_log_get(request):
   # count for this type of objects.
   query_unsliced = query
 
+  # Skip top 'start' objects.
+  try:
+    start = int(request.GET['start'])
+  except KeyError:
+    start = 0
+  except ValueError:
+    sys_log.warning('Invalid start value: %s' % request.GET['start'])
+    raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+
+  # Limit the number objects returned to 'count'.
+  # None = All remaining objects.
+  # 0 = No objects
+  try:
+    count = int(request.GET['count'])
+  except KeyError:
+    count = None
+  except ValueError:
+    sys_log.warning('Invalid count value: %s' % request.GET['count'])
+    raise Http404
+  except:
+    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+    raise
+
+  # If both start and count are present but set to 0, we just tweak the query
+  # so that it won't return any results.
+  if start == 0 and count == 0:
+    query = query.none()
+  # Handle variations of start and count. We need these because Python does not
+  # support three valued logic in expressions(which would cause an expression
+  # that includes None to be valid and evaluate to None). Note that a slice such
+  # as [value : None] is valid and equivalent to [value:]
+  elif start and count:
+    query = query[start : start + count]
+  elif start:
+    query = query[start:]
+  elif count:
+    query = query[:count]
+
   res = {}
   res['log'] = []
 
-  # Filter by start datetime.
-  if 'from_date' in request.GET:
-    try:
-      from_date = iso8601.parse_date(request.GET['from_date'])
-      query = query.filter(access_time__gte = from_date)
-      res['from_date'] = datetime.datetime.isoformat(from_date)
-    except TypeError, e:
-      sys_log.error('Invalid from_date: %s' % request.GET['from_date'])
-      raise Http404
-    except:
-      sys_log.error('Unexpected error: ', sys.exc_info()[0])
-      raise
-
-  # Filter by end datetime.
-  if 'to_date' in request.GET:
-    try:
-      to_date = iso8601.parse_date(request.GET['to_date'])
-      query = query.filter(access_time__lte = to_date)
-      res['to_date'] = datetime.datetime.isoformat(to_date)
-    except TypeError, e:
-      sys_log.error('Invalid to_date: %s' % request.GET['to_date'])
-      raise Http404
-    except:
-      sys_log.error('Unexpected error: ', sys.exc_info()[0])
-      raise
+  # Filter by last modified date.
+  query = query.filter(**util.build_date_range_filter(request, 'access_time', 'lastModified'))
   
   # Filter by requestor.
-  #  query = query.filter(repository_object_class__name = oclass)
   if 'requestor' in request.GET:
-    try:
-      query = query.filter(requestor_identity__requestor_identity = request.GET['requestor'])
-    except:
-      sys_log.error('Unexpected error: ', sys.exc_info()[0])
-      raise
+    requestor = request.GET['requestor']
+    # Translate from DOS to SQL style wildcards.
+    requestor = re.sub(r'\?', '_', requestor)
+    requestor = re.sub(r'\*', '%', requestor)
+    # Django doesn't support "complex" LIKE queries, so we have to inject it.
+    # THIS CODE MAY BREAK SINCE IT USES FIXED TABLE NAMES
+    where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
+    query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
       
   # Filter by operation type.
   #  query = query.filter(repository_object_class__name = oclass)
   if 'operation_type' in request.GET:
-    try:
-      query = query.filter(operation_type__operation_type = request.GET['operation_type'])
-    except:
-      sys_log.error('Unexpected error: ', sys.exc_info()[0])
-      raise
+    requestor = request.GET['operation_type']
+    # Translate from DOS to SQL style wildcards.
+    requestor = re.sub(r'\?', '_', requestor)
+    requestor = re.sub(r'\*', '%', requestor)
+    # Django doesn't support "complex" LIKE queries, so we have to inject it.
+    # THIS CODE MAY BREAK SINCE IT USES FIXED TABLE NAMES
+    where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
+    query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
 
   for row in query:
     ob = {}
@@ -417,3 +440,4 @@ def get_ip(request):
   """Get the client IP as seen from the server."""
   
   return HttpResponse(request.META['REMOTE_ADDR'])
+

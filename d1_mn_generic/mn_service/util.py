@@ -29,6 +29,15 @@ from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
+# 3rd party.
+try:
+  import iso8601
+except ImportError, e:
+  print 'Import error: %s' % str(e)
+  print 'Try: sudo apt-get install python-setuptools'
+  print '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
+  sys.exit(1)
+
 # App.
 import models
 import settings
@@ -161,3 +170,35 @@ def insert_object(object_class, guid, path):
   o.object_mtime = mtime
   o.size = size
   o.save()
+
+
+def build_date_range_filter(request, col_name, name):
+  filter_kwargs = {}
+
+  operator_translation = {
+    '': 'exact',
+    'eq': 'exact',
+    'lt': 'lt',
+    'le': 'lte',
+    'gt': 'gt',
+    'ge': 'gte',
+  }
+
+  # Last modified date filter.
+  for get in request.GET:
+    m = re.match('%s(_(.+))?' % name, get)
+    if not m:
+      continue
+    operator = m.group(2)
+    if operator not in operator_translation:
+      sys_log.error('Invalid argument: %s' % get)
+      raise Http404
+    try:
+      date = iso8601.parse_date(request.GET[get])
+    except TypeError, e:
+      sys_log.error('Invalid date format: %s' % request.GET[get])
+      raise Http404
+    filter_kwargs['%s__%s' % (col_name, operator_translation[operator])] = date
+    #res[get] = datetime.datetime.isoformat(date)
+
+  return filter_kwargs

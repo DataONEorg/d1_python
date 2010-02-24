@@ -74,4 +74,4 @@ class Access_log(models.Model):
   repository_object = models.ForeignKey(Repository_object)
   operation_type = models.ForeignKey(Access_operation_type)
   requestor_identity = models.ForeignKey(Access_requestor_identity)
-  access_time = models.DateTimeField(auto_now=True)
+  access_time = models.DateTimeField(auto_now_add=True)
