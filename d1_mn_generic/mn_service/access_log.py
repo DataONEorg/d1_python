@@ -11,7 +11,8 @@
 """
 
 # Django.
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse
+from django.http import HttpResponseServerError
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -24,7 +25,8 @@ import auth
 import sys_log
 import util
 import sysmeta
-import access_log
+
+#import access_log
 
 
 def log(object_guid, operation_type, requestor_identity):

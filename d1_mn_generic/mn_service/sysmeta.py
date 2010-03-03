@@ -26,8 +26,8 @@ import hashlib
 try:
   from lxml import etree
 except ImportError, e:
-  print 'Import error: %s' % str(e)
-  print 'Try: sudo apt-get install python-lxml'
+  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Try: sudo apt-get install python-lxml')
   sys.exit(1)
 
 # App
@@ -44,9 +44,6 @@ def validate(sysmeta_etree):
     xmlschema.assertValid(sysmeta_etree)
   except DocumentInvalid, e:
     sys_log.error('Invalid System Metadata: %s' % etree.tostring(sysmeta_etree))
-    raise
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
     raise
 
 
@@ -67,9 +64,6 @@ def write(sysmeta_etree, sysmeta_path):
     )
     sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
     raise
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
 
 def set_replication_status(sysmeta_guid, replication_status):
@@ -82,9 +76,6 @@ def set_replication_status(sysmeta_guid, replication_status):
     sys_log.error('System Metadata XML file could not be opened: %s' % sysmeta_path)
     sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
     return
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
   # Parse XML file to etree.
   sysmeta = etree.parse(sysmeta_file)
@@ -101,9 +92,6 @@ def set_replication_status(sysmeta_guid, replication_status):
       )
     )
     return
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
     # Update the replication status.
   sysmeta.xpath('Replica/ReplicationStatus')[0].text = replication_status
@@ -131,11 +119,8 @@ def generate(object_path, sysmeta_path):
   except IOErro:
     sys_log.error('MN object could not be opened: %s' % object_path)
     return
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
-  # Set up the namespace for the sysmeta xml doc.
+  # Set up namespace for the sysmeta xml doc.
   SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
   SYSMETA = '{%s}' % SYSMETA_NS
   NSMAP = {'D1': SYSMETA_NS} # the default namespace
@@ -266,9 +251,6 @@ def generate(object_path, sysmeta_path):
     sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
     sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
     return
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
   xmlschema_doc = etree.parse(settings.XSD_PATH)
   xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -289,8 +271,5 @@ def generate(object_path, sysmeta_path):
     )
     sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
     return
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
   return True

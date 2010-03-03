@@ -12,15 +12,16 @@
 
 from django.conf.urls.defaults import *
 
-# Uncomment the next two lines to enable the admin:
+# Enable admin.
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns(
   'mn_prototype.mn_service.views',
+  (r'^object/$', 'object_collection'),
+  (r'^object/(.*)$', 'object_contents'),
   (r'^object/(.*)/meta$', 'object_sysmeta'),
-  (r'^object/(.*)$', 'object'),
-  (r'^log/$', 'access_log_get'),
+  (r'^log/$', 'access_log_view'),
   (r'^get_ip/$', 'auth_test'),
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),
   (r'^admin/', include(admin.site.urls)),

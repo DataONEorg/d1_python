@@ -21,11 +21,18 @@ import stat
 import json
 import hashlib
 import uuid
+import exceptions
 
 # Django.
-from django.http import HttpResponse, HttpResponseServerError
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.base import BaseCommand
+from django.core.management.base import NoArgsCommand
+from django.core.management.base import CommandError
+from django.http import HttpResponse
+from django.http import HttpResponseServerError
 from django.http import Http404
-from django.template import Context, loader
+from django.template import Context
+from django.template import loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
@@ -33,9 +40,11 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  print 'Import error: %s' % str(e)
-  print 'Try: sudo apt-get install python-setuptools'
-  print '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
+  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Try: sudo apt-get install python-setuptools')
+  sys_log.error(
+    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
+  )
   sys.exit(1)
 
 # App.
@@ -48,6 +57,33 @@ import sysmeta
 import access_log
 
 
+class fixed_chunk_size_file_iterator(object):
+  """Create a file iterator that iterates through file-like object using fixed
+  size chunks.
+  """
+
+  def __init__(self, flo, chunk_size=1024**2):
+    self.flo = flo
+    self.chunk_size = chunk_size
+
+  def next(self):
+    data = self.flo.read(self.chunk_size)
+    if data:
+      return data
+    else:
+      raise StopIteration
+
+  def __iter__(self):
+    return self
+
+
+def raise_sys_log_http_404(err_msg):
+  """Log message to system log and raise 404 with message.
+  """
+  sys_log.warning(err_msg)
+  raise Http404(err_msg)
+
+
 def file_to_dict(path):
   """Convert a sample MN object to dictionary."""
 
@@ -57,9 +93,6 @@ def file_to_dict(path):
     sys_log.error('Internal server error: Could not open: %s' % path)
     sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
     return HttpResponseServerError()
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
   d = {}
 
@@ -95,9 +128,6 @@ def insert_association(guid1, guid2):
       'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
     )
     return HttpResponseServerError()
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
   association = models.Associations()
   association.from_object = o1
@@ -131,9 +161,6 @@ def insert_object(object_class, guid, path):
     sys_log.warning('Skipped file because it couldn\'t be opened: %s' % path)
     sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
     return
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
 
   # Get hash of file.
   hash = hashlib.sha1()
@@ -156,9 +183,6 @@ def insert_object(object_class, guid, path):
   except KeyError:
     sys_log.error('Internal server error: Unknown object class: %s' % object_class)
     return HttpResponseServerError()
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
   c.save()
 
   # Build object for this file and store it.
@@ -172,7 +196,7 @@ def insert_object(object_class, guid, path):
   o.save()
 
 
-def build_date_range_filter(request, col_name, name):
+def add_range_operator_filter(query, request, col_name, name):
   filter_kwargs = {}
 
   operator_translation = {
@@ -184,6 +208,9 @@ def build_date_range_filter(request, col_name, name):
     'ge': 'gte',
   }
 
+  # Keep track of if if any filters were added.
+  changed = False
+
   # Last modified date filter.
   for get in request.GET:
     m = re.match('%s(_(.+))?' % name, get)
@@ -191,14 +218,106 @@ def build_date_range_filter(request, col_name, name):
       continue
     operator = m.group(2)
     if operator not in operator_translation:
-      sys_log.error('Invalid argument: %s' % get)
-      raise Http404
+      raise_sys_log_http_404('Invalid argument: %s' % get)
     try:
       date = iso8601.parse_date(request.GET[get])
     except TypeError, e:
-      sys_log.error('Invalid date format: %s' % request.GET[get])
-      raise Http404
+      raise_sys_log_http_404('Invalid date format: %s' % request.GET[get])
     filter_kwargs['%s__%s' % (col_name, operator_translation[operator])] = date
+    changed = True
     #res[get] = datetime.datetime.isoformat(date)
 
-  return filter_kwargs
+  return query.filter(**filter_kwargs), changed
+
+
+def add_wildcard_filter(query, col_name, value):
+  """Add wildcard filter to query. Support only a single * at start OR end"""
+
+  # Make sure there are no wildcards except at beginning and/or end of value.
+  if re.match(r'.+\*.+$', value):
+    raise_sys_log_http_404(
+      'Wildcard is only supported at start OR end of value: %s' % value
+    )
+
+  value_trimmed = re.match(r'\*?(.*?)\*?$', value).group(1)
+
+  wild_beginning = False
+  wild_end = False
+
+  filter_kwargs = {}
+
+  if re.match(r'\*(.*)$', value):
+    filter_kwargs['%s__endswith' % col_name] = value_trimmed
+    wild_beginning = True
+
+  if re.match(r'(.*)\*$', value):
+    filter_kwargs['%s__startswith' % col_name] = value_trimmed
+    wild_end = True
+
+  if wild_beginning == True and wild_end == True:
+    raise_sys_log_http_404(
+      'Wildcard is only supported at start OR end of value: %s' % value
+    )
+  # If no wildcards are used, we add a regular "equals" filter.
+  elif wild_beginning == False and wild_end == False:
+    filter_kwargs[col_name] = value
+
+  return query.filter(**filter_kwargs)
+
+## Django doesn't support "complex" LIKE queries, so we have to inject it.
+## THIS CODE MAY BREAK SINCE IT USES FIXED TABLE NAMES
+#where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
+#query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
+## Filter by operation type.
+##  query = query.filter(repository_object_class__name = oclass)
+#if 'operation_type' in request.GET:
+#  requestor = request.GET['operation_type']
+#  # Translate from DOS to SQL style wildcards.
+#  requestor = re.sub(r'\?', '_', requestor)
+#  requestor = re.sub(r'\*', '%', requestor)
+
+
+def add_slice_filter(query, request):
+  """Create a slice of a query based on request start and count parameters."""
+
+  # Skip top 'start' objects.
+  try:
+    start = int(request.GET['start'])
+    if start < 0:
+      raise ValueError
+  except KeyError:
+    start = 0
+  except ValueError:
+    raise_sys_log_http_404('Invalid start value: %s' % request.GET['start'])
+
+  # Limit the number objects returned to 'count'.
+  # None = All remaining objects.
+  # 0 = No objects
+  try:
+    count = int(request.GET['count'])
+    # Enforce max count of 1000.
+    if count > 1000:
+      raise ValueError
+  except KeyError:
+    count = None
+  except ValueError:
+    raise_sys_log_http_404(
+      'Invalid count value: %s (count must be 0 <= count >= 1000' % request.GET['count']
+    )
+
+  # If both start and count are present but set to 0, we just tweak the query
+  # so that it won't return any results.
+  if start == 0 and count == 0:
+    query = query.none()
+  # Handle variations of start and count. We need these because Python does not
+  # support three valued logic in expressions(which would cause an expression
+  # that includes None to be valid and evaluate to None). Note that a slice such
+  # as [value : None] is valid and equivalent to [value:]
+  elif start and count:
+    query = query[start:start + count]
+  elif start:
+    query = query[start:]
+  elif count:
+    query = query[:count]
+
+  return query, start, count

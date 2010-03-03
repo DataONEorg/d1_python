@@ -19,12 +19,13 @@ import glob
 import time
 import datetime
 import stat
-import json
 import hashlib
 import uuid
 
 # Django.
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse
+from django.http import HttpResponseServerError
+from django.http import HttpResponseNotAllowed
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -34,9 +35,9 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  print 'Import error: %s' % str(e)
-  print 'Try: sudo apt-get install python-setuptools'
-  print '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
+  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Try: sudo apt-get install python-setuptools')
+  sys_log.error('     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg')
   sys.exit(1)
 
 # App.
@@ -47,13 +48,24 @@ import sys_log
 import util
 import sysmeta
 import access_log
+import serialize
 
+# Object Collection.
   
 @auth.cn_check_required
-def object(request, guid):  
+def object_collection(request):
   """Handle /object/ collection."""
   
   sys_log.info('/object/')
+
+  if request.method == 'GET':
+    return object_collection_get(request)
+  
+  if request.method == 'HEAD':
+    return object_collection_head(request)
+  
+  # Only GET and HEAD accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
 
   # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
   # strings for formats the client would like to receive. We should be going
@@ -64,21 +76,10 @@ def object(request, guid):
   #if request.META['HTTP_ACCEPT'] != 'application/json':
   #  raise Http404
 
-  # Determine if the request is for an object or for a list.
-  if len(guid):
-    return get_object(request, guid)
-    
-  return get_collection(request)
-
-  # Shouldn't get here.
-  sys_log.error('Internal server error: %s' % guid)
-  return HttpResponseServerError()
-
-@auth.cn_check_required
-def get_collection(request):
+def object_collection_get(request):
   """Get filtered list of objects."""
-  
-  sys_log.info('/get_collection/')
+
+  sys_log.info('GET')
   
   response = HttpResponse()
 
@@ -89,60 +90,50 @@ def get_collection(request):
   query_unsliced = query
 
   # Filter by oclass.
-  try:
-    oclass = request.GET['oclass']
-    query = query.filter(repository_object_class__name = oclass)
+  if 'oclass' in request.GET:
+    query = util.add_wildcard_filter(query, 'repository_object_class__name', request.GET['oclass'])
     query_unsliced = query
-  except KeyError:
-    pass
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+
+  # Filter by GUID.
+  if 'guid' in request.GET:
+    query = util.add_wildcard_filter(query, 'guid', request.GET['guid'])
+    query_unsliced = query
+  
+  # Filter by hash.
+  if 'hash' in request.GET:
+    query = util.add_wildcard_filter(query, 'hash', request.GET['hash'])
+    query_unsliced = query
+
+  # Filter by last modified date.
+  query, changed = util.add_range_operator_filter(query, request, 'object_mtime', 'lastModified')
+  if changed == True:
+    query_unsliced = query
 
   # Filter by sync.
   if 'sync' in request.GET:
-    query = query.filter(sync__isnull = False)
-    
-  # Skip top 'start' objects.
-  try:
-    start = int(request.GET['start'])
-  except KeyError:
-    start = 0
-  except ValueError:
-    sys_log.warning('Invalid start value: %s' % request.GET['start'])
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+    if not request.GET['sync'] in ('0', '1'):
+      util.raise_sys_log_http_404('Invalid sync value requested: %s' % request.GET['sync'])
+    query = query.filter(sync__isnull = request.GET['sync'] == '0')
 
-  # Limit the number objects returned to 'count'.
-  # None = All remaining objects.
-  # 0 = No objects
-  try:
-    count = int(request.GET['count'])
-  except KeyError:
-    count = None
-  except ValueError:
-    sys_log.warning('Invalid count value: %s' % request.GET['count'])
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+  # Access Log based filters.
 
-  # If both start and count are present but set to 0, we just tweak the query
-  # so that it won't return any results.
-  if start == 0 and count == 0:
-    query = query.none()
-  # Handle variations of start and count. We need these because Python does not
-  # support three valued logic in expressions(which would cause an expression
-  # that includes None to be valid and evaluate to None). Note that a slice such
-  # as [value : None] is valid and equivalent to [value:]
-  elif start and count:
-    query = query[start : start + count]
-  elif start:
-    query = query[start:]
-  elif count:
-    query = query[:count]
+  # Filter by last accessed date.
+  query, changed = util.add_range_operator_filter(query, request, 'access_log__access_time', 'lastAccessed')
+  if changed == True:
+    query_unsliced = query
+
+  # Filter by requestor.
+  if 'requestor' in request.GET:
+    query = util.add_wildcard_filter(query, 'access_log__requestor', request.GET['requestor'])
+    query_unsliced = query
+
+  # Filter by access operation type.
+  if 'operationType' in request.GET:
+    query = util.add_wildcard_filter(query, 'access_log__operation_type', request.GET['operationType'])
+    query_unsliced = query
+
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)
   
   res = {}
   res['data'] = []
@@ -163,74 +154,139 @@ def get_collection(request):
   res['count'] = query.count()
   res['total'] = query_unsliced.count()
 
-  # JSON encode the response.
-  # The "pretty" parameter generates pretty printed JSON.
+  # Serialize the response.
+  # The "pretty" parameter generates pretty response.
   if 'pretty' in request.GET:
-    body = '<pre>' + json.dumps(res, indent = 2) + '</pre>'
+    body = '<pre>' + serialize.serialize(res, 'rdf_xml', True) + '</pre>'
   else:
-    body = json.dumps(res)
+    body = serialize.serialize(res, 'xml')
 
   # Add header info about collection.
   db_status = models.Status.objects.all()[0]
   util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
               len(body), 'Some Content Type')
 
-  # If HEAD was requested, we don't include the body.
-  if request.method != 'HEAD':
-    response.write(body)
+  response.write(body)
+  
+  return response
+
+def object_collection_head(request):
+  """Get header for filtered list of objects."""
+  
+  sys_log.info('HEAD')
+
+  response = HttpResponse()
+
+  # Add header info about collection.
+  db_status = models.Status.objects.all()[0]
+  util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
+                  0, 'Some Content Type')
 
   return response
 
+
+# Object Contents.
+
 @auth.cn_check_required
-def get_object(request, guid):
+def object_contents(request, guid):
+  sys_log.info('/object_contents/')
+
+  if request.method == 'GET':
+    return object_contents_get(request, guid)
+
+  if request.method == 'HEAD':
+    return object_contents_head(request, guid)
+  
+  # Only GET and HEAD accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
+
+def object_contents_get(request, guid):
   """Get a data or metadata object by guid.
   
   get(token, GUID) → object
   """
-  
-  sys_log.info('/get_object/')
+
+  sys_log.info('GET')
 
   response = HttpResponse()
 
+  # Find object based on guid.
+  query = models.Repository_object.objects.filter(guid = guid)
   try:
-    query = models.Repository_object.objects.filter(guid = guid)
     path = query[0].path
   except IndexError:
-    sys_log.warning('Non-existing metadata object was requested: %s' % guid)
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
-    
-  # Get bytes of object.
+    util.raise_sys_log_http_404('Non-existing metadata object was requested: %s' % guid)
+
+  # Log the access of this object.
+  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+
+  # Open file for streaming.
   try:
-    f = open(os.path.join(path), 'r')
+    f = open(os.path.join(path), 'rb')
   except IOError as (errno, strerror):
-    sys_log.warning('Expected file was not present: %s' % path, e)
-    sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
-  body = f.read()
-  f.close()
+    err_msg = 'Expected file was not present: %s\n' % path
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    util.raise_sys_log_http_404(err_msg)
+
+  # Return the raw bytes of the object.
+  return HttpResponse(util.fixed_chunk_size_file_iterator(f))
+
+def object_contents_head(request, guid):
+  """Get a data or metadata object by guid.
+  
+  get(token, GUID) → object
+  """
+
+  sys_log.info('HEAD')
+
+  response = HttpResponse()
+
+  # Find object based on guid.
+  query = models.Repository_object.objects.filter(guid = guid)
+  try:
+    path = query[0].path
+  except IndexError:
+    util.raise_sys_log_http_404('Non-existing metadata object was requested: %s' % guid)
+
+  # Get size of object from file size.
+  try:
+    size = os.path.getsize(path)
+  except IOError as (errno, strerror):
+    err_msg = 'Could not get size of file: %s\n' % path
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    util.raise_sys_log_http_404(err_msg)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
-              len(body), 'Some Content Type')
+              size, 'Some Content Type')
 
-  # If HEAD was requested, we don't include the body.
-  if request.method != 'HEAD':
-    # Log access
-    access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
-    response.write(body)
-  else:
-    access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
+  # Log the access of this object.
+  access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
 
   return response
 
+
+# Sysmeta.
+
 @auth.cn_check_required
 def object_sysmeta(request, guid):
+  sys_log.info('/object_sysmeta/')
+
+  if request.method != 'GET':
+    return object_sysmeta_get(request, guid)
+    
+  if request.method != 'HEAD':
+    return object_sysmeta_head(request, guid)
+
+  if request.method == 'PUT':
+    return object_sysmeta_put(request, guid)  
+
+  # Only GET, HEAD and PUT accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD', 'PUT'])
+  
+def object_sysmeta_get(request, guid):
+  sys_log.info('GET %s' % guid)
+
   """
   MN_crud_0_3.getSystemMetadata(token, GUID) → system metadata
 
@@ -241,12 +297,6 @@ def object_sysmeta(request, guid):
   PUT: Update system metadata with sync info (TODO: ONLY UPDATING DB)
   """
 
-  sys_log.info('/object_sysmeta/')
-
-  # Handle PUT in separate function.
-  if request.method == 'PUT':
-    return object_sysmeta_put(request, guid)  
-
   # Handle GET and HEAD. We handle these in the same function because they
   # are almost identical.
 
@@ -254,12 +304,8 @@ def object_sysmeta(request, guid):
     query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
     sysmeta_path = query[0].path
   except IndexError:
-    sys_log.warning('Non-existing metadata object was requested: %s' % guid)
     # exception MN_crud_0_3.NotFound
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+    util.raise_sys_log_http_404('Non-existing metadata object was requested: %s' % guid)
 
   response = HttpResponse()
 
@@ -267,12 +313,9 @@ def object_sysmeta(request, guid):
   try:
     f = open(sysmeta_path, 'r')
   except IOError as (errno, strerror):
-    sys_log.warning('Not able to open system metadata file: %s' % sysmeta_path)
-    sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+    err_msg = 'Not able to open system metadata file: %s\n' % sysmeta_path
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    util.raise_sys_log_http_404(err_msg)
 
   # The "pretty" parameter returns a pretty printed XML object for debugging.
   if 'pretty' in request.GET:
@@ -287,11 +330,11 @@ def object_sysmeta(request, guid):
 
   # If HEAD was requested, we don't include the body.
   if request.method != 'HEAD':
-    # Log access
+    # Log the access of the bytes of this object.
     access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
     response.write(body)
   else:
-    # Log access
+    # Log the access of the head of this object.
     access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
 
   return response
@@ -300,17 +343,14 @@ def object_sysmeta(request, guid):
 def object_sysmeta_put(request, guid):
   """Mark object as having been synchronized."""
 
+  sys_log.info('PUT')
+
   # Update db.
   try:
     o = models.Repository_object.objects.filter(associations_to__from_object__guid =
                                          guid)[0]
   except IndexError:
-    sys_log.warning('Non-existing metadata object was requested for update: %s'
-                    % guid)
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+    util.raise_sys_log_http_404('Non-existing metadata object was requested for update: %s' % guid)
   
   s = models.Sync()
   s.repository_object = o
@@ -319,20 +359,35 @@ def object_sysmeta_put(request, guid):
   # Update sysmeta xml.
   sysmeta.set_replication_status(guid, 'wer')
 
-  # Log access
+  # Log the update of this metadata object.
   access_log.log(guid, 'set_metadata', request.META['REMOTE_ADDR'])
 
   return HttpResponse('ok')
 
+
+# Access Log.
+
 @auth.cn_check_required
-def access_log_get(request):
+def access_log_view(request):
+  sys_log.info('/access_log/')
+
+  if request.method == 'GET':
+    return access_log_view_get(request)
+  
+  if request.method == 'HEAD':
+    return access_log_view_head(request)
+    
+  # Only GET and HEAD accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
+
+def access_log_view_get(request):
   """Get the access_log.
   
   getLogRecords(token, fromDate, toDate) → log
   """
 
-  sys_log.info('/access_log_get/')
-  
+  sys_log.info('GET')
+
   response = HttpResponse()
 
   # select objects ordered by mtime desc.
@@ -341,75 +396,46 @@ def access_log_get(request):
   # count for this type of objects.
   query_unsliced = query
 
-  # Skip top 'start' objects.
-  try:
-    start = int(request.GET['start'])
-  except KeyError:
-    start = 0
-  except ValueError:
-    sys_log.warning('Invalid start value: %s' % request.GET['start'])
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
-
-  # Limit the number objects returned to 'count'.
-  # None = All remaining objects.
-  # 0 = No objects
-  try:
-    count = int(request.GET['count'])
-  except KeyError:
-    count = None
-  except ValueError:
-    sys_log.warning('Invalid count value: %s' % request.GET['count'])
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
-
-  # If both start and count are present but set to 0, we just tweak the query
-  # so that it won't return any results.
-  if start == 0 and count == 0:
-    query = query.none()
-  # Handle variations of start and count. We need these because Python does not
-  # support three valued logic in expressions(which would cause an expression
-  # that includes None to be valid and evaluate to None). Note that a slice such
-  # as [value : None] is valid and equivalent to [value:]
-  elif start and count:
-    query = query[start : start + count]
-  elif start:
-    query = query[start:]
-  elif count:
-    query = query[:count]
-
   res = {}
   res['log'] = []
 
-  # Filter by last modified date.
-  query = query.filter(**util.build_date_range_filter(request, 'access_time', 'lastModified'))
+  # Filter by referenced object oclass.
+  if 'oclass' in request.GET:
+    query = util.add_wildcard_filter(query, 'repository_object__repository_object_class__name', request.GET['oclass'])
+    query_unsliced = query
+
+  # Filter by referenced object GUID.
+  if 'guid' in request.GET:
+    query = util.add_wildcard_filter(query, 'repository_object__guid', request.GET['guid'])
+    query_unsliced = query
   
+  # Filter by referenced object hash.
+  if 'hash' in request.GET:
+    query = util.add_wildcard_filter(query, 'repository_object__hash', request.GET['hash'])
+    query_unsliced = query
+
+  # Filter by referenced object last modified date.
+  query, changed = util.add_range_operator_filter(query, request, 'repository_object__object_mtime', 'lastModified')
+  if changed == True:
+    query_unsliced = query
+
+  # Filter by last accessed date.
+  query, changed = util.add_range_operator_filter(query, request, 'access_time', 'lastAccessed')
+  if changed == True:
+    query_unsliced = query
+
   # Filter by requestor.
   if 'requestor' in request.GET:
-    requestor = request.GET['requestor']
-    # Translate from DOS to SQL style wildcards.
-    requestor = re.sub(r'\?', '_', requestor)
-    requestor = re.sub(r'\*', '%', requestor)
-    # Django doesn't support "complex" LIKE queries, so we have to inject it.
-    # THIS CODE MAY BREAK SINCE IT USES FIXED TABLE NAMES
-    where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
-    query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
+    query = util.add_wildcard_filter(query, 'requestor_identity__requestor_identity', request.GET['requestor'])
+    query_unsliced = query
       
   # Filter by operation type.
-  #  query = query.filter(repository_object_class__name = oclass)
   if 'operation_type' in request.GET:
-    requestor = request.GET['operation_type']
-    # Translate from DOS to SQL style wildcards.
-    requestor = re.sub(r'\?', '_', requestor)
-    requestor = re.sub(r'\*', '%', requestor)
-    # Django doesn't support "complex" LIKE queries, so we have to inject it.
-    # THIS CODE MAY BREAK SINCE IT USES FIXED TABLE NAMES
-    where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
-    query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
+    query = util.add_wildcard_filter(query, 'operation_type__operation_type', request.GET['operation_type'])
+    query_unsliced = query
+
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)    
 
   for row in query:
     ob = {}
@@ -424,20 +450,26 @@ def access_log_get(request):
   res['count'] = query.count()
   res['total'] = query_unsliced.count()
 
-  # JSON encode the response.
-  # The "pretty" parameter generates pretty printed JSON.
+  # Serialize the response.
+  # The "pretty" parameter generates pretty printed response.
   if 'pretty' in request.GET:
-    body = '<pre>' + json.dumps(res, indent = 2) + '</pre>'
+    body = '<pre>' + serialize.serialize(res, 'xml', True) + '</pre>'
   else:
-    body = json.dumps(res)
+    body = serialize.serialize(res, 'xml')
 
   response.write(body)
 
   return response
 
+
+# Diagnostic / Debugging.
+
 @auth.cn_check_required
 def get_ip(request):
   """Get the client IP as seen from the server."""
   
-  return HttpResponse(request.META['REMOTE_ADDR'])
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
 
+  # Only GET accepted.
+  return HttpResponse(request.META['REMOTE_ADDR'])

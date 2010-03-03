@@ -24,10 +24,14 @@ import uuid
 
 # Django.
 from django.core.exceptions import ImproperlyConfigured
-from django.core.management.base import BaseCommand, NoArgsCommand, CommandError
-from django.http import HttpResponse, HttpResponseServerError
+from django.core.management.base import BaseCommand
+from django.core.management.base import NoArgsCommand
+from django.core.management.base import CommandError
+from django.http import HttpResponse
+from django.http import HttpResponseServerError
 from django.http import Http404
-from django.template import Context, loader
+from django.template import Context
+from django.template import loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
@@ -59,8 +63,9 @@ def populate_db():
     sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
     res = mn_service.sysmeta.generate(object_path, sysmeta_path)
     if not res:
-      logging.error('System Metadata generation failed for object: %s' % object_path)
-      raise Http404
+      util.raise_sys_log_http_404(
+        'System Metadata generation failed for object: %s' % object_path
+      )
 
   # Create db entry for sysmeta object.
     mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
