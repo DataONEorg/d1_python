@@ -11,9 +11,17 @@
 """
 
 # Stdlib.
+import sys
+import os
 import csv
 import StringIO
 import types
+import json
+
+try:
+  from functools import update_wrapper
+except ImportError:
+  from django.utils.functional import update_wrapper
 
 # 3rd party.
 # Lxml
@@ -24,34 +32,44 @@ except ImportError, e:
   sys_log.error('Try: sudo apt-get install python-lxml')
   sys.exit(1)
 
+import mimeparser
+
 # Django.
 from django.http import HttpResponseServerError
 from django.utils.html import escape
+from django.conf import settings
+from django.shortcuts import render_to_response
+from django.template import Context
+from django.template import RequestContext
 
 # App
 import settings
 import sys_log
 
+content_types = {
+  'application/json': serializer_json,
+  'text/csv': serializer_csv,
+  'text/xml': serializer_xml,
+  'application/rdf+xml': serializer_rdf_xml,
+}
 
-def serialize(obj, serialization_format, pretty=False):
-  """Serialize to JSON, CSV, XML or RDF XML.
+
+def content_negotiation_required(f):
+  """Decorator that parses the Accept header and sets a module variable to
+  the appropriate serializer function.
   """
 
-  # Branch out to specific serializers.
-  if serialization_format == 'json':
-    return to_json(obj, pretty)
-  if serialization_format == 'csv':
-    return to_csv(obj, pretty)
-  if serialization_format == 'xml':
-    return to_xml(obj, pretty)
-  if serialization_format == 'rdf_xml':
-    return to_rdf_xml(obj, pretty)
+  def wrap(request, *args, **kwargs):
+    global serializer
+    serializer = content_types[mimeparser.best_match(
+      content_types.keys(), request.META['HTTP_ACCEPT']
+    )]
+    return f(request, *args, **kwargs)
 
-  # Unknown serialization format.
-  sys_log.error(
-    'Internal server error: Unrecognized serialization format: %s' % serialization_format
-  )
-  return HttpResponseServerError()
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+
+  return wrap
 
 
 #{
@@ -70,7 +88,7 @@ def serialize(obj, serialization_format, pretty=False):
 #    ...
 #  ]
 #}
-def to_json(obj, pretty):
+def serializer_json(obj, pretty=False):
   """Serialize object to JSON.
   """
   if pretty:
@@ -82,7 +100,7 @@ def to_json(obj, pretty):
 # #<start>,<count>,<total>
 # 'guid',otype,hash,modified,size
 # <identifier>,<object class>,<SHA1 hash of object>,<date time last modified>,<byte size of object>
-def to_csv(obj, pretty):
+def serializer_csv(obj, pretty=False):
   """Serialize object to CSV.
   """
 
@@ -129,7 +147,7 @@ def to_csv(obj, pretty):
 #  </data>
 #  ...
 #</response>
-def to_xml(obj, pretty):
+def serializer_xml(obj, pretty=False):
   """Serialize object to XML.
   """
 
@@ -186,7 +204,7 @@ def to_xml(obj, pretty):
 #    </d1:data>
 #  </rdf:Description>
 #</rdf:RDF>
-def to_rdf_xml(obj, pretty):
+def serializer_rdf_xml(obj, pretty=False):
   """Serialize object to RDF XML.
   """
 

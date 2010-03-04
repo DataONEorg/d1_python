@@ -50,9 +50,12 @@ import sysmeta
 import access_log
 import serialize
 
+# Content negotiation.
+
 # Object Collection.
-  
+
 @auth.cn_check_required
+@serialize.content_negotiation_required
 def object_collection(request):
   """Handle /object/ collection."""
   
@@ -157,9 +160,9 @@ def object_collection_get(request):
   # Serialize the response.
   # The "pretty" parameter generates pretty response.
   if 'pretty' in request.GET:
-    body = '<pre>' + serialize.serialize(res, 'rdf_xml', True) + '</pre>'
+    body = '<pre>' + serialize.serializer(res, True) + '</pre>'
   else:
-    body = serialize.serialize(res, 'xml')
+    body = serialize.serializer(res)
 
   # Add header info about collection.
   db_status = models.Status.objects.all()[0]
@@ -188,6 +191,7 @@ def object_collection_head(request):
 # Object Contents.
 
 @auth.cn_check_required
+@serialize.content_negotiation_required
 def object_contents(request, guid):
   sys_log.info('/object_contents/')
 
@@ -269,6 +273,7 @@ def object_contents_head(request, guid):
 # Sysmeta.
 
 @auth.cn_check_required
+@serialize.content_negotiation_required
 def object_sysmeta(request, guid):
   sys_log.info('/object_sysmeta/')
 
@@ -368,6 +373,7 @@ def object_sysmeta_put(request, guid):
 # Access Log.
 
 @auth.cn_check_required
+@serialize.content_negotiation_required
 def access_log_view(request):
   sys_log.info('/access_log/')
 
@@ -453,9 +459,9 @@ def access_log_view_get(request):
   # Serialize the response.
   # The "pretty" parameter generates pretty printed response.
   if 'pretty' in request.GET:
-    body = '<pre>' + serialize.serialize(res, 'xml', True) + '</pre>'
+    body = '<pre>' + serialize.serializer(res, True) + '</pre>'
   else:
-    body = serialize.serialize(res, 'xml')
+    body = serialize.serializer(res)
 
   response.write(body)
 

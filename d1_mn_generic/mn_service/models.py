@@ -48,6 +48,9 @@ class Associations(models.Model):
   from_object = models.ForeignKey(Repository_object, related_name='associations_from')
   to_object = models.ForeignKey(Repository_object, related_name='associations_to')
 
+  class Meta:
+    unique_together = (('from_object', 'to_object'))
+
 
 class Sync(models.Model):
   """Synchronization status for MN objects"""

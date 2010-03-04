@@ -10,10 +10,13 @@
 .. moduleauthor:: Roger Dahl
 """
 
+# Stdlib.
+import os
+import sys
+
 # Django settings for mn_prototype project.
 
 # Discover the path of this module
-import os
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
 DEBUG = True
@@ -104,6 +107,16 @@ REPOSITORY_SYSMETA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'sysmeta'))
 LOG_PATH = _here('../mn_service.log')
 XSD_PATH = _here('../../schemas/coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
+
+sys.path.append(
+  os.path.abspath(
+    os.path.join(
+      os.path.dirname(
+        __file__
+      ), './mn_service/lib'
+    )
+  )
+)
 
 # CN IPs.
 CN_IP = [
