@@ -14,6 +14,19 @@
 import os
 import sys
 
+# Member Node configuration.
+
+MN_NAME = 'mn1.com'
+MN_IP = ['127.0.0.43']
+
+# CN IPs.
+CN_IP = [
+  '192.168.1.200', # CN1
+  '192.168.1.201', # CN2
+  '192.168.1.202', # CN3
+  '127.0.0.1'
+]
+
 # Django settings for mn_prototype project.
 
 # Discover the path of this module
@@ -117,11 +130,3 @@ sys.path.append(
     )
   )
 )
-
-# CN IPs.
-CN_IP = [
-  '192.168.1.200', # CN1
-  '192.168.1.201', # CN2
-  '192.168.1.202', # CN3
-  '127.0.0.1'
-]

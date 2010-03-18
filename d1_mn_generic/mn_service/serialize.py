@@ -35,7 +35,6 @@ except ImportError, e:
 import mimeparser
 
 # Django.
-from django.http import HttpResponseServerError
 from django.utils.html import escape
 from django.conf import settings
 from django.shortcuts import render_to_response
@@ -45,13 +44,7 @@ from django.template import RequestContext
 # App
 import settings
 import sys_log
-
-content_types = {
-  'application/json': serializer_json,
-  'text/csv': serializer_csv,
-  'text/xml': serializer_xml,
-  'application/rdf+xml': serializer_rdf_xml,
-}
+import util
 
 
 def content_negotiation_required(f):
@@ -61,9 +54,13 @@ def content_negotiation_required(f):
 
   def wrap(request, *args, **kwargs):
     global serializer
-    serializer = content_types[mimeparser.best_match(
-      content_types.keys(), request.META['HTTP_ACCEPT']
-    )]
+    # If no client does not supply HTTP_ACCEPT, we default to JSON.
+    if 'HTTP_ACCEPT' not in request.META:
+      serializer = serializer_json
+    else:
+      serializer = content_types[mimeparser.best_match(
+        content_types_pri, request.META['HTTP_ACCEPT']
+      )]
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -91,6 +88,7 @@ def content_negotiation_required(f):
 def serializer_json(obj, pretty=False):
   """Serialize object to JSON.
   """
+
   if pretty:
     return json.dumps(obj, indent=2)
   else:
@@ -106,7 +104,11 @@ def serializer_csv(obj, pretty=False):
 
   io = StringIO.StringIO()
   # Comment containint start, count and object.
-  io.write('#%d,%d,%d\n' % (obj['start'], obj['count'], obj['total']))
+  try:
+    io.write('#%d,%d,%d\n' % (obj['start'], obj['count'], obj['total']))
+  except KeyError:
+    # If start, count or total don't exist, we don't return any of them.
+    pass
 
   csv_writer = csv.writer(io, dialect=csv.excel, quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
@@ -157,14 +159,17 @@ def serializer_xml(obj, pretty=False):
   NSMAP = {'d1': RESPONSE_NS} # the default namespace
   xml = etree.Element(RESPONSE + 'response', nsmap=NSMAP)
 
-  start = etree.SubElement(xml, 'start')
-  start.text = unicode(obj['start'])
+  try:
+    start = etree.SubElement(xml, 'start')
+    count = etree.SubElement(xml, 'count')
+    total = etree.SubElement(xml, 'total')
 
-  start = etree.SubElement(xml, 'count')
-  start.text = unicode(obj['count'])
-
-  start = etree.SubElement(xml, 'total')
-  start.text = unicode(obj['total'])
+    start.text = unicode(obj['start'])
+    count.text = unicode(obj['count'])
+    total.text = unicode(obj['total'])
+  except KeyError:
+    # If start, count or total don't exist, we don't return any of them.
+    pass
 
   for d in obj['data']:
     data = etree.SubElement(xml, 'data')
@@ -219,14 +224,17 @@ def serializer_rdf_xml(obj, pretty=False):
   description = etree.SubElement(xml, RDF + 'Description')
   description.set(RDF + 'about', '_requesting URL_')
 
-  start = etree.SubElement(description, D1 + 'start')
-  start.text = unicode(obj['start'])
+  try:
+    start = etree.SubElement(description, D1 + 'start')
+    count = etree.SubElement(description, D1 + 'count')
+    total = etree.SubElement(description, D1 + 'total')
 
-  start = etree.SubElement(description, D1 + 'count')
-  start.text = unicode(obj['count'])
-
-  start = etree.SubElement(description, D1 + 'total')
-  start.text = unicode(obj['total'])
+    start.text = unicode(obj['start'])
+    count.text = unicode(obj['count'])
+    total.text = unicode(obj['total'])
+  except KeyError:
+    # If start, count or total don't exist, we don't return any of them.
+    pass
 
   description = etree.SubElement(xml, RDF + 'Description')
   description.set(RDF + 'about', 'http://mn1.dataone.org/object/_identifier_')
@@ -249,3 +257,13 @@ def serializer_rdf_xml(obj, pretty=False):
     )
   )
   return io.getvalue()
+
+
+content_types = {
+  'application/json': serializer_json,
+  'text/csv': serializer_csv,
+  'text/xml': serializer_xml,
+  'application/rdf+xml': serializer_rdf_xml,
+}
+
+content_types_pri = ('application/json', 'text/csv', 'text/xml', 'application/rdf+xml', )

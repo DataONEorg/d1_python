@@ -29,7 +29,7 @@ from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand
 from django.core.management.base import CommandError
 from django.http import HttpResponse
-from django.http import HttpResponseServerError
+from django.http import HttpResponseForbidden
 from django.http import Http404
 from django.template import Context
 from django.template import loader
@@ -57,6 +57,13 @@ import sysmeta
 import access_log
 
 
+def update_sysmeta():
+  """Update a sysmeta object and reverify it"""
+  # Log the update of this metadata object.
+  #access_log.log(guid, 'set_metadata', request.META['REMOTE_ADDR'])
+  pass
+
+
 class fixed_chunk_size_file_iterator(object):
   """Create a file iterator that iterates through file-like object using fixed
   size chunks.
@@ -77,11 +84,23 @@ class fixed_chunk_size_file_iterator(object):
     return self
 
 
-def raise_sys_log_http_404(err_msg):
+def raise_sys_log_http_404_not_found(err_msg):
   """Log message to system log and raise 404 with message.
   """
   sys_log.warning(err_msg)
   raise Http404(err_msg)
+
+
+def return_sys_log_http_403_forbidden(err_msg):
+  """Log message to system log and raise 403 with message.
+  """
+  sys_log.warning(err_msg)
+  return HttpResponseForbidden(err_msg)
+
+
+def return_sys_log_http_500_server_error(err_msg):
+  sys_log.error(err_msg)
+  return HttpResponseServerError(err_msg)
 
 
 def file_to_dict(path):
@@ -90,9 +109,9 @@ def file_to_dict(path):
   try:
     f = open(path, 'r')
   except IOError as (errno, strerror):
-    sys_log.error('Internal server error: Could not open: %s' % path)
-    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
-    return HttpResponseServerError()
+    err_msg = 'Internal server error: Could not open: %s\n' % path
+    err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
+    return_sys_log_http_500_server_error(err_msg)
 
   d = {}
 
@@ -124,18 +143,16 @@ def insert_association(guid1, guid2):
     o1 = models.Repository_object.objects.filter(guid=guid1)[0]
     o2 = models.Repository_object.objects.filter(guid=guid2)[0]
   except IndexError:
-    sys_log.error(
-      'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
-    )
-    return HttpResponseServerError()
+    err_msg = 'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
+    return_sys_log_http_500_server_error(err_msg)
 
-  association = models.Associations()
+  association = models.Repository_object_associations()
   association.from_object = o1
   association.to_object = o2
   association.save()
 
 
-def insert_object(object_class, guid, path):
+def insert_object(object_class_name, guid, path):
   """Insert object into db."""
 
   # How Django knows to UPDATE vs. INSERT
@@ -178,12 +195,11 @@ def insert_object(object_class, guid, path):
   # Set up the object class.
   c = models.Repository_object_class()
   try:
-    c.id = {'data': 1, 'metadata': 2, 'sysmeta': 3}[object_class]
-    c.name = object_class
-  except KeyError:
-    sys_log.error('Internal server error: Unknown object class: %s' % object_class)
-    return HttpResponseServerError()
-  c.save()
+    object_class = models.Repository_object_class.objects.filter(name=object_class_name
+                                                                 )[0]
+  except IndexError:
+    object_class = models.Repository_object_class()
+    object_class.name = object_class_name
 
   # Build object for this file and store it.
   o = models.Repository_object()

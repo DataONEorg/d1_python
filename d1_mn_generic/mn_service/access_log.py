@@ -12,7 +12,6 @@
 
 # Django.
 from django.http import HttpResponse
-from django.http import HttpResponseServerError
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -29,27 +28,31 @@ import sysmeta
 #import access_log
 
 
-def log(object_guid, operation_type, requestor_identity):
-  """Log an object access"""
+def log(guid, operation_type, requestor_identity):
+  """Log an object access."""
 
   try:
-    repository_object_row = models.Repository_object.objects.filter(guid=object_guid)[0]
+    repository_object_row = models.Repository_object.objects.filter(guid=guid)[0]
   except IndexError:
-    sys_log.error(
-      'Attempted to create access log for non-existing object: %s' % (object_guid)
-    )
-    raise Http404
-  except:
-    sys_log.error('Unexpected error: ', sys.exc_info()[0])
-    raise
+    err_msg = 'Attempted to create access log for non-existing object: %s' % (guid)
+    return_sys_log_http_500_server_error(err_msg)
 
-  operation_type_row = models.Access_operation_type()
-  operation_type_row.operation_type = operation_type
-  operation_type_row.save()
+  try:
+    operation_type_row = models.Access_log_operation_type.objects.filter(
+      operation_type=operation_type
+    )[0]
+  except IndexError:
+    operation_type_row.operation_type = operation_type
+    operation_type_row.save()
 
-  requestor_identity_row = models.Access_requestor_identity()
-  requestor_identity_row.requestor_identity = requestor_identity
-  requestor_identity_row.save()
+  try:
+    operation_type_row = models.Access_log_operation_type.objects.filter(
+      operation_type=operation_type
+    )[0]
+  except IndexError:
+    requestor_identity_row = models.Access_log_requestor_identity()
+    requestor_identity_row.requestor_identity = requestor_identity
+    requestor_identity_row.save()
 
   access_log_row = models.Access_log()
   access_log_row.operation_type = operation_type_row

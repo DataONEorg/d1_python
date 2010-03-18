@@ -24,7 +24,6 @@ import uuid
 
 # Django.
 from django.http import HttpResponse
-from django.http import HttpResponseServerError
 from django.http import HttpResponseNotAllowed
 from django.http import Http404
 from django.template import Context, loader
@@ -46,7 +45,6 @@ import settings
 import auth
 import sys_log
 import util
-import sysmeta
 import access_log
 import serialize
 
@@ -69,15 +67,6 @@ def object_collection(request):
   
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
-
-  # HTTP_ACCEPT is part of HTTP content negotiation. It can hold a list of
-  # strings for formats the client would like to receive. We should be going
-  # through the list and pick the first one we know. If we don't know any of
-  # them, we return JSON.
-  
-  # Disabled for easy testing from web browser.
-  #if request.META['HTTP_ACCEPT'] != 'application/json':
-  #  raise Http404
 
 def object_collection_get(request):
   """Get filtered list of objects."""
@@ -107,16 +96,16 @@ def object_collection_get(request):
     query = util.add_wildcard_filter(query, 'hash', request.GET['hash'])
     query_unsliced = query
 
+  # Filter by sync.
+  if 'sync' in request.GET:
+    if not request.GET['sync'] in ('0', '1'):
+      util.raise_sys_log_http_404_not_found('Invalid sync value requested: %s' % request.GET['sync'])
+    query = query.filter(sync__isnull = request.GET['sync'] == '0')
+
   # Filter by last modified date.
   query, changed = util.add_range_operator_filter(query, request, 'object_mtime', 'lastModified')
   if changed == True:
     query_unsliced = query
-
-  # Filter by sync.
-  if 'sync' in request.GET:
-    if not request.GET['sync'] in ('0', '1'):
-      util.raise_sys_log_http_404('Invalid sync value requested: %s' % request.GET['sync'])
-    query = query.filter(sync__isnull = request.GET['sync'] == '0')
 
   # Access Log based filters.
 
@@ -127,12 +116,12 @@ def object_collection_get(request):
 
   # Filter by requestor.
   if 'requestor' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__requestor', request.GET['requestor'])
+    query = util.add_wildcard_filter(query, 'access_log__requestor_identity__requestor_identity', request.GET['requestor'])
     query_unsliced = query
 
   # Filter by access operation type.
   if 'operationType' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__operation_type', request.GET['operationType'])
+    query = util.add_wildcard_filter(query, 'access_log__operation_type__operation_type', request.GET['operationType'])
     query_unsliced = query
 
   # Create a slice of a query based on request start and count parameters.
@@ -164,8 +153,12 @@ def object_collection_get(request):
   else:
     body = serialize.serializer(res)
 
-  # Add header info about collection.
-  db_status = models.Status.objects.all()[0]
+  # Add update status for collection.
+  try:
+    db_status = models.DB_update_status.objects.all()[0]
+  except IndexError:
+    util.return_sys_log_http_500_server_error('DB update status has not been set')
+    
   util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
               len(body), 'Some Content Type')
 
@@ -180,10 +173,14 @@ def object_collection_head(request):
 
   response = HttpResponse()
 
-  # Add header info about collection.
-  db_status = models.Status.objects.all()[0]
+  # Add update status for collection.
+  try:
+    db_status = models.DB_update_status.objects.all()[0]
+  except IndexError:
+    util.return_sys_log_http_500_server_error('DB update status has not been set')
+    
   util.add_header(response, datetime.datetime.isoformat(db_status.mtime),
-                  0, 'Some Content Type')
+              0, 'Some Content Type')
 
   return response
 
@@ -219,7 +216,7 @@ def object_contents_get(request, guid):
   try:
     path = query[0].path
   except IndexError:
-    util.raise_sys_log_http_404('Non-existing metadata object was requested: %s' % guid)
+    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
 
   # Log the access of this object.
   access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
@@ -230,7 +227,7 @@ def object_contents_get(request, guid):
   except IOError as (errno, strerror):
     err_msg = 'Expected file was not present: %s\n' % path
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.raise_sys_log_http_404(err_msg)
+    util.raise_sys_log_http_404_not_found(err_msg)
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_file_iterator(f))
@@ -250,7 +247,7 @@ def object_contents_head(request, guid):
   try:
     path = query[0].path
   except IndexError:
-    util.raise_sys_log_http_404('Non-existing metadata object was requested: %s' % guid)
+    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
 
   # Get size of object from file size.
   try:
@@ -258,7 +255,7 @@ def object_contents_head(request, guid):
   except IOError as (errno, strerror):
     err_msg = 'Could not get size of file: %s\n' % path
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.raise_sys_log_http_404(err_msg)
+    util.raise_sys_log_http_404_not_found(err_msg)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
@@ -310,7 +307,7 @@ def object_sysmeta_get(request, guid):
     sysmeta_path = query[0].path
   except IndexError:
     # exception MN_crud_0_3.NotFound
-    util.raise_sys_log_http_404('Non-existing metadata object was requested: %s' % guid)
+    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
 
   response = HttpResponse()
 
@@ -320,7 +317,7 @@ def object_sysmeta_get(request, guid):
   except IOError as (errno, strerror):
     err_msg = 'Not able to open system metadata file: %s\n' % sysmeta_path
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.raise_sys_log_http_404(err_msg)
+    util.raise_sys_log_http_404_not_found(err_msg)
 
   # The "pretty" parameter returns a pretty printed XML object for debugging.
   if 'pretty' in request.GET:
@@ -352,20 +349,27 @@ def object_sysmeta_put(request, guid):
 
   # Update db.
   try:
-    o = models.Repository_object.objects.filter(associations_to__from_object__guid =
-                                         guid)[0]
+    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
   except IndexError:
-    util.raise_sys_log_http_404('Non-existing metadata object was requested for update: %s' % guid)
+    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested for update: %s' % guid)
   
-  s = models.Sync()
-  s.repository_object = o
-  s.save()
+  try:
+    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
+  except IndexError:
+    sync_status = Repository_object_sync_status()
+    sync_status.status = 'successful'
+    sync_status.save()
+  
+  try:
+    sync = Repository_object_sync.objects.filter(repository_object = o)[0]
+  except IndexError:
+    sync = Repository_object_sync()
+  
+  sync.status = sync_status
+  sync.repository_object = o
+  sync.save()
 
-  # Update sysmeta xml.
-  sysmeta.set_replication_status(guid, 'wer')
-
-  # Log the update of this metadata object.
-  access_log.log(guid, 'set_metadata', request.META['REMOTE_ADDR'])
+  # TODO: Update sysmeta.
 
   return HttpResponse('ok')
 
@@ -468,9 +472,96 @@ def access_log_view_get(request):
   return response
 
 
+# Client interface.
+
+@auth.mn_check_required
+def client_register(request):
+  """Handle /client/register/"""
+  
+  sys_log.info('/client/register/')
+
+  if request.method == 'GET':
+    return client_register_get(request)
+    
+  # Only GET accepted.
+  return HttpResponseNotAllowed(['GET'])
+
+def client_register_get(request):
+  """Register an object."""
+
+  sys_log.info('GET')
+  
+  # Additional metadata provided by client:
+  #
+  # 0.3:
+  #  - Identifier
+  #  - ObjectFormat
+  #  - Size
+  #  - Checksum
+  #  - ChecksumAlgorithm
+  #
+  # 0.5:
+  #  - ReplicationPolicy
+  #  - EmbargoExpires
+  #  - AccessRule
+
+  # Make sure all required arguments are present.
+
+  required_args = [
+    'identifier',
+    'url',
+    'objectFormat',
+    'size',
+    'checksum',
+    'checksumAlgorithm'
+  ]
+
+  missing_args = []
+  for arg in required_args:
+    if arg not in request.GET:
+      missing_args.append(arg)
+
+  if len(missing_args) > 0:
+    util.raise_sys_log_http_404_not_found('Missing required argument(s): %s' % ', '.join(missing))
+  
+  # Register object in queue.
+  
+  try:
+    status = models.Registration_queue_status.objects.filter(status = 'Queued')[0]
+  except IndexError:
+    status = models.Registration_queue_status()
+    status.status = 'Queued'
+    status.save()
+    
+  try:
+    format = models.Registration_queue_format.objects.filter(format = request.GET['objectFormat'])[0]
+  except IndexError:
+    format = models.Registration_queue_format()
+    format.format = request.GET['objectFormat']
+    format.save()
+    
+  try:
+    checksum_algorithm = models.Registration_queue_checksum_algorithm.objects.filter(checksum_algorithm = request.GET['checksumAlgorithm'])[0]
+  except IndexError:
+    checksum_algorithm = models.Registration_queue_checksum_algorithm()
+    checksum_algorithm.checksum_algorithm = request.GET['checksumAlgorithm']
+    checksum_algorithm.save()
+
+  queue = models.Registration_queue_work_queue()
+  queue.status = status
+  queue.format = format
+  queue.checksum_algorithm = checksum_algorithm
+  
+  queue.identifier = request.GET['identifier']
+  queue.url = request.GET['url']
+  queue.size = request.GET['size']
+  queue.checksum = request.GET['checksum']
+  queue.save()
+  
+  return HttpResponse('Queued OK')
+
 # Diagnostic / Debugging.
 
-@auth.cn_check_required
 def get_ip(request):
   """Get the client IP as seen from the server."""
   
@@ -479,3 +570,77 @@ def get_ip(request):
 
   # Only GET accepted.
   return HttpResponse(request.META['REMOTE_ADDR'])
+
+@serialize.content_negotiation_required
+def queue(request):
+  """Handle /queue/ collection."""
+  
+  sys_log.info('/queue/')
+
+  if request.method == 'GET':
+    return queue_get(request)
+    
+  # Only GET accepted.
+  return HttpResponseNotAllowed(['GET'])
+
+@serialize.content_negotiation_required
+def queue_clear(request):
+  """Handle /queue/clear/ call."""
+  
+  sys_log.info('/queue/clear/')
+
+  if request.method == 'GET':
+    return queue_clear_get(request)
+    
+  # Only GET accepted.
+  return HttpResponseNotAllowed(['GET'])
+
+def queue_clear_get(request):
+  """Clear the registration queue."""
+  
+  models.Registration_queue_status.objects.all().delete()
+  models.Registration_queue_format.objects.all().delete()
+  models.Registration_queue_checksum_algorithm.objects.all().delete()
+  models.Registration_queue_work_queue.objects.all().delete()
+
+  return HttpResponse('Successful')
+  
+def queue_get(request):
+  """Get queue."""
+
+  sys_log.info('GET')
+  
+  response = HttpResponse()
+
+  # select objects ordered by mtime desc.
+  query = models.Registration_queue_work_queue.objects.order_by('-pk')
+  
+  res = {}
+  res['data'] = []
+    
+  for row in query:
+    o = {}
+    o['status'] = row.status.status
+    o['identifier'] = row.identifier
+    o['url'] = row.url
+    o['format'] = row.format.format
+    o['size'] = row.size
+    o['checksum'] = row.checksum
+    o['checksum_algorithm'] = row.checksum_algorithm.checksum_algorithm
+    o['timestamp'] = row.timestamp
+
+    # Append object to response.
+    res['data'].append(o)
+
+  res['count'] = query.count()
+
+  # Serialize the response.
+  # The "pretty" parameter generates pretty response.
+  if 'pretty' in request.GET:
+    body = '<pre>' + serialize.serializer(res, True) + '</pre>'
+  else:
+    body = serialize.serializer(res)
+
+  response.write(body)
+  
+  return response

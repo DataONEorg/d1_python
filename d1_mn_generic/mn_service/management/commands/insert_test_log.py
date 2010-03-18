@@ -29,7 +29,6 @@ from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand
 from django.core.management.base import CommandError
 from django.http import HttpResponse
-from django.http import HttpResponseServerError
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -58,6 +57,8 @@ class Command(NoArgsCommand):
 
     # Clear out existing log entries.
     mn_service.models.Access_log.objects.all().delete()
+    mn_service.models.Access_log_operation_type.objects.all().delete()
+    mn_service.models.Access_log_requestor_identity.objects.all().delete()
 
     # We use a fixed seed, so that the access log is the same each time to make
     # testing easier.
