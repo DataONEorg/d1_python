@@ -117,8 +117,8 @@ REPOSITORY_DATA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'data'))
 REPOSITORY_METADATA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'metadata'))
 REPOSITORY_SYSMETA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'sysmeta'))
 
-LOG_PATH = _here('../mn_service.log')
-XSD_PATH = _here('../../schemas/coordinating_node_sysmeta.xsd')
+LOG_PATH = _here('./mn_service.log')
+XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
 sys.path.append(
