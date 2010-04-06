@@ -22,6 +22,7 @@ import json
 import hashlib
 import uuid
 import exceptions
+import traceback
 
 # Django.
 from django.core.exceptions import ImproperlyConfigured
@@ -53,15 +54,42 @@ import settings
 import auth
 import sys_log
 import util
-import sysmeta
 import access_log
 
 
-def update_sysmeta():
-  """Update a sysmeta object and reverify it"""
-  # Log the update of this metadata object.
-  #access_log.log(guid, 'set_metadata', request.META['REMOTE_ADDR'])
-  pass
+def log_exception(max_traceback_levels=5):
+  exc_class, exc_msgs, exc_traceback = sys.exc_info()
+  try:
+    exc_args = exc_msgs.__dict__["args"]
+  except KeyError:
+    exc_args = "<no args>"
+  exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
+  logging.error('Exception:')
+  logging.error('  Name: %s' % exc_class.__name__)
+  logging.error('  Args: %s' % exc_args)
+  logging.error('  Traceback: %s' % exc_formatted_traceback)
+
+
+def clear_db():
+  """Clear the database. Used for testing and debugging.
+  """
+
+  models.DB_update_status.objects.all().delete()
+
+  models.Access_log.objects.all().delete()
+  models.Access_log_operation_type.objects.all().delete()
+  models.Access_log_requestor_identity.objects.all().delete()
+
+  models.Repository_object_sync.objects.all().delete()
+  models.Repository_object_sync_status.objects.all().delete()
+  models.Repository_object_associations.objects.all().delete()
+  models.Repository_object.objects.all().delete()
+  models.Repository_object_class.objects.all().delete()
+
+  models.Registration_queue_work_queue.objects.all().delete()
+  models.Registration_queue_status.objects.all().delete()
+  models.Registration_queue_format.objects.all().delete()
+  models.Checksum_algorithm.objects.all().delete()
 
 
 class fixed_chunk_size_file_iterator(object):
@@ -152,7 +180,7 @@ def insert_association(guid1, guid2):
   association.save()
 
 
-def insert_object(object_class_name, guid, path):
+def insert_file_object(object_class_name, guid, path):
   """Insert object into db."""
 
   # How Django knows to UPDATE vs. INSERT
@@ -203,7 +231,7 @@ def insert_object(object_class_name, guid, path):
 
   # Build object for this file and store it.
   o = models.Repository_object()
-  o.path = path
+  o.url = url
   o.guid = guid
   o.repository_object_class = c
   o.hash = hash.hexdigest()

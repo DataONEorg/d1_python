@@ -54,10 +54,13 @@ def content_negotiation_required(f):
 
   def wrap(request, *args, **kwargs):
     global serializer
+
     # If no client does not supply HTTP_ACCEPT, we default to JSON.
     if 'HTTP_ACCEPT' not in request.META:
+      sys_log.debug('No HTTP_ACCEPT header')
       serializer = serializer_json
     else:
+      sys_log.debug(request.META['HTTP_ACCEPT'])
       serializer = content_types[mimeparser.best_match(
         content_types_pri, request.META['HTTP_ACCEPT']
       )]

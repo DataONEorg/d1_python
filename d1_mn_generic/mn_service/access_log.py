@@ -23,9 +23,6 @@ import settings
 import auth
 import sys_log
 import util
-import sysmeta
-
-#import access_log
 
 
 def log(guid, operation_type, requestor_identity):

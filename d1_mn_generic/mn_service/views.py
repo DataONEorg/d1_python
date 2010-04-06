@@ -133,10 +133,12 @@ def object_collection_get(request):
   for row in query:
     ob = {}
     ob['guid'] = row.guid
+    ob['url'] = row.url
     ob['oclass'] = row.repository_object_class.name
     ob['hash'] = row.hash
     # Get modified date in an ISO 8601 string.
     ob['modified'] = datetime.datetime.isoformat(row.object_mtime)
+    ob['inserted'] = datetime.datetime.isoformat(row.db_mtime)
     ob['size'] = row.size
 
     # Append object to response.
@@ -214,7 +216,7 @@ def object_contents_get(request, guid):
   # Find object based on guid.
   query = models.Repository_object.objects.filter(guid = guid)
   try:
-    path = query[0].path
+    url = query[0].url
   except IndexError:
     util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
 
@@ -225,7 +227,7 @@ def object_contents_get(request, guid):
   try:
     f = open(os.path.join(path), 'rb')
   except IOError as (errno, strerror):
-    err_msg = 'Expected file was not present: %s\n' % path
+    err_msg = 'Expected file was not present: %s\n' % url
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     util.raise_sys_log_http_404_not_found(err_msg)
 
@@ -245,15 +247,15 @@ def object_contents_head(request, guid):
   # Find object based on guid.
   query = models.Repository_object.objects.filter(guid = guid)
   try:
-    path = query[0].path
+    url = query[0].url
   except IndexError:
     util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
 
   # Get size of object from file size.
   try:
-    size = os.path.getsize(path)
+    size = os.path.getsize(url)
   except IOError as (errno, strerror):
-    err_msg = 'Could not get size of file: %s\n' % path
+    err_msg = 'Could not get size of file: %s\n' % url
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     util.raise_sys_log_http_404_not_found(err_msg)
 
@@ -280,11 +282,11 @@ def object_sysmeta(request, guid):
   if request.method != 'HEAD':
     return object_sysmeta_head(request, guid)
 
-  if request.method == 'PUT':
-    return object_sysmeta_put(request, guid)  
+  #if request.method == 'PUT':
+  #  return object_sysmeta_put(request, guid)  
 
-  # Only GET, HEAD and PUT accepted.
-  return HttpResponseNotAllowed(['GET', 'HEAD', 'PUT'])
+  # Only GET and HEAD accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
   
 def object_sysmeta_get(request, guid):
   sys_log.info('GET %s' % guid)
@@ -302,76 +304,76 @@ def object_sysmeta_get(request, guid):
   # Handle GET and HEAD. We handle these in the same function because they
   # are almost identical.
 
-  try:
-    query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
-    sysmeta_path = query[0].path
-  except IndexError:
-    # exception MN_crud_0_3.NotFound
-    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
-
-  response = HttpResponse()
-
-  # Read sysmeta object.
-  try:
-    f = open(sysmeta_path, 'r')
-  except IOError as (errno, strerror):
-    err_msg = 'Not able to open system metadata file: %s\n' % sysmeta_path
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.raise_sys_log_http_404_not_found(err_msg)
-
-  # The "pretty" parameter returns a pretty printed XML object for debugging.
-  if 'pretty' in request.GET:
-    body = '<pre>' + escape(f.read()) + '</pre>'
-  else:
-    body = f.read()
-  f.close()
-
-  # Add header info about object.
-  util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
-              len(body), 'Some Content Type')
-
-  # If HEAD was requested, we don't include the body.
-  if request.method != 'HEAD':
-    # Log the access of the bytes of this object.
-    access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
-    response.write(body)
-  else:
-    # Log the access of the head of this object.
-    access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
+  #try:
+  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
+  #  sysmeta_url = query[0].url
+  #except IndexError:
+  #  # exception MN_crud_0_3.NotFound
+  #  util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested: %s' % guid)
+  #
+  #response = HttpResponse()
+  #
+  ## Read sysmeta object.
+  #try:
+  #  f = open(sysmeta_url, 'r')
+  #except IOError as (errno, strerror):
+  #  err_msg = 'Not able to open system metadata file: %s\n' % sysmeta_url
+  #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+  #  util.raise_sys_log_http_404_not_found(err_msg)
+  #
+  ## The "pretty" parameter returns a pretty printed XML object for debugging.
+  #if 'pretty' in request.GET:
+  #  body = '<pre>' + escape(f.read()) + '</pre>'
+  #else:
+  #  body = f.read()
+  #f.close()
+  #
+  ## Add header info about object.
+  #util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+  #            len(body), 'Some Content Type')
+  #
+  ## If HEAD was requested, we don't include the body.
+  #if request.method != 'HEAD':
+  #  # Log the access of the bytes of this object.
+  #  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+  #  response.write(body)
+  #else:
+  #  # Log the access of the head of this object.
+  #  access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
 
   return response
 
-# cn_check_required is not required.
-def object_sysmeta_put(request, guid):
-  """Mark object as having been synchronized."""
-
-  sys_log.info('PUT')
-
-  # Update db.
-  try:
-    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
-  except IndexError:
-    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested for update: %s' % guid)
-  
-  try:
-    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
-  except IndexError:
-    sync_status = Repository_object_sync_status()
-    sync_status.status = 'successful'
-    sync_status.save()
-  
-  try:
-    sync = Repository_object_sync.objects.filter(repository_object = o)[0]
-  except IndexError:
-    sync = Repository_object_sync()
-  
-  sync.status = sync_status
-  sync.repository_object = o
-  sync.save()
-
-  # TODO: Update sysmeta.
-
-  return HttpResponse('ok')
+## cn_check_required is not required.
+#def object_sysmeta_put(request, guid):
+#  """Mark object as having been synchronized."""
+#
+#  sys_log.info('PUT')
+#
+#  # Update db.
+#  try:
+#    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
+#  except IndexError:
+#    util.raise_sys_log_http_404_not_found('Non-existing metadata object was requested for update: %s' % guid)
+#  
+#  try:
+#    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
+#  except IndexError:
+#    sync_status = Repository_object_sync_status()
+#    sync_status.status = 'successful'
+#    sync_status.save()
+#  
+#  try:
+#    sync = Repository_object_sync.objects.filter(repository_object = o)[0]
+#  except IndexError:
+#    sync = Repository_object_sync()
+#  
+#  sync.status = sync_status
+#  sync.repository_object = o
+#  sync.save()
+#
+#  # TODO: Update sysmeta.
+#
+#  return HttpResponse('ok')
 
 
 # Access Log.
@@ -525,33 +527,10 @@ def client_register_get(request):
     util.raise_sys_log_http_404_not_found('Missing required argument(s): %s' % ', '.join(missing))
   
   # Register object in queue.
-  
-  try:
-    status = models.Registration_queue_status.objects.filter(status = 'Queued')[0]
-  except IndexError:
-    status = models.Registration_queue_status()
-    status.status = 'Queued'
-    status.save()
-    
-  try:
-    format = models.Registration_queue_format.objects.filter(format = request.GET['objectFormat'])[0]
-  except IndexError:
-    format = models.Registration_queue_format()
-    format.format = request.GET['objectFormat']
-    format.save()
-    
-  try:
-    checksum_algorithm = models.Registration_queue_checksum_algorithm.objects.filter(checksum_algorithm = request.GET['checksumAlgorithm'])[0]
-  except IndexError:
-    checksum_algorithm = models.Registration_queue_checksum_algorithm()
-    checksum_algorithm.checksum_algorithm = request.GET['checksumAlgorithm']
-    checksum_algorithm.save()
-
   queue = models.Registration_queue_work_queue()
-  queue.status = status
-  queue.format = format
-  queue.checksum_algorithm = checksum_algorithm
-  
+  queue.set_status('Queued')
+  queue.set_format(request.GET['objectFormat'])
+  queue.set_checksum_algorithm(request.GET['checksumAlgorithm'])
   queue.identifier = request.GET['identifier']
   queue.url = request.GET['url']
   queue.size = request.GET['size']
@@ -600,7 +579,7 @@ def queue_clear_get(request):
   
   models.Registration_queue_status.objects.all().delete()
   models.Registration_queue_format.objects.all().delete()
-  models.Registration_queue_checksum_algorithm.objects.all().delete()
+  models.Checksum_algorithm.objects.all().delete()
   models.Registration_queue_work_queue.objects.all().delete()
 
   return HttpResponse('Successful')

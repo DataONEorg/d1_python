@@ -43,7 +43,6 @@ import mn_service.models
 import mn_service.auth
 import mn_service.sys_log
 import mn_service.util
-import mn_service.sysmeta
 import mn_service.access_log
 
 import site_specific
@@ -75,11 +74,6 @@ class Command(NoArgsCommand):
         # requestor.
         if random.random() > 0.3:
           mn_service.access_log.log(repository_object.guid, 'get_head', requestor)
-        # Insert a "set_metadata" access log entry for some metadata objects for
-        # this requestor.
-        if random.random(
-        ) > 0.3 and repository_object.repository_object_class.name == 'metadata':
-          mn_service.access_log.log(repository_object.guid, 'set_metadata', requestor)
 
         # Set up fixed datetimes.
     query = mn_service.models.Access_log.objects.all()

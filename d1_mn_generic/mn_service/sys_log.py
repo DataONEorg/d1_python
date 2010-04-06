@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """:mod:`sys_log` -- System Logging
-===============================
+===================================
 
 :module: sys_log
 :platform: Linux

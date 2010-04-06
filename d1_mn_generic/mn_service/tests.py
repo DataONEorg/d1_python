@@ -21,13 +21,13 @@ from django.test import TestCase
 # App.
 import settings
 import util
-import sysmeta
+#import sysmeta
 
 # Constants related to simulated MN object collection.
 mn_objects_total = 354
 mn_objects_total_data = 100
 mn_objects_total_metadata = 77
-mn_objects_total_sysmeta= 177
+#mn_objects_total_sysmeta= 177
 mn_objects_guid_startswith_1 = 18
 mn_objects_hash_startswith_1 = 21
 mn_objects_guid_and_hash_startswith_1 = 2
@@ -341,38 +341,38 @@ class mn_service_tests(TestCase):
     response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 404)
 
-  def test_rest_call_sysmeta_by_object_guid_get(self):
-    """Test call:
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
-    """
-    
-    response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
-    self.failUnlessEqual(response.status_code, 200)
-    self.check_response_headers_present(response)
-    # Check that this sysmeta validates against the schema.
-    try:
-      xsd_file = open(settings.XSD_PATH, 'r')
-    except IOError as (errno, strerror):
-      sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
-      sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
-      return
-    except:
-      sys_log.error('Unexpected error: ', sys.exc_info()[0])
-      raise
-
-    xmlschema_doc = sysmeta.etree.parse(settings.XSD_PATH)
-    xmlschema = sysmeta.etree.XMLSchema(xmlschema_doc)
-    xml = sysmeta.etree.parse(StringIO.StringIO(response.content))
-    xmlschema.assertValid(xml)
-    self.failUnlessEqual(xmlschema.validate(xml), True)
-
-  def test_rest_call_sysmeta_by_object_guid_404_get(self):
-    """Test call:
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
-    """
-    
-    response = self.client.get('/mn/object/invalid_guid/meta', {}, HTTP_ACCEPT = 'application/json')
-    self.failUnlessEqual(response.status_code, 404)
+  #def test_rest_call_sysmeta_by_object_guid_get(self):
+  #  """Test call:
+  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+  #  """
+  #  
+  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
+  #  self.failUnlessEqual(response.status_code, 200)
+  #  self.check_response_headers_present(response)
+  #  # Check that this sysmeta validates against the schema.
+  #  try:
+  #    xsd_file = open(settings.XSD_PATH, 'r')
+  #  except IOError as (errno, strerror):
+  #    sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
+  #    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
+  #    return
+  #  except:
+  #    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+  #    raise
+  #
+  #  xmlschema_doc = sysmeta.etree.parse(settings.XSD_PATH)
+  #  xmlschema = sysmeta.etree.XMLSchema(xmlschema_doc)
+  #  xml = sysmeta.etree.parse(StringIO.StringIO(response.content))
+  #  xmlschema.assertValid(xml)
+  #  self.failUnlessEqual(xmlschema.validate(xml), True)
+  #
+  #def test_rest_call_sysmeta_by_object_guid_404_get(self):
+  #  """Test call:
+  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
+  #  """
+  #  
+  #  response = self.client.get('/mn/object/invalid_guid/meta', {}, HTTP_ACCEPT = 'application/json')
+  #  self.failUnlessEqual(response.status_code, 404)
 
   #
   # /object/ specific object calls.
@@ -410,8 +410,8 @@ class mn_service_tests(TestCase):
   #  response = self.client.put('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
   #  self.failUnlessEqual(response.status_code, 200)
 
-  def test_s(self):
-    sysmeta.set_replication_status('fedd5f19-9ca3-45a6-91a4-c247322c98e9', 'test')
+  #def test_s(self):
+  #  sysmeta.set_replication_status('fedd5f19-9ca3-45a6-91a4-c247322c98e9', 'test')
 
   #
   # Authentication.

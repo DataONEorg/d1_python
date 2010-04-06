@@ -19,10 +19,12 @@ admin.autodiscover()
 urlpatterns = patterns(
   'mn_prototype.mn_service.views',
   # CN interface.
+
   # /object/
   (r'^object/$', 'object_collection'),
   (r'^object/(.*)$', 'object_contents'),
   (r'^object/(.*)/meta$', 'object_sysmeta'),
+
   # /log/
   (r'^log/$', 'access_log_view'),
 

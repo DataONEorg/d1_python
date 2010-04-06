@@ -29,3 +29,307 @@ urlpatterns = patterns(
   # Uncomment the next line to enable the admin:
   # (r'^admin/', include(admin.site.urls)),
 )
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
+# Create system metadata object.
+#register_object_create_sysmeta(item, object_tree, object_contents)
+
+#  
+#  # Create sysmeta for object.
+#  sysmeta_guid = str(uuid.uuid4())
+#  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+#  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+#  if not res:
+#    util.raise_sys_log_http_404_not_found('System Metadata generation failed for object: %s' % object_path)
+# 
+#  # Create db entry for sysmeta object.
+#  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+#
+#  # Create association between sysmeta and regular object.
+#  mn_service.util.insert_association(object_guid, sysmeta_guid)
