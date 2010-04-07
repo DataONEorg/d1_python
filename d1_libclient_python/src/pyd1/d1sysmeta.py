@@ -13,9 +13,24 @@ Module pyd1.d1sysmeta
   - lxml, (optional) a python binding for libxml2 and libxslt available from 
     http://codespeak.net/lxml/  required for validation against schemas and for 
     pretty printing
+
+This module implements a wrapper that makes it a bit simpler to pull values from
+an instance of SystemMetadata.
+
+Example:
+  >>> target = "http://localhost:8000/mn"
+  >>> from pyd1 import d1client
+  >>> cli = d1client.DataOneClient()
+  >>> objects = cli.listObjects(target=target,count=3)
+  >>> objects['data'][0]['guid']
+  u'02c3f67e-b2e1-4550-8fae-f6d90e9f15f6'
+  >>> sysm = cli.getSystemMetadata(objects['data'][0]['guid'], target=target)
+  >>> sysm.Checksum
+  '2e01e17467891f7c933dbaa00e1459d23db3fe4f'
 '''
 
 import logging
+import sys
 from dateutil.parser import parse as parseDateString
 try:
   import xml.etree.cElementTree as ET
@@ -24,20 +39,9 @@ except:
 from pyd1 import d1const
 
 
-class D1SystemMetadata(object):
+class SystemMetadata(object):
   '''Wrapper around a system metadata entry.  Provides convenience properties
   for accessing the parsed content of the document.
-  
-  Example:
-    >>> target = "http://localhost:8000/mn"
-    >>> from pyd1 import d1client
-    >>> cli = d1client.D1Client()
-    >>> objects = cli.listObjects(target=target,count=3)
-    >>> objects['data'][0]['guid']
-    u'02c3f67e-b2e1-4550-8fae-f6d90e9f15f6'
-    >>> sysm = cli.getSystemMetadata(objects['data'][0]['guid'], target=target)
-    >>> sysm.Checksum
-    '2e01e17467891f7c933dbaa00e1459d23db3fe4f'
   '''
 
   def __init__(self, xmldoc):
@@ -122,151 +126,139 @@ class D1SystemMetadata(object):
 
   ## General properties
   @property
-  def Identifier(self):
+  def identifier(self):
     ''':rtype: (unicode) The identifier of the object described by this sysmeta
     '''
-    return self._getValues(u'Identifier')
+    return self._getValues(sys._getframe().f_code.co_name)
 
   @property
-  def Created(self):
+  def dateUploaded(self):
     ''':rtype: (DateTime)
     '''
-    return parseDateString(self._getValues(u'Created'))
+    return parseDateString(self._getValues(u'dateUploaded'))
 
   @property
-  def Expires(self):
+  def dateSysMetadataModified(self):
     ''':rtype: (DateTime or None)
     '''
     try:
-      return parseDateString(self._getValues(u'Expires'))
+      return parseDateString(self._getValues(u'dateSysMetadataModified'))
     except:
       pass
     return None
 
   @property
-  def SysMetadataCreated(self):
-    ''':rtype: (DateTime)
-    '''
-    return parseDateString(self._getValues(u'SysMetadataCreated'))
-
-  @property
-  def SysMetadataModified(self):
-    ''':rtype: (DateTime)
-    '''
-    return parseDateString(self._getValues(u'SysMetadataModified'))
-
-  @property
-  def ObjectFormat(self):
+  def objectFormat(self):
     ''':rtype: (unicode)
     '''
-    return self._getValues(u'ObjectFormat')
+    return self._getValues(u'objectFormat')
 
   @property
-  def Size(self):
+  def size(self):
     ''':rtype: (integer) The reported size of the object from the sysmeta
     '''
-    return int(self._getValues(u'Size'))
+    return int(self._getValues(sys._getframe().f_code.co_name))
 
   ## Provenance properties
   @property
-  def Submitter(self):
+  def submitter(self):
     ''':rtype: (unicode)
     '''
-    return self._getValues(u'Submitter')
+    return self._getValues(u'submitter')
 
   @property
-  def RightsHolder(self):
+  def rightsHolder(self):
     ''':rtype: (unicode)
     '''
-    return self._getValues(u'RightsHolder')
+    return self._getValues(u'rightsHolder')
 
   @property
-  def OriginMemberNode(self):
+  def originMemberNode(self):
     ''':rtype: (unicode)
     '''
-    return self._getValues(u'OriginMemberNode')
+    return self._getValues(u'originMemberNode')
 
   @property
-  def AuthoritativeMemberNode(self):
+  def authoritativeMemberNode(self):
     ''':rtype: (unicode)
     '''
-    return self._getValues(u'AuthoritativeMemberNode')
+    return self._getValues(u'authoritativeMemberNode')
 
   @property
-  def Obsoletes(self):
+  def obsoletes(self):
     ''':rtype: (list of unicode)
     '''
-    return self._getValues(u'Obsoletes', multiple=True)
+    return self._getValues(u'obsoletes', multiple=True)
 
   @property
-  def ObsoletedBy(self):
+  def obsoletedBy(self):
     ''':rtype: (list of unicode)
     '''
-    return self._getValues(u'ObsoletedBy', multiple=True)
+    return self._getValues(u'obsoletedBy', multiple=True)
 
   @property
-  def DerivedFrome(self):
+  def derivedFrome(self):
     ''':rtype: (list of unicode)
     '''
-    return self._getValues(u'DerivedFrom', multiple=True)
+    return self._getValues(u'derivedFrom', multiple=True)
 
   @property
-  def Describes(self):
+  def describes(self):
     ''':rtype: (list of unicode)
     '''
-    return self._getValues(u'Describes', multiple=True)
+    return self._getValues(u'describes', multiple=True)
 
   @property
-  def DescribedBy(self):
+  def describedBy(self):
     ''':rtype: (lsit of unicode)
     '''
-    return self._getValues(u'DescribedBy', multiple=True)
+    return self._getValues(u'describedBy', multiple=True)
 
   ## Replication properties
   @property
-  def Replica(self):
+  def replica(self):
     ''':rtype: (list of dictionaries)  Each entry contains replica details
     '''
     result = []
-    replicas = self.etree.findall(u'Replica')
+    replicas = self.etree.findall(u'replica')
     for replica in replicas:
       entry = {}
-      entry['ReplicaMemberNode'] = self._getValues(u'ReplicaMemberNode', replica)
-      entry['ReplicationStatus'] = self._getValues(u'ReplicationStatus', replica)
-      entry['ReplicaVerified'] = self._getValues(u'ReplicaVerified', replica)
-      entry['ReplicationPolicy'] = self._getValues(u'ReplicationPolicy', replica)
+      entry['replicaMemberNode'] = self._getValues(u'replicaMemberNode', replica)
+      entry['replicationStatus'] = self._getValues(u'replicationStatus', replica)
+      entry['replicaVerified'] = self._getValues(u'replicaVerified', replica)
+      entry['replicationPolicy'] = self._getValues(u'replicationPolicy', replica)
       result.append(entry)
     return result
 
   ## Data Consistency properties
   @property
-  def Checksum(self):
+  def checksum(self):
     ''':rtype: (unicode) The checksum for the object.
     '''
-    return self._getValues(u'Checksum')
+    return self._getValues(u'checksum')
 
   @property
-  def ChecksumAlgorthm(self):
+  def checksumAlgorthm(self):
     ''':rtype: (unicode) The checksum for the object.
     '''
-    return self._getValues(u'ChecksumAlgorithm')
+    return self._getValues(u'checksumAlgorithm')
 
   ## Access control properties
   @property
-  def EmbargoExpires(self):
+  def embargoExpires(self):
     ''':rtype: (DateTime or None)
     '''
     try:
-      return parseDateString(self._getValues(u'EmbargoExpires'))
+      return parseDateString(self._getValues(u'embargoExpires'))
     except:
       pass
     return None
 
   @property
-  def AccessRule(self):
+  def accessRule(self):
     ''':rtype: (list of 3-tuple) [(type, service, principal), ... ]
     '''
-    entries = self._getValues(u'AccessRule', multiple=True)
+    entries = self._getValues(u'accessRule', multiple=True)
     results = []
     for entry in entries:
       values = entry.split(u",")

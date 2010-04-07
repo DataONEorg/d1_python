@@ -1,5 +1,5 @@
 '''
-Unit tests for pyd1.client
+Unit tests for pyd1.d1client
 
 :Author: Dave Vieglais
 
@@ -12,104 +12,20 @@ Unit tests for pyd1.client
 import unittest
 import logging
 import urlparse
+import urllib2
 from xml.dom.minidom import parseString
 import lxml
+try:
+  import cjson as json
+except:
+  import json
 from pyd1 import d1const
 from pyd1 import d1client
 from pyd1 import d1sysmeta
 from pyd1 import d1exceptions
 
-TEST_EG_SYSMETA = '''<?xml version="1.0" encoding="UTF-8"?>
-<d1:SystemMetadata xmlns:d1="http://dataone.org/coordinating_node_sysmeta_0.1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://dataone.org/coordinating_node_sysmeta_0.1 https://repository.dataone.org/software/cicore/trunk/schemas/coordinating_node_sysmeta.xsd">
-    <Identifier>Identifier0</Identifier>
-    <Created>2006-05-04T18:13:51.0Z</Created>
-    <Expires>2006-05-04T18:13:51.0Z</Expires>
-    <SysMetadataCreated>2006-05-04T18:13:51.0Z</SysMetadataCreated>
-    <SysMetadataModified>2006-05-04T18:13:51.0Z</SysMetadataModified>
-    <ObjectFormat>http://dataone.org/coordinating_node_sysmeta_0.1</ObjectFormat>
-    <Size>0</Size>
-    <Submitter>Submitter0</Submitter>
-    <RightsHolder>RightsHolder0</RightsHolder>
-    <OriginMemberNode>OriginMemberNode0</OriginMemberNode>
-    <AuthoritativeMemberNode>AuthoritativeMemberNode0</AuthoritativeMemberNode>
-    <Obsoletes>Obsoletes0</Obsoletes>
-    <Obsoletes>Obsoletes1</Obsoletes>
-    <ObsoletedBy>ObsoletedBy0</ObsoletedBy>
-    <ObsoletedBy>ObsoletedBy1</ObsoletedBy>
-    <DerivedFrom>DerivedFrom0</DerivedFrom>
-    <DerivedFrom>DerivedFrom1</DerivedFrom>
-    <Describes>Describes0</Describes>
-    <Describes>Describes1</Describes>
-    <DescribedBy>DescribedBy0</DescribedBy>
-    <DescribedBy>DescribedBy1</DescribedBy>
-    <Replica>
-        <ReplicaMemberNode>ReplicaMemberNode0</ReplicaMemberNode>
-        <ReplicationStatus>Queued</ReplicationStatus>
-        <ReplicaVerified>2006-05-04T18:13:51.0Z</ReplicaVerified>
-    </Replica>
-    <Replica>
-        <ReplicaMemberNode>ReplicaMemberNode1</ReplicaMemberNode>
-        <ReplicationStatus>Queued</ReplicationStatus>
-        <ReplicaVerified>2006-05-04T18:13:51.0Z</ReplicaVerified>
-    </Replica>
-    <Checksum>Checksum0</Checksum>
-    <ChecksumAlgorithm>SHA-1</ChecksumAlgorithm>
-    <EmbargoExpires>2006-05-04T18:13:51.0Z</EmbargoExpires>
-    <AccessRule RuleType="Allow" Service="Read" Principal="Principal0"/>
-    <AccessRule RuleType="Allow" Service="Read" Principal="Principal1"/>
-</d1:SystemMetadata>
-'''
 
-#Missing Identifier
-TEST_BAD_EG_SYSMETA = '''<?xml version="1.0" encoding="UTF-8"?>
-<d1:SystemMetadata xmlns:d1="http://dataone.org/coordinating_node_sysmeta_0.1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://dataone.org/coordinating_node_sysmeta_0.1 https://repository.dataone.org/software/cicore/trunk/schemas/coordinating_node_sysmeta.xsd">
-    <Created>2006-05-04T18:13:51.0Z</Created>
-    <Expires>2006-05-04T18:13:51.0Z</Expires>
-    <SysMetadataCreated>2006-05-04T18:13:51.0Z</SysMetadataCreated>
-    <SysMetadataModified>2006-05-04T18:13:51.0Z</SysMetadataModified>
-    <ObjectFormat>http://dataone.org/coordinating_node_sysmeta_0.1</ObjectFormat>
-    <Size>0</Size>
-    <Submitter>Submitter0</Submitter>
-    <RightsHolder>RightsHolder0</RightsHolder>
-    <OriginMemberNode>OriginMemberNode0</OriginMemberNode>
-    <AuthoritativeMemberNode>AuthoritativeMemberNode0</AuthoritativeMemberNode>
-    <Obsoletes>Obsoletes0</Obsoletes>
-    <Obsoletes>Obsoletes1</Obsoletes>
-    <ObsoletedBy>ObsoletedBy0</ObsoletedBy>
-    <ObsoletedBy>ObsoletedBy1</ObsoletedBy>
-    <DerivedFrom>DerivedFrom0</DerivedFrom>
-    <DerivedFrom>DerivedFrom1</DerivedFrom>
-    <Describes>Describes0</Describes>
-    <Describes>Describes1</Describes>
-    <DescribedBy>DescribedBy0</DescribedBy>
-    <DescribedBy>DescribedBy1</DescribedBy>
-    <Replica>
-        <ReplicaMemberNode>ReplicaMemberNode0</ReplicaMemberNode>
-        <ReplicationStatus>Queued</ReplicationStatus>
-        <ReplicaVerified>2006-05-04T18:13:51.0Z</ReplicaVerified>
-    </Replica>
-    <Replica>
-        <ReplicaMemberNode>ReplicaMemberNode1</ReplicaMemberNode>
-        <ReplicationStatus>Queued</ReplicationStatus>
-        <ReplicaVerified>2006-05-04T18:13:51.0Z</ReplicaVerified>
-    </Replica>
-    <Checksum>Checksum0</Checksum>
-    <ChecksumAlgorithm>SHA-1</ChecksumAlgorithm>
-    <EmbargoExpires>2006-05-04T18:13:51.0Z</EmbargoExpires>
-    <AccessRule RuleType="Allow" Service="Read" Principal="Principal0"/>
-    <AccessRule RuleType="Allow" Service="Read" Principal="Principal1"/>
-</d1:SystemMetadata>
-'''
-
-
-class TestPyD1Client(unittest.TestCase):
-  def setUp(self):
-    self.target = "http://localhost:8000/mn"
-
+class TestCaseWithURLCompare(unittest.TestCase):
   def assertUrlEqual(self, a, b):
     '''Given two URLs, test if they are equivalent.  This means decomposing into
     their parts and comparing all the pieces.  See RFC 1738 for details.
@@ -209,129 +125,130 @@ class TestPyD1Client(unittest.TestCase):
     b = "Http://www.SOME.host:999/a/b/c/;p2;p4;p3?k1=10&k2=abc&k1=20#frag"
     self.failUnlessRaises(AssertionError, self.assertUrlEqual, a, b)
 
-  def test_getObjectsUrl(self):
-    '''Verify proper construction for getObjects
-    '''
-    cli = d1client.D1Client()
-    expected = "%s/object/" % self.target
-    self.assertUrlEqual(expected, cli.getObjectsURL(self.target))
-    start = 10
-    count = 100
-    oclass = None
-    expected = "%s/object/?start=10&count=100" % self.target
-    self.assertUrlEqual(
-      expected,
-      cli.getObjectsURL(
-        self.target, start=start, count=count,
-        oclass=oclass
-      )
-    )
-    oclass = d1const.OBJECT_CLASSES[0]
-    expected = "%s/object/?start=10&count=100&oclass=%s" % (self.target, oclass)
-    self.assertUrlEqual(
-      expected,
-      cli.getObjectsURL(
-        self.target, start=start, count=count,
-        oclass=oclass
-      )
-    )
-    count = d1const.MAX_LISTOBJECTS + 1
-    self.assertRaises(
-      ValueError, cli.getObjectsURL,
-      self.target, start=start,
-      count=count
-    )
-    count = 1
-    oclass = 'booga'
-    self.assertRaises(
-      ValueError,
-      cli.getObjectsURL,
-      self.target,
-      start=start,
-      count=count,
-      oclass=oclass
-    )
+    #===============================================================================
 
-  def test_getObjectUrl(self):
-    '''Verify proper url construction for getObject
-    '''
-    cli = d1client.D1Client()
-    guid = '1234&^abc'
-    expected = "%s/object/1234%%26%%5Eabc" % self.target
-    self.assertUrlEqual(expected, cli.getObjectURL(self.target, guid))
 
-  def test_getObjectMetaUrl(self):
-    '''Verify proper url construction for getObjectMetadata
-    '''
-    cli = d1client.D1Client()
-    guid = '1234&^abc'
-    expected = "%s/object/1234%%26%%5Eabc/meta" % self.target
-    self.assertUrlEqual(expected, cli.getObjectMetadataURL(self.target, guid))
+class TestExceptions(unittest.TestCase):
+  def testNotFound(self):
+    xmlEg = """<error detailCode="1010" errorCode="404" name="NotFound"><description>Test data</description><traceInformation><value key="identifier">'ABCXYZ'</value></traceInformation></error>"""
+    try:
+      raise d1exceptions.NotFound('1010', 'Test data', 'ABCXYZ', {'test1': 'data1'})
+    except Exception, e:
+      pass
+    jdata = json.loads(e.serializeToJson())
+    self.assertEqual(jdata['errorCode'], 404)
+    self.assertEqual(jdata['name'], 'NotFound')
+    self.assertEqual(jdata['detailCode'], '1010')
+    self.assertEqual(e.serializeToXml(), xmlEg)
 
-  def test_getObjects(self):
-    '''Retrieve a list of entries from a target (MN or CN)
-    '''
-    cli = d1client.D1Client()
-    self.assertRaises(
-      d1exceptions.TargetNotAvailableException, cli.listObjects,
-      'http://dataone.org/__no_such_target', 0, 10
-    )
-    res = cli.listObjects(self.target, 0, 10)
-    self.assertEqual(10, len(res['data']))
+  def testNotImplemented(self):
+    xmlEg = '''<error detailCode="1011" errorCode="501" name="NotImplemented"><description>Test not implemented</description><traceInformation><value key="a">'sdgdsfg'</value></traceInformation></error>'''
+    try:
+      raise d1exceptions.NotImplemented('1011', 'Test not implemented', {'a': 'sdgdsfg'})
+    except Exception, e:
+      pass
+    jdata = json.loads(e.serializeToJson())
+    self.assertEqual(jdata['errorCode'], 501)
+    self.assertEqual(jdata['name'], 'NotImplemented')
+    self.assertEqual(jdata['detailCode'], '1011')
+    self.assertEqual(e.serializeToXml(), xmlEg)
 
-  def test_getSysMetaSchema(self):
-    '''Get the system metadata schema
-    '''
-    cli = d1client.D1Client()
-    doc = cli.getSystemMetadataSchema()
-    dom = parseString(doc)
-    root = dom.childNodes[0]
-    interest = root.getAttribute('targetNamespace')
-    self.assertEqual(interest, 'http://dataone.org/coordinating_node_sysmeta_0.1')
+  def testExceptionFactory(self):
+    notFoundEg = """{"errorCode": 404, "detailCode": "1010", "traceInformation": {"identifier": "ABCXYZ"}, "name": "NotFound", "description": "Test data"}"""
+    notImplementedEg = """{"errorCode": 501, "detailCode": "1011", "traceInformation": {"a": "sdgdsfg"}, "name": "NotImplemented", "description": "Test not implemented"}"""
+    res = d1exceptions.DataOneExceptionFactory(notFoundEg)
+    self.assertTrue(isinstance(res, d1exceptions.NotFound))
+    res = d1exceptions.DataOneExceptionFactory(notImplementedEg)
+    self.assertTrue(isinstance(res, d1exceptions.NotImplemented))
 
-  def testValidateSystemMetadata(self):
-    '''Try validating an example system metadata doc
-    '''
-    cli = d1client.D1Client()
-    schema = cli.getSystemMetadataSchema()
-    sysm = d1sysmeta.D1SystemMetadata(TEST_EG_SYSMETA)
-    self.assertEqual(True, sysm.isValid(schema))
-    sysm = d1sysmeta.D1SystemMetadata(TEST_BAD_EG_SYSMETA)
-    self.assertRaises(lxml.etree.DocumentInvalid, sysm.isValid, schema)
+#===============================================================================
 
-  def testWrapSystemMetadata(self):
-    '''Checking out the system metdata wrapper.
-    '''
-    sysm = d1sysmeta.D1SystemMetadata(TEST_EG_SYSMETA)
-    self.assertEqual(sysm.Size, 0)
-    self.assertEqual(sysm.Identifier, u'Identifier0')
-    self.assertEqual(2006, sysm.Created.year)
 
-  def testGetSystemMetadata(self):
-    '''Retrieve system metdata for the first object in listObjects'
-    '''
-    cli = d1client.D1Client()
-    url = cli.getObjectsURL(
-      self.target, start=0,
-      count=1, oclass=d1const.OBJECT_CLASSES[0]
-    )
-    objects = cli.listObjects(
-      self.target, start=0,
-      count=1, oclass=d1const.OBJECT_CLASSES[0]
-    )
-    guid = objects['data'][0]['guid']
-    sysm = cli.getSystemMetadata(guid, target=self.target)
-    self.assertEqual(sysm.Checksum, objects['data'][0]['hash'])
-    self.assertEqual(sysm.Size, objects['data'][0]['size'])
+class TestRestClient(TestCaseWithURLCompare):
+  def testGet(self):
+    cli = d1client.RESTClient()
+    #Google runs a fairly reliable server
+    res = cli.GET('http://www.google.com/')
+    self.assertEqual(cli.status, 200)
+    self.assertEqual(res.code, 200)
 
-  def testGetObject(self):
-    '''Try getting the 5th object from listObjects'
-    '''
-    cli = d1client.D1Client()
-    objects = cli.listObjects(self.target, start=4, count=1)
-    guid = objects['data'][0]['guid']
-    res = cli.get(guid, target=self.target)
-    self.assertTrue(len(res) > 0)
+    #This should fail with a 404
+    try:
+      cli.GET('http://www.google.com/_bogus')
+    except Exception, e:
+      pass
+    self.assertTrue(isinstance(e, urllib2.HTTPError))
+    self.assertEqual(e.code, 404)
+
+#===============================================================================
+
+
+class TestDataOneClient(TestCaseWithURLCompare):
+  def testGet(self):
+    cli = d1client.DataOneClient()
+
+    #===============================================================================
+
+
+EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
+<d1:systemMetadata xmlns:d1="http://dataone.org/service/types/SystemMetadata/0.1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://dataone.org/service/types/SystemMetadata/0.1 https://repository.dataone.org/software/cicore/trunk/schemas/systemmetadata.xsd">
+    <!-- This instance document was auto generated by oXygen XML for testing purposes.
+         It contains no useful information.
+    -->
+    <identifier>Identifier0</identifier>
+    <objectFormat>eml://ecoinformatics.org/eml-2.0.1</objectFormat>
+    <size>0</size>
+    <submitter>uid=jones,o=NCEAS,dc=ecoinformatics,dc=org</submitter>
+    <rightsHolder>uid=jones,o=NCEAS,dc=ecoinformatics,dc=org</rightsHolder>
+    <obsoletes>Obsoletes0</obsoletes>
+    <obsoletes>Obsoletes1</obsoletes>
+    <obsoletedBy>ObsoletedBy0</obsoletedBy>
+    <obsoletedBy>ObsoletedBy1</obsoletedBy>
+    <derivedFrom>DerivedFrom0</derivedFrom>
+    <derivedFrom>DerivedFrom1</derivedFrom>
+    <describes>Describes0</describes>
+    <describes>Describes1</describes>
+    <describedBy>DescribedBy0</describedBy>
+    <describedBy>DescribedBy1</describedBy>
+    <checksum algorithm="SHA-1">2e01e17467891f7c933dbaa00e1459d23db3fe4f</checksum>
+    <embargoExpires>2006-05-04T18:13:51.0Z</embargoExpires>
+    <accessRule rule="allow" service="read" principal="Principal0"/>
+    <accessRule rule="allow" service="read" principal="Principal1"/>
+    <replicationPolicy replicationAllowed="true" numberReplicas="2">
+        <preferredMemberNode>MemberNode12</preferredMemberNode>
+        <preferredMemberNode>MemberNode13</preferredMemberNode>
+        <blockedMemberNode>MemberNode6</blockedMemberNode>
+        <blockedMemberNode>MemberNode7</blockedMemberNode>
+    </replicationPolicy>
+    <dateUploaded>2006-05-04T18:13:51.0Z</dateUploaded>
+    <dateSysMetadataModified>2006-05-04T18:13:51.0Z</dateSysMetadataModified>
+    <originMemberNode>OriginMemberNode0</originMemberNode>
+    <authoritativeMemberNode>AuthoritativeMemberNode0</authoritativeMemberNode>
+    <replica>
+        <replicaMemberNode>ReplicaMemberNode0</replicaMemberNode>
+        <replicationStatus>queued</replicationStatus>
+        <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
+    </replica>
+    <replica>
+        <replicaMemberNode>ReplicaMemberNode1</replicaMemberNode>
+        <replicationStatus>queued</replicationStatus>
+        <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
+    </replica>
+</d1:systemMetadata>
+"""
+
+
+class TestSystemMetadata(unittest.TestCase):
+  def testLoadSystemMetadata(self):
+    sysm = d1sysmeta.SystemMetadata(EG_SYSMETA)
+    self.assertEqual(sysm.identifier, 'Identifier0')
+    self.assertEqual(sysm.size, 0)
+    self.assertEqual(sysm.checksum, '2e01e17467891f7c933dbaa00e1459d23db3fe4f')
+    rep = sysm.replica
+    self.assertEqual(len(rep), 2)
+    self.assertEqual(rep[1]['replicationStatus'], 'queued')
 
 
 if __name__ == "__main__":

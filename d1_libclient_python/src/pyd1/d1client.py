@@ -2,104 +2,74 @@
 Module pyd1.d1client
 ====================
 
+This module implements DataOneClient which provides a client supporting basic 
+interaction with the DataONE infrastructure.
+
 :Created: 20100111
 :Author: vieglais
 
 :Dependencies:
 
-  - httplib2 is used for HTTP interactions.  This library offers many features
-    that extend the capabilities of the standard Python urllib2, especially
-    a well thought out, simple caching mechanism and a slew of common 
-    authentication mechanisms.  httplib2 can be found at:
-    
-      http://code.google.com/p/httplib2/ 
+  - python 2.6
 
+----
 
-.. autoclass:: D1Client
+.. autoclass:: RESTClient
+   :members:
+
+----
+
+.. autoclass:: DataOneClient
    :members:
 '''
 
 import logging
+import httplib
 import urllib
+import urllib2
 import urlparse
 
 try:
   import cjson as json
 except:
   import json
-
-import httplib2
 from pyd1 import d1const
 from pyd1 import d1exceptions
 from pyd1 import d1sysmeta
 
+#===============================================================================
 
-class D1Client(httplib2.Http):
-  '''Implements a basic client for interaction with the DataONE system.
-  
-  Example:
-  
-    >>> from pyd1 import d1client
-    >>> target = "http://localhost:8000/mn"
-    >>> cli = d1client.D1Client()
-    >>> objects = cli.listObjects(target=target, count=10)
-    >>> objects.keys()
-    [u'count', u'start', u'total', u'data']
-    >>> objects['count']
-    10
-    >>> print objects['data'][0]
-    {u'guid': u'02c3f67e-b2e1-4550-8fae-f6d90e9f15f6', 
-     u'hash': u'2e01e17467891f7c933dbaa00e1459d23db3fe4f', 
-     u'modified': u'2010-01-06T12:44:26', u'oclass': u'data', u'size': 2}
-    >>> cli.get(objects['data'][0]['guid'], target=target)
-    '49'
-    >>> sysm = cli.getSystemMetadata(objects['data'][0]['guid'], target=target)
-    >>> dir(sysm)
-    ['AccessRule', 'AuthoritativeMemberNode', 'Checksum', 'ChecksumAlgorthm', 
-     'Created', 'DerivedFrome', 'DescribedBy', 'Describes', 'EmbargoExpires', 
-     'Expires', 'Identifier', 'ObjectFormat', 'ObsoletedBy', 'Obsoletes', 
-     'OriginMemberNode', 'Replica', 'RightsHolder', 'Size', 'Submitter', 
-     'SysMetadataCreated', 'SysMetadataModified', '__class__', '__delattr__', 
-     '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', 
-     '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', 
-     '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 
-     '__weakref__', '_getValues', '_parse', 'etree', 'isValid', 'toXml', 'xmldoc']
-    >>> sysm.Size
-    2
-    >>> sysm.created
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-    AttributeError: 'D1SystemMetadata' object has no attribute 'created'
-    >>> sysm.Created
-    datetime.datetime(2010, 1, 6, 12, 44, 26)
-  
+
+class HttpRequest(urllib2.Request):
+  '''Overrides the default Request class to enable setting the HTTP method.
   '''
 
-  def __init__(
-    self,
-    introspection_target=d1const.URL_DATAONE_ROOT,
-    cache=d1const.HTTP_RESPONSE_CACHE,
-    timeout=d1const.RESPONSE_TIMEOUT,
-    proxy_info=None
-  ):
-    '''
-    :param introspection_target: Location of a service for discovering
-      information about the DataONE system, such as the locations of resolvers, 
-      coordinating nodes and member nodes.
-    :param cache: Either the name of a directory to be used as a flat file 
-      cache, or it must an object that implements httlib2.FileCache interface
-    :param timeout: Socket level timeout (seconds)
-    :param proxy_info: httplib2.ProxyInfo instance
-    '''
-    httplib2.Http.__init__(self, cache=cache, timeout=timeout, proxy_info=proxy_info)
-    self.logger = logging.getLogger(self.__class__.__name__)
-    self.d1root = introspection_target
-    self.useragent = d1const.USER_AGENT
-    self._last_response = None
+  def __init__(self, *args, **kwargs):
+    self._method = 'GET'
+    if kwargs.has_key('method'):
+      self._method = kwargs['method']
+      del kwargs['method']
+    urllib2.Request.__init__(self, *args, **kwargs)
 
-  def _getHeaders(self):
-    headers = {'User-Agent': self.useragent, 'Accept': '*/*'}
-    return headers
+  def get_method(self):
+    return self._method
+
+#===============================================================================
+
+
+class RESTClient(object):
+  '''Implements a simple REST client that utilizes the base DataONE exceptions
+  for error handling if possible.
+  '''
+
+  def __init__(self):
+    self.logger = logging.getLogger(self.__class__.__name__)
+    self.status = None
+    self.responseInfo = None
+    self._BASE_DETAIL_CODE = '10000'
+
+  def exceptionCode(self, extra):
+    return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
 
   def _normalizeTarget(self, target):
     '''Internal method to ensure target url is in suitable form before 
@@ -109,194 +79,202 @@ class D1Client(httplib2.Http):
       target += "/"
     return target
 
-  def lastResponse(self):
-    '''Returns the last response metadata returned from a Http request.
-
-    :rtype: httplib2.Response
+  @property
+  def headers(self):
+    '''Returns a dictionary of headers
     '''
-    return self._last_response
+    return {'User-Agent': 'Test client', 'Accept': '*/*'}
 
-  def request(self, *args, **kwargs):
-    '''An oversight in httplib2 Http.request() means that when connecting to a
-    valid host that isn't connectable, the conn object within the Http class 
-    is not tested for None before calling httplib.  This results in httplib
-    raising an attribute error, which is a bit confusing.  Here the error
-    is trapped and re-raised as a Httplib2.HttpLib2Error.
+  def loadError(self, response):
+    '''Try and create a DataONE exception form the response.  If successful, 
+    then the DataONE error will be raised, otherwise the error is encapsulated
+    with a DataONE ServiceFailure exception and re-raised.
     
-    The _last_response instance variable is updated.
-    
-    :rtype: Tuple of Response and data returned from the Http request  
+    :param response: Response from urllib2.urlopen
+    :returns: Should not return - always raises an exception.
     '''
     try:
-      self._last_response, data = super(D1Client, self).request(*args, **kwargs)
-      return self._last_response, data
-    except AttributeError, e:
-      message = u"No socket connection could be created for Http target.\n"
-      raise httplib2.HttpLib2Error(message + str(e))
-    return None
+      edata = response.read()
+      exc = d1exceptions.DataOneExceptionFactory(edata)
+      if not exc is None:
+        raise exc
+    finally:
+      message = 'A bad response was received from the target %s' % response.url
+      traceInfo = {'body': edata}
+      raise d1exceptions.ServiceFailure(self.exceptioncode(2), message, traceInfo)
+    return False
 
-  def getObjectsURL(self, target, start=None, count=None, oclass=None):
-    '''Returns the path of the objects collection for the specified target.
+  def sendRequest(self, url, method='GET', data=None, headers=None):
+    '''Sends a HTTP request and returns the response as a file like object.
     
-    :param target: The URL of the service from which the collection is being 
-      retrieved.
-    :param start: Zero based index of the first object to retrieve.
-    :param count: Maximum number of objects to be retrieved.
-    :param oclass: The type of object being requested.
+    Has the side effect of setting the status and responseInfo properties. 
     
-    :rtype: URL for retrieving the specified content.
+    :param url: The target URL
+    :type url: string
+    :param method: The HTTP method to use.
+    :type method: string
+    :param data: Optional dictionary of data to pass on to urllib2.urlopen
+    :type data: dictionary
+    :param headers: Optional header information
+    :type headers: dictionary
+    '''
+    if headers is None:
+      headers = self.headers
+    request = HttpRequest(url, data=data, headers=headers, method=method)
+    response = urllib2.urlopen(request)
+    self.status = response.code
+    self.responseInfo = response.info()
+    return response
+
+  def HEAD(self, url, headers=None):
+    '''Issues a HTTP HEAD request.
+    '''
+    self.logger.debug("%s: %s" % (__name__, url))
+    return self.sendRequest(url, headers=headers, method='HEAD')
+
+  def GET(self, url, headers=None):
+    self.logger.debug("%s: %s" % (__name__, url))
+    return self.sendRequest(url, headers=headers, method='GET')
+
+  def PUT(self, url, data, headers=None):
+    self.logger.debug("%s: %s" % (__name__, url))
+    if isinstance(data, dict):
+      data = urllib.urlencode(data)
+    return self.sendRequest(url, data=data, headers=headers, method='PUT')
+
+  def POST(self, url, data, headers=None):
+    self.logger.debug("%s: %s" % (__name__, url))
+    if isinstance(data, dict):
+      data = urllib.urlencode(data)
+    return self.sendRequest(url, data=data, headers=headers, method='POST')
+
+  def DELETE(self, url, headers=None):
+    self.logger.debug("%s: %s" % (__name__, url))
+    return self.sendRequest(url, data=data, headers=headers, method='DELETE')
+
+#===============================================================================
+
+
+class DataOneClient(RESTClient):
+  '''Implements a simple DataONE client.
+  '''
+
+  def __init__(self, d1Root=d1const.URL_DATAONE_ROOT, userAgent=d1const.USER_AGENT):
+    self.logger = logging.getLogger(self.__class__.__name__)
+    self.d1Root = d1Root
+    self.userAgent = userAgent
+    self._BASE_DETAIL_CODE = '11000'
+
+  @property
+  def headers(self):
+    res = {'User-Agent': self.userAgent, 'Accept': '*/*'}
+    return res
+
+  def sendRequest(self, url, method='GET', data=None, headers=None):
+    '''Sends a HTTP request and returns the response as a file like object.
+    
+    Has the side effect of setting the status and responseInfo properties. 
+    
+    :param url: The target URL
+    :type url: string
+    :param method: The HTTP method to use.
+    :type method: string
+    :param data: Optional dictionary of data to pass on to urllib2.urlopen
+    :type data: dictionary
+    :param headers: Optional header information
+    :type headers: dictionary
+    '''
+    if headers is None:
+      headers = self.headers
+    request = HttpRequest(url, data=data, headers=headers, method=method)
+    try:
+      response = urllib2.urlopen(request)
+      self.status = response.code
+      self.responseInfo = response.info()
+    except urllib2.HTTPError, e:
+      self.logger.warn('%s: HTTP Error encountered.' % __name__)
+      self.status = e.code
+      self.responseInfo = e.info()
+      if not self.loadError(e):
+        description = "HTTPError. Code=%s" % str(e.code)
+        traceInfo = {'body': e.read()}
+        raise d1exceptions.ServiceFailure('10000.0', description, traceInfo)
+    except urllib2.URLError, e:
+      self.logger.warn('%s: URL Error encountered.' % __name__)
+      if not self.loadError(e):
+        description = "URL Error. Reason=%s" % e.reason
+        raise d1exceptions.ServiceFailure('10000.1', description)
+    return response
+
+  def getObjectUrl(self, target):
+    '''Returns the full URL to the object collection on target
     '''
     target = self._normalizeTarget(target)
     url = urlparse.urljoin(target, d1const.URL_OBJECT_PATH)
     if not url.endswith("/"):
       url += "/"
-    params = {}
-    if not start is None:
-      start = int(start)
-      assert (start >= 0)
-      params['start'] = str(start)
-    if not count is None:
-      count = int(count)
-      if count >= d1const.MAX_LISTOBJECTS:
-        raise ValueError('Too many objects being requested (%s)' % str(count))
-      params['count'] = str(count)
-    if not oclass is None:
-      if not oclass in d1const.OBJECT_CLASSES:
-        raise ValueError('%s is not a valid Object Class' % str(oclass))
-      params['oclass'] = oclass
-    if len(params.keys()) > 0:
-      url = "%s?%s" % (url, urllib.urlencode(params))
-    self.logger.debug("getObjectsURL=%s" % url)
     return url
 
-  def getObjectURL(self, target, guid):
-    '''
-    Given a host and object identifier, return a URL that can be used to 
-    retrieve the object.
+  ## === DataONE API Methods ===
+  def get(self, identifier, target):
+    '''Retrieve an object from DataONE.
     
-    :param target: The host (e.g. http://mn1.dataone.org/base/)
-    :param guid: The GUID for the object
-    :rtype: URL to retrieve the object bytes
+    :param identifier: Identifier of object to retrieve
+    :param target: Host URL from which to retrieve object
+    :rtype: open file stream
     '''
-    target = self._normalizeTarget(target)
-    url = urlparse.urljoin(
-      target, '%s/%s' % (d1const.URL_OBJECT_PATH, urllib.quote(guid))
-    )
-    self.logger.debug("getObjectURL=%s" % url)
-    return url
+    self.logger.debug("%s: %s" % (__name__, identifier))
+    url = urlparse.urljoin(self.getObjectUrl(target), identifier)
+    self.logger.debug("%s: url=%s" % (__name__, url))
+    response = self.GET(url, self.headers)
+    return response
 
-  def getObjectMetadataURL(self, target, guid):
+  def getSystemMetadata(self, identifier, target=d1const.URL_DATAONE_ROOT):
+    '''Retrieve system metadata for an object.
+    :param identifier: Identifier of the object to retrieve
+    :param target: Optional node URL
+    :rtype: :class:d1sysmeta.SystemMetadata
     '''
-    Given a host and object identifier, return a URL that can be used to 
-    retrieve the system metadata about the object.
-    
-    :param target: The host to which the request is being sent.
-    :param guid: The GUID for the object
-    :rtype: URL for retrieving the system metadata about the object
-    '''
-    url = self.getObjectURL(target, guid)
-    url = self._normalizeTarget(url)
-    url = urlparse.urljoin(url, '%s' % d1const.URL_SYSMETA_PATH)
-    self.logger.debug("getObjectMetadataURL=%s" % url)
-    return url
+    self.logger.debug("%s: %s" % (__name__, identifier))
+    url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'meta/')
+    self.logger.debug("%s: url=%s" % (__name__, url))
+    raise d1exceptions.NotImplemented(self.exceptioncode('1.2'), __name__)
+    response = self.GET(url, self.headers)
+    return response.data
+
+  def resolve(self, identifier, target=d1const.URL_DATAONE_ROOT):
+    self.logger.debug("%s: %s" % (__name__, identifier))
+    url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'resolve/')
+    self.logger.debug("%s: url=%s" % (__name__, url))
+    headers = self.headers
+    headers['Accept'] = ''
+    raise d1exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
+    response = self.GET(url, headers)
 
   def listObjects(
     self,
-    target=d1const.URL_DATAONE_ROOT,
+    startTime,
+    endTime=None,
+    objectFormat=None,
+    replicaStatus=None,
     start=0,
-    count=d1const.DEFAULT_LISTOBJECTS,
-    oclass=None
+    count=1000,
+    target=d1const.URL_DATAONE_ROOT
   ):
-    '''Retrieves a list of objects available on target.
-    
-    :param target: The host being queried.  If none provided then objects from
-                   the DataONE root are listed, which should be a list of all
-                   objects in the DataONE system.
-    :param start: Zero based index for first item to retrieve
-    :param count: Number of items to retrieve
-    :param oclass: Optional restriction for type of object to retrieve
-    :rtype: (dictionary) Containing a list of objects (guid, oclass, hash, 
-            modified, size) 
-    
-    :raises: TargetNotAvailableException
-    '''
-    url = self.getObjectsURL(target, start=start, count=count, oclass=oclass)
-    headers = self._getHeaders()
-    response, data = self.request(url, method='GET', headers=headers)
-    if response.status not in d1const.HTTP_STATUS_OK:
-      message = u"Error listing objects from target %s." % target
-      message += u"\nStatus = %s" % str(response.status)
-      message += u"\nFull URL=%s" % url
-      raise d1exceptions.TargetNotAvailableException(response, message)
-    #Try and convert JSON to python
-    self.logger.debug("data = %s" % data)
-    objects = json.loads(data)
-    return objects
+    if start < 0:
+      start = 0
+    if count < 0:
+      count = 0
+    if count > d1const.MAX_LISTOBJECTS:
+      raise d1exceptions.InvalidRequest(
+        10002, "Count can not be higher than %d" % d1const.MAX_LISTOBJECTS
+      )
+    params = {}
+    self.logger.debug("%s: %s" % (__name__, identifier))
+    url = urlparse.urljoin(self.getObjectUrl(target), identifier, '')
+    self.logger.debug("%s: url=%s" % (__name__, url))
+    raise d1exceptions.NotImplemented(self.exceptioncode('1.4'), __name__)
+    response = self.GET(url, headers)
 
-  def resolve(self, guid):
-    '''
-    Given an identifier, returns a list of URLs from which the object may be 
-    retrieved.  In general, the first list entry is the preferred retrieval 
-    option.
-    
-    Not Implemented.
-    
-    :param guid: Globally unique identifier known to the DataONE system.
-    :rtype: (list of string)  List of URLs for accessing <guid>
-    '''
-    raise NotImplementedError('Resolve method is not implemented.')
-    pass
-
-  def get(self, guid, target=None):
-    '''Returns the bytes of an object retrieved from the DataONE system.  If a
-    target is not provided, then the location of the object is resolved first,
-    and the bytes are retrieved from the resolved target.
-    
-    Note that the resulting object may be quite large.  If this is a concern,
-    then check the system metadata for the object first.
-
-    :param guid: The globally unique identifier for the object
-    :param target: Optional host from which to retrieve the object.
-    :rtype: (Bytes) The bytes of the object.    
-    '''
-    #resolve object
-    if target is None:
-      target = self.resolve(guid)
-    url = self.getObjectURL(target, guid)
-    #retrieve
-    headers = self._getHeaders()
-    response, data = self.request(url, 'GET', headers=headers)
-    return data
-
-  def getSystemMetadata(self, guid, target=None):
-    '''Retrieve the DataONE system metadata describing the specified object.
-
-    :param guid: The globally unique identifier for the object
-    :param target: Optional host from which to retrieve the object.
-    :rtype: (D1SystemMetadata) instance representing the object's system 
-            metadata    
-    '''
-    #resolve object
-    if target is None:
-      target = self.resolve(guid)
-    url = self.getObjectMetadataURL(target, guid)
-    headers = self._getHeaders()
-    response, data = self.request(url, 'GET', headers=headers)
-    if response.status not in d1const.HTTP_STATUS_OK:
-      message = u"Error retrieving system metadata for %s." % guid
-      message += u"\nStatus = %s" % str(response.status)
-      message += u"\nFull URL=%s" % url
-      raise d1exceptions.TargetNotAvailableException(response, message)
-    self.logger.debug("getSystemMetadata data=%s" % data)
-    return d1sysmeta.D1SystemMetadata(xmldoc=data)
-
-  def getSystemMetadataSchema(self):
-    '''Convenience function to retrieve the system metadata schema document.
-    
-    :rtype: (Unicode) The system metadata document schema.
-    '''
-    headers = self._getHeaders()
-    url = d1const.SYSTEM_METADATA_SCHEMA_URL
-    response, data = self.request(url, 'GET', headers=headers)
-    assert (response.status in d1const.HTTP_STATUS_OK)
-    return data
+  def getLogRecords(self, startTime, endTime=None, event=None):
+    raise d1exceptions.NotImplemented(self.exceptioncode('1.5'), __name__)

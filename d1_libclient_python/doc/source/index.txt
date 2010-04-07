@@ -10,6 +10,7 @@ DataONE.
 PyD1 is a part of the DataONE Investigator Toolkit (ITK), and is developed as
 part of the `DataONE project`_.
 
+
 Contents:
 
 .. toctree::
@@ -18,6 +19,7 @@ Contents:
 
    install
    pyd1
+   notes
 
 
 Indices and tables
