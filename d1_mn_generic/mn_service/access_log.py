@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`access_log` -- Access Logging
+"""
+  :mod:`access_log` -- Access Logging
 ======================================
 
 :module: access_log
@@ -26,13 +27,14 @@ import util
 
 
 def log(guid, operation_type, requestor_identity):
-  """Log an object access."""
+  """
+  Log an object access."""
 
   try:
     repository_object_row = models.Repository_object.objects.filter(guid=guid)[0]
   except IndexError:
     err_msg = 'Attempted to create access log for non-existing object: %s' % (guid)
-    return_sys_log_http_500_server_error(err_msg)
+    exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
   try:
     operation_type_row = models.Access_log_operation_type.objects.filter(

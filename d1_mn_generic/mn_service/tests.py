@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""":mod:`tests` -- Unit Tests
+"""
+  :mod:`tests` -- Unit Tests
 =============================
 
 :module: tests
@@ -26,7 +27,7 @@ import util
 # Constants related to simulated MN object collection.
 mn_objects_total = 354
 mn_objects_total_data = 100
-mn_objects_total_metadata = 77
+mn_objects_total_scimeta = 77
 #mn_objects_total_sysmeta= 177
 mn_objects_guid_startswith_1 = 18
 mn_objects_hash_startswith_1 = 21
@@ -57,16 +58,18 @@ class mn_service_tests(TestCase):
   #
   
   def check_response_headers_present(self, response):
-    """Check that required response headers are present."""
+    """
+  Check that required response headers are present."""
     
     self.failUnlessEqual('Last-Modified' in response, True)
     self.failUnlessEqual('Content-Length' in response, True)
     self.failUnlessEqual('Content-Type' in response, True)
   
   def get_valid_guid(self, object_type):
-    """Get a valid GUID of a specific type from the db.
+    """
+  Get a valid GUID of a specific type from the db.
 
-    Current valid object types: data, metadata, sysmeta
+    Current valid object types: scidata, scimeta, sysmeta
     
     Assumes that there are 3 valid objects of the given type in the db.
     """
@@ -85,7 +88,8 @@ class mn_service_tests(TestCase):
   # TODO: Set up test of update_db admin command.
   
   def test_rest_call_object_count_get(self):
-    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
+    """
+  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
     
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -99,7 +103,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(len(res['data']), res['count'])
 
   def test_rest_call_object_count_by_oclass_data_get(self):
-    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
+    """
+  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
     
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -111,22 +116,24 @@ class mn_service_tests(TestCase):
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
 
-  def test_rest_call_object_count_by_oclass_metadata_get(self):
-    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=metadata"""
+  def test_rest_call_object_count_by_oclass_scimeta_get(self):
+    """
+  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=scimeta"""
     
-    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'scimeta'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
     # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'data': {}}
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
-    self.failUnlessEqual(res['total'], mn_objects_total_metadata)
+    self.failUnlessEqual(res['total'], mn_objects_total_scimeta)
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
 
   def test_rest_call_collection_of_objects_all_get(self):
-    """Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/"""
+    """
+  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/"""
     
     response = self.client.get('/mn/object/', HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -140,7 +147,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(len(res['data']), res['count'])
 
   def test_rest_call_collection_of_objects_section_get(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=20&count=10
     """
     
@@ -157,46 +165,49 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(len(res['data'][0]['hash']), 40)
  
   def test_rest_call_collection_of_objects_section_oclass_filter_get(self):
-    """Test call:
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=10&count=5&oclass=metadata
+    """
+  Test call:
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=10&count=5&oclass=scimeta
     """
     
-    response = self.client.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'scimeta'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 5) # Number of objects returned.
     self.failUnlessEqual(res['start'], 10) # Starting object.
-    self.failUnlessEqual(res['total'], mn_objects_total_metadata)
+    self.failUnlessEqual(res['total'], mn_objects_total_scimeta)
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
     # Check the first of the data objects for the correct format.
-    self.failUnlessEqual(res['data'][0]['oclass'], 'metadata')
+    self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
     self.failUnlessEqual(len(res['data'][0]['hash']), 40)
 
   def test_rest_call_collection_of_objects_section_oclass_filter_unavailable_get(self):
-    """Test call:
+    """
+  Test call:
     The corner case where we ask for more objects of a certain type than are
     available.
     
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=15&count=10&oclass=metadata
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=15&count=10&oclass=scimeta
     """
     
-    response = self.client.get('/mn/object/', {'start': mn_objects_total_metadata - 5, 'count': '10', 'oclass': 'metadata'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': mn_objects_total_scimeta - 5, 'count': '10', 'oclass': 'scimeta'}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], 5) # We should get the 5 remaining objects even though we asked for 10.
-    self.failUnlessEqual(res['start'], mn_objects_total_metadata - 5) # Starting object.
-    self.failUnlessEqual(res['total'], mn_objects_total_metadata) # Total number of objects of type metadata.
+    self.failUnlessEqual(res['start'], mn_objects_total_scimeta - 5) # Starting object.
+    self.failUnlessEqual(res['total'], mn_objects_total_scimeta) # Total number of objects of type scimeta.
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
     # Check the first of the data objects for the correct format.
-    self.failUnlessEqual(res['data'][0]['oclass'], 'metadata')
+    self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
     self.failUnlessEqual(len(res['data'][0]['hash']), 40)
 
   def test_rest_call_collection_of_objects_guid_filter_get(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*
     """
     response = self.client.get('/mn/object/', {'guid': '1*'}, HTTP_ACCEPT = 'application/json')
@@ -206,7 +217,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_guid_startswith_1)
 
   def test_rest_call_collection_of_objects_hash_filter_get(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?hash=1*
     """
 
@@ -217,7 +229,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_hash_startswith_1)
 
   def test_rest_call_collection_of_objects_guid_and_hash_filter_startswith_get(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&hash=1*
     """
    
@@ -228,7 +241,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_guid_and_hash_startswith_1)
 
   def test_rest_call_collection_of_objects_guid_and_hash_filter_endswith_get(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&hash=*1
     """
         
@@ -239,7 +253,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_guid_and_hash_endswith_1)
 
   def test_rest_call_collection_of_objects_last_accessed_in_2000(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pretty&lastAccessed_gt=2000-01-01T00:00:00&lastAccessed_lt=2010-01-01T00:00:00
     """
         
@@ -250,7 +265,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_last_accessed_in_2000)
 
   def test_rest_call_collection_of_objects_with_requestor_1_1_1_1(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
     """
         
@@ -261,7 +277,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_requestor_1_1_1_1)
 
   def test_rest_call_collection_of_objects_with_operation_get_bytes(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_bytes
     """
         
@@ -272,7 +289,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], mn_objects_operation_get_bytes)
 
   def test_rest_call_collection_of_objects_with_unicode_guid(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
     ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
     """
@@ -290,7 +308,8 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_object_count_head(self):
-    """Test call:
+    """
+  Test call:
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0
     """
     
@@ -299,7 +318,8 @@ class mn_service_tests(TestCase):
     self.check_response_headers_present(response)
 
   def test_rest_call_object_count_by_oclass_data_head(self):
-    """Test call:
+    """
+  Test call:
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
     
@@ -314,17 +334,19 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_object_by_guid_get(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
-    response = self.client.get('/mn/object/%s' % self.get_valid_guid('metadata'), {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/%s' % self.get_valid_guid('scimeta'), {}, HTTP_ACCEPT = 'application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
-    #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n')
+    #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nscimeta:0.904577532946\n')
     
   def test_rest_call_object_by_guid_get_unicode(self):
-    """Test call: 
+    """
+  Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
     ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
     """
@@ -334,7 +356,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(response.content.decode('utf-8'), u'data:unicode_here_ƲƳƴƵƶƷƸƹƺƻƼƾƿ\n')
 
   def test_rest_call_object_by_guid_404_get(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
     """
     
@@ -342,7 +365,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(response.status_code, 404)
 
   #def test_rest_call_sysmeta_by_object_guid_get(self):
-  #  """Test call:
+  #  """
+  Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
@@ -367,7 +391,8 @@ class mn_service_tests(TestCase):
   #  self.failUnlessEqual(xmlschema.validate(xml), True)
   #
   #def test_rest_call_sysmeta_by_object_guid_404_get(self):
-  #  """Test call:
+  #  """
+  Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
   #  """
   #  
@@ -381,7 +406,8 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_object_header_by_guid_head(self):
-    """Test call:
+    """
+  Test call:
     curl -I http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
@@ -390,7 +416,8 @@ class mn_service_tests(TestCase):
     self.check_response_headers_present(response)
 
   def test_rest_call_last_modified_head(self):
-    """Test call:
+    """
+  Test call:
     curl -I http://mn1.dataone.org/object/
     """
     
@@ -403,7 +430,8 @@ class mn_service_tests(TestCase):
   #
 
   #def test_rest_call_sysmeta_by_object_guid_put(self):
-  #  """Test call:
+  #  """
+  Test call:
   #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
@@ -418,7 +446,8 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_cn_auth(self):
-    """Test call:
+    """
+  Test call:
     
     Check that CN is successfully authenticated if matching an IP in the CN_IP
     list.
@@ -431,7 +460,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(response.status_code, 200)
 
   def test_rest_call_cn_no_auth(self):
-    """Check that client is blocked if not matching an IP in the CN_IP list.
+    """
+  Check that client is blocked if not matching an IP in the CN_IP list.
     """
     
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0'},
@@ -445,7 +475,8 @@ class mn_service_tests(TestCase):
   #
 
   def test_rest_call_log_get_unfiltered(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/
     """
     
@@ -458,7 +489,8 @@ class mn_service_tests(TestCase):
     #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n')
 
   def test_rest_call_log_get_log_requestor_1_1_1_1(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1
     """
 
@@ -468,7 +500,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_requestor_1_1_1_1)
 
   def test_rest_call_log_get_log_operation_get_bytes(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_bytes
     """
 
@@ -478,7 +511,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_operation_get_bytes)
 
   def test_rest_call_log_get_log_requestor_1_1_1_1_and_operation_get_bytes(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_bytes
     """
 
@@ -488,7 +522,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_requestor_1_1_1_1_and_operation_get_bytes)
 
   def test_rest_call_log_get_log_last_modified_in_1990s(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastModified_gt=1990-01-01T00:00:00&lastModified_lt=2000-01-01T00:00:00
     """
     
@@ -498,7 +533,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_last_modified_in_1990s)
 
   def test_rest_call_log_get_log_last_accessed_in_1970s(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastAccessed_gt=1970-01-01T00:00:00&lastAccessed_lt=1980-01-01T00:00:00
     """
     
@@ -508,7 +544,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_get_log_last_accessed_in_1970s)
 
   def test_rest_call_log_get_log_entries_associated_with_objects_type_class_data(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&oclass=data
     """
     
@@ -518,7 +555,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_type_class_data)
 
   def test_rest_call_log_get_log_entries_associated_with_objects_guid_and_hash_endswith_2(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&guid=*2&hash=*2
     """
     
@@ -528,7 +566,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_guid_and_hash_endswith_2)
 
   def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
-    """Test call:
+    """
+  Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastModified_gt=1980-01-01T00:00:00&lastModified_lt=1990-01-01T00:00:00
     """
     
@@ -538,7 +577,8 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_last_modified_in_1980s)
     
   #def test_rest_call_object_by_guid_404_get(self):
-  #  """Test call:
+  #  """
+  Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
   #  """
   #  
@@ -546,7 +586,8 @@ class mn_service_tests(TestCase):
   #  self.failUnlessEqual(response.status_code, 404)
   #
   #def test_rest_call_sysmeta_by_object_guid_get(self):
-  #  """Test call:
+  #  """
+  Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  
   #  NOTE: This test fails if the /update/ call has not been run from outside the

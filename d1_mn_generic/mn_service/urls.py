@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`models` -- URLs
+"""
+  :mod:`models` -- URLs
 ========================
 
 :module: urls
@@ -28,13 +29,11 @@ urlpatterns = patterns(
   # /log/
   (r'^log/$', 'access_log_view'),
 
-  # Client MN interface.
-  (r'^client/register/$', 'client_register'),
-  (r'^client/queue/clear/$', 'queue_clear'),
+  # D1 adapter interface.
+  (r'^register/$', 'register'),
 
   # Diagnostic / Debugging.
   (r'^get_ip/$', 'auth_test'),
-  (r'^queue/$', 'queue'),
 
   # Admin.
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),

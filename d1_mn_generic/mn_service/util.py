@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`models` -- Utilities
+"""
+  :mod:`models` -- Utilities
 =============================
 
 :module: util
@@ -71,7 +72,8 @@ def log_exception(max_traceback_levels=5):
 
 
 def clear_db():
-  """Clear the database. Used for testing and debugging.
+  """
+  Clear the database. Used for testing and debugging.
   """
 
   models.DB_update_status.objects.all().delete()
@@ -93,7 +95,8 @@ def clear_db():
 
 
 class fixed_chunk_size_file_iterator(object):
-  """Create a file iterator that iterates through file-like object using fixed
+  """
+  Create a file iterator that iterates through file-like object using fixed
   size chunks.
   """
 
@@ -111,35 +114,35 @@ class fixed_chunk_size_file_iterator(object):
   def __iter__(self):
     return self
 
+  #def raise_sys_log_http_404_not_found(err_msg):
+  #  """
+  #  Log message to system log and raise 404 with message.
+  #  """
+  #  sys_log.warning(err_msg)
+  #  raise Http404(err_msg)
 
-def raise_sys_log_http_404_not_found(err_msg):
-  """Log message to system log and raise 404 with message.
-  """
-  sys_log.warning(err_msg)
-  raise Http404(err_msg)
+  #def return_sys_log_http_403_forbidden(err_msg):
+  #  """
+  #  Log message to system log and raise 403 with message.
+  #  """
+  #  sys_log.warning(err_msg)
+  #  return HttpResponseForbidden(err_msg)
 
-
-def return_sys_log_http_403_forbidden(err_msg):
-  """Log message to system log and raise 403 with message.
-  """
-  sys_log.warning(err_msg)
-  return HttpResponseForbidden(err_msg)
-
-
-def return_sys_log_http_500_server_error(err_msg):
-  sys_log.error(err_msg)
-  return HttpResponseServerError(err_msg)
+  #def return_sys_log_http_500_server_error(err_msg):
+  #  sys_log.error(err_msg)
+  #  return HttpResponseServerError(err_msg)
 
 
 def file_to_dict(path):
-  """Convert a sample MN object to dictionary."""
+  """
+  Convert a sample MN object to dictionary."""
 
   try:
     f = open(path, 'r')
   except IOError as (errno, strerror):
     err_msg = 'Internal server error: Could not open: %s\n' % path
     err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
-    return_sys_log_http_500_server_error(err_msg)
+    exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
   d = {}
 
@@ -154,7 +157,8 @@ def file_to_dict(path):
 
 
 def add_header(response, last_modified, content_length, content_type):
-  """Add Last-Modified, Content-Length and Content-Type headers to page that
+  """
+  Add Last-Modified, Content-Length and Content-Type headers to page that
   returns information about a specific object or that contains list of objects.
   For a page that contains a list of objects, Size is the combined size of all
   objects listed."""
@@ -165,14 +169,15 @@ def add_header(response, last_modified, content_length, content_type):
 
 
 def insert_association(guid1, guid2):
-  """Create an association between two objects, given their guids."""
+  """
+  Create an association between two objects, given their guids."""
 
   try:
     o1 = models.Repository_object.objects.filter(guid=guid1)[0]
     o2 = models.Repository_object.objects.filter(guid=guid2)[0]
   except IndexError:
     err_msg = 'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
-    return_sys_log_http_500_server_error(err_msg)
+    exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
   association = models.Repository_object_associations()
   association.from_object = o1
@@ -181,7 +186,8 @@ def insert_association(guid1, guid2):
 
 
 def insert_file_object(object_class_name, guid, path):
-  """Insert object into db."""
+  """
+  Insert object into db."""
 
   # How Django knows to UPDATE vs. INSERT
   #
@@ -275,7 +281,8 @@ def add_range_operator_filter(query, request, col_name, name):
 
 
 def add_wildcard_filter(query, col_name, value):
-  """Add wildcard filter to query. Support only a single * at start OR end"""
+  """
+  Add wildcard filter to query. Support only a single * at start OR end"""
 
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
@@ -322,7 +329,8 @@ def add_wildcard_filter(query, col_name, value):
 
 
 def add_slice_filter(query, request):
-  """Create a slice of a query based on request start and count parameters."""
+  """
+  Create a slice of a query based on request start and count parameters."""
 
   # Skip top 'start' objects.
   try:

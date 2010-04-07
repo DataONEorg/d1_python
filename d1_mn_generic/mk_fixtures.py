@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""mk_fixtures
+"""
+  mk_fixtures
 ==============
 
 :module: mk_fixtures

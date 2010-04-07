@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`models` -- Models
+"""
+  :mod:`models` -- Models
 ==========================
 
 :module: models
@@ -54,7 +55,8 @@ class Repository_object(models.Model):
     self.repository_object_class = object_class
 
   def save_unique(self):
-    """If attempting to save an object that has the same guid and/or url as an
+    """
+  If attempting to save an object that has the same guid and/or url as an
     old object, we automatically delete the old object before saving the new."""
     try:
       me = Repository_object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]

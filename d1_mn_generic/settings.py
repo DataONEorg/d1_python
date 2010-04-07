@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`models` -- Settings
+"""
+  :mod:`models` -- Settings
 ============================
 
 :module: settings
@@ -110,11 +111,6 @@ INSTALLED_APPS = (
   'django.contrib.admin',
   'django.contrib.admindocs',
 )
-
-# Paths to the test files.
-REPOSITORY_DOC_PATH = _here(os.path.join('..', 'mn_docs'))
-REPOSITORY_DATA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'data'))
-REPOSITORY_METADATA_PATH = _here(os.path.join(REPOSITORY_DOC_PATH, 'metadata'))
 
 LOG_PATH = _here('./mn_service.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')

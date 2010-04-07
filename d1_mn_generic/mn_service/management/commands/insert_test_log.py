@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`insert_test_log` -- Admin Command
+"""
+  :mod:`insert_test_log` -- Admin Command
 ==========================================
 
 :module: insert_test_log

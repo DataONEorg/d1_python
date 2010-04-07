@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""":mod:`models` -- Authentication
+"""
+  :mod:`models` -- Authentication
 ==================================
 
 :module: auth
@@ -23,7 +24,8 @@ import util
 
 
 def cn_check_required(f):
-  """Function decorator that checks if the IP address of the client matches a
+  """
+  Function decorator that checks if the IP address of the client matches a
   known CN IP and blocks acccess to the decorated function if there is no match.
   
   For now, it's not really necessary to tap into Django's authentication system.
@@ -41,7 +43,8 @@ def cn_check_required(f):
         sys_log.info('IP is valid CN IP: %s' % request.META['REMOTE_ADDR'])
         request.session['cn_user'] = True
       else:
-        util.return_sys_log_http_403_forbidden(
+        exceptions_dataone.return_exception(
+          request, 'InvalidCredentials',
           'Attempted to access functionality only available to Coordinating Nodes.'
         )
     else:
@@ -56,7 +59,8 @@ def cn_check_required(f):
 
 
 def mn_check_required(f):
-  """Function decorator that checks if the IP address of the client matches a
+  """
+  Function decorator that checks if the IP address of the client matches a
   known MN IP and blocks acccess to the decorated function if there is no match.
   """
 
@@ -70,7 +74,8 @@ def mn_check_required(f):
         sys_log.info('IP is valid MN IP: %s' % request.META['REMOTE_ADDR'])
         request.session['mn_user'] = True
       else:
-        util.return_sys_log_http_403_forbidden(
+        exceptions_dataone.return_exception(
+          request, 'InvalidCredentials',
           'Attempted to access functionality only available to Member Nodes.'
         )
     else:
