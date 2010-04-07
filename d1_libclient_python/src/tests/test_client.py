@@ -154,12 +154,18 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(e.serializeToXml(), xmlEg)
 
   def testExceptionFactory(self):
-    notFoundEg = """{"errorCode": 404, "detailCode": "1010", "traceInformation": {"identifier": "ABCXYZ"}, "name": "NotFound", "description": "Test data"}"""
-    notImplementedEg = """{"errorCode": 501, "detailCode": "1011", "traceInformation": {"a": "sdgdsfg"}, "name": "NotImplemented", "description": "Test not implemented"}"""
-    res = d1exceptions.DataOneExceptionFactory(notFoundEg)
+    notFoundEgJson = """{"errorCode": 404, "detailCode": "1010", "traceInformation": {"identifier": "ABCXYZ"}, "name": "NotFound", "description": "Test data"}"""
+    notImplementedEgJson = """{"errorCode": 501, "detailCode": "1011", "traceInformation": {"a": "sdgdsfg"}, "name": "NotImplemented", "description": "Test not implemented"}"""
+    notImplementedEgXml = '''<error detailCode="1011" errorCode="501" name="NotImplemented"><description>Test not implemented</description><traceInformation><value key="a">'sdgdsfg'</value></traceInformation></error>'''
+    notFoundEgXml = """<error detailCode="1010" errorCode="404" name="NotFound"><description>Test data</description><traceInformation><value key="identifier">'ABCXYZ'</value></traceInformation></error>"""
+    res = d1exceptions.DataOneExceptionFactory().createException(notFoundEgJson)
     self.assertTrue(isinstance(res, d1exceptions.NotFound))
-    res = d1exceptions.DataOneExceptionFactory(notImplementedEg)
+    res = d1exceptions.DataOneExceptionFactory().createException(notImplementedEgJson)
     self.assertTrue(isinstance(res, d1exceptions.NotImplemented))
+    res = d1exceptions.DataOneExceptionFactory().createException(notImplementedEgXml)
+    self.assertTrue(isinstance(res, d1exceptions.NotImplemented))
+    res = d1exceptions.DataOneExceptionFactory().createException(notFoundEgXml)
+    self.assertTrue(isinstance(res, d1exceptions.NotFound))
 
 #===============================================================================
 
@@ -249,6 +255,11 @@ class TestSystemMetadata(unittest.TestCase):
     rep = sysm.replica
     self.assertEqual(len(rep), 2)
     self.assertEqual(rep[1]['replicationStatus'], 'queued')
+    try:
+      bogus = sysm.thisDoesntExist
+    except Exception, e:
+      pass
+    self.assertTrue(isinstance(e, AttributeError))
 
 
 if __name__ == "__main__":

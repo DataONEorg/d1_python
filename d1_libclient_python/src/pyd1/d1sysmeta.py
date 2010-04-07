@@ -124,12 +124,20 @@ class SystemMetadata(object):
       res.append(node.text)
     return res
 
-  ## General properties
-  @property
-  def identifier(self):
-    ''':rtype: (unicode) The identifier of the object described by this sysmeta
+  def __getattr__(self, name):
+    '''Try and automate getting the simple properties of the schema. This works
+    for elements that are simple string values.  Multiple values or things that
+    require type casting need their own accessor method.
     '''
-    return self._getValues(sys._getframe().f_code.co_name)
+    #First try the inherited method
+    try:
+      return super(SystemMetadata, self).__getattr__(name)
+    except AttributeError, e:
+      pass
+    res = self._getValues(name)
+    if res is None:
+      raise AttributeError("Property '%s' not found" % name)
+    return res
 
   @property
   def dateUploaded(self):
@@ -148,41 +156,10 @@ class SystemMetadata(object):
     return None
 
   @property
-  def objectFormat(self):
-    ''':rtype: (unicode)
-    '''
-    return self._getValues(u'objectFormat')
-
-  @property
   def size(self):
     ''':rtype: (integer) The reported size of the object from the sysmeta
     '''
     return int(self._getValues(sys._getframe().f_code.co_name))
-
-  ## Provenance properties
-  @property
-  def submitter(self):
-    ''':rtype: (unicode)
-    '''
-    return self._getValues(u'submitter')
-
-  @property
-  def rightsHolder(self):
-    ''':rtype: (unicode)
-    '''
-    return self._getValues(u'rightsHolder')
-
-  @property
-  def originMemberNode(self):
-    ''':rtype: (unicode)
-    '''
-    return self._getValues(u'originMemberNode')
-
-  @property
-  def authoritativeMemberNode(self):
-    ''':rtype: (unicode)
-    '''
-    return self._getValues(u'authoritativeMemberNode')
 
   @property
   def obsoletes(self):
@@ -229,19 +206,6 @@ class SystemMetadata(object):
       entry['replicationPolicy'] = self._getValues(u'replicationPolicy', replica)
       result.append(entry)
     return result
-
-  ## Data Consistency properties
-  @property
-  def checksum(self):
-    ''':rtype: (unicode) The checksum for the object.
-    '''
-    return self._getValues(u'checksum')
-
-  @property
-  def checksumAlgorthm(self):
-    ''':rtype: (unicode) The checksum for the object.
-    '''
-    return self._getValues(u'checksumAlgorithm')
 
   ## Access control properties
   @property

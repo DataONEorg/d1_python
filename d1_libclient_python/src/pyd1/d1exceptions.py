@@ -9,6 +9,7 @@ Module pyd1.d1exceptions
 Implements the DataONE exceptions
 '''
 
+import logging
 try:
   from xml.etree import cElementTree as ETree
 except:
@@ -247,41 +248,91 @@ class UnsupportedType(DataONEException):
 #===============================================================================
 
 
-def DataOneExceptionFactory(data):
-  '''Try and create an exception from the provided data, otherwise return None.
-  
-  :param data: The exception rendered as a JSON object
-  :type data: string
-  :rtype: DataONEException
+class DataOneExceptionFactory(object):
+  '''Implements a simple factory that generates a DataONE exception from the
+  serialized form.
   '''
-  exc = None
-  exjson = json.loads(data)
-  ename = exjson['name']
-  traceinfo = exjson['traceInformation']
-  if ename == 'NotFound':
-    identifier = traceinfo['identifier']
-    del traceinfo['identifier']
-    exc = NotFound(exjson['detailCode'], exjson['description'], identifier, traceinfo)
-  elif ename == 'IdentifierNotUnique':
-    identifier = traceinfo['identifier']
-    del traceinfo['identifier']
-    exc = IdentifierNotUnique(
-      exjson['detailCode'], exjson['description'], identifier, traceinfo
-    )
-  else:
-    exceptions = {
-      'AuthenticationTimeout': AuthenticationTimeout,
-      'InsufficientResources': InsufficientResources,
-      'InvalidCredentials': InvalidCredentials,
-      'InvalidRequest': InvalidRequest,
-      'InvalidSystemMetadata': InvalidSystemMetadata,
-      'InvalidToken': InvalidToken,
-      'NotAuthorized': NotAuthorized,
-      'NotImplemented': NotImplemented,
-      'ServiceFailure': ServiceFailure,
-      'UnsupportedMetadataType': UnsupportedMetadataType,
-      'UnsupportedType': UnsupportedType,
+
+  @staticmethod
+  def returnException(data):
+    exc = None
+    exceptions = {'NotFound': NotFound, 'IdentifierNotUnique': IdentifierNotUnique}
+    if data['name'] in exceptions.keys():
+      identifier = data['traceInformation']['identifier']
+      del data['traceInformation']['identifier']
+      exc = exceptions[data['name']](
+        data['detailCode'], data['description'], identifier, data['traceInformation']
+      )
+    else:
+      exceptions = {
+        'AuthenticationTimeout': AuthenticationTimeout,
+        'InsufficientResources': InsufficientResources,
+        'InvalidCredentials': InvalidCredentials,
+        'InvalidRequest': InvalidRequest,
+        'InvalidSystemMetadata': InvalidSystemMetadata,
+        'InvalidToken': InvalidToken,
+        'NotAuthorized': NotAuthorized,
+        'NotImplemented': NotImplemented,
+        'ServiceFailure': ServiceFailure,
+        'UnsupportedMetadataType': UnsupportedMetadataType,
+        'UnsupportedType': UnsupportedType,
+      }
+      if data['name'] in exceptions.keys():
+        exc = exceptions[data['name']](
+          data['detailCode'], data['description'], data['traceInformation']
+        )
+    return exc
+
+  @staticmethod
+  def createExceptionFromJSON(data):
+    '''Try and create an exception from the provided data, otherwise return None.
+    
+    :param data: The exception rendered as a JSON string
+    :type data: string
+    :rtype: DataONEException
+    '''
+    exjson = json.loads(data)
+    return DataOneExceptionFactory.returnException(exjson)
+
+  @staticmethod
+  def createExceptionFromXML(data):
+    '''Try and create an exception from the provided data, otherwise return None.
+    
+    :param data: The exception rendered as an XML string
+    :type data: string
+    :rtype: DataONEException
+    '''
+    etree = ETree.fromstring(data)
+    edata = {
+      'name': etree.attrib['name'],
+      'errorCode': int(etree.attrib['errorCode']),
+      'detailCode': etree.attrib['detailCode'],
+      'description': '',
+      'traceInformation': {}
     }
-    if ename in exceptions:
-      exc = exceptions[ename](exjson['detailCode'], exjson['description'], traceinfo)
-  return exc
+    try:
+      edata['description'] = etree.findall('description')[0].text
+    except:
+      pass
+    tinfo = etree.findall("traceInformation/value")
+    for element in tinfo:
+      try:
+        k = element.attrib['key']
+        v = element.text
+        edata['traceInformation'][k] = v
+      except Exception, e:
+        logging.exception(e)
+    return DataOneExceptionFactory.returnException(edata)
+
+  @staticmethod
+  def createException(data):
+    '''Try and create an exception from the provided data, otherwise return None.
+    
+    :param data: The exception rendered as an XML string
+    :type data: string
+    :rtype: DataONEException
+    '''
+    data = data.strip()
+    if data[0] == "<":
+      return DataOneExceptionFactory.createExceptionFromXML(data)
+    return DataOneExceptionFactory.createExceptionFromJSON(data)
