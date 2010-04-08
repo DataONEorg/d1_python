@@ -1,6 +1,6 @@
 '''
-Module pyd1.d1client
-====================
+Module d1pythonitk.d1client
+===========================
 
 This module implements DataOneClient which provides a client supporting basic 
 interaction with the DataONE infrastructure.
@@ -33,9 +33,9 @@ try:
   import cjson as json
 except:
   import json
-from pyd1 import d1const
-from pyd1 import d1exceptions
-from pyd1 import d1sysmeta
+from d1pythonitk import const
+from d1pythonitk import exceptions
+from d1pythonitk import systemmetadata
 
 #===============================================================================
 
@@ -67,6 +67,7 @@ class RESTClient(object):
     self.status = None
     self.responseInfo = None
     self._BASE_DETAIL_CODE = '10000'
+    #TODO: Need to define these detailCode values
 
   def exceptionCode(self, extra):
     return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
@@ -95,13 +96,13 @@ class RESTClient(object):
     '''
     try:
       edata = response.read()
-      exc = d1exceptions.DataOneExceptionFactory(edata)
+      exc = exceptions.DataOneExceptionFactory(edata)
       if not exc is None:
         raise exc
     finally:
       message = 'A bad response was received from the target %s' % response.url
       traceInfo = {'body': edata}
-      raise d1exceptions.ServiceFailure(self.exceptioncode(2), message, traceInfo)
+      raise exceptions.ServiceFailure(self.exceptioncode(2), message, traceInfo)
     return False
 
   def sendRequest(self, url, method='GET', data=None, headers=None):
@@ -159,11 +160,12 @@ class DataOneClient(RESTClient):
   '''Implements a simple DataONE client.
   '''
 
-  def __init__(self, d1Root=d1const.URL_DATAONE_ROOT, userAgent=d1const.USER_AGENT):
+  def __init__(self, d1Root=const.URL_DATAONE_ROOT, userAgent=const.USER_AGENT):
     self.logger = logging.getLogger(self.__class__.__name__)
     self.d1Root = d1Root
     self.userAgent = userAgent
     self._BASE_DETAIL_CODE = '11000'
+    #TODO: Need to define this detailCode base value
 
   @property
   def headers(self):
@@ -198,12 +200,12 @@ class DataOneClient(RESTClient):
       if not self.loadError(e):
         description = "HTTPError. Code=%s" % str(e.code)
         traceInfo = {'body': e.read()}
-        raise d1exceptions.ServiceFailure('10000.0', description, traceInfo)
+        raise exceptions.ServiceFailure('10000.0', description, traceInfo)
     except urllib2.URLError, e:
       self.logger.warn('%s: URL Error encountered.' % __name__)
       if not self.loadError(e):
         description = "URL Error. Reason=%s" % e.reason
-        raise d1exceptions.ServiceFailure('10000.1', description)
+        raise exceptions.ServiceFailure('10000.1', description)
     return response
 
   def getObjectUrl(self, target):
@@ -229,7 +231,7 @@ class DataOneClient(RESTClient):
     response = self.GET(url, self.headers)
     return response
 
-  def getSystemMetadata(self, identifier, target=d1const.URL_DATAONE_ROOT):
+  def getSystemMetadata(self, identifier, target=const.URL_DATAONE_ROOT):
     '''Retrieve system metadata for an object.
     :param identifier: Identifier of the object to retrieve
     :param target: Optional node URL
@@ -238,17 +240,17 @@ class DataOneClient(RESTClient):
     self.logger.debug("%s: %s" % (__name__, identifier))
     url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'meta/')
     self.logger.debug("%s: url=%s" % (__name__, url))
-    raise d1exceptions.NotImplemented(self.exceptioncode('1.2'), __name__)
+    raise exceptions.NotImplemented(self.exceptioncode('1.2'), __name__)
     response = self.GET(url, self.headers)
     return response.data
 
-  def resolve(self, identifier, target=d1const.URL_DATAONE_ROOT):
+  def resolve(self, identifier, target=const.URL_DATAONE_ROOT):
     self.logger.debug("%s: %s" % (__name__, identifier))
     url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'resolve/')
     self.logger.debug("%s: url=%s" % (__name__, url))
     headers = self.headers
     headers['Accept'] = ''
-    raise d1exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
+    raise exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
     response = self.GET(url, headers)
 
   def listObjects(
@@ -259,22 +261,22 @@ class DataOneClient(RESTClient):
     replicaStatus=None,
     start=0,
     count=1000,
-    target=d1const.URL_DATAONE_ROOT
+    target=const.URL_DATAONE_ROOT
   ):
     if start < 0:
       start = 0
     if count < 0:
       count = 0
-    if count > d1const.MAX_LISTOBJECTS:
-      raise d1exceptions.InvalidRequest(
-        10002, "Count can not be higher than %d" % d1const.MAX_LISTOBJECTS
+    if count > const.MAX_LISTOBJECTS:
+      raise exceptions.InvalidRequest(
+        10002, "Count can not be higher than %d" % const.MAX_LISTOBJECTS
       )
     params = {}
     self.logger.debug("%s: %s" % (__name__, identifier))
     url = urlparse.urljoin(self.getObjectUrl(target), identifier, '')
     self.logger.debug("%s: url=%s" % (__name__, url))
-    raise d1exceptions.NotImplemented(self.exceptioncode('1.4'), __name__)
+    raise exceptions.NotImplemented(self.exceptioncode('1.4'), __name__)
     response = self.GET(url, headers)
 
   def getLogRecords(self, startTime, endTime=None, event=None):
-    raise d1exceptions.NotImplemented(self.exceptioncode('1.5'), __name__)
+    raise exceptions.NotImplemented(self.exceptioncode('1.5'), __name__)

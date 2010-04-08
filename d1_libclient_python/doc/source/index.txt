@@ -1,13 +1,13 @@
-Documentation for PyD1 - A DataONE Client
-=========================================
+Documentation for d1pythonitk - A DataONE Client in Python
+==========================================================
 
-PyD1 is a DataONE client written in Python. PyD1 provides programmatic access
+d1pythonitk is a DataONE client written in Python. d1pythonitk provides programmatic access
 to the DataONE infrastructure that may be used as a command line tool for
 interacting with DataONE services, may form the basis of larger applications,
 or may be used to extend existing applications to utilize the services of
 DataONE.
 
-PyD1 is a part of the DataONE Investigator Toolkit (ITK), and is developed as
+d1pythonitk is a part of the DataONE Investigator Toolkit (ITK), and is developed as
 part of the `DataONE project`_.
 
 
@@ -18,7 +18,7 @@ Contents:
    :maxdepth: 2
 
    install
-   pyd1
+   d1pythonitk
    notes
 
 

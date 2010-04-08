@@ -1,6 +1,6 @@
 '''
-Module pyd1.d1exceptions
-========================
+Module d1pythonitk.d1exceptions
+===============================
 
 :Created: 20100111
 
@@ -36,7 +36,7 @@ def instanceToSimpleType(instance):
 
 
 class DataONEException(Exception):
-  '''Base class for exceptions raised by PyD1.
+  '''Base class for exceptions raised by d1pythonitk.
   '''
 
   def __init__(self, errorCode, detailCode, description, traceInformation={}):

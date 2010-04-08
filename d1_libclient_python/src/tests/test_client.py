@@ -19,10 +19,10 @@ try:
   import cjson as json
 except:
   import json
-from pyd1 import d1const
-from pyd1 import d1client
-from pyd1 import d1sysmeta
-from pyd1 import d1exceptions
+from d1pythonitk import const
+from d1pythonitk import client
+from d1pythonitk import systemmetadata
+from d1pythonitk import exceptions
 
 
 class TestCaseWithURLCompare(unittest.TestCase):
@@ -132,7 +132,7 @@ class TestExceptions(unittest.TestCase):
   def testNotFound(self):
     xmlEg = """<error detailCode="1010" errorCode="404" name="NotFound"><description>Test data</description><traceInformation><value key="identifier">'ABCXYZ'</value></traceInformation></error>"""
     try:
-      raise d1exceptions.NotFound('1010', 'Test data', 'ABCXYZ', {'test1': 'data1'})
+      raise exceptions.NotFound('1010', 'Test data', 'ABCXYZ', {'test1': 'data1'})
     except Exception, e:
       pass
     jdata = json.loads(e.serializeToJson())
@@ -144,7 +144,7 @@ class TestExceptions(unittest.TestCase):
   def testNotImplemented(self):
     xmlEg = '''<error detailCode="1011" errorCode="501" name="NotImplemented"><description>Test not implemented</description><traceInformation><value key="a">'sdgdsfg'</value></traceInformation></error>'''
     try:
-      raise d1exceptions.NotImplemented('1011', 'Test not implemented', {'a': 'sdgdsfg'})
+      raise exceptions.NotImplemented('1011', 'Test not implemented', {'a': 'sdgdsfg'})
     except Exception, e:
       pass
     jdata = json.loads(e.serializeToJson())
@@ -158,21 +158,21 @@ class TestExceptions(unittest.TestCase):
     notImplementedEgJson = """{"errorCode": 501, "detailCode": "1011", "traceInformation": {"a": "sdgdsfg"}, "name": "NotImplemented", "description": "Test not implemented"}"""
     notImplementedEgXml = '''<error detailCode="1011" errorCode="501" name="NotImplemented"><description>Test not implemented</description><traceInformation><value key="a">'sdgdsfg'</value></traceInformation></error>'''
     notFoundEgXml = """<error detailCode="1010" errorCode="404" name="NotFound"><description>Test data</description><traceInformation><value key="identifier">'ABCXYZ'</value></traceInformation></error>"""
-    res = d1exceptions.DataOneExceptionFactory().createException(notFoundEgJson)
-    self.assertTrue(isinstance(res, d1exceptions.NotFound))
-    res = d1exceptions.DataOneExceptionFactory().createException(notImplementedEgJson)
-    self.assertTrue(isinstance(res, d1exceptions.NotImplemented))
-    res = d1exceptions.DataOneExceptionFactory().createException(notImplementedEgXml)
-    self.assertTrue(isinstance(res, d1exceptions.NotImplemented))
-    res = d1exceptions.DataOneExceptionFactory().createException(notFoundEgXml)
-    self.assertTrue(isinstance(res, d1exceptions.NotFound))
+    res = exceptions.DataOneExceptionFactory().createException(notFoundEgJson)
+    self.assertTrue(isinstance(res, exceptions.NotFound))
+    res = exceptions.DataOneExceptionFactory().createException(notImplementedEgJson)
+    self.assertTrue(isinstance(res, exceptions.NotImplemented))
+    res = exceptions.DataOneExceptionFactory().createException(notImplementedEgXml)
+    self.assertTrue(isinstance(res, exceptions.NotImplemented))
+    res = exceptions.DataOneExceptionFactory().createException(notFoundEgXml)
+    self.assertTrue(isinstance(res, exceptions.NotFound))
 
 #===============================================================================
 
 
 class TestRestClient(TestCaseWithURLCompare):
   def testGet(self):
-    cli = d1client.RESTClient()
+    cli = client.RESTClient()
     #Google runs a fairly reliable server
     res = cli.GET('http://www.google.com/')
     self.assertEqual(cli.status, 200)
@@ -191,7 +191,7 @@ class TestRestClient(TestCaseWithURLCompare):
 
 class TestDataOneClient(TestCaseWithURLCompare):
   def testGet(self):
-    cli = d1client.DataOneClient()
+    cli = client.DataOneClient()
 
     #===============================================================================
 
@@ -248,7 +248,7 @@ EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
 
 class TestSystemMetadata(unittest.TestCase):
   def testLoadSystemMetadata(self):
-    sysm = d1sysmeta.SystemMetadata(EG_SYSMETA)
+    sysm = systemmetadata.SystemMetadata(EG_SYSMETA)
     self.assertEqual(sysm.identifier, 'Identifier0')
     self.assertEqual(sysm.size, 0)
     self.assertEqual(sysm.checksum, '2e01e17467891f7c933dbaa00e1459d23db3fe4f')

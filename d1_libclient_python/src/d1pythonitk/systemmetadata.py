@@ -1,6 +1,6 @@
 '''
-Module pyd1.d1sysmeta
-=====================
+Module d1pythonitk.d1sysmeta
+============================
 
 :Created: 20100111
 :Author: vieglais
@@ -19,8 +19,8 @@ an instance of SystemMetadata.
 
 Example:
   >>> target = "http://localhost:8000/mn"
-  >>> from pyd1 import d1client
-  >>> cli = d1client.DataOneClient()
+  >>> from d1pythonitk import client
+  >>> cli = client.DataOneClient()
   >>> objects = cli.listObjects(target=target,count=3)
   >>> objects['data'][0]['guid']
   u'02c3f67e-b2e1-4550-8fae-f6d90e9f15f6'
@@ -36,7 +36,6 @@ try:
   import xml.etree.cElementTree as ET
 except:
   import xml.etree.ElementTree as ET
-from pyd1 import d1const
 
 
 class SystemMetadata(object):

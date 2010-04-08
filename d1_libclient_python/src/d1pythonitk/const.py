@@ -9,10 +9,10 @@ Provides various constants for the PyD1 client.
 
 Note that many of these parameters should be retrieved from the root node of D1
 '''
-import pyd1
+import d1pythonitk
 
 #: :const: Version of this software
-VERSION = pyd1.__version__
+VERSION = d1pythonitk.__version__
 
 #: types of objects in the DataONE system
 #: These need to be replaced with URIs, and should be discoverable from the

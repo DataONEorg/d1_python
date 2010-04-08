@@ -46,7 +46,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'PyD1'
+project = u'd1pythonitk'
 copyright = u'2010, DataONE'
 author = u'DataONE CCIT (initial code by Vieglais)'
 

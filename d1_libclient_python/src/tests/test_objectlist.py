@@ -11,7 +11,7 @@ Unit tests for pyd1.d1objectlist
 
 import unittest
 import logging
-from pyd1 import d1objectlist
+from d1pythonitk import objectlist
 
 
 class TestD1ObjectList(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestD1ObjectList(unittest.TestCase):
     pass
 
   def test_ListSlice(self):
-    olist = d1objectlist.D1ObjectList(None)
+    olist = objectlist.D1ObjectList(None)
     a = olist[1:10]
 
 

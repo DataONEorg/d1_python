@@ -1,2 +1,0 @@
-.. automodule:: pyd1.d1sysmeta
-   :members:

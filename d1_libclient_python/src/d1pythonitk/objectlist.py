@@ -11,7 +11,7 @@ Module d1objectlist
 '''
 
 
-class D1ObjectList(object):
+class ObjectList(object):
   '''Implements an immutable list that represents all objects in DataONE.  Data 
   is retrieved from the target only when required.
   '''

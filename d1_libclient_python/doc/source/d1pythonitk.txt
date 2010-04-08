@@ -1,0 +1,14 @@
+Package d1pythonitk
+===================
+
+This package contains a client tool in Python for working with the DataONE 
+system.
+
+.. toctree::
+   :numbered:
+   :maxdepth: 2
+
+   d1pythonitk/client
+   d1pythonitk/sysmeta
+   d1pythonitk/const
+   d1pythonitk/exceptions
