@@ -36,6 +36,7 @@ try:
   import xml.etree.cElementTree as ET
 except:
   import xml.etree.ElementTree as ET
+from d1pythonitk import const
 
 
 class SystemMetadata(object):
@@ -50,30 +51,22 @@ class SystemMetadata(object):
     self.xmldoc = xmldoc
     self._parse(xmldoc)
 
-  def isValid(self, schemaDoc):
+  def isValid(self, schemaUrl=const.SYSTEM_METADATA_SCHEMA_URL):
     '''This is kind of expensive as we're trying to minimize external 
     dependencies (ie. lxml and libxml2). Here we import lxml.etree, parse the 
     schema, reparse the document then check that the document is valid according 
     to the schema.
     
     :param schemaDoc: unicode or open file containing the XML Schema
+    :type schemaDoc: unicode or file
     :rtype: (bool) True if all good, otherwise an exception is raised.
     '''
     try:
-      from cStringIO import StringIO
-    except:
-      from StringIO import StringIO
-    try:
-      from lxml import etree as lxmletree
+      from d1pythonitk import xmlvalidator
     except:
       logging.warn('Could not import lxml.  Validation not available.')
       return False
-    fschema = schemaDoc
-    if isinstance(schemaDoc, basestring):
-      fschema = StringIO(schemaDoc)
-    xmlschema = lxmletree.XMLSchema(file=fschema)
-    xmldocument = lxmletree.fromstring(self.xmldoc)
-    xmlschema.assertValid(xmldocument)
+    xmlvalidator.validate(self.xmldoc, schemaUrl)
     return True
 
   def _parse(self, xmldoc):

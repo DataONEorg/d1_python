@@ -94,15 +94,10 @@ class RESTClient(object):
     :param response: Response from urllib2.urlopen
     :returns: Should not return - always raises an exception.
     '''
-    try:
-      edata = response.read()
-      exc = exceptions.DataOneExceptionFactory(edata)
-      if not exc is None:
-        raise exc
-    finally:
-      message = 'A bad response was received from the target %s' % response.url
-      traceInfo = {'body': edata}
-      raise exceptions.ServiceFailure(self.exceptioncode(2), message, traceInfo)
+    edata = response.read()
+    exc = exceptions.DataOneExceptionFactory.createException(edata)
+    if not exc is None:
+      raise exc
     return False
 
   def sendRequest(self, url, method='GET', data=None, headers=None):
@@ -122,9 +117,30 @@ class RESTClient(object):
     if headers is None:
       headers = self.headers
     request = HttpRequest(url, data=data, headers=headers, method=method)
-    response = urllib2.urlopen(request)
-    self.status = response.code
-    self.responseInfo = response.info()
+    try:
+      response = urllib2.urlopen(request, timeout=const.RESPONSE_TIMEOUT)
+      self.status = response.code
+      self.responseInfo = response.info()
+    except urllib2.HTTPError, e:
+      self.logger.warn('%s: HTTP Error encountered.' % __name__)
+      self.status = e.code
+      self.responseInfo = e.info()
+      if hasattr(e, 'read'):
+        if self.loadError(e):
+          return None
+      raise (e)
+#      if not self.loadError(e):
+#        description = "HTTPError. Code=%s" % str(e.code)
+#        traceInfo = {'body': e.read()}
+#        raise exceptions.ServiceFailure('10000.0',description,traceInfo)
+    except urllib2.URLError, e:
+      self.logger.warn('%s: URL Error encountered.' % __name__)
+      if hasattr(e, 'read'):
+        if self.loadError(e):
+          return None
+      raise (e)
+      #description = "URL Error. Reason=%s" % e.reason
+      #raise exceptions.ServiceFailure('10000.1',description)
     return response
 
   def HEAD(self, url, headers=None):
@@ -156,57 +172,30 @@ class RESTClient(object):
 #===============================================================================
 
 
-class DataOneClient(RESTClient):
+class DataOneClient(object):
   '''Implements a simple DataONE client.
   '''
 
-  def __init__(self, d1Root=const.URL_DATAONE_ROOT, userAgent=const.USER_AGENT):
+  def __init__(
+    self,
+    d1Root=const.URL_DATAONE_ROOT,
+    userAgent=const.USER_AGENT,
+    clientClass=RESTClient
+  ):
     self.logger = logging.getLogger(self.__class__.__name__)
     self.d1Root = d1Root
     self.userAgent = userAgent
     self._BASE_DETAIL_CODE = '11000'
     #TODO: Need to define this detailCode base value
+    self.client = clientClass()
+
+  def exceptionCode(self, extra):
+    return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
 
   @property
   def headers(self):
     res = {'User-Agent': self.userAgent, 'Accept': '*/*'}
     return res
-
-  def sendRequest(self, url, method='GET', data=None, headers=None):
-    '''Sends a HTTP request and returns the response as a file like object.
-    
-    Has the side effect of setting the status and responseInfo properties. 
-    
-    :param url: The target URL
-    :type url: string
-    :param method: The HTTP method to use.
-    :type method: string
-    :param data: Optional dictionary of data to pass on to urllib2.urlopen
-    :type data: dictionary
-    :param headers: Optional header information
-    :type headers: dictionary
-    '''
-    if headers is None:
-      headers = self.headers
-    request = HttpRequest(url, data=data, headers=headers, method=method)
-    try:
-      response = urllib2.urlopen(request)
-      self.status = response.code
-      self.responseInfo = response.info()
-    except urllib2.HTTPError, e:
-      self.logger.warn('%s: HTTP Error encountered.' % __name__)
-      self.status = e.code
-      self.responseInfo = e.info()
-      if not self.loadError(e):
-        description = "HTTPError. Code=%s" % str(e.code)
-        traceInfo = {'body': e.read()}
-        raise exceptions.ServiceFailure('10000.0', description, traceInfo)
-    except urllib2.URLError, e:
-      self.logger.warn('%s: URL Error encountered.' % __name__)
-      if not self.loadError(e):
-        description = "URL Error. Reason=%s" % e.reason
-        raise exceptions.ServiceFailure('10000.1', description)
-    return response
 
   def getObjectUrl(self, target):
     '''Returns the full URL to the object collection on target
@@ -217,7 +206,17 @@ class DataOneClient(RESTClient):
       url += "/"
     return url
 
-  ## === DataONE API Methods ===
+  def getSystemMetadataSchema(self, schemaUrl=const.SYSTEM_METADATA_SCHEMA_URL):
+    '''Convenience function to retrieve a copy of the system metadata schema.
+    
+    :param schemaUrl: The URL from which to load the schema from
+    :type schemaUrl: string
+    :rtype: unicode copy of the system metadata schema
+    '''
+    response = self.client.GET(schemaUrl)
+    return response
+
+    ## === DataONE API Methods ===
   def get(self, identifier, target):
     '''Retrieve an object from DataONE.
     
@@ -228,7 +227,7 @@ class DataOneClient(RESTClient):
     self.logger.debug("%s: %s" % (__name__, identifier))
     url = urlparse.urljoin(self.getObjectUrl(target), identifier)
     self.logger.debug("%s: url=%s" % (__name__, url))
-    response = self.GET(url, self.headers)
+    response = self.client.GET(url, self.headers)
     return response
 
   def getSystemMetadata(self, identifier, target=const.URL_DATAONE_ROOT):
@@ -241,7 +240,7 @@ class DataOneClient(RESTClient):
     url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'meta/')
     self.logger.debug("%s: url=%s" % (__name__, url))
     raise exceptions.NotImplemented(self.exceptioncode('1.2'), __name__)
-    response = self.GET(url, self.headers)
+    response = self.client.GET(url, self.headers)
     return response.data
 
   def resolve(self, identifier, target=const.URL_DATAONE_ROOT):
@@ -251,7 +250,7 @@ class DataOneClient(RESTClient):
     headers = self.headers
     headers['Accept'] = ''
     raise exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
-    response = self.GET(url, headers)
+    response = self.client.GET(url, headers)
 
   def listObjects(
     self,
@@ -276,7 +275,7 @@ class DataOneClient(RESTClient):
     url = urlparse.urljoin(self.getObjectUrl(target), identifier, '')
     self.logger.debug("%s: url=%s" % (__name__, url))
     raise exceptions.NotImplemented(self.exceptioncode('1.4'), __name__)
-    response = self.GET(url, headers)
+    response = self.client.GET(url, headers)
 
   def getLogRecords(self, startTime, endTime=None, event=None):
     raise exceptions.NotImplemented(self.exceptioncode('1.5'), __name__)

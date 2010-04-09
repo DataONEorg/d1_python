@@ -48,7 +48,7 @@ URL_SYSMETA_PATH = 'meta'
 #: Path to the DataONE system metadata schema
 #: TODO: retrieve this from D1 root
 SYSTEM_METADATA_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
-                             "trunk/schemas/coordinating_node_sysmeta.xsd"
+                             "trunk/schemas/systemmetadata.xsd"
 
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]

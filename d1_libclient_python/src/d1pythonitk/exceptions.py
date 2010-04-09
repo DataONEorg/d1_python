@@ -251,10 +251,19 @@ class UnsupportedType(DataONEException):
 class DataOneExceptionFactory(object):
   '''Implements a simple factory that generates a DataONE exception from the
   serialized form.
+  
+  This class would normally be used by the client to re-raise an exception on 
+  the client side from an error that occurred on the server.
   '''
 
   @staticmethod
   def returnException(data):
+    '''Returns an instance of some subclass of DataONEException.
+    
+    :param data: dictionary of {'name':<exception class name>, 'errorCode':<>,
+      'detailCode:<>, 'description':<>, 'traceInformation':< optional dict>}
+    :type data: dictionary
+    '''
     exc = None
     exceptions = {'NotFound': NotFound, 'IdentifierNotUnique': IdentifierNotUnique}
     if data['name'] in exceptions.keys():
@@ -302,14 +311,17 @@ class DataOneExceptionFactory(object):
     :type data: string
     :rtype: DataONEException
     '''
-    etree = ETree.fromstring(data)
-    edata = {
-      'name': etree.attrib['name'],
-      'errorCode': int(etree.attrib['errorCode']),
-      'detailCode': etree.attrib['detailCode'],
-      'description': '',
-      'traceInformation': {}
-    }
+    try:
+      etree = ETree.fromstring(data)
+      edata = {
+        'name': etree.attrib['name'],
+        'errorCode': int(etree.attrib['errorCode']),
+        'detailCode': etree.attrib['detailCode'],
+        'description': '',
+        'traceInformation': {}
+      }
+    except:
+      return None
     try:
       edata['description'] = etree.findall('description')[0].text
     except:
