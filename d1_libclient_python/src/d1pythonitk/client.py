@@ -33,8 +33,8 @@ try:
   import cjson as json
 except:
   import json
+from d1common import exceptions
 from d1pythonitk import const
-from d1pythonitk import exceptions
 from d1pythonitk import systemmetadata
 
 #===============================================================================

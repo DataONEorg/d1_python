@@ -1,2 +1,0 @@
-.. automodule:: d1pythonitk.exceptions
-   :members:

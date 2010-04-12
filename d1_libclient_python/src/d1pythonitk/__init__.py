@@ -1,6 +1,6 @@
 '''
 '''
 
-__version__ = "0.0.5"
+__version__ = "0.1"
 
-__all__ = ['d1client', 'd1const', 'd1exceptions', 'd1sysmeta']
+__all__ = ['client', 'const', 'systemmetadata']

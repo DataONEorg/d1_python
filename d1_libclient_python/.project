@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>PyD1</name>
+	<name>d1-itk-python</name>
 	<comment></comment>
 	<projects>
+		<project>d1-api-common-python</project>
 		<project>DataONE_cicore</project>
 	</projects>
 	<buildSpec>

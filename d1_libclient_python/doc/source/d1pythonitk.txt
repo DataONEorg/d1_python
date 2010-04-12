@@ -9,6 +9,5 @@ system.
    :maxdepth: 2
 
    d1pythonitk/client
-   d1pythonitk/sysmeta
+   d1pythonitk/systemmetadata
    d1pythonitk/const
-   d1pythonitk/exceptions
