@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`models` -- Utilities
-=============================
+:mod:`util`
+===========
 
-:module: util
-:platform: Linux
-:synopsis: Utilities
+:Synopsis:
+  General utilities.
 
 .. moduleauthor:: Roger Dahl
 """
@@ -19,13 +18,17 @@ import glob
 import time
 import datetime
 import stat
-import json
 import hashlib
 import uuid
 import exceptions
 import traceback
 
-# Django.
+try:
+  import cjson as json
+except:
+  import json
+
+  # Django.
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand

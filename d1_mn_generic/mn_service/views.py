@@ -1,26 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`views` -- Views
-========================
+:mod:`views`
+============
 
 :module: views
 :platform: Linux
 
-:synopsis:
-Implements the following REST calls:
-
-0.3   MN_crud.get()                 GET     /object/<guid>/
-0.3   MN_crud.getSystemMetadata()   GET     /object/<guid>/meta/
-0.3   MN_crud.describe()            HEAD    /object/<guid>/
-0.3   MN_crud.getChecksum()         GET     /object/<guid>/checksum/
-0.3   MN_crud.getLogRecords()       GET     /log/
-0.3   MN_replication.listObjects()  GET     /object/
-0.3   CN_crud.get()                 GET     /object/<guid>/
-0.3   CN_crud.getSystemMetadata()   GET     /object/<guid>/meta/
-0.3   CN_crud.resolve()             GET     /object/<guid>/resolve/
-0.3   CN_query.search()             GET     /object/
-0.3   CN_query.getLogRecords()      GET     /log/
+:Synopsis:
+  Implements the following REST calls:
+  
+  0.3   MN_crud.get()                 GET     /object/<guid>/
+  0.3   MN_crud.getSystemMetadata()   GET     /object/<guid>/meta/
+  0.3   MN_crud.describe()            HEAD    /object/<guid>/
+  0.3   MN_crud.getChecksum()         GET     /object/<guid>/checksum/
+  0.3   MN_crud.getLogRecords()       GET     /log/
+  0.3   MN_replication.listObjects()  GET     /object/
 
 .. moduleauthor:: Roger Dahl
 """
@@ -121,7 +116,12 @@ def object_collection_get(request):
       exceptions_dataone.return_exception(
         request, 'ServiceFailure', 'Invalid orderby value requested: %s' % orderby
       )
-    # Set up query with requested sorting.
+
+      return exceptions_dataone.serialize(
+        request, ServiceFailure='Invalid orderby value requested: %s' % orderby
+      )
+
+      # Set up query with requested sorting.
     query = models.Repository_object.objects.order_by(prefix + order_field)
   else:
     # Default ordering is by mtime ascending.
@@ -224,9 +224,9 @@ def object_collection_get(request):
   # Serialize the response.
   # The "pretty" parameter generates pretty response.
   if 'pretty' in request.GET:
-    body = '<pre>' + serialize_object_collection.serializer(res, True, jsonvar) + '</pre>'
+    body = '<pre>' + serialize_object_collection.serialize(res, True, jsonvar) + '</pre>'
   else:
-    body = serialize_object_collection.serializer(res, False, jsonvar)
+    body = serialize_object_collection.serialize(res, False, jsonvar)
 
   # Add update status for collection.
   try:
@@ -595,9 +595,9 @@ def access_log_view_get(request):
   # Serialize the response.
   # The "pretty" parameter generates pretty printed response.
   if 'pretty' in request.GET:
-    body = '<pre>' + serialize_object_collection.serializer(res, True, jsonvar) + '</pre>'
+    body = '<pre>' + serialize_object_collection.serialize(res, True, jsonvar) + '</pre>'
   else:
-    body = serialize_object_collection.serializer(res, False, jsonvar)
+    body = serialize_object_collection.serialize(res, False, jsonvar)
 
   response.write(body)
 
@@ -731,9 +731,9 @@ def register_get(request):
   # Serialize the response.
   # The "pretty" parameter generates pretty response.
   if 'pretty' in request.GET:
-    body = '<pre>' + serialize_object_collection.serializer(res, True) + '</pre>'
+    body = '<pre>' + serialize_object_collection.serialize(res, True) + '</pre>'
   else:
-    body = serialize_object_collection.serializer(res)
+    body = serialize_object_collection.serialize(res)
 
   response.write(body)
 

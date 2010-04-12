@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`models` -- Process Queue
-=================================
+:mod:`process_queue`
+====================
 
-:module: 
-:platform: Linux
-:synopsis: 
-
+:Synopsis: 
+  Iterate through queue of objects registered by client to be exposed by DataONE
+  and create database entries for exposing them.
+  
 .. moduleauthor:: Roger Dahl
 """
 
@@ -19,7 +19,6 @@ import glob
 import time
 import datetime
 import stat
-import json
 import hashlib
 import uuid
 import urllib
@@ -27,8 +26,13 @@ import logging
 import urlparse
 import httplib
 
-# 3rd party.
-# Lxml
+try:
+  import cjson as json
+except:
+  import json
+
+  # 3rd party.
+  # Lxml
 try:
   from lxml import etree
 except ImportError, e:

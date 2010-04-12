@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  mk_fixtures
-==============
+:mod:`mk_fixtures`
+==================
 
-:module: mk_fixtures
-:platform: Linux
-:synopsis: mk_fixtures
+:Synopsis:
+  Create fixtures used by unit tests.
 
 .. moduleauthor:: Roger Dahl
 """

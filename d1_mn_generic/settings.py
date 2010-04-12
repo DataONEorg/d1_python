@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`models` -- Settings
-============================
+:mod:`settings`
+===============
 
-:module: settings
-:platform: Linux
-:synopsis: Settings
+:Synopsis:
+  App level settings.
 
 .. moduleauthor:: Roger Dahl
 """

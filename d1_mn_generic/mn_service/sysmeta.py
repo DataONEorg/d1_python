@@ -1,6 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+:mod:`sysmeta`
+==============
+
+:Synopsis:
+  Create sysmeta skeleton object on the fly.
+
+.. moduleauthor:: Roger Dahl
+"""
+
 
 
 ## cn_check_required is not required.

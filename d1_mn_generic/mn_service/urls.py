@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`models` -- URLs
-========================
+:mod:`urls`
+===========
 
-:module: urls
-:platform: Linux
-:synopsis: URLs
+:Synopsis:
+  Django URL to function mapping.
 
 .. moduleauthor:: Roger Dahl
 """

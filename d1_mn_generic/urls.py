@@ -1,10 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-  :mod:`models` -- URLs
-========================
+:mod:`urls`
+===========
 
-:module: urls
-:platform: Linux
-:synopsis: URLs
+:Synopsis:
+  Django URL to service mapping.
 
 .. moduleauthor:: Roger Dahl
 """
@@ -17,7 +18,6 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns(
   '',
-  # Example:
   (r'^mn/', include('mn_prototype.mn_service.urls')),
   (
     r'^accounts/login/$', 'django.contrib.auth.views.login'

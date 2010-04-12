@@ -2,18 +2,21 @@
 # -*- coding: utf-8 -*-
 
 """
-  :mod:`tests` -- Unit Tests
-=============================
+:mod:`tests`
+============
 
-:module: tests
-:platform: Linux
-:synopsis: Unit Tests
+:Synopsis:
+  Unit Tests.
 
 .. moduleauthor:: Roger Dahl
 """
 
 # Stdlib.
-import json
+try:
+  import cjson as json
+except:
+  import json
+  
 import StringIO
 
 # Django.

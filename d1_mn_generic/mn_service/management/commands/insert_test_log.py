@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`insert_test_log` -- Admin Command
-==========================================
+:mod:`insert_test_log`
+======================
 
-:module: insert_test_log
-:platform: Linux
-:synopsis: insert_test_log
-
+:Synopsis:
+  Insert fake access log for testing and unit tests.
+  
 .. moduleauthor:: Roger Dahl
 """
 
@@ -19,12 +18,16 @@ import glob
 import time
 import datetime
 import stat
-import json
 import hashlib
 import uuid
 import random
 
-# Django.
+try:
+  import cjson as json
+except:
+  import json
+
+  # Django.
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand

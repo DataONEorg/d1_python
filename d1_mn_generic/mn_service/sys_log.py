@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`sys_log` -- System Logging
-===================================
+:mod:`sys_log`
+==============
 
-:module: sys_log
-:platform: Linux
-:synopsis: System Logging
+:Synopsis:
+  System Logging is used for logging internal events that are not exposed
+  through any of the DataONE interfaces. Used for monitoring service and doing
+  post mortem debugging.
 
 .. moduleauthor:: Roger Dahl
 """

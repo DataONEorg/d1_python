@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`models` -- Authentication
-==================================
+:mod:`auth`
+===========
 
-:module: auth
-:platform: Linux
-:synopsis: Authentication
+:Synopsis:
+  Authentication. For now, based on IP only.
 
 .. moduleauthor:: Roger Dahl
 """

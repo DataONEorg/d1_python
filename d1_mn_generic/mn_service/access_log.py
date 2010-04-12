@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`access_log` -- Access Logging
-======================================
+:mod:`access_log`
+=================
 
-:module: access_log
-:platform: Linux
-:synopsis: Access Logging
+:Synopsis:
+  Log DataONE object accesses.
 
 .. moduleauthor:: Roger Dahl
 """

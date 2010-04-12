@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-  :mod:`models` -- Models
-==========================
+:mod:`models`
+=============
 
-:module: models
-:platform: Linux
-:synopsis: Models
+:Synopsis:
+  Database models.
 
 .. moduleauthor:: Roger Dahl
 """
@@ -19,7 +18,7 @@ from django.db.models import Q
 
 
 # Status of the most recent database update attempt.
-# This table holds only one line.
+# This table holds only one row.
 class DB_update_status(models.Model):
   mtime = models.DateTimeField(auto_now=True)
   status = models.CharField(max_length=100)
@@ -56,8 +55,9 @@ class Repository_object(models.Model):
 
   def save_unique(self):
     """
-  If attempting to save an object that has the same guid and/or url as an
-    old object, we automatically delete the old object before saving the new."""
+    If attempting to save an object that has the same guid and/or url as an
+    old object, we automatically delete the old object before saving the new.
+    """
     try:
       me = Repository_object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]
     except IndexError:
