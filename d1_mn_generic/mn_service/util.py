@@ -52,6 +52,9 @@ except ImportError, e:
   )
   sys.exit(1)
 
+# MN API.
+import d1common.exceptions
+
 # App.
 import models
 import settings
@@ -145,7 +148,7 @@ def file_to_dict(path):
   except IOError as (errno, strerror):
     err_msg = 'Internal server error: Could not open: %s\n' % path
     err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
-    exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
+    #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
   d = {}
 
@@ -157,35 +160,6 @@ def file_to_dict(path):
   f.close()
 
   return d
-
-
-def add_header(response, last_modified, content_length, content_type):
-  """
-  Add Last-Modified, Content-Length and Content-Type headers to page that
-  returns information about a specific object or that contains list of objects.
-  For a page that contains a list of objects, Size is the combined size of all
-  objects listed."""
-
-  response['Last-Modified'] = last_modified
-  response['Content-Length'] = content_length
-  response['Content-Type'] = content_type
-
-
-def insert_association(guid1, guid2):
-  """
-  Create an association between two objects, given their guids."""
-
-  try:
-    o1 = models.Repository_object.objects.filter(guid=guid1)[0]
-    o2 = models.Repository_object.objects.filter(guid=guid2)[0]
-  except IndexError:
-    err_msg = 'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
-    exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
-
-  association = models.Repository_object_associations()
-  association.from_object = o1
-  association.to_object = o2
-  association.save()
 
 
 def insert_file_object(object_class_name, guid, path):

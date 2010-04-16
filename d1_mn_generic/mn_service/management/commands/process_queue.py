@@ -55,7 +55,10 @@ from django.utils.html import escape
 # Add mn_service app path to the module search path.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
-# App
+# MN API.
+import d1common.exceptions
+
+# App.
 import settings
 import mn_service.models
 import mn_service.auth

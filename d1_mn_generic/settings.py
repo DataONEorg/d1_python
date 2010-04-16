@@ -93,6 +93,9 @@ MIDDLEWARE_CLASSES = (
   'django.middleware.common.CommonMiddleware',
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.contrib.auth.middleware.AuthenticationMiddleware',
+  'mn_prototype.mn_service.middleware.exceptions_dataone.exception_handler',
+  'mn_prototype.mn_service.middleware.serialize_response.response_handler',
+  'mn_prototype.mn_service.middleware.process_view.view_handler',
 )
 
 ROOT_URLCONF = 'mn_prototype.urls'
@@ -115,12 +118,5 @@ LOG_PATH = _here('./mn_service.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
-sys.path.append(
-  os.path.abspath(
-    os.path.join(
-      os.path.dirname(
-        __file__
-      ), './mn_service/lib'
-    )
-  )
-)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './api_common')))

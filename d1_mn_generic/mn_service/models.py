@@ -13,6 +13,9 @@
 from django.db import models
 from django.db.models import Q
 
+# MN API.
+import d1common.exceptions
+
 # Django creates automatically:
 # "id" serial NOT NULL PRIMARY KEY
 
@@ -74,6 +77,23 @@ class Repository_object_associations(models.Model):
   # TODO: Unique index for the from_object / to_object combination.
   class Meta:
     unique_together = (('from_object', 'to_object'))
+
+  def insert_association(guid1, guid2):
+    """
+    Create an association between two objects, given their guids.
+    """
+
+    try:
+      o1 = models.Repository_object.objects.filter(guid=guid1)[0]
+      o2 = models.Repository_object.objects.filter(guid=guid2)[0]
+    except IndexError:
+      err_msg = 'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
+      #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
+
+    association = models.Repository_object_associations()
+    association.from_object = o1
+    association.to_object = o2
+    association.save()
 
 
 class Repository_object_sync_status(models.Model):

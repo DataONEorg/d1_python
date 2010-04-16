@@ -13,10 +13,108 @@
 
 
 
+# MN API.
+import d1common.exceptions
+
+
+
+
+
+
+
+
+  #try:
+  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
+  #  sysmeta_url = query[0].url
+  #except IndexError:
+  #  # exception MN_crud_0_3.NotFound
+  #  exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested: %s' % guid)
+  #
+  #response = HttpResponse()
+  #
+  ## Read sysmeta object.
+  #try:
+  #  f = open(sysmeta_url, 'r')
+  #except IOError as (errno, strerror):
+  #  err_msg = 'Not able to open sysmeta file: %s\n' % sysmeta_url
+  #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+  #  exceptions_dataone.return_exception(request, 'NotFound', err_msg)
+  #
+  ## The "pretty" parameter returns a pretty printed XML object for debugging.
+  #if 'pretty' in request.GET:
+  #  body = '<pre>' + escape(f.read()) + '</pre>'
+  #else:
+  #  body = f.read()
+  #f.close()
+  #
+  ## Add header info about object.
+  #util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+  #            len(body), 'Some Content Type')
+  #
+  ## If HEAD was requested, we don't include the body.
+  #if request.method != 'HEAD':
+  #  # Log the access of the bytes of this object.
+  #  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+  #  response.write(body)
+  #else:
+  #  # Log the access of the head of this object.
+  #  access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
+
+
+
+
+
+
+  #try:
+  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
+  #  sysmeta_url = query[0].url
+  #except IndexError:
+  #  # exception MN_crud_0_3.NotFound
+  #  exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested: %s' % guid)
+  #
+  #response = HttpResponse()
+  #
+  ## Read sysmeta object.
+  #try:
+  #  f = open(sysmeta_url, 'r')
+  #except IOError as (errno, strerror):
+  #  err_msg = 'Not able to open sysmeta file: %s\n' % sysmeta_url
+  #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+  #  exceptions_dataone.return_exception(request, 'NotFound', err_msg)
+  #
+  ## The "pretty" parameter returns a pretty printed XML object for debugging.
+  #if 'pretty' in request.GET:
+  #  body = '<pre>' + escape(f.read()) + '</pre>'
+  #else:
+  #  body = f.read()
+  #f.close()
+  #
+  ## Add header info about object.
+  #util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+  #            len(body), 'Some Content Type')
+  #
+  ## If HEAD was requested, we don't include the body.
+  #if request.method != 'HEAD':
+  #  # Log the access of the bytes of this object.
+  #  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+  #  response.write(body)
+  #else:
+  #  # Log the access of the head of this object.
+  #  access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
+
+
+
+
+
+
+
+
+
+
 ## cn_check_required is not required.
 #def object_sysmeta_put(request, guid):
 #  """
-  Mark object as having been synchronized."""
+#  Mark object as having been synchronized."""
 #
 #  sys_log.info('PUT')
 #
@@ -468,3 +566,62 @@ def set_replication_status(sysmeta_guid, replication_status):
   # Write updated file.
   write(sysmeta, sysmeta_path)
 
+
+
+def update_sysmeta():
+  """
+  Update a sysmeta object and reverify it"""
+   Log the update of this sysmeta object.
+  access_log.log(guid, 'set_sysmeta', request.META['REMOTE_ADDR'])
+  pass
+
+
+# cn_check_required is not required.
+def object_sysmeta_put(request, guid):
+  """
+  Mark object as having been synchronized."""
+
+  sys_log.info('PUT')
+
+  # Update db.
+  try:
+    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
+  except IndexError:
+    util.raise_sys_log_http_404_not_found('Non-existing scimeta object was requested for update: %s' % guid)
+  
+  try:
+    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
+  except IndexError:
+    sync_status = Repository_object_sync_status()
+    sync_status.status = 'successful'
+    sync_status.save()
+  
+  try:
+    sync = Repository_object_sync.objects.filter(repository_object = o)[0]
+  except IndexError:
+    sync = Repository_object_sync()
+  
+  sync.status = sync_status
+  sync.repository_object = o
+  sync.save()
+
+  # TODO: Update sysmeta.
+
+  return HttpResponse('ok')
+
+
+
+# Create sysmeta object.
+def register_object_create_sysmeta(item, object_tree, object_contents)
+  # Create sysmeta for object.
+  sysmeta_guid = str(uuid.uuid4())
+  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
+  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
+  if not res:
+    util.raise_sys_log_http_404_not_found('Sysmeta generation failed for object: %s' % object_path)
+ 
+  # Create db entry for sysmeta object.
+  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
+
+  # Create association between sysmeta and regular object.
+  mn_service.util.insert_association(object_guid, sysmeta_guid)

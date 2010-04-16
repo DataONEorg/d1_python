@@ -22,6 +22,9 @@ import StringIO
 # Django.
 from django.test import TestCase
 
+# MN API.
+import d1common.exceptions
+
 # App.
 import settings
 import util

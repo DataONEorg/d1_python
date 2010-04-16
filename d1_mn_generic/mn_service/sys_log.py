@@ -12,7 +12,13 @@
 .. moduleauthor:: Roger Dahl
 """
 
+#Stdlib.
 from logging import *
+
+# MN API.
+import d1common.exceptions
+
+# App.
 import settings
 
 # Set up logging.

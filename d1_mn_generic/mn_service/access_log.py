@@ -17,6 +17,9 @@ from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
+# MN API.
+import d1common.exceptions
+
 # App.
 import models
 import settings
@@ -33,7 +36,7 @@ def log(guid, operation_type, requestor_identity):
     repository_object_row = models.Repository_object.objects.filter(guid=guid)[0]
   except IndexError:
     err_msg = 'Attempted to create access log for non-existing object: %s' % (guid)
-    exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
+    raise d1common.exceptions.ServiceFailure(0, err_msg)
 
   try:
     operation_type_row = models.Access_log_operation_type.objects.filter(

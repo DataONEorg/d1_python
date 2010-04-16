@@ -11,10 +11,17 @@
 """
 
 # Stdlib.
+try:
+  from functools import update_wrapper
+except ImportError:
+  from django.utils.functional import update_wrapper
 
 # Django.
 from django.http import Http404
 from django.http import HttpResponse
+
+# MN API.
+import d1common.exceptions
 
 # App.
 import settings
@@ -30,6 +37,8 @@ def cn_check_required(f):
   For now, it's not really necessary to tap into Django's authentication system.
   We could just check the IP each time, but we set up a session because it'll
   come in handy shortly.
+  
+  Raises d1common.exceptions.NotAuthorized (errorCode=401, detailCode=1040)
   """
 
   def wrap(request, *args, **kwargs):
@@ -42,9 +51,8 @@ def cn_check_required(f):
         sys_log.info('IP is valid CN IP: %s' % request.META['REMOTE_ADDR'])
         request.session['cn_user'] = True
       else:
-        exceptions_dataone.return_exception(
-          request, 'InvalidCredentials',
-          'Attempted to access functionality only available to Coordinating Nodes.'
+        raise d1common.exceptions.NotAuthorized(
+          1040, 'Attempted to access functionality only available to Coordinating Nodes'
         )
     else:
       sys_log.info('User has session: %s' % request.META['REMOTE_ADDR'])
@@ -73,9 +81,8 @@ def mn_check_required(f):
         sys_log.info('IP is valid MN IP: %s' % request.META['REMOTE_ADDR'])
         request.session['mn_user'] = True
       else:
-        exceptions_dataone.return_exception(
-          request, 'InvalidCredentials',
-          'Attempted to access functionality only available to Member Nodes.'
+        raise d1common.exceptions.NotAuthorized(
+          1040, 'Attempted to access functionality only available to Member Nodes.'
         )
     else:
       sys_log.info('User has session: %s' % request.META['REMOTE_ADDR'])
