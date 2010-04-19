@@ -383,7 +383,7 @@ class mn_service_tests(TestCase):
   #  try:
   #    xsd_file = open(settings.XSD_PATH, 'r')
   #  except IOError as (errno, strerror):
-  #    sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
+  #    sys_log.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
   #    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
   #    return
   #  except:
@@ -417,7 +417,7 @@ class mn_service_tests(TestCase):
     curl -I http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
-    response = self.client.head('/mn/object/%s' % self.get_valid_guid('data'))
+    response = self.client.head('/mn/object/{0}'.format(self.get_valid_guid('data')))
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
 
@@ -441,7 +441,7 @@ class mn_service_tests(TestCase):
   #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
-  #  response = self.client.put('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT = 'application/json')
   #  self.failUnlessEqual(response.status_code, 200)
 
   #def test_s(self):
@@ -600,14 +600,14 @@ class mn_service_tests(TestCase):
   #  test framework first.
   #  """
   #  
-  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT = 'application/json')
   #  self.failUnlessEqual(response.status_code, 200)
   #  self.check_response_headers_present(response)
   #  # Check that this sysmeta validates against the schema.
   #  try:
   #    xsd_file = open(settings.XSD_PATH, 'r')
   #  except IOError as (errno, strerror):
-  #    sys_log.error('XSD could not be opened: %s' % settings.XSD_PATH)
+  #    sys_log.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
   #    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
   #    return
   #  except:

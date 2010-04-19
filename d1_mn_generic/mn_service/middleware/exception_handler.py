@@ -72,7 +72,7 @@ def traceback_to_detail_code():
   while exception_traceback:
     co = exception_traceback.tb_frame.f_code
     tb.append(
-      '%s(%s)' % (
+      '{0}({1})'.format(
         str(os.path.basename(co.co_filename)), str(
           traceback.tb_lineno(
             exception_traceback
@@ -81,8 +81,8 @@ def traceback_to_detail_code():
       )
     )
     exception_traceback = exception_traceback.tb_next
-  tb.append('Type:%s' % exception_type)
-  tb.append('Value:%s' % exception_value)
+  tb.append('Type: {0}'.format(exception_type))
+  tb.append('Value: {0}'.format(exception_value))
   return '/'.join(tb)
 
 
@@ -122,7 +122,7 @@ def serialize_exception(request, exception):
 class exception_handler():
   def process_exception(self, request, exception):
     # Log the exception.
-    sys_log.error('Exception: %s' % traceback_to_detail_code())
+    sys_log.error('Exception: {0}'.format(traceback_to_detail_code()))
 
     # If the exception is a DataONE exception, we serialize it out.
     try:

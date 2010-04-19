@@ -17,7 +17,7 @@ import sys
 # Member Node configuration.
 
 MN_NAME = 'mn1.com'
-MN_IP = ['127.0.0.43']
+MN_IP = ['127.0.0.1']
 
 # CN IPs.
 CN_IP = [
@@ -93,9 +93,9 @@ MIDDLEWARE_CLASSES = (
   'django.middleware.common.CommonMiddleware',
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.contrib.auth.middleware.AuthenticationMiddleware',
-  'mn_prototype.mn_service.middleware.exceptions_dataone.exception_handler',
-  'mn_prototype.mn_service.middleware.serialize_response.response_handler',
-  'mn_prototype.mn_service.middleware.process_view.view_handler',
+  'mn_prototype.mn_service.middleware.exception_handler.exception_handler',
+  'mn_prototype.mn_service.middleware.response_handler.response_handler',
+  'mn_prototype.mn_service.middleware.view_handler.view_handler',
 )
 
 ROOT_URLCONF = 'mn_prototype.urls'

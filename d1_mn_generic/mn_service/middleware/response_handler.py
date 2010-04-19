@@ -29,7 +29,7 @@ except:
 try:
   from lxml import etree
 except ImportError, e:
-  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Import error: {0}'.format(str(e)))
   sys_log.error('Try: sudo apt-get install python-lxml')
   sys.exit(1)
 
@@ -98,7 +98,7 @@ def serialize_csv(obj, pretty=False, jsonvar=False):
   io = StringIO.StringIO()
   # Comment containing start, count and object.
   try:
-    io.write('#%d,%d,%d\n' % (obj['start'], obj['count'], obj['total']))
+    io.write('#{0},{1},{2}\n'.format(obj['start'], obj['count'], obj['total']))
   except KeyError:
     # If start, count or total don't exist, we don't return any of them.
     pass
@@ -149,7 +149,7 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
 
   # Set up namespace for the xml response.
   RESPONSE_NS = 'http://ns.dataone.org/core/objects'
-  RESPONSE = '{%s}' % RESPONSE_NS
+  RESPONSE = '{{{0}}}'.format(RESPONSE_NS)
   NSMAP = {'d1': RESPONSE_NS} # the default namespace
   xml = etree.Element(RESPONSE + 'response', nsmap=NSMAP)
 
@@ -211,8 +211,8 @@ def serialize_rdf_xml(obj, pretty=False, jsonvar=False):
   # Set up namespaces for the XML response.
   RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
   D1_NS = 'http://ns.dataone.org/core/objects'
-  RDF = '{%s}' % RDF_NS
-  D1 = '{%s}' % D1_NS
+  RDF = '{{{0}}}'.format(RDF_NS)
+  D1 = '{{{0}}}'.format(D1_NS)
   NSMAP = {'rdf': RDF_NS, 'd1': D1_NS}
   xml = etree.Element(RDF + 'rdf', nsmap=NSMAP)
 
@@ -340,6 +340,7 @@ class response_handler():
     # unprocessed.
     try:
       obj = response.obj
+      print obj
     except AttributeError:
       pass
     else:

@@ -87,7 +87,9 @@ class Repository_object_associations(models.Model):
       o1 = models.Repository_object.objects.filter(guid=guid1)[0]
       o2 = models.Repository_object.objects.filter(guid=guid2)[0]
     except IndexError:
-      err_msg = 'Internal server error: Missing object(s): %s and/or %s' % (guid1, guid2)
+      err_msg = 'Internal server error: Missing object(s): {0} and/or {1}'.format(
+        guid1, guid2
+      )
       #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
     association = models.Repository_object_associations()

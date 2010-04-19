@@ -28,7 +28,7 @@ except:
 try:
   from lxml import etree
 except ImportError, e:
-  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Import error: {0}'.format(str(e)))
   sys_log.error('Try: sudo apt-get install python-lxml')
   sys.exit(1)
 
@@ -48,7 +48,7 @@ import mn_service.models as models
 class view_handler():
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
-    sys_log.info('View: %s' % view_func.func_name)
+    sys_log.info('View: {0}'.format(view_func.func_name))
 
     # If the view being called is one that returns data, verify that
     # DB_update_status is good.
@@ -57,7 +57,7 @@ class view_handler():
       'object_contents',
       'object_sysmeta',
       'access_log_view',
-      'client_register',
+      'register',
       'register_delete',
     ]:
       try:

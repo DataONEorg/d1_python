@@ -45,7 +45,7 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Import error: {0}'.format(str(e)))
   sys_log.error('Try: sudo apt-get install python-setuptools')
   sys_log.error(
     '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
@@ -72,9 +72,9 @@ def log_exception(max_traceback_levels=5):
     exc_args = "<no args>"
   exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
   logging.error('Exception:')
-  logging.error('  Name: %s' % exc_class.__name__)
-  logging.error('  Args: %s' % exc_args)
-  logging.error('  Traceback: %s' % exc_formatted_traceback)
+  logging.error('  Name: {0}'.format(exc_class.__name__))
+  logging.error('  Args: {0}'.format(exc_args))
+  logging.error('  Traceback: {0}'.format(exc_formatted_traceback))
 
 
 def clear_db():
@@ -146,7 +146,7 @@ def file_to_dict(path):
   try:
     f = open(path, 'r')
   except IOError as (errno, strerror):
-    err_msg = 'Internal server error: Could not open: %s\n' % path
+    err_msg = 'Internal server error: Could not open: {0}\n'.format(path)
     err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
     #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
@@ -186,7 +186,7 @@ def insert_file_object(object_class_name, guid, path):
     f = open(path, 'r')
   except IOError as (errno, strerror):
     # Skip any file we can't get read access to.
-    sys_log.warning('Skipped file because it couldn\'t be opened: %s' % path)
+    sys_log.warning('Skipped file because it couldn\'t be opened: {0}'.format(path))
     sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
     return
 
@@ -240,17 +240,17 @@ def add_range_operator_filter(query, request, col_name, name):
 
   # Last modified date filter.
   for get in request.GET:
-    m = re.match('%s(_(.+))?' % name, get)
+    m = re.match('{0}(_(.+))?'.format(name), get)
     if not m:
       continue
     operator = m.group(2)
     if operator not in operator_translation:
-      raise_sys_log_http_404('Invalid argument: %s' % get)
+      raise_sys_log_http_404('Invalid argument: {0}'.format(get))
     try:
       date = iso8601.parse_date(request.GET[get])
     except TypeError, e:
-      raise_sys_log_http_404('Invalid date format: %s' % request.GET[get])
-    filter_kwargs['%s__%s' % (col_name, operator_translation[operator])] = date
+      raise_sys_log_http_404('Invalid date format: {0}'.format(request.GET[get]))
+    filter_kwargs['{0}__{1}'.format(col_name, operator_translation[operator])] = date
     changed = True
     #res[get] = datetime.datetime.isoformat(date)
 
@@ -264,7 +264,9 @@ def add_wildcard_filter(query, col_name, value):
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
     raise_sys_log_http_404(
-      'Wildcard is only supported at start OR end of value: %s' % value
+      'Wildcard is only supported at start OR end of value: {0}'.format(
+        value
+      )
     )
 
   value_trimmed = re.match(r'\*?(.*?)\*?$', value).group(1)
@@ -275,16 +277,18 @@ def add_wildcard_filter(query, col_name, value):
   filter_kwargs = {}
 
   if re.match(r'\*(.*)$', value):
-    filter_kwargs['%s__endswith' % col_name] = value_trimmed
+    filter_kwargs['{0}__endswith'.format(col_name)] = value_trimmed
     wild_beginning = True
 
   if re.match(r'(.*)\*$', value):
-    filter_kwargs['%s__startswith' % col_name] = value_trimmed
+    filter_kwargs['{0}__startswith'.format(col_name)] = value_trimmed
     wild_end = True
 
   if wild_beginning == True and wild_end == True:
     raise_sys_log_http_404(
-      'Wildcard is only supported at start OR end of value: %s' % value
+      'Wildcard is only supported at start OR end of value: {0}'.format(
+        value
+      )
     )
   # If no wildcards are used, we add a regular "equals" filter.
   elif wild_beginning == False and wild_end == False:
@@ -317,7 +321,7 @@ def add_slice_filter(query, request):
   except KeyError:
     start = 0
   except ValueError:
-    raise_sys_log_http_404('Invalid start value: %s' % request.GET['start'])
+    raise_sys_log_http_404('Invalid start value: {0}'.format(request.GET['start']))
 
   # Limit the number objects returned to 'count'.
   # None = All remaining objects.
@@ -331,7 +335,9 @@ def add_slice_filter(query, request):
     count = None
   except ValueError:
     raise_sys_log_http_404(
-      'Invalid count value: %s (count must be 0 <= count >= 1000' % request.GET['count']
+      'Invalid count value: {0} (count must be 0 <= count >= 1000'.format(
+        request.GET['count']
+      )
     )
 
   # If both start and count are present but set to 0, we just tweak the query

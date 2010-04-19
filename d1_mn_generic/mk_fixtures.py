@@ -32,7 +32,9 @@ if 'reset' in sys.argv:
 
 # Update the test fixture to match.
 print os.system(
-  './manage.py dumpdata mn_service > %s' % os.path.join(
-    settings.FIXTURE_DIRS, 'base.fixture.json'
+  './manage.py dumpdata mn_service > {0}'.format(
+    os.path.join(
+      settings.FIXTURE_DIRS, 'base.fixture.json'
+    )
   )
 )

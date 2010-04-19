@@ -28,7 +28,7 @@ import d1common.exceptions
   #  sysmeta_url = query[0].url
   #except IndexError:
   #  # exception MN_crud_0_3.NotFound
-  #  exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested: %s' % guid)
+  #  exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested: {0}'.format(guid))
   #
   #response = HttpResponse()
   #
@@ -36,7 +36,7 @@ import d1common.exceptions
   #try:
   #  f = open(sysmeta_url, 'r')
   #except IOError as (errno, strerror):
-  #  err_msg = 'Not able to open sysmeta file: %s\n' % sysmeta_url
+  #  err_msg = 'Not able to open sysmeta file: {0}\n'.format(sysmeta_url)
   #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
   #  exceptions_dataone.return_exception(request, 'NotFound', err_msg)
   #
@@ -70,7 +70,7 @@ import d1common.exceptions
   #  sysmeta_url = query[0].url
   #except IndexError:
   #  # exception MN_crud_0_3.NotFound
-  #  exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested: %s' % guid)
+  #  exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested: {0}'.format(guid))
   #
   #response = HttpResponse()
   #
@@ -78,7 +78,7 @@ import d1common.exceptions
   #try:
   #  f = open(sysmeta_url, 'r')
   #except IOError as (errno, strerror):
-  #  err_msg = 'Not able to open sysmeta file: %s\n' % sysmeta_url
+  #  err_msg = 'Not able to open sysmeta file: {0}\n'.format(sysmeta_url)
   #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
   #  exceptions_dataone.return_exception(request, 'NotFound', err_msg)
   #
@@ -122,7 +122,7 @@ import d1common.exceptions
 #  try:
 #    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
 #  except IndexError:
-#    exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested for update: %s' % guid)
+#    exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested for update: {0}'.format(guid))
 #  
 #  try:
 #    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
@@ -155,7 +155,7 @@ import d1common.exceptions
   #  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
   #  res = mn_service.sysmeta.generate(object_path, sysmeta_path)
   #  if not res:
-  #    exceptions_dataone.return_exception(request, 'NotFound', 'Sysmeta generation failed for object: %s' % object_path)
+  #    exceptions_dataone.return_exception(request, 'NotFound', 'Sysmeta generation failed for object: {0}'.format(object_path))
   # 
   #  # Create db entry for sysmeta object.
   #  mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)
@@ -216,7 +216,7 @@ def register_object_create_sysmeta(item, object_tree):
   
   # Set up namespace for the sysmeta xml doc.
   SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
-  SYSMETA = '{%s}' % SYSMETA_NS
+  SYSMETA = '{{{0}}}'.format(SYSMETA_NS)
   NSMAP = {'D1' : SYSMETA_NS} # the default namespace
   sysmeta_doc = etree.Element(SYSMETA + 'SystemMetadata', nsmap = NSMAP)
   
@@ -508,7 +508,7 @@ def validate(sysmeta_etree):
   try:
     xsd_file = open(settings.XSD_PATH, 'r')
   except IOError as (errno, strerror):
-    logging.error('XSD could not be opened: %s' % settings.XSD_PATH)
+    logging.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
     logging.error('I/O error({0}): {1}'.format(errno, strerror))
     return
 
@@ -517,7 +517,7 @@ def validate(sysmeta_etree):
   try:
     xmlschema.assertValid(sysmeta_etree)
   except DocumentInvalid, e:
-    logging.error('Invalid Sysmeta: %s' % etree.tostring(sysmeta_etree))
+    logging.error('Invalid Sysmeta: {0}'.format(etree.tostring(sysmeta_etree)))
     raise
   
 def write(sysmeta_etree, sysmeta_path):
@@ -528,7 +528,7 @@ def write(sysmeta_etree, sysmeta_path):
     sysmeta_file = open(sysmeta_path, 'w')
     sysmeta_file.write(etree.tostring(xml, pretty_print = True,  encoding = 'UTF-8', xml_declaration = True))
   except IOError as (errno, strerror):
-    logging.error('Sysmeta file could not be opened for writing: %s' % sysmeta_path)
+    logging.error('Sysmeta file could not be opened for writing: {0}'.format(sysmeta_path))
     logging.error('I/O error({0}): {1}'.format(errno, strerror))
     raise
 
@@ -540,7 +540,7 @@ def set_replication_status(sysmeta_guid, replication_status):
   try:
     sysmeta_file = open(sysmeta_path, 'r')
   except IOError as (errno, strerror):
-    logging.error('Sysmeta XML file could not be opened: %s' % sysmeta_path)
+    logging.error('Sysmeta XML file could not be opened: {0}'.format(sysmeta_path))
     logging.warning('I/O error({0}): {1}'.format(errno, strerror))
     return
 
@@ -553,7 +553,7 @@ def set_replication_status(sysmeta_guid, replication_status):
   try:
     validate(sysmeta)
   except DocumentInvalid, e:
-    logging.error('Aborting update of replication status of %s. Cause: %s' % (sysmeta_guid, e))
+    logging.error('Aborting update of replication status of {0}. Cause: {1}'.format(sysmeta_guid, e))
     return
     
   # Update the replication status.
@@ -587,7 +587,7 @@ def object_sysmeta_put(request, guid):
   try:
     repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
   except IndexError:
-    util.raise_sys_log_http_404_not_found('Non-existing scimeta object was requested for update: %s' % guid)
+    util.raise_sys_log_http_404_not_found('Non-existing scimeta object was requested for update: {0}'.format(guid))
   
   try:
     sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
@@ -618,7 +618,7 @@ def register_object_create_sysmeta(item, object_tree, object_contents)
   sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
   res = mn_service.sysmeta.generate(object_path, sysmeta_path)
   if not res:
-    util.raise_sys_log_http_404_not_found('Sysmeta generation failed for object: %s' % object_path)
+    util.raise_sys_log_http_404_not_found('Sysmeta generation failed for object: {0}'.format(object_path))
  
   # Create db entry for sysmeta object.
   mn_service.util.insert_object('sysmeta', sysmeta_guid, sysmeta_path)

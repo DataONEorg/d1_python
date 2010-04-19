@@ -44,7 +44,7 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  sys_log.error('Import error: %s' % str(e))
+  sys_log.error('Import error: {0}'.format(str(e)))
   sys_log.error('Try: sudo apt-get install python-setuptools')
   sys_log.error('     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg')
   sys.exit(1)
@@ -108,7 +108,7 @@ def object_collection_get(request):
         'size': 'size',
       }[orderby]
     except KeyError:
-      raise d1common.exceptions.InvalidRequest(1540, 'Invalid orderby value requested: %s' % orderby)
+      raise d1common.exceptions.InvalidRequest(1540, 'Invalid orderby value requested: {0}'.format(orderby))
       
     # Set up query with requested sorting.
     query = models.Repository_object.objects.order_by(prefix + order_field)
@@ -144,7 +144,7 @@ def object_collection_get(request):
   # Filter by sync.
   if 'sync' in request.GET:
     if not request.GET['sync'] in ('0', '1'):
-      raise d1common.exceptions.InvalidRequest(1540, 'Invalid sync value requested: %s' % request.GET['sync'])
+      raise d1common.exceptions.InvalidRequest(1540, 'Invalid sync value requested: {0}'.format(request.GET['sync']))
     query = query.filter(sync__isnull = request.GET['sync'] == '0')
 
   # Filter by last modified date.
@@ -239,13 +239,13 @@ def object_contents_get(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: %s' % guid)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid))
 
   # Open file for streaming.
   try:
     f = open(os.path.join(path), 'rb')
   except IOError as (errno, strerror):
-    err_msg = 'Expected file was not present: %s\n' % url
+    err_msg = 'Expected file was not present: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.NotFound(1020, err_msg)
 
@@ -270,13 +270,13 @@ def object_contents_head(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: %s' % guid)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid))
 
   # Get size of object from file size.
   try:
     size = os.path.getsize(url)
   except IOError as (errno, strerror):
-    err_msg = 'Could not get size of file: %s\n' % url
+    err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.NotFound(1020, err_msg)
 
@@ -316,7 +316,7 @@ def object_sysmeta_get(request, guid):
   MN_crud.getSystemMetadata(token, guid) → SystemMetadata
   """
 
-  sys_log.info('GET /object/%s/meta/' % guid)
+  sys_log.info('GET /object/{0}/meta/'.format(guid))
 
   return response
 
@@ -326,7 +326,7 @@ def object_sysmeta_head(request, guid):
   0.3   MN_crud.describeSystemMetadata()       HEAD     /object/<guid>/meta/
   """
 
-  sys_log.info('HEAD /object/%s/meta/' % guid)
+  sys_log.info('HEAD /object/{0}/meta/'.format(guid))
 
   return response
 
@@ -436,10 +436,10 @@ def access_log_view_head(request):
 
   return response
 
-# Client interface.
+# Registration interface.
 
 @auth.mn_check_required
-def client_register(request):
+def register(request):
   """
   0.3   MN_register.registerObject()        POST    /register/
   0.3   MN_register.registerObject()        GET     /register/
@@ -447,18 +447,18 @@ def client_register(request):
   """
   
   if request.method == 'POST':
-    return client_register_post(request)
+    return register_post(request)
   
   if request.method == 'GET':
-    return client_register_get(request)
+    return register_get(request)
 
   if request.method == 'DELETE':
-    return client_register_get(request)
+    return register_delete(request)
 
   # Only POST, GET AND DELETE accepted.
   return HttpResponseNotAllowed(['POST', 'GET', 'DELETE'])
 
-def client_register_get(request):
+def register_post(request):
   """
   Register an object.
   0.3   MN_register.registerObject()        POST     /register/
@@ -493,24 +493,24 @@ def client_register_get(request):
 
   missing_args = []
   for arg in required_args:
-    if arg not in request.GET:
+    if arg not in request.POST:
       missing_args.append(arg)
 
   if len(missing_args) > 0:
-    raise d1common.exceptions.InvalidRequest(0, 'Missing required argument(s): %s' % ', '.join(missing))
+    raise d1common.exceptions.InvalidRequest(0, 'Missing required argument(s): {0}'.format(', '.join(missing_args)))
   
   # Register object in queue.
   queue = models.Registration_queue_work_queue()
   queue.set_status('Queued')
-  queue.set_format(request.GET['objectFormat'])
-  queue.set_checksum_algorithm(request.GET['checksumAlgorithm'])
-  queue.identifier = request.GET['identifier']
-  queue.url = request.GET['url']
-  queue.size = request.GET['size']
-  queue.checksum = request.GET['checksum']
+  queue.set_format(request.POST['objectFormat'])
+  queue.set_checksum_algorithm(request.POST['checksumAlgorithm'])
+  queue.identifier = request.POST['identifier']
+  queue.url = request.POST['url']
+  queue.size = request.POST['size']
+  queue.checksum = request.POST['checksum']
   queue.save()
   
-  return HttpResponse('Queued OK')
+  return HttpResponse('OK')
   
 def register_get(request):
   """
@@ -537,7 +537,7 @@ def register_get(request):
     data['size'] = row.size
     data['checksum'] = row.checksum
     data['checksum_algorithm'] = row.checksum_algorithm.checksum_algorithm
-    data['timestamp'] = row.timestamp
+    data['timestamp'] = datetime.datetime.isoformat(row.timestamp)
 
     # Append object to response.
     obj['data'].append(data)
