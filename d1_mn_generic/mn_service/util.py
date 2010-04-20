@@ -45,12 +45,12 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  sys_log.error('Import error: {0}'.format(str(e)))
-  sys_log.error('Try: sudo apt-get install python-setuptools')
-  sys_log.error(
+  sys.stderr.write('Import error: {0}'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-setuptools')
+  sys.stderr.write(
     '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
   )
-  sys.exit(1)
+  raise
 
 # MN API.
 import d1common.exceptions

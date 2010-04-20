@@ -29,9 +29,9 @@ except:
 try:
   from lxml import etree
 except ImportError, e:
-  sys_log.error('Import error: {0}'.format(str(e)))
-  sys_log.error('Try: sudo apt-get install python-lxml')
-  sys.exit(1)
+  sys.stderr.write('Import error: {0}'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-lxml')
+  raise
 
 import mimeparser
 

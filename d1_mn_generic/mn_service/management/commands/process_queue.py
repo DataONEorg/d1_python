@@ -36,9 +36,9 @@ except:
 try:
   from lxml import etree
 except ImportError, e:
-  print('Import error: {0}'.format(str(e)))
-  print('Try: sudo apt-get install python-lxml')
-  sys.exit(1)
+  sys.stderr.write('Import error: {0}'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-lxml')
+  raise
 
 # Django.
 from django.core.exceptions import ImproperlyConfigured
