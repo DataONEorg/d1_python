@@ -19,6 +19,7 @@ from d1pythonitk.client import RESTClient
 
 
 class SchemaResolver(etree.Resolver):
+  xsd_cache = {}
   '''Custom resolver that supports network retrieval of the schema and its 
   imported pieces.
   '''
@@ -33,12 +34,20 @@ class SchemaResolver(etree.Resolver):
     '''Load the target from the specified URL.
     '''
     logging.debug("resolve_filename url = %s" % url)
-    #Could eventually replace this with something that is catalog or 
-    #at least cache aware...
-    cli = RESTClient()
-    fstream = cli.GET(url)
-    res = fstream.read()
-    return self.resolve_string(res, context, base_url=url)
+
+    # Get schema from cache or download it if necessary.
+    if url in self.xsd_cache.keys():
+      logging.debug('Retrieving XSD from cache: {0}'.format(url))
+      xsd = self.xsd_cache[url]
+    else:
+      logging.debug('Downloading and caching XSD: {0}'.format(url))
+      cli = RESTClient()
+      fstream = cli.GET(url)
+      xsd = fstream.read()
+      # Cache the schema.
+      self.xsd_cache[url] = xsd
+
+    return self.resolve_string(xsd, context, base_url=url)
 
 #===============================================================================
 
