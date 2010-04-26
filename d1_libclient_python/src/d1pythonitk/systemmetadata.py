@@ -29,13 +29,26 @@ Example:
   '2e01e17467891f7c933dbaa00e1459d23db3fe4f'
 '''
 
+# StdLib.
 import logging
 import sys
-from dateutil.parser import parse as parseDateString
+
+# 3rd party.
+
+try:
+  from dateutil.parser import parse as parseDateString
+except ImportError, e:
+  sys.stderr.write('Import error: %s\n' % str(e))
+  sys.stderr.write('Try: sudo easy_install python-dateutil\n')
+  sys.stderr.write('Home: http://labix.org/python-dateutil\n')
+  raise
+
 try:
   import xml.etree.cElementTree as ET
 except:
   import xml.etree.ElementTree as ET
+
+  # Local.
 from d1pythonitk import const
 
 
