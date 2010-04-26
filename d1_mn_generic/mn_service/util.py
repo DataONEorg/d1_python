@@ -11,17 +11,17 @@
 """
 
 # Stdlib.
-import os
-import sys
-import re
-import glob
-import time
 import datetime
-import stat
-import hashlib
-import uuid
 import exceptions
+import glob
+import hashlib
+import os
+import re
+import stat
+import sys
+import time
 import traceback
+import uuid
 
 try:
   import cjson as json
@@ -45,10 +45,10 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  sys.stderr.write('Import error: {0}'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools')
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
   sys.stderr.write(
-    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg'
+    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
   )
   raise
 
@@ -56,12 +56,12 @@ except ImportError, e:
 import d1common.exceptions
 
 # App.
+import access_log
+import auth
 import models
 import settings
-import auth
 import sys_log
 import util
-import access_log
 
 
 def log_exception(max_traceback_levels=5):
@@ -100,7 +100,7 @@ def clear_db():
   models.Checksum_algorithm.objects.all().delete()
 
 
-class fixed_chunk_size_file_iterator(object):
+class fixed_chunk_size_iterator(object):
   """
   Create a file iterator that iterates through file-like object using fixed
   size chunks.
@@ -301,7 +301,7 @@ def add_wildcard_filter(query, col_name, value):
 #where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
 #query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
 ## Filter by operation type.
-##  query = query.filter(repository_object_class__name = oclass)
+##  query = query.filter(repository_object_class__name=oclass)
 #if 'operation_type' in request.GET:
 #  requestor = request.GET['operation_type']
 #  # Translate from DOS to SQL style wildcards.

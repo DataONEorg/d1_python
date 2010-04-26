@@ -12,10 +12,10 @@
 """
 
 # Stdlib.
-import sys
-import os
 import csv
+import os
 import StringIO
+import sys
 import types
 
 try:
@@ -28,11 +28,16 @@ except:
 try:
   from lxml import etree
 except ImportError, e:
-  sys.stderr.write('Import error: {0}'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml')
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-import mimeparser
+try:
+  import mimeparser
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('mimeparser.py is included in mn_service\n')
+  raise
 
 # Django.
 from django.http import HttpResponse

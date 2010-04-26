@@ -80,7 +80,7 @@ class mn_service_tests(TestCase):
     Assumes that there are 3 valid objects of the given type in the db.
     """
   
-    response = self.client.get('/mn/object/', {'start': '3', 'count': '1', 'oclass': object_type}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '3', 'count': '1', 'oclass': object_type}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     return res['data'][0]['guid']
@@ -97,7 +97,7 @@ class mn_service_tests(TestCase):
     """
   Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
     
-    response = self.client.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -112,7 +112,7 @@ class mn_service_tests(TestCase):
     """
   Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
     
-    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -126,7 +126,7 @@ class mn_service_tests(TestCase):
     """
   Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=scimeta"""
     
-    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'scimeta'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'scimeta'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -141,7 +141,7 @@ class mn_service_tests(TestCase):
     """
   Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/"""
     
-    response = self.client.get('/mn/object/', HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     #print response.content
@@ -158,7 +158,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=20&count=10
     """
     
-    response = self.client.get('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '20', 'count': '10'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -176,7 +176,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=10&count=5&oclass=scimeta
     """
     
-    response = self.client.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'scimeta'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': '10', 'count': '5', 'oclass': 'scimeta'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -198,7 +198,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=15&count=10&oclass=scimeta
     """
     
-    response = self.client.get('/mn/object/', {'start': mn_objects_total_scimeta - 5, 'count': '10', 'oclass': 'scimeta'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'start': mn_objects_total_scimeta - 5, 'count': '10', 'oclass': 'scimeta'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -216,7 +216,7 @@ class mn_service_tests(TestCase):
   Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*
     """
-    response = self.client.get('/mn/object/', {'guid': '1*'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'guid': '1*'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -228,7 +228,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?hash=1*
     """
 
-    response = self.client.get('/mn/object/', {'hash': '1*'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'hash': '1*'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -240,7 +240,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&hash=1*
     """
    
-    response = self.client.get('/mn/object/', {'guid': '1*', 'hash': '1*'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'guid': '1*', 'hash': '1*'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -252,7 +252,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&hash=*1
     """
         
-    response = self.client.get('/mn/object/', {'guid': '*1', 'hash': '*1'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'guid': '*1', 'hash': '*1'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -264,7 +264,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pretty&lastAccessed_gt=2000-01-01T00:00:00&lastAccessed_lt=2010-01-01T00:00:00
     """
         
-    response = self.client.get('/mn/object/', {'lastAccessed_gt': '2000-01-01T00:00:00', 'lastAccessed_lt': '2010-01-01T00:00:00'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'lastAccessed_gt': '2000-01-01T00:00:00', 'lastAccessed_lt': '2010-01-01T00:00:00'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -276,7 +276,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
     """
         
-    response = self.client.get('/mn/object/', {'requestor': '1.1.1.1'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'requestor': '1.1.1.1'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -288,7 +288,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_bytes
     """
         
-    response = self.client.get('/mn/object/', {'operationType': 'get_bytes'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'operationType': 'get_bytes'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -301,7 +301,7 @@ class mn_service_tests(TestCase):
     ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
     """
 
-    response = self.client.get('/mn/object/', {'guid': '*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/', {'guid': '*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -319,7 +319,7 @@ class mn_service_tests(TestCase):
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0
     """
     
-    response = self.client.head('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.head('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
 
@@ -329,7 +329,7 @@ class mn_service_tests(TestCase):
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
     
-    response = self.client.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
 
@@ -345,7 +345,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
-    response = self.client.get('/mn/object/%s' % self.get_valid_guid('scimeta'), {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/%s' % self.get_valid_guid('scimeta'), {}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nscimeta:0.904577532946\n')
@@ -357,7 +357,7 @@ class mn_service_tests(TestCase):
     ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
     """
 
-    response = self.client.get('/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B', {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B', {}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.content.decode('utf-8'), u'data:unicode_here_ƲƳƴƵƶƷƸƹƺƻƼƾƿ\n')
 
@@ -367,7 +367,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
     """
     
-    response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 404)
 
   #def test_rest_call_sysmeta_by_object_guid_get(self):
@@ -376,7 +376,7 @@ class mn_service_tests(TestCase):
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
-  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 200)
   #  self.check_response_headers_present(response)
   #  # Check that this sysmeta validates against the schema.
@@ -402,7 +402,7 @@ class mn_service_tests(TestCase):
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
   #  """
   #  
-  #  response = self.client.get('/mn/object/invalid_guid/meta', {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.get('/mn/object/invalid_guid/meta', {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 404)
 
   #
@@ -441,7 +441,7 @@ class mn_service_tests(TestCase):
   #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
-  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 200)
 
   #def test_s(self):
@@ -486,7 +486,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/
     """
     
-    response = self.client.get('/mn/log/', {}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_total)
@@ -500,7 +500,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1
     """
 
-    response = self.client.get('/mn/log/', {'requestor': '1.1.1.1'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'requestor': '1.1.1.1'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_requestor_1_1_1_1)
@@ -511,7 +511,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_bytes
     """
 
-    response = self.client.get('/mn/log/', {'operation_type': 'get_bytes'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'operation_type': 'get_bytes'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_operation_get_bytes)
@@ -522,7 +522,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_bytes
     """
 
-    response = self.client.get('/mn/log/', {'requestor': '1.1.1.1', 'operation_type': 'get_bytes'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'requestor': '1.1.1.1', 'operation_type': 'get_bytes'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_requestor_1_1_1_1_and_operation_get_bytes)
@@ -533,7 +533,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastModified_gt=1990-01-01T00:00:00&lastModified_lt=2000-01-01T00:00:00
     """
     
-    response = self.client.get('/mn/log/', {'lastModified_gt': '1990-01-01T00:00:00', 'lastModified_lt': '2000-01-01T00:00:00'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'lastModified_gt': '1990-01-01T00:00:00', 'lastModified_lt': '2000-01-01T00:00:00'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_last_modified_in_1990s)
@@ -544,7 +544,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastAccessed_gt=1970-01-01T00:00:00&lastAccessed_lt=1980-01-01T00:00:00
     """
     
-    response = self.client.get('/mn/log/', {'lastAccessed_gt': '1970-01-01T00:00:00', 'lastAccessed_lt': '1980-01-01T00:00:00'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'lastAccessed_gt': '1970-01-01T00:00:00', 'lastAccessed_lt': '1980-01-01T00:00:00'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_get_log_last_accessed_in_1970s)
@@ -555,7 +555,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&oclass=data
     """
     
-    response = self.client.get('/mn/log/', {'oclass': 'data'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'oclass': 'data'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_type_class_data)
@@ -566,7 +566,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&guid=*2&hash=*2
     """
     
-    response = self.client.get('/mn/log/', {'guid': '*2', 'hash': '*2'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'guid': '*2', 'hash': '*2'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_guid_and_hash_endswith_2)
@@ -577,7 +577,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastModified_gt=1980-01-01T00:00:00&lastModified_lt=1990-01-01T00:00:00
     """
     
-    response = self.client.get('/mn/log/', {'lastModified_gt': '1980-01-01T00:00:00', 'lastModified_lt': '1990-01-01T00:00:00'}, HTTP_ACCEPT = 'application/json')
+    response = self.client.get('/mn/log/', {'lastModified_gt': '1980-01-01T00:00:00', 'lastModified_lt': '1990-01-01T00:00:00'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_last_modified_in_1980s)
@@ -588,7 +588,7 @@ class mn_service_tests(TestCase):
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
   #  """
   #  
-  #  response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 404)
   #
   #def test_rest_call_sysmeta_by_object_guid_get(self):
@@ -600,7 +600,7 @@ class mn_service_tests(TestCase):
   #  test framework first.
   #  """
   #  
-  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT = 'application/json')
+  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 200)
   #  self.check_response_headers_present(response)
   #  # Check that this sysmeta validates against the schema.

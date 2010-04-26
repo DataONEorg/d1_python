@@ -10,6 +10,11 @@
 .. moduleauthor:: Roger Dahl
 """
 
+# App.
+import settings
+import sys_log
+import util
+
 from django.db import models
 from django.db.models import Q
 
@@ -66,6 +71,9 @@ class Repository_object(models.Model):
     except IndexError:
       self.save()
     else:
+      sys_log.warning('Overwriting object with duplicate GUID or URL:')
+      sys_log.warning('URL: {0}'.format(self.url))
+      sys_log.warning('GUID: {0}'.format(self.guid))
       me.delete()
       self.save()
 
@@ -123,6 +131,30 @@ class Access_log(models.Model):
   operation_type = models.ForeignKey(Access_log_operation_type)
   requestor_identity = models.ForeignKey(Access_log_requestor_identity)
   access_time = models.DateTimeField(auto_now_add=True)
+
+  def set_operation_type(self, operation_type_string):
+    try:
+      operation_type = Access_log_operation_type.objects.filter(
+        operation_type=operation_type_string
+      )[0]
+    except IndexError:
+      operation_type = Registration_queue_status()
+      operation_type.operation_type = operation_type_string
+      operation_type.save()
+
+    self.operation_type = operation_type
+
+  def set_requestor_identity(self, requestor_identity_string):
+    try:
+      requestor_identity = Access_log_requestor_identity.objects.filter(
+        requestor_identity=requestor_identity_string
+      )[0]
+    except IndexError:
+      requestor_identity = Access_log_requestor_identity()
+      requestor_identity.requestor_identity = requestor_identity_string
+      requestor_identity.save()
+
+    self.requestor_identity = requestor_identity
 
 # MN object registration work queue.
 

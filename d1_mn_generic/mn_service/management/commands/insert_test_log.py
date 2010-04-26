@@ -11,16 +11,16 @@
 """
 
 # Stdlib.
-import os
-import sys
-import re
-import glob
-import time
 import datetime
-import stat
+import glob
 import hashlib
-import uuid
+import os
 import random
+import re
+import stat
+import sys
+import time
+import uuid
 
 try:
   import cjson as json
@@ -45,13 +45,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../.
 import d1common.exceptions
 
 # App.
-import settings
-import mn_service.models
+import mn_service.access_log
 import mn_service.auth
+import mn_service.models
 import mn_service.sys_log
 import mn_service.util
-import mn_service.access_log
-
+import settings
 import site_specific
 
 

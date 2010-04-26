@@ -24,7 +24,7 @@ import d1common.exceptions
 
 
   #try:
-  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
+  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid=guid)
   #  sysmeta_url = query[0].url
   #except IndexError:
   #  # exception MN_crud_0_3.NotFound
@@ -66,7 +66,7 @@ import d1common.exceptions
 
 
   #try:
-  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)
+  #  query = models.Repository_object.objects.filter(associations_to__from_object__guid=guid)
   #  sysmeta_url = query[0].url
   #except IndexError:
   #  # exception MN_crud_0_3.NotFound
@@ -120,19 +120,19 @@ import d1common.exceptions
 #
 #  # Update db.
 #  try:
-#    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
+#    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid=guid)[0]
 #  except IndexError:
 #    exceptions_dataone.return_exception(request, 'NotFound', 'Non-existing scimeta object was requested for update: {0}'.format(guid))
 #  
 #  try:
-#    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
+#    sync_status = Repository_object_sync_status.objects.filter(status='successful')[0]
 #  except IndexError:
 #    sync_status = Repository_object_sync_status()
 #    sync_status.status = 'successful'
 #    sync_status.save()
 #  
 #  try:
-#    sync = Repository_object_sync.objects.filter(repository_object = o)[0]
+#    sync = Repository_object_sync.objects.filter(repository_object=o)[0]
 #  except IndexError:
 #    sync = Repository_object_sync()
 #  
@@ -218,7 +218,7 @@ def register_object_create_sysmeta(item, object_tree):
   SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
   SYSMETA = '{{{0}}}'.format(SYSMETA_NS)
   NSMAP = {'D1' : SYSMETA_NS} # the default namespace
-  sysmeta_doc = etree.Element(SYSMETA + 'SystemMetadata', nsmap = NSMAP)
+  sysmeta_doc = etree.Element(SYSMETA + 'SystemMetadata', nsmap=NSMAP)
   
   identifier_el = etree.SubElement(system_metadata_el, 'Identifier')
   identifier_el.text = find_value(eml_doc, 'identifier')[0].text
@@ -478,7 +478,7 @@ def register_object_create_sysmeta(item, object_tree):
 #
 #</xs:schema>
 
-  print(etree.tostring(sysmeta_doc, pretty_print = True,  encoding = 'UTF-8', xml_declaration = True))
+  print(etree.tostring(sysmeta_doc, pretty_print = True,  encoding = 'UTF-8', xml_declaration=True))
 
 
 
@@ -526,7 +526,7 @@ def write(sysmeta_etree, sysmeta_path):
   """
   try:
     sysmeta_file = open(sysmeta_path, 'w')
-    sysmeta_file.write(etree.tostring(xml, pretty_print = True,  encoding = 'UTF-8', xml_declaration = True))
+    sysmeta_file.write(etree.tostring(xml, pretty_print = True,  encoding = 'UTF-8', xml_declaration=True))
   except IOError as (errno, strerror):
     logging.error('Sysmeta file could not be opened for writing: {0}'.format(sysmeta_path))
     logging.error('I/O error({0}): {1}'.format(errno, strerror))
@@ -585,19 +585,19 @@ def object_sysmeta_put(request, guid):
 
   # Update db.
   try:
-    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid = guid)[0]
+    repository_object = models.Repository_object.objects.filter(associations_to__from_object__guid=guid)[0]
   except IndexError:
     util.raise_sys_log_http_404_not_found('Non-existing scimeta object was requested for update: {0}'.format(guid))
   
   try:
-    sync_status = Repository_object_sync_status.objects.filter(status = 'successful')[0]
+    sync_status = Repository_object_sync_status.objects.filter(status='successful')[0]
   except IndexError:
     sync_status = Repository_object_sync_status()
     sync_status.status = 'successful'
     sync_status.save()
   
   try:
-    sync = Repository_object_sync.objects.filter(repository_object = o)[0]
+    sync = Repository_object_sync.objects.filter(repository_object=o)[0]
   except IndexError:
     sync = Repository_object_sync()
   

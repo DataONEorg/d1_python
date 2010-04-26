@@ -33,13 +33,18 @@
 """
 
 # Stdlib.
+import inspect
 import os
 import sys
 import traceback
-import inspect
 
 # 3rd party.
-import mimeparser
+try:
+  import mimeparser
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('mimeparser.py is included in mn_service\n')
+  raise
 
 # Django.
 from django.http import HttpResponse

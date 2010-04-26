@@ -22,15 +22,18 @@
 """
 
 # Stdlib.
-import os
-import sys
-import re
-import glob
-import time
 import datetime
-import stat
+import glob
 import hashlib
+import os
+import re
+import stat
+import sys
+import time
 import uuid
+import urllib
+import urlparse
+import httplib
 
 # Django.
 from django.http import HttpResponse
@@ -44,21 +47,21 @@ from django.utils.html import escape
 try:
   import iso8601
 except ImportError, e:
-  sys.stderr.write('Import error: {0}'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools')
-  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg')
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
+  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
   raise
 
 # MN API.
 import d1common.exceptions
 
 # App.
+import access_log
+import auth
 import models
 import settings
-import auth
 import sys_log
 import util
-import access_log
 
 
 # Object Collection.
@@ -84,6 +87,13 @@ def object_collection_get(request):
   0.3   MN_replication.listObjects()  GET     /object/
   """
   sys_log.info('GET /object/')
+  
+  # TODO: This code should only run while debugging.
+  # For debugging, we support deleting the entire collection in a GET request.
+  if 'delete' in request.GET:
+    sys_log.info('DELETE /object/')
+    models.Repository_object.objects.all().delete()
+    sys_log.info('Deleted all repository object records')
   
   # Sort order.
   
@@ -145,7 +155,7 @@ def object_collection_get(request):
   if 'sync' in request.GET:
     if not request.GET['sync'] in ('0', '1'):
       raise d1common.exceptions.InvalidRequest(1540, 'Invalid sync value requested: {0}'.format(request.GET['sync']))
-    query = query.filter(sync__isnull = request.GET['sync'] == '0')
+    query = query.filter(sync__isnull=request.GET['sync'] == '0')
 
   # Filter by last modified date.
   query, changed = util.add_range_operator_filter(query, request, 'object_mtime', 'lastModified')
@@ -235,25 +245,42 @@ def object_contents_get(request, guid):
   sys_log.info('GET /object/<guid>/')
 
   # Find object based on guid.
-  query = models.Repository_object.objects.filter(guid = guid)
+  query = models.Repository_object.objects.filter(guid=guid)
   try:
     url = query[0].url
   except IndexError:
     raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid))
 
-  # Open file for streaming.
+  # Split URL into individual parts.
   try:
-    f = open(os.path.join(path), 'rb')
-  except IOError as (errno, strerror):
-    err_msg = 'Expected file was not present: {0}\n'.format(url)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.NotFound(1020, err_msg)
+    url_split = urlparse.urlparse(url)
+  except ValueError as e:
+    raise d1common.exceptions.InvalidRequest(0, 'Invalid URL: {0}'.format(url))
+  
+  # Open the object to proxy.
+  try:
+    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+    conn.connect()
+    conn.request('GET', url)
+    response = conn.getresponse()
+  except httplib.HTTPException as e:
+    err_msg = 'HTTPException: {0}'.format(e)
+    logging.error(err_msg)
+    raise
+
+  ## Open file for streaming.  
+  #try:
+  #  f = open(os.path.join(path), 'rb')
+  #except IOError as (errno, strerror):
+  #  err_msg = 'Expected file was not present: {0}\n'.format(url)
+  #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+  #  raise d1common.exceptions.NotFound(1020, err_msg)
 
   # Log the access of this object.
   access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
 
   # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_file_iterator(f))
+  return HttpResponse(util.fixed_chunk_size_iterator(response))
 
 def object_contents_head(request, guid):
   """
@@ -266,7 +293,7 @@ def object_contents_head(request, guid):
   response = HttpResponse()
 
   # Find object based on guid.
-  query = models.Repository_object.objects.filter(guid = guid)
+  query = models.Repository_object.objects.filter(guid=guid)
   try:
     url = query[0].url
   except IndexError:
@@ -520,6 +547,12 @@ def register_get(request):
 
   sys_log.info('GET /register/')
   
+  # For debugging. It's tricky (impossible?) to generate the DELETE verb with
+  # Firefox, so fudge things here with a check for a "delete" argument in the
+  # POST request and branch out to delete.
+  if 'delete' in request.GET:
+    return register_delete(request)
+
   response = HttpResponse()
 
   # select objects ordered by mtime desc.

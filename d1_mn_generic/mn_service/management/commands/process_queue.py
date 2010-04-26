@@ -12,19 +12,19 @@
 """
 
 # Stdlib.
-import os
-import sys
-import re
-import glob
-import time
 import datetime
-import stat
+import glob
 import hashlib
-import uuid
-import urllib
-import logging
-import urlparse
 import httplib
+import logging
+import os
+import re
+import stat
+import sys
+import time
+import urllib
+import urlparse
+import uuid
 
 try:
   import cjson as json
@@ -36,8 +36,8 @@ except:
 try:
   from lxml import etree
 except ImportError, e:
-  sys.stderr.write('Import error: {0}'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml')
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
 # Django.
@@ -82,35 +82,26 @@ def log_setup():
   logging.getLogger('').addHandler(console_logger)
 
 
-def validate(sysmeta_etree):
-  """
-  Validate sysmeta etree against sysmeta xsd.
-  """
-
-  # Check for xsd file.
-  try:
-    xsd_file = open(settings.XSD_PATH, 'r')
-  except IOError as (errno, strerror):
-    logging.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-    logging.error('I/O error({0}): {1}'.format(errno, strerror))
-    raise
-
-  xmlschema_doc = etree.parse(settings.XSD_PATH)
-  xmlschema = etree.XMLSchema(xmlschema_doc)
-  try:
-    xmlschema.assertValid(sysmeta_etree)
-  except DocumentInvalid, e:
-    logging.error('Invalid Sysmeta: {0}'.format(etree.tostring(sysmeta_etree)))
-    raise
-
+def register_object(obj):
   # Create database entry for this object.
   o = mn_service.models.Repository_object()
-  o.guid = item.identifier
-  o.path = item.url
-  o.set_object_class('data')
-  o.hash = item.checksum
-  o.object_mtime = item.timestamp
-  o.size = item.size
+  o.guid = obj.identifier
+  o.url = obj.url
+
+  #TODO: Hack: Object type mapping.
+  try:
+    oc = {
+      "DSPACE METS SIP Profile 1.0": 'scimeta',
+      'Dataset': 'scidata',
+    }[obj.format.format]
+  except KeyError:
+    logging.error('Invalid format: {0}'.format(obj.format.format))
+    raise
+
+  o.set_object_class(oc)
+  o.hash = obj.checksum
+  o.object_mtime = obj.timestamp
+  o.size = obj.size
   o.save_unique()
 
   # Successfully updated the db, so put current datetime in status.mtime.
@@ -119,8 +110,8 @@ def validate(sysmeta_etree):
   s.save()
 
   # Set status to OK on registration object.
-  item.set_status('OK')
-  item.save()
+  obj.set_status('OK')
+  obj.save()
 
 
 class Command(NoArgsCommand):
@@ -131,15 +122,20 @@ class Command(NoArgsCommand):
 
     log_setup()
 
-    try:
-      # Loop through registration queue.
-      for item in mn_service.models.Registration_queue_work_queue.objects.filter(
-        status__status='Queued'
-      ):
-        logging.info('Registering object: {0}'.format(item.url))
-        register_object(item)
-    except:
-      # Something went wrong while processing queue.
-      s = mn_service.models.DB_update_status()
-      s.status = 'Process queue failed'
-      s.save()
+    # Loop through registration queue.
+    for obj in mn_service.models.Registration_queue_work_queue.objects.filter(
+      status__status='Queued'
+    ):
+      logging.info('Registering object: {0}'.format(obj.url))
+      try:
+        register_object(obj)
+      except:
+        # Something went wrong while processing queue.
+        status = 'process_queue failed'
+        logging.error(status)
+        # Update db with failed status.
+        s = mn_service.models.DB_update_status()
+        s.status = status
+        s.save()
+        # Send exception on to framework for display.
+        raise

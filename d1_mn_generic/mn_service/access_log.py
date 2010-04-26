@@ -21,9 +21,9 @@ from django.utils.html import escape
 import d1common.exceptions
 
 # App.
+import auth
 import models
 import settings
-import auth
 import sys_log
 import util
 
@@ -38,25 +38,8 @@ def log(guid, operation_type, requestor_identity):
     err_msg = 'Attempted to create access log for non-existing object: {0}'.format((guid))
     raise d1common.exceptions.ServiceFailure(0, err_msg)
 
-  try:
-    operation_type_row = models.Access_log_operation_type.objects.filter(
-      operation_type=operation_type
-    )[0]
-  except IndexError:
-    operation_type_row.operation_type = operation_type
-    operation_type_row.save()
-
-  try:
-    operation_type_row = models.Access_log_operation_type.objects.filter(
-      operation_type=operation_type
-    )[0]
-  except IndexError:
-    requestor_identity_row = models.Access_log_requestor_identity()
-    requestor_identity_row.requestor_identity = requestor_identity
-    requestor_identity_row.save()
-
   access_log_row = models.Access_log()
-  access_log_row.operation_type = operation_type_row
-  access_log_row.requestor_identity = requestor_identity_row
   access_log_row.repository_object = repository_object_row
+  access_log_row.set_operation_type(operation_type)
+  access_log_row.set_requestor_identity(requestor_identity)
   access_log_row.save()
