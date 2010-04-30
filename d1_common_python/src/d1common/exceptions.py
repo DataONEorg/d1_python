@@ -21,6 +21,8 @@ try:
 except:
   import json
 
+import urllib
+
 
 def instanceToSimpleType(instance):
   '''Force instance to a simple type- int, float, or string
@@ -79,7 +81,7 @@ class DataONEException(Exception):
     )
     title = ETree.SubElement(head, "title")
     title.text = u"Error: %s %s (%s)" % (
-      escape(unicode(self.errorCode)), self.name, escape(self.detailCode)
+      urllib.quote(unicode(self.errorCode)), self.name, urllib.quote(str(self.detailCode))
     )
     body = ETree.SubElement(root, "body")
     dl = ETree.SubElement(body, "dl")
@@ -92,7 +94,7 @@ class DataONEException(Exception):
       dl = ETree.SubElement(body, 'dl', {'class': 'traceInformation'})
       for k in self.traceInfo.keys():
         ETree.SubElement(dl, 'dt').text = k
-        ETree.SubElem1ent(dl, 'dd').text = repr(self.traceInfo[k])
+        ETree.SubElement(dl, 'dd').text = repr(self.traceInfo[k])
     return ETree.tostring(root, "utf-8")
 
   def serializeToXml(self):
