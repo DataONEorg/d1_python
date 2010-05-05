@@ -18,6 +18,9 @@ import os
 import StringIO
 import sys
 import types
+import urllib
+import wsgiref.handlers
+import time
 
 try:
   import cjson as json
@@ -180,7 +183,7 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
   # Return xml as string.
   io = StringIO.StringIO()
   io.write(
-    escape(
+    urllib.quote(
       etree.tostring(
         xml, pretty_print=pretty,
         encoding='UTF-8', xml_declaration=True
@@ -249,7 +252,7 @@ def serialize_rdf_xml(obj, pretty=False, jsonvar=False):
   # Return xml as string.
   io = StringIO.StringIO()
   io.write(
-    escape(
+    urllib.quote(
       etree.tostring(
         xml, pretty_print=pretty,
         encoding='UTF-8', xml_declaration=True
@@ -333,7 +336,12 @@ def set_header(response, last_modified, content_length, content_type):
     else:
       last_modified = status_row.mtime
 
-  response['Last-Modified'] = last_modified
+  response['Last-Modified'] = wsgiref.handlers.format_date_time(
+    time.mktime(
+      last_modified.timetuple(
+      )
+    )
+  )
   response['Content-Length'] = content_length
   response['Content-Type'] = content_type
 
