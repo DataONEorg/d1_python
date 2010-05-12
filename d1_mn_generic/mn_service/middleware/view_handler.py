@@ -55,25 +55,23 @@ class view_handler():
     # Log which view is about the be called.
     sys_log.info('View: {0}'.format(view_func.func_name))
 
-    # If the view being called is one that returns data, verify that
-    # DB_update_status is good.
-    if view_func.func_name in [
-      'object_collection',
-      'object_contents',
-      'object_sysmeta',
-      'access_log_view',
-      'register',
-      'register_delete',
-    ]:
-      try:
-        status_row = models.DB_update_status.objects.all()[0]
-      except IndexError:
-        raise d1common.exceptions.ServiceFailure(0, 'DB update status has not been set')
-      else:
-        if status_row.status != 'update successful':
-          raise d1common.exceptions.ServiceFailure(
-            0, 'Trying to read from DB, but last DB update was not successful'
-          )
+    ## If the view being called is one that returns data, verify that
+    ## DB_update_status is good.
+    #if view_func.func_name in [
+    #  'object_collection',
+    #  'object_contents',
+    #  'object_sysmeta',
+    #  'access_log_view',
+    #  'register',
+    #  'register_delete',
+    #]:
+    #  try:
+    #    status_row = models.DB_update_status.objects.all()[0]
+    #  except IndexError:
+    #    raise d1common.exceptions.ServiceFailure(0, 'DB update status has not been set')
+    #  else:
+    #    if status_row.status != 'update successful':
+    #      raise d1common.exceptions.ServiceFailure(0, 'Trying to read from DB, but last DB update was not successful')
 
     # Returning None causes Django to continue processing by calling view_func.
     return None

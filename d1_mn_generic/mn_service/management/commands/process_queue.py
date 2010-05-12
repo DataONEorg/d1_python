@@ -105,9 +105,9 @@ def register_object(obj):
   o.save_unique()
 
   # Successfully updated the db, so put current datetime in status.mtime.
-  s = mn_service.models.DB_update_status()
-  s.status = 'update successful'
-  s.save()
+  db_update_status = mn_service.models.DB_update_status()
+  db_update_status.status = 'update successful'
+  db_update_status.save()
 
   # Set status to OK on registration object.
   obj.set_status('OK')
@@ -134,8 +134,8 @@ class Command(NoArgsCommand):
         status = 'process_queue failed'
         logging.error(status)
         # Update db with failed status.
-        s = mn_service.models.DB_update_status()
-        s.status = status
-        s.save()
+        db_update_status = mn_service.models.DB_update_status()
+        db_update_status.status = status
+        db_update_status.save()
         # Send exception on to framework for display.
         raise

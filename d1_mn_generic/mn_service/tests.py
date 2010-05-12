@@ -95,7 +95,7 @@ class mn_service_tests(TestCase):
   
   def test_rest_call_object_count_get(self):
     """
-  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
+    Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0"""
     
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -110,7 +110,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_count_by_oclass_data_get(self):
     """
-  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
+    Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
     
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -124,7 +124,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_count_by_oclass_scimeta_get(self):
     """
-  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=scimeta"""
+    Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=scimeta"""
     
     response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'scimeta'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -139,7 +139,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_all_get(self):
     """
-  Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/"""
+    Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/"""
     
     response = self.client.get('/mn/object/', HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
@@ -154,7 +154,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_section_get(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=20&count=10
     """
     
@@ -172,7 +172,7 @@ class mn_service_tests(TestCase):
  
   def test_rest_call_collection_of_objects_section_oclass_filter_get(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=10&count=5&oclass=scimeta
     """
     
@@ -191,7 +191,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_section_oclass_filter_unavailable_get(self):
     """
-  Test call:
+    Test call:
     The corner case where we ask for more objects of a certain type than are
     available.
     
@@ -213,7 +213,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_guid_filter_get(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*
     """
     response = self.client.get('/mn/object/', {'guid': '1*'}, HTTP_ACCEPT='application/json')
@@ -224,7 +224,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_hash_filter_get(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?hash=1*
     """
 
@@ -236,7 +236,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_guid_and_hash_filter_startswith_get(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&hash=1*
     """
    
@@ -248,7 +248,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_guid_and_hash_filter_endswith_get(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&hash=*1
     """
         
@@ -260,7 +260,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_last_accessed_in_2000(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pretty&lastAccessed_gt=2000-01-01T00:00:00&lastAccessed_lt=2010-01-01T00:00:00
     """
         
@@ -272,7 +272,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_with_requestor_1_1_1_1(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
     """
         
@@ -284,7 +284,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_with_operation_get_bytes(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_bytes
     """
         
@@ -296,7 +296,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_collection_of_objects_with_unicode_guid(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
     ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
     """
@@ -315,7 +315,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_count_head(self):
     """
-  Test call:
+    Test call:
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0
     """
     
@@ -325,7 +325,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_count_by_oclass_data_head(self):
     """
-  Test call:
+    Test call:
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
     
@@ -341,7 +341,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_by_guid_get(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
@@ -352,7 +352,7 @@ class mn_service_tests(TestCase):
     
   def test_rest_call_object_by_guid_get_unicode(self):
     """
-  Test call: 
+    Test call: 
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
     ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
     """
@@ -363,7 +363,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_by_guid_404_get(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
     """
     
@@ -372,7 +372,7 @@ class mn_service_tests(TestCase):
 
   #def test_rest_call_sysmeta_by_object_guid_get(self):
   #  """
-  Test call:
+  #Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
@@ -398,7 +398,7 @@ class mn_service_tests(TestCase):
   #
   #def test_rest_call_sysmeta_by_object_guid_404_get(self):
   #  """
-  Test call:
+  #Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
   #  """
   #  
@@ -413,7 +413,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_object_header_by_guid_head(self):
     """
-  Test call:
+    Test call:
     curl -I http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
@@ -423,7 +423,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_last_modified_head(self):
     """
-  Test call:
+    Test call:
     curl -I http://mn1.dataone.org/object/
     """
     
@@ -437,7 +437,7 @@ class mn_service_tests(TestCase):
 
   #def test_rest_call_sysmeta_by_object_guid_put(self):
   #  """
-  Test call:
+  #Test call:
   #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
@@ -453,7 +453,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_cn_auth(self):
     """
-  Test call:
+    Test call:
     
     Check that CN is successfully authenticated if matching an IP in the CN_IP
     list.
@@ -482,7 +482,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_unfiltered(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/
     """
     
@@ -496,7 +496,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_requestor_1_1_1_1(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1
     """
 
@@ -507,7 +507,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_operation_get_bytes(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_bytes
     """
 
@@ -518,7 +518,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_requestor_1_1_1_1_and_operation_get_bytes(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_bytes
     """
 
@@ -529,7 +529,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_last_modified_in_1990s(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastModified_gt=1990-01-01T00:00:00&lastModified_lt=2000-01-01T00:00:00
     """
     
@@ -540,7 +540,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_last_accessed_in_1970s(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastAccessed_gt=1970-01-01T00:00:00&lastAccessed_lt=1980-01-01T00:00:00
     """
     
@@ -551,7 +551,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_entries_associated_with_objects_type_class_data(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&oclass=data
     """
     
@@ -562,7 +562,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_entries_associated_with_objects_guid_and_hash_endswith_2(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&guid=*2&hash=*2
     """
     
@@ -573,7 +573,7 @@ class mn_service_tests(TestCase):
 
   def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
     """
-  Test call:
+    Test call:
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&lastModified_gt=1980-01-01T00:00:00&lastModified_lt=1990-01-01T00:00:00
     """
     
@@ -584,7 +584,7 @@ class mn_service_tests(TestCase):
     
   #def test_rest_call_object_by_guid_404_get(self):
   #  """
-  Test call:
+  #  Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
   #  """
   #  
@@ -593,7 +593,7 @@ class mn_service_tests(TestCase):
   #
   #def test_rest_call_sysmeta_by_object_guid_get(self):
   #  """
-  Test call:
+  #  Test call:
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  
   #  NOTE: This test fails if the /update/ call has not been run from outside the
