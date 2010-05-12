@@ -392,7 +392,7 @@ def access_log_view_get(request):
   query_unsliced = query
 
   obj = {}
-  obj['log'] = []
+  obj['data'] = []
 
   # Filter by referenced object oclass.
   if 'oclass' in request.GET:
@@ -440,7 +440,7 @@ def access_log_view_get(request):
     log['access_time'] = datetime.datetime.isoformat(row.access_time)
 
     # Append object to response.
-    obj['log'].append(log)
+    obj['data'].append(log)
 
   obj['count'] = query.count()
   obj['total'] = query_unsliced.count()

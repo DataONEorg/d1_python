@@ -16,15 +16,15 @@ import sys
 
 # Member Node configuration.
 
-MN_NAME = 'mn1.com'
+MN_NAME = 'dryad_mn'
 MN_IP = ['127.0.0.1']
 
 # CN IPs.
 CN_IP = [
-  '192.168.1.200', # CN1
-  '192.168.1.201', # CN2
-  '192.168.1.202', # CN3
-  '127.0.0.1'
+  '68.35.3.230', # Roger
+  '74.107.75.34', # Dave
+  '127.0.0.1', # localhost
+  '152.3.105.16', # Karya
 ]
 
 # Django settings for mn_prototype project.
