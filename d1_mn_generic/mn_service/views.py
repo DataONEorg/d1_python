@@ -540,7 +540,6 @@ def object_guid_meta_get(request, guid):
   except IndexError:
     raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid), __name__)
   
-
   # Open file for streaming.  
   try:
     f = open(os.path.join(path), 'rb')
