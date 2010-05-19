@@ -19,11 +19,6 @@ import sys
 # App.
 import settings
 
-print '5' * 100
-print id(logging.getLogger(''))
-print settings.LOG_PATH
-print '6' * 100
-
 # Set up logging.
 # We output everything to both file and stdout.
 logging.getLogger('').setLevel(logging.DEBUG)
