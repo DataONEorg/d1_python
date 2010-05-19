@@ -45,7 +45,7 @@ except ImportError, e:
 
 try:
   import xml.etree.cElementTree as ET
-except:
+except ImportError, e:
   import xml.etree.ElementTree as ET
 
   # Local.
@@ -134,6 +134,9 @@ class SystemMetadata(object):
     for elements that are simple string values.  Multiple values or things that
     require type casting need their own accessor method.
     '''
+    # TODO: Hack.
+    if name == 'checksumAlgorithm':
+      return self.etree.findall('checksum')[0].attrib['algorithm']
     #First try the inherited method
     try:
       return super(SystemMetadata, self).__getattr__(name)
@@ -143,6 +146,18 @@ class SystemMetadata(object):
     if res is None:
       raise AttributeError("Property '%s' not found" % name)
     return res
+
+  @property
+  def checksum(self):
+    ''':rtype: (Unicode)
+    '''
+    return self._getValues(u'checksum')
+
+  #@property
+  #def checksumAlgorithm(self):
+  #  ''':rtype: (Unicode)
+  #  '''
+  #  return self.etree.findall('checksum')[0].attrib['algorithm']
 
   @property
   def dateUploaded(self):
