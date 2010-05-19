@@ -32,7 +32,7 @@ def encode_multipart_formdata(fields, files):
   files is a sequence of (name, filename, value) elements for data to be uploaded as files
   Return (content_type, body) ready for httplib.HTTP instance
   """
-  BOUNDARY = '----------ThIs_Is_tHe_bouNdaRY_$'
+  BOUNDARY = '----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
   CRLF = '\r\n'
   L = []
   for (key, value) in fields:

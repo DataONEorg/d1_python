@@ -31,43 +31,73 @@ class DB_update_status(models.Model):
   mtime = models.DateTimeField(auto_now=True)
   status = models.CharField(max_length=100)
 
+# Registered MN objects.
+
 
 class Checksum_algorithm(models.Model):
   checksum_algorithm = models.CharField(max_length=20, unique=True)
 
-# Registered MN objects.
+
+# Class = sysmeta, scimeta or scidata
+class Object_class(models.Model):
+  object_class = models.CharField(max_length=10, unique=True)
 
 
-class Repository_object_class(models.Model):
-  name = models.CharField(max_length=10, unique=True)
+# Format = The file format of the object.
+class Object_format(models.Model):
+  object_format = models.CharField(max_length=10, unique=True)
 
 
-class Repository_object(models.Model):
+class Object(models.Model):
   guid = models.CharField(max_length=200, unique=True)
   url = models.CharField(max_length=1000, unique=True)
-  repository_object_class = models.ForeignKey(Repository_object_class)
-  hash = models.CharField(max_length=100)
+  object_class = models.ForeignKey(Object_class)
+  object_format = models.ForeignKey(Object_format)
+  checksum = models.CharField(max_length=100)
+  checksum_algorithm = models.ForeignKey(Checksum_algorithm)
   object_mtime = models.DateTimeField()
   db_mtime = models.DateTimeField(auto_now=True)
   size = models.PositiveIntegerField()
 
   def set_object_class(self, object_class_string):
     try:
-      object_class = Repository_object_class.objects.filter(name=object_class_string)[0]
+      object_class = Object_class.objects.filter(object_class=object_class_string)[0]
     except IndexError:
-      object_class = Repository_object_class()
-      object_class.name = object_class_string
+      object_class = Object_class()
+      object_class.object_class = object_class_string
       object_class.save()
 
-    self.repository_object_class = object_class
+    self.object_class = object_class
+
+  def set_object_format(self, object_format_string):
+    try:
+      object_format = Object_format.objects.filter(object_format=object_format_string)[0]
+    except IndexError:
+      object_format = Object_format()
+      object_format.object_format = object_format_string
+      object_format.save()
+
+    self.object_format = object_format
+
+  def set_checksum_algorithm(self, checksum_algorithm_string):
+    try:
+      checksum_algorithm = Checksum_algorithm.objects.filter(
+        checksum_algorithm=checksum_algorithm_string
+      )[0]
+    except IndexError:
+      checksum_algorithm = Checksum_algorithm()
+      checksum_algorithm.checksum_algorithm = checksum_algorithm_string
+      checksum_algorithm.save()
+
+    self.checksum_algorithm = checksum_algorithm
 
   def save_unique(self):
     """
     If attempting to save an object that has the same guid and/or url as an
-    old object, we automatically delete the old object before saving the new.
+    old object, we delete the old object before saving the new.
     """
     try:
-      me = Repository_object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]
+      me = Object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]
     except IndexError:
       self.save()
     else:
@@ -78,9 +108,9 @@ class Repository_object(models.Model):
       self.save()
 
 
-class Repository_object_associations(models.Model):
-  from_object = models.ForeignKey(Repository_object, related_name='associations_from')
-  to_object = models.ForeignKey(Repository_object, related_name='associations_to')
+class Object_associations(models.Model):
+  from_object = models.ForeignKey(Object, related_name='associations_from')
+  to_object = models.ForeignKey(Object, related_name='associations_to')
 
   # TODO: Unique index for the from_object / to_object combination.
   class Meta:
@@ -92,28 +122,28 @@ class Repository_object_associations(models.Model):
     """
 
     try:
-      o1 = models.Repository_object.objects.filter(guid=guid1)[0]
-      o2 = models.Repository_object.objects.filter(guid=guid2)[0]
+      o1 = models.Object.objects.filter(guid=guid1)[0]
+      o2 = models.Object.objects.filter(guid=guid2)[0]
     except IndexError:
       err_msg = 'Internal server error: Missing object(s): {0} and/or {1}'.format(
         guid1, guid2
       )
       #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
 
-    association = models.Repository_object_associations()
+    association = models.Object_associations()
     association.from_object = o1
     association.to_object = o2
     association.save()
 
 
-class Repository_object_sync_status(models.Model):
+class Object_sync_status(models.Model):
   status = models.CharField(max_length=100, unique=True)
 
 
-class Repository_object_sync(models.Model):
-  repository_object = models.ForeignKey(Repository_object, related_name='sync')
+class Object_sync(models.Model):
+  object = models.ForeignKey(Object, related_name='sync')
   mtime = models.DateTimeField(auto_now=True)
-  status = models.ForeignKey(Repository_object_sync_status)
+  status = models.ForeignKey(Object_sync_status)
 
 # Access Log
 
@@ -127,7 +157,7 @@ class Access_log_requestor_identity(models.Model):
 
 
 class Access_log(models.Model):
-  repository_object = models.ForeignKey(Repository_object)
+  object = models.ForeignKey(Object)
   operation_type = models.ForeignKey(Access_log_operation_type)
   requestor_identity = models.ForeignKey(Access_log_requestor_identity)
   access_time = models.DateTimeField(auto_now_add=True)
@@ -138,7 +168,7 @@ class Access_log(models.Model):
         operation_type=operation_type_string
       )[0]
     except IndexError:
-      operation_type = Registration_queue_status()
+      operation_type = Access_log_operation_type()
       operation_type.operation_type = operation_type_string
       operation_type.save()
 
@@ -155,56 +185,3 @@ class Access_log(models.Model):
       requestor_identity.save()
 
     self.requestor_identity = requestor_identity
-
-# MN object registration work queue.
-
-
-class Registration_queue_status(models.Model):
-  status = models.CharField(max_length=1000, unique=True)
-
-
-class Registration_queue_format(models.Model):
-  format = models.CharField(max_length=30, unique=True)
-
-
-class Registration_queue_work_queue(models.Model):
-  status = models.ForeignKey(Registration_queue_status)
-  identifier = models.CharField(max_length=200)
-  url = models.CharField(max_length=1000)
-  format = models.ForeignKey(Registration_queue_format)
-  size = models.PositiveIntegerField()
-  checksum = models.CharField(max_length=100)
-  checksum_algorithm = models.ForeignKey(Checksum_algorithm)
-  timestamp = models.DateTimeField(auto_now=True)
-
-  def set_status(self, status_string):
-    try:
-      status = Registration_queue_status.objects.filter(status=status_string)[0]
-    except IndexError:
-      status = Registration_queue_status()
-      status.status = status_string
-      status.save()
-
-    self.status = status
-
-  def set_format(self, format_string):
-    try:
-      format = Registration_queue_format.objects.filter(format=format_string)[0]
-    except IndexError:
-      format = Registration_queue_format()
-      format.format = format_string
-      format.save()
-
-    self.format = format
-
-  def set_checksum_algorithm(self, checksum_algorithm_string):
-    try:
-      checksum_algorithm = Checksum_algorithm.objects.filter(
-        checksum_algorithm=checksum_algorithm_string
-      )[0]
-    except IndexError:
-      checksum_algorithm = Checksum_algorithm()
-      checksum_algorithm.checksum_algorithm = checksum_algorithm_string
-      checksum_algorithm.save()
-
-    self.checksum_algorithm = checksum_algorithm

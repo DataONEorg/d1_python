@@ -43,7 +43,7 @@ def cn_check_required(f):
 
   def wrap(request, *args, **kwargs):
     # Check if we already have a session for this user.
-    if 'cn_user' not in request.session.keys():
+    if 'cn_user' not in request.session.keys() and settings.ENABLE_IP_AUTH == True:
       sys_log.info(
         'Session not found for user at IP: {0}'.format(
           request.META['REMOTE_ADDR']
@@ -77,7 +77,7 @@ def mn_check_required(f):
 
   def wrap(request, *args, **kwargs):
     # Check if we already have a session for this user.
-    if 'mn_user' not in request.session.keys():
+    if 'mn_user' not in request.session.keys() and settings.ENABLE_IP_AUTH == True:
       sys_log.info(
         'Session not found for user at IP: {0}'.format(
           request.META['REMOTE_ADDR']

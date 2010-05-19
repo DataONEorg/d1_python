@@ -62,8 +62,8 @@ class view_handler():
     #  'object_contents',
     #  'object_sysmeta',
     #  'access_log_view',
-    #  'register',
-    #  'register_delete',
+    #  'crud_create',
+    #  'crud_create_delete',
     #]:
     #  try:
     #    status_row = models.DB_update_status.objects.all()[0]

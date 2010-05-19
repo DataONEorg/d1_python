@@ -22,14 +22,13 @@ urlpatterns = patterns(
 
   # /object/
   (r'^object/$', 'object_collection'),
-  (r'^object/(.*)$', 'object_contents'),
-  (r'^object/(.*)/meta$', 'object_sysmeta'),
+  (r'^object/(.*)/meta/$', 'object_guid_meta'),
+  (r'^object/(.*)/$', 'object_guid'),
 
   # /log/
   (r'^log/$', 'access_log_view'),
-
-  # D1 adapter interface.
   (r'^register/$', 'register'),
+  (r'^upload/$', 'upload'),
 
   # Diagnostic / Debugging.
   (r'^get_ip/$', 'auth_test'),

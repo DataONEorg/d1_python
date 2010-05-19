@@ -18,7 +18,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns(
   '',
-  (r'^mn/', include('mn_prototype.mn_service.urls')),
+  (r'^', include('mn_prototype.mn_service.urls')),
   (
     r'^accounts/login/$', 'django.contrib.auth.views.login'
   ),

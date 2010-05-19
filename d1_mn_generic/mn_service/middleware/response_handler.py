@@ -71,7 +71,7 @@ import settings
 #    {
 #      'guid':<identifier>,
 #      'oclass':<object class>,
-#      'hash':<SHA1 hash of object>,
+#      'checksum':<SHA1 checksum of object>,
 #      'modified':<date time last modified>,
 #      'size':<byte size of object>
 #    },
@@ -96,8 +96,8 @@ def serialize_json(obj, pretty=False, jsonvar=False):
 
 
 # #<start>,<count>,<total>
-# 'guid',otype,hash,modified,size
-# <identifier>,<object class>,<SHA1 hash of object>,<date time last modified>,<byte size of object>
+# 'guid',otype,checksum,modified,size
+# <identifier>,<object class>,<SHA1 checksum of object>,<date time last modified>,<byte size of object>
 def serialize_csv(obj, pretty=False, jsonvar=False):
   """
   Serialize object to CSV.
@@ -144,7 +144,7 @@ def serialize_csv(obj, pretty=False, jsonvar=False):
 #          total='_integer_'>
 #  <data guid='_identifier_'>
 #    <oclass>_object class_</oclass>
-#    <hash>_SHA1 hash of object</hash>
+#    <checksum>_SHA1 checksum of object</checksum>
 #    <modified>_date time last modified_</modified>
 #    <size>_byte size of object_</size>
 #  </data>
@@ -204,7 +204,7 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
 #    <d1:data rdf:parseType="Collection">
 #      <rdf:Description rdf:about="http://mn1.dataone.org/object/_identifier_">
 #        <d1:oclass>_object class_</d1:oclass>
-#        <d1:hash>_SHA1 hash of object</d1:hash>
+#        <d1:checksum>_SHA1 checksum of object</d1:checksum>
 #        <d1:modified>_date time last modified_</d1:modified>
 #        <d1:size>_byte size of object_</d1:size>
 #      </rdf:Description>

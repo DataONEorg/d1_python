@@ -16,15 +16,22 @@ import sys
 
 # Member Node configuration.
 
+ENABLE_IP_AUTH = False
+
 MN_NAME = 'dryad_mn'
-MN_IP = ['127.0.0.1']
+MN_IP = [
+  '68.35.3.230', # Roger
+  '74.107.75.34', # Dave
+  '152.3.105.16', # Karya
+  '127.0.0.1' # localhost
+]
 
 # CN IPs.
 CN_IP = [
   '68.35.3.230', # Roger
   '74.107.75.34', # Dave
-  '127.0.0.1', # localhost
   '152.3.105.16', # Karya
+  '127.0.0.1', # localhost
 ]
 
 # Django settings for mn_prototype project.
@@ -42,7 +49,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = _here('test_db.sq3')
+DATABASE_NAME = _here('gmn.sq3')
 DATABASE_USER = '' # Not used with sqlite3.
 DATABASE_PASSWORD = '' # Not used with sqlite3.
 DATABASE_HOST = '' # Set to empty string for localhost. Not used with sqlite3.
@@ -117,6 +124,8 @@ INSTALLED_APPS = (
 LOG_PATH = _here('./mn_service.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
+
+SYSMETA_CACHE_PATH = _here('../sysmeta_cache')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './api_common')))

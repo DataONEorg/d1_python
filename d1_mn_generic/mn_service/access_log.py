@@ -33,13 +33,13 @@ def log(guid, operation_type, requestor_identity):
   Log an object access."""
 
   try:
-    repository_object_row = models.Repository_object.objects.filter(guid=guid)[0]
+    object_row = models.Object.objects.filter(guid=guid)[0]
   except IndexError:
     err_msg = 'Attempted to create access log for non-existing object: {0}'.format((guid))
     raise d1common.exceptions.ServiceFailure(0, err_msg)
 
   access_log_row = models.Access_log()
-  access_log_row.repository_object = repository_object_row
+  access_log_row.object = object_row
   access_log_row.set_operation_type(operation_type)
   access_log_row.set_requestor_identity(requestor_identity)
   access_log_row.save()

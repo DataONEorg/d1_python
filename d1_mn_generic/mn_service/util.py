@@ -71,10 +71,10 @@ def log_exception(max_traceback_levels=5):
   except KeyError:
     exc_args = "<no args>"
   exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
-  logging.error('Exception:')
-  logging.error('  Name: {0}'.format(exc_class.__name__))
-  logging.error('  Args: {0}'.format(exc_args))
-  logging.error('  Traceback: {0}'.format(exc_formatted_traceback))
+  sys_log.error('Exception:')
+  sys_log.error('  Name: {0}'.format(exc_class.__name__))
+  sys_log.error('  Args: {0}'.format(exc_args))
+  sys_log.error('  Traceback: {0}'.format(exc_formatted_traceback))
 
 
 def clear_db():
@@ -88,11 +88,11 @@ def clear_db():
   models.Access_log_operation_type.objects.all().delete()
   models.Access_log_requestor_identity.objects.all().delete()
 
-  models.Repository_object_sync.objects.all().delete()
-  models.Repository_object_sync_status.objects.all().delete()
-  models.Repository_object_associations.objects.all().delete()
-  models.Repository_object.objects.all().delete()
-  models.Repository_object_class.objects.all().delete()
+  models.Object_sync.objects.all().delete()
+  models.Object_sync_status.objects.all().delete()
+  models.Object_associations.objects.all().delete()
+  models.Object.objects.all().delete()
+  models.Object_class.objects.all().delete()
 
   models.Registration_queue_work_queue.objects.all().delete()
   models.Registration_queue_status.objects.all().delete()
@@ -190,9 +190,9 @@ def insert_file_object(object_class_name, guid, path):
     sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
     return
 
-  # Get hash of file.
-  hash = hashlib.sha1()
-  hash.update(f.read())
+  # Get checksum of file.
+  checksum = hashlib.sha1()
+  checksum.update(f.read())
 
   # Get mtime in datetime.datetime.
   mtime = os.stat(path)[stat.ST_MTIME]
@@ -204,20 +204,19 @@ def insert_file_object(object_class_name, guid, path):
   f.close()
 
   # Set up the object class.
-  c = models.Repository_object_class()
+  c = models.Object_class()
   try:
-    object_class = models.Repository_object_class.objects.filter(name=object_class_name
-                                                                 )[0]
+    object_class = models.Object_class.objects.filter(name=object_class_name)[0]
   except IndexError:
-    object_class = models.Repository_object_class()
+    object_class = models.Object_class()
     object_class.name = object_class_name
 
   # Build object for this file and store it.
-  o = models.Repository_object()
+  o = models.Object()
   o.url = url
   o.guid = guid
-  o.repository_object_class = c
-  o.hash = hash.hexdigest()
+  o.object_class = c
+  o.checksum = checksum.hexdigest()
   o.object_mtime = mtime
   o.size = size
   o.save()
@@ -301,7 +300,7 @@ def add_wildcard_filter(query, col_name, value):
 #where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
 #query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
 ## Filter by operation type.
-##  query = query.filter(repository_object_class__name=oclass)
+##  query = query.filter(object_class__name=oclass)
 #if 'operation_type' in request.GET:
 #  requestor = request.GET['operation_type']
 #  # Translate from DOS to SQL style wildcards.

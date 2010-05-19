@@ -36,9 +36,9 @@ mn_objects_total_data = 100
 mn_objects_total_scimeta = 77
 #mn_objects_total_sysmeta= 177
 mn_objects_guid_startswith_1 = 18
-mn_objects_hash_startswith_1 = 21
-mn_objects_guid_and_hash_startswith_1 = 2
-mn_objects_guid_and_hash_endswith_1 = 1
+mn_objects_checksum_startswith_1 = 21
+mn_objects_guid_and_checksum_startswith_1 = 2
+mn_objects_guid_and_checksum_endswith_1 = 1
 mn_objects_last_accessed_in_2000 = 354
 mn_objects_requestor_1_1_1_1 = 00000
 mn_objects_operation_get_bytes = 0000
@@ -52,7 +52,7 @@ log_requestor_1_1_1_1_and_operation_get_bytes = 240
 log_last_modified_in_1990s = 48
 log_last_accessed_in_1970s = 68
 log_entries_associated_with_objects_type_class_data = 569
-log_entries_associated_with_objects_guid_and_hash_endswith_2 = 5
+log_entries_associated_with_objects_guid_and_checksum_endswith_2 = 5
 log_entries_associated_with_objects_last_modified_in_1980s = 27
 
 class mn_service_tests(TestCase):
@@ -168,7 +168,7 @@ class mn_service_tests(TestCase):
     # Check if results contains number of objects that was reported to be returned.
     self.failUnlessEqual(len(res['data']), res['count'])
     # Check the first of the data objects for the correct format.
-    self.failUnlessEqual(len(res['data'][0]['hash']), 40)
+    self.failUnlessEqual(len(res['data'][0]['checksum']), 40)
  
   def test_rest_call_collection_of_objects_section_oclass_filter_get(self):
     """
@@ -187,7 +187,7 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(len(res['data']), res['count'])
     # Check the first of the data objects for the correct format.
     self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
-    self.failUnlessEqual(len(res['data'][0]['hash']), 40)
+    self.failUnlessEqual(len(res['data'][0]['checksum']), 40)
 
   def test_rest_call_collection_of_objects_section_oclass_filter_unavailable_get(self):
     """
@@ -209,7 +209,7 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(len(res['data']), res['count'])
     # Check the first of the data objects for the correct format.
     self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
-    self.failUnlessEqual(len(res['data'][0]['hash']), 40)
+    self.failUnlessEqual(len(res['data'][0]['checksum']), 40)
 
   def test_rest_call_collection_of_objects_guid_filter_get(self):
     """
@@ -222,41 +222,41 @@ class mn_service_tests(TestCase):
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], mn_objects_guid_startswith_1)
 
-  def test_rest_call_collection_of_objects_hash_filter_get(self):
+  def test_rest_call_collection_of_objects_checksum_filter_get(self):
     """
     Test call: 
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?hash=1*
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?checksum=1*
     """
 
-    response = self.client.get('/mn/object/', {'hash': '1*'}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/', {'checksum': '1*'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
-    self.failUnlessEqual(res['count'], mn_objects_hash_startswith_1)
+    self.failUnlessEqual(res['count'], mn_objects_checksum_startswith_1)
 
-  def test_rest_call_collection_of_objects_guid_and_hash_filter_startswith_get(self):
+  def test_rest_call_collection_of_objects_guid_and_checksum_filter_startswith_get(self):
     """
     Test call: 
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&hash=1*
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&checksum=1*
     """
    
-    response = self.client.get('/mn/object/', {'guid': '1*', 'hash': '1*'}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/', {'guid': '1*', 'checksum': '1*'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
-    self.failUnlessEqual(res['count'], mn_objects_guid_and_hash_startswith_1)
+    self.failUnlessEqual(res['count'], mn_objects_guid_and_checksum_startswith_1)
 
-  def test_rest_call_collection_of_objects_guid_and_hash_filter_endswith_get(self):
+  def test_rest_call_collection_of_objects_guid_and_checksum_filter_endswith_get(self):
     """
     Test call: 
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&hash=*1
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&checksum=*1
     """
         
-    response = self.client.get('/mn/object/', {'guid': '*1', 'hash': '*1'}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/', {'guid': '*1', 'checksum': '*1'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
-    self.failUnlessEqual(res['count'], mn_objects_guid_and_hash_endswith_1)
+    self.failUnlessEqual(res['count'], mn_objects_guid_and_checksum_endswith_1)
 
   def test_rest_call_collection_of_objects_last_accessed_in_2000(self):
     """
@@ -560,16 +560,16 @@ class mn_service_tests(TestCase):
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_type_class_data)
 
-  def test_rest_call_log_get_log_entries_associated_with_objects_guid_and_hash_endswith_2(self):
+  def test_rest_call_log_get_log_entries_associated_with_objects_guid_and_checksum_endswith_2(self):
     """
     Test call:
-    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&guid=*2&hash=*2
+    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&guid=*2&checksum=*2
     """
     
-    response = self.client.get('/mn/log/', {'guid': '*2', 'hash': '*2'}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/log/', {'guid': '*2', 'checksum': '*2'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
-    self.failUnlessEqual(res['count'], log_entries_associated_with_objects_guid_and_hash_endswith_2)
+    self.failUnlessEqual(res['count'], log_entries_associated_with_objects_guid_and_checksum_endswith_2)
 
   def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
     """

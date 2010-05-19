@@ -11,12 +11,21 @@
 :Synopsis:
   Implements the following REST calls:
   
-  0.3   MN_crud.get()                 GET     /object/<guid>/
-  0.3   MN_crud.getSystemMetadata()   GET     /object/<guid>/meta/
-  0.3   MN_crud.describe()            HEAD    /object/<guid>/
-  0.3   MN_crud.getChecksum()         GET     /object/<guid>/checksum/
-  0.3   MN_crud.getLogRecords()       GET     /log/
-  0.3   MN_replication.listObjects()  GET     /object/
+  0.3 MN_replication.listObjects()     GET    /object/
+  N/A MN_replication.listObjects()     HEAD   /object/
+  N/A MN_replication.listObjects()     DELETE /object/
+
+  0.3 MN_crud.get ()                   GET    /object/<guid>/
+  0.4 MN_crud.create()                 POST   /object/<guid>/
+  0.4 MN_crud.update()                 PUT    /object/<guid>/
+  0.9 MN_crud.delete()                 DELETE /object/<guid>/
+  0.3 MN_crud.describe()               HEAD   /object/<guid>/
+
+  0.3 MN_crud.getSystemMetadata()      GET    /object/<guid>/meta/
+  0.3 MN_crud.describeSystemMetadata() HEAD   /object/<guid>/meta/
+
+  0.3 MN_crud.getLogRecords()          GET    /log/
+  0.3 MN_crud.describeLogRecords()     HEAD   /log/
 
 .. moduleauthor:: Roger Dahl
 """
@@ -54,6 +63,7 @@ except ImportError, e:
 
 # MN API.
 import d1common.exceptions
+import d1pythonitk.systemmetadata
 
 # App.
 import access_log
@@ -69,22 +79,32 @@ import util
 @auth.cn_check_required
 def object_collection(request):
   """
-  0.3   MN_replication.listObjects()  GET     /object/
-  0.3   MN_replication.listObjects()  HEAD    /object/
+  0.3 MN_replication.listObjects() GET    /object/
+  N/A MN_replication.listObjects() HEAD   /object/
+  N/A MN_replication.listObjects() DELETE /object/
   """
   if request.method == 'GET':
+    # For debugging. It's tricky (impossible?) to generate the DELETE verb with
+    # Firefox, so fudge things here with a check for a "delete" argument in the
+    # POST request and branch out to delete.
+    if 'delete' in request.GET:
+      return object_collection_delete(request)
+
     return object_collection_get(request)
   
   if request.method == 'HEAD':
     return object_collection_head(request)
   
+  if request.method == 'DELETE':
+    return object_collection_delete(request)
+    
   # Only GET and HEAD accepted.
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
+  return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
 
 def object_collection_get(request):
   """
-  Get filtered list of objects.
-  0.3   MN_replication.listObjects()  GET     /object/
+  Retrieve the list of objects present on the MN that match the calling parameters.
+  MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList¶
   """
   sys_log.info('GET /object/')
   
@@ -92,7 +112,7 @@ def object_collection_get(request):
   # For debugging, we support deleting the entire collection in a GET request.
   if 'delete' in request.GET:
     sys_log.info('DELETE /object/')
-    models.Repository_object.objects.all().delete()
+    models.Object.objects.all().delete()
     sys_log.info('Deleted all repository object records')
   
   # Sort order.
@@ -111,8 +131,9 @@ def object_collection_get(request):
       order_field = {
         'guid': 'guid',
         'url': 'url',
-        'oclass': 'repository_object_class__name',
-        'hash': 'hash',
+        'objectClass': 'object_class__object_class',
+        'objectFormat': 'object_format__object_format',
+        'checksum': 'checksum',
         'lastModified': 'object_mtime',
         'dbLastModified': 'db_mtime',
         'size': 'size',
@@ -121,10 +142,10 @@ def object_collection_get(request):
       raise d1common.exceptions.InvalidRequest(1540, 'Invalid orderby value requested: {0}'.format(orderby))
       
     # Set up query with requested sorting.
-    query = models.Repository_object.objects.order_by(prefix + order_field)
+    query = models.Object.objects.order_by(prefix + order_field)
   else:       
     # Default ordering is by mtime ascending.
-    query = models.Repository_object.objects.order_by('object_mtime')
+    query = models.Object.objects.order_by('object_mtime')
   
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
@@ -136,9 +157,14 @@ def object_collection_get(request):
   
   # Undocumented filters.
 
-  # Filter by oclass.
-  if 'oclass' in request.GET:
-    query = util.add_wildcard_filter(query, 'repository_object_class__name', request.GET['oclass'])
+  # Filter by objectClass.
+  if 'objectClass' in request.GET:
+    query = util.add_wildcard_filter(query, 'object_class__object_class', request.GET['objectClass'])
+    query_unsliced = query
+
+  # Filter by objectFormat.
+  if 'objectFormat' in request.GET:
+    query = util.add_wildcard_filter(query, 'object_format__object_format', request.GET['objectFormat'])
     query_unsliced = query
 
   # Filter by GUID.
@@ -146,9 +172,9 @@ def object_collection_get(request):
     query = util.add_wildcard_filter(query, 'guid', request.GET['guid'])
     query_unsliced = query
   
-  # Filter by hash.
-  if 'hash' in request.GET:
-    query = util.add_wildcard_filter(query, 'hash', request.GET['hash'])
+  # Filter by checksum.
+  if 'checksum' in request.GET:
+    query = util.add_wildcard_filter(query, 'checksum', request.GET['checksum'])
     query_unsliced = query
 
   # Filter by sync.
@@ -187,10 +213,11 @@ def object_collection_get(request):
     
   for row in query:
     data = {}
-    data['guid'] = row.guid
+    data['guid'] = urllib.quote(row.guid, '')
     data['url'] = row.url
-    data['oclass'] = row.repository_object_class.name
-    data['hash'] = row.hash
+    data['objectClass'] = row.object_class.object_class
+    data['objectFormat'] = row.object_format.object_format
+    data['checksum'] = row.checksum
     # Get modified date in an ISO 8601 string.
     data['modified'] = datetime.datetime.isoformat(row.object_mtime)
     data['inserted'] = datetime.datetime.isoformat(row.db_mtime)
@@ -209,53 +236,91 @@ def object_collection_get(request):
 
 def object_collection_head(request):
   """
-  Get header for filtered list of objects.
-  0.3   MN_replication.listObjects()  HEAD    /object/
+  Placeholder.
   """
-  
   sys_log.info('HEAD /object/')
+  # Not implemented. Target: 0.9.
+  raise d1common.exceptions.NotImplemented(0, 'Not implemented: Not in spec.')
 
-  return HttpResponse()
+def object_collection_delete(request):
+  """
+  For debugging: Remove all objects from db.
+  Not part of spec.
+  """
+  sys_log.info('DELETE /object/<guid>/')
 
+  models.Object_sync.objects.all().delete()
+  models.Object_sync_status.objects.all().delete()
+  models.Object_class.objects.all().delete()
+  models.Checksum_algorithm.objects.all().delete()
+  models.Object.objects.all().delete()
 
-# Object Contents.
+  return HttpResponse('OK')
+
+# CRUD interface.
 
 @auth.cn_check_required
-def object_contents(request, guid):
+def object_guid(request, guid):
   """
-  0.3   MN_crud.get()                 GET     /object/<guid>/
-  0.3   MN_crud.describe()            HEAD    /object/<guid>/
+  0.3 MN_crud.get()      GET    /object/<guid>/
+  0.4 MN_crud.create()   POST   /object/<guid>/
+  0.4 MN_crud.update()   PUT    /object/<guid>/
+  0.9 MN_crud.delete()   DELETE /object/<guid>/
+  0.3 MN_crud.describe() HEAD   /object/<guid>/
   """
   
   if request.method == 'GET':
-    return object_contents_get(request, guid)
+    return object_guid_get(request, guid)
+
+  if request.method == 'POST':
+    return object_guid_post(request, guid)
+
+  if request.method == 'PUT':
+    return object_guid_put(request, guid)
+
+  if request.method == 'DELETE':
+    return object_guid_delete(request, guid)
 
   if request.method == 'HEAD':
-    return object_contents_head(request, guid)
+    return object_guid_head(request, guid)
   
-  # Only GET and HEAD accepted.
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
+  # All verbs allowed, so should never get here.
+  return HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE', 'HEAD'])
 
-def object_contents_get(request, guid):
+def object_guid_get(request, guid):
   """
-  Get a scidata or scimeta object by guid.
-  0.3   MN_crud.get()                 GET     /object/<guid>/
+  Retrieve an object identified by guid from the node.
+  MN_crud.get(token, guid) → bytes
   """
 
-  sys_log.info('GET /object/<guid>/')
+  sys_log.info('GET /object/{0}/'.format(guid))
 
   # Find object based on guid.
-  query = models.Repository_object.objects.filter(guid=guid)
+  query = models.Object.objects.filter(guid=guid)
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid))
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid), __name__)
 
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(url)
   except ValueError as e:
     raise d1common.exceptions.InvalidRequest(0, 'Invalid URL: {0}'.format(url))
+
+  # Handle 302 Found.
+  
+  try:
+    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+    conn.connect()
+    conn.request('HEAD', url)
+    response = conn.getresponse()
+    if response.status == httplib.FOUND:
+      url = response.getheader('location')
+  except httplib.HTTPException as e:
+    err_msg = 'HTTPException while checking for "302 Found": {0}'.format(e)
+    logging.error(err_msg)
+    raise
   
   # Open the object to proxy.
   try:
@@ -264,7 +329,7 @@ def object_contents_get(request, guid):
     conn.request('GET', url)
     response = conn.getresponse()
   except httplib.HTTPException as e:
-    err_msg = 'HTTPException: {0}'.format(e)
+    err_msg = 'HTTPException while opening object for proxy: {0}'.format(e)
     logging.error(err_msg)
     raise
 
@@ -282,18 +347,141 @@ def object_contents_get(request, guid):
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
 
-def object_contents_head(request, guid):
+def object_guid_post(request, guid):
   """
-  Get a scidata or scimeta object meta by guid.
-  0.3   MN_crud.describe()            HEAD    /object/<guid>/
+  Adds a new object to the Member Node, where the object is either a data object
+  or a science metadata object.
+
+  MN_crud.create(token, guid, object, sysmeta) → Identifier
+
+  POST format: The DataONE authorization token should be placed in the
+  appropriate HTTP Header field (to be determined), the GUID to be used is in
+  the request URI, and the object content and sysmeta content are encoded in the
+  request body using MIME-multipart Mixed Media Type, where the object part has
+  the name ‘object’, and the sysmeta part has the name ‘systemmetadata’.
+  Parameter names are not case sensitive.
   """
 
-  sys_log.info('HEAD /object/<guid>/')
+  sys_log.info('POST /object/{0}/'.format(guid))
+
+  ## Make sure all required arguments are present.
+  #
+  #required_args = [
+  #  'identifier',
+  #  'url',
+  #  'objectFormat',
+  #  'size',
+  #  'checksum',
+  #  'checksumAlgorithm'
+  #]
+  #
+  #missing_args = []
+  #for arg in required_args:
+  #  if arg not in request.POST:
+  #    missing_args.append(arg)
+  #
+  #if len(missing_args) > 0:
+  #  raise d1common.exceptions.InvalidRequest(0, 'Missing required argument(s): {0}'.format(', '.join(missing_args)))
+
+  # Validate POST.
+  
+  if len(request.FILES) != 2:
+    d1common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
+
+  if request.FILES.keys()[0] != 'object':
+    d1common.exceptions.InvalidRequest(0, 'Name of first MIME part must be "object"')
+    
+  if request.FILES.keys()[1] != 'systemmetadata':
+    d1common.exceptions.InvalidRequest(0, 'Name of second MIME part must be "systemmetadata"')
+
+  # Get object data. For the purposes of the GMN, the object is a URL.
+  object_bytes = request.FILES['object'].read()
+
+  # Get sysmeta bytes.
+  sysmeta_bytes = request.FILES['systemmetadata'].read()
+
+  # Create a sysmeta object.
+  sysmeta = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_bytes)
+  
+  # Validate sysmeta object.
+  sysmeta.isValid()
+  try:
+    sysmeta.isValid()
+  except: # XMLSyntaxError
+    util.log_exception()
+    raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed')
+  
+  # Write sysmeta bytes to cache folder.
+  file_out_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
+  try:
+    file = open(file_out_path, 'w')
+    file.write(sysmeta_bytes)
+    file.close()
+  except IOError as (errno, strerror):
+    err_msg = 'Could not write sysmeta file: {0}\n'.format(file_out_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1common.exceptions.ServiceFailure(0, err_msg)
+  
+  # Create database entry for object.
+  
+  object = models.Object()
+  object.guid = guid
+  object.url = object_bytes
+
+  object_format = sysmeta._getValues('objectFormat')
+
+  # TODO: Hack: We map from known objectFormat to objectClasses here.
+  try:
+    object_class = {
+    'DSPACE METS SIP Profile 1.0': 'scimeta',
+    'application/octet-stream': 'scidata',
+  }[object_format]
+  except KeyError:
+    object_class = 'scidata'
+
+  object.set_object_class(object_class)
+  object.set_object_format(object_format)
+  object.checksum = sysmeta.checksum
+  object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
+  object.object_mtime = sysmeta.dateSysMetadataModified
+  object.size = sysmeta.size
+
+  object.save_unique()
+    
+  # Successfully updated the db, so put current datetime in status.mtime.
+  db_update_status = models.DB_update_status()
+  db_update_status.status = 'update successful'
+  db_update_status.save()
+  
+  return HttpResponse('OK')
+
+def object_guid_put(request, guid):
+  """
+  MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier
+  Creates a new object on the Member Node that explicitly updates and obsoletes a previous object (identified by obsoletedGuid).
+  """
+  sys_log.info('PUT /object/{0}/'.format(guid))
+
+def object_guid_delete(request, guid):
+  """
+  MN_crud.delete(token, guid) → Identifier
+  Deletes an object from the Member Node, where the object is either a data object or a science metadata object.
+  """
+  sys_log.info('DELETE /object/{0}/'.format(guid))
+  # Not implemented. Target: 0.9.
+  raise d1common.exceptions.NotImplemented(0, 'Not implemented: MN_crud.delete(token, guid) → Identifier')
+  
+def object_guid_head(request, guid):
+  """
+  MN_crud.describe(token, guid) → DescribeResponse
+  This method provides a lighter weight mechanism than MN_crud.getSystemMetadata() for a client to determine basic properties of the referenced object.
+  """
+  sys_log.info('HEAD /object/{0}/'.format(guid))
 
   response = HttpResponse()
 
   # Find object based on guid.
-  query = models.Repository_object.objects.filter(guid=guid)
+  query = models.Object.objects.filter(guid=guid)
   try:
     url = query[0].url
   except IndexError:
@@ -316,38 +504,58 @@ def object_contents_head(request, guid):
 
   return response
 
-
+  
 # Sysmeta.
 
 @auth.cn_check_required
-def object_sysmeta(request, guid):
+def object_guid_meta(request, guid):
   """
-  0.3   MN_crud.getSystemMetadata()       GET     /object/<guid>/meta/
-  0.3   MN_crud.describeSystemMetadata()  HEAD    /object/<guid>/meta/
+  0.3 MN_crud.getSystemMetadata()      GET  /object/<guid>/meta/
+  0.3 MN_crud.describeSystemMetadata() HEAD /object/<guid>/meta/
   """
 
   if request.method != 'GET':
-    return object_sysmeta_get(request, guid)
+    return object_guid_meta_get(request, guid)
     
   if request.method != 'HEAD':
-    return object_sysmeta_head(request, guid)
+    return object_guid_meta_head(request, guid)
 
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
   
-def object_sysmeta_get(request, guid):
+def object_guid_meta_get(request, guid):
   """
-  Get sysmeta for scidata or scimeta.
-  0.3   MN_crud.getSystemMetadata()       GET     /object/<guid>/meta/
+  Describes the science metadata or data object (and likely other objects in the
+  future) identified by guid by returning the associated system metadata object.
   
   MN_crud.getSystemMetadata(token, guid) → SystemMetadata
   """
 
   sys_log.info('GET /object/{0}/meta/'.format(guid))
 
-  return response
+  # Find object based on guid.
+  query = models.Object.objects.filter(guid=guid)
+  try:
+    url = query[0].url
+  except IndexError:
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid), __name__)
+  
 
-def object_sysmeta_head(request, guid):
+  # Open file for streaming.  
+  try:
+    f = open(os.path.join(path), 'rb')
+  except IOError as (errno, strerror):
+    err_msg = 'Expected file was not present: {0}\n'.format(url)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1common.exceptions.NotFound(1020, err_msg)
+
+  # Log the access of this object.
+  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+
+  # Return the raw bytes of the object.
+  return HttpResponse(util.fixed_chunk_size_iterator(response))
+
+def object_guid_meta_head(request, guid):
   """
   Describe sysmeta for scidata or scimeta.
   0.3   MN_crud.describeSystemMetadata()       HEAD     /object/<guid>/meta/
@@ -394,23 +602,28 @@ def access_log_view_get(request):
   obj = {}
   obj['data'] = []
 
-  # Filter by referenced object oclass.
-  if 'oclass' in request.GET:
-    query = util.add_wildcard_filter(query, 'repository_object__repository_object_class__name', request.GET['oclass'])
+  # Filter by referenced object objectClass.
+  if 'objectClass' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__object_class__object_class', request.GET['objectClass'])
+    query_unsliced = query
+
+  # Filter by referenced object objectFormat.
+  if 'objectFormat' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__object_format__object_format', request.GET['objectFormat'])
     query_unsliced = query
 
   # Filter by referenced object GUID.
   if 'guid' in request.GET:
-    query = util.add_wildcard_filter(query, 'repository_object__guid', request.GET['guid'])
+    query = util.add_wildcard_filter(query, 'object__guid', request.GET['guid'])
     query_unsliced = query
   
-  # Filter by referenced object hash.
-  if 'hash' in request.GET:
-    query = util.add_wildcard_filter(query, 'repository_object__hash', request.GET['hash'])
+  # Filter by referenced object checksum.
+  if 'checksum' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__checksum', request.GET['checksum'])
     query_unsliced = query
 
   # Filter by referenced object last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'repository_object__object_mtime', 'lastModified')
+  query, changed = util.add_range_operator_filter(query, request, 'object__object_mtime', 'lastModified')
   if changed == True:
     query_unsliced = query
 
@@ -434,7 +647,7 @@ def access_log_view_get(request):
 
   for row in query:
     log = {}
-    log['guid'] = row.repository_object.guid
+    log['guid'] = row.object.guid
     log['operation_type'] = row.operation_type.operation_type
     log['requestor_identity'] = row.requestor_identity.requestor_identity
     log['access_time'] = datetime.datetime.isoformat(row.access_time)
@@ -462,139 +675,6 @@ def access_log_view_head(request):
   # TODO: Remove body from response.
 
   return response
-
-# Registration interface.
-
-@auth.mn_check_required
-def register(request):
-  """
-  0.3   MN_register.registerObject()        POST    /register/
-  0.3   MN_register.registerObject()        GET     /register/
-  0.3   MN_register.registerObject()        DELETE  /register/
-  """
-  
-  if request.method == 'POST':
-    return register_post(request)
-  
-  if request.method == 'GET':
-    return register_get(request)
-
-  if request.method == 'DELETE':
-    return register_delete(request)
-
-  # Only POST, GET AND DELETE accepted.
-  return HttpResponseNotAllowed(['POST', 'GET', 'DELETE'])
-
-def register_post(request):
-  """
-  Register an object.
-  0.3   MN_register.registerObject()        POST     /register/
-  """
-
-  sys_log.info('POST /register/')
-  
-  # Additional scimeta provided by client:
-  #
-  # 0.3:
-  #  - Identifier
-  #  - ObjectFormat
-  #  - Size
-  #  - Checksum
-  #  - ChecksumAlgorithm
-  #
-  # 0.5:
-  #  - ReplicationPolicy
-  #  - EmbargoExpires
-  #  - AccessRule
-
-  # Make sure all required arguments are present.
-
-  required_args = [
-    'identifier',
-    'url',
-    'objectFormat',
-    'size',
-    'checksum',
-    'checksumAlgorithm'
-  ]
-
-  missing_args = []
-  for arg in required_args:
-    if arg not in request.POST:
-      missing_args.append(arg)
-
-  if len(missing_args) > 0:
-    raise d1common.exceptions.InvalidRequest(0, 'Missing required argument(s): {0}'.format(', '.join(missing_args)))
-  
-  # Register object in queue.
-  queue = models.Registration_queue_work_queue()
-  queue.set_status('Queued')
-  queue.set_format(request.POST['objectFormat'])
-  queue.set_checksum_algorithm(request.POST['checksumAlgorithm'])
-  queue.identifier = request.POST['identifier']
-  queue.url = request.POST['url']
-  queue.size = request.POST['size']
-  queue.checksum = request.POST['checksum']
-  queue.save()
-  
-  return HttpResponse('OK')
-  
-def register_get(request):
-  """
-  Get queue.
-  0.3   MN_register.registerObject()        GET     /register/
-  """
-
-  sys_log.info('GET /register/')
-  
-  # For debugging. It's tricky (impossible?) to generate the DELETE verb with
-  # Firefox, so fudge things here with a check for a "delete" argument in the
-  # POST request and branch out to delete.
-  if 'delete' in request.GET:
-    return register_delete(request)
-
-  response = HttpResponse()
-
-  # select objects ordered by mtime desc.
-  query = models.Registration_queue_work_queue.objects.order_by('-pk')
-  
-  obj = {}
-  obj['data'] = []
-    
-  for row in query:
-    data = {}
-    data['status'] = row.status.status
-    data['identifier'] = row.identifier
-    data['url'] = row.url
-    data['format'] = row.format.format
-    data['size'] = row.size
-    data['checksum'] = row.checksum
-    data['checksum_algorithm'] = row.checksum_algorithm.checksum_algorithm
-    data['timestamp'] = datetime.datetime.isoformat(row.timestamp)
-
-    # Append object to response.
-    obj['data'].append(data)
-
-  obj['count'] = query.count()
-
-  response = HttpResponse()
-  response.obj = obj
-  return response
-
-def register_delete(request):
-  """
-  Clear the registration queue.
-  0.3   MN_register.registerObject()        DELETE  /register/
-  """
-  
-  sys_log.info('DELETE /register/')
-
-  models.Registration_queue_status.objects.all().delete()
-  models.Registration_queue_format.objects.all().delete()
-  models.Checksum_algorithm.objects.all().delete()
-  models.Registration_queue_work_queue.objects.all().delete()
-
-  return HttpResponse('OK')
 
 # Diagnostic / Debugging.
 

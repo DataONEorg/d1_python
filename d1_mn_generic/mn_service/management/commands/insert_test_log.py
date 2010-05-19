@@ -70,16 +70,16 @@ class Command(NoArgsCommand):
     random.seed(0)
 
     for requestor in ('1.1.1.1', '2.2.2.2', '3.3.3.3', '4.4.4.4'):
-      query = mn_service.models.Repository_object.objects.order_by('-object_mtime')
-      for repository_object in query:
+      query = mn_service.models.Object.objects.order_by('-object_mtime')
+      for object in query:
         # Insert a "get bytes" access log entry for some objects for this
         # requestor.
         if random.random() > 0.3:
-          mn_service.access_log.log(repository_object.guid, 'get_bytes', requestor)
+          mn_service.access_log.log(object.guid, 'get_bytes', requestor)
         # Insert a "get head" access log entry for some objects for this
         # requestor.
         if random.random() > 0.3:
-          mn_service.access_log.log(repository_object.guid, 'get_head', requestor)
+          mn_service.access_log.log(object.guid, 'get_head', requestor)
 
         # Set up fixed datetimes.
     query = mn_service.models.Access_log.objects.all()
