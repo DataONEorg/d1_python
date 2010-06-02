@@ -21,17 +21,15 @@ urlpatterns = patterns(
   # CN interface.
 
   # /object/
-  (r'^object/$', 'object_collection'),
-  (r'^object/(.*)/meta/$', 'object_guid_meta'),
+  (r'^object$', 'object_collection'),
+  (r'^meta/(.*)$', 'meta_guid'),
   (r'^object/(.*)/$', 'object_guid'),
 
   # /log/
-  (r'^log/$', 'access_log_view'),
-  (r'^register/$', 'register'),
-  (r'^upload/$', 'upload'),
+  (r'^log$', 'access_log_view'),
 
   # Diagnostic / Debugging.
-  (r'^get_ip/$', 'auth_test'),
+  #(r'^get_ip/$', 'auth_test'),
 
   # Admin.
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),

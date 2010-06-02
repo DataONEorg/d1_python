@@ -14,6 +14,7 @@
 
 # Stdlib.
 import csv
+import datetime
 import os
 import StringIO
 import sys
@@ -66,7 +67,7 @@ import settings
 #  'start': <integer>,
 #  'count': <integer>,
 #  'total': <integer>,
-#  'data':
+#  'objectInfo':
 #  [
 #    {
 #      'guid':<identifier>,
@@ -114,7 +115,7 @@ def serialize_csv(obj, pretty=False, jsonvar=False):
   csv_writer = csv.writer(io, dialect=csv.excel, quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
   first = True
-  for d in obj['data']:
+  for d in obj['objectInfo']:
     if first == True:
       # Don't know if it's possible for the order of the keys to change during
       # iteration of the data objects, so grab the keys once here and use those
@@ -173,8 +174,8 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
     # If start, count or total don't exist, we don't return any of them.
     pass
 
-  for d in obj['data']:
-    data = etree.SubElement(xml, 'data')
+  for d in obj['objectInfo']:
+    data = etree.SubElement(xml, 'objectInfo')
 
     for key in sorted(d.keys()):
       ele = etree.SubElement(data, unicode(key))
@@ -242,8 +243,8 @@ def serialize_rdf_xml(obj, pretty=False, jsonvar=False):
   description = etree.SubElement(xml, RDF + 'Description')
   description.set(RDF + 'about', 'http://mn1.dataone.org/object/_identifier_')
 
-  for d in obj['data']:
-    data = etree.SubElement(description, D1 + 'data')
+  for d in obj['objectInfo']:
+    data = etree.SubElement(description, D1 + 'objectInfo')
 
     for key in sorted(d.keys()):
       ele = etree.SubElement(data, unicode(D1 + key))
@@ -308,11 +309,6 @@ def serialize_object(request, response, obj):
     content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     obj_ser = map[content_type](obj, pretty, jsonvar)
 
-    # If pretty formatting was used, we wrap the serialized object for web page
-    # presentation (good for debugging).
-  if pretty:
-    obj_ser = '<pre>' + obj_ser + '</pre>'
-
   # Add the serialized object to the response.
   response.write(obj_ser)
 
@@ -332,7 +328,7 @@ def set_header(response, last_modified, content_length, content_type):
     try:
       status_row = models.DB_update_status.objects.all()[0]
     except IndexError:
-      raise d1common.exceptions.ServiceFailure(0, 'DB update status has not been set')
+      last_modified = datetime.datetime.now()
     else:
       last_modified = status_row.mtime
 
@@ -348,15 +344,17 @@ def set_header(response, last_modified, content_length, content_type):
 
 class response_handler():
   def process_response(self, request, response):
-
     # If there was no res object in the response, we return the response
     # unprocessed.
     try:
       obj = response.obj
-      print obj
     except AttributeError:
       pass
     else:
       serialize_object(request, response, obj)
+
+    # For debugging, if "pretty", we force the content type to text.
+    if 'pretty' in request.REQUEST:
+      response['Content-Type'] = 'text/plain'
 
     return response

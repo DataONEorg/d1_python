@@ -53,7 +53,14 @@ import mn_service.models as models
 class view_handler():
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
-    sys_log.info('View: {0}'.format(view_func.func_name))
+    sys_log.info(
+      'View: func_name({0}) args({1}) kwargs({2})'
+      .format(view_func.func_name, view_args, view_kwargs)
+    )
+
+    # For debugging, simulate an accept header with a regular parameter.
+    if 'accept' in request.REQUEST:
+      request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
 
     ## If the view being called is one that returns data, verify that
     ## DB_update_status is good.

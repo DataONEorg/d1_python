@@ -167,7 +167,7 @@
 ##
 ##* identifier for prototype, use "throwaway" GUID for zip and sci-meta
 ##
-##* objectFormat Mime/Type (enumerated value from sysmeta schema)
+##* format Mime/Type (enumerated value from sysmeta schema)
 ##
 ##* size byte size of object (scimeta or data zip file)
 ##

@@ -83,7 +83,7 @@ class mn_service_tests(TestCase):
     response = self.client.get('/mn/object/', {'start': '3', 'count': '1', 'oclass': object_type}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
-    return res['data'][0]['guid']
+    return res['objectInfo'][0]['guid']
 
   #
   # /object/ collection calls.
@@ -101,18 +101,18 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
-    # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'data': {}}
+    # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'objectInfo': {}}
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
     self.failUnlessEqual(res['total'], mn_objects_total)
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
 
   def test_rest_call_object_count_by_oclass_data_get(self):
     """
     Test call: curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data"""
     
-    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'objectInfo'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
@@ -120,7 +120,7 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['start'], 0)
     self.failUnlessEqual(res['total'], mn_objects_total_data)
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
 
   def test_rest_call_object_count_by_oclass_scimeta_get(self):
     """
@@ -130,12 +130,12 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
     res = json.loads(response.content)
-    # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'data': {}}
+    # {u'count': 0, u'start': 0, u'total': mn_objects_total, u'objectInfo': {}}
     self.failUnlessEqual(res['count'], 0)
     self.failUnlessEqual(res['start'], 0)
     self.failUnlessEqual(res['total'], mn_objects_total_scimeta)
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
 
   def test_rest_call_collection_of_objects_all_get(self):
     """
@@ -144,13 +144,12 @@ class mn_service_tests(TestCase):
     response = self.client.get('/mn/object/', HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
-    #print response.content
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], mn_objects_total)
     self.failUnlessEqual(res['start'], 0)
     self.failUnlessEqual(res['total'], mn_objects_total)
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
 
   def test_rest_call_collection_of_objects_section_get(self):
     """
@@ -166,9 +165,9 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['start'], 20)
     self.failUnlessEqual(res['total'], mn_objects_total)
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
     # Check the first of the data objects for the correct format.
-    self.failUnlessEqual(len(res['data'][0]['checksum']), 40)
+    self.failUnlessEqual(len(res['objectInfo'][0]['checksum']), 40)
  
   def test_rest_call_collection_of_objects_section_oclass_filter_get(self):
     """
@@ -184,10 +183,10 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['start'], 10) # Starting object.
     self.failUnlessEqual(res['total'], mn_objects_total_scimeta)
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
     # Check the first of the data objects for the correct format.
-    self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
-    self.failUnlessEqual(len(res['data'][0]['checksum']), 40)
+    self.failUnlessEqual(res['objectInfo'][0]['oclass'], 'scimeta')
+    self.failUnlessEqual(len(res['objectInfo'][0]['checksum']), 40)
 
   def test_rest_call_collection_of_objects_section_oclass_filter_unavailable_get(self):
     """
@@ -206,10 +205,10 @@ class mn_service_tests(TestCase):
     self.failUnlessEqual(res['start'], mn_objects_total_scimeta - 5) # Starting object.
     self.failUnlessEqual(res['total'], mn_objects_total_scimeta) # Total number of objects of type scimeta.
     # Check if results contains number of objects that was reported to be returned.
-    self.failUnlessEqual(len(res['data']), res['count'])
+    self.failUnlessEqual(len(res['objectInfo']), res['count'])
     # Check the first of the data objects for the correct format.
-    self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
-    self.failUnlessEqual(len(res['data'][0]['checksum']), 40)
+    self.failUnlessEqual(res['objectInfo'][0]['oclass'], 'scimeta')
+    self.failUnlessEqual(len(res['objectInfo'][0]['checksum']), 40)
 
   def test_rest_call_collection_of_objects_guid_filter_get(self):
     """
@@ -329,7 +328,7 @@ class mn_service_tests(TestCase):
     curl -I http://127.0.0.1:8000/mn/object/?start=0&count=0&oclass=data
     """
     
-    response = self.client.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'data'}, HTTP_ACCEPT='application/json')
+    response = self.client.head('/mn/object/', {'start': '0', 'count': '0', 'oclass': 'objectInfo'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
 
@@ -376,7 +375,7 @@ class mn_service_tests(TestCase):
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
-  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT='application/json')
+  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('objectInfo'), {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 200)
   #  self.check_response_headers_present(response)
   #  # Check that this sysmeta validates against the schema.
@@ -417,7 +416,7 @@ class mn_service_tests(TestCase):
     curl -I http://127.0.0.1:8000/mn/object/<valid guid>
     """
     
-    response = self.client.head('/mn/object/{0}'.format(self.get_valid_guid('data')))
+    response = self.client.head('/mn/object/{0}'.format(self.get_valid_guid('objectInfo')))
     self.failUnlessEqual(response.status_code, 200)
     self.check_response_headers_present(response)
 
@@ -441,7 +440,7 @@ class mn_service_tests(TestCase):
   #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
   #  """
   #  
-  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT='application/json')
+  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_guid('objectInfo')), {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 200)
 
   #def test_s(self):
@@ -555,7 +554,7 @@ class mn_service_tests(TestCase):
     curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&oclass=data
     """
     
-    response = self.client.get('/mn/log/', {'oclass': 'data'}, HTTP_ACCEPT='application/json')
+    response = self.client.get('/mn/log/', {'oclass': 'objectInfo'}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
     self.failUnlessEqual(res['count'], log_entries_associated_with_objects_type_class_data)
@@ -600,7 +599,7 @@ class mn_service_tests(TestCase):
   #  test framework first.
   #  """
   #  
-  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT='application/json')
+  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_guid('objectInfo')), {}, HTTP_ACCEPT='application/json')
   #  self.failUnlessEqual(response.status_code, 200)
   #  self.check_response_headers_present(response)
   #  # Check that this sysmeta validates against the schema.

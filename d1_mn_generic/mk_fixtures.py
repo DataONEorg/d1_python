@@ -25,13 +25,13 @@ f.close()
 
 # Populate db with information about filesystem objects.
 if 'reset' in sys.argv:
-  print os.system('rm test_db.sq3')
-  print os.system('./manage.py syncdb')
-  print os.system('./manage.py update_db')
-  print os.system('./manage.py insert_test_log')
+  os.system('rm test_db.sq3')
+  os.system('./manage.py syncdb')
+  os.system('./manage.py update_db')
+  os.system('./manage.py insert_test_log')
 
 # Update the test fixture to match.
-print os.system(
+os.system(
   './manage.py dumpdata mn_service > {0}'.format(
     os.path.join(
       settings.FIXTURE_DIRS, 'base.fixture.json'

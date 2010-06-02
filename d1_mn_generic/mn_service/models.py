@@ -38,46 +38,30 @@ class Checksum_algorithm(models.Model):
   checksum_algorithm = models.CharField(max_length=20, unique=True)
 
 
-# Class = sysmeta, scimeta or scidata
-class Object_class(models.Model):
-  object_class = models.CharField(max_length=10, unique=True)
-
-
-# Format = The file format of the object.
+# Format = The format of the object.
 class Object_format(models.Model):
-  object_format = models.CharField(max_length=10, unique=True)
+  format = models.CharField(max_length=10, unique=True)
 
 
 class Object(models.Model):
   guid = models.CharField(max_length=200, unique=True)
   url = models.CharField(max_length=1000, unique=True)
-  object_class = models.ForeignKey(Object_class)
-  object_format = models.ForeignKey(Object_format)
+  format = models.ForeignKey(Object_format)
   checksum = models.CharField(max_length=100)
   checksum_algorithm = models.ForeignKey(Checksum_algorithm)
   object_mtime = models.DateTimeField()
   db_mtime = models.DateTimeField(auto_now=True)
   size = models.PositiveIntegerField()
 
-  def set_object_class(self, object_class_string):
+  def set_format(self, format_string):
     try:
-      object_class = Object_class.objects.filter(object_class=object_class_string)[0]
+      format = Object_format.objects.filter(format=format_string)[0]
     except IndexError:
-      object_class = Object_class()
-      object_class.object_class = object_class_string
-      object_class.save()
+      format = Object_format()
+      format.format = format_string
+      format.save()
 
-    self.object_class = object_class
-
-  def set_object_format(self, object_format_string):
-    try:
-      object_format = Object_format.objects.filter(object_format=object_format_string)[0]
-    except IndexError:
-      object_format = Object_format()
-      object_format.object_format = object_format_string
-      object_format.save()
-
-    self.object_format = object_format
+    self.format = format
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
     try:
@@ -106,44 +90,6 @@ class Object(models.Model):
       sys_log.warning('GUID: {0}'.format(self.guid))
       me.delete()
       self.save()
-
-
-class Object_associations(models.Model):
-  from_object = models.ForeignKey(Object, related_name='associations_from')
-  to_object = models.ForeignKey(Object, related_name='associations_to')
-
-  # TODO: Unique index for the from_object / to_object combination.
-  class Meta:
-    unique_together = (('from_object', 'to_object'))
-
-  def insert_association(guid1, guid2):
-    """
-    Create an association between two objects, given their guids.
-    """
-
-    try:
-      o1 = models.Object.objects.filter(guid=guid1)[0]
-      o2 = models.Object.objects.filter(guid=guid2)[0]
-    except IndexError:
-      err_msg = 'Internal server error: Missing object(s): {0} and/or {1}'.format(
-        guid1, guid2
-      )
-      #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
-
-    association = models.Object_associations()
-    association.from_object = o1
-    association.to_object = o2
-    association.save()
-
-
-class Object_sync_status(models.Model):
-  status = models.CharField(max_length=100, unique=True)
-
-
-class Object_sync(models.Model):
-  object = models.ForeignKey(Object, related_name='sync')
-  mtime = models.DateTimeField(auto_now=True)
-  status = models.ForeignKey(Object_sync_status)
 
 # Access Log
 

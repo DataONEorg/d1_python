@@ -93,7 +93,7 @@ SECRET_KEY = '(ok#4)+n++u0#x&j1-xsy)u8fijlyv&ycn2t(@cys$ozawzlb-'
 TEMPLATE_LOADERS = (
   'django.template.loaders.filesystem.load_template_source',
   'django.template.loaders.app_directories.load_template_source',
-  #     'django.template.loaders.eggs.load_template_source',
+  'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -125,7 +125,7 @@ LOG_PATH = _here('./mn_service.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
-SYSMETA_CACHE_PATH = _here('../sysmeta_cache')
+SYSMETA_CACHE_PATH = _here('./sysmeta_cache')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './api_common')))

@@ -11,21 +11,21 @@
 :Synopsis:
   Implements the following REST calls:
   
-  0.3 MN_replication.listObjects()     GET    /object/
-  N/A MN_replication.listObjects()     HEAD   /object/
-  N/A MN_replication.listObjects()     DELETE /object/
+  0.3 MN_replication.listObjects()     GET    /object
+  N/A MN_replication.listObjects()     HEAD   /object
+  N/A MN_replication.listObjects()     DELETE /object
 
-  0.3 MN_crud.get ()                   GET    /object/<guid>/
-  0.4 MN_crud.create()                 POST   /object/<guid>/
-  0.4 MN_crud.update()                 PUT    /object/<guid>/
-  0.9 MN_crud.delete()                 DELETE /object/<guid>/
-  0.3 MN_crud.describe()               HEAD   /object/<guid>/
+  0.3 MN_crud.get ()                   GET    /object/<guid>
+  0.4 MN_crud.create()                 POST   /object/<guid>
+  0.4 MN_crud.update()                 PUT    /object/<guid>
+  0.9 MN_crud.delete()                 DELETE /object/<guid>
+  0.3 MN_crud.describe()               HEAD   /object/<guid>
 
-  0.3 MN_crud.getSystemMetadata()      GET    /object/<guid>/meta/
-  0.3 MN_crud.describeSystemMetadata() HEAD   /object/<guid>/meta/
+  0.3 MN_crud.getSystemMetadata()      GET    /meta/<guid>
+  0.3 MN_crud.describeSystemMetadata() HEAD   /meta/<guid>
 
-  0.3 MN_crud.getLogRecords()          GET    /log/
-  0.3 MN_crud.describeLogRecords()     HEAD   /log/
+  0.3 MN_crud.getLogRecords()          GET    /log
+  0.3 MN_crud.describeLogRecords()     HEAD   /log
 
 .. moduleauthor:: Roger Dahl
 """
@@ -73,15 +73,15 @@ import settings
 import sys_log
 import util
 
-
-# Object Collection.
+# REST interface: Object Collection
+# Member Node API: Replication API
 
 @auth.cn_check_required
 def object_collection(request):
   """
-  0.3 MN_replication.listObjects() GET    /object/
-  N/A MN_replication.listObjects() HEAD   /object/
-  N/A MN_replication.listObjects() DELETE /object/
+  0.3 MN_replication.listObjects() GET    /object
+  N/A MN_replication.listObjects() HEAD   /object
+  N/A MN_replication.listObjects() DELETE /object
   """
   if request.method == 'GET':
     # For debugging. It's tricky (impossible?) to generate the DELETE verb with
@@ -104,9 +104,8 @@ def object_collection(request):
 def object_collection_get(request):
   """
   Retrieve the list of objects present on the MN that match the calling parameters.
-  MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList¶
+  MN_replication.listObjects(token, startTime[, endTime][, format][, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
-  sys_log.info('GET /object/')
   
   # TODO: This code should only run while debugging.
   # For debugging, we support deleting the entire collection in a GET request.
@@ -131,10 +130,9 @@ def object_collection_get(request):
       order_field = {
         'guid': 'guid',
         'url': 'url',
-        'objectClass': 'object_class__object_class',
-        'objectFormat': 'object_format__object_format',
+        'format': 'format__format',
         'checksum': 'checksum',
-        'lastModified': 'object_mtime',
+        'lastModified': 'mtime',
         'dbLastModified': 'db_mtime',
         'size': 'size',
       }[orderby]
@@ -145,7 +143,7 @@ def object_collection_get(request):
     query = models.Object.objects.order_by(prefix + order_field)
   else:       
     # Default ordering is by mtime ascending.
-    query = models.Object.objects.order_by('object_mtime')
+    query = models.Object.objects.order_by('mtime')
   
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
@@ -157,14 +155,9 @@ def object_collection_get(request):
   
   # Undocumented filters.
 
-  # Filter by objectClass.
-  if 'objectClass' in request.GET:
-    query = util.add_wildcard_filter(query, 'object_class__object_class', request.GET['objectClass'])
-    query_unsliced = query
-
-  # Filter by objectFormat.
-  if 'objectFormat' in request.GET:
-    query = util.add_wildcard_filter(query, 'object_format__object_format', request.GET['objectFormat'])
+  # Filter by format.
+  if 'format' in request.GET:
+    query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
     query_unsliced = query
 
   # Filter by GUID.
@@ -184,7 +177,7 @@ def object_collection_get(request):
     query = query.filter(sync__isnull=request.GET['sync'] == '0')
 
   # Filter by last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'object_mtime', 'lastModified')
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'lastModified')
   if changed == True:
     query_unsliced = query
 
@@ -209,22 +202,19 @@ def object_collection_get(request):
   query, start, count = util.add_slice_filter(query, request)
   
   obj = {}
-  obj['data'] = []
+  obj['objectInfo'] = []
     
   for row in query:
     data = {}
-    data['guid'] = urllib.quote(row.guid, '')
-    data['url'] = row.url
-    data['objectClass'] = row.object_class.object_class
-    data['objectFormat'] = row.object_format.object_format
+    data['identifier'] = row.guid
+    data['format'] = row.format.format
     data['checksum'] = row.checksum
     # Get modified date in an ISO 8601 string.
-    data['modified'] = datetime.datetime.isoformat(row.object_mtime)
-    data['inserted'] = datetime.datetime.isoformat(row.db_mtime)
+    data['dateSysMetadataModified'] = datetime.datetime.isoformat(row.mtime)
     data['size'] = row.size
 
     # Append object to response.
-    obj['data'].append(data)
+    obj['objectInfo'].append(data)
 
   obj['start'] = start
   obj['count'] = query.count()
@@ -238,20 +228,18 @@ def object_collection_head(request):
   """
   Placeholder.
   """
-  sys_log.info('HEAD /object/')
+
   # Not implemented. Target: 0.9.
-  raise d1common.exceptions.NotImplemented(0, 'Not implemented: Not in spec.')
+  raise d1common.exceptions.NotImplemented(0, 'Not in spec.')
 
 def object_collection_delete(request):
   """
   For debugging: Remove all objects from db.
   Not part of spec.
   """
-  sys_log.info('DELETE /object/<guid>/')
 
   models.Object_sync.objects.all().delete()
   models.Object_sync_status.objects.all().delete()
-  models.Object_class.objects.all().delete()
   models.Checksum_algorithm.objects.all().delete()
   models.Object.objects.all().delete()
 
@@ -262,11 +250,11 @@ def object_collection_delete(request):
 @auth.cn_check_required
 def object_guid(request, guid):
   """
-  0.3 MN_crud.get()      GET    /object/<guid>/
-  0.4 MN_crud.create()   POST   /object/<guid>/
-  0.4 MN_crud.update()   PUT    /object/<guid>/
-  0.9 MN_crud.delete()   DELETE /object/<guid>/
-  0.3 MN_crud.describe() HEAD   /object/<guid>/
+  0.3 MN_crud.get()      GET    /object/<guid>
+  0.4 MN_crud.create()   POST   /object/<guid>
+  0.4 MN_crud.update()   PUT    /object/<guid>
+  0.9 MN_crud.delete()   DELETE /object/<guid>
+  0.3 MN_crud.describe() HEAD   /object/<guid>
   """
   
   if request.method == 'GET':
@@ -292,8 +280,6 @@ def object_guid_get(request, guid):
   Retrieve an object identified by guid from the node.
   MN_crud.get(token, guid) → bytes
   """
-
-  sys_log.info('GET /object/{0}/'.format(guid))
 
   # Find object based on guid.
   query = models.Object.objects.filter(guid=guid)
@@ -333,14 +319,6 @@ def object_guid_get(request, guid):
     logging.error(err_msg)
     raise
 
-  ## Open file for streaming.  
-  #try:
-  #  f = open(os.path.join(path), 'rb')
-  #except IOError as (errno, strerror):
-  #  err_msg = 'Expected file was not present: {0}\n'.format(url)
-  #  err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-  #  raise d1common.exceptions.NotFound(1020, err_msg)
-
   # Log the access of this object.
   access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
 
@@ -361,27 +339,6 @@ def object_guid_post(request, guid):
   the name ‘object’, and the sysmeta part has the name ‘systemmetadata’.
   Parameter names are not case sensitive.
   """
-
-  sys_log.info('POST /object/{0}/'.format(guid))
-
-  ## Make sure all required arguments are present.
-  #
-  #required_args = [
-  #  'identifier',
-  #  'url',
-  #  'objectFormat',
-  #  'size',
-  #  'checksum',
-  #  'checksumAlgorithm'
-  #]
-  #
-  #missing_args = []
-  #for arg in required_args:
-  #  if arg not in request.POST:
-  #    missing_args.append(arg)
-  #
-  #if len(missing_args) > 0:
-  #  raise d1common.exceptions.InvalidRequest(0, 'Missing required argument(s): {0}'.format(', '.join(missing_args)))
 
   # Validate POST.
   
@@ -407,7 +364,7 @@ def object_guid_post(request, guid):
   sysmeta.isValid()
   try:
     sysmeta.isValid()
-  except: # XMLSyntaxError
+  except sysmeta.XMLSyntaxError:
     util.log_exception()
     raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed')
   
@@ -428,22 +385,12 @@ def object_guid_post(request, guid):
   object.guid = guid
   object.url = object_bytes
 
-  object_format = sysmeta._getValues('objectFormat')
+  format = sysmeta._getValues('format')
 
-  # TODO: Hack: We map from known objectFormat to objectClasses here.
-  try:
-    object_class = {
-    'DSPACE METS SIP Profile 1.0': 'scimeta',
-    'application/octet-stream': 'scidata',
-  }[object_format]
-  except KeyError:
-    object_class = 'scidata'
-
-  object.set_object_class(object_class)
-  object.set_object_format(object_format)
+  object.set_format(format)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.object_mtime = sysmeta.dateSysMetadataModified
+  object.mtime = sysmeta.dateSysMetadataModified
   object.size = sysmeta.size
 
   object.save_unique()
@@ -460,24 +407,20 @@ def object_guid_put(request, guid):
   MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier
   Creates a new object on the Member Node that explicitly updates and obsoletes a previous object (identified by obsoletedGuid).
   """
-  sys_log.info('PUT /object/{0}/'.format(guid))
+  raise d1common.exceptions.NotImplemented(0, 'MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier')
 
 def object_guid_delete(request, guid):
   """
   MN_crud.delete(token, guid) → Identifier
   Deletes an object from the Member Node, where the object is either a data object or a science metadata object.
   """
-  sys_log.info('DELETE /object/{0}/'.format(guid))
-  # Not implemented. Target: 0.9.
-  raise d1common.exceptions.NotImplemented(0, 'Not implemented: MN_crud.delete(token, guid) → Identifier')
+  raise d1common.exceptions.NotImplemented(0, 'MN_crud.delete(token, guid) → Identifier')
   
 def object_guid_head(request, guid):
   """
   MN_crud.describe(token, guid) → DescribeResponse
   This method provides a lighter weight mechanism than MN_crud.getSystemMetadata() for a client to determine basic properties of the referenced object.
   """
-  sys_log.info('HEAD /object/{0}/'.format(guid))
-
   response = HttpResponse()
 
   # Find object based on guid.
@@ -496,7 +439,7 @@ def object_guid_head(request, guid):
     raise d1common.exceptions.NotFound(1020, err_msg)
 
   # Add header info about object.
-  util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+  util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
               size, 'Some Content Type')
 
   # Log the access of this object.
@@ -508,22 +451,22 @@ def object_guid_head(request, guid):
 # Sysmeta.
 
 @auth.cn_check_required
-def object_guid_meta(request, guid):
+def meta_guid(request, guid):
   """
-  0.3 MN_crud.getSystemMetadata()      GET  /object/<guid>/meta/
-  0.3 MN_crud.describeSystemMetadata() HEAD /object/<guid>/meta/
+  0.3 MN_crud.getSystemMetadata()      GET  /meta/<guid>
+  0.3 MN_crud.describeSystemMetadata() HEAD /meta/<guid>
   """
 
   if request.method != 'GET':
-    return object_guid_meta_get(request, guid)
+    return meta_guid_get(request, guid)
     
   if request.method != 'HEAD':
-    return object_guid_meta_head(request, guid)
+    return meta_guid_head(request, guid)
 
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
   
-def object_guid_meta_get(request, guid):
+def meta_guid_get(request, guid):
   """
   Describes the science metadata or data object (and likely other objects in the
   future) identified by guid by returning the associated system metadata object.
@@ -531,37 +474,31 @@ def object_guid_meta_get(request, guid):
   MN_crud.getSystemMetadata(token, guid) → SystemMetadata
   """
 
-  sys_log.info('GET /object/{0}/meta/'.format(guid))
-
-  # Find object based on guid.
-  query = models.Object.objects.filter(guid=guid)
+  # Verify that object exists. 
   try:
-    url = query[0].url
+    url = models.Object.objects.filter(guid=guid)[0]
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested: {0}'.format(guid), __name__)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing System Metadata object was requested: {0}'.format(guid), __name__)
   
   # Open file for streaming.  
+  file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
   try:
-    f = open(os.path.join(path), 'rb')
+    file = open(file_in_path, 'r')
   except IOError as (errno, strerror):
-    err_msg = 'Expected file was not present: {0}\n'.format(url)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.NotFound(1020, err_msg)
+    raise d1common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
-  # Log the access of this object.
-  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+  # Log access of the SysMeta of this object.
+  access_log.log(guid, 'get_sysmeta_bytes', request.META['REMOTE_ADDR'])
 
   # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(response))
+  return HttpResponse(util.fixed_chunk_size_iterator(file))
 
-def object_guid_meta_head(request, guid):
+def meta_guid_head(request, guid):
   """
   Describe sysmeta for scidata or scimeta.
-  0.3   MN_crud.describeSystemMetadata()       HEAD     /object/<guid>/meta/
+  0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<guid>
   """
-
-  sys_log.info('HEAD /object/{0}/meta/'.format(guid))
-
+  
   return response
 
 # Access Log.
@@ -569,8 +506,8 @@ def object_guid_meta_head(request, guid):
 @auth.cn_check_required
 def access_log_view(request):
   """
-  0.3   MN_crud.getLogRecords()       GET     /log/
-  0.3   MN_crud.describeLogRecords()  HEAD    /log/
+  0.3 MN_crud.getLogRecords()      GET  /log
+  0.3 MN_crud.describeLogRecords() HEAD /log
   """
 
   if request.method == 'GET':
@@ -585,12 +522,10 @@ def access_log_view(request):
 def access_log_view_get(request):
   """
   Get access_log.
-  0.3   MN_crud.getLogRecords()       GET     /log/
+  0.3   MN_crud.getLogRecords()       GET     /log
   
   MN_crud.getLogRecords(token, fromDate[, toDate][, event]) → LogRecords
   """
-
-  sys_log.info('GET /log/')
 
   # select objects ordered by mtime desc.
   query = models.Access_log.objects.order_by('-access_time')
@@ -599,16 +534,11 @@ def access_log_view_get(request):
   query_unsliced = query
 
   obj = {}
-  obj['data'] = []
+  obj['objectInfo'] = []
 
-  # Filter by referenced object objectClass.
-  if 'objectClass' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__object_class__object_class', request.GET['objectClass'])
-    query_unsliced = query
-
-  # Filter by referenced object objectFormat.
-  if 'objectFormat' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__object_format__object_format', request.GET['objectFormat'])
+  # Filter by referenced object format.
+  if 'format' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
     query_unsliced = query
 
   # Filter by referenced object GUID.
@@ -622,7 +552,7 @@ def access_log_view_get(request):
     query_unsliced = query
 
   # Filter by referenced object last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'object__object_mtime', 'lastModified')
+  query, changed = util.add_range_operator_filter(query, request, 'object__mtime', 'lastModified')
   if changed == True:
     query_unsliced = query
 
@@ -652,7 +582,7 @@ def access_log_view_get(request):
     log['access_time'] = datetime.datetime.isoformat(row.access_time)
 
     # Append object to response.
-    obj['data'].append(log)
+    obj['objectInfo'].append(log)
 
   obj['count'] = query.count()
   obj['total'] = query_unsliced.count()
@@ -664,10 +594,8 @@ def access_log_view_get(request):
 def access_log_view_head(request):
   """
   Describe access_log.
-  0.3   MN_crud.describeLogRecords()       HEAD     /log/
+  0.3   MN_crud.describeLogRecords()       HEAD     /log
   """
-
-  sys_log.info('HEAD /log/')
 
   response = access_log_view_get(request)
   

@@ -88,16 +88,9 @@ def clear_db():
   models.Access_log_operation_type.objects.all().delete()
   models.Access_log_requestor_identity.objects.all().delete()
 
-  models.Object_sync.objects.all().delete()
-  models.Object_sync_status.objects.all().delete()
-  models.Object_associations.objects.all().delete()
   models.Object.objects.all().delete()
-  models.Object_class.objects.all().delete()
-
-  models.Registration_queue_work_queue.objects.all().delete()
-  models.Registration_queue_status.objects.all().delete()
-  models.Registration_queue_format.objects.all().delete()
   models.Checksum_algorithm.objects.all().delete()
+  models.Object_format.objects.all().delete()
 
 
 class fixed_chunk_size_iterator(object):
@@ -160,66 +153,6 @@ def file_to_dict(path):
   f.close()
 
   return d
-
-
-def insert_file_object(object_class_name, guid, path):
-  """
-  Insert object into db."""
-
-  # How Django knows to UPDATE vs. INSERT
-  #
-  # You may have noticed Django database objects use the same save() method
-  # for creating and changing objects. Django abstracts the need to use INSERT
-  # or UPDATE SQL statements. Specifically, when you call save(), Django
-  # follows this algorithm:
-  #
-  # * If the object's primary key attribute is set to a value that evaluates
-  #   to True (i.e., a value other than None or the empty string), Django
-  #   executes a SELECT query to determine whether a record with the given
-  #   primary key already exists.
-  # * If the record with the given primary key does already exist, Django
-  #   executes an UPDATE query.
-  # * If the object's primary key attribute is not set, or if it's set but a
-  #   record doesn't exist, Django executes an INSERT.
-
-  try:
-    f = open(path, 'r')
-  except IOError as (errno, strerror):
-    # Skip any file we can't get read access to.
-    sys_log.warning('Skipped file because it couldn\'t be opened: {0}'.format(path))
-    sys_log.warning('I/O error({0}): {1}'.format(errno, strerror))
-    return
-
-  # Get checksum of file.
-  checksum = hashlib.sha1()
-  checksum.update(f.read())
-
-  # Get mtime in datetime.datetime.
-  mtime = os.stat(path)[stat.ST_MTIME]
-  mtime = datetime.datetime.fromtimestamp(mtime)
-
-  # Get size.
-  size = os.stat(path)[stat.ST_SIZE]
-
-  f.close()
-
-  # Set up the object class.
-  c = models.Object_class()
-  try:
-    object_class = models.Object_class.objects.filter(name=object_class_name)[0]
-  except IndexError:
-    object_class = models.Object_class()
-    object_class.name = object_class_name
-
-  # Build object for this file and store it.
-  o = models.Object()
-  o.url = url
-  o.guid = guid
-  o.object_class = c
-  o.checksum = checksum.hexdigest()
-  o.object_mtime = mtime
-  o.size = size
-  o.save()
 
 
 def add_range_operator_filter(query, request, col_name, name):
@@ -295,18 +228,6 @@ def add_wildcard_filter(query, col_name, value):
 
   return query.filter(**filter_kwargs)
 
-## Django doesn't support "complex" LIKE queries, so we have to inject it.
-## THIS CODE MAY BREAK SINCE IT USES FIXED TABLE NAMES
-#where_str = 'mn_service_access_requestor_identity.id = mn_service_access_log.requestor_identity_id and requestor_identity like %s'
-#query = query.extra(where=[where_str], params=[requestor], tables=['mn_service_access_requestor_identity'])
-## Filter by operation type.
-##  query = query.filter(object_class__name=oclass)
-#if 'operation_type' in request.GET:
-#  requestor = request.GET['operation_type']
-#  # Translate from DOS to SQL style wildcards.
-#  requestor = re.sub(r'\?', '_', requestor)
-#  requestor = re.sub(r'\*', '%', requestor)
-
 
 def add_slice_filter(query, request):
   """
@@ -320,7 +241,11 @@ def add_slice_filter(query, request):
   except KeyError:
     start = 0
   except ValueError:
-    raise_sys_log_http_404('Invalid start value: {0}'.format(request.GET['start']))
+    raise d1common.exceptions.InvalidRequest(
+      0, 'Invalid start value: {0}'.format(
+        request.GET['start']
+      )
+    )
 
   # Limit the number objects returned to 'count'.
   # None = All remaining objects.
@@ -333,8 +258,8 @@ def add_slice_filter(query, request):
   except KeyError:
     count = None
   except ValueError:
-    raise_sys_log_http_404(
-      'Invalid count value: {0} (count must be 0 <= count >= 1000'.format(
+    raise d1common.exceptions.InvalidRequest(
+      0, 'Invalid count value: {0} (count must be 0 <= count >= 1000'.format(
         request.GET['count']
       )
     )
