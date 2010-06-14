@@ -348,6 +348,10 @@ class DataOneExceptionFactory(object):
     :rtype: DataONEException
     '''
     data = data.strip()
-    if data[0] == "<":
-      return DataOneExceptionFactory.createExceptionFromXML(data)
+    try:
+      if data[0] == "<":
+        return DataOneExceptionFactory.createExceptionFromXML(data)
+    except IndexError:
+      pass
+
     return DataOneExceptionFactory.createExceptionFromJSON(data)
