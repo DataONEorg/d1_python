@@ -23,19 +23,26 @@ interaction with the DataONE infrastructure.
    :members:
 '''
 
+# Stdlib.
 import logging
 import httplib
 import urllib
 import urllib2
 import urlparse
+import sys
+import os
+import xml.dom.minidom
 
 try:
   import cjson as json
 except:
   import json
+
+# DataONE.
 from d1common import exceptions
 from d1pythonitk import const
 from d1pythonitk import systemmetadata
+import lib.upload
 
 #===============================================================================
 
@@ -62,11 +69,12 @@ class RESTClient(object):
   for error handling if possible.
   '''
 
-  def __init__(self):
+  def __init__(self, target=const.URL_DATAONE_ROOT):
     self.logger = logging.getLogger(self.__class__.__name__)
     self.status = None
     self.responseInfo = None
     self._BASE_DETAIL_CODE = '10000'
+    self.target = self._normalizeTarget(target)
     #TODO: Need to define these detailCode values
 
   def exceptionCode(self, extra):
@@ -117,12 +125,13 @@ class RESTClient(object):
     if headers is None:
       headers = self.headers
     request = HttpRequest(url, data=data, headers=headers, method=method)
+    self.logger.debug('{0}: sendRequest({1})'.format(__name__, url))
     try:
       response = urllib2.urlopen(request, timeout=const.RESPONSE_TIMEOUT)
       self.status = response.code
       self.responseInfo = response.info()
     except urllib2.HTTPError, e:
-      self.logger.warn('%s: HTTP Error encountered.' % __name__)
+      self.logger.warn('{0}: HTTP Error: {1}'.format(__name__, e))
       self.status = e.code
       self.responseInfo = e.info()
       if hasattr(e, 'read'):
@@ -134,7 +143,7 @@ class RESTClient(object):
 #        traceInfo = {'body': e.read()}
 #        raise exceptions.ServiceFailure('10000.0',description,traceInfo)
     except urllib2.URLError, e:
-      self.logger.warn('%s: URL Error encountered.' % __name__)
+      self.logger.warn('{0}: URL Error: {1}'.format(__name__, e))
       if hasattr(e, 'read'):
         if self.loadError(e):
           return None
@@ -165,7 +174,7 @@ class RESTClient(object):
       data = urllib.urlencode(data)
     return self.sendRequest(url, data=data, headers=headers, method='POST')
 
-  def DELETE(self, url, headers=None):
+  def DELETE(self, url, data=None, headers=None):
     self.logger.debug("%s: %s" % (__name__, url))
     return self.sendRequest(url, data=data, headers=headers, method='DELETE')
 
@@ -178,16 +187,15 @@ class DataOneClient(object):
 
   def __init__(
     self,
-    d1Root=const.URL_DATAONE_ROOT,
+    target=const.URL_DATAONE_ROOT,
     userAgent=const.USER_AGENT,
-    clientClass=RESTClient
+    clientClass=RESTClient,
   ):
     self.logger = logging.getLogger(self.__class__.__name__)
-    self.d1Root = d1Root
     self.userAgent = userAgent
     self._BASE_DETAIL_CODE = '11000'
     #TODO: Need to define this detailCode base value
-    self.client = clientClass()
+    self.client = clientClass(target)
 
   def exceptionCode(self, extra):
     return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
@@ -197,14 +205,20 @@ class DataOneClient(object):
     res = {'User-Agent': self.userAgent, 'Accept': '*/*'}
     return res
 
-  def getObjectUrl(self, target):
-    '''Returns the full URL to the object collection on target
+  def getObjectUrl(self):
+    '''Returns the base URL to an object on target.
     '''
-    target = self._normalizeTarget(target)
-    url = urlparse.urljoin(target, d1const.URL_OBJECT_PATH)
-    if not url.endswith("/"):
-      url += "/"
-    return url
+    return urlparse.urljoin(self.client.target, const.URL_OBJECT_PATH)
+
+  def getObjectListUrl(self):
+    '''Returns the full URL to the object collection on target.
+    '''
+    return urlparse.urljoin(self.client.target, const.URL_OBJECT_LIST_PATH)
+
+  def getAccessLogUrl(self):
+    '''Returns the full URL to the access log collection on target.
+    '''
+    return urlparse.urljoin(self.client.target, const.URL_ACCESS_LOG_PATH)
 
   def getSystemMetadataSchema(self, schemaUrl=const.SYSTEM_METADATA_SCHEMA_URL):
     '''Convenience function to retrieve a copy of the system metadata schema.
@@ -217,35 +231,33 @@ class DataOneClient(object):
     return response
 
     ## === DataONE API Methods ===
-  def get(self, identifier, target):
+  def get(self, identifier):
     '''Retrieve an object from DataONE.
     
     :param identifier: Identifier of object to retrieve
-    :param target: Host URL from which to retrieve object
     :rtype: open file stream
     '''
     self.logger.debug("%s: %s" % (__name__, identifier))
-    url = urlparse.urljoin(self.getObjectUrl(target), identifier)
+    url = urlparse.urljoin(self.getObjectListUrl(), identifier)
     self.logger.debug("%s: url=%s" % (__name__, url))
     response = self.client.GET(url, self.headers)
     return response
 
-  def getSystemMetadata(self, identifier, target=const.URL_DATAONE_ROOT):
+  def getSystemMetadata(self, identifier):
     '''Retrieve system metadata for an object.
     :param identifier: Identifier of the object to retrieve
-    :param target: Optional node URL
     :rtype: :class:d1sysmeta.SystemMetadata
     '''
     self.logger.debug("%s: %s" % (__name__, identifier))
-    url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'meta/')
+    url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'meta/')
     self.logger.debug("%s: url=%s" % (__name__, url))
     raise exceptions.NotImplemented(self.exceptioncode('1.2'), __name__)
     response = self.client.GET(url, self.headers)
     return response.data
 
-  def resolve(self, identifier, target=const.URL_DATAONE_ROOT):
+  def resolve(self, identifier):
     self.logger.debug("%s: %s" % (__name__, identifier))
-    url = urlparse.urljoin(self.getObjectUrl(target), identifier, 'resolve/')
+    url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'resolve/')
     self.logger.debug("%s: url=%s" % (__name__, url))
     headers = self.headers
     headers['Accept'] = ''
@@ -254,28 +266,321 @@ class DataOneClient(object):
 
   def listObjects(
     self,
-    startTime,
+    startTime=None,
     endTime=None,
     objectFormat=None,
-    replicaStatus=None,
     start=0,
-    count=1000,
-    target=const.URL_DATAONE_ROOT
+    count=const.MAX_LISTOBJECTS
   ):
-    if start < 0:
-      start = 0
-    if count < 0:
-      count = 0
-    if count > const.MAX_LISTOBJECTS:
-      raise exceptions.InvalidRequest(
-        10002, "Count can not be higher than %d" % const.MAX_LISTOBJECTS
-      )
+
     params = {}
-    self.logger.debug("%s: %s" % (__name__, identifier))
-    url = urlparse.urljoin(self.getObjectUrl(target), identifier, '')
+
+    try:
+      if start < 0:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(10002, "start must be a positive integer")
+    else:
+      params['start'] = start
+
+    try:
+      if count < 1:
+        raise ValueError
+      if count > const.MAX_LISTOBJECTS:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(
+        10002, "count must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
+      )
+    else:
+      params['count'] = count
+
+    try:
+      if startTime is not None and endTime is None:
+        raise ValueError
+      elif endTime is not None and startTime is None:
+        raise ValueError
+      elif endTime is not None and startTime is not None and startTime >= endTime:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(
+        10002,
+        "startTime and endTime must be specified together, must be valid dates and endTime must be after startTime"
+      )
+    else:
+      params['startTime'] = startTime
+      params['endTime'] = endTime
+
+    url = self.getObjectListUrl() + '?pretty&' + urllib.urlencode(params)
     self.logger.debug("%s: url=%s" % (__name__, url))
-    raise exceptions.NotImplemented(self.exceptioncode('1.4'), __name__)
+
+    headers = self.headers
+    headers['Accept'] = 'text/xml'
+
+    # Fetch.
     response = self.client.GET(url, headers)
 
-  def getLogRecords(self, startTime, endTime=None, event=None):
-    raise exceptions.NotImplemented(self.exceptioncode('1.5'), __name__)
+    # Deserialize.
+    xml = response.read()
+    return DeserializeObjectList(self.logger, xml).get()
+
+  def getLogRecords(
+    self,
+    startTime=None,
+    endTime=None,
+    objectFormat=None,
+    start=0,
+    count=const.MAX_LISTOBJECTS
+  ):
+
+    params = {}
+
+    try:
+      if start < 0:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(10002, "start must be a positive integer")
+    else:
+      params['start'] = start
+
+    try:
+      if count < 1:
+        raise ValueError
+      if count > const.MAX_LISTOBJECTS:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(
+        10002, "count must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
+      )
+    else:
+      params['count'] = count
+
+    try:
+      if startTime is not None and endTime is None:
+        raise ValueError
+      elif endTime is not None and startTime is None:
+        raise ValueError
+      elif endTime is not None and startTime is not None and startTime >= endTime:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(
+        10002,
+        "startTime and endTime must be specified together, must be valid dates and endTime must be after startTime"
+      )
+    else:
+      params['startTime'] = startTime
+      params['endTime'] = endTime
+
+    url = self.getAccessLogUrl() + '?pretty&' + urllib.urlencode(params)
+    self.logger.debug("%s: url=%s" % (__name__, url))
+
+    headers = self.headers
+    headers['Accept'] = 'text/xml'
+
+    # Fetch.
+    response = self.client.GET(url, headers)
+
+    # Deserialize.
+    xml = response.read()
+    return DeserializeLogRecords(self.logger, xml).get()
+
+  def create(self, identifier, object_bytes, sysmeta_bytes):
+    # Parameter validation.
+    if len(identifier) == 0 or len(object_bytes) == 0 or len(sysmeta_bytes) == 0:
+      self.logger.error("")
+
+      # Create MIME-multipart Mixed Media Type body.
+    files = []
+    files.append(('object', 'object', object_bytes))
+    files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
+    content_type, mime_doc = lib.upload.encode_multipart_formdata([], files)
+
+    # Send REST POST call to register object.
+    self.logger.debug("%s: %s" % (__name__, identifier))
+
+    headers = {'Content-Type': content_type, 'Content-Length': str(len(mime_doc)), }
+
+    crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
+
+    self.logger.debug('~' * 79)
+    self.logger.debug('REST call: {0}'.format(crud_create_url))
+    self.logger.debug('~' * 10)
+    self.logger.debug(headers)
+    self.logger.debug('~' * 10)
+    self.logger.debug(mime_doc)
+    self.logger.debug('~' * 79)
+
+    try:
+      res = self.client.POST(crud_create_url, data=mime_doc, headers=headers)
+      res = '\n'.join(res)
+      if res != r'OK':
+        raise Exception(res)
+    except Exception as e:
+      logging.error('REST call failed: {0}'.format(str(e)))
+      raise
+
+#<?xml version='1.0' encoding='UTF-8'?>
+#<d1:response xmlns:d1="http://ns.dataone.org/core/objects">
+#  <start>0</start>
+#  <count>243</count>
+#  <total>243</total>
+#  <objectInfo>
+#    <checksum>5f173b60a36d4ce42e90b1698dcb10631de6dee0</checksum>
+#    <dateSysMetadataModified>2010-04-26T07:23:42.380413</dateSysMetadataModified>
+#    <format>eml://ecoinformatics.org/eml-2.0.0</format>
+#    <identifier>hdl:10255/dryad.1099/mets.xml</identifier>
+#    <size>3636</size>
+#  </objectInfo>
+#</d1:response>
+
+
+class DeserializeObjectList():
+  def __init__(self, logger, d):
+    self.r = {'objectInfo': []}
+    self.logger = logger
+    self.d = d
+
+  def get(self):
+    try:
+      dom = xml.dom.minidom.parseString(self.d)
+      self.handleObjectList(dom)
+      return self.r
+    except (TypeError, AttributeError, ValueError):
+      self.logger.error("Could not deserialize XML result")
+      raise
+
+  def getText(self, nodelist):
+    rc = []
+    for node in nodelist:
+      if node.nodeType == node.TEXT_NODE:
+        rc.append(node.data)
+    return ''.join(rc)
+
+  def handleObjectList(self, dom):
+    # start, count and total
+    self.handleObjectStart(dom.getElementsByTagName("start")[0])
+    self.handleObjectCount(dom.getElementsByTagName("count")[0])
+    self.handleObjectTotal(dom.getElementsByTagName("total")[0])
+    objects = dom.getElementsByTagName("objectInfo")
+    self.handleObjects(objects)
+
+  def handleObjects(self, objects):
+    for object in objects:
+      self.handleObject(object)
+
+  def handleObject(self, object):
+    objectInfo = {}
+    self.handleObjectChecksum(objectInfo, object.getElementsByTagName("checksum")[0])
+    self.handleObjectDateSysMetadataModified(
+      objectInfo, object.getElementsByTagName(
+        "dateSysMetadataModified"
+      )[0]
+    )
+    self.handleObjectFormat(objectInfo, object.getElementsByTagName("format")[0])
+    self.handleObjectIdentifier(objectInfo, object.getElementsByTagName("identifier")[0])
+    self.handleObjectSize(objectInfo, object.getElementsByTagName("size")[0])
+    self.r['objectInfo'].append(objectInfo)
+
+    # Header.
+
+  def handleObjectStart(self, title):
+    self.r['start'] = int(self.getText(title.childNodes))
+
+  def handleObjectCount(self, title):
+    self.r['count'] = int(self.getText(title.childNodes))
+
+  def handleObjectTotal(self, title):
+    self.r['total'] = int(self.getText(title.childNodes))
+
+  # Objects.
+
+  def handleObjectChecksum(self, objectInfo, checksum):
+    objectInfo['checksum'] = self.getText(checksum.childNodes)
+
+  def handleObjectDateSysMetadataModified(self, objectInfo, dateSysMetadataModified):
+    objectInfo['dateSysMetadataModified'] = self.getText(
+      dateSysMetadataModified.childNodes
+    )
+
+  def handleObjectFormat(self, objectInfo, format):
+    objectInfo['format'] = self.getText(format.childNodes)
+
+  def handleObjectIdentifier(self, objectInfo, identifier):
+    objectInfo['identifier'] = self.getText(identifier.childNodes)
+
+  def handleObjectSize(self, objectInfo, size):
+    objectInfo['size'] = int(self.getText(size.childNodes))
+
+
+class DeserializeLogRecords():
+  def __init__(self, logger, d):
+    self.r = {'logRecord': []}
+    self.logger = logger
+    self.d = d
+
+  def get(self):
+    try:
+      dom = xml.dom.minidom.parseString(self.d)
+      self.handleLogRecords(dom)
+      return self.r
+    except (TypeError, AttributeError, ValueError):
+      self.logger.error("Could not deserialize XML result")
+      raise
+
+  def getText(self, nodelist):
+    rc = []
+    for node in nodelist:
+      if node.nodeType == node.TEXT_NODE:
+        rc.append(node.data)
+    return ''.join(rc)
+
+  def handleLogRecords(self, dom):
+    # start, count and total
+    self.handleObjectStart(dom.getElementsByTagName("start")[0])
+    self.handleObjectCount(dom.getElementsByTagName("count")[0])
+    self.handleObjectTotal(dom.getElementsByTagName("total")[0])
+    objects = dom.getElementsByTagName("logRecord")
+    self.handleObjects(objects)
+
+  def handleObjects(self, objects):
+    for object in objects:
+      self.handleObject(object)
+
+  def handleObject(self, object):
+    logRecord = {}
+    self.handleObjectIdentifier(logRecord, object.getElementsByTagName("identifier")[0])
+    self.handleObjectOperationType(
+      logRecord, object.getElementsByTagName("operationType")[0]
+    )
+    self.handleObjectRequestorIdentity(
+      logRecord, object.getElementsByTagName(
+        "requestorIdentity"
+      )[0]
+    )
+    self.handleObjectAccessTime(logRecord, object.getElementsByTagName("accessTime")[0])
+    self.r['logRecord'].append(logRecord)
+
+    # Header.
+
+  def handleObjectStart(self, title):
+    self.r['start'] = int(self.getText(title.childNodes))
+
+  def handleObjectCount(self, title):
+    self.r['count'] = int(self.getText(title.childNodes))
+
+  def handleObjectTotal(self, title):
+    self.r['total'] = int(self.getText(title.childNodes))
+
+  # Log Records.
+
+  def handleObjectIdentifier(self, logRecord, identifier):
+    logRecord['identifier'] = self.getText(identifier.childNodes)
+
+  def handleObjectOperationType(self, logRecord, operationType):
+    logRecord['operationType'] = self.getText(operationType.childNodes)
+
+  def handleObjectRequestorIdentity(self, logRecord, requestorIdentity):
+    logRecord['requestorIdentity'] = self.getText(requestorIdentity.childNodes)
+
+  def handleObjectAccessTime(self, logRecord, accessTime):
+    logRecord['accessTime'] = self.getText(accessTime.childNodes)

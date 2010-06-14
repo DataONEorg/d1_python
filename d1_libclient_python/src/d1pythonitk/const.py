@@ -39,11 +39,19 @@ URL_DATAONE_ROOT = "http://cn.dataone.org/"
 
 #: Path to append to target base for the object collection
 #: TODO: retrieve this from D1 root
-URL_OBJECT_PATH = 'object'
+URL_OBJECT_LIST_PATH = 'object'
+
+#: Path to append to target base for a specific object
+#: TODO: retrieve this from D1 root
+URL_OBJECT_PATH = 'object/'
 
 #: Path to append to target base for system metadata collection
 #: TODO: retrieve this from D1 root
 URL_SYSMETA_PATH = 'meta'
+
+#: Path to append to target base for the access log collection.
+#: TODO: retrieve this from D1 root
+URL_ACCESS_LOG_PATH = 'log'
 
 #: Path to the DataONE system metadata schema
 #: TODO: retrieve this from D1 root
