@@ -45,7 +45,7 @@
 #  #f.close()
 #  #
 #  ## Add header info about object.
-#  #util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+#  #util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
 #  #            len(body), 'Some Content Type')
 #  #
 #  ## If HEAD was requested, we don't include the body.
@@ -87,7 +87,7 @@
 #  #f.close()
 #  #
 #  ## Add header info about object.
-#  #util.add_header(response, datetime.datetime.isoformat(query[0].object_mtime),
+#  #util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
 #  #            len(body), 'Some Content Type')
 #  #
 #  ## If HEAD was requested, we don't include the body.

@@ -54,13 +54,26 @@ class view_handler():
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
     sys_log.info(
-      'View: func_name({0}) args({1}) kwargs({2})'
-      .format(view_func.func_name, view_args, view_kwargs)
+      'View: func_name({0}) method({1}) args({2}) kwargs({3})'
+      .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
     # For debugging, simulate an accept header with a regular parameter.
     if 'accept' in request.REQUEST:
       request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
+
+    # The REST interface spec requires parameters in the URL to be case
+    # insensitive. We handle this by setting all the keys in the GET map to
+    # lower case here and using lower case keys in the views.
+    #
+    # This destroys and rebuilds the entire map. Is there a faster way?
+    #
+    # We don't need to process the POST and HEAD maps in this way because we
+    # don't have any REST interfaces using those that take parameters.
+    iGET = {}
+    for k in request.GET.keys():
+      iGET[k.lower()] = request.GET[k]
+    request.GET = iGET
 
     ## If the view being called is one that returns data, verify that
     ## DB_update_status is good.

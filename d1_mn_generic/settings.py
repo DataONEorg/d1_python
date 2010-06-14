@@ -121,6 +121,8 @@ INSTALLED_APPS = (
   'django.contrib.admindocs',
 )
 
+APPEND_SLASH = False
+
 LOG_PATH = _here('./mn_service.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')

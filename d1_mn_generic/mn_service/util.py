@@ -155,11 +155,10 @@ def file_to_dict(path):
   return d
 
 
-def add_range_operator_filter(query, request, col_name, name):
+def add_range_operator_filter(query, request, col_name, name, default='eq'):
   filter_kwargs = {}
 
   operator_translation = {
-    '': 'exact',
     'eq': 'exact',
     'lt': 'lt',
     'le': 'lte',
@@ -176,6 +175,8 @@ def add_range_operator_filter(query, request, col_name, name):
     if not m:
       continue
     operator = m.group(2)
+    if operator is None:
+      operator = default
     if operator not in operator_translation:
       raise_sys_log_http_404('Invalid argument: {0}'.format(get))
     try:
@@ -184,7 +185,6 @@ def add_range_operator_filter(query, request, col_name, name):
       raise_sys_log_http_404('Invalid date format: {0}'.format(request.GET[get]))
     filter_kwargs['{0}__{1}'.format(col_name, operator_translation[operator])] = date
     changed = True
-    #res[get] = datetime.datetime.isoformat(date)
 
   return query.filter(**filter_kwargs), changed
 
@@ -232,7 +232,7 @@ def add_wildcard_filter(query, col_name, value):
 def add_slice_filter(query, request):
   """
   Create a slice of a query based on request start and count parameters."""
-
+  print request.GET
   # Skip top 'start' objects.
   try:
     start = int(request.GET['start'])

@@ -113,28 +113,39 @@ def serialize_exception(request, exception):
   # We "inject" trace information into the given DataONE exception.
   exception.detailCode = str(exception.detailCode) + '.' + traceback_to_detail_code()
 
-  # Determine which serializer to use.
-
-  # If no client does not supply HTTP_ACCEPT, we default to JSON.
+  # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
+  # we default to JSON.
+  content_type = 'application/json'
   if 'HTTP_ACCEPT' not in request.META:
-    sys_log.debug('No HTTP_ACCEPT header')
-    return exception.serializeToJson()
+    sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
   else:
-    sys_log.debug(request.META['HTTP_ACCEPT'])
-    return map[mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])]()
+    try:
+      content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+    except ValueError:
+      # An invalid Accept header causes mimeparser to throw a ValueError. In
+      # that case, we also default to JSON.
+      sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
+
+  # Serialize object.
+  return map[content_type]()
 
 
 class exception_handler():
   def process_exception(self, request, exception):
-    # Log the exception.
-    sys_log.error('Exception: {0}'.format(traceback_to_detail_code()))
+    # Note: An exception within this function causes a generic 500 to be
+    # returned.
 
     # If the exception is a DataONE exception, we serialize it out.
-    try:
+    if isinstance(exception, d1common.exceptions.DataONEException):
+      # Log the exception.
+      sys_log.error('DataONE Exception: {0}'.format(traceback_to_detail_code()))
       return HttpResponse(serialize_exception(request, exception))
-    except AttributeError:
-      pass
 
-    # If we get here, we got an unexpected exception and returning None
-    # sends it on to the default exception handler in the framework.
+    # If we get here, we got an unexpected exception and returning None sends it
+    # on to the default exception handler in the framework. Log the exception.
+    sys_log.error('Non-DataONE Exception: {0}'.format(traceback_to_detail_code()))
+    return HttpResponse('Non-DataONE Exception: {0}'.format(traceback_to_detail_code()))
+
+    # When debugging from a web browser, we want to return None to get Django's
+    # extremely useful exception page.
     return None

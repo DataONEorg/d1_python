@@ -22,8 +22,8 @@ urlpatterns = patterns(
 
   # /object/
   (r'^object$', 'object_collection'),
-  (r'^meta/(.*)$', 'meta_guid'),
-  (r'^object/(.*)/$', 'object_guid'),
+  (r'^meta/(.+)$', 'meta_guid'),
+  (r'^object/(.+)$', 'object_guid'),
 
   # /log/
   (r'^log$', 'access_log_view'),

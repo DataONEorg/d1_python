@@ -174,21 +174,28 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
     # If start, count or total don't exist, we don't return any of them.
     pass
 
-  for d in obj['objectInfo']:
-    data = etree.SubElement(xml, 'objectInfo')
+  if 'objectInfo' in obj:
+    for d in obj['objectInfo']:
+      data = etree.SubElement(xml, 'objectInfo')
 
-    for key in sorted(d.keys()):
-      ele = etree.SubElement(data, unicode(key))
-      ele.text = unicode(d[key])
+      for key in sorted(d.keys()):
+        ele = etree.SubElement(data, unicode(key))
+        ele.text = unicode(d[key])
+
+  if 'logRecord' in obj:
+    for d in obj['logRecord']:
+      data = etree.SubElement(xml, 'logRecord')
+
+      for key in sorted(d.keys()):
+        ele = etree.SubElement(data, unicode(key))
+        ele.text = unicode(d[key])
 
   # Return xml as string.
   io = StringIO.StringIO()
   io.write(
-    urllib.quote(
-      etree.tostring(
-        xml, pretty_print=pretty,
-        encoding='UTF-8', xml_declaration=True
-      )
+    etree.tostring(
+      xml, pretty_print=pretty,
+      encoding='UTF-8', xml_declaration=True
     )
   )
   return io.getvalue()
@@ -298,16 +305,21 @@ def serialize_object(request, response, obj):
   else:
     jsonvar = False
 
-  # Determine which serializer to use.
-
-  # If no client does not supply HTTP_ACCEPT, we default to JSON.
+  # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
+  # we default to JSON.
+  content_type = 'application/json'
   if 'HTTP_ACCEPT' not in request.META:
-    sys_log.debug('No HTTP_ACCEPT header')
-    obj_ser = serialize_json(obj, pretty, jsonvar)
+    sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
   else:
-    sys_log.debug(request.META['HTTP_ACCEPT'])
-    content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
-    obj_ser = map[content_type](obj, pretty, jsonvar)
+    try:
+      content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+    except ValueError:
+      # An invalid Accept header causes mimeparser to throw a ValueError. In
+      # that case, we also default to JSON.
+      sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
+
+  # Serialize object.
+  obj_ser = map[content_type](obj, pretty, jsonvar)
 
   # Add the serialized object to the response.
   response.write(obj_ser)

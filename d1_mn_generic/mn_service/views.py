@@ -104,7 +104,7 @@ def object_collection(request):
 def object_collection_get(request):
   """
   Retrieve the list of objects present on the MN that match the calling parameters.
-  MN_replication.listObjects(token, startTime[, endTime][, format][, replicaStatus][, start=0][, count=1000]) → ObjectList
+  MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
   
   # TODO: This code should only run while debugging.
@@ -130,7 +130,7 @@ def object_collection_get(request):
       order_field = {
         'guid': 'guid',
         'url': 'url',
-        'format': 'format__format',
+        'objectFormat': 'format__format',
         'checksum': 'checksum',
         'lastModified': 'mtime',
         'dbLastModified': 'db_mtime',
@@ -151,13 +151,21 @@ def object_collection_get(request):
 
   # Documented filters
 
+  # startTime
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'startTime', 'ge')
+  if changed == True:
+    query_unsliced = query
   
+  # endTime
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'endTime', 'le')
+  if changed == True:
+    query_unsliced = query
   
   # Undocumented filters.
 
   # Filter by format.
-  if 'format' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
+  if 'objectformat' in request.GET:
+    query = util.add_wildcard_filter(query, 'format__format', request.GET['objectformat'])
     query_unsliced = query
 
   # Filter by GUID.
@@ -194,8 +202,8 @@ def object_collection_get(request):
     query_unsliced = query
 
   # Filter by access operation type.
-  if 'operationType' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__operation_type__operation_type', request.GET['operationType'])
+  if 'operationtype' in request.GET:
+    query = util.add_wildcard_filter(query, 'access_log__operation_type__operation_type', request.GET['operationtype'])
     query_unsliced = query
 
   # Create a slice of a query based on request start and count parameters.
@@ -234,14 +242,29 @@ def object_collection_head(request):
 
 def object_collection_delete(request):
   """
-  For debugging: Remove all objects from db.
-  Not part of spec.
+  Remove all objects from db.
+  Not currently part of spec.
   """
 
-  models.Object_sync.objects.all().delete()
-  models.Object_sync_status.objects.all().delete()
-  models.Checksum_algorithm.objects.all().delete()
+  # Clear the DB.
   models.Object.objects.all().delete()
+  models.Object_format.objects.all().delete()
+  models.Checksum_algorithm.objects.all().delete()
+  
+  models.DB_update_status.objects.all().delete()
+
+  # Clear the SysMeta cache.
+  try:
+    for sysmeta_file in os.listdir(settings.SYSMETA_CACHE_PATH):
+      if os.path.isfile(sysmeta_file):
+        os.unlink(os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_file))
+  except IOError as (errno, strerror):
+    err_msg = 'Could not clear SysMeta cache\n'
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1common.exceptions.ServiceFailure(0, err_msg)
+
+  # Log this operation.
+  access_log.log(None, 'delete_all_object_collection', request.META['REMOTE_ADDR'])
 
   return HttpResponse('OK')
 
@@ -320,7 +343,7 @@ def object_guid_get(request, guid):
     raise
 
   # Log the access of this object.
-  access_log.log(guid, 'get_bytes', request.META['REMOTE_ADDR'])
+  access_log.log(guid, 'get_object_bytes', request.META['REMOTE_ADDR'])
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
@@ -339,7 +362,6 @@ def object_guid_post(request, guid):
   the name ‘object’, and the sysmeta part has the name ‘systemmetadata’.
   Parameter names are not case sensitive.
   """
-
   # Validate POST.
   
   if len(request.FILES) != 2:
@@ -385,7 +407,7 @@ def object_guid_post(request, guid):
   object.guid = guid
   object.url = object_bytes
 
-  format = sysmeta._getValues('format')
+  format = sysmeta._getValues('objectFormat')
 
   object.set_format(format)
   object.checksum = sysmeta.checksum
@@ -399,6 +421,9 @@ def object_guid_post(request, guid):
   db_update_status = models.DB_update_status()
   db_update_status.status = 'update successful'
   db_update_status.save()
+  
+  # Log this object creation.
+  access_log.log(guid, 'create_object', request.META['REMOTE_ADDR'])
   
   return HttpResponse('OK')
 
@@ -443,7 +468,7 @@ def object_guid_head(request, guid):
               size, 'Some Content Type')
 
   # Log the access of this object.
-  access_log.log(guid, 'get_head', request.META['REMOTE_ADDR'])
+  access_log.log(guid, 'get_object_head', request.META['REMOTE_ADDR'])
 
   return response
 
@@ -457,10 +482,10 @@ def meta_guid(request, guid):
   0.3 MN_crud.describeSystemMetadata() HEAD /meta/<guid>
   """
 
-  if request.method != 'GET':
+  if request.method == 'GET':
     return meta_guid_get(request, guid)
     
-  if request.method != 'HEAD':
+  if request.method == 'HEAD':
     return meta_guid_head(request, guid)
 
   # Only GET and HEAD accepted.
@@ -498,8 +523,8 @@ def meta_guid_head(request, guid):
   Describe sysmeta for scidata or scimeta.
   0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<guid>
   """
-  
-  return response
+  pass
+  #return response
 
 # Access Log.
 
@@ -516,8 +541,11 @@ def access_log_view(request):
   if request.method == 'HEAD':
     return access_log_view_head(request)
     
-  # Only GET and HEAD accepted.
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
+  if request.method == 'DELETE':
+    return access_log_view_delete(request)
+
+  # Only GET, HEAD and DELETE accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
 
 def access_log_view_get(request):
   """
@@ -534,11 +562,11 @@ def access_log_view_get(request):
   query_unsliced = query
 
   obj = {}
-  obj['objectInfo'] = []
+  obj['logRecord'] = []
 
   # Filter by referenced object format.
-  if 'format' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
+  if 'objectformat' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['objectformat'])
     query_unsliced = query
 
   # Filter by referenced object GUID.
@@ -576,14 +604,18 @@ def access_log_view_get(request):
 
   for row in query:
     log = {}
-    log['guid'] = row.object.guid
-    log['operation_type'] = row.operation_type.operation_type
-    log['requestor_identity'] = row.requestor_identity.requestor_identity
-    log['access_time'] = datetime.datetime.isoformat(row.access_time)
+    if row.object is not None:
+      log['identifier'] = row.object.guid
+    else:
+      log['identifier'] = None
+    log['operationType'] = row.operation_type.operation_type
+    log['requestorIdentity'] = row.requestor_identity.requestor_identity
+    log['accessTime'] = datetime.datetime.isoformat(row.access_time)
 
     # Append object to response.
-    obj['objectInfo'].append(log)
+    obj['logRecord'].append(log)
 
+  obj['start'] = start
   obj['count'] = query.count()
   obj['total'] = query_unsliced.count()
 
@@ -602,6 +634,22 @@ def access_log_view_head(request):
   # TODO: Remove body from response.
 
   return response
+
+def access_log_view_delete(request):
+  """
+  Remove all log records.
+  Not part of spec.
+  """
+
+  # Clear the access log.
+  models.Access_log.objects.all().delete()
+  models.Access_log_requestor_identity.objects.all().delete()
+  models.Access_log_operation_type.objects.all().delete()
+
+  # Log this operation.
+  access_log.log(None, 'delete_all_access_log', request.META['REMOTE_ADDR'])
+
+  return HttpResponse('OK')
 
 # Diagnostic / Debugging.
 

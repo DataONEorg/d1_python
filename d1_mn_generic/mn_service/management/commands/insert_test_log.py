@@ -70,7 +70,7 @@ class Command(NoArgsCommand):
     random.seed(0)
 
     for requestor in ('1.1.1.1', '2.2.2.2', '3.3.3.3', '4.4.4.4'):
-      query = mn_service.models.Object.objects.order_by('-object_mtime')
+      query = mn_service.models.Object.objects.order_by('-mtime')
       for object in query:
         # Insert a "get bytes" access log entry for some objects for this
         # requestor.

@@ -49,7 +49,7 @@ class Object(models.Model):
   format = models.ForeignKey(Object_format)
   checksum = models.CharField(max_length=100)
   checksum_algorithm = models.ForeignKey(Checksum_algorithm)
-  object_mtime = models.DateTimeField()
+  mtime = models.DateTimeField()
   db_mtime = models.DateTimeField(auto_now=True)
   size = models.PositiveIntegerField()
 
@@ -103,7 +103,7 @@ class Access_log_requestor_identity(models.Model):
 
 
 class Access_log(models.Model):
-  object = models.ForeignKey(Object)
+  object = models.ForeignKey(Object, null=True)
   operation_type = models.ForeignKey(Access_log_operation_type)
   requestor_identity = models.ForeignKey(Access_log_requestor_identity)
   access_time = models.DateTimeField(auto_now_add=True)

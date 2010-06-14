@@ -32,11 +32,17 @@ def log(guid, operation_type, requestor_identity):
   """
   Log an object access."""
 
-  try:
-    object_row = models.Object.objects.filter(guid=guid)[0]
-  except IndexError:
-    err_msg = 'Attempted to create access log for non-existing object: {0}'.format((guid))
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+  object_row = None
+  if guid is not None:
+    try:
+      object_row = models.Object.objects.filter(guid=guid)[0]
+    except IndexError:
+      err_msg = 'Attempted to create access log for non-existing object: {0}'.format(
+        (
+          guid
+        )
+      )
+      raise d1common.exceptions.ServiceFailure(0, err_msg)
 
   access_log_row = models.Access_log()
   access_log_row.object = object_row
