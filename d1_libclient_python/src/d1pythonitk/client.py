@@ -42,11 +42,10 @@ except:
 from d1common import exceptions
 from d1pythonitk import const
 from d1pythonitk import systemmetadata
-import lib.upload
+from d1common import upload
+
 
 #===============================================================================
-
-
 class HttpRequest(urllib2.Request):
   '''Overrides the default Request class to enable setting the HTTP method.
   '''
@@ -61,9 +60,8 @@ class HttpRequest(urllib2.Request):
   def get_method(self):
     return self._method
 
+
 #===============================================================================
-
-
 class RESTClient(object):
   '''Implements a simple REST client that utilizes the base DataONE exceptions
   for error handling if possible.
@@ -188,9 +186,8 @@ class RESTClient(object):
   def DELETE(self, url, data=None, headers=None):
     return self.sendRequest(url, data=data, headers=headers, method='DELETE')
 
+
 #===============================================================================
-
-
 class DataOneClient(object):
   '''Implements a simple DataONE client.
   '''
@@ -201,6 +198,12 @@ class DataOneClient(object):
     userAgent=const.USER_AGENT,
     clientClass=RESTClient,
   ):
+    '''Initialize the test client.
+    
+    :param target: URL of the service to contact.
+    :param UserAgent: The userAgent string being passed in the request headers
+    :param clientClass: Class that will be used for HTTP connections.
+    '''
     self.logger = clientClass.logger
     self.userAgent = userAgent
     self._BASE_DETAIL_CODE = '11000'
@@ -212,7 +215,7 @@ class DataOneClient(object):
 
   @property
   def headers(self):
-    res = {'User-Agent': self.userAgent, 'Accept': '*/*'}
+    res = {'User-Agent': self.userAgent, 'Accept': 'text/xml'}
     return res
 
   def getObjectUrl(self):
@@ -246,7 +249,7 @@ class DataOneClient(object):
     return response
 
     ## === DataONE API Methods ===
-  def get(self, identifier):
+  def get(self, identifier, headers=None):
     '''Retrieve an object from DataONE.
     
     :param identifier: Identifier of object to retrieve
@@ -255,13 +258,15 @@ class DataOneClient(object):
     if len(identifier) == 0:
       self.logger.debug_("Invalid parameter(s)")
 
-    url = urlparse.urljoin(self.getObjectUrl(), identifier)
+    url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier))
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
-    response = self.client.GET(url, self.headers)
+    if headers is None:
+      headers = self.headers
+    response = self.client.GET(url, headers)
 
     return response
 
-  def getSystemMetadata(self, identifier):
+  def getSystemMetadata(self, identifier, headers=None):
     '''Retrieve system metadata for an object.
     :param identifier: Identifier of the object to retrieve
     :rtype: :class:d1sysmeta.SystemMetadata
@@ -269,16 +274,18 @@ class DataOneClient(object):
     if len(identifier) == 0:
       self.logger.debug_("Invalid parameter(s)")
 
-    url = urlparse.urljoin(self.getMetaUrl(), identifier)
+    url = urlparse.urljoin(self.getMetaUrl(), urllib.quote(identifier))
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
-    response = self.client.GET(url, self.headers)
+    if headers is None:
+      headers = self.headers
+    response = self.client.GET(url, headers)
     return response
 
-  def resolve(self, identifier):
+  def resolve(self, identifier, headers=None):
     url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'resolve/')
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
-    headers = self.headers
-    headers['Accept'] = ''
+    if headers is None:
+      headers = self.headers
     raise exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
     response = self.client.GET(url, headers)
 
@@ -288,60 +295,82 @@ class DataOneClient(object):
     endTime=None,
     objectFormat=None,
     start=0,
-    count=const.MAX_LISTOBJECTS
+    count=const.MAX_LISTOBJECTS,
+    requestFormat="text/xml",
+    headers=None
   ):
-
+    '''Perform the MN_replication.listObjects call.
+    
+    :param startTime:
+    :param endTime:
+    :param objectFormat:
+    :param start:
+    :param count:
+    
+    :rtype: dictionary
+    :returns:
+    '''
     params = {}
+    if start < 0:
+      raise exceptions.InvalidRequest(10002, "'start' must be a positive integer")
+    params['start'] = start
 
     try:
-      if start < 0:
-        raise ValueError
-    except ValueError:
-      raise exceptions.InvalidRequest(10002, "start must be a positive integer")
-    else:
-      params['start'] = start
-
-    try:
-      if count < 1:
+      if count < 0:
         raise ValueError
       if count > const.MAX_LISTOBJECTS:
         raise ValueError
     except ValueError:
       raise exceptions.InvalidRequest(
-        10002, "count must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
+        10002,
+        "'count' must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
       )
     else:
       params['count'] = count
 
-    try:
-      if startTime is not None and endTime is None:
-        raise ValueError
-      elif endTime is not None and startTime is None:
-        raise ValueError
-      elif endTime is not None and startTime is not None and startTime >= endTime:
-        raise ValueError
-    except ValueError:
-      raise exceptions.InvalidRequest(
-        10002,
-        "startTime and endTime must be specified together, must be valid dates and endTime must be after startTime"
-      )
-    else:
-      params['startTime'] = startTime
-      params['endTime'] = endTime
+    if not (startTime is None and endTime is None):
+      try:
+        if startTime is not None and endTime is None:
+          raise ValueError
+        elif endTime is not None and startTime is None:
+          raise ValueError
+        elif endTime is not None and startTime is not None and startTime >= endTime:
+          raise ValueError
+      except ValueError:
+        raise exceptions.InvalidRequest(
+          10002,
+          "startTime and endTime must be specified together, must be valid dates and endTime must be after startTime"
+        )
+      else:
+        params['startTime'] = startTime
+        params['endTime'] = endTime
 
-    url = self.getObjectListUrl() + '?' + urllib.urlencode(params)
+    #url = self.getObjectListUrl() + '?pretty&' + urllib.urlencode(params)
+    url = "%s?%s" % (self.getObjectListUrl(), urllib.urlencode(params))
+    self.logger.debug("%s: url=%s" % (__name__, url))
 
-    headers = self.headers
-    headers['Accept'] = 'text/xml'
-
-    self.logger.debug_("url({0}) headers({1})".format(url, headers))
+    if headers is None:
+      headers = self.headers
+    #TODO: This is stupid. Conflict between requestFormat and headers is here
+    # because
+    headers['Accept'] = requestFormat
 
     # Fetch.
+    self.logger.debug_("url({0}) headers({1})".format(url, headers))
     response = self.client.GET(url, headers)
 
     # Deserialize.
-    xml = response.read()
-    return DeserializeObjectList(self.logger, xml).get()
+    #send the stream to the sax parser rather than laoding hte string
+    #xml = response.read()
+    if requestFormat == "text/xml":
+      self.logger.debug("Deserializing XML")
+      return DeserializeObjectListXML(self.logger, response).get()
+    if requestFormat == "application/json":
+      self.logger.debug("Deserializing JSON")
+      res = response.read()
+      return json.loads(res)
+    self.logger.debug("returning raw response")
+    return response.read()
 
   def getLogRecords(
     self,
@@ -354,13 +383,9 @@ class DataOneClient(object):
 
     params = {}
 
-    try:
-      if start < 0:
-        raise ValueError
-    except ValueError:
+    if start < 0:
       raise exceptions.InvalidRequest(10002, "start must be a positive integer")
-    else:
-      params['start'] = start
+    params['start'] = start
 
     try:
       if count < 1:
@@ -371,8 +396,7 @@ class DataOneClient(object):
       raise exceptions.InvalidRequest(
         10002, "count must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
       )
-    else:
-      params['count'] = count
+    params['count'] = count
 
     try:
       if startTime is not None and endTime is None:
@@ -401,8 +425,8 @@ class DataOneClient(object):
     response = self.client.GET(url, headers)
 
     # Deserialize.
-    xml = response.read()
-    return DeserializeLogRecords(self.logger, xml).get()
+    #xml = response.read()
+    return DeserializeLogRecords(self.logger, response).get()
 
   def create(self, identifier, object_bytes, sysmeta_bytes):
     # Parameter validation.
@@ -413,7 +437,7 @@ class DataOneClient(object):
     files = []
     files.append(('object', 'object', object_bytes))
     files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
-    content_type, mime_doc = lib.upload.encode_multipart_formdata([], files)
+    content_type, mime_doc = d1common.upload.encode_multipart_formdata([], files)
 
     # Send REST POST call to register object.
 
@@ -444,6 +468,7 @@ class DataOneClient(object):
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
 
+    #===============================================================================
     #<?xml version='1.0' encoding='UTF-8'?>
     #<d1:response xmlns:d1="http://ns.dataone.org/core/objects">
     #  <start>0</start>
@@ -459,15 +484,25 @@ class DataOneClient(object):
     #</d1:response>
 
 
-class DeserializeObjectList():
+class DeserializeObjectListXML():
+  '''Deserializes XML form of an ObjectList.
+  '''
+
   def __init__(self, logger, d):
+    '''
+    :param logger:
+    :param d: unicode, string, or file object open for reading
+    '''
     self.r = {'objectInfo': []}
     self.logger = logger
     self.d = d
 
   def get(self):
     try:
-      dom = xml.dom.minidom.parseString(self.d)
+      if isinstance(self.d, basestring):
+        dom = xml.dom.minidom.parseString(self.d)
+      else:
+        dom = xml.dom.minidom.parse(self.d)
       self.handleObjectList(dom)
       return self.r
     except (TypeError, AttributeError, ValueError):
@@ -537,15 +572,26 @@ class DeserializeObjectList():
     objectInfo['size'] = int(self.getText(size.childNodes))
 
 
+#===============================================================================
 class DeserializeLogRecords():
+  '''Deserialize log records from XML format.
+  '''
+
   def __init__(self, logger, d):
+    '''
+    :param logger:
+    :param d: unicode, string, or file object open for reading
+    '''
     self.r = {'logRecord': []}
     self.logger = logger
     self.d = d
 
   def get(self):
     try:
-      dom = xml.dom.minidom.parseString(self.d)
+      if isinstance(self.d, basestring):
+        dom = xml.dom.minidom.parseString(self.d)
+      else:
+        dom = xml.dom.minidom.parse(self.d)
       self.handleLogRecords(dom)
       return self.r
     except (TypeError, AttributeError, ValueError):
