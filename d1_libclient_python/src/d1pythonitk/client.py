@@ -69,13 +69,26 @@ class RESTClient(object):
   for error handling if possible.
   '''
 
+  logger = logging.getLogger()
+
   def __init__(self, target=const.URL_DATAONE_ROOT):
-    self.logger = logging.getLogger(self.__class__.__name__)
     self.status = None
     self.responseInfo = None
     self._BASE_DETAIL_CODE = '10000'
     self.target = self._normalizeTarget(target)
     #TODO: Need to define these detailCode values
+
+    self.logger.debug_ = lambda *x: self.log(self.logger.debug, x)
+    self.logger.warn_ = lambda *x: self.log(self.logger.warn, x)
+    self.logger.err_ = lambda *x: self.log(self.logger.error, x)
+
+  def log(self, d, x):
+    d(
+      'file({0}) func({1}) line({2}): {3}'.format(
+        os.path.basename(sys._getframe(2).f_code.co_filename), sys._getframe(
+          2).f_code.co_name, sys._getframe(2).f_lineno, x
+      )
+    )
 
   def exceptionCode(self, extra):
     return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
@@ -125,13 +138,15 @@ class RESTClient(object):
     if headers is None:
       headers = self.headers
     request = HttpRequest(url, data=data, headers=headers, method=method)
-    self.logger.debug('{0}: sendRequest({1})'.format(__name__, url))
+
+    self.logger.debug_('url({0}) headers({1}) method({2})'.format(url, headers, method))
+
     try:
       response = urllib2.urlopen(request, timeout=const.RESPONSE_TIMEOUT)
       self.status = response.code
       self.responseInfo = response.info()
     except urllib2.HTTPError, e:
-      self.logger.warn('{0}: HTTP Error: {1}'.format(__name__, e))
+      self.logger.warn_('HTTPError({0})'.format(e))
       self.status = e.code
       self.responseInfo = e.info()
       if hasattr(e, 'read'):
@@ -143,7 +158,7 @@ class RESTClient(object):
 #        traceInfo = {'body': e.read()}
 #        raise exceptions.ServiceFailure('10000.0',description,traceInfo)
     except urllib2.URLError, e:
-      self.logger.warn('{0}: URL Error: {1}'.format(__name__, e))
+      self.logger.warn_('URLError({0})'.format(e))
       if hasattr(e, 'read'):
         if self.loadError(e):
           return None
@@ -155,27 +170,22 @@ class RESTClient(object):
   def HEAD(self, url, headers=None):
     '''Issues a HTTP HEAD request.
     '''
-    self.logger.debug("%s: %s" % (__name__, url))
     return self.sendRequest(url, headers=headers, method='HEAD')
 
   def GET(self, url, headers=None):
-    self.logger.debug("%s: %s" % (__name__, url))
     return self.sendRequest(url, headers=headers, method='GET')
 
   def PUT(self, url, data, headers=None):
-    self.logger.debug("%s: %s" % (__name__, url))
     if isinstance(data, dict):
       data = urllib.urlencode(data)
     return self.sendRequest(url, data=data, headers=headers, method='PUT')
 
   def POST(self, url, data, headers=None):
-    self.logger.debug("%s: %s" % (__name__, url))
     if isinstance(data, dict):
       data = urllib.urlencode(data)
     return self.sendRequest(url, data=data, headers=headers, method='POST')
 
   def DELETE(self, url, data=None, headers=None):
-    self.logger.debug("%s: %s" % (__name__, url))
     return self.sendRequest(url, data=data, headers=headers, method='DELETE')
 
 #===============================================================================
@@ -191,7 +201,7 @@ class DataOneClient(object):
     userAgent=const.USER_AGENT,
     clientClass=RESTClient,
   ):
-    self.logger = logging.getLogger(self.__class__.__name__)
+    self.logger = clientClass.logger
     self.userAgent = userAgent
     self._BASE_DETAIL_CODE = '11000'
     #TODO: Need to define this detailCode base value
@@ -215,6 +225,11 @@ class DataOneClient(object):
     '''
     return urlparse.urljoin(self.client.target, const.URL_OBJECT_LIST_PATH)
 
+  def getMetaUrl(self):
+    '''Return the full URL to the SysMeta object on target.
+    '''
+    return urlparse.urljoin(self.client.target, const.URL_SYSMETA_PATH)
+
   def getAccessLogUrl(self):
     '''Returns the full URL to the access log collection on target.
     '''
@@ -237,10 +252,13 @@ class DataOneClient(object):
     :param identifier: Identifier of object to retrieve
     :rtype: open file stream
     '''
-    self.logger.debug("%s: %s" % (__name__, identifier))
-    url = urlparse.urljoin(self.getObjectListUrl(), identifier)
-    self.logger.debug("%s: url=%s" % (__name__, url))
+    if len(identifier) == 0:
+      self.logger.debug_("Invalid parameter(s)")
+
+    url = urlparse.urljoin(self.getObjectUrl(), identifier)
+    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     response = self.client.GET(url, self.headers)
+
     return response
 
   def getSystemMetadata(self, identifier):
@@ -248,17 +266,17 @@ class DataOneClient(object):
     :param identifier: Identifier of the object to retrieve
     :rtype: :class:d1sysmeta.SystemMetadata
     '''
-    self.logger.debug("%s: %s" % (__name__, identifier))
-    url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'meta/')
-    self.logger.debug("%s: url=%s" % (__name__, url))
-    raise exceptions.NotImplemented(self.exceptioncode('1.2'), __name__)
+    if len(identifier) == 0:
+      self.logger.debug_("Invalid parameter(s)")
+
+    url = urlparse.urljoin(self.getMetaUrl(), identifier)
+    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     response = self.client.GET(url, self.headers)
-    return response.data
+    return response
 
   def resolve(self, identifier):
-    self.logger.debug("%s: %s" % (__name__, identifier))
     url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'resolve/')
-    self.logger.debug("%s: url=%s" % (__name__, url))
+    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     headers = self.headers
     headers['Accept'] = ''
     raise exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
@@ -311,11 +329,12 @@ class DataOneClient(object):
       params['startTime'] = startTime
       params['endTime'] = endTime
 
-    url = self.getObjectListUrl() + '?pretty&' + urllib.urlencode(params)
-    self.logger.debug("%s: url=%s" % (__name__, url))
+    url = self.getObjectListUrl() + '?' + urllib.urlencode(params)
 
     headers = self.headers
     headers['Accept'] = 'text/xml'
+
+    self.logger.debug_("url({0}) headers({1})".format(url, headers))
 
     # Fetch.
     response = self.client.GET(url, headers)
@@ -371,11 +390,12 @@ class DataOneClient(object):
       params['startTime'] = startTime
       params['endTime'] = endTime
 
-    url = self.getAccessLogUrl() + '?pretty&' + urllib.urlencode(params)
-    self.logger.debug("%s: url=%s" % (__name__, url))
+    url = self.getAccessLogUrl() + '?' + urllib.urlencode(params)
 
     headers = self.headers
     headers['Accept'] = 'text/xml'
+
+    self.logger.debug_("url({0}) headers({1})".format(url, headers))
 
     # Fetch.
     response = self.client.GET(url, headers)
@@ -387,7 +407,7 @@ class DataOneClient(object):
   def create(self, identifier, object_bytes, sysmeta_bytes):
     # Parameter validation.
     if len(identifier) == 0 or len(object_bytes) == 0 or len(sysmeta_bytes) == 0:
-      self.logger.error("")
+      self.logger.debug_("Invalid parameter(s)")
 
       # Create MIME-multipart Mixed Media Type body.
     files = []
@@ -396,19 +416,24 @@ class DataOneClient(object):
     content_type, mime_doc = lib.upload.encode_multipart_formdata([], files)
 
     # Send REST POST call to register object.
-    self.logger.debug("%s: %s" % (__name__, identifier))
 
     headers = {'Content-Type': content_type, 'Content-Length': str(len(mime_doc)), }
 
     crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
 
-    self.logger.debug('~' * 79)
-    self.logger.debug('REST call: {0}'.format(crud_create_url))
-    self.logger.debug('~' * 10)
-    self.logger.debug(headers)
-    self.logger.debug('~' * 10)
-    self.logger.debug(mime_doc)
-    self.logger.debug('~' * 79)
+    #self.logger.debug_('~' * 79)
+    #self.logger.debug_('REST call: {0}'.format(crud_create_url))
+    #self.logger.debug_('~' * 10)
+    #self.logger.debug_(headers)
+    #self.logger.debug_('~' * 10)
+    #self.logger.debug_(mime_doc)
+    #self.logger.debug_('~' * 79)
+
+    self.logger.debug_(
+      "url({0}) identifier({1}) headers({2})".format(
+        crud_create_url, identifier, headers
+      )
+    )
 
     try:
       res = self.client.POST(crud_create_url, data=mime_doc, headers=headers)
@@ -419,19 +444,19 @@ class DataOneClient(object):
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
 
-#<?xml version='1.0' encoding='UTF-8'?>
-#<d1:response xmlns:d1="http://ns.dataone.org/core/objects">
-#  <start>0</start>
-#  <count>243</count>
-#  <total>243</total>
-#  <objectInfo>
-#    <checksum>5f173b60a36d4ce42e90b1698dcb10631de6dee0</checksum>
-#    <dateSysMetadataModified>2010-04-26T07:23:42.380413</dateSysMetadataModified>
-#    <format>eml://ecoinformatics.org/eml-2.0.0</format>
-#    <identifier>hdl:10255/dryad.1099/mets.xml</identifier>
-#    <size>3636</size>
-#  </objectInfo>
-#</d1:response>
+    #<?xml version='1.0' encoding='UTF-8'?>
+    #<d1:response xmlns:d1="http://ns.dataone.org/core/objects">
+    #  <start>0</start>
+    #  <count>243</count>
+    #  <total>243</total>
+    #  <objectInfo>
+    #    <checksum>5f173b60a36d4ce42e90b1698dcb10631de6dee0</checksum>
+    #    <dateSysMetadataModified>2010-04-26T07:23:42.380413</dateSysMetadataModified>
+    #    <format>eml://ecoinformatics.org/eml-2.0.0</format>
+    #    <identifier>hdl:10255/dryad.1099/mets.xml</identifier>
+    #    <size>3636</size>
+    #  </objectInfo>
+    #</d1:response>
 
 
 class DeserializeObjectList():
@@ -446,7 +471,7 @@ class DeserializeObjectList():
       self.handleObjectList(dom)
       return self.r
     except (TypeError, AttributeError, ValueError):
-      self.logger.error("Could not deserialize XML result")
+      self.logger.error_("Could not deserialize XML result")
       raise
 
   def getText(self, nodelist):
@@ -524,7 +549,7 @@ class DeserializeLogRecords():
       self.handleLogRecords(dom)
       return self.r
     except (TypeError, AttributeError, ValueError):
-      self.logger.error("Could not deserialize XML result")
+      self.logger.error_("Could not deserialize XML result")
       raise
 
   def getText(self, nodelist):

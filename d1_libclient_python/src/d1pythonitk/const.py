@@ -47,7 +47,7 @@ URL_OBJECT_PATH = 'object/'
 
 #: Path to append to target base for system metadata collection
 #: TODO: retrieve this from D1 root
-URL_SYSMETA_PATH = 'meta'
+URL_SYSMETA_PATH = 'meta/'
 
 #: Path to append to target base for the access log collection.
 #: TODO: retrieve this from D1 root
