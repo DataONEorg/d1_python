@@ -88,6 +88,8 @@ class SystemMetadata(object):
     
     :param xmldoc: (Unicode) The system metadata document to parse.
     '''
+    if not isinstance(xmldoc, basestring):
+      xmldoc = xmldoc.read()
     self.xmldoc = xmldoc
     self.etree = ET.fromstring(xmldoc)
 

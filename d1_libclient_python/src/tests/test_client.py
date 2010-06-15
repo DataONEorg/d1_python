@@ -26,8 +26,16 @@ from d1pythonitk import const
 from d1pythonitk import client
 from d1pythonitk import systemmetadata
 
+MEMBER_NODES = {'dryad': 'http://129.24.0.11/mn', 'daac': 'http://x.x.x.x/mn', }
+
+COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn', }
+
 
 class TestCaseWithURLCompare(unittest.TestCase):
+  '''Utility class that check whether two URLs are equal.  Not really as simple
+  as it migh seem at first.
+  '''
+
   def assertUrlEqual(self, a, b):
     '''Given two URLs, test if they are equivalent.  This means decomposing into
     their parts and comparing all the pieces.  See RFC 1738 for details.
@@ -131,6 +139,9 @@ class TestCaseWithURLCompare(unittest.TestCase):
 
 
 class TestRestClient(TestCaseWithURLCompare):
+  '''Run a couple of tests with the low level REST client.
+  '''
+
   def testGet(self):
     cli = client.RESTClient()
     #Google runs a fairly reliable server
@@ -157,8 +168,90 @@ class TestRestClient(TestCaseWithURLCompare):
 
 
 class TestDataOneClient(TestCaseWithURLCompare):
+  def setUp(self):
+    self.target = MEMBER_NODES['dryad']
+
   def testGet(self):
-    cli = client.DataOneClient()
+    cli = client.DataOneClient(target=self.target)
+    #try loading some random object
+    start = 23
+    count = 1
+    startTime = None
+    endTime = None
+    requestFormat = 'text/xml'
+    objlist = cli.listObjects(
+      start=start,
+      count=count,
+      startTime=startTime,
+      endTime=endTime,
+      requestFormat=requestFormat
+    )
+    id = objlist['objectInfo'][0]['identifier']
+    bytes = cli.get(id).read()
+    headers = cli.headers
+    headers['Accept'] = 'text/xml'
+    sysm = cli.getSystemMetadata(id, headers=headers)
+    sysmeta = systemmetadata.SystemMetadata(sysm)
+    self.assertEqual(sysmeta.identifier, id)
+
+  def testGetFail(self):
+    cli = client.DataOneClient(target=self.target)
+    # see if failure works
+    id = 'some bogus id'
+    response = cli.get(id)
+    self.assertEqual(404, response.getcode())
+    self.assertRaises(exceptions.NotFound, cli.get, id)
+
+  def testGetSystemMetadata(self):
+    #TODO: test getSystemMetadata()
+    assert (1 == 0)
+
+  def _subListObjectTest(self, requestformat):
+    cli = client.DataOneClient(target=self.target)
+    start = 0
+    count = 10
+    startTime = None
+    endTime = None
+    requestFormat = 'application/json'
+    objlist = cli.listObjects(
+      start=start,
+      count=count,
+      startTime=startTime,
+      endTime=endTime,
+      requestFormat=requestFormat
+    )
+    self.assertEqual(objlist['count'], len(objlist['objectInfo']))
+    obj = objlist['objectInfo'][0]
+    self.assertTrue(obj.has_key('size'))
+    self.assertTrue(obj.has_key('checksum'))
+    self.assertTrue(obj.has_key('dateSysMetadataModified'))
+    self.assertTrue(obj.has_key('identifier'))
+    self.assertTrue(obj.has_key('format'))
+
+    start = 4
+    count = 3
+    objlist2 = cli.listObjects(
+      start=start,
+      count=count,
+      startTime=startTime,
+      endTime=endTime,
+      requestFormat=requestFormat
+    )
+    self.assertEqual(objlist2['count'], len(objlist2['objectInfo']))
+    self.assertEqual(objlist2['count'], count)
+    i = 0
+    for obj in objlist2['objectInfo']:
+      self.assertEqual(objlist['objectInfo'][4 + i]['identifier'], obj['identifier'])
+      logging.info(obj['identifier'])
+      i += 1
+
+  def testListObjectsJson(self):
+    requestFormat = 'application/json'
+    self._subListObjectTest(requestFormat)
+
+  def testListObjectsXml(self):
+    requestFormat = 'text/xml'
+    self._subListObjectTest(requestFormat)
 
     #===============================================================================
 
