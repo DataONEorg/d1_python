@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`auth`
 ===========
 
@@ -8,7 +8,7 @@
   Authentication. For now, based on IP only.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 try:
@@ -30,7 +30,7 @@ import util
 
 
 def cn_check_required(f):
-  """
+  '''
   Function decorator that checks if the IP address of the client matches a
   known CN IP and blocks acccess to the decorated function if there is no match.
   
@@ -39,7 +39,7 @@ def cn_check_required(f):
   come in handy shortly.
   
   Raises d1common.exceptions.NotAuthorized (errorCode=401, detailCode=1040)
-  """
+  '''
 
   def wrap(request, *args, **kwargs):
     # Check if we already have a session for this user.
@@ -70,10 +70,10 @@ def cn_check_required(f):
 
 
 def mn_check_required(f):
-  """
+  '''
   Function decorator that checks if the IP address of the client matches a
   known MN IP and blocks acccess to the decorated function if there is no match.
-  """
+  '''
 
   def wrap(request, *args, **kwargs):
     # Check if we already have a session for this user.

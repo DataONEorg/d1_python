@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`content_negotiation`
 ==========================
 
@@ -18,7 +18,7 @@
   - text/log
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import csv

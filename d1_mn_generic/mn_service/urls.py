@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`urls`
 ===========
 
@@ -8,7 +8,7 @@
   Django URL to function mapping.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 from django.conf.urls.defaults import *
 
@@ -27,6 +27,10 @@ urlpatterns = patterns(
 
   # /log/
   (r'^log$', 'access_log_view'),
+
+  # /monitor/
+  (r'^monitor/object$', 'monitor_object'),
+  (r'^monitor/log$', 'monitor_log'),
 
   # Diagnostic / Debugging.
   #(r'^get_ip/$', 'auth_test'),

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`util`
 ===========
 
@@ -8,7 +8,7 @@
   General utilities.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import datetime
@@ -64,7 +64,9 @@ import sys_log
 import util
 
 
-def log_exception(max_traceback_levels=5):
+def log_exception(max_traceback_levels=5, msg=None):
+  if msg is not None:
+    sys_log.error('{0}'.format(msg))
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
   try:
     exc_args = exc_msgs.__dict__["args"]
@@ -78,9 +80,9 @@ def log_exception(max_traceback_levels=5):
 
 
 def clear_db():
-  """
+  '''
   Clear the database. Used for testing and debugging.
-  """
+  '''
 
   models.DB_update_status.objects.all().delete()
 
@@ -94,10 +96,10 @@ def clear_db():
 
 
 class fixed_chunk_size_iterator(object):
-  """
+  '''
   Create a file iterator that iterates through file-like object using fixed
   size chunks.
-  """
+  '''
 
   def __init__(self, flo, chunk_size=1024**2):
     self.flo = flo
@@ -114,16 +116,16 @@ class fixed_chunk_size_iterator(object):
     return self
 
   #def raise_sys_log_http_404_not_found(err_msg):
-  #  """
+  #  '''
   #  Log message to system log and raise 404 with message.
-  #  """
+  #  '''
   #  sys_log.warning(err_msg)
   #  raise Http404(err_msg)
 
   #def return_sys_log_http_403_forbidden(err_msg):
-  #  """
+  #  '''
   #  Log message to system log and raise 403 with message.
-  #  """
+  #  '''
   #  sys_log.warning(err_msg)
   #  return HttpResponseForbidden(err_msg)
 
@@ -133,8 +135,8 @@ class fixed_chunk_size_iterator(object):
 
 
 def file_to_dict(path):
-  """
-  Convert a sample MN object to dictionary."""
+  '''
+  Convert a sample MN object to dictionary.'''
 
   try:
     f = open(path, 'r')
@@ -190,8 +192,8 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
 
 
 def add_wildcard_filter(query, col_name, value):
-  """
-  Add wildcard filter to query. Support only a single * at start OR end"""
+  '''
+  Add wildcard filter to query. Support only a single * at start OR end'''
 
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
@@ -230,9 +232,9 @@ def add_wildcard_filter(query, col_name, value):
 
 
 def add_slice_filter(query, request):
-  """
-  Create a slice of a query based on request start and count parameters."""
-  print request.GET
+  '''
+  Create a slice of a query based on request start and count parameters.'''
+
   # Skip top 'start' objects.
   try:
     start = int(request.GET['start'])

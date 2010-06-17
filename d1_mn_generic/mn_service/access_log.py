@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`access_log`
 =================
 
@@ -8,7 +8,7 @@
   Log DataONE object accesses.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Django.
 from django.http import HttpResponse
@@ -29,8 +29,8 @@ import util
 
 
 def log(guid, operation_type, requestor_identity):
-  """
-  Log an object access."""
+  '''
+  Log an object access.'''
 
   object_row = None
   if guid is not None:

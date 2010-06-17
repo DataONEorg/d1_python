@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`sysmeta`
 ==============
 
@@ -8,7 +8,7 @@
   Create sysmeta skeleton object on the fly.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 ## MN API.
 #import d1common.exceptions
@@ -110,8 +110,8 @@
 #
 ### cn_check_required is not required.
 ##def object_sysmeta_put(request, guid):
-##  """
-##  Mark object as having been synchronized."""
+##  '''
+##  Mark object as having been synchronized.'''
 ##
 ##  sys_log.info('PUT')
 ##
@@ -204,12 +204,12 @@
 #      return x
 #
 #def register_object_create_sysmeta(item, object_tree):
-#  """
+#  '''
 #  Generate sysmeta object for a MN object.
 #
 #  This call provides a CN with an initial sysmeta object that contains
 #  information about a MN object.
-#  """
+#  '''
 #  
 #  # Set up namespace for the sysmeta xml doc.
 #  SYSMETA_NS = 'http://dataone.org/coordinating_node_sysmeta_0.1'
@@ -490,16 +490,16 @@
 #
 #
 #def update_sysmeta():
-#  """
-#  Update a sysmeta object and reverify it"""
+#  '''
+#  Update a sysmeta object and reverify it'''
 #  # Log the update of this sysmeta object.
 #  #access_log.log(guid, 'set_sysmeta', request.META['REMOTE_ADDR'])
 #  pass
 #
 #def validate(sysmeta_etree):
-#  """
+#  '''
 #  Validate sysmeta etree against sysmeta xsd.
-#  """
+#  '''
 #  
 #  # Check for xsd file.
 #  try:
@@ -518,9 +518,9 @@
 #    raise
 #  
 #def write(sysmeta_etree, sysmeta_path):
-#  """
+#  '''
 #   Write SysMeta XML file.
-#  """
+#  '''
 #  try:
 #    sysmeta_file = open(sysmeta_path, 'w')
 #    sysmeta_file.write(etree.tostring(xml, pretty_print = True,  encoding = 'UTF-8', xml_declaration=True))
@@ -530,9 +530,9 @@
 #    raise
 #
 #def set_replication_status(sysmeta_guid, replication_status):
-#  """
+#  '''
 #  Update the replication status in a sysmeta xml file.
-#  """
+#  '''
 #  sysmeta_path = os.path.join(settings.REPOSITORY_SYSMETA_PATH, sysmeta_guid)
 #  try:
 #    sysmeta_file = open(sysmeta_path, 'r')
@@ -566,8 +566,8 @@
 #
 #
 #def update_sysmeta():
-#  """
-#  Update a sysmeta object and reverify it"""
+#  '''
+#  Update a sysmeta object and reverify it'''
 #   Log the update of this sysmeta object.
 #  access_log.log(guid, 'set_sysmeta', request.META['REMOTE_ADDR'])
 #  pass
@@ -575,8 +575,8 @@
 #
 ## cn_check_required is not required.
 #def object_sysmeta_put(request, guid):
-#  """
-#  Mark object as having been synchronized."""
+#  '''
+#  Mark object as having been synchronized.'''
 #
 #  sys_log.info('PUT')
 #

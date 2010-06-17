@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`insert_test_log`
 ======================
 
@@ -8,7 +8,7 @@
   Insert fake access log for testing and unit tests.
   
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import datetime

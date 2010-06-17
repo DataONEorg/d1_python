@@ -139,7 +139,11 @@ class exception_handler():
     if isinstance(exception, d1common.exceptions.DataONEException):
       # Log the exception.
       sys_log.error('DataONE Exception: {0}'.format(traceback_to_detail_code()))
-      return HttpResponse(serialize_exception(request, exception), exception.errorCode)
+      return HttpResponse(
+        serialize_exception(
+          request, exception
+        ), status=exception.errorCode
+      )
 
     # If we get here, we got an unexpected exception.
     # Log the exception.

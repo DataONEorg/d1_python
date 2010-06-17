@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`models`
 =============
 
@@ -8,7 +8,7 @@
   Database models.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # App.
 import settings
@@ -76,10 +76,10 @@ class Object(models.Model):
     self.checksum_algorithm = checksum_algorithm
 
   def save_unique(self):
-    """
+    '''
     If attempting to save an object that has the same guid and/or url as an
     old object, we delete the old object before saving the new.
-    """
+    '''
     try:
       me = Object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]
     except IndexError:
