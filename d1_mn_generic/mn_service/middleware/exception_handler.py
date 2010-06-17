@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`exception_handler`
 =========================
 
@@ -30,7 +30,7 @@
   These are not related to Python's exception system.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import inspect
@@ -139,12 +139,18 @@ class exception_handler():
     if isinstance(exception, d1common.exceptions.DataONEException):
       # Log the exception.
       sys_log.error('DataONE Exception: {0}'.format(traceback_to_detail_code()))
-      return HttpResponse(serialize_exception(request, exception))
+      return HttpResponse(serialize_exception(request, exception), exception.errorCode)
 
-    # If we get here, we got an unexpected exception and returning None sends it
-    # on to the default exception handler in the framework. Log the exception.
+    # If we get here, we got an unexpected exception.
+    # Log the exception.
     sys_log.error('Non-DataONE Exception: {0}'.format(traceback_to_detail_code()))
-    return HttpResponse('Non-DataONE Exception: {0}'.format(traceback_to_detail_code()))
+
+    return HttpResponse(
+      'Non-DataONE Exception: {0}'.format(
+        traceback_to_detail_code(
+        )
+      ), 500
+    )
 
     # When debugging from a web browser, we want to return None to get Django's
     # extremely useful exception page.

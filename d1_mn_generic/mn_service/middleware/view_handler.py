@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`view_handler`
 ===================
 
@@ -9,7 +9,7 @@
   Sanity checking on system state before view is executed.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import csv

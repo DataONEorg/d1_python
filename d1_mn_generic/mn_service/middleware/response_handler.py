@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`response_handler`
 =========================
 
@@ -10,7 +10,7 @@
   (Size and Content-Type) accordingly.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import csv
@@ -80,9 +80,9 @@ import settings
 #  ]
 #}
 def serialize_json(obj, pretty=False, jsonvar=False):
-  """
+  '''
   Serialize object to JSON.
-  """
+  '''
 
   if pretty:
     if jsonvar is not False:
@@ -100,9 +100,9 @@ def serialize_json(obj, pretty=False, jsonvar=False):
 # 'guid',otype,checksum,modified,size
 # <identifier>,<object class>,<SHA1 checksum of object>,<date time last modified>,<byte size of object>
 def serialize_csv(obj, pretty=False, jsonvar=False):
-  """
+  '''
   Serialize object to CSV.
-  """
+  '''
 
   io = StringIO.StringIO()
   # Comment containing start, count and object.
@@ -152,9 +152,9 @@ def serialize_csv(obj, pretty=False, jsonvar=False):
 #  ...
 #</response>
 def serialize_xml(obj, pretty=False, jsonvar=False):
-  """
+  '''
   Serialize object to XML.
-  """
+  '''
 
   # Set up namespace for the xml response.
   RESPONSE_NS = 'http://ns.dataone.org/core/objects'
@@ -220,9 +220,9 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
 #  </rdf:Description>
 #</rdf:RDF>
 def serialize_rdf_xml(obj, pretty=False, jsonvar=False):
-  """
+  '''
   Serialize object to RDF XML.
-  """
+  '''
 
   # Set up namespaces for the XML response.
   RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
@@ -271,9 +271,9 @@ def serialize_rdf_xml(obj, pretty=False, jsonvar=False):
 
 
 def serialize_null(obj, pretty=False, jsonvar=False):
-  """
+  '''
   For now, this NULL serializer just calls out to the json serializer.
-  """
+  '''
   return serialize_json(obj, pretty, jsonvar)
 
 
@@ -305,8 +305,8 @@ def serialize_object(request, response, obj):
   else:
     jsonvar = False
 
-  # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
-  # we default to JSON.
+  # Determine which serializer to use. If client does not supply HTTP_ACCEPT, we
+  # default to JSON.
   content_type = 'application/json'
   if 'HTTP_ACCEPT' not in request.META:
     sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
@@ -329,13 +329,136 @@ def serialize_object(request, response, obj):
 
   return response
 
+# Monitoring.
+
+
+#{
+#  [
+#    {
+#      'guid':<identifier>,
+#      'oclass':<object class>,
+#      'checksum':<SHA1 checksum of object>,
+#      'modified':<date time last modified>,
+#      'size':<byte size of object>
+#    },
+#    ...
+#  ]
+#}
+def monitor_serialize_json(monitor, jsonvar=False):
+  '''
+  Serialize object to JSON.
+  '''
+
+  if jsonvar is not False:
+    return jsonvar + '=' + json.dumps(monitor)
+  else:
+    return json.dumps(monitor)
+
+
+#<response xmlns='http://ns.dataone.org/core/objects'
+#  <data guid='_identifier_'>
+#    <oclass>_object class_</oclass>
+#    <checksum>_SHA1 checksum of object</checksum>
+#    <modified>_date time last modified_</modified>
+#    <size>_byte size of object_</size>
+#  </data>
+#  ...
+#</response>
+def monitor_serialize_xml(monitor, jsonvar=False):
+  '''
+  Serialize object to XML.
+  '''
+
+  # Set up namespace for the xml response.
+  RESPONSE_NS = 'http://ns.dataone.org/core/objects'
+  RESPONSE = '{{{0}}}'.format(RESPONSE_NS)
+  NSMAP = {'d1': RESPONSE_NS} # the default namespace
+  xml = etree.Element(RESPONSE + 'monitor', nsmap=NSMAP)
+
+  #if 'objectInfo' in obj:
+  #  for d in obj['objectInfo']:
+  #    data = etree.SubElement(xml, 'objectInfo')
+  #    
+  #    for key in sorted(d.keys()):
+  #      ele = etree.SubElement(data, unicode(key))
+  #      ele.text = unicode(d[key])
+
+  for row in monitor:
+    data = etree.SubElement(xml, 'day')
+    ele = etree.SubElement(data, 'date')
+    ele.text = unicode(row[0])
+    ele = etree.SubElement(data, 'count')
+    ele.text = unicode(row[1])
+
+    # Return xml as string.
+  io = StringIO.StringIO()
+  io.write(etree.tostring(xml, encoding='UTF-8', xml_declaration=True))
+  return io.getvalue()
+
+
+def monitor_serialize_null(monitor, jsonvar=False):
+  '''
+  For now, this NULL serializer just calls out to the json serializer.
+  '''
+  return monitor_serialize_json(monitor, jsonvar)
+
+
+def monitor_serialize_object(request, response, monitor):
+  map = {
+    'application/json': monitor_serialize_json,
+    'text/csv': monitor_serialize_null,
+    'text/xml': monitor_serialize_xml,
+    'application/rdf+xml': monitor_serialize_null,
+    'text/html': monitor_serialize_null,
+    'text/log': monitor_serialize_null,
+  }
+
+  pri = [
+    'application/json',
+    'text/csv',
+    'text/xml',
+    'application/rdf+xml',
+    'text/html',
+    'text/log',
+  ]
+
+  # For JSON, we support giving a variable name.
+  if 'jsonvar' in request.GET:
+    jsonvar = request.GET['jsonvar']
+  else:
+    jsonvar = False
+
+  # Determine which serializer to use. If client does not supply HTTP_ACCEPT,
+  # we default to JSON.
+  content_type = 'application/json'
+  if 'HTTP_ACCEPT' not in request.META:
+    sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
+  else:
+    try:
+      content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+    except ValueError:
+      # An invalid Accept header causes mimeparser to throw a ValueError. In
+      # that case, we also default to JSON.
+      sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
+
+  # Serialize object.
+  obj_ser = map[content_type](monitor, jsonvar)
+
+  # Add the serialized object to the response.
+  response.write(obj_ser)
+
+  # Set headers.
+  set_header(response, None, len(obj_ser), content_type)
+
+  return response
+
 
 def set_header(response, last_modified, content_length, content_type):
-  """
+  '''
   Add Last-Modified, Content-Length and Content-Type headers to response.
 
   If last_modified is None, we pull the date from the one stored in the db.
-  """
+  '''
   if last_modified is None:
     try:
       status_row = models.DB_update_status.objects.all()[0]
@@ -365,7 +488,14 @@ class response_handler():
     else:
       serialize_object(request, response, obj)
 
-    # For debugging, if "pretty", we force the content type to text.
+    try:
+      monitor = response.monitor
+    except AttributeError:
+      pass
+    else:
+      monitor_serialize_object(request, response, monitor)
+
+  # For debugging, if "pretty", we force the content type to text.
     if 'pretty' in request.REQUEST:
       response['Content-Type'] = 'text/plain'
 
