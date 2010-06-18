@@ -9,6 +9,7 @@ Unit tests for pyd1.d1client
   :members:
 '''
 
+import sys
 import unittest
 import logging
 import urlparse
@@ -21,6 +22,7 @@ try:
 except:
   import json
 
+from d1common import xmlrunner
 from d1common import exceptions
 from d1pythonitk import const
 from d1pythonitk import client
@@ -386,4 +388,4 @@ class TestSystemMetadata(unittest.TestCase):
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.DEBUG)
-  unittest.main(testRunner=unittest.TextTestRunner)
+  unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
