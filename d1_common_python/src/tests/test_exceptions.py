@@ -9,6 +9,7 @@ Unit tests for d1common.exceptions
   :members:
 '''
 
+import sys
 import unittest
 import logging
 import urlparse
@@ -20,6 +21,7 @@ try:
   import cjson as json
 except:
   import json
+from d1common import xmlrunner
 from d1common import exceptions
 
 #===============================================================================
@@ -67,4 +69,4 @@ class TestExceptions(unittest.TestCase):
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.DEBUG)
-  unittest.main(testRunner=unittest.TextTestRunner)
+  unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
