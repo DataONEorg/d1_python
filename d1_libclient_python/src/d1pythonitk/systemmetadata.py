@@ -146,6 +146,23 @@ class SystemMetadata(object):
       raise AttributeError("Property '%s' not found" % name)
     return res
 
+  # <checksum algorithm="MD5">4a8565eddcef66b2147d3aa313f3ebbb</checksum>
+  @property
+  def checksum(self):
+    '''
+    '''
+    return self._getValues(u'checksum')
+
+  @property
+  def checksumAlgorithm(self):
+    '''
+    '''
+    try:
+      checksumNode = self.etree.findall(u'checksum')[0]
+      return checksumNode.attrib['algorithm']
+    except IndexError, KeyError:
+      raise AttributeError("Property 'checksumAlgorithm' not found")
+
   @property
   def dateUploaded(self):
     ''':rtype: (DateTime)
@@ -181,7 +198,7 @@ class SystemMetadata(object):
     return self._getValues(u'obsoletedBy', multiple=True)
 
   @property
-  def derivedFrome(self):
+  def derivedFrom(self):
     ''':rtype: (list of unicode)
     '''
     return self._getValues(u'derivedFrom', multiple=True)
