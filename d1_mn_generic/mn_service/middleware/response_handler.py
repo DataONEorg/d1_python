@@ -72,7 +72,7 @@ import settings
 #    {
 #      'guid':<identifier>,
 #      'oclass':<object class>,
-#      'checksum':<SHA1 checksum of object>,
+#      'checksum': {'algorithm': <algorithm used for checksum>, 'value': <checksum of object> }
 #      'modified':<date time last modified>,
 #      'size':<byte size of object>
 #    },
@@ -97,8 +97,8 @@ def serialize_json(obj, pretty=False, jsonvar=False):
 
 
 # #<start>,<count>,<total>
-# 'guid',otype,checksum,modified,size
-# <identifier>,<object class>,<SHA1 checksum of object>,<date time last modified>,<byte size of object>
+# 'guid',otype,checksumAlgorithm,checksum,modified,size
+# <identifier>,<object class>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
 def serialize_csv(obj, pretty=False, jsonvar=False):
   '''
   Serialize object to CSV.
@@ -145,7 +145,10 @@ def serialize_csv(obj, pretty=False, jsonvar=False):
 #          total='_integer_'>
 #  <data guid='_identifier_'>
 #    <oclass>_object class_</oclass>
-#    <checksum>_SHA1 checksum of object</checksum>
+#    <checksum>
+#     <algorithm>_algorithm used for checksum_</algorithm>
+#     <value>_checksum of object_</value>
+#   </checksum>
 #    <modified>_date time last modified_</modified>
 #    <size>_byte size of object_</size>
 #  </data>
@@ -179,8 +182,15 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
       data = etree.SubElement(xml, 'objectInfo')
 
       for key in sorted(d.keys()):
-        ele = etree.SubElement(data, unicode(key))
-        ele.text = unicode(d[key])
+        val = d[key]
+        if type(val) is not types.DictionaryType:
+          ele = etree.SubElement(data, unicode(key))
+          ele.text = unicode(val)
+        else:
+          ele1 = etree.SubElement(data, unicode(key))
+          for key in sorted(val.keys()):
+            ele2 = etree.SubElement(ele1, unicode(key))
+            ele2.text = unicode(val[key])
 
   if 'logRecord' in obj:
     for d in obj['logRecord']:
@@ -212,7 +222,10 @@ def serialize_xml(obj, pretty=False, jsonvar=False):
 #    <d1:data rdf:parseType="Collection">
 #      <rdf:Description rdf:about="http://mn1.dataone.org/object/_identifier_">
 #        <d1:oclass>_object class_</d1:oclass>
-#        <d1:checksum>_SHA1 checksum of object</d1:checksum>
+#        <d1:checksum>
+#          <d1:algorithm>_algorithm used for checksum_</d1:algorithm>
+#          <d1:value>_checksum of object_</d1:value>
+#        </d1:checksum>
 #        <d1:modified>_date time last modified_</d1:modified>
 #        <d1:size>_byte size of object_</d1:size>
 #      </rdf:Description>
@@ -264,7 +277,8 @@ def serialize_rdf_xml(obj, pretty=False, jsonvar=False):
       etree.tostring(
         xml, pretty_print=pretty,
         encoding='UTF-8', xml_declaration=True
-      )
+      ),
+      ''
     )
   )
   return io.getvalue()
@@ -337,7 +351,7 @@ def serialize_object(request, response, obj):
 #    {
 #      'guid':<identifier>,
 #      'oclass':<object class>,
-#      'checksum':<SHA1 checksum of object>,
+#      'checksum': {'algorithm': _algorithm used for checksum_, 'value': _checksum of object_}
 #      'modified':<date time last modified>,
 #      'size':<byte size of object>
 #    },
@@ -358,7 +372,10 @@ def monitor_serialize_json(monitor, jsonvar=False):
 #<response xmlns='http://ns.dataone.org/core/objects'
 #  <data guid='_identifier_'>
 #    <oclass>_object class_</oclass>
-#    <checksum>_SHA1 checksum of object</checksum>
+#    <checksum>
+#     <algorithm>_algorithm used for checksum_</algorithm>
+#     <value>_checksum of object_</value>
+#    </checksum>
 #    <modified>_date time last modified_</modified>
 #    <size>_byte size of object_</size>
 #  </data>

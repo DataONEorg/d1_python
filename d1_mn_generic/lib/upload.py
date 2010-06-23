@@ -12,12 +12,12 @@ def post_multipart_url(url, fields, files):
 
 
 def post_multipart(host, selector, fields, files):
-  """
+  '''
   Post fields and files to an http host as multipart/form-data.
   fields is a sequence of (name, value) elements for regular form fields.
   files is a sequence of (name, filename, value) elements for data to be uploaded as files
   Return the server's response page.
-  """
+  '''
   content_type, body = encode_multipart_formdata(fields, files)
   h = httplib.HTTPConnection(host)
   headers = {'User-Agent': os.path.basename(__file__), 'Content-Type': content_type}
@@ -27,11 +27,11 @@ def post_multipart(host, selector, fields, files):
 
 
 def encode_multipart_formdata(fields, files):
-  """
+  '''
   fields is a sequence of (name, value) elements for regular form fields.
   files is a sequence of (name, filename, value) elements for data to be uploaded as files
   Return (content_type, body) ready for httplib.HTTP instance
-  """
+  '''
   BOUNDARY = '----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
   CRLF = '\r\n'
   L = []

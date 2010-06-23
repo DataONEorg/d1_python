@@ -135,14 +135,13 @@ def object_collection_get(request):
         'url': 'url',
         'objectFormat': 'format__format',
         'checksum': 'checksum',
+        'checksum_algorithm': 'checksum_algorithm__checksum_algorithm',
         'modified': 'mtime',
         'dbModified': 'db_mtime',
         'size': 'size',
       }[orderby]
     except KeyError:
-      err_msg = 'Invalid orderby value requested: {0}'.format(orderby)
-      util.log_exception(err_msg)
-      raise d1common.exceptions.InvalidRequest(1540, err_msg)
+      raise d1common.exceptions.InvalidRequest(1540, 'Invalid orderby value requested: {0}'.format(orderby))
       
     # Set up query with requested sorting.
     query = models.Object.objects.order_by(prefix + order_field)
@@ -157,12 +156,12 @@ def object_collection_get(request):
   # Documented filters
 
   # startTime
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'startTime', 'ge')
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'starttime', 'ge')
   if changed == True:
     query_unsliced = query
   
   # endTime
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'endTime', 'le')
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'endtime', 'le')
   if changed == True:
     query_unsliced = query
   
@@ -181,6 +180,11 @@ def object_collection_get(request):
   # Filter by checksum.
   if 'checksum' in request.GET:
     query = util.add_wildcard_filter(query, 'checksum', request.GET['checksum'])
+    query_unsliced = query
+
+  # Filter by checksum_algorithm.
+  if 'checksum_algorithm' in request.GET:
+    query = util.add_wildcard_filter(query, 'checksum_algorithm__checksum_algorithm', request.GET['checksum_algorithm'])
     query_unsliced = query
 
   # Filter by last modified date.
@@ -215,7 +219,7 @@ def object_collection_get(request):
     data = {}
     data['identifier'] = row.guid
     data['format'] = row.format.format
-    data['checksum'] = row.checksum
+    data['checksum'] = {'algorithm': row.checksum_algorithm.checksum_algorithm, 'value': row.checksum}
     # Get modified date in an ISO 8601 string.
     data['dateSysMetadataModified'] = datetime.datetime.isoformat(row.mtime)
     data['size'] = row.size
@@ -237,9 +241,7 @@ def object_collection_head(request):
   '''
 
   # Not implemented. Target: 0.9.
-  err_msg = 'Not in spec.'
-  util.log_exception(err_msg)
-  raise d1common.exceptions.NotImplemented(0, err_msg)
+  raise d1common.exceptions.NotImplemented(0, 'Not in spec.')
 
 def object_collection_delete(request):
   '''
@@ -262,7 +264,6 @@ def object_collection_delete(request):
   except IOError as (errno, strerror):
     err_msg = 'Could not clear SysMeta cache\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.log_exception(err_msg)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
@@ -311,17 +312,13 @@ def object_guid_get(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    err_msg = 'Non-existing scimeta object was requested: {0}'.format(guid)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.NotFound(1020, err_msg, __name__)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested', guid)
 
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(url)
   except ValueError as e:
-    err_msg = 'Invalid URL: {0}'.format(url)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.InvalidRequest(0, err_msg)
+    raise d1common.exceptions.InvalidRequest(0, 'Invalid URL: {0}'.format(url))
 
   # Handle 302 Found.
   
@@ -333,9 +330,7 @@ def object_guid_get(request, guid):
     if response.status == httplib.FOUND:
       url = response.getheader('location')
   except httplib.HTTPException as e:
-    err_msg = 'HTTPException while checking for "302 Found"'
-    util.log_exception(err_msg)
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+    raise d1common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
 
   # Open the object to proxy.
   try:
@@ -348,9 +343,7 @@ def object_guid_get(request, guid):
       sys_log.error(err_msg)
       raise d1common.exceptions.ServiceFailure(0, err_msg)
   except httplib.HTTPException as e:
-    err_msg = 'HTTPException while opening object for proxy: {0}'.format(e)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+    raise d1common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
 
   # Log the access of this object.
   access_log.log(guid, 'get_object_bytes', request.META['REMOTE_ADDR'])
@@ -385,7 +378,6 @@ def object_guid_post(request, guid):
 
   # Get object data. For the purposes of the GMN, the object is a URL.
   object_bytes = request.FILES['object'].read()
-
   # Get sysmeta bytes.
   sysmeta_bytes = request.FILES['systemmetadata'].read()
 
@@ -397,9 +389,7 @@ def object_guid_post(request, guid):
   try:
     sysmeta.isValid()
   except sysmeta.XMLSyntaxError:
-    err_msg = 'System metadata validation failed'
-    util.log_exception(err_msg)
-    raise d1common.exceptions.InvalidRequest(0, err_msg)
+    raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed')
   
   # Write sysmeta bytes to cache folder.
   file_out_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
@@ -410,7 +400,6 @@ def object_guid_post(request, guid):
   except IOError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(file_out_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.log_exception(err_msg)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
   
   # Create database entry for object.
@@ -465,9 +454,7 @@ def object_guid_head(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    err_msg = 'Non-existing scimeta object was requested: {0}'.format(guid)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.NotFound(1020, err_msg, __name__)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested', guid)
 
   # Get size of object from file size.
   try:
@@ -475,8 +462,7 @@ def object_guid_head(request, guid):
   except IOError as (errno, strerror):
     err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.NotFound(1020, err_msg, __name__)
+    raise d1common.exceptions.NotFound(1020, err_msg, guid)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
@@ -518,18 +504,14 @@ def meta_guid_get(request, guid):
   try:
     url = models.Object.objects.filter(guid=guid)[0]
   except IndexError:
-    err_msg = 'Non-existing System Metadata object was requested: {0}'.format(guid)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.NotFound(1020, err_msg, __name__)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing System Metadata object was requested', guid)
   
   # Open file for streaming.  
   file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
   try:
     file = open(file_in_path, 'r')
   except IOError as (errno, strerror):
-    err_msg = 'I/O error({0}): {1}\n'.format(errno, strerror)
-    util.log_exception(err_msg)
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+    raise d1common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
   # Log access of the SysMeta of this object.
   access_log.log(guid, 'get_sysmeta_bytes', request.META['REMOTE_ADDR'])
@@ -596,6 +578,11 @@ def access_log_view_get(request):
   # Filter by referenced object checksum.
   if 'checksum' in request.GET:
     query = util.add_wildcard_filter(query, 'object__checksum', request.GET['checksum'])
+    query_unsliced = query
+
+  # Filter by referenced object checksum_algorithm.
+  if 'checksum_algorithm' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__checksum_algorithm__checksum_algorithm', request.GET['checksum_algorithm'])
     query_unsliced = query
 
   # Filter by referenced object last modified date.
@@ -670,6 +657,19 @@ def access_log_view_delete(request):
 
   return HttpResponse('OK')
 
+# Health.
+
+def health_ping(request):
+  '''
+  '''
+  return HttpResponse('OK')
+  
+def health_status(request):
+  '''
+  '''
+  # Not implemented.
+  raise d1common.exceptions.NotImplemented(0, 'Targeted for later version.')
+  
 # Monitoring
 
 @auth.cn_check_required
@@ -697,18 +697,18 @@ def monitor_object_get(request):
     - modified
     - format
   '''
-      
+
   # Set up query with requested sorting.
-  query = models.Object.objects.order_by('mtime')
-  
+  query = models.Object.objects.all()
+  #print query.aggregate(count=Count('id'))
   # Filter by last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'modified')
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'time')
   if changed == True:
     query_unsliced = query
 
   # Filter by format.
-  if 'objectformat' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format', request.GET['objectformat'])
+  if 'format' in request.GET:
+    query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
     query_unsliced = query
   
   monitor = []
@@ -716,12 +716,9 @@ def monitor_object_get(request):
   if 'day' in request.GET:
     query = query.extra({'day' : "date(mtime)"}).values('day').annotate(count=Count('id')).order_by()
     for row in query:
-      monitor.append(((str(row['day']), str(row['count']))))
+      monitor.append((str(row['day']), str(row['count'])))
   else:
-    cnt = 0
-    for row in query:
-      cnt += 1
-    monitor.append(('null', cnt))
+    monitor.append(('null', query.aggregate(count=Count('id'))['count']))
 
   response = HttpResponse()
   response.monitor = monitor
@@ -749,7 +746,7 @@ def monitor_log_get(request):
   query = models.Object.objects.order_by('mtime')
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'access_log__access_time', 'lastAccessed')
+  query, changed = util.add_range_operator_filter(query, request, 'access_log__access_time', 'time')
   if changed == True:
     query_unsliced = query
 
@@ -770,10 +767,7 @@ def monitor_log_get(request):
     for row in query:
       monitor.append(((str(row['day']), str(row['count']))))
   else:
-    cnt = 0
-    for row in query:
-      cnt += 1
-    monitor.append(('null', cnt))
+    monitor.append(('null', query.aggregate(count=Count('id'))['count']))
 
   response = HttpResponse()
   response.monitor = monitor

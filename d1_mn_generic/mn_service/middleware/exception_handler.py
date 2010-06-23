@@ -54,6 +54,7 @@ import d1common.exceptions
 
 # App.
 import mn_service.sys_log as sys_log
+import mn_service.util as util
 
 
 def generate_debug_info():
@@ -134,26 +135,27 @@ class exception_handler():
   def process_exception(self, request, exception):
     # Note: An exception within this function causes a generic 500 to be
     # returned.
+    tb = traceback_to_detail_code()
+
+    # Log the exception.
+    util.log_exception(tb)
 
     # If the exception is a DataONE exception, we serialize it out.
     if isinstance(exception, d1common.exceptions.DataONEException):
-      # Log the exception.
-      sys_log.error('DataONE Exception: {0}'.format(traceback_to_detail_code()))
       return HttpResponse(
         serialize_exception(
           request, exception
         ), status=exception.errorCode
       )
 
-    # If we get here, we got an unexpected exception.
-    # Log the exception.
-    sys_log.error('Non-DataONE Exception: {0}'.format(traceback_to_detail_code()))
-
+    # If we get here, we got an unexpected exception. Wrap it in a DataONE exception.
     return HttpResponse(
-      'Non-DataONE Exception: {0}'.format(
-        traceback_to_detail_code(
+      serialize_exception(
+        request, d1common.exceptions.ServiceFailure(
+          0, tb
         )
-      ), 500
+      ),
+      status=500
     )
 
     # When debugging from a web browser, we want to return None to get Django's

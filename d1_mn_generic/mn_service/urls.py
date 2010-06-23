@@ -28,6 +28,10 @@ urlpatterns = patterns(
   # /log/
   (r'^log$', 'access_log_view'),
 
+  # /health/
+  (r'^health/ping$', 'health_ping'),
+  (r'^health/status$', 'health_status'),
+
   # /monitor/
   (r'^monitor/object$', 'monitor_object'),
   (r'^monitor/log$', 'monitor_log'),

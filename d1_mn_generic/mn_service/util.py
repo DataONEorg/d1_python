@@ -172,19 +172,30 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
   changed = False
 
   # Last modified date filter.
-  for get in request.GET:
-    m = re.match('{0}(_(.+))?'.format(name), get)
+  for key in request.GET:
+    m = re.match('{0}(_(.+))?'.format(name), key)
     if not m:
       continue
     operator = m.group(2)
     if operator is None:
       operator = default
     if operator not in operator_translation:
-      raise_sys_log_http_404('Invalid argument: {0}'.format(get))
+      raise d1common.exceptions.InvalidRequest(0, 'Invalid argument: {0}'.format(key))
     try:
-      date = iso8601.parse_date(request.GET[get])
+      date_str = request.GET[key]
+      # parse_date() needs date-time, so if we only have date, add time
+      # (midnight).
+      if re.match(r'\d{4}-\d{2}-\d{2}$', date_str):
+        date_str += ' 00:00:00Z'
+      date = iso8601.parse_date(date_str)
     except TypeError, e:
-      raise_sys_log_http_404('Invalid date format: {0}'.format(request.GET[get]))
+      raise d1common.exceptions.InvalidRequest(
+        0, 'Invalid date format: {0} {1}'.format(
+          request.GET[key], str(
+            e
+          )
+        )
+      )
     filter_kwargs['{0}__{1}'.format(col_name, operator_translation[operator])] = date
     changed = True
 

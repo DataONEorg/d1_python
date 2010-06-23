@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`mk_fixtures`
 ==================
 
@@ -8,7 +8,7 @@
   Create fixtures used by unit tests.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 import sys
 import os

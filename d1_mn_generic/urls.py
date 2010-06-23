@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`urls`
 ===========
 
@@ -8,7 +8,7 @@
   Django URL to service mapping.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 from django.conf.urls.defaults import *
 
@@ -28,7 +28,7 @@ urlpatterns = patterns(
   (r'^admin/', include(admin.site.urls)),
 )
 
-#"""
+#'''
 #:mod:`Top level __init__.py`
 #==============
 #
@@ -38,7 +38,7 @@ urlpatterns = patterns(
 #  post mortem debugging.
 #
 #.. moduleauthor:: Roger Dahl
-#"""
+#'''
 
 #Stdlib.
 import logging

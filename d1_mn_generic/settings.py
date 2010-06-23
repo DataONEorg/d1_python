@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`settings`
 ===============
 
@@ -8,7 +8,7 @@
   App level settings.
 
 .. moduleauthor:: Roger Dahl
-"""
+'''
 
 # Stdlib.
 import os
