@@ -258,7 +258,7 @@ class DataOneClient(object):
     if len(identifier) == 0:
       self.logger.debug_("Invalid parameter(s)")
 
-    url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier))
+    url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
       headers = self.headers
@@ -274,7 +274,7 @@ class DataOneClient(object):
     if len(identifier) == 0:
       self.logger.debug_("Invalid parameter(s)")
 
-    url = urlparse.urljoin(self.getMetaUrl(), urllib.quote(identifier))
+    url = urlparse.urljoin(self.getMetaUrl(), urllib.quote(identifier, ''))
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
       headers = self.headers
@@ -310,6 +310,9 @@ class DataOneClient(object):
     :rtype: dictionary
     :returns:
     '''
+
+    # Sanity.
+
     params = {}
     if start < 0:
       raise exceptions.InvalidRequest(10002, "'start' must be a positive integer")
@@ -328,31 +331,28 @@ class DataOneClient(object):
     else:
       params['count'] = count
 
-    if not (startTime is None and endTime is None):
-      try:
-        if startTime is not None and endTime is None:
-          raise ValueError
-        elif endTime is not None and startTime is None:
-          raise ValueError
-        elif endTime is not None and startTime is not None and startTime >= endTime:
-          raise ValueError
-      except ValueError:
-        raise exceptions.InvalidRequest(
-          10002,
-          "startTime and endTime must be specified together, must be valid dates and endTime must be after startTime"
-        )
-      else:
-        params['startTime'] = startTime
-        params['endTime'] = endTime
+    if endTime is not None and startTime is not None and startTime >= endTime:
+      raise exceptions.InvalidRequest(10002, "startTime must be before endTime")
 
-    #url = self.getObjectListUrl() + '?pretty&' + urllib.urlencode(params)
-    url = "%s?%s" % (self.getObjectListUrl(), urllib.urlencode(params))
+    # Date range.
+
+    if startTime is not None:
+      params['startTime'] = startTime.isoformat()
+
+    if endTime is not None:
+      params['endTime'] = endTime.isoformat()
+
+    # Object format.
+    if objectFormat is not None:
+      params['objectFormat'] = objectFormat
+
+    # Generate URL.
+    url = "{0}?{1}".format(self.getObjectListUrl(), urllib.urlencode(params))
     self.logger.debug("%s: url=%s" % (__name__, url))
 
     if headers is None:
       headers = self.headers
-    #TODO: This is stupid. Conflict between requestFormat and headers is here
-    # because
+    #TODO: Conflict between requestFormat and headers?
     headers['Accept'] = requestFormat
 
     # Fetch.
@@ -360,7 +360,7 @@ class DataOneClient(object):
     response = self.client.GET(url, headers)
 
     # Deserialize.
-    #send the stream to the sax parser rather than laoding hte string
+    #send the stream to the sax parser rather than laoding the string
     #xml = response.read()
     if requestFormat == "text/xml":
       self.logger.debug("Deserializing XML")
@@ -437,7 +437,7 @@ class DataOneClient(object):
     files = []
     files.append(('object', 'object', object_bytes))
     files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
-    content_type, mime_doc = d1common.upload.encode_multipart_formdata([], files)
+    content_type, mime_doc = upload.encode_multipart_formdata([], files)
 
     # Send REST POST call to register object.
 
@@ -554,8 +554,21 @@ class DeserializeObjectListXML():
 
   # Objects.
 
-  def handleObjectChecksum(self, objectInfo, checksum):
-    objectInfo['checksum'] = self.getText(checksum.childNodes)
+  def handleObjectChecksum(self, objectInfo, checksumEl):
+    checksum = {}
+    self.handleObjectChecksumValue(checksum, checksumEl.getElementsByTagName("value")[0])
+    self.handleObjectChecksumAlgorithm(
+      checksum, checksumEl.getElementsByTagName(
+        "algorithm"
+      )[0]
+    )
+    objectInfo['checksum'] = checksum
+
+  def handleObjectChecksumValue(self, checksum, value):
+    checksum['value'] = self.getText(value.childNodes)
+
+  def handleObjectChecksumAlgorithm(self, checksum, algorithm):
+    checksum['algorithm'] = self.getText(algorithm.childNodes)
 
   def handleObjectDateSysMetadataModified(self, objectInfo, dateSysMetadataModified):
     objectInfo['dateSysMetadataModified'] = self.getText(
