@@ -36,8 +36,9 @@ urlpatterns = patterns(
   (r'^monitor/object$', 'monitor_object'),
   (r'^monitor/log$', 'monitor_log'),
 
-  # Diagnostic / Debugging.
-  #(r'^get_ip/$', 'auth_test'),
+  # Diagnostics, debugging and testing.
+  (r'^inject_log$', 'inject_log'),
+  (r'^get_ip/$', 'auth_test'),
 
   # Admin.
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),

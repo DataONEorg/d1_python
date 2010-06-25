@@ -35,23 +35,23 @@ class DB_update_status(models.Model):
 
 
 class Checksum_algorithm(models.Model):
-  checksum_algorithm = models.CharField(max_length=20, unique=True)
+  checksum_algorithm = models.CharField(max_length=20, unique=True, db_index=True)
 
 
 # Format = The format of the object.
 class Object_format(models.Model):
-  format = models.CharField(max_length=10, unique=True)
+  format = models.CharField(max_length=10, unique=True, db_index=True)
 
 
 class Object(models.Model):
-  guid = models.CharField(max_length=200, unique=True)
-  url = models.CharField(max_length=1000, unique=True)
-  format = models.ForeignKey(Object_format)
-  checksum = models.CharField(max_length=100)
-  checksum_algorithm = models.ForeignKey(Checksum_algorithm)
-  mtime = models.DateTimeField()
-  db_mtime = models.DateTimeField(auto_now=True)
-  size = models.PositiveIntegerField()
+  guid = models.CharField(max_length=200, unique=True, db_index=True)
+  url = models.CharField(max_length=1000, unique=True, db_index=True)
+  format = models.ForeignKey(Object_format, db_index=True)
+  checksum = models.CharField(max_length=100, db_index=True)
+  checksum_algorithm = models.ForeignKey(Checksum_algorithm, db_index=True)
+  mtime = models.DateTimeField(db_index=True)
+  db_mtime = models.DateTimeField(auto_now=True, db_index=True)
+  size = models.PositiveIntegerField(db_index=True)
 
   def set_format(self, format_string):
     try:
@@ -95,18 +95,18 @@ class Object(models.Model):
 
 
 class Access_log_operation_type(models.Model):
-  operation_type = models.CharField(max_length=100, unique=True)
+  operation_type = models.CharField(max_length=100, unique=True, db_index=True)
 
 
 class Access_log_requestor_identity(models.Model):
-  requestor_identity = models.CharField(max_length=100, unique=True)
+  requestor_identity = models.CharField(max_length=100, unique=True, db_index=True)
 
 
 class Access_log(models.Model):
   object = models.ForeignKey(Object, null=True)
-  operation_type = models.ForeignKey(Access_log_operation_type)
-  requestor_identity = models.ForeignKey(Access_log_requestor_identity)
-  access_time = models.DateTimeField(auto_now_add=True)
+  operation_type = models.ForeignKey(Access_log_operation_type, db_index=True)
+  requestor_identity = models.ForeignKey(Access_log_requestor_identity, db_index=True)
+  access_time = models.DateTimeField(auto_now_add=True, db_index=True)
 
   def set_operation_type(self, operation_type_string):
     try:

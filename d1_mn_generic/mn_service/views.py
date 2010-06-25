@@ -31,6 +31,7 @@
 '''
 
 # Stdlib.
+import csv
 import datetime
 import glob
 import hashlib
@@ -366,15 +367,14 @@ def object_guid_post(request, guid):
   Parameter names are not case sensitive.
   '''
   # Validate POST.
-  
   if len(request.FILES) != 2:
-    d1common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
+    raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
 
-  if request.FILES.keys()[0] != 'object':
-    d1common.exceptions.InvalidRequest(0, 'Name of first MIME part must be "object"')
+  if 'object' not in request.FILES.keys():
+    raise d1common.exceptions.InvalidRequest(0, 'Could not find MIME part named "object". Parts found: {0}'.format(', '.join(request.FILES.keys())))
     
-  if request.FILES.keys()[1] != 'systemmetadata':
-    d1common.exceptions.InvalidRequest(0, 'Name of second MIME part must be "systemmetadata"')
+  if 'systemmetadata' not in request.FILES.keys():
+    raise d1common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
 
   # Get object data. For the purposes of the GMN, the object is a URL.
   object_bytes = request.FILES['object'].read()
@@ -700,7 +700,7 @@ def monitor_object_get(request):
 
   # Set up query with requested sorting.
   query = models.Object.objects.all()
-  #print query.aggregate(count=Count('id'))
+
   # Filter by last modified date.
   query, changed = util.add_range_operator_filter(query, request, 'mtime', 'time')
   if changed == True:
@@ -774,7 +774,7 @@ def monitor_log_get(request):
   return response
 
 
-# Diagnostic / Debugging.
+# Diagnostics, debugging and testing.
 
 def get_ip(request):
   '''
@@ -785,3 +785,24 @@ def get_ip(request):
 
   # Only GET accepted.
   return HttpResponse(request.META['REMOTE_ADDR'])
+
+def inject_log(request):
+  '''Inject a fake log for testing.
+  
+  The corresponding test object set must have already been created.
+  '''
+  # Validate POST.
+  
+  if len(request.FILES) != 1:
+    raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
+
+  if 'csv' not in request.FILES.keys():
+    raise d1common.exceptions.InvalidRequest(0, 'Name of first MIME part must be "csv". Parts found: {0}'.format(', '.join(request.FILES.keys())))
+  
+  # Create log entries.
+  csv_reader = csv.reader(request.FILES['csv'])
+
+  for row in csv_reader:    
+    access_log.log(row[0], row[2], row[1], iso8601.parse_date(row[3]))
+
+  return HttpResponse('OK')

@@ -28,7 +28,7 @@ import sys_log
 import util
 
 
-def log(guid, operation_type, requestor_identity):
+def log(guid, operation_type, requestor_identity, dt=None):
   '''
   Log an object access.'''
 
@@ -49,3 +49,12 @@ def log(guid, operation_type, requestor_identity):
   access_log_row.set_operation_type(operation_type)
   access_log_row.set_requestor_identity(requestor_identity)
   access_log_row.save()
+
+  if dt is not None:
+    access_log_row.access_time = dt
+    access_log_row.save()
+
+  sys_log.info(
+    'Created log entry: guid({0}) operation_type({1}) requestor({2}) timestamp({3})'.format(
+      guid, operation_type, requestor_identity, dt)
+  )
