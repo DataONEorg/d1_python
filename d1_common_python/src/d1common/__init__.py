@@ -2,4 +2,6 @@
 '''
 
 __version__ = "0.1"
-__all__ = ['exceptions', ]
+__all__ = ['exceptions', 'upload', 'xmlrunner', ]
+
+MIMETYPES = {'xml': 'text/xml', 'json': 'application/json', 'csv': 'text/csv', }
