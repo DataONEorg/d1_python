@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!--
+  *    build.xml
+  *
+  *    Copyright: 
+  *
+-->
+<project name="api-common-python" default="usage" basedir=".">
+
+	<target name="report-pylint" depends="report-prepare">
+	 <exec dir="${src.python}" executable="${pylint.binary}" output="${report.pylint}">
+	  <env key="PYTHONPATH" path="${build.bin}:${build.bin}/lib/"/>
+	 <arg line="-f parseable -i y TVcom.py tvguicontroller.py tvweb.py tv.py settingsmanager.py --output-format=parseable --ignore-comments=y --min-similarity-lines=4 --disable-msg=R0903 --disable-msg=C0301"/>
+	</exec>
+	</target>
+
+	<target name="report-prepare">
+	</target>
+	
+  <target name="usage" depends="init">
+    <exec executable="ant" dir="." vmlauncher="false">
+      <arg line=" -projecthelp"/>
+    </exec>
+  </target>
+
+  <target name="config">
+    <property name="installdir" value="dist" />
+    <property name="debuglevel" value="100"/>
+    <!-- set the test that you want to run here -->
+    <property name="testtorun" value="MonarchUtilTest.java"/>
+  </target>
+
+  <target name="init" depends="config">
+      <property name="name" value="utilities"/>
+      <property name="Name" value="Utilities"/>
+      <property name="release" value="0.0.0"/>
+
+      <filter token="release" value="${release}"/>
+
+      <property name="srcdir" value="src/java" />
+      <property name="libdir" value="lib" />
+      <property name="testdir" value="tests/java" />
+
+      <property name="build.dir" value="./build"/>
+      <property name="build.src" value="${build.dir}/src"/>
+      <property name="build.dest" value="${build.dir}/classes"/>
+      <property name="build.docs" value="${build.dir}/docs"/>
+      <property name="build.samples" value="${build.dir}/samples"/>
+      <property name="build.tests" value="${build.dir}/tests"/>
+      <property name="build.data" value="${build.dir}/data"/>
+      <property name="build.lib" value="${build.dir}/lib"/>
+      <property name="build.javadocs" value="${build.dir}/docs/api"/>
+
+      <property name="package.home" value="edu/ucsb/nceas" />
+
+      <property name="dist.dir" value="dist"/>
+      <property name="ver.dir" value="${dist.dir}/${name}-${release}"/>
+      <property name="ver.src" value="${ver.dir}/src"/>
+
+      <filter token="debuglevel" value="${debuglevel}"/>
+      <filter token="installdir" value="${installdir}"/>
+      <filter token="name" value="${name}"/>
+
+      <!-- classpath jar files (including relative path from basedir) -->
+      <property name="xmlapijar" value="${libdir}/xml-apis.jar" />
+      <property name="xalanjar"  value="${libdir}/xalan.jar" />
+<!--
+      <property name="extresjar" value="${libdir}/ExternalResources.jar" />
+-->
+      <property name="xercesjar" value="${libdir}/xercesImpl.jar" />
+      <property name="log4jjar"  value="${libdir}/log4j-1.2.8.jar" />
+      <property name="httpjar"  value="${libdir}/httpclient.jar" />
+      <!-- CLASSPATH -->
+      <property name="cpath"          
+        value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}" />
+                
+      <echo message="classpath is:   ${cpath}"/>
+ 
+    </target>
+
+</project>
