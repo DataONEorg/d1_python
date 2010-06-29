@@ -2,7 +2,7 @@ import sys
 import unittest
 import logging
 
-import pyxb.exceptions_
+import pyxb
 from d1common import xmlrunner
 from d1common.types import systemmetadata
 
@@ -122,12 +122,24 @@ class TestSystemMetdata(unittest.TestCase):
     self.assertTrue(isinstance(e, AttributeError))
 
   def testValidateSystemMetadata(self):
+    #Try loading a bad document with validation turned on.
+    #Should fail with an "UnrecognizedContentError"
     try:
       sysm = systemmetadata.CreateFromDocument(EG_BAD_SYSMETA)
-      self.assertFalse(res)
+      self.assertFalse(sysm)
     except Exception, e:
       logging.debug(repr(e))
-      self.assertTrue(isinstance(e, pyxb.exceptions_.UnrecognizedContentError))
+      self.assertTrue(isinstance(e, pyxb.UnrecognizedContentError))
+    #Turning off validation should not raise an exception
+    pyxb.RequireValidWhenParsing(False)
+    try:
+      sysm = systemmetadata.CreateFromDocument(EG_BAD_SYSMETA)
+      self.assertTrue(True)
+    except Exception, e:
+      logging.debug(repr(e))
+      self.assertFalse(isinstance(e, pyxb.UnrecognizedContentError))
+    #Turn validation back on and check for error
+    pyxb.RequireValidWhenParsing(True)
     sysm = systemmetadata.CreateFromDocument(EG_SYSMETA)
 
 
