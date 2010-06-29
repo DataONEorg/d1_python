@@ -4,7 +4,7 @@ Implements serializaton and de-serialization for the ObjectList.
 
 import d1common
 
-from d1common.generated import objectlist
+from d1common.types import objectlist
 
 #===============================================================================
 
