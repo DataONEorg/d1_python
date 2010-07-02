@@ -56,6 +56,10 @@ except ImportError, e:
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
 
+#objectList = d1common.types.generated.objectlist.pyxb.binding.basis.element(d1common.types.generated.objectlist.pyxb.namespace.ExpandedName(d1common.types.generated.objectlist.Namespace, u'objectList'), d1common.types.generated.objectlist.ObjectList)
+#d1common.types.generated.objectlist.Namespace.addCategoryObject('elementBinding', objectList.name().localName(), objectList)
+# -> pyxb.exceptions_.NamespaceUniquenessError: http://dataone.org/service/types/ObjectList/0.1: name objectList used for multiple values in elementBinding
+
 
 def CreateFromDocument(doc, content_type='application/json'):
   if content_type == 'text/xml':
@@ -112,6 +116,20 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
     # Deserialize object
     return self.serialize_map[content_type](pretty, jsonvar), content_type
 
+  #<?xml version="1.0" encoding="UTF-8"?>
+  #<p:objectList count="0" start="0" total="0"
+  #  xmlns:p="http://dataone.org/service/types/ObjectList/0.1"
+  #  xmlns:p1="http://dataone.org/service/types/common/0.1"
+  #  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  #  xsi:schemaLocation="http://dataone.org/service/types/ObjectList/0.1 objectlist.xsd ">
+  #  <objectInfo>
+  #    <identifier>identifier</identifier>
+  #    <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+  #    <checksum algorithm="SHA-1">checksum</checksum>
+  #    <dateSysMetadataModified>2001-12-31T12:00:00</dateSysMetadataModified>
+  #    <size>0</size>
+  #  </objectInfo>
+  #</p:objectList>
   def serializeXML(self, pretty=False, jsonvar=False):
     return self.toxml()
 
@@ -134,7 +152,6 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   def serializeJSON(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to JSON.
     '''
-
     obj = {}
     obj['objectInfo'] = []
 
@@ -271,9 +288,6 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
     raise d1common.exceptions.NotImplemented(0, 'deserializeRDFXML not implemented.')
 
   def deserializeJSON(self, doc):
-    # Clear ObjectList.
-    self = ObjectList()
-
     j = json.loads(doc)
 
     self.start = j['start']
@@ -310,9 +324,6 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
     )
-
-    # Clear ObjectList.
-    self = ObjectList()
 
     for csv_line in csv_reader:
       # Get start, count and total from first comment.
