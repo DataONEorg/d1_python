@@ -37,6 +37,13 @@ except ImportError, e:
   )
   raise
 
+try:
+  import mimeparser
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('mimeparser.py is included in mn_service\n')
+  raise
+
 # MN API.
 import d1common
 import d1common.exceptions
@@ -49,11 +56,32 @@ except ImportError, e:
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
 
+
+def CreateFromDocument(doc, content_type='application/json'):
+  if content_type == 'text/xml':
+    res = d1common.types.generated.objectlist.CreateFromDocument(doc)
+    res.__class__ = ObjectList().__class__
+    return res
+
+  objectList = ObjectList()
+
+  deserialize_map = {
+    'application/json': objectList.deserializeJSON,
+    'text/csv': objectList.deserializeCSV,
+    'application/rdf+xml': objectList.deserializeRDFXML,
+    'text/html': objectList.deserializeNULL, #TODO: Not in current REST spec.
+    'text/log': objectList.deserializeNULL, #TODO: Not in current REST spec.
+  }
+
+  deserialize_map[content_type](doc)
+
+  return objectList
+
 #===============================================================================
 
 
-class ObjectListSerialization(object):
-  def __init__(self):
+class ObjectList(d1common.types.generated.objectlist.ObjectList):
+  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
     self.serialize_map = {
       'application/json': self.serializeJSON,
       'text/csv': self.serializeCSV,
@@ -61,15 +89,6 @@ class ObjectListSerialization(object):
       'application/rdf+xml': self.serializeRDFXML,
       'text/html': self.serializeNULL, #TODO: Not in current REST spec.
       'text/log': self.serializeNULL, #TODO: Not in current REST spec.
-    }
-
-    self.deserialize_map = {
-      'application/json': self.deserializeJSON,
-      'text/csv': self.deserializeCSV,
-      'text/xml': self.deserializeXML,
-      'application/rdf+xml': self.deserializeRDFXML,
-      'text/html': self.deserializeNULL, #TODO: Not in current REST spec.
-      'text/log': self.deserializeNULL, #TODO: Not in current REST spec.
     }
 
     self.pri = [
@@ -81,50 +100,20 @@ class ObjectListSerialization(object):
       'text/log',
     ]
 
-    self.objectlist = d1common.types.generated.objectlist.ObjectList()
-
-  def serialize(self, doc, destfile, accept="application/json"):
-    # The "pretty" parameter generates pretty response.
-    pretty = 'pretty' in request.GET
-
-    # For JSON, we support giving a variable name.
-    if 'jsonvar' in request.GET:
-      jsonvar = request.GET['jsonvar']
-    else:
-      jsonvar = False
-
-  # Determine which serializer to use. If client does not supply accept, we
-  # default to JSON.
+    # Determine which serializer to use. If client does not supply accept, we
+    # default to JSON.
     try:
-      content_type = mimeparser.best_match(pri, accept)
+      content_type = mimeparser.best_match(self.pri, accept)
     except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError. In
-      # that case, we also default to JSON.
+      # An invalid Accept header causes mimeparser to throw a ValueError.
       sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
-      content_type = 'application/json'
+      content_type = accept
 
-      # Serialize object.
-    return map[content_type](doc, pretty, jsonvar)
-
-  #<?xml version="1.0" encoding="UTF-8"?>
-  #<p:objectList count="0" start="0" total="0"
-  #  xmlns:p="http://dataone.org/service/types/ObjectList/0.1"
-  #  xmlns:p1="http://dataone.org/service/types/common/0.1"
-  #  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  #  xsi:schemaLocation="http://dataone.org/service/types/ObjectList/0.1 objectlist.xsd ">
-  #  <objectInfo>
-  #    <identifier>identifier</identifier>
-  #    <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
-  #    <checksum algorithm="SHA-1">checksum</checksum>
-  #    <dateSysMetadataModified>2001-12-31T12:00:00</dateSysMetadataModified>
-  #    <size>0</size>
-  #  </objectInfo>
-  #</p:objectList>
+    # Deserialize object
+    return self.serialize_map[content_type](pretty, jsonvar), content_type
 
   def serializeXML(self, pretty=False, jsonvar=False):
-    '''Serialize object to XML.
-    '''
-    return self.objectlist.toxml()
+    return self.toxml()
 
   #{
   #  'start': <integer>,
@@ -143,14 +132,13 @@ class ObjectListSerialization(object):
   #  ]
   #}
   def serializeJSON(self, pretty=False, jsonvar=False):
-    '''
-    Serialize object to JSON.
+    '''Serialize ObjectList to JSON.
     '''
 
     obj = {}
     obj['objectInfo'] = []
 
-    for o in self.objectlist.objectInfo:
+    for o in self.objectInfo:
       objectInfo = {}
       objectInfo['identifier'] = o.identifier
       objectInfo['objectFormat'] = o.objectFormat
@@ -164,9 +152,9 @@ class ObjectListSerialization(object):
       # Append object to response.
       obj['objectInfo'].append(objectInfo)
 
-    obj['start'] = self.objectlist.start
-    obj['count'] = self.objectlist.count
-    obj['total'] = self.objectlist.total
+    obj['start'] = self.start
+    obj['count'] = self.count
+    obj['total'] = self.total
 
     if pretty:
       if jsonvar is not False:
@@ -182,24 +170,20 @@ class ObjectListSerialization(object):
   # #<start>,<count>,<total>
   # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
   def serializeCSV(self, pretty=False, jsonvar=False):
-    '''Serialize object to CSV.
+    '''Serialize ObjectList to JSON.
     '''
 
     io = StringIO.StringIO()
 
     # Comment containing start, count and total.
-    io.write(
-      '#{0},{1},{2}\n'.format(
-        self.objectlist.start, self.objectlist.count, self.objectlist.total
-      )
-    )
+    io.write('#{0},{1},{2}\n'.format(self.start, self.count, self.total))
 
     csv_writer = csv.writer(
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
     )
 
-    for o in self.objectlist.objectInfo:
+    for o in self.objectInfo:
       csv_line = []
 
       csv_line.append(o.identifier)
@@ -235,8 +219,7 @@ class ObjectListSerialization(object):
   #  </rdf:Description>
   #</rdf:RDF>
   def serializeRDFXML(self, pretty=False, jsonvar=False):
-    '''
-    Serialize object to RDF XML.
+    '''Serialize ObjectList to RDFXML.
     '''
 
     # Set up namespaces for the XML response.
@@ -253,7 +236,7 @@ class ObjectListSerialization(object):
     description = etree.SubElement(xml, RDF + 'Description')
     description.set(RDF + 'about', 'http://mn1.dataone.org/object/_identifier_')
 
-    for o in self.objectlist.objectInfo:
+    for o in self.objectInfo:
       objectInfo = etree.SubElement(description, u'objectInfo')
 
       ele = etree.SubElement(objectInfo, u'identifier')
@@ -284,35 +267,18 @@ class ObjectListSerialization(object):
 
     #===============================================================================
 
-  def deserialize(self, doc, accept="application/json"):
-    # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
-    try:
-      content_type = mimeparser.best_match(pri, accept)
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError. In
-      # that case, we also default to JSON.
-      sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
-      content_type = 'application/json'
-
-    # Deserialize object
-    return map[content_type](doc, pretty, jsonvar)
-
-  def deserializeXML(self, doc):
-    self.objectlist = d1common.types.generated.objectlist.CreateFromDocument(doc)
-
   def deserializeRDFXML(self, doc):
     raise d1common.exceptions.NotImplemented(0, 'deserializeRDFXML not implemented.')
 
   def deserializeJSON(self, doc):
     # Clear ObjectList.
-    self.objectlist = d1common.types.generated.objectlist.ObjectList()
+    self = ObjectList()
 
     j = json.loads(doc)
 
-    self.objectlist.start = j['start']
-    self.objectlist.count = j['count']
-    self.objectlist.total = j['total']
+    self.start = j['start']
+    self.count = j['count']
+    self.total = j['total']
 
     objectInfos = []
 
@@ -330,7 +296,7 @@ class ObjectListSerialization(object):
 
       objectInfos.append(objectInfo)
 
-    self.objectlist.objectInfo = objectInfos
+    self.objectInfo = objectInfos
 
   # #<start>,<count>,<total>
   # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
@@ -346,14 +312,14 @@ class ObjectListSerialization(object):
     )
 
     # Clear ObjectList.
-    self.objectlist = d1common.types.generated.objectlist.ObjectList()
+    self = ObjectList()
 
     for csv_line in csv_reader:
       # Get start, count and total from first comment.
       if csv_line[0][0] == '#':
-        self.objectlist.start = csv_line[0][1:]
-        self.objectlist.count = csv_line[1]
-        self.objectlist.total = csv_line[2]
+        self.start = csv_line[0][1:]
+        self.count = csv_line[1]
+        self.total = csv_line[2]
         continue
 
       objectInfos = []
@@ -368,7 +334,7 @@ class ObjectListSerialization(object):
 
       objectInfos.append(objectInfo)
 
-    self.objectlist.objectInfo = objectInfos
+    self.objectInfo = objectInfos
 
   def deserializeNULL(self, doc):
     raise d1common.exceptions.NotImplemented(
