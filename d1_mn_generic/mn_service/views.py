@@ -213,32 +213,10 @@ def object_collection_get(request):
   # Create a slice of a query based on request start and count parameters.
   query, start, count = util.add_slice_filter(query, request)
   
-  obj = {}
-  obj['objectInfo'] = []
-    
-  for row in query:
-    data = {}
-    data['identifier'] = row.guid
-    data['format'] = row.format.format
-    data['checksum'] = {'algorithm': row.checksum_algorithm.checksum_algorithm, 'value': row.checksum}
-    # Get modified date in an ISO 8601 string.
-    data['dateSysMetadataModified'] = datetime.datetime.isoformat(row.mtime)
-    data['size'] = row.size
-
-    # Append object to response.
-    obj['objectInfo'].append(data)
-
-  obj['start'] = start
-  obj['count'] = query.count()
-  obj['total'] = query_unsliced.count()
-
-  response = HttpResponse()
-  response.obj = obj
-  return response
+  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count() }
 
 def object_collection_head(request):
-  '''
-  Placeholder.
+  '''Placeholder.
   '''
 
   # Not implemented. Target: 0.9.
@@ -743,7 +721,7 @@ def monitor_log_get(request):
   '''
   
   # Set up query with requested sorting.
-  query = models.Object.objects.order_by('mtime')
+  query = models.Access_log.objects.order_by('mtime')
 
   # Filter by last accessed date.
   query, changed = util.add_range_operator_filter(query, request, 'access_log__access_time', 'time')
@@ -763,7 +741,7 @@ def monitor_log_get(request):
   monitor = []
 
   if 'day' in request.GET:
-    query = query.extra({'day' : "date(mtime)"}).values('day').annotate(count=Count('id')).order_by()
+    query = query.extra({'day' : "date(access_time)"}).values('day').annotate(count=Count('id')).order_by()
     for row in query:
       monitor.append(((str(row['day']), str(row['count']))))
   else:

@@ -54,6 +54,7 @@ except ImportError, e:
 
 # MN API.
 import d1common.exceptions
+import d1pythonitk.const
 
 # App.
 import access_log
@@ -265,15 +266,15 @@ def add_slice_filter(query, request):
   # 0 = No objects
   try:
     count = int(request.GET['count'])
-    # Enforce max count of 1000.
-    if count > 1000:
+    # Enforce max count.
+    if count > d1pythonitk.const.MAX_LISTOBJECTS:
       raise ValueError
   except KeyError:
-    count = None
+    count = d1pythonitk.const.MAX_LISTOBJECTS
   except ValueError:
     raise d1common.exceptions.InvalidRequest(
-      0, 'Invalid count value: {0} (count must be 0 <= count >= 1000'.format(
-        request.GET['count']
+      0, 'Invalid count value: {0} (count must be 0 <= count >= {1}'.format(
+        request.GET['count'], d1pythonitk.const.MAX_LISTOBJECTS
       )
     )
 
