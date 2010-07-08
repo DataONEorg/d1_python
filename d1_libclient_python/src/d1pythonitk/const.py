@@ -58,6 +58,10 @@ URL_ACCESS_LOG_PATH = 'log'
 SYSTEM_METADATA_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
                              "trunk/schemas/systemmetadata.xsd"
 
+# Path to the DataONE ObjectList
+OBJECTLIST_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
+                             "trunk/schemas/objectlist.xsd"
+
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]
 

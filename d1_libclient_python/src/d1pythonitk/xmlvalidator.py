@@ -19,10 +19,11 @@ from d1pythonitk.client import RESTClient
 
 
 class SchemaResolver(etree.Resolver):
-  xsd_cache = {}
   '''Custom resolver that supports network retrieval of the schema and its 
   imported pieces.
   '''
+
+  xsd_cache = {}
 
   def resolve(self, url, id, context):
     '''Implements lxml Resolver.resolve
