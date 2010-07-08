@@ -39,12 +39,7 @@ import sys
 import traceback
 
 # 3rd party.
-try:
-  import mimeparser
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('mimeparser.py is included in mn_service\n')
-  raise
+import d1common.ext.mimeparser
 
 # Django.
 from django.http import HttpResponse
@@ -121,7 +116,7 @@ def serialize_exception(request, exception):
     sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
   else:
     try:
-      content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+      content_type = d1common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also default to JSON.

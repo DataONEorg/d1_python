@@ -37,12 +37,7 @@ except ImportError, e:
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-try:
-  import mimeparser
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('mimeparser.py is included in mn_service\n')
-  raise
+import d1common.ext.mimeparser
 
 # Django.
 #from django.utils.html import escape
@@ -236,7 +231,7 @@ def monitor_serialize_object(request, response, monitor):
     sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
   else:
     try:
-      content_type = mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+      content_type = d1common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also default to JSON.
