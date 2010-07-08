@@ -38,6 +38,14 @@ try:
 except:
   import json
 
+# 3rd party.
+try:
+  import d1common.types.objectlist_serialization
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: sudo easy_install pyxb\n')
+  raise
+
 # DataONE.
 from d1common import exceptions
 from d1pythonitk import const
@@ -360,17 +368,22 @@ class DataOneClient(object):
     response = self.client.GET(url, headers)
 
     # Deserialize.
-    #send the stream to the sax parser rather than laoding the string
+    #send the stream to the sax parser rather than loading the string
     #xml = response.read()
-    if requestFormat == "text/xml":
-      self.logger.debug("Deserializing XML")
-      return DeserializeObjectListXML(self.logger, response).get()
-    if requestFormat == "application/json":
-      self.logger.debug("Deserializing JSON")
-      res = response.read()
-      return json.loads(res)
-    self.logger.debug("returning raw response")
-    return response.read()
+    #if requestFormat == "text/xml":
+    #  self.logger.debug("Deserializing XML")
+    #  return DeserializeObjectListXML(self.logger, response).get()
+    #if requestFormat == "application/json":
+    #  self.logger.debug("Deserializing JSON")
+    #  res = response.read()
+    #  return json.loads(res)
+    #self.logger.debug("returning raw response")
+
+    xml_doc = response.read()
+    object_list = d1common.types.objectlist_serialization.ObjectList()
+    object_list.deserialize(xml_doc, 'text/xml')
+
+    return object_list
 
   def getLogRecords(
     self,
@@ -425,7 +438,6 @@ class DataOneClient(object):
     response = self.client.GET(url, headers)
 
     # Deserialize.
-    #xml = response.read()
     return DeserializeLogRecords(self.logger, response).get()
 
   def create(self, identifier, object_bytes, sysmeta_bytes):
@@ -484,108 +496,129 @@ class DataOneClient(object):
     #</d1:response>
 
 
-class DeserializeObjectListXML():
-  '''Deserializes XML form of an ObjectList.
-  '''
-
-  def __init__(self, logger, d):
-    '''
-    :param logger:
-    :param d: unicode, string, or file object open for reading
-    '''
-    self.r = {'objectInfo': []}
-    self.logger = logger
-    self.d = d
-
-  def get(self):
-    try:
-      if isinstance(self.d, basestring):
-        dom = xml.dom.minidom.parseString(self.d)
-      else:
-        dom = xml.dom.minidom.parse(self.d)
-      self.handleObjectList(dom)
-      return self.r
-    except (TypeError, AttributeError, ValueError):
-      self.logger.error_("Could not deserialize XML result")
-      raise
-
-  def getText(self, nodelist):
-    rc = []
-    for node in nodelist:
-      if node.nodeType == node.TEXT_NODE:
-        rc.append(node.data)
-    return ''.join(rc)
-
-  def handleObjectList(self, dom):
-    # start, count and total
-    self.handleObjectStart(dom.getElementsByTagName("start")[0])
-    self.handleObjectCount(dom.getElementsByTagName("count")[0])
-    self.handleObjectTotal(dom.getElementsByTagName("total")[0])
-    objects = dom.getElementsByTagName("objectInfo")
-    self.handleObjects(objects)
-
-  def handleObjects(self, objects):
-    for object in objects:
-      self.handleObject(object)
-
-  def handleObject(self, object):
-    objectInfo = {}
-    self.handleObjectChecksum(objectInfo, object.getElementsByTagName("checksum")[0])
-    self.handleObjectDateSysMetadataModified(
-      objectInfo, object.getElementsByTagName(
-        "dateSysMetadataModified"
-      )[0]
-    )
-    self.handleObjectFormat(objectInfo, object.getElementsByTagName("format")[0])
-    self.handleObjectIdentifier(objectInfo, object.getElementsByTagName("identifier")[0])
-    self.handleObjectSize(objectInfo, object.getElementsByTagName("size")[0])
-    self.r['objectInfo'].append(objectInfo)
-
-    # Header.
-
-  def handleObjectStart(self, title):
-    self.r['start'] = int(self.getText(title.childNodes))
-
-  def handleObjectCount(self, title):
-    self.r['count'] = int(self.getText(title.childNodes))
-
-  def handleObjectTotal(self, title):
-    self.r['total'] = int(self.getText(title.childNodes))
-
-  # Objects.
-
-  def handleObjectChecksum(self, objectInfo, checksumEl):
-    checksum = {}
-    self.handleObjectChecksumValue(checksum, checksumEl.getElementsByTagName("value")[0])
-    self.handleObjectChecksumAlgorithm(
-      checksum, checksumEl.getElementsByTagName(
-        "algorithm"
-      )[0]
-    )
-    objectInfo['checksum'] = checksum
-
-  def handleObjectChecksumValue(self, checksum, value):
-    checksum['value'] = self.getText(value.childNodes)
-
-  def handleObjectChecksumAlgorithm(self, checksum, algorithm):
-    checksum['algorithm'] = self.getText(algorithm.childNodes)
-
-  def handleObjectDateSysMetadataModified(self, objectInfo, dateSysMetadataModified):
-    objectInfo['dateSysMetadataModified'] = self.getText(
-      dateSysMetadataModified.childNodes
-    )
-
-  def handleObjectFormat(self, objectInfo, format):
-    objectInfo['format'] = self.getText(format.childNodes)
-
-  def handleObjectIdentifier(self, objectInfo, identifier):
-    objectInfo['identifier'] = self.getText(identifier.childNodes)
-
-  def handleObjectSize(self, objectInfo, size):
-    objectInfo['size'] = int(self.getText(size.childNodes))
-
-
-#===============================================================================
+    #class DeserializeObjectListXML():
+    #  '''Deserializes XML form of an ObjectList.
+    #  '''
+    #  def __init__(self, logger, d):
+    #    '''
+    #    :param logger:
+    #    :param d: unicode, string, or file object open for reading
+    #    '''
+    #    self.r = {'objectInfo':[]}
+    #    self.logger = logger
+    #    self.d=d
+    #
+    #  def get(self):
+    #    try:
+    #      return d1common.types.generated.objectlist.CreateFromDocument(self.d.read())
+    #    except d1common.types.generated.objectlist.pyxb.PyXBException:
+    #      self.logger.error_("Could not deserialize XML result")
+    #      raise
+    #      
+    #    #try:
+    #    #  if isinstance(self.d, basestring):
+    #    #    dom = xml.dom.minidom.parseString(self.d)
+    #    #  else:
+    #    #    dom = xml.dom.minidom.parse(self.d)
+    #    #  self.handleObjectList(dom)
+    #    #  return self.r
+    #    #except (TypeError, AttributeError, ValueError):
+    #    #  self.logger.error_("Could not deserialize XML result")
+    #    #  raise
+    #  
+    #  
+    #class DeserializeObjectListXML0():
+    #  '''Deserializes XML form of an ObjectList.
+    #  '''
+    #  
+    #  def __init__(self, logger, d):
+    #    '''
+    #    :param logger:
+    #    :param d: unicode, string, or file object open for reading
+    #    '''
+    #    self.r = {'objectInfo':[]}
+    #    self.logger = logger
+    #    self.d=d
+    #
+    #  def get(self):
+    #    try:
+    #      if isinstance(self.d, basestring):
+    #        dom = xml.dom.minidom.parseString(self.d)
+    #      else:
+    #        dom = xml.dom.minidom.parse(self.d)
+    #      self.handleObjectList(dom)
+    #      return self.r
+    #    except (TypeError, AttributeError, ValueError):
+    #      self.logger.error_("Could not deserialize XML result")
+    #      raise
+    #    
+    #  def getText(self, nodelist):
+    #    rc = []
+    #    for node in nodelist:
+    #      if node.nodeType == node.TEXT_NODE:
+    #        rc.append(node.data)
+    #    return ''.join(rc)
+    #  
+    #  def handleObjectList(self, dom):
+    #    # start, count and total
+    #    self.handleObjectStart(dom.getElementsByTagName("start")[0])
+    #    self.handleObjectCount(dom.getElementsByTagName("count")[0])
+    #    self.handleObjectTotal(dom.getElementsByTagName("total")[0])
+    #    objects = dom.getElementsByTagName("objectInfo")
+    #    self.handleObjects(objects)
+    #  
+    #  def handleObjects(self, objects):
+    #    for object in objects:
+    #      self.handleObject(object)
+    #  
+    #  def handleObject(self, object):
+    #    objectInfo = {}
+    #    self.handleObjectChecksum(objectInfo, object.getElementsByTagName("checksum")[0])
+    #    self.handleObjectDateSysMetadataModified(objectInfo, object.getElementsByTagName("dateSysMetadataModified")[0])
+    #    self.handleObjectFormat(objectInfo, object.getElementsByTagName("format")[0])
+    #    self.handleObjectIdentifier(objectInfo, object.getElementsByTagName("identifier")[0])
+    #    self.handleObjectSize(objectInfo, object.getElementsByTagName("size")[0])
+    #    self.r['objectInfo'].append(objectInfo)
+    #    
+    #  # Header.
+    #  
+    #  def handleObjectStart(self, title):
+    #    self.r['start'] = int(self.getText(title.childNodes))
+    #  
+    #  def handleObjectCount(self, title):
+    #    self.r['count'] = int(self.getText(title.childNodes))
+    #
+    #  def handleObjectTotal(self, title):
+    #    self.r['total'] = int(self.getText(title.childNodes))
+    #
+    #  # Objects.
+    #
+    #  def handleObjectChecksum(self, objectInfo, checksumEl):
+    #    checksum = {}
+    #    self.handleObjectChecksumValue(checksum, checksumEl.getElementsByTagName("value")[0])
+    #    self.handleObjectChecksumAlgorithm(checksum, checksumEl.getElementsByTagName("algorithm")[0])
+    #    objectInfo['checksum'] = checksum
+    #
+    #  def handleObjectChecksumValue(self, checksum, value):
+    #    checksum['value'] = self.getText(value.childNodes)
+    #    
+    #  def handleObjectChecksumAlgorithm(self, checksum, algorithm):
+    #    checksum['algorithm'] = self.getText(algorithm.childNodes)
+    #
+    #  def handleObjectDateSysMetadataModified(self, objectInfo, dateSysMetadataModified):
+    #    objectInfo['dateSysMetadataModified'] = self.getText(dateSysMetadataModified.childNodes)
+    #
+    #  def handleObjectFormat(self, objectInfo, format):
+    #    objectInfo['format'] = self.getText(format.childNodes)
+    #
+    #  def handleObjectIdentifier(self, objectInfo, identifier):
+    #    objectInfo['identifier'] = self.getText(identifier.childNodes)
+    #
+    #  def handleObjectSize(self, objectInfo, size):
+    #    objectInfo['size'] = int(self.getText(size.childNodes))
+    #
+    #
+    ##===============================================================================
 class DeserializeLogRecords():
   '''Deserialize log records from XML format.
   '''
