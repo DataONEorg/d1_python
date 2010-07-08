@@ -738,18 +738,13 @@ def monitor_log_get(request):
     query = util.add_wildcard_filter(query, 'access_log__operation_type__operation_type', request.GET['operationtype'])
     query_unsliced = query
   
-  monitor = []
-
   if 'day' in request.GET:
     query = query.extra({'day' : "date(access_time)"}).values('day').annotate(count=Count('id')).order_by()
-    for row in query:
-      monitor.append(((str(row['day']), str(row['count']))))
-  else:
-    monitor.append(('null', query.aggregate(count=Count('id'))['count']))
 
-  response = HttpResponse()
-  response.monitor = monitor
-  return response
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)
+  
+  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count() }
 
 
 # Diagnostics, debugging and testing.

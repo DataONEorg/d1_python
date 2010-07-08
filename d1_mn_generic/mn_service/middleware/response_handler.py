@@ -69,13 +69,10 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
   def deserializeDB(self, view_result):
     '''
     '''
-    self.objectlist.start = view_result['start']
-    self.objectlist.count = view_result['count']
-    self.objectlist.total = view_result['total']
-
     objectInfos = []
 
     for row in view_result['query']:
+      print row
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
 
       objectInfo.identifier = row.guid
@@ -87,7 +84,11 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
 
       objectInfos.append(objectInfo)
 
-    self.objectlist.objectInfo = objectInfos
+    self.object_list.start = view_result['start']
+    self.object_list.count = len(objectInfos)
+    self.object_list.total = view_result['total']
+
+    self.object_list.objectInfo = objectInfos
 
 
 def serialize_object(request, view_result):
@@ -104,7 +105,13 @@ def serialize_object(request, view_result):
   response = HttpResponse()
   object_list = ObjectList()
   object_list.deserializeDB(view_result)
-  doc, content_type = object_list.serialize(request.META['HTTP_ACCEPT'], pretty, jsonvar)
+
+  if 'HTTP_ACCEPT' in request.META:
+    accept = request.META['HTTP_ACCEPT']
+  else:
+    accept = None
+
+  doc, content_type = object_list.serialize(accept, pretty, jsonvar)
   response.write(doc)
 
   # Set headers.
@@ -113,6 +120,14 @@ def serialize_object(request, view_result):
   return response
 
 # Monitoring.
+
+#else:
+#  for row in query:
+#    monitor.append(((str(row['day']), str(row['count']))))
+#  monitor.append(('null', query.aggregate(count=Count('id'))['count']))
+#
+#response.monitor = monitor
+#return response
 
 
 #{
