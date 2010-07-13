@@ -55,21 +55,21 @@ except ImportError, e:
 class ObjectList(d1common.types.generated.objectlist.ObjectList):
   def __init__(self):
     self.serialize_map = {
-      'application/json': self.serializeJSON,
-      'text/csv': self.serializeCSV,
-      'text/xml': self.serializeXML,
-      'application/rdf+xml': self.serializeRDFXML,
-      #'text/html': self.serializeNULL, #TODO: Not in current REST spec.
-      #'text/log': self.serializeNULL, #TODO: Not in current REST spec.
+      'application/json': self.serialize_json,
+      'text/csv': self.serialize_csv,
+      'text/xml': self.serialize_xml,
+      'application/rdf+xml': self.serialize_rdf_xml,
+      #'text/html': self.serialize_null, #TODO: Not in current REST spec.
+      #'text/log': self.serialize_null, #TODO: Not in current REST spec.
     }
 
     self.deserialize_map = {
-      'application/json': self.deserializeJSON,
-      'text/csv': self.deserializeCSV,
-      'text/xml': self.deserializeXML,
-      'application/rdf+xml': self.deserializeRDFXML,
-      #'text/html': self.deserializeNULL, #TODO: Not in current REST spec.
-      #'text/log': self.deserializeNULL, #TODO: Not in current REST spec.
+      'application/json': self.deserialize_json,
+      'text/csv': self.deserialize_csv,
+      'text/xml': self.deserialize_xml,
+      'application/rdf+xml': self.deserialize_rdf_xml,
+      #'text/html': self.deserialize_null, #TODO: Not in current REST spec.
+      #'text/log': self.deserialize_null, #TODO: Not in current REST spec.
     }
 
     self.pri = [
@@ -90,8 +90,8 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
       content_type = d1common.ext.mimeparser.best_match(self.pri, accept)
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError.
-      sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
-      content_type = accept
+      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
+      content_type = 'application/json'
 
     # Deserialize object
     return self.serialize_map[content_type](pretty, jsonvar), content_type
@@ -110,7 +110,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   #    <size>0</size>
   #  </objectInfo>
   #</p:objectList>
-  def serializeXML(self, pretty=False, jsonvar=False):
+  def serialize_xml(self, pretty=False, jsonvar=False):
     return self.object_list.toxml()
 
   #{
@@ -129,7 +129,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   #    ...
   #  ]
   #}
-  def serializeJSON(self, pretty=False, jsonvar=False):
+  def serialize_json(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to JSON.
     '''
     obj = {}
@@ -166,7 +166,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
 
   # #<start>,<count>,<total>
   # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
-  def serializeCSV(self, pretty=False, jsonvar=False):
+  def serialize_csv(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to JSON.
     '''
 
@@ -219,7 +219,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   #    </d1:data>
   #  </rdf:Description>
   #</rdf:RDF>
-  def serializeRDFXML(self, pretty=False, jsonvar=False):
+  def serialize_rdf_xml(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to RDFXML.
     '''
 
@@ -263,7 +263,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
       encoding='UTF-8', xml_declaration=True
     )
 
-  def serializeNULL(self, doc, pretty=False, jsonvar=False):
+  def serialize_null(self, doc, pretty=False, jsonvar=False):
     raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
 
     #===============================================================================
@@ -271,13 +271,13 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   def deserialize(self, doc, content_type='application/json'):
     return self.deserialize_map[content_type](doc)
 
-  def deserializeXML(self, doc):
+  def deserialize_xml(self, doc):
     self.object_list = d1common.types.generated.objectlist.CreateFromDocument(doc)
 
-  def deserializeRDFXML(self, doc):
-    raise d1common.exceptions.NotImplemented(0, 'deserializeRDFXML not implemented.')
+  def deserialize_rdf_xml(self, doc):
+    raise d1common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
 
-  def deserializeJSON(self, doc):
+  def deserialize_json(self, doc):
     j = json.loads(doc)
 
     self.object_list.start = j['start']
@@ -304,7 +304,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
 
   # #<start>,<count>,<total>
   # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
-  def deserializeCSV(self, doc):
+  def deserialize_csv(self, doc):
     '''Serialize object to CSV.
     '''
 
@@ -338,7 +338,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
 
     self.object_list.objectInfo = objectInfos
 
-  def deserializeNULL(self, doc):
+  def deserialize_null(self, doc):
     raise d1common.exceptions.NotImplemented(
       0, 'De-serialization method not implemented.'
     )
