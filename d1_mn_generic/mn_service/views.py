@@ -70,7 +70,7 @@ import d1common.exceptions
 import d1pythonitk.systemmetadata
 
 # App.
-import access_log
+import event_log
 import auth
 import models
 import settings
@@ -114,9 +114,8 @@ def object_collection_get(request):
   # TODO: This code should only run while debugging.
   # For debugging, we support deleting the entire collection in a GET request.
   if 'delete' in request.GET:
-    sys_log.info('DELETE /object/')
     models.Object.objects.all().delete()
-    sys_log.info('Deleted all repository object records')
+    sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
   
   # Sort order.
   
@@ -196,24 +195,25 @@ def object_collection_get(request):
   # Access Log based filters.
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'access_log__access_time', 'lastAccessed')
+  query, changed = util.add_range_operator_filter(query, request, 'event_log__access_time', 'lastAccessed')
   if changed == True:
     query_unsliced = query
 
-  # Filter by requestor.
-  if 'requestor' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__requestor_identity__requestor_identity', request.GET['requestor'])
+  # Filter by ip_address.
+  if 'ip_address' in request.GET:
+    query = util.add_wildcard_filter(query, 'event_log__ip_address__ip_address', request.GET['ip_address'])
     query_unsliced = query
 
   # Filter by access operation type.
   if 'operationtype' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__operation_type__operation_type', request.GET['operationtype'])
+    query = util.add_wildcard_filter(query, 'event_log__operation_type__operation_type', request.GET['operationtype'])
     query_unsliced = query
 
   # Create a slice of a query based on request start and count parameters.
   query, start, count = util.add_slice_filter(query, request)
-  
-  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count() }
+
+  # Return query data for further processing in middleware layer.  
+  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'object' }
 
 def object_collection_head(request):
   '''Placeholder.
@@ -246,7 +246,7 @@ def object_collection_delete(request):
     raise d1common.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
-  access_log.log(None, 'delete_all_object_collection', request.META['REMOTE_ADDR'])
+  sys_log.info('client({0}): object_collection_delete'.format(util.request_to_string(request)))
 
   return HttpResponse('OK')
 
@@ -318,14 +318,13 @@ def object_guid_get(request, guid):
     conn.request('GET', url)
     response = conn.getresponse()
     if response.status != httplib.OK:
-      err_msg = 'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status)
-      sys_log.error(err_msg)
-      raise d1common.exceptions.ServiceFailure(0, err_msg)
+      raise d1common.exceptions.ServiceFailure(0,
+        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
   except httplib.HTTPException as e:
     raise d1common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
 
   # Log the access of this object.
-  access_log.log(guid, 'get_object_bytes', request.META['REMOTE_ADDR'])
+  event_log.log(guid, 'read', request)
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
@@ -402,7 +401,7 @@ def object_guid_post(request, guid):
   db_update_status.save()
   
   # Log this object creation.
-  access_log.log(guid, 'create_object', request.META['REMOTE_ADDR'])
+  event_log.log(guid, 'create', request)
   
   return HttpResponse('OK')
 
@@ -447,7 +446,7 @@ def object_guid_head(request, guid):
               size, 'Some Content Type')
 
   # Log the access of this object.
-  access_log.log(guid, 'get_object_head', request.META['REMOTE_ADDR'])
+  event_log.log(guid, 'read', request)
 
   return response
 
@@ -492,7 +491,7 @@ def meta_guid_get(request, guid):
     raise d1common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
   # Log access of the SysMeta of this object.
-  access_log.log(guid, 'get_sysmeta_bytes', request.META['REMOTE_ADDR'])
+  event_log.log(guid, 'read', request)
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(file))
@@ -508,34 +507,34 @@ def meta_guid_head(request, guid):
 # Access Log.
 
 @auth.cn_check_required
-def access_log_view(request):
+def event_log_view(request):
   '''
   0.3 MN_crud.getLogRecords()      GET  /log
   0.3 MN_crud.describeLogRecords() HEAD /log
   '''
 
   if request.method == 'GET':
-    return access_log_view_get(request)
+    return event_log_view_get(request)
   
   if request.method == 'HEAD':
-    return access_log_view_head(request)
+    return event_log_view_head(request)
     
   if request.method == 'DELETE':
-    return access_log_view_delete(request)
+    return event_log_view_delete(request)
 
   # Only GET, HEAD and DELETE accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
 
-def access_log_view_get(request):
+def event_log_view_get(request):
   '''
-  Get access_log.
+  Get event_log.
   0.3   MN_crud.getLogRecords()       GET     /log
   
   MN_crud.getLogRecords(token, fromDate[, toDate][, event]) → LogRecords
   '''
 
   # select objects ordered by mtime desc.
-  query = models.Access_log.objects.order_by('-access_time')
+  query = models.Event_log.objects.order_by('-date_logged')
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
@@ -569,69 +568,51 @@ def access_log_view_get(request):
     query_unsliced = query
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'access_time', 'lastAccessed')
+  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastAccessed')
   if changed == True:
     query_unsliced = query
 
-  # Filter by requestor.
-  if 'requestor' in request.GET:
-    query = util.add_wildcard_filter(query, 'requestor_identity__requestor_identity', request.GET['requestor'])
+  # Filter by ip_address.
+  if 'ip_address' in request.GET:
+    query = util.add_wildcard_filter(query, 'ip_address__ip_address', request.GET['ip_address'])
     query_unsliced = query
       
   # Filter by operation type.
-  if 'operation_type' in request.GET:
-    query = util.add_wildcard_filter(query, 'operation_type__operation_type', request.GET['operation_type'])
+  if 'event' in request.GET:
+    query = util.add_wildcard_filter(query, 'event__event', request.GET['event'])
     query_unsliced = query
 
   # Create a slice of a query based on request start and count parameters.
   query, start, count = util.add_slice_filter(query, request)    
 
-  for row in query:
-    log = {}
-    if row.object is not None:
-      log['identifier'] = row.object.guid
-    else:
-      log['identifier'] = None
-    log['operationType'] = row.operation_type.operation_type
-    log['requestorIdentity'] = row.requestor_identity.requestor_identity
-    log['accessTime'] = datetime.datetime.isoformat(row.access_time)
+  # Return query data for further processing in middleware layer.  
+  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'log' }
 
-    # Append object to response.
-    obj['logRecord'].append(log)
-
-  obj['start'] = start
-  obj['count'] = query.count()
-  obj['total'] = query_unsliced.count()
-
-  response = HttpResponse()
-  response.obj = obj
-  return response
-
-def access_log_view_head(request):
+def event_log_view_head(request):
   '''
-  Describe access_log.
+  Describe event_log.
   0.3   MN_crud.describeLogRecords()       HEAD     /log
   '''
 
-  response = access_log_view_get(request)
+  response = event_log_view_get(request)
   
   # TODO: Remove body from response.
 
   return response
 
-def access_log_view_delete(request):
+def event_log_view_delete(request):
   '''
   Remove all log records.
   Not part of spec.
   '''
 
   # Clear the access log.
-  models.Access_log.objects.all().delete()
-  models.Access_log_requestor_identity.objects.all().delete()
-  models.Access_log_operation_type.objects.all().delete()
+  models.Event_log.objects.all().delete()
+  models.Event_log_ip_address.objects.all().delete()
+  models.Event_log_event.objects.all().delete()
 
   # Log this operation.
-  access_log.log(None, 'delete_all_access_log', request.META['REMOTE_ADDR'])
+  sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(request))
 
   return HttpResponse('OK')
 
@@ -721,25 +702,25 @@ def monitor_log_get(request):
   '''
   
   # Set up query with requested sorting.
-  query = models.Access_log.objects.order_by('mtime')
+  query = models.Event_log.objects.order_by('mtime')
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'access_log__access_time', 'time')
+  query, changed = util.add_range_operator_filter(query, request, 'event_log__date_logged', 'time')
   if changed == True:
     query_unsliced = query
 
-  # Filter by requestor.
-  if 'requestor' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__requestor_identity__requestor_identity', request.GET['requestor'])
+  # Filter by ip_address.
+  if 'ip_address' in request.GET:
+    query = util.add_wildcard_filter(query, 'event_log__ip_address__ip_address', request.GET['ip_address'])
     query_unsliced = query
 
   # Filter by access operation type.
   if 'operationtype' in request.GET:
-    query = util.add_wildcard_filter(query, 'access_log__operation_type__operation_type', request.GET['operationtype'])
+    query = util.add_wildcard_filter(query, 'event_log__event__event', request.GET['operationtype'])
     query_unsliced = query
   
   if 'day' in request.GET:
-    query = query.extra({'day' : "date(access_time)"}).values('day').annotate(count=Count('id')).order_by()
+    query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(count=Count('id')).order_by()
 
   # Create a slice of a query based on request start and count parameters.
   query, start, count = util.add_slice_filter(query, request)
@@ -775,7 +756,22 @@ def inject_log(request):
   # Create log entries.
   csv_reader = csv.reader(request.FILES['csv'])
 
-  for row in csv_reader:    
-    access_log.log(row[0], row[2], row[1], iso8601.parse_date(row[3]))
+  for row in csv_reader:
+    identifier = row[0]
+    event = row[1]
+    ip_address = row[2]
+    user_agent = row[3]
+    principal = row[4]
+    timestamp = iso8601.parse_date(row[5])
+    member_node = row[6]
+
+    # Create fake request object.
+    request.META = {
+      'REMOTE_ADDR': ip_address,
+      'HTTP_USER_AGENT': user_agent,
+      'REMOTE_ADDR': principal,
+    }
+
+    event_log.log(identifier, event, request, timestamp)
 
   return HttpResponse('OK')

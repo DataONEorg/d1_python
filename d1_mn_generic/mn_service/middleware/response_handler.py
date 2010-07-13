@@ -52,6 +52,7 @@ from django.http import HttpResponse
 # MN API.
 import d1common.exceptions
 import d1common.types.objectlist_serialization
+import d1common.types.logrecords_serialization
 
 # App.
 import mn_service.models as models
@@ -64,10 +65,9 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
   def deserializeDB(self, view_result):
     '''
     '''
-    objectInfos = []
+    #objectInfos = []
 
     for row in view_result['query']:
-      print row
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
 
       objectInfo.identifier = row.guid
@@ -77,13 +77,32 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
       objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(row.mtime)
       objectInfo.size = row.size
 
-      objectInfos.append(objectInfo)
+      self.object_list.objectInfo.append(objectInfo)
 
     self.object_list.start = view_result['start']
     self.object_list.count = len(objectInfos)
     self.object_list.total = view_result['total']
 
-    self.object_list.objectInfo = objectInfos
+    #self.object_list.objectInfo = objectInfos
+
+
+class LogRecords(d1common.types.logrecords_serialization.LogRecords):
+  def deserializeDB(self, view_result):
+    '''
+    '''
+    for row in view_result['query']:
+      logEntry = d1common.types.generated.logging.LogEntry()
+
+      logEntry.entryId = row.object.guid
+      logEntry.identifier = row.object.guid
+      logEntry.ipAddress = row.ip_address.ip_address
+      logEntry.userAgent = row.user_agent.user_agent
+      logEntry.principal = row.principal.principal
+      logEntry.event = row.event.event
+      logEntry.dateLogged = row.date_logged
+      logEntry.memberNode = row.member_node.member_node
+
+      self.log.logEntry.append(logEntry)
 
 
 def serialize_object(request, view_result):
@@ -98,15 +117,17 @@ def serialize_object(request, view_result):
 
   # Serialize to response in requested format.
   response = HttpResponse()
-  object_list = ObjectList()
-  object_list.deserializeDB(view_result)
+
+  type = {'object': ObjectList(), 'log': LogRecords(), }[view_result['type']]
+
+  type.deserializeDB(view_result)
 
   if 'HTTP_ACCEPT' in request.META:
     accept = request.META['HTTP_ACCEPT']
   else:
     accept = None
 
-  doc, content_type = object_list.serialize(accept, pretty, jsonvar)
+  doc, content_type = type.serialize(accept, pretty, jsonvar)
   response.write(doc)
 
   # Set headers.
@@ -228,14 +249,26 @@ def monitor_serialize_object(request, response, monitor):
   # we default to JSON.
   content_type = 'application/json'
   if 'HTTP_ACCEPT' not in request.META:
-    sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
+    sys_log.debug(
+      'client({0}): No HTTP_ACCEPT header. Defaulting to JSON'.format(
+        util.request_to_string(
+          request
+        )
+      )
+    )
   else:
     try:
       content_type = d1common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also default to JSON.
-      sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
+      sys_log.debug(
+        'client({0}): Invalid HTTP_ACCEPT header. Defaulting to JSON'.format(
+          util.request_to_string(
+            request
+          )
+        )
+      )
 
   # Serialize object.
   obj_ser = map[content_type](monitor, jsonvar)
@@ -284,7 +317,8 @@ class response_handler():
       response = view_result
 
     # For debugging, if pretty printed outout was requested, we force the
-    # content type to text.
+    # content type to text. This causes the browser to not try to format
+    # the output in any way.
     if 'pretty' in request.REQUEST:
       response['Content-Type'] = 'text/plain'
 

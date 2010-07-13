@@ -113,14 +113,26 @@ def serialize_exception(request, exception):
   # we default to JSON.
   content_type = 'application/json'
   if 'HTTP_ACCEPT' not in request.META:
-    sys_log.debug('No HTTP_ACCEPT header. Defaulting to JSON')
+    sys_log.debug(
+      'client({0}): No HTTP_ACCEPT header. Defaulting to JSON'.format(
+        util.request_to_string(
+          request
+        )
+      )
+    )
   else:
     try:
       content_type = d1common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also default to JSON.
-      sys_log.debug('Invalid HTTP_ACCEPT header. Defaulting to JSON')
+      sys_log.debug(
+        'client({0}): Invalid HTTP_ACCEPT header. Defaulting to JSON'.format(
+          util.request_to_string(
+            request
+          )
+        )
+      )
 
   # Serialize object.
   return map[content_type]()

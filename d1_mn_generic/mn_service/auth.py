@@ -45,21 +45,35 @@ def cn_check_required(f):
     # Check if we already have a session for this user.
     if 'cn_user' not in request.session.keys() and settings.ENABLE_IP_AUTH == True:
       sys_log.info(
-        'Session not found for user at IP: {0}'.format(
-          request.META['REMOTE_ADDR']
+        'client({0}): Session not found for user at IP'.format(
+          util.request_to_string(
+            request
+          )
         )
       )
       # Check if IP belongs to a CN.
       if request.META['REMOTE_ADDR'] in settings.CN_IP:
         # This is a valid IP, so we create a session object.
-        sys_log.info('IP is valid CN IP: {0}'.format(request.META['REMOTE_ADDR']))
+        sys_log.info(
+          'client({0}): IP is valid CN IP'.format(
+            util.request_to_string(
+              request
+            )
+          )
+        )
         request.session['cn_user'] = True
       else:
         raise d1common.exceptions.NotAuthorized(
           1040, 'Attempted to access functionality only available to Coordinating Nodes'
         )
     else:
-      sys_log.info('User has session: {0}'.format(request.META['REMOTE_ADDR']))
+      sys_log.info(
+        'client({0}): User has session'.format(
+          util.request_to_string(
+            request
+          )
+        )
+      )
 
     return f(request, *args, **kwargs)
 
@@ -79,21 +93,35 @@ def mn_check_required(f):
     # Check if we already have a session for this user.
     if 'mn_user' not in request.session.keys() and settings.ENABLE_IP_AUTH == True:
       sys_log.info(
-        'Session not found for user at IP: {0}'.format(
-          request.META['REMOTE_ADDR']
+        'client({0}): Session not found for user at IP'.format(
+          util.request_to_string(
+            request
+          )
         )
       )
       # Check if IP belongs to a MN.
       if request.META['REMOTE_ADDR'] in settings.MN_IP:
         # This is a valid IP, so we create a session object.
-        sys_log.info('IP is valid MN IP: {0}'.format(request.META['REMOTE_ADDR']))
+        sys_log.info(
+          'client({0}): IP is valid MN IP'.format(
+            util.request_to_string(
+              request
+            )
+          )
+        )
         request.session['mn_user'] = True
       else:
         raise d1common.exceptions.NotAuthorized(
           1040, 'Attempted to access functionality only available to Member Nodes.'
         )
     else:
-      sys_log.info('User has session: {0}'.format(request.META['REMOTE_ADDR']))
+      sys_log.info(
+        'client({0}): User has session'.format(
+          util.request_to_string(
+            request
+          )
+        )
+      )
 
     return f(request, *args, **kwargs)
 

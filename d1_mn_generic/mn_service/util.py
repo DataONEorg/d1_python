@@ -57,12 +57,21 @@ import d1common.exceptions
 import d1pythonitk.const
 
 # App.
-import access_log
+import event_log
 import auth
 import models
 import settings
 import sys_log
 import util
+
+
+def request_to_string(request):
+  '''Pull some information about the client out from a request object.
+  '''
+
+  return 'ip_address({0}) user_agent({1})'.format(
+    request.META['REMOTE_ADDR'], request.META['HTTP_USER_AGENT']
+  )
 
 
 def log_exception(max_traceback_levels=5, msg=None):
@@ -87,9 +96,9 @@ def clear_db():
 
   models.DB_update_status.objects.all().delete()
 
-  models.Access_log.objects.all().delete()
-  models.Access_log_operation_type.objects.all().delete()
-  models.Access_log_requestor_identity.objects.all().delete()
+  models.Event_log.objects.all().delete()
+  models.Event_log_event.objects.all().delete()
+  models.Event_log_ip_address.objects.all().delete()
 
   models.Object.objects.all().delete()
   models.Checksum_algorithm.objects.all().delete()

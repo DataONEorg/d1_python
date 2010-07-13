@@ -76,7 +76,7 @@ class view_handler():
     #  'object_collection',
     #  'object_contents',
     #  'object_sysmeta',
-    #  'access_log_view',
+    #  'event_log_view',
     #  'crud_create',
     #  'crud_create_delete',
     #]:

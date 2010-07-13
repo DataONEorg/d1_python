@@ -94,40 +94,86 @@ class Object(models.Model):
 # Access Log
 
 
-class Access_log_operation_type(models.Model):
-  operation_type = models.CharField(max_length=100, unique=True, db_index=True)
+class Event_log_event(models.Model):
+  event = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Access_log_requestor_identity(models.Model):
-  requestor_identity = models.CharField(max_length=100, unique=True, db_index=True)
+class Event_log_ip_address(models.Model):
+  ip_address = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Access_log(models.Model):
+class Event_log_user_agent(models.Model):
+  user_agent = models.CharField(max_length=100, unique=True, db_index=True)
+
+
+class Event_log_principal(models.Model):
+  principal = models.CharField(max_length=100, unique=True, db_index=True)
+
+
+class Event_log_member_node(models.Model):
+  member_node = models.CharField(max_length=100, unique=True, db_index=True)
+
+
+class Event_log(models.Model):
   object = models.ForeignKey(Object, null=True)
-  operation_type = models.ForeignKey(Access_log_operation_type, db_index=True)
-  requestor_identity = models.ForeignKey(Access_log_requestor_identity, db_index=True)
-  access_time = models.DateTimeField(auto_now_add=True, db_index=True)
+  event = models.ForeignKey(Event_log_event, db_index=True)
+  ip_address = models.ForeignKey(Event_log_ip_address, db_index=True)
+  user_agent = models.ForeignKey(Event_log_user_agent, db_index=True)
+  principal = models.ForeignKey(Event_log_principal, db_index=True)
+  date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
+  member_node = models.ForeignKey(Event_log_member_node, db_index=True)
 
-  def set_operation_type(self, operation_type_string):
+  def set_event(self, event_string):
+    if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
+      raise d1common.exceptions.ServiceFailure(
+        0, 'Attempted to create invalid type of event: {0}'.format(event_string)
+      )
     try:
-      operation_type = Access_log_operation_type.objects.filter(
-        operation_type=operation_type_string
-      )[0]
+      event = Event_log_event.objects.filter(event=event_string)[0]
     except IndexError:
-      operation_type = Access_log_operation_type()
-      operation_type.operation_type = operation_type_string
-      operation_type.save()
+      event = Event_log_event()
+      event.event = event_string
+      event.save()
 
-    self.operation_type = operation_type
+    self.event = event
 
-  def set_requestor_identity(self, requestor_identity_string):
+  def set_ip_address(self, ip_address_string):
     try:
-      requestor_identity = Access_log_requestor_identity.objects.filter(
-        requestor_identity=requestor_identity_string
-      )[0]
+      ip_address = Event_log_ip_address.objects.filter(ip_address=ip_address_string)[0]
     except IndexError:
-      requestor_identity = Access_log_requestor_identity()
-      requestor_identity.requestor_identity = requestor_identity_string
-      requestor_identity.save()
+      ip_address = Event_log_ip_address()
+      ip_address.ip_address = ip_address_string
+      ip_address.save()
 
-    self.requestor_identity = requestor_identity
+    self.ip_address = ip_address
+
+  def set_user_agent(self, user_agent_string):
+    try:
+      user_agent = Event_log_user_agent.objects.filter(user_agent=user_agent_string)[0]
+    except IndexError:
+      user_agent = Event_log_user_agent()
+      user_agent.user_agent = user_agent_string
+      user_agent.save()
+
+    self.user_agent = user_agent
+
+  def set_principal(self, principal_string):
+    try:
+      principal = Event_log_principal.objects.filter(principal=principal_string)[0]
+    except IndexError:
+      principal = Event_log_principal()
+      principal.principal = principal_string
+      principal.save()
+
+    self.principal = principal
+
+  def set_member_node(self, member_node_string):
+    try:
+      member_node = Event_log_member_node.objects.filter(member_node=member_node_string
+                                                         )[0]
+    except IndexError:
+      member_node = Event_log_member_node()
+      member_node.member_node = member_node_string
+      member_node.save()
+
+    self.member_node = member_node

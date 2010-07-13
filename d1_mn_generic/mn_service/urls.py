@@ -26,7 +26,7 @@ urlpatterns = patterns(
   (r'^object/(.+)$', 'object_guid'),
 
   # /log/
-  (r'^log$', 'access_log_view'),
+  (r'^log$', 'event_log_view'),
 
   # /health/
   (r'^health/ping$', 'health_ping'),
