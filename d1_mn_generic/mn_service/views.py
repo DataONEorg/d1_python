@@ -240,7 +240,7 @@ def object_collection_delete(request):
     for sysmeta_file in os.listdir(settings.SYSMETA_CACHE_PATH):
       if os.path.isfile(sysmeta_file):
         os.unlink(os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_file))
-  except IOError as (errno, strerror):
+  except EnvironmentError as (errno, strerror):
     err_msg = 'Could not clear SysMeta cache\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
@@ -374,7 +374,7 @@ def object_guid_post(request, guid):
     file = open(file_out_path, 'w')
     file.write(sysmeta_bytes)
     file.close()
-  except IOError as (errno, strerror):
+  except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(file_out_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
@@ -436,7 +436,7 @@ def object_guid_head(request, guid):
   # Get size of object from file size.
   try:
     size = os.path.getsize(url)
-  except IOError as (errno, strerror):
+  except EnvironmentError as (errno, strerror):
     err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.NotFound(1020, err_msg, guid)
@@ -487,7 +487,7 @@ def meta_guid_get(request, guid):
   file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
   try:
     file = open(file_in_path, 'r')
-  except IOError as (errno, strerror):
+  except EnvironmentError as (errno, strerror):
     raise d1common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
   # Log access of the SysMeta of this object.
@@ -660,28 +660,14 @@ def monitor_object_get(request):
   # Set up query with requested sorting.
   query = models.Object.objects.all()
 
-  # Filter by last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'time')
-  if changed == True:
-    query_unsliced = query
-
   # Filter by format.
   if 'format' in request.GET:
     query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
-    query_unsliced = query
   
-  monitor = []
-
   if 'day' in request.GET:
     query = query.extra({'day' : "date(mtime)"}).values('day').annotate(count=Count('id')).order_by()
-    for row in query:
-      monitor.append((str(row['day']), str(row['count'])))
-  else:
-    monitor.append(('null', query.aggregate(count=Count('id'))['count']))
 
-  response = HttpResponse()
-  response.monitor = monitor
-  return response
+  return {'query': query, 'day': 'day' in request.GET, 'type': 'monitor_object' }
 
 @auth.cn_check_required
 def monitor_log(request):

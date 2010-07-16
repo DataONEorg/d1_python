@@ -46,6 +46,7 @@ import d1common.ext.mimeparser
 #from django.template import Context
 #from django.template import RequestContext
 from django.db import models
+from django.db.models import Avg, Max, Min, Count
 
 from django.http import HttpResponse
 
@@ -53,6 +54,7 @@ from django.http import HttpResponse
 import d1common.exceptions
 import d1common.types.objectlist_serialization
 import d1common.types.logrecords_serialization
+import d1common.types.monitor_object_serialization
 
 # App.
 import mn_service.models as models
@@ -62,10 +64,10 @@ import settings
 
 
 class ObjectList(d1common.types.objectlist_serialization.ObjectList):
-  def deserializeDB(self, view_result):
+  def deserialize_db(self, view_result):
     '''
     '''
-    #objectInfos = []
+    objectInfos = []
 
     for row in view_result['query']:
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
@@ -87,7 +89,7 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
 
 
 class LogRecords(d1common.types.logrecords_serialization.LogRecords):
-  def deserializeDB(self, view_result):
+  def deserialize_db(self, view_result):
     '''
     '''
     for row in view_result['query']:
@@ -105,6 +107,30 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
       self.log.logEntry.append(logEntry)
 
 
+class MonitorObject(d1common.types.monitor_object_serialization.MonitorObject):
+  def deserialize_db(self, view_result):
+    '''
+    '''
+    query = view_result['query']
+    if view_result['day'] == True:
+      query = query.extra({'day': "date(mtime)"}).values('day').annotate(
+        count=Count(
+          'id'
+        )
+      ).order_by(
+      )
+      for row in query:
+        monitorObjectEntry = d1common.types.generated.monitor_object.MonitorObjectEntry()
+        monitorObjectEntry.date = row['day']
+        monitorObjectEntry.count = row['count']
+        self.monitor_object.append(monitorObjectEntry)
+    else:
+      monitorObjectEntry = d1common.types.generated.monitor_object.MonitorObjectEntry()
+      monitorObjectEntry.date = datetime.datetime.now()
+      monitorObjectEntry.count = query.aggregate(count=Count('id'))['count']
+      self.monitor_object.append(monitorObjectEntry)
+
+
 def serialize_object(request, view_result):
   # The "pretty" parameter generates pretty response.
   pretty = 'pretty' in request.REQUEST
@@ -118,9 +144,13 @@ def serialize_object(request, view_result):
   # Serialize to response in requested format.
   response = HttpResponse()
 
-  type = {'object': ObjectList(), 'log': LogRecords(), }[view_result['type']]
+  type = {
+    'object': ObjectList(),
+    'log': LogRecords(),
+    'monitor_object': MonitorObject(),
+  }[view_result['type']]
 
-  type.deserializeDB(view_result)
+  type.deserialize_db(view_result)
 
   if 'HTTP_ACCEPT' in request.META:
     accept = request.META['HTTP_ACCEPT']

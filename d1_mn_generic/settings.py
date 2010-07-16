@@ -19,6 +19,7 @@ import sys
 ENABLE_IP_AUTH = False
 
 MN_NAME = 'dryad_mn'
+
 MN_IP = [
   '68.35.3.230', # Roger
   '74.107.75.34', # Dave

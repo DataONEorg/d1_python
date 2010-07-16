@@ -150,7 +150,7 @@ def file_to_dict(path):
 
   try:
     f = open(path, 'r')
-  except IOError as (errno, strerror):
+  except EnvironmentError as (errno, strerror):
     err_msg = 'Internal server error: Could not open: {0}\n'.format(path)
     err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
     #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
