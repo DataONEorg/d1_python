@@ -20,22 +20,20 @@ except:
 
 # 3rd party.
 # Lxml
-try:
-  from lxml import etree
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
-  raise
+#try:
+#  from lxml import etree
+#except ImportError, e:
+#  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+#  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
+#  raise
 
-try:
-  import iso8601
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write(
-    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
-  )
-  raise
+#try:
+#  import iso8601
+#except ImportError, e:
+#  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+#  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
+#  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
+#  raise
 
 # MN API.
 import d1common
@@ -52,7 +50,10 @@ except ImportError, e:
 #===============================================================================
 
 
-class LogRecords(d1common.types.generated.logging.LogEntry):
+class LogRecords(object):
+  '''Implements serialization of DataONE LogEntry
+  '''
+
   def __init__(self):
     self.serialize_map = {
       'application/json': self.serialize_json,
@@ -84,6 +85,8 @@ class LogRecords(d1common.types.generated.logging.LogEntry):
     self.log = d1common.types.generated.logging.log()
 
   def serialize(self, accept='application/json', pretty=False, jsonvar=False):
+    '''
+    '''
     # Determine which serializer to use. If client does not supply accept, we
     # default to JSON.
     try:
@@ -122,6 +125,8 @@ class LogRecords(d1common.types.generated.logging.LogEntry):
   #    </logEntry> 
   #</d1:log>
   def serialize_xml(self, pretty=False, jsonvar=False):
+    '''
+    '''
     return self.log.toxml()
 
   def serialize_json(self, pretty=False, jsonvar=False):
@@ -158,9 +163,7 @@ class LogRecords(d1common.types.generated.logging.LogEntry):
   def serialize_csv(self, pretty=False, jsonvar=False):
     '''Serialize LogRecords to CSV.
     '''
-
     io = StringIO.StringIO()
-
     csv_writer = csv.writer(
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
@@ -179,26 +182,33 @@ class LogRecords(d1common.types.generated.logging.LogEntry):
       logEntry.append(o.memberNode)
 
       csv_writer.writerow(logEntry)
-
     return io.getvalue()
 
   def serialize_rdf_xml(self, doc):
+    '''
+    '''
     raise d1common.exceptions.NotImplemented(0, 'serialize_rdf_xml not implemented.')
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
+    '''
+    '''
     raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
 
-    #===============================================================================
-
+    #== Deserialization methods ==================================================
   def deserialize(self, doc, content_type='application/json'):
+    '''
+    '''
     return self.deserialize_map[content_type](doc)
 
   def deserialize_xml(self, doc):
+    '''
+    '''
     self.log = d1common.types.generated.logrecords.CreateFromDocument(doc)
 
   def deserialize_json(self, doc):
+    '''
+    '''
     j = json.loads(doc)
-
     logEntries = []
 
     for o in j['logEntry']:
@@ -212,17 +222,13 @@ class LogRecords(d1common.types.generated.logging.LogEntry):
       logEntry.event = o['event']
       logEntry.dateLogged = datetime.datetime.isoformat(o['dateLogged'])
       logEntry.memberNode = o['memberNode']
-
       logEntries.append(logEntry)
-
     self.log.logEntry = logEntries
 
   def deserialize_csv(self, doc):
     '''Serialize object to CSV.
     '''
-
     io = StringIO.StringIO(doc)
-
     csv_reader = csv.reader(
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
@@ -231,22 +237,22 @@ class LogRecords(d1common.types.generated.logging.LogEntry):
     logEntries = []
 
     for csv_line in csv_reader:
-
       logEntry = d1common.types.generated.logging.LogEntry()
-
       logEntry.identifier = csv_line[0]
       logEntry.objectFormat = csv_line[1]
       logEntry.checksum = csv_line[2]
       logEntry.checksum.algorithm = csv_line[3]
       logEntry.dateSysMetadataModified = csv_line[4]
       logEntry.size = csv_line[5]
-
       logEntries.append(logEntry)
-
     self.log.logEntry = logEntries
 
   def deserialize_rdf_xml(self, doc):
+    '''
+    '''
     raise d1common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
 
   def deserialize_null(self, doc):
+    '''
+    '''
     raise d1common.exceptions.NotImplemented(0, 'Deserialization method not implemented.')
