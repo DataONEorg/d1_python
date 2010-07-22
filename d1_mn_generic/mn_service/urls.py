@@ -20,6 +20,9 @@ urlpatterns = patterns(
   'mn_prototype.mn_service.views',
   # CN interface.
 
+  # /session/
+  (r'^session/$', 'session'),
+
   # /object/
   (r'^object$', 'object_collection'),
   (r'^meta/(.+)$', 'meta_guid'),

@@ -129,6 +129,7 @@ XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
 SYSMETA_CACHE_PATH = _here('./sysmeta_cache')
+OBJECT_STORE_PATH = _here('./object_store')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './api_common')))

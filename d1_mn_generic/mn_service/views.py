@@ -54,7 +54,6 @@ from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
-from django.db.models import Avg, Max, Min, Count
 
 # 3rd party.
 try:
@@ -79,6 +78,10 @@ import util
 
 # REST interface: Object Collection
 # Member Node API: Replication API
+
+# TODO: Stub.
+def session(request):
+  return HttpResponse('<sessionId>bogusID</sessionId>')
 
 @auth.cn_check_required
 def object_collection(request):
@@ -262,11 +265,11 @@ def object_guid(request, guid):
   0.3 MN_crud.describe() HEAD   /object/<guid>
   '''
   
-  if request.method == 'GET':
-    return object_guid_get(request, guid)
-
   if request.method == 'POST':
     return object_guid_post(request, guid)
+
+  if request.method == 'GET':
+    return object_guid_get(request, guid)
 
   if request.method == 'PUT':
     return object_guid_put(request, guid)
@@ -279,55 +282,6 @@ def object_guid(request, guid):
   
   # All verbs allowed, so should never get here.
   return HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE', 'HEAD'])
-
-def object_guid_get(request, guid):
-  '''
-  Retrieve an object identified by guid from the node.
-  MN_crud.get(token, guid) → bytes
-  '''
-
-  # Find object based on guid.
-  query = models.Object.objects.filter(guid=guid)
-  try:
-    url = query[0].url
-  except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested', guid)
-
-  # Split URL into individual parts.
-  try:
-    url_split = urlparse.urlparse(url)
-  except ValueError as e:
-    raise d1common.exceptions.InvalidRequest(0, 'Invalid URL: {0}'.format(url))
-
-  # Handle 302 Found.
-  
-  try:
-    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
-    conn.connect()
-    conn.request('HEAD', url)
-    response = conn.getresponse()
-    if response.status == httplib.FOUND:
-      url = response.getheader('location')
-  except httplib.HTTPException as e:
-    raise d1common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
-
-  # Open the object to proxy.
-  try:
-    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
-    conn.connect()
-    conn.request('GET', url)
-    response = conn.getresponse()
-    if response.status != httplib.OK:
-      raise d1common.exceptions.ServiceFailure(0,
-        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
-  except httplib.HTTPException as e:
-    raise d1common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
-
-  # Log the access of this object.
-  event_log.log(guid, 'read', request)
-
-  # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(response))
 
 def object_guid_post(request, guid):
   '''
@@ -353,7 +307,9 @@ def object_guid_post(request, guid):
   if 'systemmetadata' not in request.FILES.keys():
     raise d1common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
 
-  # Get object data. For the purposes of the GMN, the object is a URL.
+  # The object can be a URL, in which case GMN will just store the URL and
+  # stream the object from the URL when it's requested. If the object is not
+  # a URL, the object is stored locally and served from there.
   object_bytes = request.FILES['object'].read()
   # Get sysmeta bytes.
   sysmeta_bytes = request.FILES['systemmetadata'].read()
@@ -369,21 +325,48 @@ def object_guid_post(request, guid):
     raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed')
   
   # Write sysmeta bytes to cache folder.
-  file_out_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
+  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
   try:
-    file = open(file_out_path, 'w')
+    file = open(sysmeta_path, 'wb')
     file.write(sysmeta_bytes)
     file.close()
   except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write sysmeta file: {0}\n'.format(file_out_path)
+    err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
   
+  # If object is not a HTTP URL, store it to disk.
+  try:
+    url_split = urlparse.urlparse(object_bytes)
+    if url_split.scheme != 'http':
+      raise ValueError
+  except ValueError:
+    object_is_url = False
+  else:
+    object_is_url = True
+
+  if object_is_url == False:
+    sys_log.info('guid({0}): Object is not a HTTP URL. Storing on disk'.format(guid))
+
+    object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
+    try:
+      file = open(object_path, 'wb')
+      file.write(object_bytes)
+      file.close()
+    except EnvironmentError as (errno, strerror):
+      err_msg = 'Could not write object file: {0}\n'.format(object_path)
+      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+      raise d1common.exceptions.ServiceFailure(0, err_msg)
+  else:
+    sys_log.info('guid({0}): Object is a HTTP URL. Storing URL in DB'.format(guid))
+
   # Create database entry for object.
-  
   object = models.Object()
   object.guid = guid
-  object.url = object_bytes
+  if object_is_url == True:
+    object.url = object_bytes
+  else:
+    object.url = 'file://{0}'.format(guid)
 
   format = sysmeta._getValues('objectFormat')
 
@@ -405,25 +388,95 @@ def object_guid_post(request, guid):
   
   return HttpResponse('OK')
 
+def object_guid_get(request, guid):
+  '''
+  Retrieve an object identified by guid from the node.
+  MN_crud.get(token, guid) → bytes
+  '''
+
+  # Find object based on guid.
+  query = models.Object.objects.filter(guid=guid)
+  try:
+    url = query[0].url
+  except IndexError:
+    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested', guid)
+
+  # Split URL into individual parts.
+  try:
+    url_split = urlparse.urlparse(url)
+    if url_split.scheme != 'http':
+      raise ValueError
+  except ValueError:
+    object_is_url = False
+  else:
+    object_is_url = True
+
+  if object_is_url == True:
+    sys_log.info('guid({0}): Object is a HTTP URL. Proxying from original location'.format(guid))
+
+    # Handle 302 Found.  
+    try:
+      conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+      conn.connect()
+      conn.request('HEAD', url)
+      response = conn.getresponse()
+      if response.status == httplib.FOUND:
+        url = response.getheader('location')
+    except httplib.HTTPException as e:
+      raise d1common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
+  
+    # Open the object to proxy.
+    try:
+      conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+      conn.connect()
+      conn.request('GET', url)
+      response = conn.getresponse()
+      if response.status != httplib.OK:
+        raise d1common.exceptions.ServiceFailure(0,
+          'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
+    except httplib.HTTPException as e:
+      raise d1common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
+
+  # Handle disk object.
+  else:
+    sys_log.info('guid({0}): Object is not a HTTP URL. Streaming from disk'.format(guid))
+
+    file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
+    try:
+      response = open(file_in_path, 'r')
+    except EnvironmentError as (errno, strerror):
+      err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
+      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+      raise d1common.exceptions.ServiceFailure(0, err_msg)    
+
+  # Log the access of this object.
+  event_log.log(guid, 'read', request)
+
+  # Return the raw bytes of the object.
+  return HttpResponse(util.fixed_chunk_size_iterator(response))
+
 def object_guid_put(request, guid):
   '''
   MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier
-  Creates a new object on the Member Node that explicitly updates and obsoletes a previous object (identified by obsoletedGuid).
+  Creates a new object on the Member Node that explicitly updates and obsoletes
+  a previous object (identified by obsoletedGuid).
   '''
   raise d1common.exceptions.NotImplemented(0, 'MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier')
 
 def object_guid_delete(request, guid):
   '''
   MN_crud.delete(token, guid) → Identifier
-  Deletes an object from the Member Node, where the object is either a data object or a science metadata object.
+  Deletes an object from the Member Node, where the object is either a data
+  object or a science metadata object.
   '''
   raise d1common.exceptions.NotImplemented(0, 'MN_crud.delete(token, guid) → Identifier')
   
 def object_guid_head(request, guid):
   '''
   MN_crud.describe(token, guid) → DescribeResponse
-  This method provides a lighter weight mechanism than MN_crud.getSystemMetadata() for a client to determine basic properties of the referenced object.
-  '''
+  This method provides a lighter weight mechanism than
+  MN_crud.getSystemMetadata() for a client to determine basic properties of the
+  referenced object. '''
   response = HttpResponse()
 
   # Find object based on guid.
@@ -494,7 +547,7 @@ def meta_guid_get(request, guid):
   event_log.log(guid, 'read', request)
 
   # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(file))
+  return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype='text/xml')
 
 def meta_guid_head(request, guid):
   '''
@@ -664,9 +717,6 @@ def monitor_object_get(request):
   if 'format' in request.GET:
     query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
   
-  if 'day' in request.GET:
-    query = query.extra({'day' : "date(mtime)"}).values('day').annotate(count=Count('id')).order_by()
-
   return {'query': query, 'day': 'day' in request.GET, 'type': 'monitor_object' }
 
 @auth.cn_check_required
