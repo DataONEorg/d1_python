@@ -12,6 +12,7 @@ import types
 import urllib
 import wsgiref.handlers
 import time
+import logging
 
 try:
   import cjson as json
@@ -52,8 +53,9 @@ except ImportError, e:
 #===============================================================================
 
 
-class ObjectList(d1common.types.generated.objectlist.ObjectList):
+class ObjectList(object):
   def __init__(self):
+    self.log = logging.getLogger('ObjectList')
     self.serialize_map = {
       'application/json': self.serialize_json,
       'text/csv': self.serialize_csv,
@@ -92,6 +94,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
       # An invalid Accept header causes mimeparser to throw a ValueError.
       #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
       content_type = 'application/json'
+    self.log.debug("serializing, content-type=%s" % content_type)
 
     # Deserialize object
     return self.serialize_map[content_type](pretty, jsonvar), content_type
@@ -111,6 +114,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   #  </objectInfo>
   #</p:objectList>
   def serialize_xml(self, pretty=False, jsonvar=False):
+    self.log.debug("serialize_xml")
     return self.object_list.toxml()
 
   #{
@@ -132,6 +136,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   def serialize_json(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to JSON.
     '''
+    self.log.debug("serialize_json")
     obj = {}
     obj['objectInfo'] = []
 
@@ -167,8 +172,9 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   # #<start>,<count>,<total>
   # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
   def serialize_csv(self, pretty=False, jsonvar=False):
-    '''Serialize ObjectList to JSON.
+    '''Serialize ObjectList to CSV.
     '''
+    self.log.debug("serialize_csv")
 
     io = StringIO.StringIO()
 
@@ -222,6 +228,7 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
   def serialize_rdf_xml(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to RDFXML.
     '''
+    self.log.debug("serialize_rdf_xml")
 
     # Set up namespaces for the XML response.
     RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
@@ -269,26 +276,27 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
     #===============================================================================
 
   def deserialize(self, doc, content_type='application/json'):
+    self.log.debug("de-serialize, content-type=%s" % content_type)
     return self.deserialize_map[content_type](doc)
 
   def deserialize_xml(self, doc):
+    self.log.debug('deserialize xml')
     self.object_list = d1common.types.generated.objectlist.CreateFromDocument(doc)
+    return self.object_list
 
   def deserialize_rdf_xml(self, doc):
+    self.log.debug('deserialize rdf xml')
     raise d1common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
 
   def deserialize_json(self, doc):
+    self.log.debug('deserialize json')
     j = json.loads(doc)
-
     self.object_list.start = j['start']
     self.object_list.count = j['count']
     self.object_list.total = j['total']
-
     objectInfos = []
-
     for o in j['objectInfo']:
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
-
       objectInfo.identifier = o['identifier']
       objectInfo.objectFormat = o['objectFormat']
       objectInfo.checksum = o['checksum']
@@ -297,26 +305,22 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
         o['dateSysMetadataModified']
       )
       objectInfo.size = o['size']
-
       objectInfos.append(objectInfo)
-
     self.object_list.objectInfo = objectInfos
+    return self.object_list
 
   # #<start>,<count>,<total>
   # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
   def deserialize_csv(self, doc):
     '''Serialize object to CSV.
     '''
-
+    self.log.debug('deserialize csv')
     io = StringIO.StringIO(doc)
-
     csv_reader = csv.reader(
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
     )
-
     objectInfos = []
-
     for csv_line in csv_reader:
       # Get start, count and total from first comment.
       if csv_line[0][0] == '#':
@@ -326,19 +330,18 @@ class ObjectList(d1common.types.generated.objectlist.ObjectList):
         continue
 
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
-
       objectInfo.identifier = csv_line[0]
       objectInfo.objectFormat = csv_line[1]
       objectInfo.checksum = csv_line[2]
       objectInfo.checksum.algorithm = csv_line[3]
       objectInfo.dateSysMetadataModified = csv_line[4]
       objectInfo.size = csv_line[5]
-
       objectInfos.append(objectInfo)
-
     self.object_list.objectInfo = objectInfos
+    return self.object_list
 
   def deserialize_null(self, doc):
+    self.log.debug('deserialize NULL')
     raise d1common.exceptions.NotImplemented(
       0, 'De-serialization method not implemented.'
     )
