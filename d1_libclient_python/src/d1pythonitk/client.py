@@ -6,7 +6,7 @@ This module implements DataOneClient which provides a client supporting basic
 interaction with the DataONE infrastructure.
 
 :Created: 20100111
-:Author: vieglais
+:Author: DataONE (vieglais, dahl)
 
 :Dependencies:
 
@@ -31,7 +31,6 @@ import urllib2
 import urlparse
 import sys
 import os
-import xml.dom.minidom
 
 try:
   import cjson as json
@@ -48,9 +47,11 @@ except ImportError, e:
 
 # DataONE.
 from d1common import exceptions
-from d1pythonitk import const
-from d1pythonitk import systemmetadata
 from d1common import upload
+import d1common.types.systemmetadata
+import d1common.types.logrecords_serialization
+from d1pythonitk import const
+from d1pythonitk import objectlist
 
 
 #===============================================================================
@@ -263,7 +264,21 @@ class DataOneClient(object):
     response = self.client.GET(schemaUrl)
     return response
 
-    ## === DataONE API Methods ===
+  def enumerateObjectFormats(self, object_formats={}):
+    '''Utility method that returns a list of [object format, count] available
+    on the target.
+    '''
+    object_list = objectlist.ObjectListIterator(self)
+    object_formats = {}
+    for info in object_list:
+      logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat))
+      try:
+        object_formats[info.objectFormat] += 1
+      except KeyError:
+        object_formats[info.objectFormat] = 1
+    return object_formats
+
+  ## === DataONE API Methods ===
   def get(self, identifier, headers=None):
     '''Retrieve an object from DataONE.
     
@@ -273,28 +288,37 @@ class DataOneClient(object):
     if len(identifier) == 0:
       self.logger.debug_("Invalid parameter(s)")
 
-    url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
+    url = self.getObjectUrl(id=identifier)
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
       headers = self.headers
     response = self.client.GET(url, headers)
-
     return response
 
-  def getSystemMetadata(self, identifier, headers=None):
-    '''Retrieve system metadata for an object.
+  def getSystemMetadataResponse(self, identifier, headers=None):
+    '''Returns an open file stream from which the system metadata can be read.
+    
     :param identifier: Identifier of the object to retrieve
     :rtype: :class:d1sysmeta.SystemMetadata
     '''
     if len(identifier) == 0:
       self.logger.debug_("Invalid parameter(s)")
-
-    url = urlparse.urljoin(self.getMetaUrl(), urllib.quote(identifier, ''))
+    url = self.getMetaUrl(id=identifier)
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
       headers = self.headers
     response = self.client.GET(url, headers)
     return response
+
+  def getSystemMetadata(self, identifier, headers=None):
+    '''Returns the de-serialized SystemMetadata object.
+    
+    :param identifier: Identifier of the object for which to retrieve system 
+       metadata
+    '''
+    response = self.getSystemMetadataResponse(identifier, headers)
+    format = response.headers['content-type']
+    return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
   def resolve(self, identifier, headers=None):
     url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'resolve/')
@@ -370,9 +394,9 @@ class DataOneClient(object):
     response = self.client.GET(url, headers)
 
     # Deserialize.
-    xml_doc = response.read()
+    format = response.headers['content-type']
     serializer = d1common.types.objectlist_serialization.ObjectList()
-    return serializer.deserialize(xml_doc, requestFormat)
+    return serializer.deserialize(response.read(), format)
 
   def getLogRecords(
     self,
@@ -425,9 +449,9 @@ class DataOneClient(object):
 
     # Fetch.
     response = self.client.GET(url, headers)
-
-    # Deserialize.
-    return DeserializeLogRecords(self.logger, response).get()
+    format = response.headers['content-type']
+    deser = d1common.types.logrecords_serialization.LogRecords()
+    return deser.deserialize(response.read(), format)
 
   def create(self, identifier, object_bytes, sysmeta_bytes):
     # Parameter validation.
