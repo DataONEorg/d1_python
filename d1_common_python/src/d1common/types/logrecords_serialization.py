@@ -50,6 +50,25 @@ except ImportError, e:
 #===============================================================================
 
 
+def logEntryToText(logEntry):
+  '''Returns a human readable string representation of a logEntry
+  '''
+  txt = []
+  txt.append("%s (%s): %s" % (logEntry.memberNode, logEntry.event, logEntry.entryId))
+  txt.append("  object id: %s" % logEntry.identifier)
+  txt.append("    ip addr: %s" % logEntry.ipAddress)
+  txt.append("      agent: %s" % logEntry.userAgent)
+  txt.append("       date: %s" % logEntry.dateLogged.isoformat())
+  return "\n".join(txt)
+
+
+def logEntriesToText(logEntries):
+  res = []
+  for entry in logEntries.logEntry:
+    res.append(logEntryToText(entry))
+  return "\n".join(res)
+
+
 class LogRecords(object):
   '''Implements serialization of DataONE LogEntry
   '''
@@ -203,7 +222,8 @@ class LogRecords(object):
   def deserialize_xml(self, doc):
     '''
     '''
-    self.log = d1common.types.generated.logrecords.CreateFromDocument(doc)
+    self.log = d1common.types.generated.logging.CreateFromDocument(doc)
+    return self.log
 
   def deserialize_json(self, doc):
     '''
@@ -224,6 +244,7 @@ class LogRecords(object):
       logEntry.memberNode = o['memberNode']
       logEntries.append(logEntry)
     self.log.logEntry = logEntries
+    return self.log
 
   def deserialize_csv(self, doc):
     '''Serialize object to CSV.
@@ -246,6 +267,7 @@ class LogRecords(object):
       logEntry.size = csv_line[5]
       logEntries.append(logEntry)
     self.log.logEntry = logEntries
+    return self.log
 
   def deserialize_rdf_xml(self, doc):
     '''
