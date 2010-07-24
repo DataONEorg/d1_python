@@ -1,12 +1,15 @@
 """
+Module d1common.xmlrunner
+=========================
+
 XML Test Runner for PyUnit
 
 SOURCE: http://xbmc.ramfelt.se/browser/TV.com/trunk/src/python-test/xmlrunner.py
 Date Retrieved: 2010-06-15
-"""
 
-# Written by Sebastian Rittau <srittau@jroger.in-berlin.de> and placed in
-# the Public Domain.
+Written by Sebastian Rittau <srittau@jroger.in-berlin.de> and placed in
+the Public Domain.
+"""
 
 __revision__ = "$Id: /mirror/jroger/python/stdlib/xmlrunner.py 3506 2006-07-27T09:12:39.629878Z srittau  $"
 
