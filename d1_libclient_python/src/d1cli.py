@@ -3,12 +3,16 @@ Simple client for DataONE demonstrating a couple of core operations.
 '''
 import sys
 import logging
+import datetime
+import dateutil.parser
 from optparse import OptionParser
 import d1common.types.logrecords_serialization
 from d1pythonitk.client import DataOneClient
-from d1pythonitk import objectlist
+from d1pythonitk.objectlistiterator import ObjectListIterator
+from d1pythonitk.logrecorditerator import LogRecordIterator
 
 if __name__ == '__main__':
+  yesterday = datetime.datetime.now() - datetime.timedelta(1)
   parser = OptionParser()
   operations = ['list', 'meta', 'get', 'formats', 'log']
   parser.add_option(
@@ -40,6 +44,13 @@ if __name__ == '__main__':
     default=3,
     type="int"
   )
+  parser.add_option(
+    "-s",
+    "--start",
+    dest="startdate",
+    help="Starting date, YYYY-MM-DD for log or list.",
+    default=yesterday.isoformat()
+  )
   (options, args) = parser.parse_args()
   if options.loglevel < 1:
     options.loglevel = 1
@@ -51,6 +62,11 @@ if __name__ == '__main__':
     print "Error: operation is required\n"
     parser.print_help()
     sys.exit()
+  try:
+    startdate = dateutil.parser.parse(options.startdate)
+  except:
+    logging.warn('"%s" could not be parsed as start date' % options.startdate)
+    startdate = None
   op = op.lower()
   client = DataOneClient(options.target)
   if op == 'get':
@@ -60,7 +76,8 @@ if __name__ == '__main__':
     res = client.getSystemMetadata(options.identifier)
     print res.toxml()
   elif op == 'list':
-    object_list = objectlist.ObjectListIterator(client)
+    logging.info('List objects, startTime=%s' % startdate.isoformat())
+    object_list = ObjectListIterator(client, startTime=startdate)
     print "#Found %d entries." % len(object_list)
     print "ID,format,size"
     for obj in object_list:
@@ -71,5 +88,7 @@ if __name__ == '__main__':
     for k in formats.keys():
       print "%s, %s" % (str(formats[k]), k)
   elif op == 'log':
-    entries = client.getLogRecords()
-    d1common.types.logrecords_serialization.logEntriesToText(entries)
+    logging.info('Log records, startTime=%s' % startdate.isoformat())
+    log_records = LogRecordIterator(client, startTime=startdate)
+    for entry in log_records:
+      print d1common.types.logrecords_serialization.logEntryToText(entry)

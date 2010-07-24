@@ -51,7 +51,7 @@ from d1common import upload
 import d1common.types.systemmetadata
 import d1common.types.logrecords_serialization
 from d1pythonitk import const
-from d1pythonitk import objectlist
+from d1pythonitk import objectlistiterator
 
 
 #===============================================================================
@@ -268,7 +268,7 @@ class DataOneClient(object):
     '''Utility method that returns a list of [object format, count] available
     on the target.
     '''
-    object_list = objectlist.ObjectListIterator(self)
+    object_list = objectlistiterator.ObjectListIterator(self)
     object_formats = {}
     for info in object_list:
       logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat))
@@ -424,21 +424,14 @@ class DataOneClient(object):
       )
     params['count'] = count
 
-    try:
-      if startTime is not None and endTime is None:
-        raise ValueError
-      elif endTime is not None and startTime is None:
-        raise ValueError
-      elif endTime is not None and startTime is not None and startTime >= endTime:
-        raise ValueError
-    except ValueError:
-      raise exceptions.InvalidRequest(
-        10002,
-        "startTime and endTime must be specified together, must be valid dates and endTime must be after startTime"
-      )
-    else:
-      params['startTime'] = startTime
-      params['endTime'] = endTime
+    if endTime is not None and startTime is not None and startTime >= endTime:
+      raise exceptions.InvalidRequest(10002, "startTime must be before endTime")
+
+    # Date range.
+    if startTime is not None:
+      params['startTime'] = startTime.isoformat()
+    if endTime is not None:
+      params['endTime'] = endTime.isoformat()
 
     url = self.getAccessLogUrl() + '?' + urllib.urlencode(params)
 
