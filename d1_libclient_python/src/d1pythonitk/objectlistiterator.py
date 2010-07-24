@@ -1,6 +1,6 @@
 ''' 
-Module d1objectlist
-===================
+Module d1objectIterator
+=======================
  
 :Created: 20100122
 :Author: vieglais
@@ -16,7 +16,7 @@ class ObjectListIterator(object):
   DataONE node.  Data is retrieved from the target only when required.
   '''
 
-  def __init__(self, client, start=0):
+  def __init__(self, client, start=0, startTime=None):
     '''Initializes the iterator.
     
      TODO: Extend this with date range and other restrictions
@@ -27,7 +27,8 @@ class ObjectListIterator(object):
     self._objectList = None
     self._czero = 0
     self._client = client
-    self._pagesize = 50
+    self._pagesize = 500
+    self.startTime = startTime
     self._loadMore(start=start)
     self._maxitem = self._objectList.total
 
@@ -53,7 +54,10 @@ class ObjectListIterator(object):
     '''
     self._czero = start
     self._citem = 0
-    self._objectList = self._client.listObjects(start=start, count=self._pagesize)
+    self._objectList = self._client.listObjects(
+      start=start, count=self._pagesize,
+      startTime=self.startTime
+    )
 
   def __len__(self):
     '''Implements len(ObjectListIterator)
