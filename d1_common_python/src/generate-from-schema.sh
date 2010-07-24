@@ -10,6 +10,8 @@
 BASEURL="https://repository.dataone.org/software/cicore/trunk/schemas"
 pyxbgen --binding-root d1common/types/generated \
         -u $BASEURL/logging.xsd -m logging \
-        -u $BASEURL/noderegistry.xsd -m noderegistry \
+        -u $BASEURL/nodelist.xsd -m nodelist \
         -u $BASEURL/objectlist.xsd -m objectlist \
-        -u $BASEURL/systemmetadata.xsd -m systemmetadata
+        -u $BASEURL/systemmetadata.xsd -m systemmetadata \
+        -u $BASEURL/monitor_object.xsd -m monitor_object 
+        
