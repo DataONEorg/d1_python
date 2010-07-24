@@ -12,15 +12,7 @@ interaction with the DataONE infrastructure.
 
   - python 2.6
 
-----
 
-.. autoclass:: RESTClient
-   :members:
-
-----
-
-.. autoclass:: DataOneClient
-   :members:
 '''
 
 # Stdlib.

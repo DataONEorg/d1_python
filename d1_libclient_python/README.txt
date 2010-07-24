@@ -6,8 +6,10 @@ and Coordinating Nodes.
 
 To build the documentation::
 
-  cd $HOME/Projects/d1pythonitk/doc
-  export PYTHONPATH=`dirname $PWD`/src
+  cd $HOME/Projects/D1_cicore/
+  export CDIR=`dirname $PWD`
+  export PYTHONPATH="$CDIR/api-common-python:$CDIR/itk/d1-python/src:$PYTHONPATH"
+  cd itk/d1-python/doc
   make html
 
 

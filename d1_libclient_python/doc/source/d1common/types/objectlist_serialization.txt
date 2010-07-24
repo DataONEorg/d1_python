@@ -1,0 +1,3 @@
+.. automodule:: d1common.types.objectlist_serialization
+   :members:
+   :undoc-members:

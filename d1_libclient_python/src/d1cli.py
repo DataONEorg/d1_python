@@ -69,26 +69,42 @@ if __name__ == '__main__':
     startdate = None
   op = op.lower()
   client = DataOneClient(options.target)
+
+  # Get an object
   if op == 'get':
     res = client.get(options.identifier)
     print res.read()
+
+  # Get system metadata about an object
   elif op == 'meta':
     res = client.getSystemMetadata(options.identifier)
     print res.toxml()
+
+  # List all objects
   elif op == 'list':
-    logging.info('List objects, startTime=%s' % startdate.isoformat())
+    try:
+      logging.info('List objects, startTime=%s' % startdate.isoformat())
+    except:
+      pass
     object_list = ObjectListIterator(client, startTime=startdate)
     print "#Found %d entries." % len(object_list)
     print "ID,format,size"
     for obj in object_list:
       print "%s,%s,%s" % (obj.identifier, obj.objectFormat, str(obj.size))
+
+  # Enumerate all object formats
   elif op == 'formats':
     formats = client.enumerateObjectFormats()
     print "count, format"
     for k in formats.keys():
       print "%s, %s" % (str(formats[k]), k)
+
+      # Iterate log entries
   elif op == 'log':
-    logging.info('Log records, startTime=%s' % startdate.isoformat())
+    try:
+      logging.info('Log records, startTime=%s' % startdate.isoformat())
+    except:
+      pass
     log_records = LogRecordIterator(client, startTime=startdate)
     for entry in log_records:
       print d1common.types.logrecords_serialization.logEntryToText(entry)

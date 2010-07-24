@@ -1,13 +1,10 @@
 ''' 
-Module d1objectIterator
-=======================
+Module d1pythonitk.d1objectIterator
+===================================
  
 :Created: 20100122
 :Author: vieglais
 
-
-.. autoclass:: ObjectListIterator
-   :members:
 '''
 
 

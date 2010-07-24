@@ -1,1 +1,4 @@
 .. automodule:: d1pythonitk.client
+   :members:
+   :undoc-members:
+

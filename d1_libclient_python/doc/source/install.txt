@@ -1,16 +1,27 @@
 Installing d1pythonitk
 ======================
 
-d1pythonitk is in the early stages of development and will likely change significantly
-over time.  As such, it should be considered experimental.  
+Note that ``d1pythonitk`` is in the early stages of development and will 
+likely change significantly over time.    
 
 Use it at your own risk of frustration.
 
-To install in your HOME::
+The simplest way to utilize the library is to check out the source from 
+subversion and work from there.  This makes it easy to keep up to date with
+changes.
 
-  python setup.py install --home=~
+A package will be released at some point in the future once things stabilize 
+a bit.
 
-To install in the default system location::
+To set things up in ``$HOME/dataone-python``::
 
-  sudo python setup.py install
+  mkdir $HOME/dataone-python
+  cd $HOME/dataone-python
+  svn co https://repository.dataone.org/software/cicore/trunk/api-common-python
+  svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python
+  export PYTHONPATH="$PWD/api-common-python/src:$PWD/d1-python/src:$PYTHONPATH"
+  cd d1-python/src
+  python d1cli.py --help
 
+
+Use the usual ``svn update`` operations to update your copy.

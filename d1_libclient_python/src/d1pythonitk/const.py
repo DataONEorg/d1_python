@@ -1,11 +1,11 @@
 '''
-Module pyd1.d1const
-===================
+Module d1pythonitk.const
+========================
 
 :Created: 20100111
 :Author: vieglais
 
-Provides various constants for the PyD1 client.
+Provides various constants for the python DataONE client.
 
 Note that many of these parameters should be retrieved from the root node of D1
 '''
