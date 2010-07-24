@@ -1,13 +1,10 @@
 ''' 
-Module logrecorditerator
-========================
+Module d1pythonitk.logrecorditerator
+====================================
  
 :Created: 20100724
 :Author: vieglais
 
-
-.. autoclass:: LogRecordIterator
-   :members:
 '''
 
 import logging

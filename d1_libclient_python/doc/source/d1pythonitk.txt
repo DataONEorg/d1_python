@@ -6,8 +6,9 @@ system.
 
 .. toctree::
    :numbered:
-   :maxdepth: 2
-
+   
    d1pythonitk/client
-   d1pythonitk/systemmetadata
    d1pythonitk/const
+   d1pythonitk/objectlistiterator
+   d1pythonitk/logrecorditerator
+   

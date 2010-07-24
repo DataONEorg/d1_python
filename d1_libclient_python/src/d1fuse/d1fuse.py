@@ -168,7 +168,7 @@ class DataOneFS(fuse.Operations):
 
 
 if __name__ == "__main__":
-  if len(argv) != 2:
+  if len(argv) < 2:
     print 'usage: %s <node> <mountpoint>' % argv[0]
     exit(1)
   mountpoint = argv[1]

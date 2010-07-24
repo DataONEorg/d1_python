@@ -1,0 +1,3 @@
+.. automodule:: d1common.types.logrecords_serialization
+   :members:
+   :undoc-members:

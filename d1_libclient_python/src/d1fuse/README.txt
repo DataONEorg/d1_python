@@ -25,12 +25,26 @@ Could do something like this for multiple nodes::
     + node1
       + meta
       + object
-      +log
+      + log
     + node2
     ...
-    
- Would be better to present content as a single unified filesystem view, which
- could be supported by the SOLR indexes on the CNs (fast query critical).
+
+
+Perhaps::
+
+  + node1
+    + content
+      + <identifier>
+        + sysmeta
+        + metadata
+        + data
+      + <identifier>
+      ...
+    + log
+
+
+Would be better to present content as a single unified filesystem view, which
+could be supported by the SOLR indexes on the CNs (fast query critical).
 
 Perhaps use facets from the SOLR index to enable drill down into different 
 topics.  Plenty of ways to arbitrarily present the content in a file system 

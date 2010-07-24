@@ -1,0 +1,3 @@
+.. automodule:: d1common.types.monitor_object_serialization
+   :members:
+   :undoc-members:
