@@ -1,5 +1,12 @@
-# {{{ http://code.activestate.com/recipes/146306/ (r1)
-# With some of the modifications suggested in the user comments.
+'''
+Module d1common.upload
+======================
+
+http://code.activestate.com/recipes/146306/ (r1)
+
+With some of the modifications suggested in the user comments.
+
+'''
 
 import httplib
 import mimetypes

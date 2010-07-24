@@ -1,4 +1,7 @@
 '''
+Module d1common.types.logrecords_serialization
+==============================================
+
 Implements serializaton and de-serialization for the LogRecords.
 '''
 

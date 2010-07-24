@@ -1,4 +1,7 @@
 '''
+Module d1common.types.systemmetadata
+====================================
+
 Extends the PyXB generated class to enable serialization to and from CSV and 
 JSON.
 
