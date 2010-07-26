@@ -125,28 +125,9 @@ class fixed_chunk_size_iterator(object):
   def __iter__(self):
     return self
 
-  #def raise_sys_log_http_404_not_found(err_msg):
-  #  '''
-  #  Log message to system log and raise 404 with message.
-  #  '''
-  #  sys_log.warning(err_msg)
-  #  raise Http404(err_msg)
-
-  #def return_sys_log_http_403_forbidden(err_msg):
-  #  '''
-  #  Log message to system log and raise 403 with message.
-  #  '''
-  #  sys_log.warning(err_msg)
-  #  return HttpResponseForbidden(err_msg)
-
-  #def return_sys_log_http_500_server_error(err_msg):
-  #  sys_log.error(err_msg)
-  #  return HttpResponseServerError(err_msg)
-
 
 def file_to_dict(path):
-  '''
-  Convert a sample MN object to dictionary.'''
+  '''Convert a sample MN object to dictionary.'''
 
   try:
     f = open(path, 'r')
@@ -195,8 +176,8 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
       date_str = request.GET[key]
       # parse_date() needs date-time, so if we only have date, add time
       # (midnight).
-      if re.match(r'\d{4}-\d{2}-\d{2}$', date_str):
-        date_str += ' 00:00:00Z'
+      if not re.search('T', date_str):
+        date_str += 'T00:00:00Z'
       date = iso8601.parse_date(date_str)
     except TypeError, e:
       raise d1common.exceptions.InvalidRequest(

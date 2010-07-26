@@ -54,6 +54,7 @@ from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
+from django.db.models import Avg, Max, Min, Count
 
 # 3rd party.
 try:
@@ -97,10 +98,10 @@ def object_collection(request):
     if 'delete' in request.GET:
       return object_collection_delete(request)
 
-    return object_collection_get(request)
+    return object_collection_get(request, head=False)
   
   if request.method == 'HEAD':
-    return object_collection_head(request)
+    return object_collection_get(request, head=True)
   
   if request.method == 'DELETE':
     return object_collection_delete(request)
@@ -108,7 +109,7 @@ def object_collection(request):
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
 
-def object_collection_get(request):
+def object_collection_get(request, head):
   '''
   Retrieve the list of objects present on the MN that match the calling parameters.
   MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -125,12 +126,12 @@ def object_collection_get(request):
   if 'orderby' in request.GET:
     orderby = request.GET['orderby']
     # Prefix for ascending or descending order.
-    pre = ''
+    prefix = ''
     m = re.match(r'(asc_|desc_)(.*)', orderby)
     if m:
       orderby = m.group(2)
       if m.group(1) == 'desc_':
-          pre = '-'
+          prefix = '-'
     # Map attribute to field.
     try:
       order_field = {
@@ -212,18 +213,14 @@ def object_collection_get(request):
     query = util.add_wildcard_filter(query, 'event_log__operation_type__operation_type', request.GET['operationtype'])
     query_unsliced = query
 
-  # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)
+  if head == False:
+    # Create a slice of a query based on request start and count parameters.
+    query, start, count = util.add_slice_filter(query, request)
+  else:
+    query = query.none()
 
-  # Return query data for further processing in middleware layer.  
+  # Return query data for further processing in middleware layer.
   return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'object' }
-
-def object_collection_head(request):
-  '''Placeholder.
-  '''
-
-  # Not implemented. Target: 0.9.
-  raise d1common.exceptions.NotImplemented(0, 'Not in spec.')
 
 def object_collection_delete(request):
   '''
@@ -514,20 +511,25 @@ def meta_guid(request, guid):
   '''
 
   if request.method == 'GET':
-    return meta_guid_get(request, guid)
+    return meta_guid_get(request, guid, head=False)
     
   if request.method == 'HEAD':
-    return meta_guid_head(request, guid)
+    return meta_guid_head(request, guid, head=True)
 
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
   
-def meta_guid_get(request, guid):
+def meta_guid_get(request, guid, head):
   '''
-  Describes the science metadata or data object (and likely other objects in the
-  future) identified by guid by returning the associated system metadata object.
-  
-  MN_crud.getSystemMetadata(token, guid) → SystemMetadata
+  Get:
+    Describes the science metadata or data object (and likely other objects in the
+    future) identified by guid by returning the associated system metadata object.
+    
+    MN_crud.getSystemMetadata(token, guid) → SystemMetadata
+
+  Head:
+    Describe sysmeta for scidata or scimeta.
+    0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<guid>
   '''
 
   # Verify that object exists. 
@@ -535,6 +537,9 @@ def meta_guid_get(request, guid):
     url = models.Object.objects.filter(guid=guid)[0]
   except IndexError:
     raise d1common.exceptions.NotFound(1020, 'Non-existing System Metadata object was requested', guid)
+
+  if head == True:
+    return HttpResponse('', mimetype='text/xml')
   
   # Open file for streaming.  
   file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
@@ -549,14 +554,6 @@ def meta_guid_get(request, guid):
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype='text/xml')
 
-def meta_guid_head(request, guid):
-  '''
-  Describe sysmeta for scidata or scimeta.
-  0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<guid>
-  '''
-  pass
-  #return response
-
 # Access Log.
 
 @auth.cn_check_required
@@ -567,10 +564,10 @@ def event_log_view(request):
   '''
 
   if request.method == 'GET':
-    return event_log_view_get(request)
+    return event_log_view_get(request, head=False)
   
   if request.method == 'HEAD':
-    return event_log_view_head(request)
+    return event_log_view_get(request, head=True)
     
   if request.method == 'DELETE':
     return event_log_view_delete(request)
@@ -578,12 +575,17 @@ def event_log_view(request):
   # Only GET, HEAD and DELETE accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
 
-def event_log_view_get(request):
+def event_log_view_get(request, head):
   '''
-  Get event_log.
-  0.3   MN_crud.getLogRecords()       GET     /log
+  Get:
+    Get event_log.
+    0.3   MN_crud.getLogRecords()       GET     /log
+    
+    MN_crud.getLogRecords(token, fromDate[, toDate][, event]) → LogRecords
   
-  MN_crud.getLogRecords(token, fromDate[, toDate][, event]) → LogRecords
+  Head:
+    Describe event_log.
+    0.3   MN_crud.describeLogRecords()       HEAD     /log
   '''
 
   # select objects ordered by mtime desc.
@@ -635,23 +637,14 @@ def event_log_view_get(request):
     query = util.add_wildcard_filter(query, 'event__event', request.GET['event'])
     query_unsliced = query
 
-  # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)    
+  if head == False:
+    # Create a slice of a query based on request start and count parameters.
+    query, start, count = util.add_slice_filter(query, request)    
+  else:
+    query = query.none()
 
   # Return query data for further processing in middleware layer.  
   return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'log' }
-
-def event_log_view_head(request):
-  '''
-  Describe event_log.
-  0.3   MN_crud.describeLogRecords()       HEAD     /log
-  '''
-
-  response = event_log_view_get(request)
-  
-  # TODO: Remove body from response.
-
-  return response
 
 def event_log_view_delete(request):
   '''
@@ -685,54 +678,20 @@ def health_status(request):
 # Monitoring
 
 @auth.cn_check_required
-def monitor_object(request):
+def monitor(request):
   '''
   '''
   if request.method == 'GET':
-    return monitor_object_get(request)
+    return monitor_get(request)
 
   # Only GET accepted.
   return HttpResponseNotAllowed(['GET'])
 
-
-# number of accesses, cumulative
-# number of accesses, per day
-# - modified
-# - startTime
-# - endTime
-
-def monitor_object_get(request):
+def monitor_get(request):
   '''
   - number of objects, cumulative
   - number of objects, per day
   - filters:
-    - modified
-    - format
-  '''
-
-  # Set up query with requested sorting.
-  query = models.Object.objects.all()
-
-  # Filter by format.
-  if 'format' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
-  
-  return {'query': query, 'day': 'day' in request.GET, 'type': 'monitor_object' }
-
-@auth.cn_check_required
-def monitor_log(request):
-  '''
-  '''
-  if request.method == 'GET':
-    return monitor_log_get(request)
-
-  # Only GET accepted.
-  return HttpResponseNotAllowed(['GET'])
-
-def monitor_log_get(request):
-  '''
-  - number of accesses, cumulative
-  - number of accesses, per day
     - modified
     - format
   '''
@@ -741,27 +700,34 @@ def monitor_log_get(request):
   query = models.Event_log.objects.order_by('mtime')
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'event_log__date_logged', 'time')
+
+  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'time')
   if changed == True:
+    print 'time'
     query_unsliced = query
 
   # Filter by ip_address.
   if 'ip_address' in request.GET:
-    query = util.add_wildcard_filter(query, 'event_log__ip_address__ip_address', request.GET['ip_address'])
+    query = util.add_wildcard_filter(query, 'ip_address__ip_address', request.GET['ip_address'])
     query_unsliced = query
 
   # Filter by access operation type.
   if 'operationtype' in request.GET:
-    query = util.add_wildcard_filter(query, 'event_log__event__event', request.GET['operationtype'])
+    query = util.add_wildcard_filter(query, 'event__event', request.GET['operationtype'])
     query_unsliced = query
   
+  # Filter by format.
+  if 'format' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
+
   if 'day' in request.GET:
     query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(count=Count('id')).order_by()
 
   # Create a slice of a query based on request start and count parameters.
   query, start, count = util.add_slice_filter(query, request)
   
-  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count() }
+  return {'query': query, 'start': start, 'count': count, 'total':
+    0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
 
 # Diagnostics, debugging and testing.

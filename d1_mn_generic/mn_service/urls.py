@@ -36,8 +36,7 @@ urlpatterns = patterns(
   (r'^health/status$', 'health_status'),
 
   # /monitor/
-  (r'^monitor/object$', 'monitor_object'),
-  (r'^monitor/log$', 'monitor_log'),
+  (r'^monitor$', 'monitor'),
 
   # Diagnostics, debugging and testing.
   (r'^inject_log$', 'inject_log'),

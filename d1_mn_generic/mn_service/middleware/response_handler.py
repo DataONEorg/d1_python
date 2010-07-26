@@ -46,7 +46,6 @@ import d1common.ext.mimeparser
 #from django.template import Context
 #from django.template import RequestContext
 from django.db import models
-from django.db.models import Avg, Max, Min, Count
 
 from django.http import HttpResponse
 
@@ -54,7 +53,7 @@ from django.http import HttpResponse
 import d1common.exceptions
 import d1common.types.objectlist_serialization
 import d1common.types.logrecords_serialization
-import d1common.types.monitor_object_serialization
+import d1common.types.monitorlist_serialization
 
 # App.
 import mn_service.models as models
@@ -67,8 +66,6 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
   def deserialize_db(self, view_result):
     '''
     '''
-    objectInfos = []
-
     for row in view_result['query']:
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
 
@@ -82,10 +79,8 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
       self.object_list.objectInfo.append(objectInfo)
 
     self.object_list.start = view_result['start']
-    self.object_list.count = len(objectInfos)
+    self.object_list.count = len(self.object_list.objectInfo)
     self.object_list.total = view_result['total']
-
-    #self.object_list.objectInfo = objectInfos
 
 
 class LogRecords(d1common.types.logrecords_serialization.LogRecords):
@@ -95,7 +90,7 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
     for row in view_result['query']:
       logEntry = d1common.types.generated.logging.LogEntry()
 
-      logEntry.entryId = row.object.guid
+      logEntry.entryId = str(row.id)
       logEntry.identifier = row.object.guid
       logEntry.ipAddress = row.ip_address.ip_address
       logEntry.userAgent = row.user_agent.user_agent
@@ -107,28 +102,22 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
       self.log.logEntry.append(logEntry)
 
 
-class MonitorObject(d1common.types.monitor_object_serialization.MonitorObject):
+class MonitorList(d1common.types.monitorlist_serialization.MonitorList):
   def deserialize_db(self, view_result):
     '''
     '''
     query = view_result['query']
     if view_result['day'] == True:
-      query = query.extra({'day': "date(mtime)"}).values('day').annotate(
-        count=Count(
-          'id'
-        )
-      ).order_by(
-      )
       for row in query:
-        monitorObjectEntry = d1common.types.generated.monitor_object.MonitorObjectEntry()
-        monitorObjectEntry.date = row['day']
-        monitorObjectEntry.count = row['count']
-        self.monitor_object.append(monitorObjectEntry)
+        monitorInfo = d1common.types.generated.monitorlist.MonitorInfo()
+        monitorInfo.date = row['day']
+        monitorInfo.count = row['count']
+        self.monitorlist.append(monitorInfo)
     else:
-      monitorObjectEntry = d1common.types.generated.monitor_object.MonitorObjectEntry()
-      monitorObjectEntry.date = datetime.datetime.now()
-      monitorObjectEntry.count = query.aggregate(count=Count('id'))['count']
-      self.monitor_object.append(monitorObjectEntry)
+      monitorInfo = d1common.types.generated.monitorlist.MonitorInfo()
+      monitorInfo.date = datetime.date.today()
+      monitorInfo.count = query.aggregate(count=Count('id'))['count']
+      self.monitorlist.append(monitorInfo)
 
 
 def serialize_object(request, view_result):
@@ -147,7 +136,7 @@ def serialize_object(request, view_result):
   type = {
     'object': ObjectList(),
     'log': LogRecords(),
-    'monitor_object': MonitorObject(),
+    'monitor': MonitorList(),
   }[view_result['type']]
 
   type.deserialize_db(view_result)
@@ -255,7 +244,8 @@ def monitor_serialize_object(request, response, monitor):
     'application/json': monitor_serialize_json,
     'text/csv': monitor_serialize_null,
     'text/xml': monitor_serialize_xml,
-    #'application/rdf+xml': monitor_serialize_null,
+    'application/xml': monitor_serialize_xml,
+    'application/rdf+xml': monitor_serialize_null,
     'text/html': monitor_serialize_null,
     'text/log': monitor_serialize_null,
   }
@@ -264,7 +254,8 @@ def monitor_serialize_object(request, response, monitor):
     'application/json',
     'text/csv',
     'text/xml',
-    #'application/rdf+xml',
+    'application/xml',
+    'application/rdf+xml',
     'text/html',
     'text/log',
   ]
