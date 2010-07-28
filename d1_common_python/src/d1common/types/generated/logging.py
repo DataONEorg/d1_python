@@ -1,7 +1,7 @@
-# d1common/types/logging.py
+# ./logging.py
 # PyXB bindings for NamespaceModule
 # NSM:4c0b254ff7a24921cacdb99b4dab6f73821e5ad7
-# Generated 2010-06-29 11:08:16.908753 by PyXB version 1.1.2
+# Generated 2010-07-26 15:18:50.447356 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:23603098-8390-11df-9bc3-00264a005868')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:6260d01a-98fb-11df-9a83-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -67,6 +67,13 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'LogEntry')
     # Base type is pyxb.binding.datatypes.anyType
     
+    # Element userAgent uses Python identifier userAgent
+    __userAgent = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'userAgent'), 'userAgent', '__httpdataone_orgservicetypeslogging0_1_LogEntry_userAgent', False)
+
+    
+    userAgent = property(__userAgent.value, __userAgent.set, None, None)
+
+    
     # Element entryId uses Python identifier entryId
     __entryId = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'entryId'), 'entryId', '__httpdataone_orgservicetypeslogging0_1_LogEntry_entryId', False)
 
@@ -95,13 +102,6 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     memberNode = property(__memberNode.value, __memberNode.set, None, None)
 
     
-    # Element userAgent uses Python identifier userAgent
-    __userAgent = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'userAgent'), 'userAgent', '__httpdataone_orgservicetypeslogging0_1_LogEntry_userAgent', False)
-
-    
-    userAgent = property(__userAgent.value, __userAgent.set, None, None)
-
-    
     # Element principal uses Python identifier principal
     __principal = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'principal'), 'principal', '__httpdataone_orgservicetypeslogging0_1_LogEntry_principal', False)
 
@@ -124,11 +124,11 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
 
 
     _ElementMap = {
+        __userAgent.name() : __userAgent,
         __entryId.name() : __entryId,
         __identifier.name() : __identifier,
         __ipAddress.name() : __ipAddress,
         __memberNode.name() : __memberNode,
-        __userAgent.name() : __userAgent,
         __principal.name() : __principal,
         __event.name() : __event,
         __dateLogged.name() : __dateLogged
@@ -168,6 +168,8 @@ Namespace.addCategoryObject('elementBinding', log.name().localName(), log)
 
 
 
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'userAgent'), pyxb.binding.datatypes.string, scope=LogEntry))
+
 LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'entryId'), _common.Identifier, scope=LogEntry))
 
 LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), _common.Identifier, scope=LogEntry))
@@ -175,8 +177,6 @@ LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None
 LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'ipAddress'), pyxb.binding.datatypes.string, scope=LogEntry))
 
 LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'memberNode'), _common.NodeReference, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'userAgent'), pyxb.binding.datatypes.string, scope=LogEntry))
 
 LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'principal'), _common.Principal, scope=LogEntry))
 
@@ -199,6 +199,6 @@ LogEntry._ContentModel = pyxb.binding.content.ParticleModel(LogEntry._GroupModel
 
 CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'logEntry'), LogEntry, scope=CTD_ANON))
 CTD_ANON._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'logEntry')), min_occurs=1L, max_occurs=None)
+    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'logEntry')), min_occurs=0L, max_occurs=None)
     )
 CTD_ANON._ContentModel = pyxb.binding.content.ParticleModel(CTD_ANON._GroupModel, min_occurs=1, max_occurs=1)
