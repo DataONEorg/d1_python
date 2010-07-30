@@ -53,14 +53,27 @@ URL_SYSMETA_PATH = 'meta/'
 #: TODO: retrieve this from D1 root
 URL_ACCESS_LOG_PATH = 'log'
 
+#: Path to append to target base for the monitor object collection.
+URL_MONITOR_OBJECT_PATH = 'monitor/object'
+
+#: Path to append to target base for the resolve call.
+URL_RESOLVE_PATH = 'resolve/'
+
+#: Path to append to target base for the node call.
+URL_NODE_PATH = 'node/'
+
 #: Path to the DataONE system metadata schema
 #: TODO: retrieve this from D1 root
 SYSTEM_METADATA_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
                              "trunk/schemas/systemmetadata.xsd"
 
-# Path to the DataONE ObjectList
+# Path to the DataONE ObjectList schema.
 OBJECTLIST_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
                              "trunk/schemas/objectlist.xsd"
+
+# Path to the DataONE MonitorObject schema.
+MONITOR_OBJECT_SCHEMA_URL = "https://repository.dataone.org/software/cicore/"+\
+                             "trunk/schemas/monitor_object.xsd"
 
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]

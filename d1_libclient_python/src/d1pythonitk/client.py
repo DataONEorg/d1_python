@@ -32,6 +32,10 @@ except:
 # 3rd party.
 try:
   import d1common.types.objectlist_serialization
+  import d1common.types.objectlocationlist_serialization
+  import d1common.types.systemmetadata
+  import d1common.types.logrecords_serialization
+  import d1common.types.nodelist_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -40,8 +44,6 @@ except ImportError, e:
 # DataONE.
 from d1common import exceptions
 from d1common import upload
-import d1common.types.systemmetadata
-import d1common.types.logrecords_serialization
 from d1pythonitk import const
 from d1pythonitk import objectlistiterator
 
@@ -70,11 +72,13 @@ class RESTClient(object):
 
   logger = logging.getLogger()
 
-  def __init__(self, target=const.URL_DATAONE_ROOT):
+  def __init__(self, target=const.URL_DATAONE_ROOT, timeout=const.RESPONSE_TIMEOUT):
     self.status = None
     self.responseInfo = None
     self._BASE_DETAIL_CODE = '10000'
     self.target = self._normalizeTarget(target)
+    self.timeout = timeout
+
     #TODO: Need to define these detailCode values
 
     self.logger.debug_ = lambda *x: self.log(self.logger.debug, x)
@@ -141,7 +145,7 @@ class RESTClient(object):
     self.logger.debug_('url({0}) headers({1}) method({2})'.format(url, headers, method))
 
     try:
-      response = urllib2.urlopen(request, timeout=const.RESPONSE_TIMEOUT)
+      response = urllib2.urlopen(request, timeout)
       self.status = response.code
       self.responseInfo = response.info()
     except urllib2.HTTPError, e:
@@ -187,8 +191,9 @@ class RESTClient(object):
   def DELETE(self, url, data=None, headers=None):
     return self.sendRequest(url, data=data, headers=headers, method='DELETE')
 
-
 #===============================================================================
+
+
 class DataOneClient(object):
   '''Implements a simple DataONE client.
   '''
@@ -198,6 +203,7 @@ class DataOneClient(object):
     target=const.URL_DATAONE_ROOT,
     userAgent=const.USER_AGENT,
     clientClass=RESTClient,
+    timeout=const.RESPONSE_TIMEOUT,
   ):
     '''Initialize the test client.
     
@@ -209,7 +215,7 @@ class DataOneClient(object):
     self.userAgent = userAgent
     self._BASE_DETAIL_CODE = '11000'
     #TODO: Need to define this detailCode base value
-    self.client = clientClass(target)
+    self.client = clientClass(target, timeout)
 
   def exceptionCode(self, extra):
     return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
@@ -233,6 +239,11 @@ class DataOneClient(object):
     '''
     return urlparse.urljoin(self.client.target, const.URL_OBJECT_LIST_PATH)
 
+  def getMonitorObjectUrl(self):
+    '''Returns the full URL to the object collection on target.
+    '''
+    return urlparse.urljoin(self.client.target, const.URL_MONITOR_OBJECT_PATH)
+
   def getMetaUrl(self, id=None):
     '''Return the full URL to the SysMeta object on target.
     '''
@@ -245,6 +256,16 @@ class DataOneClient(object):
     '''Returns the full URL to the access log collection on target.
     '''
     return urlparse.urljoin(self.client.target, const.URL_ACCESS_LOG_PATH)
+
+  def getResolveUrl(self):
+    '''Returns the full URL to the resolve collection on target.
+    '''
+    return urlparse.urljoin(self.client.target, const.URL_RESOLVE_PATH)
+
+  def getNodeUrl(self):
+    '''Returns the full URL to the node collection on target.
+    '''
+    return urlparse.urljoin(self.client.target, const.URL_NODE_PATH)
 
   def getSystemMetadataSchema(self, schemaUrl=const.SYSTEM_METADATA_SCHEMA_URL):
     '''Convenience function to retrieve a copy of the system metadata schema.
@@ -313,12 +334,41 @@ class DataOneClient(object):
     return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
   def resolve(self, identifier, headers=None):
-    url = urlparse.urljoin(self.getObjectListUrl(), identifier, 'resolve/')
+    '''Resolve an identifier into a ObjectLocationList.
+    :param identifier: Identifier of the object to retrieve
+    :rtype: :class:d1sysmeta.ObjectLocationList
+    '''
+    if len(identifier) == 0:
+      self.logger.debug_("Invalid parameter(s)")
+
+    url = urlparse.urljoin(self.getResolveUrl(), urllib.quote(identifier, ''))
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
       headers = self.headers
-    raise exceptions.NotImplemented(self.exceptioncode('1.3'), __name__)
     response = self.client.GET(url, headers)
+    xml_doc = response.read()
+    print xml_doc
+    object_location_list = d1common.types.objectlocationlist_serialization.ObjectLocationList(
+    )
+    object_location_list.deserialize(xml_doc, 'text/xml')
+
+    return object_location_list
+
+  def node(self, headers=None):
+    '''Get Node registry.
+    :rtype: :class:d1sysmeta.NodeList
+    '''
+    url = self.getNodeUrl()
+    self.logger.debug_("url({0})".format(url))
+    if headers is None:
+      headers = self.headers
+    response = self.client.GET(url, headers)
+
+    xml_doc = response.read()
+    node_list = d1common.types.nodelist_serialization.NodeList()
+    node_list.deserialize(xml_doc, 'text/xml')
+
+    return node_list
 
   def listObjects(
     self,
