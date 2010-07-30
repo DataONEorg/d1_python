@@ -7,6 +7,9 @@ a regular filesystem on Linux and OS X systems.
 
 Status: Pre-alpha, design phase really.  Proof of concept, that sort of thing.
 
+There is no implementation of FUSE for windows systems, though an approximate
+equivalent is Dokan_ which enables new file systems to be implemented without 
+resorting to writing a kernel driver.
 
 Design Notes
 ------------
@@ -61,3 +64,5 @@ about objects.
 .. macfuse:: http://code.google.com/p/macfuse/
 
 .. _fusepy:: http://code.google.com/p/fusepy/
+
+.. _Dokan:: http://yukoba.accelart.jp/2008/05/windows-fuse-dokan-become-open-source.html

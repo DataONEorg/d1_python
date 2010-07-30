@@ -24,10 +24,9 @@ except:
 
 from d1common import xmlrunner
 from d1common import exceptions
+from d1common.types import systemmetadata
 from d1pythonitk import const
 from d1pythonitk import client
-from d1pythonitk import systemmetadata
-from d1pythonitk import xmlvalidator
 
 MEMBER_NODES = {
   'dryad': 'http://dev-dryad-mn.dataone.org/mn',
@@ -169,9 +168,9 @@ class TestRestClient(TestCaseWithURLCompare):
     except Exception, e:
       pass
     self.assertTrue(isinstance(e, urllib2.URLError))
-    self.assertEqual(e.reason.errno, socket.EAI_NONAME)
+    #self.assertEqual(e.errno, socket.EAI_NONAME)
 
-#===============================================================================
+    #===============================================================================
 
 
 class TestDataOneClient(TestCaseWithURLCompare):
@@ -193,21 +192,18 @@ class TestDataOneClient(TestCaseWithURLCompare):
       endTime=endTime,
       requestFormat=requestFormat
     )
-    id = objlist['objectInfo'][0]['identifier']
+    id = objlist.objectInfo[0].identifier
     logging.info("Attempting to get ID=%s" % id)
     bytes = cli.get(id).read()
     headers = cli.headers
     headers['Accept'] = 'text/xml'
-    sysm = cli.getSystemMetadata(id, headers=headers)
-    sysmeta = systemmetadata.SystemMetadata(sysm)
+    sysmeta = cli.getSystemMetadata(id, headers=headers)
     self.assertEqual(sysmeta.identifier, id)
 
   def testGetFail(self):
     cli = client.DataOneClient(target=self.target)
     # see if failure works
     id = 'some bogus id'
-    response = cli.get(id)
-    self.assertEqual(404, response.getcode())
     self.assertRaises(exceptions.NotFound, cli.get, id)
 
   def testGetSystemMetadata(self):
@@ -220,7 +216,7 @@ class TestDataOneClient(TestCaseWithURLCompare):
     count = 10
     startTime = None
     endTime = None
-    requestFormat = 'application/json'
+    requestFormat = 'text/xml'
     objlist = cli.listObjects(
       start=start,
       count=count,
@@ -228,13 +224,13 @@ class TestDataOneClient(TestCaseWithURLCompare):
       endTime=endTime,
       requestFormat=requestFormat
     )
-    self.assertEqual(objlist['count'], len(objlist['objectInfo']))
-    obj = objlist['objectInfo'][0]
-    self.assertTrue(obj.has_key('size'))
-    self.assertTrue(obj.has_key('checksum'))
-    self.assertTrue(obj.has_key('dateSysMetadataModified'))
-    self.assertTrue(obj.has_key('identifier'))
-    self.assertTrue(obj.has_key('format'))
+    self.assertEqual(objlist.count, len(objlist.objectInfo))
+    obj = objlist.objectInfo[0]
+    tmp = obj.size
+    tmp = obj.checksum
+    tmp = obj.dateSysMetadataModified
+    tmp = obj.identifier
+    tmp = obj.objectFormat
 
     start = 4
     count = 3
@@ -245,12 +241,12 @@ class TestDataOneClient(TestCaseWithURLCompare):
       endTime=endTime,
       requestFormat=requestFormat
     )
-    self.assertEqual(objlist2['count'], len(objlist2['objectInfo']))
-    self.assertEqual(objlist2['count'], count)
+    self.assertEqual(objlist2.count, len(objlist2.objectInfo))
+    self.assertEqual(objlist2.count, count)
     i = 0
-    for obj in objlist2['objectInfo']:
-      self.assertEqual(objlist['objectInfo'][4 + i]['identifier'], obj['identifier'])
-      logging.info(obj['identifier'])
+    for obj in objlist2.objectInfo:
+      self.assertEqual(objlist.objectInfo[4 + i].identifier, obj.identifier)
+      logging.info(obj.identifier)
       i += 1
 
   def testListObjectsJson(self):
@@ -266,15 +262,16 @@ class TestDataOneClient(TestCaseWithURLCompare):
 
 class TestListObjects(unittest.TestCase):
   def setUp(self):
-    self.target = MEMBER_NODES['knb']
+    self.target = MEMBER_NODES['dryad']
 
   def testValidListObjects(self):
     objectListUrl = "https://repository.dataone.org/software/cicore/trunk/schemas/objectlist.xsd"
     cli = client.DataOneClient(target=self.target)
-    response = cli.listObjects(start=0, count=5, deserialize=False)
+    response = cli.listObjects(start=0, count=5)
     logging.error("====")
     logging.error(response)
-    xmlvalidator.validate(response, objectListUrl)
+    #not needed any more since the pxyb parser will validate
+    #xmlvalidator.validate(response, objectListUrl)
 
 
 if __name__ == "__main__":
