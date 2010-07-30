@@ -63,6 +63,7 @@ class ObjectList(object):
       'application/json': self.serialize_json,
       'text/csv': self.serialize_csv,
       'text/xml': self.serialize_xml,
+      'application/xml': self.serialize_xml,
       'application/rdf+xml': self.serialize_rdf_xml,
       #'text/html': self.serialize_null, #TODO: Not in current REST spec.
       #'text/log': self.serialize_null, #TODO: Not in current REST spec.
@@ -72,6 +73,7 @@ class ObjectList(object):
       'application/json': self.deserialize_json,
       'text/csv': self.deserialize_csv,
       'text/xml': self.deserialize_xml,
+      'application/xml': self.deserialize_xml,
       'application/rdf+xml': self.deserialize_rdf_xml,
       #'text/html': self.deserialize_null, #TODO: Not in current REST spec.
       #'text/log': self.deserialize_null, #TODO: Not in current REST spec.
@@ -81,6 +83,7 @@ class ObjectList(object):
       'application/json',
       'text/csv',
       'text/xml',
+      'application/xml',
       'application/rdf+xml',
       #'text/html',
       #'text/log',
