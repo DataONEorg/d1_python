@@ -145,7 +145,7 @@ class RESTClient(object):
     self.logger.debug_('url({0}) headers({1}) method({2})'.format(url, headers, method))
 
     try:
-      response = urllib2.urlopen(request, self.timeout)
+      response = urllib2.urlopen(request, timeout=self.timeout)
       self.status = response.code
       self.responseInfo = response.info()
     except urllib2.HTTPError, e:
