@@ -1,8 +1,5 @@
 '''
-Module d1common.types.monitor_object_serialization
-==================================================
-
-Implements serializaton and de-serialization for the MonitorObject.
+Implements serializaton and de-serialization for the MonitorList.
 '''
 
 # Stdlib.
@@ -53,7 +50,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1common.types.generated.monitor_object
+  import d1common.types.generated.monitorlist
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -62,12 +59,13 @@ except ImportError, e:
 #===============================================================================
 
 
-class MonitorObject(d1common.types.generated.monitor_object.MonitorObject):
+class MonitorList(object):
   def __init__(self):
     self.serialize_map = {
       'application/json': self.serialize_null,
       'text/csv': self.serialize_null,
       'text/xml': self.serialize_xml,
+      'application/xml': self.serialize_xml,
       'application/rdf+xml': self.serialize_null,
       'text/html': self.serialize_null,
       'text/log': self.serialize_null,
@@ -77,21 +75,23 @@ class MonitorObject(d1common.types.generated.monitor_object.MonitorObject):
       'application/json': self.deserialize_null,
       'text/csv': self.deserialize_null,
       'text/xml': self.deserialize_xml,
+      'application/xml': self.deserialize_xml,
       'application/rdf+xml': self.deserialize_null,
       'text/html': self.deserialize_null,
       'text/log': self.deserialize_null,
     }
 
     self.pri = [
-      'application/json',
-      'text/csv',
+      #'application/json',
+      #'text/csv',
       'text/xml',
-      'application/rdf+xml',
-      'text/html',
-      'text/log',
+      'application/xml',
+      #'application/rdf+xml',
+      #'text/html',
+      #'text/log',
     ]
 
-    self.monitor_object = d1common.types.generated.monitor_object.monitorObject()
+    self.monitorlist = d1common.types.generated.monitorlist.monitorList()
 
     #===============================================================================
 
@@ -109,7 +109,7 @@ class MonitorObject(d1common.types.generated.monitor_object.MonitorObject):
     return self.serialize_map[content_type](pretty, jsonvar), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
-    return self.monitor_object.toxml()
+    return self.monitorlist.toxml()
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
     raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
@@ -120,7 +120,7 @@ class MonitorObject(d1common.types.generated.monitor_object.MonitorObject):
     return self.deserialize_map[content_type](doc)
 
   def deserialize_xml(self, doc):
-    self.monitorObject = d1common.types.generated.monitor_object.CreateFromDocument(doc)
+    self.monitorList = d1common.types.generated.monitorlist.CreateFromDocument(doc)
 
   def deserialize_null(self, doc):
     raise d1common.exceptions.NotImplemented(0, 'Deserialization method not implemented.')

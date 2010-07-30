@@ -81,6 +81,7 @@ class LogRecords(object):
       'application/json': self.serialize_json,
       'text/csv': self.serialize_csv,
       'text/xml': self.serialize_xml,
+      'application/xml': self.serialize_xml,
       'application/rdf+xml': self.serialize_rdf_xml,
       'text/html': self.serialize_null, #TODO: Not in current REST spec.
       'text/log': self.serialize_null, #TODO: Not in current REST spec.
@@ -90,6 +91,7 @@ class LogRecords(object):
       'application/json': self.deserialize_json,
       'text/csv': self.deserialize_csv,
       'text/xml': self.deserialize_xml,
+      'application/xml': self.deserialize_xml,
       'application/rdf+xml': self.deserialize_rdf_xml,
       'text/html': self.deserialize_null, #TODO: Not in current REST spec.
       'text/log': self.deserialize_null, #TODO: Not in current REST spec.
@@ -99,9 +101,10 @@ class LogRecords(object):
       'application/json',
       'text/csv',
       'text/xml',
+      'application/xml',
       'application/rdf+xml',
-      'text/html',
-      'text/log',
+      #'text/html',
+      #'text/log',
     ]
 
     self.log = d1common.types.generated.logging.log()
@@ -117,7 +120,7 @@ class LogRecords(object):
       # An invalid Accept header causes mimeparser to throw a ValueError.
       #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
       content_type = 'application/json'
-
+    print accept
     # Deserialize object
     return self.serialize_map[content_type](pretty, jsonvar), content_type
 
