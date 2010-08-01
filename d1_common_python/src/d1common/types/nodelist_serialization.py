@@ -1,8 +1,8 @@
 '''
-Module d1common.types.objectlocationlist_serialization
+Module d1common.types.nodelist_serialization
 ==============================================
 
-Implements serializaton and de-serialization for the ObjectLocationList.
+Implements serializaton and de-serialization for the NodeList.
 '''
 
 # Stdlib.
@@ -47,7 +47,7 @@ import d1common.exceptions
 import d1common.ext.mimeparser
 
 try:
-  import d1common.types.generated.objectlocationlist
+  import d1common.types.generated.nodelist
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -56,9 +56,9 @@ except ImportError, e:
 #===============================================================================
 
 
-class ObjectLocationList(object):
+class NodeList(object):
   def __init__(self):
-    self.log = logging.getLogger('ObjectLocationList')
+    self.log = logging.getLogger('NodeList')
     self.serialize_map = {
       'application/json': self.serialize_null, #TODO: Not in current REST spec.
       'text/csv': self.serialize_null, #TODO: Not in current REST spec.
@@ -89,8 +89,7 @@ class ObjectLocationList(object):
       #'text/log',
     ]
 
-    self.object_location_list = d1common.types.generated.objectlocationlist.objectLocationList(
-    )
+    self.node_list = d1common.types.generated.nodelist.nodeList()
 
   def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
     # Determine which serializer to use. If client does not supply accept, we
@@ -106,7 +105,7 @@ class ObjectLocationList(object):
 
   def serialize_xml(self, pretty=False, jsonvar=False):
     self.log.debug("serialize_xml")
-    return self.object_location_list.toxml()
+    return self.node_list.toxml()
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
     raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
@@ -119,10 +118,8 @@ class ObjectLocationList(object):
 
   def deserialize_xml(self, doc):
     self.log.debug('deserialize xml')
-    self.object_location_list = d1common.types.generated.objectlocationlist.CreateFromDocument(
-      doc
-    )
-    return self.object_location_list
+    self.node_list = d1common.types.generated.nodelist.CreateFromDocument(doc)
+    return self.node_list
 
   def deserialize_null(self, doc):
     self.log.debug('deserialize NULL')
