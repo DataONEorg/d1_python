@@ -68,6 +68,9 @@ def generate_debug_info():
 
 
 def traceback_to_detail_code():
+  ''':param:
+  :return:
+  '''
   exception_type, exception_value, exception_traceback = sys.exc_info()
   tb = []
   while exception_traceback:
@@ -88,6 +91,9 @@ def traceback_to_detail_code():
 
 
 def serialize_exception(request, exception):
+  ''':param:
+  :return:
+  '''
   map = {
     'application/json': exception.serializeToJson,
     'text/csv': None,

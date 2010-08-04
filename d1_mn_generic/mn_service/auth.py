@@ -30,8 +30,7 @@ import util
 
 
 def cn_check_required(f):
-  '''
-  Function decorator that checks if the IP address of the client matches a
+  '''Function decorator that checks if the IP address of the client matches a
   known CN IP and blocks acccess to the decorated function if there is no match.
   
   For now, it's not really necessary to tap into Django's authentication system.
@@ -84,9 +83,9 @@ def cn_check_required(f):
 
 
 def mn_check_required(f):
-  '''
-  Function decorator that checks if the IP address of the client matches a
+  '''Function decorator that checks if the IP address of the client matches a
   known MN IP and blocks acccess to the decorated function if there is no match.
+  :return:
   '''
 
   def wrap(request, *args, **kwargs):

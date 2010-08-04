@@ -82,6 +82,9 @@ import util
 
 # TODO: Stub.
 def session(request):
+  ''':param:
+  :return:
+  '''
   return HttpResponse('<sessionId>bogusID</sessionId>')
 
 @auth.cn_check_required
@@ -113,6 +116,7 @@ def object_collection_get(request, head):
   '''
   Retrieve the list of objects present on the MN that match the calling parameters.
   MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList
+  :return:
   '''
   
   # TODO: This code should only run while debugging.
@@ -226,6 +230,7 @@ def object_collection_delete(request):
   '''
   Remove all objects from db.
   Not currently part of spec.
+  :return:
   '''
 
   # Clear the DB.
@@ -260,6 +265,7 @@ def object_guid(request, guid):
   0.4 MN_crud.update()   PUT    /object/<guid>
   0.9 MN_crud.delete()   DELETE /object/<guid>
   0.3 MN_crud.describe() HEAD   /object/<guid>
+  :return:
   '''
   
   if request.method == 'POST':
@@ -293,7 +299,9 @@ def object_guid_post(request, guid):
   request body using MIME-multipart Mixed Media Type, where the object part has
   the name ‘object’, and the sysmeta part has the name ‘systemmetadata’.
   Parameter names are not case sensitive.
+  :return:
   '''
+  
   # Validate POST.
   if len(request.FILES) != 2:
     raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
@@ -303,25 +311,16 @@ def object_guid_post(request, guid):
     
   if 'systemmetadata' not in request.FILES.keys():
     raise d1common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
-
-  # The object can be a URL, in which case GMN will just store the URL and
-  # stream the object from the URL when it's requested. If the object is not
-  # a URL, the object is stored locally and served from there.
-  object_bytes = request.FILES['object'].read()
-  # Get sysmeta bytes.
-  sysmeta_bytes = request.FILES['systemmetadata'].read()
-
-  # Create a sysmeta object.
-  sysmeta = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_bytes)
   
-  # Validate sysmeta object.
-  sysmeta.isValid()
+  # Validate SysMeta.
+  sysmeta_bytes = request.FILES['systemmetadata'].read()
+  sysmeta = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_bytes)
   try:
     sysmeta.isValid()
   except sysmeta.XMLSyntaxError:
     raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed')
   
-  # Write sysmeta bytes to cache folder.
+  # Write SysMeta bytes to cache folder.
   sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
   try:
     file = open(sysmeta_path, 'wb')
@@ -332,30 +331,58 @@ def object_guid_post(request, guid):
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
   
-  # If object is not a HTTP URL, store it to disk.
+  # The object can be a URL, in which case GMN will just store the URL and
+  # stream the object from the URL when it's requested. If the object is not
+  # a URL, the object is stored locally and served from there.
+  
+  # TODO: This is a hack. The interface does not have a way for the client to
+  # specify who should manage the object, so we guess based on if the object
+  # looks like a URL.
+
+  object_is_url = False
+  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
   try:
-    url_split = urlparse.urlparse(object_bytes)
-    if url_split.scheme != 'http':
-      raise ValueError
-  except ValueError:
-    object_is_url = False
-  else:
-    object_is_url = True
+    if not request.FILES['object'].multiple_chunks():
+      # The object is a single chunk (under 2.5MiB by default). It can be either
+      # an object to store on disk or a URL to use for proxy/streaming.
+      sys_log.info('guid({0}): Object is a single chunk'.format(guid))
 
-  if object_is_url == False:
-    sys_log.info('guid({0}): Object is not a HTTP URL. Storing on disk'.format(guid))
+      object_bytes = request.FILES['object'].read()  
+  
+      # Determine if the object is a URL.
+      try:
+        url_split = urlparse.urlparse(object_bytes)
+        if url_split.scheme != 'http':
+          raise ValueError
+      except ValueError:
+        pass
+      else:
+        object_is_url = True
+  
+      # If object is not a HTTP URL, write it to disk.
+      if object_is_url == False:
+        sys_log.info('guid({0}): Object is not a HTTP URL. Writing to disk'.format(guid))
+    
+        file = open(object_path, 'wb')
+        file.write(object_bytes)
+        file.close()
+      else:
+        sys_log.info('guid({0}): Object is a HTTP URL. Storing URL in DB'.format(guid))
+        
+    else:
+      # Object is multiple chunks (larger than 2.5MiB by default). It can only
+      # be an object to write to disk.
+      sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
 
-    object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
-    try:
       file = open(object_path, 'wb')
-      file.write(object_bytes)
+      for chunk in request.FILES['object'].chunks():
+        file.write(chunk)
       file.close()
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not write object file: {0}\n'.format(object_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1common.exceptions.ServiceFailure(0, err_msg)
-  else:
-    sys_log.info('guid({0}): Object is a HTTP URL. Storing URL in DB'.format(guid))
+      
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not write object file: {0}\n'.format(object_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1common.exceptions.ServiceFailure(0, err_msg)
 
   # Create database entry for object.
   object = models.Object()
@@ -389,6 +416,7 @@ def object_guid_get(request, guid):
   '''
   Retrieve an object identified by guid from the node.
   MN_crud.get(token, guid) → bytes
+  :return:
   '''
 
   # Find object based on guid.
@@ -396,7 +424,7 @@ def object_guid_get(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested', guid)
+    raise d1common.exceptions.NotFound(1020, 'Non-existing object was requested', guid)
 
   # Split URL into individual parts.
   try:
@@ -457,6 +485,7 @@ def object_guid_put(request, guid):
   MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier
   Creates a new object on the Member Node that explicitly updates and obsoletes
   a previous object (identified by obsoletedGuid).
+  :return:
   '''
   raise d1common.exceptions.NotImplemented(0, 'MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier')
 
@@ -465,6 +494,7 @@ def object_guid_delete(request, guid):
   MN_crud.delete(token, guid) → Identifier
   Deletes an object from the Member Node, where the object is either a data
   object or a science metadata object.
+  :return:
   '''
   raise d1common.exceptions.NotImplemented(0, 'MN_crud.delete(token, guid) → Identifier')
   
@@ -530,6 +560,7 @@ def meta_guid_get(request, guid, head):
   Head:
     Describe sysmeta for scidata or scimeta.
     0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<guid>
+  :return:
   '''
 
   # Verify that object exists. 
@@ -561,6 +592,7 @@ def event_log_view(request):
   '''
   0.3 MN_crud.getLogRecords()      GET  /log
   0.3 MN_crud.describeLogRecords() HEAD /log
+  :return:
   '''
 
   if request.method == 'GET':
@@ -586,6 +618,7 @@ def event_log_view_get(request, head):
   Head:
     Describe event_log.
     0.3   MN_crud.describeLogRecords()       HEAD     /log
+  :return:
   '''
 
   # select objects ordered by mtime desc.
@@ -650,6 +683,7 @@ def event_log_view_delete(request):
   '''
   Remove all log records.
   Not part of spec.
+  :return:
   '''
 
   # Clear the access log.
@@ -694,6 +728,7 @@ def monitor_get(request):
   - filters:
     - modified
     - format
+  :return:
   '''
   
   # Set up query with requested sorting.
@@ -746,6 +781,7 @@ def inject_log(request):
   '''Inject a fake log for testing.
   
   The corresponding test object set must have already been created.
+  :return:
   '''
   # Validate POST.
   

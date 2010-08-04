@@ -40,14 +40,9 @@ except ImportError, e:
 import d1common.ext.mimeparser
 
 # Django.
-#from django.utils.html import escape
-#from django.conf import settings
-#from django.shortcuts import render_to_response
-#from django.template import Context
-#from django.template import RequestContext
 from django.db import models
-
 from django.http import HttpResponse
+from django.db.models import Avg, Max, Min, Count
 
 # MN API.
 import d1common.exceptions
@@ -65,7 +60,10 @@ import settings
 class ObjectList(d1common.types.objectlist_serialization.ObjectList):
   def deserialize_db(self, view_result):
     '''
+    :param:
+    :return:
     '''
+
     for row in view_result['query']:
       objectInfo = d1common.types.generated.objectlist.ObjectInfo()
 
@@ -86,7 +84,10 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
 class LogRecords(d1common.types.logrecords_serialization.LogRecords):
   def deserialize_db(self, view_result):
     '''
+    :param:
+    :return:
     '''
+
     for row in view_result['query']:
       logEntry = d1common.types.generated.logging.LogEntry()
 
@@ -105,7 +106,10 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
 class MonitorList(d1common.types.monitorlist_serialization.MonitorList):
   def deserialize_db(self, view_result):
     '''
+    :param:
+    :return:
     '''
+
     query = view_result['query']
     if view_result['day'] == True:
       for row in query:
@@ -178,8 +182,8 @@ def serialize_object(request, view_result):
 #  ]
 #}
 def monitor_serialize_json(monitor, jsonvar=False):
-  '''
-  Serialize object to JSON.
+  '''Serialize object to JSON.
+  :return:
   '''
 
   if jsonvar is not False:
@@ -201,8 +205,8 @@ def monitor_serialize_json(monitor, jsonvar=False):
 #  ...
 #</response>
 def monitor_serialize_xml(monitor, jsonvar=False):
-  '''
-  Serialize object to XML.
+  '''Serialize object to XML.
+  :return:
   '''
 
   # Set up namespace for the xml response.
@@ -233,9 +237,10 @@ def monitor_serialize_xml(monitor, jsonvar=False):
 
 
 def monitor_serialize_null(monitor, jsonvar=False):
+  '''For now, this NULL serializer just calls out to the json serializer.
+  :return:
   '''
-  For now, this NULL serializer just calls out to the json serializer.
-  '''
+
   return monitor_serialize_json(monitor, jsonvar)
 
 
@@ -304,11 +309,12 @@ def monitor_serialize_object(request, response, monitor):
 
 
 def set_header(response, last_modified, content_length, content_type):
-  '''
-  Add Last-Modified, Content-Length and Content-Type headers to response.
+  '''Add Last-Modified, Content-Length and Content-Type headers to response.
 
   If last_modified is None, we pull the date from the one stored in the db.
+  :return:
   '''
+
   if last_modified is None:
     try:
       status_row = models.DB_update_status.objects.all()[0]

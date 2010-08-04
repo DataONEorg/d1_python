@@ -54,6 +54,9 @@ class Object(models.Model):
   size = models.PositiveIntegerField(db_index=True)
 
   def set_format(self, format_string):
+    ''':param:
+    :return:
+    '''
     try:
       format = Object_format.objects.filter(format=format_string)[0]
     except IndexError:
@@ -64,6 +67,9 @@ class Object(models.Model):
     self.format = format
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
+    ''':param:
+    :return:
+    '''
     try:
       checksum_algorithm = Checksum_algorithm.objects.filter(
         checksum_algorithm=checksum_algorithm_string
@@ -76,10 +82,11 @@ class Object(models.Model):
     self.checksum_algorithm = checksum_algorithm
 
   def save_unique(self):
-    '''
-    If attempting to save an object that has the same guid and/or url as an
+    '''If attempting to save an object that has the same guid and/or url as an
     old object, we delete the old object before saving the new.
+    :return:
     '''
+
     try:
       me = Object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]
     except IndexError:
@@ -124,6 +131,9 @@ class Event_log(models.Model):
   member_node = models.ForeignKey(Event_log_member_node, db_index=True)
 
   def set_event(self, event_string):
+    ''':param:
+    :return:
+    '''
     if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
       raise d1common.exceptions.ServiceFailure(
         0, 'Attempted to create invalid type of event: {0}'.format(event_string)
@@ -138,6 +148,9 @@ class Event_log(models.Model):
     self.event = event
 
   def set_ip_address(self, ip_address_string):
+    ''':param:
+    :return:
+    '''
     try:
       ip_address = Event_log_ip_address.objects.filter(ip_address=ip_address_string)[0]
     except IndexError:
@@ -148,6 +161,9 @@ class Event_log(models.Model):
     self.ip_address = ip_address
 
   def set_user_agent(self, user_agent_string):
+    ''':param:
+    :return:
+    '''
     try:
       user_agent = Event_log_user_agent.objects.filter(user_agent=user_agent_string)[0]
     except IndexError:
@@ -158,6 +174,9 @@ class Event_log(models.Model):
     self.user_agent = user_agent
 
   def set_principal(self, principal_string):
+    ''':param:
+    :return:
+    '''
     try:
       principal = Event_log_principal.objects.filter(principal=principal_string)[0]
     except IndexError:
@@ -168,6 +187,9 @@ class Event_log(models.Model):
     self.principal = principal
 
   def set_member_node(self, member_node_string):
+    ''':param:
+    :return:
+    '''
     try:
       member_node = Event_log_member_node.objects.filter(member_node=member_node_string
                                                          )[0]

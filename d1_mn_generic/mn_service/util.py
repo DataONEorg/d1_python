@@ -67,14 +67,20 @@ import util
 
 def request_to_string(request):
   '''Pull some information about the client out from a request object.
+  :return:
   '''
 
   return 'ip_address({0}) user_agent({1})'.format(
-    request.META['REMOTE_ADDR'], request.META['HTTP_USER_AGENT']
+    #request.META['REMOTE_ADDR'], request.META['HTTP_USER_AGENT'])
+    request.META['REMOTE_ADDR'],
+    ''
   )
 
 
 def log_exception(max_traceback_levels=5, msg=None):
+  ''':param:
+  :return:
+  '''
   if msg is not None:
     sys_log.error('{0}'.format(msg))
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
@@ -92,6 +98,7 @@ def log_exception(max_traceback_levels=5, msg=None):
 def clear_db():
   '''
   Clear the database. Used for testing and debugging.
+  :return:
   '''
 
   models.DB_update_status.objects.all().delete()
@@ -109,13 +116,20 @@ class fixed_chunk_size_iterator(object):
   '''
   Create a file iterator that iterates through file-like object using fixed
   size chunks.
+  :return:
   '''
 
   def __init__(self, flo, chunk_size=1024**2):
+    ''':param:
+    :return:
+    '''
     self.flo = flo
     self.chunk_size = chunk_size
 
   def next(self):
+    ''':param:
+    :return:
+    '''
     data = self.flo.read(self.chunk_size)
     if data:
       return data
@@ -123,6 +137,9 @@ class fixed_chunk_size_iterator(object):
       raise StopIteration
 
   def __iter__(self):
+    ''':param:
+    :return:
+    '''
     return self
 
 
@@ -149,6 +166,9 @@ def file_to_dict(path):
 
 
 def add_range_operator_filter(query, request, col_name, name, default='eq'):
+  ''':param:
+  :return:
+  '''
   filter_kwargs = {}
 
   operator_translation = {

@@ -30,6 +30,7 @@ import util
 
 def log(guid, event, request, timestamp=None):
   '''Log an object access.
+  :return:
   '''
 
   # Gather info from request object.
