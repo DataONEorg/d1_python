@@ -39,9 +39,17 @@ except:
 #  raise
 
 # MN API.
-import d1common
-import d1common.exceptions
-import d1common.ext.mimeparser
+try:
+  import d1common
+  import d1common.exceptions
+  import d1common.ext.mimeparser
+  import d1common.util
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n'
+  )
+  raise
 
 try:
   import d1common.types.generated.logging
@@ -122,7 +130,9 @@ class LogRecords(object):
       content_type = 'application/json'
     print accept
     # Deserialize object
-    return self.serialize_map[content_type](pretty, jsonvar), content_type
+    return self.serialize_map[d1common.util.get_content_type(content_type)](
+      pretty, jsonvar
+    ), content_type
 
   #<?xml version="1.0" encoding="UTF-8"?>
   #<d1:log xmlns:d1="http://dataone.org/service/types/logging/0.1"
@@ -223,7 +233,7 @@ class LogRecords(object):
   def deserialize(self, doc, content_type='application/json'):
     '''
     '''
-    return self.deserialize_map[content_type](doc)
+    return self.deserialize_map[d1common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
     '''
