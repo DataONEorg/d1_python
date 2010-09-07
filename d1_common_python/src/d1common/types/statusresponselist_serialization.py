@@ -1,5 +1,8 @@
 '''
-Implements serializaton and de-serialization for the MonitorList.
+Module d1common.types.objectlocationlist_serialization
+==============================================
+
+Implements serializaton and de-serialization for the StatusResponseList.
 '''
 
 # Stdlib.
@@ -12,6 +15,7 @@ import types
 import urllib
 import wsgiref.handlers
 import time
+import logging
 
 try:
   import cjson as json
@@ -51,7 +55,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1common.types.generated.monitorlist
+  import d1common.types.generated.statusresponselist
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -60,26 +64,27 @@ except ImportError, e:
 #===============================================================================
 
 
-class MonitorList(object):
+class StatusResponseList(object):
   def __init__(self):
+    self.log = logging.getLogger('StatusResponseList')
     self.serialize_map = {
-      'application/json': self.serialize_null,
-      'text/csv': self.serialize_null,
+      'application/json': self.serialize_null, #TODO: Not in current REST spec.
+      'text/csv': self.serialize_null, #TODO: Not in current REST spec.
       'text/xml': self.serialize_xml,
       'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_null,
-      'text/html': self.serialize_null,
-      'text/log': self.serialize_null,
+      'application/rdf+xml': self.serialize_null, #TODO: Not in current REST spec.
+      'text/html': self.serialize_null, #TODO: Not in current REST spec.
+      'text/log': self.serialize_null, #TODO: Not in current REST spec.
     }
 
     self.deserialize_map = {
-      'application/json': self.deserialize_null,
-      'text/csv': self.deserialize_null,
+      'application/json': self.deserialize_null, #TODO: Not in current REST spec.
+      'text/csv': self.deserialize_null, #TODO: Not in current REST spec.
       'text/xml': self.deserialize_xml,
       'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_null,
-      'text/html': self.deserialize_null,
-      'text/log': self.deserialize_null,
+      'application/rdf+xml': self.deserialize_null, #TODO: Not in current REST spec.
+      'text/html': self.deserialize_null, #TODO: Not in current REST spec.
+      'text/log': self.deserialize_null, #TODO: Not in current REST spec.
     }
 
     self.pri = [
@@ -92,19 +97,17 @@ class MonitorList(object):
       #'text/log',
     ]
 
-    self.monitorlist = d1common.types.generated.monitorlist.monitorList()
+    self.object_location_list = d1common.types.generated.statusresponselist.statusResponseList(
+    )
 
-    #===============================================================================
-
-  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
+  def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
     # Determine which serializer to use. If client does not supply accept, we
     # default to JSON.
     try:
       content_type = d1common.ext.mimeparser.best_match(self.pri, accept)
     except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError.
-      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
-      content_type = 'application/json'
+      content_type = 'text/xml'
+    self.log.debug("serializing, content-type=%s" % content_type)
 
     # Deserialize object
     return self.serialize_map[d1common.util.get_content_type(content_type)](
@@ -112,18 +115,27 @@ class MonitorList(object):
     ), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
-    return self.monitorlist.toxml()
+    self.log.debug("serialize_xml")
+    return self.object_location_list.toxml()
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
     raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
 
     #===============================================================================
 
-  def deserialize(self, doc, content_type='application/json'):
+  def deserialize(self, doc, content_type='text/xml'):
+    self.log.debug("de-serialize, content-type=%s" % content_type)
     return self.deserialize_map[d1common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
-    self.monitorList = d1common.types.generated.monitorlist.CreateFromDocument(doc)
+    self.log.debug('deserialize xml')
+    self.object_location_list = d1common.types.generated.statusresponselist.CreateFromDocument(
+      doc
+    )
+    return self.object_location_list
 
   def deserialize_null(self, doc):
-    raise d1common.exceptions.NotImplemented(0, 'Deserialization method not implemented.')
+    self.log.debug('deserialize NULL')
+    raise d1common.exceptions.NotImplemented(
+      0, 'De-serialization method not implemented.'
+    )

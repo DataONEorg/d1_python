@@ -8,14 +8,15 @@ Implements serializaton and de-serialization for the ObjectLocationList.
 # Stdlib.
 import csv
 import datetime
+import logging
 import os
+import re
 import StringIO
 import sys
+import time
 import types
 import urllib
 import wsgiref.handlers
-import time
-import logging
 
 try:
   import cjson as json
@@ -42,9 +43,17 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1common
-import d1common.exceptions
-import d1common.ext.mimeparser
+try:
+  import d1common
+  import d1common.exceptions
+  import d1common.ext.mimeparser
+  import d1common.util
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n'
+  )
+  raise
 
 try:
   import d1common.types.generated.objectlocationlist
@@ -102,7 +111,9 @@ class ObjectLocationList(object):
     self.log.debug("serializing, content-type=%s" % content_type)
 
     # Deserialize object
-    return self.serialize_map[content_type](pretty, jsonvar), content_type
+    return self.serialize_map[d1common.util.get_content_type(content_type)](
+      pretty, jsonvar
+    ), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
     self.log.debug("serialize_xml")
@@ -115,7 +126,7 @@ class ObjectLocationList(object):
 
   def deserialize(self, doc, content_type='text/xml'):
     self.log.debug("de-serialize, content-type=%s" % content_type)
-    return self.deserialize_map[content_type](doc)
+    return self.deserialize_map[d1common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
     self.log.debug('deserialize xml')

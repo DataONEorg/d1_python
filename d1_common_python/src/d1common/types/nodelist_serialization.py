@@ -42,9 +42,17 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1common
-import d1common.exceptions
-import d1common.ext.mimeparser
+try:
+  import d1common
+  import d1common.exceptions
+  import d1common.ext.mimeparser
+  import d1common.util
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n'
+  )
+  raise
 
 try:
   import d1common.types.generated.nodelist
@@ -93,7 +101,7 @@ class NodeList(object):
 
   def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
     # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
+    # default to text/xml.
     try:
       content_type = d1common.ext.mimeparser.best_match(self.pri, accept)
     except ValueError:
@@ -101,7 +109,9 @@ class NodeList(object):
     self.log.debug("serializing, content-type=%s" % content_type)
 
     # Deserialize object
-    return self.serialize_map[content_type](pretty, jsonvar), content_type
+    return self.serialize_map[d1common.util.get_content_type(content_type)](
+      pretty, jsonvar
+    ), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
     self.log.debug("serialize_xml")
@@ -114,7 +124,7 @@ class NodeList(object):
 
   def deserialize(self, doc, content_type='text/xml'):
     self.log.debug("de-serialize, content-type=%s" % content_type)
-    return self.deserialize_map[content_type](doc)
+    return self.deserialize_map[d1common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
     self.log.debug('deserialize xml')
