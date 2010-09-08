@@ -1,7 +1,7 @@
-# ./_common.py
+# ./pyxb/_common.py
 # PyXB bindings for NamespaceModule
 # NSM:cc95dcea7ffc87390c2ad21660a741b26761176b
-# Generated 2010-07-28 14:53:50.796959 by PyXB version 1.1.2
+# Generated 2010-09-08 11:58:32.541201 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:39429dea-9a8a-11df-9d26-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b16472b8-bb72-11df-b7fa-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -43,30 +43,6 @@ def CreateFromDOM (node, default_namespace=None):
 
 
 # Atomic SimpleTypeDefinition
-class NonEmptyString (pyxb.binding.datatypes.string):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
-    _Documentation = None
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
-NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
-NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
-   NonEmptyString._CF_pattern)
-Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
-
-# Atomic SimpleTypeDefinition
-class Principal (NonEmptyString):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Principal')
-    _Documentation = None
-Principal._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'Principal', Principal)
-
-# Atomic SimpleTypeDefinition
 class ObjectFormat (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
     """An atomic simple type."""
@@ -88,7 +64,7 @@ ObjectFormat.CF_1_3 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=
 ObjectFormat.CF_1_4 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'CF-1.4')
 ObjectFormat.httpwww_cuahsi_orgwaterML1_0 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'http://www.cuahsi.org/waterML/1.0/')
 ObjectFormat.httpwww_cuahsi_orgwaterML1_1 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'http://www.cuahsi.org/waterML/1.1/')
-ObjectFormat.DSPACE_METS_SIP_Profile_1_0 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'DSPACE METS SIP Profile 1.0')
+ObjectFormat.httpwww_loc_govMETS = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'http://www.loc.gov/METS/')
 ObjectFormat.netCDF_3 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'netCDF-3')
 ObjectFormat.netCDF_4 = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'netCDF-4')
 ObjectFormat.textplain = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'text/plain')
@@ -99,6 +75,30 @@ ObjectFormat.httpdigir_netschemaconceptualdarwin20031_0darwin2_xsd = ObjectForma
 ObjectFormat.applicationoctet_stream = ObjectFormat._CF_enumeration.addEnumeration(unicode_value=u'application/octet-stream')
 ObjectFormat._InitializeFacetMap(ObjectFormat._CF_enumeration)
 Namespace.addCategoryObject('typeBinding', u'ObjectFormat', ObjectFormat)
+
+# Atomic SimpleTypeDefinition
+class NonEmptyString (pyxb.binding.datatypes.string):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
+    _Documentation = None
+NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
+NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
+NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
+NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
+   NonEmptyString._CF_pattern)
+Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
+
+# Atomic SimpleTypeDefinition
+class ServiceVersion (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceVersion')
+    _Documentation = None
+ServiceVersion._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ServiceVersion', ServiceVersion)
 
 # Atomic SimpleTypeDefinition
 class ChecksumAlgorithm (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
@@ -118,6 +118,36 @@ ChecksumAlgorithm._InitializeFacetMap(ChecksumAlgorithm._CF_enumeration)
 Namespace.addCategoryObject('typeBinding', u'ChecksumAlgorithm', ChecksumAlgorithm)
 
 # Atomic SimpleTypeDefinition
+class Identifier (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
+    _Documentation = None
+Identifier._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
+
+# Atomic SimpleTypeDefinition
+class ServiceName (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceName')
+    _Documentation = None
+ServiceName._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ServiceName', ServiceName)
+
+# Atomic SimpleTypeDefinition
+class Principal (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Principal')
+    _Documentation = None
+Principal._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'Principal', Principal)
+
+# Atomic SimpleTypeDefinition
 class NodeReference (NonEmptyString):
 
     """An atomic simple type."""
@@ -128,14 +158,33 @@ NodeReference._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'NodeReference', NodeReference)
 
 # Atomic SimpleTypeDefinition
-class Identifier (NonEmptyString):
+class ComponentName (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
     """An atomic simple type."""
 
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ComponentName')
     _Documentation = None
-Identifier._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
+ComponentName._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=ComponentName, enum_prefix=None)
+ComponentName.Apache = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'Apache')
+ComponentName.CoordinatingNode = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'CoordinatingNode')
+ComponentName.Django = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'Django')
+ComponentName.LinuxUbuntu = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'LinuxUbuntu')
+ComponentName.LinuxDebian = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'LinuxDebian')
+ComponentName.MemberNode = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'MemberNode')
+ComponentName.Mercury = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'Mercury')
+ComponentName.Metacat = ComponentName._CF_enumeration.addEnumeration(unicode_value=u'Metacat')
+ComponentName._InitializeFacetMap(ComponentName._CF_enumeration)
+Namespace.addCategoryObject('typeBinding', u'ComponentName', ComponentName)
+
+# Atomic SimpleTypeDefinition
+class ComponentVersion (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ComponentVersion')
+    _Documentation = None
+ComponentVersion._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ComponentVersion', ComponentVersion)
 
 # Complex type Checksum with content type SIMPLE
 class Checksum (pyxb.binding.basis.complexTypeDefinition):
