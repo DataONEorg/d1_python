@@ -1,7 +1,7 @@
-# ./statusresponselist.py
+# ./pyxb/statusresponselist.py
 # PyXB bindings for NamespaceModule
-# NSM:bd5909557543568baae22458a6754f4f3dd7bde3
-# Generated 2010-08-19 09:24:06.910621 by PyXB version 1.1.2
+# NSM:d63af8e216143d5eec0988eda9c8e00a33d17d07
+# Generated 2010-09-08 11:58:31.805498 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,13 +11,13 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:ce99b258-aba5-11df-a12b-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b0f5de20-bb72-11df-8809-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 import _common
 
-Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/StatusResponseList/0.1', create_if_missing=True)
+Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/ComponentList/0.1', create_if_missing=True)
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
 ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
 ModuleRecord._setModule(sys.modules[__name__])
@@ -43,80 +43,67 @@ def CreateFromDOM (node, default_namespace=None):
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
 
 
-# Complex type StatusResponse with content type ELEMENT_ONLY
-class StatusResponse (pyxb.binding.basis.complexTypeDefinition):
+# Complex type ComponentList with content type ELEMENT_ONLY
+class ComponentList (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'StatusResponse')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ComponentList')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element componentVersion uses Python identifier componentVersion
-    __componentVersion = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'componentVersion'), 'componentVersion', '__httpdataone_orgservicetypesStatusResponseList0_1_StatusResponse_componentVersion', False)
+    # Element Component uses Python identifier Component
+    __Component = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'Component'), 'Component', '__httpdataone_orgservicetypesComponentList0_1_ComponentList_Component', False)
 
     
-    componentVersion = property(__componentVersion.value, __componentVersion.set, None, u'Version of component in DataONE software stack.\n          ')
-
-    
-    # Element componentName uses Python identifier componentName
-    __componentName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'componentName'), 'componentName', '__httpdataone_orgservicetypesStatusResponseList0_1_StatusResponse_componentName', False)
-
-    
-    componentName = property(__componentName.value, __componentName.set, None, u'Name of component in DataONE software stack.\n          ')
+    Component = property(__Component.value, __Component.set, None, None)
 
 
     _ElementMap = {
-        __componentVersion.name() : __componentVersion,
-        __componentName.name() : __componentName
+        __Component.name() : __Component
     }
     _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'StatusResponse', StatusResponse)
+Namespace.addCategoryObject('typeBinding', u'ComponentList', ComponentList)
 
 
-# Complex type StatusResponseList with content type ELEMENT_ONLY
-class StatusResponseList (pyxb.binding.basis.complexTypeDefinition):
+# Complex type CTD_ANON with content type EMPTY
+class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'StatusResponseList')
+    _ExpandedName = None
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element statusResponse uses Python identifier statusResponse
-    __statusResponse = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'statusResponse'), 'statusResponse', '__httpdataone_orgservicetypesStatusResponseList0_1_StatusResponseList_statusResponse', True)
+    # Attribute version uses Python identifier version
+    __version = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'version'), 'version', '__httpdataone_orgservicetypesComponentList0_1_CTD_ANON_version', _common.ComponentVersion, required=True)
+    
+    version = property(__version.value, __version.set, None, None)
 
     
-    statusResponse = property(__statusResponse.value, __statusResponse.set, None, u'List of DataONE software stack components and their\n            corresponding version numbers.\n          ')
+    # Attribute name uses Python identifier name
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesComponentList0_1_CTD_ANON_name', _common.ComponentName, required=True)
+    
+    name = property(__name.value, __name.set, None, None)
 
 
     _ElementMap = {
-        __statusResponse.name() : __statusResponse
-    }
-    _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'StatusResponseList', StatusResponseList)
+    _AttributeMap = {
+        __version.name() : __version,
+        __name.name() : __name
+    }
 
 
-statusResponseList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'statusResponseList'), StatusResponseList)
-Namespace.addCategoryObject('elementBinding', statusResponseList.name().localName(), statusResponseList)
+
+componentList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'componentList'), ComponentList)
+Namespace.addCategoryObject('elementBinding', componentList.name().localName(), componentList)
 
 
 
-StatusResponse._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'componentVersion'), _common.ComponentVersion, scope=StatusResponse, documentation=u'Version of component in DataONE software stack.\n          '))
-
-StatusResponse._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'componentName'), _common.ComponentName, scope=StatusResponse, documentation=u'Name of component in DataONE software stack.\n          '))
-StatusResponse._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(StatusResponse._UseForTag(pyxb.namespace.ExpandedName(None, u'componentName')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(StatusResponse._UseForTag(pyxb.namespace.ExpandedName(None, u'componentVersion')), min_occurs=1L, max_occurs=1L)
+ComponentList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'Component'), CTD_ANON, scope=ComponentList))
+ComponentList._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ComponentList._UseForTag(pyxb.namespace.ExpandedName(None, u'Component')), min_occurs=1, max_occurs=1)
     )
-StatusResponse._ContentModel = pyxb.binding.content.ParticleModel(StatusResponse._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-StatusResponseList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'statusResponse'), StatusResponse, scope=StatusResponseList, documentation=u'List of DataONE software stack components and their\n            corresponding version numbers.\n          '))
-StatusResponseList._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(StatusResponseList._UseForTag(pyxb.namespace.ExpandedName(None, u'statusResponse')), min_occurs=1L, max_occurs=None)
-    )
-StatusResponseList._ContentModel = pyxb.binding.content.ParticleModel(StatusResponseList._GroupModel, min_occurs=1, max_occurs=1)
+ComponentList._ContentModel = pyxb.binding.content.ParticleModel(ComponentList._GroupModel, min_occurs=1, max_occurs=1)

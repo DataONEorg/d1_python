@@ -1,7 +1,7 @@
-# d1common/types/systemmetadata.py
+# ./pyxb/systemmetadata.py
 # PyXB bindings for NamespaceModule
 # NSM:ad83a62b16c5ba4e749e404d671cad04fd140a97
-# Generated 2010-06-29 11:08:16.909148 by PyXB version 1.1.2
+# Generated 2010-09-08 11:58:30.310632 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:23603098-8390-11df-9bc3-00264a005868')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b00c90b2-bb72-11df-bb6d-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -51,8 +51,9 @@ class STD_ANON (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mi
     _ExpandedName = None
     _Documentation = None
 STD_ANON._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=STD_ANON, enum_prefix=None)
-STD_ANON.allow = STD_ANON._CF_enumeration.addEnumeration(unicode_value=u'allow')
-STD_ANON.deny = STD_ANON._CF_enumeration.addEnumeration(unicode_value=u'deny')
+STD_ANON.read = STD_ANON._CF_enumeration.addEnumeration(unicode_value=u'read')
+STD_ANON.write = STD_ANON._CF_enumeration.addEnumeration(unicode_value=u'write')
+STD_ANON.changePermission = STD_ANON._CF_enumeration.addEnumeration(unicode_value=u'changePermission')
 STD_ANON._InitializeFacetMap(STD_ANON._CF_enumeration)
 
 # Atomic SimpleTypeDefinition
@@ -63,9 +64,8 @@ class STD_ANON_ (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_m
     _ExpandedName = None
     _Documentation = None
 STD_ANON_._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=STD_ANON_, enum_prefix=None)
-STD_ANON_.read = STD_ANON_._CF_enumeration.addEnumeration(unicode_value=u'read')
-STD_ANON_.write = STD_ANON_._CF_enumeration.addEnumeration(unicode_value=u'write')
-STD_ANON_.changePermission = STD_ANON_._CF_enumeration.addEnumeration(unicode_value=u'changePermission')
+STD_ANON_.allow = STD_ANON_._CF_enumeration.addEnumeration(unicode_value=u'allow')
+STD_ANON_.deny = STD_ANON_._CF_enumeration.addEnumeration(unicode_value=u'deny')
 STD_ANON_._InitializeFacetMap(STD_ANON_._CF_enumeration)
 
 # Atomic SimpleTypeDefinition
@@ -103,13 +103,13 @@ class AccessRule (pyxb.binding.basis.complexTypeDefinition):
     # Base type is pyxb.binding.datatypes.anyType
     
     # Attribute service uses Python identifier service
-    __service = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'service'), 'service', '__httpdataone_orgservicetypesSystemMetadata0_1_AccessRule_service', STD_ANON_)
+    __service = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'service'), 'service', '__httpdataone_orgservicetypesSystemMetadata0_1_AccessRule_service', STD_ANON)
     
     service = property(__service.value, __service.set, None, None)
 
     
     # Attribute rule uses Python identifier rule
-    __rule = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'rule'), 'rule', '__httpdataone_orgservicetypesSystemMetadata0_1_AccessRule_rule', STD_ANON)
+    __rule = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'rule'), 'rule', '__httpdataone_orgservicetypesSystemMetadata0_1_AccessRule_rule', STD_ANON_)
     
     rule = property(__rule.value, __rule.set, None, None)
 
@@ -176,174 +176,6 @@ class ReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'ReplicationPolicy', ReplicationPolicy)
 
 
-# Complex type SystemMetadata with content type ELEMENT_ONLY
-class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SystemMetadata')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element originMemberNode uses Python identifier originMemberNode
-    __originMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'originMemberNode'), 'originMemberNode', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_originMemberNode', False)
-
-    
-    originMemberNode = property(__originMemberNode.value, __originMemberNode.set, None, None)
-
-    
-    # Element rightsHolder uses Python identifier rightsHolder
-    __rightsHolder = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'rightsHolder'), 'rightsHolder', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_rightsHolder', False)
-
-    
-    rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, None)
-
-    
-    # Element submitter uses Python identifier submitter
-    __submitter = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'submitter'), 'submitter', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_submitter', False)
-
-    
-    submitter = property(__submitter.value, __submitter.set, None, None)
-
-    
-    # Element obsoletes uses Python identifier obsoletes
-    __obsoletes = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletes'), 'obsoletes', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_obsoletes', True)
-
-    
-    obsoletes = property(__obsoletes.value, __obsoletes.set, None, None)
-
-    
-    # Element size uses Python identifier size
-    __size = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'size'), 'size', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_size', False)
-
-    
-    size = property(__size.value, __size.set, None, None)
-
-    
-    # Element replica uses Python identifier replica
-    __replica = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replica'), 'replica', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_replica', True)
-
-    
-    replica = property(__replica.value, __replica.set, None, None)
-
-    
-    # Element replicationPolicy uses Python identifier replicationPolicy
-    __replicationPolicy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), 'replicationPolicy', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_replicationPolicy', False)
-
-    
-    replicationPolicy = property(__replicationPolicy.value, __replicationPolicy.set, None, None)
-
-    
-    # Element derivedFrom uses Python identifier derivedFrom
-    __derivedFrom = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'derivedFrom'), 'derivedFrom', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_derivedFrom', True)
-
-    
-    derivedFrom = property(__derivedFrom.value, __derivedFrom.set, None, None)
-
-    
-    # Element dateUploaded uses Python identifier dateUploaded
-    __dateUploaded = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateUploaded'), 'dateUploaded', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_dateUploaded', False)
-
-    
-    dateUploaded = property(__dateUploaded.value, __dateUploaded.set, None, None)
-
-    
-    # Element accessRule uses Python identifier accessRule
-    __accessRule = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'accessRule'), 'accessRule', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_accessRule', True)
-
-    
-    accessRule = property(__accessRule.value, __accessRule.set, None, None)
-
-    
-    # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_identifier', False)
-
-    
-    identifier = property(__identifier.value, __identifier.set, None, None)
-
-    
-    # Element describes uses Python identifier describes
-    __describes = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'describes'), 'describes', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_describes', True)
-
-    
-    describes = property(__describes.value, __describes.set, None, None)
-
-    
-    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
-    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_dateSysMetadataModified', False)
-
-    
-    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
-
-    
-    # Element describedBy uses Python identifier describedBy
-    __describedBy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'describedBy'), 'describedBy', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_describedBy', True)
-
-    
-    describedBy = property(__describedBy.value, __describedBy.set, None, None)
-
-    
-    # Element obsoletedBy uses Python identifier obsoletedBy
-    __obsoletedBy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), 'obsoletedBy', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_obsoletedBy', True)
-
-    
-    obsoletedBy = property(__obsoletedBy.value, __obsoletedBy.set, None, None)
-
-    
-    # Element checksum uses Python identifier checksum
-    __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_checksum', False)
-
-    
-    checksum = property(__checksum.value, __checksum.set, None, None)
-
-    
-    # Element objectFormat uses Python identifier objectFormat
-    __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_objectFormat', False)
-
-    
-    objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
-
-    
-    # Element authoritativeMemberNode uses Python identifier authoritativeMemberNode
-    __authoritativeMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), 'authoritativeMemberNode', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_authoritativeMemberNode', False)
-
-    
-    authoritativeMemberNode = property(__authoritativeMemberNode.value, __authoritativeMemberNode.set, None, None)
-
-    
-    # Element embargoExpires uses Python identifier embargoExpires
-    __embargoExpires = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'embargoExpires'), 'embargoExpires', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_embargoExpires', False)
-
-    
-    embargoExpires = property(__embargoExpires.value, __embargoExpires.set, None, None)
-
-
-    _ElementMap = {
-        __originMemberNode.name() : __originMemberNode,
-        __rightsHolder.name() : __rightsHolder,
-        __submitter.name() : __submitter,
-        __obsoletes.name() : __obsoletes,
-        __size.name() : __size,
-        __replica.name() : __replica,
-        __replicationPolicy.name() : __replicationPolicy,
-        __derivedFrom.name() : __derivedFrom,
-        __dateUploaded.name() : __dateUploaded,
-        __accessRule.name() : __accessRule,
-        __identifier.name() : __identifier,
-        __describes.name() : __describes,
-        __dateSysMetadataModified.name() : __dateSysMetadataModified,
-        __describedBy.name() : __describedBy,
-        __obsoletedBy.name() : __obsoletedBy,
-        __checksum.name() : __checksum,
-        __objectFormat.name() : __objectFormat,
-        __authoritativeMemberNode.name() : __authoritativeMemberNode,
-        __embargoExpires.name() : __embargoExpires
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
-
-
 # Complex type CTD_ANON with content type ELEMENT_ONLY
 class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -384,6 +216,174 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
 
 
 
+# Complex type SystemMetadata with content type ELEMENT_ONLY
+class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SystemMetadata')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element describedBy uses Python identifier describedBy
+    __describedBy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'describedBy'), 'describedBy', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_describedBy', True)
+
+    
+    describedBy = property(__describedBy.value, __describedBy.set, None, None)
+
+    
+    # Element checksum uses Python identifier checksum
+    __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_checksum', False)
+
+    
+    checksum = property(__checksum.value, __checksum.set, None, None)
+
+    
+    # Element size uses Python identifier size
+    __size = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'size'), 'size', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_size', False)
+
+    
+    size = property(__size.value, __size.set, None, None)
+
+    
+    # Element replica uses Python identifier replica
+    __replica = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replica'), 'replica', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_replica', True)
+
+    
+    replica = property(__replica.value, __replica.set, None, None)
+
+    
+    # Element dateUploaded uses Python identifier dateUploaded
+    __dateUploaded = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateUploaded'), 'dateUploaded', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_dateUploaded', False)
+
+    
+    dateUploaded = property(__dateUploaded.value, __dateUploaded.set, None, None)
+
+    
+    # Element embargoExpires uses Python identifier embargoExpires
+    __embargoExpires = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'embargoExpires'), 'embargoExpires', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_embargoExpires', False)
+
+    
+    embargoExpires = property(__embargoExpires.value, __embargoExpires.set, None, None)
+
+    
+    # Element submitter uses Python identifier submitter
+    __submitter = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'submitter'), 'submitter', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_submitter', False)
+
+    
+    submitter = property(__submitter.value, __submitter.set, None, None)
+
+    
+    # Element accessRule uses Python identifier accessRule
+    __accessRule = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'accessRule'), 'accessRule', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_accessRule', True)
+
+    
+    accessRule = property(__accessRule.value, __accessRule.set, None, None)
+
+    
+    # Element originMemberNode uses Python identifier originMemberNode
+    __originMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'originMemberNode'), 'originMemberNode', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_originMemberNode', False)
+
+    
+    originMemberNode = property(__originMemberNode.value, __originMemberNode.set, None, None)
+
+    
+    # Element authoritativeMemberNode uses Python identifier authoritativeMemberNode
+    __authoritativeMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), 'authoritativeMemberNode', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_authoritativeMemberNode', False)
+
+    
+    authoritativeMemberNode = property(__authoritativeMemberNode.value, __authoritativeMemberNode.set, None, None)
+
+    
+    # Element obsoletes uses Python identifier obsoletes
+    __obsoletes = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletes'), 'obsoletes', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_obsoletes', True)
+
+    
+    obsoletes = property(__obsoletes.value, __obsoletes.set, None, None)
+
+    
+    # Element replicationPolicy uses Python identifier replicationPolicy
+    __replicationPolicy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), 'replicationPolicy', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_replicationPolicy', False)
+
+    
+    replicationPolicy = property(__replicationPolicy.value, __replicationPolicy.set, None, None)
+
+    
+    # Element obsoletedBy uses Python identifier obsoletedBy
+    __obsoletedBy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), 'obsoletedBy', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_obsoletedBy', True)
+
+    
+    obsoletedBy = property(__obsoletedBy.value, __obsoletedBy.set, None, None)
+
+    
+    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
+    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_dateSysMetadataModified', False)
+
+    
+    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
+
+    
+    # Element derivedFrom uses Python identifier derivedFrom
+    __derivedFrom = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'derivedFrom'), 'derivedFrom', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_derivedFrom', True)
+
+    
+    derivedFrom = property(__derivedFrom.value, __derivedFrom.set, None, None)
+
+    
+    # Element identifier uses Python identifier identifier
+    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_identifier', False)
+
+    
+    identifier = property(__identifier.value, __identifier.set, None, None)
+
+    
+    # Element describes uses Python identifier describes
+    __describes = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'describes'), 'describes', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_describes', True)
+
+    
+    describes = property(__describes.value, __describes.set, None, None)
+
+    
+    # Element rightsHolder uses Python identifier rightsHolder
+    __rightsHolder = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'rightsHolder'), 'rightsHolder', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_rightsHolder', False)
+
+    
+    rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, None)
+
+    
+    # Element objectFormat uses Python identifier objectFormat
+    __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpdataone_orgservicetypesSystemMetadata0_1_SystemMetadata_objectFormat', False)
+
+    
+    objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
+
+
+    _ElementMap = {
+        __describedBy.name() : __describedBy,
+        __checksum.name() : __checksum,
+        __size.name() : __size,
+        __replica.name() : __replica,
+        __dateUploaded.name() : __dateUploaded,
+        __embargoExpires.name() : __embargoExpires,
+        __submitter.name() : __submitter,
+        __accessRule.name() : __accessRule,
+        __originMemberNode.name() : __originMemberNode,
+        __authoritativeMemberNode.name() : __authoritativeMemberNode,
+        __obsoletes.name() : __obsoletes,
+        __replicationPolicy.name() : __replicationPolicy,
+        __obsoletedBy.name() : __obsoletedBy,
+        __dateSysMetadataModified.name() : __dateSysMetadataModified,
+        __derivedFrom.name() : __derivedFrom,
+        __identifier.name() : __identifier,
+        __describes.name() : __describes,
+        __rightsHolder.name() : __rightsHolder,
+        __objectFormat.name() : __objectFormat
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
+
+
 systemMetadata = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'systemMetadata'), SystemMetadata)
 Namespace.addCategoryObject('elementBinding', systemMetadata.name().localName(), systemMetadata)
 
@@ -400,43 +400,57 @@ ReplicationPolicy._ContentModel = pyxb.binding.content.ParticleModel(Replication
 
 
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'originMemberNode'), _common.NodeReference, scope=SystemMetadata))
+CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaVerified'), pyxb.binding.datatypes.dateTime, scope=CTD_ANON))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'rightsHolder'), _common.Principal, scope=SystemMetadata))
+CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaMemberNode'), _common.NodeReference, scope=CTD_ANON))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'submitter'), _common.Principal, scope=SystemMetadata))
+CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationStatus'), STD_ANON_3, scope=CTD_ANON))
+CTD_ANON._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaMemberNode')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'replicationStatus')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaVerified')), min_occurs=1, max_occurs=1)
+    )
+CTD_ANON._ContentModel = pyxb.binding.content.ParticleModel(CTD_ANON._GroupModel, min_occurs=1, max_occurs=1)
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletes'), _common.Identifier, scope=SystemMetadata))
+
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'describedBy'), _common.Identifier, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), _common.Checksum, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'size'), pyxb.binding.datatypes.long, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replica'), CTD_ANON, scope=SystemMetadata))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), ReplicationPolicy, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'derivedFrom'), _common.Identifier, scope=SystemMetadata))
-
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateUploaded'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
 
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'embargoExpires'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'submitter'), _common.Principal, scope=SystemMetadata))
+
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'accessRule'), AccessRule, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'originMemberNode'), _common.NodeReference, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), _common.NodeReference, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletes'), _common.Identifier, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), ReplicationPolicy, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), _common.Identifier, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'derivedFrom'), _common.Identifier, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), _common.Identifier, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'describes'), _common.Identifier, scope=SystemMetadata))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'describedBy'), _common.Identifier, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), _common.Identifier, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), _common.Checksum, scope=SystemMetadata))
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'rightsHolder'), _common.Principal, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), _common.ObjectFormat, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), _common.NodeReference, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'embargoExpires'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
 SystemMetadata._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
     pyxb.binding.content.ParticleModel(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, u'objectFormat')), min_occurs=1, max_occurs=1),
@@ -459,17 +473,3 @@ SystemMetadata._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, u'replica')), min_occurs=0L, max_occurs=None)
     )
 SystemMetadata._ContentModel = pyxb.binding.content.ParticleModel(SystemMetadata._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaVerified'), pyxb.binding.datatypes.dateTime, scope=CTD_ANON))
-
-CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaMemberNode'), _common.NodeReference, scope=CTD_ANON))
-
-CTD_ANON._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationStatus'), STD_ANON_3, scope=CTD_ANON))
-CTD_ANON._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaMemberNode')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'replicationStatus')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(CTD_ANON._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaVerified')), min_occurs=1, max_occurs=1)
-    )
-CTD_ANON._ContentModel = pyxb.binding.content.ParticleModel(CTD_ANON._GroupModel, min_occurs=1, max_occurs=1)
