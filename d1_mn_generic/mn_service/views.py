@@ -656,8 +656,9 @@ def event_log_view_get(request, head):
     query_unsliced = query
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastAccessed')
+  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastaccessed')
   if changed == True:
+    print '2'
     query_unsliced = query
 
   # Filter by ip_address.
@@ -784,7 +785,7 @@ def inject_log(request):
   :return:
   '''
   # Validate POST.
-  
+
   if len(request.FILES) != 1:
     raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
 

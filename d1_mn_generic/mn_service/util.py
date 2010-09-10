@@ -192,14 +192,14 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
       operator = default
     if operator not in operator_translation:
       raise d1common.exceptions.InvalidRequest(0, 'Invalid argument: {0}'.format(key))
+    date_str = request.GET[key]
+    # parse_date() needs date-time, so if we only have date, add time
+    # (midnight).
+    if not re.search('T', date_str):
+      date_str += 'T00:00:00Z'
     try:
-      date_str = request.GET[key]
-      # parse_date() needs date-time, so if we only have date, add time
-      # (midnight).
-      if not re.search('T', date_str):
-        date_str += 'T00:00:00Z'
       date = iso8601.parse_date(date_str)
-    except TypeError, e:
+    except iso8601.ParseError, e:
       raise d1common.exceptions.InvalidRequest(
         0, 'Invalid date format: {0} {1}'.format(
           request.GET[key], str(
