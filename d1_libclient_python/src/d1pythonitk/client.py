@@ -11,7 +11,6 @@ interaction with the DataONE infrastructure.
 
   - python 2.6
 
-
 '''
 
 # Stdlib.
@@ -375,14 +374,12 @@ class DataOneClient(object):
     return object_formats
 
   ## === DataONE API Methods ===
+
   def get(self, identifier, headers=None):
     '''Retrieve an object from DataONE.
     :param: (string) Identifier of object to retrieve.
     :return: (file) Open file stream.
     '''
-
-    if len(identifier) == 0:
-      self.logger.debug_("Invalid parameter(s)")
 
     url = self.getObjectUrl(id=identifier)
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
@@ -397,8 +394,6 @@ class DataOneClient(object):
     :return: (file, :class:d1sysmeta.SystemMetadata) Open file stream.
     '''
 
-    if len(identifier) == 0:
-      self.logger.debug_("Invalid parameter(s)")
     url = self.getMetaUrl(id=identifier)
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
@@ -422,9 +417,6 @@ class DataOneClient(object):
     :return: :class:ObjectLocationList
     '''
 
-    if len(identifier) == 0:
-      self.logger.debug_("Invalid parameter(s)")
-
     url = urlparse.urljoin(self.getResolveUrl(), urllib.quote(identifier, ''))
     self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
     if headers is None:
@@ -447,6 +439,7 @@ class DataOneClient(object):
       headers = self.headers
     # Fetch.
     response = self.client.GET(url, headers)
+    # Return.
     format = response.headers['content-type']
     deser = d1common.types.nodelist_serialization.NodeList()
     return deser.deserialize(response.read(), format)
@@ -562,9 +555,9 @@ class DataOneClient(object):
 
     # Date range.
     if startTime is not None:
-      params['startTime'] = startTime.isoformat()
+      params['lastaccessed_ge'] = startTime.isoformat()
     if endTime is not None:
-      params['endTime'] = endTime.isoformat()
+      params['lastaccessed_lt'] = endTime.isoformat()
 
     url = self.getAccessLogUrl() + '?' + urllib.urlencode(params)
 
@@ -614,9 +607,168 @@ class DataOneClient(object):
     :return: (None)
     '''
 
-    # Parameter validation.
-    if len(identifier) == 0:
-      self.logger.debug_("Invalid parameter(s)")
+    # Data to post.
+    files = []
+    files.append(('object', 'object', object_bytes))
+    files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
+
+    # Send REST POST call to register object.
+
+    crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
+    self.logger.debug_('url({0}) identifier({1})'.format(crud_create_url, identifier))
+
+    multipart = mime_multipart.multipart({}, [], files)
+    try:
+      status, reason, page = multipart.post(crud_create_url)
+      if status != 200:
+        raise Exception(page)
+    except Exception as e:
+      logging.error('REST call failed: {0}'.format(str(e)))
+      raise
+
+
+class SimpleDataOneClient(object):
+  '''Simpler DataONE client
+  '''
+
+  #  def __init__(self, target=const.URL_DATAONE_ROOT,
+  #                     userAgent=const.USER_AGENT,
+  #                     clientClass=RESTClient,
+  #                     timeout=const.RESPONSE_TIMEOUT,
+  #                     ):
+  #    '''Initialize the test client.
+  #    
+  #    :param target: URL of the service to contact.
+  #    :param UserAgent: The userAgent string being passed in the request headers
+  #    :param clientClass: Class that will be used for HTTP connections.
+  #    :return: (None)
+  #    '''
+  #
+  #    self.logger = clientClass.logger
+  #    self.userAgent = userAgent
+  #    self._BASE_DETAIL_CODE = '11000'
+  #    #TODO: Need to define this detailCode base value
+  #    self.client = clientClass(target, timeout)
+
+  def resolve(self, identifier):
+    '''Resolve an identifier to object location
+    
+    The difference between this resolve() and DataOneClient.resolve() is that
+    DataOneClient.resolve() returns a complete, deserialized object representing
+    all the resolve data for the given identifier, while this selects a single
+    location and cross-references that with information in the node registry to
+    return a single service interface at a MN that the DataOneClient() can be
+    instantiated with.
+    '''
+    return 'http://127.0.0.1:8000' # TODO:
+    client_root = DataOneClient()
+
+    # Get a copy of the node registry.
+    nodes = client_root.node()
+
+    # Resolve object.
+    resolve = client_root.resolve(identifier)
+
+    # Get first location for object.
+    for location in resolve.objectLocation:
+      # Use registry to look up baseURL.
+      for node in nodes.node:
+        if node.identifier == location.nodeIdentifier:
+          return node.baseURL
+
+  def get(self, identifier):
+    '''Retrieve a Science Object from DataONE.
+    :param: (string) Identifier of object to retrieve.
+    :return: (file) Open file stream.
+    '''
+
+    # Resolve.
+    mn = self.resolve(identifier)
+
+    # Get.
+    client_mn = DataOneClient(target=mn)
+
+    return client_mn.get(identifier)
+
+  def getSysMeta(self, identifier):
+    '''Get de-serialized SystemMetadata object.
+    :param: (string) Identifier of object for which to retrieve SysMeta
+    :return: (class) De-serialized SystemMetadata object.
+    '''
+
+    # Get.
+    client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+    response = client_root.getSystemMetadataResponse(identifier)
+    format = response.headers['content-type']
+    return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
+
+  def getLogRecords(
+    self,
+    startTime=None,
+    endTime=None,
+    objectFormat=None,
+    start=0,
+    count=const.MAX_LISTOBJECTS
+  ):
+
+    client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+
+    response = client_root.getLogRecords(startTime, endTime, objectFormat, start, count)
+
+    return response
+
+  def listObjects(
+    self,
+    startTime=None,
+    endTime=None,
+    objectFormat=None,
+    start=0,
+    count=const.MAX_LISTOBJECTS,
+    requestFormat="text/xml"
+  ):
+
+    client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+
+    response = client_root.listObjects(
+      startTime, endTime, objectFormat, start, count, requestFormat
+    )
+
+    return response
+
+#def create(self, identifier, object_bytes, sysmeta_bytes):
+#  # Create MIME-multipart Mixed Media Type body.
+#  files = []
+#  files.append(('object', 'object', object_bytes))
+#  files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
+#  content_type, mime_doc = mime_multipart.encode_multipart_formdata([], files)
+#  
+#  # Send REST POST call to register object.
+#
+#  headers = {
+#    'Content-Type': content_type,
+#    'Content-Length': str(len(mime_doc)),
+#  }
+#  
+#  crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
+#
+#  self.logger.debug_("url({0}) identifier({1}) headers({2})".format(crud_create_url, identifier, headers))
+#
+#  try:
+#    res = self.client.POST(crud_create_url, data=mime_doc, headers=headers)
+#    res = '\n'.join(res)
+#    if res != r'OK':
+#      raise Exception(res)
+#  except Exception as e:
+#    logging.error('REST call failed: {0}'.format(str(e)))
+#    raise
+
+  def create(self, identifier, object_bytes, sysmeta_bytes):
+    '''Create an object in DataONE.
+    :param: (string) Identifier of object to create.
+    :param: (flo or string) Object data.
+    :param: (flo or string) SysMeta.
+    :return: (None)
+    '''
 
     # Data to post.
     files = []
