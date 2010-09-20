@@ -1,7 +1,7 @@
 # ./pyxb/objectlocationlist.py
 # PyXB bindings for NamespaceModule
 # NSM:af4f9b4805c6c6c32b907a42d835b6cdf1ec6c64
-# Generated 2010-09-08 11:58:29.561638 by PyXB version 1.1.2
+# Generated 2010-09-15 10:01:41.917646 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:af998dd8-bb72-11df-926c-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:8790c2dc-c0e2-11df-bf81-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes

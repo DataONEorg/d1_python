@@ -1,7 +1,7 @@
 # ./pyxb/_common.py
 # PyXB bindings for NamespaceModule
 # NSM:cc95dcea7ffc87390c2ad21660a741b26761176b
-# Generated 2010-09-08 11:58:32.541201 by PyXB version 1.1.2
+# Generated 2010-09-15 10:01:45.514233 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b16472b8-bb72-11df-b7fa-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:89b68eca-c0e2-11df-9b95-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -41,6 +41,23 @@ def CreateFromDOM (node, default_namespace=None):
         default_namespace = Namespace.fallbackNamespace()
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
 
+
+# Atomic SimpleTypeDefinition
+class ChecksumAlgorithm (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ChecksumAlgorithm')
+    _Documentation = None
+ChecksumAlgorithm._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=ChecksumAlgorithm, enum_prefix=None)
+ChecksumAlgorithm.SHA_1 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-1')
+ChecksumAlgorithm.SHA_224 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-224')
+ChecksumAlgorithm.SHA_256 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-256')
+ChecksumAlgorithm.SHA_384 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-384')
+ChecksumAlgorithm.SHA_512 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-512')
+ChecksumAlgorithm.MD5 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'MD5')
+ChecksumAlgorithm._InitializeFacetMap(ChecksumAlgorithm._CF_enumeration)
+Namespace.addCategoryObject('typeBinding', u'ChecksumAlgorithm', ChecksumAlgorithm)
 
 # Atomic SimpleTypeDefinition
 class ObjectFormat (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
@@ -91,33 +108,6 @@ NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
 Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
 
 # Atomic SimpleTypeDefinition
-class ServiceVersion (NonEmptyString):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceVersion')
-    _Documentation = None
-ServiceVersion._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'ServiceVersion', ServiceVersion)
-
-# Atomic SimpleTypeDefinition
-class ChecksumAlgorithm (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ChecksumAlgorithm')
-    _Documentation = None
-ChecksumAlgorithm._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=ChecksumAlgorithm, enum_prefix=None)
-ChecksumAlgorithm.SHA_1 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-1')
-ChecksumAlgorithm.SHA_224 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-224')
-ChecksumAlgorithm.SHA_256 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-256')
-ChecksumAlgorithm.SHA_384 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-384')
-ChecksumAlgorithm.SHA_512 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'SHA-512')
-ChecksumAlgorithm.MD5 = ChecksumAlgorithm._CF_enumeration.addEnumeration(unicode_value=u'MD5')
-ChecksumAlgorithm._InitializeFacetMap(ChecksumAlgorithm._CF_enumeration)
-Namespace.addCategoryObject('typeBinding', u'ChecksumAlgorithm', ChecksumAlgorithm)
-
-# Atomic SimpleTypeDefinition
 class Identifier (NonEmptyString):
 
     """An atomic simple type."""
@@ -128,14 +118,14 @@ Identifier._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
 
 # Atomic SimpleTypeDefinition
-class ServiceName (NonEmptyString):
+class ServiceVersion (NonEmptyString):
 
     """An atomic simple type."""
 
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceName')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceVersion')
     _Documentation = None
-ServiceName._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'ServiceName', ServiceName)
+ServiceVersion._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ServiceVersion', ServiceVersion)
 
 # Atomic SimpleTypeDefinition
 class Principal (NonEmptyString):
@@ -185,6 +175,16 @@ class ComponentVersion (NonEmptyString):
     _Documentation = None
 ComponentVersion._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'ComponentVersion', ComponentVersion)
+
+# Atomic SimpleTypeDefinition
+class ServiceName (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceName')
+    _Documentation = None
+ServiceName._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ServiceName', ServiceName)
 
 # Complex type Checksum with content type SIMPLE
 class Checksum (pyxb.binding.basis.complexTypeDefinition):

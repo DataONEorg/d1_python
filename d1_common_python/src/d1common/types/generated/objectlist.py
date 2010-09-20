@@ -1,7 +1,7 @@
 # ./pyxb/objectlist.py
 # PyXB bindings for NamespaceModule
 # NSM:96ccb5882fb936073345ea8144478ca840b9133c
-# Generated 2010-09-08 11:58:27.918490 by PyXB version 1.1.2
+# Generated 2010-09-15 10:01:40.443900 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:ae90aebc-bb72-11df-b16b-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:86576632-c0e2-11df-a051-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -109,18 +109,18 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     identifier = property(__identifier.value, __identifier.set, None, None)
 
     
-    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
-    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpdataone_orgservicetypesObjectList0_1_ObjectInfo_dateSysMetadataModified', False)
-
-    
-    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
-
-    
     # Element objectFormat uses Python identifier objectFormat
     __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpdataone_orgservicetypesObjectList0_1_ObjectInfo_objectFormat', False)
 
     
     objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
+
+    
+    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
+    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpdataone_orgservicetypesObjectList0_1_ObjectInfo_dateSysMetadataModified', False)
+
+    
+    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
 
     
     # Element checksum uses Python identifier checksum
@@ -133,8 +133,8 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {
         __size.name() : __size,
         __identifier.name() : __identifier,
-        __dateSysMetadataModified.name() : __dateSysMetadataModified,
         __objectFormat.name() : __objectFormat,
+        __dateSysMetadataModified.name() : __dateSysMetadataModified,
         __checksum.name() : __checksum
     }
     _AttributeMap = {
@@ -160,9 +160,9 @@ ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(No
 
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), _common.Identifier, scope=ObjectInfo))
 
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=ObjectInfo))
-
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), _common.ObjectFormat, scope=ObjectInfo))
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=ObjectInfo))
 
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), _common.Checksum, scope=ObjectInfo))
 ObjectInfo._GroupModel = pyxb.binding.content.GroupSequence(

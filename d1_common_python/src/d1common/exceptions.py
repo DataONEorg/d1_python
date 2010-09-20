@@ -134,6 +134,20 @@ class DataONEException(Exception):
       return json.dumps(res)
     return u"%s=%s" % (jsonVar, json.dumps(res))
 
+  def serializeToText(self):
+    '''Serialize the exception to Text
+
+    :rtype: string
+    '''
+    res = []
+    res.append('name: {0}'.format(self.name))
+    res.append('errorCode: {0}'.format(self.errorCode))
+    res.append('detailCode: {0}'.format(str(self.detailCode)))
+    res.append('description: {0}'.format(self.description))
+    res.append('traceInformation: {0}'.format(instanceToSimpleType(self.traceInfo[k])))
+
+    return '\n'.join(res)
+
 #===============================================================================
 
 

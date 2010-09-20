@@ -1,7 +1,7 @@
 # ./pyxb/monitorlist.py
 # PyXB bindings for NamespaceModule
 # NSM:3a8d5615d1fe3b625c087c8373b5e1555c9408b0
-# Generated 2010-09-08 11:58:32.540632 by PyXB version 1.1.2
+# Generated 2010-09-15 10:01:45.513727 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b16472b8-bb72-11df-b7fa-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:89b68eca-c0e2-11df-9b95-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
