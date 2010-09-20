@@ -1,7 +1,7 @@
 # ./pyxb/statusresponselist.py
 # PyXB bindings for NamespaceModule
 # NSM:d63af8e216143d5eec0988eda9c8e00a33d17d07
-# Generated 2010-09-08 11:58:31.805498 by PyXB version 1.1.2
+# Generated 2010-09-15 10:01:44.626522 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b0f5de20-bb72-11df-8809-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:892ede3a-c0e2-11df-9876-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -43,30 +43,6 @@ def CreateFromDOM (node, default_namespace=None):
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
 
 
-# Complex type ComponentList with content type ELEMENT_ONLY
-class ComponentList (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ComponentList')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element Component uses Python identifier Component
-    __Component = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'Component'), 'Component', '__httpdataone_orgservicetypesComponentList0_1_ComponentList_Component', False)
-
-    
-    Component = property(__Component.value, __Component.set, None, None)
-
-
-    _ElementMap = {
-        __Component.name() : __Component
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'ComponentList', ComponentList)
-
-
 # Complex type CTD_ANON with content type EMPTY
 class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -95,6 +71,30 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
         __name.name() : __name
     }
 
+
+
+# Complex type ComponentList with content type ELEMENT_ONLY
+class ComponentList (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ComponentList')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element Component uses Python identifier Component
+    __Component = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'Component'), 'Component', '__httpdataone_orgservicetypesComponentList0_1_ComponentList_Component', False)
+
+    
+    Component = property(__Component.value, __Component.set, None, None)
+
+
+    _ElementMap = {
+        __Component.name() : __Component
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'ComponentList', ComponentList)
 
 
 componentList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'componentList'), ComponentList)
