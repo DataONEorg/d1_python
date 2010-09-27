@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 '''Module d1pythonitk.d1client
 ===========================
 
@@ -53,7 +73,8 @@ class HttpRequest(urllib2.Request):
   '''
 
   def __init__(self, *args, **kwargs):
-    ''':param: Passed on to urllib2.Request.__init__
+    '''Init HttpRequest.
+    :param: parameters are passed to urllib2.Request.__init__
     :return: (None)
     '''
     self._method = 'GET'
@@ -64,8 +85,11 @@ class HttpRequest(urllib2.Request):
 
   def get_method(self):
     '''Get HTTP method.
-    :param: (None)
-    :return: (string) HTTP method.
+    
+    :param: None
+
+    :return: HTTP method.
+    :return type: string
     '''
     return self._method
 
@@ -80,8 +104,12 @@ class RESTClient(object):
   logger = logging.getLogger()
 
   def __init__(self, target=const.URL_DATAONE_ROOT, timeout=const.RESPONSE_TIMEOUT):
-    ''':param: (string, float) DataONE root URL, HTTP timeout
-    :return: (None)
+    '''Init RESTClient. 
+
+    :param: DataONE root URL, HTTP timeout
+    :type: string, float
+
+    :return: None
     '''
     self.status = None
     self.responseInfo = None
@@ -97,8 +125,13 @@ class RESTClient(object):
 
   def log(self, d, x):
     '''Log a message with context.
-    :param: (flo) log, (string) message
-    :return: (None)
+    
+    :param log: The log to log to.
+    :type log: flo
+    :param message: The message to add to the log.
+    :type message: string
+     
+    :return: None
     '''
     d(
       'file({0}) func({1}) line({2}): {3}'.format(
@@ -108,27 +141,35 @@ class RESTClient(object):
     )
 
   def exceptionCode(self, extra):
-    '''Generate exception code
-    :param: (string) extra message
-    :return: (None)
+    '''Generate exception code.
+    
+    :param extra: Extra message.
+    :type extra: string
+     
+    :return: None
     '''
     return "%s.%s" % (self._BASE_DETAIL_CODE, str(extra))
 
   def _normalizeTarget(self, target):
-    '''Internal method to ensure target url is in suitable form before 
+    '''Internal method to ensure target URL is in suitable form before 
     adding paths.
-    'param: (string) url
-    :return: (string) url with ending slash
+    
+    :param url: The URL  to normalize.
+    :type url: string
+    
+    :return: URL with ending slash
+    :type: string
     '''
-
     if not target.endswith("/"):
       target += "/"
     return target
 
   @property
   def headers(self):
-    '''Get dictionary of headers
-    :return: (dict) headers
+    '''Get dictionary of headers.
+    
+    :return: headers
+    :return type: dict
     '''
 
     return {'User-Agent': 'Test client', 'Accept': '*/*'}
@@ -138,8 +179,11 @@ class RESTClient(object):
     the DataONE error will be raised, otherwise the error is encapsulated with a
     DataONE ServiceFailure exception and re-raised.
     
-    :param: (response) Response from urllib2.urlopen
-    :return: (exception) Should not return - always raises an exception.
+    :param response: Response from urllib2.urlopen
+    :type response: :class:`response`
+    
+    :return: Should not return - always raises an exception.
+    :return type: exception
     '''
 
     edata = response.read()
@@ -149,7 +193,7 @@ class RESTClient(object):
     return False
 
   def sendRequest(self, url, method='GET', data=None, headers=None):
-    '''Sends a HTTP request and returns the response as a file like object.
+    '''Send a HTTP request and returns the response as a file like object.
     
     Has the side effect of setting the status and responseInfo properties. 
     
@@ -161,6 +205,9 @@ class RESTClient(object):
     :type data: dictionary
     :param headers: Optional header information
     :type headers: dictionary
+    
+    :return: response
+    :return type: :class:`response`  
     '''
 
     if headers is None:
@@ -197,7 +244,11 @@ class RESTClient(object):
 
   def HEAD(self, url, headers=None):
     '''Issue a HTTP HEAD request.
-    :param: (string) url, (dict) headers
+    
+    :param url:
+    :type url:
+    :param headers:
+    :type headers: (string) url, (dict) headers
     :return: (response)
     '''
 
@@ -242,7 +293,9 @@ class RESTClient(object):
 
 
 class DataOneClient(object):
-  '''Simple DataONE client.
+  '''Provides low level access to the DataONE
+  infrastructure from Python. It is more complicated to use than
+  SimpleDataONEClient (see below), but it provides more control.
   '''
 
   def __init__(
@@ -524,13 +577,19 @@ class DataOneClient(object):
   ):
     '''Get log records from MN.
     
-    :param startTime:
-    :param endTime:
-    :param objectFormat:
-    :param start:
-    :param count:
+    :param startTime: Include only events that happened at or after this time.
+    :type startTime: datetime
+    :param endTime: Include only events that happened before this time.
+    :type endTime: datetime
+    :param objectFormat: Include only events for science objects of this format.
+    :type objectFormat: string
+    :param start: Slice resultset, starting at *start*.
+    :type start: integer
+    :param count: Slice resultset, limit to *count* events.
+    :type count: integer
     
-    :return: (class) :class:LogRecords
+    :return: :class:`LogRecords`
+    :return type: class
     '''
 
     params = {}
@@ -628,7 +687,9 @@ class DataOneClient(object):
 
 
 class SimpleDataOneClient(object):
-  '''Simpler DataONE client
+  '''Provides high level access to the DataONE infrastructure
+  from Python. It is easier to use than DataONEClient (see above)
+  but it does not provide the same level of control.
   '''
 
   #  def __init__(self, target=const.URL_DATAONE_ROOT,
@@ -660,7 +721,9 @@ class SimpleDataOneClient(object):
     return a single service interface at a MN that the DataOneClient() can be
     instantiated with.
     '''
-    return 'http://127.0.0.1:8000' # TODO:
+    #return 'http://127.0.0.1:8000' # TODO:
+    return 'http://dev-dryad-mn.dataone.org/mn' # TODO:
+
     client_root = DataOneClient()
 
     # Get a copy of the node registry.
@@ -697,7 +760,10 @@ class SimpleDataOneClient(object):
     '''
 
     # Get.
-    client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+    #client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+    client_root = DataOneClient(
+      'http://dev-dryad-mn.dataone.org/mn'
+    ) #TODO: Should go to root.
     response = client_root.getSystemMetadataResponse(identifier)
     format = response.headers['content-type']
     return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
@@ -711,7 +777,9 @@ class SimpleDataOneClient(object):
     count=const.MAX_LISTOBJECTS
   ):
 
-    client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+    client_root = DataOneClient(
+      'http://dev-dryad-mn.dataone.org/mn'
+    ) #TODO: Should go to root.
 
     response = client_root.getLogRecords(startTime, endTime, objectFormat, start, count)
 
@@ -727,7 +795,10 @@ class SimpleDataOneClient(object):
     requestFormat="text/xml"
   ):
 
-    client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+    #client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
+    client_root = DataOneClient(
+      'http://dev-dryad-mn.dataone.org/mn'
+    ) #TODO: Should go to root.
 
     response = client_root.listObjects(
       startTime, endTime, objectFormat, start, count, requestFormat
@@ -788,3 +859,10 @@ class SimpleDataOneClient(object):
     except Exception as e:
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
+
+  def enumerateObjectFormats(self):
+    client_root = DataOneClient(
+      'http://dev-dryad-mn.dataone.org/mn'
+    ) #TODO: Should go to root.
+
+    return client_root.enumerateObjectFormats()
