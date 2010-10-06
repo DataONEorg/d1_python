@@ -1,5 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 '''
 :mod:`response_handler`
 =========================
@@ -49,6 +67,7 @@ import d1common.exceptions
 import d1common.types.objectlist_serialization
 import d1common.types.logrecords_serialization
 import d1common.types.monitorlist_serialization
+import d1common.types.nodelist_serialization
 
 # App.
 import mn_service.models as models
@@ -124,6 +143,26 @@ class MonitorList(d1common.types.monitorlist_serialization.MonitorList):
       self.monitorlist.append(monitorInfo)
 
 
+class NodeList(d1common.types.nodelist_serialization.NodeList):
+  def deserialize_db(self, view_result):
+    '''
+    :param:
+    :return:
+    '''
+    cfg = lambda key: models.Node.objects.get(key=key).val
+    # El.
+    node = d1common.types.generated.nodelist.Node()
+    node.identifier = cfg('identifier')
+    node.name = cfg('version')
+    node.baseURL = cfg('base_url')
+    # Attr
+    node.replicate = 'true'
+    node.synchronize = 'true'
+    node.type = 'mn'
+
+    self.node_list.append(node)
+
+
 def serialize_object(request, view_result):
   # The "pretty" parameter generates pretty response.
   pretty = 'pretty' in request.REQUEST
@@ -141,6 +180,7 @@ def serialize_object(request, view_result):
     'object': ObjectList(),
     'log': LogRecords(),
     'monitor': MonitorList(),
+    'node': NodeList()
   }[view_result['type']]
 
   type.deserialize_db(view_result)

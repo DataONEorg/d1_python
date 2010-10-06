@@ -18,21 +18,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
-:mod:`request_handler`
-=========================
+"""
+:mod:`set_node_val`
+====================
 
-:platform: Linux
-:Synopsis:
+:Synopsis: 
+  Set a config value for the Member Node.
+
 .. moduleauthor:: Roger Dahl
-'''
+"""
 
-from django.http import HttpResponse
+# Stdlib.
+import os
+import sys
+
+# Django.
+from django.core.management.base import BaseCommand
+
+# Add mn_service app path to the module search path.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
+# App.
+import settings
+import mn_service.models
 
 
-class request_handler():
-  def process_request(self, request):
-    print '>' * 80
-    print 'Request:'
-    print '<' * 80
-    return None
+class Command(BaseCommand):
+  args = '<key value ...>'
+  help = 'Set a config value for the Member Node'
+
+  def handle(self, *args, **options):
+    mn_service.models.Node().set(args[0], args[1])

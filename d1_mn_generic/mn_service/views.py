@@ -1,6 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 '''
 :mod:`views`
 ============
@@ -203,7 +221,7 @@ def object_collection_get(request, head):
   # Access Log based filters.
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'event_log__access_time', 'lastAccessed')
+  query, changed = util.add_range_operator_filter(query, request, 'event_log__access_time', 'lastaccessed')
   if changed == True:
     query_unsliced = query
 
@@ -658,7 +676,6 @@ def event_log_view_get(request, head):
   # Filter by last accessed date.
   query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastaccessed')
   if changed == True:
-    print '2'
     query_unsliced = query
 
   # Filter by ip_address.
@@ -713,16 +730,19 @@ def health_status(request):
 # Monitoring
 
 @auth.cn_check_required
-def monitor(request):
+def monitor_object(request):
   '''
   '''
   if request.method == 'GET':
-    return monitor_get(request)
+    return monitor_object_get(request, False)
 
-  # Only GET accepted.
-  return HttpResponseNotAllowed(['GET'])
+  if request.method == 'HEAD':
+    return monitor_object_get(request, True)
 
-def monitor_get(request):
+  # Only GET and HEAD accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
+
+def monitor_object_get(request, head):
   '''
   - number of objects, cumulative
   - number of objects, per day
@@ -733,38 +753,153 @@ def monitor_get(request):
   '''
   
   # Set up query with requested sorting.
-  query = models.Event_log.objects.order_by('mtime')
+  query = models.Object.objects.all()
 
   # Filter by last accessed date.
-
-  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'time')
+  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'time')
   if changed == True:
-    print 'time'
+    query_unsliced = query
+
+  # Filter by identifier.
+  if 'id' in request.GET:
+    query = util.add_wildcard_filter(query, 'guid', request.GET['id'])
+  
+  # Filter by URL.
+  if 'url' in request.GET:
+    query = util.add_wildcard_filter(query, 'url', request.GET['url'])
+
+  # Filter by objectFormat.
+  if 'format' in request.GET:
+    query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
+
+  # Prepare to group by day.
+  if 'day' in request.GET:
+    query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(count=Count('id')).order_by()
+
+  if head == False:
+    # Create a slice of a query based on request start and count parameters.
+    query, start, count = util.add_slice_filter(query, request)
+  else:
+    query = query.none()
+  
+  return {'query': query, 'start': start, 'count': count, 'total':
+    0, 'day': 'day' in request.GET, 'type': 'monitor' }
+
+@auth.cn_check_required
+def monitor_event(request):
+  '''
+  '''
+  if request.method == 'GET':
+    return monitor_event_get(request, False)
+
+  if request.method == 'HEAD':
+    return monitor_event_get(request, True)
+
+  # Only GET and HEAD accepted.
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
+
+def monitor_event_get(request, head):
+  '''
+  - number of events, cumulative
+  - number of events, per day
+  - filters:
+    - type of event
+    - object format of object that event relates to
+  :return:
+  '''
+  
+  # select objects ordered by mtime desc.
+  query = models.Event_log.objects.order_by('-date_logged')
+  # Create a copy of the query that we will not slice, for getting the total
+  # count for this type of objects.
+  query_unsliced = query
+
+  obj = {}
+  obj['logRecord'] = []
+
+  # Filter by referenced object format.
+  if 'objectformat' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['objectformat'])
+    query_unsliced = query
+
+  # Filter by referenced object identifier.
+  if 'guid' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__guid', request.GET['guid'])
+    query_unsliced = query
+  
+  # Filter by referenced object checksum.
+  if 'checksum' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__checksum', request.GET['checksum'])
+    query_unsliced = query
+
+  # Filter by referenced object checksum_algorithm.
+  if 'checksum_algorithm' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__checksum_algorithm__checksum_algorithm', request.GET['checksum_algorithm'])
+    query_unsliced = query
+
+  # Filter by referenced object last modified date.
+  query, changed = util.add_range_operator_filter(query, request, 'object__mtime', 'modified')
+  if changed == True:
+    query_unsliced = query
+
+  # Filter by last accessed date.
+  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastaccessed')
+  if changed == True:
     query_unsliced = query
 
   # Filter by ip_address.
   if 'ip_address' in request.GET:
     query = util.add_wildcard_filter(query, 'ip_address__ip_address', request.GET['ip_address'])
     query_unsliced = query
-
-  # Filter by access operation type.
-  if 'operationtype' in request.GET:
-    query = util.add_wildcard_filter(query, 'event__event', request.GET['operationtype'])
+      
+  # Filter by operation type.
+  if 'event' in request.GET:
+    query = util.add_wildcard_filter(query, 'event__event', request.GET['event'])
     query_unsliced = query
-  
-  # Filter by format.
-  if 'format' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
 
+  # Prepare to group by day.
   if 'day' in request.GET:
     query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(count=Count('id')).order_by()
 
-  # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)
+  if head == False:
+    # Create a slice of a query based on request start and count parameters.
+    query, start, count = util.add_slice_filter(query, request)    
+  else:
+    query = query.none()
   
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
+@auth.cn_check_required
+def node(request):
+  '''
+  '''
+  if request.method == 'GET':
+    return node_get(request)
+
+  # Only GET accepted.
+  return HttpResponseNotAllowed(['GET'])
+
+def node_get(request):
+  return {'type': 'node' }
+
+#<node replicate="true" synchronize="true" type="mn">
+#<identifier>http://cn-rpw</identifier>
+#<name>DataONESamples</name>
+#<baseURL>http://cn-rpw/mn/</baseURL>
+#−
+#<services>
+#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="get" rest="object/${GUID}"/>
+#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="getSystemMetadata" rest="meta/${GUID}"/>
+#<service api="mn_replicate" available="true" datechecked="1900-01-01T00:00:00Z" method="listObjects" rest="object"/>
+#</services>
+#−
+#<synchronization>
+#<schedule hour="12" mday="*" min="00" mon="*" sec="00" wday="*" year="*"/>
+#<lastHarvested>1900-01-01T00:00:00Z</lastHarvested>
+#<lastCompleteHarvest>1900-01-01T00:00:00Z</lastCompleteHarvest>
+#</synchronization>
+#</node>
 
 # Diagnostics, debugging and testing.
 

@@ -1,5 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 '''
 :mod:`util`
 ===========
@@ -207,7 +225,9 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
           )
         )
       )
-    filter_kwargs['{0}__{1}'.format(col_name, operator_translation[operator])] = date
+    filter_arg = '{0}__{1}'.format(col_name, operator_translation[operator])
+    filter_kwargs[filter] = date
+    sys_log.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
     changed = True
 
   return query.filter(**filter_kwargs), changed
@@ -219,8 +239,8 @@ def add_wildcard_filter(query, col_name, value):
 
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
-    raise_sys_log_http_404(
-      'Wildcard is only supported at start OR end of value: {0}'.format(
+    raise d1common.exceptions.InvalidRequest(
+      0, 'Wildcard is only supported at start OR end of value: {0}'.format(
         value
       )
     )
@@ -233,22 +253,28 @@ def add_wildcard_filter(query, col_name, value):
   filter_kwargs = {}
 
   if re.match(r'\*(.*)$', value):
-    filter_kwargs['{0}__endswith'.format(col_name)] = value_trimmed
+    filter_arg = '{0}__endswith'.format(col_name)
+    filter_kwargs[filter_arg] = value_trimmed
+    sys_log.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
     wild_beginning = True
 
   if re.match(r'(.*)\*$', value):
-    filter_kwargs['{0}__startswith'.format(col_name)] = value_trimmed
+    filter_arg = '{0}__startswith'.format(col_name)
+    filter_kwargs[filter_arg] = value_trimmed
+    sys_log.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
     wild_end = True
 
   if wild_beginning == True and wild_end == True:
-    raise_sys_log_http_404(
-      'Wildcard is only supported at start OR end of value: {0}'.format(
+    raise d1common.exceptions.InvalidRequest(
+      0, 'Wildcard is only supported at start OR end of value: {0}'.format(
         value
       )
     )
+
   # If no wildcards are used, we add a regular "equals" filter.
   elif wild_beginning == False and wild_end == False:
     filter_kwargs[col_name] = value
+    sys_log.info('Applied wildcard filter: {0} = {1}'.format(col_name, value))
 
   return query.filter(**filter_kwargs)
 
@@ -292,15 +318,19 @@ def add_slice_filter(query, request):
   # so that it won't return any results.
   if start == 0 and count == 0:
     query = query.none()
-  # Handle variations of start and count. We need these because Python does not
-  # support three valued logic in expressions(which would cause an expression
-  # that includes None to be valid and evaluate to None). Note that a slice such
-  # as [value : None] is valid and equivalent to [value:]
+
+    # Handle variations of start and count. We need these because Python does not
+    # support three valued logic in expressions(which would cause an expression
+    # that includes None to be valid and evaluate to None). Note that a slice such
+    # as [value : None] is valid and equivalent to [value:]
   elif start and count:
     query = query[start:start + count]
+    sys_log.info('Applied slice filter: start({0}) count({1})'.format(start, count))
   elif start:
     query = query[start:]
+    sys_log.info('Applied slice filter: start({0})'.format(start))
   elif count:
     query = query[:count]
+    sys_log.info('Applied slice filter: count({0})'.format(count))
 
   return query, start, count
