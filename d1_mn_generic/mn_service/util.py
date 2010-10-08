@@ -226,7 +226,7 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
         )
       )
     filter_arg = '{0}__{1}'.format(col_name, operator_translation[operator])
-    filter_kwargs[filter] = date
+    filter_kwargs[filter_arg] = date
     sys_log.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
     changed = True
 
