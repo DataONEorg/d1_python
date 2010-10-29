@@ -1,7 +1,7 @@
 # ./pyxb/_common.py
 # PyXB bindings for NamespaceModule
-# NSM:cc95dcea7ffc87390c2ad21660a741b26761176b
-# Generated 2010-09-15 10:01:45.514233 by PyXB version 1.1.2
+# NSM:5396a9708d6d94c0b88547b160b89909b3ddaf3d
+# Generated 2010-10-28 12:50:12.898583 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,12 +11,12 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:89b68eca-c0e2-11df-9b95-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 
-Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/common/0.1', create_if_missing=True)
+Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/common/0.5', create_if_missing=True)
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
 ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
 ModuleRecord._setModule(sys.modules[__name__])
@@ -41,6 +41,40 @@ def CreateFromDOM (node, default_namespace=None):
         default_namespace = Namespace.fallbackNamespace()
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
 
+
+# Atomic SimpleTypeDefinition
+class NonEmptyString (pyxb.binding.datatypes.string):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
+    _Documentation = None
+NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
+NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
+NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
+NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
+   NonEmptyString._CF_pattern)
+Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
+
+# Atomic SimpleTypeDefinition
+class NodeReference (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeReference')
+    _Documentation = None
+NodeReference._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'NodeReference', NodeReference)
+
+# Atomic SimpleTypeDefinition
+class Identifier (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
+    _Documentation = None
+Identifier._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
 
 # Atomic SimpleTypeDefinition
 class ChecksumAlgorithm (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
@@ -94,30 +128,6 @@ ObjectFormat._InitializeFacetMap(ObjectFormat._CF_enumeration)
 Namespace.addCategoryObject('typeBinding', u'ObjectFormat', ObjectFormat)
 
 # Atomic SimpleTypeDefinition
-class NonEmptyString (pyxb.binding.datatypes.string):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
-    _Documentation = None
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
-NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
-NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
-   NonEmptyString._CF_pattern)
-Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
-
-# Atomic SimpleTypeDefinition
-class Identifier (NonEmptyString):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
-    _Documentation = None
-Identifier._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
-
-# Atomic SimpleTypeDefinition
 class ServiceVersion (NonEmptyString):
 
     """An atomic simple type."""
@@ -128,6 +138,16 @@ ServiceVersion._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'ServiceVersion', ServiceVersion)
 
 # Atomic SimpleTypeDefinition
+class ServiceName (NonEmptyString):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceName')
+    _Documentation = None
+ServiceName._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ServiceName', ServiceName)
+
+# Atomic SimpleTypeDefinition
 class Principal (NonEmptyString):
 
     """An atomic simple type."""
@@ -136,16 +156,6 @@ class Principal (NonEmptyString):
     _Documentation = None
 Principal._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'Principal', Principal)
-
-# Atomic SimpleTypeDefinition
-class NodeReference (NonEmptyString):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeReference')
-    _Documentation = None
-NodeReference._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'NodeReference', NodeReference)
 
 # Atomic SimpleTypeDefinition
 class ComponentName (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
@@ -176,15 +186,42 @@ class ComponentVersion (NonEmptyString):
 ComponentVersion._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'ComponentVersion', ComponentVersion)
 
-# Atomic SimpleTypeDefinition
-class ServiceName (NonEmptyString):
+# Complex type Slice with content type EMPTY
+class Slice (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Slice')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Attribute count uses Python identifier count
+    __count = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpdataone_orgservicetypescommon0_5_Slice_count', pyxb.binding.datatypes.int, required=True)
+    
+    count = property(__count.value, __count.set, None, None)
 
-    """An atomic simple type."""
+    
+    # Attribute start uses Python identifier start
+    __start = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'start'), 'start', '__httpdataone_orgservicetypescommon0_5_Slice_start', pyxb.binding.datatypes.int, required=True)
+    
+    start = property(__start.value, __start.set, None, None)
 
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceName')
-    _Documentation = None
-ServiceName._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'ServiceName', ServiceName)
+    
+    # Attribute total uses Python identifier total
+    __total = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'total'), 'total', '__httpdataone_orgservicetypescommon0_5_Slice_total', pyxb.binding.datatypes.int, required=True)
+    
+    total = property(__total.value, __total.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __count.name() : __count,
+        __start.name() : __start,
+        __total.name() : __total
+    }
+Namespace.addCategoryObject('typeBinding', u'Slice', Slice)
+
 
 # Complex type Checksum with content type SIMPLE
 class Checksum (pyxb.binding.basis.complexTypeDefinition):
@@ -195,7 +232,7 @@ class Checksum (pyxb.binding.basis.complexTypeDefinition):
     # Base type is pyxb.binding.datatypes.string
     
     # Attribute algorithm uses Python identifier algorithm
-    __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'algorithm'), 'algorithm', '__httpdataone_orgservicetypescommon0_1_Checksum_algorithm', ChecksumAlgorithm, required=True)
+    __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'algorithm'), 'algorithm', '__httpdataone_orgservicetypescommon0_5_Checksum_algorithm', ChecksumAlgorithm, required=True)
     
     algorithm = property(__algorithm.value, __algorithm.set, None, None)
 

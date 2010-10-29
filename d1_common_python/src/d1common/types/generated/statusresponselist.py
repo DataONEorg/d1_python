@@ -1,7 +1,7 @@
 # ./pyxb/statusresponselist.py
 # PyXB bindings for NamespaceModule
-# NSM:d63af8e216143d5eec0988eda9c8e00a33d17d07
-# Generated 2010-09-15 10:01:44.626522 by PyXB version 1.1.2
+# NSM:aab07a751b78b10ac68aa90c2ee1d5d4b2cec4be
+# Generated 2010-10-28 12:50:12.921884 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,13 +11,13 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:892ede3a-c0e2-11df-9876-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 import _common
 
-Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/ComponentList/0.1', create_if_missing=True)
+Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/ComponentList/0.5', create_if_missing=True)
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
 ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
 ModuleRecord._setModule(sys.modules[__name__])
@@ -43,22 +43,22 @@ def CreateFromDOM (node, default_namespace=None):
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
 
 
-# Complex type CTD_ANON with content type EMPTY
-class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
+# Complex type Component with content type EMPTY
+class Component (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
     _Abstract = False
-    _ExpandedName = None
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Component')
     # Base type is pyxb.binding.datatypes.anyType
     
     # Attribute version uses Python identifier version
-    __version = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'version'), 'version', '__httpdataone_orgservicetypesComponentList0_1_CTD_ANON_version', _common.ComponentVersion, required=True)
+    __version = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'version'), 'version', '__httpdataone_orgservicetypesComponentList0_5_Component_version', _common.ComponentVersion, required=True)
     
     version = property(__version.value, __version.set, None, None)
 
     
     # Attribute name uses Python identifier name
-    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesComponentList0_1_CTD_ANON_name', _common.ComponentName, required=True)
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesComponentList0_5_Component_name', _common.ComponentName, required=True)
     
     name = property(__name.value, __name.set, None, None)
 
@@ -70,7 +70,7 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
         __version.name() : __version,
         __name.name() : __name
     }
-
+Namespace.addCategoryObject('typeBinding', u'Component', Component)
 
 
 # Complex type ComponentList with content type ELEMENT_ONLY
@@ -81,15 +81,15 @@ class ComponentList (pyxb.binding.basis.complexTypeDefinition):
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ComponentList')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element Component uses Python identifier Component
-    __Component = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'Component'), 'Component', '__httpdataone_orgservicetypesComponentList0_1_ComponentList_Component', False)
+    # Element component uses Python identifier component
+    __component = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'component'), 'component', '__httpdataone_orgservicetypesComponentList0_5_ComponentList_component', False)
 
     
-    Component = property(__Component.value, __Component.set, None, None)
+    component = property(__component.value, __component.set, None, None)
 
 
     _ElementMap = {
-        __Component.name() : __Component
+        __component.name() : __component
     }
     _AttributeMap = {
         
@@ -102,8 +102,8 @@ Namespace.addCategoryObject('elementBinding', componentList.name().localName(), 
 
 
 
-ComponentList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'Component'), CTD_ANON, scope=ComponentList))
+ComponentList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'component'), Component, scope=ComponentList))
 ComponentList._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ComponentList._UseForTag(pyxb.namespace.ExpandedName(None, u'Component')), min_occurs=1, max_occurs=1)
+    pyxb.binding.content.ParticleModel(ComponentList._UseForTag(pyxb.namespace.ExpandedName(None, u'component')), min_occurs=1, max_occurs=1)
     )
 ComponentList._ContentModel = pyxb.binding.content.ParticleModel(ComponentList._GroupModel, min_occurs=1, max_occurs=1)

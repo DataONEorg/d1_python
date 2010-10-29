@@ -1,7 +1,7 @@
 # ./pyxb/monitorlist.py
 # PyXB bindings for NamespaceModule
-# NSM:3a8d5615d1fe3b625c087c8373b5e1555c9408b0
-# Generated 2010-09-15 10:01:45.513727 by PyXB version 1.1.2
+# NSM:46147b3f04a029aa87d8aa4652c0e6f458cc89c8
+# Generated 2010-10-28 12:50:12.888490 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,12 +11,12 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:89b68eca-c0e2-11df-9b95-000c29f765e9')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 
-Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/monitorObject/0.1', create_if_missing=True)
+Namespace = pyxb.namespace.NamespaceForURI(u'http://dataone.org/service/types/monitorObject/0.5', create_if_missing=True)
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
 ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
 ModuleRecord._setModule(sys.modules[__name__])
@@ -51,14 +51,14 @@ class MonitorInfo (pyxb.binding.basis.complexTypeDefinition):
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element count uses Python identifier count
-    __count = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpdataone_orgservicetypesmonitorObject0_1_MonitorInfo_count', False)
+    __count = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpdataone_orgservicetypesmonitorObject0_5_MonitorInfo_count', False)
 
     
     count = property(__count.value, __count.set, None, None)
 
     
     # Element date uses Python identifier date
-    __date = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'date'), 'date', '__httpdataone_orgservicetypesmonitorObject0_1_MonitorInfo_date', False)
+    __date = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'date'), 'date', '__httpdataone_orgservicetypesmonitorObject0_5_MonitorInfo_date', False)
 
     
     date = property(__date.value, __date.set, None, None)
@@ -83,7 +83,7 @@ class MonitorList (pyxb.binding.basis.complexTypeDefinition):
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element monitorInfo uses Python identifier monitorInfo
-    __monitorInfo = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'monitorInfo'), 'monitorInfo', '__httpdataone_orgservicetypesmonitorObject0_1_MonitorList_monitorInfo', True)
+    __monitorInfo = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'monitorInfo'), 'monitorInfo', '__httpdataone_orgservicetypesmonitorObject0_5_MonitorList_monitorInfo', True)
 
     
     monitorInfo = property(__monitorInfo.value, __monitorInfo.set, None, None)
