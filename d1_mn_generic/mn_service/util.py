@@ -99,17 +99,24 @@ def log_exception(max_traceback_levels=5, msg=None):
   ''':param:
   :return:
   '''
+  sys_log.error('Exception:')
+  # Message.
   if msg is not None:
-    sys_log.error('{0}'.format(msg))
+    sys_log.error('  Message: {0}'.format(msg))
+
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
+  # Name.
+  sys_log.error('  Name: {0}'.format(exc_class.__name__))
+  # Value.
+  sys_log.error('  Value: {0}'.format(exc_msgs))
+  # Args.
   try:
     exc_args = exc_msgs.__dict__["args"]
   except KeyError:
     exc_args = "<no args>"
-  exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
-  sys_log.error('Exception:')
-  sys_log.error('  Name: {0}'.format(exc_class.__name__))
   sys_log.error('  Args: {0}'.format(exc_args))
+  # Traceback.
+  exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
   sys_log.error('  Traceback: {0}'.format(exc_formatted_traceback))
 
 

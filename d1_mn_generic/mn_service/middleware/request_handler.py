@@ -28,11 +28,17 @@
 '''
 
 from django.http import HttpResponse
+import settings
 
 
 class request_handler():
   def process_request(self, request):
+    if settings.GMN_DEBUG == False:
+      return None
+
+    # Print request.
     print '>' * 80
     print 'Request:'
+    print request
     print '<' * 80
     return None

@@ -81,7 +81,7 @@ def cn_check_required(f):
         request.session['cn_user'] = True
       else:
         raise d1common.exceptions.NotAuthorized(
-          1040, 'Attempted to access functionality only available to Coordinating Nodes'
+          0, 'Attempted to access functionality only available to Coordinating Nodes'
         )
     else:
       sys_log.info(
@@ -129,7 +129,7 @@ def mn_check_required(f):
         request.session['mn_user'] = True
       else:
         raise d1common.exceptions.NotAuthorized(
-          1040, 'Attempted to access functionality only available to Member Nodes.'
+          0, 'Attempted to access functionality only available to Member Nodes.'
         )
     else:
       sys_log.info(

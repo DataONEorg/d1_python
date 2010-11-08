@@ -68,6 +68,7 @@ import d1common.exceptions
 # App.
 import mn_service.sys_log as sys_log
 import mn_service.util as util
+import detail_codes
 
 
 def generate_debug_info():
@@ -133,7 +134,10 @@ def serialize_exception(request, exception):
   ]
 
   # We "inject" trace information into the given DataONE exception.
-  exception.detailCode = str(exception.detailCode) + '.' + traceback_to_detail_code()
+  detail_code = detail_codes.dataone_exception_to_detail_code().detail_code(
+    request, exception
+  )
+  exception.detailCode = str(detail_code) + '.' + traceback_to_detail_code()
 
   # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
   # we default to JSON.
@@ -166,12 +170,10 @@ def serialize_exception(request, exception):
 
 class exception_handler():
   def process_exception(self, request, exception):
-    # Note: An exception within this function causes a generic 500 to be
-    # returned.
-    tb = traceback_to_detail_code()
+    # An exception within this function causes a generic 500 to be returned.
 
     # Log the exception.
-    util.log_exception(tb)
+    util.log_exception(10)
 
     # If the exception is a DataONE exception, we serialize it out.
     if isinstance(exception, d1common.exceptions.DataONEException):
@@ -182,6 +184,7 @@ class exception_handler():
       )
 
     # If we get here, we got an unexpected exception. Wrap it in a DataONE exception.
+    tb = traceback_to_detail_code()
     return HttpResponse(
       serialize_exception(
         request, d1common.exceptions.ServiceFailure(

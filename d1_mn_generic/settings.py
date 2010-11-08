@@ -36,6 +36,9 @@ import sys
 
 ENABLE_IP_AUTH = False
 
+# Enable functionality that should only be accessible during testing and debugging.
+GMN_DEBUG = True
+
 MN_NAME = 'dryad_mn'
 
 MN_IP = [
@@ -134,6 +137,7 @@ FIXTURE_DIRS = (_here('mn_service/fixtures'))
 
 INSTALLED_APPS = (
   'mn_prototype.mn_service',
+  'mn_prototype.fake_cn',
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',

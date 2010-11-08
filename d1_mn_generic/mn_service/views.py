@@ -136,15 +136,13 @@ def object_collection_get(request, head):
   MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList
   :return:
   '''
-  
-  # TODO: This code should only run while debugging.
+
   # For debugging, we support deleting the entire collection in a GET request.
-  if 'delete' in request.GET:
+  if settings.GMN_DEBUG == True and 'delete' in request.GET:
     models.Object.objects.all().delete()
     sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
   
-  # Sort order.
-  
+  # Sort order.  
   if 'orderby' in request.GET:
     orderby = request.GET['orderby']
     # Prefix for ascending or descending order.
@@ -167,7 +165,7 @@ def object_collection_get(request, head):
         'size': 'size',
       }[orderby]
     except KeyError:
-      raise d1common.exceptions.InvalidRequest(1540, 'Invalid orderby value requested: {0}'.format(orderby))
+      raise d1common.exceptions.InvalidRequest(0, 'Invalid orderby value requested: {0}'.format(orderby))
       
     # Set up query with requested sorting.
     query = models.Object.objects.order_by(prefix + order_field)
@@ -251,6 +249,10 @@ def object_collection_delete(request):
   :return:
   '''
 
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access object_collection_delete while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+    
   # Clear the DB.
   models.Object.objects.all().delete()
   models.Object_format.objects.all().delete()
@@ -335,8 +337,9 @@ def object_guid_post(request, guid):
   sysmeta = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_bytes)
   try:
     sysmeta.isValid()
-  except sysmeta.XMLSyntaxError:
-    raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed')
+  except:
+    err = sys.exc_info()[1]
+    raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
   
   # Write SysMeta bytes to cache folder.
   sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
@@ -349,15 +352,7 @@ def object_guid_post(request, guid):
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1common.exceptions.ServiceFailure(0, err_msg)
   
-  # The object can be a URL, in which case GMN will just store the URL and
-  # stream the object from the URL when it's requested. If the object is not
-  # a URL, the object is stored locally and served from there.
-  
-  # TODO: This is a hack. The interface does not have a way for the client to
-  # specify who should manage the object, so we guess based on if the object
-  # looks like a URL.
-
-  object_is_url = False
+  store_remotely = False
   object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
   try:
     if not request.FILES['object'].multiple_chunks():
@@ -366,30 +361,36 @@ def object_guid_post(request, guid):
       sys_log.info('guid({0}): Object is a single chunk'.format(guid))
 
       object_bytes = request.FILES['object'].read()  
-  
-      # Determine if the object is a URL.
-      try:
-        url_split = urlparse.urlparse(object_bytes)
-        if url_split.scheme != 'http':
-          raise ValueError
-      except ValueError:
-        pass
-      else:
-        object_is_url = True
-  
+
+      # The object can be a URL, in which case GMN will just store the URL and
+      # stream the object from the URL when it's requested. 
+      if 'vendor_gmn_remote_storage' in request.POST:
+        # Determine if the object is a URL.
+        try:
+          url_split = urlparse.urlparse(object_bytes)
+          if url_split.scheme != 'http':
+            raise ValueError
+        except ValueError:
+          raise d1common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
+        else:
+          store_remotely = True
+    
       # If object is not a HTTP URL, write it to disk.
-      if object_is_url == False:
-        sys_log.info('guid({0}): Object is not a HTTP URL. Writing to disk'.format(guid))
+      if store_remotely == False:
+        sys_log.info('guid({0}): Writing object to disk'.format(guid))
     
         file = open(object_path, 'wb')
         file.write(object_bytes)
         file.close()
       else:
-        sys_log.info('guid({0}): Object is a HTTP URL. Storing URL in DB'.format(guid))
+        sys_log.info('guid({0}): Storing URL in DB'.format(guid))
         
     else:
       # Object is multiple chunks (larger than 2.5MiB by default). It can only
       # be an object to write to disk.
+      if 'vendor_gmn_remote_storage' in request.POST:
+        raise d1common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
+
       sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
 
       file = open(object_path, 'wb')
@@ -405,7 +406,7 @@ def object_guid_post(request, guid):
   # Create database entry for object.
   object = models.Object()
   object.guid = guid
-  if object_is_url == True:
+  if store_remotely == True:
     object.url = object_bytes
   else:
     object.url = 'file://{0}'.format(guid)
@@ -442,7 +443,7 @@ def object_guid_get(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing object was requested', guid)
+    raise d1common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
 
   # Split URL into individual parts.
   try:
@@ -450,11 +451,11 @@ def object_guid_get(request, guid):
     if url_split.scheme != 'http':
       raise ValueError
   except ValueError:
-    object_is_url = False
+    store_remotely = False
   else:
-    object_is_url = True
+    store_remotely = True
 
-  if object_is_url == True:
+  if store_remotely == True:
     sys_log.info('guid({0}): Object is a HTTP URL. Proxying from original location'.format(guid))
 
     # Handle 302 Found.  
@@ -529,7 +530,7 @@ def object_guid_head(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing scimeta object was requested', guid)
+    raise d1common.exceptions.NotFound(0, 'Non-existing scimeta object was requested', guid)
 
   # Get size of object from file size.
   try:
@@ -537,7 +538,7 @@ def object_guid_head(request, guid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.NotFound(1020, err_msg, guid)
+    raise d1common.exceptions.NotFound(0, err_msg, guid)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
@@ -585,7 +586,7 @@ def meta_guid_get(request, guid, head):
   try:
     url = models.Object.objects.filter(guid=guid)[0]
   except IndexError:
-    raise d1common.exceptions.NotFound(1020, 'Non-existing System Metadata object was requested', guid)
+    raise d1common.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', guid)
 
   if head == True:
     return HttpResponse('', mimetype='text/xml')
@@ -704,6 +705,10 @@ def event_log_view_delete(request):
   :return:
   '''
 
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access event_log_view_delete while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+
   # Clear the access log.
   models.Event_log.objects.all().delete()
   models.Event_log_ip_address.objects.all().delete()
@@ -751,11 +756,10 @@ def monitor_object_get(request, head):
     - format
   :return:
   '''
-  
   # Set up query with requested sorting.
   query = models.Object.objects.all()
 
-  # Filter by last accessed date.
+  # Filter by created date.
   query, changed = util.add_range_operator_filter(query, request, 'mtime', 'time')
   if changed == True:
     query_unsliced = query
@@ -774,7 +778,7 @@ def monitor_object_get(request, head):
 
   # Prepare to group by day.
   if 'day' in request.GET:
-    query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(count=Count('id')).order_by()
+    query = query.extra({'day' : "date(mtime)"}).values('day').annotate(count=Count('id')).order_by()
 
   if head == False:
     # Create a slice of a query based on request start and count parameters.
@@ -818,32 +822,22 @@ def monitor_event_get(request, head):
   obj['logRecord'] = []
 
   # Filter by referenced object format.
-  if 'objectformat' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['objectformat'])
+  if 'format' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
     query_unsliced = query
 
   # Filter by referenced object identifier.
-  if 'guid' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__guid', request.GET['guid'])
+  if 'id' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__guid', request.GET['id'])
     query_unsliced = query
   
-  # Filter by referenced object checksum.
-  if 'checksum' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__checksum', request.GET['checksum'])
-    query_unsliced = query
-
-  # Filter by referenced object checksum_algorithm.
-  if 'checksum_algorithm' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__checksum_algorithm__checksum_algorithm', request.GET['checksum_algorithm'])
-    query_unsliced = query
-
-  # Filter by referenced object last modified date.
+   # Filter by referenced object created date.
   query, changed = util.add_range_operator_filter(query, request, 'object__mtime', 'modified')
   if changed == True:
     query_unsliced = query
 
   # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastaccessed')
+  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'eventtime')
   if changed == True:
     query_unsliced = query
 
@@ -907,6 +901,10 @@ def get_ip(request):
   '''
   Get the client IP as seen from the server.'''
   
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access get_ip while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
@@ -919,13 +917,18 @@ def inject_log(request):
   The corresponding test object set must have already been created.
   :return:
   '''
+
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access inject_log while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+  
   # Validate POST.
 
   if len(request.FILES) != 1:
     raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
 
   if 'csv' not in request.FILES.keys():
-    raise d1common.exceptions.InvalidRequest(0, 'Name of first MIME part must be "csv". Parts found: {0}'.format(', '.join(request.FILES.keys())))
+    raise d1common.exceptions.InvalidRequest(0, 'Name of MIME part must be "csv". Found: {0}'.format(', '.join(request.FILES.keys())))
   
   # Create log entries.
   csv_reader = csv.reader(request.FILES['csv'])

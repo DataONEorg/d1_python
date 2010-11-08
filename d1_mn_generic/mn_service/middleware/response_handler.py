@@ -121,6 +121,10 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
 
       self.log.logEntry.append(logEntry)
 
+    self.log.start = view_result['start']
+    self.log.count = len(self.log.logEntry)
+    self.log.total = view_result['total']
+
 
 class MonitorList(d1common.types.monitorlist_serialization.MonitorList):
   def deserialize_db(self, view_result):
@@ -150,15 +154,114 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
     :return:
     '''
     cfg = lambda key: models.Node.objects.get(key=key).val
+
+    # Node
+
     # El.
     node = d1common.types.generated.nodelist.Node()
     node.identifier = cfg('identifier')
     node.name = cfg('version')
+    node.description = cfg('description')
     node.baseURL = cfg('base_url')
     # Attr
-    node.replicate = 'true'
-    node.synchronize = 'true'
-    node.type = 'mn'
+    node.replicate = cfg('replicate')
+    node.synchronize = cfg('synchronize')
+    node.type = cfg('node_type')
+
+    # Services
+
+    services = d1common.types.generated.nodelist.Services()
+
+    svc = d1common.types.generated.nodelist.Service()
+    svc.name = cfg('service_name')
+    svc.version = cfg('service_version')
+    svc.available = cfg('service_available')
+
+    # Methods
+
+    methods = []
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'session'
+    method.rest = 'session/'
+    method.implemented = 'true'
+    methods.append(method)
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'object_collection'
+    method.rest = 'object'
+    method.implemented = 'true'
+    methods.append(method)
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'get_object'
+    method.rest = 'object/'
+    method.implemented = 'true'
+    methods.append(method)
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'get_meta'
+    method.rest = 'meta/'
+    method.implemented = 'true'
+    methods.append(method)
+
+    # Log
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'log_collection'
+    method.rest = 'log'
+    method.implemented = 'true'
+    methods.append(method)
+
+    # Health
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'health_ping'
+    method.rest = 'health/ping'
+    method.implemented = 'true'
+    methods.append(method)
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'health_status'
+    method.rest = 'health/status'
+    method.implemented = 'true'
+    methods.append(method)
+
+    # Monitor
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'monitor_object'
+    method.rest = 'monitor/object'
+    method.implemented = 'true'
+    methods.append(method)
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'monitor_event'
+    method.rest = 'monitor/event'
+    method.implemented = 'true'
+    methods.append(method)
+
+    # Node
+
+    method = d1common.types.generated.nodelist.ServiceMethod()
+    method.name = 'node'
+    method.rest = 'node'
+    method.implemented = 'true'
+    methods.append(method)
+
+    # Diagnostics, debugging and testing.
+    # inject_log
+    # get_ip
+
+    # Admin.
+    # admin/doc
+    # admin
+
+    svc.method = methods
+
+    services.append(svc)
+
+    node.services = services
 
     self.node_list.append(node)
 
@@ -386,7 +489,7 @@ class response_handler():
     # For debugging, if pretty printed outout was requested, we force the
     # content type to text. This causes the browser to not try to format
     # the output in any way.
-    if 'pretty' in request.REQUEST:
+    if settings.GMN_DEBUG == True and 'pretty' in request.REQUEST:
       response['Content-Type'] = 'text/plain'
 
     # If view_result is a HttpResponse, we return it unprocessed.

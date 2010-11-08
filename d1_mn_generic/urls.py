@@ -34,15 +34,18 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
+# Whenever Django encounters include(), it chops off whatever part of the URL
+# matched up to that point and sends the remaining string to the included
+# URLconf for further processing.
 urlpatterns = patterns(
   '',
+  # CN.
+  (r'^cn/', include('mn_prototype.fake_cn.urls')),
+  # GMN.
   (r'^', include('mn_prototype.mn_service.urls')),
+  # Admin.
   (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-
-  # Enable admin documentation:
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-  # Enable admin interface:
   (r'^admin/', include(admin.site.urls)),
 )
 

@@ -61,6 +61,7 @@ import d1common.exceptions
 # App.
 import mn_service.sys_log as sys_log
 import mn_service.models as models
+import settings
 
 
 class view_handler():
@@ -71,9 +72,10 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
-    # For debugging, simulate an accept header with a regular parameter.
-    if 'accept' in request.REQUEST:
-      request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
+    if settings.GMN_DEBUG == True:
+      # For debugging, simulate an accept header with a regular parameter.
+      if 'accept' in request.REQUEST:
+        request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
 
     # The REST interface spec requires parameters in the URL to be case
     # insensitive. We handle this by setting all the keys in the GET map to

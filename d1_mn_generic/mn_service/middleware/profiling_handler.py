@@ -22,6 +22,7 @@
 from django.http import HttpResponse
 import hotshot, hotshot.stats
 import sys, StringIO, os
+import settings
 
 
 class ProfileMiddleware():
@@ -29,6 +30,9 @@ class ProfileMiddleware():
     pass
 
   def process_view(self, request, view, *args, **kwargs):
+    if settings.GMN_DEBUG == False:
+      return None
+
     for item in request.META['QUERY_STRING'].split('&'):
       if item.split('=')[0] == 'profile': # profile in query string
         # catch the output, must happen before stats object is created
