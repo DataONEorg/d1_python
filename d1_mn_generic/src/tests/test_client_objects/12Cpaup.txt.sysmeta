@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/SystemMetadata/0.5">
+  <identifier>12Cpaup.txt</identifier>
+  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+  <size>30815</size>
+  <submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <checksum algorithm="MD5">27b04d35e8afdd118042bbad964f25f4</checksum>
+  <dateUploaded>2010-04-26T07:23:46.653566</dateUploaded>
+  <dateSysMetadataModified>1991-06-11T13:43:05</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>

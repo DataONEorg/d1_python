@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.1232" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=1404" ID="hdl:10255/dryad.1232" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Thurber, Carrie</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Reagon, Michael</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Gross, Briana</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Olsen, Kenneth</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Jia, Yulin</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Caicedo, Ana</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned">2010-02-23T18:39:47Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available">2010-02-23T18:39:47Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued">2010-02-23T18:39:47Z</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri">http://hdl.handle.net/10255/dryad.1232</dim:field>
+<dim:field element="description" mdschema="dc" language="en">Shattering (BTS) measurements collect from growth chamber grown Oryza.  Individual names match those provided in manuscript's Supplemental Table 1.  Replicates are labled _1, _2 or _3.  Average, Median and Standard Deviation included.</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="en">http://hdl.handle.net/10255/dryad.1231</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="en">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">Abscission</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">red rice</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">Oryza sativa</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">candidate gene</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">seed dispersal</dim:field>
+<dim:field element="title" mdschema="dc" language="en">Shattering_Data.xls</dim:field>
+<dim:field element="type" mdschema="dc" language="en">Dataset</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_996" SIZE="59904" CHECKSUM="7ac391d537627c5978bb4d4db2c799ad" MIMETYPE="application/vnd.ms-excel" CHECKSUMTYPE="MD5" ID="file_996">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.1232/Shattering_Data.xls?sequence=1" xlink:title="Shattering_Data.xls" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_996"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

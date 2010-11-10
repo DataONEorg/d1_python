@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/SystemMetadata/0.5">
+  <identifier>Codeml Results .zip</identifier>
+  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+  <size>3026104</size>
+  <submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <checksum algorithm="MD5">f2bdb7adb9b8fc1f9c72e65056c4485b</checksum>
+  <dateUploaded>2010-04-26T07:25:20.154200</dateUploaded>
+  <dateSysMetadataModified>1979-07-11T08:30:47</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>

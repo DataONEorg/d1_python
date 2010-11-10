@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.215" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=239" ID="hdl:10255/dryad.215" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Jin, Wei</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Riley, Rebecca M.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Wolfinger, Russel D.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">White, Kevin P.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Passador-Gurgel, Gisele</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Gibson, Greg</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2008-10-16T18:00:31Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2008-10-16T18:00:31Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">2001-12</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.215</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="">http://hdl.handle.net/10255/dryad.120</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="title" mdschema="dc" language="en_US">RR Slide 11b_Cy3</dim:field>
+<dim:field element="type" mdschema="dc" language="en_US">Image</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_436" SIZE="6008542" CHECKSUM="ed64dab1bbf317be3e2def3030b3e8b3" MIMETYPE="image/tiff" CHECKSUMTYPE="MD5" ID="file_436">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.215/RRSlide11b.Cy3.TIF?sequence=1" xlink:title="RRSlide11b.Cy3.TIF" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_436"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

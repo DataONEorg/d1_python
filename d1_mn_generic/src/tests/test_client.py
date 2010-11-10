@@ -1,0 +1,643 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+'''
+:mod:`test_client`
+=======================
+
+:Synopsis:
+  Round-trip test of the ITK and GMN.
+
+.. moduleauthor:: Roger Dahl
+'''
+
+# Stdlib.
+import csv
+import datetime
+import dateutil
+import glob
+import hashlib
+import httplib
+import json
+import logging
+import optparse
+import os
+import re
+import stat
+import sys
+import time
+import unittest
+import urllib
+import urlparse
+import uuid
+
+# If this was checked out as part of the GMN service, the libraries can be found here.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../mn_prototype/')))
+
+# MN API.
+try:
+  #import d1common.mime_multipart
+  import d1common.exceptions
+  import d1common.types.objectlist_serialization
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n')
+  raise
+try:
+  import d1pythonitk
+  import d1pythonitk.xmlvalidator
+  import d1pythonitk.client
+  import d1pythonitk.systemmetadata
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1pythonitk\n')
+  raise
+
+# 3rd party.
+# Lxml
+try:
+  from lxml import etree, objectify
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
+  raise
+
+# Constants.
+
+# Constants related to MN test object collection.
+mn_objects_total = 354
+mn_objects_total_data = 100
+mn_objects_total_scimeta = 77
+#mn_objects_total_sysmeta= 177
+mn_objects_guid_startswith_1 = 18
+mn_objects_checksum_startswith_1 = 21
+mn_objects_guid_and_checksum_startswith_1 = 2
+mn_objects_guid_and_checksum_endswith_1 = 1
+mn_objects_last_accessed_in_2000 = 354
+mn_objects_requestor_1_1_1_1 = 00000
+mn_objects_operation_get_bytes = 0000
+mn_objects_with_guid_ends_with_unicode = 1 # guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+
+# Constants related to log collection.
+log_total = 2213
+log_requestor_1_1_1_1 = 538
+log_operation_get_bytes = 981
+log_requestor_1_1_1_1_and_operation_get_bytes = 240
+log_last_modified_in_1990s = 48
+log_last_accessed_in_1970s = 68
+log_entries_associated_with_objects_type_class_data = 569
+log_entries_associated_with_objects_guid_and_checksum_endswith_2 = 5
+log_entries_associated_with_objects_last_modified_in_1980s = 27
+
+def log_setup():
+  # Set up logging.
+  # We output everything to both file and stdout.
+  logging.getLogger('').setLevel(logging.DEBUG)
+  formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
+  file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
+  file_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(file_logger)
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+  
+class GMNException(Exception):
+  pass
+
+class TestSequenceFunctions(unittest.TestCase):
+  def setUp(self):
+    pass
+
+  def assert_counts(self, object_list, start, count, total):
+    self.assertEqual(object_list.start, start)
+    self.assertEqual(object_list.count, count)
+    self.assertEqual(object_list.total, total)
+    self.assertEqual(len(object_list.objectInfo), count)
+  
+  def assert_response_headers(self, response):
+    '''Check that required response headers are present.
+    '''
+    
+    self.assertIn('Last-Modified', response)
+    self.assertIn('Content-Length', response)
+    self.assertIn('Content-Type', response)
+
+  def assert_xml_equals(self, xml_a, xml_b):  
+    obj_a = objectify.fromstring(xml_a)
+    str_a = etree.tostring(obj_a)
+    obj_b = objectify.fromstring(xml_b)
+    str_b = etree.tostring(obj_b)
+
+    str_a_orig = str_a
+    str_b_orig = str_b
+
+    msg = 'Strings are equal to the point where one is longer than the other: "{0}" != "{1}"'.format(str_a_orig, str_b_orig)
+    if str_a != str_b:
+      if len(str_a) > len(str_b):
+        str_a, str_b = str_b, str_a
+      i = 0
+      for c in str_a:
+        if c != str_b[i]:
+          msg = 'Difference at offset {0} ({1} != {2}): "{3}" != "{4}"'.format(i, c, str_b[i], str_a_orig, str_b_orig)
+          break
+        i += 1
+    
+    self.assertEquals(str_a_orig, str_b_orig, msg)
+
+  def get_object_info_by_identifer(self, identifier):
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    # Get object collection.
+    object_list = client.listObjects()
+    
+    for o in object_list['objectInfo']:
+      if o["identifier"] == identifier:
+        return o
+  
+    # Object not found
+    assertTrue(False)
+
+  def test_01_delete_all_objects(self):
+    '''Delete all objects
+    '''
+    client = d1pythonitk.client.RESTClient()
+  
+    # Objects.
+    crud_object_url = urlparse.urljoin(self.options.gmn_url, 'object')
+    try:
+      res = client.DELETE(crud_object_url)
+      res = '\n'.join(res)
+      if res != r'OK':
+        raise Exception(res)
+    except Exception as e:
+      logging.error('REST call failed: {0}'.format(str(e)))
+      raise
+    
+  def test_02_object_collection_is_empty(self):
+    '''Verify that object collection is empty
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    # Get object collection.
+    object_list = client.listObjects()
+  
+    # Check header.
+    self.assert_counts(object_list, 0, 0, 0)
+  
+  def test_03_create_objects(self):
+    '''Populate MN with set of test objects
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+      # Get name of corresponding object and open it.
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      object_file = open(object_path, 'r')
+  
+      # The identifier is stored in the sysmeta.
+      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_xml = sysmeta_file.read()
+      sysmeta_obj = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_xml)
+      identifier = sysmeta_obj.identifier
+          
+      # To create a valid URL, we must quote the identifier twice. First, so
+      # that the URL will match what's on disk and then again so that the
+      # quoting survives being passed to the web server.
+      #obj_url = urlparse.urljoin(self.options.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
+  
+      # To test the MIME Multipart poster, we provide the Sci object as a file
+      # and the SysMeta as a string.
+      client.create(identifier, object_file, sysmeta_xml)
+  
+  def test_04_clear_event_log(self):
+    '''Clear event log
+    '''
+    client = d1pythonitk.client.RESTClient()
+  
+    # Access log.
+    event_log_url = urlparse.urljoin(self.options.gmn_url, 'log')
+    try:
+      res = client.DELETE(event_log_url)
+      res = '\n'.join(res)
+      if res != r'OK':
+        raise Exception(res)
+    except Exception as e:
+      logging.error('REST call failed: {0}'.format(str(e)))
+      raise
+  
+  def test_05_event_log_is_empty(self):
+    '''Verify that access log is empty
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    # Get object collection.
+    logRecords = client.getLogRecords()
+  
+    self.assertEqual(len(logRecords.logEntry), 0)
+  
+  def test_06_inject_event_log(self):
+    '''Inject a fake event log for testing.
+    '''
+    client = d1pythonitk.client.DataOneClient()
+  
+    csv_file = open('test_log.csv', 'rb')
+  
+    files = [('csv', 'csv', csv_file.read())]
+    
+    multipart = d1common.mime_multipart.multipart({}, [], files)
+    inject_log_url = urlparse.urljoin(self.options.gmn_url, 'inject_log')
+    status, reason, page = multipart.post(inject_log_url)
+  
+  
+  def test_07_create_log(self):
+    '''Verify that access log correctly reflects create_object actions
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    # Get object collection.
+    logRecords = client.getLogRecords()
+  
+    found = False
+    for o in logRecords.logEntry:
+      if o.identifier == 'hdl:10255/dryad.654/mets.xml':
+        found = True
+        break
+    
+    self.assertTrue(found)
+    # accessTime varies, so we just check if it's valid ISO8601
+    #self.assertTrue(dateutil.parser.parse(o.dateLogged))
+    self.assertEqual(o.identifier, "hdl:10255/dryad.654/mets.xml")
+    self.assertEqual(o.event, "update")
+    self.assertTrue(o.principal)
+  
+  def test_08_compare_byte_by_byte(self):
+    '''Read set of test objects back from MN and do byte-by-byte comparison with local copies
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+    
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      identifier = urllib.unquote(os.path.basename(object_path))
+      #sysmeta_bytes_disk = open(sysmeta_path, 'r').read()
+      object_bytes_disk = open(object_path, 'r').read()
+      #sysmeta_bytes_d1 = client.getSystemMetadata(identifier).read()
+      object_bytes_d1 = client.get(identifier).read()
+      #self.assertEqual(sysmeta_bytes_disk, sysmeta_bytes_d1)
+      self.assertEqual(object_bytes_disk, object_bytes_d1)
+      
+ #Read objectList from MN and compare the values for each object with values
+ #from sysmeta on disk.
+ 
+  def test_09_object_properties(self):
+    '''Read complete object collection and compare with values stored in local SysMeta files
+    '''
+    # Get object collection.
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+    object_list = client.listObjects()
+    
+    # Loop through our local test objects.
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+      # Get name of corresponding object and check that it exists on disk.
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      self.assertTrue(os.path.exists(object_path))
+      # Get identifier for object.
+      identifier = urllib.unquote(os.path.basename(object_path))
+      # Get sysmeta xml for corresponding object from disk.
+      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_obj = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_file)
+  
+      # Get corresponding object from objectList.
+      found = False
+      for object_info in object_list.objectInfo:
+        if object_info.identifier == sysmeta_obj.identifier:
+          found = True
+          break;
+  
+      self.assertTrue(found, 'Couldn\'t find object with identifier "{0}"'.format(sysmeta_obj.identifier))
+      
+      self.assertEqual(object_info.identifier, sysmeta_obj.identifier)
+      self.assertEqual(object_info.objectFormat, sysmeta_obj.objectFormat)
+      self.assertEqual(object_info.dateSysMetadataModified, sysmeta_obj.dateSysMetadataModified)
+      self.assertEqual(object_info.size, sysmeta_obj.size)
+      self.assertEqual(object_info.checksum.value(), sysmeta_obj.checksum)
+      self.assertEqual(object_info.checksum.algorithm, sysmeta_obj.checksumAlgorithm)
+      
+  def test_10_slicing_1(self):
+    '''Verify slicing: Starting at 0 and getting half of the available objects
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_cnt = 100
+    object_cnt_half = object_cnt / 2
+  
+    # Starting at 0 and getting half of the available objects.
+    object_list = client.listObjects(start=0, count=object_cnt_half)
+    self.assert_counts(object_list, 0, object_cnt_half, object_cnt)
+    
+  def test_11_slicing_2(self):
+    '''Verify slicing: Starting at object_cnt_half and requesting more objects
+    than there are
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_cnt = 100
+    object_cnt_half = object_cnt / 2
+  
+    object_list = client.listObjects(start=object_cnt_half, count=d1pythonitk.const.MAX_LISTOBJECTS)
+    self.assert_counts(object_list, object_cnt_half, object_cnt_half, object_cnt)
+  
+  def test_12_slicing_3(self):
+    '''Verify slicing: Starting above number of objects that we have
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_cnt = 100
+    object_cnt_half = object_cnt / 2
+  
+    object_list = client.listObjects(start=object_cnt * 2, count=1)
+    self.assert_counts(object_list, object_cnt * 2, 0, object_cnt)
+    
+  def test_13_slicing_4(self):
+    '''Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_cnt = 100
+    object_cnt_half = object_cnt / 2
+  
+    try:
+      object_list = client.listObjects(count=d1pythonitk.const.MAX_LISTOBJECTS + 1)
+    except:
+      pass
+    else:
+      self.assertTrue(False)
+  
+  def test_14_date_range_1(self):
+    '''Verify date range query: Get all objects from the 1990s
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_list = client.listObjects(
+      startTime=datetime.datetime(1990, 1, 1),
+      endTime=datetime.datetime(1999, 12, 31)
+      )
+    self.assert_counts(object_list, 0, 32, 32)
+  
+  
+  def test_15_date_range_2(self):
+    '''Verify date range query: Get first 10 objects from the 1990s
+    '''    
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_list = client.listObjects(
+      startTime=datetime.datetime(1990, 1, 1),
+      endTime=datetime.datetime(1999, 12, 31),
+      start=0,
+      count=10
+      )
+    self.assert_counts(object_list, 0, 10, 32)
+  
+  def test_16_date_range_3(self):
+    '''Verify date range query: Get 10 first objects from the 1990s, filtered by
+    objectFormat
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_list = client.listObjects(
+      startTime=datetime.datetime(1990, 1, 1),
+      endTime=datetime.datetime(1999, 12, 31),
+      start=0,
+      count=10,
+      objectFormat='eml://ecoinformatics.org/eml-2.0.0'
+      )
+    self.assert_counts(object_list, 0, 10, 32)
+  
+  def test_17_date_range_4(self):
+    '''Verify date range query: Get 10 first objects from non-existing date range
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_list = client.listObjects(
+      startTime=datetime.datetime(2500, 1, 1),
+      endTime=datetime.datetime(2500, 12, 31),
+      start=0,
+      count=10,
+      objectFormat='eml://ecoinformatics.org/eml-2.0.0'
+      )
+    self.assert_counts(object_list, 0, 0, 0)
+  
+  def test_18_get_object_count(self):
+    '''Get object count
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    object_list = client.listObjects(
+      start=0,
+      count=0,
+      )
+    self.assert_counts(object_list, 0, 0, 100)
+  
+  
+  # /object/<guid>
+  
+  def test_19_get_object_by_invalid_guid(self):
+    '''Verify 404 NotFound when attempting to get non-existing object
+    /object/_invalid_guid_
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    try:
+      response = client.get('_invalid_guid_')
+    except d1common.exceptions.NotFound:
+      pass
+    else:
+      assertTrue(False)
+  
+  def test_20_get_object_by_valid_guid(self):
+    '''Verify successful retrieval of valid object
+    /object/valid_guid
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    try:
+      response = client.get('10Dappend2.txt')
+    except:
+      assertTrue(False)
+    else:
+      pass
+  
+    # Todo: Verify that we got the right object.
+  
+  # Todo: Unicode tests.
+  #def test_rest_call_object_by_guid_get_unicode(self):
+  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
+  #  ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+  
+  # /meta/<guid>
+  
+  def test_21_get_object_by_invalid_guid(self):
+    '''Verify 404 NotFound when attempting to get non-existing SysMeta
+    /meta/_invalid_guid_
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    try:
+      response = client.getSystemMetadata('_invalid_guid_')
+    except d1common.exceptions.NotFound:
+      pass
+    else:
+      assertTrue(False)
+  
+  def test_22_get_meta_by_valid_guid(self):
+    '''Verify successful retrieval of valid object
+    /meta/valid_guid
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+  
+    response = client.getSystemMetadata('10Dappend2.txt')
+    self.assertTrue(response)
+  
+  def test_23_xml_validation(self):
+    '''Verify that returned XML document validates against the ObjectList schema
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+    response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
+    xml_doc = response.read()
+    
+    try:
+      #d1pythonitk.xmlvalidator.validate(xml_doc, 'http://127.0.0.1/objectlist.xsd')
+      d1pythonitk.xmlvalidator.validate(xml_doc, d1pythonitk.const.OBJECTLIST_SCHEMA_URL)
+    except:
+      self.assertTrue(False, 'd1pythonitk.xmlvalidator.validate() failed')
+      raise
+    
+  def test_24_pxby_objectlist_xml(self):
+    xml_doc = open('test.xml').read()
+    object_list_1 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_1.deserialize(xml_doc, 'text/xml')
+    doc, content_type = object_list_1.serialize('text/xml')
+    
+    object_list_2 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_2.deserialize(doc, 'text/xml')
+    xml_doc_out, content_type = object_list_2.serialize('text/xml')
+    
+    self.assert_xml_equals(xml_doc, xml_doc_out)
+  
+  def test_25_pxby_objectlist_json(self):
+    xml_doc = open('test.xml').read()
+    object_list_1 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_1.deserialize(xml_doc, 'text/xml')
+    doc, content_type = object_list_1.serialize('application/json')
+    
+    object_list_2 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_2.deserialize(doc, 'application/json')
+    xml_doc_out, content_type = object_list_2.serialize('text/xml')
+    
+    self.assert_xml_equals(xml_doc, xml_doc_out)
+  
+  def test_26_pxby_objectlist_rdf_xml(self):
+    xml_doc = open('test.xml').read()
+    object_list_1 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_1.deserialize(xml_doc, 'text/xml')
+    doc, content_type = object_list_1.serialize('application/rdf+xml')
+    
+  def test_27_pxby_objectlist_csv(self):
+    xml_doc = open('test.xml').read()
+    object_list_1 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_1.deserialize(xml_doc, 'text/xml')
+    doc, content_type = object_list_1.serialize('text/csv')
+  
+    object_list_2 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_2.deserialize(doc, 'text/csv')
+    xml_doc_out, content_type = object_list_2.serialize('text/xml')
+    
+    # This assert currently does not pass because there is a slight difference
+    # in the ISO1601 rendering of the timestamp.
+    #self.assert_xml_equals(xml_doc, xml_doc_out)
+  
+  def test_28_monitor_xml_validation(self):
+    '''Verify that returned XML document validates against the ObjectList schema
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+    response = client.client.GET(client.getMonitorObjectUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
+    xml_doc = response.read()
+    try:
+      d1pythonitk.xmlvalidator.validate(xml_doc, d1pythonitk.const.MONITOR_OBJECT_SCHEMA_URL)
+    except:
+      self.assertTrue(False, 'd1pythonitk.xmlvalidator.validate() failed')
+      raise
+  
+  def test_29_pxby_monitor_xml(self):
+    xml_doc = open('test.xml').read()
+    object_list_1 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_1.deserialize(xml_doc, 'text/xml')
+    doc, content_type = object_list_1.serialize('text/xml')
+    
+    object_list_2 = d1common.types.objectlist_serialization.ObjectList()
+    object_list_2.deserialize(doc, 'text/xml')
+    xml_doc_out, content_type = object_list_2.serialize('text/xml')
+    
+    self.assert_xml_equals(xml_doc, xml_doc_out)
+    
+  def test_30_orderby_size(self):
+    '''Verify ObjectList orderby: size
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+    response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=size', {'Accept': 'application/json'})
+    doc = json.loads(response.read())
+    self.assertEqual(doc['objectInfo'][0]['size'], 1982)
+    self.assertEqual(doc['objectInfo'][9]['size'], 2746)
+
+  def test_31_orderby_size_desc(self):
+    '''Verify ObjectList orderby: desc_size
+    '''
+    client = d1pythonitk.client.DataOneClient(self.options.gmn_url)
+    response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=desc_size', {'Accept': 'application/json'})
+    doc = json.loads(response.read())
+    self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
+    self.assertEqual(doc['objectInfo'][9]['size'], 717851)
+
+def main():
+  log_setup()
+  
+  # Command line options.
+  parser = optparse.OptionParser()
+  parser.add_option('-g', '--gmn-url', dest='gmn_url', action='store', type='string', default='http://127.0.0.1:8000/')
+  parser.add_option('-c', '--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
+  parser.add_option('-x', '--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
+  parser.add_option('-p', '--obj-path', dest='obj_path', action='store', type='string', default='/var/www/test_client_objects')
+  parser.add_option('-w', '--obj-url', dest='obj_url', action='store', type='string', default='http://localhost/test_client_objects/')
+  parser.add_option('-v', '--verbose', action='store_true', default=False, dest='verbose')
+  parser.add_option('-u', '--quick', action='store_true', default=False, dest='quick')
+
+  (options, args) = parser.parse_args()
+
+  if not options.verbose:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestSequenceFunctions
+  s.options = options
+  suite = unittest.TestLoader().loadTestsFromTestCase(s)
+  unittest.TextTestRunner(verbosity=2).run(suite)
+  
+if __name__ == '__main__':
+  main()
+
