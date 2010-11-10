@@ -139,7 +139,7 @@ def main():
     dest='obj_path',
     action='store',
     type='string',
-    default='/var/www/test_client_objects'
+    default='./test_objects'
   )
   parser.add_option('-v', '--verbose', action='store_true', default=False, dest='verbose')
 
@@ -152,13 +152,12 @@ def main():
   csv_file = open(options.csv_path, 'wb')
   csv_writer = csv.writer(csv_file)
 
-  for sysmeta_path in sorted(glob.glob(os.path.join(options.obj_path, '*.sysmeta'))):
+  for sysmeta_path in sorted(glob.glob(os.path.join(options.obj_path, 'sysmeta', '*'))):
     sysmeta_file = open(sysmeta_path, 'r')
     sysmeta_tree = etree.parse(sysmeta_file)
     sysmeta_file.close()
 
-    object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-    identifier = urllib.unquote(os.path.basename(object_path))
+    identifier = urllib.unquote(os.path.basename(sysmeta_path))
 
     logging.info(identifier)
 
