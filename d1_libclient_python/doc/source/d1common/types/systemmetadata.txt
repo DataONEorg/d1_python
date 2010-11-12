@@ -1,3 +1,0 @@
-.. automodule:: d1common.types.systemmetadata
-   :members:
-   :undoc-members:
