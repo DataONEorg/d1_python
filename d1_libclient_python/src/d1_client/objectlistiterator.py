@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ''' 
-Module d1pythonitk.d1objectIterator
+Module d1_client.d1objectIterator
 ===================================
  
 :Created: 20100122
@@ -86,14 +86,14 @@ if __name__ == "__main__":
   '''A simple demonstration of the iterator.  Walks over the list of objects
   available from a given node.
   '''
-  import d1pythonitk.client
+  import d1_client.client
   import sys
   #target = "http://dev-dryad-mn.dataone.org/mn"
   #target = "http://129.24.0.15/mn"
   target = "http://knb-mn.ecoinformatics.org/knb"
   if len(sys.argv) > 1:
     target = sys.argv[1]
-  client = d1pythonitk.client.DataOneClient(target=target)
+  client = d1_client.client.DataOneClient(target=target)
   ol = ObjectListIterator(client)
   counter = 0
   print "Total of %d items." % len(ol)

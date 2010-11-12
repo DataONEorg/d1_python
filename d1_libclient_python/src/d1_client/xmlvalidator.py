@@ -33,7 +33,7 @@ try:
 except:
   from StringIO import StringIO
 
-from d1pythonitk.client import RESTClient
+from d1_client.client import RESTClient
 
 #===============================================================================
 

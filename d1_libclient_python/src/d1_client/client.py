@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1pythonitk.d1client
+'''Module d1_client.d1client
 ===========================
 
 This module implements DataOneClient which provides a client supporting basic 
@@ -49,21 +49,21 @@ except:
 
 # 3rd party.
 try:
-  import d1common.types.objectlist_serialization
-  import d1common.types.objectlocationlist_serialization
-  import d1common.types.systemmetadata
-  import d1common.types.logrecords_serialization
-  import d1common.types.nodelist_serialization
+  import d1_common.types.objectlist_serialization
+  import d1_common.types.objectlocationlist_serialization
+  import d1_common.types.systemmetadata
+  import d1_common.types.logrecords_serialization
+  import d1_common.types.nodelist_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
 
 # DataONE.
-from d1common import exceptions
-from d1common import mime_multipart
-from d1pythonitk import const
-from d1pythonitk import objectlistiterator
+from d1_common import exceptions
+from d1_common import mime_multipart
+from d1_client import const
+from d1_client import objectlistiterator
 
 #===============================================================================
 
@@ -462,7 +462,7 @@ class DataOneClient(object):
 
     response = self.getSystemMetadataResponse(identifier, headers)
     format = response.headers['content-type']
-    return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
+    return d1_common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
   def resolve(self, identifier, headers=None):
     '''Resolve an identifier into a ObjectLocationList.
@@ -477,7 +477,7 @@ class DataOneClient(object):
     # Fetch.
     response = self.client.GET(url, headers)
     format = response.headers['content-type']
-    deser = d1common.types.objectlocationlist_serialization.ObjectLocationList()
+    deser = d1_common.types.objectlocationlist_serialization.ObjectLocationList()
     return deser.deserialize(response.read(), format)
 
   def node(self, headers=None):
@@ -494,7 +494,7 @@ class DataOneClient(object):
     response = self.client.GET(url, headers)
     # Return.
     format = response.headers['content-type']
-    deser = d1common.types.nodelist_serialization.NodeList()
+    deser = d1_common.types.nodelist_serialization.NodeList()
     return deser.deserialize(response.read(), format)
 
   def listObjects(
@@ -563,7 +563,7 @@ class DataOneClient(object):
 
     # Deserialize.
     format = response.headers['content-type']
-    serializer = d1common.types.objectlist_serialization.ObjectList()
+    serializer = d1_common.types.objectlist_serialization.ObjectList()
     # TODO: Remove buffering.
     return serializer.deserialize(response.read(), format)
 
@@ -628,7 +628,7 @@ class DataOneClient(object):
     # Fetch.
     response = self.client.GET(url, headers)
     format = response.headers['content-type']
-    deser = d1common.types.logrecords_serialization.LogRecords()
+    deser = d1_common.types.logrecords_serialization.LogRecords()
     return deser.deserialize(response.read(), format)
 
   #def create(self, identifier, object_bytes, sysmeta_bytes):
@@ -766,7 +766,7 @@ class SimpleDataOneClient(object):
     ) #TODO: Should go to root.
     response = client_root.getSystemMetadataResponse(identifier)
     format = response.headers['content-type']
-    return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
+    return d1_common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
   def getLogRecords(
     self,
