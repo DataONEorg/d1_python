@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ''' 
-Module d1pythonitk.logrecorditerator
+Module d1_client.logrecorditerator
 ====================================
  
 :Created: 20100724
@@ -84,7 +84,7 @@ if __name__ == "__main__":
   '''A simple demonstration of the iterator.  Walks over the list of log 
   entries available from a given node.
   '''
-  import d1pythonitk.client
+  import d1_client.client
   import sys
   logging.basicConfig(level=logging.INFO)
   target = "http://dev-dryad-mn.dataone.org/mn"
@@ -92,7 +92,7 @@ if __name__ == "__main__":
   #target = "http://knb-mn.ecoinformatics.org/knb"
   if len(sys.argv) > 1:
     target = sys.argv[1]
-  client = d1pythonitk.client.DataOneClient(target=target)
+  client = d1_client.client.DataOneClient(target=target)
   rl = LogRecordIterator(client)
   counter = 0
   for e in rl:

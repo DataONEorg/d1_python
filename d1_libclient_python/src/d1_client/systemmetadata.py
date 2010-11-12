@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1pythonitk.d1sysmeta
+Module d1_client.d1sysmeta
 ============================
 
 :Created: 20100111
@@ -39,7 +39,7 @@ an instance of SystemMetadata.
 
 Example:
   >>> target = "http://localhost:8000/mn"
-  >>> from d1pythonitk import client
+  >>> from d1_client import client
   >>> cli = client.DataOneClient()
   >>> objects = cli.listObjects(target=target,count=3)
   >>> objects['data'][0]['guid']
@@ -69,7 +69,7 @@ except:
   import xml.etree.ElementTree as ET
 
   # Local.
-from d1pythonitk import const
+from d1_client import const
 
 
 class SystemMetadata(object):
@@ -95,7 +95,7 @@ class SystemMetadata(object):
     :rtype: (bool) True if all good, otherwise an exception is raised.
     '''
     try:
-      from d1pythonitk import xmlvalidator
+      from d1_client import xmlvalidator
     except:
       logging.warn('Could not import lxml.  Validation not available.')
       return False
