@@ -61,8 +61,5 @@ Python - DataONE Common API
 .. automodule:: d1_common.mime_multipart
    :members:
 
-.. automodule:: d1_common.ext.__init__
-   :members:
-
 .. automodule:: d1_common.ext.mimeparser
    :members:
