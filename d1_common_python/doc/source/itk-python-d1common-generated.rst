@@ -1,71 +1,68 @@
-Python Library API
-==================
+Python - DataONE Common API
+===========================
 
-.. automodule:: d1common.exceptions
+.. automodule:: d1_common.exceptions
    :members:
 
-.. automodule:: d1common.types.monitorlist_serialization
+.. automodule:: d1_common.types.monitorlist_serialization                                                                                                                                                                                                
    :members:
 
-.. automodule:: d1common.types.systemmetadata
+.. automodule:: d1_common.types.systemmetadata                                                                                                                                                                                                           
    :members:
 
-.. automodule:: d1common.types.logrecords_serialization
+.. automodule:: d1_common.types.logrecords_serialization                                                                                                                                                                                                 
    :members:
 
-.. automodule:: d1common.types.objectlist_serialization
+.. automodule:: d1_common.types.objectlist_serialization                                                                                                                                                                                                 
    :members:
 
-.. automodule:: d1common.types.nodelist_serialization
+.. automodule:: d1_common.types.nodelist_serialization                                                                                                                                                                                                   
    :members:
 
-.. automodule:: d1common.types.objectlocationlist_serialization
+.. automodule:: d1_common.types.objectlocationlist_serialization                                                                                                                                                                                         
    :members:
 
-.. automodule:: d1common.types.generated.noderegistry
+.. automodule:: d1_common.types.generated.noderegistry                                                                                                                                                                                                   
    :members:
 
-.. automodule:: d1common.types.generated.dryadDim
+.. automodule:: d1_common.types.generated.statusresponselist                                                                                                                                                                                             
    :members:
 
-.. automodule:: d1common.types.generated.statusresponselist
+.. automodule:: d1_common.types.generated.systemmetadata                                                                                                                                                                                                 
    :members:
 
-.. automodule:: d1common.types.generated.systemmetadata
+.. automodule:: d1_common.types.generated.objectlocationlist                                                                                                                                                                                             
    :members:
 
-.. automodule:: d1common.types.generated.objectlocationlist
+.. automodule:: d1_common.types.generated.logging                                                                                                                                                                                                        
    :members:
 
-.. automodule:: d1common.types.generated.logging
+.. automodule:: d1_common.types.generated.objectlist                                                                                                                                                                                                     
    :members:
 
-.. automodule:: d1common.types.generated.objectlist
+.. automodule:: d1_common.types.generated._common                                                                                                                                                                                                        
    :members:
 
-.. automodule:: d1common.types.generated.dryadXlink
+.. automodule:: d1_common.types.generated.monitorlist                                                                                                                                                                                                    
    :members:
 
-.. automodule:: d1common.types.generated._common
+.. automodule:: d1_common.types.generated.nodelist                                                                                                                                                                                                       
    :members:
 
-.. automodule:: d1common.types.generated.monitorlist
+.. automodule:: d1_common.types.statusresponselist_serialization                                                                                                                                                                                         
    :members:
 
-.. automodule:: d1common.types.generated.nodelist
+.. automodule:: d1_common.util                                                                                                                                                                                                                           
    :members:
 
-.. automodule:: d1common.types.statusresponselist_serialization
+.. automodule:: d1_common.xmlrunner
    :members:
 
-.. automodule:: d1common.util
+.. automodule:: d1_common.mime_multipart
    :members:
 
-.. automodule:: d1common.xmlrunner
+.. automodule:: d1_common.ext.__init__
    :members:
 
-.. automodule:: d1common.mime_multipart
-   :members:
-
-.. automodule:: d1common.ext.mimeparser
+.. automodule:: d1_common.ext.mimeparser
    :members:
