@@ -48,13 +48,13 @@ import os
 #sys.path.append(os.path.abspath('.'))
 
 # Play nice with Django.
-sys.path.append(os.path.abspath('./'))
-sys.path.append(os.path.abspath('./mn_prototype/'))
-sys.path.append(os.path.abspath('./mn_prototype/mn_service/'))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+#sys.path.append(os.path.abspath('./mn_prototype/'))
+#sys.path.append(os.path.abspath('./mn_prototype/mn_service/'))
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 # Add path to d1common.client, so that it can be found by autodoc.
-sys.path.append(os.path.abspath('./../..'))
+sys.path.append(os.path.abspath('../../src/'))
+#sys.path.append(os.path.abspath('./../..'))
 
 # -- General configuration -----------------------------------------------------
 

@@ -9,9 +9,8 @@ Contents:
 .. toctree::
   :maxdepth: 2
 
-  itk-python-d1common.rst
-  itk-python-d1common-generated.rst
-  pyxb.rst
+  pyxb
+  generated
 
 Indices and tables
 ==================
