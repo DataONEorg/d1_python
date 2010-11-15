@@ -1,7 +1,8 @@
-Python - DataONE Common
-=======================
+Python Package - DataONE Common
+===============================
 
-Contains functionality common to DataONE projects implemented in Python.
+Contains functionality common to projects that interact with the DataONE
+infrastructure via Python.
 
 Contents:
 
@@ -10,6 +11,7 @@ Contents:
 
   itk-python-d1common.rst
   itk-python-d1common-generated.rst
+  pyxb.rst
 
 Indices and tables
 ==================
@@ -17,45 +19,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-Python - DataONE Common
-=======================
-
-Libraries containining basic facilities that enable interacting with the DataONE
-infrastructure via Python.
-Package d1common
-================
-
-This package contains code that is shared between the client and server
-implementations.
-
-.. toctree::
-   :numbered:
-   
-   d1common/exceptions
-   d1common/upload
-   d1common/xmlrunner
-   d1common/types/logrecords_serialization
-   d1common/types/monitor_object_serialization
-   d1common/types/objectlist_serialization
-   d1common/types/systemmetadata
-   
-
- Pyxb Generated Code
- -------------------
- 
- The python code under ``d1common/types/generated`` is generated from the 
- DataONE schemas_ using pyxb_.  To regenerate the code such as after a
- schema change, follow a process like::
- 
-  cd $HOME/Projects/D1_cicore/api-common-python/src 
-  export BASEURL="https://repository.dataone.org/software/cicore/trunk/schemas"
-  pyxbgen --binding-root d1common/types/generated \
-          -u $BASEURL/logging.xsd -m logging \
-          -u $BASEURL/nodelist.xsd -m nodelist \
-          -u $BASEURL/objectlist.xsd -m objectlist \
-          -u $BASEURL/systemmetadata.xsd -m systemmetadata \
-          -u $BASEURL/monitor_object.xsd -m monitor_object 
- 
- 
- .. _pyxb:: http://pyxb.sourceforge.net/
- .. _schemas:: https://repository.dataone.org/software/cicore/trunk/schemas/
