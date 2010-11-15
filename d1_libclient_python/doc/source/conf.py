@@ -25,6 +25,7 @@
 :Synopsis:
   Sphinx documentation building system configuration.
 
+.. moduleauthor:: Dave Vieglais
 .. moduleauthor:: Roger Dahl
 """
 
