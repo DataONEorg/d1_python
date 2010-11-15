@@ -2,64 +2,85 @@ Python - DataONE Common API
 ===========================
 
 .. automodule:: d1_common.exceptions
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.monitorlist_serialization                                                                                                                                                                                                
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.systemmetadata                                                                                                                                                                                                           
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.logrecords_serialization                                                                                                                                                                                                 
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.objectlist_serialization                                                                                                                                                                                                 
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.nodelist_serialization                                                                                                                                                                                                   
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.objectlocationlist_serialization                                                                                                                                                                                         
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.noderegistry                                                                                                                                                                                                   
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.statusresponselist                                                                                                                                                                                             
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.systemmetadata                                                                                                                                                                                                 
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.objectlocationlist                                                                                                                                                                                             
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.logging                                                                                                                                                                                                        
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.objectlist                                                                                                                                                                                                     
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated._common                                                                                                                                                                                                        
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.monitorlist                                                                                                                                                                                                    
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.generated.nodelist                                                                                                                                                                                                       
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.types.statusresponselist_serialization                                                                                                                                                                                         
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.util                                                                                                                                                                                                                           
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.xmlrunner
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.mime_multipart
-   :members:
+  :members:
+  :undoc-members:
 
 .. automodule:: d1_common.ext.mimeparser
-   :members:
+  :members:
+  :undoc-members:
