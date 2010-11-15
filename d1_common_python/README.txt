@@ -1,5 +1,4 @@
-= README for d1-api-common-python =
+= README for d1_common_python =
 
-Contains python modules that are shared between the Member Node and 
-Investigator Toolkit python implementations.
-
+Contains functionality common to projects that interact with the DataONE
+infrastructure via Python.
