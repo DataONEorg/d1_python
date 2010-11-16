@@ -57,17 +57,17 @@ import sys
 import traceback
 
 # 3rd party.
-import d1common.ext.mimeparser
+import d1_common.ext.mimeparser
 
 # Django.
 from django.http import HttpResponse
 
 # MN API.
-import d1common.exceptions
+import d1_common.exceptions
 
 # App.
-import mn_service.sys_log as sys_log
-import mn_service.util as util
+import mn.sys_log as sys_log
+import mn.util as util
 import detail_codes
 
 
@@ -152,7 +152,7 @@ def serialize_exception(request, exception):
     )
   else:
     try:
-      content_type = d1common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+      content_type = d1_common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also default to JSON.
@@ -176,7 +176,7 @@ class exception_handler():
     util.log_exception(10)
 
     # If the exception is a DataONE exception, we serialize it out.
-    if isinstance(exception, d1common.exceptions.DataONEException):
+    if isinstance(exception, d1_common.exceptions.DataONEException):
       return HttpResponse(
         serialize_exception(
           request, exception
@@ -187,7 +187,7 @@ class exception_handler():
     tb = traceback_to_detail_code()
     return HttpResponse(
       serialize_exception(
-        request, d1common.exceptions.ServiceFailure(
+        request, d1_common.exceptions.ServiceFailure(
           0, tb
         )
       ),

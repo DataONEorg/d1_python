@@ -41,23 +41,23 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1common.exceptions
-import d1pythonitk.systemmetadata
-import d1pythonitk.client
-import d1common.types.objectlocationlist_serialization
+import d1_common.exceptions
+import d1_client.systemmetadata
+import d1_client.client
+import d1_common.types.objectlocationlist_serialization
 
 # App.
-import mn_service.models
+import mn.models
 import settings
 
 
 class ObjectLocationList(
-  d1common.types.objectlocationlist_serialization.ObjectLocationList
+  d1_common.types.objectlocationlist_serialization.ObjectLocationList
 ):
   def deserialize_db(self, obj):
-    cfg = lambda key: mn_service.models.Node.objects.get(key=key).val
+    cfg = lambda key: mn.models.Node.objects.get(key=key).val
 
-    objectLocation = d1common.types.generated.objectlocationlist.ObjectLocation()
+    objectLocation = d1_common.types.generated.objectlocationlist.ObjectLocation()
 
     objectLocation.nodeIdentifier = cfg('identifier')
     objectLocation.baseURL = cfg('base_url')
@@ -68,18 +68,18 @@ class ObjectLocationList(
     self.object_location_list.identifier = obj.guid
 
 
-class NodeList(d1common.types.nodelist_serialization.NodeList):
+class NodeList(d1_common.types.nodelist_serialization.NodeList):
   def deserialize_db(self):
     '''
     :param:
     :return:
     '''
-    cfg = lambda key: mn_service.models.Node.objects.get(key=key).val
+    cfg = lambda key: mn.models.Node.objects.get(key=key).val
 
     # Node
 
     # El.
-    node = d1common.types.generated.nodelist.Node()
+    node = d1_common.types.generated.nodelist.Node()
     node.identifier = cfg('identifier')
     node.name = cfg('version')
     node.description = cfg('description')
@@ -91,9 +91,9 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Services
 
-    services = d1common.types.generated.nodelist.Services()
+    services = d1_common.types.generated.nodelist.Services()
 
-    svc = d1common.types.generated.nodelist.Service()
+    svc = d1_common.types.generated.nodelist.Service()
     svc.name = cfg('service_name')
     svc.version = cfg('service_version')
     svc.available = cfg('service_available')
@@ -102,25 +102,25 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     methods = []
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'session'
     method.rest = 'session/'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'object_collection'
     method.rest = 'object'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'get_object'
     method.rest = 'object/'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'get_meta'
     method.rest = 'meta/'
     method.implemented = 'true'
@@ -128,7 +128,7 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Log
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'log_collection'
     method.rest = 'log'
     method.implemented = 'true'
@@ -136,13 +136,13 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Health
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'health_ping'
     method.rest = 'health/ping'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'health_status'
     method.rest = 'health/status'
     method.implemented = 'true'
@@ -150,13 +150,13 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Monitor
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'monitor_object'
     method.rest = 'monitor/object'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'monitor_event'
     method.rest = 'monitor/event'
     method.implemented = 'true'
@@ -164,7 +164,7 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Node
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'node'
     method.rest = 'node'
     method.implemented = 'true'
@@ -200,9 +200,9 @@ def resolve(request, guid):
 
 def resolve_get(request, guid, head):
   try:
-    obj = mn_service.models.Object.objects.get(guid=guid)
-  except: # mn_service.models.DoesNotExist
-    raise d1common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
+    obj = mn.models.Object.objects.get(guid=guid)
+  except: # mn.models.DoesNotExist
+    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
 
   object_location_list = ObjectLocationList()
   object_location_list.deserialize_db(obj)

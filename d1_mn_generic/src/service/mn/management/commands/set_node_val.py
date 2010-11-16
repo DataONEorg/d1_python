@@ -35,12 +35,12 @@ import sys
 # Django.
 from django.core.management.base import BaseCommand
 
-# Add mn_service app path to the module search path.
+# Add mn app path to the module search path.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 # App.
 import settings
-import mn_service.models
+import mn.models
 
 
 class Command(BaseCommand):
@@ -48,4 +48,4 @@ class Command(BaseCommand):
   help = 'Set a config value for the Member Node'
 
   def handle(self, *args, **options):
-    mn_service.models.Node().set(args[0], args[1])
+    mn.models.Node().set(args[0], args[1])

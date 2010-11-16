@@ -71,8 +71,8 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1common.exceptions
-import d1pythonitk.const
+import d1_common.exceptions
+import d1_client.const
 
 # App.
 import event_log
@@ -216,7 +216,7 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
     if operator is None:
       operator = default
     if operator not in operator_translation:
-      raise d1common.exceptions.InvalidRequest(0, 'Invalid argument: {0}'.format(key))
+      raise d1_common.exceptions.InvalidRequest(0, 'Invalid argument: {0}'.format(key))
     date_str = request.GET[key]
     # parse_date() needs date-time, so if we only have date, add time
     # (midnight).
@@ -225,7 +225,7 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
     try:
       date = iso8601.parse_date(date_str)
     except iso8601.ParseError, e:
-      raise d1common.exceptions.InvalidRequest(
+      raise d1_common.exceptions.InvalidRequest(
         0, 'Invalid date format: {0} {1}'.format(
           request.GET[key], str(
             e
@@ -246,7 +246,7 @@ def add_wildcard_filter(query, col_name, value):
 
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
-    raise d1common.exceptions.InvalidRequest(
+    raise d1_common.exceptions.InvalidRequest(
       0, 'Wildcard is only supported at start OR end of value: {0}'.format(
         value
       )
@@ -272,7 +272,7 @@ def add_wildcard_filter(query, col_name, value):
     wild_end = True
 
   if wild_beginning == True and wild_end == True:
-    raise d1common.exceptions.InvalidRequest(
+    raise d1_common.exceptions.InvalidRequest(
       0, 'Wildcard is only supported at start OR end of value: {0}'.format(
         value
       )
@@ -298,7 +298,7 @@ def add_slice_filter(query, request):
   except KeyError:
     start = 0
   except ValueError:
-    raise d1common.exceptions.InvalidRequest(
+    raise d1_common.exceptions.InvalidRequest(
       0, 'Invalid start value: {0}'.format(
         request.GET['start']
       )
@@ -310,14 +310,14 @@ def add_slice_filter(query, request):
   try:
     count = int(request.GET['count'])
     # Enforce max count.
-    if count > d1pythonitk.const.MAX_LISTOBJECTS:
+    if count > d1_client.const.MAX_LISTOBJECTS:
       raise ValueError
   except KeyError:
-    count = d1pythonitk.const.MAX_LISTOBJECTS
+    count = d1_client.const.MAX_LISTOBJECTS
   except ValueError:
-    raise d1common.exceptions.InvalidRequest(
+    raise d1_common.exceptions.InvalidRequest(
       0, 'Invalid count value: {0} (count must be 0 <= count >= {1}'.format(
-        request.GET['count'], d1pythonitk.const.MAX_LISTOBJECTS
+        request.GET['count'], d1_client.const.MAX_LISTOBJECTS
       )
     )
 

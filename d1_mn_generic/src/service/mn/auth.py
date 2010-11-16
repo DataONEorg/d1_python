@@ -39,7 +39,7 @@ from django.http import Http404
 from django.http import HttpResponse
 
 # MN API.
-import d1common.exceptions
+import d1_common.exceptions
 
 # App.
 import settings
@@ -55,7 +55,7 @@ def cn_check_required(f):
   We could just check the IP each time, but we set up a session because it'll
   come in handy shortly.
   
-  Raises d1common.exceptions.NotAuthorized (errorCode=401, detailCode=1040)
+  Raises d1_common.exceptions.NotAuthorized (errorCode=401, detailCode=1040)
   '''
 
   def wrap(request, *args, **kwargs):
@@ -80,7 +80,7 @@ def cn_check_required(f):
         )
         request.session['cn_user'] = True
       else:
-        raise d1common.exceptions.NotAuthorized(
+        raise d1_common.exceptions.NotAuthorized(
           0, 'Attempted to access functionality only available to Coordinating Nodes'
         )
     else:
@@ -128,7 +128,7 @@ def mn_check_required(f):
         )
         request.session['mn_user'] = True
       else:
-        raise d1common.exceptions.NotAuthorized(
+        raise d1_common.exceptions.NotAuthorized(
           0, 'Attempted to access functionality only available to Member Nodes.'
         )
     else:

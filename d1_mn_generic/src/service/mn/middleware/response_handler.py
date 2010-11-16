@@ -55,7 +55,7 @@ except ImportError, e:
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-import d1common.ext.mimeparser
+import d1_common.ext.mimeparser
 
 # Django.
 from django.db import models
@@ -63,20 +63,20 @@ from django.http import HttpResponse
 from django.db.models import Avg, Max, Min, Count
 
 # MN API.
-import d1common.exceptions
-import d1common.types.objectlist_serialization
-import d1common.types.logrecords_serialization
-import d1common.types.monitorlist_serialization
-import d1common.types.nodelist_serialization
+import d1_common.exceptions
+import d1_common.types.objectlist_serialization
+import d1_common.types.logrecords_serialization
+import d1_common.types.monitorlist_serialization
+import d1_common.types.nodelist_serialization
 
 # App.
-import mn_service.models as models
-import mn_service.sys_log as sys_log
-import mn_service.util as util
+import mn.models as models
+import mn.sys_log as sys_log
+import mn.util as util
 import settings
 
 
-class ObjectList(d1common.types.objectlist_serialization.ObjectList):
+class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
   def deserialize_db(self, view_result):
     '''
     :param:
@@ -84,7 +84,7 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
     '''
 
     for row in view_result['query']:
-      objectInfo = d1common.types.generated.objectlist.ObjectInfo()
+      objectInfo = d1_common.types.generated.objectlist.ObjectInfo()
 
       objectInfo.identifier = row.guid
       objectInfo.objectFormat = row.format.format
@@ -100,7 +100,7 @@ class ObjectList(d1common.types.objectlist_serialization.ObjectList):
     self.object_list.total = view_result['total']
 
 
-class LogRecords(d1common.types.logrecords_serialization.LogRecords):
+class LogRecords(d1_common.types.logrecords_serialization.LogRecords):
   def deserialize_db(self, view_result):
     '''
     :param:
@@ -108,7 +108,7 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
     '''
 
     for row in view_result['query']:
-      logEntry = d1common.types.generated.logging.LogEntry()
+      logEntry = d1_common.types.generated.logging.LogEntry()
 
       logEntry.entryId = str(row.id)
       logEntry.identifier = row.object.guid
@@ -126,7 +126,7 @@ class LogRecords(d1common.types.logrecords_serialization.LogRecords):
     self.log.total = view_result['total']
 
 
-class MonitorList(d1common.types.monitorlist_serialization.MonitorList):
+class MonitorList(d1_common.types.monitorlist_serialization.MonitorList):
   def deserialize_db(self, view_result):
     '''
     :param:
@@ -136,18 +136,18 @@ class MonitorList(d1common.types.monitorlist_serialization.MonitorList):
     query = view_result['query']
     if view_result['day'] == True:
       for row in query:
-        monitorInfo = d1common.types.generated.monitorlist.MonitorInfo()
+        monitorInfo = d1_common.types.generated.monitorlist.MonitorInfo()
         monitorInfo.date = row['day']
         monitorInfo.count = row['count']
         self.monitorlist.append(monitorInfo)
     else:
-      monitorInfo = d1common.types.generated.monitorlist.MonitorInfo()
+      monitorInfo = d1_common.types.generated.monitorlist.MonitorInfo()
       monitorInfo.date = datetime.date.today()
       monitorInfo.count = query.aggregate(count=Count('id'))['count']
       self.monitorlist.append(monitorInfo)
 
 
-class NodeList(d1common.types.nodelist_serialization.NodeList):
+class NodeList(d1_common.types.nodelist_serialization.NodeList):
   def deserialize_db(self, view_result):
     '''
     :param:
@@ -158,7 +158,7 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
     # Node
 
     # El.
-    node = d1common.types.generated.nodelist.Node()
+    node = d1_common.types.generated.nodelist.Node()
     node.identifier = cfg('identifier')
     node.name = cfg('version')
     node.description = cfg('description')
@@ -170,9 +170,9 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Services
 
-    services = d1common.types.generated.nodelist.Services()
+    services = d1_common.types.generated.nodelist.Services()
 
-    svc = d1common.types.generated.nodelist.Service()
+    svc = d1_common.types.generated.nodelist.Service()
     svc.name = cfg('service_name')
     svc.version = cfg('service_version')
     svc.available = cfg('service_available')
@@ -181,25 +181,25 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     methods = []
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'session'
     method.rest = 'session/'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'object_collection'
     method.rest = 'object'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'get_object'
     method.rest = 'object/'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'get_meta'
     method.rest = 'meta/'
     method.implemented = 'true'
@@ -207,7 +207,7 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Log
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'log_collection'
     method.rest = 'log'
     method.implemented = 'true'
@@ -215,13 +215,13 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Health
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'health_ping'
     method.rest = 'health/ping'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'health_status'
     method.rest = 'health/status'
     method.implemented = 'true'
@@ -229,13 +229,13 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Monitor
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'monitor_object'
     method.rest = 'monitor/object'
     method.implemented = 'true'
     methods.append(method)
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'monitor_event'
     method.rest = 'monitor/event'
     method.implemented = 'true'
@@ -243,7 +243,7 @@ class NodeList(d1common.types.nodelist_serialization.NodeList):
 
     # Node
 
-    method = d1common.types.generated.nodelist.ServiceMethod()
+    method = d1_common.types.generated.nodelist.ServiceMethod()
     method.name = 'node'
     method.rest = 'node'
     method.implemented = 'true'
@@ -427,7 +427,7 @@ def monitor_serialize_object(request, response, monitor):
     )
   else:
     try:
-      content_type = d1common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
+      content_type = d1_common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also default to JSON.

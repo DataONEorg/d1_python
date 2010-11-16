@@ -37,7 +37,7 @@ from django.db import models
 from django.db.models import Q
 
 # MN API.
-import d1common.exceptions
+import d1_common.exceptions
 
 # TEST
 
@@ -141,7 +141,7 @@ class Event_log(models.Model):
     :return:
     '''
     if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
-      raise d1common.exceptions.ServiceFailure(
+      raise d1_common.exceptions.ServiceFailure(
         0, 'Attempted to create invalid type of event: {0}'.format(event_string)
       )
     self.event = Event_log_event.objects.get_or_create(event=event_string)[0]

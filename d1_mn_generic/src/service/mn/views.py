@@ -84,8 +84,8 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1common.exceptions
-import d1pythonitk.systemmetadata
+import d1_common.exceptions
+import d1_client.systemmetadata
 
 # App.
 import event_log
@@ -165,7 +165,7 @@ def object_collection_get(request, head):
         'size': 'size',
       }[orderby]
     except KeyError:
-      raise d1common.exceptions.InvalidRequest(0, 'Invalid orderby value requested: {0}'.format(orderby))
+      raise d1_common.exceptions.InvalidRequest(0, 'Invalid orderby value requested: {0}'.format(orderby))
       
     # Set up query with requested sorting.
     query = models.Object.objects.order_by(prefix + order_field)
@@ -251,7 +251,7 @@ def object_collection_delete(request):
 
   if settings.GMN_DEBUG != True:
     sys_log.info('client({0}): Attempted to access object_collection_delete while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
     
   # Clear the DB.
   models.Object.objects.all().delete()
@@ -268,7 +268,7 @@ def object_collection_delete(request):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not clear SysMeta cache\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
   sys_log.info('client({0}): object_collection_delete'.format(util.request_to_string(request)))
@@ -324,22 +324,22 @@ def object_guid_post(request, guid):
   
   # Validate POST.
   if len(request.FILES) != 2:
-    raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
+    raise d1_common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
 
   if 'object' not in request.FILES.keys():
-    raise d1common.exceptions.InvalidRequest(0, 'Could not find MIME part named "object". Parts found: {0}'.format(', '.join(request.FILES.keys())))
+    raise d1_common.exceptions.InvalidRequest(0, 'Could not find MIME part named "object". Parts found: {0}'.format(', '.join(request.FILES.keys())))
     
   if 'systemmetadata' not in request.FILES.keys():
-    raise d1common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
+    raise d1_common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
   
   # Validate SysMeta.
   sysmeta_bytes = request.FILES['systemmetadata'].read()
-  sysmeta = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_bytes)
+  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_bytes)
   try:
     sysmeta.isValid()
   except:
     err = sys.exc_info()[1]
-    raise d1common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
   
   # Write SysMeta bytes to cache folder.
   sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
@@ -350,7 +350,7 @@ def object_guid_post(request, guid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)
   
   store_remotely = False
   object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
@@ -371,7 +371,7 @@ def object_guid_post(request, guid):
           if url_split.scheme != 'http':
             raise ValueError
         except ValueError:
-          raise d1common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
+          raise d1_common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
         else:
           store_remotely = True
     
@@ -389,7 +389,7 @@ def object_guid_post(request, guid):
       # Object is multiple chunks (larger than 2.5MiB by default). It can only
       # be an object to write to disk.
       if 'vendor_gmn_remote_storage' in request.POST:
-        raise d1common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
+        raise d1_common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
 
       sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
 
@@ -401,7 +401,7 @@ def object_guid_post(request, guid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write object file: {0}\n'.format(object_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)
 
   # Create database entry for object.
   object = models.Object()
@@ -443,7 +443,7 @@ def object_guid_get(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
 
   # Split URL into individual parts.
   try:
@@ -467,7 +467,7 @@ def object_guid_get(request, guid):
       if response.status == httplib.FOUND:
         url = response.getheader('location')
     except httplib.HTTPException as e:
-      raise d1common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
+      raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
   
     # Open the object to proxy.
     try:
@@ -476,10 +476,10 @@ def object_guid_get(request, guid):
       conn.request('GET', url)
       response = conn.getresponse()
       if response.status != httplib.OK:
-        raise d1common.exceptions.ServiceFailure(0,
+        raise d1_common.exceptions.ServiceFailure(0,
           'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
     except httplib.HTTPException as e:
-      raise d1common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
+      raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
 
   # Handle disk object.
   else:
@@ -491,7 +491,7 @@ def object_guid_get(request, guid):
     except EnvironmentError as (errno, strerror):
       err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
       err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1common.exceptions.ServiceFailure(0, err_msg)    
+      raise d1_common.exceptions.ServiceFailure(0, err_msg)    
 
   # Log the access of this object.
   event_log.log(guid, 'read', request)
@@ -506,7 +506,7 @@ def object_guid_put(request, guid):
   a previous object (identified by obsoletedGuid).
   :return:
   '''
-  raise d1common.exceptions.NotImplemented(0, 'MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier')
+  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier')
 
 def object_guid_delete(request, guid):
   '''
@@ -515,7 +515,7 @@ def object_guid_delete(request, guid):
   object or a science metadata object.
   :return:
   '''
-  raise d1common.exceptions.NotImplemented(0, 'MN_crud.delete(token, guid) → Identifier')
+  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.delete(token, guid) → Identifier')
   
 def object_guid_head(request, guid):
   '''
@@ -530,7 +530,7 @@ def object_guid_head(request, guid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1common.exceptions.NotFound(0, 'Non-existing scimeta object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing scimeta object was requested', guid)
 
   # Get size of object from file size.
   try:
@@ -538,7 +538,7 @@ def object_guid_head(request, guid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1common.exceptions.NotFound(0, err_msg, guid)
+    raise d1_common.exceptions.NotFound(0, err_msg, guid)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
@@ -586,7 +586,7 @@ def meta_guid_get(request, guid, head):
   try:
     url = models.Object.objects.filter(guid=guid)[0]
   except IndexError:
-    raise d1common.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', guid)
 
   if head == True:
     return HttpResponse('', mimetype='text/xml')
@@ -596,7 +596,7 @@ def meta_guid_get(request, guid, head):
   try:
     file = open(file_in_path, 'r')
   except EnvironmentError as (errno, strerror):
-    raise d1common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
+    raise d1_common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
   # Log access of the SysMeta of this object.
   event_log.log(guid, 'read', request)
@@ -707,7 +707,7 @@ def event_log_view_delete(request):
 
   if settings.GMN_DEBUG != True:
     sys_log.info('client({0}): Attempted to access event_log_view_delete while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
   # Clear the access log.
   models.Event_log.objects.all().delete()
@@ -730,7 +730,7 @@ def health_status(request):
   '''
   '''
   # Not implemented.
-  raise d1common.exceptions.NotImplemented(0, 'Targeted for later version.')
+  raise d1_common.exceptions.NotImplemented(0, 'Targeted for later version.')
   
 # Monitoring
 
@@ -903,7 +903,7 @@ def get_ip(request):
   
   if settings.GMN_DEBUG != True:
     sys_log.info('client({0}): Attempted to access get_ip while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
@@ -920,15 +920,15 @@ def inject_log(request):
 
   if settings.GMN_DEBUG != True:
     sys_log.info('client({0}): Attempted to access inject_log while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1common.exceptions.InvalidRequest(0, 'Unsupported')
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
   
   # Validate POST.
 
   if len(request.FILES) != 1:
-    raise d1common.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
+    raise d1_common.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
 
   if 'csv' not in request.FILES.keys():
-    raise d1common.exceptions.InvalidRequest(0, 'Name of MIME part must be "csv". Found: {0}'.format(', '.join(request.FILES.keys())))
+    raise d1_common.exceptions.InvalidRequest(0, 'Name of MIME part must be "csv". Found: {0}'.format(', '.join(request.FILES.keys())))
   
   # Create log entries.
   csv_reader = csv.reader(request.FILES['csv'])

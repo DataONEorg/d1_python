@@ -36,7 +36,7 @@ from django.shortcuts import render_to_response
 from django.utils.html import escape
 
 # MN API.
-import d1common.exceptions
+import d1_common.exceptions
 
 # App.
 import auth
@@ -68,7 +68,7 @@ def log(guid, event, request, timestamp=None):
           guid
         )
       )
-      raise d1common.exceptions.ServiceFailure(0, err_msg)
+      raise d1_common.exceptions.ServiceFailure(0, err_msg)
 
   # Create log entry.
   event_log_row = models.Event_log()

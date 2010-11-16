@@ -35,36 +35,36 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns(
-  'mn_prototype.mn_service.views',
+  'service.mn.views',
   # CN interface.
 
   # /session/
-  (r'^session/$', 'session'),
+  (r'^session/?$', 'session'),
 
   # /object/
-  (r'^object$', 'object_collection'),
+  (r'^object/?$', 'object_collection'),
   (r'^meta/(.+)$', 'meta_guid'),
   (r'^object/(.+)$', 'object_guid'),
 
   # /log/
-  (r'^log$', 'event_log_view'),
+  (r'^log/?$', 'event_log_view'),
 
   # /health/
-  (r'^health/ping$', 'health_ping'),
-  (r'^health/status$', 'health_status'),
+  (r'^health/ping/?$', 'health_ping'),
+  (r'^health/status/?$', 'health_status'),
 
   # /monitor/
-  (r'^monitor/object$', 'monitor_object'),
-  (r'^monitor/event$', 'monitor_event'),
+  (r'^monitor/object/?$', 'monitor_object'),
+  (r'^monitor/event/?$', 'monitor_event'),
 
   # /node/
-  (r'^node$', 'node'),
+  (r'^node/?$', 'node'),
 
   # Diagnostics, debugging and testing.
-  (r'^inject_log$', 'inject_log'),
-  (r'^get_ip/$', 'auth_test'),
+  (r'^inject_log/?$', 'inject_log'),
+  (r'^get_ip/?$', 'auth_test'),
 
   # Admin.
-  (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-  (r'^admin/', include(admin.site.urls)),
+  (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),
+  (r'^admin/?$', include(admin.site.urls)),
 )

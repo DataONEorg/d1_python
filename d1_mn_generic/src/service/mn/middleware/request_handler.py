@@ -36,9 +36,9 @@ class request_handler():
     if settings.GMN_DEBUG == False:
       return None
 
-    # Print request.
-    print '>' * 80
-    print 'Request:'
-    print request
-    print '<' * 80
+    ## Print request.
+    #print '>'*80
+    #print 'Request:'
+    #print request
+    #print '<'*80
     return None

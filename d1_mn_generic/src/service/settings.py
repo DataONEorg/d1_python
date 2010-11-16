@@ -56,7 +56,7 @@ CN_IP = [
   '127.0.0.1', # localhost
 ]
 
-# Django settings for mn_prototype project.
+# Django settings for service project.
 
 # Discover the path of this module
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -123,21 +123,21 @@ MIDDLEWARE_CLASSES = (
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.contrib.auth.middleware.AuthenticationMiddleware',
   #'django.middleware.profile.ProfileMiddleware',
-  'mn_prototype.mn_service.middleware.request_handler.request_handler',
-  'mn_prototype.mn_service.middleware.exception_handler.exception_handler',
-  'mn_prototype.mn_service.middleware.response_handler.response_handler',
-  'mn_prototype.mn_service.middleware.view_handler.view_handler',
+  'service.mn.middleware.request_handler.request_handler',
+  'service.mn.middleware.exception_handler.exception_handler',
+  'service.mn.middleware.response_handler.response_handler',
+  'service.mn.middleware.view_handler.view_handler',
 )
 
-ROOT_URLCONF = 'mn_prototype.urls'
+ROOT_URLCONF = 'service.urls'
 
-TEMPLATE_DIRS = (_here('mn_service/templates'))
+TEMPLATE_DIRS = (_here('mn/templates'))
 
-FIXTURE_DIRS = (_here('mn_service/fixtures'))
+FIXTURE_DIRS = (_here('mn/fixtures'))
 
 INSTALLED_APPS = (
-  'mn_prototype.mn_service',
-  'mn_prototype.fake_cn',
+  'service.mn',
+  'service.fake_cn',
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
@@ -148,7 +148,7 @@ INSTALLED_APPS = (
 
 APPEND_SLASH = False
 
-LOG_PATH = _here('./mn_service.log')
+LOG_PATH = _here('./mn.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 

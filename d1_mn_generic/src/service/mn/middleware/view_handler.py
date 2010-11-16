@@ -50,17 +50,17 @@ except ImportError, e:
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-import d1common.ext.mimeparser
+import d1_common.ext.mimeparser
 
 # Django.
 from django.http import HttpResponse
 
 # MN API.
-import d1common.exceptions
+import d1_common.exceptions
 
 # App.
-import mn_service.sys_log as sys_log
-import mn_service.models as models
+import mn.sys_log as sys_log
+import mn.models as models
 import settings
 
 
@@ -103,10 +103,10 @@ class view_handler():
     #  try:
     #    status_row = models.DB_update_status.objects.all()[0]
     #  except IndexError:
-    #    raise d1common.exceptions.ServiceFailure(0, 'DB update status has not been set')
+    #    raise d1_common.exceptions.ServiceFailure(0, 'DB update status has not been set')
     #  else:
     #    if status_row.status != 'update successful':
-    #      raise d1common.exceptions.ServiceFailure(0, 'Trying to read from DB, but last DB update was not successful')
+    #      raise d1_common.exceptions.ServiceFailure(0, 'Trying to read from DB, but last DB update was not successful')
 
     # Returning None causes Django to continue processing by calling view_func.
     return None

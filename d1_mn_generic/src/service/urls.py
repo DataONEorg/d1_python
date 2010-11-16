@@ -40,9 +40,9 @@ admin.autodiscover()
 urlpatterns = patterns(
   '',
   # CN.
-  (r'^cn/', include('mn_prototype.fake_cn.urls')),
+  (r'^cn/', include('service.fake_cn.urls')),
   # GMN.
-  (r'^', include('mn_prototype.mn_service.urls')),
+  (r'^', include('service.mn.urls')),
   # Admin.
   (r'^accounts/login/$', 'django.contrib.auth.views.login'),
   (r'^admin/doc/', include('django.contrib.admindocs.urls')),
