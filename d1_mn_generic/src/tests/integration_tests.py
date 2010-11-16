@@ -55,21 +55,21 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../m
 
 # MN API.
 try:
-  import d1common.mime_multipart
-  import d1common.exceptions
-  import d1common.types.objectlist_serialization
+  import d1_common.mime_multipart
+  import d1_common.exceptions
+  import d1_common.types.objectlist_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n')
+  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
   raise
 try:
-  import d1pythonitk
-  import d1pythonitk.xmlvalidator
-  import d1pythonitk.client
-  import d1pythonitk.systemmetadata
+  import d1_client
+  import d1_client.xmlvalidator
+  import d1_client.client
+  import d1_client.systemmetadata
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1pythonitk\n')
+  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n')
   raise
 
 # 3rd party.
@@ -177,7 +177,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify that SciObject collection is empty')
 
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     # Get SciObject collection.
     sci_objects = client.listObjects()
@@ -195,7 +195,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify that event log is empty')
 
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     # Get SciObject collection.
     logRecords = client.getLogRecords()
@@ -207,7 +207,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify that access log correctly reflects create_object actions')
 
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     # Get SciObject collection.
     logRecords = client.getLogRecords()
@@ -230,7 +230,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies')
 
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       sci_object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -248,7 +248,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     logging.info('MN: Download a SciObject and compare it byte by byte with a local copy')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', identifier)
     sci_object_bytes_disk = open(sci_object_path, 'r').read()
     sci_object_bytes_node = client.get(identifier).read()
@@ -261,9 +261,9 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: Download a SciObject and compare it byte by byte with a local copy')
     
     if cn_url == None:
-      client = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+      client = d1_client.client.DataOneClient(self.opts.cn_url)
     else:
-      client = d1pythonitk.client.DataOneClient(cn_url)
+      client = d1_client.client.DataOneClient(cn_url)
     sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', identifier)
     sci_object_bytes_disk = open(sci_object_path, 'r').read()
     sci_object_bytes_node = client.get(identifier).read()
@@ -290,11 +290,11 @@ class TestSequenceFunctions(unittest.TestCase):
   def mn_get_sci_object_by_identifier(self, identifier):
     '''MN: Get SciObject by identifier.
     '''
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_bytes_mn = client.get(identifier).read()
     
     # Retrieve SciObject.
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_bytes = client.get(o.identifier).read()
 
     # Compare SciObject with local.
@@ -305,7 +305,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Get SciObject information by identifier')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     # Get SciObject collection.
     sci_objects = client.listObjects()
@@ -322,7 +322,7 @@ class TestSequenceFunctions(unittest.TestCase):
     with local copy, byte by byte.
     '''
     # Retrieve SciObject.
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_bytes = client.get(o.identifier).read()
 
     # Compare SciObject with local.
@@ -334,7 +334,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Delete all SciObjects')
     
-    client = d1pythonitk.client.RESTClient()
+    client = d1_client.client.RESTClient()
   
     # Objects.
     crud_sci_object_url = urlparse.urljoin(self.opts.mn_url, 'object')
@@ -352,7 +352,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Clear event log')
 
-    client = d1pythonitk.client.RESTClient()
+    client = d1_client.client.RESTClient()
   
     # Access log.
     event_log_url = urlparse.urljoin(self.opts.mn_url, 'log')
@@ -370,13 +370,13 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Inject a fake event log for testing')
 
-    client = d1pythonitk.client.DataOneClient()
+    client = d1_client.client.DataOneClient()
   
     csv_file = open('test_log.csv', 'rb')
   
     files = [('csv', 'csv', csv_file.read())]
     
-    multipart = d1common.mime_multipart.multipart({}, [], files)
+    multipart = d1_common.mime_multipart.multipart({}, [], files)
     inject_log_url = urlparse.urljoin(self.opts.mn_url, 'inject_log')
     status, reason, page = multipart.post(inject_log_url)
     
@@ -394,7 +394,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Populate with set of test SciObjects.')
 
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, 'sysmeta/*'))):
       # Get name of corresponding SciObject and open it.
@@ -404,7 +404,7 @@ class TestSequenceFunctions(unittest.TestCase):
       # The identifier is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_xml)
+      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
       identifier = sysmeta_obj.identifier
 
       if register == True:
@@ -423,7 +423,7 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: Read complete SciObject collection and compare with values stored in local SysMeta files')
 
     # Get SciObject collection.
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_objects = client.listObjects()
     
     # Loop through our local test SciObjects.
@@ -435,7 +435,7 @@ class TestSequenceFunctions(unittest.TestCase):
       identifier = urllib.unquote(os.path.basename(sci_object_path))
       # Get sysmeta xml for corresponding SciObject from disk.
       sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_obj = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_file)
+      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_file)
   
       # Get corresponding SciObject from objectList.
       found = False
@@ -458,7 +458,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''    
     logging.info('MN: Verify slicing: Starting at 0 and getting half of the available SciObjects')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_object_cnt = 17
     sci_object_cnt_half = sci_object_cnt / 2
@@ -472,13 +472,13 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_object_cnt = 17
     sci_object_cnt_first = 8
     sci_object_cnt_second = 9
     
-    sci_objects = client.listObjects(start=sci_object_cnt_first, count=d1pythonitk.const.MAX_LISTOBJECTS)
+    sci_objects = client.listObjects(start=sci_object_cnt_first, count=d1_common.const.MAX_LISTOBJECTS)
     self.assert_counts(sci_objects, sci_object_cnt_first, sci_object_cnt_second, sci_object_cnt)
   
   def assert_mn_sci_object_slicing_3(self):
@@ -486,7 +486,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify slicing: Starting above number of SciObjects that we have')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_object_cnt = 17
     sci_object_cnt_half = sci_object_cnt / 2
@@ -499,13 +499,13 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('Verify slicing: Requesting more than MAX_LISTOBJECTS should throw')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_object_cnt = 100
     sci_object_cnt_half = sci_object_cnt / 2
   
     try:
-      sci_objects = client.listObjects(count=d1pythonitk.const.MAX_LISTOBJECTS + 1)
+      sci_objects = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS + 1)
     except:
       pass
     else:
@@ -516,7 +516,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''  
     logging.info('Verify date range query: Get all SciObjects from the 1990s')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_objects = client.listObjects(
       startTime=iso8601.parse_date('2010-06-22T01:13:51'),
@@ -530,7 +530,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify date range query: Get last 2 SciObjects from range')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_objects = client.listObjects(
       startTime=iso8601.parse_date('2010-06-22T01:13:51'),
@@ -545,7 +545,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_objects = client.listObjects(
       startTime=iso8601.parse_date('2010-06-22T01:13:51'),
@@ -561,7 +561,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''  
     logging.info('MN: Verify date range query: Get 10 first SciObjects from non-existing date range')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_objects = client.listObjects(
       startTime=datetime.datetime(2500, 1, 1),
@@ -575,7 +575,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def assert_mn_sci_object_count(self):
     '''MN: Get SciObject count
     '''
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     sci_objects = client.listObjects(
       start=0,
@@ -586,13 +586,13 @@ class TestSequenceFunctions(unittest.TestCase):
   def assert_mn_sci_object_by_invalid_guid(self):
     '''MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_guid_
     '''
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     logging.info('MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_guid_')
   
     try:
       response = client.get('_invalid_guid_')
-    except d1common.exceptions.NotFound:
+    except d1_common.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
@@ -600,7 +600,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def mn_get_sci_object_by_valid_guid(self):
     '''Verify successful retrieval of valid SciObject /object/valid_guid
     '''
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     try:
       response = client.get('10Dappend2.txt')
@@ -621,11 +621,11 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_guid_')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     try:
       response = client.getSystemMetadata('_invalid_guid_')
-    except d1common.exceptions.NotFound:
+    except d1_common.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
@@ -635,7 +635,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify successful retrieval of valid SciObject /meta/valid_guid')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     response = client.getSystemMetadata('10Dappend2.txt')
     self.assertTrue(response)
@@ -645,15 +645,15 @@ class TestSequenceFunctions(unittest.TestCase):
     '''  
     logging.info('MN: Verify that returned XML document validates against the ObjectList schema')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     
     try:
-      #d1pythonitk.xmlvalidator.validate(xml_doc, 'http://127.0.0.1/objectlist.xsd')
-      d1pythonitk.xmlvalidator.validate(xml_doc, d1pythonitk.const.OBJECTLIST_SCHEMA_URL)
+      #d1_client.xmlvalidator.validate(xml_doc, 'http://127.0.0.1/objectlist.xsd')
+      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.OBJECTLIST_SCHEMA_URL)
     except:
-      self.assertTrue(False, 'd1pythonitk.xmlvalidator.validate() failed')
+      self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
     
   def mn_pxby_objectlist_xml(self):
@@ -662,11 +662,11 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: ObjectList deserialization, XML')
     
     xml_doc = open('test.xml').read()
-    sci_objects_1 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('text/xml')
     
-    sci_objects_2 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_2.deserialize(doc, 'text/xml')
     xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
     
@@ -678,11 +678,11 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: ObjectList deserialization, JSON')
     
     xml_doc = open('test.xml').read()
-    sci_objects_1 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('application/json')
     
-    sci_objects_2 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_2.deserialize(doc, 'application/json')
     xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
     
@@ -694,7 +694,7 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: ObjectList deserialization, RDF XML')
     
     xml_doc = open('test.xml').read()
-    sci_objects_1 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('application/rdf+xml')
     
@@ -704,11 +704,11 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: ObjectList deserialization, CSV')
     
     xml_doc = open('test.xml').read()
-    sci_objects_1 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('text/csv')
   
-    sci_objects_2 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_2.deserialize(doc, 'text/csv')
     xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
     
@@ -721,13 +721,13 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: MonitorList XML validation')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     response = client.client.GET(client.getMonitorUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     try:
-      d1pythonitk.xmlvalidator.validate(xml_doc, d1pythonitk.const.MONITOR_OBJECT_SCHEMA_URL)
+      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.MONITOR_OBJECT_SCHEMA_URL)
     except:
-      self.assertTrue(False, 'd1pythonitk.xmlvalidator.validate() failed')
+      self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
   
   def mn_pxby_monitor_xml(self):
@@ -736,11 +736,11 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: MonitorList deserialization, XML')
     
     xml_doc = open('test.xml').read()
-    sci_objects_1 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('text/xml')
     
-    sci_objects_2 = d1common.types.objectlist_serialization.ObjectList()
+    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_2.deserialize(doc, 'text/xml')
     xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
     
@@ -751,7 +751,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify ObjectList orderby: size')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=size', {'Accept': 'application/json'})
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 1982)
@@ -762,7 +762,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: Verify ObjectList orderby: desc_size')
     
-    client = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client = d1_client.client.DataOneClient(self.opts.mn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=desc_size', {'Accept': 'application/json'})
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
@@ -774,7 +774,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('CN: NodeList validation')
         
-    client = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client = d1_client.client.DataOneClient(self.opts.cn_url)
     NodeList = client.node({'Accept': 'text/xml'})
     for node in NodeList.nodes.node:
       self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
@@ -791,7 +791,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     #self.init_to_known_state()        
 
-    client_cn = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
     
     # Get a copy of the node registry.
     nodes = client_cn.node()
@@ -856,8 +856,8 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.init_to_known_state()        
 
-    client_mn = d1pythonitk.client.DataOneClient(self.opts.mn_url)
-    client_cn = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
+    client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
     # Test successful retrieval of known good identifier.    
     #self.assert_cn_sci_object_bytes('nceas9318', self.opts.cn_url)      
@@ -892,28 +892,28 @@ class TestSequenceFunctions(unittest.TestCase):
     # vulnerabilities by specifying bogus strings containing a single quote and
     # checking if we get 500 Internal Errors back.
 
-    rest_client = d1pythonitk.client.RESTClient()
+    rest_client = d1_client.client.RESTClient()
 
     # MN
-    client_mn = d1pythonitk.client.DataOneClient(self.opts.mn_url)
+    client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
     
 #    try:
 #      result = client_mn.get('\'')
-#    except d1common.exceptions.NotFound:
+#    except d1_common.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
 #    
 #    try:
 #      result = client_mn.getSystemMetadataResponse('\'')
-#    except d1common.exceptions.NotFound:
+#    except d1_common.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
 #    
 #    try:
 #      result = client_mn.getSystemMetadata('\'')
-#    except d1common.exceptions.NotFound:
+#    except d1_common.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
@@ -925,28 +925,28 @@ class TestSequenceFunctions(unittest.TestCase):
 
     try:
       rest_client.GET(self.opts.mn_url + 'object?start=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'object?count=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'object?startTime=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
       
     try:
       rest_client.GET(self.opts.mn_url + 'object?endTime=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
@@ -955,7 +955,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     try:
       result = client_mn.listObjects(objectFormat='\'')
-    except d1common.exceptions.DataONEException:
+    except d1_common.exceptions.DataONEException:
       self.assertTrue(False, 'Unexpected DataONEException')
     else:
       self.assertEqual(result.count, 0, 'Unexpected records returned')
@@ -964,28 +964,28 @@ class TestSequenceFunctions(unittest.TestCase):
 
     try:
       rest_client.GET(self.opts.mn_url + 'log?start=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'log?count=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'log?lastAccessed_ge=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
       
     try:
       rest_client.GET(self.opts.mn_url + 'log?lastAccessed_lt=\'')    
-    except d1common.exceptions.InvalidRequest:
+    except d1_common.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
@@ -994,7 +994,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     try:
       result = client_mn.getLogRecords(objectFormat='\'')
-    except d1common.exceptions.DataONEException:
+    except d1_common.exceptions.DataONEException:
       self.assertTrue(False, 'Unexpected DataONEException')
     #else:
     #  self.assertEqual(result.count, 0, 'Unexpected records returned')
@@ -1003,18 +1003,18 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # CN
 
-    client_cn = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
 # Grabbed from test_client (should be here instead)
   def test_32_pxby_resolve_xml(self):
-    client = d1pythonitk.client.DataOneClient(self.options.cn_url)
+    client = d1_client.client.DataOneClient(self.options.cn_url)
     resolve = client.resolve('AnserMatrix.htm', {'Accept': 'text/xml'})
     #for node in NodeList.node_list.node:
     #  self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
 
 #
 #  def test_33_pxby_nodelist_xml(self):
-#    client = d1pythonitk.client.DataOneClient(self.options.cn_url)
+#    client = d1_client.client.DataOneClient(self.options.cn_url)
 #    NodeList = client.node({'Accept': 'text/xml'})
 #    for node in NodeList.node_list.node:
 #      self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
@@ -1102,7 +1102,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
 #    try:
 #      result = client_cn.resolve('\'')
-#    except d1common.exceptions.NotFound:
+#    except d1_common.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
@@ -1126,13 +1126,13 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.init_to_known_state()        
 
-    client_mn = d1pythonitk.client.DataOneClient(self.opts.mn_url)
-    client_cn = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
+    client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
     # The identifier is stored in the sysmeta.
     sysmeta_file = open(sysmeta_path, 'r')
     sysmeta_xml = sysmeta_file.read()
-    sysmeta_obj = d1pythonitk.systemmetadata.SystemMetadata(sysmeta_xml)
+    sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
     identifier = sysmeta_obj.identifier
 
     client.create(identifier, sci_object_file, sysmeta_xml)
@@ -1393,8 +1393,8 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.init_to_known_state()        
 
-    client_mn = d1pythonitk.client.DataOneClient(self.opts.mn_url)
-    client_cn = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
+    client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
   
   def _test_zz_uc_38(self):
     '''Use Case 38 - Reserve an Identifier
@@ -1404,8 +1404,8 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.init_to_known_state()        
 
-    client_mn = d1pythonitk.client.DataOneClient(self.opts.mn_url)
-    client_cn = d1pythonitk.client.DataOneClient(self.opts.cn_url)
+    client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
+    client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
 def main():
   log_setup()
