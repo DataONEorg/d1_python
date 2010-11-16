@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1common.types.logrecords_serialization
+Module d1_common.types.logrecords_serialization
 ==============================================
 
 Implements serializaton and de-serialization for the LogRecords.
@@ -60,19 +60,19 @@ except:
 
 # MN API.
 try:
-  import d1common
-  import d1common.exceptions
-  import d1common.ext.mimeparser
-  import d1common.util
+  import d1_common
+  import d1_common.exceptions
+  import d1_common.ext.mimeparser
+  import d1_common.util
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n'
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
 
 try:
-  import d1common.types.generated.logging
+  import d1_common.types.generated.logging
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -135,7 +135,7 @@ class LogRecords(object):
       #'text/log',
     ]
 
-    self.log = d1common.types.generated.logging.log()
+    self.log = d1_common.types.generated.logging.log()
 
   def serialize(self, accept='application/json', pretty=False, jsonvar=False):
     '''
@@ -143,14 +143,14 @@ class LogRecords(object):
     # Determine which serializer to use. If client does not supply accept, we
     # default to JSON.
     try:
-      content_type = d1common.ext.mimeparser.best_match(self.pri, accept)
+      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError.
       #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
       content_type = 'application/json'
     print accept
     # Deserialize object
-    return self.serialize_map[d1common.util.get_content_type(content_type)](
+    return self.serialize_map[d1_common.util.get_content_type(content_type)](
       pretty, jsonvar
     ), content_type
 
@@ -242,23 +242,23 @@ class LogRecords(object):
   def serialize_rdf_xml(self, doc):
     '''
     '''
-    raise d1common.exceptions.NotImplemented(0, 'serialize_rdf_xml not implemented.')
+    raise d1_common.exceptions.NotImplemented(0, 'serialize_rdf_xml not implemented.')
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
     '''
     '''
-    raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
+    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
 
     #== Deserialization methods ==================================================
   def deserialize(self, doc, content_type='application/json'):
     '''
     '''
-    return self.deserialize_map[d1common.util.get_content_type(content_type)](doc)
+    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
     '''
     '''
-    self.log = d1common.types.generated.logging.CreateFromDocument(doc)
+    self.log = d1_common.types.generated.logging.CreateFromDocument(doc)
     return self.log
 
   def deserialize_json(self, doc):
@@ -268,7 +268,7 @@ class LogRecords(object):
     logEntries = []
 
     for o in j['logEntry']:
-      logEntry = d1common.types.generated.logging.LogEntry()
+      logEntry = d1_common.types.generated.logging.LogEntry()
 
       logEntry.entryId = o['entryId']
       logEntry.identifier = o['identifier']
@@ -294,7 +294,7 @@ class LogRecords(object):
     logEntries = []
 
     for csv_line in csv_reader:
-      logEntry = d1common.types.generated.logging.LogEntry()
+      logEntry = d1_common.types.generated.logging.LogEntry()
       logEntry.identifier = csv_line[0]
       logEntry.objectFormat = csv_line[1]
       logEntry.checksum = csv_line[2]
@@ -308,9 +308,11 @@ class LogRecords(object):
   def deserialize_rdf_xml(self, doc):
     '''
     '''
-    raise d1common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
+    raise d1_common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
 
   def deserialize_null(self, doc):
     '''
     '''
-    raise d1common.exceptions.NotImplemented(0, 'Deserialization method not implemented.')
+    raise d1_common.exceptions.NotImplemented(
+      0, 'Deserialization method not implemented.'
+    )

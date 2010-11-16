@@ -1,4 +1,4 @@
-# d1common/types/noderegistry.py
+# d1_common/types/noderegistry.py
 # PyXB bindings for NamespaceModule
 # NSM:86e332546bb2ba0a4fc7a322cd2a1514b059fd99
 # Generated 2010-06-29 11:08:16.908949 by PyXB version 1.1.2

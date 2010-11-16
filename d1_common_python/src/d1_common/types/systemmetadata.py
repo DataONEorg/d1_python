@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1common.types.systemmetadata
+Module d1_common.types.systemmetadata
 ====================================
 
 Extends the PyXB generated class to enable serialization to and from CSV and 
@@ -48,34 +48,34 @@ Example serialization::
 '''
 
 import new
-import d1common
-import d1common.exceptions
-import d1common.types.generated.systemmetadata
+import d1_common
+import d1_common.exceptions
+import d1_common.types.generated.systemmetadata
 
 #===============================================================================
 
 
 def toCSV(self, dialect='excel'):
-  raise d1common.exceptions.NotImplemented(
+  raise d1_common.exceptions.NotImplemented(
     '0.SystemMetaData.toCSV', 'Serializing SystemMetadata to CSV is not implemented.'
   )
 
 
 def fromCSV(self, data, dialect='excel'):
-  raise d1common.exceptions.NotImplemented(
+  raise d1_common.exceptions.NotImplemented(
     '0.SystemMetaData.fromCSV',
     'De-serializing SystemMetadata from CSV is not implemented.'
   )
 
 
 def toJSON(self):
-  raise d1common.exceptions.NotImplemented(
+  raise d1_common.exceptions.NotImplemented(
     '0.SystemMetaData.toJSON', 'Serializing SystemMetadata to JSON is not implemented.'
   )
 
 
 def fromJSON(self, data):
-  raise d1common.exceptions.NotImplemented(
+  raise d1_common.exceptions.NotImplemented(
     '0.SystemMetaData.fromJSON',
     'De-serializing SystemMetadata from JSON is not implemented.'
   )
@@ -99,7 +99,7 @@ def systemMetadata():
   :returns: Instance of SystemMetadata, blank
   :rtype: SystemMetadata
   '''
-  sysm = d1common.types.generated.systemmetadata.systemMetadata()
+  sysm = d1_common.types.generated.systemmetadata.systemMetadata()
   sysm.toCSV = new.instancemethod(toCSV, sysm, sysm.__class__)
   sysm.fromCSV = new.instancemethod(fromCSV, sysm, sysm.__class__)
   sysm.toJSON = new.instancemethod(toJSON, sysm, sysm.__class__)
@@ -117,8 +117,8 @@ def CreateFromDocument(data, format='text/xml'):
   :rtype: SystemMetadata
   '''
   format = format.strip().lower()
-  if format == d1common.MIMETYPES['xml']:
-    sysm = d1common.types.generated.systemmetadata.CreateFromDocument(data)
+  if format == d1_common.MIMETYPES['xml']:
+    sysm = d1_common.types.generated.systemmetadata.CreateFromDocument(data)
     sysm.toCSV = new.instancemethod(toCSV, sysm, sysm.__class__)
     sysm.fromCSV = new.instancemethod(fromCSV, sysm, sysm.__class__)
     sysm.toJSON = new.instancemethod(toJSON, sysm, sysm.__class__)
@@ -126,11 +126,11 @@ def CreateFromDocument(data, format='text/xml'):
     sysm.toText = new.instancemethod(toText, sysm, sysm.__class__)
     return sysm
 
-  if format == d1common.MIMETYPES['json']:
+  if format == d1_common.MIMETYPES['json']:
     res = systemMetadata()
     return res.fromJSON(data)
 
-  if format == d1common.MIMETYPES['csv']:
+  if format == d1_common.MIMETYPES['csv']:
     res = systemMetadata()
     return res.fromCSV(data)
 
