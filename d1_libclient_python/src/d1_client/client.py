@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''Module d1_client.d1client
-===========================
+============================
 
 This module implements DataOneClient which provides a client supporting basic 
 interaction with the DataONE infrastructure.
@@ -62,7 +62,6 @@ except ImportError, e:
 # DataONE.
 from d1_common import exceptions
 from d1_common import mime_multipart
-from d1_client import const
 from d1_client import objectlistiterator
 
 #===============================================================================
@@ -103,7 +102,11 @@ class RESTClient(object):
 
   logger = logging.getLogger()
 
-  def __init__(self, target=const.URL_DATAONE_ROOT, timeout=const.RESPONSE_TIMEOUT):
+  def __init__(
+    self,
+    target=d1_common.const.URL_DATAONE_ROOT,
+    timeout=d1_common.const.RESPONSE_TIMEOUT
+  ):
     '''Init RESTClient. 
 
     :param: DataONE root URL, HTTP timeout
@@ -300,10 +303,10 @@ class DataOneClient(object):
 
   def __init__(
     self,
-    target=const.URL_DATAONE_ROOT,
-    userAgent=const.USER_AGENT,
+    target=d1_common.const.URL_DATAONE_ROOT,
+    userAgent=d1_common.const.USER_AGENT,
     clientClass=RESTClient,
-    timeout=const.RESPONSE_TIMEOUT,
+    timeout=d1_common.const.RESPONSE_TIMEOUT,
   ):
     '''Initialize the test client.
     
@@ -342,7 +345,7 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    res = urlparse.urljoin(self.client.target, const.URL_OBJECT_PATH)
+    res = urlparse.urljoin(self.client.target, d1_common.const.URL_OBJECT_PATH)
     if id is None:
       return res
     res = urlparse.urljoin(res, urllib.quote(id, ''))
@@ -354,7 +357,7 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    return urlparse.urljoin(self.client.target, const.URL_OBJECT_LIST_PATH)
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_OBJECT_LIST_PATH)
 
   def getMonitorUrl(self):
     '''Get the full URL to the object collection on target.
@@ -362,7 +365,7 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    return urlparse.urljoin(self.client.target, const.URL_MONITOR_PATH)
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_MONITOR_PATH)
 
   def getMetaUrl(self, id=None):
     '''Get the full URL to the SysMeta object on target.
@@ -370,7 +373,7 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    res = urlparse.urljoin(self.client.target, const.URL_SYSMETA_PATH)
+    res = urlparse.urljoin(self.client.target, d1_common.const.URL_SYSMETA_PATH)
     if id is None:
       return res
     return urlparse.urljoin(res, urllib.quote(id, ''))
@@ -381,7 +384,7 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    return urlparse.urljoin(self.client.target, const.URL_ACCESS_LOG_PATH)
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_ACCESS_LOG_PATH)
 
   def getResolveUrl(self):
     '''Get the full URL to the resolve collection on target.
@@ -389,7 +392,7 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    return urlparse.urljoin(self.client.target, const.URL_RESOLVE_PATH)
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_RESOLVE_PATH)
 
   def getNodeUrl(self):
     '''Get the full URL to the node collection on target.
@@ -397,9 +400,9 @@ class DataOneClient(object):
     :return: (string) url
     '''
 
-    return urlparse.urljoin(self.client.target, const.URL_NODE_PATH)
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_NODE_PATH)
 
-  def getSystemMetadataSchema(self, schemaUrl=const.SYSTEM_METADATA_SCHEMA_URL):
+  def getSystemMetadataSchema(self, schemaUrl=d1_common.const.SYSTEM_METADATA_SCHEMA_URL):
     '''Convenience function to retrieve the SysMeta schema.
     
     :param schemaUrl: The URL from which to load the schema from
@@ -503,7 +506,7 @@ class DataOneClient(object):
     endTime=None,
     objectFormat=None,
     start=0,
-    count=const.MAX_LISTOBJECTS,
+    count=d1_common.const.MAX_LISTOBJECTS,
     requestFormat="text/xml",
     headers=None
   ):
@@ -525,12 +528,13 @@ class DataOneClient(object):
     try:
       if count < 0:
         raise ValueError
-      if count > const.MAX_LISTOBJECTS:
+      if count > d1_common.const.MAX_LISTOBJECTS:
         raise ValueError
     except ValueError:
       raise exceptions.InvalidRequest(
-        10002,
-        "'count' must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
+        10002, "'count' must be an integer between 1 and {0}".format(
+          d1_common.const.MAX_LISTOBJECTS
+        )
       )
     else:
       params['count'] = count
@@ -573,7 +577,7 @@ class DataOneClient(object):
     endTime=None,
     objectFormat=None,
     start=0,
-    count=const.MAX_LISTOBJECTS
+    count=d1_common.const.MAX_LISTOBJECTS
   ):
     '''Get log records from MN.
     
@@ -601,11 +605,13 @@ class DataOneClient(object):
     try:
       if count < 1:
         raise ValueError
-      if count > const.MAX_LISTOBJECTS:
+      if count > d1_common.const.MAX_LISTOBJECTS:
         raise ValueError
     except ValueError:
       raise exceptions.InvalidRequest(
-        10002, "count must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
+        10002, "count must be an integer between 1 and {0}".format(
+          d1_common.const.MAX_LISTOBJECTS
+        )
       )
     params['count'] = count
 
@@ -692,10 +698,10 @@ class SimpleDataOneClient(object):
   but it does not provide the same level of control.
   '''
 
-  #  def __init__(self, target=const.URL_DATAONE_ROOT,
-  #                     userAgent=const.USER_AGENT,
+  #  def __init__(self, target=d1_common.const.URL_DATAONE_ROOT,
+  #                     userAgent=d1_common.const.USER_AGENT,
   #                     clientClass=RESTClient,
-  #                     timeout=const.RESPONSE_TIMEOUT,
+  #                     timeout=d1_common.const.RESPONSE_TIMEOUT,
   #                     ):
   #    '''Initialize the test client.
   #    
@@ -774,7 +780,7 @@ class SimpleDataOneClient(object):
     endTime=None,
     objectFormat=None,
     start=0,
-    count=const.MAX_LISTOBJECTS
+    count=d1_common.const.MAX_LISTOBJECTS
   ):
 
     client_root = DataOneClient(
@@ -791,7 +797,7 @@ class SimpleDataOneClient(object):
     endTime=None,
     objectFormat=None,
     start=0,
-    count=const.MAX_LISTOBJECTS,
+    count=d1_common.const.MAX_LISTOBJECTS,
     requestFormat="text/xml"
   ):
 

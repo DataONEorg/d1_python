@@ -69,7 +69,7 @@ except:
   import xml.etree.ElementTree as ET
 
   # Local.
-from d1_client import const
+import d1_common.const
 
 
 class SystemMetadata(object):
@@ -84,7 +84,7 @@ class SystemMetadata(object):
     self.xmldoc = xmldoc
     self._parse(xmldoc)
 
-  def isValid(self, schemaUrl=const.SYSTEM_METADATA_SCHEMA_URL):
+  def isValid(self, schemaUrl=d1_common.const.SYSTEM_METADATA_SCHEMA_URL):
     '''This is kind of expensive as we're trying to minimize external 
     dependencies (ie. lxml and libxml2). Here we import lxml.etree, parse the 
     schema, reparse the document then check that the document is valid according 
