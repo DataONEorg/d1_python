@@ -1,5 +1,5 @@
 '''
-Unit tests for d1common.exceptions
+Unit tests for d1_common.exceptions
 
 :Author: Dave Vieglais
 
@@ -21,8 +21,8 @@ try:
   import cjson as json
 except:
   import json
-from d1common import xmlrunner
-from d1common import exceptions
+from d1_common import xmlrunner
+from d1_common import exceptions
 
 #===============================================================================
 

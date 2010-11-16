@@ -27,7 +27,7 @@ import httplib
 import mimetypes
 import urlparse
 import StringIO
-import d1_client.const
+import d1_common.const
 
 
 class multipart(object):
@@ -79,7 +79,7 @@ class multipart(object):
 
     self.headers['Content-Type'] = self._get_content_type()
     self.headers['Content-Length'] = content_length
-    self.headers['User-Agent'] = d1_client.const.USER_AGENT
+    self.headers['User-Agent'] = d1_common.const.USER_AGENT
 
     http_connection = httplib.HTTPConnection(host)
     http_connection.request('POST', path, self, self.headers)
