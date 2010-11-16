@@ -20,5 +20,5 @@
 # limitations under the License.
 '''
 Contains extensions to the PyXB generated classes that appear in the
-d1common.types.generated package.
+d1_common.types.generated package.
 '''

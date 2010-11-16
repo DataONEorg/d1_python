@@ -59,19 +59,19 @@ except ImportError, e:
 
 # MN API.
 try:
-  import d1common
-  import d1common.exceptions
-  import d1common.ext.mimeparser
-  import d1common.util
+  import d1_common
+  import d1_common.exceptions
+  import d1_common.ext.mimeparser
+  import d1_common.util
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n'
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
 
 try:
-  import d1common.types.generated.monitorlist
+  import d1_common.types.generated.monitorlist
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -112,7 +112,7 @@ class MonitorList(object):
       #'text/log',
     ]
 
-    self.monitorlist = d1common.types.generated.monitorlist.monitorList()
+    self.monitorlist = d1_common.types.generated.monitorlist.monitorList()
 
     #===============================================================================
 
@@ -120,14 +120,14 @@ class MonitorList(object):
     # Determine which serializer to use. If client does not supply accept, we
     # default to JSON.
     try:
-      content_type = d1common.ext.mimeparser.best_match(self.pri, accept)
+      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError.
       #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
       content_type = 'application/json'
 
     # Deserialize object
-    return self.serialize_map[d1common.util.get_content_type(content_type)](
+    return self.serialize_map[d1_common.util.get_content_type(content_type)](
       pretty, jsonvar
     ), content_type
 
@@ -135,15 +135,17 @@ class MonitorList(object):
     return self.monitorlist.toxml()
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
-    raise d1common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
+    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
 
     #===============================================================================
 
   def deserialize(self, doc, content_type='application/json'):
-    return self.deserialize_map[d1common.util.get_content_type(content_type)](doc)
+    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
-    self.monitorList = d1common.types.generated.monitorlist.CreateFromDocument(doc)
+    self.monitorList = d1_common.types.generated.monitorlist.CreateFromDocument(doc)
 
   def deserialize_null(self, doc):
-    raise d1common.exceptions.NotImplemented(0, 'Deserialization method not implemented.')
+    raise d1_common.exceptions.NotImplemented(
+      0, 'Deserialization method not implemented.'
+    )
