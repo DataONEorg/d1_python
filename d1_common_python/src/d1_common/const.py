@@ -30,7 +30,11 @@ Provides various constants for the python DataONE client.
 Note that many of these parameters should be retrieved from the root node of D1
 '''
 
+# Make contents of __init__ available.
+import d1_common
+
 #: :const: Version of this software
+
 VERSION = d1_common.__version__
 
 #: types of objects in the DataONE system

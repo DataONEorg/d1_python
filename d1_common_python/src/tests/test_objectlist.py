@@ -3,9 +3,9 @@ import unittest
 import logging
 
 import pyxb
-from d1common import xmlrunner
-import d1common.exceptions
-from d1common.types import objectlist_serialization
+from d1_common import xmlrunner
+import d1_common.exceptions
+from d1_common.types import objectlist_serialization
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"

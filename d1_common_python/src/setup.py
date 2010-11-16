@@ -1,16 +1,38 @@
-#!/usr/bin/python
-#
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+:mod:`setup`
+====================
 
-import sys
-from distutils.core import setup
-import d1common
+:Synopsis:
+  Create egg.
+
+.. moduleauthor:: Roger Dahl
+"""
+
+from setuptools import setup, find_packages
+import d1_common
 
 setup(
-  name='D1 API Common',
-  version=d1common.__version__,
-  description='Common libraries for DataONE',
+  name='Python DataONE Common',
+  #version=d1_client.__version__,
+  description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
   author='Dave Vieglais',
   author_email='vieglais at ku edu',
   url='http://dataone.org',
-  packages=['d1common', ],
+  packages=find_packages(),
+
+  # Dependencies that are available through PYPI / easy_install.
+  install_requires=[
+    # iso860
+    'iso8601 >= 0.1',
+    # Lxml
+    'lxml >= 2.1.5',
+    # PyXB
+    'pyxb >= 1.1.2',
+  ],
+  package_data={
+    # If any package contains *.txt or *.rst files, include them:
+    '': ['*.txt', '*.rst'],
+  }
 )
