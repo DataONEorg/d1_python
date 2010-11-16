@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_client.const
+Module d1_common.const
 ========================
 
 :Created: 20100111
@@ -29,10 +29,9 @@ Provides various constants for the python DataONE client.
 
 Note that many of these parameters should be retrieved from the root node of D1
 '''
-import d1_client
 
 #: :const: Version of this software
-VERSION = d1_client.__version__
+VERSION = d1_common.__version__
 
 #: types of objects in the DataONE system
 #: These need to be replaced with URIs, and should be discoverable from the
