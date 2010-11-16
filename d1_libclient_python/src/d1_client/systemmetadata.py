@@ -97,7 +97,7 @@ class SystemMetadata(object):
     try:
       from d1_client import xmlvalidator
     except:
-      logging.warn('Could not import lxml.  Validation not available.')
+      logging.warn('Could not import lxml. Validation not available.')
       return False
     xmlvalidator.validate(self.xmldoc, schemaUrl)
     return True
