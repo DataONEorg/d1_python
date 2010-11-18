@@ -57,8 +57,9 @@ urlpatterns = patterns(
   (r'^monitor/object/?$', 'monitor_object'),
   (r'^monitor/event/?$', 'monitor_event'),
 
-  # /node/
+  # /node/ (also available at root)
   (r'^node/?$', 'node'),
+  (r'^/?$', 'node'),
 
   # Diagnostics, debugging and testing.
   (r'^inject_log/?$', 'inject_log'),
