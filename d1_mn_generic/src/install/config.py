@@ -22,9 +22,12 @@
 :mod:`config.py`
 ====================
 
-* Set up mod_wsgi for GMN.
-* Create an empty sqlite3 database.
-* Restart Apache
+* Set up mod_wsgi entry for GMN.
+* Create sqlite db file for GMN.
+* Fix permissions.
+* Copy fixed config values from .cfg file to database.
+* Update GMN version from SVN revision number.
+* Restart Apache.
 
 .. moduleauthor:: Roger Dahl
 '''
@@ -35,11 +38,15 @@ import optparse
 import os
 import sys
 import re
+import ConfigParser
 
 try:
   from cStringIO import StringIO
 except:
   from StringIO import StringIO
+
+import config_util
+import svn_update
 
 
 def log_setup():
@@ -57,18 +64,6 @@ def log_setup():
   logging.getLogger('').addHandler(console_logger)
 
 
-def run(cmd):
-  logging.info('Running: "{0}"'.format(cmd))
-
-  res = os.system(cmd)
-
-  if res != 0:
-    logging.error('ERROR')
-    sys.exit()
-  else:
-    logging.info('OK')
-
-
 def setup_mod_wsgi(httpd_conf_path, gmn_home_path):
   '''Set up mod_wsgi entry for GMN.'''
 
@@ -81,7 +76,7 @@ WSGIScriptAlias /mn {1}
   Order deny,allow
   Allow from all
 </Directory>
-'''.format(gmn_home_path, os.path.join(gmn_home_path, 'mn_prototype', 'gmn.wsgi'))
+'''.format(gmn_home_path, os.path.join(gmn_home_path, 'gmn.wsgi'))
 
   # Write new config.
   conf_gmn_path = os.path.join(httpd_conf_path, 'gmn')
@@ -95,27 +90,32 @@ WSGIScriptAlias /mn {1}
 
 def apache_restart():
   '''Restart Apache.'''
-  run('apache2ctl restart')
+  config_util.run(['apache2ctl', 'restart'])
 
 
 def db_setup(gmn_home_path):
   '''Create sqlite db file for GMN.'''
 
-  res = os.system(
-    'cd {0} && ./manage.py syncdb'.format(
-      os.path.join(
-        gmn_home_path, 'mn_prototype'
-      )
-    )
-  )
+  res = os.system('./manage.py syncdb')
   if res != 0:
     logging.error('db_setup failed.')
     sys.exit()
 
 
 def fix_permissions(gmn_home_path):
-  run('chmod g+w -R \'{0}\''.format(gmn_home_path))
-  run('chown :www-data -R \'{0}\''.format(gmn_home_path))
+  config_util.run(['chmod', 'g+w', '-R', gmn_home_path])
+  config_util.run(['chown', ':www-data', '-R', gmn_home_path])
+
+
+def copy_cfg_values():
+  config = ConfigParser.ConfigParser()
+  config.read(['./gmn.cfg'])
+  for key, val in config.items('gmn'):
+    config_util.set_node_val(key, val)
+
+
+def update_version_from_svn():
+  svn_update.update_version_from_svn()
 
 
 def main():
@@ -129,7 +129,7 @@ def main():
     dest='gmn_home_path',
     action='store',
     type='string',
-    default='/var/local/mn_service/'
+    default='./'
   )
   parser.add_option(
     '-a',
@@ -146,12 +146,23 @@ def main():
   if not options.verbose:
     logging.getLogger('').setLevel(logging.ERROR)
 
+  gmn_home_path = os.path.abspath(options.gmn_home_path)
+
   # Set up mod_wsgi entry for GMN.
-  setup_mod_wsgi(options.apache2_conf_path, options.gmn_home_path)
+  setup_mod_wsgi(options.apache2_conf_path, gmn_home_path)
+
   # Create sqlite db file for GMN.
-  db_setup(options.gmn_home_path)
+  db_setup(gmn_home_path)
+
   # Fix permissions.
-  fix_permissions(options.gmn_home_path)
+  fix_permissions(gmn_home_path)
+
+  # Copy fixed config values from .cfg file to database.
+  copy_cfg_values()
+
+  # Update GMN version from SVN revision number.
+  update_version_from_svn()
+
   # Restart Apache.
   apache_restart()
 

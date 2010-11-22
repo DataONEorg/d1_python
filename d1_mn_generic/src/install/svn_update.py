@@ -30,58 +30,26 @@
 #      Last Changed Author: dahl
 #      Last Changed Rev: 2116
 #      Last Changed Date: 2010-08-04 10:09:06 -0600 (Wed, 04 Aug 2010)
+'''
+:mod:`svn_update.py`
+====================
 
-# StdLib
-import os
-import sys
-import subprocess
-import ConfigParser, os
+Update GMN version from SVN revision number.
 
+.. moduleauthor:: Roger Dahl
+'''
 
-def run(cmd):
-  print 'run: {0}'.format(cmd)
-  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  stdout, stderr = p.communicate()
-  ret = p.returncode
-
-  if ret != 0:
-    print 'ret: {0}'.format(ret)
-    print 'stdout: {0}'.format(stdout)
-    print 'stderr: {0}'.format(stderr)
-
-  return stdout
+import config_util
 
 
-def get_svn_info():
-  info = run(['svn', 'info'])
-  info_map = {}
-  for line in info.split('\n'):
-    line_split = line.split(':', 2)
-    if len(line_split) != 2:
-      continue
-    info_map[line_split[0].strip()] = line_split[1].strip()
-  return info_map
-
-
-def set_node_val(key, val):
-  cur = os.getcwd()
-  os.chdir('./mn_prototype')
-  run(['./manage.py', 'set_node_val', key, val])
-  os.chdir(cur)
+def update_version_from_svn():
+  svn_info = config_util.get_svn_info()
+  rev = svn_info['Revision']
+  config_util.set_node_val('version', rev)
 
 
 def main():
-  #run(['svn', 'update'])
-  svn_info = get_svn_info()
-  rev = svn_info['Revision']
-
-  set_node_val('version', rev)
-
-  # Copy fixed config values from file.
-  config = ConfigParser.ConfigParser()
-  config.read(['./gmn.cfg'])
-  for key, val in config.items('gmn'):
-    set_node_val(key, val)
+  update_version_from_svn()
 
 
 if __name__ == '__main__':
