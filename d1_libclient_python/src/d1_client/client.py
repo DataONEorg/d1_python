@@ -359,8 +359,16 @@ class DataOneClient(object):
 
     return urlparse.urljoin(self.client.target, d1_common.const.URL_OBJECT_LIST_PATH)
 
-  def getMonitorUrl(self):
-    '''Get the full URL to the object collection on target.
+  def getMonitorObjectUrl(self):
+    '''Get the full URL to the monitor object collection on target.
+    :param: (None)
+    :return: (string) url
+    '''
+
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_MONITOR_OBJECT_PATH)
+
+  def getMonitorEventUrl(self):
+    '''Get the full URL to the monitor event collection on target.
     :param: (None)
     :return: (string) url
     '''
@@ -541,6 +549,14 @@ class DataOneClient(object):
 
     if endTime is not None and startTime is not None and startTime >= endTime:
       raise exceptions.InvalidRequest(10002, "startTime must be before endTime")
+
+    try:
+      if requestFormat != headers['Accept']:
+        raise exceptions.InvalidRequest(
+          10002, "Conflicting Accept header and requestFormat"
+        )
+    except (KeyError, TypeError):
+      pass
 
     # Date range.
     if startTime is not None:
@@ -727,23 +743,22 @@ class SimpleDataOneClient(object):
     return a single service interface at a MN that the DataOneClient() can be
     instantiated with.
     '''
-    #return 'http://127.0.0.1:8000' # TODO:
-    return 'http://dev-dryad-mn.dataone.org/mn' # TODO:
-
-    client_root = DataOneClient()
+    client_root = DataOneClient(self.target)
 
     # Get a copy of the node registry.
     nodes = client_root.node()
 
     # Resolve object.
-    resolve = client_root.resolve(identifier)
+    object_location_list = client_root.resolve(identifier)
 
     # Get first location for object.
-    for location in resolve.objectLocation:
+    for object_location in object_location_list.objectLocation:
       # Use registry to look up baseURL.
       for node in nodes.node:
-        if node.identifier == location.nodeIdentifier:
+        if node.identifier == object_location.nodeIdentifier:
           return node.baseURL
+
+    raise d1common.exceptions.NotFound(0, 'Could not resolve identifier', guid)
 
   def get(self, identifier):
     '''Retrieve a Science Object from DataONE.
@@ -765,14 +780,16 @@ class SimpleDataOneClient(object):
     :return: (class) De-serialized SystemMetadata object.
     '''
 
+    # Resolve.
+    mn = self.resolve(identifier)
+
     # Get.
-    #client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
-    client_root = DataOneClient(
-      'http://dev-dryad-mn.dataone.org/mn'
-    ) #TODO: Should go to root.
-    response = client_root.getSystemMetadataResponse(identifier)
+    client_mn = DataOneClient(target=mn)
+
+    response = client_mn.getSystemMetadataResponse(identifier)
+
     format = response.headers['content-type']
-    return d1_common.types.systemmetadata.CreateFromDocument(response.read(), format)
+    return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
   def getLogRecords(
     self,
@@ -783,9 +800,7 @@ class SimpleDataOneClient(object):
     count=d1_common.const.MAX_LISTOBJECTS
   ):
 
-    client_root = DataOneClient(
-      'http://dev-dryad-mn.dataone.org/mn'
-    ) #TODO: Should go to root.
+    client_root = DataOneClient(self.target)
 
     response = client_root.getLogRecords(startTime, endTime, objectFormat, start, count)
 
@@ -801,43 +816,13 @@ class SimpleDataOneClient(object):
     requestFormat="text/xml"
   ):
 
-    #client_root = DataOneClient('http://127.0.0.1:8000') #TODO: Should go to root.
-    client_root = DataOneClient(
-      'http://dev-dryad-mn.dataone.org/mn'
-    ) #TODO: Should go to root.
+    client_root = DataOneClient(self.target)
 
     response = client_root.listObjects(
       startTime, endTime, objectFormat, start, count, requestFormat
     )
 
     return response
-
-#def create(self, identifier, object_bytes, sysmeta_bytes):
-#  # Create MIME-multipart Mixed Media Type body.
-#  files = []
-#  files.append(('object', 'object', object_bytes))
-#  files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
-#  content_type, mime_doc = mime_multipart.encode_multipart_formdata([], files)
-#  
-#  # Send REST POST call to register object.
-#
-#  headers = {
-#    'Content-Type': content_type,
-#    'Content-Length': str(len(mime_doc)),
-#  }
-#  
-#  crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
-#
-#  self.logger.debug_("url({0}) identifier({1}) headers({2})".format(crud_create_url, identifier, headers))
-#
-#  try:
-#    res = self.client.POST(crud_create_url, data=mime_doc, headers=headers)
-#    res = '\n'.join(res)
-#    if res != r'OK':
-#      raise Exception(res)
-#  except Exception as e:
-#    logging.error('REST call failed: {0}'.format(str(e)))
-#    raise
 
   def create(self, identifier, object_bytes, sysmeta_bytes):
     '''Create an object in DataONE.
@@ -867,8 +852,6 @@ class SimpleDataOneClient(object):
       raise
 
   def enumerateObjectFormats(self):
-    client_root = DataOneClient(
-      'http://dev-dryad-mn.dataone.org/mn'
-    ) #TODO: Should go to root.
+    client_root = DataOneClient(self.target)
 
     return client_root.enumerateObjectFormats()
