@@ -1,7 +1,7 @@
 # ./pyxb/monitorlist.py
 # PyXB bindings for NamespaceModule
 # NSM:46147b3f04a029aa87d8aa4652c0e6f458cc89c8
-# Generated 2010-10-28 12:50:12.888490 by PyXB version 1.1.2
+# Generated 2010-11-23 10:22:01.227920 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2d02ce12-f726-11df-b71e-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -40,6 +40,30 @@ def CreateFromDOM (node, default_namespace=None):
     if default_namespace is None:
         default_namespace = Namespace.fallbackNamespace()
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
+
+
+# Complex type MonitorList with content type ELEMENT_ONLY
+class MonitorList (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'MonitorList')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element monitorInfo uses Python identifier monitorInfo
+    __monitorInfo = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'monitorInfo'), 'monitorInfo', '__httpdataone_orgservicetypesmonitorObject0_5_MonitorList_monitorInfo', True)
+
+    
+    monitorInfo = property(__monitorInfo.value, __monitorInfo.set, None, None)
+
+
+    _ElementMap = {
+        __monitorInfo.name() : __monitorInfo
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'MonitorList', MonitorList)
 
 
 # Complex type MonitorInfo with content type ELEMENT_ONLY
@@ -74,32 +98,16 @@ class MonitorInfo (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'MonitorInfo', MonitorInfo)
 
 
-# Complex type MonitorList with content type ELEMENT_ONLY
-class MonitorList (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'MonitorList')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element monitorInfo uses Python identifier monitorInfo
-    __monitorInfo = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'monitorInfo'), 'monitorInfo', '__httpdataone_orgservicetypesmonitorObject0_5_MonitorList_monitorInfo', True)
-
-    
-    monitorInfo = property(__monitorInfo.value, __monitorInfo.set, None, None)
-
-
-    _ElementMap = {
-        __monitorInfo.name() : __monitorInfo
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'MonitorList', MonitorList)
-
-
 monitorList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'monitorList'), MonitorList)
 Namespace.addCategoryObject('elementBinding', monitorList.name().localName(), monitorList)
+
+
+
+MonitorList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'monitorInfo'), MonitorInfo, scope=MonitorList))
+MonitorList._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(MonitorList._UseForTag(pyxb.namespace.ExpandedName(None, u'monitorInfo')), min_occurs=0L, max_occurs=None)
+    )
+MonitorList._ContentModel = pyxb.binding.content.ParticleModel(MonitorList._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -111,11 +119,3 @@ MonitorInfo._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(MonitorInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'count')), min_occurs=1L, max_occurs=1L)
     )
 MonitorInfo._ContentModel = pyxb.binding.content.ParticleModel(MonitorInfo._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-MonitorList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'monitorInfo'), MonitorInfo, scope=MonitorList))
-MonitorList._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(MonitorList._UseForTag(pyxb.namespace.ExpandedName(None, u'monitorInfo')), min_occurs=0L, max_occurs=None)
-    )
-MonitorList._ContentModel = pyxb.binding.content.ParticleModel(MonitorList._GroupModel, min_occurs=1, max_occurs=1)

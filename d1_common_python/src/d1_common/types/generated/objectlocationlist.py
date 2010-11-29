@@ -1,7 +1,7 @@
 # ./pyxb/objectlocationlist.py
 # PyXB bindings for NamespaceModule
 # NSM:b76d06d55b64bd5b8a6949ed646876856310e825
-# Generated 2010-10-28 12:50:12.916939 by PyXB version 1.1.2
+# Generated 2010-11-23 10:22:01.228753 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2d02ce12-f726-11df-b71e-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -41,6 +41,54 @@ def CreateFromDOM (node, default_namespace=None):
     if default_namespace is None:
         default_namespace = Namespace.fallbackNamespace()
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
+
+
+# Complex type ObjectLocation with content type ELEMENT_ONLY
+class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectLocation')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element preference uses Python identifier preference
+    __preference = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'preference'), 'preference', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_preference', False)
+
+    
+    preference = property(__preference.value, __preference.set, None, u'A weighting parameter that provides a hint to the caller \n\t    for the relative preference for nodes from which the content should be retrieved.\n\t  ')
+
+    
+    # Element nodeIdentifier uses Python identifier nodeIdentifier
+    __nodeIdentifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), 'nodeIdentifier', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_nodeIdentifier', False)
+
+    
+    nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, u'Identifier of the node (the same identifier used\n\t    in the node registry for identifying the node.\n          ')
+
+    
+    # Element url uses Python identifier url
+    __url = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'url'), 'url', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_url', False)
+
+    
+    url = property(__url.value, __url.set, None, u'The full (absolute) URL that can be used to\n\t    retrieve the object using the get() method of the rest interface.\n\t  ')
+
+    
+    # Element baseURL uses Python identifier baseURL
+    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_baseURL', False)
+
+    
+    baseURL = property(__baseURL.value, __baseURL.set, None, u'The current base URL for services implemented on the target node.\n\t  ')
+
+
+    _ElementMap = {
+        __preference.name() : __preference,
+        __nodeIdentifier.name() : __nodeIdentifier,
+        __url.name() : __url,
+        __baseURL.name() : __baseURL
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'ObjectLocation', ObjectLocation)
 
 
 # Complex type ObjectLocationList with content type ELEMENT_ONLY
@@ -75,56 +123,25 @@ class ObjectLocationList (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'ObjectLocationList', ObjectLocationList)
 
 
-# Complex type ObjectLocation with content type ELEMENT_ONLY
-class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectLocation')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element preference uses Python identifier preference
-    __preference = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'preference'), 'preference', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_preference', False)
-
-    
-    preference = property(__preference.value, __preference.set, None, u'A weighting parameter that provides a hint to the caller \n\t    for the relative preference for nodes from which the content should be retrieved.\n\t  ')
-
-    
-    # Element nodeIdentifier uses Python identifier nodeIdentifier
-    __nodeIdentifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), 'nodeIdentifier', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_nodeIdentifier', False)
-
-    
-    nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, u'Identifier of the node (the same identifier used\n\t    in the node registry for identifying the node.\n          ')
-
-    
-    # Element baseURL uses Python identifier baseURL
-    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_baseURL', False)
-
-    
-    baseURL = property(__baseURL.value, __baseURL.set, None, u'The current base URL for services implemented on the target node.\n\t  ')
-
-    
-    # Element url uses Python identifier url
-    __url = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'url'), 'url', '__httpdataone_orgservicetypesObjectLocationList0_5_ObjectLocation_url', False)
-
-    
-    url = property(__url.value, __url.set, None, u'The full (absolute) URL that can be used to\n\t    retrieve the object using the get() method of the rest interface.\n\t  ')
-
-
-    _ElementMap = {
-        __preference.name() : __preference,
-        __nodeIdentifier.name() : __nodeIdentifier,
-        __baseURL.name() : __baseURL,
-        __url.name() : __url
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'ObjectLocation', ObjectLocation)
-
-
 objectLocationList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'objectLocationList'), ObjectLocationList)
 Namespace.addCategoryObject('elementBinding', objectLocationList.name().localName(), objectLocationList)
+
+
+
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'preference'), pyxb.binding.datatypes.integer, scope=ObjectLocation, documentation=u'A weighting parameter that provides a hint to the caller \n\t    for the relative preference for nodes from which the content should be retrieved.\n\t  '))
+
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), _common.Identifier, scope=ObjectLocation, documentation=u'Identifier of the node (the same identifier used\n\t    in the node registry for identifying the node.\n          '))
+
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'url'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The full (absolute) URL that can be used to\n\t    retrieve the object using the get() method of the rest interface.\n\t  '))
+
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The current base URL for services implemented on the target node.\n\t  '))
+ObjectLocation._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'nodeIdentifier')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'baseURL')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'url')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'preference')), min_occurs=0L, max_occurs=1L)
+    )
+ObjectLocation._ContentModel = pyxb.binding.content.ParticleModel(ObjectLocation._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -136,20 +153,3 @@ ObjectLocationList._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(ObjectLocationList._UseForTag(pyxb.namespace.ExpandedName(None, u'objectLocation')), min_occurs=0L, max_occurs=None)
     )
 ObjectLocationList._ContentModel = pyxb.binding.content.ParticleModel(ObjectLocationList._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'preference'), pyxb.binding.datatypes.integer, scope=ObjectLocation, documentation=u'A weighting parameter that provides a hint to the caller \n\t    for the relative preference for nodes from which the content should be retrieved.\n\t  '))
-
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), _common.Identifier, scope=ObjectLocation, documentation=u'Identifier of the node (the same identifier used\n\t    in the node registry for identifying the node.\n          '))
-
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The current base URL for services implemented on the target node.\n\t  '))
-
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'url'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The full (absolute) URL that can be used to\n\t    retrieve the object using the get() method of the rest interface.\n\t  '))
-ObjectLocation._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'nodeIdentifier')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'baseURL')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'url')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'preference')), min_occurs=0L, max_occurs=1L)
-    )
-ObjectLocation._ContentModel = pyxb.binding.content.ParticleModel(ObjectLocation._GroupModel, min_occurs=1, max_occurs=1)
