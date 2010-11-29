@@ -1,7 +1,7 @@
 # ./pyxb/nodelist.py
 # PyXB bindings for NamespaceModule
 # NSM:42c0d00c00834050987db7e6d3ea15787defefca
-# Generated 2010-10-28 12:50:12.923059 by PyXB version 1.1.2
+# Generated 2010-11-23 10:22:01.226342 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2d02ce12-f726-11df-b71e-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -98,6 +98,234 @@ crontabEntryType._CF_pattern.addPattern(pattern=u'([\\*\\d]{1,2}[\\-,]?)+')
 crontabEntryType._InitializeFacetMap(crontabEntryType._CF_pattern)
 Namespace.addCategoryObject('typeBinding', u'crontabEntryType', crontabEntryType)
 
+# Complex type Status with content type EMPTY
+class Status (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Status')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Attribute dateChecked uses Python identifier dateChecked
+    __dateChecked = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'dateChecked'), 'dateChecked', '__httpdataone_orgservicetypesNodeList0_5_Status_dateChecked', pyxb.binding.datatypes.dateTime, required=True)
+    
+    dateChecked = property(__dateChecked.value, __dateChecked.set, None, None)
+
+    
+    # Attribute success uses Python identifier success
+    __success = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'success'), 'success', '__httpdataone_orgservicetypesNodeList0_5_Status_success', pyxb.binding.datatypes.boolean)
+    
+    success = property(__success.value, __success.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __dateChecked.name() : __dateChecked,
+        __success.name() : __success
+    }
+Namespace.addCategoryObject('typeBinding', u'Status', Status)
+
+
+# Complex type NodeHealth with content type ELEMENT_ONLY
+class NodeHealth (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeHealth')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element status uses Python identifier status
+    __status = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'status'), 'status', '__httpdataone_orgservicetypesNodeList0_5_NodeHealth_status', False)
+
+    
+    status = property(__status.value, __status.set, None, None)
+
+    
+    # Element ping uses Python identifier ping
+    __ping = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'ping'), 'ping', '__httpdataone_orgservicetypesNodeList0_5_NodeHealth_ping', False)
+
+    
+    ping = property(__ping.value, __ping.set, None, None)
+
+    
+    # Attribute state uses Python identifier state
+    __state = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'state'), 'state', '__httpdataone_orgservicetypesNodeList0_5_NodeHealth_state', NodeState, required=True)
+    
+    state = property(__state.value, __state.set, None, None)
+
+
+    _ElementMap = {
+        __status.name() : __status,
+        __ping.name() : __ping
+    }
+    _AttributeMap = {
+        __state.name() : __state
+    }
+Namespace.addCategoryObject('typeBinding', u'NodeHealth', NodeHealth)
+
+
+# Complex type Node with content type ELEMENT_ONLY
+class Node (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Node')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element description uses Python identifier description
+    __description = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__httpdataone_orgservicetypesNodeList0_5_Node_description', False)
+
+    
+    description = property(__description.value, __description.set, None, u'Description of content maintained by this node and any other free style\n            notes. May be we should allow CDATA element with the purpose of using for display\n          ')
+
+    
+    # Element services uses Python identifier services
+    __services = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'services'), 'services', '__httpdataone_orgservicetypesNodeList0_5_Node_services', False)
+
+    
+    services = property(__services.value, __services.set, None, None)
+
+    
+    # Element synchronization uses Python identifier synchronization
+    __synchronization = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'synchronization'), 'synchronization', '__httpdataone_orgservicetypesNodeList0_5_Node_synchronization', False)
+
+    
+    synchronization = property(__synchronization.value, __synchronization.set, None, None)
+
+    
+    # Element baseURL uses Python identifier baseURL
+    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpdataone_orgservicetypesNodeList0_5_Node_baseURL', False)
+
+    
+    baseURL = property(__baseURL.value, __baseURL.set, None, None)
+
+    
+    # Element health uses Python identifier health
+    __health = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'health'), 'health', '__httpdataone_orgservicetypesNodeList0_5_Node_health', False)
+
+    
+    health = property(__health.value, __health.set, None, u'The name of the node is being used in Mercury currently to assign a\n            path, so format should be consistent with dataone directory naming conventions\n          ')
+
+    
+    # Element identifier uses Python identifier identifier
+    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpdataone_orgservicetypesNodeList0_5_Node_identifier', False)
+
+    
+    identifier = property(__identifier.value, __identifier.set, None, u'A unique identifier for the node. This may initially be the same as the\n            baseURL, however this value should not change for future implementations of the same\n            node, whereas the baseURL may change in the future. \n            ')
+
+    
+    # Element name uses Python identifier name
+    __name = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesNodeList0_5_Node_name', False)
+
+    
+    name = property(__name.value, __name.set, None, u'A human readable name of the Node. \n            The name of the node is being used in Mercury currently to assign a path,\n            so format should be consistent with dataone directory naming conventions\n          ')
+
+    
+    # Attribute environment uses Python identifier environment
+    __environment = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'environment'), 'environment', '__httpdataone_orgservicetypesNodeList0_5_Node_environment', Environment)
+    
+    environment = property(__environment.value, __environment.set, None, None)
+
+    
+    # Attribute synchronize uses Python identifier synchronize
+    __synchronize = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'synchronize'), 'synchronize', '__httpdataone_orgservicetypesNodeList0_5_Node_synchronize', pyxb.binding.datatypes.boolean, required=True)
+    
+    synchronize = property(__synchronize.value, __synchronize.set, None, None)
+
+    
+    # Attribute type uses Python identifier type
+    __type = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'type'), 'type', '__httpdataone_orgservicetypesNodeList0_5_Node_type', NodeType, required=True)
+    
+    type = property(__type.value, __type.set, None, None)
+
+    
+    # Attribute replicate uses Python identifier replicate
+    __replicate = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'replicate'), 'replicate', '__httpdataone_orgservicetypesNodeList0_5_Node_replicate', pyxb.binding.datatypes.boolean, required=True)
+    
+    replicate = property(__replicate.value, __replicate.set, None, None)
+
+
+    _ElementMap = {
+        __description.name() : __description,
+        __services.name() : __services,
+        __synchronization.name() : __synchronization,
+        __baseURL.name() : __baseURL,
+        __health.name() : __health,
+        __identifier.name() : __identifier,
+        __name.name() : __name
+    }
+    _AttributeMap = {
+        __environment.name() : __environment,
+        __synchronize.name() : __synchronize,
+        __type.name() : __type,
+        __replicate.name() : __replicate
+    }
+Namespace.addCategoryObject('typeBinding', u'Node', Node)
+
+
+# Complex type Services with content type ELEMENT_ONLY
+class Services (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Services')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element service uses Python identifier service
+    __service = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'service'), 'service', '__httpdataone_orgservicetypesNodeList0_5_Services_service', True)
+
+    
+    service = property(__service.value, __service.set, None, None)
+
+
+    _ElementMap = {
+        __service.name() : __service
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'Services', Services)
+
+
+# Complex type ServiceMethod with content type EMPTY
+class ServiceMethod (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceMethod')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Attribute implemented uses Python identifier implemented
+    __implemented = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'implemented'), 'implemented', '__httpdataone_orgservicetypesNodeList0_5_ServiceMethod_implemented', pyxb.binding.datatypes.boolean, required=True)
+    
+    implemented = property(__implemented.value, __implemented.set, None, None)
+
+    
+    # Attribute name uses Python identifier name
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesNodeList0_5_ServiceMethod_name', pyxb.binding.datatypes.NMTOKEN)
+    
+    name = property(__name.value, __name.set, None, None)
+
+    
+    # Attribute rest uses Python identifier rest
+    __rest = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'rest'), 'rest', '__httpdataone_orgservicetypesNodeList0_5_ServiceMethod_rest', pyxb.binding.datatypes.token, required=True)
+    
+    rest = property(__rest.value, __rest.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __implemented.name() : __implemented,
+        __name.name() : __name,
+        __rest.name() : __rest
+    }
+Namespace.addCategoryObject('typeBinding', u'ServiceMethod', ServiceMethod)
+
+
 # Complex type Synchronization with content type ELEMENT_ONLY
 class Synchronization (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -168,34 +396,28 @@ class Ping (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'Ping', Ping)
 
 
-# Complex type Status with content type EMPTY
-class Status (pyxb.binding.basis.complexTypeDefinition):
+# Complex type NodeList with content type ELEMENT_ONLY
+class NodeList (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Status')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeList')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Attribute dateChecked uses Python identifier dateChecked
-    __dateChecked = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'dateChecked'), 'dateChecked', '__httpdataone_orgservicetypesNodeList0_5_Status_dateChecked', pyxb.binding.datatypes.dateTime, required=True)
-    
-    dateChecked = property(__dateChecked.value, __dateChecked.set, None, None)
+    # Element node uses Python identifier node
+    __node = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'node'), 'node', '__httpdataone_orgservicetypesNodeList0_5_NodeList_node', True)
 
     
-    # Attribute success uses Python identifier success
-    __success = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'success'), 'success', '__httpdataone_orgservicetypesNodeList0_5_Status_success', pyxb.binding.datatypes.boolean)
-    
-    success = property(__success.value, __success.set, None, None)
+    node = property(__node.value, __node.set, None, None)
 
 
     _ElementMap = {
-        
+        __node.name() : __node
     }
     _AttributeMap = {
-        __dateChecked.name() : __dateChecked,
-        __success.name() : __success
+        
     }
-Namespace.addCategoryObject('typeBinding', u'Status', Status)
+Namespace.addCategoryObject('typeBinding', u'NodeList', NodeList)
 
 
 # Complex type Service with content type ELEMENT_ONLY
@@ -243,167 +465,6 @@ class Service (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'Service', Service)
 
 
-# Complex type NodeHealth with content type ELEMENT_ONLY
-class NodeHealth (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeHealth')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element status uses Python identifier status
-    __status = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'status'), 'status', '__httpdataone_orgservicetypesNodeList0_5_NodeHealth_status', False)
-
-    
-    status = property(__status.value, __status.set, None, None)
-
-    
-    # Element ping uses Python identifier ping
-    __ping = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'ping'), 'ping', '__httpdataone_orgservicetypesNodeList0_5_NodeHealth_ping', False)
-
-    
-    ping = property(__ping.value, __ping.set, None, None)
-
-    
-    # Attribute state uses Python identifier state
-    __state = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'state'), 'state', '__httpdataone_orgservicetypesNodeList0_5_NodeHealth_state', NodeState, required=True)
-    
-    state = property(__state.value, __state.set, None, None)
-
-
-    _ElementMap = {
-        __status.name() : __status,
-        __ping.name() : __ping
-    }
-    _AttributeMap = {
-        __state.name() : __state
-    }
-Namespace.addCategoryObject('typeBinding', u'NodeHealth', NodeHealth)
-
-
-# Complex type Node with content type ELEMENT_ONLY
-class Node (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Node')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element services uses Python identifier services
-    __services = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'services'), 'services', '__httpdataone_orgservicetypesNodeList0_5_Node_services', False)
-
-    
-    services = property(__services.value, __services.set, None, None)
-
-    
-    # Element synchronization uses Python identifier synchronization
-    __synchronization = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'synchronization'), 'synchronization', '__httpdataone_orgservicetypesNodeList0_5_Node_synchronization', False)
-
-    
-    synchronization = property(__synchronization.value, __synchronization.set, None, None)
-
-    
-    # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpdataone_orgservicetypesNodeList0_5_Node_identifier', False)
-
-    
-    identifier = property(__identifier.value, __identifier.set, None, u'A unique identifier for the node. This may initially be the same as the\n            baseURL, however this value should not change for future implementations of the same\n            node, whereas the baseURL may change in the future. \n            ')
-
-    
-    # Element name uses Python identifier name
-    __name = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesNodeList0_5_Node_name', False)
-
-    
-    name = property(__name.value, __name.set, None, u'A human readable name of the Node. \n            The name of the node is being used in Mercury currently to assign a path,\n            so format should be consistent with dataone directory naming conventions\n          ')
-
-    
-    # Element health uses Python identifier health
-    __health = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'health'), 'health', '__httpdataone_orgservicetypesNodeList0_5_Node_health', False)
-
-    
-    health = property(__health.value, __health.set, None, u'The name of the node is being used in Mercury currently to assign a\n            path, so format should be consistent with dataone directory naming conventions\n          ')
-
-    
-    # Element description uses Python identifier description
-    __description = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__httpdataone_orgservicetypesNodeList0_5_Node_description', False)
-
-    
-    description = property(__description.value, __description.set, None, u'Description of content maintained by this node and any other free style\n            notes. May be we should allow CDATA element with the purpose of using for display\n          ')
-
-    
-    # Element baseURL uses Python identifier baseURL
-    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpdataone_orgservicetypesNodeList0_5_Node_baseURL', False)
-
-    
-    baseURL = property(__baseURL.value, __baseURL.set, None, None)
-
-    
-    # Attribute environment uses Python identifier environment
-    __environment = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'environment'), 'environment', '__httpdataone_orgservicetypesNodeList0_5_Node_environment', Environment)
-    
-    environment = property(__environment.value, __environment.set, None, None)
-
-    
-    # Attribute synchronize uses Python identifier synchronize
-    __synchronize = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'synchronize'), 'synchronize', '__httpdataone_orgservicetypesNodeList0_5_Node_synchronize', pyxb.binding.datatypes.boolean, required=True)
-    
-    synchronize = property(__synchronize.value, __synchronize.set, None, None)
-
-    
-    # Attribute type uses Python identifier type
-    __type = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'type'), 'type', '__httpdataone_orgservicetypesNodeList0_5_Node_type', NodeType, required=True)
-    
-    type = property(__type.value, __type.set, None, None)
-
-    
-    # Attribute replicate uses Python identifier replicate
-    __replicate = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'replicate'), 'replicate', '__httpdataone_orgservicetypesNodeList0_5_Node_replicate', pyxb.binding.datatypes.boolean, required=True)
-    
-    replicate = property(__replicate.value, __replicate.set, None, None)
-
-
-    _ElementMap = {
-        __services.name() : __services,
-        __synchronization.name() : __synchronization,
-        __identifier.name() : __identifier,
-        __name.name() : __name,
-        __health.name() : __health,
-        __description.name() : __description,
-        __baseURL.name() : __baseURL
-    }
-    _AttributeMap = {
-        __environment.name() : __environment,
-        __synchronize.name() : __synchronize,
-        __type.name() : __type,
-        __replicate.name() : __replicate
-    }
-Namespace.addCategoryObject('typeBinding', u'Node', Node)
-
-
-# Complex type Services with content type ELEMENT_ONLY
-class Services (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Services')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element service uses Python identifier service
-    __service = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'service'), 'service', '__httpdataone_orgservicetypesNodeList0_5_Services_service', True)
-
-    
-    service = property(__service.value, __service.set, None, None)
-
-
-    _ElementMap = {
-        __service.name() : __service
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'Services', Services)
-
-
 # Complex type Schedule with content type EMPTY
 class Schedule (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -412,10 +473,28 @@ class Schedule (pyxb.binding.basis.complexTypeDefinition):
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Schedule')
     # Base type is pyxb.binding.datatypes.anyType
     
+    # Attribute wday uses Python identifier wday
+    __wday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'wday'), 'wday', '__httpdataone_orgservicetypesNodeList0_5_Schedule_wday', crontabEntryType, required=True)
+    
+    wday = property(__wday.value, __wday.set, None, None)
+
+    
     # Attribute hour uses Python identifier hour
     __hour = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'hour'), 'hour', '__httpdataone_orgservicetypesNodeList0_5_Schedule_hour', crontabEntryType, required=True)
     
     hour = property(__hour.value, __hour.set, None, None)
+
+    
+    # Attribute year uses Python identifier year
+    __year = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'year'), 'year', '__httpdataone_orgservicetypesNodeList0_5_Schedule_year', crontabEntryType, required=True)
+    
+    year = property(__year.value, __year.set, None, None)
+
+    
+    # Attribute mday uses Python identifier mday
+    __mday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'mday'), 'mday', '__httpdataone_orgservicetypesNodeList0_5_Schedule_mday', crontabEntryType, required=True)
+    
+    mday = property(__mday.value, __mday.set, None, None)
 
     
     # Attribute min uses Python identifier min
@@ -430,133 +509,29 @@ class Schedule (pyxb.binding.basis.complexTypeDefinition):
     mon = property(__mon.value, __mon.set, None, None)
 
     
-    # Attribute mday uses Python identifier mday
-    __mday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'mday'), 'mday', '__httpdataone_orgservicetypesNodeList0_5_Schedule_mday', crontabEntryType, required=True)
-    
-    mday = property(__mday.value, __mday.set, None, None)
-
-    
     # Attribute sec uses Python identifier sec
     __sec = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'sec'), 'sec', '__httpdataone_orgservicetypesNodeList0_5_Schedule_sec', crontabEntryType, required=True)
     
     sec = property(__sec.value, __sec.set, None, None)
 
-    
-    # Attribute wday uses Python identifier wday
-    __wday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'wday'), 'wday', '__httpdataone_orgservicetypesNodeList0_5_Schedule_wday', crontabEntryType, required=True)
-    
-    wday = property(__wday.value, __wday.set, None, None)
-
-    
-    # Attribute year uses Python identifier year
-    __year = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'year'), 'year', '__httpdataone_orgservicetypesNodeList0_5_Schedule_year', crontabEntryType, required=True)
-    
-    year = property(__year.value, __year.set, None, None)
-
 
     _ElementMap = {
         
     }
     _AttributeMap = {
+        __wday.name() : __wday,
         __hour.name() : __hour,
+        __year.name() : __year,
+        __mday.name() : __mday,
         __min.name() : __min,
         __mon.name() : __mon,
-        __mday.name() : __mday,
-        __sec.name() : __sec,
-        __wday.name() : __wday,
-        __year.name() : __year
+        __sec.name() : __sec
     }
 Namespace.addCategoryObject('typeBinding', u'Schedule', Schedule)
 
 
-# Complex type NodeList with content type ELEMENT_ONLY
-class NodeList (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeList')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element node uses Python identifier node
-    __node = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'node'), 'node', '__httpdataone_orgservicetypesNodeList0_5_NodeList_node', True)
-
-    
-    node = property(__node.value, __node.set, None, None)
-
-
-    _ElementMap = {
-        __node.name() : __node
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'NodeList', NodeList)
-
-
-# Complex type ServiceMethod with content type EMPTY
-class ServiceMethod (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceMethod')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Attribute implemented uses Python identifier implemented
-    __implemented = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'implemented'), 'implemented', '__httpdataone_orgservicetypesNodeList0_5_ServiceMethod_implemented', pyxb.binding.datatypes.boolean, required=True)
-    
-    implemented = property(__implemented.value, __implemented.set, None, None)
-
-    
-    # Attribute name uses Python identifier name
-    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpdataone_orgservicetypesNodeList0_5_ServiceMethod_name', pyxb.binding.datatypes.NMTOKEN)
-    
-    name = property(__name.value, __name.set, None, None)
-
-    
-    # Attribute rest uses Python identifier rest
-    __rest = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'rest'), 'rest', '__httpdataone_orgservicetypesNodeList0_5_ServiceMethod_rest', pyxb.binding.datatypes.token, required=True)
-    
-    rest = property(__rest.value, __rest.set, None, None)
-
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        __implemented.name() : __implemented,
-        __name.name() : __name,
-        __rest.name() : __rest
-    }
-Namespace.addCategoryObject('typeBinding', u'ServiceMethod', ServiceMethod)
-
-
 nodeList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'nodeList'), NodeList)
 Namespace.addCategoryObject('elementBinding', nodeList.name().localName(), nodeList)
-
-
-
-Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time all the data from a node was pulled from a member node\n           '))
-
-Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'schedule'), Schedule, scope=Synchronization))
-
-Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastHarvested'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time the mn sychronization daemon ran and found new data to synchronize\n           '))
-Synchronization._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'schedule')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastHarvested')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest')), min_occurs=1, max_occurs=1)
-    )
-Synchronization._ContentModel = pyxb.binding.content.ParticleModel(Synchronization._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'method'), ServiceMethod, scope=Service))
-
-Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'name'), _common.ServiceName, scope=Service))
-Service._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Service._UseForTag(pyxb.namespace.ExpandedName(None, u'name')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Service._UseForTag(pyxb.namespace.ExpandedName(None, u'method')), min_occurs=0L, max_occurs=None)
-    )
-Service._ContentModel = pyxb.binding.content.ParticleModel(Service._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -571,19 +546,19 @@ NodeHealth._ContentModel = pyxb.binding.content.ParticleModel(NodeHealth._GroupM
 
 
 
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'description'), _common.NonEmptyString, scope=Node, documentation=u'Description of content maintained by this node and any other free style\n            notes. May be we should allow CDATA element with the purpose of using for display\n          '))
+
 Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'services'), Services, scope=Node))
 
 Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'synchronization'), Synchronization, scope=Node))
 
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), _common.NodeReference, scope=Node, documentation=u'A unique identifier for the node. This may initially be the same as the\n            baseURL, however this value should not change for future implementations of the same\n            node, whereas the baseURL may change in the future. \n            '))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'name'), _common.NonEmptyString, scope=Node, documentation=u'A human readable name of the Node. \n            The name of the node is being used in Mercury currently to assign a path,\n            so format should be consistent with dataone directory naming conventions\n          '))
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=Node))
 
 Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'health'), NodeHealth, scope=Node, documentation=u'The name of the node is being used in Mercury currently to assign a\n            path, so format should be consistent with dataone directory naming conventions\n          '))
 
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'description'), _common.NonEmptyString, scope=Node, documentation=u'Description of content maintained by this node and any other free style\n            notes. May be we should allow CDATA element with the purpose of using for display\n          '))
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), _common.NodeReference, scope=Node, documentation=u'A unique identifier for the node. This may initially be the same as the\n            baseURL, however this value should not change for future implementations of the same\n            node, whereas the baseURL may change in the future. \n            '))
 
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=Node))
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'name'), _common.NonEmptyString, scope=Node, documentation=u'A human readable name of the Node. \n            The name of the node is being used in Mercury currently to assign a path,\n            so format should be consistent with dataone directory naming conventions\n          '))
 Node._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
     pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'name')), min_occurs=1L, max_occurs=1L),
@@ -605,8 +580,33 @@ Services._ContentModel = pyxb.binding.content.ParticleModel(Services._GroupModel
 
 
 
+Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time all the data from a node was pulled from a member node\n           '))
+
+Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'schedule'), Schedule, scope=Synchronization))
+
+Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastHarvested'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time the mn sychronization daemon ran and found new data to synchronize\n           '))
+Synchronization._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'schedule')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastHarvested')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest')), min_occurs=1, max_occurs=1)
+    )
+Synchronization._ContentModel = pyxb.binding.content.ParticleModel(Synchronization._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
 NodeList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'node'), Node, scope=NodeList))
 NodeList._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(NodeList._UseForTag(pyxb.namespace.ExpandedName(None, u'node')), min_occurs=1L, max_occurs=None)
     )
 NodeList._ContentModel = pyxb.binding.content.ParticleModel(NodeList._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'method'), ServiceMethod, scope=Service))
+
+Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'name'), _common.ServiceName, scope=Service))
+Service._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Service._UseForTag(pyxb.namespace.ExpandedName(None, u'name')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Service._UseForTag(pyxb.namespace.ExpandedName(None, u'method')), min_occurs=0L, max_occurs=None)
+    )
+Service._ContentModel = pyxb.binding.content.ParticleModel(Service._GroupModel, min_occurs=1, max_occurs=1)

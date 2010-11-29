@@ -1,7 +1,7 @@
 # ./pyxb/statusresponselist.py
 # PyXB bindings for NamespaceModule
 # NSM:aab07a751b78b10ac68aa90c2ee1d5d4b2cec4be
-# Generated 2010-10-28 12:50:12.921884 by PyXB version 1.1.2
+# Generated 2010-11-23 10:22:01.227164 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2d02ce12-f726-11df-b71e-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes

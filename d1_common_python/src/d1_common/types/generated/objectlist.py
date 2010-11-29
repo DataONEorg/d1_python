@@ -1,7 +1,7 @@
 # ./pyxb/objectlist.py
 # PyXB bindings for NamespaceModule
 # NSM:557d120571eb0cc45a44d6c5c8959dafe6927bd7
-# Generated 2010-10-28 12:50:12.907512 by PyXB version 1.1.2
+# Generated 2010-11-23 10:22:01.225319 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3210f33c-e2c4-11df-8ffa-65839d235cf8')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2d02ce12-f726-11df-b71e-000c29f765e9')
 
 # Import bindings for namespaces imported into schema
 import _common
@@ -97,13 +97,6 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     identifier = property(__identifier.value, __identifier.set, None, None)
 
     
-    # Element objectFormat uses Python identifier objectFormat
-    __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpdataone_orgservicetypesObjectList0_5_ObjectInfo_objectFormat', False)
-
-    
-    objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
-
-    
     # Element checksum uses Python identifier checksum
     __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpdataone_orgservicetypesObjectList0_5_ObjectInfo_checksum', False)
 
@@ -117,13 +110,20 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     
     dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
 
+    
+    # Element objectFormat uses Python identifier objectFormat
+    __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpdataone_orgservicetypesObjectList0_5_ObjectInfo_objectFormat', False)
+
+    
+    objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
+
 
     _ElementMap = {
         __size.name() : __size,
         __identifier.name() : __identifier,
-        __objectFormat.name() : __objectFormat,
         __checksum.name() : __checksum,
-        __dateSysMetadataModified.name() : __dateSysMetadataModified
+        __dateSysMetadataModified.name() : __dateSysMetadataModified,
+        __objectFormat.name() : __objectFormat
     }
     _AttributeMap = {
         
@@ -148,11 +148,11 @@ ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(No
 
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), _common.Identifier, scope=ObjectInfo))
 
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), _common.ObjectFormat, scope=ObjectInfo))
-
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), _common.Checksum, scope=ObjectInfo))
 
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=ObjectInfo))
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), _common.ObjectFormat, scope=ObjectInfo))
 ObjectInfo._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
     pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'objectFormat')), min_occurs=1, max_occurs=1),
