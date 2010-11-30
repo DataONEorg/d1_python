@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/SystemMetadata/0.5">
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
   <identifier>hdl:10255/dryad.1160/mets.xml</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
   <size>4605</size>

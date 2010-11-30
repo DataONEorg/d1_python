@@ -169,7 +169,7 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list = client.listObjects()
     
     for o in object_list['objectInfo']:
-      if o["identifier"] == identifier:
+      if o["identifier"].value() == identifier:
         return o
   
     # Object not found
@@ -216,7 +216,6 @@ class TestSequenceFunctions(unittest.TestCase):
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-      identifier = sysmeta_obj.identifier
           
       # To create a valid URL, we must quote the identifier twice. First, so
       # that the URL will match what's on disk and then again so that the
@@ -225,7 +224,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
       # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
-      client.create(identifier, object_file, sysmeta_xml)
+      client.create(sysmeta_obj.identifier, object_file, sysmeta_xml)
   
   def test_04_clear_event_log(self):
     '''Clear event log
@@ -277,14 +276,14 @@ class TestSequenceFunctions(unittest.TestCase):
   
     found = False
     for o in logRecords.logEntry:
-      if o.identifier == 'hdl:10255/dryad.654/mets.xml':
+      if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml':
         found = True
         break
     
     self.assertTrue(found)
     # accessTime varies, so we just check if it's valid ISO8601
     #self.assertTrue(dateutil.parser.parse(o.dateLogged))
-    self.assertEqual(o.identifier, "hdl:10255/dryad.654/mets.xml")
+    self.assertEqual(o.identifier.value(), "hdl:10255/dryad.654/mets.xml")
     self.assertEqual(o.event, "update")
     self.assertTrue(o.principal)
   
@@ -327,13 +326,13 @@ class TestSequenceFunctions(unittest.TestCase):
       # Get corresponding object from objectList.
       found = False
       for object_info in object_list.objectInfo:
-        if object_info.identifier == sysmeta_obj.identifier:
+        if object_info.identifier.value() == sysmeta_obj.identifier:
           found = True
           break;
   
       self.assertTrue(found, 'Couldn\'t find object with identifier "{0}"'.format(sysmeta_obj.identifier))
       
-      self.assertEqual(object_info.identifier, sysmeta_obj.identifier)
+      self.assertEqual(object_info.identifier.value(), sysmeta_obj.identifier)
       self.assertEqual(object_info.objectFormat, sysmeta_obj.objectFormat)
       self.assertEqual(object_info.dateSysMetadataModified, sysmeta_obj.dateSysMetadataModified)
       self.assertEqual(object_info.size, sysmeta_obj.size)
@@ -524,7 +523,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     try:
       #d1_client.xmlvalidator.validate(xml_doc, 'http://127.0.0.1/objectlist.xsd')
-      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.OBJECTLIST_SCHEMA_URL)
+      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
     except:
       self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
@@ -580,7 +579,7 @@ class TestSequenceFunctions(unittest.TestCase):
     response = client.client.GET(client.getMonitorObjectUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     try:
-      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.MONITOR_OBJECT_SCHEMA_URL)
+      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
     except:
       self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise

@@ -651,7 +651,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     try:
       #d1_client.xmlvalidator.validate(xml_doc, 'http://127.0.0.1/objectlist.xsd')
-      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.OBJECTLIST_SCHEMA_URL)
+      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
     except:
       self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
@@ -725,7 +725,7 @@ class TestSequenceFunctions(unittest.TestCase):
     response = client.client.GET(client.getMonitorUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     try:
-      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.MONITOR_OBJECT_SCHEMA_URL)
+      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
     except:
       self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
