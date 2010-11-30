@@ -75,7 +75,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1_common.types.generated.statusresponselist
+  import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -117,7 +117,7 @@ class StatusResponseList(object):
       #'text/log',
     ]
 
-    self.object_location_list = d1_common.types.generated.statusresponselist.statusResponseList(
+    self.object_location_list = d1_common.types.generated.dataoneTypes.statusResponseList(
     )
 
   def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
@@ -149,7 +149,7 @@ class StatusResponseList(object):
 
   def deserialize_xml(self, doc):
     self.log.debug('deserialize xml')
-    self.object_location_list = d1_common.types.generated.statusresponselist.CreateFromDocument(
+    self.object_location_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(
       doc
     )
     return self.object_location_list

@@ -168,10 +168,10 @@ html_static_path = ['_static']
 # template names.
 #html_additional_pages = {}
 
-# If false, no module index is generated.
+# If false, no module index is generated.dataoneTypes
 #html_use_modindex = True
 
-# If false, no index is generated.
+# If false, no index is generated.dataoneTypes
 #html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
@@ -222,5 +222,5 @@ latex_documents = [
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
 
-# If false, no module index is generated.
+# If false, no module index is generated.dataoneTypes
 #latex_use_modindex = True

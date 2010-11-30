@@ -50,7 +50,7 @@ Example serialization::
 import new
 import d1_common
 import d1_common.exceptions
-import d1_common.types.generated.systemmetadata
+import d1_common.types.generated.dataoneTypes
 
 #===============================================================================
 
@@ -99,7 +99,7 @@ def systemMetadata():
   :returns: Instance of SystemMetadata, blank
   :rtype: SystemMetadata
   '''
-  sysm = d1_common.types.generated.systemmetadata.systemMetadata()
+  sysm = d1_common.types.generated.dataoneTypes.systemMetadata()
   sysm.toCSV = new.instancemethod(toCSV, sysm, sysm.__class__)
   sysm.fromCSV = new.instancemethod(fromCSV, sysm, sysm.__class__)
   sysm.toJSON = new.instancemethod(toJSON, sysm, sysm.__class__)
@@ -118,7 +118,7 @@ def CreateFromDocument(data, format='text/xml'):
   '''
   format = format.strip().lower()
   if format == d1_common.MIMETYPES['xml']:
-    sysm = d1_common.types.generated.systemmetadata.CreateFromDocument(data)
+    sysm = d1_common.types.generated.dataoneTypes.CreateFromDocument(data)
     sysm.toCSV = new.instancemethod(toCSV, sysm, sysm.__class__)
     sysm.fromCSV = new.instancemethod(fromCSV, sysm, sysm.__class__)
     sysm.toJSON = new.instancemethod(toJSON, sysm, sysm.__class__)

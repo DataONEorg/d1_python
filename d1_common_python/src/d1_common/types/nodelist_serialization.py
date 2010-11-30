@@ -75,7 +75,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1_common.types.generated.nodelist
+  import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -117,7 +117,7 @@ class NodeList(object):
       #'text/log',
     ]
 
-    self.node_list = d1_common.types.generated.nodelist.nodeList()
+    self.node_list = d1_common.types.generated.dataoneTypes.nodeList()
 
   def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
     # Determine which serializer to use. If client does not supply accept, we
@@ -148,7 +148,7 @@ class NodeList(object):
 
   def deserialize_xml(self, doc):
     self.log.debug('deserialize xml')
-    self.node_list = d1_common.types.generated.nodelist.CreateFromDocument(doc)
+    self.node_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
     return self.node_list
 
   def deserialize_null(self, doc):

@@ -17,15 +17,7 @@ __all__ = [
   'types.objectlocationlist_serialization',
   'types.statusresponselist_serialization',
   'types.systemmetadata',
-  'types.generated._common',
-  'types.generated.logging',
-  'types.generated.monitorlist',
-  'types.generated.nodelist',
-  'types.generated.noderegistry',
-  'types.generated.objectlist',
-  'types.generated.objectlocationlist',
-  'types.generated.statusresponselist',
-  'types.generated.systemmetadata',
+  'types.generated.dataoneTypes',
   'ext.mimeparser',
 ]
 

@@ -71,7 +71,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1_common.types.generated.monitorlist
+  import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -112,7 +112,7 @@ class MonitorList(object):
       #'text/log',
     ]
 
-    self.monitorlist = d1_common.types.generated.monitorlist.monitorList()
+    self.monitorlist = d1_common.types.generated.dataoneTypes.monitorList()
 
     #===============================================================================
 
@@ -143,7 +143,7 @@ class MonitorList(object):
     return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
-    self.monitorList = d1_common.types.generated.monitorlist.CreateFromDocument(doc)
+    self.monitorList = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
 
   def deserialize_null(self, doc):
     raise d1_common.exceptions.NotImplemented(

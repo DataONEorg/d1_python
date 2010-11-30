@@ -76,7 +76,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1_common.types.generated.objectlocationlist
+  import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -118,7 +118,7 @@ class ObjectLocationList(object):
       #'text/log',
     ]
 
-    self.object_location_list = d1_common.types.generated.objectlocationlist.objectLocationList(
+    self.object_location_list = d1_common.types.generated.dataoneTypes.objectLocationList(
     )
 
   def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
@@ -150,7 +150,7 @@ class ObjectLocationList(object):
 
   def deserialize_xml(self, doc):
     self.log.debug('deserialize xml')
-    self.object_location_list = d1_common.types.generated.objectlocationlist.CreateFromDocument(
+    self.object_location_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(
       doc
     )
     return self.object_location_list

@@ -72,7 +72,7 @@ except ImportError, e:
   raise
 
 try:
-  import d1_common.types.generated.logging
+  import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
@@ -135,7 +135,7 @@ class LogRecords(object):
       #'text/log',
     ]
 
-    self.log = d1_common.types.generated.logging.log()
+    self.log = d1_common.types.generated.dataoneTypes.log()
 
   def serialize(self, accept='application/json', pretty=False, jsonvar=False):
     '''
@@ -258,7 +258,7 @@ class LogRecords(object):
   def deserialize_xml(self, doc):
     '''
     '''
-    self.log = d1_common.types.generated.logging.CreateFromDocument(doc)
+    self.log = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
     return self.log
 
   def deserialize_json(self, doc):
@@ -268,7 +268,7 @@ class LogRecords(object):
     logEntries = []
 
     for o in j['logEntry']:
-      logEntry = d1_common.types.generated.logging.LogEntry()
+      logEntry = d1_common.types.generated.dataoneTypes.LogEntry()
 
       logEntry.entryId = o['entryId']
       logEntry.identifier = o['identifier']
@@ -294,7 +294,7 @@ class LogRecords(object):
     logEntries = []
 
     for csv_line in csv_reader:
-      logEntry = d1_common.types.generated.logging.LogEntry()
+      logEntry = d1_common.types.generated.dataoneTypes.LogEntry()
       logEntry.identifier = csv_line[0]
       logEntry.objectFormat = csv_line[1]
       logEntry.checksum = csv_line[2]
