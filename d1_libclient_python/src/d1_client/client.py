@@ -410,7 +410,7 @@ class DataOneClient(object):
 
     return urlparse.urljoin(self.client.target, d1_common.const.URL_NODE_PATH)
 
-  def getSystemMetadataSchema(self, schemaUrl=d1_common.const.SYSTEM_METADATA_SCHEMA_URL):
+  def getSystemMetadataSchema(self, schemaUrl=d1_common.const.SCHEMA_URL):
     '''Convenience function to retrieve the SysMeta schema.
     
     :param schemaUrl: The URL from which to load the schema from
