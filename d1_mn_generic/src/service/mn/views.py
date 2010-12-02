@@ -86,6 +86,7 @@ except ImportError, e:
 # MN API.
 import d1_common.exceptions
 import d1_client.systemmetadata
+import d1_common.types.identifier_serialization
 
 # App.
 import event_log
@@ -429,7 +430,15 @@ def object_guid_post(request, guid):
   # Log this object creation.
   event_log.log(guid, 'create', request)
   
-  return HttpResponse('OK')
+  # Return the identifier.
+  identifier = d1_common.types.identifier_serialization.Identifier(guid)
+  
+  if 'HTTP_ACCEPT' in request.META:
+    accept = request.META['HTTP_ACCEPT']
+  else:
+    accept = 'application/xml'
+
+  return HttpResponse(identifier.serialize(accept))
 
 def object_guid_get(request, guid):
   '''
