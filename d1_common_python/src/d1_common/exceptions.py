@@ -67,7 +67,6 @@ class DataONEException(Exception):
     self.detailCode = detailCode
     self.description = description
     self.traceInfo = traceInformation
-    print detailCode
 
   def __str__(self):
     '''
@@ -123,7 +122,6 @@ class DataONEException(Exception):
 
     :rtype: UTF-8 encoded XML string
     '''
-    print str(self.detailCode)
     root = ETree.Element(
       'error', {
         'name': self.name,

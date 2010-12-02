@@ -85,8 +85,13 @@ def logEntryToText(logEntry):
   '''Returns a human readable string representation of a logEntry
   '''
   txt = []
-  txt.append("%s (%s): %s" % (logEntry.memberNode, logEntry.event, logEntry.entryId))
-  txt.append("  object id: %s" % logEntry.identifier)
+  txt.append(
+    "%s (%s): %s" % (
+      logEntry.memberNode, logEntry.event, logEntry.entryId.value(
+      )
+    )
+  )
+  txt.append("  object id: %s" % logEntry.identifier.value())
   txt.append("    ip addr: %s" % logEntry.ipAddress)
   txt.append("      agent: %s" % logEntry.userAgent)
   txt.append("       date: %s" % logEntry.dateLogged.isoformat())
@@ -148,7 +153,6 @@ class LogRecords(object):
       # An invalid Accept header causes mimeparser to throw a ValueError.
       #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
       content_type = 'application/json'
-    print accept
     # Deserialize object
     return self.serialize_map[d1_common.util.get_content_type(content_type)](
       pretty, jsonvar
@@ -192,8 +196,8 @@ class LogRecords(object):
 
     for o in self.log.logEntry:
       logEntry = {}
-      logEntry['entryId'] = o.entryId
-      logEntry['identifier'] = o.identifier
+      logEntry['entryId'] = o.entryId.value()
+      logEntry['identifier'] = o.identifier.value()
       logEntry['ipAddress'] = o.ipAddress
       logEntry['userAgent'] = o.userAgent
       logEntry['principal'] = o.principal
@@ -227,8 +231,8 @@ class LogRecords(object):
     # Comment containing start, count and total.
     for o in self.log.logEntry:
       logEntry = []
-      logEntry.append(o.entryId)
-      logEntry.append(o.identifier)
+      logEntry.append(o.entryId.value())
+      logEntry.append(o.identifier.value())
       logEntry.append(o.ipAddress)
       logEntry.append(o.userAgent)
       logEntry.append(o.principal)
