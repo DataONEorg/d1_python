@@ -19,14 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_common.types.objectlocationlist_serialization
-======================================================
+Module d1_common.types.identifier_serialization
+==============================================
 
-Implements serializaton and de-serialization for the ObjectLocationList.
+Implements serializaton and de-serialization for the the identifier type.
 '''
 
 # Stdlib.
-import logging
+import StringIO
+import csv
 import sys
 
 try:
@@ -57,78 +58,116 @@ except ImportError, e:
 #===============================================================================
 
 
-class ObjectLocationList(object):
-  def __init__(self):
-    self.log = logging.getLogger('ObjectLocationList')
+class Identifier(object):
+  '''Implements serialization of DataONE Identifier
+  '''
+
+  def __init__(self, identifier):
     self.serialize_map = {
-      'application/json': self.serialize_null, #TODO: Not in current REST spec.
-      'text/csv': self.serialize_null, #TODO: Not in current REST spec.
+      'application/json': self.serialize_json,
+      'text/csv': self.serialize_csv,
       'text/xml': self.serialize_xml,
       'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_null, #TODO: Not in current REST spec.
+      'application/rdf+xml': self.serialize_rdf_xml,
       'text/html': self.serialize_null, #TODO: Not in current REST spec.
       'text/log': self.serialize_null, #TODO: Not in current REST spec.
     }
 
     self.deserialize_map = {
-      'application/json': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/csv': self.deserialize_null, #TODO: Not in current REST spec.
+      'application/json': self.deserialize_json,
+      'text/csv': self.deserialize_csv,
       'text/xml': self.deserialize_xml,
       'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_null, #TODO: Not in current REST spec.
+      'application/rdf+xml': self.deserialize_rdf_xml,
       'text/html': self.deserialize_null, #TODO: Not in current REST spec.
       'text/log': self.deserialize_null, #TODO: Not in current REST spec.
     }
 
     self.pri = [
-      #'application/json',
-      #'text/csv',
+      'application/json',
+      'text/csv',
       'text/xml',
       'application/xml',
-      #'application/rdf+xml',
+      'application/rdf+xml',
       #'text/html',
       #'text/log',
     ]
 
-    self.object_location_list = d1_common.types.generated.dataoneTypes.objectLocationList(
-    )
+    self.identifier = d1_common.types.generated.dataoneTypes.identifier(identifier)
 
-  def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
+  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
+    '''
+    '''
     # Determine which serializer to use. If client does not supply accept, we
     # default to JSON.
     try:
       content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
     except ValueError:
-      content_type = 'text/xml'
-    self.log.debug("serializing, content-type=%s" % content_type)
-
+      # An invalid Accept header causes mimeparser to throw a ValueError.
+      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
+      content_type = 'application/json'
     # Deserialize object
     return self.serialize_map[d1_common.util.get_content_type(content_type)](
       pretty, jsonvar
     ), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
-    self.log.debug("serialize_xml")
-    return self.object_location_list.toxml()
+    '''Serialize Identifier to XML.
+    '''
+    return self.identifier.toxml()
+
+  def serialize_json(self, pretty=False, jsonvar=False):
+    '''Serialize Identifier to JSON.
+    '''
+    return json.dumps({'identifier': self.identifier.value()})
+
+  def serialize_csv(self, pretty=False, jsonvar=False):
+    '''Serialize Identifier to CSV.
+    '''
+    io = StringIO.StringIO()
+    csv_writer = csv.writer(
+      io, dialect=csv.excel,
+      quotechar='"', quoting=csv.QUOTE_MINIMAL
+    )
+    csv_writer.writerow([self.identifier.value()])
+    return io.getvalue()
+
+  def serialize_rdf_xml(self, doc):
+    raise d1_common.exceptions.NotImplemented(0, 'serialize_rdf_xml not implemented.')
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
     raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
 
-    #===============================================================================
+    #== Deserialization methods ==================================================
 
-  def deserialize(self, doc, content_type='text/xml'):
-    self.log.debug("de-serialize, content-type=%s" % content_type)
+  def deserialize(self, doc, content_type='application/json'):
     return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
-    self.log.debug('deserialize xml')
-    self.object_location_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(
-      doc
+    self.identifier = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
+    return self.identifier
+
+  def deserialize_json(self, doc):
+    j = json.loads(doc)
+    self.identifier = d1_common.types.generated.dataoneTypes.identifier(j['identifier'])
+    return self.identifier
+
+  def deserialize_csv(self, doc):
+    io = StringIO.StringIO(doc)
+    csv_reader = csv.reader(
+      io, dialect=csv.excel,
+      quotechar='"', quoting=csv.QUOTE_MINIMAL
     )
-    return self.object_location_list
+
+    for csv_line in csv_reader:
+      self.identifier = d1_common.types.generated.dataoneTypes.identifier(csv_line[0])
+      break
+    return self.identifier
+
+  def deserialize_rdf_xml(self, doc):
+    raise d1_common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
 
   def deserialize_null(self, doc):
-    self.log.debug('deserialize NULL')
     raise d1_common.exceptions.NotImplemented(
-      0, 'De-serialization method not implemented.'
+      0, 'Deserialization method not implemented.'
     )

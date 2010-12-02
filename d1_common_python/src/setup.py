@@ -11,7 +11,6 @@
 """
 
 from setuptools import setup, find_packages
-import d1_common
 
 setup(
   name='Python DataONE Common',

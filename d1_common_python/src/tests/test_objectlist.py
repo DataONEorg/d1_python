@@ -1,10 +1,8 @@
+import logging
 import sys
 import unittest
-import logging
 
-import pyxb
 from d1_common import xmlrunner
-import d1_common.exceptions
 from d1_common.types import objectlist_serialization
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>

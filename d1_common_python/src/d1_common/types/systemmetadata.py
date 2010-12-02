@@ -20,7 +20,7 @@
 # limitations under the License.
 '''
 Module d1_common.types.systemmetadata
-====================================
+=====================================
 
 Extends the PyXB generated class to enable serialization to and from CSV and 
 JSON.
@@ -48,7 +48,6 @@ Example serialization::
 '''
 
 import new
-import d1_common
 import d1_common.exceptions
 import d1_common.types.generated.dataoneTypes
 
