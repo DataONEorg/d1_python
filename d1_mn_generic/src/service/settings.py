@@ -138,10 +138,11 @@ FIXTURE_DIRS = (_here('mn/fixtures'))
 INSTALLED_APPS = (
   'service.mn',
   'service.fake_cn',
-  'django.contrib.auth',
-  'django.contrib.contenttypes',
-  'django.contrib.sessions',
-  'django.contrib.sites',
+
+  #    'django.contrib.auth',
+  #    'django.contrib.contenttypes',
+  #    'django.contrib.sessions',
+  #    'django.contrib.sites',
   'django.contrib.admin',
   'django.contrib.admindocs',
 )
