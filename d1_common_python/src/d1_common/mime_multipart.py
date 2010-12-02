@@ -134,7 +134,6 @@ class multipart(object):
     '''Iterate over MIME Multipart object.
     :return: Next section of MIME Multipart data. Some sections are empty.
     '''
-    #print self.state
 
     if self.state == 'form_fields':
       self.state = 'file_head'
