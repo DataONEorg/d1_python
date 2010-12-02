@@ -1,6 +1,6 @@
+import logging
 import sys
 import unittest
-import logging
 
 import pyxb
 from d1_common import xmlrunner

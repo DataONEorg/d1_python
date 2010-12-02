@@ -9,20 +9,17 @@ Unit tests for d1_common.exceptions
   :members:
 '''
 
+import logging
 import sys
 import unittest
-import logging
-import urlparse
-import urllib2
-import socket #for error codes
-from xml.dom.minidom import parseString
-import lxml
+
 try:
   import cjson as json
 except:
   import json
-from d1_common import xmlrunner
+
 from d1_common import exceptions
+from d1_common import xmlrunner
 
 #===============================================================================
 

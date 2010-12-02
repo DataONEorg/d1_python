@@ -3,7 +3,6 @@
 # Generate PyXB binding classes from schemas.
 
 import os
-import sys
 import glob
 import optparse
 
