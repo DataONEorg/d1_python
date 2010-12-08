@@ -71,7 +71,6 @@ from django.http import HttpResponseNotAllowed
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
-from django.utils.html import escape
 from django.db.models import Avg, Max, Min, Count
 
 # 3rd party.
@@ -352,76 +351,36 @@ def object_guid_post(request, guid):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.exceptions.ServiceFailure(0, err_msg)
-  
-  store_remotely = False
-  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
-  try:
-    if not request.FILES['object'].multiple_chunks():
-      # The object is a single chunk (under 2.5MiB by default). It can be either
-      # an object to store on disk or a URL to use for proxy/streaming.
-      sys_log.info('guid({0}): Object is a single chunk'.format(guid))
 
-      object_bytes = request.FILES['object'].read()  
-
-      # The object can be a URL, in which case GMN will just store the URL and
-      # stream the object from the URL when it's requested. 
-      if 'vendor_gmn_remote_storage' in request.POST:
-        # Determine if the object is a URL.
-        try:
-          url_split = urlparse.urlparse(object_bytes)
-          if url_split.scheme != 'http':
-            raise ValueError
-        except ValueError:
-          raise d1_common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
-        else:
-          store_remotely = True
-    
-      # If object is not a HTTP URL, write it to disk.
-      if store_remotely == False:
-        sys_log.info('guid({0}): Writing object to disk'.format(guid))
-    
-        file = open(object_path, 'wb')
-        file.write(object_bytes)
-        file.close()
-      else:
-        sys_log.info('guid({0}): Storing URL in DB'.format(guid))
+  # MN_crud.create() has a GMN specific extension. Instead of providing
+  # an object for GMN to manage, the object can be left empty and
+  # a URL to a remote location be provided instead. In that case, GMN
+  # will stream the object bytes from the remote server while handling
+  # all other object related operations like usual. 
+  if 'vendor_gmn_remote_url' in request.POST:
+    url = request.POST['vendor_gmn_remote_url']
+    try:
+      url_split = urlparse.urlparse(url)
+      if url_split.scheme != 'http':
+        raise ValueError
+    except ValueError:
+      raise d1_common.exceptions.InvalidRequest(0, 'url({0}): Invalid URL specified for remote storage'.format(url)) 
+  else:
+    # http://en.wikipedia.org/wiki/File_URI_scheme
+    url = 'file:///{0}'.format(urllib.quote(guid, ''))
+    object_guid_post_store_local(request, guid)
         
-    else:
-      # Object is multiple chunks (larger than 2.5MiB by default). It can only
-      # be an object to write to disk.
-      if 'vendor_gmn_remote_storage' in request.POST:
-        raise d1_common.exceptions.InvalidRequest(0, 'Specified remote storage but object is not a valid HTTP URL') 
-
-      sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
-
-      file = open(object_path, 'wb')
-      for chunk in request.FILES['object'].chunks():
-        file.write(chunk)
-      file.close()
-      
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write object file: {0}\n'.format(object_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
-
   # Create database entry for object.
   object = models.Object()
   object.guid = guid
-  if store_remotely == True:
-    object.url = object_bytes
-  else:
-    object.url = 'file://{0}'.format(guid)
-
-  format = sysmeta._getValues('objectFormat')
-
-  object.set_format(format)
+  object.url = url
+  object.set_format(sysmeta._getValues('objectFormat'))
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
   object.mtime = sysmeta.dateSysMetadataModified
   object.size = sysmeta.size
-
   object.save_unique()
-    
+
   # Successfully updated the db, so put current datetime in status.mtime.
   db_update_status = models.DB_update_status()
   db_update_status.status = 'update successful'
@@ -440,6 +399,30 @@ def object_guid_post(request, guid):
 
   return HttpResponse(identifier.serialize(accept))
 
+def object_guid_post_store_local(request, guid):
+  sys_log.info('guid({0}): Writing object to disk'.format(guid))
+
+  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
+
+  try:
+    if not request.FILES['object'].multiple_chunks():
+      sys_log.info('guid({0}): Object is a single chunk'.format(guid))
+  
+      object_bytes = request.FILES['object'].read()  
+      file = open(object_path, 'wb')
+      file.write(object_bytes)
+      file.close()
+    else:
+      sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
+      file = open(object_path, 'wb')
+      for chunk in request.FILES['object'].chunks():
+        file.write(chunk)
+      file.close()
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not write object file: {0}\n'.format(object_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+
 def object_guid_get(request, guid):
   '''
   Retrieve an object identified by guid from the node.
@@ -457,53 +440,58 @@ def object_guid_get(request, guid):
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(url)
-    if url_split.scheme != 'http':
-      raise ValueError
   except ValueError:
-    store_remotely = False
-  else:
-    store_remotely = True
-
-  if store_remotely == True:
-    sys_log.info('guid({0}): Object is a HTTP URL. Proxying from original location'.format(guid))
-
-    # Handle 302 Found.  
-    try:
-      conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
-      conn.connect()
-      conn.request('HEAD', url)
-      response = conn.getresponse()
-      if response.status == httplib.FOUND:
-        url = response.getheader('location')
-    except httplib.HTTPException as e:
-      raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
-  
-    # Open the object to proxy.
-    try:
-      conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
-      conn.connect()
-      conn.request('GET', url)
-      response = conn.getresponse()
-      if response.status != httplib.OK:
-        raise d1_common.exceptions.ServiceFailure(0,
-          'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
-    except httplib.HTTPException as e:
-      raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
-
-  # Handle disk object.
-  else:
-    sys_log.info('guid({0}): Object is not a HTTP URL. Streaming from disk'.format(guid))
-
-    file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
-    try:
-      response = open(file_in_path, 'r')
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.exceptions.ServiceFailure(0, err_msg)    
+    raise d1_common.exceptions.ServiceFailure(0, 'guid({0}) url({1}): Invalid URL'.format(guid, url))
 
   # Log the access of this object.
   event_log.log(guid, 'read', request)
+
+  if url_split.scheme == 'http':
+    return object_guid_get_remote(request, guid)
+  elif url_split.scheme == 'file':
+    return object_guid_get_local(request, guid)
+  else:
+    raise d1_common.exceptions.ServiceFailure(0, 'guid({0}) url({1}): Invalid URL. Must be http:// or file://')
+
+def object_guid_get_remote(request, guid):
+  sys_log.info('guid({0}): Object is a HTTP URL. Proxying from original location'.format(guid))
+
+  # Handle 302 Found.  
+  try:
+    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+    conn.connect()
+    conn.request('HEAD', url)
+    response = conn.getresponse()
+    if response.status == httplib.FOUND:
+      url = response.getheader('location')
+  except httplib.HTTPException as e:
+    raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
+
+  # Open the object to proxy.
+  try:
+    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+    conn.connect()
+    conn.request('GET', url)
+    response = conn.getresponse()
+    if response.status != httplib.OK:
+      raise d1_common.exceptions.ServiceFailure(0,
+        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
+  except httplib.HTTPException as e:
+    raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
+
+  # Return the raw bytes of the object.
+  return HttpResponse(util.fixed_chunk_size_iterator(response))
+
+def object_guid_get_local(request, guid):
+  sys_log.info('guid({0}): Object is not a HTTP URL. Streaming from disk'.format(guid))
+
+  file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
+  try:
+    response = open(file_in_path, 'rb')
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)    
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
@@ -727,6 +715,68 @@ def event_log_view_delete(request):
   sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(request))
 
   return HttpResponse('OK')
+
+# Replication.
+
+# MN_replication.replicate(token, id, sourceNode) → boolean
+
+@auth.cn_check_required
+def replicate(request, source_node, id):
+  '''
+  '''
+
+  if request.method == 'PUT':
+    return replicate_put(request, source_node, id)
+  
+  if request.method == 'GET':
+    return replicate_get(request, source_node, id)
+
+  # Only PUT accepted.
+  return HttpResponseNotAllowed(['PUT'])
+
+def replicate_put(request, source_node, identifier):
+  '''
+  '''
+  replication_item = models.Replication_work_queue()
+  replication_item.set_status('new')
+  replication_item.set_source_node(source_node)
+  replication_item.identifier = identifier
+  replication_item.checksum = 'unused'
+  replication_item.set_checksum_algorithm('unused')
+  replication_item.save()
+
+  return HttpResponse('ok')
+
+def replicate_get(request, source_node, identifier):
+  return render_to_response('replicate_get.html',
+                           {'replication_queue': models.Replication_work_queue.objects.all() })
+
+#  '''
+#  '''
+#
+#  replication_item = Replication_work_queue()
+#  replication_item.set_status('new')
+#  replication_item.set_source_node(source_node)
+#  replication_item.identifier = id
+#  replication_item.save()
+
+# For testing via browser.
+def replicate_new(request, source_node, identifier):
+  return replicate_put(request, source_node, identifier)
+
+# For testing via browser.
+def replicate_delete(request):
+  models.Replication_work_queue.objects.all().delete()
+  return HttpResponse('Deleted')
+
+#  '''
+#  '''
+#
+#  replication_item = Replication_work_queue()
+#  replication_item.set_status('new')
+#  replication_item.set_source_node(source_node)
+#  replication_item.identifier = id
+#  replication_item.save()
 
 # Health.
 

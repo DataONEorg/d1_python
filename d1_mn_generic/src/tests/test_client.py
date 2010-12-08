@@ -175,7 +175,12 @@ class TestSequenceFunctions(unittest.TestCase):
     # Object not found
     assertTrue(False)
 
-  def test_01_delete_all_objects(self):
+
+  #
+  # Tests that are run for both local and remote objects.
+  #
+
+  def delete_all_objects(self):
     '''Delete all objects
     '''
     client = d1_client.client.RESTClient()
@@ -191,7 +196,7 @@ class TestSequenceFunctions(unittest.TestCase):
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
     
-  def test_02_object_collection_is_empty(self):
+  def object_collection_is_empty(self):
     '''Verify that object collection is empty
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -202,31 +207,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # Check header.
     self.assert_counts(object_list, 0, 0, 0)
   
-  def test_03_create_objects(self):
-    '''Populate MN with set of test objects
-    '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
-  
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
-  
-      # The identifier is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-          
-      # To create a valid URL, we must quote the identifier twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.options.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
-  
-      # To test the MIME Multipart poster, we provide the Sci object as a file
-      # and the SysMeta as a string.
-      client.create(sysmeta_obj.identifier, object_file, sysmeta_xml)
-  
-  def test_04_clear_event_log(self):
+  def clear_event_log(self):
     '''Clear event log
     '''
     client = d1_client.client.RESTClient()
@@ -242,7 +223,7 @@ class TestSequenceFunctions(unittest.TestCase):
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
   
-  def test_05_event_log_is_empty(self):
+  def event_log_is_empty(self):
     '''Verify that access log is empty
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -252,7 +233,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
     self.assertEqual(len(logRecords.logEntry), 0)
   
-  def test_06_inject_event_log(self):
+  def inject_event_log(self):
     '''Inject a fake event log for testing.
     '''
     client = d1_client.client.DataOneClient()
@@ -266,7 +247,7 @@ class TestSequenceFunctions(unittest.TestCase):
     status, reason, page = multipart.post(inject_log_url)
   
   
-  def test_07_create_log(self):
+  def create_log(self):
     '''Verify that access log correctly reflects create_object actions
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -287,7 +268,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(o.event, "update")
     self.assertTrue(o.principal)
   
-  def test_08_compare_byte_by_byte(self):
+  def compare_byte_by_byte(self):
     '''Read set of test objects back from MN and do byte-by-byte comparison with local copies
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -305,7 +286,7 @@ class TestSequenceFunctions(unittest.TestCase):
  #Read objectList from MN and compare the values for each object with values
  #from sysmeta on disk.
  
-  def test_09_object_properties(self):
+  def object_properties(self):
     '''Read complete object collection and compare with values stored in local SysMeta files
     '''
     # Get object collection.
@@ -338,9 +319,9 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertEqual(object_info.size, sysmeta_obj.size)
       self.assertEqual(object_info.checksum.value(), sysmeta_obj.checksum)
       self.assertEqual(object_info.checksum.algorithm, sysmeta_obj.checksumAlgorithm)
-      
-  def test_10_slicing_1(self):
-    '''Verify slicing: Starting at 0 and getting half of the available objects
+
+  def slicing_1(self):
+    '''Generic: Verify slicing: Starting at 0 and getting half of the available objects
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -351,8 +332,8 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list = client.listObjects(start=0, count=object_cnt_half)
     self.assert_counts(object_list, 0, object_cnt_half, object_cnt)
     
-  def test_11_slicing_2(self):
-    '''Verify slicing: Starting at object_cnt_half and requesting more objects
+  def slicing_2(self):
+    '''Generic: Verify slicing: Starting at object_cnt_half and requesting more objects
     than there are
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -363,8 +344,8 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list = client.listObjects(start=object_cnt_half, count=d1_common.const.MAX_LISTOBJECTS)
     self.assert_counts(object_list, object_cnt_half, object_cnt_half, object_cnt)
   
-  def test_12_slicing_3(self):
-    '''Verify slicing: Starting above number of objects that we have
+  def slicing_3(self):
+    '''Generic: Verify slicing: Starting above number of objects that we have
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -374,8 +355,8 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list = client.listObjects(start=object_cnt * 2, count=1)
     self.assert_counts(object_list, object_cnt * 2, 0, object_cnt)
     
-  def test_13_slicing_4(self):
-    '''Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
+  def slicing_4(self):
+    '''Generic: Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -389,8 +370,8 @@ class TestSequenceFunctions(unittest.TestCase):
     else:
       self.assertTrue(False)
   
-  def test_14_date_range_1(self):
-    '''Verify date range query: Get all objects from the 1990s
+  def date_range_1(self):
+    '''Generic: Verify date range query: Get all objects from the 1990s
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -401,8 +382,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(object_list, 0, 32, 32)
   
   
-  def test_15_date_range_2(self):
-    '''Verify date range query: Get first 10 objects from the 1990s
+  def date_range_2(self):
+    '''Generic: Verify date range query: Get first 10 objects from the 1990s
     '''    
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -414,8 +395,8 @@ class TestSequenceFunctions(unittest.TestCase):
       )
     self.assert_counts(object_list, 0, 10, 32)
   
-  def test_16_date_range_3(self):
-    '''Verify date range query: Get 10 first objects from the 1990s, filtered by
+  def date_range_3(self):
+    '''Generic: Verify date range query: Get 10 first objects from the 1990s, filtered by
     objectFormat
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -429,8 +410,8 @@ class TestSequenceFunctions(unittest.TestCase):
       )
     self.assert_counts(object_list, 0, 10, 32)
   
-  def test_17_date_range_4(self):
-    '''Verify date range query: Get 10 first objects from non-existing date range
+  def date_range_4(self):
+    '''Generic: Verify date range query: Get 10 first objects from non-existing date range
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -443,8 +424,8 @@ class TestSequenceFunctions(unittest.TestCase):
       )
     self.assert_counts(object_list, 0, 0, 0)
   
-  def test_18_get_object_count(self):
-    '''Get object count
+  def get_object_count(self):
+    '''Generic: Get object count
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
   
@@ -457,8 +438,8 @@ class TestSequenceFunctions(unittest.TestCase):
   
   # /object/<guid>
   
-  def test_19_get_object_by_invalid_guid(self):
-    '''Verify 404 NotFound when attempting to get non-existing object
+  def get_object_by_invalid_guid(self):
+    '''Generic: Verify 404 NotFound when attempting to get non-existing object
     /object/_invalid_guid_
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -470,8 +451,8 @@ class TestSequenceFunctions(unittest.TestCase):
     else:
       assertTrue(False)
   
-  def test_20_get_object_by_valid_guid(self):
-    '''Verify successful retrieval of valid object
+  def get_object_by_valid_guid(self):
+    '''Generic: Verify successful retrieval of valid object
     /object/valid_guid
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -492,7 +473,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
   # /meta/<guid>
   
-  def test_21_get_object_by_invalid_guid(self):
+  def get_object_by_invalid_guid(self):
     '''Verify 404 NotFound when attempting to get non-existing SysMeta
     /meta/_invalid_guid_
     '''
@@ -505,7 +486,7 @@ class TestSequenceFunctions(unittest.TestCase):
     else:
       assertTrue(False)
   
-  def test_22_get_meta_by_valid_guid(self):
+  def get_meta_by_valid_guid(self):
     '''Verify successful retrieval of valid object
     /meta/valid_guid
     '''
@@ -514,7 +495,7 @@ class TestSequenceFunctions(unittest.TestCase):
     response = client.getSystemMetadata('10Dappend2.txt')
     self.assertTrue(response)
   
-  def test_23_xml_validation(self):
+  def xml_validation(self):
     '''Verify that returned XML document validates against the ObjectList schema
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -528,7 +509,7 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
     
-  def test_24_pxby_objectlist_xml(self):
+  def pxby_objectlist_xml(self):
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -540,7 +521,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.assert_xml_equals(xml_doc, xml_doc_out)
   
-  def test_25_pxby_objectlist_json(self):
+  def pxby_objectlist_json(self):
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -552,13 +533,13 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.assert_xml_equals(xml_doc, xml_doc_out)
   
-  def test_26_pxby_objectlist_rdf_xml(self):
+  def pxby_objectlist_rdf_xml(self):
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = object_list_1.serialize('application/rdf+xml')
     
-  def test_27_pxby_objectlist_csv(self):
+  def pxby_objectlist_csv(self):
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -572,7 +553,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # in the ISO1601 rendering of the timestamp.
     #self.assert_xml_equals(xml_doc, xml_doc_out)
   
-  def test_28_monitor_xml_validation(self):
+  def monitor_xml_validation(self):
     '''Verify that returned XML document validates against the ObjectList schema
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -584,7 +565,7 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
       raise
   
-  def test_29_pxby_monitor_xml(self):
+  def pxby_monitor_xml(self):
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -596,7 +577,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.assert_xml_equals(xml_doc, xml_doc_out)
     
-  def test_30_orderby_size(self):
+  def orderby_size(self):
     '''Verify ObjectList orderby: size
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -605,7 +586,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(doc['objectInfo'][0]['size'], 1982)
     self.assertEqual(doc['objectInfo'][9]['size'], 2746)
 
-  def test_31_orderby_size_desc(self):
+  def orderby_size_desc(self):
     '''Verify ObjectList orderby: desc_size
     '''
     client = d1_client.client.DataOneClient(self.options.gmn_url)
@@ -613,6 +594,379 @@ class TestSequenceFunctions(unittest.TestCase):
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
     self.assertEqual(doc['objectInfo'][9]['size'], 717851)
+
+  #
+  # Tests.
+  #
+
+  # Local.
+
+  def test_1010_delete_all_objects(self):
+    '''Local: Delete all objects
+    '''
+    self.delete_all_objects()
+    
+  def test_1020_object_collection_is_empty(self):
+    '''Local: Verify that object collection is empty
+    '''
+    self.object_collection_is_empty()
+  
+  def test_1030_create_objects(self):
+    '''Local: Populate MN with set of test objects (local)
+    '''
+    client = d1_client.client.DataOneClient(self.options.gmn_url)
+  
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+      # Get name of corresponding object and open it.
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      object_file = open(object_path, 'r')
+  
+      # The identifier is stored in the sysmeta.
+      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_xml = sysmeta_file.read()
+      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
+          
+      # To create a valid URL, we must quote the identifier twice. First, so
+      # that the URL will match what's on disk and then again so that the
+      # quoting survives being passed to the web server.
+      #obj_url = urlparse.urljoin(self.options.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
+  
+      # To test the MIME Multipart poster, we provide the Sci object as a file
+      # and the SysMeta as a string.
+      client.create(sysmeta_obj.identifier, object_file, sysmeta_xml, {})
+    
+  def test_1040_clear_event_log(self):
+    '''Local: Clear event log
+    '''
+    self.clear_event_log()
+  
+  def test_1050_event_log_is_empty(self):
+    '''Local: Verify that access log is empty
+    '''
+    self.event_log_is_empty()
+
+  def test_1060_inject_event_log(self):
+    '''Local: Inject a fake event log for testing.
+    '''
+    self.inject_event_log()
+
+  def test_1070_create_log(self):
+    '''Local: Verify that access log correctly reflects create_object actions
+    '''
+    self.create_log()
+  
+  def test_1080_compare_byte_by_byte(self):
+    '''Local: Read set of test objects back from MN and do byte-by-byte comparison with local copies
+    '''
+    self.compare_byte_by_byte()
+       
+  def test_1090_object_properties(self):
+    '''Local: Read complete object collection and compare with values stored in local SysMeta files
+    '''
+    self.object_properties()
+
+  def test_1100_slicing_1(self):
+    '''Local: Verify slicing: Starting at 0 and getting half of the available objects
+    '''
+    self.slicing_1()
+
+  def test_1110_slicing_2(self):
+    '''Local: Verify slicing: Starting at object_cnt_half and requesting more objects
+    than there are
+    '''
+    self.slicing_2()
+
+  def test_1120_slicing_3(self):
+    '''Local: Verify slicing: Starting above number of objects that we have
+    '''
+    self.slicing_3()
+
+  def test_1130_slicing_4(self):
+    '''Local: Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
+    '''
+    self.slicing_4()
+
+  def test_1140_date_range_1(self):
+    '''Local: Verify date range query: Get all objects from the 1990s
+    '''
+    self.date_range_1()
+
+  def test_1150_date_range_2(self):
+    '''Local: Verify date range query: Get first 10 objects from the 1990s
+    '''    
+    self.date_range_2()
+
+  def test_1160_date_range_3(self):
+    '''Local: Verify date range query: Get 10 first objects from the 1990s, filtered by
+    objectFormat
+    '''
+    self.date_range_3()
+
+  def test_1170_date_range_4(self):
+    '''Local: Verify date range query: Get 10 first objects from non-existing date range
+    '''
+    self.date_range_4()
+
+  def test_1180_get_object_count(self):
+    '''Local: Get object count
+    '''
+    self.get_object_count()
+
+  # /object/<guid>
+  
+  def test_1190_get_object_by_invalid_guid(self):
+    '''Local: Verify 404 NotFound when attempting to get non-existing object
+    /object/_invalid_guid_
+    '''
+    self.get_object_by_invalid_guid()
+
+  def test_1200_get_object_by_valid_guid(self):
+    '''Local: Verify successful retrieval of valid object
+    /object/valid_guid
+    '''
+    self.get_object_by_valid_guid()
+
+  def test_1210_get_object_by_invalid_guid(self):
+    '''Local: Verify 404 NotFound when attempting to get non-existing SysMeta
+    /meta/_invalid_guid_
+    '''
+    self.get_object_by_invalid_guid()
+
+  def test_1220_get_meta_by_valid_guid(self):
+    '''Local: Verify successful retrieval of valid object
+    /meta/valid_guid
+    '''
+    self.get_meta_by_valid_guid()
+
+  def test_1230_xml_validation(self):
+    '''Local: Verify that returned XML document validates against the ObjectList schema
+    '''
+    self.xml_validation()
+
+  def test_1240_pxby_objectlist_xml(self):
+    '''Local:
+    '''
+    self.pxby_objectlist_xml()
+  
+  def test_1250_pxby_objectlist_json(self):
+    '''Local:
+    '''
+    self.pxby_objectlist_json()
+
+  def test_1260_pxby_objectlist_rdf_xml(self):
+    '''Local:
+    '''
+    self.pxby_objectlist_rdf_xml()
+    
+  def test_1270_pxby_objectlist_csv(self):
+    '''Local:
+    '''
+    self.pxby_objectlist_csv()
+
+  def test_1280_monitor_xml_validation(self):
+    '''Local:
+    '''
+    self.monitor_xml_validation()
+
+  def test_1290_pxby_monitor_xml(self):
+    '''Local:
+    '''
+    self.pxby_monitor_xml()
+
+  def test_1300_orderby_size(self):
+    '''Local:
+    '''
+    self.orderby_size()
+
+  def test_1310_orderby_size_desc(self):
+    '''Local: Verify ObjectList orderby: desc_size
+    '''
+    self.orderby_size_desc()
+
+
+  # Remote.
+
+  def test_2010_delete_all_objects(self):
+    '''Remote: Delete all objects
+    '''
+    self.delete_all_objects()
+    
+  def test_2020_object_collection_is_empty(self):
+    '''Remote: Verify that object collection is empty
+    '''
+    self.object_collection_is_empty()
+  
+  def test_2030_create_objects(self):
+    '''Remote: Populate MN with set of test objects (Remote)
+    '''
+    client = d1_client.client.DataOneClient(self.options.gmn_url)
+  
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+      # Get name of corresponding object and open it.
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      object_file = open(object_path, 'r')
+  
+      # The identifier is stored in the sysmeta.
+      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_xml = sysmeta_file.read()
+      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
+          
+      # To create a valid URL, we must quote the identifier twice. First, so
+      # that the URL will match what's on disk and then again so that the
+      # quoting survives being passed to the web server.
+      #obj_url = urlparse.urljoin(self.options.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
+  
+      # To test the MIME Multipart poster, we provide the Sci object as a file
+      # and the SysMeta as a string.
+      client.create(sysmeta_obj.identifier, object_file, sysmeta_xml, {})
+    
+  def test_2040_clear_event_log(self):
+    '''Remote: Clear event log
+    '''
+    self.clear_event_log()
+  
+  def test_2050_event_log_is_empty(self):
+    '''Remote: Verify that access log is empty
+    '''
+    self.event_log_is_empty()
+
+  def test_2060_inject_event_log(self):
+    '''Remote: Inject a fake event log for testing.
+    '''
+    self.inject_event_log()
+
+  def test_2070_create_log(self):
+    '''Remote: Verify that access log correctly reflects create_object actions
+    '''
+    self.create_log()
+  
+  def test_2080_compare_byte_by_byte(self):
+    '''Remote: Read set of test objects back from MN and do byte-by-byte comparison with Remote copies
+    '''
+    self.compare_byte_by_byte()
+       
+  def test_2090_object_properties(self):
+    '''Remote: Read complete object collection and compare with values stored in Remote SysMeta files
+    '''
+    self.object_properties()
+
+  def test_2100_slicing_1(self):
+    '''Remote: Verify slicing: Starting at 0 and getting half of the available objects
+    '''
+    self.slicing_1()
+
+  def test_2110_slicing_2(self):
+    '''Remote: Verify slicing: Starting at object_cnt_half and requesting more objects
+    than there are
+    '''
+    self.slicing_2()
+
+  def test_2120_slicing_3(self):
+    '''Remote: Verify slicing: Starting above number of objects that we have
+    '''
+    self.slicing_3()
+
+  def test_2130_slicing_4(self):
+    '''Remote: Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
+    '''
+    self.slicing_4()
+
+  def test_2140_date_range_1(self):
+    '''Remote: Verify date range query: Get all objects from the 1990s
+    '''
+    self.date_range_1()
+
+  def test_2150_date_range_2(self):
+    '''Remote: Verify date range query: Get first 10 objects from the 1990s
+    '''    
+    self.date_range_2()
+
+  def test_2160_date_range_3(self):
+    '''Remote: Verify date range query: Get 10 first objects from the 1990s, filtered by
+    objectFormat
+    '''
+    self.date_range_3()
+
+  def test_2170_date_range_4(self):
+    '''Remote: Verify date range query: Get 10 first objects from non-existing date range
+    '''
+    self.date_range_4()
+
+  def test_2180_get_object_count(self):
+    '''Remote: Get object count
+    '''
+    self.get_object_count()
+
+  # /object/<guid>
+  
+  def test_2190_get_object_by_invalid_guid(self):
+    '''Remote: Verify 404 NotFound when attempting to get non-existing object
+    /object/_invalid_guid_
+    '''
+    self.get_object_by_invalid_guid()
+
+  def test_2200_get_object_by_valid_guid(self):
+    '''Remote: Verify successful retrieval of valid object
+    /object/valid_guid
+    '''
+    self.get_object_by_valid_guid()
+
+  def test_2210_get_object_by_invalid_guid(self):
+    '''Remote: Verify 404 NotFound when attempting to get non-existing SysMeta
+    /meta/_invalid_guid_
+    '''
+    self.get_object_by_invalid_guid()
+
+  def test_2220_get_meta_by_valid_guid(self):
+    '''Remote: Verify successful retrieval of valid object
+    /meta/valid_guid
+    '''
+    self.get_meta_by_valid_guid()
+
+  def test_2230_xml_validation(self):
+    '''Remote: Verify that returned XML document validates against the ObjectList schema
+    '''
+    self.xml_validation()
+
+  def test_2240_pxby_objectlist_xml(self):
+    '''Remote:
+    '''
+    self.pxby_objectlist_xml()
+  
+  def test_2250_pxby_objectlist_json(self):
+    '''Remote:
+    '''
+    self.pxby_objectlist_json()
+
+  def test_2260_pxby_objectlist_rdf_xml(self):
+    '''Remote:
+    '''
+    self.pxby_objectlist_rdf_xml()
+    
+  def test_2270_pxby_objectlist_csv(self):
+    '''Remote:
+    '''
+    self.pxby_objectlist_csv()
+
+  def test_2280_monitor_xml_validation(self):
+    '''Remote:
+    '''
+    self.monitor_xml_validation()
+
+  def test_2290_pxby_monitor_xml(self):
+    '''Remote:
+    '''
+    self.pxby_monitor_xml()
+
+  def test_2300_orderby_size(self):
+    '''Remote:
+    '''
+    self.orderby_size()
+
+  def test_2310_orderby_size_desc(self):
+    '''Remote: Verify ObjectList orderby: desc_size
+    '''
+    self.orderby_size_desc()
 
 def main():
   log_setup()

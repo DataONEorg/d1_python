@@ -57,7 +57,7 @@ import util
 #log_entries_associated_with_objects_guid_and_hash_endswith_2 = 5
 #log_entries_associated_with_objects_last_modified_in_1980s = 27
 
-class mn_service_tests(TestCase):
+class mn_tests(TestCase):
   fixtures = ['base.fixture.json']
 
   #

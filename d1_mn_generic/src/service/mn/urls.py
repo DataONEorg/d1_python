@@ -61,6 +61,11 @@ urlpatterns = patterns(
   (r'^node/?$', 'node'),
   (r'^/?$', 'node'),
 
+  # /replicate/
+  (r'^replicate/(.*)/(.*)/?$', 'replicate'),
+  (r'^replicate_new/(.*)/(.*)/?$', 'replicate_new'),
+  (r'^replicate_delete/?$', 'replicate_delete'),
+
   # Diagnostics, debugging and testing.
   (r'^inject_log/?$', 'inject_log'),
   (r'^get_ip/?$', 'auth_test'),

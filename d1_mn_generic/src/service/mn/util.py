@@ -144,12 +144,18 @@ class fixed_chunk_size_iterator(object):
   :return:
   '''
 
-  def __init__(self, flo, chunk_size=1024**2):
+  def __init__(self, flo, chunk_size=1024**2, len=None):
     ''':param:
     :return:
     '''
     self.flo = flo
     self.chunk_size = chunk_size
+    self.len = len
+
+  def __len__(self):
+    if self.len is None:
+      return len(self.flo)
+    return self.len
 
   def next(self):
     ''':param:

@@ -40,7 +40,7 @@ admin.autodiscover()
 urlpatterns = patterns(
   '',
   # CN.
-  (r'^cn/', include('service.fake_cn.urls')),
+  (r'^cn/', include('service.cn.urls')),
   # GMN.
   (r'^', include('service.mn.urls')),
   # Admin.

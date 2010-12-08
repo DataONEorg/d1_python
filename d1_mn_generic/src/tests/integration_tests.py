@@ -260,7 +260,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     logging.info('MN: Download a SciObject and compare it byte by byte with a local copy')
     
-    if cn_url == None:
+    if cn_url is None:
       client = d1_client.client.DataOneClient(self.opts.cn_url)
     else:
       client = d1_client.client.DataOneClient(cn_url)

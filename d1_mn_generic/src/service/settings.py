@@ -131,13 +131,13 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'service.urls'
 
-TEMPLATE_DIRS = (_here('mn/templates'))
+TEMPLATE_DIRS = (_here('mn/templates'), _here('cn/templates'), )
 
-FIXTURE_DIRS = (_here('mn/fixtures'))
+FIXTURE_DIRS = (_here('mn/fixtures'), _here('cn/fixtures'), )
 
 INSTALLED_APPS = (
   'service.mn',
-  'service.fake_cn',
+  'service.cn',
 
   #    'django.contrib.auth',
   #    'django.contrib.contenttypes',
@@ -157,4 +157,3 @@ SYSMETA_CACHE_PATH = _here('./sysmeta_cache')
 OBJECT_STORE_PATH = _here('./object_store')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './api_common')))

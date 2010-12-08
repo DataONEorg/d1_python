@@ -39,8 +39,6 @@ from django.db.models import Q
 # MN API.
 import d1_common.exceptions
 
-# TEST
-
 # Django creates automatically:
 # "id" serial NOT NULL PRIMARY KEY
 
@@ -183,8 +181,9 @@ class Callable:
   def __init__(self, anycallable):
     self.__call__ = anycallable
 
-
 # Node information.
+
+
 class Node(models.Model):
   key = models.CharField(max_length=10, unique=True, db_index=True)
   val = models.CharField(max_length=100)
@@ -201,3 +200,37 @@ class Node(models.Model):
     node.save()
 
   set = Callable(set)
+
+# MN object replication work queue.
+
+
+class Replication_queue_status(models.Model):
+  status = models.CharField(max_length=1000, unique=True)
+
+
+class Replication_queue_source_node(models.Model):
+  source_node = models.CharField(max_length=30, unique=True)
+
+
+class Replication_work_queue(models.Model):
+  #error = models.BooleanField()
+  #new = models.BooleanField()
+  status = models.ForeignKey(Replication_queue_status)
+  identifier = models.CharField(max_length=200)
+  source_node = models.ForeignKey(Replication_queue_source_node)
+  checksum = models.CharField(max_length=100)
+  checksum_algorithm = models.ForeignKey(Checksum_algorithm)
+  timestamp = models.DateTimeField(auto_now=True)
+
+  def set_status(self, status_string):
+    self.status = Replication_queue_status.objects.get_or_create(status=status_string)[0]
+
+  def set_source_node(self, source_node_string):
+    self.source_node = Replication_queue_source_node.objects.get_or_create(
+      source_node=source_node_string
+    )[0]
+
+  def set_checksum_algorithm(self, checksum_algorithm_string):
+    self.checksum_algorithm = Checksum_algorithm.objects.get_or_create(
+      checksum_algorithm=checksum_algorithm_string
+    )[0]

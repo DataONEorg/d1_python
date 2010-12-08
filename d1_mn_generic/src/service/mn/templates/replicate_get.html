@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title></title>
+
+<h1>Replication queue</h1>
+
+<table>
+	<tr>
+		<th>Status</th>
+		<th>Identifier</th>
+		<th>Source Node</th>
+		<th>Timestamp</th>
+	</tr>
+<td>
+{% for replication_item in replication_queue %}
+	<tr>
+		<td>{{ replication_item.status.status }}</td>
+		<td>{{ replication_item.identifier }}</td>
+		<td>{{ replication_item.source_node.source_node }}</td>
+		<td>{{ replication_item.timestamp }}</td>
+	</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>
