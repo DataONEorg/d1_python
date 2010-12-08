@@ -247,7 +247,7 @@ class RESTClient(object):
 
   def HEAD(self, url, headers=None):
     '''Issue a HTTP HEAD request.
-    
+
     :param url:
     :type url:
     :param headers:
@@ -309,7 +309,7 @@ class DataOneClient(object):
     timeout=d1_common.const.RESPONSE_TIMEOUT,
   ):
     '''Initialize the test client.
-    
+
     :param target: URL of the service to contact.
     :param UserAgent: The userAgent string being passed in the request headers
     :param clientClass: Class that will be used for HTTP connections.
@@ -412,7 +412,7 @@ class DataOneClient(object):
 
   def getSystemMetadataSchema(self, schemaUrl=d1_common.const.SCHEMA_URL):
     '''Convenience function to retrieve the SysMeta schema.
-    
+
     :param schemaUrl: The URL from which to load the schema from
     :type schemaUrl: string
     :return: (unicode) SysMeta schema
@@ -519,13 +519,13 @@ class DataOneClient(object):
     headers=None
   ):
     '''Perform the MN_replication.listObjects call.
-    
+
     :param startTime:
     :param endTime:
     :param objectFormat:
     :param start:
     :param count:
-    
+
     :return: (class) :class:ObjectList
     '''
     # Sanity.
@@ -596,7 +596,7 @@ class DataOneClient(object):
     count=d1_common.const.MAX_LISTOBJECTS
   ):
     '''Get log records from MN.
-    
+
     :param startTime: Include only events that happened at or after this time.
     :type startTime: datetime
     :param endTime: Include only events that happened before this time.
@@ -607,7 +607,7 @@ class DataOneClient(object):
     :type start: integer
     :param count: Slice resultset, limit to *count* events.
     :type count: integer
-    
+
     :return: :class:`LogRecords`
     :return type: class
     '''
@@ -680,11 +680,12 @@ class DataOneClient(object):
   #    logging.error('REST call failed: {0}'.format(str(e)))
   #    raise
 
-  def create(self, identifier, object_bytes, sysmeta_bytes):
+  def create(self, identifier, object_bytes, sysmeta_bytes, vendor_specific=None):
     '''Create an object in DataONE.
     :param: (string) Identifier of object to create.
     :param: (flo or string) Object data.
     :param: (flo or string) SysMeta.
+    :param: (map) vendor specific parameters
     :return: (None)
     '''
 
@@ -698,7 +699,7 @@ class DataOneClient(object):
     crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
     self.logger.debug_('url({0}) identifier({1})'.format(crud_create_url, identifier))
 
-    multipart = mime_multipart.multipart({}, [], files)
+    multipart = mime_multipart.multipart(vendor_specific, [], files)
     try:
       status, reason, page = multipart.post(crud_create_url)
       if status != 200:
@@ -735,7 +736,7 @@ class SimpleDataOneClient(object):
 
   def resolve(self, identifier):
     '''Resolve an identifier to object location
-    
+
     The difference between this resolve() and DataOneClient.resolve() is that
     DataOneClient.resolve() returns a complete, deserialized object representing
     all the resolve data for the given identifier, while this selects a single
