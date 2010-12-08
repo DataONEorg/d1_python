@@ -103,7 +103,7 @@ class multipart(object):
     ''':param: (int) Bytes to read.
     :return: (str) Bytes read.
     '''
-    if n == None:
+    if n is None:
       # Return everything at once.
       for s in self:
         self.io.write(s)
