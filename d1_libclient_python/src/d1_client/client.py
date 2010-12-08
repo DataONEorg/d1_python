@@ -653,11 +653,11 @@ class DataOneClient(object):
     deser = d1_common.types.logrecords_serialization.LogRecords()
     return deser.deserialize(response.read(), format)
 
-  #def create(self, identifier, object_bytes, sysmeta_bytes):
+  #def create(self, identifier, object_str, sysmeta_str):
   #  # Create MIME-multipart Mixed Media Type body.
   #  files = []
-  #  files.append(('object', 'object', object_bytes))
-  #  files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
+  #  files.append(('object', 'object', object_str))
+  #  files.append(('systemmetadata', 'systemmetadata', sysmeta_str))
   #  content_type, mime_doc = mime_multipart.encode_multipart_formdata([], files)
   #  
   #  # Send REST POST call to register object.
@@ -680,7 +680,7 @@ class DataOneClient(object):
   #    logging.error('REST call failed: {0}'.format(str(e)))
   #    raise
 
-  def create(self, identifier, object_bytes, sysmeta_bytes, vendor_specific=None):
+  def create(self, identifier, object_str, sysmeta_str, vendor_specific=None):
     '''Create an object in DataONE.
     :param: (string) Identifier of object to create.
     :param: (flo or string) Object data.
@@ -691,8 +691,8 @@ class DataOneClient(object):
 
     # Data to post.
     files = []
-    files.append(('object', 'object', object_bytes))
-    files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
+    files.append(('object', 'object', object_str))
+    files.append(('systemmetadata', 'systemmetadata', sysmeta_str))
 
     # Send REST POST call to register object.
 
@@ -825,7 +825,7 @@ class SimpleDataOneClient(object):
 
     return response
 
-  def create(self, identifier, object_bytes, sysmeta_bytes):
+  def create(self, identifier, object_str, sysmeta_str):
     '''Create an object in DataONE.
     :param: (string) Identifier of object to create.
     :param: (flo or string) Object data.
@@ -835,8 +835,8 @@ class SimpleDataOneClient(object):
 
     # Data to post.
     files = []
-    files.append(('object', 'object', object_bytes))
-    files.append(('systemmetadata', 'systemmetadata', sysmeta_bytes))
+    files.append(('object', 'object', object_str))
+    files.append(('systemmetadata', 'systemmetadata', sysmeta_str))
 
     # Send REST POST call to register object.
 
