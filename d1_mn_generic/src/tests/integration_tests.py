@@ -235,14 +235,14 @@ class TestSequenceFunctions(unittest.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       sci_object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       identifier = urllib.unquote(os.path.basename(sci_object_path))
-      #sysmeta_bytes_disk = open(sysmeta_path, 'r').read()
-      sci_object_bytes_disk = open(sci_object_path, 'r').read()
-      #sysmeta_bytes_d1 = client.getSystemMetadata(identifier).read()
-      sci_object_bytes_d1 = client.get(identifier).read()
-      #self.assertEqual(sysmeta_bytes_disk, sysmeta_bytes_d1)
-      self.assertEqual(sci_object_bytes_disk, sci_object_bytes_d1)
+      #sysmeta_str_disk = open(sysmeta_path, 'r').read()
+      sci_object_str_disk = open(sci_object_path, 'r').read()
+      #sysmeta_str_d1 = client.getSystemMetadata(identifier).read()
+      sci_object_str_d1 = client.get(identifier).read()
+      #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
+      self.assertEqual(sci_object_str_disk, sci_object_str_d1)
 
-  def assert_mn_sci_object_bytes(self, identifier):
+  def assert_mn_sci_object_str(self, identifier):
     '''MN: Download a SciObject and compare it byte by byte with a local copy.
     '''
     
@@ -250,11 +250,11 @@ class TestSequenceFunctions(unittest.TestCase):
     
     client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', identifier)
-    sci_object_bytes_disk = open(sci_object_path, 'r').read()
-    sci_object_bytes_node = client.get(identifier).read()
-    self.assertEqual(sci_object_bytes_disk, sci_object_bytes_node)
+    sci_object_str_disk = open(sci_object_path, 'r').read()
+    sci_object_str_node = client.get(identifier).read()
+    self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
-  def assert_cn_sci_object_bytes(self, identifier, cn_url=None):
+  def assert_cn_sci_object_str(self, identifier, cn_url=None):
     '''MN: Download a SciObject and compare it byte by byte with a local copy.
     '''
     
@@ -265,9 +265,9 @@ class TestSequenceFunctions(unittest.TestCase):
     else:
       client = d1_client.client.DataOneClient(cn_url)
     sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', identifier)
-    sci_object_bytes_disk = open(sci_object_path, 'r').read()
-    sci_object_bytes_node = client.get(identifier).read()
-    self.assertEqual(sci_object_bytes_disk, sci_object_bytes_node)
+    sci_object_str_disk = open(sci_object_path, 'r').read()
+    sci_object_str_node = client.get(identifier).read()
+    self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
 #------------------------------------------------------------------------------
   
@@ -291,11 +291,11 @@ class TestSequenceFunctions(unittest.TestCase):
     '''MN: Get SciObject by identifier.
     '''
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_bytes_mn = client.get(identifier).read()
+    sci_object_str_mn = client.get(identifier).read()
     
     # Retrieve SciObject.
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_bytes = client.get(o.identifier).read()
+    sci_object_str = client.get(o.identifier).read()
 
     # Compare SciObject with local.
 
@@ -317,13 +317,13 @@ class TestSequenceFunctions(unittest.TestCase):
     # Object not found
     assertTrue(False)
 
-  def mn_compare_sci_object_bytes(self, identifier):
+  def mn_compare_sci_object_str(self, identifier):
     '''MN: Retrieve an SciObject by identifier and compare the SciObject
     with local copy, byte by byte.
     '''
     # Retrieve SciObject.
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_bytes = client.get(o.identifier).read()
+    sci_object_str = client.get(o.identifier).read()
 
     # Compare SciObject with local.
 
@@ -816,7 +816,7 @@ class TestSequenceFunctions(unittest.TestCase):
         # Fail if we couldn't look up the node.
         self.assertTrue('resolve_node' in locals(), 'Unable to find identifier({0}) in the Node Registry'.format(location.nodeIdentifier))
         # Check if we can retrieve the object from the3 given location.
-        self.assert_cn_sci_object_bytes(sci_object.identifier, resolve_node.baseURL)      
+        self.assert_cn_sci_object_str(sci_object.identifier, resolve_node.baseURL)      
 
   def test_02_uc_02(self):
     '''Integration Test: Use case 2 (query)
@@ -860,12 +860,12 @@ class TestSequenceFunctions(unittest.TestCase):
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
     # Test successful retrieval of known good identifier.    
-    #self.assert_cn_sci_object_bytes('nceas9318', self.opts.cn_url)      
+    #self.assert_cn_sci_object_str('nceas9318', self.opts.cn_url)      
 
     # Test unsuccessful retrieval of known bad identifier.
     try:
       client_cn.get('_invalid_')
-#      self.assert_cn_sci_object_bytes('_invalid_', self.opts.cn_url)
+#      self.assert_cn_sci_object_str('_invalid_', self.opts.cn_url)
     except:
       pass
     else:
@@ -1060,8 +1060,8 @@ class TestSequenceFunctions(unittest.TestCase):
 #  #def test_rest_call_collection_of_objects_with_requestor_1_1_1_1(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
 #
-#  #def test_rest_call_collection_of_objects_with_operation_get_bytes(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_bytes
+#  #def test_rest_call_collection_of_objects_with_operation_get_str(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_str
 #
 #  #def test_rest_call_collection_of_objects_with_unicode_guid(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
@@ -1069,14 +1069,14 @@ class TestSequenceFunctions(unittest.TestCase):
 #
 #  # Not in spec: No filtering except for date range and event is in spec.
 #  
-#  #def test_rest_call_log_get_log_operation_get_bytes(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_bytes
+#  #def test_rest_call_log_get_log_operation_get_str(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_str
 #
 #  #def test_rest_call_log_get_log_requestor_1_1_1_1(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1
 #
-#  #def test_rest_call_log_get_log_requestor_1_1_1_1_and_operation_get_bytes(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_bytes
+#  #def test_rest_call_log_get_log_requestor_1_1_1_1_and_operation_get_str(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_str
 #
 #  #def test_rest_call_log_get_log_last_modified_in_1990s(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastModified_gt=1990-01-01T00:00:00&lastModified_lt=2000-01-01T00:00:00

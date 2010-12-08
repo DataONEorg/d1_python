@@ -91,13 +91,10 @@ def replicate_object(identifier):
   # Stream.
   object_file = src.get(identifier)
   sysmeta_str = src.getSystemMetadataResponse(identifier).read()
-  dst = d1_client.client.DataOneClient('http://0.0.0.0/mn')
-  dst.create(
-    identifier,
-    mn.util.fixed_chunk_size_iterator(object_file, obj_size),
-    sysmeta_str,
-    vendor_specific={}
-  )
+  dst = d1_client.client.DataOneClient('http://0.0.0.0:8000/')
+  # Add the ability to do len() on object_file. Needed by mime_multipart.
+  object_file.__len__ = lambda x=None: int(obj_size)
+  dst.create(identifier, object_file, sysmeta_str, vendor_specific={})
 
 
 class Command(NoArgsCommand):

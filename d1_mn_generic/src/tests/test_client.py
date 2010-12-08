@@ -276,12 +276,12 @@ class TestSequenceFunctions(unittest.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       identifier = urllib.unquote(os.path.basename(object_path))
-      #sysmeta_bytes_disk = open(sysmeta_path, 'r').read()
-      object_bytes_disk = open(object_path, 'r').read()
-      #sysmeta_bytes_d1 = client.getSystemMetadata(identifier).read()
-      object_bytes_d1 = client.get(identifier).read()
-      #self.assertEqual(sysmeta_bytes_disk, sysmeta_bytes_d1)
-      self.assertEqual(object_bytes_disk, object_bytes_d1)
+      #sysmeta_str_disk = open(sysmeta_path, 'r').read()
+      object_str_disk = open(object_path, 'r').read()
+      #sysmeta_str_d1 = client.getSystemMetadata(identifier).read()
+      object_str_d1 = client.get(identifier).read()
+      #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
+      self.assertEqual(object_str_disk, object_str_d1)
       
  #Read objectList from MN and compare the values for each object with values
  #from sysmeta on disk.

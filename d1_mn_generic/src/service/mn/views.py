@@ -333,8 +333,8 @@ def object_guid_post(request, guid):
     raise d1_common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
   
   # Validate SysMeta.
-  sysmeta_bytes = request.FILES['systemmetadata'].read()
-  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_bytes)
+  sysmeta_str = request.FILES['systemmetadata'].read()
+  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
   try:
     sysmeta.isValid()
   except:
@@ -345,7 +345,7 @@ def object_guid_post(request, guid):
   sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
   try:
     file = open(sysmeta_path, 'wb')
-    file.write(sysmeta_bytes)
+    file.write(sysmeta_str)
     file.close()
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
@@ -408,9 +408,9 @@ def object_guid_post_store_local(request, guid):
     if not request.FILES['object'].multiple_chunks():
       sys_log.info('guid({0}): Object is a single chunk'.format(guid))
   
-      object_bytes = request.FILES['object'].read()  
+      object_str = request.FILES['object'].read()  
       file = open(object_path, 'wb')
-      file.write(object_bytes)
+      file.write(object_str)
       file.close()
     else:
       sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
