@@ -149,11 +149,11 @@ Create and/or enter the folder where you wish to install GMN DAAC::
 
 Download the GMN DAAC "package"::
 
-  $ sudo svn co https://repository.dataone.org/software/python_products/mn_daac mn_daac
+  $ sudo svn co https://repository.dataone.org/software/python_products/mn mn
 
 Enter the DataONE Common library for Python::
 
-  $ cd mn_daac/d1_common
+  $ cd mn/d1_common
 
 Install the library::
 
@@ -183,11 +183,110 @@ Setup GMN::
 
 config.py performs the following tasks:
 
-* Set up mod_wsgi entry for GMN.
 * Create sqlite database file for GMN.
 * Make sure logfile can be written by group www-data.
-* Make sure db file and PARENT FOLDER of db file is writeable by www-data.
+* Make sure db file and parent folder of db file is writeable by www-data.
 * Copy fixed config values from .cfg file to database.
 * Update GMN version from SVN revision number.
-* Restart Apache.
+
+
+Apache configuration
+--------------------
+
+GMN has been tested with Apache 2.2.
+
+These instructions have been tested on Ubuntu 10.04 LTS. Adjust the paths to
+match your configuration.
+
+* Set up mod_wsgi:
+
+  * Create a file::
+  
+      /etc/apache2/mods-available/wsgi.load
+      
+    with the following contents::
+  
+      LoadModule wsgi_module /usr/lib/apache2/modules/mod_wsgi.so
+  
+  * Enable the wsgi module::
+  
+    # a2enmod wsgi
+
+* Set up GMN in a new or existing VirtualHost section. An example site file
+  is included below. It is a modified version of the default site file at::
+  
+    /etc/apache2/sites-available/default
+
+  Note that the settings for AllowEncodedSlashes and AcceptPathInfo that are
+  included at the top of the VirtualHost section are required for GMN to
+  function properly. Also see `Apache Configuration for DataONE Services`_ for
+  other important information about these settings.
+  
+* Restart Apache::
+
+    apache2ctl restart
+
+Example default site file::
+
+  <VirtualHost *:80>
+    AllowEncodedSlashes On
+    AcceptPathInfo On
+  
+    ServerAdmin dahl@unm.edu
+  
+    DocumentRoot /var/www
+  
+    <Directory />
+      Options FollowSymLinks
+      AllowOverride None
+    </Directory>
+  
+    <Directory /var/www/>
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride None
+      Order allow,deny
+      allow from all
+    </Directory>
+  
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    <Directory "/usr/lib/cgi-bin">
+      AllowOverride None
+      Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+      Order allow,deny
+      Allow from all
+    </Directory>
+  
+    ErrorLog /var/log/apache2/error.log
+  
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel debug
+  
+    CustomLog /var/log/apache2/access.log combined
+  
+      Alias /doc/ "/usr/share/doc/"
+      <Directory "/usr/share/doc/">
+          Options Indexes MultiViews FollowSymLinks
+          AllowOverride None
+          Order deny,allow
+          Deny from all
+          Allow from 127.0.0.0/255.0.0.0 ::1/128
+      </Directory>
+  
+    # Generic Member Node (GMN)
+  
+    WSGIScriptAlias /mn /var/local/mn/mn_generic/service/gmn.wsgi
+  
+    DocumentRoot /var/local/mn/mn_generic/service
+  
+    <Directory /var/local/mn/mn_generic/service>
+      WSGIApplicationGroup %{GLOBAL}
+      Order deny,allow
+      Allow from all
+    </Directory>
+  
+  </VirtualHost>
+
+.. _`Apache Configuration for DataONE Services`:
+  http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration
 
