@@ -48,7 +48,11 @@ except:
   import json
 
 # 3rd party.
+
+# DataONE.
 try:
+  import d1_common.types.checksum_serialization
+  import d1_common.types.identifier_serialization
   import d1_common.types.objectlist_serialization
   import d1_common.types.objectlocationlist_serialization
   import d1_common.types.systemmetadata
@@ -59,7 +63,6 @@ except ImportError, e:
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
 
-# DataONE.
 from d1_common import exceptions
 from d1_common import mime_multipart
 from d1_client import objectlistiterator
@@ -410,6 +413,14 @@ class DataOneClient(object):
 
     return urlparse.urljoin(self.client.target, d1_common.const.URL_NODE_PATH)
 
+  def getChecksumUrl(self):
+    '''Get the full URL to the checksum call on target.
+    :param: (None)
+    :return: (string) url
+    '''
+
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_CHECKSUM_PATH)
+
   def getSystemMetadataSchema(self, schemaUrl=d1_common.const.SCHEMA_URL):
     '''Convenience function to retrieve the SysMeta schema.
 
@@ -506,6 +517,23 @@ class DataOneClient(object):
     # Return.
     format = response.headers['content-type']
     deser = d1_common.types.nodelist_serialization.NodeList()
+    return deser.deserialize(response.read(), format)
+
+  def checksum(self, identifier, headers=None):
+    '''Get checksum for object.
+    :param: (pid)
+    :return: (class) :class:NodeList
+    '''
+
+    url = urlparse.urljoin(self.getChecksumUrl(), urllib.quote(identifier, ''))
+    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
+    if headers is None:
+      headers = self.headers
+    # Fetch.
+    response = self.client.GET(url, headers)
+    # Return.
+    format = response.headers['content-type']
+    deser = d1_common.types.checksum_serialization.Checksum('<dummy>')
     return deser.deserialize(response.read(), format)
 
   def listObjects(
@@ -680,7 +708,7 @@ class DataOneClient(object):
   #    logging.error('REST call failed: {0}'.format(str(e)))
   #    raise
 
-  def create(self, identifier, object_str, sysmeta_str, vendor_specific=None):
+  def create(self, identifier, object_str, sysmeta_str, vendor_specific={}):
     '''Create an object in DataONE.
     :param: (string) Identifier of object to create.
     :param: (flo or string) Object data.
