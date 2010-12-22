@@ -85,6 +85,7 @@ except ImportError, e:
 # MN API.
 import d1_common.exceptions
 import d1_client.systemmetadata
+import d1_common.types.checksum_serialization
 import d1_common.types.identifier_serialization
 
 # App.
@@ -397,7 +398,8 @@ def object_guid_post(request, guid):
   else:
     accept = 'application/xml'
 
-  return HttpResponse(identifier.serialize(accept))
+  doc, content_type = identifier.serialize(accept)
+  return HttpResponse(doc, content_type)
 
 def object_guid_post_store_local(request, guid):
   sys_log.info('guid({0}): Writing object to disk'.format(guid))
@@ -601,6 +603,40 @@ def meta_guid_get(request, guid, head):
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype='text/xml')
 
+def checksum_guid(request, guid):
+  '''
+  '''
+
+  if request.method == 'GET':
+    return checksum_guid_get(request, guid)
+
+  # Only GET.
+  return HttpResponseNotAllowed(['GET'])
+
+def checksum_guid_get(request, guid):
+  # Find object based on guid.
+  query = models.Object.objects.filter(guid=guid)
+  try:
+    checksum = query[0].checksum
+    checksum_algorithm = query[0].checksum_algorithm.checksum_algorithm
+  except IndexError:
+    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
+
+  # Log the access of this object.
+  event_log.log(guid, 'read', request) # todo: look into log type other than 'read'
+
+  # Return the checksum.
+  checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
+  checksum_ser.checksum.algorithm = checksum_algorithm 
+
+  if 'HTTP_ACCEPT' in request.META:
+    accept = request.META['HTTP_ACCEPT']
+  else:
+    accept = 'application/xml'
+
+  doc, content_type = checksum_ser.serialize(accept)
+  return HttpResponse(doc, content_type)
+  
 # Access Log.
 
 @auth.cn_check_required
@@ -721,62 +757,59 @@ def event_log_view_delete(request):
 # MN_replication.replicate(token, id, sourceNode) → boolean
 
 @auth.cn_check_required
-def replicate(request, source_node, id):
+def replicate(request, source_node, pid):
   '''
   '''
 
   if request.method == 'PUT':
-    return replicate_put(request, source_node, id)
+    return replicate_put(request, source_node, pid)
   
-  if request.method == 'GET':
-    return replicate_get(request, source_node, id)
-
-  # Only PUT accepted.
   return HttpResponseNotAllowed(['PUT'])
 
-def replicate_put(request, source_node, identifier):
+def replicate_put(request, source_node, pid):
   '''
   '''
   replication_item = models.Replication_work_queue()
   replication_item.set_status('new')
   replication_item.set_source_node(source_node)
-  replication_item.identifier = identifier
+  replication_item.identifier = pid
   replication_item.checksum = 'unused'
   replication_item.set_checksum_algorithm('unused')
   replication_item.save()
 
-  return HttpResponse('ok')
+  # Return the identifier.
+  identifier = d1_common.types.identifier_serialization.Identifier(pid)
+  
+  if 'HTTP_ACCEPT' in request.META:
+    accept = request.META['HTTP_ACCEPT']
+  else:
+    accept = 'application/xml'
 
-def replicate_get(request, source_node, identifier):
+  doc, content_type = identifier.serialize(accept)
+  return HttpResponse(doc, content_type)
+
+# For testing via browser.
+def test_replicate_put(request, source_node, identifier):
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access test_replicate_put while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
+
+  return replicate_put(request, source_node, identifier)
+
+def test_replicate_get(request):
+  '''
+  '''
   return render_to_response('replicate_get.html',
                            {'replication_queue': models.Replication_work_queue.objects.all() })
 
-#  '''
-#  '''
-#
-#  replication_item = Replication_work_queue()
-#  replication_item.set_status('new')
-#  replication_item.set_source_node(source_node)
-#  replication_item.identifier = id
-#  replication_item.save()
-
 # For testing via browser.
-def replicate_new(request, source_node, identifier):
-  return replicate_put(request, source_node, identifier)
+def test_replicate_clear(request):
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access test_replicate_delete while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
-# For testing via browser.
-def replicate_delete(request):
   models.Replication_work_queue.objects.all().delete()
-  return HttpResponse('Deleted')
-
-#  '''
-#  '''
-#
-#  replication_item = Replication_work_queue()
-#  replication_item.set_status('new')
-#  replication_item.set_source_node(source_node)
-#  replication_item.identifier = id
-#  replication_item.save()
+  return HttpResponse('OK')
 
 # Health.
 
@@ -956,21 +989,40 @@ def node_get(request):
 
 # Diagnostics, debugging and testing.
 
-def get_ip(request):
+def test_slash(request, p1, p2):
   '''
-  Get the client IP as seen from the server.'''
+  '''
   
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access get_ip while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
-
+  # Only GET accepted.
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  # Only GET accepted.
-  return HttpResponse(request.META['REMOTE_ADDR'])
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access test_slash while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
-def inject_log(request):
+  return render_to_response('test_slash.html', {'p1': p1, 'p2': p2})
+
+def test_get_request(request):
+  '''
+  '''
+  
+  # Only GET accepted.
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  if settings.GMN_DEBUG != True:
+    sys_log.info('client({0}): Attempted to access test_get_request while not in DEBUG mode'.format(util.request_to_string(request)))
+    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
+
+  html = '<table>'
+  for key, val in request.META.items():
+    html += '<tr><td>{0}</td><td>{1}</td></tr>'.format(key, val)
+  html += '</table>'
+
+  return HttpResponse(html)
+
+def test_inject_log(request):
   '''Inject a fake log for testing.
   
   The corresponding test object set must have already been created.
@@ -978,9 +1030,13 @@ def inject_log(request):
   '''
 
   if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access inject_log while not in DEBUG mode'.format(util.request_to_string(request)))
+    sys_log.info('client({0}): Attempted to access test_inject_log while not in DEBUG mode'.format(util.request_to_string(request)))
     raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
   
+  # Only POST accepted.
+  if request.method != 'POST':
+    return HttpResponseNotAllowed(['POST'])
+
   # Validate POST.
 
   if len(request.FILES) != 1:

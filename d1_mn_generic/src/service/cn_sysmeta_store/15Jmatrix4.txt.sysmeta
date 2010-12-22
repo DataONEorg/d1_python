@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
+  <identifier>15Jmatrix4.txt</identifier>
+  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+  <size>7531</size>
+  <submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <checksum algorithm="MD5">1e6cf124aed03d07e28348b306529b30</checksum>
+  <dateUploaded>2010-04-26T07:25:18.078435</dateUploaded>
+  <dateSysMetadataModified>1996-04-13T08:01:47</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>

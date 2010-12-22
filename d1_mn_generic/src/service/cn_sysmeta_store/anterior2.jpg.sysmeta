@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
+  <identifier>anterior2.jpg</identifier>
+  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+  <size>724051</size>
+  <submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <checksum algorithm="MD5">f4df66db501afaf33e14ec8da8634981</checksum>
+  <dateUploaded>2010-04-26T07:23:46.952743</dateUploaded>
+  <dateSysMetadataModified>1983-05-09T18:25:56</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>

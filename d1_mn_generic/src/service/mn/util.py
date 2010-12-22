@@ -40,6 +40,7 @@ import sys
 import time
 import traceback
 import uuid
+import inspect
 
 try:
   import cjson as json
@@ -62,6 +63,7 @@ from django.utils.html import escape
 # 3rd party.
 try:
   import iso8601
+  import lxml
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
@@ -81,6 +83,17 @@ import models
 import settings
 import sys_log
 import util
+
+
+def pretty_xml(xml_str, encoding="UTF-8"):
+  '''Pretty print XML.
+  '''
+
+  xml_obj = lxml.etree.fromstring(xml_str)
+  return lxml.etree.tostring(
+    xml_obj, encoding=encoding,
+    pretty_print=True, xml_declaration=True
+  )
 
 
 def request_to_string(request):
@@ -118,6 +131,44 @@ def log_exception(max_traceback_levels=5, msg=None):
   # Traceback.
   exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
   sys_log.error('  Traceback: {0}'.format(exc_formatted_traceback))
+
+
+def exception_to_dot_str():
+  # Get stack frame of calling function.
+  frame = inspect.currentframe()
+  frame = frame.f_back.f_back
+  # Get name of calling function.
+  function_name = frame.__name__
+  # Get line number of calling function.
+  line_number = frame.f_lineno
+  # Get filename for source of calling function.
+  code = frame.f_code
+  filename = code.co_filename
+
+  return '.'.join(filename, function_name, line_number)
+
+
+def traceback_to_detail_code():
+  ''':param:
+  :return:
+  '''
+  exception_type, exception_value, exception_traceback = sys.exc_info()
+  tb = []
+  while exception_traceback:
+    co = exception_traceback.tb_frame.f_code
+    tb.append(
+      '{0}({1})'.format(
+        str(os.path.basename(co.co_filename)), str(
+          traceback.tb_lineno(
+            exception_traceback
+          )
+        )
+      )
+    )
+    exception_traceback = exception_traceback.tb_next
+  tb.append('Type: {0}'.format(exception_type))
+  tb.append('Value: {0}'.format(exception_value))
+  return '/'.join(tb)
 
 
 def clear_db():

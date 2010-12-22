@@ -41,10 +41,11 @@ urlpatterns = patterns(
   # /session/
   (r'^session/?$', 'session'),
 
-  # /object/
+  # /object
   (r'^object/?$', 'object_collection'),
   (r'^meta/(.+)$', 'meta_guid'),
   (r'^object/(.+)$', 'object_guid'),
+  (r'^checksum/(.+)$', 'checksum_guid'),
 
   # /log/
   (r'^log/?$', 'event_log_view'),
@@ -63,12 +64,15 @@ urlpatterns = patterns(
 
   # /replicate/
   (r'^replicate/(.*)/(.*)/?$', 'replicate'),
-  (r'^replicate_new/(.*)/(.*)/?$', 'replicate_new'),
-  (r'^replicate_delete/?$', 'replicate_delete'),
+  # For testing via browser.
+  (r'^test_replicate_put/(.+)/(.+)/?$', 'test_replicate_put'),
+  (r'^test_replicate_get/?$', 'test_replicate_get'),
+  (r'^test_replicate_clear/?$', 'test_replicate_clear'),
 
   # Diagnostics, debugging and testing.
-  (r'^inject_log/?$', 'inject_log'),
-  (r'^get_ip/?$', 'auth_test'),
+  (r'^test_slash/(.+)/(.+?)/?$', 'test_slash'),
+  (r'^test_get_request/?$', 'test_get_request'),
+  (r'^test_inject_log/?$', 'test_inject_log'),
 
   # Admin.
   (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),

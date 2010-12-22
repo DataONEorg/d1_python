@@ -24,5 +24,30 @@
 
 '''
 
-# Bring logging.info and family into sys_log scope.
 from logging import *
+import os
+import sys
+
+
+def log(d, x):
+  '''Log a message with context.
+  
+  :param log: The log to log to.
+  :type log: flo
+  :param message: The message to add to the log.
+  :type message: string
+   
+  :return: None
+  '''
+  d(
+    'file({0}) func({1}) line({2}): {3}'.format(
+      os.path.basename(sys._getframe(2).f_code.co_filename), sys._getframe(
+        2).f_code.co_name, sys._getframe(2).f_lineno, x
+    )
+  )
+
+
+info_ = lambda *x: log(info, x)
+debug_ = lambda *x: log(debug, x)
+warning_ = lambda *x: log(warn, x)
+error_ = lambda *x: log(error, x)

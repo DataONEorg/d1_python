@@ -153,7 +153,12 @@ LOG_PATH = _here('./mn.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
+# GMN.
 SYSMETA_CACHE_PATH = _here('./sysmeta_cache')
 OBJECT_STORE_PATH = _here('./object_store')
+STATIC_STORE_PATH = _here('./static_store')
+
+# Test CN.
+CN_SYSMETA_STORE_PATH = _here('./cn_sysmeta_store')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))

@@ -37,12 +37,7 @@ from django.db.models import Q
 # MN API.
 import d1_common.exceptions
 
-
-class Object_replication_status(models.Model):
-  guid = models.CharField(max_length=200, unique=True, db_index=True)
-  status = models.CharField(max_length=100)
-  mtime = models.DateTimeField(auto_now=True)
-
-
-class Testingsd(models.Model):
-  guidds = models.CharField(max_length=200)
+#class Object_replication_status(models.Model):
+#  guid = models.CharField(max_length=200, db_index=True)
+#  status = models.CharField(max_length=100)
+#  mtime = models.DateTimeField(auto_now=True)

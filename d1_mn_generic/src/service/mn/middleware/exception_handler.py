@@ -71,44 +71,6 @@ import mn.util as util
 import detail_codes
 
 
-def generate_debug_info():
-  # Get stack frame of calling function.
-  frame = inspect.currentframe()
-  frame = frame.f_back.f_back
-  # Get name of calling function.
-  function_name = frame.__name__
-  # Get line number of calling function.
-  line_number = frame.f_lineno
-  # Get filename for source of calling function.
-  code = frame.f_code
-  filename = code.co_filename
-
-  return '.'.join(filename, function_name, line_number)
-
-
-def traceback_to_detail_code():
-  ''':param:
-  :return:
-  '''
-  exception_type, exception_value, exception_traceback = sys.exc_info()
-  tb = []
-  while exception_traceback:
-    co = exception_traceback.tb_frame.f_code
-    tb.append(
-      '{0}({1})'.format(
-        str(os.path.basename(co.co_filename)), str(
-          traceback.tb_lineno(
-            exception_traceback
-          )
-        )
-      )
-    )
-    exception_traceback = exception_traceback.tb_next
-  tb.append('Type: {0}'.format(exception_type))
-  tb.append('Value: {0}'.format(exception_value))
-  return '/'.join(tb)
-
-
 def serialize_exception(request, exception):
   ''':param:
   :return:
@@ -137,7 +99,7 @@ def serialize_exception(request, exception):
   detail_code = detail_codes.dataone_exception_to_detail_code().detail_code(
     request, exception
   )
-  exception.detailCode = str(detail_code) + '.' + traceback_to_detail_code()
+  exception.detailCode = str(detail_code) + '.' + util.traceback_to_detail_code()
 
   # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
   # we default to JSON.
@@ -184,7 +146,7 @@ class exception_handler():
       )
 
     # If we get here, we got an unexpected exception. Wrap it in a DataONE exception.
-    tb = traceback_to_detail_code()
+    tb = util.traceback_to_detail_code()
     return HttpResponse(
       serialize_exception(
         request, d1_common.exceptions.ServiceFailure(

@@ -33,6 +33,20 @@ import settings
 
 class request_handler():
   def process_request(self, request):
+    # Django's view selection and argument parsing process is based on
+    # request.path_info. The default version of request.path_info is broken in
+    # two ways: Consecutive slashes are collapsed to a single slash and escaped
+    # slashes (%2f) are unescaped. This makes it impossible to use
+    # request.path_info to resolve REST calls where sections of the URL are
+    # variables that may contain escaped slashes. Because of that, we recreate
+    # request.path_info from the REQUEST_URI, which contains the unmodified
+    # request URL.
+    try:
+      parent_path_len = len(request.META['SCRIPT_NAME'])
+      request.path_info = request.environ['REQUEST_URI'][parent_path_len:]
+    except KeyError:
+      pass
+
     if settings.GMN_DEBUG == False:
       return None
 
