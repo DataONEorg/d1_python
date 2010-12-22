@@ -56,6 +56,8 @@ RESPONSE_TIMEOUT = 30.0
 #: HTTP User Agent that this software is known as
 USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
 
+# Note: Trailing slashes are important in the URLs.
+
 #: The root of all DataONE.  Used to perform introspection on the system when
 #: no other node information is provided.
 URL_DATAONE_ROOT = 'http://cn-dev.dataone.org/cn/' # "http://cn.dataone.org/"
@@ -84,6 +86,9 @@ URL_RESOLVE_PATH = 'resolve/'
 
 #: Path to append to target base for the node call.
 URL_NODE_PATH = 'node/'
+
+#: Path to append to target base for the checksum call.
+URL_CHECKSUM_PATH = 'checksum/'
 
 #: Path to the DataONE schema.
 #: TODO: retrieve this from D1 root
