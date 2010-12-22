@@ -64,42 +64,13 @@ def log_setup():
   logging.getLogger('').addHandler(console_logger)
 
 
-def setup_mod_wsgi(httpd_conf_path, gmn_home_path):
-  '''Set up mod_wsgi entry for GMN.'''
-
-  gmn = '''
-LoadModule wsgi_module /usr/lib/apache2/modules/mod_wsgi.so
-WSGIScriptAlias /mn {1}
-
-<Directory {0}>
-  WSGIApplicationGroup %{{GLOBAL}}
-  Order deny,allow
-  Allow from all
-</Directory>
-'''.format(gmn_home_path, os.path.join(gmn_home_path, 'gmn.wsgi'))
-
-  # Write new config.
-  conf_gmn_path = os.path.join(httpd_conf_path, 'gmn')
-  try:
-    cfg_file = open(conf_gmn_path, 'w')
-    cfg_file.write(gmn)
-  except EnvironmentError:
-    logging.error('Could not write: {0}\n'.format(conf_gmn_path))
-    raise
-
-
-def apache_restart():
-  '''Restart Apache.'''
-  config_util.run(['apache2ctl', 'restart'])
-
-
 def db_setup(gmn_home_path):
   '''Create sqlite db file for GMN.'''
 
   res = os.system('./manage.py syncdb')
   if res != 0:
     logging.error('db_setup failed.')
-    sys.exit()
+    exit()
 
 
 def fix_permissions(gmn_home_path):
@@ -132,12 +103,12 @@ def main():
     default='./'
   )
   parser.add_option(
-    '-a',
-    '--apache2-conf-path',
-    dest='apache2_conf_path',
+    '-w',
+    '--mod-wsgi-path',
+    dest='mod_wsgi_path',
     action='store',
     type='string',
-    default='/etc/apache2/conf.d/'
+    default='/usr/lib/apache2/modules/mod_wsgi.so'
   )
   parser.add_option('-v', '--verbose', action='store_true', default=False, dest='verbose')
 
@@ -146,10 +117,13 @@ def main():
   if not options.verbose:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  gmn_home_path = os.path.abspath(options.gmn_home_path)
+  # Check that we're in the GMN root folder.
+  if not os.path.exists('settings.py'):
+    print 'This script must be run from the GMN root folder (the folder'
+    print 'that contains the settings.py file).'
+    exit()
 
-  # Set up mod_wsgi entry for GMN.
-  setup_mod_wsgi(options.apache2_conf_path, gmn_home_path)
+  gmn_home_path = os.path.abspath(options.gmn_home_path)
 
   # Create sqlite db file for GMN.
   db_setup(gmn_home_path)
@@ -162,9 +136,6 @@ def main():
 
   # Update GMN version from SVN revision number.
   update_version_from_svn()
-
-  # Restart Apache.
-  apache_restart()
 
 
 if __name__ == '__main__':

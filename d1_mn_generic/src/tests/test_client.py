@@ -56,6 +56,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../m
 try:
   #import d1_common.mime_multipart
   import d1_common.exceptions
+  import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
@@ -74,7 +75,7 @@ except ImportError, e:
 # 3rd party.
 # Lxml
 try:
-  from lxml import etree, objectify
+  import lxml
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
@@ -141,10 +142,10 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertIn('Content-Type', response)
 
   def assert_xml_equals(self, xml_a, xml_b):  
-    obj_a = objectify.fromstring(xml_a)
-    str_a = etree.tostring(obj_a)
-    obj_b = objectify.fromstring(xml_b)
-    str_b = etree.tostring(obj_b)
+    obj_a = lxml.objectify.fromstring(xml_a)
+    str_a = lxml.etree.tostring(obj_a)
+    obj_b = lxml.objectify.fromstring(xml_b)
+    str_b = lxml.etree.tostring(obj_b)
 
     str_a_orig = str_a
     str_b_orig = str_b
@@ -162,14 +163,14 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.assertEquals(str_a_orig, str_b_orig, msg)
 
-  def get_object_info_by_identifer(self, identifier):
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+  def get_object_info_by_identifer(self, pid):
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
     object_list = client.listObjects()
     
     for o in object_list['objectInfo']:
-      if o["identifier"].value() == identifier:
+      if o["identifier"].value() == pid:
         return o
   
     # Object not found
@@ -186,7 +187,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.RESTClient()
   
     # Objects.
-    crud_object_url = urlparse.urljoin(self.options.gmn_url, 'object')
+    crud_object_url = urlparse.urljoin(self.opts.gmn_url, 'object')
     try:
       res = client.DELETE(crud_object_url)
       res = '\n'.join(res)
@@ -199,7 +200,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def object_collection_is_empty(self):
     '''Verify that object collection is empty
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
     object_list = client.listObjects()
@@ -213,7 +214,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.RESTClient()
   
     # Access log.
-    event_log_url = urlparse.urljoin(self.options.gmn_url, 'log')
+    event_log_url = urlparse.urljoin(self.opts.gmn_url, 'log')
     try:
       res = client.DELETE(event_log_url)
       res = '\n'.join(res)
@@ -226,7 +227,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def event_log_is_empty(self):
     '''Verify that access log is empty
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
     logRecords = client.getLogRecords()
@@ -243,14 +244,14 @@ class TestSequenceFunctions(unittest.TestCase):
     files = [('csv', 'csv', csv_file.read())]
     
     multipart = d1_common.mime_multipart.multipart({}, [], files)
-    inject_log_url = urlparse.urljoin(self.options.gmn_url, 'inject_log')
+    inject_log_url = urlparse.urljoin(self.opts.gmn_url, 'inject_log')
     status, reason, page = multipart.post(inject_log_url)
   
   
   def create_log(self):
     '''Verify that access log correctly reflects create_object actions
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
     logRecords = client.getLogRecords()
@@ -271,15 +272,15 @@ class TestSequenceFunctions(unittest.TestCase):
   def compare_byte_by_byte(self):
     '''Read set of test objects back from MN and do byte-by-byte comparison with local copies
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
     
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      identifier = urllib.unquote(os.path.basename(object_path))
+      pid = urllib.unquote(os.path.basename(object_path))
       #sysmeta_str_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'r').read()
-      #sysmeta_str_d1 = client.getSystemMetadata(identifier).read()
-      object_str_d1 = client.get(identifier).read()
+      #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
+      object_str_d1 = client.get(pid).read()
       #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
       self.assertEqual(object_str_disk, object_str_d1)
       
@@ -290,16 +291,16 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Read complete object collection and compare with values stored in local SysMeta files
     '''
     # Get object collection.
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
     object_list = client.listObjects()
     
     # Loop through our local test objects.
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       # Get name of corresponding object and check that it exists on disk.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       self.assertTrue(os.path.exists(object_path))
-      # Get identifier for object.
-      identifier = urllib.unquote(os.path.basename(object_path))
+      # Get pid for object.
+      pid = urllib.unquote(os.path.basename(object_path))
       # Get sysmeta xml for corresponding object from disk.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_file)
@@ -311,7 +312,7 @@ class TestSequenceFunctions(unittest.TestCase):
           found = True
           break;
   
-      self.assertTrue(found, 'Couldn\'t find object with identifier "{0}"'.format(sysmeta_obj.identifier))
+      self.assertTrue(found, 'Couldn\'t find object with pid "{0}"'.format(sysmeta_obj.identifier))
       
       self.assertEqual(object_info.identifier.value(), sysmeta_obj.identifier)
       self.assertEqual(object_info.objectFormat, sysmeta_obj.objectFormat)
@@ -323,7 +324,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def slicing_1(self):
     '''Generic: Verify slicing: Starting at 0 and getting half of the available objects
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_cnt = 100
     object_cnt_half = object_cnt / 2
@@ -336,7 +337,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Generic: Verify slicing: Starting at object_cnt_half and requesting more objects
     than there are
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_cnt = 100
     object_cnt_half = object_cnt / 2
@@ -347,7 +348,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def slicing_3(self):
     '''Generic: Verify slicing: Starting above number of objects that we have
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_cnt = 100
     object_cnt_half = object_cnt / 2
@@ -358,7 +359,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def slicing_4(self):
     '''Generic: Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_cnt = 100
     object_cnt_half = object_cnt / 2
@@ -373,7 +374,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def date_range_1(self):
     '''Generic: Verify date range query: Get all objects from the 1990s
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_list = client.listObjects(
       startTime=datetime.datetime(1990, 1, 1),
@@ -385,7 +386,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def date_range_2(self):
     '''Generic: Verify date range query: Get first 10 objects from the 1990s
     '''    
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_list = client.listObjects(
       startTime=datetime.datetime(1990, 1, 1),
@@ -399,7 +400,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Generic: Verify date range query: Get 10 first objects from the 1990s, filtered by
     objectFormat
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_list = client.listObjects(
       startTime=datetime.datetime(1990, 1, 1),
@@ -413,7 +414,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def date_range_4(self):
     '''Generic: Verify date range query: Get 10 first objects from non-existing date range
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_list = client.listObjects(
       startTime=datetime.datetime(2500, 1, 1),
@@ -427,7 +428,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def get_object_count(self):
     '''Generic: Get object count
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     object_list = client.listObjects(
       start=0,
@@ -442,7 +443,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Generic: Verify 404 NotFound when attempting to get non-existing object
     /object/_invalid_guid_
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     try:
       response = client.get('_invalid_guid_')
@@ -455,7 +456,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Generic: Verify successful retrieval of valid object
     /object/valid_guid
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     try:
       response = client.get('10Dappend2.txt')
@@ -477,7 +478,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Verify 404 NotFound when attempting to get non-existing SysMeta
     /meta/_invalid_guid_
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     try:
       response = client.getSystemMetadata('_invalid_guid_')
@@ -490,7 +491,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Verify successful retrieval of valid object
     /meta/valid_guid
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     response = client.getSystemMetadata('10Dappend2.txt')
     self.assertTrue(response)
@@ -498,7 +499,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def xml_validation(self):
     '''Verify that returned XML document validates against the ObjectList schema
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     
@@ -556,7 +557,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def monitor_xml_validation(self):
     '''Verify that returned XML document validates against the ObjectList schema
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
     response = client.client.GET(client.getMonitorObjectUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     try:
@@ -580,7 +581,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def orderby_size(self):
     '''Verify ObjectList orderby: size
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=size', {'Accept': 'application/json'})
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 1982)
@@ -589,7 +590,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def orderby_size_desc(self):
     '''Verify ObjectList orderby: desc_size
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=desc_size', {'Accept': 'application/json'})
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
@@ -614,22 +615,22 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_1030_create_objects(self):
     '''Local: Populate MN with set of test objects (local)
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       object_file = open(object_path, 'r')
   
-      # The identifier is stored in the sysmeta.
+      # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
           
-      # To create a valid URL, we must quote the identifier twice. First, so
+      # To create a valid URL, we must quote the pid twice. First, so
       # that the URL will match what's on disk and then again so that the
       # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.options.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
+      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
   
       # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
@@ -799,22 +800,22 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_2030_create_objects(self):
     '''Remote: Populate MN with set of test objects (Remote)
     '''
-    client = d1_client.client.DataOneClient(self.options.gmn_url)
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       object_file = open(object_path, 'r')
   
-      # The identifier is stored in the sysmeta.
+      # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
           
-      # To create a valid URL, we must quote the identifier twice. First, so
+      # To create a valid URL, we must quote the pid twice. First, so
       # that the URL will match what's on disk and then again so that the
       # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.options.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
+      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
   
       # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
@@ -968,27 +969,109 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.orderby_size_desc()
 
+  def test_checksum_serialization(self):
+    f = d1_common.types.checksum_serialization.Checksum('1'*32)
+    f.checksum.algorithm = 'MD5'
+    xml_doc, content_type = f.serialize('application/xml')
+    #<?xml version="1.0" ?><ns1:checksum algorithm="MD5" xmlns:ns1="http://dataone.org/service/types/0.5.1">11111111111111111111111111111111</ns1:checksum>
+    f.deserialize(xml_doc, 'application/xml')
+
+    json_doc, content_type = f.serialize('application/json')
+    # {"checksum": "11111111111111111111111111111111", "algorithm": "MD5"}
+    f.deserialize(json_doc, 'application/json')
+    
+    csv_doc, content_type = f.serialize('text/csv')
+    # 11111111111111111111111111111111,MD5
+    f.deserialize(csv_doc, 'text/csv')
+
+  def test_3000_replication_1(self):
+    # The object we will replicate.
+    pid = 'FigS2_Hsieh.pdf'
+    src_node = 'gmn_test_2'
+
+    client_src = d1_client.client.DataOneClient(self.opts.gmn2_url)
+    client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
+
+    # Get the checksum of the object from the source GMN. This also checks if
+    # we can reach the source server and that it has the object we will replicate.
+    src_checksum_obj = client_src.checksum(pid)
+    src_checksum = src_checksum_obj.value()
+    src_algorithm = src_checksum_obj.algorithm
+
+    # Get the bytes of the object from the source server.
+    src_obj_str = client_src.get(pid).read()
+
+    # Replicate.
+
+    # Clear any existing Replica items related to this pid and test
+    # source node on the CN.
+    clear_replication_status_url = urlparse.urljoin(client_dst.client.target,
+                                                    '/cn/test_clear_replication_status/{0}/{1}'.format(src_node, pid))
+    client_dst.client.GET(clear_replication_status_url)
+    
+    # Add replication task to the destination GMN work queue.
+    replicate_url = urlparse.urljoin(client_dst.client.target,
+                                                    '/replicate/{0}/{1}'.format(src_node, pid))
+    client_dst.client.PUT(replicate_url, '')
+    
+    # Poll for completed replication.
+    replication_completed = False
+    while not replication_completed:
+      test_get_replication_status_xml = urlparse.urljoin(client_dst.client.target,
+                                                      '/cn/test_get_replication_status_xml/{0}'.format(pid))
+      status_xml_str = client_dst.client.GET(test_get_replication_status_xml).read()
+      status_xml_obj = lxml.etree.fromstring(status_xml_str)
+
+      for replica in status_xml_obj.xpath('/replicas/replica'):
+        if replica.xpath('replicaMemberNode')[0].text == src_node:
+          if replica.xpath('replicationStatus')[0].text == 'completed':
+            replication_completed = True
+            break
+
+      if not replication_completed:
+        time.sleep(1)
+
+    # Get checksum of the object on the destination server and compare it to
+    # the checksum retrieved from the source server.
+    dst_checksum_obj = client_dst.checksum(pid)
+    dst_checksum = dst_checksum_obj.value()
+    dst_algorithm = dst_checksum_obj.algorithm
+    self.assertEqual(src_checksum, dst_checksum)
+    self.assertEqual(src_algorithm, dst_algorithm)
+    
+    # Get the bytes of the object on the destination and compare them with the
+    # bytes retrieved from the source.
+    dst_obj_str = client_dst.get(pid).read()
+    self.assertEqual(src_obj_str, dst_obj_str)
+
 def main():
   log_setup()
   
-  # Command line options.
+  # Command line opts.
   parser = optparse.OptionParser()
-  parser.add_option('-g', '--gmn-url', dest='gmn_url', action='store', type='string', default='http://127.0.0.1:8000/')
+  parser.add_option('-g', '--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option('-2', '--gmn2-url', dest='gmn2_url', action='store', type='string', default='http://0.0.0.0:8001/')
   parser.add_option('-c', '--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
   parser.add_option('-x', '--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
   parser.add_option('-p', '--obj-path', dest='obj_path', action='store', type='string', default='/var/www/test_client_objects')
   parser.add_option('-w', '--obj-url', dest='obj_url', action='store', type='string', default='http://localhost/test_client_objects/')
   parser.add_option('-v', '--verbose', action='store_true', default=False, dest='verbose')
   parser.add_option('-u', '--quick', action='store_true', default=False, dest='quick')
+  parser.add_option('-t', '--test', action='store', default='', dest='test', help='run a single test')
 
-  (options, args) = parser.parse_args()
+  (opts, args) = parser.parse_args()
 
-  if not options.verbose:
+  if not opts.verbose:
     logging.getLogger('').setLevel(logging.ERROR)
-
+  
   s = TestSequenceFunctions
-  s.options = options
-  suite = unittest.TestLoader().loadTestsFromTestCase(s)
+  s.opts = opts
+
+  if opts.test != '':
+    suite = unittest.TestSuite(map(s, [opts.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+    
   unittest.TextTestRunner(verbosity=2).run(suite)
   
 if __name__ == '__main__':
