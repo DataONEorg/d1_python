@@ -19,10 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_common.types.identifier_serialization
-===============================================
+Module d1_common.types.checksum_serialization
+=============================================
 
-Implements serializaton and de-serialization for the the identifier type.
+Implements serializaton and de-serialization for the the checksum type.
 '''
 
 # Stdlib.
@@ -58,17 +58,17 @@ except ImportError, e:
 #===============================================================================
 
 
-class Identifier(object):
-  '''Implements serialization of DataONE Identifier
+class Checksum(object):
+  '''Implements serialization of DataONE Checksum
   '''
 
-  def __init__(self, identifier='<dummy>'):
+  def __init__(self, checksum):
     self.serialize_map = {
       'application/json': self.serialize_json,
       'text/csv': self.serialize_csv,
       'text/xml': self.serialize_xml,
       'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_rdf_xml,
+      'application/rdf+xml': self.serialize_null, #TODO: Not in current REST spec.
       'text/html': self.serialize_null, #TODO: Not in current REST spec.
       'text/log': self.serialize_null, #TODO: Not in current REST spec.
     }
@@ -78,7 +78,7 @@ class Identifier(object):
       'text/csv': self.deserialize_csv,
       'text/xml': self.deserialize_xml,
       'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_rdf_xml,
+      'application/rdf+xml': self.deserialize_null, #TODO: Not in current REST spec.
       'text/html': self.deserialize_null, #TODO: Not in current REST spec.
       'text/log': self.deserialize_null, #TODO: Not in current REST spec.
     }
@@ -88,12 +88,12 @@ class Identifier(object):
       'text/csv',
       'text/xml',
       'application/xml',
-      'application/rdf+xml',
+      #'application/rdf+xml',
       #'text/html',
       #'text/log',
     ]
 
-    self.identifier = d1_common.types.generated.dataoneTypes.identifier(identifier)
+    self.checksum = d1_common.types.generated.dataoneTypes.checksum(checksum)
 
   def serialize(self, accept='application/json', pretty=False, jsonvar=False):
     '''
@@ -112,28 +112,25 @@ class Identifier(object):
     ), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
-    '''Serialize Identifier to XML.
+    '''Serialize Checksum to XML.
     '''
-    return self.identifier.toxml()
+    return self.checksum.toxml()
 
   def serialize_json(self, pretty=False, jsonvar=False):
-    '''Serialize Identifier to JSON.
+    '''Serialize Checksum to JSON.
     '''
-    return json.dumps({'identifier': self.identifier.value()})
+    return json.dumps({'checksum': self.checksum.value(), 'algorithm': self.checksum.algorithm})
 
   def serialize_csv(self, pretty=False, jsonvar=False):
-    '''Serialize Identifier to CSV.
+    '''Serialize Checksum to CSV.
     '''
     io = StringIO.StringIO()
     csv_writer = csv.writer(
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
     )
-    csv_writer.writerow([self.identifier.value()])
+    csv_writer.writerow([self.checksum.value(), self.checksum.algorithm])
     return io.getvalue()
-
-  def serialize_rdf_xml(self, doc):
-    raise d1_common.exceptions.NotImplemented(0, 'serialize_rdf_xml not implemented.')
 
   def serialize_null(self, doc, pretty=False, jsonvar=False):
     raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
@@ -144,13 +141,16 @@ class Identifier(object):
     return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
-    self.identifier = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
-    return self.identifier
+    self.checksum = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
+    return self.checksum
 
   def deserialize_json(self, doc):
     j = json.loads(doc)
-    self.identifier = d1_common.types.generated.dataoneTypes.identifier(j['identifier'])
-    return self.identifier
+
+    self.checksum = d1_common.types.generated.dataoneTypes.checksum(j['checksum'])
+    self.checksum.algorithm = j['algorithm']
+
+    return self.checksum
 
   def deserialize_csv(self, doc):
     io = StringIO.StringIO(doc)
@@ -160,12 +160,11 @@ class Identifier(object):
     )
 
     for csv_line in csv_reader:
-      self.identifier = d1_common.types.generated.dataoneTypes.identifier(csv_line[0])
+      self.checksum = d1_common.types.generated.dataoneTypes.checksum(csv_line[0])
+      self.checksum.algorithm = csv_line[1]
       break
-    return self.identifier
 
-  def deserialize_rdf_xml(self, doc):
-    raise d1_common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
+    return self.checksum
 
   def deserialize_null(self, doc):
     raise d1_common.exceptions.NotImplemented(

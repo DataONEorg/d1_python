@@ -10,6 +10,8 @@ __all__ = [
   'exceptions',
   'upload',
   'xmlrunner',
+  'types.checksum_serialization',
+  'types.identifier_serialization',
   'types.logrecords_serialization',
   'types.monitorlist_serialization',
   'types.nodelist_serialization',
