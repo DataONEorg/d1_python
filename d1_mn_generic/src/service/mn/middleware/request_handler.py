@@ -29,6 +29,7 @@
 
 from django.http import HttpResponse
 import settings
+import re
 
 
 class request_handler():
@@ -42,13 +43,18 @@ class request_handler():
     # request.path_info from the REQUEST_URI, which contains the unmodified
     # request URL.
     try:
+      # Strip parent path from path_info.
       parent_path_len = len(request.META['SCRIPT_NAME'])
       request.path_info = request.environ['REQUEST_URI'][parent_path_len:]
+      # Strip any arguments from path_info.
+      request.path_info = re.sub(r'\?.*', '', request.path_info)
     except KeyError:
       pass
 
     if settings.GMN_DEBUG == False:
       return None
+
+    print request.path_info
 
     ## Print request.
     #print '>'*80

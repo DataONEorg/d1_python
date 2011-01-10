@@ -31,6 +31,7 @@
 
 # Stdlib.
 import csv
+import codecs
 import datetime
 import dateutil
 import glob
@@ -42,12 +43,15 @@ import optparse
 import os
 import re
 import stat
+import StringIO
 import sys
 import time
 import unittest
 import urllib
 import urlparse
 import uuid
+
+from xml.sax.saxutils import escape
 
 # If this was checked out as part of the GMN service, the libraries can be found here.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../mn_prototype/')))
@@ -176,6 +180,21 @@ class TestSequenceFunctions(unittest.TestCase):
     # Object not found
     assertTrue(False)
 
+  def gen_sysmeta(self, pid, size, md5, now):
+    return u'''<?xml version="1.0" encoding="UTF-8"?>
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.6.0">
+  <identifier>{0}</identifier>
+  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+  <size>{1}</size>
+  <submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <checksum algorithm="MD5">{2}</checksum>
+  <dateUploaded>{3}</dateUploaded>
+  <dateSysMetadataModified>{3}</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>
+'''.format(escape(pid), size, md5, datetime.datetime.isoformat(now))
 
   #
   # Tests that are run for both local and remote objects.
@@ -244,9 +263,10 @@ class TestSequenceFunctions(unittest.TestCase):
     files = [('csv', 'csv', csv_file.read())]
     
     multipart = d1_common.mime_multipart.multipart({}, [], files)
-    inject_log_url = urlparse.urljoin(self.opts.gmn_url, 'inject_log')
+    inject_log_url = urlparse.urljoin(self.opts.gmn_url, 'test_inject_log')
     status, reason, page = multipart.post(inject_log_url)
-  
+    
+    self.assertEqual(status, 200)
   
   def create_log(self):
     '''Verify that access log correctly reflects create_object actions
@@ -258,16 +278,11 @@ class TestSequenceFunctions(unittest.TestCase):
   
     found = False
     for o in logRecords.logEntry:
-      if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml':
+      if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' and o.event == 'create': 
         found = True
         break
     
     self.assertTrue(found)
-    # accessTime varies, so we just check if it's valid ISO8601
-    #self.assertTrue(dateutil.parser.parse(o.dateLogged))
-    self.assertEqual(o.identifier.value(), "hdl:10255/dryad.654/mets.xml")
-    self.assertEqual(o.event, "update")
-    self.assertTrue(o.principal)
   
   def compare_byte_by_byte(self):
     '''Read set of test objects back from MN and do byte-by-byte comparison with local copies
@@ -616,7 +631,6 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Local: Populate MN with set of test objects (local)
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -984,7 +998,10 @@ class TestSequenceFunctions(unittest.TestCase):
     # 11111111111111111111111111111111,MD5
     f.deserialize(csv_doc, 'text/csv')
 
-  def test_3000_replication_1(self):
+  def _test_3000_replication_1(self):
+    '''Commented out because it requires a second GMN instance
+    '''
+    
     # The object we will replicate.
     pid = 'FigS2_Hsieh.pdf'
     src_node = 'gmn_test_2'
@@ -1044,20 +1061,61 @@ class TestSequenceFunctions(unittest.TestCase):
     dst_obj_str = client_dst.get(pid).read()
     self.assertEqual(src_obj_str, dst_obj_str)
 
+  def test_4000_unicode_1(self):
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+
+    test_doc_path = os.path.join(self.opts.int_path,
+                                 'src', 'test', 'resources', 'd1_testdocs', 'encodingTestSet')
+    test_ascii_strings_path = os.path.join(test_doc_path, 'testAsciiStrings.utf8.txt')
+
+    file_obj = codecs.open(test_ascii_strings_path, 'r', 'utf-8')
+    for line in file_obj:
+      line = line.strip()
+      try:
+        pid_unescaped, pid_escaped = line.split('\t')
+      except ValueError:
+        pass
+
+      # Create a small test object containing only the pid. 
+      scidata = pid_unescaped.encode('utf-8')
+
+      # Create corresponding system metadata for the test object.
+      size = len(scidata)
+      # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
+      # of the internal Python encoding for the string. So we maintain scidata as a utf-8 string.
+      md5 = hashlib.md5(scidata).hexdigest()
+      now = datetime.datetime.now()
+      sysmeta_xml = self.gen_sysmeta(pid_unescaped, size, md5, now)
+
+      # Create the object on GMN.
+      client.create(pid_unescaped, StringIO.StringIO(scidata), StringIO.StringIO(sysmeta_xml), {})
+
+      # Retrieve the object from GMN.
+      scidata_retrieved = client.get(pid_unescaped).read()
+      sysmeta_obj_retrieved = client.getSystemMetadata(pid_unescaped)
+      
+      # Round-trip validation.
+      self.assertEqual(scidata_retrieved, scidata)
+      self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
+
+      
 def main():
   log_setup()
   
   # Command line opts.
   parser = optparse.OptionParser()
-  parser.add_option('-g', '--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
-  parser.add_option('-2', '--gmn2-url', dest='gmn2_url', action='store', type='string', default='http://0.0.0.0:8001/')
-  parser.add_option('-c', '--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
-  parser.add_option('-x', '--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
-  parser.add_option('-p', '--obj-path', dest='obj_path', action='store', type='string', default='/var/www/test_client_objects')
-  parser.add_option('-w', '--obj-url', dest='obj_url', action='store', type='string', default='http://localhost/test_client_objects/')
-  parser.add_option('-v', '--verbose', action='store_true', default=False, dest='verbose')
-  parser.add_option('-u', '--quick', action='store_true', default=False, dest='quick')
-  parser.add_option('-t', '--test', action='store', default='', dest='test', help='run a single test')
+  parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option('--gmn2-url', dest='gmn2_url', action='store', type='string', default='http://0.0.0.0:8001/')
+  parser.add_option('--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
+  parser.add_option('--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
+  parser.add_option('--obj-path', dest='obj_path', action='store', type='string', default='./test_client_objects')
+  parser.add_option('--obj-url', dest='obj_url', action='store', type='string', default='http://localhost/test_client_objects/')
+  parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
+  parser.add_option('--quick', action='store_true', default=False, dest='quick')
+  parser.add_option('--test', action='store', default='', dest='test', help='run a single test')
+#  parser.add_option('--unicode-path', dest='unicode_path', action='store', type='string', default='/home/roger/D1/svn/allsoftware/cicore/d1_integration/src/test/resources/d1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt')
+  parser.add_option('--integration-path', dest='int_path', action='store', type='string', default='./d1_integration')
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
 
   (opts, args) = parser.parse_args()
 
@@ -1066,14 +1124,18 @@ def main():
   
   s = TestSequenceFunctions
   s.opts = opts
-
+ 
   if opts.test != '':
     suite = unittest.TestSuite(map(s, [opts.test]))
+    #suite.debug()
   else:
     suite = unittest.TestLoader().loadTestsFromTestCase(s)
-    
+
+#  if opts.debug == True:    
+#    unittest.TextTestRunner(verbosity=2).debug(suite)
+#  else:
   unittest.TextTestRunner(verbosity=2).run(suite)
-  
+
 if __name__ == '__main__':
   main()
 
