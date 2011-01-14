@@ -42,9 +42,9 @@ Example:
   >>> from d1_client import client
   >>> cli = client.DataOneClient()
   >>> objects = cli.listObjects(target=target,count=3)
-  >>> objects['data'][0]['guid']
+  >>> objects['data'][0]['pid']
   u'02c3f67e-b2e1-4550-8fae-f6d90e9f15f6'
-  >>> sysm = cli.getSystemMetadata(objects['data'][0]['guid'], target=target)
+  >>> sysm = cli.getSystemMetadata(objects['data'][0]['pid'], target=target)
   >>> sysm.Checksum
   '2e01e17467891f7c933dbaa00e1459d23db3fe4f'
 '''
@@ -165,6 +165,18 @@ class SystemMetadata(object):
     if res is None:
       raise AttributeError("Property '%s' not found" % name)
     return res
+
+  @property
+  def pid(self):
+    '''
+    '''
+    return self._getValues(u'identifier')
+
+  @property
+  def objectFormat(self):
+    '''
+    '''
+    return self._getValues(u'objectFormat')
 
   # <checksum algorithm="MD5">4a8565eddcef66b2147d3aa313f3ebbb</checksum>
   @property

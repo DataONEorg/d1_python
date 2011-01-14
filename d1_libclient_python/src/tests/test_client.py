@@ -193,7 +193,7 @@ class TestDataOneClient(TestCaseWithURLCompare):
       endTime=endTime,
       requestFormat=requestFormat
     )
-    id = objlist.objectInfo[0].identifier
+    id = objlist.objectInfo[0].pid
     logging.info("Attempting to get ID=%s" % id)
     bytes = cli.get(id).read()
     headers = cli.headers

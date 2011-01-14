@@ -52,7 +52,7 @@ except:
 # DataONE.
 try:
   import d1_common.types.checksum_serialization
-  import d1_common.types.identifier_serialization
+  import d1_common.types.pid_serialization
   import d1_common.types.objectlist_serialization
   import d1_common.types.objectlocationlist_serialization
   import d1_common.types.systemmetadata
@@ -450,50 +450,50 @@ class DataOneClient(object):
 
   ## === DataONE API Methods ===
 
-  def get(self, identifier, headers=None):
+  def get(self, pid, headers=None):
     '''Retrieve an object from DataONE.
     :param: (string) Identifier of object to retrieve.
     :return: (file) Open file stream.
     '''
 
-    url = self.getObjectUrl(id=identifier)
-    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
+    url = self.getObjectUrl(id=pid)
+    self.logger.debug_("pid({0}) url({1})".format(pid, url))
     if headers is None:
       headers = self.headers
     response = self.client.GET(url, headers)
     return response
 
-  def getSystemMetadataResponse(self, identifier, headers=None):
+  def getSystemMetadataResponse(self, pid, headers=None):
     '''Retrieve a SysMeta object from DataONE.
     :param: (string) Identifier of object for which to retrieve SysMeta.
     :return: (file, :class:d1sysmeta.SystemMetadata) Open file stream.
     '''
 
-    url = self.getMetaUrl(id=identifier)
-    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
+    url = self.getMetaUrl(id=pid)
+    self.logger.debug_("pid({0}) url({1})".format(pid, url))
     if headers is None:
       headers = self.headers
     response = self.client.GET(url, headers)
     return response
 
-  def getSystemMetadata(self, identifier, headers=None):
+  def getSystemMetadata(self, pid, headers=None):
     '''Get de-serialized SystemMetadata object.
     :param: (string) Identifier of object for which to retrieve SysMeta
     :return: (class) De-serialized SystemMetadata object.
     '''
 
-    response = self.getSystemMetadataResponse(identifier, headers)
+    response = self.getSystemMetadataResponse(pid, headers)
     format = response.headers['content-type']
     return d1_common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
-  def resolve(self, identifier, headers=None):
-    '''Resolve an identifier into a ObjectLocationList.
+  def resolve(self, pid, headers=None):
+    '''Resolve an pid into a ObjectLocationList.
     :param: (string) Identifier of the object to resolve.
     :return: :class:ObjectLocationList
     '''
 
-    url = urlparse.urljoin(self.getResolveUrl(), urllib.quote(identifier, ''))
-    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
+    url = urlparse.urljoin(self.getResolveUrl(), urllib.quote(pid, ''))
+    self.logger.debug_("pid({0}) url({1})".format(pid, url))
     if headers is None:
       headers = self.headers
     # Fetch.
@@ -519,14 +519,14 @@ class DataOneClient(object):
     deser = d1_common.types.nodelist_serialization.NodeList()
     return deser.deserialize(response.read(), format)
 
-  def checksum(self, identifier, headers=None):
+  def checksum(self, pid, headers=None):
     '''Get checksum for object.
     :param: (pid)
     :return: (class) :class:NodeList
     '''
 
-    url = urlparse.urljoin(self.getChecksumUrl(), urllib.quote(identifier, ''))
-    self.logger.debug_("identifier({0}) url({1})".format(identifier, url))
+    url = urlparse.urljoin(self.getChecksumUrl(), urllib.quote(pid, ''))
+    self.logger.debug_("pid({0}) url({1})".format(pid, url))
     if headers is None:
       headers = self.headers
     # Fetch.
@@ -681,7 +681,7 @@ class DataOneClient(object):
     deser = d1_common.types.logrecords_serialization.LogRecords()
     return deser.deserialize(response.read(), format)
 
-  #def create(self, identifier, object_str, sysmeta_str):
+  #def create(self, pid, object_str, sysmeta_str):
   #  # Create MIME-multipart Mixed Media Type body.
   #  files = []
   #  files.append(('object', 'object', object_str))
@@ -695,9 +695,9 @@ class DataOneClient(object):
   #    'Content-Length': str(len(mime_doc)),
   #  }
   #  
-  #  crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
+  #  crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(pid, ''))
   #
-  #  self.logger.debug_("url({0}) identifier({1}) headers({2})".format(crud_create_url, identifier, headers))
+  #  self.logger.debug_("url({0}) pid({1}) headers({2})".format(crud_create_url, pid, headers))
   #
   #  try:
   #    res = self.client.POST(crud_create_url, data=mime_doc, headers=headers)
@@ -708,7 +708,7 @@ class DataOneClient(object):
   #    logging.error('REST call failed: {0}'.format(str(e)))
   #    raise
 
-  def create(self, identifier, object_str, sysmeta_str, vendor_specific={}):
+  def create(self, pid, scidata, sysmeta, vendor_specific={}):
     '''Create an object in DataONE.
     :param: (string) Identifier of object to create.
     :param: (flo or string) Object data.
@@ -717,15 +717,23 @@ class DataOneClient(object):
     :return: (None)
     '''
 
+    #assert type(pid) is unicode
+
     # Data to post.
     files = []
-    files.append(('object', 'object', object_str))
-    files.append(('systemmetadata', 'systemmetadata', sysmeta_str))
+    files.append(('object', 'object', scidata))
+    files.append(('systemmetadata', 'systemmetadata', sysmeta))
 
-    # Send REST POST call to register object.
+    # Send REST POST call to register object. The URL is the same as for /object/ GET.
 
-    crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
-    self.logger.debug_('url({0}) identifier({1})'.format(crud_create_url, identifier))
+    crud_create_url = urlparse.urljoin(
+      self.getObjectUrl(), urllib.quote(
+        pid.encode(
+          'utf-8'
+        ), ''
+      )
+    )
+    self.logger.debug_(u'url({0}) pid({1})'.format(crud_create_url, pid))
 
     multipart = mime_multipart.multipart(vendor_specific, [], files)
     try:
@@ -762,12 +770,12 @@ class SimpleDataOneClient(object):
   #    #TODO: Need to define this detailCode base value
   #    self.client = clientClass(target, timeout)
 
-  def resolve(self, identifier):
-    '''Resolve an identifier to object location
+  def resolve(self, pid):
+    '''Resolve an pid to object location
 
     The difference between this resolve() and DataOneClient.resolve() is that
     DataOneClient.resolve() returns a complete, deserialized object representing
-    all the resolve data for the given identifier, while this selects a single
+    all the resolve data for the given pid, while this selects a single
     location and cross-references that with information in the node registry to
     return a single service interface at a MN that the DataOneClient() can be
     instantiated with.
@@ -778,44 +786,44 @@ class SimpleDataOneClient(object):
     nodes = client_root.node()
 
     # Resolve object.
-    object_location_list = client_root.resolve(identifier)
+    object_location_list = client_root.resolve(pid)
 
     # Get first location for object.
     for object_location in object_location_list.objectLocation:
       # Use registry to look up baseURL.
       for node in nodes.node:
-        if node.identifier == object_location.nodeIdentifier:
+        if node.pid == object_location.nodeIdentifier:
           return node.baseURL
 
-    raise d1common.exceptions.NotFound(0, 'Could not resolve identifier', guid)
+    raise d1common.exceptions.NotFound(0, 'Could not resolve pid', pid)
 
-  def get(self, identifier):
+  def get(self, pid):
     '''Retrieve a Science Object from DataONE.
     :param: (string) Identifier of object to retrieve.
     :return: (file) Open file stream.
     '''
 
     # Resolve.
-    mn = self.resolve(identifier)
+    mn = self.resolve(pid)
 
     # Get.
     client_mn = DataOneClient(target=mn)
 
-    return client_mn.get(identifier)
+    return client_mn.get(pid)
 
-  def getSysMeta(self, identifier):
+  def getSysMeta(self, pid):
     '''Get de-serialized SystemMetadata object.
     :param: (string) Identifier of object for which to retrieve SysMeta
     :return: (class) De-serialized SystemMetadata object.
     '''
 
     # Resolve.
-    mn = self.resolve(identifier)
+    mn = self.resolve(pid)
 
     # Get.
     client_mn = DataOneClient(target=mn)
 
-    response = client_mn.getSystemMetadataResponse(identifier)
+    response = client_mn.getSystemMetadataResponse(pid)
 
     format = response.headers['content-type']
     return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
@@ -853,23 +861,23 @@ class SimpleDataOneClient(object):
 
     return response
 
-  def create(self, identifier, object_str, sysmeta_str):
+  def create(self, pid, scidata, sysmeta):
     '''Create an object in DataONE.
     :param: (string) Identifier of object to create.
-    :param: (flo or string) Object data.
-    :param: (flo or string) SysMeta.
+    :param: (flo) SciData.
+    :param: (flo) SysMeta.
     :return: (None)
     '''
 
     # Data to post.
     files = []
-    files.append(('object', 'object', object_str))
-    files.append(('systemmetadata', 'systemmetadata', sysmeta_str))
+    files.append(('object', 'object', scidata))
+    files.append(('systemmetadata', 'systemmetadata', sysmeta))
 
     # Send REST POST call to register object.
 
-    crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(identifier, ''))
-    self.logger.debug_('url({0}) identifier({1})'.format(crud_create_url, identifier))
+    crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(pid, ''))
+    self.logger.debug_('url({0}) pid({1})'.format(crud_create_url, pid))
 
     multipart = mime_multipart.multipart({}, [], files)
     try:
