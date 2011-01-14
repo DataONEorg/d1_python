@@ -172,13 +172,13 @@ class DataONEException(Exception):
 
 
 class DataONEIdentifierException(DataONEException):
-  '''Base class for exceptions raised by PyD1 that include an identifier in
+  '''Base class for exceptions raised by PyD1 that include an pid in
   the constructor.
   '''
 
-  def __init__(self, errorCode, detailCode, description, identifier, traceInformation={}):
+  def __init__(self, errorCode, detailCode, description, pid, traceInformation={}):
     DataONEException.__init__(self, errorCode, detailCode, description, traceInformation)
-    self.traceInfo['identifier'] = identifier
+    self.traceInfo['pid'] = pid
 
 #===============================================================================
 
@@ -187,11 +187,11 @@ class NotFound(DataONEIdentifierException):
   '''Implements NotFound exception
   '''
 
-  def __init__(self, detailCode, description, identifier, traceInformation={}):
+  def __init__(self, detailCode, description, pid, traceInformation={}):
     DataONEIdentifierException.__init__(
       self, 404, detailCode, description, traceInformation
     )
-    self.traceInfo['identifier'] = identifier
+    self.traceInfo['pid'] = pid
     #TODO: add link to resolve()
 
     #===============================================================================
@@ -201,7 +201,7 @@ class IdentifierNotUnique(DataONEIdentifierException):
   '''Implements IdentifierNotUnique exception
   '''
 
-  def __init__(self, detailCode, description, identifier, traceInformation={}):
+  def __init__(self, detailCode, description, pid, traceInformation={}):
     DataONEIdentifierException.__init__(
       self, 409, detailCode, description, traceInformation
     )
@@ -304,10 +304,10 @@ class DataOneExceptionFactory(object):
     exc = None
     exceptions = {'NotFound': NotFound, 'IdentifierNotUnique': IdentifierNotUnique}
     if data['name'] in exceptions.keys():
-      identifier = data['traceInformation']['identifier']
-      del data['traceInformation']['identifier']
+      pid = data['traceInformation']['pid']
+      del data['traceInformation']['pid']
       exc = exceptions[data['name']](
-        data['detailCode'], data['description'], identifier, data['traceInformation']
+        data['detailCode'], data['description'], pid, data['traceInformation']
       )
     else:
       exceptions = {

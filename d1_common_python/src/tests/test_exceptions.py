@@ -50,10 +50,10 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(e.serializeToXml(), xmlEg)
 
   def testExceptionFactory(self):
-    notFoundEgJson = """{"errorCode": 404, "detailCode": "1010", "traceInformation": {"identifier": "ABCXYZ"}, "name": "NotFound", "description": "Test data"}"""
+    notFoundEgJson = """{"errorCode": 404, "detailCode": "1010", "traceInformation": {"pid": "ABCXYZ"}, "name": "NotFound", "description": "Test data"}"""
     notImplementedEgJson = """{"errorCode": 501, "detailCode": "1011", "traceInformation": {"a": "sdgdsfg"}, "name": "NotImplemented", "description": "Test not implemented"}"""
     notImplementedEgXml = '''<error detailCode="1011" errorCode="501" name="NotImplemented"><description>Test not implemented</description><traceInformation><value key="a">'sdgdsfg'</value></traceInformation></error>'''
-    notFoundEgXml = """<error detailCode="1010" errorCode="404" name="NotFound"><description>Test data</description><traceInformation><value key="identifier">'ABCXYZ'</value></traceInformation></error>"""
+    notFoundEgXml = """<error detailCode="1010" errorCode="404" name="NotFound"><description>Test data</description><traceInformation><value key="pid">'ABCXYZ'</value></traceInformation></error>"""
     res = exceptions.DataOneExceptionFactory().createException(notFoundEgJson)
     self.assertTrue(isinstance(res, exceptions.NotFound))
     res = exceptions.DataOneExceptionFactory().createException(notImplementedEgJson)

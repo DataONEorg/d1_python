@@ -11,7 +11,7 @@ __all__ = [
   'upload',
   'xmlrunner',
   'types.checksum_serialization',
-  'types.identifier_serialization',
+  'types.pid_serialization',
   'types.logrecords_serialization',
   'types.monitorlist_serialization',
   'types.nodelist_serialization',
