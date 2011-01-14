@@ -17,7 +17,7 @@ def main():
     dest='schema_path',
     action='store',
     type='string',
-    default='../../d1_schemas/'
+    default='./d1_schemas'
   )
   parser.add_option(
     '-t',
@@ -38,7 +38,9 @@ def main():
 
   args.append('--binding-root=\'{0}\''.format(opts.types_generated_path))
   args.append(
-    '--location-prefix-rewrite=\'https://repository.dataone.org/software/cicore/trunk/schemas/=./\''
+    '--location-prefix-rewrite=\'https://repository.dataone.org/software/cicore/trunk/schemas/={0}\''.format(
+      opts.schema_path
+    )
   )
 
   for xsd in glob.glob(os.path.join(opts.schema_path, '*.xsd')):

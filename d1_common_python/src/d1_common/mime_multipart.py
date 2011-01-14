@@ -33,6 +33,9 @@ import d1_common.const
 class multipart(object):
   '''File-like MIME Multipart object.
   
+  This class wraps files and returns the file data wrapped in a mime multipart
+  structure when iterated, without buffering.
+
   :param: fields is a sequence of (name, value) elements for regular form fields.
   :param: files is a sequence of (name, filename, value) elements for data to be
     uploaded as files. The value elements of files can be file-like objects or
@@ -81,6 +84,8 @@ class multipart(object):
     self.headers['Content-Length'] = content_length
     self.headers['User-Agent'] = d1_common.const.USER_AGENT
 
+    # "self" refers this class, which returns the wrapped files in a mime
+    # multipart structure when iterated by httplib.HTTPConnection().
     http_connection = httplib.HTTPConnection(host)
     http_connection.request('POST', path, self, self.headers)
     res = http_connection.getresponse()
@@ -147,6 +152,8 @@ class multipart(object):
       key, filename, val = self.files[self.file_idx]
       if isinstance(val, str):
         self.state = 'str_val'
+      elif isinstance(val, unicode):
+        self.state = 'unicode_val'
       else:
         self.state = 'file_chunk'
       return ''
@@ -154,6 +161,10 @@ class multipart(object):
     elif self.state == 'str_val':
       self.state = 'file_foot'
       return self._str_val()
+
+    elif self.state == 'unicode_val':
+      self.state = 'file_foot'
+      return self._unicode_val()
 
     elif self.state == 'file_chunk':
       data = self._file_chunk()
@@ -230,6 +241,10 @@ class multipart(object):
   def _str_val(self):
     key, filename, val = self.files[self.file_idx]
     return val
+
+  def _unicode_val(self):
+    key, filename, val = self.files[self.file_idx]
+    return val.encode('utf-8')
 
   def _body_foot(self):
     L = []

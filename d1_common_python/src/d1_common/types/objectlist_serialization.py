@@ -155,7 +155,7 @@ class ObjectList(object):
   #  'objectInfo':
   #  [
   #    {
-  #      'guid':<identifier>,
+  #      'pid':<pid>,
   #      'oclass':<object class>,
   #      'checksum': {'algorithm': <algorithm used for checksum>, 'value': <checksum of object> }
   #      'modified':<date time last modified>,
@@ -201,7 +201,7 @@ class ObjectList(object):
         return json.dumps(obj)
 
   # #<start>,<count>,<total>
-  # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
+  # <pid>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
   def serialize_csv(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to CSV.
     '''
@@ -244,7 +244,7 @@ class ObjectList(object):
   #  </rdf:Description>
   #  <rdf:Description rdf:about="_requesting URL_">
   #    <d1:data rdf:parseType="Collection">
-  #      <rdf:Description rdf:about="http://mn1.dataone.org/object/_identifier_">
+  #      <rdf:Description rdf:about="http://mn1.dataone.org/object/_pid_">
   #        <d1:oclass>_object class_</d1:oclass>
   #        <d1:checksum>
   #          <d1:algorithm>_algorithm used for checksum_</d1:algorithm>
@@ -273,7 +273,7 @@ class ObjectList(object):
     description.set(RDF + 'about', '_requesting URL_')
 
     description = etree.SubElement(xml, RDF + 'Description')
-    description.set(RDF + 'about', 'http://mn1.dataone.org/object/_identifier_')
+    description.set(RDF + 'about', 'http://mn1.dataone.org/object/_pid_')
 
     for o in self.object_list.objectInfo:
       objectInfo = etree.SubElement(description, u'objectInfo')
@@ -341,7 +341,7 @@ class ObjectList(object):
     return self.object_list
 
   # #<start>,<count>,<total>
-  # <identifier>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
+  # <pid>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
   def deserialize_csv(self, doc):
     '''Serialize object to CSV.
     '''

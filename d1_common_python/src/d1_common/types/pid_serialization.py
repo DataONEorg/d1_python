@@ -19,10 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_common.types.identifier_serialization
+Module d1_common.types.pid_serialization
 ===============================================
 
-Implements serializaton and de-serialization for the the identifier type.
+Implements serializaton and de-serialization for the the pid type.
 '''
 
 # Stdlib.
@@ -62,7 +62,7 @@ class Identifier(object):
   '''Implements serialization of DataONE Identifier
   '''
 
-  def __init__(self, identifier='<dummy>'):
+  def __init__(self, pid='<dummy>'):
     self.serialize_map = {
       'application/json': self.serialize_json,
       'text/csv': self.serialize_csv,
@@ -93,7 +93,7 @@ class Identifier(object):
       #'text/log',
     ]
 
-    self.identifier = d1_common.types.generated.dataoneTypes.identifier(identifier)
+    self.pid = d1_common.types.generated.dataoneTypes.Identifier(pid)
 
   def serialize(self, accept='application/json', pretty=False, jsonvar=False):
     '''
@@ -114,12 +114,12 @@ class Identifier(object):
   def serialize_xml(self, pretty=False, jsonvar=False):
     '''Serialize Identifier to XML.
     '''
-    return self.identifier.toxml()
+    return self.pid.toxml()
 
   def serialize_json(self, pretty=False, jsonvar=False):
     '''Serialize Identifier to JSON.
     '''
-    return json.dumps({'identifier': self.identifier.value()})
+    return json.dumps({'pid': self.pid.value()})
 
   def serialize_csv(self, pretty=False, jsonvar=False):
     '''Serialize Identifier to CSV.
@@ -129,7 +129,7 @@ class Identifier(object):
       io, dialect=csv.excel,
       quotechar='"', quoting=csv.QUOTE_MINIMAL
     )
-    csv_writer.writerow([self.identifier.value()])
+    csv_writer.writerow([self.pid.value()])
     return io.getvalue()
 
   def serialize_rdf_xml(self, doc):
@@ -144,13 +144,13 @@ class Identifier(object):
     return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
 
   def deserialize_xml(self, doc):
-    self.identifier = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
-    return self.identifier
+    self.pid = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
+    return self.pid
 
   def deserialize_json(self, doc):
     j = json.loads(doc)
-    self.identifier = d1_common.types.generated.dataoneTypes.identifier(j['identifier'])
-    return self.identifier
+    self.pid = d1_common.types.generated.dataoneTypes.pid(j['pid'])
+    return self.pid
 
   def deserialize_csv(self, doc):
     io = StringIO.StringIO(doc)
@@ -160,9 +160,9 @@ class Identifier(object):
     )
 
     for csv_line in csv_reader:
-      self.identifier = d1_common.types.generated.dataoneTypes.identifier(csv_line[0])
+      self.pid = d1_common.types.generated.dataoneTypes.pid(csv_line[0])
       break
-    return self.identifier
+    return self.pid
 
   def deserialize_rdf_xml(self, doc):
     raise d1_common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
