@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<ns1:systemMetadata xmlns:ns1="http://dataone.org/service/types/0.5.1">
+<ns1:systemMetadata xmlns:ns1="http://dataone.org/service/types/0.6.0">
   <identifier>FigS2_Hsieh.pdf</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
   <size>166172</size>
@@ -7,12 +7,17 @@
   <rightsHolder>test</rightsHolder>
   <checksum algorithm="MD5">5d67614bb726d4ef438196bd58e26457</checksum>
   <dateUploaded>2010-04-26T07:23:43.834318</dateUploaded>
-  <dateSysMetadataModified>2011-01-05T12:55:44.093689</dateSysMetadataModified>
+  <dateSysMetadataModified>2011-01-14T08:31:44.821039</dateSysMetadataModified>
   <originMemberNode>MN1</originMemberNode>
   <authoritativeMemberNode>MN1</authoritativeMemberNode>
   <replica>
     <replicaMemberNode>test_source_node</replicaMemberNode>
     <replicationStatus>completed</replicationStatus>
     <replicaVerified>2010-12-22T18:55:24.434826</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>gmn_test_2</replicaMemberNode>
+    <replicationStatus>queued</replicationStatus>
+    <replicaVerified>2011-01-14T06:35:56.606759</replicaVerified>
   </replica>
 </ns1:systemMetadata>

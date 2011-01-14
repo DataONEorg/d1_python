@@ -86,7 +86,7 @@ class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
     for row in view_result['query']:
       objectInfo = d1_common.types.generated.dataoneTypes.ObjectInfo()
 
-      objectInfo.identifier = row.guid
+      objectInfo.identifier = row.pid
       objectInfo.objectFormat = row.format.format
       objectInfo.checksum = row.checksum
       objectInfo.checksum.algorithm = row.checksum_algorithm.checksum_algorithm
@@ -111,7 +111,7 @@ class LogRecords(d1_common.types.logrecords_serialization.LogRecords):
       logEntry = d1_common.types.generated.dataoneTypes.LogEntry()
 
       logEntry.entryId = str(row.id)
-      logEntry.identifier = row.object.guid
+      logEntry.identifier = row.object.pid
       logEntry.ipAddress = row.ip_address.ip_address
       logEntry.userAgent = row.user_agent.user_agent
       logEntry.principal = row.principal.principal
@@ -315,7 +315,7 @@ def serialize_object(request, view_result):
 #{
 #  [
 #    {
-#      'guid':<identifier>,
+#      'pid':<pid>,
 #      'oclass':<object class>,
 #      'checksum': {'algorithm': _algorithm used for checksum_, 'value': _checksum of object_}
 #      'modified':<date time last modified>,
@@ -336,7 +336,7 @@ def monitor_serialize_json(monitor, jsonvar=False):
 
 
 #<response xmlns='http://ns.dataone.org/core/objects'
-#  <data guid='_identifier_'>
+#  <data pid='_pid_'>
 #    <oclass>_object class_</oclass>
 #    <checksum>
 #     <algorithm>_algorithm used for checksum_</algorithm>
@@ -479,8 +479,7 @@ def set_header(response, last_modified, content_length, content_type):
 class response_handler():
   def process_response(self, request, view_result):
     # If response is a query, we run the query and create a response.
-    if type(view_result) == dict:
-      #if isinstance(response, models.models.query.QuerySet):
+    if type(view_result) is dict:
       response = serialize_object(request, view_result)
     # If view_result is a HttpResponse, we return it unprocessed.
     else:

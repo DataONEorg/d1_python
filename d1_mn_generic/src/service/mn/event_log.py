@@ -46,7 +46,7 @@ import sys_log
 import util
 
 
-def log(guid, event, request, timestamp=None):
+def log(pid, event, request, timestamp=None):
   '''Log an object access.
   :return:
   '''
@@ -59,15 +59,11 @@ def log(guid, event, request, timestamp=None):
 
   # We support logging events that are not associated with an object.
   object_row = None
-  if guid is not None:
+  if pid is not None:
     try:
-      object_row = models.Object.objects.filter(guid=guid)[0]
+      object_row = models.Object.objects.filter(pid=pid)[0]
     except IndexError:
-      err_msg = 'Attempted to create event log for non-existing object: {0}'.format(
-        (
-          guid
-        )
-      )
+      err_msg = 'Attempted to create event log for non-existing object: {0}'.format((pid))
       raise d1_common.exceptions.ServiceFailure(0, err_msg)
 
   # Create log entry.
@@ -92,6 +88,6 @@ def log(guid, event, request, timestamp=None):
 
   # Log in syslog as well.
   sys_log.info(
-    'client({0}): Created log entry: guid({1}) event({2})'.format(
-      util.request_to_string(request), guid, event)
+    'client({0}): Created log entry: pid({1}) event({2})'.format(
+      util.request_to_string(request), pid, event)
   )

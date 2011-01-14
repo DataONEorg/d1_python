@@ -90,5 +90,23 @@ class view_handler():
       iGET[k.lower()] = request.GET[k]
     request.GET = iGET
 
+    ## If the view being called is one that returns data, verify that
+    ## DB_update_status is good.
+    #if view_func.func_name in [
+    #  'object_collection',
+    #  'object_contents',
+    #  'object_sysmeta',
+    #  'event_log_view',
+    #  'crud_create',
+    #  'crud_create_delete',
+    #]:
+    #  try:
+    #    status_row = models.DB_update_status.objects.all()[0]
+    #  except IndexError:
+    #    raise d1_common.exceptions.ServiceFailure(0, 'DB update status has not been set')
+    #  else:
+    #    if status_row.status != 'update successful':
+    #      raise d1_common.exceptions.ServiceFailure(0, 'Trying to read from DB, but last DB update was not successful')
+
     # Returning None causes Django to continue processing by calling view_func.
     return None

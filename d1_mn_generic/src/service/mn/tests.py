@@ -37,14 +37,14 @@ import util
 #mn_objects_total_data = 100
 #mn_objects_total_scimeta = 77
 ##mn_objects_total_sysmeta= 177
-#mn_objects_guid_startswith_1 = 18
+#mn_objects_pid_startswith_1 = 18
 #mn_objects_hash_startswith_1 = 21
-#mn_objects_guid_and_hash_startswith_1 = 2
-#mn_objects_guid_and_hash_endswith_1 = 1
+#mn_objects_pid_and_hash_startswith_1 = 2
+#mn_objects_pid_and_hash_endswith_1 = 1
 #mn_objects_last_accessed_in_2000 = 354
 #mn_objects_requestor_1_1_1_1 = 00000
 #mn_objects_operation_get_bytes = 0000
-#mn_objects_with_guid_ends_with_unicode = 1 # guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+#mn_objects_with_pid_ends_with_unicode = 1 # pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
 #
 ## Constants related to log collection.
 #log_total = 2213
@@ -54,7 +54,7 @@ import util
 #log_last_modified_in_1990s = 48
 #log_last_accessed_in_1970s = 68
 #log_entries_associated_with_objects_type_class_data = 569
-#log_entries_associated_with_objects_guid_and_hash_endswith_2 = 5
+#log_entries_associated_with_objects_pid_and_hash_endswith_2 = 5
 #log_entries_associated_with_objects_last_modified_in_1980s = 27
 
 class mn_tests(TestCase):
@@ -73,9 +73,9 @@ class mn_tests(TestCase):
     self.failUnlessEqual('Content-Length' in response, True)
     self.failUnlessEqual('Content-Type' in response, True)
   
-  def get_valid_guid(self, object_type):
+  def get_valid_pid(self, object_type):
     """
-    Get a valid GUID of a specific type from the db.
+    Get a valid PID of a specific type from the db.
 
     Current valid object types: scidata, scimeta, sysmeta
     
@@ -84,7 +84,7 @@ class mn_tests(TestCase):
     response = self.client.get('/mn/object/', {'start': '3', 'count': '1', 'oclass': object_type}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 200)
     res = json.loads(response.content)
-    return res['data'][0]['guid']
+    return res['data'][0]['pid']
 
   def validate_xml_node(self, node_xml):
     xmlschema_doc = sysmeta.etree.parse(settings.XSD_PATH)
@@ -288,16 +288,16 @@ class mn_tests(TestCase):
 #    self.failUnlessEqual(res['data'][0]['oclass'], 'scimeta')
 #    self.failUnlessEqual(len(res['data'][0]['hash']), 40)
 #
-#  def test_rest_call_collection_of_objects_guid_filter_get(self):
+#  def test_rest_call_collection_of_objects_pid_filter_get(self):
 #    """
 #    Test call: 
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*
 #    """
-#    response = self.client.get('/mn/object/', {'guid': '1*'}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/object/', {'pid': '1*'}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.check_response_headers_present(response)
 #    res = json.loads(response.content)
-#    self.failUnlessEqual(res['count'], mn_objects_guid_startswith_1)
+#    self.failUnlessEqual(res['count'], mn_objects_pid_startswith_1)
 #
 #  def test_rest_call_collection_of_objects_hash_filter_get(self):
 #    """
@@ -311,29 +311,29 @@ class mn_tests(TestCase):
 #    res = json.loads(response.content)
 #    self.failUnlessEqual(res['count'], mn_objects_hash_startswith_1)
 #
-#  def test_rest_call_collection_of_objects_guid_and_hash_filter_startswith_get(self):
+#  def test_rest_call_collection_of_objects_pid_and_hash_filter_startswith_get(self):
 #    """
 #    Test call: 
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&hash=1*
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*&hash=1*
 #    """
 #   
-#    response = self.client.get('/mn/object/', {'guid': '1*', 'hash': '1*'}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/object/', {'pid': '1*', 'hash': '1*'}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.check_response_headers_present(response)
 #    res = json.loads(response.content)
-#    self.failUnlessEqual(res['count'], mn_objects_guid_and_hash_startswith_1)
+#    self.failUnlessEqual(res['count'], mn_objects_pid_and_hash_startswith_1)
 #
-#  def test_rest_call_collection_of_objects_guid_and_hash_filter_endswith_get(self):
+#  def test_rest_call_collection_of_objects_pid_and_hash_filter_endswith_get(self):
 #    """
 #    Test call: 
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&hash=*1
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*1&hash=*1
 #    """
 #        
-#    response = self.client.get('/mn/object/', {'guid': '*1', 'hash': '*1'}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/object/', {'pid': '*1', 'hash': '*1'}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.check_response_headers_present(response)
 #    res = json.loads(response.content)
-#    self.failUnlessEqual(res['count'], mn_objects_guid_and_hash_endswith_1)
+#    self.failUnlessEqual(res['count'], mn_objects_pid_and_hash_endswith_1)
 #
 #  def test_rest_call_collection_of_objects_last_accessed_in_2000(self):
 #    """
@@ -371,18 +371,18 @@ class mn_tests(TestCase):
 #    res = json.loads(response.content)
 #    self.failUnlessEqual(res['count'], mn_objects_operation_get_bytes)
 #
-#  def test_rest_call_collection_of_objects_with_unicode_guid(self):
+#  def test_rest_call_collection_of_objects_with_unicode_pid(self):
 #    """
 #    Test call: 
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
-#    ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
+#    ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
 #    """
 #
-#    response = self.client.get('/mn/object/', {'guid': '*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B'}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/object/', {'pid': '*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B'}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.check_response_headers_present(response)
 #    res = json.loads(response.content)
-#    self.failUnlessEqual(res['count'], mn_objects_with_guid_ends_with_unicode)
+#    self.failUnlessEqual(res['count'], mn_objects_with_pid_ends_with_unicode)
 #
 #  #
 #  # /object/ collection calls.
@@ -416,44 +416,44 @@ class mn_tests(TestCase):
 #  # GET.
 #  #
 #
-#  def test_rest_call_object_by_guid_get(self):
+#  def test_rest_call_object_by_pid_get(self):
 #    """
 #    Test call:
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>
 #    """
 #    
-#    response = self.client.get('/mn/object/%s' % self.get_valid_guid('scimeta'), {}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/object/%s' % self.get_valid_pid('scimeta'), {}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.check_response_headers_present(response)
-#    #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nscimeta:0.904577532946\n')
+#    #self.failUnlessEqual(response.content, 'data_pid:c93ee59c-990f-4b2f-af53-995c0689bf73\nscimeta:0.904577532946\n')
 #    
-#  def test_rest_call_object_by_guid_get_unicode(self):
+#  def test_rest_call_object_by_pid_get_unicode(self):
 #    """
 #    Test call: 
 #    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
-#    ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+#    ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
 #    """
 #
 #    response = self.client.get('/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B', {}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.failUnlessEqual(response.content.decode('utf-8'), u'data:unicode_here_ƲƳƴƵƶƷƸƹƺƻƼƾƿ\n')
 #
-#  def test_rest_call_object_by_guid_404_get(self):
+#  def test_rest_call_object_by_pid_404_get(self):
 #    """
 #    Test call:
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_pid
 #    """
 #    
-#    response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/object/invalid_pid', {}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 404)
 #
-#  #def test_rest_call_sysmeta_by_object_guid_get(self):
+#  #def test_rest_call_sysmeta_by_object_pid_get(self):
 #  #  """
 #  #Test call:
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
 #  #  """
 #  #  
-#  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_guid('data'), {}, HTTP_ACCEPT='application/json')
+#  #  response = self.client.get('/mn/object/%s/meta' % self.get_valid_pid('data'), {}, HTTP_ACCEPT='application/json')
 #  #  self.failUnlessEqual(response.status_code, 200)
 #  #  self.check_response_headers_present(response)
 #  #  # Check that this sysmeta validates against the schema.
@@ -473,13 +473,13 @@ class mn_tests(TestCase):
 #  #  xmlschema.assertValid(xml)
 #  #  self.failUnlessEqual(xmlschema.validate(xml), True)
 #  #
-#  #def test_rest_call_sysmeta_by_object_guid_404_get(self):
+#  #def test_rest_call_sysmeta_by_object_pid_404_get(self):
 #  #  """
 #  #Test call:
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid pid>/meta
 #  #  """
 #  #  
-#  #  response = self.client.get('/mn/object/invalid_guid/meta', {}, HTTP_ACCEPT='application/json')
+#  #  response = self.client.get('/mn/object/invalid_pid/meta', {}, HTTP_ACCEPT='application/json')
 #  #  self.failUnlessEqual(response.status_code, 404)
 #
 #  #
@@ -488,13 +488,13 @@ class mn_tests(TestCase):
 #  # HEAD
 #  #
 #
-#  def test_rest_call_object_header_by_guid_head(self):
+#  def test_rest_call_object_header_by_pid_head(self):
 #    """
 #    Test call:
-#    curl -I http://127.0.0.1:8000/mn/object/<valid guid>
+#    curl -I http://127.0.0.1:8000/mn/object/<valid pid>
 #    """
 #    
-#    response = self.client.head('/mn/object/{0}'.format(self.get_valid_guid('data')))
+#    response = self.client.head('/mn/object/{0}'.format(self.get_valid_pid('data')))
 #    self.failUnlessEqual(response.status_code, 200)
 #    self.check_response_headers_present(response)
 #
@@ -512,13 +512,13 @@ class mn_tests(TestCase):
 #  # PUT.
 #  #
 #
-#  #def test_rest_call_sysmeta_by_object_guid_put(self):
+#  #def test_rest_call_sysmeta_by_object_pid_put(self):
 #  #  """
 #  #Test call:
-#  #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+#  #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
 #  #  """
 #  #  
-#  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT='application/json')
+#  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_pid('data')), {}, HTTP_ACCEPT='application/json')
 #  #  self.failUnlessEqual(response.status_code, 200)
 #
 #  #def test_s(self):
@@ -569,7 +569,7 @@ class mn_tests(TestCase):
 #    self.failUnlessEqual(res['count'], log_total)
 #    self.failUnlessEqual(res['start'], 0)
 #    self.failUnlessEqual(res['total'], log_total)
-#    #self.failUnlessEqual(response.content, 'data_guid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n')
+#    #self.failUnlessEqual(response.content, 'data_pid:c93ee59c-990f-4b2f-af53-995c0689bf73\nmetadata:0.904577532946\n')
 #
 #  def test_rest_call_log_get_log_requestor_1_1_1_1(self):
 #    """
@@ -637,16 +637,16 @@ class mn_tests(TestCase):
 #    res = json.loads(response.content)
 #    self.failUnlessEqual(res['count'], log_entries_associated_with_objects_type_class_data)
 #
-#  def test_rest_call_log_get_log_entries_associated_with_objects_guid_and_hash_endswith_2(self):
+#  def test_rest_call_log_get_log_entries_associated_with_objects_pid_and_hash_endswith_2(self):
 #    """
 #    Test call:
-#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&guid=*2&hash=*2
+#    curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pretty&pid=*2&hash=*2
 #    """
 #    
-#    response = self.client.get('/mn/log/', {'guid': '*2', 'hash': '*2'}, HTTP_ACCEPT='application/json')
+#    response = self.client.get('/mn/log/', {'pid': '*2', 'hash': '*2'}, HTTP_ACCEPT='application/json')
 #    self.failUnlessEqual(response.status_code, 200)
 #    res = json.loads(response.content)
-#    self.failUnlessEqual(res['count'], log_entries_associated_with_objects_guid_and_hash_endswith_2)
+#    self.failUnlessEqual(res['count'], log_entries_associated_with_objects_pid_and_hash_endswith_2)
 #
 #  def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
 #    """
@@ -659,25 +659,25 @@ class mn_tests(TestCase):
 #    res = json.loads(response.content)
 #    self.failUnlessEqual(res['count'], log_entries_associated_with_objects_last_modified_in_1980s)
 #    
-#  #def test_rest_call_object_by_guid_404_get(self):
+#  #def test_rest_call_object_by_pid_404_get(self):
 #  #  """
 #  #  Test call:
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_guid
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/invalid_pid
 #  #  """
 #  #  
-#  #  response = self.client.get('/mn/object/invalid_guid', {}, HTTP_ACCEPT='application/json')
+#  #  response = self.client.get('/mn/object/invalid_pid', {}, HTTP_ACCEPT='application/json')
 #  #  self.failUnlessEqual(response.status_code, 404)
 #  #
-#  #def test_rest_call_sysmeta_by_object_guid_get(self):
+#  #def test_rest_call_sysmeta_by_object_pid_get(self):
 #  #  """
 #  #  Test call:
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
 #  #  
 #  #  NOTE: This test fails if the /update/ call has not been run from outside the
 #  #  test framework first.
 #  #  """
 #  #  
-#  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_guid('data')), {}, HTTP_ACCEPT='application/json')
+#  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_pid('data')), {}, HTTP_ACCEPT='application/json')
 #  #  self.failUnlessEqual(response.status_code, 200)
 #  #  self.check_response_headers_present(response)
 #  #  # Check that this sysmeta validates against the schema.

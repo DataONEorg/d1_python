@@ -65,7 +65,8 @@ import d1_common.exceptions
 import d1_client.systemmetadata
 import d1_client.client
 import d1_common.types.objectlocationlist_serialization
-import d1_common.types.identifier_serialization
+import d1_common.types.pid_serialization
+import d1_common.types.nodelist_serialization
 
 # App.
 import mn.models
@@ -256,16 +257,16 @@ def node_get(request):
 
 # CN_data_replication.setReplicationStatus(token, pid, status) → boolean
 def set_replication_status(request, status, node_ref, pid):
-  if request.method == 'PUT':
-    return set_replication_status_put(request, status, node_ref, pid)
+  if request.method == 'GET':
+    return set_replication_status_get(request, status, node_ref, pid)
 
-  return HttpResponseNotAllowed(['PUT'])
+  return HttpResponseNotAllowed(['GET'])
 
-def set_replication_status_put(request, status, node_ref, pid):
+def set_replication_status_get(request, status, node_ref, pid):
   cn.util.set_replication_status(status, node_ref, pid)
   
   # Return the pid.
-  pid = d1_common.types.identifier_serialization.Identifier(pid)
+  pid = d1_common.types.pid_serialization.Identifier(pid)
   
   if 'HTTP_ACCEPT' in request.META:
     accept = request.META['HTTP_ACCEPT']
@@ -278,6 +279,10 @@ def set_replication_status_put(request, status, node_ref, pid):
 #
 # Testing.
 #
+
+def test_replicate(request, pid, src_node_ref, dst_node_ref):
+  res = cn.util.test_replicate(pid, src_node_ref, dst_node_ref)
+  return HttpResponse(res)
 
 def test_set_replication_status_put(request, status, node_ref, pid):
   if settings.GMN_DEBUG != True:

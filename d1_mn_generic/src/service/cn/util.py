@@ -1,4 +1,5 @@
 import os
+import StringIO
 
 import settings
 
@@ -19,12 +20,23 @@ import datetime
 import d1_common.types.generated.dataoneTypes
 import d1_common.types.systemmetadata
 import d1_common.exceptions
+import d1_common.mime_multipart
 
 import mn.util
 import mn.sys_log
 
 import xml.sax._exceptions
 import pyxb.exceptions_
+
+try:
+  import d1_client
+  import d1_client.client
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
+  )
+  raise
 
 # Replication schema.
 #
@@ -60,6 +72,61 @@ import pyxb.exceptions_
 #  <originMemberNode>MN1</originMemberNode>
 #  <authoritativeMemberNode>MN1</authoritativeMemberNode>
 #</ns1:systemMetadata>
+
+
+def test_replicate(pid, src_node_ref, dst_node_ref):
+  '''Build the mime multipart document that will be sent to /mn/replicate.
+  '''
+
+  # Resolve src and dst references to base URLs.
+  src_base_url = baseurl_by_noderef(src_node_ref)
+  dst_base_url = baseurl_by_noderef(dst_node_ref)
+
+  files = []
+
+  files.append(('token', 'token', '<dummy token>'))
+
+  files.append(('sourceNode', 'sourceNode', src_base_url))
+  files.append(('destinationNode', 'destinationNode', dst_base_url))
+
+  sysmeta_filename, sysmeta_obj = get_sysmeta(pid)
+  files.append(('sysmeta', 'sysmeta', sysmeta_obj.toxml()))
+
+  multipart_obj = d1_common.mime_multipart.multipart({}, [], files)
+
+  multipart_doc = StringIO.StringIO()
+  for part in multipart_obj:
+    multipart_doc.write(part)
+
+  # Set CN SysMeta replication status for object being replicated.
+  set_replication_status('queued', src_node_ref, pid)
+
+  return multipart_doc.getvalue()
+
+
+def baseurl_by_noderef(node_ref):
+  try:
+    node_registry = open(os.path.join(settings.STATIC_STORE_PATH, 'nodeRegistry.xml')
+                         ).read(
+                         )
+  except EnvironmentError:
+    raise d1_common.exceptions.ServiceFailure(0, 'Missing static node registry file')
+
+  nodes = d1_common.types.generated.dataoneTypes.CreateFromDocument(node_registry)
+
+  base_url = ''
+  for node in nodes.node:
+    if node.identifier == node_ref:
+      base_url = node.baseURL
+      break
+  if base_url == '':
+    raise d1_common.exceptions.InvalidRequest(
+      0, 'Could not resolve node reference: {0}'.format(
+        node_ref
+      )
+    )
+
+  return base_url
 
 
 def get_sysmeta(pid):

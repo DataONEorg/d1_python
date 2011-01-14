@@ -127,6 +127,10 @@ MIDDLEWARE_CLASSES = (
   'service.mn.middleware.exception_handler.exception_handler',
   'service.mn.middleware.response_handler.response_handler',
   'service.mn.middleware.view_handler.view_handler',
+  'service.cn.middleware.request_handler.request_handler',
+  'service.cn.middleware.exception_handler.exception_handler',
+  'service.cn.middleware.response_handler.response_handler',
+  'service.cn.middleware.view_handler.view_handler',
 )
 
 ROOT_URLCONF = 'service.urls'

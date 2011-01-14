@@ -62,7 +62,7 @@ class Object_format(models.Model):
 
 
 class Object(models.Model):
-  guid = models.CharField(max_length=200, unique=True, db_index=True)
+  pid = models.CharField(max_length=200, unique=True, db_index=True)
   url = models.CharField(max_length=1000, unique=True, db_index=True)
   format = models.ForeignKey(Object_format, db_index=True)
   checksum = models.CharField(max_length=100, db_index=True)
@@ -86,19 +86,19 @@ class Object(models.Model):
     )[0]
 
   def save_unique(self):
-    '''If attempting to save an object that has the same guid and/or url as an
+    '''If attempting to save an object that has the same pid and/or url as an
     old object, we delete the old object before saving the new.
     :return:
     '''
 
     try:
-      me = Object.objects.filter(Q(guid=self.guid) | Q(url=self.url))[0]
+      me = Object.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
     except IndexError:
       self.save()
     else:
-      sys_log.warning('Overwriting object with duplicate GUID or URL:')
+      sys_log.warning('Overwriting object with duplicate PID or URL:')
       sys_log.warning('URL: {0}'.format(self.url))
-      sys_log.warning('GUID: {0}'.format(self.guid))
+      sys_log.warning('PID: {0}'.format(self.pid))
       me.delete()
       self.save()
 
@@ -216,7 +216,7 @@ class Replication_work_queue(models.Model):
   #error = models.BooleanField()
   #new = models.BooleanField()
   status = models.ForeignKey(Replication_queue_status)
-  identifier = models.CharField(max_length=200)
+  pid = models.CharField(max_length=200)
   source_node = models.ForeignKey(Replication_queue_source_node)
   checksum = models.CharField(max_length=100)
   checksum_algorithm = models.ForeignKey(Checksum_algorithm)

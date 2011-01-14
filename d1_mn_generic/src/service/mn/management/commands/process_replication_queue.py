@@ -57,7 +57,7 @@ from django.utils.html import escape
 
 # MN API.
 import d1_common.exceptions
-import d1_common.types.identifier_serialization
+import d1_common.types.pid_serialization
 import d1_client.client
 
 # App.
@@ -78,6 +78,13 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
 
     return urlparse.urljoin(self.client.target, 'setreplicationstatus/')
 
+  def getReplicationStoreUrl(self):
+    ''':param: (None)
+    :return: (string) url
+    '''
+
+    return urlparse.urljoin(self.client.target, '_replicate_store/')
+
   def set_replication_status(self, status, node_ref, pid):
     '''
     :param:
@@ -92,11 +99,35 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
         status, node_ref, pid, url
       )
     )
-    # Fetch.
-    response = self.client.PUT(url, '')
+
+    response = self.client.GET(url, {})
     format = response.headers['content-type']
-    deser = d1_common.types.identifier_serialization.Identifier()
+    deser = d1_common.types.pid_serialization.Identifier()
     return deser.deserialize(response.read(), format)
+
+  def replicate_store(self, pid, scidata):
+    # Data to post.
+    files.append(('systemmetadata', 'systemmetadata', sysmeta))
+
+    # Send REST POST call to register object. The URL is the same as for /object/ GET.
+
+    files = []
+    files.append(('scidata', 'scidata', scidata))
+
+    crud_create_url = urlparse.urljoin(
+      self.getReplicationStoreUrl(), urllib.quote(
+        pid.encode('utf-8'), '')
+    )
+    self.logger.debug_(u'url({0}) pid({1})'.format(crud_create_url, pid))
+
+    multipart = mime_multipart.multipart(vendor_specific, [], files)
+    try:
+      status, reason, page = multipart.post(crud_create_url)
+      if status != 200:
+        raise Exception(page)
+    except Exception as e:
+      logging.error('REST call failed: {0}'.format(str(e)))
+      raise
 
 
 def log_setup():
@@ -115,8 +146,12 @@ def log_setup():
 
 
 def replicate_object(obj):
-  # Get MN baseURL by MN identifier.
   root = DataOneClientWrapper('http://0.0.0.0:8000/cn')
+
+  # Set replication status to 'requested' on CN.
+  root.set_replication_status('requested', obj.source_node.source_node, obj.pid)
+
+  # Get source MN baseURL by MN pid.
   nodes = root.node()
   base_url = ''
   for node in nodes.node:
@@ -131,19 +166,20 @@ def replicate_object(obj):
     obj.save()
     # Abort handling of this replication item.
     raise d1_common.exceptions.ServiceFailure(0, err_msg)
-  # Find size of object.
-  src = d1_client.client.DataOneClient(base_url)
+  # Find size of scidata.
+  src = DataOneClientWrapper(base_url)
   sysmeta_obj = src.getSystemMetadata(obj.identifier)
   obj_size = sysmeta_obj.size
   # Stream.
   object_file = src.get(obj.identifier)
   sysmeta_str = src.getSystemMetadataResponse(obj.identifier).read()
-  dst = d1_client.client.DataOneClient('http://0.0.0.0:8000/')
+  dst = DataOneClientWrapper('http://0.0.0.0:8000/')
   # Add the ability to do len() on object_file. Needed by mime_multipart.
   object_file.__len__ = lambda x=None: int(obj_size)
   dst.create(obj.identifier, object_file, sysmeta_str)
+
   # Register the completed replication with the CN.
-  root.set_replication_status('completed', obj.source_node.source_node, obj.identifier, )
+  root.set_replication_status('completed', obj.source_node.source_node, obj.identifier)
 
 
 class Command(NoArgsCommand):
@@ -161,14 +197,14 @@ class Command(NoArgsCommand):
     # Loop through registration queue.
     for obj in mn.models.Replication_work_queue.objects.filter(status__status='new'):
       #for obj in mn.models.Replication_work_queue.objects.all():
-      mn.sys_log.info_('Replicating object: {0}'.format(obj.identifier))
-      try:
-        replicate_object(obj)
-      except d1_common.exceptions.DataONEException as e:
-        mn.sys_log.error_(e.serializeToXml())
-      except Exception:
-        err_msg = mn.util.traceback_to_detail_code()
-        mn.sys_log.error_(err_msg)
-      else:
-        obj.set_status('completed')
-        obj.save()
+      mn.sys_log.info_('Replicating object: {0}'.format(obj.pid))
+      #try:
+      replicate_object(obj)
+      #except d1_common.exceptions.DataONEException as e:
+      #  mn.sys_log.error_(e.serializeToXml())
+      #except Exception:
+      #  err_msg = mn.util.traceback_to_detail_code()
+      #  mn.sys_log.error_(err_msg)
+      #else:
+      #  obj.set_status('completed')
+      #  obj.save()

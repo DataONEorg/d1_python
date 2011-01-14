@@ -94,14 +94,14 @@ except ImportError, e:
 #mn_objects_total_data = 100
 #mn_objects_total_scimeta = 77
 ##mn_objects_total_sysmeta= 177
-#mn_objects_guid_startswith_1 = 18
+#mn_objects_pid_startswith_1 = 18
 #mn_objects_checksum_startswith_1 = 21
-#mn_objects_guid_and_checksum_startswith_1 = 2
-#mn_objects_guid_and_checksum_endswith_1 = 1
+#mn_objects_pid_and_checksum_startswith_1 = 2
+#mn_objects_pid_and_checksum_endswith_1 = 1
 #mn_objects_last_accessed_in_2000 = 354
 #mn_objects_requestor_1_1_1_1 = 00000
 #mn_objects_operation_get_bytes = 0000
-#mn_objects_with_guid_ends_with_unicode = 1 # guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+#mn_objects_with_pid_ends_with_unicode = 1 # pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
 #
 ## Constants related to log collection.
 #log_total = 2213
@@ -111,7 +111,7 @@ except ImportError, e:
 #log_last_modified_in_1990s = 48
 #log_last_accessed_in_1970s = 68
 #log_entries_associated_with_objects_type_class_data = 569
-#log_entries_associated_with_objects_guid_and_checksum_endswith_2 = 5
+#log_entries_associated_with_objects_pid_and_checksum_endswith_2 = 5
 #log_entries_associated_with_objects_last_modified_in_1980s = 27
 
 def log_setup():
@@ -214,14 +214,14 @@ class TestSequenceFunctions(unittest.TestCase):
   
     found = False
     for o in logRecords.logEntry:
-      if o.identifier == 'hdl:10255/dryad.654/mets.xml':
+      if o.pid == 'hdl:10255/dryad.654/mets.xml':
         found = True
         break
     
     self.assertTrue(found)
     # accessTime varies, so we just check if it's valid ISO8601
     #self.assertTrue(dateutil.parser.parse(o.dateLogged))
-    self.assertEqual(o.identifier, "hdl:10255/dryad.654/mets.xml")
+    self.assertEqual(o.pid, "hdl:10255/dryad.654/mets.xml")
     self.assertEqual(o.event, "update")
     self.assertTrue(o.principal)
   
@@ -234,27 +234,27 @@ class TestSequenceFunctions(unittest.TestCase):
     
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       sci_object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      identifier = urllib.unquote(os.path.basename(sci_object_path))
+      pid = urllib.unquote(os.path.basename(sci_object_path))
       #sysmeta_str_disk = open(sysmeta_path, 'r').read()
       sci_object_str_disk = open(sci_object_path, 'r').read()
-      #sysmeta_str_d1 = client.getSystemMetadata(identifier).read()
-      sci_object_str_d1 = client.get(identifier).read()
+      #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
+      sci_object_str_d1 = client.get(pid).read()
       #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
       self.assertEqual(sci_object_str_disk, sci_object_str_d1)
 
-  def assert_mn_sci_object_str(self, identifier):
+  def assert_mn_sci_object_str(self, pid):
     '''MN: Download a SciObject and compare it byte by byte with a local copy.
     '''
     
     logging.info('MN: Download a SciObject and compare it byte by byte with a local copy')
     
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', identifier)
+    sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', pid)
     sci_object_str_disk = open(sci_object_path, 'r').read()
-    sci_object_str_node = client.get(identifier).read()
+    sci_object_str_node = client.get(pid).read()
     self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
-  def assert_cn_sci_object_str(self, identifier, cn_url=None):
+  def assert_cn_sci_object_str(self, pid, cn_url=None):
     '''MN: Download a SciObject and compare it byte by byte with a local copy.
     '''
     
@@ -264,9 +264,9 @@ class TestSequenceFunctions(unittest.TestCase):
       client = d1_client.client.DataOneClient(self.opts.cn_url)
     else:
       client = d1_client.client.DataOneClient(cn_url)
-    sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', identifier)
+    sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', pid)
     sci_object_str_disk = open(sci_object_path, 'r').read()
-    sci_object_str_node = client.get(identifier).read()
+    sci_object_str_node = client.get(pid).read()
     self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
 #------------------------------------------------------------------------------
@@ -287,23 +287,23 @@ class TestSequenceFunctions(unittest.TestCase):
     self.mn_inject_event_log()
     logging.info('MN: END: init_to_known_state')
     
-  def mn_get_sci_object_by_identifier(self, identifier):
-    '''MN: Get SciObject by identifier.
+  def mn_get_sci_object_by_pid(self, pid):
+    '''MN: Get SciObject by pid.
     '''
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_str_mn = client.get(identifier).read()
+    sci_object_str_mn = client.get(pid).read()
     
     # Retrieve SciObject.
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_str = client.get(o.identifier).read()
+    sci_object_str = client.get(o.pid).read()
 
     # Compare SciObject with local.
 
 
-  def mn_get_sci_object_info_by_identifer(self, identifier):
-    '''MN: Get SciObject information by identifier
+  def mn_get_sci_object_info_by_identifer(self, pid):
+    '''MN: Get SciObject information by pid
     '''
-    logging.info('MN: Get SciObject information by identifier')
+    logging.info('MN: Get SciObject information by pid')
     
     client = d1_client.client.DataOneClient(self.opts.mn_url)
   
@@ -311,19 +311,19 @@ class TestSequenceFunctions(unittest.TestCase):
     sci_objects = client.listObjects()
     
     for o in sci_objects['objectInfo']:
-      if o["identifier"] == identifier:
+      if o["pid"] == pid:
         return o
   
     # Object not found
     assertTrue(False)
 
-  def mn_compare_sci_object_str(self, identifier):
-    '''MN: Retrieve an SciObject by identifier and compare the SciObject
+  def mn_compare_sci_object_str(self, pid):
+    '''MN: Retrieve an SciObject by pid and compare the SciObject
     with local copy, byte by byte.
     '''
     # Retrieve SciObject.
     client = d1_client.client.DataOneClient(self.opts.mn_url)
-    sci_object_str = client.get(o.identifier).read()
+    sci_object_str = client.get(o.pid).read()
 
     # Compare SciObject with local.
 
@@ -401,21 +401,21 @@ class TestSequenceFunctions(unittest.TestCase):
       sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', os.path.split(sysmeta_path)[1])
       sci_object_file = open(sci_object_path, 'r')
   
-      # The identifier is stored in the sysmeta.
+      # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-      identifier = sysmeta_obj.identifier
+      pid = sysmeta_obj.pid
 
       if register == True:
-        # To create a valid URL, we must quote the identifier twice. First, so
+        # To create a valid URL, we must quote the pid twice. First, so
         # that the URL will match what's on disk and then again so that the
         # quoting survives being passed to the web server.
-        obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(identifier, ''), ''))
+        obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
       else:
         # To test the MIME Multipart poster, we provide the Sci SciObject as a file
         # and the SysMeta as a string.
-        client.create(identifier, sci_object_file, sysmeta_xml)
+        client.create(pid, sci_object_file, sysmeta_xml)
   
   def mn_sci_object_properties(self):
     '''MN: Read complete SciObject collection and compare with values stored in local SysMeta files
@@ -431,8 +431,8 @@ class TestSequenceFunctions(unittest.TestCase):
       # Get name of corresponding SciObject and check that it exists on disk.
       sci_object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       self.assertTrue(os.path.exists(sci_object_path))
-      # Get identifier for SciObject.
-      identifier = urllib.unquote(os.path.basename(sci_object_path))
+      # Get pid for SciObject.
+      pid = urllib.unquote(os.path.basename(sci_object_path))
       # Get sysmeta xml for corresponding SciObject from disk.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_file)
@@ -440,13 +440,13 @@ class TestSequenceFunctions(unittest.TestCase):
       # Get corresponding SciObject from objectList.
       found = False
       for sci_object_info in sci_objects.objectInfo:
-        if sci_object_info.identifier == sysmeta_obj.identifier:
+        if sci_object_info.pid == sysmeta_obj.pid:
           found = True
           break;
   
-      self.assertTrue(found, 'Couldn\'t find SciObject with identifier "{0}"'.format(sysmeta_obj.identifier))
+      self.assertTrue(found, 'Couldn\'t find SciObject with pid "{0}"'.format(sysmeta_obj.pid))
       
-      self.assertEqual(object_info.identifier, sysmeta_obj.identifier)
+      self.assertEqual(object_info.pid, sysmeta_obj.pid)
       self.assertEqual(sci_object_info.objectFormat, sysmeta_obj.objectFormat)
       self.assertEqual(sci_object_info.datesci_objectadataModified, sysmeta_obj.dateSysMetadataModified)
       self.assertEqual(sci_object_info.size, sysmeta_obj.size)
@@ -583,22 +583,22 @@ class TestSequenceFunctions(unittest.TestCase):
       )
     self.assert_counts(sci_objects, 0, 0, 17)
     
-  def assert_mn_sci_object_by_invalid_guid(self):
-    '''MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_guid_
+  def assert_mn_sci_object_by_invalid_pid(self):
+    '''MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_pid_
     '''
     client = d1_client.client.DataOneClient(self.opts.mn_url)
   
-    logging.info('MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_guid_')
+    logging.info('MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_pid_')
   
     try:
-      response = client.get('_invalid_guid_')
+      response = client.get('_invalid_pid_')
     except d1_common.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
   
-  def mn_get_sci_object_by_valid_guid(self):
-    '''Verify successful retrieval of valid SciObject /object/valid_guid
+  def mn_get_sci_object_by_valid_pid(self):
+    '''Verify successful retrieval of valid SciObject /object/valid_pid
     '''
     client = d1_client.client.DataOneClient(self.opts.mn_url)
   
@@ -610,30 +610,30 @@ class TestSequenceFunctions(unittest.TestCase):
       pass
   
   # Todo: Unicode tests.
-  #def test_rest_call_sci_object_by_guid_get_unicode(self):
+  #def test_rest_call_sci_object_by_pid_get_unicode(self):
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
-  #  ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+  #  ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
   
-  # /meta/<guid>
+  # /meta/<pid>
   
-  def mn_get_sci_object_by_invalid_guid(self):
-    '''MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_guid_
+  def mn_get_sci_object_by_invalid_pid(self):
+    '''MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_
     '''
-    logging.info('MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_guid_')
+    logging.info('MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_')
     
     client = d1_client.client.DataOneClient(self.opts.mn_url)
   
     try:
-      response = client.getSystemMetadata('_invalid_guid_')
+      response = client.getSystemMetadata('_invalid_pid_')
     except d1_common.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
   
-  def mn_get_meta_by_valid_guid(self):
-    '''MN: Verify successful retrieval of valid SciObject /meta/valid_guid
+  def mn_get_meta_by_valid_pid(self):
+    '''MN: Verify successful retrieval of valid SciObject /meta/valid_pid
     '''
-    logging.info('MN: Verify successful retrieval of valid SciObject /meta/valid_guid')
+    logging.info('MN: Verify successful retrieval of valid SciObject /meta/valid_pid')
     
     client = d1_client.client.DataOneClient(self.opts.mn_url)
   
@@ -798,29 +798,29 @@ class TestSequenceFunctions(unittest.TestCase):
     
     # Get SciObject collection.
     sci_objects = client_mn.listObjects()
-    # Loop through first 3 identifiers. 
+    # Loop through first 3 pids. 
     for sci_object in sci_objects.objectInfo[:3]:
       # Resolve the object.
-      resolve = client_cn.resolve(sci_object.identifier)
-      # Verify that the identifier returned by resolve was the one we asked for.
-      self.assertEqual(sci_object.identifier, resolve.identifier)
+      resolve = client_cn.resolve(sci_object.pid)
+      # Verify that the pid returned by resolve was the one we asked for.
+      self.assertEqual(sci_object.pid, resolve.pid)
       # Download all objects from locations provided in ObjectLocationList and
       # compare them with the local copy.
       for location in resolve.objectLocation:
         # Use registry to look up baseURL.
         print dir(nodes)
         for node in nodes.node:
-          if node.identifier == location.nodeIdentifier:
+          if node.pid == location.nodeIdentifier:
             resolve_node = node
             break
         # Fail if we couldn't look up the node.
-        self.assertTrue('resolve_node' in locals(), 'Unable to find identifier({0}) in the Node Registry'.format(location.nodeIdentifier))
+        self.assertTrue('resolve_node' in locals(), 'Unable to find pid({0}) in the Node Registry'.format(location.nodeIdentifier))
         # Check if we can retrieve the object from the3 given location.
-        self.assert_cn_sci_object_str(sci_object.identifier, resolve_node.baseURL)      
+        self.assert_cn_sci_object_str(sci_object.pid, resolve_node.baseURL)      
 
   def test_02_uc_02(self):
     '''Integration Test: Use case 2 (query)
-    Use Case 02: List GUIDs By Search
+    Use Case 02: List PIDs By Search
     http://mule1.dataone.org/ArchitectureDocs/UseCases/02_uc.html
     '''
     logging.info('Use Case 02')
@@ -849,7 +849,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     Integration Test: Use case 1 (get). Note: need to test for non-existant
     ID’s, test access control, test for malicious content.
-    Use Case 01: Get Object Identified by GUID
+    Use Case 01: Get Object Identified by PID
     http://mule1.dataone.org/ArchitectureDocs/UseCases/01_uc.html
     '''
     logging.info('Use Case 01')
@@ -859,10 +859,10 @@ class TestSequenceFunctions(unittest.TestCase):
     client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
-    # Test successful retrieval of known good identifier.    
+    # Test successful retrieval of known good pid.    
     #self.assert_cn_sci_object_str('nceas9318', self.opts.cn_url)      
 
-    # Test unsuccessful retrieval of known bad identifier.
+    # Test unsuccessful retrieval of known bad pid.
     try:
       client_cn.get('_invalid_')
 #      self.assert_cn_sci_object_str('_invalid_', self.opts.cn_url)
@@ -1021,14 +1021,14 @@ class TestSequenceFunctions(unittest.TestCase):
 
 
 
-#  ##def test_rest_call_sysmeta_by_object_guid_get(self):
-#  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid guid>/meta
+#  ##def test_rest_call_sysmeta_by_object_pid_get(self):
+#  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
 #    
-#  ##def test_rest_call_sysmeta_by_object_guid_404_get(self):
-#  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid guid>/meta
+#  ##def test_rest_call_sysmeta_by_object_pid_404_get(self):
+#  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid pid>/meta
 #
-#  #def test_rest_call_object_header_by_guid_head(self):
-#  #  curl -I http://127.0.0.1:8000/mn/object/<valid guid>
+#  #def test_rest_call_object_header_by_pid_head(self):
+#  #  curl -I http://127.0.0.1:8000/mn/object/<valid pid>
 #  
 #  #def test_rest_call_last_modified_head(self):
 #  #  curl -I http://mn1.dataone.org/object/
@@ -1044,18 +1044,18 @@ class TestSequenceFunctions(unittest.TestCase):
 #
 #  # Not in spec.
 #  
-#  #def test_rest_call_collection_of_objects_guid_filter_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*
+#  #def test_rest_call_collection_of_objects_pid_filter_get(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*
 #
 #  #def test_rest_call_collection_of_objects_checksum_filter_get(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?checksum=1*
 #
-#  #def test_rest_call_collection_of_objects_guid_and_checksum_filter_startswith_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=1*&checksum=1*
+#  #def test_rest_call_collection_of_objects_pid_and_checksum_filter_startswith_get(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*&checksum=1*
 #  #
 #  
-#  #def test_rest_call_collection_of_objects_guid_and_checksum_filter_endswith_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*1&checksum=*1
+#  #def test_rest_call_collection_of_objects_pid_and_checksum_filter_endswith_get(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*1&checksum=*1
 #
 #  #def test_rest_call_collection_of_objects_with_requestor_1_1_1_1(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
@@ -1063,9 +1063,9 @@ class TestSequenceFunctions(unittest.TestCase):
 #  #def test_rest_call_collection_of_objects_with_operation_get_str(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_str
 #
-#  #def test_rest_call_collection_of_objects_with_unicode_guid(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?guid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
-#  #  ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+#  #def test_rest_call_collection_of_objects_with_unicode_pid(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
+#  #  ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
 #
 #  # Not in spec: No filtering except for date range and event is in spec.
 #  
@@ -1087,8 +1087,8 @@ class TestSequenceFunctions(unittest.TestCase):
 #  #def test_rest_call_log_get_log_entries_associated_with_objects_type_class_data(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?oclass=data
 #
-#  #def test_rest_call_log_get_log_entries_associated_with_objects_guid_and_checksum_endswith_2(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?guid=*2&checksum=*2
+#  #def test_rest_call_log_get_log_entries_associated_with_objects_pid_and_checksum_endswith_2(self):
+#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pid=*2&checksum=*2
 #
 #  #def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
 #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastModified_gt=1980-01-01T00:00:00&lastModified_lt=1990-01-01T00:00:00
@@ -1129,13 +1129,13 @@ class TestSequenceFunctions(unittest.TestCase):
     client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
-    # The identifier is stored in the sysmeta.
+    # The pid is stored in the sysmeta.
     sysmeta_file = open(sysmeta_path, 'r')
     sysmeta_xml = sysmeta_file.read()
     sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-    identifier = sysmeta_obj.identifier
+    pid = sysmeta_obj.pid
 
-    client.create(identifier, sci_object_file, sysmeta_xml)
+    client.create(pid, sci_object_file, sysmeta_xml)
 
   def _test_zz_uc_05(self):
     '''Use Case 05 - Update Metadata

@@ -66,11 +66,11 @@ def main():
     #el = sysmeta_tree.xpath('/D1:systemMetadata/dateSysMetadataModified', namespaces=namespaces)
     #el[0].text = datetime.datetime.fromtimestamp(random.randint(0, 60 * 60 * 24 * 365 * 30)).isoformat()
 
-    # Fix identifier (want it to be filename).
+    # Fix pid (want it to be filename).
     object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-    identifier = urllib.unquote(os.path.basename(object_path))
-    el = sysmeta_tree.xpath('/D1:systemMetadata/identifier', namespaces=namespaces)
-    el[0].text = identifier
+    pid = urllib.unquote(os.path.basename(object_path))
+    el = sysmeta_tree.xpath('/D1:systemMetadata/pid', namespaces=namespaces)
+    el[0].text = pid
 
     #print(etree.tostring(sysmeta_tree, pretty_print = True,  encoding = 'UTF-8', xml_declaration=True))
 

@@ -157,15 +157,15 @@ def main():
     sysmeta_tree = etree.parse(sysmeta_file)
     sysmeta_file.close()
 
-    identifier = urllib.unquote(os.path.basename(sysmeta_path))
+    pid = urllib.unquote(os.path.basename(sysmeta_path))
 
-    logging.info(identifier)
+    logging.info(pid)
 
     # All objects must have a "create" log. We reserve the first week after the
     # epoch for them since they must occur before all other events.
     csv_writer.writerow(
       [
-        identifier,
+        pid,
         events[0], # "create" only.
         pick_random(ip_addresses),
         pick_random(user_agents),
@@ -184,7 +184,7 @@ def main():
     for event_idx in range(event_cnt):
       csv_writer.writerow(
         [
-          identifier,
+          pid,
           events[random.randint(1, len(events) - 1)], # excludes "create".
           pick_random(ip_addresses),
           pick_random(user_agents),

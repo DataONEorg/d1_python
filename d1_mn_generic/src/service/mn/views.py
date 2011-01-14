@@ -33,14 +33,14 @@
   N/A MN_replication.listObjects()     HEAD   /object
   N/A MN_replication.listObjects()     DELETE /object
 
-  0.3 MN_crud.get ()                   GET    /object/<guid>
-  0.4 MN_crud.create()                 POST   /object/<guid>
-  0.4 MN_crud.update()                 PUT    /object/<guid>
-  0.9 MN_crud.delete()                 DELETE /object/<guid>
-  0.3 MN_crud.describe()               HEAD   /object/<guid>
+  0.3 MN_crud.get ()                   GET    /object/<pid>
+  0.4 MN_crud.create()                 POST   /object/<pid>
+  0.4 MN_crud.update()                 PUT    /object/<pid>
+  0.9 MN_crud.delete()                 DELETE /object/<pid>
+  0.3 MN_crud.describe()               HEAD   /object/<pid>
 
-  0.3 MN_crud.getSystemMetadata()      GET    /meta/<guid>
-  0.3 MN_crud.describeSystemMetadata() HEAD   /meta/<guid>
+  0.3 MN_crud.getSystemMetadata()      GET    /meta/<pid>
+  0.3 MN_crud.describeSystemMetadata() HEAD   /meta/<pid>
 
   0.3 MN_crud.getLogRecords()          GET    /log
   0.3 MN_crud.describeLogRecords()     HEAD   /log
@@ -86,7 +86,7 @@ except ImportError, e:
 import d1_common.exceptions
 import d1_client.systemmetadata
 import d1_common.types.checksum_serialization
-import d1_common.types.identifier_serialization
+import d1_common.types.pid_serialization
 
 # App.
 import event_log
@@ -156,7 +156,7 @@ def object_collection_get(request, head):
     # Map attribute to field.
     try:
       order_field = {
-        'guid': 'guid',
+        'pid': 'pid',
         'url': 'url',
         'objectFormat': 'format__format',
         'checksum': 'checksum',
@@ -197,9 +197,9 @@ def object_collection_get(request, head):
     query = util.add_wildcard_filter(query, 'format__format', request.GET['objectformat'])
     query_unsliced = query
 
-  # Filter by GUID.
-  if 'guid' in request.GET:
-    query = util.add_wildcard_filter(query, 'guid', request.GET['guid'])
+  # Filter by PID.
+  if 'pid' in request.GET:
+    query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
     query_unsliced = query
   
   # Filter by checksum.
@@ -279,43 +279,43 @@ def object_collection_delete(request):
 # CRUD interface.
 
 @auth.cn_check_required
-def object_guid(request, guid):
+def object_pid(request, pid):
   '''
-  0.3 MN_crud.get()      GET    /object/<guid>
-  0.4 MN_crud.create()   POST   /object/<guid>
-  0.4 MN_crud.update()   PUT    /object/<guid>
-  0.9 MN_crud.delete()   DELETE /object/<guid>
-  0.3 MN_crud.describe() HEAD   /object/<guid>
+  0.3 MN_crud.get()      GET    /object/<pid>
+  0.4 MN_crud.create()   POST   /object/<pid>
+  0.4 MN_crud.update()   PUT    /object/<pid>
+  0.9 MN_crud.delete()   DELETE /object/<pid>
+  0.3 MN_crud.describe() HEAD   /object/<pid>
   :return:
   '''
   
   if request.method == 'POST':
-    return object_guid_post(request, guid)
+    return object_pid_post(request, pid)
 
   if request.method == 'GET':
-    return object_guid_get(request, guid)
+    return object_pid_get(request, pid)
 
   if request.method == 'PUT':
-    return object_guid_put(request, guid)
+    return object_pid_put(request, pid)
 
   if request.method == 'DELETE':
-    return object_guid_delete(request, guid)
+    return object_pid_delete(request, pid)
 
   if request.method == 'HEAD':
-    return object_guid_head(request, guid)
+    return object_pid_head(request, pid)
   
   # All verbs allowed, so should never get here.
   return HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE', 'HEAD'])
 
-def object_guid_post(request, guid):
+def object_pid_post(request, pid):
   '''
   Adds a new object to the Member Node, where the object is either a data object
   or a science metadata object.
 
-  MN_crud.create(token, guid, object, sysmeta) → Identifier
+  MN_crud.create(token, pid, object, sysmeta) → Identifier
 
   POST format: The DataONE authorization token should be placed in the
-  appropriate HTTP Header field (to be determined), the GUID to be used is in
+  appropriate HTTP Header field (to be determined), the PID to be used is in
   the request URI, and the object content and sysmeta content are encoded in the
   request body using MIME-multipart Mixed Media Type, where the object part has
   the name ‘object’, and the sysmeta part has the name ‘systemmetadata’.
@@ -323,16 +323,13 @@ def object_guid_post(request, guid):
   :return:
   '''
   
-  # Validate POST.
+  # Basic validation.
   if len(request.FILES) != 2:
     raise d1_common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
+  for field in ('object', 'systemmetadata'):
+    if field not in request.FILES.keys():
+      raise d1_common.exceptions.InvalidRequest(0, 'Missing field: {0}. Fields found: {1}'.format(field, ', '.join(request.FILES.keys())))
 
-  if 'object' not in request.FILES.keys():
-    raise d1_common.exceptions.InvalidRequest(0, 'Could not find MIME part named "object". Parts found: {0}'.format(', '.join(request.FILES.keys())))
-    
-  if 'systemmetadata' not in request.FILES.keys():
-    raise d1_common.exceptions.InvalidRequest(0, 'Could not find MIME part named "systemmetadata". Parts found: {0}'.format(', '.join(request.FILES.keys())))
-  
   # Validate SysMeta.
   sysmeta_str = request.FILES['systemmetadata'].read()
   sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
@@ -343,7 +340,7 @@ def object_guid_post(request, guid):
     raise d1_common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
   
   # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
+  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
   try:
     file = open(sysmeta_path, 'wb')
     file.write(sysmeta_str)
@@ -368,14 +365,14 @@ def object_guid_post(request, guid):
       raise d1_common.exceptions.InvalidRequest(0, 'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
-    url = 'file:///{0}'.format(urllib.quote(guid, ''))
-    object_guid_post_store_local(request, guid)
+    url = 'file:///{0}'.format(urllib.quote(pid, ''))
+    object_pid_post_store_local(request, pid)
         
   # Create database entry for object.
   object = models.Object()
-  object.guid = guid
+  object.pid = pid
   object.url = url
-  object.set_format(sysmeta._getValues('objectFormat'))
+  object.set_format(sysmeta.objectFormat)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
   object.mtime = sysmeta.dateSysMetadataModified
@@ -388,75 +385,66 @@ def object_guid_post(request, guid):
   db_update_status.save()
   
   # Log this object creation.
-  event_log.log(guid, 'create', request)
+  event_log.log(pid, 'create', request)
   
-  # Return the identifier.
-  identifier = d1_common.types.identifier_serialization.Identifier(guid)
+  # Return the pid.
+  pid = d1_common.types.pid_serialization.Identifier(pid)
   
   if 'HTTP_ACCEPT' in request.META:
     accept = request.META['HTTP_ACCEPT']
   else:
     accept = 'application/xml'
 
-  doc, content_type = identifier.serialize(accept)
+  doc, content_type = pid.serialize(accept)
   return HttpResponse(doc, content_type)
 
-def object_guid_post_store_local(request, guid):
-  sys_log.info('guid({0}): Writing object to disk'.format(guid))
+def object_pid_post_store_local(request, pid):
+  sys_log.info('pid({0}): Writing object to disk'.format(pid))
 
-  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
+  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
 
   try:
-    if not request.FILES['object'].multiple_chunks():
-      sys_log.info('guid({0}): Object is a single chunk'.format(guid))
-  
-      object_str = request.FILES['object'].read()  
-      file = open(object_path, 'wb')
-      file.write(object_str)
-      file.close()
-    else:
-      sys_log.info('guid({0}): Object is multiple chunks. Writing to disk'.format(guid))
-      file = open(object_path, 'wb')
-      for chunk in request.FILES['object'].chunks():
-        file.write(chunk)
-      file.close()
+    file = open(object_path, 'wb')
+    for chunk in request.FILES['object'].chunks():
+      file.write(chunk)
+    file.close()
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write object file: {0}\n'.format(object_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.exceptions.ServiceFailure(0, err_msg)
 
-def object_guid_get(request, guid):
+def object_pid_get(request, pid):
   '''
-  Retrieve an object identified by guid from the node.
-  MN_crud.get(token, guid) → bytes
+  Retrieve an object identified by pid from the node.
+  MN_crud.get(token, pid) → bytes
   :return:
   '''
 
-  # Find object based on guid.
-  query = models.Object.objects.filter(guid=guid)
+  # Find object based on pid.
+  query = models.Object.objects.filter(pid=pid)
   try:
     url = query[0].url
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', pid)
 
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(url)
   except ValueError:
-    raise d1_common.exceptions.ServiceFailure(0, 'guid({0}) url({1}): Invalid URL'.format(guid, url))
+    raise d1_common.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, url))
 
   # Log the access of this object.
-  event_log.log(guid, 'read', request)
+  event_log.log(pid, 'read', request)
 
   if url_split.scheme == 'http':
-    return object_guid_get_remote(request, guid)
+    return object_pid_get_remote(request, pid)
   elif url_split.scheme == 'file':
-    return object_guid_get_local(request, guid)
+    return object_pid_get_local(request, pid)
   else:
-    raise d1_common.exceptions.ServiceFailure(0, 'guid({0}) url({1}): Invalid URL. Must be http:// or file://')
+    raise d1_common.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
-def object_guid_get_remote(request, guid):
-  sys_log.info('guid({0}): Object is a HTTP URL. Proxying from original location'.format(guid))
+def object_pid_get_remote(request, pid):
+  sys_log.info('pid({0}): Object is a HTTP URL. Proxying from original location'.format(pid))
 
   # Handle 302 Found.  
   try:
@@ -484,10 +472,10 @@ def object_guid_get_remote(request, guid):
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
 
-def object_guid_get_local(request, guid):
-  sys_log.info('guid({0}): Object is not a HTTP URL. Streaming from disk'.format(guid))
+def object_pid_get_local(request, pid):
+  sys_log.info('pid({0}): Object is not a HTTP URL. Streaming from disk'.format(pid))
 
-  file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(guid, ''))
+  file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
   try:
     response = open(file_in_path, 'rb')
   except EnvironmentError as (errno, strerror):
@@ -498,38 +486,38 @@ def object_guid_get_local(request, guid):
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
 
-def object_guid_put(request, guid):
+def object_pid_put(request, pid):
   '''
-  MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier
+  MN_crud.update(token, pid, object, obsoletedGuid, sysmeta) → Identifier
   Creates a new object on the Member Node that explicitly updates and obsoletes
   a previous object (identified by obsoletedGuid).
   :return:
   '''
-  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.update(token, guid, object, obsoletedGuid, sysmeta) → Identifier')
+  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.update(token, pid, object, obsoletedGuid, sysmeta) → Identifier')
 
-def object_guid_delete(request, guid):
+def object_pid_delete(request, pid):
   '''
-  MN_crud.delete(token, guid) → Identifier
+  MN_crud.delete(token, pid) → Identifier
   Deletes an object from the Member Node, where the object is either a data
   object or a science metadata object.
   :return:
   '''
-  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.delete(token, guid) → Identifier')
+  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.delete(token, pid) → Identifier')
   
-def object_guid_head(request, guid):
+def object_pid_head(request, pid):
   '''
-  MN_crud.describe(token, guid) → DescribeResponse
+  MN_crud.describe(token, pid) → DescribeResponse
   This method provides a lighter weight mechanism than
   MN_crud.getSystemMetadata() for a client to determine basic properties of the
   referenced object. '''
   response = HttpResponse()
 
-  # Find object based on guid.
-  query = models.Object.objects.filter(guid=guid)
+  # Find object based on pid.
+  query = models.Object.objects.filter(pid=pid)
   try:
     url = query[0].url
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing scimeta object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing scimeta object was requested', pid)
 
   # Get size of object from file size.
   try:
@@ -537,14 +525,14 @@ def object_guid_head(request, guid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.NotFound(0, err_msg, guid)
+    raise d1_common.exceptions.NotFound(0, err_msg, pid)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
               size, 'Some Content Type')
 
   # Log the access of this object.
-  event_log.log(guid, 'read', request)
+  event_log.log(pid, 'read', request)
 
   return response
 
@@ -552,78 +540,78 @@ def object_guid_head(request, guid):
 # Sysmeta.
 
 @auth.cn_check_required
-def meta_guid(request, guid):
+def meta_pid(request, pid):
   '''
-  0.3 MN_crud.getSystemMetadata()      GET  /meta/<guid>
-  0.3 MN_crud.describeSystemMetadata() HEAD /meta/<guid>
+  0.3 MN_crud.getSystemMetadata()      GET  /meta/<pid>
+  0.3 MN_crud.describeSystemMetadata() HEAD /meta/<pid>
   '''
 
   if request.method == 'GET':
-    return meta_guid_get(request, guid, head=False)
+    return meta_pid_get(request, pid, head=False)
     
   if request.method == 'HEAD':
-    return meta_guid_head(request, guid, head=True)
+    return meta_pid_head(request, pid, head=True)
 
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
   
-def meta_guid_get(request, guid, head):
+def meta_pid_get(request, pid, head):
   '''
   Get:
     Describes the science metadata or data object (and likely other objects in the
-    future) identified by guid by returning the associated system metadata object.
+    future) identified by pid by returning the associated system metadata object.
     
-    MN_crud.getSystemMetadata(token, guid) → SystemMetadata
+    MN_crud.getSystemMetadata(token, pid) → SystemMetadata
 
   Head:
     Describe sysmeta for scidata or scimeta.
-    0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<guid>
+    0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<pid>
   :return:
   '''
 
   # Verify that object exists. 
   try:
-    url = models.Object.objects.filter(guid=guid)[0]
+    url = models.Object.objects.filter(pid=pid)[0]
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', pid)
 
   if head == True:
     return HttpResponse('', mimetype='text/xml')
   
   # Open file for streaming.  
-  file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(guid, ''))
+  file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
   try:
     file = open(file_in_path, 'r')
   except EnvironmentError as (errno, strerror):
     raise d1_common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
   # Log access of the SysMeta of this object.
-  event_log.log(guid, 'read', request)
+  event_log.log(pid, 'read', request)
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype='text/xml')
 
-def checksum_guid(request, guid):
+def checksum_pid(request, pid):
   '''
   '''
 
   if request.method == 'GET':
-    return checksum_guid_get(request, guid)
+    return checksum_pid_get(request, pid)
 
   # Only GET.
   return HttpResponseNotAllowed(['GET'])
 
-def checksum_guid_get(request, guid):
-  # Find object based on guid.
-  query = models.Object.objects.filter(guid=guid)
+def checksum_pid_get(request, pid):
+  # Find object based on pid.
+  query = models.Object.objects.filter(pid=pid)
   try:
     checksum = query[0].checksum
     checksum_algorithm = query[0].checksum_algorithm.checksum_algorithm
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', guid)
+    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', pid)
 
   # Log the access of this object.
-  event_log.log(guid, 'read', request) # todo: look into log type other than 'read'
+  event_log.log(pid, 'read', request) # todo: look into log type other than 'read'
 
   # Return the checksum.
   checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
@@ -687,9 +675,9 @@ def event_log_view_get(request, head):
     query = util.add_wildcard_filter(query, 'object__format__format', request.GET['objectformat'])
     query_unsliced = query
 
-  # Filter by referenced object GUID.
-  if 'guid' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__guid', request.GET['guid'])
+  # Filter by referenced object PID.
+  if 'pid' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__pid', request.GET['pid'])
     query_unsliced = query
   
   # Filter by referenced object checksum.
@@ -757,44 +745,140 @@ def event_log_view_delete(request):
 # MN_replication.replicate(token, id, sourceNode) → boolean
 
 @auth.cn_check_required
-def replicate(request, source_node, pid):
+def replicate(request):
   '''
   '''
 
-  if request.method == 'PUT':
-    return replicate_put(request, source_node, pid)
+  if request.method == 'POST':
+    return replicate_post(request)
   
-  return HttpResponseNotAllowed(['PUT'])
+  return HttpResponseNotAllowed(['POST'])
 
-def replicate_put(request, source_node, pid):
+def replicate_post(request):
   '''
   '''
+  # Basic validation.
+  for field in ('token', 'sysmeta', 'sourceNode'):
+    if field not in request.FILES.keys():
+      raise d1_common.exceptions.InvalidRequest(0, 'Missing field: {0}. Fields found: {1}'.format(field, ', '.join(request.FILES.keys())))
+
+  # TODO: Validate token.
+  
+  # Validate SysMeta.
+  sysmeta_str = request.FILES['sysmeta'].read()
+  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+  try:
+    sysmeta.isValid()
+  except:
+    err = sys.exc_info()[1]
+    raise d1_common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+
+  # Verify that this is not an object we already have.
+  if models.Object.objects.filter(pid=sysmeta.pid):
+    raise d1_common.exceptions.InvalidRequest(0, 'Requested replication of object that already exists: {0}'.format(sysmeta.pid))
+
+  # Write SysMeta bytes to cache folder.
+  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(sysmeta.pid, ''))
+  try:
+    file = open(sysmeta_path, 'wb')
+    file.write(sysmeta_str)
+    file.close()
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+
+  # Create replication work item for this replication.  
   replication_item = models.Replication_work_queue()
   replication_item.set_status('new')
-  replication_item.set_source_node(source_node)
-  replication_item.identifier = pid
+  replication_item.set_source_node(request.FILES['sourceNode'].read())
+  replication_item.pid = sysmeta.pid
   replication_item.checksum = 'unused'
   replication_item.set_checksum_algorithm('unused')
   replication_item.save()
 
-  # Return the identifier.
-  identifier = d1_common.types.identifier_serialization.Identifier(pid)
+  # Return the PID. All that is required for this response is that it's a 200
+  # OK.
+  pid_serializer = d1_common.types.pid_serialization.Identifier(sysmeta.pid)
   
   if 'HTTP_ACCEPT' in request.META:
     accept = request.META['HTTP_ACCEPT']
   else:
     accept = 'application/xml'
 
-  doc, content_type = identifier.serialize(accept)
+  doc, content_type = pid_serializer.serialize(accept)
+  return HttpResponse(doc, content_type)
+
+def _replicate_store(request):
+  '''
+  '''
+
+  if request.method == 'POST':
+    return _replicate_store(request)
+  
+  return HttpResponseNotAllowed(['POST'])
+
+def _replicate_store(request):
+  '''
+  '''
+  
+  # Basic validation.
+  for field in ('pid', 'scidata'):
+    if field not in request.FILES.keys():
+      raise d1_common.exceptions.InvalidRequest(0, 'Missing field: {0}. Fields found: {1}'.format(field, ', '.join(request.FILES.keys())))
+
+  pid = request.FILES['pid'].read()
+
+  # Write SciData to object store.  
+  sys_log.info('pid({0}): Writing object to disk'.format(pid))
+  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
+  try:
+    file = open(object_path, 'wb')
+    for chunk in request.FILES['object'].chunks():
+      file.write(chunk)
+    file.close()
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not write object file: {0}\n'.format(object_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+
+  # Create database entry for object.
+  object = models.Object()
+  object.pid = pid
+  object.url = 'file:///{0}'.format(urllib.quote(pid, ''))
+  object.set_format(sysmeta.objectFormat)
+  object.checksum = sysmeta.checksum
+  object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
+  object.mtime = sysmeta.dateSysMetadataModified
+  object.size = sysmeta.size
+  object.save_unique()
+
+  # Successfully updated the db, so put current datetime in status.mtime.
+  db_update_status = models.DB_update_status()
+  db_update_status.status = 'update successful'
+  db_update_status.save()
+  
+  # Log this object creation.
+  event_log.log(pid, 'create', request)
+  
+  # Return the pid.
+  pid = d1_common.types.pid_serialization.Identifier(pid)
+  
+  if 'HTTP_ACCEPT' in request.META:
+    accept = request.META['HTTP_ACCEPT']
+  else:
+    accept = 'application/xml'
+
+  doc, content_type = pid.serialize(accept)
   return HttpResponse(doc, content_type)
 
 # For testing via browser.
-def test_replicate_put(request, source_node, identifier):
+def test_replicate_put(request, source_node, pid):
   if settings.GMN_DEBUG != True:
     sys_log.info('client({0}): Attempted to access test_replicate_put while not in DEBUG mode'.format(util.request_to_string(request)))
     raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
-  return replicate_put(request, source_node, identifier)
+  return replicate_put(request, source_node, pid)
 
 def test_replicate_get(request):
   '''
@@ -856,9 +940,9 @@ def monitor_object_get(request, head):
   if changed == True:
     query_unsliced = query
 
-  # Filter by identifier.
+  # Filter by pid.
   if 'id' in request.GET:
-    query = util.add_wildcard_filter(query, 'guid', request.GET['id'])
+    query = util.add_wildcard_filter(query, 'pid', request.GET['id'])
   
   # Filter by URL.
   if 'url' in request.GET:
@@ -918,9 +1002,9 @@ def monitor_event_get(request, head):
     query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
     query_unsliced = query
 
-  # Filter by referenced object identifier.
+  # Filter by referenced object pid.
   if 'id' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__guid', request.GET['id'])
+    query = util.add_wildcard_filter(query, 'object__pid', request.GET['id'])
     query_unsliced = query
   
    # Filter by referenced object created date.
@@ -970,13 +1054,13 @@ def node_get(request):
   return {'type': 'node' }
 
 #<node replicate="true" synchronize="true" type="mn">
-#<identifier>http://cn-rpw</identifier>
+#<pid>http://cn-rpw</pid>
 #<name>DataONESamples</name>
 #<baseURL>http://cn-rpw/mn/</baseURL>
 #−
 #<services>
-#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="get" rest="object/${GUID}"/>
-#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="getSystemMetadata" rest="meta/${GUID}"/>
+#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="get" rest="object/${PID}"/>
+#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="getSystemMetadata" rest="meta/${PID}"/>
 #<service api="mn_replicate" available="true" datechecked="1900-01-01T00:00:00Z" method="listObjects" rest="object"/>
 #</services>
 #−
@@ -989,7 +1073,7 @@ def node_get(request):
 
 # Diagnostics, debugging and testing.
 
-def test_slash(request, p1, p2):
+def test_slash(request, p1, p2, p3):
   '''
   '''
   
@@ -1001,7 +1085,7 @@ def test_slash(request, p1, p2):
     sys_log.info('client({0}): Attempted to access test_slash while not in DEBUG mode'.format(util.request_to_string(request)))
     raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
-  return render_to_response('test_slash.html', {'p1': p1, 'p2': p2})
+  return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 def test_get_request(request):
   '''
@@ -1049,7 +1133,7 @@ def test_inject_log(request):
   csv_reader = csv.reader(request.FILES['csv'])
 
   for row in csv_reader:
-    identifier = row[0]
+    pid = row[0]
     event = row[1]
     ip_address = row[2]
     user_agent = row[3]
@@ -1064,6 +1148,6 @@ def test_inject_log(request):
       'REMOTE_ADDR': principal,
     }
 
-    event_log.log(identifier, event, request, timestamp)
+    event_log.log(pid, event, request, timestamp)
 
   return HttpResponse('OK')

@@ -80,6 +80,7 @@ except ImportError, e:
 # Lxml
 try:
   import lxml
+  import lxml.objectify
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
@@ -92,14 +93,14 @@ mn_objects_total = 354
 mn_objects_total_data = 100
 mn_objects_total_scimeta = 77
 #mn_objects_total_sysmeta= 177
-mn_objects_guid_startswith_1 = 18
+mn_objects_pid_startswith_1 = 18
 mn_objects_checksum_startswith_1 = 21
-mn_objects_guid_and_checksum_startswith_1 = 2
-mn_objects_guid_and_checksum_endswith_1 = 1
+mn_objects_pid_and_checksum_startswith_1 = 2
+mn_objects_pid_and_checksum_endswith_1 = 1
 mn_objects_last_accessed_in_2000 = 354
 mn_objects_requestor_1_1_1_1 = 00000
 mn_objects_operation_get_bytes = 0000
-mn_objects_with_guid_ends_with_unicode = 1 # guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+mn_objects_with_pid_ends_with_unicode = 1 # pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
 
 # Constants related to log collection.
 log_total = 2213
@@ -109,7 +110,7 @@ log_requestor_1_1_1_1_and_operation_get_bytes = 240
 log_last_modified_in_1990s = 48
 log_last_accessed_in_1970s = 68
 log_entries_associated_with_objects_type_class_data = 569
-log_entries_associated_with_objects_guid_and_checksum_endswith_2 = 5
+log_entries_associated_with_objects_pid_and_checksum_endswith_2 = 5
 log_entries_associated_with_objects_last_modified_in_1980s = 27
 
 def log_setup():
@@ -452,24 +453,24 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(object_list, 0, 0, 100)
   
   
-  # /object/<guid>
+  # /object/<pid>
   
-  def get_object_by_invalid_guid(self):
+  def get_object_by_invalid_pid(self):
     '''Generic: Verify 404 NotFound when attempting to get non-existing object
-    /object/_invalid_guid_
+    /object/_invalid_pid_
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     try:
-      response = client.get('_invalid_guid_')
+      response = client.get('_invalid_pid_')
     except d1_common.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
   
-  def get_object_by_valid_guid(self):
+  def get_object_by_valid_pid(self):
     '''Generic: Verify successful retrieval of valid object
-    /object/valid_guid
+    /object/valid_pid
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
@@ -483,28 +484,28 @@ class TestSequenceFunctions(unittest.TestCase):
     # Todo: Verify that we got the right object.
   
   # Todo: Unicode tests.
-  #def test_rest_call_object_by_guid_get_unicode(self):
+  #def test_rest_call_object_by_pid_get_unicode(self):
   #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/unicode_document_%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
-  #  ?guid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+  #  ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
   
-  # /meta/<guid>
+  # /meta/<pid>
   
-  def get_object_by_invalid_guid(self):
+  def get_object_by_invalid_pid(self):
     '''Verify 404 NotFound when attempting to get non-existing SysMeta
-    /meta/_invalid_guid_
+    /meta/_invalid_pid_
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     try:
-      response = client.getSystemMetadata('_invalid_guid_')
+      response = client.getSystemMetadata('_invalid_pid_')
     except d1_common.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
   
-  def get_meta_by_valid_guid(self):
+  def get_meta_by_valid_pid(self):
     '''Verify successful retrieval of valid object
-    /meta/valid_guid
+    /meta/valid_pid
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
@@ -727,31 +728,31 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.get_object_count()
 
-  # /object/<guid>
+  # /object/<pid>
   
-  def test_1190_get_object_by_invalid_guid(self):
+  def test_1190_get_object_by_invalid_pid(self):
     '''Local: Verify 404 NotFound when attempting to get non-existing object
-    /object/_invalid_guid_
+    /object/_invalid_pid_
     '''
-    self.get_object_by_invalid_guid()
+    self.get_object_by_invalid_pid()
 
-  def test_1200_get_object_by_valid_guid(self):
+  def test_1200_get_object_by_valid_pid(self):
     '''Local: Verify successful retrieval of valid object
-    /object/valid_guid
+    /object/valid_pid
     '''
-    self.get_object_by_valid_guid()
+    self.get_object_by_valid_pid()
 
-  def test_1210_get_object_by_invalid_guid(self):
+  def test_1210_get_object_by_invalid_pid(self):
     '''Local: Verify 404 NotFound when attempting to get non-existing SysMeta
-    /meta/_invalid_guid_
+    /meta/_invalid_pid_
     '''
-    self.get_object_by_invalid_guid()
+    self.get_object_by_invalid_pid()
 
-  def test_1220_get_meta_by_valid_guid(self):
+  def test_1220_get_meta_by_valid_pid(self):
     '''Local: Verify successful retrieval of valid object
-    /meta/valid_guid
+    /meta/valid_pid
     '''
-    self.get_meta_by_valid_guid()
+    self.get_meta_by_valid_pid()
 
   def test_1230_xml_validation(self):
     '''Local: Verify that returned XML document validates against the ObjectList schema
@@ -912,31 +913,31 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.get_object_count()
 
-  # /object/<guid>
+  # /object/<pid>
   
-  def test_2190_get_object_by_invalid_guid(self):
+  def test_2190_get_object_by_invalid_pid(self):
     '''Remote: Verify 404 NotFound when attempting to get non-existing object
-    /object/_invalid_guid_
+    /object/_invalid_pid_
     '''
-    self.get_object_by_invalid_guid()
+    self.get_object_by_invalid_pid()
 
-  def test_2200_get_object_by_valid_guid(self):
+  def test_2200_get_object_by_valid_pid(self):
     '''Remote: Verify successful retrieval of valid object
-    /object/valid_guid
+    /object/valid_pid
     '''
-    self.get_object_by_valid_guid()
+    self.get_object_by_valid_pid()
 
-  def test_2210_get_object_by_invalid_guid(self):
+  def test_2210_get_object_by_invalid_pid(self):
     '''Remote: Verify 404 NotFound when attempting to get non-existing SysMeta
-    /meta/_invalid_guid_
+    /meta/_invalid_pid_
     '''
-    self.get_object_by_invalid_guid()
+    self.get_object_by_invalid_pid()
 
-  def test_2220_get_meta_by_valid_guid(self):
+  def test_2220_get_meta_by_valid_pid(self):
     '''Remote: Verify successful retrieval of valid object
-    /meta/valid_guid
+    /meta/valid_pid
     '''
-    self.get_meta_by_valid_guid()
+    self.get_meta_by_valid_pid()
 
   def test_2230_xml_validation(self):
     '''Remote: Verify that returned XML document validates against the ObjectList schema
@@ -998,68 +999,90 @@ class TestSequenceFunctions(unittest.TestCase):
     # 11111111111111111111111111111111,MD5
     f.deserialize(csv_doc, 'text/csv')
 
-  def _test_3000_replication_1(self):
-    '''Commented out because it requires a second GMN instance
-    '''
-    
+  def test_3000_replication_1(self):
     # The object we will replicate.
     pid = 'FigS2_Hsieh.pdf'
+    # Source and destination node references.
     src_node = 'gmn_test_2'
+    dst_node = 'gmn_test'
 
-    client_src = d1_client.client.DataOneClient(self.opts.gmn2_url)
-    client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
-
-    # Get the checksum of the object from the source GMN. This also checks if
-    # we can reach the source server and that it has the object we will replicate.
-    src_checksum_obj = client_src.checksum(pid)
-    src_checksum = src_checksum_obj.value()
-    src_algorithm = src_checksum_obj.algorithm
-
-    # Get the bytes of the object from the source server.
-    src_obj_str = client_src.get(pid).read()
-
-    # Replicate.
-
-    # Clear any existing Replica items related to this pid and test
-    # source node on the CN.
-    clear_replication_status_url = urlparse.urljoin(client_dst.client.target,
-                                                    '/cn/test_clear_replication_status/{0}/{1}'.format(src_node, pid))
-    client_dst.client.GET(clear_replication_status_url)
+    # Call to /cn/test_replicate/<pid>/<src_node_ref>/<dst_node_ref>
+    test_replicate_url = urlparse.urljoin(self.opts.d1_root,
+                                          'test_replicate/{0}/{1}/{2}'\
+                                          .format(urllib.quote(pid, ''),
+                                                  urllib.quote(src_node, ''),
+                                                  urllib.quote(dst_node, '')))
     
+    root = d1_client.client.DataOneClient(self.opts.d1_root)
+    response = root.client.GET(test_replicate_url)
+    
+    self.assertEqual(response.code, 200)
+
+    replicate_mime = response.read()
+
     # Add replication task to the destination GMN work queue.
-    replicate_url = urlparse.urljoin(client_dst.client.target,
-                                                    '/replicate/{0}/{1}'.format(src_node, pid))
-    client_dst.client.PUT(replicate_url, '')
-    
-    # Poll for completed replication.
-    replication_completed = False
-    while not replication_completed:
-      test_get_replication_status_xml = urlparse.urljoin(client_dst.client.target,
-                                                      '/cn/test_get_replication_status_xml/{0}'.format(pid))
-      status_xml_str = client_dst.client.GET(test_get_replication_status_xml).read()
-      status_xml_obj = lxml.etree.fromstring(status_xml_str)
+    client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
+    replicate_url = urlparse.urljoin(client_dst.client.target, '/replicate')
+    headers = {}
+    headers['Content-Type'] = 'multipart/form-data; boundary=----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
+    headers['Content-Length'] = len(replicate_mime)
+    headers['User-Agent'] = d1_common.const.USER_AGENT
+    client_dst.client.POST(replicate_url, replicate_mime, headers)
 
-      for replica in status_xml_obj.xpath('/replicas/replica'):
-        if replica.xpath('replicaMemberNode')[0].text == src_node:
-          if replica.xpath('replicationStatus')[0].text == 'completed':
-            replication_completed = True
-            break
-
-      if not replication_completed:
-        time.sleep(1)
-
-    # Get checksum of the object on the destination server and compare it to
-    # the checksum retrieved from the source server.
-    dst_checksum_obj = client_dst.checksum(pid)
-    dst_checksum = dst_checksum_obj.value()
-    dst_algorithm = dst_checksum_obj.algorithm
-    self.assertEqual(src_checksum, dst_checksum)
-    self.assertEqual(src_algorithm, dst_algorithm)
-    
-    # Get the bytes of the object on the destination and compare them with the
-    # bytes retrieved from the source.
-    dst_obj_str = client_dst.get(pid).read()
-    self.assertEqual(src_obj_str, dst_obj_str)
+#  client_src = d1_client.client.DataOneClient(self.opts.gmn2_url)
+#  client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
+#
+#  # Get the checksum of the object from the source GMN. This also checks if
+#  # we can reach the source server and that it has the object we will replicate.
+#  src_checksum_obj = client_src.checksum(pid)
+#  src_checksum = src_checksum_obj.value()
+#  src_algorithm = src_checksum_obj.algorithm
+#
+#  # Get the bytes of the object from the source server.
+#  src_obj_str = client_src.get(pid).read()
+#
+#  # Replicate.
+#
+#  # Clear any existing Replica items related to this pid and test
+#  # source node on the CN.
+#  clear_replication_status_url = urlparse.urljoin(client_dst.client.target,
+#                                                  '/cn/test_clear_replication_status/{0}/{1}'.format(src_node, pid))
+#  client_dst.client.GET(clear_replication_status_url)
+#  
+#  # Add replication task to the destination GMN work queue.
+#  replicate_url = urlparse.urljoin(client_dst.client.target,
+#                                                  '/replicate/{0}/{1}'.format(src_node, pid))
+#  client_dst.client.PUT(replicate_url, '')
+#  
+#  # Poll for completed replication.
+#  replication_completed = False
+#  while not replication_completed:
+#    test_get_replication_status_xml = urlparse.urljoin(client_dst.client.target,
+#                                                    '/cn/test_get_replication_status_xml/{0}'.format(pid))
+#    status_xml_str = client_dst.client.GET(test_get_replication_status_xml).read()
+#    status_xml_obj = lxml.etree.fromstring(status_xml_str)
+#
+#    for replica in status_xml_obj.xpath('/replicas/replica'):
+#      if replica.xpath('replicaMemberNode')[0].text == src_node:
+#        if replica.xpath('replicationStatus')[0].text == 'completed':
+#          replication_completed = True
+#          break
+#
+#    if not replication_completed:
+#      time.sleep(1)
+#
+#  # Get checksum of the object on the destination server and compare it to
+#  # the checksum retrieved from the source server.
+#  dst_checksum_obj = client_dst.checksum(pid)
+#  dst_checksum = dst_checksum_obj.value()
+#  dst_algorithm = dst_checksum_obj.algorithm
+#  self.assertEqual(src_checksum, dst_checksum)
+#  self.assertEqual(src_algorithm, dst_algorithm)
+#  
+#  # Get the bytes of the object on the destination and compare them with the
+#  # bytes retrieved from the source.
+#  dst_obj_str = client_dst.get(pid).read()
+#  self.assertEqual(src_obj_str, dst_obj_str)
 
   def test_4000_unicode_1(self):
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
@@ -1104,6 +1127,7 @@ def main():
   
   # Command line opts.
   parser = optparse.OptionParser()
+  parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
   parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
   parser.add_option('--gmn2-url', dest='gmn2_url', action='store', type='string', default='http://0.0.0.0:8001/')
   parser.add_option('--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
