@@ -34,14 +34,7 @@ import settings
 
 
 class response_handler():
-  def process_response(self, request, view_result):
-    # If response is a query, we run the query and create a response.
-    if type(view_result) is dict:
-      response = serialize_object(request, view_result)
-    # If view_result is a HttpResponse, we return it unprocessed.
-    else:
-      response = view_result
-
+  def process_response(self, request, response):
     # For debugging, if pretty printed outout was requested, we force the
     # content type to text. This causes the browser to not try to format
     # the output in any way.

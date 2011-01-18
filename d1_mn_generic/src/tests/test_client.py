@@ -183,7 +183,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
   def gen_sysmeta(self, pid, size, md5, now):
     return u'''<?xml version="1.0" encoding="UTF-8"?>
-<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.6.0">
+<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
   <identifier>{0}</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
   <size>{1}</size>
