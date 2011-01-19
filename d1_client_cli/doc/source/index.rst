@@ -1,0 +1,20 @@
+DataONE Command Line Interface (CLI)
+====================================
+
+A command line tool for interacting with DataONE services.
+
+
+Contents:
+
+.. toctree::
+  :maxdepth: 2
+
+  itk-cli.rst
+  itk-cli-generated.rst
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
