@@ -51,14 +51,22 @@ class request_handler():
     except KeyError:
       pass
 
+    # Django ticket: http://code.djangoproject.com/ticket/12083. This is a hack
+    # that is applied when the root of the app is requested without a trailing
+    # backslash through Apache. Without this, Django 1.1.1 raises a KeyError
+    # exception. The workaround was found by comparing working and non-working
+    # requests. It should be removed for Django 1.2.
+    if request.path_info == '':
+      request.environ['REQUEST_URI'] = request.META['SCRIPT_NAME'] + '/'
+      request.META['REQUEST_URI'] = request.META['SCRIPT_NAME'] + '/'
+      request.path_info = '/'
+
     if settings.GMN_DEBUG == False:
       return None
 
-    print request.path_info
+    # Print request.
+    #    import pprint
+    #    pp = pprint.PrettyPrinter(indent=2)
+    #    return HttpResponse('<pre>{0}</pre>'.format(pp.pformat(request)))
 
-    ## Print request.
-    #print '>'*80
-    #print 'Request:'
-    #print request
-    #print '<'*80
     return None
