@@ -11,6 +11,7 @@ import urlparse
 import urllib
 from d1_common import const
 from d1_common import exceptions
+from d1_common import util
 from d1_common.mime_multipart import multipart
 
 
@@ -74,10 +75,10 @@ class RESTClient(object):
       if self.logger.getEffectiveLevel() == logging.DEBUG:
         self.logger.debug("DATA=%s" % str(data))
       if parts['query'] == '':
-        parts['query'] = self.urlencode(data)
+        parts['query'] = util.urlencode(data)
       else:
         parts['query'] = '%s&%s' % (parts['query'], \
-                                    self.urlencode(data))
+                                    util.urlencode(data))
       targeturl = urlparse.urljoin(targeturl, "?%s" % parts['query'])
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       self.logger.debug('targetURL=%s' % targeturl)
@@ -108,82 +109,6 @@ class RESTClient(object):
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
-
-  def encodePathElement(self, element):
-    return urllib.quote(element.encode('utf-8'), \
-                        safe=const.URL_PATHELEMENT_SAFE_CHARS)
-
-  def encodeQueryElement(self, element):
-    return urllib.quote(element.encode('utf-8'), \
-                        safe=const.URL_QUERYELEMENT_SAFE_CHARS)
-
-  def urlencode(self, query, doseq=0):
-    '''Modified version of the standard urllib.urlencode that is conformant
-    with RFC3986. The urllib version encodes spaces as '+' which can lead
-    to inconsistency. This version will always encode spaces as '%20'.
-    
-    TODO: verify the unicode encoding process - looks a bit suspect.
-
-    Encode a sequence of two-element tuples or dictionary into a URL query string.
-
-    If any values in the query arg are sequences and doseq is true, each
-    sequence element is converted to a separate parameter.
-
-    If the query arg is a sequence of two-element tuples, the order of the
-    parameters in the output will match the order of parameters in the
-    input.
-    '''
-    if hasattr(query, "items"):
-      # mapping objects
-      query = query.items()
-    else:
-      # it's a bother at times that strings and string-like objects are
-      # sequences...
-      try:
-        # non-sequence items should not work with len()
-        # non-empty strings will fail this
-        if len(query) and not isinstance(query[0], tuple):
-          raise TypeError
-        # zero-length sequences of all types will get here and succeed,
-        # but that's a minor nit - since the original implementation
-        # allowed empty dicts that type of behavior probably should be
-        # preserved for consistency
-      except TypeError:
-        ty, va, tb = sys.exc_info()
-        raise TypeError, "not a valid non-string sequence or mapping object", tb
-
-    l = []
-    if not doseq:
-      # preserve old behavior
-      for k, v in query:
-        k = self.encodeQueryElement(str(k))
-        v = self.encodeQueryElement(str(v))
-        l.append(k + '=' + v)
-    else:
-      for k, v in query:
-        k = self.encodeQueryElement(str(k))
-        if isinstance(v, str):
-          v = self.encodeQueryElement(v)
-          l.append(k + '=' + v)
-        elif isinstance(v, unicode):
-          # is there a reasonable way to convert to ASCII?
-          # encode generates a string, but "replace" or "ignore"
-          # lose information and "strict" can raise UnicodeError
-          v = self.encodeQueryElement(v.encode("ASCII", "replace"))
-          l.append(k + '=' + v)
-        else:
-          try:
-            # is this a sufficient test for sequence-ness?
-            x = len(v)
-          except TypeError:
-            # not a sequence
-            v = self.encodeQueryElement(str(v))
-            l.append(k + '=' + v)
-          else:
-            # loop over the sequence
-            for elt in v:
-              l.append(k + '=' + self.encodeQueryElement(str(elt)))
-    return '&'.join(l)
 
   def GET(self, url, data=None, headers=None):
     '''Perform a HTTP GET and return the response. All values are to be UTF-8
