@@ -4,6 +4,7 @@ import logging
 import urllib
 import urlparse
 from d1_common import const
+from d1_common import util
 from d1_common.types import systemmetadata
 from d1_common.types import objectlist_serialization
 from restclient import DataONEClient
@@ -25,13 +26,13 @@ class MemberNodeClient(DataONEClient):
 
   def get(self, pid):
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object/%s' % self.encodePathElement(pid))
+                           'object/%s' % util.encodePathElement(pid))
     self.logger.info("URL = %s" % url)
     return self.GET(url)
 
   def getSystemMetadataResponse(self, pid):
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'meta/%s' % self.encodePathElement(pid))
+                           'meta/%s' % util.encodePathElement(pid))
     self.logger.info("URL = %s" % url)
     return self.GET(url)
 
@@ -47,8 +48,6 @@ class MemberNodeClient(DataONEClient):
 
   def listObjects(self, params={'start': 0, 'count': 10}):
     res = self.listObjectsResponse(params)
-    print res.read()
-    return
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     serializer = objectlist_serialization.ObjectList()
     return serializer.deserialize(res.read(), format)
