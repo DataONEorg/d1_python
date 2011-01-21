@@ -177,7 +177,6 @@ class RESTClient(object):
     :return: headers
     :return type: dict
     '''
-
     return {'User-Agent': 'Test client', 'Accept': '*/*'}
 
   def loadError(self, response):
@@ -191,7 +190,6 @@ class RESTClient(object):
     :return: Should not return - always raises an exception.
     :return type: exception
     '''
-
     edata = response.read()
     exc = exceptions.DataOneExceptionFactory.createException(edata)
     if not exc is None:
@@ -215,7 +213,6 @@ class RESTClient(object):
     :return: response
     :return type: :class:`response`  
     '''
-
     if headers is None:
       headers = self.headers
     request = HttpRequest(url, data=data, headers=headers, method=method)
@@ -257,7 +254,6 @@ class RESTClient(object):
     :type headers: (string) url, (dict) headers
     :return: (response)
     '''
-
     return self.sendRequest(url, headers=headers, method='HEAD')
 
   def GET(self, url, headers=None):
@@ -265,7 +261,6 @@ class RESTClient(object):
     :param: (string) url, (dict) headers
     :return: (response)
     '''
-
     return self.sendRequest(url, headers=headers, method='GET')
 
   def PUT(self, url, data, headers=None):
@@ -273,7 +268,6 @@ class RESTClient(object):
     :param: (string) url, (string) data, (dict) headers
     :return: (response)
     '''
-
     if isinstance(data, dict):
       data = urllib.urlencode(data)
     return self.sendRequest(url, data=data, headers=headers, method='PUT')
@@ -283,7 +277,6 @@ class RESTClient(object):
     :param: (string) url, (string) data, (dict) headers
     :return: (response)
     '''
-
     if isinstance(data, dict):
       data = urllib.urlencode(data)
     return self.sendRequest(url, data=data, headers=headers, method='POST')

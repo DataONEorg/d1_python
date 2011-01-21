@@ -71,7 +71,7 @@ class RESTClient(object):
     targeturl = parts['path']
     if not data is None:
       #URL encode data and append to URL
-      if self.logger.loglevel == logging.DEBUG:
+      if self.logger.getEffectiveLevel() == logging.DEBUG:
         self.logger.debug("DATA=%s" % str(data))
       if parts['query'] == '':
         parts['query'] = self.urlencode(data)
@@ -79,7 +79,8 @@ class RESTClient(object):
         parts['query'] = '%s&%s' % (parts['query'], \
                                     self.urlencode(data))
       targeturl = urlparse.urljoin(targeturl, "?%s" % parts['query'])
-    self.logger.debug('targetURL=%s' % targeturl)
+    if self.logger.getEffectiveLevel() == logging.DEBUG:
+      self.logger.debug('targetURL=%s' % targeturl)
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     conn.request(method, targeturl, None, self._mergeHeaders(headers))
     return self._getResponse(conn)
@@ -87,7 +88,6 @@ class RESTClient(object):
   def _doRequestMMBody(self, method, url, data=None, files=None, headers=None):
     parts = self._parseURL(url)
     targeturl = parts['path']
-    conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     headers = self._mergeHeaders(headers)
     if not data is None:
       try:
@@ -289,12 +289,18 @@ class DataONEClient(RESTClient):
                certfile=None, strictHttps=True):
     if not defaultHeaders.has_key('Accept'):
       defaultHeaders['Accept'] = const.DEFAULT_MIMETYPE
-    if not defaultHeaders.has_key('User Agent'):
+    if not defaultHeaders.has_key('User-Agent'):
       defaultHeaders['User-Agent'] = const.USER_AGENT
     if not defaultHeaders.has_key('Charset'):
       defaultHeaders['Charset'] = const.DEFAULT_CHARSET
-    RESTClient.__init__(self, defaultHeaders={}, timeout=10, keyfile=None,
-                            certfile=None, strictHttps=True)
+    RESTClient.__init__(
+      self,
+      defaultHeaders=defaultHeaders,
+      timeout=timeout,
+      keyfile=keyfile,
+      certfile=certfile,
+      strictHttps=strictHttps
+    )
 
   def isHttpStatusOK(self, status):
     status = int(status)
