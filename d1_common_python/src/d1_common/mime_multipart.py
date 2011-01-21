@@ -157,7 +157,10 @@ class multipart(object):
     '''
 
     if self.state == 'form_fields':
-      self.state = 'file_head'
+      if len(self.files) > 0:
+        self.state = 'file_head'
+      else:
+        self.state = 'body_foot'
       return self._form_fields()
 
     elif self.state == 'file_head':
