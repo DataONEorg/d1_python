@@ -55,7 +55,7 @@ def encodeQueryElement(element):
                safe=const.URL_QUERYELEMENT_SAFE_CHARS)
 
 
-def urlencode(self, query, doseq=0):
+def urlencode(query, doseq=0):
   '''Modified version of the standard urllib.urlencode that is conformant
   with RFC3986. The urllib version encodes spaces as '+' which can lead
   to inconsistency. This version will always encode spaces as '%20'.
