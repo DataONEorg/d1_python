@@ -101,3 +101,8 @@ HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]
 #: caching of any responses.  Setting to "/tmp" will cache responses in
 #: the /tmp filesystem
 HTTP_RESPONSE_CACHE = None
+
+# The default mimetype used by DataONE services
+DEFAULT_MIMETYPE = 'text/xml'
+
+DEFAULT_CHARSET = 'utf-8'
