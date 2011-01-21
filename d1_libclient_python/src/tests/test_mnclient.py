@@ -33,7 +33,11 @@ class TestMNClient(TestCaseWithURLCompare):
 
   def testListObjects(self):
     cli = mnclient.MemberNodeClient(self.baseurl)
-    res = cli.listObjects(params={})
+    start = 0
+    count = 5
+    res = cli.listObjects(params={'start': start, 'count': count})
+    self.assertEqual(start, res.start)
+    self.assertEqual(count, res.count)
     logging.info(res)
 
 
