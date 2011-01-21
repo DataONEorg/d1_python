@@ -280,38 +280,40 @@ def set_replication_status_get(request, status, node_ref, pid):
 # Testing.
 #
 
-def test_replicate(request, pid, src_node_ref, dst_node_ref):
-  res = cn.util.test_replicate(pid, src_node_ref, dst_node_ref)
-  return HttpResponse(res)
+def test(request):
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
 
-def test_set_replication_status_put(request, status, node_ref, pid):
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access test_set_replication_status_put while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
+  return render_to_response('test_cn.html', {})
 
-  return set_replication_status_put(request, status, node_ref, pid)
+# Status
 
-def test_get_sysmeta(request, pid):
-  return HttpResponse(mn.util.pretty_xml(cn.util.get_sysmeta(pid)[1].toxml()), 'application/xml')
-
-def test_get_replication_status(request, pid):
-  if pid == '':
-    pid = None
-
-  status_list = cn.util.get_replication_status_list(pid)
+def test_get_replication_status(request):
+  status_list = cn.util.get_replication_status_list(request.GET.get('pid', None))
 
   return render_to_response('test_get_replication_status.html',
                             {'status_list': status_list })
 
-def test_get_replication_status_xml(request, pid):
-  if pid == '':
-    pid = None
-
-  status_list = cn.util.get_replication_status_list(pid)
+def test_get_replication_status_xml(request):
+  status_list = cn.util.get_replication_status_list(request.GET.get('pid', None))
 
   return render_to_response('test_get_replication_status.xml',
                             {'status_list': status_list },
                             mimetype='application/xml')
+
+def test_get_sysmeta(request, pid):
+  return HttpResponse(mn.util.pretty_xml(cn.util.get_sysmeta(pid)[1].toxml()), 'application/xml')
+
+# Create and Update
+
+def test_replicate(request, src_node_ref, dst_node_ref, pid):
+  res = cn.util.test_replicate(pid, src_node_ref, dst_node_ref)
+  return HttpResponse(res)
+
+def test_set_replication_status_get(request, status, node_ref, pid):
+  return set_replication_status_get(request, status, node_ref, pid)
+
+# Delete
 
 def test_clear_replication_status(request, node_ref, pid):
   if node_ref == '':

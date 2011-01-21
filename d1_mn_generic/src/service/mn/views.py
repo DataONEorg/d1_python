@@ -49,11 +49,13 @@
 '''
 
 # Stdlib.
+import cgi
 import csv
 import datetime
 import glob
 import hashlib
 import os
+import pprint
 import re
 import stat
 import sys
@@ -114,12 +116,6 @@ def object_collection(request):
   N/A MN_replication.listObjects() DELETE /object
   '''
   if request.method == 'GET':
-    # For debugging. It's tricky (impossible?) to generate the DELETE verb with
-    # Firefox, so fudge things here with a check for a "delete" argument in the
-    # POST request and branch out to delete.
-    if 'delete' in request.GET:
-      return object_collection_delete(request)
-
     return object_collection_get(request, head=False)
   
   if request.method == 'HEAD':
@@ -137,11 +133,6 @@ def object_collection_get(request, head):
   MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList
   :return:
   '''
-
-  # For debugging, we support deleting the entire collection in a GET request.
-  if settings.GMN_DEBUG == True and 'delete' in request.GET:
-    models.Object.objects.all().delete()
-    sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
   
   # Sort order.  
   if 'orderby' in request.GET:
@@ -250,10 +241,9 @@ def object_collection_delete(request):
   :return:
   '''
 
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access object_collection_delete while not in DEBUG mode'.format(util.request_to_string(request)))
+  if settings.GMN_DEBUG == False:
     raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
-    
+  
   # Clear the DB.
   models.Object.objects.all().delete()
   models.Object_format.objects.all().delete()
@@ -272,7 +262,7 @@ def object_collection_delete(request):
     raise d1_common.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
-  sys_log.info('client({0}): object_collection_delete'.format(util.request_to_string(request)))
+  sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
 
   return HttpResponse('OK')
 
@@ -726,10 +716,6 @@ def event_log_view_delete(request):
   :return:
   '''
 
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access event_log_view_delete while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
-
   # Clear the access log.
   models.Event_log.objects.all().delete()
   models.Event_log_ip_address.objects.all().delete()
@@ -873,12 +859,8 @@ def _replicate_store(request):
   return HttpResponse(doc, content_type)
 
 # For testing via browser.
-def test_replicate_put(request, source_node, pid):
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access test_replicate_put while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
-
-  return replicate_put(request, source_node, pid)
+def test_replicate_post(request):
+  return replicate_post(request)
 
 def test_replicate_get(request):
   '''
@@ -888,10 +870,6 @@ def test_replicate_get(request):
 
 # For testing via browser.
 def test_replicate_clear(request):
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access test_replicate_delete while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
-
   models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
 
@@ -1073,6 +1051,12 @@ def node_get(request):
 
 # Diagnostics, debugging and testing.
 
+def test(request):
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  return render_to_response('test.html', {})  
+
 def test_slash(request, p1, p2, p3):
   '''
   '''
@@ -1080,10 +1064,6 @@ def test_slash(request, p1, p2, p3):
   # Only GET accepted.
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
-
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access test_slash while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
 
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
@@ -1094,17 +1074,9 @@ def test_get_request(request):
   # Only GET accepted.
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
-
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access test_get_request while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
-
-  html = '<table>'
-  for key, val in request.META.items():
-    html += '<tr><td>{0}</td><td>{1}</td></tr>'.format(key, val)
-  html += '</table>'
-
-  return HttpResponse(html)
+  
+  pp = pprint.PrettyPrinter(indent=2)
+  return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 def test_inject_log(request):
   '''Inject a fake log for testing.
@@ -1112,10 +1084,6 @@ def test_inject_log(request):
   The corresponding test object set must have already been created.
   :return:
   '''
-
-  if settings.GMN_DEBUG != True:
-    sys_log.info('client({0}): Attempted to access test_inject_log while not in DEBUG mode'.format(util.request_to_string(request)))
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
   
   # Only POST accepted.
   if request.method != 'POST':

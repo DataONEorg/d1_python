@@ -33,6 +33,7 @@ import datetime
 import exceptions
 import glob
 import hashlib
+import htmlentitydefs
 import os
 import re
 import stat
