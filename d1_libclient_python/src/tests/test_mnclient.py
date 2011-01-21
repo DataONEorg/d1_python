@@ -29,7 +29,7 @@ class TestMNClient(TestCaseWithURLCompare):
   def testGetSystemMetadata(self):
     cli = mnclient.MemberNodeClient(self.baseurl)
     res = cli.getSystemMetadata(self.testpid)
-    print res
+    logging.info(res)
 
   def testListObjects(self):
     cli = mnclient.MemberNodeClient(self.baseurl)
