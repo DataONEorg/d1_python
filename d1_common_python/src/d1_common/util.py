@@ -20,9 +20,35 @@
 # limitations under the License.
 
 import email.message
+from urllib import quote
+import const
 
 
 def get_content_type(content_type):
   m = email.message.Message()
   m['Content-Type'] = content_type
   return m.get_content_type()
+
+
+def encodePathElement(element):
+  '''Encodes a URL path element according to RFC3986.
+  
+  :param element: The path element to encode for transmission in a URL.
+  :type element: Unicode
+  :return: URL encoded path element
+  :return type: UTF-8 encoded string. 
+  '''
+  return quote(element.encode('utf-8'), \
+               safe=const.URL_PATHELEMENT_SAFE_CHARS)
+
+
+def encodeQueryElement(element):
+  '''Encodes a URL query element according to RFC3986.
+  
+  :param element: The query element to encode for transmission in a URL.
+  :type element: Unicode
+  :return: URL encoded query element
+  :return type: UTF-8 encoded string. 
+  '''
+  return quote(element.encode('utf-8'), \
+               safe=const.URL_QUERYELEMENT_SAFE_CHARS)
