@@ -110,10 +110,12 @@ class RESTClient(object):
     return self._getResponse(conn)
 
   def encodePathElement(self, element):
-    return urllib.quote(element.encode('utf-8'), safe=':')
+    return urllib.quote(element.encode('utf-8'), \
+                        safe=const.URL_PATHELEMENT_SAFE_CHARS)
 
   def encodeQueryElement(self, element):
-    return urllib.quote(element.encode('utf-8'), safe=':')
+    return urllib.quote(element.encode('utf-8'), \
+                        safe=const.URL_QUERYELEMENT_SAFE_CHARS)
 
   def urlencode(self, query, doseq=0):
     '''Modified version of the standard urllib.urlencode that is conformant
