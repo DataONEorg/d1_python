@@ -5,6 +5,7 @@ Created on Jan 20, 2011
 '''
 import unittest
 import logging
+import codecs
 from d1_client import restclient
 import d1_common.exceptions
 from testcasewithurlcompare import TestCaseWithURLCompare
@@ -12,18 +13,34 @@ from testcasewithurlcompare import TestCaseWithURLCompare
 
 class TestRESTClient(TestCaseWithURLCompare):
   def setUp(self):
-    pass
+    self.cli = restclient.RESTClient()
 
   def tearDown(self):
     pass
 
   def testEncodePathElement(self):
-    return
-    raise Exception('Not Implemented')
+    ftest = 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt'
+    testfile = codecs.open(ftest, encoding='utf-8', mode='r')
+    testrows = testfile.readlines()
+    for row in testrows:
+      parts = row.split('\t')
+      if len(parts) > 1:
+        v = parts[0]
+        if v.startswith('common') or v.startswith('path'):
+          e = parts[1].strip()
+          self.assertEqual(e, self.cli.encodePathElement(v))
 
   def testEncodeQueryElement(self):
-    return
-    raise Exception('Not Implemented')
+    ftest = 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt'
+    testfile = codecs.open(ftest, encoding='utf-8', mode='r')
+    testrows = testfile.readlines()
+    for row in testrows:
+      parts = row.split('\t')
+      if len(parts) > 1:
+        v = parts[0]
+        if v.startswith('common') or v.startswith('query'):
+          e = parts[1].strip()
+          self.assertEqual(e, self.cli.encodeQueryElement(v))
 
   def testEncodeURL(self):
     return

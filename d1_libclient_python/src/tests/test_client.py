@@ -25,7 +25,7 @@ except:
 from d1_common import xmlrunner
 from d1_common import exceptions
 from d1_common.types import systemmetadata
-from d1_client import const
+from d1_common import const
 from d1_client import client
 
 MEMBER_NODES = {
@@ -175,7 +175,7 @@ class TestRestClient(TestCaseWithURLCompare):
 
 class TestDataOneClient(TestCaseWithURLCompare):
   def setUp(self):
-    self.target = MEMBER_NODES['metacat']
+    self.target = MEMBER_NODES['dryad']
 
   def testGet(self):
     return
