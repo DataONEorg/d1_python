@@ -57,6 +57,22 @@ class multipart(object):
     self.BOUNDARY = '----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
     self.io = StringIO.StringIO()
 
+  def getContentLength(self):
+    '''
+    '''
+    m = multipart(
+      self.headers, self.fields, [
+        (
+          file[0], file[1], ''
+        ) for file in self.files
+      ]
+    )
+    content_length = len(m.read())
+    for file in self.files:
+      content_length += self._get_len(file)
+    self.reset()
+    return content_length
+
   def post(self, url):
     '''Post fields and files to an HTTP host as MIME Multipart.
     :return: (tuple) response status, response reason, response body
