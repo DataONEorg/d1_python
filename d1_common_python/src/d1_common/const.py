@@ -110,3 +110,5 @@ DEFAULT_CHARSET = 'utf-8'
 URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="
 
 URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
+
+AUTH_HEADER_NAME = 'Authorization'
