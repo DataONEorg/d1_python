@@ -4,17 +4,16 @@ Created on Jan 20, 2011
 @author: vieglais
 '''
 
-import sys
 import logging
 import httplib
 import urlparse
-import urllib
 from d1_common import const
 from d1_common import exceptions
 from d1_common import util
 from d1_common.mime_multipart import multipart
 from d1_common.types import systemmetadata
 from d1_common.types import objectlist_serialization
+from d1_common.types import logrecords_serialization
 
 
 class RESTClient(object):
@@ -288,7 +287,7 @@ class DataONEBaseClient(RESTClient):
     objectFormat=None,
     replicaStatus=None,
     start=0,
-    count=100
+    count=const.DEFAULT_LISTOBJECTS
   ):
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
                            'object')
@@ -315,7 +314,7 @@ class DataONEBaseClient(RESTClient):
     objectFormat=None,
     replicaStatus=None,
     start=0,
-    count=100
+    count=const.DEFAULT_LISTOBJECTS
   ):
     res = self.listObjectsResponse(
       token,
@@ -330,8 +329,22 @@ class DataONEBaseClient(RESTClient):
     serializer = objectlist_serialization.ObjectList()
     return serializer.deserialize(res.read(), format)
 
+  def getLogRecordsResponse(self, token, fromDate, toDate=None, event=None):
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'log')
+    params = {'fromDate': fromDate}
+    if not toDate is None:
+      params['toDate'] = toDate
+    if not event is None:
+      params['event'] = event
+    return self.GET(url, data=params, headers=self._getAuthHeader(token))
+
   def getLogRecords(self, token, fromDate, toDate=None, event=None):
-    raise Exception('Not Implemented')
+    response = self.getLogRecordsResponse(token, fromDate, toDate=toDate, event=event)
+
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = logrecords_serialization.LogRecords()
+    return deser.deserialize(response.read(), format)
 
   def isAuthorized(self, token, pid, action):
     raise Exception('Not Implemented')
