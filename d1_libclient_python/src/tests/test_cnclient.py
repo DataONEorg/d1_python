@@ -5,12 +5,12 @@ Created on Jan 20, 2011
 '''
 import unittest
 import logging
-from d1_client import cnclient
+from d1_client import mnclient
 import d1_common.exceptions
 from testcasewithurlcompare import TestCaseWithURLCompare
 
 
-class TestCNClient(TestCaseWithURLCompare):
+class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
     self.baseurl = 'http://dev-dryad-mn.dataone.org/mn'
@@ -24,34 +24,52 @@ class TestCNClient(TestCaseWithURLCompare):
   def tearDown(self):
     pass
 
-  def test_create(self):
+  def resolve(self):
     raise Exception('Not Implemented')
 
-  def test_update(self):
+  def test_reserveIdentifier(self):
     raise Exception('Not Implemented')
 
-  def test_delete(self):
+  def test_assertRelation(self):
     raise Exception('Not Implemented')
 
-  def test_getChecksum(self):
+  def test_search(self):
     raise Exception('Not Implemented')
 
-  def test_replicate(self):
+  def test_getAuthToken(self):
     raise Exception('Not Implemented')
 
-  def test_synchronizationFailed(self):
+  def test_setOwner(self):
     raise Exception('Not Implemented')
 
-  def test_getObjectStatistics(self):
+  def test_newAccount(self):
     raise Exception('Not Implemented')
 
-  def test_getOperationStatistics(self):
+  def test_verifyToken(self):
     raise Exception('Not Implemented')
 
-  def test_getStatus(self):
+  def test_mapIdentity(self):
     raise Exception('Not Implemented')
 
-  def test_getCapabilities(self):
+  def test_createGroup(self):
+    raise Exception('Not Implemented')
+
+  def test_addGroupMembers(self):
+    raise Exception('Not Implemented')
+
+  def test_removeGroupMembers(self):
+    raise Exception('Not Implemented')
+
+  def test_setReplicationStatus(self):
+    raise Exception('Not Implemented')
+
+  def test_listNodes(self):
+    raise Exception('Not Implemented')
+
+  def test_addNodeCapabilities(self):
+    raise Exception('Not Implemented')
+
+  def test_register(self):
     raise Exception('Not Implemented')
 
 

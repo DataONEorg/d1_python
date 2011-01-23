@@ -40,9 +40,10 @@ class TestRESTClient(TestCaseWithURLCompare):
 class TestDataONEClient(TestCaseWithURLCompare):
   def setUp(self):
     self.token = None
+    self.baseurl = "http://dev-dryad-mn.dataone.org/mn"
 
   def testGet(self):
-    cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
+    cli = restclient.DataONEBaseClient(self.baseurl)
     #res = cli.get(self.token, "something")
     #print "STATUS = %s" % str(res.status)
     #print res.read()
@@ -50,7 +51,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
       "some_bogus_983")
 
   def testPing(self):
-    cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
+    cli = restclient.DataONEBaseClient(self.baseurl)
     res = cli.ping()
     self.assertTrue(res)
     cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/bogus/mn")
@@ -63,6 +64,29 @@ class TestDataONEClient(TestCaseWithURLCompare):
     #fromDate = ''
     #res = cli.getLogRecords(self.token, fromDate)
     raise Exception("Not Implemented - discrepancy in REST docs")
+
+  def testGetSystemMetadata(self):
+    cli = restclient.DataONEBaseClient(self.baseurl)
+    self.assertRaises(
+      d1_common.exceptions.NotFound, cli.getSystemMetadata, self.token, 'some bogus id'
+    )
+    res = cli.getSystemMetadata(self.token, self.testpid)
+    logging.info(res)
+
+  def testListObjects(self):
+    cli = restclient.DataONEBaseClient(self.baseurl)
+    start = 0
+    count = 5
+    res = cli.listObjects(self.token, start=start, count=count)
+    self.assertEqual(start, res.start)
+    self.assertEqual(count, res.count)
+    logging.info(res)
+
+  def testIsAuthorized(self):
+    raise Exception('Not Implemented')
+
+  def testSetAccess(self):
+    raise Exception('Not Implemented')
 
 
 if __name__ == "__main__":

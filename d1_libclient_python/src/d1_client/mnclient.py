@@ -41,9 +41,6 @@ class MemberNodeClient(DataONEBaseClient):
   def synchronizationFailed(self, message):
     raise Exception('Not Implemented')
 
-  def ping(self):
-    raise Exception('Not Implemented')
-
   def getObjectStatistics(self, token, time=None, format=None, day=None, pid=None):
     raise Exception('Not Implemented')
 
