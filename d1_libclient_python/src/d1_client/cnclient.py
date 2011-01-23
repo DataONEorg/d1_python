@@ -11,8 +11,9 @@ from d1_common.types import objectlist_serialization
 
 class CoordinatingNodeClient(DataONEBaseClient):
 
-  def __init__(self, baseurl, defaultHeaders={}, timeout=10, keyfile=None,
-               certfile=None, strictHttps=True):
+  def __init__(self, baseurl=const.URL_DATAONE_ROOT,
+                     defaultHeaders={}, timeout=10, keyfile=None,
+                     certfile=None, strictHttps=True):
     DataONEBaseClient.__init__(
       self,
       baseurl,

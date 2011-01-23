@@ -57,6 +57,13 @@ class TestDataONEClient(TestCaseWithURLCompare):
     res = cli.ping()
     self.assertFalse(res)
 
+  def testGetLogRecords(self):
+    #basic deserialization test
+    #cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
+    #fromDate = ''
+    #res = cli.getLogRecords(self.token, fromDate)
+    raise Exception("Not Implemented - discrepancy in REST docs")
+
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.DEBUG)
