@@ -5,49 +5,62 @@ import urllib
 import urlparse
 from d1_common import const
 from d1_common import util
-from d1_common.types import systemmetadata
-from d1_common.types import objectlist_serialization
-from restclient import DataONEClient
+from restclient import DataONEBaseClient
 
 
-class MemberNodeClient(DataONEClient):
+class MemberNodeClient(DataONEBaseClient):
 
   def __init__(self, baseurl, defaultHeaders={}, timeout=10, keyfile=None,
                certfile=None, strictHttps=True):
-    DataONEClient.__init__(self, defaultHeaders={}, timeout=10, keyfile=None,
-                           certfile=None, strictHttps=True)
-    self.baseurl = baseurl
+    DataONEBaseClient.__init__(
+      self,
+      baseurl,
+      defaultHeaders=defaultHeaders,
+      timeout=timeout,
+      keyfile=keyfile,
+      certfile=certfile,
+      strictHttps=strictHttps
+    )
     self.logger = logging.getLogger('MemberNodeClient')
 
-  def _normalizeTarget(self, target):
-    if not target.endswith('/'):
-      target += '/'
-    return target
+  def create(self, token, pid, obj, sysmeta):
+    raise Exception('Not Implemented')
 
-  def get(self, pid):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object/%s' % util.encodePathElement(pid))
-    self.logger.info("URL = %s" % url)
-    return self.GET(url)
+  def update(self, token, pid, obj, obsoletedPid, sysmeta):
+    raise Exception('Not Implemented')
 
-  def getSystemMetadataResponse(self, pid):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'meta/%s' % util.encodePathElement(pid))
-    self.logger.info("URL = %s" % url)
-    return self.GET(url)
+  def delete(self, token, pid):
+    raise Exception('Not Implemented')
 
-  def getSystemMetadata(self, pid):
-    res = self.getSystemMetadataResponse(pid)
-    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    return systemmetadata.CreateFromDocument(res.read(), )
+  def getChecksum(self, token, pid, checksumAgorithm=None):
+    raise Exception('Not Implemented')
 
-  def listObjectsResponse(self, params):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object')
-    return self.GET(url, data=params)
+  def replicate(self, token, sysmeta, sourceNode):
+    raise Exception('Not Implemented')
 
-  def listObjects(self, params={'start': 0, 'count': 10}):
-    res = self.listObjectsResponse(params)
-    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    serializer = objectlist_serialization.ObjectList()
-    return serializer.deserialize(res.read(), format)
+  def synchronizationFailed(self, message):
+    raise Exception('Not Implemented')
+
+  def ping(self):
+    raise Exception('Not Implemented')
+
+  def getObjectStatistics(self, token, time=None, format=None, day=None, pid=None):
+    raise Exception('Not Implemented')
+
+  def getOperationStatistics(
+    self,
+    token,
+    time=None,
+    requestor=None,
+    day=None,
+    event=None,
+    eventTime=None,
+    format=None
+  ):
+    raise Exception('Not Implemented')
+
+  def getStatus(self):
+    raise Exception('Not Implemented')
+
+  def getCapabilities(self):
+    raise Exception('Not Implemented')

@@ -38,11 +38,24 @@ class TestRESTClient(TestCaseWithURLCompare):
 
 
 class TestDataONEClient(TestCaseWithURLCompare):
+  def setUp(self):
+    self.token = None
+
   def testGet(self):
-    cli = restclient.DataONEClient()
-    res = cli.GET("http://dev-dryad-mn.dataone.org/mn")
-    self.assertRaises(d1_common.exceptions.NotFound, cli.GET, \
-      "http://dev-dryad-mn.dataone.org/mn/object/some_bogus_983")
+    cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
+    #res = cli.get(self.token, "something")
+    #print "STATUS = %s" % str(res.status)
+    #print res.read()
+    self.assertRaises(d1_common.exceptions.NotFound, cli.get, self.token, \
+      "some_bogus_983")
+
+  def testPing(self):
+    cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
+    res = cli.ping()
+    self.assertTrue(res)
+    cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/bogus/mn")
+    res = cli.ping()
+    self.assertFalse(res)
 
 
 if __name__ == "__main__":

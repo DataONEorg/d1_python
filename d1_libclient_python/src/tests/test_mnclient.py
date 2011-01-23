@@ -14,11 +14,12 @@ class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
     self.baseurl = 'http://dev-dryad-mn.dataone.org/mn'
-    self.testpid = 'hdl:10255/dryad.105/mets.xml'
+    #    self.testpid = 'hdl:10255/dryad.105/mets.xml'
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255/dryad.105/mets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255/dryad.105/mets.xml
+    self.token = None
 
   def tearDown(self):
     pass
@@ -28,14 +29,17 @@ class TestMNClient(TestCaseWithURLCompare):
 
   def testGetSystemMetadata(self):
     cli = mnclient.MemberNodeClient(self.baseurl)
-    res = cli.getSystemMetadata(self.testpid)
+    self.assertRaises(
+      d1_common.exceptions.NotFound, cli.getSystemMetadata, self.token, 'some bogus id'
+    )
+    res = cli.getSystemMetadata(self.token, self.testpid)
     logging.info(res)
 
   def testListObjects(self):
     cli = mnclient.MemberNodeClient(self.baseurl)
     start = 0
     count = 5
-    res = cli.listObjects(params={'start': start, 'count': count})
+    res = cli.listObjects(self.token, start=start, count=count)
     self.assertEqual(start, res.start)
     self.assertEqual(count, res.count)
     logging.info(res)
