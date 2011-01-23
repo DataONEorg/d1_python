@@ -37,7 +37,8 @@ class RESTClient(object):
       conn = httplib.HTTPSConnection(
         host, port, self.keyfile, self.certfile, self.strictHttps, self.timeout
       )
-    #conn.set_debuglevel(logging.DEBUG)
+    if self.logger.getEffectiveLevel() == logging.DEBUG:
+      conn.set_debuglevel(logging.DEBUG)
     return conn
 
   def _parseURL(self, url):
@@ -71,6 +72,7 @@ class RESTClient(object):
   def _doRequestNoBody(self, method, url, data=None, headers=None):
     parts = self._parseURL(url)
     targeturl = parts['path']
+    headers = self._mergeHeaders(headers)
     if not data is None:
       #URL encode data and append to URL
       if self.logger.getEffectiveLevel() == logging.DEBUG:
@@ -83,8 +85,9 @@ class RESTClient(object):
       targeturl = urlparse.urljoin(targeturl, "?%s" % parts['query'])
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       self.logger.debug('targetURL=%s' % targeturl)
+      self.logger.debug('HEADERS=%s' % str(headers))
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
-    conn.request(method, targeturl, None, self._mergeHeaders(headers))
+    conn.request(method, targeturl, None, headers)
     return self._getResponse(conn)
 
   def _doRequestMMBody(self, method, url, data=None, files=None, headers=None):
@@ -107,6 +110,9 @@ class RESTClient(object):
     mm = multipart(headers, data, files)
     headers['Content-Type'] = mm._get_content_type()
     headers['Content-Length'] = mm.getContentLength()
+    if self.logger.getEffectiveLevel() == logging.DEBUG:
+      self.logger.debug('targetURL=%s' % targeturl)
+      self.logger.debug('HEADERS=%s' % str(headers))
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
@@ -214,6 +220,9 @@ class DataONEBaseClient(RESTClient):
   
   Also implements DataONE API methods that are common to both Member and
   Coordinating Nodes.
+  
+  Unless otherwise indicated, methods with names that end in "Response" return 
+  the HTTPResponse object, otherwise the de-serialized object is returned.
   '''
 
   def __init__(self, baseurl, defaultHeaders={}, timeout=10, keyfile=None,
@@ -234,12 +243,6 @@ class DataONEBaseClient(RESTClient):
     )
     self.baseurl = baseurl
     self.logger = logging.getLogger('DataONEBaseClient')
-
-  def isHttpStatusOK(self, status):
-    status = int(status)
-    if status >= 100 and status < 400:
-      return True
-    return False
 
   def _getResponse(self, conn):
     res = conn.getresponse()
@@ -262,19 +265,41 @@ class DataONEBaseClient(RESTClient):
       target += '/'
     return target
 
+  def isHttpStatusOK(self, status):
+    status = int(status)
+    if status >= 100 and status < 400:
+      return True
+    return False
+
   def get(self, token, pid):
+    '''Implements CRUD.get()
+    
+    :param token: Authentication token
+    :param pid: Identifier
+    :returns: HTTPResponse instance, a file like object that supports read().
+    :return type: HTTPResponse
+    '''
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
                            'object/%s' % util.encodePathElement(pid))
     self.logger.info("URL = %s" % url)
     return self.GET(url, headers=self._getAuthHeader(token))
 
   def getSystemMetadataResponse(self, token, pid):
+    '''Implements the MN getSystemMetadata call, returning a HTTPResponse 
+    object. See getSystemMetada() for method that returns a deserialized
+    system metadata object.
+    
+    :return type: HTTPResponse
+    '''
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
                            'meta/%s' % util.encodePathElement(pid))
     self.logger.info("URL = %s" % url)
     return self.GET(url, headers=self._getAuthHeader(token))
 
   def getSystemMetadata(self, token, pid):
+    '''
+    :return type: SystemMetadata
+    '''
     res = self.getSystemMetadataResponse(token, pid)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     return systemmetadata.CreateFromDocument(res.read(), )
@@ -289,6 +314,9 @@ class DataONEBaseClient(RESTClient):
     start=0,
     count=const.DEFAULT_LISTOBJECTS
   ):
+    '''
+    :return type: HTTPResponse
+    '''
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
                            'object')
     params = {}
@@ -316,6 +344,9 @@ class DataONEBaseClient(RESTClient):
     start=0,
     count=const.DEFAULT_LISTOBJECTS
   ):
+    '''
+    :return type: ObjectList
+    '''
     res = self.listObjectsResponse(
       token,
       startTime=startTime,
@@ -330,6 +361,9 @@ class DataONEBaseClient(RESTClient):
     return serializer.deserialize(res.read(), format)
 
   def getLogRecordsResponse(self, token, fromDate, toDate=None, event=None):
+    '''
+    :return type: HTTPResponse
+    '''
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
                            'log')
     params = {'fromDate': fromDate}
@@ -340,19 +374,19 @@ class DataONEBaseClient(RESTClient):
     return self.GET(url, data=params, headers=self._getAuthHeader(token))
 
   def getLogRecords(self, token, fromDate, toDate=None, event=None):
+    '''
+    :return type: LogRecords
+    '''
     response = self.getLogRecordsResponse(token, fromDate, toDate=toDate, event=event)
 
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = logrecords_serialization.LogRecords()
     return deser.deserialize(response.read(), format)
 
-  def isAuthorized(self, token, pid, action):
-    raise Exception('Not Implemented')
-
-  def setAccess(self, token, pid, accessPolicy):
-    raise Exception('Not Implemented')
-
   def ping(self):
+    '''
+    :return type: Boolean
+    '''
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
                            'health/ping')
     try:
@@ -363,3 +397,13 @@ class DataONEBaseClient(RESTClient):
     if response.status == 200:
       return True
     return False
+
+  def isAuthorized(self, token, pid, action):
+    '''
+    '''
+    raise Exception('Not Implemented')
+
+  def setAccess(self, token, pid, accessPolicy):
+    '''
+    '''
+    raise Exception('Not Implemented')

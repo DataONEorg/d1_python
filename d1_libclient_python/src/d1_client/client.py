@@ -368,7 +368,6 @@ class DataOneClient(object):
     :param: (None)
     :return: (string) url
     '''
-
     return urlparse.urljoin(self.client.target, d1_common.const.URL_MONITOR_PATH)
 
   def getMetaUrl(self, id=None):

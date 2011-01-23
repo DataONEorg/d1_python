@@ -1,11 +1,13 @@
 '''
 '''
 import logging
-import urllib
 import urlparse
 from d1_common import const
 from d1_common import util
 from restclient import DataONEBaseClient
+from d1_common.types import checksum_serialization
+from d1_common.types import monitorlist_serialization
+from d1_common.types import nodelist_serialization
 
 
 class MemberNodeClient(DataONEBaseClient):
@@ -24,7 +26,32 @@ class MemberNodeClient(DataONEBaseClient):
     self.logger = logging.getLogger('MemberNodeClient')
 
   def create(self, token, pid, obj, sysmeta):
-    raise Exception('Not Implemented')
+    '''
+    :param token:
+    :type token: Authentication Token
+    :param pid: 
+    :type pid: Identifier
+    :param obj:
+    :type obj: Unicode or file like object
+    :param sysmeta:
+    :type: sysmeta: Unicode or file like object
+    :returns: True on successful completion
+    :return type: Boolean
+    '''
+    data = {'pid': pid}
+    files = []
+    if isinstance(basestring, obj):
+      data['object'] = obj
+    else:
+      files.append(('object', 'content.bin', obj))
+    if isinstance(basestring, sysmeta):
+      data['sysmeta'] = sysmeta
+    else:
+      files.append(('sysmeta', 'systemmetadata.xml', sysmeta))
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'object')
+    response = self.POST(url, data=data, files=files, headers=self._getAuthHeader(token))
+    return self.isHttpStatusOK(response.status)
 
   def update(self, token, pid, obj, obsoletedPid, sysmeta):
     raise Exception('Not Implemented')
@@ -32,8 +59,20 @@ class MemberNodeClient(DataONEBaseClient):
   def delete(self, token, pid):
     raise Exception('Not Implemented')
 
-  def getChecksum(self, token, pid, checksumAgorithm=None):
-    raise Exception('Not Implemented')
+  def getChecksumResponse(self, token, pid, checksumAlgorithm=None):
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'checksum/%s' % util.encodePathElement(pid))
+    data = None
+    if not checksumAlgorithm is None:
+      data = {'checksumAgorithm': checksumAlgorithm}
+    response = self.GET(url, data=data, headers=self._getAuthHeader(token))
+    return response
+
+  def getChecksum(self, token, pid, checksumAlgorithm=None):
+    response = self.getChecksumResponse(token, pid, checksumAlgorithm)
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = checksum_serialization.Checksum('<dummy>')
+    return deser.deserialize(response.read(), format)
 
   def replicate(self, token, sysmeta, sourceNode):
     raise Exception('Not Implemented')
@@ -41,8 +80,60 @@ class MemberNodeClient(DataONEBaseClient):
   def synchronizationFailed(self, message):
     raise Exception('Not Implemented')
 
+  def getObjectStatisticsResponse(
+    self, token, time=None, format=None,
+    day=None, pid=None
+  ):
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'monitor/object')
+    data = {}
+    if not time is None:
+      data['time'] = time
+    if not format is None:
+      data['format'] = format
+    if not day is None:
+      data['day'] = day
+    if not pid is None:
+      data['pid'] = pid
+    return self.GET(url, data=data, headers=self._getAuthHeader(token))
+
   def getObjectStatistics(self, token, time=None, format=None, day=None, pid=None):
-    raise Exception('Not Implemented')
+    response = self.getObjectStatisticsResponse(
+      token, time=time, format=format, day=day,
+      pid=pid
+    )
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = monitorlist_serialization.MonitorList()
+    if self.logger.getEffectiveLevel() == logging.DEBUG:
+      logging.debug("FORMAT = %s" % format)
+    return deser.deserialize(response.read(), format)
+
+  def getOperationStatisticsResponse(
+    self,
+    token,
+    time=None,
+    requestor=None,
+    day=None,
+    event=None,
+    eventTime=None,
+    format=None
+  ):
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'monitor/event')
+    data = {}
+    if not time is None:
+      data['time'] = time
+    if not requestor is None:
+      data['requestor'] = requestor
+    if not day is None:
+      data['day'] = day
+    if not event is None:
+      data['event'] = event
+    if not eventTime is None:
+      data['eventTime'] = eventTime
+    if not format is None:
+      data['format'] = format
+    return self.GET(url, data=data, headers=self._getAuthHeader(token))
 
   def getOperationStatistics(
     self,
@@ -54,10 +145,29 @@ class MemberNodeClient(DataONEBaseClient):
     eventTime=None,
     format=None
   ):
-    raise Exception('Not Implemented')
+    response = self.getOperationStatisticsResponse(
+      token,
+      time=time,
+      requestor=requestor,
+      day=day,
+      event=event,
+      eventTime=eventTime,
+      format=format
+    )
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = monitorlist_serialization.MonitorList()
+    return deser.deserialize(response.read(), format)
 
   def getStatus(self):
     raise Exception('Not Implemented')
 
+  def getCapabilitiesResponse(self):
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'node')
+    return self.GET(url)
+
   def getCapabilities(self):
-    raise Exception('Not Implemented')
+    response = self.getCapabilitiesResponse()
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = nodelist_serialization.NodeList()
+    return deser.deserialize(response.read(), format)
