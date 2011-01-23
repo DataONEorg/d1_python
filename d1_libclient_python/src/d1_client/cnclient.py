@@ -7,6 +7,7 @@ from d1_common import const
 from d1_common import util
 from restclient import DataONEBaseClient
 from d1_common.types import objectlist_serialization
+from d1_common.types import objectlocationlist_serialization
 
 
 class CoordinatingNodeClient(DataONEBaseClient):
@@ -25,8 +26,16 @@ class CoordinatingNodeClient(DataONEBaseClient):
     )
     self.logger = logging.getLogger('CoordinatingNodeClient')
 
+  def resolveResponse(self, token, pid):
+    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
+                           'object')
+    return self.GET(url, headers=self._getAuthHeader(token))
+
   def resolve(self, token, pid):
-    raise Exception('Not Implemented')
+    response = self.resolveResponse(token, pid)
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = objectlocationlist_serialization.ObjectLocationList()
+    return deser.deserialize(response.read(), format)
 
   def reserveIdentifier(self, pid=None, scope=None, format=None):
     raise Exception('Not Implemented')
