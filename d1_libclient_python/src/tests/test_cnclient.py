@@ -5,12 +5,12 @@ Created on Jan 20, 2011
 '''
 import unittest
 import logging
-from d1_client import mnclient
+from d1_client import cnclient
 import d1_common.exceptions
 from testcasewithurlcompare import TestCaseWithURLCompare
 
 
-class TestMNClient(TestCaseWithURLCompare):
+class TestCNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
     self.baseurl = 'http://dev-dryad-mn.dataone.org/mn'
