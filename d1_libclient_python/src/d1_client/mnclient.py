@@ -38,7 +38,7 @@ class MemberNodeClient(DataONEBaseClient):
     :returns: True on successful completion
     :return type: Boolean
     '''
-    data = {'pid': pid}
+    data = None
     files = []
     if isinstance(basestring, obj):
       data['object'] = obj
@@ -49,7 +49,7 @@ class MemberNodeClient(DataONEBaseClient):
     else:
       files.append(('sysmeta', 'systemmetadata.xml', sysmeta))
     url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object')
+                           'object/%s' % util.encodePathElement(pid))
     response = self.POST(url, data=data, files=files, headers=self._getAuthHeader(token))
     return self.isHttpStatusOK(response.status)
 
