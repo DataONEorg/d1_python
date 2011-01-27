@@ -9,5 +9,5 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'service.settings'
 sys.path.append(_here('.'))
 sys.path.append(_here('..'))
 
-import django.core.handlers.wsgi
-application = django.core.handlers.wsgi.WSGIHandler()
+import d1wsgihandler
+application = d1wsgihandler.D1WSGIHandler()
