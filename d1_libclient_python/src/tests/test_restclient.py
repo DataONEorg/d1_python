@@ -57,21 +57,44 @@ class TestDataONEClient(TestCaseWithURLCompare):
     self.token = None
     self.ignore_not_implemented = True
 
-  def testGet(self):
+  def testSchemaVersion(self):
+    '''Simple test to check if the correct schema version is being returned
+    '''
+
+    def dotest(baseurl):
+      logging.info("Version test %s" % baseurl)
+      cli = restclient.DataONEBaseClient(baseurl)
+      response = cli.GET(baseurl)
+      doc = response.read(1024)
+      if not doc.find(TEST_DATA['schema_version']):
+        raise Exception("Expected schema version not detected:\n %s" % doc)
+
     for test in TEST_DATA['MN']:
-      print("GET %s" % test['baseurl'])
+      dotest(test['baseurl'])
+    for test in TEST_DATA['CN']:
+      dotest(test['baseurl'])
+
+  def testGet(self):
+    '''Check the CRUD.get operation
+    '''
+    for test in TEST_DATA['MN']:
+      logging.info("GET %s" % test['baseurl'])
       cli = restclient.DataONEBaseClient(test['baseurl'])
       try:
         res = cli.get(self.token, test['boguspid'])
         if hasattr(res, 'body'):
-          msg = res.body
+          msg = res.body[:512]
         else:
-          msg = res.read()
-        raise Exception('NotFound not raised. Detail: %s' % msg)
+          msg = res.read(512)
+        raise Exception('NotFound not raised for get on %s. Detail: %s' \
+                        % (test['baseurl'], msg))
       except d1_common.exceptions.NotFound:
         pass
 
   def testPing(self):
+    '''Attempt to Ping the target.
+    '''
+
     def dotest(baseurl):
       logging.info("PING %s" % baseurl)
       cli = restclient.DataONEBaseClient(baseurl)
@@ -87,6 +110,8 @@ class TestDataONEClient(TestCaseWithURLCompare):
       dotest(test['baseurl'])
 
   def testGetLogRecords(self):
+    '''Return and deserialize log records
+    '''
     #basic deserialization test
     #cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
     #fromDate = ''
@@ -95,6 +120,9 @@ class TestDataONEClient(TestCaseWithURLCompare):
       raise Exception("Not Implemented - discrepancy in REST docs")
 
   def testGetSystemMetadata(self):
+    '''Return and successfully deserialize SystemMetadata
+    '''
+
     def dotest(baseurl, existing, bogus):
       logging.info("getSystemMetadata %s" % baseurl)
       cli = restclient.DataONEBaseClient(baseurl)
@@ -108,6 +136,9 @@ class TestDataONEClient(TestCaseWithURLCompare):
       dotest(test['baseurl'].test['existingpid'], test['boguspid'])
 
   def testListObjects(self):
+    '''Return and successfully deserialize listObjects
+    '''
+
     def dotest(baseurl):
       logging.info("listObjects %s" % baseurl)
       cli = restclient.DataONEBaseClient(baseurl)
