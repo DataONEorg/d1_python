@@ -67,7 +67,8 @@ class TestDataONEClient(TestCaseWithURLCompare):
       response = cli.GET(baseurl)
       doc = response.read(1024)
       if not doc.find(TEST_DATA['schema_version']):
-        raise Exception("Expected schema version not detected:\n %s" % doc)
+        raise Exception("Expected schema version not detected on %s:\n %s" \
+                        % (baseurl, doc))
 
     for test in TEST_DATA['MN']:
       dotest(test['baseurl'])
