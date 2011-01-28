@@ -12,6 +12,45 @@ import cnclient
 import mnclient
 
 
+class DataONEObject(object):
+  def __init__(self, pid):
+    self.pid = pid
+    self._locations = []
+    self._systemmetadata = None
+    self._content = None
+    self.__client = None
+
+  def getCredentials(self):
+    '''Override this method to retrieve credentials that can be used to
+    authenticate and retrieve a token for further operations.
+    '''
+    return {}
+
+  def _getClient(self, forcenew=False):
+    '''Internal method used to retrieve an instance of a DataONE client that
+    can be used for interacting with the DataONE services.
+    '''
+    if self.__client is None or forcenew:
+      self.__client = DataONEClient(credentials=self.getCredentials())
+    return self.__client
+
+  def getLocations(self, forcenew=False):
+    '''Retrieve a list of node base urls known to hold a copy of this object.
+    '''
+    if len(self._locations) < 1 or forcenew:
+      cli = self._getClient()
+      self._locations = cli.resolve(self.pid)
+    return self._locations
+
+  def realize(self, filestream):
+    '''Persist a copy of the bytes of this object to filestream, which is a 
+    file like object open for writing.
+    '''
+    pass
+
+#===============================================================================
+
+
 class DataONEClient(object):
   def __init__(self, cnBaseUrl=const.URL_DATAONE_ROOT, credentials={}):
     self.cnBaseUrl = cnBaseUrl
