@@ -19,13 +19,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ''' 
-Module d1_client.d1objectIterator
+Module d1_client.objectlistiterator
 ===================================
- 
-:Created: 20100122
-:Author: vieglais
+
+Example::
+
+  $python objectlistiterator.py -b "http://knb-mn.ecoinformatics.org/knb/d1" \
+    -m 5 -s 1000
+
+  ---
+  total: 5
+  ---
+  -
+    item     : 1
+    pid      : knb-lter-lno.9.1
+    modified : 2011-01-13 18:42:32.469000
+    format   : eml://ecoinformatics.org/eml-2.0.1
+    size     : 6751
+    checksum : 9039F0388DC76B1A13B0F139520A8D90
+    algorithm: MD5
+  -
+    item     : 2
+    pid      : LB30XX_030MTV2021R00_20080516.50.1
+    modified : 2011-01-12 22:51:00.774000
+    format   : eml://ecoinformatics.org/eml-2.0.1
+    size     : 14435
+    checksum : B2200FB7FAE18A3517AA9E2EA680EE09
+    algorithm: MD5
+  -
+    item     : 3
+    pid      : SHLX00_XXXITBDXLSR01_20080220.40.1
+    modified : 2011-01-14 00:07:57.851000
+    format   : application/octet-stream
+    size     : 108927
+    checksum : 023DAF91DCFDC5AD75BA09B25A7E1A9F
+    algorithm: MD5
+  -
+    item     : 4
+    pid      : knb-lter-arc.156.1
+    modified : 2011-01-13 18:30:07.686000
+    format   : eml://ecoinformatics.org/eml-2.0.1
+    size     : 6227
+    checksum : EFF4BE6A23EB5273FCE7F4E716519A46
+    algorithm: MD5
+  -
+    item     : 5
+    pid      : SH30XX_030MXTI009R00_20070917.40.1
+    modified : 2011-01-13 20:39:44.491000
+    format   : application/octet-stream
+    size     : 1519909
+    checksum : 0D2EA212DB6D60C53E456C145C331D65
+    algorithm: MD5
+
 
 '''
+import logging
 
 
 class ObjectListIterator(object):
@@ -33,21 +81,41 @@ class ObjectListIterator(object):
   DataONE node.  Data is retrieved from the target only when required.
   '''
 
-  def __init__(self, client, start=0, startTime=None):
+  def __init__(
+    self, client,
+    start=0, startTime=None,
+    authtoken=None,
+    pagesize=500,
+    max=-1
+  ):
     '''Initializes the iterator.
     
      TODO: Extend this with date range and other restrictions
 
-    :param DataOneClient client: The client instance for retrieving stuff.
-    :param integer start: The starting index value
+    :param client: The client instance for retrieving stuff.
+    :type client: DataONEBaseClient or derivative
+    :param start: The zero based starting index value (0)
+    :type start: integer
+    :param startTime:
+    :type startTime: DateTime
+    :param pagesize: Number of items to retrieve in a single request (page, 500)
+    :type pagesize: integer
+    :param max: Maximum number of items to retrieve (all)
+    :type max: integer
     '''
+    self._authtoken = authtoken
     self._objectList = None
     self._czero = 0
     self._client = client
-    self._pagesize = 500
+    if max >= 0 and max < pagesize:
+      pagesize = max
+    self._pagesize = pagesize
     self.startTime = startTime
     self._loadMore(start=start)
-    self._maxitem = self._objectList.total
+    if max > 0:
+      self._maxitem = max
+    else:
+      self._maxitem = self._objectList.total
 
   def __iter__(self):
     return self
@@ -72,7 +140,9 @@ class ObjectListIterator(object):
     self._czero = start
     self._citem = 0
     self._objectList = self._client.listObjects(
-      start=start, count=self._pagesize,
+      self._authtoken,
+      start=start,
+      count=self._pagesize,
       startTime=self.startTime
     )
 
@@ -84,25 +154,72 @@ class ObjectListIterator(object):
 #===============================================================================
 if __name__ == "__main__":
   '''A simple demonstration of the iterator.  Walks over the list of objects
-  available from a given node.
+  available from a given node. Output is in YAML.
   '''
-  import d1_client.client
+  from optparse import OptionParser
+  from d1_client import restclient
   import sys
-  #target = "http://dev-dryad-mn.dataone.org/mn"
-  #target = "http://129.24.0.15/mn"
-  target = "http://knb-mn.ecoinformatics.org/knb"
-  if len(sys.argv) > 1:
-    target = sys.argv[1]
-  client = d1_client.client.DataOneClient(target=target)
-  ol = ObjectListIterator(client)
+
+  parser = OptionParser()
+  default_baseurl = 'http://dev-dryad-mn.dataone.org/mn'
+  parser.add_option(
+    '-b',
+    '--baseurl',
+    dest='baseurl',
+    default=default_baseurl,
+    help='ListObjects from BASEURL (default=%s)' % default_baseurl
+  )
+  parser.add_option('-l', '--loglevel', dest='llevel', default=20, type='int',
+                 help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
+                     '40=Error, 50=Fatal')
+  parser.add_option(
+    '-s',
+    '--start',
+    dest='start',
+    default=0,
+    type='int',
+    help='Start retrieving objects from this position (default=0'
+  )
+  parser.add_option(
+    '-m',
+    '--max',
+    dest='max',
+    default=-1,
+    type='int',
+    help='Maximum number of entries to retrieve (all)'
+  )
+  parser.add_option(
+    '-p',
+    '--page',
+    dest='pagesize',
+    default=500,
+    type='int',
+    help='Maximum number of entries to retrieve per call (500)'
+  )
+  (options, args) = parser.parse_args()
+  if options.llevel not in [10, 20, 30, 40, 50]:
+    options.llevel = 20
+  logging.basicConfig(level=int(options.llevel))
+
+  client = restclient.DataONEBaseClient(options.baseurl)
+  ol = ObjectListIterator(
+    client,
+    start=options.start,
+    pagesize=options.pagesize,
+    max=options.max,
+    authtoken=None
+  )
   counter = 0
-  print "Total of %d items." % len(ol)
+  print "---"
+  print "total: %d" % len(ol)
+  print "---"
   for o in ol:
     counter += 1
-    print "==== #%d ====" % counter
-    print "Identifier = %s" % o.identifier
-    print "Last Modified = %s" % o.dateSysMetadataModified
-    print "Object Format = %s" % o.objectFormat
-    print "Size (bytes) = %s" % o.size
-    print "Get URL = %s" % client.getObjectUrl(id=o.identifier)
-    print "Meta URL = %s" % client.getMetaUrl(id=o.identifier)
+    print "-"
+    print "  item     : %d" % counter
+    print "  pid      : %s" % o.identifier.value()
+    print "  modified : %s" % o.dateSysMetadataModified
+    print "  format   : %s" % o.objectFormat
+    print "  size     : %s" % o.size
+    print "  checksum : %s" % o.checksum.value()
+    print "  algorithm: %s" % o.checksum.algorithm
