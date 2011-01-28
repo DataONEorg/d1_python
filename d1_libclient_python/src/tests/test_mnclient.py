@@ -12,14 +12,6 @@ from testcasewithurlcompare import TestCaseWithURLCompare
 
 class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
-    #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
-    self.baseurl = 'http://dev-dryad-mn.dataone.org/mn'
-    self.testpid = 'hdl:10255/dryad.105/mets.xml'
-    self.testcksum = 'e494ca7b15404f41006356a5a87dbf44b9a415e7'
-    #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255/dryad.105/mets.xml
-    #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255%2Fdryad.105%2Fmets.xml
-    #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255%2Fdryad.105%2Fmets.xml
-    #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255/dryad.105/mets.xml
     self.token = None
     self.ignore_not_implemented = True
 
@@ -39,13 +31,14 @@ class TestMNClient(TestCaseWithURLCompare):
       raise Exception('Not Implemented')
 
   def test_getChecksum(self):
-    cli = mnclient.MemberNodeClient(self.baseurl)
-    pid = self.testpid
-    cksum = cli.getChecksum(self.token, pid, checksumAlgorithm=None)
-    self.assertEqual(self.testcksum, cksum.value())
-    self.assertRaises(
-      d1_common.exceptions.NotFound, cli.getChecksum, self.token, 'some bogus pid'
-    )
+    for test in TEST_INFO['MN']:
+      cli = mnclient.MemberNodeClient(test['baseurl'])
+      pid = test['existingpid']
+      cksum = cli.getChecksum(self.token, pid, checksumAlgorithm=None)
+      self.assertEqual(test['existingpid_ck'], cksum.value())
+      self.assertRaises(
+        d1_common.exceptions.NotFound, cli.getChecksum, self.token, 'some bogus pid'
+      )
 
   def test_replicate(self):
     if not self.ignore_not_implemented:
@@ -57,27 +50,31 @@ class TestMNClient(TestCaseWithURLCompare):
 
   def test_getObjectStatistics(self):
     #simple test for correct serialization
-    cli = mnclient.MemberNodeClient(self.baseurl)
-    stats = cli.getObjectStatistics(self.token)
-    self.assertTrue(0 <= stats.monitorInfo[0].count)
+    for test in TEST_INFO['MN']:
+      cli = mnclient.MemberNodeClient(test['baseurl'])
+      stats = cli.getObjectStatistics(self.token)
+      self.assertTrue(0 <= stats.monitorInfo[0].count)
 
   def test_getOperationStatistics(self):
     #simple test for serialization
-    cli = mnclient.MemberNodeClient(self.baseurl)
-    stats = cli.getOperationStatistics(self.token)
-    self.assertTrue(0 <= stats.monitorInfo[0].count)
+    for test in TEST_INFO['MN']:
+      cli = mnclient.MemberNodeClient(test['baseurl'])
+      stats = cli.getOperationStatistics(self.token)
+      self.assertTrue(0 <= stats.monitorInfo[0].count)
 
   def test_getStatus(self):
     if not self.ignore_not_implemented:
       raise Exception('Not Implemented')
 
   def test_getCapabilities(self):
-    cli = mnclient.MemberNodeClient(self.baseurl)
-    nodeinfo = cli.getCapabilities()
-    for method in nodeinfo.node[0].services.service[0].method:
-      print method.name
+    for test in TEST_INFO['MN']:
+      cli = mnclient.MemberNodeClient(test['baseurl'])
+      nodeinfo = cli.getCapabilities()
+      for method in nodeinfo.node[0].services.service[0].method:
+        print method.name
 
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.DEBUG)
+  loadTestInfo()
   unittest.main()
