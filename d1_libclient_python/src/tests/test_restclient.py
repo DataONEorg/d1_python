@@ -3,13 +3,10 @@ Created on Jan 20, 2011
 
 @author: vieglais
 '''
-import sys
 import unittest
 import logging
-import codecs
 from d1_client import restclient
 import d1_common.exceptions
-from node_test_common import loadTestInfo
 from testcasewithurlcompare import TestCaseWithURLCompare
 
 TEST_DATA = {}
@@ -164,52 +161,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
 
 #===============================================================================
 if __name__ == "__main__":
-  from optparse import OptionParser
-  parser = OptionParser()
-  parser.add_option(
-    '-b',
-    '--baseurl',
-    dest='baseurl',
-    default=None,
-    help='Use BASEURL instead of predefined targets for testing'
-  )
-  parser.add_option(
-    '-p',
-    '--pid',
-    dest='pid',
-    default=None,
-    help='Use PID for testing existing object access'
-  )
-  parser.add_option(
-    '-c',
-    '--checksum',
-    dest='checksum',
-    default=None,
-    help='CHECKSUM for specified PID.'
-  )
-  parser.add_option('-l', '--loglevel', dest='llevel', default=None,
-                help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
-                     '40=Error, 50=Fatal')
-  parser.add_option('-v', '--verbose', dest='verbose', action='store_true', \
-                    default=False)
-  parser.add_option('-q', '--quiet', dest='quiet', action='store_true', \
-                    default=False)
-  (options, args) = parser.parse_args()
-  if options.llevel not in ['10', '20', '30', '40', '50']:
-    options.llevel = 20
-  logging.basicConfig(level=int(options.llevel))
-  TEST_DATA = loadTestInfo(
-    baseurl=options.baseurl,
-    pid=options.pid, checksum=options.checksum
-  )
-  options_tpl = ('-b', '--baseurl', '-p', '--pid', '-c', '--checksum', '-l', '--loglevel')
-  del_lst = []
-  for i, option in enumerate(sys.argv):
-    if option in options_tpl:
-      del_lst.append(i)
-      del_lst.append(i + 1)
-
-  del_lst.reverse()
-  for i in del_lst:
-    del sys.argv[i]
+  import sys
+  from node_test_common import loadTestInfo, initMain
+  TEST_DATA = initMain()
   unittest.main(argv=sys.argv)

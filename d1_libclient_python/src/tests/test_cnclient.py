@@ -25,11 +25,31 @@ class TestCNClient(TestCaseWithURLCompare):
   def tearDown(self):
     pass
 
-  def resolve(self):
-    #Warning - this is a fragile test
-    pid = 'knb:testid:20111111590640'
-    cli = cnclient.CoordinatingNodeClient(self.baseurl)
-    cli.resolve(self.token, pid)
+  def test_resolve(self):
+    '''Verify that resolve can be deserialized
+    '''
+    for test in TEST_DATA['CN']:
+      pid = test['existingpid']
+      baseurl = test['baseurl']
+      cli = cnclient.CoordinatingNodeClient(baseurl)
+      res = cli.resolve(self.token, pid)
+
+  def test_resolveFail(self):
+    '''Verify that bad identifier raises an error
+    '''
+    for test in TEST_DATA['CN']:
+      pid = test['boguspid']
+      baseurl = test['baseurl']
+      cli = cnclient.CoordinatingNodeClient(baseurl)
+      try:
+        res = cli.resolveResponse(self.token, pid)
+        try:
+          msg = res.body[:512]
+        except:
+          msg = res.read(512)
+        raise Exception('NotFound expected (%s):\n%s' % (test['baseurl'], msg))
+      except d1_common.exceptions.NotFound, e:
+        pass
 
   def test_reserveIdentifier(self):
     if not self.ignore_not_implemented:
@@ -93,5 +113,7 @@ class TestCNClient(TestCaseWithURLCompare):
 
 
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.DEBUG)
-  unittest.main()
+  import sys
+  from node_test_common import loadTestInfo, initMain
+  TEST_DATA = initMain()
+  unittest.main(argv=sys.argv)

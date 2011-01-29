@@ -26,10 +26,13 @@ class CoordinatingNodeClient(DataONEBaseClient):
       strictHttps=strictHttps
     )
     self.logger = logging.getLogger('CoordinatingNodeClient')
+    self.methodmap['resolve'] = u'resolve/%(pid)s'
+    self.methodmap['search'] = u'object'
+    self.methodmap['listobjects'] = u'object?qt=path'
+    self.methodmap['listnodes'] = u'node'
 
   def resolveResponse(self, token, pid):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object')
+    url = self._makeUrl('resolve', pid=pid)
     return self.GET(url, headers=self._getAuthHeader(token))
 
   def resolve(self, token, pid):
@@ -45,8 +48,7 @@ class CoordinatingNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def searchResponse(self, token, query):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object')
+    url = self._makeUrl('search')
     params = {}
     if query is not None:
       params['query'] = query
@@ -86,8 +88,7 @@ class CoordinatingNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def listNodesResponse(self):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'node')
+    url = self._makeUrl('listnodes')
     response = self.GET(url)
     return response
 
@@ -95,7 +96,7 @@ class CoordinatingNodeClient(DataONEBaseClient):
     res = self.listNodesResponse()
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
-    return deser.deserialize(response.read(), format)
+    return deser.deserialize(res.read(), format)
 
   def addNodeCapabilities(self, token, pid):
     raise Exception('Not Implemented')

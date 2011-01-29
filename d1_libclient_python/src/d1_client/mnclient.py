@@ -24,6 +24,11 @@ class MemberNodeClient(DataONEBaseClient):
       strictHttps=strictHttps
     )
     self.logger = logging.getLogger('MemberNodeClient')
+    self.methodmap['create'] = u'object/%(pid)s'
+    self.methodmap['getchecksum'] = u'checksum/%(pid)s'
+    self.methodmap['getobjectstatistics'] = u'monitor/object'
+    self.methodmap['getoperationstatistics'] = u'monitor/event'
+    self.methodmap['getcapabilities'] = u'node'
 
   def create(self, token, pid, obj, sysmeta):
     '''
@@ -48,8 +53,7 @@ class MemberNodeClient(DataONEBaseClient):
       data['sysmeta'] = sysmeta
     else:
       files.append(('sysmeta', 'systemmetadata.xml', sysmeta))
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object/%s' % util.encodePathElement(pid))
+    url = self._makeUrl('create', pid=pid)
     response = self.POST(url, data=data, files=files, headers=self._getAuthHeader(token))
     return self.isHttpStatusOK(response.status)
 
@@ -60,8 +64,7 @@ class MemberNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def getChecksumResponse(self, token, pid, checksumAlgorithm=None):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'checksum/%s' % util.encodePathElement(pid))
+    url = self._makeUrl('getchecksum', pid=pid)
     data = None
     if not checksumAlgorithm is None:
       data = {'checksumAgorithm': checksumAlgorithm}
@@ -84,8 +87,7 @@ class MemberNodeClient(DataONEBaseClient):
     self, token, time=None, format=None,
     day=None, pid=None
   ):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'monitor/object')
+    url = self._makeUrl('getobjectstatistics')
     data = {}
     if not time is None:
       data['time'] = time
@@ -118,8 +120,7 @@ class MemberNodeClient(DataONEBaseClient):
     eventTime=None,
     format=None
   ):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'monitor/event')
+    url = self._makeUrl('getoperationstatistics')
     data = {}
     if not time is None:
       data['time'] = time
@@ -162,8 +163,7 @@ class MemberNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def getCapabilitiesResponse(self):
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'node')
+    url = self._makeUrl('getcapabilities')
     return self.GET(url)
 
   def getCapabilities(self):
