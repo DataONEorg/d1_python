@@ -42,11 +42,34 @@ class DataONEObject(object):
       self._locations = cli.resolve(self.pid)
     return self._locations
 
-  def realize(self, filestream):
-    '''Persist a copy of the bytes of this object to filestream, which is a 
+  def getSystemMetadata(self, forcenew=False):
+    if self._systemmetadata is None or forcenew:
+      cli = self._getClient()
+      self._systemmetadata = cli.getSystemMetadata(self.pid)
+    return self._systemmetadata
+
+  def getRelatedObjects(self):
+    cli = self._getClient()
+    return cli.getRelatedObjects(self.pid)
+
+  def load(self, outstr):
+    '''Persist a copy of the bytes of this object to outstr, which is a 
     file like object open for writing.
     '''
-    pass
+    cli = self._getClient()
+    instr = cli.get(self.pid)
+    while True:
+      data = instr.read(4096)
+      if not data:
+        return
+      outstr.write(data)
+
+  def save(self, filename):
+    '''Save the object to a local file
+    '''
+    outstr = file(filename, "wb")
+    self.realize(outstr)
+    outstr.close()
 
 #===============================================================================
 
@@ -78,7 +101,7 @@ class DataONEClient(object):
     
     :return type: AuthToken
     '''
-    if self.authtoken is None or forcenew:
+    if self.authToken is None or forcenew:
       self.authToken = None
     return self.authToken
 
@@ -89,7 +112,7 @@ class DataONEClient(object):
     cn = self._getCN()
     token = self.getAuthToken()
     result = cn.resolve(token, pid)
-    result.objectLocation.sort(key='priority')
+    #result.objectLocation.sort(key='priority')
     res = []
     for location in result.objectLocation:
       res.append(location.baseURL)
@@ -103,6 +126,7 @@ class DataONEClient(object):
     locations = self.resolve(pid)
     token = self.getAuthToken()
     for location in locations:
+      print location
       mn = self._getMN(location)
       try:
         return mn.get(token, pid)
@@ -137,7 +161,7 @@ class DataONEClient(object):
       'describedBy': [],
       'describes': [],
     }
-    sysmeta = self.getSystemMetadata(pid, asStream=False)
+    sysmeta = self.getSystemMetadata(pid)
     for pid in sysmeta.obsoletes:
       relations['obsoletes'].append(pid.value())
     for pid in sysmeta.obsoletedBy:

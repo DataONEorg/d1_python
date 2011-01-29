@@ -9,6 +9,8 @@ from d1_client import mnclient
 import d1_common.exceptions
 from testcasewithurlcompare import TestCaseWithURLCompare
 
+TEST_DATA = {}
+
 
 class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
@@ -31,14 +33,28 @@ class TestMNClient(TestCaseWithURLCompare):
       raise Exception('Not Implemented')
 
   def test_getChecksum(self):
-    for test in TEST_INFO['MN']:
+    '''Verify checksum response deserializes and value matches expected
+    '''
+    for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
       pid = test['existingpid']
       cksum = cli.getChecksum(self.token, pid, checksumAlgorithm=None)
       self.assertEqual(test['existingpid_ck'], cksum.value())
-      self.assertRaises(
-        d1_common.exceptions.NotFound, cli.getChecksum, self.token, 'some bogus pid'
-      )
+
+  def test_getChecksumFail(self):
+    '''Try and geta checksum for a bogus identifier
+    '''
+    for test in TEST_DATA['MN']:
+      cli = mnclient.MemberNodeClient(test['baseurl'])
+      try:
+        res = cli.getChecksumResponse(self.token, test['boguspid'])
+        try:
+          msg = res.body[:512]
+        except:
+          msg = res.read(512)
+        raise Exception("NotFound not raised: %s\n%s" % (test['baseurl'], msg))
+      except d1_common.exceptions.NotFound, e:
+        pass
 
   def test_replicate(self):
     if not self.ignore_not_implemented:
@@ -49,15 +65,17 @@ class TestMNClient(TestCaseWithURLCompare):
       raise Exception('Not Implemented')
 
   def test_getObjectStatistics(self):
-    #simple test for correct serialization
-    for test in TEST_INFO['MN']:
+    '''Verify that object statistics response deserializes
+    '''
+    for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
       stats = cli.getObjectStatistics(self.token)
       self.assertTrue(0 <= stats.monitorInfo[0].count)
 
   def test_getOperationStatistics(self):
-    #simple test for serialization
-    for test in TEST_INFO['MN']:
+    '''Verify that operation statistics response deserializes
+    '''
+    for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
       stats = cli.getOperationStatistics(self.token)
       self.assertTrue(0 <= stats.monitorInfo[0].count)
@@ -67,14 +85,17 @@ class TestMNClient(TestCaseWithURLCompare):
       raise Exception('Not Implemented')
 
   def test_getCapabilities(self):
-    for test in TEST_INFO['MN']:
+    '''Deserialize getCapabilities response
+    '''
+    for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
       nodeinfo = cli.getCapabilities()
       for method in nodeinfo.node[0].services.service[0].method:
-        print method.name
+        logging.debug(method.name)
 
 
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.DEBUG)
-  loadTestInfo()
-  unittest.main()
+  import sys
+  from node_test_common import loadTestInfo, initMain
+  TEST_DATA = initMain()
+  unittest.main(argv=sys.argv)

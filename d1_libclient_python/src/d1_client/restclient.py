@@ -243,6 +243,15 @@ class DataONEBaseClient(RESTClient):
     )
     self.baseurl = baseurl
     self.logger = logging.getLogger('DataONEBaseClient')
+    ## A dictionary that provides a mapping from method name (from the DataONE
+    ## APIs to a string format pattern that will be appended to the baseurl
+    self.methodmap = {
+      'get': u'object/%(pid)s',
+      'getsystemmetadata': u'meta/%(pid)s',
+      'listobjects': u'object',
+      'getlogrecords': u'log',
+      'ping': u'health/ping'
+    }
 
   def _getResponse(self, conn):
     res = conn.getresponse()
@@ -265,6 +274,16 @@ class DataONEBaseClient(RESTClient):
       target += '/'
     return target
 
+  def _makeUrl(self, meth, **args):
+    meth = meth.lower()
+    for k in args.keys():
+      args[k] = util.encodePathElement(args[k])
+    base = self._normalizeTarget(self.baseurl)
+    path = self.methodmap[meth] % args
+    url = urlparse.urljoin(base, path)
+    self.logger.debug("%s URL=%s" % (meth, url))
+    return url
+
   def isHttpStatusOK(self, status):
     status = int(status)
     if status >= 100 and status < 400:
@@ -279,8 +298,7 @@ class DataONEBaseClient(RESTClient):
     :returns: HTTPResponse instance, a file like object that supports read().
     :return type: HTTPResponse
     '''
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object/%s' % util.encodePathElement(pid))
+    url = self._makeUrl('get', pid=pid)
     self.logger.info("URL = %s" % url)
     return self.GET(url, headers=self._getAuthHeader(token))
 
@@ -291,8 +309,7 @@ class DataONEBaseClient(RESTClient):
     
     :return type: HTTPResponse
     '''
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'meta/%s' % util.encodePathElement(pid))
+    url = self._makeUrl('getSystemMetadata', pid=pid)
     self.logger.info("URL = %s" % url)
     return self.GET(url, headers=self._getAuthHeader(token))
 
@@ -317,8 +334,7 @@ class DataONEBaseClient(RESTClient):
     '''
     :return type: HTTPResponse
     '''
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'object')
+    url = self._makeUrl('listObjects')
     params = {}
     if startTime is not None:
       params['startTime'] = startTime
@@ -364,8 +380,7 @@ class DataONEBaseClient(RESTClient):
     '''
     :return type: HTTPResponse
     '''
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'log')
+    url = self._makeUrl('log')
     params = {'fromDate': fromDate}
     if not toDate is None:
       params['toDate'] = toDate
@@ -387,8 +402,7 @@ class DataONEBaseClient(RESTClient):
     '''
     :return type: Boolean
     '''
-    url = urlparse.urljoin(self._normalizeTarget(self.baseurl),\
-                           'health/ping')
+    url = self._makeUrl('ping')
     try:
       response = self.GET(url)
     except Exception, e:
