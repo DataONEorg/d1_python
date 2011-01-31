@@ -6,7 +6,7 @@ Created on Jan 20, 2011
 import unittest
 import logging
 from d1_client import restclient
-import d1_common.exceptions
+import d1_common.types.exceptions
 from testcasewithurlcompare import TestCaseWithURLCompare
 
 TEST_DATA = {}
@@ -86,7 +86,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
           msg = res.read(512)
         raise Exception('NotFound not raised for get on %s. Detail: %s' \
                         % (test['baseurl'], msg))
-      except d1_common.exceptions.NotFound:
+      except d1_common.types.exceptions.NotFound:
         pass
 
   def testPing(self):
