@@ -58,12 +58,13 @@ try:
   import d1_common.types.systemmetadata
   import d1_common.types.logrecords_serialization
   import d1_common.types.nodelist_serialization
+  import d1_common.types.exception_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
 
-from d1_common import exceptions
+from d1_common.types import exceptions
 from d1_common import mime_multipart
 from d1_client import objectlistiterator
 
@@ -190,11 +191,11 @@ class RESTClient(object):
     :return: Should not return - always raises an exception.
     :return type: exception
     '''
-    edata = response.read()
-    exc = exceptions.DataOneExceptionFactory.createException(edata)
-    if not exc is None:
-      raise exc
-    return False
+    exception_deserializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
+      None
+    )
+    raise exception_deserializer.deserialize_xml(response.read())
+    # TODO: Support exception serialization formats other than XML.
 
   def sendRequest(self, url, method='GET', data=None, headers=None):
     '''Send a HTTP request and returns the response as a file like object.
@@ -716,6 +717,10 @@ class DataOneClient(object):
     files.append(('object', 'object', scidata))
     files.append(('systemmetadata', 'systemmetadata', sysmeta))
 
+    headers = {}
+    headers['AuthToken'] = '<dummy auth token>'
+    headers.update(vendor_specific)
+
     # Send REST POST call to register object. The URL is the same as for /object/ GET.
 
     crud_create_url = urlparse.urljoin(
@@ -727,7 +732,7 @@ class DataOneClient(object):
     )
     self.logger.debug_(u'url({0}) pid({1})'.format(crud_create_url, pid))
 
-    multipart = mime_multipart.multipart(vendor_specific, [], files)
+    multipart = mime_multipart.multipart(headers, [], files)
     try:
       status, reason, page = multipart.post(crud_create_url)
       if status != 200:
