@@ -19,106 +19,66 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Implements serializaton and de-serialization for the MonitorList.
+Module d1_common.types.monitorlist_serialization
+================================================
+
+Implements serializaton and de-serialization for the MonitorList type.
 '''
 
-# Stdlib.
+## Stdlib.
+import StringIO
+import logging
 import sys
-
 try:
   import cjson as json
 except:
   import json
 
-# MN API.
+# App.
 try:
   import d1_common
-  import d1_common.exceptions
-  import d1_common.ext.mimeparser
-  import d1_common.util
+  import d1_common.const
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
-
 try:
   import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
+import serialization_base
 
-#===============================================================================
 
-
-class MonitorList(object):
+class MonitorList(serialization_base.Serialization):
   def __init__(self):
-    self.serialize_map = {
-      'application/json': self.serialize_null,
-      'text/csv': self.serialize_null,
-      'text/xml': self.serialize_xml,
-      'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_null,
-      'text/html': self.serialize_null,
-      'text/log': self.serialize_null,
-    }
+    serialization_base.Serialization.__init__(self)
 
-    self.deserialize_map = {
-      'application/json': self.deserialize_null,
-      'text/csv': self.deserialize_null,
-      'text/xml': self.deserialize_xml,
-      'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_null,
-      'text/html': self.deserialize_null,
-      'text/log': self.deserialize_null,
-    }
+    self.log = logging.getLogger('MonitorListSerialization')
 
     self.pri = [
-      #'application/json',
-      #'text/csv',
-      'text/xml',
-      'application/xml',
-      #'application/rdf+xml',
-      #'text/html',
-      #'text/log',
+      d1_common.const.MIMETYPE_XML,
+      d1_common.const.MIMETYPE_APP_XML,
+      #d1_common.const.MIMETYPE_JSON,
+      #d1_common.const.MIMETYPE_CSV,
+      #d1_common.const.MIMETYPE_RDF,
+      #d1_common.const.MIMETYPE_HTML,
+      #d1_common.const.MIMETYPE_LOG,
     ]
 
     self.monitorlist = d1_common.types.generated.dataoneTypes.monitorList()
 
-    #===============================================================================
-
-  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
-    # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError.
-      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
-      content_type = 'application/json'
-
-    # Deserialize object
-    return self.serialize_map[d1_common.util.get_content_type(content_type)](
-      pretty, jsonvar
-    ), content_type
-
   def serialize_xml(self, pretty=False, jsonvar=False):
+    '''Serialize MonitorList to XML.
+    '''
     return self.monitorlist.toxml()
 
-  def serialize_null(self, doc, pretty=False, jsonvar=False):
-    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
-
     #===============================================================================
 
-  def deserialize(self, doc, content_type='application/json'):
-    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
-
   def deserialize_xml(self, doc):
+    '''Deserialize MonitorList from XML.
+    '''
     self.monitorList = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
-
-  def deserialize_null(self, doc):
-    raise d1_common.exceptions.NotImplemented(
-      0, 'Deserialization method not implemented.'
-    )

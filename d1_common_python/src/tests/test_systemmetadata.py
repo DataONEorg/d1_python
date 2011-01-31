@@ -4,7 +4,7 @@ import unittest
 
 import pyxb
 from d1_common import xmlrunner
-import d1_common.exceptions
+import d1_common.types.exceptions
 from d1_common.types import systemmetadata
 
 EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
@@ -122,8 +122,8 @@ class TestSystemMetdata(unittest.TestCase):
       pass
     self.assertTrue(isinstance(e, AttributeError))
     #should fail with NotImplemented
-    self.assertRaises(d1_common.exceptions.NotImplemented, sysm.toJSON)
-    self.assertRaises(d1_common.exceptions.NotImplemented, sysm.toCSV)
+    self.assertRaises(d1_common.types.exceptions.NotImplemented, sysm.toJSON)
+    self.assertRaises(d1_common.types.exceptions.NotImplemented, sysm.toCSV)
 
   def testValidateSystemMetadata(self):
     #Try loading a bad document with validation turned on.

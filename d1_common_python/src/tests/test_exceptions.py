@@ -1,5 +1,5 @@
 '''
-Unit tests for d1_common.exceptions
+Unit tests for d1_common.types.exceptions
 
 :Author: Dave Vieglais
 

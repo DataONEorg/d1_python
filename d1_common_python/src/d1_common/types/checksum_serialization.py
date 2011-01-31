@@ -22,94 +22,49 @@
 Module d1_common.types.checksum_serialization
 =============================================
 
-Implements serializaton and de-serialization for the the checksum type.
+Implements serializaton and de-serialization for the Checksum type.
 '''
 
 # Stdlib.
 import StringIO
 import csv
+import logging
 import sys
-
 try:
   import cjson as json
 except:
   import json
 
-# MN API.
-try:
-  import d1_common
-  import d1_common.exceptions
-  import d1_common.ext.mimeparser
-  import d1_common.util
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
-  )
-  raise
-
+# App.
 try:
   import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
+import serialization_base
 
-#===============================================================================
 
-
-class Checksum(object):
-  '''Implements serialization of DataONE Checksum
+class Checksum(serialization_base.Serialization):
+  '''Implements serialization of DataONE Checksum.
   '''
 
   def __init__(self, checksum):
-    self.serialize_map = {
-      'application/json': self.serialize_json,
-      'text/csv': self.serialize_csv,
-      'text/xml': self.serialize_xml,
-      'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_null, #TODO: Not in current REST spec.
-      'text/html': self.serialize_null, #TODO: Not in current REST spec.
-      'text/log': self.serialize_null, #TODO: Not in current REST spec.
-    }
+    serialization_base.Serialization.__init__(self)
 
-    self.deserialize_map = {
-      'application/json': self.deserialize_json,
-      'text/csv': self.deserialize_csv,
-      'text/xml': self.deserialize_xml,
-      'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/html': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/log': self.deserialize_null, #TODO: Not in current REST spec.
-    }
+    self.log = logging.getLogger('ChecksumSerialization')
 
     self.pri = [
-      'application/json',
-      'text/csv',
-      'text/xml',
-      'application/xml',
-      #'application/rdf+xml',
-      #'text/html',
-      #'text/log',
+      d1_common.const.MIMETYPE_XML,
+      d1_common.const.MIMETYPE_APP_XML,
+      d1_common.const.MIMETYPE_JSON,
+      d1_common.const.MIMETYPE_CSV,
+      #d1_common.const.MIMETYPE_RDF,
+      #d1_common.const.MIMETYPE_HTML,
+      #d1_common.const.MIMETYPE_LOG,
     ]
 
     self.checksum = d1_common.types.generated.dataoneTypes.checksum(checksum)
-
-  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
-    '''
-    '''
-    # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError.
-      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
-      content_type = 'application/json'
-    # Deserialize object
-    return self.serialize_map[d1_common.util.get_content_type(content_type)](
-      pretty, jsonvar
-    ), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
     '''Serialize Checksum to XML.
@@ -132,19 +87,15 @@ class Checksum(object):
     csv_writer.writerow([self.checksum.value(), self.checksum.algorithm])
     return io.getvalue()
 
-  def serialize_null(self, doc, pretty=False, jsonvar=False):
-    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
-
-    #== Deserialization methods ==================================================
-
-  def deserialize(self, doc, content_type='application/json'):
-    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
+    #============================================================================
 
   def deserialize_xml(self, doc):
     self.checksum = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
     return self.checksum
 
   def deserialize_json(self, doc):
+    '''Deserialize Checksum from JSON.
+    '''
     j = json.loads(doc)
 
     self.checksum = d1_common.types.generated.dataoneTypes.checksum(j['checksum'])
@@ -153,6 +104,8 @@ class Checksum(object):
     return self.checksum
 
   def deserialize_csv(self, doc):
+    '''Deserialize Checksum from CSV.
+    '''
     io = StringIO.StringIO(doc)
     csv_reader = csv.reader(
       io, dialect=csv.excel,
@@ -165,8 +118,3 @@ class Checksum(object):
       break
 
     return self.checksum
-
-  def deserialize_null(self, doc):
-    raise d1_common.exceptions.NotImplemented(
-      0, 'Deserialization method not implemented.'
-    )

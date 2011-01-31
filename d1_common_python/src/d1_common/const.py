@@ -105,6 +105,16 @@ HTTP_RESPONSE_CACHE = None
 # The default mimetype used by DataONE services
 DEFAULT_MIMETYPE = 'text/xml'
 
+# Mimetypes.
+MIMETYPE_XML = 'text/xml'
+MIMETYPE_APP_XML = 'application/xml'
+MIMETYPE_JSON = 'application/json'
+MIMETYPE_CSV = 'text/csv'
+MIMETYPE_RDF = 'application/rdf+xml'
+MIMETYPE_HTML = 'text/html'
+MIMETYPE_LOG = 'text/log'
+MIMETYPE_TEXT = 'text/plain'
+
 DEFAULT_CHARSET = 'utf-8'
 
 URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="

@@ -20,32 +20,29 @@
 # limitations under the License.
 '''
 Module d1_common.types.objectlist_serialization
-==============================================
+===============================================
 
-Implements serializaton and de-serialization for the ObjectList.
+Implements serializaton and de-serialization for the ObjectList type.
 '''
 
 # Stdlib.
+import StringIO
 import csv
 import datetime
-import StringIO
-import sys
 import logging
-
+import sys
 try:
   import cjson as json
 except:
   import json
 
 # 3rd party.
-# Lxml
 try:
   from lxml import etree
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
-
 try:
   import iso8601
 except ImportError, e:
@@ -56,118 +53,66 @@ except ImportError, e:
   )
   raise
 
-# MN API.
+# App.
 try:
   import d1_common
-  import d1_common.exceptions
-  import d1_common.ext.mimeparser
-  import d1_common.util
+  import d1_common.types.exceptions
+  import d1_common.const
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
-
 try:
   import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
+import serialization_base
 
-#===============================================================================
 
-
-class ObjectList(object):
+class ObjectList(serialization_base.Serialization):
   def __init__(self):
-    self.log = logging.getLogger('ObjectList')
-    self.serialize_map = {
-      'application/json': self.serialize_json,
-      'text/csv': self.serialize_csv,
-      'text/xml': self.serialize_xml,
-      'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_rdf_xml,
-      #'text/html': self.serialize_null, #TODO: Not in current REST spec.
-      #'text/log': self.serialize_null, #TODO: Not in current REST spec.
-    }
+    serialization_base.Serialization.__init__(self)
 
-    self.deserialize_map = {
-      'application/json': self.deserialize_json,
-      'text/csv': self.deserialize_csv,
-      'text/xml': self.deserialize_xml,
-      'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_rdf_xml,
-      #'text/html': self.deserialize_null, #TODO: Not in current REST spec.
-      #'text/log': self.deserialize_null, #TODO: Not in current REST spec.
-    }
+    self.log = logging.getLogger('ObjectListSerialization')
 
     self.pri = [
-      'application/json',
-      'text/csv',
-      'text/xml',
-      'application/xml',
-      'application/rdf+xml',
-      #'text/html',
-      #'text/log',
+      d1_common.const.MIMETYPE_XML,
+      d1_common.const.MIMETYPE_APP_XML,
+      d1_common.const.MIMETYPE_JSON,
+      d1_common.const.MIMETYPE_CSV,
+      d1_common.const.MIMETYPE_RDF,
+      #d1_common.const.MIMETYPE_HTML,
+      #d1_common.const.MIMETYPE_LOG,
     ]
 
     self.object_list = d1_common.types.generated.dataoneTypes.objectList()
 
-  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
-    # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError.
-      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
-      content_type = 'application/json'
-    self.log.debug("serializing, content-type=%s" % content_type)
-
-    # Deserialize object
-    return self.serialize_map[d1_common.util.get_content_type(content_type)](
-      pretty, jsonvar
-    ), content_type
-
-  #<?xml version="1.0" encoding="UTF-8"?>
-  #<p:objectList count="0" start="0" total="0"
-  #  xmlns:p="http://dataone.org/service/types/ObjectList/0.1"
-  #  xmlns:p1="http://dataone.org/service/types/common/0.1"
-  #  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  #  xsi:schemaLocation="http://dataone.org/service/types/ObjectList/0.1 objectlist.xsd ">
-  #  <objectInfo>
-  #    <identifier>identifier</identifier>
-  #    <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
-  #    <checksum algorithm="SHA-1">checksum</checksum>
-  #    <dateSysMetadataModified>2001-12-31T12:00:00</dateSysMetadataModified>
-  #    <size>0</size>
-  #  </objectInfo>
-  #</p:objectList>
+    #<?xml version="1.0" encoding="UTF-8"?>
+    #<p:objectList count="0" start="0" total="0"
+    #  xmlns:p="http://dataone.org/service/types/ObjectList/0.1"
+    #  xmlns:p1="http://dataone.org/service/types/common/0.1"
+    #  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    #  xsi:schemaLocation="http://dataone.org/service/types/ObjectList/0.1 objectlist.xsd ">
+    #  <objectInfo>
+    #    <identifier>identifier</identifier>
+    #    <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+    #    <checksum algorithm="SHA-1">checksum</checksum>
+    #    <dateSysMetadataModified>2001-12-31T12:00:00</dateSysMetadataModified>
+    #    <size>0</size>
+    #  </objectInfo>
+    #</p:objectList>
   def serialize_xml(self, pretty=False, jsonvar=False):
-    self.log.debug("serialize_xml")
+    '''Serialize ObjectList to XML.
+    '''
     return self.object_list.toxml()
 
-  #{
-  #  'start': <integer>,
-  #  'count': <integer>,
-  #  'total': <integer>,
-  #  'objectInfo':
-  #  [
-  #    {
-  #      'pid':<pid>,
-  #      'oclass':<object class>,
-  #      'checksum': {'algorithm': <algorithm used for checksum>, 'value': <checksum of object> }
-  #      'modified':<date time last modified>,
-  #      'size':<byte size of object>
-  #    },
-  #    ...
-  #  ]
-  #}
   def serialize_json(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to JSON.
     '''
-    self.log.debug("serialize_json")
     obj = {}
     obj['objectInfo'] = []
 
@@ -205,7 +150,6 @@ class ObjectList(object):
   def serialize_csv(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to CSV.
     '''
-    self.log.debug("serialize_csv")
 
     io = StringIO.StringIO()
 
@@ -257,10 +201,8 @@ class ObjectList(object):
   #  </rdf:Description>
   #</rdf:RDF>
   def serialize_rdf_xml(self, pretty=False, jsonvar=False):
-    '''Serialize ObjectList to RDFXML.
+    '''Serialize ObjectList to RDF XML.
     '''
-    self.log.debug("serialize_rdf_xml")
-
     # Set up namespaces for the XML response.
     RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
     D1_NS = 'http://ns.dataone.org/core/objects'
@@ -301,26 +243,17 @@ class ObjectList(object):
       encoding='UTF-8', xml_declaration=True
     )
 
-  def serialize_null(self, doc, pretty=False, jsonvar=False):
-    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
-
-    #===============================================================================
-
-  def deserialize(self, doc, content_type='application/json'):
-    self.log.debug("de-serialize, content-type=%s" % content_type)
-    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
+    #============================================================================
 
   def deserialize_xml(self, doc):
-    self.log.debug('deserialize xml')
+    '''Deserialize ObjectList from XML.
+    '''
     self.object_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
     return self.object_list
 
-  def deserialize_rdf_xml(self, doc):
-    self.log.debug('deserialize rdf xml')
-    raise d1_common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
-
   def deserialize_json(self, doc):
-    self.log.debug('deserialize json')
+    '''Deserialize ObjectList from JSON.
+    '''
     j = json.loads(doc)
     self.object_list.start = j['start']
     self.object_list.count = j['count']
@@ -337,15 +270,15 @@ class ObjectList(object):
       )
       objectInfo.size = o['size']
       objectInfos.append(objectInfo)
+
     self.object_list.objectInfo = objectInfos
     return self.object_list
 
-  # #<start>,<count>,<total>
-  # <pid>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
+    # #<start>,<count>,<total>
+    # <pid>,<object format>,<algorithm used for checksum>,<checksum of object>,<date time last modified>,<byte size of object>
   def deserialize_csv(self, doc):
-    '''Serialize object to CSV.
+    '''Deserialize ObjectList from CSV.
     '''
-    self.log.debug('deserialize csv')
     io = StringIO.StringIO(doc)
     csv_reader = csv.reader(
       io, dialect=csv.excel,
@@ -368,11 +301,6 @@ class ObjectList(object):
       objectInfo.dateSysMetadataModified = csv_line[4]
       objectInfo.size = csv_line[5]
       objectInfos.append(objectInfo)
+
     self.object_list.objectInfo = objectInfos
     return self.object_list
-
-  def deserialize_null(self, doc):
-    self.log.debug('deserialize NULL')
-    raise d1_common.exceptions.NotImplemented(
-      0, 'De-serialization method not implemented.'
-    )

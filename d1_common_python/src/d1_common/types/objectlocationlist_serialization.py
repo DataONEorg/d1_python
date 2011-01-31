@@ -20,115 +20,68 @@
 # limitations under the License.
 '''
 Module d1_common.types.objectlocationlist_serialization
-======================================================
+=======================================================
 
-Implements serializaton and de-serialization for the ObjectLocationList.
+Implements serializaton and de-serialization for the ObjectLocationList type.
 '''
 
 # Stdlib.
 import logging
 import sys
-
 try:
   import cjson as json
 except:
   import json
 
-# MN API.
+# App.
 try:
   import d1_common
-  import d1_common.exceptions
-  import d1_common.ext.mimeparser
-  import d1_common.util
+  import d1_common.const
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
-
 try:
   import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
+import serialization_base
 
-#===============================================================================
 
-
-class ObjectLocationList(object):
+class ObjectLocationList(serialization_base.Serialization):
   def __init__(self):
-    self.log = logging.getLogger('ObjectLocationList')
-    self.serialize_map = {
-      'application/json': self.serialize_null, #TODO: Not in current REST spec.
-      'text/csv': self.serialize_null, #TODO: Not in current REST spec.
-      'text/xml': self.serialize_xml,
-      'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_null, #TODO: Not in current REST spec.
-      'text/html': self.serialize_null, #TODO: Not in current REST spec.
-      'text/log': self.serialize_null, #TODO: Not in current REST spec.
-    }
+    serialization_base.Serialization.__init__(self)
 
-    self.deserialize_map = {
-      'application/json': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/csv': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/xml': self.deserialize_xml,
-      'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/html': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/log': self.deserialize_null, #TODO: Not in current REST spec.
-    }
+    self.log = logging.getLogger('ObjectLocationListSerialization')
 
     self.pri = [
-      #'application/json',
-      #'text/csv',
-      'text/xml',
-      'application/xml',
-      #'application/rdf+xml',
-      #'text/html',
-      #'text/log',
+      d1_common.const.MIMETYPE_XML,
+      d1_common.const.MIMETYPE_APP_XML,
+      #d1_common.const.MIMETYPE_JSON,
+      #d1_common.const.MIMETYPE_CSV,
+      #d1_common.const.MIMETYPE_RDF,
+      #d1_common.const.MIMETYPE_HTML,
+      #d1_common.const.MIMETYPE_LOG,
     ]
 
     self.object_location_list = d1_common.types.generated.dataoneTypes.objectLocationList(
     )
 
-  def serialize(self, accept='text/xml', pretty=False, jsonvar=False):
-    # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
-    except ValueError:
-      content_type = 'text/xml'
-    self.log.debug("serializing, content-type=%s" % content_type)
-
-    # Deserialize object
-    return self.serialize_map[d1_common.util.get_content_type(content_type)](
-      pretty, jsonvar
-    ), content_type
-
   def serialize_xml(self, pretty=False, jsonvar=False):
-    self.log.debug("serialize_xml")
+    '''Serialize ObjectLocationList to XML.
+    '''
     return self.object_location_list.toxml()
 
-  def serialize_null(self, doc, pretty=False, jsonvar=False):
-    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
-
-    #===============================================================================
-
-  def deserialize(self, doc, content_type='text/xml'):
-    self.log.debug("de-serialize, content-type=%s" % content_type)
-    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
+  #============================================================================
 
   def deserialize_xml(self, doc):
-    self.log.debug('deserialize xml')
+    '''Deserialize ObjectLocationList from XML.
+    '''
     self.object_location_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(
       doc
     )
     return self.object_location_list
-
-  def deserialize_null(self, doc):
-    self.log.debug('deserialize NULL')
-    raise d1_common.exceptions.NotImplemented(
-      0, 'De-serialization method not implemented.'
-    )
