@@ -56,7 +56,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../m
 # MN API.
 try:
   import d1_common.mime_multipart
-  import d1_common.exceptions
+  import d1_common.types.exceptions
   import d1_common.types.objectlist_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
@@ -592,7 +592,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
     try:
       response = client.get('_invalid_pid_')
-    except d1_common.exceptions.NotFound:
+    except d1_common.types.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
@@ -625,7 +625,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
     try:
       response = client.getSystemMetadata('_invalid_pid_')
-    except d1_common.exceptions.NotFound:
+    except d1_common.types.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
@@ -899,21 +899,21 @@ class TestSequenceFunctions(unittest.TestCase):
     
 #    try:
 #      result = client_mn.get('\'')
-#    except d1_common.exceptions.NotFound:
+#    except d1_common.types.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
 #    
 #    try:
 #      result = client_mn.getSystemMetadataResponse('\'')
-#    except d1_common.exceptions.NotFound:
+#    except d1_common.types.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
 #    
 #    try:
 #      result = client_mn.getSystemMetadata('\'')
-#    except d1_common.exceptions.NotFound:
+#    except d1_common.types.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')
@@ -925,28 +925,28 @@ class TestSequenceFunctions(unittest.TestCase):
 
     try:
       rest_client.GET(self.opts.mn_url + 'object?start=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'object?count=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'object?startTime=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
       
     try:
       rest_client.GET(self.opts.mn_url + 'object?endTime=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
@@ -955,7 +955,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     try:
       result = client_mn.listObjects(objectFormat='\'')
-    except d1_common.exceptions.DataONEException:
+    except d1_common.types.exceptions.DataONEException:
       self.assertTrue(False, 'Unexpected DataONEException')
     else:
       self.assertEqual(result.count, 0, 'Unexpected records returned')
@@ -964,28 +964,28 @@ class TestSequenceFunctions(unittest.TestCase):
 
     try:
       rest_client.GET(self.opts.mn_url + 'log?start=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'log?count=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
       rest_client.GET(self.opts.mn_url + 'log?lastAccessed_ge=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
       
     try:
       rest_client.GET(self.opts.mn_url + 'log?lastAccessed_lt=\'')    
-    except d1_common.exceptions.InvalidRequest:
+    except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
@@ -994,7 +994,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     try:
       result = client_mn.getLogRecords(objectFormat='\'')
-    except d1_common.exceptions.DataONEException:
+    except d1_common.types.exceptions.DataONEException:
       self.assertTrue(False, 'Unexpected DataONEException')
     #else:
     #  self.assertEqual(result.count, 0, 'Unexpected records returned')
@@ -1102,7 +1102,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
 #    try:
 #      result = client_cn.resolve('\'')
-#    except d1_common.exceptions.NotFound:
+#    except d1_common.types.exceptions.NotFound:
 #      pass
 #    else:
 #      self.assertTrue(False, 'Expected 404 Not Found')

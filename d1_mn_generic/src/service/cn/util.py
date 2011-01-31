@@ -19,7 +19,7 @@ import datetime
 
 import d1_common.types.generated.dataoneTypes
 import d1_common.types.systemmetadata
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_common.mime_multipart
 
 import mn.util
@@ -110,7 +110,9 @@ def baseurl_by_noderef(node_ref):
                          ).read(
                          )
   except EnvironmentError:
-    raise d1_common.exceptions.ServiceFailure(0, 'Missing static node registry file')
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, 'Missing static node registry file'
+    )
 
   nodes = d1_common.types.generated.dataoneTypes.CreateFromDocument(node_registry)
 
@@ -120,7 +122,7 @@ def baseurl_by_noderef(node_ref):
       base_url = node.baseURL
       break
   if base_url == '':
-    raise d1_common.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidRequest(
       0, 'Could not resolve node reference: {0}'.format(
         node_ref
       )
@@ -146,7 +148,7 @@ def get_sysmeta(pid):
       mn.sys_log.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
 
   if sysmeta_found == False:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
 
   return sysmeta_filename, sysmeta_obj
 
@@ -186,7 +188,7 @@ def set_sysmeta(sysmeta_filename, sysmeta_obj):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
   sysmeta_file.write(mn.util.pretty_xml(sysmeta_obj.toxml()))
 
 
@@ -198,7 +200,11 @@ def sysmeta_set_modified(sysmeta_obj, timestamp=None):
 
 def set_replication_status(status, node_ref, pid):
   if status not in ('queued', 'requested', 'completed', 'invalidated'):
-    raise d1_common.exceptions.InvalidRequest(0, 'Invalid status: {0}'.format(status))
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid status: {0}'.format(
+        status
+      )
+    )
 
   sysmeta_filename, sysmeta_obj = get_sysmeta(pid)
 

@@ -35,6 +35,8 @@ import os
 import StringIO
 import sys
 import types
+import urllib
+import inspect
 
 try:
   import cjson as json
@@ -56,7 +58,8 @@ import d1_common.ext.mimeparser
 from django.http import HttpResponse
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
+import d1_common.util
 
 # App.
 import mn.sys_log as sys_log
@@ -77,18 +80,43 @@ class view_handler():
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
 
-    # The REST interface spec requires parameters in the URL to be case
-    # insensitive. We handle this by setting all the keys in the GET map to
-    # lower case here and using lower case keys in the views.
+    # The D1 REST interface spec requires keys in the query string part of URLs
+    # to be case insensitive. We handle this by setting all the keys in the GET
+    # map to lower case here and using lower case keys in the views.
     #
     # This destroys and rebuilds the entire map. Is there a faster way?
     #
     # We don't need to process the POST and HEAD maps in this way because we
     # don't have any REST interfaces using those that take parameters.
-    iGET = {}
+    get = {}
     for k in request.GET.keys():
-      iGET[k.lower()] = request.GET[k]
-    request.GET = iGET
+      get[k.lower()] = request.GET[k]
+    request.GET = get
 
-    # Returning None causes Django to continue processing by calling view_func.
-    return None
+    # Decode view parameters. This is the counterpart to the changes made to
+    # request.path_info detailed in request_handler.py.
+    view_args_list = []
+    for arg in view_args:
+      view_args_list.append(urllib.unquote(arg))
+    view_args = tuple(view_args_list)
+    for key, arg in view_kwargs:
+      view_kwargs[key] = d1_common.util.decodePathElement(arg)
+
+    # Since copies of the view_args and view_kwargs were modified, the view must
+    # be called directly with the modified arguments. This short circuits
+    # Django's own processing, so the middleware functions must then be called
+    # manually.
+    try:
+      response = view_func(request, *view_args, **view_kwargs)
+    except Exception, e:
+      # If the view raised an exception, run it through exception middleware,
+      # and if the exception middleware returns a response, use that. Otherwise,
+      # reraise the exception.
+      for middleware_method in inspect.currentframe().f_back.f_locals[
+        'self']._exception_middleware:
+        response = middleware_method(request, e)
+        if response:
+          return response
+      raise
+
+    return response

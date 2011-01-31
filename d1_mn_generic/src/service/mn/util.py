@@ -74,7 +74,7 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_common.const
 
 # App.
@@ -84,6 +84,53 @@ import models
 import settings
 import sys_log
 import util
+
+
+def validate_post(request, parts):
+  # Parts is a list. file, field, name,
+
+  missing = []
+
+  #print request.FILES.keys()
+  #print request.FILES['file'].name # filename
+
+  #0030: 65 6e 74 2d 44 69 73 70 6f 73 69 74 69 6f 6e 3a ent-Disposition:
+  #0040: 20 66 6f 72 6d 2d 64 61 74 61 3b 20 6e 61 6d 65  form-data; name
+  #0050: 3d 22 66 69 6c 65 22 3b 20 66 69 6c 65 6e 61 6d ="file"; filenam
+  #0060: 65 3d 22 32 36 53 2e 6e 65 78 75 73 22 0d 0a 43 e="26S.nexus"..C
+  #0070: 6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 61 70 70 ontent-Type: app
+  #0080: 6c 69 63 61 74 69 6f 6e 2f 6f 63 74 65 74 2d 73 lication/octet-s
+  #0090: 74 72 65 61 6d 0d 0a 0d 0a                      tream..
+
+  #curl -H "AuthToken: UR45W21A1S19ZE3CC9" \
+  #     -F "object=@datafile.csv;name=object" \
+  #     -F "file=@sysmeta.xml;name=systemmetdata" \
+  #     http://m1.dataone.org/mn/object/XYZ33256
+
+  #Content-Disposition: form-data; name="file"; filename="26S.nexus"
+  #Content-Type: application/octet-stream
+
+  for part_type, part_name in parts:
+    if part_type == 'header':
+      if 'HTTP_' + part_name.upper() not in request.META:
+        missing.append('{0}: {1}'.format(part_type, part_name))
+    elif part_type == 'file':
+      if part_name not in request.FILES.keys():
+        missing.append('{0}: {1}'.format(part_type, part_name))
+    elif part_type == 'field':
+      if part_name not in request.POST.keys():
+        missing.append('{0}: {1}'.format(part_type, part_name))
+    else:
+      raise d1_common.types.exceptions.ServiceFailure(
+        0, 'Invalid part_type: {0}'.format(
+          part_type
+        )
+      )
+
+  if len(missing) > 0:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Missing part(s) in MIME Multipart document: ' + ', '.join(missing)
+    )
 
 
 def pretty_xml(xml_str, encoding="UTF-8"):
@@ -170,6 +217,27 @@ def traceback_to_detail_code():
   tb.append('Type: {0}'.format(exception_type))
   tb.append('Value: {0}'.format(exception_value))
   return '/'.join(tb)
+
+
+def traceback_to_trace_info():
+  exception_type, exception_value, exception_traceback = sys.exc_info()
+  tb = []
+  while exception_traceback:
+    co = exception_traceback.tb_frame.f_code
+    tb.append(
+      '{0}({1})'.format(
+        str(os.path.basename(co.co_filename)), str(
+          traceback.tb_lineno(
+            exception_traceback
+          )
+        )
+      )
+    )
+    exception_traceback = exception_traceback.tb_next
+  if not isinstance(exception_value, d1_common.types.exceptions.DataONEException):
+    tb.append('Type: {0}'.format(exception_type))
+    tb.append('Value: {0}'.format(exception_value))
+  return tb
 
 
 def clear_db():
@@ -274,7 +342,11 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
     if operator is None:
       operator = default
     if operator not in operator_translation:
-      raise d1_common.exceptions.InvalidRequest(0, 'Invalid argument: {0}'.format(key))
+      raise d1_common.types.exceptions.InvalidRequest(
+        0, 'Invalid argument: {0}'.format(
+          key
+        )
+      )
     date_str = request.GET[key]
     # parse_date() needs date-time, so if we only have date, add time
     # (midnight).
@@ -283,7 +355,7 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
     try:
       date = iso8601.parse_date(date_str)
     except iso8601.ParseError, e:
-      raise d1_common.exceptions.InvalidRequest(
+      raise d1_common.types.exceptions.InvalidRequest(
         0, 'Invalid date format: {0} {1}'.format(
           request.GET[key], str(
             e
@@ -304,7 +376,7 @@ def add_wildcard_filter(query, col_name, value):
 
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
-    raise d1_common.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidRequest(
       0, 'Wildcard is only supported at start OR end of value: {0}'.format(
         value
       )
@@ -330,7 +402,7 @@ def add_wildcard_filter(query, col_name, value):
     wild_end = True
 
   if wild_beginning == True and wild_end == True:
-    raise d1_common.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidRequest(
       0, 'Wildcard is only supported at start OR end of value: {0}'.format(
         value
       )
@@ -356,7 +428,7 @@ def add_slice_filter(query, request):
   except KeyError:
     start = 0
   except ValueError:
-    raise d1_common.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid start value: {0}'.format(
         request.GET['start']
       )
@@ -373,7 +445,7 @@ def add_slice_filter(query, request):
   except KeyError:
     count = d1_common.const.MAX_LISTOBJECTS
   except ValueError:
-    raise d1_common.exceptions.InvalidRequest(
+    raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid count value: {0} (count must be 0 <= count >= {1}'.format(
         request.GET['count'], d1_common.const.MAX_LISTOBJECTS
       )

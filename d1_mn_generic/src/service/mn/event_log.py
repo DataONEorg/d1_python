@@ -36,7 +36,7 @@ from django.shortcuts import render_to_response
 from django.utils.html import escape
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 
 # App.
 import auth
@@ -64,7 +64,7 @@ def log(pid, event, request, timestamp=None):
       object_row = models.Object.objects.filter(pid=pid)[0]
     except IndexError:
       err_msg = 'Attempted to create event log for non-existing object: {0}'.format((pid))
-      raise d1_common.exceptions.ServiceFailure(0, err_msg)
+      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Create log entry.
   event_log_row = models.Event_log()

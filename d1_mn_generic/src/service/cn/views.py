@@ -61,7 +61,7 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_client.systemmetadata
 import d1_client.client
 import d1_common.types.objectlocationlist_serialization
@@ -221,7 +221,7 @@ def resolve_get(request, pid, head):
   try:
     obj = mn.models.Object.objects.get(pid=pid)
   except: # mn.models.DoesNotExist
-    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
   
   object_location_list = ObjectLocationList()
   object_location_list.deserialize_db(obj)
@@ -245,7 +245,7 @@ def node_get(request):
   try:
     node_registry = open(os.path.join(settings.STATIC_STORE_PATH, 'nodeRegistry.xml'))
   except EnvironmentError:
-    raise d1_common.exceptions.ServiceFailure(0, 'Missing static node registry file')
+    raise d1_common.types.exceptions.ServiceFailure(0, 'Missing static node registry file')
   response = HttpResponse(node_registry)
   response['Content-Type'] = 'text/xml'
   

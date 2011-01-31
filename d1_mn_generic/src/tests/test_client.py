@@ -59,7 +59,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../m
 # MN API.
 try:
   #import d1_common.mime_multipart
-  import d1_common.exceptions
+  import d1_common.types.exceptions
   import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
 except ImportError, e:
@@ -463,7 +463,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
     try:
       response = client.get('_invalid_pid_')
-    except d1_common.exceptions.NotFound:
+    except d1_common.types.exceptions.NotFound:
       pass
     else:
       assertTrue(False)
@@ -498,7 +498,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
     try:
       response = client.getSystemMetadata('_invalid_pid_')
-    except d1_common.exceptions.NotFound:
+    except d1_common.types.exceptions.NotFound:
       pass
     else:
       assertTrue(False)

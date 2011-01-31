@@ -63,7 +63,7 @@ from django.http import HttpResponse
 from django.db.models import Avg, Max, Min, Count
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_common.types.objectlist_serialization
 import d1_common.types.logrecords_serialization
 import d1_common.types.monitorlist_serialization
@@ -414,15 +414,15 @@ def monitor_serialize_object(request, response, monitor):
   else:
     jsonvar = False
 
-  # Determine which serializer to use. If client does not supply HTTP_ACCEPT,
-  # we default to JSON.
-  content_type = 'application/json'
+  # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
+  # we use the default defined in d1_common.const.DEFAULT_MIMETYPE.
+  content_type = d1_common.const.DEFAULT_MIMETYPE
   if 'HTTP_ACCEPT' not in request.META:
     sys_log.debug(
-      'client({0}): No HTTP_ACCEPT header. Defaulting to JSON'.format(
+      'client({0}): No HTTP_ACCEPT header. Defaulting to {0}'.format(
         util.request_to_string(
           request
-        )
+        ), d1_common.const.DEFAULT_MIMETYPE
       )
     )
   else:
@@ -430,12 +430,12 @@ def monitor_serialize_object(request, response, monitor):
       content_type = d1_common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
-      # that case, we also default to JSON.
+      # that case, we also use the default defined in d1_common.const.DEFAULT_MIMETYPE.
       sys_log.debug(
-        'client({0}): Invalid HTTP_ACCEPT header. Defaulting to JSON'.format(
+        'client({0}): Invalid HTTP_ACCEPT header. Defaulting to {0}'.format(
           util.request_to_string(
             request
-          )
+          ), d1_common.const.DEFAULT_MIMETYPE
         )
       )
 

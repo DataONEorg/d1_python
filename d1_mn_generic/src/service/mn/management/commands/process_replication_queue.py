@@ -26,13 +26,8 @@ import urllib
 import urlparse
 import uuid
 
-try:
-  import cjson as json
-except:
-  import json
-
-  # 3rd party.
-  # Lxml
+# 3rd party.
+# Lxml
 try:
   from lxml import etree
 except ImportError, e:
@@ -56,7 +51,7 @@ from django.utils.html import escape
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_common.types.pid_serialization
 import d1_client.client
 
@@ -165,7 +160,7 @@ def replicate_object(obj):
     obj.set_status('Error: {0}'.format(err_msg))
     obj.save()
     # Abort handling of this replication item.
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
   # Find size of scidata.
   src = DataOneClientWrapper(base_url)
   sysmeta_obj = src.getSystemMetadata(obj.identifier)
@@ -200,7 +195,7 @@ class Command(NoArgsCommand):
       mn.sys_log.info_('Replicating object: {0}'.format(obj.pid))
       #try:
       replicate_object(obj)
-      #except d1_common.exceptions.DataONEException as e:
+      #except d1_common.types.exceptions.DataONEException as e:
       #  mn.sys_log.error_(e.serializeToXml())
       #except Exception:
       #  err_msg = mn.util.traceback_to_detail_code()

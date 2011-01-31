@@ -63,7 +63,8 @@ import d1_common.ext.mimeparser
 from django.http import HttpResponse
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
+import d1_common.types.exception_serialization
 
 # App.
 import mn.sys_log as sys_log
@@ -71,91 +72,65 @@ import mn.util as util
 import detail_codes
 
 
-def serialize_exception(request, exception):
-  ''':param:
-  :return:
-  '''
-  map = {
-    'application/json': exception.serializeToJson,
-    'text/csv': None,
-    'text/xml': exception.serializeToXml,
-    'application/xml': exception.serializeToXml,
-    'application/rdf+xml': None,
-    'text/html': exception.serializeToHtml,
-    'text/log': None,
-  }
-
-  pri = [
-    'application/json',
-    'text/csv',
-    'text/xml',
-    'application/xml',
-    'application/rdf+xml',
-    'text/html',
-    'text/log',
-  ]
-
-  # We "inject" trace information into the given DataONE exception.
-  detail_code = detail_codes.dataone_exception_to_detail_code().detail_code(
-    request, exception
-  )
-  exception.detailCode = str(detail_code) + '.' + util.traceback_to_detail_code()
-
-  # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
-  # we default to JSON.
-  content_type = 'application/json'
-  if 'HTTP_ACCEPT' not in request.META:
-    sys_log.debug(
-      'client({0}): No HTTP_ACCEPT header. Defaulting to JSON'.format(
-        util.request_to_string(
-          request
-        )
-      )
-    )
-  else:
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError. In
-      # that case, we also default to JSON.
-      sys_log.debug(
-        'client({0}): Invalid HTTP_ACCEPT header. Defaulting to JSON'.format(
-          util.request_to_string(
-            request
-          )
-        )
-      )
-
-  # Serialize object.
-  return map[content_type]()
-
-
 class exception_handler():
   def process_exception(self, request, exception):
+    # When debugging from a web browser, we want to return None to get Django's
+    # extremely useful exception page.
+    return None
+
     # An exception within this function causes a generic 500 to be returned.
 
     # Log the exception.
     util.log_exception(10)
 
     # If the exception is a DataONE exception, we serialize it out.
-    if isinstance(exception, d1_common.exceptions.DataONEException):
-      return HttpResponse(
-        serialize_exception(
+    if isinstance(exception, d1_common.types.exceptions.DataONEException):
+      # Add trace information to the given DataONE exception.
+      exception.detailCode = str(
+        detail_codes.dataone_exception_to_detail_code().detail_code(
           request, exception
-        ), status=exception.errorCode
+        )
+      )
+      exception.traceInformation = util.traceback_to_trace_info()
+      exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
+        exception
+      )
+      exception_serialized, content_type = exception_serializer.serialize(
+        request.META.get(
+          'HTTP_ACCEPT', None
+        )
+      )
+      return HttpResponse(
+        exception_serialized,
+        status=exception.errorCode,
+        mimetype=content_type
       )
 
     # If we get here, we got an unexpected exception. Wrap it in a DataONE exception.
-    tb = util.traceback_to_detail_code()
+    exception = d1_common.types.exceptions.ServiceFailure(0, '', '')
+    exception.detailCode = str(
+      detail_codes.dataone_exception_to_detail_code().detail_code(
+        request, exception
+      )
+    )
+    exception.traceInformation = util.traceback_to_trace_info()
+    exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
+      exception
+    )
+    exception_serialized, content_type = exception_serializer.serialize(
+      request.META.get(
+        'HTTP_ACCEPT', None
+      )
+    )
     return HttpResponse(
-      serialize_exception(
-        request, d1_common.exceptions.ServiceFailure(
-          0, tb
-        )
-      ),
-      status=500
+      exception_serialized,
+      status=exception.errorCode,
+      mimetype=content_type
     )
 
-    # When debugging from a web browser, we want to return None to get Django's
-    # extremely useful exception page.
-    return None
+    #    
+    #    
+    #    exception_serialized, content_type = exception_serializer.serialize(request.META.get('HTTP_ACCEPT', None)) 
+    #    
+    #    return HttpResponse(serialize_exception(request, ), status=500)
+    #

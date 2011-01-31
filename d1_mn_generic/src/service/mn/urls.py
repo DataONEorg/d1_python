@@ -71,6 +71,7 @@ urlpatterns = patterns(
   (r'^test_replicate_get/?$', 'test_replicate_get'),
   (r'^test_replicate_clear/?$', 'test_replicate_clear'),
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
+  (r'^test_exception/(.+?)/?$', 'test_exception'),
   (r'^test_get_request/?$', 'test_get_request'),
   (r'^test_inject_log/?$', 'test_inject_log'),
 

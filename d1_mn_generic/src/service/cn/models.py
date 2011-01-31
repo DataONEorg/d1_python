@@ -35,7 +35,7 @@ from django.db import models
 from django.db.models import Q
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 
 #class Object_replication_status(models.Model):
 #  pid = models.CharField(max_length=200, db_index=True)

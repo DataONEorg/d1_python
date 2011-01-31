@@ -85,7 +85,7 @@ except ImportError, e:
   raise
 
 # MN API.
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_client.systemmetadata
 import d1_common.types.checksum_serialization
 import d1_common.types.pid_serialization
@@ -157,7 +157,7 @@ def object_collection_get(request, head):
         'size': 'size',
       }[orderby]
     except KeyError:
-      raise d1_common.exceptions.InvalidRequest(0, 'Invalid orderby value requested: {0}'.format(orderby))
+      raise d1_common.types.exceptions.InvalidRequest(0, 'Invalid orderby value requested: {0}'.format(orderby))
       
     # Set up query with requested sorting.
     query = models.Object.objects.order_by(prefix + order_field)
@@ -242,7 +242,7 @@ def object_collection_delete(request):
   '''
 
   if settings.GMN_DEBUG == False:
-    raise d1_common.exceptions.InvalidRequest(0, 'Unsupported')
+    raise d1_common.types.exceptions.InvalidRequest(0, 'Unsupported')
   
   # Clear the DB.
   models.Object.objects.all().delete()
@@ -259,7 +259,7 @@ def object_collection_delete(request):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not clear SysMeta cache\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
   sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
@@ -313,12 +313,9 @@ def object_pid_post(request, pid):
   :return:
   '''
   
-  # Basic validation.
-  if len(request.FILES) != 2:
-    raise d1_common.exceptions.InvalidRequest(0, 'POST must contain exactly two MIME parts, object content and sysmeta content')
-  for field in ('object', 'systemmetadata'):
-    if field not in request.FILES.keys():
-      raise d1_common.exceptions.InvalidRequest(0, 'Missing field: {0}. Fields found: {1}'.format(field, ', '.join(request.FILES.keys())))
+  util.validate_post(request, (('header', 'AuthToken'),
+                               ('file', 'object'),
+                               ('file', 'systemmetadata')))
 
   # Validate SysMeta.
   sysmeta_str = request.FILES['systemmetadata'].read()
@@ -327,7 +324,7 @@ def object_pid_post(request, pid):
     sysmeta.isValid()
   except:
     err = sys.exc_info()[1]
-    raise d1_common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.types.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
   
   # Write SysMeta bytes to cache folder.
   sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
@@ -338,7 +335,7 @@ def object_pid_post(request, pid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # MN_crud.create() has a GMN specific extension. Instead of providing
   # an object for GMN to manage, the object can be left empty and
@@ -352,7 +349,7 @@ def object_pid_post(request, pid):
       if url_split.scheme != 'http':
         raise ValueError
     except ValueError:
-      raise d1_common.exceptions.InvalidRequest(0, 'url({0}): Invalid URL specified for remote storage'.format(url)) 
+      raise d1_common.types.exceptions.InvalidRequest(0, 'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(urllib.quote(pid, ''))
@@ -401,7 +398,7 @@ def object_pid_post_store_local(request, pid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write object file: {0}\n'.format(object_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
 def object_pid_get(request, pid):
   '''
@@ -415,13 +412,13 @@ def object_pid_get(request, pid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
 
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(url)
   except ValueError:
-    raise d1_common.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, url))
+    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, url))
 
   # Log the access of this object.
   event_log.log(pid, 'read', request)
@@ -431,7 +428,7 @@ def object_pid_get(request, pid):
   elif url_split.scheme == 'file':
     return object_pid_get_local(request, pid)
   else:
-    raise d1_common.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
+    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
 def object_pid_get_remote(request, pid):
   sys_log.info('pid({0}): Object is a HTTP URL. Proxying from original location'.format(pid))
@@ -445,7 +442,7 @@ def object_pid_get_remote(request, pid):
     if response.status == httplib.FOUND:
       url = response.getheader('location')
   except httplib.HTTPException as e:
-    raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
+    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
 
   # Open the object to proxy.
   try:
@@ -454,10 +451,10 @@ def object_pid_get_remote(request, pid):
     conn.request('GET', url)
     response = conn.getresponse()
     if response.status != httplib.OK:
-      raise d1_common.exceptions.ServiceFailure(0,
+      raise d1_common.types.exceptions.ServiceFailure(0,
         'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
   except httplib.HTTPException as e:
-    raise d1_common.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
+    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
@@ -471,7 +468,7 @@ def object_pid_get_local(request, pid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)    
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
 
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(response))
@@ -483,7 +480,7 @@ def object_pid_put(request, pid):
   a previous object (identified by obsoletedGuid).
   :return:
   '''
-  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.update(token, pid, object, obsoletedGuid, sysmeta) → Identifier')
+  raise d1_common.types.exceptions.NotImplemented(0, 'MN_crud.update(token, pid, object, obsoletedGuid, sysmeta) → Identifier')
 
 def object_pid_delete(request, pid):
   '''
@@ -492,7 +489,7 @@ def object_pid_delete(request, pid):
   object or a science metadata object.
   :return:
   '''
-  raise d1_common.exceptions.NotImplemented(0, 'MN_crud.delete(token, pid) → Identifier')
+  raise d1_common.types.exceptions.NotImplemented(0, 'MN_crud.delete(token, pid) → Identifier')
   
 def object_pid_head(request, pid):
   '''
@@ -507,7 +504,7 @@ def object_pid_head(request, pid):
   try:
     url = query[0].url
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing scimeta object was requested', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Non-existing scimeta object was requested', pid)
 
   # Get size of object from file size.
   try:
@@ -515,7 +512,7 @@ def object_pid_head(request, pid):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not get size of file: {0}\n'.format(url)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.NotFound(0, err_msg, pid)
+    raise d1_common.types.exceptions.NotFound(0, err_msg, pid)
 
   # Add header info about object.
   util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
@@ -563,7 +560,7 @@ def meta_pid_get(request, pid, head):
   try:
     url = models.Object.objects.filter(pid=pid)[0]
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', pid)
 
   if head == True:
     return HttpResponse('', mimetype='text/xml')
@@ -573,7 +570,7 @@ def meta_pid_get(request, pid, head):
   try:
     file = open(file_in_path, 'r')
   except EnvironmentError as (errno, strerror):
-    raise d1_common.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
+    raise d1_common.types.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
 
   # Log access of the SysMeta of this object.
   event_log.log(pid, 'read', request)
@@ -598,7 +595,7 @@ def checksum_pid_get(request, pid):
     checksum = query[0].checksum
     checksum_algorithm = query[0].checksum_algorithm.checksum_algorithm
   except IndexError:
-    raise d1_common.exceptions.NotFound(0, 'Non-existing object was requested', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
 
   # Log the access of this object.
   event_log.log(pid, 'read', request) # todo: look into log type other than 'read'
@@ -743,13 +740,8 @@ def replicate(request):
 def replicate_post(request):
   '''
   '''
-  # Basic validation.
-  for field in ('token', 'sysmeta', 'sourceNode'):
-    if field not in request.FILES.keys():
-      raise d1_common.exceptions.InvalidRequest(0, 'Missing field: {0}. Fields found: {1}'.format(field, ', '.join(request.FILES.keys())))
+  util.validate_post(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
 
-  # TODO: Validate token.
-  
   # Validate SysMeta.
   sysmeta_str = request.FILES['sysmeta'].read()
   sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
@@ -757,11 +749,11 @@ def replicate_post(request):
     sysmeta.isValid()
   except:
     err = sys.exc_info()[1]
-    raise d1_common.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.types.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
 
   # Verify that this is not an object we already have.
   if models.Object.objects.filter(pid=sysmeta.pid):
-    raise d1_common.exceptions.InvalidRequest(0, 'Requested replication of object that already exists: {0}'.format(sysmeta.pid))
+    raise d1_common.types.exceptions.InvalidRequest(0, 'Requested replication of object that already exists: {0}'.format(sysmeta.pid))
 
   # Write SysMeta bytes to cache folder.
   sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(sysmeta.pid, ''))
@@ -772,7 +764,7 @@ def replicate_post(request):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Create replication work item for this replication.  
   replication_item = models.Replication_work_queue()
@@ -808,11 +800,8 @@ def _replicate_store(request):
   '''
   '''
   
-  # Basic validation.
-  for field in ('pid', 'scidata'):
-    if field not in request.FILES.keys():
-      raise d1_common.exceptions.InvalidRequest(0, 'Missing field: {0}. Fields found: {1}'.format(field, ', '.join(request.FILES.keys())))
-
+  util.validate_post(request, (('file', 'pid'), ('file', 'scidata')))
+  
   pid = request.FILES['pid'].read()
 
   # Write SciData to object store.  
@@ -826,7 +815,7 @@ def _replicate_store(request):
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write object file: {0}\n'.format(object_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.exceptions.ServiceFailure(0, err_msg)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Create database entry for object.
   object = models.Object()
@@ -884,7 +873,7 @@ def health_status(request):
   '''
   '''
   # Not implemented.
-  raise d1_common.exceptions.NotImplemented(0, 'Targeted for later version.')
+  raise d1_common.types.exceptions.NotImplemented(0, 'Targeted for later version.')
   
 # Monitoring
 
@@ -1067,6 +1056,16 @@ def test_slash(request, p1, p2, p3):
 
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
+def test_exception(request, exc):
+  '''
+  '''
+  
+  # Only GET accepted.
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  raise d1_common.types.exceptions.InvalidRequest(0, 'Test exception')
+
 def test_get_request(request):
   '''
   '''
@@ -1092,10 +1091,10 @@ def test_inject_log(request):
   # Validate POST.
 
   if len(request.FILES) != 1:
-    raise d1_common.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
+    raise d1_common.types.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
 
   if 'csv' not in request.FILES.keys():
-    raise d1_common.exceptions.InvalidRequest(0, 'Name of MIME part must be "csv". Found: {0}'.format(', '.join(request.FILES.keys())))
+    raise d1_common.types.exceptions.InvalidRequest(0, 'Name of MIME part must be "csv". Found: {0}'.format(', '.join(request.FILES.keys())))
   
   # Create log entries.
   csv_reader = csv.reader(request.FILES['csv'])
