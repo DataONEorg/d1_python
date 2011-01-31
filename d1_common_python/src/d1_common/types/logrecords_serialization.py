@@ -20,43 +20,39 @@
 # limitations under the License.
 '''
 Module d1_common.types.logrecords_serialization
-==============================================
+===============================================
 
-Implements serializaton and de-serialization for the LogRecords.
+Implements serializaton and de-serialization for the LogRecords type.
 '''
 
 # Stdlib.
+import StringIO
 import csv
 import datetime
-import StringIO
+import logging
 import sys
-
 try:
   import cjson as json
 except:
   import json
 
-# MN API.
+# App.
 try:
   import d1_common
-  import d1_common.exceptions
-  import d1_common.ext.mimeparser
-  import d1_common.util
+  import d1_common.const
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
-
 try:
   import d1_common.types.generated.dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo easy_install pyxb\n')
   raise
-
-#===============================================================================
+import serialization_base
 
 
 def logEntryToText(logEntry):
@@ -83,58 +79,27 @@ def logEntriesToText(logEntries):
   return "\n".join(res)
 
 
-class LogRecords(object):
+class LogRecords(serialization_base.Serialization):
   '''Implements serialization of DataONE LogEntry
   '''
 
   def __init__(self):
-    self.serialize_map = {
-      'application/json': self.serialize_json,
-      'text/csv': self.serialize_csv,
-      'text/xml': self.serialize_xml,
-      'application/xml': self.serialize_xml,
-      'application/rdf+xml': self.serialize_rdf_xml,
-      'text/html': self.serialize_null, #TODO: Not in current REST spec.
-      'text/log': self.serialize_null, #TODO: Not in current REST spec.
-    }
+    serialization_base.Serialization.__init__(self)
 
-    self.deserialize_map = {
-      'application/json': self.deserialize_json,
-      'text/csv': self.deserialize_csv,
-      'text/xml': self.deserialize_xml,
-      'application/xml': self.deserialize_xml,
-      'application/rdf+xml': self.deserialize_rdf_xml,
-      'text/html': self.deserialize_null, #TODO: Not in current REST spec.
-      'text/log': self.deserialize_null, #TODO: Not in current REST spec.
-    }
+    self.log = logging.getLogger('LogRecordsSerialization')
 
     self.pri = [
-      'application/json',
-      'text/csv',
-      'text/xml',
-      'application/xml',
-      'application/rdf+xml',
-      #'text/html',
-      #'text/log',
+      d1_common.const.MIMETYPE_XML,
+      d1_common.const.MIMETYPE_APP_XML,
+      d1_common.const.MIMETYPE_JSON,
+      d1_common.const.MIMETYPE_CSV,
+      d1_common.const.MIMETYPE_RDF,
+      #d1_common.const.MIMETYPE_HTML,
+      #d1_common.const.MIMETYPE_LOG,
+      #d1_common.const.MIMETYPE_TEXT,
     ]
 
-    self.log = d1_common.types.generated.dataoneTypes.log()
-
-  def serialize(self, accept='application/json', pretty=False, jsonvar=False):
-    '''
-    '''
-    # Determine which serializer to use. If client does not supply accept, we
-    # default to JSON.
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(self.pri, accept)
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError.
-      #sys_log.debug('Invalid HTTP_ACCEPT value. Defaulting to JSON')
-      content_type = 'application/json'
-    # Deserialize object
-    return self.serialize_map[d1_common.util.get_content_type(content_type)](
-      pretty, jsonvar
-    ), content_type
+    self.log_records = d1_common.types.generated.dataoneTypes.log()
 
   #<?xml version="1.0" encoding="UTF-8"?>
   #<d1:log xmlns:d1="http://dataone.org/service/types/logging/0.1"
@@ -162,9 +127,9 @@ class LogRecords(object):
   #    </logEntry> 
   #</d1:log>
   def serialize_xml(self, pretty=False, jsonvar=False):
+    '''Serialize LogRecords to XML.
     '''
-    '''
-    return self.log.toxml()
+    return self.log_records.toxml()
 
   def serialize_json(self, pretty=False, jsonvar=False):
     '''Serialize LogRecords to JSON.
@@ -172,7 +137,7 @@ class LogRecords(object):
     obj = {}
     obj['logEntry'] = []
 
-    for o in self.log.logEntry:
+    for o in self.log_records.logEntry:
       logEntry = {}
       logEntry['entryId'] = o.entryId.value()
       logEntry['identifier'] = o.identifier.value()
@@ -207,7 +172,7 @@ class LogRecords(object):
     )
 
     # Comment containing start, count and total.
-    for o in self.log.logEntry:
+    for o in self.log_records.logEntry:
       logEntry = []
       logEntry.append(o.entryId.value())
       logEntry.append(o.identifier.value())
@@ -219,32 +184,19 @@ class LogRecords(object):
       logEntry.append(o.memberNode)
 
       csv_writer.writerow(logEntry)
+
     return io.getvalue()
 
-  def serialize_rdf_xml(self, doc):
-    '''
-    '''
-    raise d1_common.exceptions.NotImplemented(0, 'serialize_rdf_xml not implemented.')
-
-  def serialize_null(self, doc, pretty=False, jsonvar=False):
-    '''
-    '''
-    raise d1_common.exceptions.NotImplemented(0, 'Serialization method not implemented.')
-
-    #== Deserialization methods ==================================================
-  def deserialize(self, doc, content_type='application/json'):
-    '''
-    '''
-    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
+  #============================================================================
 
   def deserialize_xml(self, doc):
+    '''Deserialize LogRecords from XML.
     '''
-    '''
-    self.log = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
-    return self.log
+    self.log_records = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
+    return self.log_records
 
   def deserialize_json(self, doc):
-    '''
+    '''Deserialize LogRecords from JSON.
     '''
     j = json.loads(doc)
     logEntries = []
@@ -261,11 +213,12 @@ class LogRecords(object):
       logEntry.dateLogged = datetime.datetime.isoformat(o['dateLogged'])
       logEntry.memberNode = o['memberNode']
       logEntries.append(logEntry)
-    self.log.logEntry = logEntries
-    return self.log
+
+    self.log_records.logEntry = logEntries
+    return self.log_records
 
   def deserialize_csv(self, doc):
-    '''Serialize object to CSV.
+    '''Deserialize LogRecords from CSV.
     '''
     io = StringIO.StringIO(doc)
     csv_reader = csv.reader(
@@ -284,17 +237,6 @@ class LogRecords(object):
       logEntry.dateSysMetadataModified = csv_line[4]
       logEntry.size = csv_line[5]
       logEntries.append(logEntry)
-    self.log.logEntry = logEntries
-    return self.log
 
-  def deserialize_rdf_xml(self, doc):
-    '''
-    '''
-    raise d1_common.exceptions.NotImplemented(0, 'deserialize_rdf_xml not implemented.')
-
-  def deserialize_null(self, doc):
-    '''
-    '''
-    raise d1_common.exceptions.NotImplemented(
-      0, 'Deserialization method not implemented.'
-    )
+    self.log_records.logEntry = logEntries
+    return self.log_records

@@ -22,6 +22,7 @@
 import sys
 import email.message
 from urllib import quote
+from urllib import unquote
 import const
 
 
@@ -41,6 +42,17 @@ def encodePathElement(element):
   '''
   return quote(element.encode('utf-8'), \
                safe=const.URL_PATHELEMENT_SAFE_CHARS)
+
+
+def decodePathElement(element):
+  '''Decodes a URL path element according to RFC3986.
+  
+  :param element: The URL path element to decode.
+  :type element: Unicode
+  :return: decoded URL path element
+  :return type: UTF-8 encoded string. 
+  '''
+  return unquote(element).decode('utf-8')
 
 
 def encodeQueryElement(element):

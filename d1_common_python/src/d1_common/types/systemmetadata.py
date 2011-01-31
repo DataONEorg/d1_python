@@ -48,33 +48,33 @@ Example serialization::
 '''
 
 import new
-import d1_common.exceptions
+import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes
 
 #===============================================================================
 
 
 def toCSV(self, dialect='excel'):
-  raise d1_common.exceptions.NotImplemented(
+  raise d1_common.types.exceptions.NotImplemented(
     '0.SystemMetaData.toCSV', 'Serializing SystemMetadata to CSV is not implemented.'
   )
 
 
 def fromCSV(self, data, dialect='excel'):
-  raise d1_common.exceptions.NotImplemented(
+  raise d1_common.types.exceptions.NotImplemented(
     '0.SystemMetaData.fromCSV',
     'De-serializing SystemMetadata from CSV is not implemented.'
   )
 
 
 def toJSON(self):
-  raise d1_common.exceptions.NotImplemented(
+  raise d1_common.types.exceptions.NotImplemented(
     '0.SystemMetaData.toJSON', 'Serializing SystemMetadata to JSON is not implemented.'
   )
 
 
 def fromJSON(self, data):
-  raise d1_common.exceptions.NotImplemented(
+  raise d1_common.types.exceptions.NotImplemented(
     '0.SystemMetaData.fromJSON',
     'De-serializing SystemMetadata from JSON is not implemented.'
   )
