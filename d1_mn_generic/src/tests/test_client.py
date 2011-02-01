@@ -245,13 +245,12 @@ class TestSequenceFunctions(unittest.TestCase):
       raise
   
   def event_log_is_empty(self):
-    '''Verify that access log is empty
+    '''Verify that event log is empty
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
     logRecords = client.getLogRecords()
-  
     self.assertEqual(len(logRecords.logEntry), 0)
   
   def inject_event_log(self):
@@ -527,6 +526,8 @@ class TestSequenceFunctions(unittest.TestCase):
       raise
     
   def pxby_objectlist_xml(self):
+    '''Test serialization: ObjectList -> XML.
+    '''
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -539,6 +540,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_xml_equals(xml_doc, xml_doc_out)
   
   def pxby_objectlist_json(self):
+    '''Test serialization: ObjectList -> JSON.
+    '''
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -551,12 +554,16 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_xml_equals(xml_doc, xml_doc_out)
   
   def pxby_objectlist_rdf_xml(self):
+    '''Test serialization: ObjectList -> RDF XML.
+    '''
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = object_list_1.serialize('application/rdf+xml')
     
   def pxby_objectlist_csv(self):
+    '''Test serialization: ObjectList -> CSV.
+    '''
     xml_doc = open('test.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
@@ -760,37 +767,37 @@ class TestSequenceFunctions(unittest.TestCase):
     self.xml_validation()
 
   def test_1240_pxby_objectlist_xml(self):
-    '''Local:
+    '''Local: Test serialization: ObjectList -> XML.
     '''
     self.pxby_objectlist_xml()
   
   def test_1250_pxby_objectlist_json(self):
-    '''Local:
+    '''Local: Test serialization: ObjectList -> JSON.
     '''
     self.pxby_objectlist_json()
 
   def test_1260_pxby_objectlist_rdf_xml(self):
-    '''Local:
+    '''Local: Test serialization: ObjectList -> RDF XML.
     '''
     self.pxby_objectlist_rdf_xml()
     
   def test_1270_pxby_objectlist_csv(self):
-    '''Local:
+    '''Local: Test serialization: ObjectList -> RDF CSV.
     '''
     self.pxby_objectlist_csv()
 
   def test_1280_monitor_xml_validation(self):
-    '''Local:
+    '''Local: Verify that returned XML document validates against the MonitorList schema.
     '''
     self.monitor_xml_validation()
 
   def test_1290_pxby_monitor_xml(self):
-    '''Local:
+    '''Local: Test serialization: MonitorList -> XML.
     '''
     self.pxby_monitor_xml()
 
   def test_1300_orderby_size(self):
-    '''Local:
+    '''Local: Verify ObjectList orderby: size
     '''
     self.orderby_size()
 
@@ -945,37 +952,37 @@ class TestSequenceFunctions(unittest.TestCase):
     self.xml_validation()
 
   def test_2240_pxby_objectlist_xml(self):
-    '''Remote:
+    '''Remote: Test serialization: ObjectList -> XML.
     '''
     self.pxby_objectlist_xml()
   
   def test_2250_pxby_objectlist_json(self):
-    '''Remote:
+    '''Remote: Test serialization: ObjectList -> JSON.
     '''
     self.pxby_objectlist_json()
 
   def test_2260_pxby_objectlist_rdf_xml(self):
-    '''Remote:
+    '''Remote: Test serialization: ObjectList -> RDF XML.
     '''
     self.pxby_objectlist_rdf_xml()
     
   def test_2270_pxby_objectlist_csv(self):
-    '''Remote:
+    '''Remote: Test serialization: ObjectList -> RDF CSV.
     '''
     self.pxby_objectlist_csv()
 
   def test_2280_monitor_xml_validation(self):
-    '''Remote:
+    '''Remote: Verify that returned XML document validates against the MonitorList schema.
     '''
     self.monitor_xml_validation()
 
   def test_2290_pxby_monitor_xml(self):
-    '''Remote:
+    '''Remote: Test serialization: MonitorList -> XML.
     '''
     self.pxby_monitor_xml()
 
   def test_2300_orderby_size(self):
-    '''Remote:
+    '''Remote: Verify ObjectList orderby: size
     '''
     self.orderby_size()
 

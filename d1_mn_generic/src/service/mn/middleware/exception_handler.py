@@ -74,11 +74,11 @@ import detail_codes
 
 class exception_handler():
   def process_exception(self, request, exception):
+    # An exception within this function causes a generic 500 to be returned.
+
     # When debugging from a web browser, we want to return None to get Django's
     # extremely useful exception page.
-    return None
-
-    # An exception within this function causes a generic 500 to be returned.
+    #return None
 
     # Log the exception.
     util.log_exception(10)
@@ -127,10 +127,3 @@ class exception_handler():
       status=exception.errorCode,
       mimetype=content_type
     )
-
-    #    
-    #    
-    #    exception_serialized, content_type = exception_serializer.serialize(request.META.get('HTTP_ACCEPT', None)) 
-    #    
-    #    return HttpResponse(serialize_exception(request, ), status=500)
-    #

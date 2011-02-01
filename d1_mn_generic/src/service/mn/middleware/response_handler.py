@@ -119,11 +119,11 @@ class LogRecords(d1_common.types.logrecords_serialization.LogRecords):
       logEntry.dateLogged = row.date_logged
       logEntry.memberNode = row.member_node.member_node
 
-      self.log.logEntry.append(logEntry)
+      self.log_records.logEntry.append(logEntry)
 
-    self.log.start = view_result['start']
-    self.log.count = len(self.log.logEntry)
-    self.log.total = view_result['total']
+    self.log_records.start = view_result['start']
+    self.log_records.count = len(self.log_records.logEntry)
+    self.log_records.total = view_result['total']
 
 
 class MonitorList(d1_common.types.monitorlist_serialization.MonitorList):

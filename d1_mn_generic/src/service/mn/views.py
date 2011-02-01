@@ -1088,13 +1088,7 @@ def test_inject_log(request):
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
 
-  # Validate POST.
-
-  if len(request.FILES) != 1:
-    raise d1_common.types.exceptions.InvalidRequest(0, 'POST must contain exactly one MIME part')
-
-  if 'csv' not in request.FILES.keys():
-    raise d1_common.types.exceptions.InvalidRequest(0, 'Name of MIME part must be "csv". Found: {0}'.format(', '.join(request.FILES.keys())))
+  util.validate_post(request, (('file', 'csv'),))
   
   # Create log entries.
   csv_reader = csv.reader(request.FILES['csv'])
