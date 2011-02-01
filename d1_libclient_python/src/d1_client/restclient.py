@@ -8,9 +8,9 @@ import logging
 import httplib
 import urlparse
 from d1_common import const
-from d1_common import exceptions
 from d1_common import util
 from d1_common.mime_multipart import multipart
+from d1_common.types import exception_serialization
 from d1_common.types import systemmetadata
 from d1_common.types import objectlist_serialization
 from d1_common.types import logrecords_serialization
@@ -29,6 +29,7 @@ class RESTClient(object):
     self.certfile = certfile
     self.strictHttps = strictHttps
     self.logger = logging.getLogger('RESTClient')
+    self._lasturl = ''
 
   def _getConnection(self, scheme, host, port):
     if scheme == 'http':
@@ -87,6 +88,7 @@ class RESTClient(object):
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
+    self._lasturl = '%s:%s%s' % (parts['host'], parts['port'], targeturl)
     conn.request(method, targeturl, None, headers)
     return self._getResponse(conn)
 
@@ -114,6 +116,7 @@ class RESTClient(object):
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
+    self._lasturl = '%s:%s%s' % (parts['host'], parts['port'], targeturl)
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
 
@@ -258,9 +261,18 @@ class DataONEBaseClient(RESTClient):
     if self.isHttpStatusOK(res.status):
       return res
     body = res.read()
-    exc = exceptions.DataOneExceptionFactory.createException(body)
-    if not exc is None:
-      raise exc
+    serializer = exception_serialization.DataONEExceptionSerialization(None)
+    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
+    try:
+      if format == const.MIMETYPE_XML:
+        raise (serializer.deserialize_xml(body))
+      elif format == const.MIMETYPE_JSON:
+        raise (serializer.deserialize_json(body))
+      raise Exception("No DataONE exception in response. " + \
+                      "content-type = %s" % format)
+    except ValueError, e:
+      logging.error("Invalid error message returned. " +\
+                    "Deserializing raised: %s" % str(e))
     res.body = body
     return res
 

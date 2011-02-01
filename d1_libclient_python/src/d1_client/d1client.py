@@ -10,6 +10,7 @@ from d1_common import const
 from d1_common import exceptions
 import cnclient
 import mnclient
+import objectlistiterator
 
 
 class DataONEObject(object):
@@ -212,4 +213,80 @@ class DataONEClient(object):
   def getObjects(self, pids):
     '''
     '''
+    pass
+
+  def listObjects(self, start=0, count=const.DEFAULT_LISTOBJECTS):
+    '''
+    '''
+    cli = self._getCN()
+    return objectlistiterator.ObjectListIterator(cli, start=start, max=count)
+
+#===============================================================================
+import sys
+
+COMMANDS = ['resolve', 'total', 'list', 'meta', 'get']
+
+
+def showHelp():
+  print 'd1client command [options]'
+  print 'Command = one of [%s]' % ",".join(COMMANDS)
+
+
+if __name__ == '__main__':
+  if len(sys.argv) < 2:
+    showHelp()
+    sys.exit(1)
+  command = sys.argv[1].lower()
+  if command not in COMMANDS:
+    showHelp()
+    sys.exit(1)
+
+  from optparse import OptionParser
+  parser = OptionParser()
+  parser.add_option(
+    '-b',
+    '--baseurl',
+    dest='baseurl',
+    default='URL_DATAONE_ROOT',
+    help='Use BASEURL instead of predefined targets for testing'
+  )
+  parser.add_option(
+    '-p',
+    '--pid',
+    dest='pid',
+    default=None,
+    help='Use PID for testing existing object access'
+  )
+  parser.add_option(
+    '-c',
+    '--checksum',
+    dest='checksum',
+    default=None,
+    help='CHECKSUM for specified PID.'
+  )
+  parser.add_option('-l', '--loglevel', dest='llevel', default=20,
+                type='int',
+                help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
+                     '40=Error, 50=Fatal')
+  (options, args) = parser.parse_args(sys.argv[2:])
+  if options.llevel not in [10, 20, 30, 40, 50]:
+    options.llevel = 20
+  logging.basicConfig(level=int(options.llevel))
+
+  if command == 'resolve':
+    if options.pid is None:
+      print '-p PID is required for resolve operation.'
+      sys.exit(1)
+    obj = DataONEObject(options.pid)
+    for loc in obj.getLocations():
+      print loc
+  elif command == 'total':
+    cli = DataONEClient(cnBaseUrl=options.baseurl)
+    objlist = cli.listObjects(start=0, count=0)
+    print "total: %d" % objlist.totalObjectCount()
+  elif command == 'list':
+    pass
+  elif command == 'meta':
+    pass
+  elif command == 'get':
     pass
