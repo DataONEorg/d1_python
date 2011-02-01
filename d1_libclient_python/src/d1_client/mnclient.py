@@ -50,7 +50,7 @@ class MemberNodeClient(DataONEBaseClient):
     else:
       files.append(('object', 'content.bin', obj))
     if isinstance(basestring, sysmeta):
-      data['sysmeta'] = sysmeta
+      data['systemmetadata'] = sysmeta
     else:
       files.append(('sysmeta', 'systemmetadata.xml', sysmeta))
     url = self._makeUrl('create', pid=pid)
