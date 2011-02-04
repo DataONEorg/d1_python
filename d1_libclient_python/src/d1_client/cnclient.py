@@ -8,7 +8,6 @@ from d1_common import util
 from restclient import DataONEBaseClient
 from d1_common.types import objectlist_serialization
 from d1_common.types import objectlocationlist_serialization
-from d1_common.types import nodelist_serialization
 
 
 class CoordinatingNodeClient(DataONEBaseClient):
@@ -29,7 +28,6 @@ class CoordinatingNodeClient(DataONEBaseClient):
     self.methodmap['resolve'] = u'resolve/%(pid)s'
     self.methodmap['search'] = u'object'
     self.methodmap['listobjects'] = u'object?qt=path'
-    self.methodmap['listnodes'] = u'node'
 
   def resolveResponse(self, token, pid):
     url = self._makeUrl('resolve', pid=pid)
@@ -86,17 +84,6 @@ class CoordinatingNodeClient(DataONEBaseClient):
 
   def setReplicationStatus(self, token, pid, status):
     raise Exception('Not Implemented')
-
-  def listNodesResponse(self):
-    url = self._makeUrl('listnodes')
-    response = self.GET(url)
-    return response
-
-  def listNodes(self):
-    res = self.listNodesResponse()
-    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = nodelist_serialization.NodeList()
-    return deser.deserialize(res.read(), format)
 
   def addNodeCapabilities(self, token, pid):
     raise Exception('Not Implemented')
