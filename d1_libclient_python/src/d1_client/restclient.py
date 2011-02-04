@@ -31,6 +31,7 @@ class RESTClient(object):
     self.strictHttps = strictHttps
     self.logger = logging.getLogger('RESTClient')
     self._lasturl = ''
+    self._curlrequest = []
 
   def _getConnection(self, scheme, host, port):
     if scheme == 'http':
@@ -89,7 +90,13 @@ class RESTClient(object):
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
-    self._lasturl = '%s:%s%s' % (parts['host'], parts['port'], targeturl)
+    self._lasturl = '%s://%s:%s%s' % (
+      parts['scheme'], parts['host'], parts['port'], targeturl
+    )
+    self._curlrequest = ['curl', '-X %s' % method]
+    for h in headers.keys():
+      self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
+    self._curlrequest.append('"%s"' % self._lasturl)
     conn.request(method, targeturl, None, headers)
     return self._getResponse(conn)
 
@@ -117,9 +124,25 @@ class RESTClient(object):
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
-    self._lasturl = '%s:%s%s' % (parts['host'], parts['port'], targeturl)
+    self._lasturl = '%s://%s:%s%s' % (
+      parts['scheme'], parts['host'], parts['port'], targeturl
+    )
+    self._curlrequest = ['curl', '-X %s' % method]
+    for h in headers.keys():
+      self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
+    for d in data:
+      self._curlrequest.append('-F %s=%s' % (d[0], d[1]))
+    for f in files:
+      self._curlrequest.append('-F %s=@%s' % (f['name'], f['filename']))
+    self._curlrequest.append('"%s"' % self._lasturl)
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
+
+  def getLastRequestAsCurlCommand(self):
+    return " ".join(self._curlrequest)
+
+  def getlastUrl(self):
+    return self._lasturl
 
   def GET(self, url, data=None, headers=None):
     '''Perform a HTTP GET and return the response. All values are to be UTF-8
