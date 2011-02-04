@@ -7,7 +7,7 @@ Created on Jan 26, 2011
 import logging
 import urlparse
 from d1_common import const
-from d1_common import exceptions
+from d1_common.types import exceptions
 import cnclient
 import mnclient
 import objectlistiterator

@@ -14,6 +14,7 @@ from d1_common.types import exception_serialization
 from d1_common.types import systemmetadata
 from d1_common.types import objectlist_serialization
 from d1_common.types import logrecords_serialization
+from d1_common.types import nodelist_serialization
 
 
 class RESTClient(object):
@@ -255,25 +256,27 @@ class DataONEBaseClient(RESTClient):
       'getlogrecords': u'log',
       'ping': u'health/ping'
     }
+    self.methodmap['listnodes'] = u'node'
+    self.lastresponse = None
 
   def _getResponse(self, conn):
     res = conn.getresponse()
+    self.lastresponse = res
     if self.isHttpStatusOK(res.status):
       return res
-    body = res.read()
+    res.body = res.read()
     serializer = exception_serialization.DataONEExceptionSerialization(None)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     try:
-      if format == const.MIMETYPE_XML:
-        raise (serializer.deserialize_xml(body))
-      elif format == const.MIMETYPE_JSON:
-        raise (serializer.deserialize_json(body))
+      if format.startswith(const.MIMETYPE_XML):
+        raise (serializer.deserialize_xml(res.body))
+      elif format.startswith(const.MIMETYPE_JSON):
+        raise (serializer.deserialize_json(res.body))
       raise Exception("No DataONE exception in response. " + \
                       "content-type = %s" % format)
     except ValueError, e:
       logging.error("Invalid error message returned. " +\
                     "Deserializing raised: %s" % str(e))
-    res.body = body
     return res
 
   def _getAuthHeader(self, token):
@@ -433,3 +436,14 @@ class DataONEBaseClient(RESTClient):
     '''
     '''
     raise Exception('Not Implemented')
+
+  def listNodesResponse(self):
+    url = self._makeUrl('listnodes')
+    response = self.GET(url)
+    return response
+
+  def listNodes(self):
+    res = self.listNodesResponse()
+    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = nodelist_serialization.NodeList()
+    return deser.deserialize(res.read(), format)
