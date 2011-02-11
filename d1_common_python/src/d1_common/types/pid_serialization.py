@@ -74,7 +74,7 @@ class Identifier(serialization_base.Serialization):
       #d1_common.const.MIMETYPE_LOG,
     ]
 
-    self.pid = d1_common.types.generated.dataoneTypes.Identifier(pid)
+    self.pid = d1_common.types.generated.dataoneTypes.identifier(pid)
 
   def serialize_xml(self, pretty=False, jsonvar=False):
     '''Serialize Identifier to XML.

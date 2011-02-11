@@ -245,6 +245,19 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     # Create exception without PID.
     return exception_map[exception_name](detailCode, description, traceInformation)
 
+  def get_element_text(self, el):
+    '''Get text contents for element. Return empty string if element does
+    not contain any text.
+    
+    :param element:
+    :type data: Element
+    :rtype: string
+    '''
+    try:
+      return el.text.strip()
+    except AttributeError:
+      return ''
+
   def deserialize_xml(self, doc):
     '''Deserialize DataONEException from XML.
     
@@ -254,10 +267,11 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     :rtype: A DataONEException based object.
     '''
     etree = ETree.fromstring(doc)
+
     return self.dataone_exception_factory(
       etree.attrib[u'name'], etree.attrib[u'detailCode'].strip(),
-      etree.find(u'description').text.strip(), etree.find(u'pid').text.strip(), [
-        element.text.strip() for element in etree.findall(
+      etree.findtext(u'description', '').strip(), etree.findtext(u'pid'), [
+        self.get_element_text(el) for el in etree.findall(
           u'traceInformation'
         )
       ]
