@@ -213,7 +213,7 @@ class multipart(object):
       raise StopIteration
 
     else:
-      print 'ERROR'
+      raise Exception('Invalid state in {0}: {1}'.format(__file__, self.state))
 
   def _get_len(self, file):
     try:

@@ -90,9 +90,13 @@ URL_NODE_PATH = 'node/'
 #: Path to append to target base for the checksum call.
 URL_CHECKSUM_PATH = 'checksum/'
 
+#: Path to append to target base for the delete call.
+URL_DELETE_PATH = 'object/'
+
 #: Path to the DataONE schema.
 #: TODO: retrieve this from D1 root
 SCHEMA_URL = 'https://repository.dataone.org/software/cicore/tags/D1_SCHEMA_0_5_1/dataoneTypes.xsd'
+#SCHEMA_URL = 'http://localhost/schemas/D1_SCHEMA_0_5_1/dataoneTypes.xsd'
 
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]
