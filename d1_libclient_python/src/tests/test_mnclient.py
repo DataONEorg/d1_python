@@ -6,7 +6,7 @@ Created on Jan 20, 2011
 import unittest
 import logging
 from d1_client import mnclient
-import d1_common.exceptions
+import d1_common.types.exceptions
 from testcasewithurlcompare import TestCaseWithURLCompare
 
 TEST_DATA = {}
