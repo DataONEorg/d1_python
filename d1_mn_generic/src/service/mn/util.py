@@ -87,28 +87,17 @@ import util
 
 
 def validate_post(request, parts):
-  # Parts is a list. file, field, name,
+  '''Validate that a MMP POST contains all required sections.
+  :param parts: [(part_type, part_name), ...]
+  :return: None or raises exception.
+  
+  Where information is stored in the request:
+  part_type header: request.META['HTTP_<UPPER CASE NAME>']
+  part_type file: request.FILES['<name>']
+  part_type field: request.POST['<name>']
+  '''
 
   missing = []
-
-  #print request.FILES.keys()
-  #print request.FILES['file'].name # filename
-
-  #0030: 65 6e 74 2d 44 69 73 70 6f 73 69 74 69 6f 6e 3a ent-Disposition:
-  #0040: 20 66 6f 72 6d 2d 64 61 74 61 3b 20 6e 61 6d 65  form-data; name
-  #0050: 3d 22 66 69 6c 65 22 3b 20 66 69 6c 65 6e 61 6d ="file"; filenam
-  #0060: 65 3d 22 32 36 53 2e 6e 65 78 75 73 22 0d 0a 43 e="26S.nexus"..C
-  #0070: 6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 61 70 70 ontent-Type: app
-  #0080: 6c 69 63 61 74 69 6f 6e 2f 6f 63 74 65 74 2d 73 lication/octet-s
-  #0090: 74 72 65 61 6d 0d 0a 0d 0a                      tream..
-
-  #curl -H "AuthToken: UR45W21A1S19ZE3CC9" \
-  #     -F "object=@datafile.csv;name=object" \
-  #     -F "file=@sysmeta.xml;name=systemmetdata" \
-  #     http://m1.dataone.org/mn/object/XYZ33256
-
-  #Content-Disposition: form-data; name="file"; filename="26S.nexus"
-  #Content-Type: application/octet-stream
 
   for part_type, part_name in parts:
     if part_type == 'header':

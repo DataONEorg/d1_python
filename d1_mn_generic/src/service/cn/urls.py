@@ -23,8 +23,8 @@ urlpatterns = patterns(
 
   # Create and Update
 
-  # /test_replicate/<src_node_ref>/<dst_node_ref>/<pid>
-  (r'^test_replicate/(.*)/(.*)/(.*)/?$', 'test_replicate'),
+  # /test_replicate/<src_node_ref>/<pid>
+  (r'^test_replicate/(.*)/(.*)/?$', 'test_replicate'),
   # /test_set_replication_status_put/<status>/<node>/<pid>
   (
     r'^test_set_replication_status_get/(.*)/(.*)/(.*)/?$',

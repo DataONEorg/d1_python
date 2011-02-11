@@ -245,7 +245,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = d1_client.client.RESTClient()
   
-    # Access log.
+    # Event log.
     event_log_url = urlparse.urljoin(self.opts.gmn_url, 'log')
     try:
       res = client.DELETE(event_log_url)
@@ -281,7 +281,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(status, 200)
   
   def create_log(self):
-    '''Access log correctly reflects create_object actions.
+    '''Event log correctly reflects create_object actions.
     '''
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
@@ -619,6 +619,33 @@ class TestSequenceFunctions(unittest.TestCase):
     # 11111111111111111111111111111111,MD5
     f.deserialize(csv_doc, d1_common.const.MIMETYPE_CSV)
 
+  def delete_test(self):
+    '''MN_crud.delete() in GMN and libraries.
+    '''
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    # Find the PID for a random object that exists on the server.
+    pid = self.find_valid_pid(client)
+    # Delete the object on GMN.
+    pid_deleted = client.delete(pid)
+    self.assertEqual(pid, pid_deleted.value())
+    # Verify that the object no longer exists.
+    # We check for SyntaxError raised by the XML deserializer when it attempts
+    # to deserialize a DataONEException. The exception is caused by the body
+    # being empty since describe() uses a HEAD request.
+    self.assertRaises(SyntaxError, client.describe, pid)
+
+  def describe(self):
+    '''MN_crud.describe in GMN and libraries.
+    '''
+    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    # Find the PID for a random object that exists on the server.
+    pid = self.find_valid_pid(client)
+    # Get header information for object.
+    info = client.describe(pid)
+    self.assertTrue(re.search(r'Content-Length', str(info))) 
+    self.assertTrue(re.search(r'Date', str(info))) 
+    self.assertTrue(re.search(r'Content-Type', str(info))) 
+  
   def replication(self):
     '''Replication. Requires fake CN.
     '''
@@ -630,13 +657,23 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # Delete the object on the destination node if it exists there.
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    try:
+      pid_deleted = client.delete(pid)
+      self.assertEqual(pid, pid_deleted.value())
+    except d1_common.types.exceptions.NotFound:
+      pass
+
+    # Verify that the object no longer exists.
+    # We check for SyntaxError raised by the XML deserializer when it attempts
+    # to deserialize a DataONEException. The exception is caused by the body
+    # being empty since describe() uses a HEAD request.
+    self.assertRaises(SyntaxError, client.describe, pid)
 
 
     # Call to /cn/test_replicate/<pid>/<src_node_ref>/<dst_node_ref>
     test_replicate_url = urlparse.urljoin(self.opts.d1_root,
-                                          'test_replicate/{0}/{1}/{2}'\
+                                          'test_replicate/{0}/{1}'\
                                           .format(urllib.quote(src_node, ''),
-                                                  urllib.quote(dst_node, ''),
                                                   urllib.quote(pid, '')))
     
     root = d1_client.client.DataOneClient(self.opts.d1_root)
@@ -653,9 +690,6 @@ class TestSequenceFunctions(unittest.TestCase):
     headers['User-Agent'] = d1_common.const.USER_AGENT
     client_dst.client.POST(replicate_url, replicate_mime, headers)
 
-#  client_src = d1_client.client.DataOneClient(self.opts.gmn2_url)
-#  client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
-#
 #  # Get the checksum of the object from the source GMN. This also checks if
 #  # we can reach the source server and that it has the object we will replicate.
 #  src_checksum_obj = client_src.checksum(pid)
@@ -747,33 +781,6 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertEqual(scidata_retrieved, scidata)
       self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
 
-  def delete_test(self):
-    '''MN_crud.delete() in GMN and libraries.
-    '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    # Find the PID for a random object that exists on the server.
-    pid = self.find_valid_pid(client)
-    # Delete the object on GMN.
-    pid_deleted = client.delete(pid)
-    self.assertEqual(pid, pid_deleted.value())
-    # Verify that the object no longer exists.
-    # We check for SyntaxError raised by the XML deserializer when it attempts
-    # to deserialize a DataONEException. The exception is caused by the body
-    # being empty since describe() uses a HEAD request.
-    self.assertRaises(SyntaxError, client.describe, pid)
-
-  def describe(self):
-    '''MN_crud.describe in GMN and libraries.
-    '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    # Find the PID for a random object that exists on the server.
-    pid = self.find_valid_pid(client)
-    # Get header information for object.
-    info = client.describe(pid)
-    self.assertTrue(re.search(r'Content-Length', str(info))) 
-    self.assertTrue(re.search(r'Date', str(info))) 
-    self.assertTrue(re.search(r'Content-Type', str(info))) 
-  
   #
   # Tests.
   #
@@ -819,7 +826,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.clear_event_log()
   
   def test_1050_event_log_is_empty(self):
-    '''Managed: Access log is empty.
+    '''Managed: Event log is empty.
     '''
     self.event_log_is_empty()
 
@@ -829,7 +836,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.inject_event_log()
 
   def test_1070_create_log(self):
-    '''Managed: Access log correctly reflects create_object actions.
+    '''Managed: Event log correctly reflects create_object actions.
     '''
     self.create_log()
   
@@ -972,26 +979,26 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.checksum_serialization_3()
 
-#  def test_1330_replication(self):
-#    '''Managed: Replication. Requires fake CN.
-#    '''
-#    self.replication(self)
-
-#  def test_1340_unicode_test_1(self):
-#    '''Managed: GMN and libraries handle Unicode correctly.
-#    '''
-#    self.unicode_test_1()
-
-  def test_1350_delete(self):
+  def test_1330_delete(self):
     '''Managed: MN_crud.delete() in GMN and libraries.
     '''
     self.delete_test()
 
-  def test_1360_describe(self):
+  def test_1340_describe(self):
     '''Managed: MN_crud.describe in GMN and libraries.
     '''
     self.describe()
   
+  def test_1350_replication(self):
+    '''Managed: Replication. Requires fake CN.
+    '''
+    self.replication()
+
+#  def test_1360_unicode_test_1(self):
+#    '''Managed: GMN and libraries handle Unicode correctly.
+#    '''
+#    self.unicode_test_1()
+
   # Remote.
 
   def test_2010_delete_all_objects(self):
@@ -1040,7 +1047,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.clear_event_log()
   
   def test_2050_event_log_is_empty(self):
-    '''Wrapped: Access log is empty.
+    '''Wrapped: Event log is empty.
     '''
     self.event_log_is_empty()
 
@@ -1050,7 +1057,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.inject_event_log()
 
   def test_2070_create_log(self):
-    '''Wrapped: Access log correctly reflects create_object actions.
+    '''Wrapped: Event log correctly reflects create_object actions.
     '''
     self.create_log()
   
@@ -1193,25 +1200,25 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.checksum_serialization_3()
   
-#  def test_2330_replication(self):
-#    '''Wrapped: Replication. Requires fake CN.
-#    '''
-#    self.replication(self)
-
-#  def test_2340_unicode_test_1(self):
-#    '''Wrapped: GMN and libraries handle Unicode correctly.
-#    '''
-#    self.unicode_test_1()
-
-  def test_2350_delete(self):
+  def test_2330_delete(self):
     '''Wrapped: MN_crud.delete() in GMN and libraries.
     '''
     self.delete_test()
 
-  def test_2360_describe(self):
+  def test_2340_describe(self):
     '''Wrapped: MN_crud.describe in GMN and libraries.
     '''
     self.describe()
+
+#  def test_2350_replication(self):
+#    '''Wrapped: Replication. Requires fake CN.
+#    '''
+#    self.replication(self)
+
+#  def test_2360_unicode_test_1(self):
+#    '''Wrapped: GMN and libraries handle Unicode correctly.
+#    '''
+#    self.unicode_test_1()
 
 def main():
   log_setup()

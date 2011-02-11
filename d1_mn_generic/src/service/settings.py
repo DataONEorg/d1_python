@@ -154,7 +154,7 @@ INSTALLED_APPS = (
 
 APPEND_SLASH = False
 
-LOG_PATH = _here('./mn.log')
+LOG_PATH = _here('./gmn.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 

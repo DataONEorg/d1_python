@@ -73,20 +73,6 @@ class request_handler():
     # Strip any arguments from path_info.
     request.path_info = re.sub(r'\?.*', '', request.path_info)
 
-    #    # When running through the Django development server, parameters that may
-    #    # contain slashes must be supplied in the query string. We define standard
-    #    # parameters the query string on the form of url_param_n, where n is a
-    #    # number >= 0. The number designates which place holder (@) in the URL that
-    #    # should be replaced with the value in the the key/value pair.
-    #    #
-    #    # Ex: /test/abc/@/def/@?url_param_0=X&url_param_1=Y = /test/abc/X/def/Y     
-    #    for k in request.GET:
-    #      m = re.search(r'url_param_(\d)', k)
-    #      if m:
-    #        request.path_info = re.sub(r'((.*?@){{{0}}})(.*?)@'.format(int(m.group(1))),
-    #                                    '\\1\\3{0}'.format(urllib.quote(request.GET[k], '')),
-    #                                    request.path_info, 1)
-
     # Django ticket: http://code.djangoproject.com/ticket/12083. This is a hack
     # that is applied when the root of the app is requested without a trailing
     # backslash through Apache. Without this, Django 1.1.1 raises a KeyError

@@ -7,7 +7,7 @@
   <rightsHolder>test</rightsHolder>
   <checksum algorithm="MD5">5d67614bb726d4ef438196bd58e26457</checksum>
   <dateUploaded>2010-04-26T07:23:43.834318</dateUploaded>
-  <dateSysMetadataModified>2011-01-14T08:31:44.821039</dateSysMetadataModified>
+  <dateSysMetadataModified>2011-02-11T10:53:39.80154</dateSysMetadataModified>
   <originMemberNode>MN1</originMemberNode>
   <authoritativeMemberNode>MN1</authoritativeMemberNode>
   <replica>
@@ -17,7 +17,12 @@
   </replica>
   <replica>
     <replicaMemberNode>gmn_test_2</replicaMemberNode>
-    <replicationStatus>queued</replicationStatus>
+    <replicationStatus>completed</replicationStatus>
     <replicaVerified>2011-01-14T06:35:56.606759</replicaVerified>
+  </replica>
+  <replica>
+    <replicaMemberNode>http://192.168.1.122/mn</replicaMemberNode>
+    <replicationStatus>requested</replicationStatus>
+    <replicaVerified>2011-02-11T10:14:26.562111</replicaVerified>
   </replica>
 </ns1:systemMetadata>

@@ -163,18 +163,18 @@ def replicate_object(obj):
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
   # Find size of scidata.
   src = DataOneClientWrapper(base_url)
-  sysmeta_obj = src.getSystemMetadata(obj.identifier)
+  sysmeta_obj = src.getSystemMetadata(obj.pid)
   obj_size = sysmeta_obj.size
   # Stream.
-  object_file = src.get(obj.identifier)
-  sysmeta_str = src.getSystemMetadataResponse(obj.identifier).read()
+  object_file = src.get(obj.pid)
+  sysmeta_str = src.getSystemMetadataResponse(obj.pid).read()
   dst = DataOneClientWrapper('http://0.0.0.0:8000/')
   # Add the ability to do len() on object_file. Needed by mime_multipart.
   object_file.__len__ = lambda x=None: int(obj_size)
-  dst.create(obj.identifier, object_file, sysmeta_str)
+  dst.create(obj.pid, object_file, sysmeta_str)
 
   # Register the completed replication with the CN.
-  root.set_replication_status('completed', obj.source_node.source_node, obj.identifier)
+  root.set_replication_status('completed', obj.source_node.source_node, obj.pid)
 
 
 class Command(NoArgsCommand):
@@ -193,13 +193,13 @@ class Command(NoArgsCommand):
     for obj in mn.models.Replication_work_queue.objects.filter(status__status='new'):
       #for obj in mn.models.Replication_work_queue.objects.all():
       mn.sys_log.info_('Replicating object: {0}'.format(obj.pid))
-      #try:
-      replicate_object(obj)
-      #except d1_common.types.exceptions.DataONEException as e:
-      #  mn.sys_log.error_(e.serializeToXml())
-      #except Exception:
-      #  err_msg = mn.util.traceback_to_detail_code()
-      #  mn.sys_log.error_(err_msg)
-      #else:
-      #  obj.set_status('completed')
-      #  obj.save()
+      try:
+        replicate_object(obj)
+      except d1_common.types.exceptions.DataONEException as e:
+        mn.sys_log.error(str(e))
+      except Exception:
+        err_msg = mn.util.traceback_to_detail_code()
+        mn.sys_log.error(err_msg)
+      else:
+        obj.set_status('completed')
+        obj.save()

@@ -54,16 +54,17 @@ import csv
 import datetime
 import glob
 import hashlib
+import httplib
+import mimetypes
 import os
 import pprint
 import re
 import stat
 import sys
 import time
-import uuid
 import urllib
 import urlparse
-import httplib
+import uuid
 
 import pickle
 
@@ -74,6 +75,7 @@ from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.db.models import Avg, Max, Min, Count
+from django.core.exceptions import ObjectDoesNotExist
 
 # 3rd party.
 try:
@@ -85,10 +87,11 @@ except ImportError, e:
   raise
 
 # MN API.
+import d1_common.const
 import d1_common.types.exceptions
-import d1_client.systemmetadata
 import d1_common.types.checksum_serialization
 import d1_common.types.pid_serialization
+import d1_client.systemmetadata
 
 # App.
 import event_log
@@ -266,36 +269,129 @@ def object_collection_delete(request):
 
   return HttpResponse('OK')
 
+#
 # CRUD interface.
+#
 
 @auth.cn_check_required
 def object_pid(request, pid):
   '''
-  0.3 MN_crud.get()      GET    /object/<pid>
-  0.4 MN_crud.create()   POST   /object/<pid>
-  0.4 MN_crud.update()   PUT    /object/<pid>
-  0.9 MN_crud.delete()   DELETE /object/<pid>
-  0.3 MN_crud.describe() HEAD   /object/<pid>
+  MN_crud.get()      GET    /object/<pid>
+  MN_crud.describe() HEAD   /object/<pid>
+  MN_crud.create()   POST   /object/<pid>
+  MN_crud.update()   PUT    /object/<pid>
+  MN_crud.delete()   DELETE /object/<pid>
   :return:
   '''
   
+  if request.method == 'GET':
+    return object_pid_get(request, pid, False)
+
+  if request.method == 'HEAD':
+    return object_pid_get(request, pid, True)
+
   if request.method == 'POST':
     return object_pid_post(request, pid)
-
-  if request.method == 'GET':
-    return object_pid_get(request, pid)
 
   if request.method == 'PUT':
     return object_pid_put(request, pid)
 
   if request.method == 'DELETE':
     return object_pid_delete(request, pid)
-
-  if request.method == 'HEAD':
-    return object_pid_head(request, pid)
   
   # All verbs allowed, so should never get here.
-  return HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE', 'HEAD'])
+  return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
+
+def object_pid_get(request, pid, head):
+  '''
+  Retrieve an object identified by pid from the node.
+  MN_crud.get(token, pid) → bytes
+  :return:
+  '''
+
+  # Find object based on pid.
+  try:
+    sciobj = models.Object.objects.get(pid=pid)
+  except ObjectDoesNotExist:
+    raise d1_common.types.exceptions.NotFound(0, 'Attempted to get a non-existing object', pid)
+
+  # Split URL into individual parts.
+  try:
+    url_split = urlparse.urlparse(sciobj.url)
+  except ValueError:
+    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
+
+  response = HttpResponse()
+
+  # Add header info about object.
+  # TODO: Keep track of Content-Type instead of guessing.
+  response['Content-Length'] = sciobj.size
+  response['Date'] = datetime.datetime.isoformat(sciobj.mtime) 
+  response['Content-Type'] = mimetypes.guess_type(url_split.path)[0] or 'application/octet-stream'
+
+  # Log the access of this object.
+  event_log.log(pid, 'read', request)
+
+  # If this is a HEAD request, we don't include the body.
+  if head:
+    return response
+
+  if url_split.scheme == 'http':
+    sys_log.info('pid({0}) url({1}): Object is wrapped. Proxying from original location'.format(pid, sciobj.url))
+    return object_pid_get_remote(request, response, pid, sciobj.url, url_split)
+  elif url_split.scheme == 'file':
+    sys_log.info('pid({0}) url({1}): Object is managed. Streaming from disk'.format(pid, sciobj.url))
+    return object_pid_get_local(request, response, pid)
+  else:
+    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
+
+def object_pid_get_remote(request, response, pid, url, url_split):
+  # Handle 302 Found.  
+  try:
+    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+    conn.connect()
+    conn.request('HEAD', url)
+    remote_response = conn.getresponse()
+    if remote_response.status == httplib.FOUND:
+      url = remote_response.getheader('location')
+  except httplib.HTTPException as e:
+    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
+
+  # Open the object to proxy.
+  try:
+    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
+    conn.connect()
+    conn.request('GET', url)
+    remote_response = conn.getresponse()
+    if remote_response.status != httplib.OK:
+      raise d1_common.types.exceptions.ServiceFailure(0,
+        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, remote_response.status))
+  except httplib.HTTPException as e:
+    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
+
+  # Return the raw bytes of the object.
+
+  # TODO: The HttpResponse object supports streaming with an iterator, but only
+  # when instantiated with the iterator. That behavior is not convenient here,
+  # so we set up the iterator by writing directly to the internal methods of an
+  # instantiated HttpResponse object.
+  response._container = util.fixed_chunk_size_iterator(remote_response)
+  response._is_str = False
+  return response
+
+def object_pid_get_local(request, response, pid):
+  file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
+  try:
+    file = open(file_in_path, 'rb')
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
+
+  # Return the raw bytes of the object.
+  response._container = util.fixed_chunk_size_iterator(file)
+  response._is_str = False
+  return response
 
 def object_pid_post(request, pid):
   '''
@@ -313,12 +409,12 @@ def object_pid_post(request, pid):
   :return:
   '''
   
-  util.validate_post(request, (('header', 'AuthToken'),
+  util.validate_post(request, (('header', 'token'),
                                ('file', 'object'),
-                               ('file', 'systemmetadata')))
+                               ('file', 'sysmeta')))
 
   # Validate SysMeta.
-  sysmeta_str = request.FILES['systemmetadata'].read()
+  sysmeta_str = request.FILES['sysmeta'].read()
   sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
   try:
     sysmeta.isValid()
@@ -342,8 +438,8 @@ def object_pid_post(request, pid):
   # a URL to a remote location be provided instead. In that case, GMN
   # will stream the object bytes from the remote server while handling
   # all other object related operations like usual. 
-  if 'vendor_gmn_remote_url' in request.POST:
-    url = request.POST['vendor_gmn_remote_url']
+  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
+    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
     try:
       url_split = urlparse.urlparse(url)
       if url_split.scheme != 'http':
@@ -375,14 +471,8 @@ def object_pid_post(request, pid):
   event_log.log(pid, 'create', request)
   
   # Return the pid.
-  pid = d1_common.types.pid_serialization.Identifier(pid)
-  
-  if 'HTTP_ACCEPT' in request.META:
-    accept = request.META['HTTP_ACCEPT']
-  else:
-    accept = 'application/xml'
-
-  doc, content_type = pid.serialize(accept)
+  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
+  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
 def object_pid_post_store_local(request, pid):
@@ -400,131 +490,88 @@ def object_pid_post_store_local(request, pid):
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
-def object_pid_get(request, pid):
-  '''
-  Retrieve an object identified by pid from the node.
-  MN_crud.get(token, pid) → bytes
-  :return:
-  '''
-
-  # Find object based on pid.
-  query = models.Object.objects.filter(pid=pid)
-  try:
-    url = query[0].url
-  except IndexError:
-    raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
-
-  # Split URL into individual parts.
-  try:
-    url_split = urlparse.urlparse(url)
-  except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, url))
-
-  # Log the access of this object.
-  event_log.log(pid, 'read', request)
-
-  if url_split.scheme == 'http':
-    return object_pid_get_remote(request, pid)
-  elif url_split.scheme == 'file':
-    return object_pid_get_local(request, pid)
-  else:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
-
-def object_pid_get_remote(request, pid):
-  sys_log.info('pid({0}): Object is a HTTP URL. Proxying from original location'.format(pid))
-
-  # Handle 302 Found.  
-  try:
-    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
-    conn.connect()
-    conn.request('HEAD', url)
-    response = conn.getresponse()
-    if response.status == httplib.FOUND:
-      url = response.getheader('location')
-  except httplib.HTTPException as e:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
-
-  # Open the object to proxy.
-  try:
-    conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
-    conn.connect()
-    conn.request('GET', url)
-    response = conn.getresponse()
-    if response.status != httplib.OK:
-      raise d1_common.types.exceptions.ServiceFailure(0,
-        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, response.status))
-  except httplib.HTTPException as e:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
-
-  # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(response))
-
-def object_pid_get_local(request, pid):
-  sys_log.info('pid({0}): Object is not a HTTP URL. Streaming from disk'.format(pid))
-
-  file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
-  try:
-    response = open(file_in_path, 'rb')
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
-
-  # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(response))
-
 def object_pid_put(request, pid):
-  '''
-  MN_crud.update(token, pid, object, obsoletedGuid, sysmeta) → Identifier
-  Creates a new object on the Member Node that explicitly updates and obsoletes
-  a previous object (identified by obsoletedGuid).
+  '''MN_crud.update(token, pid, object, obsoletedPid, sysmeta) → Identifier
+  Creates a new object on the Member Node that explicitly updates and
+  obsoletes a previous object (identified by obsoletedPid).
   :return:
   '''
-  raise d1_common.types.exceptions.NotImplemented(0, 'MN_crud.update(token, pid, object, obsoletedGuid, sysmeta) → Identifier')
+  util.validate_post(request, (('header', 'token'),
+                               ('file', 'object'),
+                               ('file', 'sysmeta'),
+                               ('field', 'obsoletedPid')))
+
+  object_pid_delete(request, request.POST['obsoletedPid'])
+  
+  object_pid_post(request, pid)
 
 def object_pid_delete(request, pid):
   '''
   MN_crud.delete(token, pid) → Identifier
   Deletes an object from the Member Node, where the object is either a data
   object or a science metadata object.
+  
+  TODO: This method removes all traces that the object ever existed, which is
+  likely not what we will want to do when we decide how to support object
+  deletion in DataONE.
+  
   :return:
   '''
-  raise d1_common.types.exceptions.NotImplemented(0, 'MN_crud.delete(token, pid) → Identifier')
-  
-def object_pid_head(request, pid):
-  '''
-  MN_crud.describe(token, pid) → DescribeResponse
-  This method provides a lighter weight mechanism than
-  MN_crud.getSystemMetadata() for a client to determine basic properties of the
-  referenced object. '''
-  response = HttpResponse()
 
   # Find object based on pid.
-  query = models.Object.objects.filter(pid=pid)
   try:
-    url = query[0].url
-  except IndexError:
-    raise d1_common.types.exceptions.NotFound(0, 'Non-existing scimeta object was requested', pid)
+    sciobj = models.Object.objects.get(pid=pid)
+  except ObjectDoesNotExist:
+    raise d1_common.types.exceptions.NotFound(0, 'Attempted to delete a non-existing object', pid)
 
-  # Get size of object from file size.
+  # If the object is wrapped, we only delete the reference. If it's managed, we
+  # delete both the object and the reference.
+
   try:
-    size = os.path.getsize(url)
+    url_split = urlparse.urlparse(sciobj.url)
+  except ValueError:
+    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
+
+  if url_split.scheme == 'file':
+    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
+    try:
+      os.unlink(sciobj_path)
+    except EnvironmentError as (errno, strerror):
+      err_msg = 'Could not delete managed SciObj: {0}\n'.format(sciobj_path)
+      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
+ 
+  # At this point, the object was either managed and successfully deleted or
+  # wrapped and ignored.
+    
+  # Delete the SysMeta object.
+  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
+  try:
+    os.unlink(sysmeta_path)
   except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not get size of file: {0}\n'.format(url)
+    err_msg = 'Could not delete SciMeta: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.NotFound(0, err_msg, pid)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
 
-  # Add header info about object.
-  util.add_header(response, datetime.datetime.isoformat(query[0].mtime),
-              size, 'Some Content Type')
+  # Delete the DB entry.
 
-  # Log the access of this object.
-  event_log.log(pid, 'read', request)
+  # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
+  # CASCADE -- in other words, any objects with foreign keys pointing at the
+  # objects to be deleted will be deleted along with them.
+  sciobj.delete()
 
-  return response
+  # Log this operation. Event logs are tied to particular objects, so we can't
+  # log this event in the event log. Instead, we log it in the sys_log.
+  sys_log.info('client({0}) pid({1}) Deleted object'.format(util.request_to_string(request), pid))
 
-  
+  # Return the pid.
+  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
+  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
+  return HttpResponse(doc, content_type)
+
+#  
 # Sysmeta.
+#
 
 @auth.cn_check_required
 def meta_pid(request, pid):
@@ -602,17 +649,13 @@ def checksum_pid_get(request, pid):
 
   # Return the checksum.
   checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
-  checksum_ser.checksum.algorithm = checksum_algorithm 
-
-  if 'HTTP_ACCEPT' in request.META:
-    accept = request.META['HTTP_ACCEPT']
-  else:
-    accept = 'application/xml'
-
-  doc, content_type = checksum_ser.serialize(accept)
+  checksum_ser.checksum.algorithm = checksum_algorithm
+  doc, content_type = checksum_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
-  
-# Access Log.
+
+#  
+# Event Log.
+#
 
 @auth.cn_check_required
 def event_log_view(request):
@@ -723,7 +766,9 @@ def event_log_view_delete(request):
 
   return HttpResponse('OK')
 
+#
 # Replication.
+#
 
 # MN_replication.replicate(token, id, sourceNode) → boolean
 
@@ -740,7 +785,9 @@ def replicate(request):
 def replicate_post(request):
   '''
   '''
-  util.validate_post(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
+  util.validate_post(request,
+                     (('field', 'sourceNode'),
+                      ('file', 'sysmeta')))
 
   # Validate SysMeta.
   sysmeta_str = request.FILES['sysmeta'].read()
@@ -769,7 +816,7 @@ def replicate_post(request):
   # Create replication work item for this replication.  
   replication_item = models.Replication_work_queue()
   replication_item.set_status('new')
-  replication_item.set_source_node(request.FILES['sourceNode'].read())
+  replication_item.set_source_node(request.POST['sourceNode'])
   replication_item.pid = sysmeta.pid
   replication_item.checksum = 'unused'
   replication_item.set_checksum_algorithm('unused')
@@ -777,14 +824,8 @@ def replicate_post(request):
 
   # Return the PID. All that is required for this response is that it's a 200
   # OK.
-  pid_serializer = d1_common.types.pid_serialization.Identifier(sysmeta.pid)
-  
-  if 'HTTP_ACCEPT' in request.META:
-    accept = request.META['HTTP_ACCEPT']
-  else:
-    accept = 'application/xml'
-
-  doc, content_type = pid_serializer.serialize(accept)
+  pid_ser = d1_common.types.pid_serialization.Identifier(sysmeta.pid)
+  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
 def _replicate_store(request):
@@ -837,14 +878,8 @@ def _replicate_store(request):
   event_log.log(pid, 'create', request)
   
   # Return the pid.
-  pid = d1_common.types.pid_serialization.Identifier(pid)
-  
-  if 'HTTP_ACCEPT' in request.META:
-    accept = request.META['HTTP_ACCEPT']
-  else:
-    accept = 'application/xml'
-
-  doc, content_type = pid.serialize(accept)
+  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
+  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
 # For testing via browser.
@@ -862,7 +897,28 @@ def test_replicate_clear(request):
   models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
 
+@auth.cn_check_required
+def error(request):
+  '''
+  '''
+
+  if request.method == 'POST':
+    return error_post(request)
+  
+  return HttpResponseNotAllowed(['POST'])
+
+def error_post(request):
+  # TODO: Deserialize exception in message and log full information.
+  util.validate_post(request, (('header', 'token'),
+                               ('field', 'message')))
+  
+  sys_log.info('client({0}): CN cannot complete SciMeta sync'.format(util.request_to_string(request)))
+
+  return HttpResponse('')
+
+#
 # Health.
+#
 
 def health_ping(request):
   '''
@@ -1038,7 +1094,9 @@ def node_get(request):
 #</synchronization>
 #</node>
 
+#
 # Diagnostics, debugging and testing.
+#
 
 def test(request):
   if request.method != 'GET':
@@ -1064,7 +1122,8 @@ def test_exception(request, exc):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  raise d1_common.types.exceptions.InvalidRequest(0, 'Test exception')
+  #raise d1_common.types.exceptions.InvalidRequest(0, 'Test exception')
+  raise d1_common.types.exceptions.NotFound(0, 'Test exception', '123')
 
 def test_get_request(request):
   '''

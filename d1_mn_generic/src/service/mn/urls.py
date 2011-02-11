@@ -62,6 +62,7 @@ urlpatterns = patterns(
 
   # /replicate/
   (r'^replicate/?$', 'replicate'),
+  (r'^error/(.+)$', 'error'),
   # Internal
   (r'^_replicate_store/?$', '_replicate_store'),
 

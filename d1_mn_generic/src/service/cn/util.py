@@ -74,25 +74,22 @@ except ImportError, e:
 #</ns1:systemMetadata>
 
 
-def test_replicate(pid, src_node_ref, dst_node_ref):
+def test_replicate(src_node_ref, pid):
   '''Build the mime multipart document that will be sent to /mn/replicate.
   '''
 
-  # Resolve src and dst references to base URLs.
-  src_base_url = baseurl_by_noderef(src_node_ref)
-  dst_base_url = baseurl_by_noderef(dst_node_ref)
+  headers = {}
+  headers[u'Content-type'] = 'multipart/form-data'
+  headers[u'token'] = u'<dummy token>'
 
   files = []
-
-  files.append(('token', 'token', '<dummy token>'))
-
-  files.append(('sourceNode', 'sourceNode', src_base_url))
-  files.append(('destinationNode', 'destinationNode', dst_base_url))
-
   sysmeta_filename, sysmeta_obj = get_sysmeta(pid)
   files.append(('sysmeta', 'sysmeta', sysmeta_obj.toxml()))
 
-  multipart_obj = d1_common.mime_multipart.multipart({}, [], files)
+  fields = []
+  fields.append(('sourceNode', src_node_ref))
+
+  multipart_obj = d1_common.mime_multipart.multipart(headers, fields, files)
 
   multipart_doc = StringIO.StringIO()
   for part in multipart_obj:

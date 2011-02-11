@@ -19,14 +19,14 @@ table,th, td {
 <table>
 	<tr>
 		<th>Status</th>
-		<th>Identifier</th>
+		<th>PID</th>
 		<th>Source Node</th>
 		<th>Timestamp</th>
 	</tr>
 {% for replication_item in replication_queue %}
 	<tr>
 		<td>{{ replication_item.status.status }}</td>
-		<td>{{ replication_item.identifier }}</td>
+		<td>{{ replication_item.pid }}</td>
 		<td>{{ replication_item.source_node.source_node }}</td>
 		<td>{{ replication_item.timestamp }}</td>
 	</tr>

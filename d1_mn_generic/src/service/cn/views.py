@@ -306,8 +306,8 @@ def test_get_sysmeta(request, pid):
 
 # Create and Update
 
-def test_replicate(request, src_node_ref, dst_node_ref, pid):
-  res = cn.util.test_replicate(pid, src_node_ref, dst_node_ref)
+def test_replicate(request, src_node_ref, pid):
+  res = cn.util.test_replicate(src_node_ref, pid)
   return HttpResponse(res)
 
 def test_set_replication_status_get(request, status, node_ref, pid):
