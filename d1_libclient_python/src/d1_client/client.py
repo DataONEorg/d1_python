@@ -191,10 +191,12 @@ class RESTClient(object):
     :return: Should not return - always raises an exception.
     :return type: exception
     '''
+    doc = response.read()
+    logging.debug("Raising exception: {0}".format(doc))
     exception_deserializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
       None
     )
-    raise exception_deserializer.deserialize_xml(response.read())
+    raise exception_deserializer.deserialize_xml(doc)
     # TODO: Support exception serialization formats other than XML.
 
   def sendRequest(self, url, method='GET', data=None, headers=None):
@@ -219,7 +221,6 @@ class RESTClient(object):
     request = HttpRequest(url, data=data, headers=headers, method=method)
 
     self.logger.debug_('url({0}) headers({1}) method({2})'.format(url, headers, method))
-
     try:
       response = urllib2.urlopen(request, timeout=self.timeout)
       self.status = response.code
@@ -414,6 +415,14 @@ class DataOneClient(object):
 
     return urlparse.urljoin(self.client.target, d1_common.const.URL_CHECKSUM_PATH)
 
+  def getDeleteUrl(self):
+    '''Get the full URL to the delete call on target.
+    :param: (None)
+    :return: (string) url
+    '''
+
+    return urlparse.urljoin(self.client.target, d1_common.const.URL_DELETE_PATH)
+
   def getSystemMetadataSchema(self, schemaUrl=d1_common.const.SCHEMA_URL):
     '''Convenience function to retrieve the SysMeta schema.
 
@@ -455,6 +464,22 @@ class DataOneClient(object):
       headers = self.headers
     response = self.client.GET(url, headers)
     return response
+
+  def describe(self, pid, headers=None):
+    '''This method provides a lighter weight mechanism than
+    MN_crud.getSystemMetadata() for a client to determine basic properties of
+    the referenced object.
+
+    :param: (string) Identifier of object to retrieve.
+    :return: mimetools.Message or raises DataONEException.
+    '''
+
+    url = self.getObjectUrl(id=pid)
+    self.logger.debug_("pid({0}) url({1})".format(pid, url))
+    if headers is None:
+      headers = self.headers
+    response = self.client.HEAD(url, headers)
+    return response.info()
 
   def getSystemMetadataResponse(self, pid, headers=None):
     '''Retrieve a SysMeta object from DataONE.
@@ -715,10 +740,10 @@ class DataOneClient(object):
     # Data to post.
     files = []
     files.append(('object', 'object', scidata))
-    files.append(('systemmetadata', 'systemmetadata', sysmeta))
+    files.append(('sysmeta', 'sysmeta', sysmeta))
 
     headers = {}
-    headers['AuthToken'] = '<dummy auth token>'
+    headers['token'] = '<dummy auth token>'
     headers.update(vendor_specific)
 
     # Send REST POST call to register object. The URL is the same as for /object/ GET.
@@ -740,6 +765,20 @@ class DataOneClient(object):
     except Exception as e:
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
+
+  def delete(self, pid):
+    '''Delete a SciObj from MN.
+    :param: (string) Identifier of object to delete.
+    :return: Type.Identifier or raises DataONEException
+    '''
+
+    url = urlparse.urljoin(self.getDeleteUrl(), urllib.quote(pid, ''))
+    self.logger.debug_("pid({0}) url({1})".format(pid, url))
+    # Delete.
+    response = self.client.DELETE(url)
+    format = response.headers['content-type']
+    deser = d1_common.types.pid_serialization.Identifier()
+    return deser.deserialize(response.read(), format)
 
 
 class SimpleDataOneClient(object):
@@ -792,7 +831,7 @@ class SimpleDataOneClient(object):
         if node.pid == object_location.nodeIdentifier:
           return node.baseURL
 
-    raise d1common.exceptions.NotFound(0, 'Could not resolve pid', pid)
+    raise d1_common.types.exceptions.NotFound(0, 'Could not resolve pid', pid)
 
   def get(self, pid):
     '''Retrieve a Science Object from DataONE.
@@ -823,7 +862,7 @@ class SimpleDataOneClient(object):
     response = client_mn.getSystemMetadataResponse(pid)
 
     format = response.headers['content-type']
-    return d1common.types.systemmetadata.CreateFromDocument(response.read(), format)
+    return d1_common.types.systemmetadata.CreateFromDocument(response.read(), format)
 
   def getLogRecords(
     self,
