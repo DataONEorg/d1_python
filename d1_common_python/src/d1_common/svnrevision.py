@@ -1,0 +1,49 @@
+'''
+Check subversion revision of the tree in which this file is contained
+and returns that value or the statically set value on failure.
+'''
+
+import os
+import logging
+
+_default_revision = "3355" ##TAG
+
+
+def getSvnRevision(update_static=False):
+  '''If update_static then attempt to modify this source file with the current
+  svn revision number.
+  '''
+  rev = _default_revision
+  logger = logging.getLogger('d1_common.getSvnRevision')
+  try:
+    import pysvn
+    here = os.path.abspath(os.path.dirname(__file__))
+    cli = pysvn.Client()
+    rev = str(cli.info(here).revision.number)
+    if update_static and rev != _default_revision:
+      #Try to update the static revision number - requires file write permission
+      try:
+        import codecs
+        logger.error("FILE=%s" % os.path.abspath(__file__))
+        tf = codecs.open(os.path.abspath(__file__), 'r', 'utf-8')
+        content = tf.read()
+        tf.close()
+        content = content.replace(u'_default_revision="%s" ##TAG' % \
+                                    _default_revision,
+                                  u'_default_revision="%s" ##TAG' % rev, 1 )
+        logger.info("Setting revision in %s to %s" % \
+                       (os.path.abspath(__file__), rev) )
+        tf = codecs.open(os.path.abspath(__file__), 'w', 'utf-8')
+        tf.write(content)
+        tf.close()
+      except Exception, e:
+        logger.exception(e)
+  except:
+    logger.error("pysvn not available for revision information.")
+  return rev
+
+
+if __name__ == "__main__":
+  logging.basicConfig(level=logging.INFO)
+  ver = getSvnRevision(update_static=True)
+  print "svn:%s" % ver
