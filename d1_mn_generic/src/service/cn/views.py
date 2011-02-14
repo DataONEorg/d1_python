@@ -325,3 +325,7 @@ def test_clear_replication_status(request, node_ref, pid):
   
   return HttpResponse('{0}'.format(removed_count), mimetype='text/plain')
 
+# Misc
+
+def test_baseurl_by_noderef(request, node_ref):
+  return HttpResponse(cn.util.baseurl_by_noderef(node_ref), mimetype='text/plain')

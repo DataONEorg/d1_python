@@ -36,4 +36,7 @@ urlpatterns = patterns(
   # Remove Replica entries from SysMeta.
   # test_clear_replication_status/<optional node_ref>/<optional pid>
   (r'^test_clear_replication_status/(.*)/(.*)/?$', 'test_clear_replication_status'),
+
+  # Misc
+  (r'^test_baseurl_by_noderef/(.*)/?$', 'test_baseurl_by_noderef'),
 )

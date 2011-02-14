@@ -1,0 +1,29 @@
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Tests</title>
+
+<h1>Diagnostics, debugging and testing</h1>
+
+<h2>Replication</h2>
+<h3>Status</h3>
+<ul>
+<li><a href="test_get_replication_status">Get replication status for all active objects (HTML) (optional pid for filtering)</a>
+<li><a href="test_get_replication_status_xml">Get replication status for all active objects (XML) (optional pid for filtering)</a>
+<li><a href="test_get_sysmeta/$pid">Get SysMeta for a SciObj (pid)</a>
+</ul>
+
+<h3>Create and Update</h3>
+<ul>
+<li><a href="test_replicate/$src_node_ref/$dst_node_ref/$pid">Create CN replication task and generate MMP doc for passing to MN /replicate (src_node_ref, dst_node_ref, pid)</a>
+<li><a href="test_set_replication_status_get/$status/$node_ref/$pid">Set replication status for a SciObj (status, node_ref, pid)</a>
+</ul>
+
+<h3>Delete</h3>
+<ul>
+<li><a href="test_clear_replication_status/$node_ref/$pid">Clear the CN replication task queue (node_ref, pid)</a>
+</ul>
+
+</body>
+</html>

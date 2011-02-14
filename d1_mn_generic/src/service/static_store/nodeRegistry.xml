@@ -1,5 +1,28 @@
 <?xml version="1.0"?>
 <ns1:nodeList xmlns:ns1="http://dataone.org/service/types/0.5.1">
+
+  <node replicate="true" synchronize="true" type="mn">
+    <identifier>gmn_test</identifier>
+    <name>2796</name>
+    <description>'GMN'</description>
+    <baseURL>http://localhost:8000</baseURL>
+    <services>
+      <service available="true" version="'0.5'">
+        <name>"GMN test"</name>
+        <method implemented="true" name="session" rest="session/"/>
+        <method implemented="true" name="object_collection" rest="object"/>
+        <method implemented="true" name="get_object" rest="object/"/>
+        <method implemented="true" name="get_meta" rest="meta/"/>
+        <method implemented="true" name="log_collection" rest="log"/>
+        <method implemented="true" name="health_ping" rest="health/ping"/>
+        <method implemented="true" name="health_status" rest="health/status"/>
+        <method implemented="true" name="monitor_object" rest="monitor/object"/>
+        <method implemented="true" name="monitor_event" rest="monitor/event"/>
+        <method implemented="true" name="node" rest="node"/>
+      </service>
+    </services>
+  </node>
+
   <node replicate="true" synchronize="true" type="mn">
     <identifier>gmn_test_2</identifier>
     <name>gmn_test_2</name>
@@ -23,10 +46,32 @@
   </node>
 
   <node replicate="true" synchronize="true" type="mn">
-    <identifier>gmn_test</identifier>
-    <name>2796</name>
-    <description>'GMN'</description>
-    <baseURL>http://localhost:8000</baseURL>
+    <identifier>gmn_dryad</identifier>
+    <name>1111</name>
+    <description>'GMN Dryad'</description>
+    <baseURL>http://dev-dryad-mn.dataone.org/mn</baseURL>
+    <services>
+      <service available="true" version="'0.5'">
+        <name>"GMN test"</name>
+        <method implemented="true" name="session" rest="session/"/>
+        <method implemented="true" name="object_collection" rest="object"/>
+        <method implemented="true" name="get_object" rest="object/"/>
+        <method implemented="true" name="get_meta" rest="meta/"/>
+        <method implemented="true" name="log_collection" rest="log"/>
+        <method implemented="true" name="health_ping" rest="health/ping"/>
+        <method implemented="true" name="health_status" rest="health/status"/>
+        <method implemented="true" name="monitor_object" rest="monitor/object"/>
+        <method implemented="true" name="monitor_event" rest="monitor/event"/>
+        <method implemented="true" name="node" rest="node"/>
+      </service>
+    </services>
+  </node>
+
+  <node replicate="true" synchronize="true" type="mn">
+    <identifier>gmn_daac</identifier>
+    <name>1111</name>
+    <description>'GMN DAAC'</description>
+    <baseURL>http://daacmn.dataone.utk.edu/mn</baseURL>
     <services>
       <service available="true" version="'0.5'">
         <name>"GMN test"</name>

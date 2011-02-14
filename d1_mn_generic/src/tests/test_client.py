@@ -650,10 +650,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Replication. Requires fake CN.
     '''
     # The object we will replicate.
-    pid = 'FigS2_Hsieh.pdf'
+    pid = 'hdl:10255/dryad.105/mets.xml'
     # Source and destination node references.
-    src_node = 'gmn_test_2'
-    dst_node = 'gmn_test'
 
     # Delete the object on the destination node if it exists there.
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
@@ -670,10 +668,10 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertRaises(SyntaxError, client.describe, pid)
 
 
-    # Call to /cn/test_replicate/<pid>/<src_node_ref>/<dst_node_ref>
+    # Call to /cn/test_replicate/<pid>/<src_node_ref>
     test_replicate_url = urlparse.urljoin(self.opts.d1_root,
                                           'test_replicate/{0}/{1}'\
-                                          .format(urllib.quote(src_node, ''),
+                                          .format(urllib.quote(self.opts.replicate_src_ref, ''),
                                                   urllib.quote(pid, '')))
     
     root = d1_client.client.DataOneClient(self.opts.d1_root)
@@ -683,7 +681,7 @@ class TestSequenceFunctions(unittest.TestCase):
     replicate_mime = response.read()
     # Add replication task to the destination GMN work queue.
     client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
-    replicate_url = urlparse.urljoin(client_dst.client.target, '/replicate')
+    replicate_url = urlparse.urljoin(client_dst.client.target, 'replicate')
     headers = {}
     headers['Content-Type'] = 'multipart/form-data; boundary=----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
     headers['Content-Length'] = len(replicate_mime)
@@ -1228,6 +1226,7 @@ def main():
   parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
   parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
   parser.add_option('--gmn2-url', dest='gmn2_url', action='store', type='string', default='http://0.0.0.0:8001/')
+  parser.add_option('--gmn-replicate-src-ref', dest='replicate_src_ref', action='store', type='string', default='gmn_dryad')
   parser.add_option('--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
   parser.add_option('--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
   parser.add_option('--obj-path', dest='obj_path', action='store', type='string', default='./test_client_objects')
