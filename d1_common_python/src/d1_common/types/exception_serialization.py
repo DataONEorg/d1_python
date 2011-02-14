@@ -100,8 +100,13 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     except AttributeError:
       pass
     ETree.SubElement(root, u'description').text = self.dataone_exception.description
-    for v in self.dataone_exception.traceInformation:
-      ETree.SubElement(root, u'traceInformation').text = unicode(v)
+    #    for v in self.dataone_exception.traceInformation:
+    #      ETree.SubElement(root, u'traceInformation').text = unicode(v)
+    # TODO: For the Feb 2011 NSF demo, we keep traceInformation blank as
+    # the serialization format of traceInformation is different between
+    # Python and Java stacks. We only do this for XML because that is
+    # the only serialization format used in the Java stack.
+    ETree.SubElement(root, u'traceInformation').text = ''
 
     doc = ETree.tostring(root, 'utf-8')
 
