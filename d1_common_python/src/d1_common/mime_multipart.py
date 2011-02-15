@@ -28,6 +28,7 @@ import mimetypes
 import urlparse
 import StringIO
 import d1_common.const
+import logging
 
 
 class multipart(object):
@@ -47,6 +48,18 @@ class multipart(object):
     ''':param:
     :return:
     '''
+    # Remove any provided headers that we need to generate ourselves.
+    #   headers.keys() is a copy of the dictionary keys, so it's safe to
+    #   mutate the dictionary while iterating.
+    for header_key in headers.keys():
+      if header_key.lower() in ('content-type', 'content-length', 'user-agent'):
+        logging.warning(
+          '{0} header was provided but overridden by internally generated version'.format(
+            header_key
+          )
+        )
+        del headers[header_key]
+
     self.chunk_size = chunk_size
     self.headers = headers
     self.fields = fields
@@ -96,6 +109,7 @@ class multipart(object):
 
     self.reset()
 
+    # The headers do not count towards the size of the MIME Multipart doc.
     self.headers['Content-Type'] = self._get_content_type()
     self.headers['Content-Length'] = content_length
     self.headers['User-Agent'] = d1_common.const.USER_AGENT
