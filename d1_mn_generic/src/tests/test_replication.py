@@ -19,6 +19,7 @@ import optparse
 import urlparse
 import urllib
 import StringIO
+import time
 
 # MN API.
 try:
@@ -119,54 +120,46 @@ def replicate(opts, args):
   sysmeta_obj = client_src.getSystemMetadata(pid)
   sysmeta_doc = sysmeta_obj.toxml()
 
-  # Create the MMP document that is submitted to dst to request a replication.
+  # Add replication task to the destination GMN work queue.
+  #   Create the MMP document that is submitted to dst to request a replication.
   headers = {}
-  headers[u'Content-type'] = 'multipart/form-data'
   headers[u'token'] = u'<dummy token>'
   files = []
   files.append(('sysmeta', 'sysmeta', sysmeta_doc))
   fields = []
   fields.append(('sourceNode', src_ref))
-  multipart_obj = d1_common.mime_multipart.multipart(headers, fields, files)
-  multipart_flo = StringIO.StringIO()
-  for part in multipart_obj:
-    multipart_flo.write(part)
-  multipart_doc = multipart_flo.getvalue()
-  #  return multipart_doc
-  # Add replication task to the destination GMN work queue.
-  client_t = d1_client.client.DataOneClient(dst_base)
-  replicate_url = urlparse.urljoin(client_t.client.target, '/replicate')
-  client_t.client.POST(replicate_url, multipart_doc, headers)
+  multipart = d1_common.mime_multipart.multipart(headers, fields, files)
+  #   Post the MMP doc to /replicate on GMN.
+  replicate_url = urlparse.urljoin(client_dst.client.target, '/replicate')
+  multipart.post(replicate_url)
 
-  #  # Poll for completed replication.
-  #  replication_completed = False
-  #  while not replication_completed:
-  #    test_get_replication_status_xml = urlparse.urljoin(client_dst.client.target,
-  #                                                    '/cn/test_get_replication_status_xml/{0}'.format(pid))
-  #    status_xml_str = client_dst.client.GET(test_get_replication_status_xml).read()
-  #    status_xml_obj = lxml.etree.fromstring(status_xml_str)
-  #
-  #    for replica in status_xml_obj.xpath('/replicas/replica'):
-  #      if replica.xpath('replicaMemberNode')[0].text == src_node:
-  #        if replica.xpath('replicationStatus')[0].text == 'completed':
-  #          replication_completed = True
-  #          break
-  #
-  #    if not replication_completed:
-  #      time.sleep(1)
-  #
-  #  # Get checksum of the object on the destination server and compare it to
-  #  # the checksum retrieved from the source server.
-  #  dst_checksum_obj = client_dst.checksum(pid)
-  #  dst_checksum = dst_checksum_obj.value()
-  #  dst_algorithm = dst_checksum_obj.algorithm
-  #  assertEqual(src_checksum, dst_checksum)
-  #  assertEqual(src_algorithm, dst_algorithm)
-  #  
-  #  # Get the bytes of the object on the destination and compare them with the
-  #  # bytes retrieved from the source.
-  #  dst_obj_str = client_dst.get(pid).read()
-  #  assertEqual(src_obj_str, dst_obj_str)
+  # Poll for completed replication.
+  test_replicate_get_xml = urlparse.urljoin(
+    client_dst.client.target, '/test_replicate_get_xml'
+  )
+  replication_completed = False
+  while not replication_completed:
+    status_xml_str = client_dst.client.GET(test_replicate_get_xml).read()
+    status_xml_obj = lxml.etree.fromstring(status_xml_str)
+
+    for work_item in status_xml_obj.xpath('/replication_queue/replication_item'):
+      if  work_item.xpath('pid')[0].text == pid and \
+          work_item.xpath('source_node')[0].text == src_ref and \
+          work_item.xpath('status')[0].text == 'completed':
+        replication_completed = True
+        break
+
+    if not replication_completed:
+      time.sleep(1)
+
+  # Get checksum of the object on the destination server and compare it to
+  # the checksum retrieved from the source server.
+  dst_checksum_obj = client_dst.checksum(pid)
+  dst_checksum = dst_checksum_obj.value()
+  src_checksum_obj = client_src.checksum(pid)
+  src_checksum = src_checksum_obj.value()
+  if src_checksum != dst_checksum:
+    raise Exception('Replication failed: Source and destination checksums do not match')
 
 
 def main():
