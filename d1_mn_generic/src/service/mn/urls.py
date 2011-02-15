@@ -70,10 +70,10 @@ urlpatterns = patterns(
   (r'^test/?$', 'test'),
   (r'^test_replicate_post/?$', 'test_replicate_post'),
   (r'^test_replicate_get/?$', 'test_replicate_get'),
+  (r'^test_replicate_get_xml/?$', 'test_replicate_get_xml'),
   (r'^test_replicate_clear/?$', 'test_replicate_clear'),
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
   (r'^test_exception/(.+?)/?$', 'test_exception'),
-  (r'^test_get_request/?$', 'test_get_request'),
   (r'^test_inject_log/?$', 'test_inject_log'),
 
   # Admin.

@@ -74,6 +74,7 @@ import mn.util
 import cn.models
 import settings
 import cn.util
+import d1_common.const
 
 class ObjectLocationList(d1_common.types.objectlocationlist_serialization.ObjectLocationList):
   def deserialize_db(self, obj):
@@ -227,7 +228,7 @@ def resolve_get(request, pid, head):
   object_location_list.deserialize_db(obj)
 
   response = HttpResponse(object_location_list.serialize_xml(pretty=True))
-  response['Content-Type'] = 'text/xml'
+  response['Content-Type'] = d1_common.const.MIMETYPE_XML
   
   return response
 
@@ -247,7 +248,7 @@ def node_get(request):
   except EnvironmentError:
     raise d1_common.types.exceptions.ServiceFailure(0, 'Missing static node registry file')
   response = HttpResponse(node_registry)
-  response['Content-Type'] = 'text/xml'
+  response['Content-Type'] = d1_common.const.MIMETYPE_XML
   
   return response
 
@@ -271,7 +272,7 @@ def set_replication_status_get(request, status, node_ref, pid):
   if 'HTTP_ACCEPT' in request.META:
     accept = request.META['HTTP_ACCEPT']
   else:
-    accept = 'application/xml'
+    accept = d1_common.const.MIMETYPE_XML
 
   doc, content_type = pid.serialize(accept)
   return HttpResponse(doc, mimetype=content_type)
@@ -299,10 +300,11 @@ def test_get_replication_status_xml(request):
 
   return render_to_response('test_get_replication_status.xml',
                             {'status_list': status_list },
-                            mimetype='application/xml')
+                            mimetype=d1_common.const.MIMETYPE_XML)
 
 def test_get_sysmeta(request, pid):
-  return HttpResponse(mn.util.pretty_xml(cn.util.get_sysmeta(pid)[1].toxml()), 'application/xml')
+  return HttpResponse(mn.util.pretty_xml(cn.util.get_sysmeta(pid)[1].toxml()),
+                      d1_common.const.MIMETYPE_XML)
 
 # Create and Update
 

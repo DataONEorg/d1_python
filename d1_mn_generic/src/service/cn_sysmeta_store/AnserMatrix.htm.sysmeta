@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
+<ns1:systemMetadata xmlns:ns1="http://dataone.org/service/types/0.5.1">
   <identifier>AnserMatrix.htm</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
   <size>11048</size>
@@ -7,7 +7,12 @@
   <rightsHolder>test</rightsHolder>
   <checksum algorithm="MD5">0e25cf59d7bd4d57154cc83e0aa32b34</checksum>
   <dateUploaded>2010-04-26T07:23:46.064887</dateUploaded>
-  <dateSysMetadataModified>1970-05-27T06:12:49</dateSysMetadataModified>
+  <dateSysMetadataModified>2011-02-14T23:18:02.539345</dateSysMetadataModified>
   <originMemberNode>MN1</originMemberNode>
   <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</D1:systemMetadata>
+  <replica>
+    <replicaMemberNode>gmn_test_2</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>2011-02-14T23:17:39.193033</replicaVerified>
+  </replica>
+</ns1:systemMetadata>

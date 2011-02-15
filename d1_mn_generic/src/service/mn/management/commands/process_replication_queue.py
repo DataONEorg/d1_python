@@ -141,7 +141,7 @@ def log_setup():
 
 
 def replicate_object(obj):
-  root = DataOneClientWrapper('http://0.0.0.0:80/mn/cn')
+  root = DataOneClientWrapper('http://0.0.0.0:8000/cn')
 
   # Set replication status to 'requested' on CN.
   root.set_replication_status('requested', obj.source_node.source_node, obj.pid)
@@ -168,7 +168,7 @@ def replicate_object(obj):
   # Stream.
   object_file = src.get(obj.pid)
   sysmeta_str = src.getSystemMetadataResponse(obj.pid).read()
-  dst = DataOneClientWrapper('http://0.0.0.0:80/mn/')
+  dst = DataOneClientWrapper('http://0.0.0.0:8000/')
   # Add the ability to do len() on object_file. Needed by mime_multipart.
   object_file.__len__ = lambda x=None: int(obj_size)
   dst.create(obj.pid, object_file, sysmeta_str)

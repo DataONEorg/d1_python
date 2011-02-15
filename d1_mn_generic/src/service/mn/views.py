@@ -610,7 +610,7 @@ def meta_pid_get(request, pid, head):
     raise d1_common.types.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', pid)
 
   if head == True:
-    return HttpResponse('', mimetype='text/xml')
+    return HttpResponse('', mimetype=d1_common.const.MIMETYPE_XML)
   
   # Open file for streaming.  
   file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
@@ -623,7 +623,7 @@ def meta_pid_get(request, pid, head):
   event_log.log(pid, 'read', request)
 
   # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype='text/xml')
+  return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype=d1_common.const.MIMETYPE_XML)
 
 def checksum_pid(request, pid):
   '''
@@ -776,7 +776,6 @@ def event_log_view_delete(request):
 def replicate(request):
   '''
   '''
-
   if request.method == 'POST':
     return replicate_post(request)
   
@@ -891,6 +890,13 @@ def test_replicate_get(request):
   '''
   return render_to_response('replicate_get.html',
                            {'replication_queue': models.Replication_work_queue.objects.all() })
+
+def test_replicate_get_xml(request):
+  '''
+  '''
+  return render_to_response('replicate_get.xml',
+                            {'replication_queue': models.Replication_work_queue.objects.all() },
+                            mimetype=d1_common.const.MIMETYPE_XML)
 
 # For testing via browser.
 def test_replicate_clear(request):
