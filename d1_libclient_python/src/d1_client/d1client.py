@@ -14,12 +14,13 @@ import objectlistiterator
 
 
 class DataONEObject(object):
-  def __init__(self, pid):
+  def __init__(self, pid, cnBaseUrl=const.URL_DATAONE_ROOT):
     self.pid = pid
     self._locations = []
     self._systemmetadata = None
     self._content = None
     self.__client = None
+    self._cnBaseUrl = cnBaseUrl
 
   def getCredentials(self):
     '''Override this method to retrieve credentials that can be used to
@@ -32,7 +33,10 @@ class DataONEObject(object):
     can be used for interacting with the DataONE services.
     '''
     if self.__client is None or forcenew:
-      self.__client = DataONEClient(credentials=self.getCredentials())
+      self.__client = DataONEClient(
+        credentials=self.getCredentials(
+        ), cnBaseUrl=self._cnBaseUrl
+      )
     return self.__client
 
   def getLocations(self, forcenew=False):
@@ -72,6 +76,10 @@ class DataONEObject(object):
     self.realize(outstr)
     outstr.close()
 
+  def get(self):
+    cli = self._getClient()
+    return cli.get(self.pid)
+
 #===============================================================================
 
 
@@ -83,6 +91,7 @@ class DataONEClient(object):
     self.credentials = credentials
     self.authToken = None
     self._sysmetacache = {}
+    self.logger = logging.getLogger('DataONEClient')
 
   def _getCN(self, forcenew=False):
     if self.cn is None or forcenew:
@@ -127,12 +136,12 @@ class DataONEClient(object):
     locations = self.resolve(pid)
     token = self.getAuthToken()
     for location in locations:
-      print location
+      self.logger.debug(location)
       mn = self._getMN(location)
       try:
         return mn.get(token, pid)
       except Exception, e:
-        logging.exception(e)
+        self.logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
     return None
 
