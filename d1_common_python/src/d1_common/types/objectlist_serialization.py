@@ -37,12 +37,12 @@ except:
   import json
 
 # 3rd party.
-try:
-  from lxml import etree
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
-  raise
+#try:
+#  from lxml import etree
+#except ImportError, e:
+#  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+#  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
+#  raise
 try:
   import iso8601
 except ImportError, e:
@@ -203,45 +203,43 @@ class ObjectList(serialization_base.Serialization):
   def serialize_rdf_xml(self, pretty=False, jsonvar=False):
     '''Serialize ObjectList to RDF XML.
     '''
+    raise d1_common.types.exceptions.NotImplemented('serialize_rdf_xml')
     # Set up namespaces for the XML response.
-    RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-    D1_NS = 'http://ns.dataone.org/core/objects'
-    RDF = '{{{0}}}'.format(RDF_NS)
-    D1 = '{{{0}}}'.format(D1_NS)
-    NSMAP = {'rdf': RDF_NS, 'd1': D1_NS}
-    xml = etree.Element(RDF + 'rdf', nsmap=NSMAP)
-
-    description = etree.SubElement(xml, RDF + 'Description')
-    description.set(RDF + 'about', '_requesting URL_')
-
-    description = etree.SubElement(xml, RDF + 'Description')
-    description.set(RDF + 'about', 'http://mn1.dataone.org/object/_pid_')
-
-    for o in self.object_list.objectInfo:
-      objectInfo = etree.SubElement(description, u'objectInfo')
-
-      ele = etree.SubElement(objectInfo, u'identifier')
-      ele.text = unicode(o.identifier)
-
-      ele = etree.SubElement(objectInfo, u'objectFormat')
-      ele.text = unicode(o.objectFormat)
-
-      ele = etree.SubElement(objectInfo, u'checksum')
-      ele.text = unicode(o.checksum.value())
-      ele.attrib[u'algorithm'] = unicode(o.checksum.algorithm)
-
-      # Get modified date in an ISO 8601 string.
-      ele = etree.SubElement(objectInfo, u'dateSysMetadataModified')
-      ele.text = unicode(datetime.datetime.isoformat(o.dateSysMetadataModified))
-
-      ele = etree.SubElement(objectInfo, u'size')
-      ele.text = unicode(o.size)
-
-    # Return xml as string.
-    return etree.tostring(
-      xml, pretty_print=pretty,
-      encoding='UTF-8', xml_declaration=True
-    )
+    #    RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+    #    D1_NS = 'http://ns.dataone.org/core/objects'
+    #    RDF = '{{{0}}}'.format(RDF_NS)
+    #    D1 = '{{{0}}}'.format(D1_NS)
+    #    NSMAP = {'rdf' : RDF_NS, 'd1' : D1_NS}
+    #    xml = etree.Element(RDF + 'rdf', nsmap=NSMAP)
+    #  
+    #    description = etree.SubElement(xml, RDF + 'Description')
+    #    description.set(RDF + 'about', '_requesting URL_')
+    #      
+    #    description = etree.SubElement(xml, RDF + 'Description')
+    #    description.set(RDF + 'about', 'http://mn1.dataone.org/object/_pid_')
+    #  
+    #    for o in self.object_list.objectInfo:
+    #      objectInfo = etree.SubElement(description, u'objectInfo')
+    #      
+    #      ele = etree.SubElement(objectInfo, u'identifier')
+    #      ele.text = unicode(o.identifier)
+    #    
+    #      ele = etree.SubElement(objectInfo, u'objectFormat')
+    #      ele.text = unicode(o.objectFormat)
+    #    
+    #      ele = etree.SubElement(objectInfo, u'checksum')
+    #      ele.text = unicode(o.checksum.value())
+    #      ele.attrib[u'algorithm'] = unicode(o.checksum.algorithm)
+    #    
+    #      # Get modified date in an ISO 8601 string.
+    #      ele = etree.SubElement(objectInfo, u'dateSysMetadataModified')
+    #      ele.text = unicode(datetime.datetime.isoformat(o.dateSysMetadataModified))
+    #    
+    #      ele = etree.SubElement(objectInfo, u'size')
+    #      ele.text = unicode(o.size)
+    #
+    #    # Return xml as string.
+    #    return etree.tostring(xml, pretty_print=pretty,  encoding='UTF-8', xml_declaration=True)
 
     #============================================================================
 
