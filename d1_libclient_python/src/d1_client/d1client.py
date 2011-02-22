@@ -11,12 +11,17 @@ from d1_common.types import exceptions
 import cnclient
 import mnclient
 import objectlistiterator
+import time
+
+MAX_CACHE_AGE = 60 #seconds data remains in cache
 
 
 class DataONEObject(object):
   def __init__(self, pid, cnBaseUrl=const.URL_DATAONE_ROOT):
     self.pid = pid
     self._locations = []
+    self._relations = None
+    self._relations_t = 0
     self._systemmetadata = None
     self._content = None
     self.__client = None
@@ -53,9 +58,15 @@ class DataONEObject(object):
       self._systemmetadata = cli.getSystemMetadata(self.pid)
     return self._systemmetadata
 
-  def getRelatedObjects(self):
-    cli = self._getClient()
-    return cli.getRelatedObjects(self.pid)
+  def getRelatedObjects(self, forcenew=False):
+    t = time.time()
+    if t - self._relations_t > MAX_CACHE_AGE:
+      forcenew = True
+    if self._relations is None or forcenew:
+      cli = self._getClient()
+      self._relations = cli.getRelatedObjects(self.pid)
+      self._relations_t = t
+    return self._relations
 
   def load(self, outstr):
     '''Persist a copy of the bytes of this object to outstr, which is a 
