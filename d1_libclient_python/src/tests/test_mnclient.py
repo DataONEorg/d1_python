@@ -38,8 +38,17 @@ class TestMNClient(TestCaseWithURLCompare):
     for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
       pid = test['existingpid']
-      cksum = cli.getChecksum(self.token, pid, checksumAlgorithm=None)
-      self.assertEqual(test['existingpid_ck'], cksum.value())
+      try:
+        cksum = cli.getChecksum(self.token, pid, checksumAlgorithm=None)
+        self.assertEqual(test['existingpid_ck'], cksum.value())
+      except d1_common.exceptions.NotImplemented, e:
+        msg = 'Invalid checksum response from %s' % test['baseurl']
+        msg += "\nRequest URL=%s" % cli._lasturl
+        raise Exception(msg, str(e))
+      except Exception, e:
+        msg = 'Invalid checksum response from %s' % test['baseurl']
+        msg += "\nRequest URL=%s" % cli._lasturl
+        raise Exception(msg, str(e))
 
   def test_getChecksumFail(self):
     '''Try and geta checksum for a bogus identifier
@@ -69,16 +78,26 @@ class TestMNClient(TestCaseWithURLCompare):
     '''
     for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
-      stats = cli.getObjectStatistics(self.token)
-      self.assertTrue(0 <= stats.monitorInfo[0].count)
+      try:
+        stats = cli.getObjectStatistics(self.token)
+        self.assertTrue(0 <= stats.monitorInfo[0].count)
+      except Exception, e:
+        msg = "Invalid object statistics response from %s" % test['baseurl']
+        msg += "\nRequest URL=%s" % cli._lasturl
+        raise Exception(msg, str(e))
 
   def test_getOperationStatistics(self):
     '''Verify that operation statistics response deserializes
     '''
     for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
-      stats = cli.getOperationStatistics(self.token)
-      self.assertTrue(0 <= stats.monitorInfo[0].count)
+      try:
+        stats = cli.getOperationStatistics(self.token)
+        self.assertTrue(0 <= stats.monitorInfo[0].count)
+      except Exception, e:
+        msg = "Invalid operation statistics response from %s" % test['baseurl']
+        msg += "\nRequest URL=%s" % cli._lasturl
+        raise Exception(msg, str(e))
 
   def test_getStatus(self):
     if not self.ignore_not_implemented:
@@ -89,9 +108,17 @@ class TestMNClient(TestCaseWithURLCompare):
     '''
     for test in TEST_DATA['MN']:
       cli = mnclient.MemberNodeClient(test['baseurl'])
-      nodeinfo = cli.getCapabilities()
-      for method in nodeinfo.node[0].services.service[0].method:
-        logging.debug(method.name)
+      try:
+        nodeinfo = cli.getCapabilities()
+        self.assertTrue(len(nodeinfo.node) > 0)
+      except d1_common.exceptions.NotImplemented, e:
+        msg = "Could not parse capabilities document for %s" % test['baseurl']
+        msg += "\nRequest URL=%s" % cli._lasturl
+        raise Exception(msg, str(e))
+      except Exception, e:
+        msg = "Could not parse capabilities document for %s" % test['baseurl']
+        msg += "\nRequest URL=%s" % cli._lasturl
+        raise Exception(msg, str(e))
 
 
 if __name__ == "__main__":
