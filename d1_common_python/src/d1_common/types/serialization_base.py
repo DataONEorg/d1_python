@@ -24,15 +24,10 @@ Module d1_common.types.serialization
 '''
 
 # Stdlib.
-import StringIO
 import csv
 import logging
 import sys
-
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 # MN API.
 try:

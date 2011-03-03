@@ -33,7 +33,7 @@ the Public Domain.
 
 __revision__ = "$Id: /mirror/jroger/python/stdlib/xmlrunner.py 3506 2006-07-27T09:12:39.629878Z srittau  $"
 
-from StringIO import StringIO
+import StringIO
 from xml.sax.saxutils import escape
 import os.path
 import re
@@ -95,7 +95,7 @@ class _TestInfo(object):
     stream.write('\n')
     stream.write('    <%s type="%s">%s\n' \
         % (tagname, escape(str(error[0])), text))
-    tb_stream = StringIO()
+    tb_stream = StringIO.StringIO()
     traceback.print_tb(error[2], None, tb_stream)
     stream.write(escape(tb_stream.getvalue()))
     stream.write('    </%s>\n' % tagname)
@@ -194,8 +194,8 @@ class XmlTestRunner(object):
     # TODO: Python 2.5: Use the with statement
     old_stdout = sys.stdout
     old_stderr = sys.stderr
-    sys.stdout = StringIO()
-    sys.stderr = StringIO()
+    sys.stdout = StringIO.StringIO()
+    sys.stderr = StringIO.StringIO()
 
     try:
       test(result)
@@ -231,7 +231,7 @@ class XmlTestRunner(object):
 
 class XmlTestRunnerTest(unittest.TestCase):
   def setUp(self):
-    self._stream = StringIO()
+    self._stream = StringIO.StringIO()
 
   def _try_test_run(self, test_class, expected):
     """Run the test suite against the supplied test class and compare the

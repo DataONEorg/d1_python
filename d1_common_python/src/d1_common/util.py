@@ -19,11 +19,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
+import re
 import email.message
-from urllib import quote
-from urllib import unquote
+import xml.dom.minidom
+import logging
+import StringIO
+import tempfile
+import urllib
+import shutil
+
+# 3rd party.
+try:
+  import minixsv.pyxsval
+except ImportError, e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(
+    'Try: Download and install minixsv from http://www.familieleuthe.de/DownloadMiniXsv.html\n'
+  )
+  raise
+
 import const
+
+
+def pretty_xml(xml_doc):
+  '''Pretty formatting of XML.
+
+  :param xml_doc: xml text
+  :type xml_doc: basestring
+  '''
+  try:
+    xml = xml.dom.minidom.parseString(xml_doc)
+  except TypeError:
+    xml = xml.dom.minidom.parse(xml_doc)
+  return xml.toprettyxml()
+
+
+def validate_xml(xml_doc):
+  ''' Validate the supplied XML document text against the D1 schema.
+
+  :param xml_doc: xml text
+  :type xml_doc: basestring
+  '''
+  # TODO: Speed up validation by caching parsed schema tree in memory. 
+  # Cache the schema on local filesystem.
+  tmp_schema_filename = re.sub(r'[^\w]', '_', const.SCHEMA_URL)
+  tmp_schema_path = os.path.join(tempfile.gettempdir(), tmp_schema_filename)
+  # If the schema does not exist on local filesystem, download it from DataONE.
+  if not os.path.exists(tmp_schema_path):
+    tmp_schema_file = open(tmp_schema_path, 'wb')
+    schema_file = urllib.urlopen(const.SCHEMA_URL)
+    shutil.copyfileobj(schema_file, tmp_schema_file)
+    tmp_schema_file.close()
+    # Validate the downloaded schema. Raises GenXmlIfError or XsvalError on
+    # error.
+    minixsv.parseAndValidateXmlSchema(tmp_schema_path)
+
+  xsValidator = minixsv.pyxsval.XsValidator()
+  inputTreeWrapper = xsValidator.parseString(xml_doc)
+  # Validate the downloaded schema. Raises GenXmlIfError or XsvalError on
+  # error.
+  xsValidator.validateXmlInput(xml_doc, inputTreeWrapper, tmp_schema_path, 0)
 
 
 def get_content_type(content_type):
@@ -40,7 +97,7 @@ def encodePathElement(element):
   :return: URL encoded path element
   :return type: UTF-8 encoded string. 
   '''
-  return quote(element.encode('utf-8'), \
+  return urllib.quote(element.encode('utf-8'), \
                safe=const.URL_PATHELEMENT_SAFE_CHARS)
 
 
@@ -52,7 +109,7 @@ def decodePathElement(element):
   :return: decoded URL path element
   :return type: UTF-8 encoded string. 
   '''
-  return unquote(element).decode('utf-8')
+  return urllib.unquote(element).decode('utf-8')
 
 
 def encodeQueryElement(element):
@@ -63,7 +120,7 @@ def encodeQueryElement(element):
   :return: URL encoded query element
   :return type: UTF-8 encoded string. 
   '''
-  return quote(element.encode('utf-8'), \
+  return urllib.quote(element.encode('utf-8'), \
                safe=const.URL_QUERYELEMENT_SAFE_CHARS)
 
 

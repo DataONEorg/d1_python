@@ -31,12 +31,9 @@ import csv
 import datetime
 import logging
 import sys
-try:
-  import cjson as json
-except:
-  import json
+import xml
+import json
 
-# 3rd party.
 #try:
 #  from lxml import etree
 #except ImportError, e:
