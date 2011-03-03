@@ -26,13 +26,9 @@ Implements serializaton and de-serialization for the MonitorList type.
 '''
 
 ## Stdlib.
-import StringIO
 import logging
 import sys
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 # App.
 try:

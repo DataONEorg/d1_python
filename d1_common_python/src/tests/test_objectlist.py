@@ -1,13 +1,46 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+Module d1_common.tests.test_objectlist
+======================================
+
+Unit tests for serializaton and de-serialization of the ObjectList type.
+
+:Author: Vieglais, Dahl
+
+..autoclass:: TestObjectList
+  :members:
+'''
+
 import logging
 import sys
 import unittest
 
-from d1_common import xmlrunner
-from d1_common.types import objectlist_serialization
+import d1_common
+import d1_common.xmlrunner
+import d1_common.types.objectlist_serialization
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/ObjectList/0.1">
+    xmlns:ns1="http://dataone.org/service/types/0.5.1">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -46,7 +79,7 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 </ns1:objectList>"""
 
 EG_OBJECTLIST_KNB = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectList xmlns:d1="http://dataone.org/service/types/ObjectList/0.1" count="5" start="0"
+<d1:objectList xmlns:d1="http://dataone.org/service/types/0.5.1" count="5" start="0"
     total="673">
     <objectInfo>
         <identifier>knb:testid:201020217324403 </identifier>
@@ -89,7 +122,7 @@ EG_OBJECTLIST_KNB = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 EG_BAD_OBJECTLIST = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectList xmlns:d1="http://dataone.org/service/types/ObjectList/0.1" count="5" start="0"
+<d1:objectList xmlns:d1="http://dataone.org/service/types/0.5.1" count="5" start="0"
     total="0">
     <objectInfo>
         <identifier>knb:testid:201020217324403 </identifier>
@@ -124,22 +157,42 @@ EG_BAD_OBJECTLIST = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 class TestObjectList(unittest.TestCase):
-  def testCounts(self):
-    loader = objectlist_serialization.ObjectList()
+  def _test_deserialize(self, doc, shouldfail=False):
+    serializer = d1_common.types.objectlist_serialization.ObjectList()
+    olist = serializer.deserialize(doc, content_type=d1_common.const.MIMETYPE_XML)
+    oinfo = olist.objectInfo
+    if shouldfail:
+      self.assertNotEqual(len(oinfo), olist.count)
+    else:
+      self.assertEqual(len(oinfo), olist.count)
 
-    def doctest(doc, shouldfail=False):
-      olist = loader.deserialize(doc, content_type="text/xml")
-      oinfo = olist.objectInfo
-      if shouldfail:
-        self.assertNotEqual(len(oinfo), olist.count)
-      else:
-        self.assertEqual(len(oinfo), olist.count)
+  def test_deserialize_xml_gmn(self):
+    self._test_deserialize(EG_OBJECTLIST_GMN)
 
-    doctest(EG_OBJECTLIST_GMN)
-    doctest(EG_OBJECTLIST_KNB)
-    doctest(EG_BAD_OBJECTLIST, shouldfail=True)
+  def test_deserialize_xml_knb(self):
+    self._test_deserialize(EG_OBJECTLIST_KNB)
+
+  def test_deserialize_xml_bad(self):
+    self._test_deserialize(EG_BAD_OBJECTLIST, shouldfail=True)
+
+  def test_serialize_rdf(self):
+    serializer = d1_common.types.objectlist_serialization.ObjectList()
+    olist = serializer.deserialize(
+      EG_OBJECTLIST_GMN, content_type=d1_common.const.MIMETYPE_XML
+    )
+    #olist.deserialize(content_type=d1_common.const.MIMETYPE_XML)
+    #olist = serializer.deserialize(EG_OBJECTLIST_GMN, content_type="text/xml")
+    #serialize_rdf_xml
+    l2 = d1_common.types.objectlist_serialization.ObjectList()
+    l2.object_list = olist
+    l2.serialize(accept=d1_common.const.MIMETYPE_RDF)
+    #oinfo = olist.objectInfo
+    #if shouldfail:
+    #  self.assertNotEqual(len(oinfo), olist.count)
+    #else:
+    #  self.assertEqual(len(oinfo), olist.count)
 
 
 if __name__ == '__main__':
   logging.basicConfig(level=logging.DEBUG)
-  unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  unittest.main(testRunner=d1_common.xmlrunner.XmlTestRunner(sys.stdout))

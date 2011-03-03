@@ -33,14 +33,8 @@ Implements serializaton and de-serialization for the DataONE Exception type.
 # Stdlib.
 import logging
 import urllib
-try:
-  import cjson as json
-except:
-  import json
-try:
-  from xml.etree import cElementTree as ETree
-except:
-  from xml.etree import ElementTree as Etree
+import json
+import xml.etree.ElementTree
 import xml.dom.minidom
 
 # App.
@@ -88,7 +82,7 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
 
     :rtype: UTF-8 encoded XML string
     '''
-    root = ETree.Element(
+    root = xml.etree.ElementTree.Element(
       u'error', {
         u'name': self.dataone_exception.name,
         u'errorCode': str(self.dataone_exception.errorCode),
@@ -96,19 +90,21 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
       }
     )
     try:
-      ETree.SubElement(root, u'pid').text = self.dataone_exception.pid
+      xml.etree.ElementTree.SubElement(root, u'pid').text = self.dataone_exception.pid
     except AttributeError:
       pass
-    ETree.SubElement(root, u'description').text = self.dataone_exception.description
+    xml.etree.ElementTree.SubElement(
+      root, u'description'
+    ).text = self.dataone_exception.description
     #    for v in self.dataone_exception.traceInformation:
-    #      ETree.SubElement(root, u'traceInformation').text = unicode(v)
+    #      xml.etree.ElementTree.SubElement(root, u'traceInformation').text = unicode(v)
     # TODO: For the Feb 2011 NSF demo, we keep traceInformation blank as
     # the serialization format of traceInformation is different between
     # Python and Java stacks. We only do this for XML because that is
     # the only serialization format used in the Java stack.
-    ETree.SubElement(root, u'traceInformation').text = ''
+    xml.etree.ElementTree.SubElement(root, u'traceInformation').text = ''
 
-    doc = ETree.tostring(root, 'utf-8')
+    doc = xml.etree.ElementTree.tostring(root, 'utf-8')
 
     if pretty:
       xml_obj = xml.dom.minidom.parseString(doc)
@@ -146,42 +142,45 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     
     :rtype: UTF-8 encoded HTML string
     '''
-    root = ETree.Element(u'html')
-    head = ETree.SubElement(
+    root = xml.etree.ElementTree.Element(u'html')
+    head = xml.etree.ElementTree.SubElement(
       root, u'meta', {
         u'http-equiv': u'content-type',
         u'content': u'text/html;charset=utf-8'
       }
     )
-    title = ETree.SubElement(head, u'title')
+    title = xml.etree.ElementTree.SubElement(head, u'title')
 
     title.text = u'Error: {0} {1} ({2})'.format(
       urllib.quote(unicode(self.dataone_exception.errorCode)),
       self.dataone_exception.name, urllib.quote(str(self.dataone_exception.detailCode))
     )
 
-    body = ETree.SubElement(root, u'body')
-    dl = ETree.SubElement(body, u'dl')
+    body = xml.etree.ElementTree.SubElement(root, u'body')
+    dl = xml.etree.ElementTree.SubElement(body, u'dl')
 
-    ETree.SubElement(dl, u'dt').text = u'Code'
-    ETree.SubElement(dl, u'dd', {u'class': u'errorCode'}).text = str(
+    xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Code'
+    xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'errorCode'}).text = str(
       self.dataone_exception.errorCode
     )
 
-    ETree.SubElement(dl, u'dt').text = u'Detail Code'
-    ETree.SubElement(dl, u'dd', {u'class': u'detailCode'}).text = str(
+    xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Detail Code'
+    xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'detailCode'}).text = str(
       self.dataone_exception.detailCode
     )
 
-    ETree.SubElement(dl, u'dt').text = u'Description'
-    ETree.SubElement(dl, u'dd', {u'class': u'description'}).text = self.dataone_exception.description
+    xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Description'
+    xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'description'}).text = self.dataone_exception.description
 
     if len(self.dataone_exception.traceInformation) > 0:
-      ETree.SubElement(dl, u'dt').text = u'Trace'
+      xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Trace'
       for v in self.dataone_exception.traceInformation:
-        ETree.SubElement(dl, u'dd', {u'class': u'traceInformation'}).text = str(v)
+        xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'traceInformation'}
+                                         ).text = str(
+                                           v
+                                         )
 
-    doc = ETree.tostring(root, 'utf-8')
+    doc = xml.etree.ElementTree.tostring(root, 'utf-8')
 
     # TODO: Add pretty printing for html.
 
@@ -271,7 +270,7 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     
     :rtype: A DataONEException based object.
     '''
-    etree = ETree.fromstring(doc)
+    etree = xml.etree.ElementTree.fromstring(doc)
 
     return self.dataone_exception_factory(
       etree.attrib[u'name'], etree.attrib[u'detailCode'].strip(),

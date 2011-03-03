@@ -1,9 +1,30 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 '''
-Unit tests for d1_common.types.exceptions
+Module d1_common.tests.test_exceptions
+======================================
 
-:Author: Dave Vieglais
+Unit tests for serializaton and de-serialization of the DataONEException type.
 
-:Created: 20100108
+:Author: Vieglais, Dahl
 
 ..autoclass:: TestExceptions
   :members:
@@ -13,11 +34,7 @@ import logging
 import sys
 import unittest
 import xml.dom.minidom
-
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 from d1_common.types import exceptions
 from d1_common.types import exception_serialization
@@ -60,18 +77,12 @@ class TestExceptions(unittest.TestCase):
       root.getElementsByTagName('description')[0].childNodes[0].nodeValue,
       u'description_test'
     )
-    self.assertEqual(
-      root.getElementsByTagName('traceInformation')[0].childNodes[0].nodeValue,
-      u'trace_test_1'
-    )
-    self.assertEqual(
-      root.getElementsByTagName('traceInformation')[1].childNodes[0].nodeValue,
-      u'trace_test_2'
-    )
-    self.assertEqual(
-      root.getElementsByTagName('traceInformation')[2].childNodes[0].nodeValue,
-      u'trace_test_3'
-    )
+    # TODO: For now, we exclude traceInformation from the XML round trip test
+    # because traceInformation has been disabled until the Java stack can be
+    # updated to match.
+    #    self.assertEqual(root.getElementsByTagName('traceInformation')[0].childNodes[0].nodeValue, u'trace_test_1')
+    #    self.assertEqual(root.getElementsByTagName('traceInformation')[1].childNodes[0].nodeValue, u'trace_test_2')
+    #    self.assertEqual(root.getElementsByTagName('traceInformation')[2].childNodes[0].nodeValue, u'trace_test_3')
     # Check deserialize XML to exception (includes test of exception factory).
     exc_deser = exception_serialization.DataONEExceptionSerialization(None)
     e_deser = exc_deser.deserialize(xml_str, content_type)
@@ -80,11 +91,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(e_deser.name, 'IdentifierNotUnique')
     self.assertEqual(e_deser.pid, 'test_pid')
     self.assertEqual(e_deser.description, 'description_test')
-    self.assertEqual(
-      e_deser.traceInformation, [
-        "trace_test_1", "trace_test_2", "trace_test_3"
-      ]
-    )
+#    self.assertEqual(e_deser.traceInformation, ["trace_test_1", "trace_test_2", "trace_test_3"])
 
   def test_json_round_trip(self):
     '''JSON round trip.
@@ -124,7 +131,6 @@ class TestExceptions(unittest.TestCase):
         "trace_test_1", "trace_test_2", "trace_test_3"
       ]
     )
-
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.DEBUG)

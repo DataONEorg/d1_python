@@ -30,10 +30,7 @@ import StringIO
 import csv
 import logging
 import sys
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 # App.
 try:

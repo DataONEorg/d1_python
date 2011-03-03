@@ -25,8 +25,6 @@ setup(
   install_requires=[
     # iso860
     'iso8601 >= 0.1',
-    # Lxml
-    'lxml >= 2.1.5',
     # PyXB
     'pyxb >= 1.1.2',
   ],

@@ -28,10 +28,7 @@ Implements serializaton and de-serialization for the ObjectLocationList type.
 # Stdlib.
 import logging
 import sys
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 # App.
 try:
