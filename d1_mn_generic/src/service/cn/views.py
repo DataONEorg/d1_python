@@ -82,13 +82,13 @@ class ObjectLocationList(d1_common.types.objectlocationlist_serialization.Object
 
     objectLocation = d1_common.types.generated.dataoneTypes.ObjectLocation()
 
-    objectLocation.nodepid = cfg('pid')
+    objectLocation.nodeIdentifier = cfg('identifier')
     objectLocation.baseURL = cfg('base_url')
     objectLocation.url = '{0}/object/{1}'.format(cfg('base_url'), obj.pid)
 
     self.object_location_list.objectLocation.append(objectLocation)
   
-    self.object_location_list.pid = obj.pid
+    self.object_location_list.identifier = obj.pid
     
 class NodeList(d1_common.types.nodelist_serialization.NodeList):
   def deserialize_db(self):

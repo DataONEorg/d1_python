@@ -58,13 +58,13 @@ try:
   import d1_common.mime_multipart
   import d1_common.types.exceptions
   import d1_common.types.objectlist_serialization
+  import d1_common.util
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
   raise
 try:
   import d1_client
-  import d1_client.xmlvalidator
   import d1_client.client
   import d1_client.systemmetadata
 except ImportError, e:
@@ -73,12 +73,7 @@ except ImportError, e:
   raise
 
 # 3rd party.
-try:
-  from lxml import etree, objectify
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
-  raise
+
 try:
   import iso8601
 except ImportError, e:
@@ -649,13 +644,8 @@ class TestSequenceFunctions(unittest.TestCase):
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     
-    try:
-      #d1_client.xmlvalidator.validate(xml_doc, 'http://127.0.0.1/objectlist.xsd')
-      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
-    except:
-      self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
-      raise
-    
+    d1_common.util.validate_xml(xml_doc)
+
   def mn_pxby_objectlist_xml(self):
     '''MN: ObjectList deserialization, XML
     '''
@@ -724,11 +714,8 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.mn_url)
     response = client.client.GET(client.getMonitorUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
-    try:
-      d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
-    except:
-      self.assertTrue(False, 'd1_client.xmlvalidator.validate() failed')
-      raise
+
+    d1_common.util.validate_xml(xml_doc)
   
   def mn_pxby_monitor_xml(self):
     '''MN: MonitorList deserialization, XML

@@ -42,13 +42,9 @@ import time
 import traceback
 import uuid
 import inspect
+import json
 
-try:
-  import cjson as json
-except:
-  import json
-
-  # Django.
+# Django.
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand

@@ -21,7 +21,9 @@
 
 from django.http import HttpResponse
 import hotshot, hotshot.stats
-import sys, StringIO, os
+import sys
+import StringIO
+import os
 import settings
 
 

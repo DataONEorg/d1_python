@@ -40,11 +40,7 @@ import types
 import urllib
 import wsgiref.handlers
 import time
-
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 # 3rd party.
 # Lxml

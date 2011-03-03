@@ -12,11 +12,7 @@
 """
 
 # Stdlib.
-try:
-  import cjson as json
-except:
-  import json
-  
+import json
 import StringIO
 
 # Django.

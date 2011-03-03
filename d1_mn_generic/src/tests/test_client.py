@@ -51,10 +51,6 @@ import urllib
 import urlparse
 import uuid
 from xml.sax.saxutils import escape
-try:
-  from xml.etree import cElementTree as ETree
-except:
-  from xml.etree import ElementTree as Etree
 
 # If this was checked out as part of the GMN service, the libraries can be found here.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../mn_prototype/')))
@@ -65,28 +61,19 @@ try:
   import d1_common.types.exceptions
   import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
+  import d1_common.util
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
   raise
 try:
   import d1_client
-  import d1_client.xmlvalidator
   import d1_client.client
   import d1_client.systemmetadata
+  import d1_common.xml_compare
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n')
-  raise
-
-# 3rd party.
-# Lxml
-try:
-  import lxml
-  import lxml.objectify
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
 # Constants.
@@ -148,28 +135,6 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertIn('Last-Modified', response)
     self.assertIn('Content-Length', response)
     self.assertIn('Content-Type', response)
-
-  def assert_xml_equals(self, xml_a, xml_b):  
-    obj_a = lxml.objectify.fromstring(xml_a)
-    str_a = lxml.etree.tostring(obj_a)
-    obj_b = lxml.objectify.fromstring(xml_b)
-    str_b = lxml.etree.tostring(obj_b)
-
-    str_a_orig = str_a
-    str_b_orig = str_b
-
-    msg = 'Strings are equal to the point where one is longer than the other: "{0}" != "{1}"'.format(str_a_orig, str_b_orig)
-    if str_a != str_b:
-      if len(str_a) > len(str_b):
-        str_a, str_b = str_b, str_a
-      i = 0
-      for c in str_a:
-        if c != str_b[i]:
-          msg = 'Difference at offset {0} ({1} != {2}): "{3}" != "{4}"'.format(i, c, str_b[i], str_a_orig, str_b_orig)
-          break
-        i += 1
-    
-    self.assertEquals(str_a_orig, str_b_orig, msg)
 
   def find_valid_pid(self, client):
     '''Find the PID of an object that exists on the server.
@@ -500,7 +465,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
-    d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
+    d1_common.util.validate_xml(xml_doc)
 
   def pxby_objectlist_xml(self):
     '''Serialization: ObjectList -> XML.
@@ -513,8 +478,7 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list_2 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_2.deserialize(doc, 'text/xml')
     xml_doc_out, content_type = object_list_2.serialize('text/xml')
-    
-    self.assert_xml_equals(xml_doc, xml_doc_out)
+    d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
   
   def pxby_objectlist_json(self):
     '''Serialization: ObjectList -> JSON.
@@ -528,15 +492,15 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list_2.deserialize(doc, d1_common.const.MIMETYPE_JSON)
     xml_doc_out, content_type = object_list_2.serialize('text/xml')
     
-    self.assert_xml_equals(xml_doc, xml_doc_out)
+    d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
   
-  def pxby_objectlist_rdf_xml(self):
-    '''Serialization: ObjectList -> RDF XML.
-    '''
-    xml_doc = open('test.xml').read()
-    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = object_list_1.serialize('application/rdf+xml')
+#  def pxby_objectlist_rdf_xml(self):
+#    '''Serialization: ObjectList -> RDF XML.
+#    '''
+#    xml_doc = open('test.xml').read()
+#    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
+#    object_list_1.deserialize(xml_doc, 'text/xml')
+#    doc, content_type = object_list_1.serialize('application/rdf+xml')
     
   def pxby_objectlist_csv(self):
     '''Serialization: ObjectList -> CSV.
@@ -552,7 +516,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     # This assert currently does not pass because there is a slight difference
     # in the ISO1601 rendering of the timestamp.
-    #self.assert_xml_equals(xml_doc, xml_doc_out)
+    #d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
   
   def monitor_xml_validation(self):
     '''Returned XML document validates against the schema.
@@ -560,7 +524,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
     response = client.client.GET(client.getMonitorObjectUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
-    d1_client.xmlvalidator.validate(xml_doc, d1_common.const.SCHEMA_URL)
+    d1_common.util.validate_xml(xml_doc)
 
   def pxby_monitor_xml(self):
     xml_doc = open('test.xml').read()
@@ -572,7 +536,7 @@ class TestSequenceFunctions(unittest.TestCase):
     object_list_2.deserialize(doc, 'text/xml')
     xml_doc_out, content_type = object_list_2.serialize('text/xml')
     
-    self.assert_xml_equals(xml_doc, xml_doc_out)
+    d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
     
   def orderby_size(self):
     '''ObjectList orderby: size.

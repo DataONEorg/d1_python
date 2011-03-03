@@ -293,8 +293,8 @@ def object_pid(request, pid):
   if request.method == 'POST':
     return object_pid_post(request, pid)
 
-  if request.method == 'PUT':
-    return object_pid_put(request, pid)
+#  if request.method == 'PUT':
+#    return object_pid_put(request, pid)
 
   if request.method == 'DELETE':
     return object_pid_delete(request, pid)
@@ -1129,7 +1129,12 @@ def test_exception(request, exc):
     return HttpResponseNotAllowed(['GET'])
 
   #raise d1_common.types.exceptions.InvalidRequest(0, 'Test exception')
-  raise d1_common.types.exceptions.NotFound(0, 'Test exception', '123')
+  #raise d1_common.types.exceptions.NotFound(0, 'Test exception', '123')
+
+  # Return the pid.
+  pid_ser = d1_common.types.pid_serialization.Identifier('testpid')
+  doc, content_type = pid_ser.serialize('text/xml')
+  return HttpResponse(doc, content_type)
 
 def test_get_request(request):
   '''

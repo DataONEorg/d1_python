@@ -39,11 +39,7 @@ import os
 import sys
 import re
 import ConfigParser
-
-try:
-  from cStringIO import StringIO
-except:
-  from StringIO import StringIO
+import StringIO
 
 import config_util
 import svn_update

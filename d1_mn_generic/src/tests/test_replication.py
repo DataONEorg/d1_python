@@ -27,6 +27,7 @@ try:
   import d1_common.types.exceptions
   import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
+  import d1_common.util
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
@@ -35,7 +36,6 @@ except ImportError, e:
   raise
 try:
   import d1_client
-  import d1_client.xmlvalidator
   import d1_client.client
   import d1_client.systemmetadata
 except ImportError, e:
@@ -43,16 +43,6 @@ except ImportError, e:
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
-  raise
-
-# 3rd party.
-# Lxml
-try:
-  import lxml
-  import lxml.objectify
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
 

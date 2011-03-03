@@ -37,11 +37,7 @@ import sys
 import types
 import urllib
 import inspect
-
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 # 3rd party.
 # Lxml
