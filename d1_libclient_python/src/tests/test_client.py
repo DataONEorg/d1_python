@@ -16,17 +16,14 @@ import urlparse
 import urllib2
 import socket #for error codes
 from xml.dom.minidom import parseString
-import lxml
-try:
-  import cjson as json
-except:
-  import json
+import json
 
 from d1_common import xmlrunner
 from d1_common import exceptions
 from d1_common.types import systemmetadata
 from d1_common import const
 from d1_client import client
+import d1_common.util
 
 MEMBER_NODES = {
   'dryad': 'http://dev-dryad-mn.dataone.org/mn',
@@ -273,8 +270,7 @@ class TestListObjects(unittest.TestCase):
     response = cli.listObjects(start=0, count=5)
     logging.error("====")
     logging.error(response)
-    #not needed any more since the pxyb parser will validate
-    #xmlvalidator.validate(response, objectListUrl)
+    # PyXB parser validates the object.
 
 
 if __name__ == "__main__":
