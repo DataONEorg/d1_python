@@ -4,7 +4,7 @@ import urlparse
 
 class TestCaseWithURLCompare(unittest.TestCase):
   '''Utility class that check whether two URLs are equal.  Not really as simple
-  as it migh seem at first.
+  as it might seem at first.
   '''
 
   def assertUrlEqual(self, a, b):

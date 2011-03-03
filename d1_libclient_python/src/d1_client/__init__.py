@@ -25,8 +25,11 @@ __version__ = "0.5"
 
 __all__ = [
   'client',
+  'cnclient',
+  'd1client',
   'logrecorditerator',
+  'mnclient',
   'objectlistiterator',
+  'restclient',
   'systemmetadata',
-  'xmlvalidator',
 ]

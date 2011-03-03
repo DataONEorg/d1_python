@@ -30,9 +30,7 @@ Module d1_client.d1sysmeta
   - dateutil useful python library for parsing dates, available from
     http://labix.org/python-dateutil or easy_install python-dateutil
 
-  - lxml, (optional) a python binding for libxml2 and libxslt available from 
-    http://codespeak.net/lxml/  required for validation against schemas and for 
-    pretty printing
+  - minixsv, required for validation against schemas.
 
 This module implements a wrapper that makes it a bit simpler to pull values from
 an instance of SystemMetadata.
@@ -52,6 +50,7 @@ Example:
 # StdLib.
 import logging
 import sys
+import xml.etree.ElementTree
 
 # 3rd party.
 
@@ -63,13 +62,9 @@ except ImportError, e:
   sys.stderr.write('Home: http://labix.org/python-dateutil\n')
   raise
 
-try:
-  import xml.etree.cElementTree as ET
-except:
-  import xml.etree.ElementTree as ET
-
-  # Local.
+# Local.
 import d1_common.const
+import d1_common.util
 
 
 class SystemMetadata(object):
@@ -84,23 +79,11 @@ class SystemMetadata(object):
     self.xmldoc = xmldoc
     self._parse(xmldoc)
 
-  def isValid(self, schemaUrl=d1_common.const.SCHEMA_URL):
-    '''This is kind of expensive as we're trying to minimize external 
-    dependencies (ie. lxml and libxml2). Here we import lxml.etree, parse the 
-    schema, reparse the document then check that the document is valid according 
-    to the schema.
-    
-    :param schemaDoc: unicode or open file containing the XML Schema
-    :type schemaDoc: unicode or file
-    :rtype: (bool) True if all good, otherwise an exception is raised.
+  def isValid(self):
+    '''Validate the document.
+    :rtype: None if all good, otherwise an exception is raised.
     '''
-    try:
-      from d1_client import xmlvalidator
-    except:
-      logging.warn('Could not import lxml. Validation not available.')
-      return False
-    xmlvalidator.validate(self.xmldoc, schemaUrl)
-    return True
+    d1_common.util.validate_xml(self.xmldoc)
 
   def _parse(self, xmldoc):
     '''Parse the content and generate the internal "etree" which is the 
@@ -111,7 +94,7 @@ class SystemMetadata(object):
     if not isinstance(xmldoc, basestring):
       xmldoc = xmldoc.read()
     self.xmldoc = xmldoc
-    self.etree = ET.fromstring(xmldoc)
+    self.etree = xml.etree.ElementTree.fromstring(xmldoc)
 
   def __repr__(self):
     return self.xmldoc
@@ -119,22 +102,13 @@ class SystemMetadata(object):
   def toXml(self, encoding='utf-8', pretty=True):
     '''Spits out representation of the parsed xml.
     
-    :param pretty: Output is a bit easier for human digestion if True (requires
-        lxml.etree to be installed)
+    :param pretty: Output is a bit easier for human digestion if True
     :rtype: (string) UTF-8 encoded string
     '''
+    xml_doc = xml.etree.ElementTree.tostring(self.etree, encoding)
     if pretty:
-      try:
-        from lxml import etree as lxmletree
-        lxmldoc = lxmletree.fromstring(self.xmldoc)
-        return lxmletree.tostring(
-          lxmldoc, encoding=encoding,
-          pretty_print=True,
-          xml_declaration=False
-        )
-      except:
-        pass
-    return ET.tostring(self.etree, encoding)
+      return d1_common.util.pretty_xml(xml_doc)
+    return xml_doc
 
   def _getValues(self, nodeName, root=None, multiple=False):
     nodes = []
