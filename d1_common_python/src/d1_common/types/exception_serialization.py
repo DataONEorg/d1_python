@@ -1,16 +1,15 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jan 28, 2011
 
 @author: roger
 '''
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2010, 2011
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,20 +26,20 @@ Created on Jan 28, 2011
 Module d1_common.types.exception_serialization
 ==============================================
 
-Implements serializaton and de-serialization for the DataONE Exception type.
+Implements serialization and deserialization for the DataONE Exception type.
 '''
 
 # Stdlib.
 import logging
 import urllib
 import json
-import xml.etree.ElementTree
-import xml.dom.minidom
+from xml.etree import ElementTree
+from xml.dom import minidom
 
 # App.
 import d1_common.const
-import serialization_base
 import d1_common.types.exceptions
+import serialization_base
 
 
 def instanceToSimpleType(instance):
@@ -82,32 +81,32 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
 
     :rtype: UTF-8 encoded XML string
     '''
-    root = xml.etree.ElementTree.Element(
-      u'error', {
-        u'name': self.dataone_exception.name,
-        u'errorCode': str(self.dataone_exception.errorCode),
-        u'detailCode': str(self.dataone_exception.detailCode)
-      }
-    )
+    attrs = {
+      u'name': self.dataone_exception.name,
+      u'errorCode': str(self.dataone_exception.errorCode),
+      u'detailCode': str(self.dataone_exception.detailCode)
+    }
     try:
-      xml.etree.ElementTree.SubElement(root, u'pid').text = self.dataone_exception.pid
+      attrs[u'pid'] = self.dataone_exception.pid
     except AttributeError:
       pass
-    xml.etree.ElementTree.SubElement(
-      root, u'description'
-    ).text = self.dataone_exception.description
+    root = ElementTree.Element(u'error', attrs)
+    ElementTree.SubElement(root, u'description').text = \
+       self.dataone_exception.description
     #    for v in self.dataone_exception.traceInformation:
-    #      xml.etree.ElementTree.SubElement(root, u'traceInformation').text = unicode(v)
+    #      ElementTree.SubElement(root, u'traceInformation').text = unicode(v)
     # TODO: For the Feb 2011 NSF demo, we keep traceInformation blank as
     # the serialization format of traceInformation is different between
     # Python and Java stacks. We only do this for XML because that is
     # the only serialization format used in the Java stack.
-    xml.etree.ElementTree.SubElement(root, u'traceInformation').text = ''
+    if self.dataone_exception.traceInformation is not None:
+      ElementTree.SubElement(root, u'traceInformation').text = \
+        self.dataone_exception.traceInformation
 
-    doc = xml.etree.ElementTree.tostring(root, 'utf-8')
+    doc = ElementTree.tostring(root, 'utf-8')
 
     if pretty:
-      xml_obj = xml.dom.minidom.parseString(doc)
+      xml_obj = minidom.parseString(doc)
       doc = xml_obj.toprettyxml(encoding='utf-8')
 
     return doc
@@ -118,19 +117,18 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     :rtype: UTF-8 encoded JSON string
     '''
     json_obj = {
-     u'name': self.dataone_exception.name,
-     u'errorCode': self.dataone_exception.errorCode,
-     u'detailCode': str(self.dataone_exception.detailCode),
-     u'description': self.dataone_exception.description,
-     u'traceInformation': [
-       instanceToSimpleType(v)
-       for v in self.dataone_exception.traceInformation
-     ],
+      u'name': self.dataone_exception.name,
+      u'errorCode': self.dataone_exception.errorCode,
+      u'detailCode': str(self.dataone_exception.detailCode),
+      u'description': self.dataone_exception.description,
     }
     try:
       json_obj['pid'] = self.dataone_exception.pid
     except AttributeError:
       pass
+    if self.dataone_exception.traceInformation is not None:
+      json_obj[u'traceInformation'] = \
+        instanceToSimpleType(self.dataone_exception.traceInformation)
 
     if not jsonvar:
       return json.dumps(json_obj)
@@ -142,48 +140,45 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     
     :rtype: UTF-8 encoded HTML string
     '''
-    root = xml.etree.ElementTree.Element(u'html')
-    head = xml.etree.ElementTree.SubElement(
+    root = ElementTree.Element(u'html')
+    head = ElementTree.SubElement(
       root, u'meta', {
         u'http-equiv': u'content-type',
         u'content': u'text/html;charset=utf-8'
       }
     )
-    title = xml.etree.ElementTree.SubElement(head, u'title')
-
+    title = ElementTree.SubElement(head, u'title')
     title.text = u'Error: {0} {1} ({2})'.format(
       urllib.quote(unicode(self.dataone_exception.errorCode)),
       self.dataone_exception.name, urllib.quote(str(self.dataone_exception.detailCode))
     )
 
-    body = xml.etree.ElementTree.SubElement(root, u'body')
-    dl = xml.etree.ElementTree.SubElement(body, u'dl')
+    body = ElementTree.SubElement(root, u'body')
+    dl = ElementTree.SubElement(body, u'dl')
 
-    xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Code'
-    xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'errorCode'}).text = str(
-      self.dataone_exception.errorCode
-    )
+    ElementTree.SubElement(dl, u'dt').text = u'Code'
+    ElementTree.SubElement(dl, u'dd', {u'class': u'errorCode'}).text = \
+      str(self.dataone_exception.errorCode)
 
-    xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Detail Code'
-    xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'detailCode'}).text = str(
-      self.dataone_exception.detailCode
-    )
+    ElementTree.SubElement(dl, u'dt').text = u'Detail Code'
+    ElementTree.SubElement(dl, u'dd', {u'class': u'detailCode'}).text = \
+      str(self.dataone_exception.detailCode)
 
-    xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Description'
-    xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'description'}).text = self.dataone_exception.description
+    ElementTree.SubElement(dl, u'dt').text = u'Description'
+    ElementTree.SubElement(dl, u'dd', {u'class': u'description'}).text = \
+      self.dataone_exception.description
+    try:
+      pid = self.dataone_exception.pid
+      ElementTree.SubElement(dl, u'dt').text = u'PID'
+      ElementTree.SubElement(dl, u'dd', {u'class': u'pid'}).text = pid
+    except AttributeError:
+      pass
 
-    if len(self.dataone_exception.traceInformation) > 0:
-      xml.etree.ElementTree.SubElement(dl, u'dt').text = u'Trace'
-      for v in self.dataone_exception.traceInformation:
-        xml.etree.ElementTree.SubElement(dl, u'dd', {u'class': u'traceInformation'}
-                                         ).text = str(
-                                           v
-                                         )
+    if self.dataone_exception.traceInformation is not None:
+      ElementTree.SubElement(body, u'pre',{u'class': 'traceInformation'}).text =\
+        self.dataone_exception.traceInformation
 
-    doc = xml.etree.ElementTree.tostring(root, 'utf-8')
-
-    # TODO: Add pretty printing for html.
-
+    doc = ElementTree.tostring(root, 'utf-8')
     return doc
 
   def serialize_text(self, pretty=False, jsonvar=False):
@@ -191,7 +186,7 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
 
     :rtype: string
     '''
-    return str(self.dataone_exception)
+    return unicode(self.dataone_exception)
 
   #== Deserialization =========================================================
 
@@ -209,8 +204,8 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
 
     Returns an instance of some subclass of DataONEException.
     
-    :param exception_name: The class name of the exception to create. Raises a LookupError based
-                           exception if the name is invalid.
+    :param exception_name: The class name of the exception to create. Raises a 
+                           LookupError based exception if the name is invalid.
     :type data: str
     
     :param detailCode:
@@ -270,15 +265,24 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     
     :rtype: A DataONEException based object.
     '''
-    etree = xml.etree.ElementTree.fromstring(doc)
-
+    etree = ElementTree.fromstring(doc)
+    pid = None
+    traceInformation = None
+    try:
+      pid = etree.attrib[u'pid'].strip()
+    except:
+      pass
+    try:
+      traceInformation = etree.findtext(u'traceInformation').strip()
+    except:
+      pass
     return self.dataone_exception_factory(
-      etree.attrib[u'name'], etree.attrib[u'detailCode'].strip(),
-      etree.findtext(u'description', '').strip(), etree.findtext(u'pid'), [
-        self.get_element_text(el) for el in etree.findall(
-          u'traceInformation'
-        )
-      ]
+      etree.attrib[u'name'],
+      etree.attrib[u'detailCode'].strip(),
+      etree.findtext(u'description', '').strip(
+      ),
+      pid=pid,
+      traceInformation=traceInformation
     )
 
   def deserialize_json(self, doc):
@@ -293,5 +297,5 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
 
     return self.dataone_exception_factory(
       exjson[u'name'], exjson[u'detailCode'], exjson[u'description'],
-      exjson.get(u'pid', None), exjson[u'traceInformation']
+      exjson.get(u'pid', None), exjson.get(u'traceInformation', None)
     )

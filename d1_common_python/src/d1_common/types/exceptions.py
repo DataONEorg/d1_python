@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2010, 2011
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +37,11 @@ class DataONEException(Exception):
     self.errorCode = errorCode
     self.detailCode = detailCode
     self.description = description
-    self.traceInformation = traceInformation or []
+    if isinstance(traceInformation, list) or \
+       isinstance(traceInformation, tuple):
+      self.traceInformation = u"\n".join(traceInformation)
+    else:
+      self.traceInformation = traceInformation
 
   def __str__(self):
     res = []
@@ -50,8 +53,8 @@ class DataONEException(Exception):
       res.append(u'PID: {0}'.format(self.pid))
     except AttributeError:
       pass
-    for trace in self.traceInformation:
-      res.append(u'traceInformation: {0}'.format(trace))
+    if self.traceInformation is not None:
+      res.append(u'traceInformation: {0}'.format(self.traceInformation))
     return u'\n'.join(res)
 
 # Keeping this around in case we need this particular layout.

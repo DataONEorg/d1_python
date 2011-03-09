@@ -6,7 +6,7 @@ and returns that value or the statically set value on failure.
 import os
 import logging
 
-_default_revision = "3355" ##TAG
+_default_revision = "3492" ##TAG
 
 
 def getSvnRevision(update_static=False):
@@ -24,18 +24,20 @@ def getSvnRevision(update_static=False):
       #Try to update the static revision number - requires file write permission
       try:
         import codecs
-        logger.error("FILE=%s" % os.path.abspath(__file__))
-        tf = codecs.open(os.path.abspath(__file__), 'r', 'utf-8')
-        content = tf.read()
-        tf.close()
-        content = content.replace(u'_default_revision="%s" ##TAG' % \
-                                    _default_revision,
-                                  u'_default_revision="%s" ##TAG' % rev, 1 )
-        logger.info("Setting revision in %s to %s" % \
-                       (os.path.abspath(__file__), rev) )
-        tf = codecs.open(os.path.abspath(__file__), 'w', 'utf-8')
-        tf.write(content)
-        tf.close()
+        fname = os.path.abspath(__file__)
+        if fname.endswith('.py'):
+          logger.error("FILE=%s" % fname)
+          tf = codecs.open(fname, 'r', 'utf-8')
+          content = tf.read()
+          tf.close()
+          content = content.replace(u'_default_revision="%s" ##TAG' % \
+                                      _default_revision,
+                                    u'_default_revision="%s" ##TAG' % rev, 1 )
+          logger.info("Setting revision in %s to %s" % \
+                         (fname, rev) )
+          tf = codecs.open(fname, 'w', 'utf-8')
+          tf.write(content)
+          tf.close()
       except Exception, e:
         logger.exception(e)
   except:
