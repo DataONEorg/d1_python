@@ -34,13 +34,15 @@ import sys
 import logging
 import unittest
 import codecs
+import os
 from d1_common import xmlrunner
 import d1_common.util
 
 
 class TestUtils(unittest.TestCase):
   def testEncodePathElement(self):
-    ftest = 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt'
+    fpath = os.path.abspath(os.path.dirname(__file__))
+    ftest = os.path.join(fpath, 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt')
     testfile = codecs.open(ftest, encoding='utf-8', mode='r')
     testrows = testfile.readlines()
     for row in testrows:
@@ -52,7 +54,8 @@ class TestUtils(unittest.TestCase):
           self.assertEqual(e, d1_common.util.encodePathElement(v))
 
   def testEncodeQueryElement(self):
-    ftest = 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt'
+    fpath = os.path.abspath(os.path.dirname(__file__))
+    ftest = os.path.join(fpath, 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt')
     testfile = codecs.open(ftest, encoding='utf-8', mode='r')
     testrows = testfile.readlines()
     for row in testrows:
