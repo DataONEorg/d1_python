@@ -30,8 +30,11 @@ Unit tests for various utilities.
   :members:
 '''
 
+import sys
+import logging
 import unittest
 import codecs
+from d1_common import xmlrunner
 import d1_common.util
 
 
@@ -68,6 +71,14 @@ class TestUtils(unittest.TestCase):
     test = d1_common.util.urlencode(data)
     self.assertEqual(test, expected)
 
-
+#===============================================================================
 if __name__ == "__main__":
-  unittest.main()
+  argv = sys.argv
+  if "--debug" in argv:
+    logging.basicConfig(level=logging.DEBUG)
+    argv.remove("--debug")
+  if "--with-xunit" in argv:
+    argv.remove("--with-xunit")
+    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  else:
+    unittest.main(argv=argv)
