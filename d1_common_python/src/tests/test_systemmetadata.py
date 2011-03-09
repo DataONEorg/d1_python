@@ -178,7 +178,14 @@ class TestSystemMetadata(unittest.TestCase):
     pyxb.RequireValidWhenParsing(True)
     sysm = systemmetadata.CreateFromDocument(EG_SYSMETA)
 
-
-if __name__ == '__main__':
-  logging.basicConfig(level=logging.INFO)
-  unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+#===============================================================================
+if __name__ == "__main__":
+  argv = sys.argv
+  if "--debug" in argv:
+    logging.basicConfig(level=logging.DEBUG)
+    argv.remove("--debug")
+  if "--with-xunit" in argv:
+    argv.remove("--with-xunit")
+    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  else:
+    unittest.main(argv=argv)

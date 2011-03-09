@@ -19,7 +19,7 @@
 # limitations under the License.
 '''
 Module d1_common.types.exceptions
-===========================
+=================================
 
 :Created: 20100111
 

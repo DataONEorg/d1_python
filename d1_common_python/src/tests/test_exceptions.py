@@ -40,8 +40,7 @@ from d1_common.types import exceptions
 from d1_common.types import exception_serialization
 from d1_common import const
 
-import d1_common.xmlrunner as xmlrunner
-from d1_common import svnrevision
+from d1_common import xmlrunner
 
 #===============================================================================
 
@@ -130,7 +129,14 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(e_deser.detailCode, '1010')
     self.assertEqual(e_deser.traceInformation, "trace_test_1\ntrace_test_2\ntrace_test_3")
 
+#===============================================================================
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.DEBUG)
-  svnrevision.getSvnRevision(update_static=True)
-  unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  argv = sys.argv
+  if "--debug" in argv:
+    logging.basicConfig(level=logging.DEBUG)
+    argv.remove("--debug")
+  if "--with-xunit" in argv:
+    argv.remove("--with-xunit")
+    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  else:
+    unittest.main(argv=argv)

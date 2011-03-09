@@ -1,0 +1,1913 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python - DataONE Common API &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="index.html" />
+    <link rel="prev" title="PyXB Generated Code" href="pyxb.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyxb.html" title="PyXB Generated Code"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE v0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-d1_common.types.exceptions">
+<span id="python-dataone-common-api"></span><h1>Python - DataONE Common API<a class="headerlink" href="#module-d1_common.types.exceptions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-d1-common-types-exceptions">
+<h2>Module d1_common.types.exceptions<a class="headerlink" href="#module-d1-common-types-exceptions" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Created:</th><td class="field-body">20100111</td>
+</tr>
+<tr class="field"><th class="field-name">Authors:</th><td class="field-body">vieglais, dahl</td>
+</tr>
+</tbody>
+</table>
+<p>Implements the DataONE exceptions, shared between client and member node.</p>
+<dl class="exception">
+<dt id="d1_common.types.exceptions.AuthenticationTimeout">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">AuthenticationTimeout</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.AuthenticationTimeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.DataONEException">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">DataONEException</tt><big>(</big><em>errorCode</em>, <em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.DataONEException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for exceptions raised by DataONE.</p>
+<dl class="attribute">
+<dt id="d1_common.types.exceptions.DataONEException.name">
+<tt class="descname">name</tt><a class="headerlink" href="#d1_common.types.exceptions.DataONEException.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.DataONEIdentifierException">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">DataONEIdentifierException</tt><big>(</big><em>errorCode</em>, <em>detailCode</em>, <em>description</em>, <em>pid</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.DataONEIdentifierException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for exceptions that include a PID in the constructor.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.IdentifierNotUnique">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">IdentifierNotUnique</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>pid</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.IdentifierNotUnique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements IdentifierNotUnique exception</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.InsufficientResources">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">InsufficientResources</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.InsufficientResources" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.InvalidCredentials">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">InvalidCredentials</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.InvalidCredentials" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.InvalidRequest">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">InvalidRequest</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.InvalidRequest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.InvalidSystemMetadata">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">InvalidSystemMetadata</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.InvalidSystemMetadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.InvalidToken">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">InvalidToken</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.InvalidToken" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.NotAuthorized">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">NotAuthorized</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.NotAuthorized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.NotFound">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">NotFound</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>pid</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.NotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements NotFound exception</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.NotImplemented">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">NotImplemented</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.NotImplemented" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.ServiceFailure">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">ServiceFailure</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.ServiceFailure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.UnsupportedMetadataType">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">UnsupportedMetadataType</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.UnsupportedMetadataType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="d1_common.types.exceptions.UnsupportedType">
+<em class="property">exception </em><tt class="descclassname">d1_common.types.exceptions.</tt><tt class="descname">UnsupportedType</tt><big>(</big><em>detailCode</em>, <em>description</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#d1_common.types.exceptions.UnsupportedType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.monitorlist_serialization"></span><div class="section" id="module-d1-common-types-monitorlist-serialization">
+<h2>Module d1_common.types.monitorlist_serialization<a class="headerlink" href="#module-d1-common-types-monitorlist-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Implements serializaton and de-serialization for the MonitorList type.</p>
+<dl class="class">
+<dt id="d1_common.types.monitorlist_serialization.MonitorList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.monitorlist_serialization.</tt><tt class="descname">MonitorList</tt><a class="headerlink" href="#d1_common.types.monitorlist_serialization.MonitorList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="d1_common.types.monitorlist_serialization.MonitorList.deserialize_xml">
+<tt class="descname">deserialize_xml</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.monitorlist_serialization.MonitorList.deserialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize MonitorList from XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.monitorlist_serialization.MonitorList.serialize_xml">
+<tt class="descname">serialize_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.monitorlist_serialization.MonitorList.serialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize MonitorList to XML.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.systemmetadata"></span><div class="section" id="module-d1-common-types-systemmetadata">
+<h2>Module d1_common.types.systemmetadata<a class="headerlink" href="#module-d1-common-types-systemmetadata" title="Permalink to this headline">¶</a></h2>
+<p>Extends the PyXB generated class to enable serialization to and from CSV and 
+JSON.</p>
+<p>Note that the approach for handling serializers here is quite different from
+the other types wrapped here.  In this case, the additional serialization 
+methods are added dynamically to the class instantiated by the generated code.  
+Hence the created object behaves exactly the same as the pyxb generated object, 
+except with the additional serialization methods.</p>
+<p>Example de-serialization:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">doc</span> <span class="o">=</span> <span class="n">getSystemMetdataDocument</span><span class="p">()</span>
+<span class="n">sysm</span> <span class="o">=</span> <span class="n">CreateFromDocument</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">sysm</span><span class="o">.</span><span class="n">identifier</span>
+</pre></div>
+</div>
+<p>Example serialization:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sysm</span> <span class="o">=</span> <span class="n">systemMetadata</span><span class="p">()</span>
+<span class="c">#set sysm properties</span>
+<span class="c"># ...</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">sysm</span><span class="o">.</span><span class="n">toxml</span><span class="p">()</span> 
+</pre></div>
+</div>
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.CreateFromDocument">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">CreateFromDocument</tt><big>(</big><em>data</em>, <em>format='text/xml'</em><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.CreateFromDocument" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an instance of SystemMetadata with elements and attributes set from
+the values in the provided document.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>string</em>) &#8211; The document to be deserialized</li>
+<li><strong>format</strong> (<em>string</em>) &#8211; The mime-type of the data.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The deserialized document as a SystemMetadata object</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">SystemMetadata</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.fromCSV">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">fromCSV</tt><big>(</big><em>self</em>, <em>data</em>, <em>dialect='excel'</em><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.fromCSV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.fromJSON">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">fromJSON</tt><big>(</big><em>self</em>, <em>data</em><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.fromJSON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.systemMetadata">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">systemMetadata</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.systemMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new, blank instance of SystemMetadata that can be modified and 
+subsequently serialized to one of the supported formats.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">Instance of SystemMetadata, blank</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">SystemMetadata</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.toCSV">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">toCSV</tt><big>(</big><em>self</em>, <em>dialect='excel'</em><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.toCSV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.toJSON">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">toJSON</tt><big>(</big><em>self</em><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.toJSON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.systemmetadata.toText">
+<tt class="descclassname">d1_common.types.systemmetadata.</tt><tt class="descname">toText</tt><big>(</big><em>self</em><big>)</big><a class="headerlink" href="#d1_common.types.systemmetadata.toText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a human readable rending of the content.  Returns a string.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.logrecords_serialization"></span><div class="section" id="module-d1-common-types-logrecords-serialization">
+<h2>Module d1_common.types.logrecords_serialization<a class="headerlink" href="#module-d1-common-types-logrecords-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Implements serializaton and de-serialization for the LogRecords type.</p>
+<dl class="class">
+<dt id="d1_common.types.logrecords_serialization.LogRecords">
+<em class="property">class </em><tt class="descclassname">d1_common.types.logrecords_serialization.</tt><tt class="descname">LogRecords</tt><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements serialization of DataONE LogEntry</p>
+<dl class="method">
+<dt id="d1_common.types.logrecords_serialization.LogRecords.deserialize_csv">
+<tt class="descname">deserialize_csv</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords.deserialize_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize LogRecords from CSV.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.logrecords_serialization.LogRecords.deserialize_json">
+<tt class="descname">deserialize_json</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords.deserialize_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize LogRecords from JSON.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.logrecords_serialization.LogRecords.deserialize_xml">
+<tt class="descname">deserialize_xml</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords.deserialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize LogRecords from XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.logrecords_serialization.LogRecords.serialize_csv">
+<tt class="descname">serialize_csv</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords.serialize_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize LogRecords to CSV.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.logrecords_serialization.LogRecords.serialize_json">
+<tt class="descname">serialize_json</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords.serialize_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize LogRecords to JSON.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.logrecords_serialization.LogRecords.serialize_xml">
+<tt class="descname">serialize_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.LogRecords.serialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize LogRecords to XML.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.logrecords_serialization.logEntriesToText">
+<tt class="descclassname">d1_common.types.logrecords_serialization.</tt><tt class="descname">logEntriesToText</tt><big>(</big><em>logEntries</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.logEntriesToText" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.logrecords_serialization.logEntryToText">
+<tt class="descclassname">d1_common.types.logrecords_serialization.</tt><tt class="descname">logEntryToText</tt><big>(</big><em>logEntry</em><big>)</big><a class="headerlink" href="#d1_common.types.logrecords_serialization.logEntryToText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a human readable string representation of a logEntry</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.objectlist_serialization"></span><div class="section" id="module-d1-common-types-objectlist-serialization">
+<h2>Module d1_common.types.objectlist_serialization<a class="headerlink" href="#module-d1-common-types-objectlist-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Implements serializaton and de-serialization for the ObjectList type.</p>
+<dl class="class">
+<dt id="d1_common.types.objectlist_serialization.ObjectList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.objectlist_serialization.</tt><tt class="descname">ObjectList</tt><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.deserialize_csv">
+<tt class="descname">deserialize_csv</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.deserialize_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize ObjectList from CSV.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.deserialize_json">
+<tt class="descname">deserialize_json</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.deserialize_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize ObjectList from JSON.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.deserialize_xml">
+<tt class="descname">deserialize_xml</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.deserialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize ObjectList from XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.serialize_csv">
+<tt class="descname">serialize_csv</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.serialize_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize ObjectList to CSV.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.serialize_json">
+<tt class="descname">serialize_json</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.serialize_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize ObjectList to JSON.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.serialize_rdf_xml">
+<tt class="descname">serialize_rdf_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.serialize_rdf_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize ObjectList to RDF XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlist_serialization.ObjectList.serialize_xml">
+<tt class="descname">serialize_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlist_serialization.ObjectList.serialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize ObjectList to XML.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.nodelist_serialization"></span><div class="section" id="module-d1-common-types-nodelist-serialization">
+<h2>Module d1_common.types.nodelist_serialization<a class="headerlink" href="#module-d1-common-types-nodelist-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Implements serializaton and de-serialization for the NodeList type.</p>
+<dl class="class">
+<dt id="d1_common.types.nodelist_serialization.NodeList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.nodelist_serialization.</tt><tt class="descname">NodeList</tt><a class="headerlink" href="#d1_common.types.nodelist_serialization.NodeList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="d1_common.types.nodelist_serialization.NodeList.deserialize_xml">
+<tt class="descname">deserialize_xml</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.nodelist_serialization.NodeList.deserialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize NodeList from XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.nodelist_serialization.NodeList.serialize_xml">
+<tt class="descname">serialize_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.nodelist_serialization.NodeList.serialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize NodeList to XML.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.objectlocationlist_serialization"></span><div class="section" id="module-d1-common-types-objectlocationlist-serialization">
+<h2>Module d1_common.types.objectlocationlist_serialization<a class="headerlink" href="#module-d1-common-types-objectlocationlist-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Implements serializaton and de-serialization for the ObjectLocationList type.</p>
+<dl class="class">
+<dt id="d1_common.types.objectlocationlist_serialization.ObjectLocationList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.objectlocationlist_serialization.</tt><tt class="descname">ObjectLocationList</tt><a class="headerlink" href="#d1_common.types.objectlocationlist_serialization.ObjectLocationList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="d1_common.types.objectlocationlist_serialization.ObjectLocationList.deserialize_xml">
+<tt class="descname">deserialize_xml</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlocationlist_serialization.ObjectLocationList.deserialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize ObjectLocationList from XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.types.objectlocationlist_serialization.ObjectLocationList.serialize_xml">
+<tt class="descname">serialize_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#d1_common.types.objectlocationlist_serialization.ObjectLocationList.serialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize ObjectLocationList to XML.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.types.generated.dataoneTypes"></span><dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.AccessRule">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">AccessRule</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.AccessRule" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.AccessRule.principal">
+<tt class="descname">principal</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.AccessRule.principal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.AccessRule.rule">
+<tt class="descname">rule</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.AccessRule.rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.AccessRule.service">
+<tt class="descname">service</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.AccessRule.service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.CTD_ANON">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">CTD_ANON</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.CTD_ANON" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.CTD_ANON.logEntry">
+<tt class="descname">logEntry</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.CTD_ANON.logEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Checksum">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Checksum</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Checksum" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Checksum.algorithm">
+<tt class="descname">algorithm</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Checksum.algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ChecksumAlgorithm">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ChecksumAlgorithm</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ChecksumAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Component">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Component</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Component" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Component.name">
+<tt class="descname">name</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Component.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Component.version">
+<tt class="descname">version</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Component.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ComponentList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ComponentList</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ComponentList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ComponentList.component">
+<tt class="descname">component</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ComponentList.component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ComponentName">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ComponentName</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ComponentName" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ComponentVersion">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ComponentVersion</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ComponentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.generated.dataoneTypes.CreateFromDOM">
+<tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">CreateFromDOM</tt><big>(</big><em>node</em>, <em>default_namespace=None</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.CreateFromDOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Python instance from the given DOM node.
+The node tag must correspond to an element declaration in this module.</p>
+<p>&#64;deprecated: Forcing use of DOM interface is unnecessary; use L{CreateFromDocument}.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.types.generated.dataoneTypes.CreateFromDocument">
+<tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">CreateFromDocument</tt><big>(</big><em>xml_text</em>, <em>default_namespace=None</em>, <em>location_base=None</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.CreateFromDocument" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the given XML and use the document element to create a Python instance.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.CrontabEntry">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">CrontabEntry</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.CrontabEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Environment">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Environment</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Event">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Event</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Identifier">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Identifier</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Identifier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.IdentifierFormat">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">IdentifierFormat</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.IdentifierFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">LogEntry</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.dateLogged">
+<tt class="descname">dateLogged</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.dateLogged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.entryId">
+<tt class="descname">entryId</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.entryId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.event">
+<tt class="descname">event</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.identifier">
+<tt class="descname">identifier</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.ipAddress">
+<tt class="descname">ipAddress</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.ipAddress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.memberNode">
+<tt class="descname">memberNode</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.memberNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.principal">
+<tt class="descname">principal</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.principal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.LogEntry.userAgent">
+<tt class="descname">userAgent</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.LogEntry.userAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.MonitorInfo">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">MonitorInfo</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.MonitorInfo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.MonitorInfo.count">
+<tt class="descname">count</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.MonitorInfo.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.MonitorInfo.date">
+<tt class="descname">date</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.MonitorInfo.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.MonitorList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">MonitorList</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.MonitorList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.MonitorList.monitorInfo">
+<tt class="descname">monitorInfo</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.MonitorList.monitorInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Node">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Node</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.baseURL">
+<tt class="descname">baseURL</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.baseURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.description">
+<tt class="descname">description</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of content maintained by this node and any other free style
+notes. May be we should allow CDATA element with the purpose of using for display</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.environment">
+<tt class="descname">environment</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.health">
+<tt class="descname">health</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.health" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the node is being used in Mercury currently to assign a
+path, so format should be consistent with dataone directory naming conventions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.identifier">
+<tt class="descname">identifier</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unique identifier for the node. This may initially be the same as the
+baseURL, however this value should not change for future implementations of the same
+node, whereas the baseURL may change in the future.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.name">
+<tt class="descname">name</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A human readable name of the Node. 
+The name of the node is being used in Mercury currently to assign a path,
+so format should be consistent with dataone directory naming conventions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.replicate">
+<tt class="descname">replicate</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.replicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.services">
+<tt class="descname">services</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.services" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.synchronization">
+<tt class="descname">synchronization</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.synchronization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.synchronize">
+<tt class="descname">synchronize</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.synchronize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Node.type">
+<tt class="descname">type</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Node.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.NodeHealth">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">NodeHealth</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeHealth" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.NodeHealth.ping">
+<tt class="descname">ping</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeHealth.ping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.NodeHealth.state">
+<tt class="descname">state</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeHealth.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.NodeHealth.status">
+<tt class="descname">status</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeHealth.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.NodeList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">NodeList</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.NodeList.node">
+<tt class="descname">node</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeList.node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.NodeReference">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">NodeReference</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.NodeState">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">NodeState</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.NodeType">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">NodeType</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NodeType" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.NonEmptyString">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">NonEmptyString</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.NonEmptyString" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectFormat">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ObjectFormat</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectInfo">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ObjectInfo</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectInfo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectInfo.checksum">
+<tt class="descname">checksum</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectInfo.checksum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectInfo.dateSysMetadataModified">
+<tt class="descname">dateSysMetadataModified</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectInfo.dateSysMetadataModified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectInfo.identifier">
+<tt class="descname">identifier</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectInfo.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectInfo.objectFormat">
+<tt class="descname">objectFormat</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectInfo.objectFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectInfo.size">
+<tt class="descname">size</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectInfo.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ObjectList</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectList.objectInfo">
+<tt class="descname">objectInfo</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectList.objectInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocation">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ObjectLocation</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocation.baseURL">
+<tt class="descname">baseURL</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocation.baseURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current base URL for services implemented on the target node.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocation.nodeIdentifier">
+<tt class="descname">nodeIdentifier</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocation.nodeIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifier of the node (the same identifier used
+in the node registry for identifying the node.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocation.preference">
+<tt class="descname">preference</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocation.preference" title="Permalink to this definition">¶</a></dt>
+<dd><p>A weighting parameter that provides a hint to the caller 
+for the relative preference for nodes from which the content should be retrieved.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocation.url">
+<tt class="descname">url</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocation.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>The full (absolute) URL that can be used to
+retrieve the object using the get() method of the rest interface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocationList">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ObjectLocationList</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocationList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocationList.identifier">
+<tt class="descname">identifier</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocationList.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The identifier of the object being resolved.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ObjectLocationList.objectLocation">
+<tt class="descname">objectLocation</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ObjectLocationList.objectLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of nodes from which the object can be
+retrieved</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Ping">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Ping</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Ping" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Ping.lastSuccess">
+<tt class="descname">lastSuccess</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Ping.lastSuccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Ping.success">
+<tt class="descname">success</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Ping.success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Principal">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Principal</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Principal" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Replica">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Replica</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Replica" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Replica.replicaMemberNode">
+<tt class="descname">replicaMemberNode</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Replica.replicaMemberNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Replica.replicaVerified">
+<tt class="descname">replicaVerified</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Replica.replicaVerified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Replica.replicationStatus">
+<tt class="descname">replicationStatus</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Replica.replicationStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ReplicationPolicy">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ReplicationPolicy</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ReplicationPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ReplicationPolicy.blockedMemberNode">
+<tt class="descname">blockedMemberNode</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ReplicationPolicy.blockedMemberNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ReplicationPolicy.numberReplicas">
+<tt class="descname">numberReplicas</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ReplicationPolicy.numberReplicas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ReplicationPolicy.preferredMemberNode">
+<tt class="descname">preferredMemberNode</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ReplicationPolicy.preferredMemberNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ReplicationPolicy.replicationAllowed">
+<tt class="descname">replicationAllowed</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ReplicationPolicy.replicationAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ReplicationStatus">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ReplicationStatus</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ReplicationStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.STD_ANON">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">STD_ANON</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.STD_ANON" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.STD_ANON_">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">STD_ANON_</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.STD_ANON_" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Schedule</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.hour">
+<tt class="descname">hour</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.hour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.mday">
+<tt class="descname">mday</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.mday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.min">
+<tt class="descname">min</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.mon">
+<tt class="descname">mon</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.mon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.sec">
+<tt class="descname">sec</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.sec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.wday">
+<tt class="descname">wday</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.wday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Schedule.year">
+<tt class="descname">year</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Schedule.year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Service">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Service</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Service" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Service.available">
+<tt class="descname">available</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Service.available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Service.method">
+<tt class="descname">method</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Service.method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Service.name">
+<tt class="descname">name</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Service.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Service.version">
+<tt class="descname">version</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Service.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ServiceMethod">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ServiceMethod</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ServiceMethod" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ServiceMethod.implemented">
+<tt class="descname">implemented</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ServiceMethod.implemented" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ServiceMethod.name">
+<tt class="descname">name</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ServiceMethod.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.ServiceMethod.rest">
+<tt class="descname">rest</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ServiceMethod.rest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ServiceName">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ServiceName</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ServiceName" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.ServiceVersion">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">ServiceVersion</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.ServiceVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic simple type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Services">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Services</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Services" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Services.service">
+<tt class="descname">service</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Services.service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Slice">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Slice</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Slice" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Slice.count">
+<tt class="descname">count</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Slice.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Slice.start">
+<tt class="descname">start</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Slice.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Slice.total">
+<tt class="descname">total</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Slice.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Status">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Status</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Status" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Status.dateChecked">
+<tt class="descname">dateChecked</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Status.dateChecked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Status.success">
+<tt class="descname">success</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Status.success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the attribute from the instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.Synchronization">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">Synchronization</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Synchronization" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Synchronization.lastCompleteHarvest">
+<tt class="descname">lastCompleteHarvest</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Synchronization.lastCompleteHarvest" title="Permalink to this definition">¶</a></dt>
+<dd><p>The last time all the data from a node was pulled from a member node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Synchronization.lastHarvested">
+<tt class="descname">lastHarvested</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Synchronization.lastHarvested" title="Permalink to this definition">¶</a></dt>
+<dd><p>The last time the mn sychronization daemon ran and found new data to synchronize</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.Synchronization.schedule">
+<tt class="descname">schedule</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.Synchronization.schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata">
+<em class="property">class </em><tt class="descclassname">d1_common.types.generated.dataoneTypes.</tt><tt class="descname">SystemMetadata</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.accessRule">
+<tt class="descname">accessRule</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.accessRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.authoritativeMemberNode">
+<tt class="descname">authoritativeMemberNode</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.authoritativeMemberNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.checksum">
+<tt class="descname">checksum</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.checksum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.dateSysMetadataModified">
+<tt class="descname">dateSysMetadataModified</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.dateSysMetadataModified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.dateUploaded">
+<tt class="descname">dateUploaded</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.dateUploaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.derivedFrom">
+<tt class="descname">derivedFrom</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.derivedFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.describedBy">
+<tt class="descname">describedBy</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.describedBy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.describes">
+<tt class="descname">describes</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.describes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.embargoExpires">
+<tt class="descname">embargoExpires</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.embargoExpires" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.identifier">
+<tt class="descname">identifier</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.objectFormat">
+<tt class="descname">objectFormat</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.objectFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.obsoletedBy">
+<tt class="descname">obsoletedBy</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.obsoletedBy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.obsoletes">
+<tt class="descname">obsoletes</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.obsoletes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.originMemberNode">
+<tt class="descname">originMemberNode</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.originMemberNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.replica">
+<tt class="descname">replica</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.replica" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.replicationPolicy">
+<tt class="descname">replicationPolicy</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.replicationPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.rightsHolder">
+<tt class="descname">rightsHolder</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.rightsHolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.size">
+<tt class="descname">size</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="d1_common.types.generated.dataoneTypes.SystemMetadata.submitter">
+<tt class="descname">submitter</tt><a class="headerlink" href="#d1_common.types.generated.dataoneTypes.SystemMetadata.submitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value for this use within the given instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-d1_common.util"></span><dl class="function">
+<dt id="d1_common.util.decodePathElement">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">decodePathElement</tt><big>(</big><em>element</em><big>)</big><a class="headerlink" href="#d1_common.util.decodePathElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decodes a URL path element according to RFC3986.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element</strong> (<em>Unicode</em>) &#8211; The URL path element to decode.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">decoded URL path element</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">UTF-8 encoded string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.util.encodePathElement">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">encodePathElement</tt><big>(</big><em>element</em><big>)</big><a class="headerlink" href="#d1_common.util.encodePathElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes a URL path element according to RFC3986.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element</strong> (<em>Unicode</em>) &#8211; The path element to encode for transmission in a URL.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">URL encoded path element</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">UTF-8 encoded string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.util.encodeQueryElement">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">encodeQueryElement</tt><big>(</big><em>element</em><big>)</big><a class="headerlink" href="#d1_common.util.encodeQueryElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes a URL query element according to RFC3986.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element</strong> (<em>Unicode</em>) &#8211; The query element to encode for transmission in a URL.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">URL encoded query element</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">UTF-8 encoded string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.util.get_content_type">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">get_content_type</tt><big>(</big><em>content_type</em><big>)</big><a class="headerlink" href="#d1_common.util.get_content_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="d1_common.util.pretty_xml">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">pretty_xml</tt><big>(</big><em>xml_doc</em><big>)</big><a class="headerlink" href="#d1_common.util.pretty_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty formatting of XML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xml_doc</strong> (<em>basestring</em>) &#8211; xml text</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.util.urlencode">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">urlencode</tt><big>(</big><em>query</em>, <em>doseq=0</em><big>)</big><a class="headerlink" href="#d1_common.util.urlencode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified version of the standard urllib.urlencode that is conformant
+with RFC3986. The urllib version encodes spaces as &#8216;+&#8217; which can lead
+to inconsistency. This version will always encode spaces as &#8216;%20&#8217;.</p>
+<p>TODO: verify the unicode encoding process - looks a bit suspect.</p>
+<p>Encode a sequence of two-element tuples or dictionary into a URL query string.</p>
+<p>If any values in the query arg are sequences and doseq is true, each
+sequence element is converted to a separate parameter.</p>
+<p>If the query arg is a sequence of two-element tuples, the order of the
+parameters in the output will match the order of parameters in the
+input.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.util.validate_xml">
+<tt class="descclassname">d1_common.util.</tt><tt class="descname">validate_xml</tt><big>(</big><em>xml_doc</em><big>)</big><a class="headerlink" href="#d1_common.util.validate_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the supplied XML document text against the D1 schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xml_doc</strong> (<em>basestring</em>) &#8211; xml text</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-d1_common.xmlrunner"></span><div class="section" id="module-d1-common-xmlrunner">
+<h2>Module d1_common.xmlrunner<a class="headerlink" href="#module-d1-common-xmlrunner" title="Permalink to this headline">¶</a></h2>
+<p>XML Test Runner for PyUnit</p>
+<p>SOURCE: <a class="reference external" href="http://xbmc.ramfelt.se/browser/TV.com/trunk/src/python-test/xmlrunner.py">http://xbmc.ramfelt.se/browser/TV.com/trunk/src/python-test/xmlrunner.py</a>
+Date Retrieved: 2010-06-15</p>
+<p>Written by Sebastian Rittau &lt;<a class="reference external" href="mailto:srittau&#37;&#52;&#48;jroger&#46;in-berlin&#46;de">srittau<span>&#64;</span>jroger<span>&#46;</span>in-berlin<span>&#46;</span>de</a>&gt; and placed in
+the Public Domain.</p>
+<dl class="class">
+<dt id="d1_common.xmlrunner.XmlTestRunner">
+<em class="property">class </em><tt class="descclassname">d1_common.xmlrunner.</tt><tt class="descname">XmlTestRunner</tt><big>(</big><em>stream=None</em><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>A test runner that stores results in XML format compatible with JUnit.</p>
+<p>XmlTestRunner(stream=None) -&gt; XML test runner</p>
+<p>The XML file is written to the supplied stream. If stream is None, the
+results are stored in a file called TEST-&lt;module&gt;.&lt;class&gt;.xml in the
+current working directory (if not overridden with the path property),
+where &lt;module&gt; and &lt;class&gt; are the module and class name of the test class.</p>
+<dl class="attribute">
+<dt id="d1_common.xmlrunner.XmlTestRunner.path">
+<tt class="descname">path</tt><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunner.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path where the XML files are stored.</p>
+<p>This property is ignored when the XML file is written to a file
+stream.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunner.run">
+<tt class="descname">run</tt><big>(</big><em>test</em><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunner.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the given test case or test suite.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest">
+<em class="property">class </em><tt class="descclassname">d1_common.xmlrunner.</tt><tt class="descname">XmlTestRunnerTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="class">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.NullStream">
+<em class="property">class </em><tt class="descname">NullStream</tt><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.NullStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>A file-like object that discards everything written to it.</p>
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.NullStream.write">
+<tt class="descname">write</tt><big>(</big><em>buffer</em><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.NullStream.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.setUp">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">setUp</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_error">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_error</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression test: Check whether a test run with a erroneous test
+matches a previous run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_failure">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_failure</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression test: Check whether a test run with a failing test
+matches a previous run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_no_tests">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_no_tests</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_no_tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression test: Check whether a test run without any tests
+matches a previous run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_stderr_capture">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_stderr_capture</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_stderr_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression test: Check whether a test run with output to stderr
+matches a previous run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_stdout_capture">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_stdout_capture</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_stdout_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression test: Check whether a test run with output to stdout
+matches a previous run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_success">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_success</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression test: Check whether a test run with a successful test
+matches a previous run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_unittests_changing_stderr">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_unittests_changing_stderr</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_unittests_changing_stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the XmlTestRunner recovers gracefully from unit tests
+that change stderr, but don&#8217;t change it back properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.xmlrunner.XmlTestRunnerTest.test_unittests_changing_stdout">
+<tt class="descclassname">XmlTestRunnerTest.</tt><tt class="descname">test_unittests_changing_stdout</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.xmlrunner.XmlTestRunnerTest.test_unittests_changing_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the XmlTestRunner recovers gracefully from unit tests
+that change stdout, but don&#8217;t change it back properly.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-d1_common.mime_multipart"></span><dl class="class">
+<dt id="d1_common.mime_multipart.multipart">
+<em class="property">class </em><tt class="descclassname">d1_common.mime_multipart.</tt><tt class="descname">multipart</tt><big>(</big><em>headers</em>, <em>fields</em>, <em>files</em>, <em>chunk_size=1048576</em><big>)</big><a class="headerlink" href="#d1_common.mime_multipart.multipart" title="Permalink to this definition">¶</a></dt>
+<dd><p>File-like MIME Multipart object.</p>
+<p>This class wraps files and returns the file data wrapped in a mime multipart
+structure when iterated, without buffering.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Param :</th><td class="field-body">fields is a sequence of (name, value) elements for regular form fields.</td>
+</tr>
+<tr class="field"><th class="field-name">Param :</th><td class="field-body">files is a sequence of (name, filename, value) elements for data to be
+uploaded as files. The value elements of files can be file-like objects or
+strings.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="d1_common.mime_multipart.multipart.getContentLength">
+<tt class="descname">getContentLength</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.mime_multipart.multipart.getContentLength" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="d1_common.mime_multipart.multipart.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.mime_multipart.multipart.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over MIME Multipart object.
+:return: Next section of MIME Multipart data. Some sections are empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.mime_multipart.multipart.post">
+<tt class="descname">post</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#d1_common.mime_multipart.multipart.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post fields and files to an HTTP host as MIME Multipart.
+:return: (tuple) response status, response reason, response body</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.mime_multipart.multipart.read">
+<tt class="descname">read</tt><big>(</big><em>n=None</em><big>)</big><a class="headerlink" href="#d1_common.mime_multipart.multipart.read" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Param :</th><td class="field-body">(int) Bytes to read.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">(str) Bytes read.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.mime_multipart.multipart.reset">
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.mime_multipart.multipart.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset file-like object to initial state. This also sets seek to 0 on any
+file-like objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-d1_common.testcasewithurlcompare"></span><dl class="class">
+<dt id="d1_common.testcasewithurlcompare.TestCaseWithURLCompare">
+<em class="property">class </em><tt class="descclassname">d1_common.testcasewithurlcompare.</tt><tt class="descname">TestCaseWithURLCompare</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="headerlink" href="#d1_common.testcasewithurlcompare.TestCaseWithURLCompare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility class that checks whether two URLs are equal.  Not really as simple
+as it might seem at first.</p>
+<dl class="method">
+<dt id="d1_common.testcasewithurlcompare.TestCaseWithURLCompare.assertUrlEqual">
+<tt class="descname">assertUrlEqual</tt><big>(</big><em>a</em>, <em>b</em><big>)</big><a class="headerlink" href="#d1_common.testcasewithurlcompare.TestCaseWithURLCompare.assertUrlEqual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two URLs, test if they are equivalent.  This means decomposing into
+their parts and comparing all the pieces.  See RFC 1738 for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> &#8211; URL #1</li>
+<li><strong>b</strong> &#8211; URL #2</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last">AssertionError, accumulation of differences between a and b.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.testcasewithurlcompare.TestCaseWithURLCompare.test_assertUrlEqual">
+<tt class="descname">test_assertUrlEqual</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.testcasewithurlcompare.TestCaseWithURLCompare.test_assertUrlEqual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the Url comparison tester...</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-d1_common.ext.mimeparser"></span><p>MIME-Type Parser</p>
+<p>This module provides basic functions for handling mime-types. It can handle
+matching mime-types against a list of media-ranges. See section 14.1 of 
+the HTTP specification [RFC 2616] for a complete explanation.</p>
+<blockquote>
+<div><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1</a></div></blockquote>
+<dl class="docutils">
+<dt>Contents:</dt>
+<dd><ul class="first last simple">
+<li>parse_mime_type():   Parses a mime-type into its component parts.</li>
+<li>parse_media_range(): Media-ranges are mime-types with wild-cards and a &#8216;q&#8217; quality parameter.</li>
+<li>quality():           Determines the quality (&#8216;q&#8217;) of a mime-type when compared against a list of media-ranges.</li>
+<li>quality_parsed():    Just like quality() except the second parameter must be pre-parsed.</li>
+<li>best_match():        Choose the mime-type with the highest quality (&#8216;q&#8217;) from a list of candidates.</li>
+</ul>
+</dd>
+</dl>
+<dl class="function">
+<dt id="d1_common.ext.mimeparser.best_match">
+<tt class="descclassname">d1_common.ext.mimeparser.</tt><tt class="descname">best_match</tt><big>(</big><em>supported</em>, <em>header</em><big>)</big><a class="headerlink" href="#d1_common.ext.mimeparser.best_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of supported mime-types and finds the best
+match for all the media-ranges listed in header. The value of
+header must be a string that conforms to the format of the 
+HTTP Accept: header. The value of &#8216;supported&#8217; is a list of
+mime-types.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">best_match</span><span class="p">([</span><span class="s">&#39;application/xbel+xml&#39;</span><span class="p">,</span> <span class="s">&#39;text/xml&#39;</span><span class="p">],</span> <span class="s">&#39;text/*;q=0.5,*/*; q=0.1&#39;</span><span class="p">)</span>
+<span class="go">&#39;text/xml&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.ext.mimeparser.fitness_and_quality_parsed">
+<tt class="descclassname">d1_common.ext.mimeparser.</tt><tt class="descname">fitness_and_quality_parsed</tt><big>(</big><em>mime_type</em>, <em>parsed_ranges</em><big>)</big><a class="headerlink" href="#d1_common.ext.mimeparser.fitness_and_quality_parsed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the best match for a given mime-type against 
+a list of media_ranges that have already been 
+parsed by parse_media_range(). Returns a tuple of
+the fitness value and the value of the &#8216;q&#8217; quality
+parameter of the best match, or (-1, 0) if no match
+was found. Just as for quality_parsed(), &#8216;parsed_ranges&#8217;
+must be a list of parsed media ranges.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.ext.mimeparser.parse_media_range">
+<tt class="descclassname">d1_common.ext.mimeparser.</tt><tt class="descname">parse_media_range</tt><big>(</big><em>range</em><big>)</big><a class="headerlink" href="#d1_common.ext.mimeparser.parse_media_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Carves up a media range and returns a tuple of the
+(type, subtype, params) where &#8216;params&#8217; is a dictionary
+of all the parameters for the media range.
+For example, the media range &#8216;application/*;q=0.5&#8217; would
+get parsed into:</p>
+<p>(&#8216;application&#8217;, &#8216;*&#8217;, {&#8216;q&#8217;, &#8216;0.5&#8217;})</p>
+<p>In addition this function also guarantees that there 
+is a value for &#8216;q&#8217; in the params dictionary, filling it
+in with a proper default if necessary.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.ext.mimeparser.parse_mime_type">
+<tt class="descclassname">d1_common.ext.mimeparser.</tt><tt class="descname">parse_mime_type</tt><big>(</big><em>mime_type</em><big>)</big><a class="headerlink" href="#d1_common.ext.mimeparser.parse_mime_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Carves up a mime-type and returns a tuple of the
+(type, subtype, params) where &#8216;params&#8217; is a dictionary
+of all the parameters for the media range.
+For example, the media range &#8216;application/xhtml;q=0.5&#8217; would
+get parsed into:</p>
+<p>(&#8216;application&#8217;, &#8216;xhtml&#8217;, {&#8216;q&#8217;, &#8216;0.5&#8217;})</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.ext.mimeparser.quality">
+<tt class="descclassname">d1_common.ext.mimeparser.</tt><tt class="descname">quality</tt><big>(</big><em>mime_type</em>, <em>ranges</em><big>)</big><a class="headerlink" href="#d1_common.ext.mimeparser.quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the quality &#8216;q&#8217; of a mime-type when compared
+against the media-ranges in ranges. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quality</span><span class="p">(</span><span class="s">&#39;text/html&#39;</span><span class="p">,</span><span class="s">&#39;text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5&#39;</span><span class="p">)</span>
+<span class="go">0.7</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="d1_common.ext.mimeparser.quality_parsed">
+<tt class="descclassname">d1_common.ext.mimeparser.</tt><tt class="descname">quality_parsed</tt><big>(</big><em>mime_type</em>, <em>parsed_ranges</em><big>)</big><a class="headerlink" href="#d1_common.ext.mimeparser.quality_parsed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the best match for a given mime-type against
+a list of media_ranges that have already been
+parsed by parse_media_range(). Returns the
+&#8216;q&#8217; quality parameter of the best match, 0 if no
+match was found. This function bahaves the same as quality()
+except that &#8216;parsed_ranges&#8217; must be a list of
+parsed media ranges.</p>
+</dd></dl>
+
+<span class="target" id="module-d1_common.restclient"></span><p>Provides a HTTP client support core REST operations and using mime-multipart
+mixed encoding of request message bodies.</p>
+<p>Requires Python &gt;= 2.6</p>
+<dl class="class">
+<dt id="d1_common.restclient.RESTClient">
+<em class="property">class </em><tt class="descclassname">d1_common.restclient.</tt><tt class="descname">RESTClient</tt><big>(</big><em>defaultHeaders={}</em>, <em>timeout=10</em>, <em>keyfile=None</em>, <em>certfile=None</em>, <em>strictHttps=True</em><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a REST HTTP client that encodes POST and PUT using 
+MIME multipart encoding.</p>
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.DELETE">
+<tt class="descname">DELETE</tt><big>(</big><em>url</em>, <em>data=None</em>, <em>headers=None</em><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.DELETE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a HTTP DELETE and return the response. All values are to be UTF-8
+encoded - no Unicode encoding is done by this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>String</em>) &#8211; The full URL to the target</li>
+<li><strong>data</strong> (<em>dictionary of key-value pairs, or list of (key, value)</em>) &#8211; Parameters that will be encoded in the query portion of the 
+final URL.</li>
+<li><strong>headers</strong> (<em>Dictionary</em>) &#8211; Additional headers in addition to default to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result of the HTTP request</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">httplib.HTTPResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.GET">
+<tt class="descname">GET</tt><big>(</big><em>url</em>, <em>data=None</em>, <em>headers=None</em><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.GET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a HTTP GET and return the response. All values are to be UTF-8
+encoded - no Unicode encoding is done by this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>String</em>) &#8211; The full URL to the target</li>
+<li><strong>data</strong> (<em>dictionary of key-value pairs, or list of (key, value)</em>) &#8211; Parameters that will be encoded in the query portion of the 
+final URL.</li>
+<li><strong>headers</strong> (<em>Dictionary</em>) &#8211; Additional headers in addition to default to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result of the HTTP request</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">httplib.HTTPResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.HEAD">
+<tt class="descname">HEAD</tt><big>(</big><em>url</em>, <em>data=None</em>, <em>headers=None</em><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.HEAD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a HTTP HEAD and return the response. All values are to be UTF-8
+encoded - no Unicode encoding is done by this method. Note that HEAD 
+requests return no body.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>String</em>) &#8211; The full URL to the target</li>
+<li><strong>data</strong> (<em>dictionary of key-value pairs, or list of (key, value)</em>) &#8211; Parameters that will be encoded in the query portion of the 
+final URL.</li>
+<li><strong>headers</strong> (<em>Dictionary</em>) &#8211; Additional headers in addition to default to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result of the HTTP request</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">httplib.HTTPResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.POST">
+<tt class="descname">POST</tt><big>(</big><em>url</em>, <em>data=None</em>, <em>files=None</em>, <em>headers=None</em><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.POST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a HTTP POST and return the response. All values are to be UTF-8
+encoded - no Unicode encoding is done by this method. The body of the POST 
+message is encoded using MIME multipart-mixed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>String</em>) &#8211; The full URL to the target</li>
+<li><strong>data</strong> (<em>dictionary of key-value pairs, or list of (key, value)</em>) &#8211; Parameters that will be send in the message body.</li>
+<li><strong>files</strong> (<em>list of (name, filename, value)</em>) &#8211; List of files that will be sent with the POST request. The
+&#8220;name&#8221; is the name of the parameter in the MM body, &#8220;filename&#8221; is the 
+value of the &#8220;filename&#8221; parameter in the MM body, and &#8220;value&#8221; is a 
+file-like object open for reading that will be transmitted.</li>
+<li><strong>headers</strong> (<em>Dictionary</em>) &#8211; Additional headers in addition to default to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result of the HTTP request</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">httplib.HTTPResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.PUT">
+<tt class="descname">PUT</tt><big>(</big><em>url</em>, <em>data=None</em>, <em>files=None</em>, <em>headers=None</em><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.PUT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a HTTP PUT and return the response. All values are to be UTF-8
+encoded - no Unicode encoding is done by this method. The body of the POST 
+message is encoded using MIME multipart-mixed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>String</em>) &#8211; The full URL to the target</li>
+<li><strong>data</strong> (<em>dictionary of key-value pairs, or list of (key, value)</em>) &#8211; Parameters that will be send in the message body.</li>
+<li><strong>files</strong> (<em>list of (name, filename, value)</em>) &#8211; List of files that will be sent with the POST request. The
+&#8220;name&#8221; is the name of the parameter in the MM body, &#8220;filename&#8221; is the 
+value of the &#8220;filename&#8221; parameter in the MM body, and &#8220;value&#8221; is a 
+file-like object open for reading that will be transmitted.</li>
+<li><strong>headers</strong> (<em>Dictionary</em>) &#8211; Additional headers in addition to default to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result of the HTTP request</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">httplib.HTTPResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.getLastRequestAsCurlCommand">
+<tt class="descname">getLastRequestAsCurlCommand</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.getLastRequestAsCurlCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a curl command line equivalent of the last request issued by
+this client instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1_common.restclient.RESTClient.getlastUrl">
+<tt class="descname">getlastUrl</tt><big>(</big><big>)</big><a class="headerlink" href="#d1_common.restclient.RESTClient.getlastUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last URL that was opened using this client instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Python - DataONE Common API</a><ul>
+<li><a class="reference internal" href="#module-d1-common-types-exceptions">Module d1_common.types.exceptions</a></li>
+<li><a class="reference internal" href="#module-d1-common-types-monitorlist-serialization">Module d1_common.types.monitorlist_serialization</a></li>
+<li><a class="reference internal" href="#module-d1-common-types-systemmetadata">Module d1_common.types.systemmetadata</a></li>
+<li><a class="reference internal" href="#module-d1-common-types-logrecords-serialization">Module d1_common.types.logrecords_serialization</a></li>
+<li><a class="reference internal" href="#module-d1-common-types-objectlist-serialization">Module d1_common.types.objectlist_serialization</a></li>
+<li><a class="reference internal" href="#module-d1-common-types-nodelist-serialization">Module d1_common.types.nodelist_serialization</a></li>
+<li><a class="reference internal" href="#module-d1-common-types-objectlocationlist-serialization">Module d1_common.types.objectlocationlist_serialization</a></li>
+<li><a class="reference internal" href="#module-d1-common-xmlrunner">Module d1_common.xmlrunner</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pyxb.html"
+                        title="previous chapter">PyXB Generated Code</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/generated.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyxb.html" title="PyXB Generated Code"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE v0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011, Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

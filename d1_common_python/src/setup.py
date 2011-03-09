@@ -16,8 +16,7 @@ setup(
   name='Python DataONE Common',
   #version=d1_client.__version__,
   description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
-  author='Dave Vieglais',
-  author_email='vieglais at ku edu',
+  author='DataONE Project',
   url='http://dataone.org',
   packages=find_packages(),
 

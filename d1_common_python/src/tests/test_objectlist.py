@@ -35,7 +35,7 @@ import sys
 import unittest
 
 import d1_common
-import d1_common.xmlrunner
+from d1_common import xmlrunner
 import d1_common.types.objectlist_serialization
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
@@ -175,24 +175,30 @@ class TestObjectList(unittest.TestCase):
   def test_deserialize_xml_bad(self):
     self._test_deserialize(EG_BAD_OBJECTLIST, shouldfail=True)
 
-  def test_serialize_rdf(self):
-    serializer = d1_common.types.objectlist_serialization.ObjectList()
-    olist = serializer.deserialize(
-      EG_OBJECTLIST_GMN, content_type=d1_common.const.MIMETYPE_XML
-    )
-    #olist.deserialize(content_type=d1_common.const.MIMETYPE_XML)
-    #olist = serializer.deserialize(EG_OBJECTLIST_GMN, content_type="text/xml")
-    #serialize_rdf_xml
-    l2 = d1_common.types.objectlist_serialization.ObjectList()
-    l2.object_list = olist
-    l2.serialize(accept=d1_common.const.MIMETYPE_RDF)
-    #oinfo = olist.objectInfo
-    #if shouldfail:
-    #  self.assertNotEqual(len(oinfo), olist.count)
-    #else:
-    #  self.assertEqual(len(oinfo), olist.count)
+#RDF Serialization is not implemented yet
+#  def test_serialize_rdf(self):
+#    serializer = d1_common.types.objectlist_serialization.ObjectList()
+#    olist = serializer.deserialize(EG_OBJECTLIST_GMN, content_type=d1_common.const.MIMETYPE_XML)
+#    #olist.deserialize(content_type=d1_common.const.MIMETYPE_XML)
+#    #olist = serializer.deserialize(EG_OBJECTLIST_GMN, content_type="text/xml")
+#    #serialize_rdf_xml
+#    l2 = d1_common.types.objectlist_serialization.ObjectList()
+#    l2.object_list = olist
+#    l2.serialize(accept=d1_common.const.MIMETYPE_RDF)
+#    #oinfo = olist.objectInfo
+#    #if shouldfail:
+#    #  self.assertNotEqual(len(oinfo), olist.count)
+#    #else:
+#    #  self.assertEqual(len(oinfo), olist.count)
 
-
-if __name__ == '__main__':
-  logging.basicConfig(level=logging.DEBUG)
-  unittest.main(testRunner=d1_common.xmlrunner.XmlTestRunner(sys.stdout))
+#===============================================================================
+if __name__ == "__main__":
+  argv = sys.argv
+  if "--debug" in argv:
+    logging.basicConfig(level=logging.DEBUG)
+    argv.remove("--debug")
+  if "--with-xunit" in argv:
+    argv.remove("--with-xunit")
+    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  else:
+    unittest.main(argv=argv)

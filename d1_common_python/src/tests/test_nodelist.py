@@ -215,7 +215,14 @@ class TestNodeList(unittest.TestCase):
     doctest(EG_BAD_NODELIST_1, shouldfail=True)
     doctest(EG_BAD_NODELIST_2, shouldfail=True)
 
-
-if __name__ == '__main__':
-  logging.basicConfig(level=logging.DEBUG)
-  unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+#===============================================================================
+if __name__ == "__main__":
+  argv = sys.argv
+  if "--debug" in argv:
+    logging.basicConfig(level=logging.DEBUG)
+    argv.remove("--debug")
+  if "--with-xunit" in argv:
+    argv.remove("--with-xunit")
+    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  else:
+    unittest.main(argv=argv)

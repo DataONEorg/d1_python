@@ -20,7 +20,7 @@
 # limitations under the License.
 """
 Module d1_common.xmlrunner
-=========================
+==========================
 
 XML Test Runner for PyUnit
 

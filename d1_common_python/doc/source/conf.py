@@ -70,7 +70,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'DataONE'
-copyright = u'2010, Participating institutions in DataONE'
+copyright = u'2010,2011, Participating institutions in DataONE'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
