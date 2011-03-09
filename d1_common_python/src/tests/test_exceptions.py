@@ -41,6 +41,7 @@ from d1_common.types import exception_serialization
 from d1_common import const
 
 import d1_common.xmlrunner as xmlrunner
+from d1_common import svnrevision
 
 #===============================================================================
 
@@ -50,14 +51,19 @@ class TestExceptions(unittest.TestCase):
     '''XML round trip.
     
     Example XML:
-    <error detailCode="1010" errorCode="409" name="IdentifierNotUnique"><pid>test_pid</pid><description>description_test</description><traceInformation>trace_test_1</traceInformation><traceInformation>trace_test_2</traceInformation><traceInformation>trace_test_3</traceInformation></error>"""
+    <error detailCode="1010" 
+           errorCode="409" 
+           name="IdentifierNotUnique"
+           pid="test_pid">
+      <description>description_test</description>
+      <traceInformation>trace_test_1</traceInformation>
+    </error>"""
     '''
 
     # Create a DataONE IdentifierNotUnique Exception.
     exc = exceptions.IdentifierNotUnique(
-      '1010', 'description_test', 'test_pid', [
-        'trace_test_1', 'trace_test_2', 'trace_test_3'
-      ]
+      '1010', 'description_test', 'test_pid', ['trace_test_1', 'trace_test_2',
+                                               'trace_test_3']
     )
     # Check serialization to XML.
     exc_ser = exception_serialization.DataONEExceptionSerialization(exc)
@@ -70,9 +76,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(root.attributes['detailCode'].value, u'1010')
     self.assertEqual(root.attributes['errorCode'].value, u'409')
     self.assertEqual(root.attributes['name'].value, u'IdentifierNotUnique')
-    self.assertEqual(
-      root.getElementsByTagName('pid')[0].childNodes[0].nodeValue, u'test_pid'
-    )
+    self.assertEqual(root.attributes['pid'].value, u'test_pid')
     self.assertEqual(
       root.getElementsByTagName('description')[0].childNodes[0].nodeValue,
       u'description_test'
@@ -116,9 +120,7 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(json_obj['name'], 'NotFound')
     self.assertEqual(json_obj['detailCode'], '1010')
     self.assertEqual(
-      json_obj['traceInformation'], [
-        "trace_test_1", "trace_test_2", "trace_test_3"
-      ]
+      json_obj['traceInformation'], "trace_test_1\ntrace_test_2\ntrace_test_3"
     )
     # Check deserialize JSON to exception (includes test of exception factory).
     exc_deser = exception_serialization.DataONEExceptionSerialization(None)
@@ -126,12 +128,9 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(e_deser.errorCode, 404)
     self.assertEqual(e_deser.name, 'NotFound')
     self.assertEqual(e_deser.detailCode, '1010')
-    self.assertEqual(
-      e_deser.traceInformation, [
-        "trace_test_1", "trace_test_2", "trace_test_3"
-      ]
-    )
+    self.assertEqual(e_deser.traceInformation, "trace_test_1\ntrace_test_2\ntrace_test_3")
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.DEBUG)
+  svnrevision.getSvnRevision(update_static=True)
   unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))

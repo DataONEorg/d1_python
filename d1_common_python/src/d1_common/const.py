@@ -47,7 +47,7 @@ OBJECT_CLASSES = ['data', 'metadata', 'system']
 MAX_LISTOBJECTS = 1000
 
 #: Default number of objects to retrieve in a list objects request
-DEFAULT_LISTOBJECTS = 100
+DEFAULT_LISTOBJECTS = 10
 
 #: HTTP Response timeout in seconds, float.
 #: TODO: retrieve this from D1 root
@@ -60,7 +60,7 @@ USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
 
 #: The root of all DataONE.  Used to perform introspection on the system when
 #: no other node information is provided.
-URL_DATAONE_ROOT = 'http://cn-dev.dataone.org/cn/' # "http://cn.dataone.org/"
+URL_DATAONE_ROOT = 'http://cn.dataone.org/cn/' # "http://cn.dataone.org/"
 
 #: Path to append to target base for the object collection
 #: TODO: retrieve this from D1 root
