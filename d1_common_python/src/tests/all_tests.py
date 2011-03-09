@@ -40,7 +40,6 @@ from test_restclient import TestRESTClient
 #===============================================================================
 if __name__ == "__main__":
   from d1_common import svnrevision
-  svnrevision.getSvnRevision(update_static=True)
   argv = sys.argv
   if "--debug" in argv:
     logging.basicConfig(level=logging.DEBUG)
