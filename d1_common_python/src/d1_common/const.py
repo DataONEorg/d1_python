@@ -37,11 +37,6 @@ import d1_common
 
 VERSION = d1_common.__version__
 
-#: types of objects in the DataONE system
-#: These need to be replaced with URIs, and should be discoverable from the
-#: Coordinating Node introspection data
-OBJECT_CLASSES = ['data', 'metadata', 'system']
-
 #: Maximum number of entries per list objects request
 #: TODO: Retrieve this from the CN introspection
 MAX_LISTOBJECTS = 1000
@@ -96,15 +91,9 @@ URL_DELETE_PATH = 'object/'
 #: Path to the DataONE schema.
 #: TODO: retrieve this from D1 root
 SCHEMA_URL = 'https://repository.dataone.org/software/cicore/tags/D1_SCHEMA_0_5_1/dataoneTypes.xsd'
-#SCHEMA_URL = 'http://localhost/schemas/D1_SCHEMA_0_5_1/dataoneTypes.xsd'
 
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]
-
-#: Default cache to use with client connections.  Setting to None prevents 
-#: caching of any responses.  Setting to "/tmp" will cache responses in
-#: the /tmp filesystem
-HTTP_RESPONSE_CACHE = None
 
 # The default mimetype used by DataONE services
 DEFAULT_MIMETYPE = 'text/xml'
