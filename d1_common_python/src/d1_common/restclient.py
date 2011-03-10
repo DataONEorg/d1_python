@@ -28,7 +28,8 @@ import logging
 import httplib
 import urlparse
 import util
-from mime_multipart import multipart
+from d1_common import const
+from d1_common.mime_multipart import multipart
 
 
 class RESTClient(object):
@@ -37,8 +38,8 @@ class RESTClient(object):
   '''
 
   def __init__(self,
-               defaultHeaders={},
-               timeout=10,
+               defaultHeaders={'User-Agent': const.USER_AGENT},
+               timeout=const.RESPONSE_TIMEOUT,
                keyfile=None,
                certfile=None,
                strictHttps=True):

@@ -53,7 +53,7 @@ class multipart(object):
     #   mutate the dictionary while iterating.
     for header_key in headers.keys():
       if header_key.lower() in ('content-type', 'content-length', 'user-agent'):
-        logging.warning(
+        logging.info(
           '{0} header was provided but overridden by internally generated version'.format(
             header_key
           )
