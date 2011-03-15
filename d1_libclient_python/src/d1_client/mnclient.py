@@ -4,7 +4,7 @@ import logging
 import urlparse
 from d1_common import const
 from d1_common import util
-from restclient import DataONEBaseClient
+from d1baseclient import DataONEBaseClient
 from d1_common.types import checksum_serialization
 from d1_common.types import monitorlist_serialization
 from d1_common.types import nodelist_serialization

@@ -5,7 +5,7 @@ import urllib
 import urlparse
 from d1_common import const
 from d1_common import util
-from restclient import DataONEBaseClient
+from d1baseclient import DataONEBaseClient
 from d1_common.types import objectlist_serialization
 from d1_common.types import objectlocationlist_serialization
 
