@@ -24,10 +24,10 @@ Module d1_common.tests.test_nodelist
 
 Unit tests for serializaton and de-serialization of the NodeList type.
 
-:Author: Vieglais, Dahl
-
-..autoclass:: TestNodeList
-  :members:
+:Created: 2011-03-03
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import logging

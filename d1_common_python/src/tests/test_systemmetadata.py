@@ -24,10 +24,10 @@ Module d1_common.tests.test_systemmetadata
 
 Unit tests for serializaton and de-serialization of the SystemMetadata type.
 
-:Author: Vieglais, Dahl
-
-..autoclass:: TestSystemMetadata
-  :members:
+:Created: 2010-06-29
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import logging

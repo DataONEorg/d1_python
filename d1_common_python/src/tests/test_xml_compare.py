@@ -24,10 +24,10 @@ Module d1_common.tests.test_xml_compare
 
 Unit tests for XML document comparison utility.
 
-:Author: Dahl
-
-..autoclass:: TestXMLCompare
-  :members:
+:Created: 2011-03-03
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import logging

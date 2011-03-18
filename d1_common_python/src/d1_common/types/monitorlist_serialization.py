@@ -22,7 +22,12 @@
 Module d1_common.types.monitorlist_serialization
 ================================================
 
-Implements serializaton and de-serialization for the MonitorList type.
+Serializaton and deserialization of the DataONE MonitorList type.
+
+:Created: 2010-07-29
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 ## Stdlib.
@@ -51,6 +56,8 @@ import serialization_base
 
 class MonitorList(serialization_base.Serialization):
   def __init__(self):
+    '''Serializaton and deserialization of the DataONE MonitorList type.
+    '''
     serialization_base.Serialization.__init__(self)
 
     self.log = logging.getLogger('MonitorListSerialization')

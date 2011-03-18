@@ -18,9 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''
+Module d1_common.mime_multipart
+===============================
 
-# {{{ http://code.activestate.com/recipes/146306/ (r1)
-# With some of the modifications suggested in the user comments.
+Wrap files and return the file data wrapped in a mime multipart structure when
+iterated, without buffering.
+
+:Created: 2010-09-07
+:Author: DataONE (dahl, vieglais)
+:Dependencies:
+  - python 2.6
+'''
 
 import os
 import httplib
@@ -32,21 +41,28 @@ import logging
 
 
 class multipart(object):
-  '''File-like MIME Multipart object.
-  
-  This class wraps files and returns the file data wrapped in a mime multipart
-  structure when iterated, without buffering.
+  '''Generate a MIME Multipart document based on a set of files and fields.
 
-  :param: fields is a sequence of (name, value) elements for regular form fields.
-  :param: files is a sequence of (name, filename, value) elements for data to be
-    uploaded as files. The value elements of files can be file-like objects or
-    strings.
-  :return: None
+  The document can either be automatically posted to a web server with HTTP
+  POST, retrieved in chunks using iteration or retrieved in chunks using the
+  read interface.
   '''
 
   def __init__(self, headers, fields, files, chunk_size=1024**2):
-    ''':param:
-    :return:
+    '''Constructor for multipart.
+    
+    :param headers: sequence of (name, value) elements for headers
+    :type headers: { string: string, }
+    :param fields: sequence of (name, value) elements for regular form fields
+    :type fields: [(string, string), ]
+    :param files: sequence of (name, filename, value) elements for data to be
+      uploaded as files.
+    :type files: [(string, string, file-like object | string | unicode), ]
+    :param chunk_size: Max number of bytes to return in a single iteration.
+      If chunk_size is set lower than a few hundred bytes, chunks that include
+      MMP headers and boundaries may exceed this number.
+    :type chunk_size: integer
+    :returns: None
     '''
     # Remove any provided headers that we need to generate ourselves.
     #   headers.keys() is a copy of the dictionary keys, so it's safe to
@@ -71,7 +87,11 @@ class multipart(object):
     self.io = StringIO.StringIO()
 
   def getContentLength(self):
-    '''
+    '''Get the length, in bytes, of the MIME Multipart document that will be
+    generated.
+    
+    :returns: length
+    :returns type: integer
     '''
     m = multipart(
       self.headers, self.fields, [
@@ -87,10 +107,14 @@ class multipart(object):
     return content_length
 
   def post(self, url):
-    '''Post fields and files to an HTTP host as MIME Multipart.
-    :return: (tuple) response status, response reason, response body
-    '''
+    '''Submit the generated MIME Multipart document to a web server using HTTP
+    POST.
 
+    :returns: response status, response reason, response body
+    :returns type: (integer, string, string)
+    
+    TODO: Remove this method. Use restclient instead.
+    '''
     scheme, host, path = urlparse.urlsplit(url)[:3]
 
     # Determine full length. We create a new multipart object that is a copy of
@@ -122,8 +146,13 @@ class multipart(object):
     return res.status, res.reason, res.read()
 
   def reset(self):
-    '''Reset file-like object to initial state. This also sets seek to 0 on any
-    file-like objects.'''
+    '''Reset the mime_multipart object to its initial state.
+    
+    This allows the MIME Multipart document to be regenerated from the data with
+    which the multipart object was instantiated.
+    
+    :returns: None
+    '''
     self.file_idx = 0
     self.state = 'form_fields'
     self.io = StringIO.StringIO()
@@ -135,8 +164,18 @@ class multipart(object):
         pass
 
   def read(self, n=None):
-    ''':param: (int) Bytes to read.
-    :return: (str) Bytes read.
+    '''Read a chunk of the generated MIME Multipart document.
+    
+    The returned number of bytes will be equal to n for all chunks but the last
+    one, which will most likely be smaller. When the method returns an empty
+    string, there is no more data to be retrieved.
+
+    If n is None, the entire MIME Multipart document is returned.
+    
+    :param n: Minimum number of bytes to read.
+    :type n: integer
+    :returns: The bytes that were read.
+    :returns type: string
     '''
     if n is None:
       # Return everything at once.
@@ -166,8 +205,16 @@ class multipart(object):
     return ret
 
   def next(self):
-    '''Iterate over MIME Multipart object.
-    :return: Next section of MIME Multipart data. Some sections are empty.
+    '''Iterate over the multipart object and return the next chunk of MIME
+    Multipart data.
+
+    The returned number of bytes will match the chunk_size with which the
+    multipart object was instantiated when chunks of files are returned. When
+    parts of the MIME Multipart structure is returned, the number of bytes
+    returned will be between zero and a few hundred.
+
+    :returns: The next chunk of MIME Multipart data.
+    :returns type: string
     '''
 
     if self.state == 'form_fields':
@@ -230,6 +277,11 @@ class multipart(object):
       raise Exception('Invalid state in {0}: {1}'.format(__file__, self.state))
 
   def _get_len(self, file):
+    '''Get the length of a file or FLO.
+    
+    :param file: File of which to get the length.
+    :type file: file object | file-like object
+    '''
     try:
       pos = file[2].tell()
       file[2].seek(0, os.SEEK_END)
@@ -240,12 +292,23 @@ class multipart(object):
       return len(file[2])
 
   def _get_content_type(self):
+    '''Get the contents for the Content-Type header.
+    '''
     return 'multipart/form-data; boundary={0}'.format(self.BOUNDARY)
 
   def _guess_mime_type(self, filename):
+    '''Internal method that attempts to map a filename extension to a mimetype.
+    
+    :param filename: The name of a file, including extension.
+    :type filename: string
+    :returns: Mimetype.
+    :returns type: string
+    '''
     return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
   def _form_fields(self):
+    '''Generate the MIME Multipart form fields.
+    '''
     L = []
     for (key, val) in self.fields:
       L.append('--' + self.BOUNDARY)
@@ -255,6 +318,8 @@ class multipart(object):
     return self.CRLF.join(L)
 
   def _file_head(self):
+    '''Generate the MIME Multipart header for a file.
+    '''
     key, filename, val = self.files[self.file_idx]
     L = []
     L.append('--' + self.BOUNDARY)
@@ -265,26 +330,43 @@ class multipart(object):
     return self.CRLF.join(L)
 
   def _file_chunk(self):
+    '''Get a chunk of the file currently being iterated.
+    '''
     key, filename, val = self.files[self.file_idx]
     return val.read(self.chunk_size)
 
   def _file_foot(self):
+    '''Get the footer used to designate the end of a file.
+    '''
     return self.CRLF
 
   def _str_val(self):
+    '''Get information about the file currently being iterated. Used when the
+    file is represented as a string.
+    '''
     key, filename, val = self.files[self.file_idx]
     return val
 
   def _unicode_val(self):
+    '''Get information about the file currently being iterated. Used when the
+    file is represented as a Unicode string.
+    '''
     key, filename, val = self.files[self.file_idx]
     return val.encode('utf-8')
 
   def _body_foot(self):
+    '''Get the footer used to designate the end of the MIME Multipart
+    document.
+    '''
     L = []
     L.append('--' + self.BOUNDARY + '--')
     L.append('')
     return self.CRLF.join(L)
 
   def __iter__(self):
+    '''Start the iteration. This automatically resets the object so that
+    the object can be iterated multiple times and the result is the same
+    each time.
+    '''
     self.reset()
     return self

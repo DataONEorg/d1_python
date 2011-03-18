@@ -22,7 +22,12 @@
 Module d1_common.types.nodelist_serialization
 =============================================
 
-Implements serializaton and de-serialization for the NodeList type.
+Serializaton and deserialization of the DataONE NodeList type.
+
+:Created: 2010-07-29
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -51,6 +56,8 @@ import serialization_base
 
 class NodeList(serialization_base.Serialization):
   def __init__(self):
+    '''Serializaton and deserialization of the DataONE NodeList type.
+    '''
     serialization_base.Serialization.__init__(self)
 
     self.log = logging.getLogger('NodeListSerialization')

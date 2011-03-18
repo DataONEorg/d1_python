@@ -21,11 +21,12 @@
 Module d1_common.types.exceptions
 =================================
 
-:Created: 20100111
+DataONE exceptions, shared between client and member node.
 
-:Authors: vieglais, dahl
-
-Implements the DataONE exceptions, shared between client and member node.
+:Created: 2010-04-12
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 

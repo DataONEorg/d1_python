@@ -22,7 +22,12 @@
 Module d1_common.types.checksum_serialization
 =============================================
 
-Implements serializaton and de-serialization for the Checksum type.
+Serializaton and deserialization of the DataONE Checksum type.
+
+:Created: 2010-12-22
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -43,7 +48,7 @@ import serialization_base
 
 
 class Checksum(serialization_base.Serialization):
-  '''Implements serialization of DataONE Checksum.
+  '''Serializaton and deserialization of the DataONE Checksum type.
   '''
 
   def __init__(self, checksum):

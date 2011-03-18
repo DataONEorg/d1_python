@@ -1,7 +1,7 @@
 Python Package - DataONE Common
 ===============================
 
-Contains functionality common to projects that interact with the DataONE
+Functionality commonly needed by projects that interact with the DataONE
 infrastructure via Python.
 
 Contents:
@@ -10,8 +10,10 @@ Contents:
   :maxdepth: 2
 
   pyxb
-  generated
-
+  types
+  general
+  tests
+  
 Indices and tables
 ==================
 

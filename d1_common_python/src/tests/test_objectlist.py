@@ -24,10 +24,10 @@ Module d1_common.tests.test_objectlist
 
 Unit tests for serializaton and de-serialization of the ObjectList type.
 
-:Author: Vieglais, Dahl
-
-..autoclass:: TestObjectList
-  :members:
+:Created: 2010-07-21
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import logging

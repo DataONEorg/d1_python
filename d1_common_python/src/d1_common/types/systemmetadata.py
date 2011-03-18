@@ -25,10 +25,15 @@ Module d1_common.types.systemmetadata
 Extends the PyXB generated class to enable serialization to and from CSV and 
 JSON.
 
+:Created: 2010-06-29
+:Author: DataONE (vieglais)
+:Dependencies:
+  - python 2.6
+
 Note that the approach for handling serializers here is quite different from
 the other types wrapped here.  In this case, the additional serialization 
 methods are added dynamically to the class instantiated by the generated code.  
-Hence the created object behaves exactly the same as the pyxb generated object, 
+Hence the created object behaves exactly the same as the PyXB generated object, 
 except with the additional serialization methods.
 
 Example de-serialization::
@@ -44,7 +49,6 @@ Example serialization::
   #set sysm properties
   # ...
   doc = sysm.toxml() 
-
 '''
 
 import new
@@ -116,7 +120,7 @@ def CreateFromDocument(data, format='text/xml'):
   :rtype: SystemMetadata
   '''
   format = format.strip().lower()
-  if format == d1_common.MIMETYPES['xml']:
+  if format == d1_common.const.MIMETYPE_XML:
     sysm = d1_common.types.generated.dataoneTypes.CreateFromDocument(data)
     sysm.toCSV = new.instancemethod(toCSV, sysm, sysm.__class__)
     sysm.fromCSV = new.instancemethod(fromCSV, sysm, sysm.__class__)
@@ -125,11 +129,11 @@ def CreateFromDocument(data, format='text/xml'):
     sysm.toText = new.instancemethod(toText, sysm, sysm.__class__)
     return sysm
 
-  if format == d1_common.MIMETYPES['json']:
+  if format == d1_common.const.MIMETYPE_JSON:
     res = systemMetadata()
     return res.fromJSON(data)
 
-  if format == d1_common.MIMETYPES['csv']:
+  if format == d1_common.const.MIMETYPE_CSV:
     res = systemMetadata()
     return res.fromCSV(data)
 

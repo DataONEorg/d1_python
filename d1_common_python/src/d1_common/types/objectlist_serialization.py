@@ -22,7 +22,12 @@
 Module d1_common.types.objectlist_serialization
 ===============================================
 
-Implements serializaton and de-serialization for the ObjectList type.
+Serializaton and deserialization of the DataONE ObjectList type.
+
+:Created: 2010-06-28
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -72,6 +77,8 @@ import serialization_base
 
 class ObjectList(serialization_base.Serialization):
   def __init__(self):
+    '''Serializaton and deserialization of the DataONE ObjectList type.
+    '''
     serialization_base.Serialization.__init__(self)
 
     self.log = logging.getLogger('ObjectListSerialization')

@@ -1,5 +1,7 @@
-Common API
-==========
+General
+=======
+
+Modules that facilitate interacting with the DataONE infrastructure.
 
 .. autosummary::
   :toctree: generated/

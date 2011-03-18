@@ -19,10 +19,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Created on Jan 20, 2011
+Module d1_common.tests.test_restclient
+======================================
 
-@author: vieglais
+Unit tests for the generic REST client.
+
+:Created: 2011-03-09
+:Author: DataONE (vieglais)
+:Dependencies:
+  - python 2.6
 '''
+
 import sys
 import unittest
 import logging
@@ -31,8 +38,6 @@ from d1_common import restclient
 import d1_common.types.exceptions
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
-TEST_DATA = {}
-
 
 class TestRESTClient(TestCaseWithURLCompare):
   def setUp(self):
@@ -40,6 +45,28 @@ class TestRESTClient(TestCaseWithURLCompare):
 
   def tearDown(self):
     pass
+
+  def testGet(self):
+    cli = client.RESTClient()
+    #Google runs a fairly reliable server
+    res = cli.GET('http://www.google.com/')
+    self.assertEqual(cli.status, 200)
+    self.assertEqual(res.code, 200)
+
+    #This should fail with a 404
+    try:
+      cli.GET('http://www.google.com/_bogus')
+    except Exception, e:
+      pass
+    self.assertTrue(isinstance(e, urllib2.HTTPError))
+    self.assertEqual(e.code, 404)
+    #This should fail
+    try:
+      cli.GET('http://some.bogus.address/')
+    except Exception, e:
+      pass
+    self.assertTrue(isinstance(e, urllib2.URLError))
+    #self.assertEqual(e.errno, socket.EAI_NONAME)
 
   def testGet(self):
     cli = restclient.RESTClient()

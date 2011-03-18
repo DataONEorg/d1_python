@@ -19,8 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_common.types.serialization
-====================================
+Module d1_common.types.serialization_base
+=========================================
+
+"Pure virtual" base class for the serialization classes. Maps between
+mimetypes and functions.
+
+:Created: 2011-01-31
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.

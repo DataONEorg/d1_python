@@ -18,6 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''
+Module d1_common.tests.all_tests
+================================
+
+Run all Unit tests.
+
+:Created: 2011-03-09
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
+'''
 
 import sys
 import logging
@@ -36,8 +47,10 @@ from test_testcasewithurlcompare import Test_URLCompare
 from test_utils import TestUtils
 from test_xml_compare import TestXMLCompare
 from test_restclient import TestRESTClient
+from test_mime_multipart import TestMimeMultipart
 
 #===============================================================================
+
 if __name__ == "__main__":
   from d1_common import svnrevision
   argv = sys.argv
