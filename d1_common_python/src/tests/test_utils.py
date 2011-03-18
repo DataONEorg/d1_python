@@ -24,10 +24,10 @@ Module d1_common.tests.test_utils
 
 Unit tests for various utilities.
 
-:Author: Vieglais, Dahl
-
-..autoclass:: TestUtils
-  :members:
+:Created: 2011-01-21
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import sys

@@ -47,14 +47,23 @@ import os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-# Add path to d1common.client, so that it can be found by autodoc.
-sys.path.append(os.path.abspath('../../src/'))
+# Add path to d1_common packages so they can be found by autodoc.
+sys.path.append(os.path.abspath('../../src/d1_common'))
+sys.path.append(os.path.abspath('../../src/d1_common/types'))
+sys.path.append(os.path.abspath('../../src/tests'))
 
 # -- General configuration -----------------------------------------------------
 
+autosummary_generate = True
+
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo']
+extensions = [
+  'sphinx.ext.autodoc',
+  'sphinx.ext.doctest',
+  'sphinx.ext.todo',
+  'sphinx.ext.autosummary',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

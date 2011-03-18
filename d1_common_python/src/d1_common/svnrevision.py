@@ -18,8 +18,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
+Module d1_common.svnrevision
+============================
+
 Check subversion revision of the tree in which this file is contained
 and returns that value or the statically set value on failure.
+
+:Created: 2011-02-14
+:Author: DataONE (vieglais)
+:Dependencies:
+  - python 2.6
 '''
 
 import os

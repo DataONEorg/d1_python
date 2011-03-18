@@ -22,7 +22,12 @@
 Module d1_common.types.objectlocationlist_serialization
 =======================================================
 
-Implements serializaton and de-serialization for the ObjectLocationList type.
+Serializaton and deserialization of the DataONE ObjectLocationList type.
+
+:Created: 2010-07-29
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -51,6 +56,8 @@ import serialization_base
 
 class ObjectLocationList(serialization_base.Serialization):
   def __init__(self):
+    '''Serializaton and deserialization of the DataONE ObjectLocationList type.
+    '''
     serialization_base.Serialization.__init__(self)
 
     self.log = logging.getLogger('ObjectLocationListSerialization')

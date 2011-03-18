@@ -17,13 +17,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''
+Module d1_common.testcasewithurlcompare
+=======================================
+
+Utility that checks whether two URLs are equal.
+
+:Created: 2010-01-11
+:Author: DataONE (vieglais)
+:Dependencies:
+  - python 2.6
+'''
 
 import unittest
 import urlparse
 
 
 class TestCaseWithURLCompare(unittest.TestCase):
-  '''Utility class that checks whether two URLs are equal.  Not really as simple
+  '''Utility that checks whether two URLs are equal. Not really as simple
   as it might seem at first.
   '''
 
@@ -114,17 +125,6 @@ class TestCaseWithURLCompare(unittest.TestCase):
 
     if len(accumulator) > 0:
       raise AssertionError(u"\n".join(accumulator))
-
-  def test_assertUrlEqual(self):
-    '''Test the Url comparison tester...
-    '''
-    #According to RFC  these URLs are equivalent
-    a = "HTTP://www.some.host:999/a/b/c/;p1;p2;p3?k1=10&k1=20&k2=abc#frag"
-    b = "Http://www.SOME.host:999/a/b/c/;p2;p1;p3?k1=10&k2=abc&k1=20#frag"
-    self.assertUrlEqual(a, b)
-    #and these are not
-    b = "Http://www.SOME.host:999/a/b/c/;p2;p4;p3?k1=10&k2=abc&k1=20#frag"
-    self.failUnlessRaises(AssertionError, self.assertUrlEqual, a, b)
 
 
 if __name__ == "__main__":

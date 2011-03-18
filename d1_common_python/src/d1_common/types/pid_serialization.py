@@ -22,7 +22,12 @@
 Module d1_common.types.pid_serialization
 ========================================
 
-Implements serializaton and de-serialization for the PID type.
+Serializaton and deserialization of the DataONE PID type.
+
+:Created: 2010-12-02
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -57,6 +62,8 @@ class Identifier(serialization_base.Serialization):
   '''
 
   def __init__(self, pid='<dummy>'):
+    '''Serializaton and deserialization of the DataONE PID type.
+    '''
     serialization_base.Serialization.__init__(self)
 
     self.log = logging.getLogger('PIDSerialization')

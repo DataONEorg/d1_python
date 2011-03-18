@@ -18,6 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''
+Module d1_common.tests.test_testcasewithurlcompare
+==================================================
+
+Unit tests for TestCaseWithURLCompare.
+
+:Created: 2011-03-09
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
+'''
 
 import sys
 import logging

@@ -20,21 +20,22 @@
 # limitations under the License.
 '''
 Module d1_common.const
-========================
-
-:Created: 20100111
-:Author: vieglais
+======================
 
 Provides various constants for the python DataONE client.
 
-Note that many of these parameters should be retrieved from the root node of D1
+:Created: 2010-01-20
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
+  
+TODO: Many of these parameters should be retrieved from the root node of D1.
 '''
 
 # Make contents of __init__ available.
 import d1_common
 
 #: :const: Version of this software
-
 VERSION = d1_common.__version__
 
 #: Maximum number of entries per list objects request
@@ -95,9 +96,6 @@ SCHEMA_URL = 'https://repository.dataone.org/software/cicore/tags/D1_SCHEMA_0_5_
 #: These HTTP response status codes are OK.
 HTTP_STATUS_OK = [200, 300, 301, 302, 303, 307]
 
-# The default mimetype used by DataONE services
-DEFAULT_MIMETYPE = 'text/xml'
-
 # Mimetypes.
 MIMETYPE_XML = 'text/xml'
 MIMETYPE_APP_XML = 'application/xml'
@@ -107,6 +105,9 @@ MIMETYPE_RDF = 'application/rdf+xml'
 MIMETYPE_HTML = 'text/html'
 MIMETYPE_LOG = 'text/log'
 MIMETYPE_TEXT = 'text/plain'
+
+# The default mimetype used by DataONE services
+DEFAULT_MIMETYPE = MIMETYPE_XML
 
 DEFAULT_CHARSET = 'utf-8'
 

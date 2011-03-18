@@ -21,7 +21,12 @@
 Module d1_common.xml_compare
 ============================
 
-A class to compare two XML documents for functional equality.
+:Created: 2011-03-03
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
+
+Compare two XML documents for functional equality.
 '''
 
 import StringIO
@@ -30,17 +35,32 @@ import xml.etree.ElementTree
 
 
 class CompareError(Exception):
+  '''Raised when a difference is found between the two XML documents.
+  '''
   pass
 
 
 class Xml_compare(object):
   def __init__(self, xml_first, xml_second):
+    '''Constructor for Xml_compare.
+    
+    :param xml_first: The XML document to use as basis for comparison.
+    :type xml_first: string
+    :param xml_second: The XML document to check for functional equality
+      with the first.
+    :type xml_second: string
+    '''
     self.tree_first = xml.etree.ElementTree.parse(xml_first)
     self.tree_second = xml.etree.ElementTree.parse(xml_second)
 
   def _compare_strings(self, s1, s2):
     '''Compare two strings, treating None as empty string and stripping
     leading and trailing whitespace.
+    
+    :param s1: First string.
+    :type s1: string
+    :param s2: Second string.
+    :type s2: string
     '''
     return (s1.strip() if s1 else '') == (s2.strip() if s2 else '')
 
@@ -48,7 +68,9 @@ class Xml_compare(object):
     '''Get path to element.
 
     :param tree: The tree that the element is in.
+    :type tree: ElementTree
     :param el: The element to get the path for.
+    :type el: Element
     '''
     parents = dict((c, p) for p in tree.getiterator() for c in p)
     path = []
@@ -64,9 +86,14 @@ class Xml_compare(object):
     '''Find an element based by path and sibling index.
     
     :param tree: The tree that the element is in.
+    :type tree: ElementTree
     :param path: The path to the element.
+    :type path: string
     :param find_i: The sibling index of the element.
-    :return: Element or raises.
+    :type find_i: integer
+    
+    :returns: The element or raises CompareError.
+    :returns type: Element | Exception
     '''
     for i, el in enumerate(tree.findall(path)):
       if find_i == i:
@@ -77,7 +104,10 @@ class Xml_compare(object):
     '''Find sibling index of element.
 
     :param tree: The tree that the element is in.
-    :return: index.
+    :type tree: ElementTree
+
+    :returns: Index.
+    :returns type: integer
     '''
     path = self._get_path(tree, find_el)
     for i, el in enumerate(tree.findall(path)):
@@ -88,9 +118,11 @@ class Xml_compare(object):
     '''Given an element in tree_first, find the corresponding element in
     tree_second or raise.
     
-    :param el: Element in tree_first to find corresponding element for in
+    :param el_first: Element in tree_first to find corresponding element for in
       tree_second.
-    :return: Element from tree_second or raises.
+    :type el_first: Element
+    :returns: Element from tree_second or raises CompareError.
+    :returns type: Element | Exception
     '''
     # Find the instance index of this element.
     i_first = self._find_instance_idx(self.tree_first, el_first)
@@ -103,10 +135,15 @@ class Xml_compare(object):
     '''Check that an element attribute exists and contains the expected value.
     
     :param tree: The tree that the element is in.
+    :type tree: ElementTree
     :param el: The element that contains the attribute to check.
+    :type el: Element
     :param attr_name: Name of attribute to check.
+    :type attr_name: string
     :param attr_val: Value to check for in attribute.
-    :return: None or raises.
+    :type attr_val: string
+    :returns: None or raises CompareError.
+    :returns type: None | Exception
     '''
     try:
       if not self._compare_strings(el.attrib[attr_name_expected], attr_val_expected):
@@ -128,7 +165,8 @@ class Xml_compare(object):
     '''Compare the attributes of two XML files. Raise CompareError if comparison
     fails.
     
-    :return: None or raises.
+    :returns: None or raises CompareError.
+    :returns type: None | Exception
     '''
     # Loop through all elements in the first doc.
     for el_first in self.tree_first.getiterator():
@@ -144,7 +182,8 @@ class Xml_compare(object):
     '''Compare the text values of two XML files. Raise CompareError if
     comparison fails.
 
-    :return: None or raises.
+    :return: None or raises CompareError.
+    :returns type: None | Exception
     '''
     # Loop through all elements in the first doc.
     for el_first in self.tree_first.getiterator():
@@ -163,11 +202,12 @@ class Xml_compare(object):
 def compare(xml_first, xml_second):
   '''Compare two XML files. Raise CompareError if comparison fails.
   
-  :param xml_first: Open file or filename of XML document that is known to be
-    correct.
-  :param xml_second: Open file or filename of XML document to be checked against
-    xml_first.
-  :return: None or raises.
+  :param xml_first: Open file or filename of XML document that is known to be correct.
+  :type xml_first: Open file object | string
+  :param xml_second: Open file or filename of XML document to be checked against xml_first.
+  :type xml_second: Open file object | string
+  :returns: None or raises CompareError.
+  :returns type: None | Exception
   
   Using xml_first to determine the requirements for xml_second, this checks the
   following in xml_second:

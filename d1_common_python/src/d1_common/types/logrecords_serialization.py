@@ -22,7 +22,12 @@
 Module d1_common.types.logrecords_serialization
 ===============================================
 
-Implements serializaton and de-serialization for the LogRecords type.
+Serializaton and deserialization of the DataONE LogRecords type.
+
+:Created: 2010-07-13
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -77,7 +82,7 @@ def logEntriesToText(logEntries):
 
 
 class LogRecords(serialization_base.Serialization):
-  '''Implements serialization of DataONE LogEntry
+  '''Serializaton and deserialization of the DataONE LogRecords type.
   '''
 
   def __init__(self):

@@ -39,5 +39,3 @@ __all__ = [
   'types.generated.dataoneTypes',
   'ext.mimeparser',
 ]
-
-MIMETYPES = {'xml': 'text/xml', 'json': 'application/json', 'csv': 'text/csv', }

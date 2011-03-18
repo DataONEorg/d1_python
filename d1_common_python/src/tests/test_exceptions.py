@@ -24,10 +24,10 @@ Module d1_common.tests.test_exceptions
 
 Unit tests for serializaton and de-serialization of the DataONEException type.
 
-:Author: Vieglais, Dahl
-
-..autoclass:: TestExceptions
-  :members:
+:Created: 2010-04-12
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import logging

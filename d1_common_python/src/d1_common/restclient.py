@@ -18,10 +18,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Provides a HTTP client support core REST operations and using mime-multipart
-mixed encoding of request message bodies.
+Module d1_common.restclient
+===========================
 
-Requires Python >= 2.6
+HTTP client that supports core REST operations using MIME multipart mixed
+encoding.
+
+:Created: 2010-03-09
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 import logging
@@ -33,8 +39,7 @@ from d1_common.mime_multipart import multipart
 
 
 class RESTClient(object):
-  '''Implements a REST HTTP client that encodes POST and PUT using 
-  MIME multipart encoding.
+  '''REST HTTP client that encodes POST and PUT using MIME multipart encoding.
   '''
 
   def __init__(self,
@@ -229,8 +234,8 @@ class RESTClient(object):
     :type data: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
-    :returns: The result of the HTTP request
-    :return type: httplib.HTTPResponse 
+    :return: The result of the HTTP request
+    :type return: httplib.HTTPResponse 
     '''
     return self._doRequestNoBody('DELETE', url, data, headers)
 

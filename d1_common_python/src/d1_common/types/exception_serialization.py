@@ -1,9 +1,5 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''
-Created on Jan 28, 2011
-
-@author: roger
-'''
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
@@ -26,7 +22,12 @@ Created on Jan 28, 2011
 Module d1_common.types.exception_serialization
 ==============================================
 
-Implements serialization and deserialization for the DataONE Exception type.
+Serialization and deserialization of the DataONE Exception type.
+
+:Created: 2011-01-31
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -55,7 +56,7 @@ def instanceToSimpleType(instance):
 
 
 class DataONEExceptionSerialization(serialization_base.Serialization):
-  '''Implements serialization of DataONE Exception.
+  '''Serialization and deserialization of the DataONE Exception type.
   '''
 
   def __init__(self, dataone_exception):
