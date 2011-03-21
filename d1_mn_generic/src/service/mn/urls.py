@@ -74,7 +74,9 @@ urlpatterns = patterns(
   (r'^test_replicate_clear/?$', 'test_replicate_clear'),
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
   (r'^test_exception/(.+?)/?$', 'test_exception'),
-  (r'^test_inject_log/?$', 'test_inject_log'),
+  (r'^test_delete_all_objects/?$', 'test_delete_all_objects'),
+  (r'^test_delete_event_log/?$', 'test_delete_event_log'),
+  (r'^test_inject_event_log/?$', 'test_inject_event_log'),
 
   # Admin.
   (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),

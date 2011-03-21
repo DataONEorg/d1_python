@@ -20,13 +20,37 @@
 # limitations under the License.
 
 '''
-:mod:`test_client`
-=======================
+:mod:`gmn_integration_tests`
+============================
 
 :Synopsis:
-  Round-trip test of the ITK and GMN.
+  Integration testing of ITK and GMN.
+  
+:Warning:
+  This test deletes any existing objects and event log records on the
+  destination GMN instance.
 
-.. moduleauthor:: Roger Dahl
+:Details:  
+  This test works by first putting the target GMN into a known state by deleting
+  any existing objects and all event logs from the instance and then creating a
+  set of test objects of which all object properties and exact contents are
+  known. For each object, a set of fictitious events are stored in the event
+  log. The test then runs through a series of tests where the GMN is queried,
+  through the ITK, about all aspects of the object collection and the associated
+  events and the results are compared with the known correct responses.
+
+  GMN can handle storage of the object bytes itself ("managed" mode), or it can
+  defer storage of the object bytes to another web server ("wrapped" mode). The
+  mode is selectable on a per object basis. This test tests both managed and
+  wrapped modes by running through all the tests twice, first registering the
+  objects in managed mode and then in wrapped mode. For the wrapped mode tests
+  to work, the test objects must be available on a web server. The location can
+  be specified as a program argument.
+  
+:Created:
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -52,9 +76,6 @@ import urlparse
 import uuid
 from xml.sax.saxutils import escape
 
-# If this was checked out as part of the GMN service, the libraries can be found here.
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../mn_prototype/')))
-
 # MN API.
 try:
   #import d1_common.mime_multipart
@@ -76,32 +97,36 @@ except ImportError, e:
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n')
   raise
 
+import d1_common.const
+
+import gmn_test_client
+
 # Constants.
 
 # Constants related to MN test object collection.
-mn_objects_total = 354
-mn_objects_total_data = 100
-mn_objects_total_scimeta = 77
-#mn_objects_total_sysmeta= 177
-mn_objects_pid_startswith_1 = 18
-mn_objects_checksum_startswith_1 = 21
-mn_objects_pid_and_checksum_startswith_1 = 2
-mn_objects_pid_and_checksum_endswith_1 = 1
-mn_objects_last_accessed_in_2000 = 354
-mn_objects_requestor_1_1_1_1 = 00000
-mn_objects_operation_get_bytes = 0000
-mn_objects_with_pid_ends_with_unicode = 1 # pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+OBJECTS_TOTAL_DATA = 100
+#OBJECTS_TOTAL_SCIMETA = 77
+#OBJECTS_TOTAL_SYSMETA= 177
+#OBJECTS_PID_STARTSWITH_1 = 18
+#OBJECTS_CHECKSUM_STARTSWITH_1 = 21
+#OBJECTS_PID_AND_CHECKSUM_STARTSWITH_1 = 2
+#OBJECTS_PID_AND_CHECKSUM_ENDSWITH_1 = 1
+OBJECTS_CREATED_IN_90S = 32
+#OBJECTS_LAST_ACCESSED_IN_2000 = 354
+#OBJECTS_REQUESTOR_1_1_1_1 = 00000
+#OBJECTS_OPERATION_GET_BYTES = 0000
+#OBJECTS_WITH_PID_ENDS_WITH_UNICODE = 1 # PID=*ǍǏǏǑǑǓǕǕǗǗǙǙǛ
 
-# Constants related to log collection.
-log_total = 2213
-log_requestor_1_1_1_1 = 538
-log_operation_get_bytes = 981
-log_requestor_1_1_1_1_and_operation_get_bytes = 240
-log_last_modified_in_1990s = 48
-log_last_accessed_in_1970s = 68
-log_entries_associated_with_objects_type_class_data = 569
-log_entries_associated_with_objects_pid_and_checksum_endswith_2 = 5
-log_entries_associated_with_objects_last_modified_in_1980s = 27
+# CONSTANTS RELATED TO LOG COLLECTION.
+LOG_TOTAL = 552
+#LOG_REQUESTOR_1_1_1_1 = 538
+#LOG_OPERATION_GET_BYTES = 981
+#LOG_REQUESTOR_1_1_1_1_AND_OPERATION_GET_BYTES = 240
+#LOG_LAST_MODIFIED_IN_1990S = 48
+#LOG_LAST_ACCESSED_IN_1970S = 68
+#LOG_ENTRIES_ASSOCIATED_WITH_OBJECTS_TYPE_CLASS_DATA = 569
+#LOG_ENTRIES_ASSOCIATED_WITH_OBJECTS_PID_AND_CHECKSUM_ENDSWITH_2 = 5
+#LOG_ENTRIES_ASSOCIATED_WITH_OBJECTS_LAST_MODIFIED_IN_1980S = 27
 
 def log_setup():
   # Set up logging.
@@ -181,98 +206,75 @@ class TestSequenceFunctions(unittest.TestCase):
   def delete_all_objects(self):
     '''Delete all objects.
     '''
-    client = d1_client.client.RESTClient()
-  
-    # Objects.
-    crud_object_url = urlparse.urljoin(self.opts.gmn_url, 'object')
-    try:
-      res = client.DELETE(crud_object_url)
-      res = '\n'.join(res)
-      if res != r'OK':
-        raise Exception(res)
-    except Exception as e:
-      logging.error('REST call failed: {0}'.format(str(e)))
-      raise
-    
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client.delete_all_objects()
+
   def object_collection_is_empty(self):
     '''Object collection is empty.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Get object collection.
-    object_list = client.listObjects()
-  
+    object_list = client.listObjects('<dummy token>')
     # Check header.
     self.assert_counts(object_list, 0, 0, 0)
   
+  def object_collection_is_populated(self):
+    '''Object collection is empty.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    # Get object collection.
+    object_list = client.listObjects('<dummy token>',
+                                     count=d1_common.const.MAX_LISTOBJECTS)
+    # Check header.
+    self.assert_counts(object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA)
+
   def clear_event_log(self):
     '''Clear event log.
     '''
-    client = d1_client.client.RESTClient()
-  
-    # Event log.
-    event_log_url = urlparse.urljoin(self.opts.gmn_url, 'log')
-    try:
-      res = client.DELETE(event_log_url)
-      res = '\n'.join(res)
-      if res != r'OK':
-        raise Exception(res)
-    except Exception as e:
-      logging.error('REST call failed: {0}'.format(str(e)))
-      raise
-  
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client.delete_event_log()
+
   def event_log_is_empty(self):
     '''Event log is empty.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
-    # Get object collection.
-    logRecords = client.getLogRecords()
+    '''Object collection is empty.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    logRecords = client.getLogRecords('<dummy token>', datetime.datetime(1800, 1, 1))
     self.assertEqual(len(logRecords.logEntry), 0)
   
   def inject_event_log(self):
-    '''Inject a fake event log for testing.
+    '''Inject a set of fictitious events for each object.
     '''
-    client = d1_client.client.DataOneClient()
-  
     csv_file = open('test_log.csv', 'rb')
-  
-    files = [('csv', 'csv', csv_file.read())]
-    
-    multipart = d1_common.mime_multipart.multipart({}, [], files)
-    inject_log_url = urlparse.urljoin(self.opts.gmn_url, 'test_inject_log')
-    status, reason, page = multipart.post(inject_log_url)
-    
-    self.assertEqual(status, 200)
-  
-  def create_log(self):
-    '''Event log correctly reflects create_object actions.
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client.inject_event_log(csv_file)
+
+  def event_log_is_populated(self):
+    '''Event log is populated.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
-    # Get object collection.
-    logRecords = client.getLogRecords()
-  
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    logRecords = client.getLogRecords('<dummy token>', datetime.datetime(1800, 1, 1))
+    self.assertEqual(len(logRecords.logEntry), LOG_TOTAL)
     found = False
     for o in logRecords.logEntry:
       if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' and o.event == 'create': 
         found = True
         break
-    
     self.assertTrue(found)
   
   def compare_byte_by_byte(self):
     '''Read set of test objects back from MN and do byte-by-byte comparison with local copies.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url, timeout=60)
-    
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
+
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = urllib.unquote(os.path.basename(object_path))
       #sysmeta_str_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'r').read()
       #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
-      object_str_d1 = client.get(pid).read()
+      object_str_d1 = client.get('<dummy token>', pid).read(1024**2)
       #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
       self.assertEqual(object_str_disk, object_str_d1)
       
@@ -283,8 +285,9 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Read complete object collection and compare with values stored in local SysMeta files.
     '''
     # Get object collection.
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    object_list = client.listObjects()
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
+    object_list = client.listObjects('<dummy token>',
+                                     count=d1_common.const.MAX_LISTOBJECTS)
     
     # Loop through our local test objects.
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
@@ -316,110 +319,104 @@ class TestSequenceFunctions(unittest.TestCase):
   def slicing_1(self):
     '''Slicing: Starting at 0 and getting half of the available objects.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
-    object_cnt = 100
-    object_cnt_half = object_cnt / 2
-  
+    object_cnt_half = OBJECTS_TOTAL_DATA / 2  
     # Starting at 0 and getting half of the available objects.
-    object_list = client.listObjects(start=0, count=object_cnt_half)
-    self.assert_counts(object_list, 0, object_cnt_half, object_cnt)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    #client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    object_list = client.listObjects('<dummy token>', start=0,
+                                     count=object_cnt_half)
+    self.assert_counts(object_list, 0, object_cnt_half,
+                       OBJECTS_TOTAL_DATA)
     
   def slicing_2(self):
     '''Slicing: Starting at object_cnt_half and requesting more objects
     than there are.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
-    object_cnt = 100
-    object_cnt_half = object_cnt / 2
-  
-    object_list = client.listObjects(start=object_cnt_half, count=d1_common.const.MAX_LISTOBJECTS)
-    self.assert_counts(object_list, object_cnt_half, object_cnt_half, object_cnt)
+    object_cnt_half = OBJECTS_TOTAL_DATA / 2  
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects('<dummy token>', start=object_cnt_half,
+                                     count=d1_common.const.MAX_LISTOBJECTS)
+    self.assert_counts(object_list, object_cnt_half, object_cnt_half,
+                       OBJECTS_TOTAL_DATA)
   
   def slicing_3(self):
     '''Slicing: Starting above number of objects that we have.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
-    object_cnt = 100
-    object_cnt_half = object_cnt / 2
-  
-    object_list = client.listObjects(start=object_cnt * 2, count=1)
-    self.assert_counts(object_list, object_cnt * 2, 0, object_cnt)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects('<dummy token>',
+                                     start=OBJECTS_TOTAL_DATA * 2,
+                                     count=1)
+    self.assert_counts(object_list, OBJECTS_TOTAL_DATA * 2, 0,
+                       OBJECTS_TOTAL_DATA)
     
   def slicing_4(self):
     '''Slicing: Requesting more than MAX_LISTOBJECTS should throw.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    object_cnt = 100
-    object_cnt_half = object_cnt / 2
-    self.assertRaises(Exception, client.listObjects, count=d1_common.const.MAX_LISTOBJECTS + 1)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_cnt_half = OBJECTS_TOTAL_DATA / 2
+    self.assertRaises(Exception, client.listObjects, '<dummy token>',
+                      count=d1_common.const.MAX_LISTOBJECTS + 1)
 
   def date_range_1(self):
     '''Date range query: Get all objects from the 1990s.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(
-      startTime=datetime.datetime(1990, 1, 1),
-      endTime=datetime.datetime(1999, 12, 31)
-      )
-    self.assert_counts(object_list, 0, 32, 32)
+    object_list = client.listObjects('<dummy token>',
+                                     count=d1_common.const.MAX_LISTOBJECTS,
+                                     startTime=datetime.datetime(1990, 1, 1),
+                                     endTime=datetime.datetime(1999, 12, 31))
+    self.assert_counts(object_list, 0, OBJECTS_CREATED_IN_90S, OBJECTS_CREATED_IN_90S)
   
   
   def date_range_2(self):
     '''Date range query: Get first 10 objects from the 1990s.
     '''    
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(
-      startTime=datetime.datetime(1990, 1, 1),
-      endTime=datetime.datetime(1999, 12, 31),
-      start=0,
-      count=10
-      )
-    self.assert_counts(object_list, 0, 10, 32)
+    object_list = client.listObjects('<dummy token>',
+                                     start=0,
+                                     count=10,
+                                     startTime=datetime.datetime(1990, 1, 1),
+                                     endTime=datetime.datetime(1999, 12, 31))
+    self.assert_counts(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
   
   def date_range_3(self):
     '''Date range query: Get 10 first objects from the 1990s, filtered by
     objectFormat.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(
-      startTime=datetime.datetime(1990, 1, 1),
-      endTime=datetime.datetime(1999, 12, 31),
-      start=0,
-      count=10,
-      objectFormat='eml://ecoinformatics.org/eml-2.0.0'
-      )
+    object_list = client.listObjects('<dummy token>',
+                                     start=0,
+                                     count=10,
+                                     startTime=datetime.datetime(1990, 1, 1),
+                                     endTime=datetime.datetime(1999, 12, 31),
+                                     objectFormat='eml://ecoinformatics.org/eml-2.0.0')
     self.assert_counts(object_list, 0, 10, 32)
   
   def date_range_4(self):
     '''Date range query: Get 10 first objects from non-existing date range.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(
-      startTime=datetime.datetime(2500, 1, 1),
-      endTime=datetime.datetime(2500, 12, 31),
-      start=0,
-      count=10,
-      objectFormat='eml://ecoinformatics.org/eml-2.0.0'
-      )
+    object_list = client.listObjects('<dummy token>',
+                                     start=0,                      
+                                     count=10,
+                                     startTime=datetime.datetime(2500, 1, 1),
+                                     endTime=datetime.datetime(2500, 12, 31),
+                                     objectFormat='eml://ecoinformatics.org/eml-2.0.0')
     self.assert_counts(object_list, 0, 0, 0)
   
   def get_object_count(self):
     '''Get object count.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(
-      start=0,
-      count=0,
-      )
-    self.assert_counts(object_list, 0, 0, 100)
+    object_list = client.listObjects('<dummy token>',
+                                     start=0,
+                                     count=0)
+    self.assert_counts(object_list, 0, 0, OBJECTS_TOTAL_DATA)
   
   
   # /object/<pid>
@@ -427,15 +424,17 @@ class TestSequenceFunctions(unittest.TestCase):
   def get_object_by_invalid_pid(self):
     '''404 NotFound when attempting to get non-existing object /object/_invalid_pid_.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    self.assertRaises(d1_common.types.exceptions.NotFound, client.get, '_invalid_pid_')
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    self.assertRaises(d1_common.types.exceptions.NotFound, client.get,
+                      '<dummy token>',
+                      '_invalid_pid_')
 
   def get_object_by_valid_pid(self):
     '''Successful retrieval of valid object
     /object/valid_pid.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    response = client.get('10Dappend2.txt')
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    response = client.get('<dummy token>', '10Dappend2.txt')
     # Todo: Verify that we got the right object.
   
   # Todo: Unicode tests.
@@ -448,29 +447,32 @@ class TestSequenceFunctions(unittest.TestCase):
   def get_sysmeta_by_invalid_pid(self):
     '''404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    self.assertRaises(d1_common.types.exceptions.NotFound, client.getSystemMetadata, '_invalid_pid_')
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    self.assertRaises(d1_common.types.exceptions.NotFound,
+                      client.getSystemMetadata,
+                      '<dummy token>',
+                      '_invalid_pid_')
 
   def get_sysmeta_by_valid_pid(self):
     '''Successful retrieval of valid object /meta/valid_pid.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
-    response = client.getSystemMetadata('10Dappend2.txt')
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    response = client.getSystemMetadata('<dummy token>', '10Dappend2.txt')
     self.assertTrue(response)
   
   def xml_validation(self):
     '''Returned XML document validates against the ObjectList schema.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    response = client.listObjectsResponse('<dummy token>',
+                                          count=d1_common.const.MAX_LISTOBJECTS) 
     xml_doc = response.read()
     d1_common.util.validate_xml(xml_doc)
 
   def pxby_objectlist_xml(self):
     '''Serialization: ObjectList -> XML.
     '''
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test_objectlist.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = object_list_1.serialize('text/xml')
@@ -483,7 +485,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def pxby_objectlist_json(self):
     '''Serialization: ObjectList -> JSON.
     '''
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test_objectlist.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = object_list_1.serialize(d1_common.const.MIMETYPE_JSON)
@@ -505,7 +507,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def pxby_objectlist_csv(self):
     '''Serialization: ObjectList -> CSV.
     '''
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test_objectlist.xml').read()
     object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
     object_list_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = object_list_1.serialize(d1_common.const.MIMETYPE_CSV)
@@ -521,7 +523,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def monitor_xml_validation(self):
     '''Returned XML document validates against the schema.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.client.GET(client.getMonitorObjectUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
     xml_doc = response.read()
     d1_common.util.validate_xml(xml_doc)
@@ -541,7 +543,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def orderby_size(self):
     '''ObjectList orderby: size.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=size', {'Accept': d1_common.const.MIMETYPE_JSON})
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 1982)
@@ -550,7 +552,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def orderby_size_desc(self):
     '''ObjectList orderby: desc_size.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=desc_size', {'Accept': d1_common.const.MIMETYPE_JSON})
     doc = json.loads(response.read())
     self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
@@ -586,7 +588,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def delete_test(self):
     '''MN_crud.delete() in GMN and libraries.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)
     # Delete the object on GMN.
@@ -601,7 +603,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def describe(self):
     '''MN_crud.describe in GMN and libraries.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)
     # Get header information for object.
@@ -618,7 +620,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # Source and destination node references.
 
     # Delete the object on the destination node if it exists there.
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     try:
       pid_deleted = client.delete(pid)
       self.assertEqual(pid, pid_deleted.value())
@@ -638,13 +640,13 @@ class TestSequenceFunctions(unittest.TestCase):
                                           .format(urllib.quote(self.opts.replicate_src_ref, ''),
                                                   urllib.quote(pid, '')))
     
-    root = d1_client.client.DataOneClient(self.opts.d1_root)
+    root = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = root.client.GET(test_replicate_url)
     self.assertEqual(response.code, 200)
 
     replicate_mime = response.read()
     # Add replication task to the destination GMN work queue.
-    client_dst = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client_dst = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     replicate_url = urlparse.urljoin(client_dst.client.target, 'replicate')
     headers = {}
     headers['Content-Type'] = 'multipart/form-data; boundary=----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
@@ -707,7 +709,7 @@ class TestSequenceFunctions(unittest.TestCase):
   def unicode_test_1(self):
     '''GMN and libraries handle Unicode correctly.
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
 
     test_doc_path = os.path.join(self.opts.int_path,
                                  'src', 'test', 'resources', 'd1_testdocs', 'encodingTestSet')
@@ -758,11 +760,21 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Managed: Object collection is empty.
     '''
     self.object_collection_is_empty()
+
+  def test_1030_clear_event_log(self):
+    '''Managed: Clear event log.
+    '''
+    self.clear_event_log()
   
-  def test_1030_create_objects(self):
+  def test_1040_event_log_is_empty(self):
+    '''Managed: Event log is empty.
+    '''
+    self.event_log_is_empty()
+  
+  def test_1050_create_objects(self):
     '''Managed: Populate MN with set of test objects (local).
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -780,27 +792,22 @@ class TestSequenceFunctions(unittest.TestCase):
   
       # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
-      client.create(sysmeta_obj.identifier, object_file, sysmeta_xml, {})
-    
-  def test_1040_clear_event_log(self):
-    '''Managed: Clear event log.
+      client.create('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
+
+  def test_1055_object_collection_is_populated(self):
+    '''Managed: Object collection is populated.
     '''
-    self.clear_event_log()
-  
-  def test_1050_event_log_is_empty(self):
-    '''Managed: Event log is empty.
-    '''
-    self.event_log_is_empty()
+    self.object_collection_is_populated()
 
   def test_1060_inject_event_log(self):
-    '''Managed: Inject a fake event log for testing.
+    '''Managed: Inject a set of fictitious events for each object.
     '''
     self.inject_event_log()
 
-  def test_1070_create_log(self):
-    '''Managed: Event log correctly reflects create_object actions.
+  def test_1070_event_log_is_populated(self):
+    '''Managed: Event log is populated.
     '''
-    self.create_log()
+    self.event_log_is_populated()
   
   def test_1080_compare_byte_by_byte(self):
     '''Managed: Read set of test objects back from MN and do byte-by-byte comparison with local copies.
@@ -808,7 +815,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.compare_byte_by_byte()
        
   def test_1090_object_properties(self):
-    '''Managed: Read complete object collection and compare with values stored in local SysMeta files.
+    '''Managed: Read complete object collection and compare object properties with values stored in local SysMeta files.
     '''
     self.object_properties()
 
@@ -896,73 +903,73 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.pxby_objectlist_json()
 
-#  def test_1260_pxby_objectlist_rdf_xml(self):
-#    '''Managed: Serialization: ObjectList -> RDF XML.
-#    '''
-#    self.pxby_objectlist_rdf_xml()
+##  def test_1260_pxby_objectlist_rdf_xml(self):
+##    '''Managed: Serialization: ObjectList -> RDF XML.
+##    '''
+##    self.pxby_objectlist_rdf_xml()
     
   def test_1270_pxby_objectlist_csv(self):
     '''Managed: Serialization: ObjectList -> CSV.
     '''
     self.pxby_objectlist_csv()
 
-  def test_1280_monitor_xml_validation(self):
-    '''Managed: Returned XML document validates against the MonitorList schema.
-    '''
-    self.monitor_xml_validation()
-
-  def test_1290_pxby_monitor_xml(self):
-    '''Managed: Serialization: MonitorList -> XML.
-    '''
-    self.pxby_monitor_xml()
-
-  def test_1300_orderby_size(self):
-    '''Managed: ObjectList orderby: size.
-    '''
-    self.orderby_size()
-
-  def test_1310_orderby_size_desc(self):
-    '''Managed: ObjectList orderby: desc_size.
-    '''
-    self.orderby_size_desc()
-
-  def test_1320_checksum_serialization_1(self):
-    '''Managed: Serialization: Checksum -> XML -> Checksum.
-    '''
-    self.checksum_serialization_1()
-  
-  def test_1321_checksum_serialization_2(self):
-    '''Managed: Serialization: Checksum -> JSON.
-    '''
-    self.checksum_serialization_2()
-
-  def test_1322_checksum_serialization_3(self):
-    '''Managed: Serialization: Checksum -> CSV.
-    '''
-    self.checksum_serialization_3()
-
-  def test_1330_delete(self):
-    '''Managed: MN_crud.delete() in GMN and libraries.
-    '''
-    self.delete_test()
-
-  def test_1340_describe(self):
-    '''Managed: MN_crud.describe in GMN and libraries.
-    '''
-    self.describe()
-  
-  def test_1350_replication(self):
-    '''Managed: Replication. Requires fake CN.
-    '''
-    self.replication()
-
-#  def test_1360_unicode_test_1(self):
-#    '''Managed: GMN and libraries handle Unicode correctly.
+#  def test_1280_monitor_xml_validation(self):
+#    '''Managed: Returned XML document validates against the MonitorList schema.
 #    '''
-#    self.unicode_test_1()
-
-  # Remote.
-
+#    self.monitor_xml_validation()
+#
+#  def test_1290_pxby_monitor_xml(self):
+#    '''Managed: Serialization: MonitorList -> XML.
+#    '''
+#    self.pxby_monitor_xml()
+#
+#  def test_1300_orderby_size(self):
+#    '''Managed: ObjectList orderby: size.
+#    '''
+#    self.orderby_size()
+#
+#  def test_1310_orderby_size_desc(self):
+#    '''Managed: ObjectList orderby: desc_size.
+#    '''
+#    self.orderby_size_desc()
+#
+#  def test_1320_checksum_serialization_1(self):
+#    '''Managed: Serialization: Checksum -> XML -> Checksum.
+#    '''
+#    self.checksum_serialization_1()
+#  
+#  def test_1321_checksum_serialization_2(self):
+#    '''Managed: Serialization: Checksum -> JSON.
+#    '''
+#    self.checksum_serialization_2()
+#
+#  def test_1322_checksum_serialization_3(self):
+#    '''Managed: Serialization: Checksum -> CSV.
+#    '''
+#    self.checksum_serialization_3()
+#
+#  def test_1330_delete(self):
+#    '''Managed: MN_crud.delete() in GMN and libraries.
+#    '''
+#    self.delete_test()
+#
+#  def test_1340_describe(self):
+#    '''Managed: MN_crud.describe in GMN and libraries.
+#    '''
+#    self.describe()
+#  
+#  def test_1350_replication(self):
+#    '''Managed: Replication. Requires fake CN.
+#    '''
+#    self.replication()
+#
+##  def test_1360_unicode_test_1(self):
+##    '''Managed: GMN and libraries handle Unicode correctly.
+##    '''
+##    self.unicode_test_1()
+#
+#  # Remote.
+#
   def test_2010_delete_all_objects(self):
     '''Wrapped: Delete all objects.
     '''
@@ -973,11 +980,20 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.object_collection_is_empty()
   
-  def test_2030_create_objects(self):
+  def test_2030_clear_event_log(self):
+    '''Wrapped: Clear event log.
+    '''
+    self.clear_event_log()
+  
+  def test_2040_event_log_is_empty(self):
+    '''Wrapped: Event log is empty.
+    '''
+    self.event_log_is_empty()
+
+  def test_2050_create_objects(self):
     '''Wrapped: Populate MN with set of test objects (Remote).
     '''
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-  
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -987,7 +1003,7 @@ class TestSequenceFunctions(unittest.TestCase):
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-
+          
       # This test requires the objects to also be available on a web server
       # (http://localhost:80/test_client_objects by default). This simulates
       # remote storage of the objects.
@@ -998,31 +1014,26 @@ class TestSequenceFunctions(unittest.TestCase):
       sciobj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(sysmeta_obj.identifier, ''), ''))
       scimeta_abs_url = urlparse.urljoin(self.opts.obj_url, sciobj_url)
     
-      # To test the MIME Multipart poster, we provide the SciObj as a file
+      # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
-      client.create(sysmeta_obj.identifier, object_file, sysmeta_xml,
-                    {'vendor_gmn_remote_url': scimeta_abs_url})
+      client.create('<dummy token>', sysmeta_obj.identifier, object_file,
+                    sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
     
-  def test_2040_clear_event_log(self):
-    '''Wrapped: Clear event log.
+  def test_1055_object_collection_is_populated(self):
+    '''Wrapped: Object collection is populated.
     '''
-    self.clear_event_log()
-  
-  def test_2050_event_log_is_empty(self):
-    '''Wrapped: Event log is empty.
-    '''
-    self.event_log_is_empty()
+    self.object_collection_is_populated()
 
   def test_2060_inject_event_log(self):
-    '''Wrapped: Inject a fake event log for testing.
+    '''Wrapped: Inject a set of fictitious events for each object.
     '''
     self.inject_event_log()
 
-  def test_2070_create_log(self):
-    '''Wrapped: Event log correctly reflects create_object actions.
+  def test_2070_event_log_is_populated(self):
+    '''Wrapped: Event log is populated.
     '''
-    self.create_log()
-  
+    self.event_log_is_populated()
+
   def test_2080_compare_byte_by_byte(self):
     '''Wrapped: Read set of test objects back from MN and do byte-by-byte comparison with Remote copies.
     '''
@@ -1117,10 +1128,10 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.pxby_objectlist_json()
 
-#  def test_2260_pxby_objectlist_rdf_xml(self):
-#    '''Wrapped: Serialization: ObjectList -> RDF XML.
-#    '''
-#    self.pxby_objectlist_rdf_xml()
+##  def test_2260_pxby_objectlist_rdf_xml(self):
+##    '''Wrapped: Serialization: ObjectList -> RDF XML.
+##    '''
+##    self.pxby_objectlist_rdf_xml()
     
   def test_2270_pxby_objectlist_csv(self):
     '''Wrapped: Serialization: ObjectList -> CSV.
@@ -1132,55 +1143,55 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.monitor_xml_validation()
 
-  def test_2290_pxby_monitor_xml(self):
-    '''Wrapped: Serialization: MonitorList -> XML.
-    '''
-    self.pxby_monitor_xml()
-
-  def test_2300_orderby_size(self):
-    '''Wrapped: ObjectList orderby: size.
-    '''
-    self.orderby_size()
-
-  def test_2310_orderby_size_desc(self):
-    '''Wrapped: ObjectList orderby: desc_size.
-    '''
-    self.orderby_size_desc()
-          
-  def test_2320_checksum_serialization_1(self):
-    '''Wrapped: Serialization: Checksum -> XML -> Checksum.
-    '''
-    self.checksum_serialization_1()
-  
-  def test_2321_checksum_serialization_2(self):
-    '''Wrapped: Serialization: Checksum -> JSON.
-    '''
-    self.checksum_serialization_2()
-  
-  def test_2322_checksum_serialization_3(self):
-    '''Wrapped: Serialization: Checksum -> CSV.
-    '''
-    self.checksum_serialization_3()
-  
-  def test_2330_delete(self):
-    '''Wrapped: MN_crud.delete() in GMN and libraries.
-    '''
-    self.delete_test()
-
-  def test_2340_describe(self):
-    '''Wrapped: MN_crud.describe in GMN and libraries.
-    '''
-    self.describe()
-
-#  def test_2350_replication(self):
-#    '''Wrapped: Replication. Requires fake CN.
+#  def test_2290_pxby_monitor_xml(self):
+#    '''Wrapped: Serialization: MonitorList -> XML.
 #    '''
-#    self.replication(self)
-
-#  def test_2360_unicode_test_1(self):
-#    '''Wrapped: GMN and libraries handle Unicode correctly.
+#    self.pxby_monitor_xml()
+#
+#  def test_2300_orderby_size(self):
+#    '''Wrapped: ObjectList orderby: size.
 #    '''
-#    self.unicode_test_1()
+#    self.orderby_size()
+#
+#  def test_2310_orderby_size_desc(self):
+#    '''Wrapped: ObjectList orderby: desc_size.
+#    '''
+#    self.orderby_size_desc()
+#          
+#  def test_2320_checksum_serialization_1(self):
+#    '''Wrapped: Serialization: Checksum -> XML -> Checksum.
+#    '''
+#    self.checksum_serialization_1()
+#  
+#  def test_2321_checksum_serialization_2(self):
+#    '''Wrapped: Serialization: Checksum -> JSON.
+#    '''
+#    self.checksum_serialization_2()
+#  
+#  def test_2322_checksum_serialization_3(self):
+#    '''Wrapped: Serialization: Checksum -> CSV.
+#    '''
+#    self.checksum_serialization_3()
+#  
+#  def test_2330_delete(self):
+#    '''Wrapped: MN_crud.delete() in GMN and libraries.
+#    '''
+#    self.delete_test()
+#
+#  def test_2340_describe(self):
+#    '''Wrapped: MN_crud.describe in GMN and libraries.
+#    '''
+#    self.describe()
+#
+##  def test_2350_replication(self):
+##    '''Wrapped: Replication. Requires fake CN.
+##    '''
+##    self.replication(self)
+#
+##  def test_2360_unicode_test_1(self):
+##    '''Wrapped: GMN and libraries handle Unicode correctly.
+##    '''
+##    self.unicode_test_1()
 
 def main():
   log_setup()

@@ -116,19 +116,15 @@ def object_collection(request):
   '''
   0.3 MN_replication.listObjects() GET    /object
   N/A MN_replication.listObjects() HEAD   /object
-  N/A MN_replication.listObjects() DELETE /object
   '''
   if request.method == 'GET':
     return object_collection_get(request, head=False)
   
   if request.method == 'HEAD':
     return object_collection_get(request, head=True)
-  
-  if request.method == 'DELETE':
-    return object_collection_delete(request)
-    
+      
   # Only GET and HEAD accepted.
-  return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
 
 def object_collection_get(request, head):
   '''
@@ -211,7 +207,7 @@ def object_collection_get(request, head):
   if changed == True:
     query_unsliced = query
 
-  # Access Log based filters.
+  # Event Log based filters.
 
   # Filter by last accessed date.
   query, changed = util.add_range_operator_filter(query, request, 'event_log__access_time', 'lastaccessed')
@@ -236,38 +232,6 @@ def object_collection_get(request, head):
 
   # Return query data for further processing in middleware layer.
   return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'object' }
-
-def object_collection_delete(request):
-  '''
-  Remove all objects from db.
-  Not currently part of spec.
-  :return:
-  '''
-
-  if settings.GMN_DEBUG == False:
-    raise d1_common.types.exceptions.InvalidRequest(0, 'Unsupported')
-  
-  # Clear the DB.
-  models.Object.objects.all().delete()
-  models.Object_format.objects.all().delete()
-  models.Checksum_algorithm.objects.all().delete()
-  
-  models.DB_update_status.objects.all().delete()
-
-  # Clear the SysMeta cache.
-  try:
-    for sysmeta_file in os.listdir(settings.SYSMETA_CACHE_PATH):
-      if os.path.isfile(sysmeta_file):
-        os.unlink(os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_file))
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not clear SysMeta cache\n'
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
-
-  # Log this operation.
-  sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
-
-  return HttpResponse('OK')
 
 #
 # CRUD interface.
@@ -409,7 +373,7 @@ def object_pid_post(request, pid):
   :return:
   '''
   
-  util.validate_post(request, (('header', 'token'),
+  util.validate_post(request, (#('header', 'token'),
                                ('file', 'object'),
                                ('file', 'sysmeta')))
 
@@ -496,7 +460,7 @@ def object_pid_put(request, pid):
   obsoletes a previous object (identified by obsoletedPid).
   :return:
   '''
-  util.validate_post(request, (('header', 'token'),
+  util.validate_post(request, ( #('header', 'token'), TODO: Add check for token back in after we settle on a name for it.
                                ('file', 'object'),
                                ('file', 'sysmeta'),
                                ('field', 'obsoletedPid')))
@@ -671,11 +635,7 @@ def event_log_view(request):
   if request.method == 'HEAD':
     return event_log_view_get(request, head=True)
     
-  if request.method == 'DELETE':
-    return event_log_view_delete(request)
-
-  # Only GET, HEAD and DELETE accepted.
-  return HttpResponseNotAllowed(['GET', 'HEAD', 'DELETE'])
+  return HttpResponseNotAllowed(['GET', 'HEAD'])
 
 def event_log_view_get(request, head):
   '''
@@ -748,23 +708,6 @@ def event_log_view_get(request, head):
 
   # Return query data for further processing in middleware layer.  
   return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'log' }
-
-def event_log_view_delete(request):
-  '''
-  Remove all log records.
-  Not part of spec.
-  :return:
-  '''
-
-  # Clear the access log.
-  models.Event_log.objects.all().delete()
-  models.Event_log_ip_address.objects.all().delete()
-  models.Event_log_event.objects.all().delete()
-
-  # Log this operation.
-  sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(request))
-
-  return HttpResponse('OK')
 
 #
 # Replication.
@@ -915,7 +858,7 @@ def error(request):
 
 def error_post(request):
   # TODO: Deserialize exception in message and log full information.
-  util.validate_post(request, (('header', 'token'),
+  util.validate_post(request, ( #('header', 'token'),
                                ('field', 'message')))
   
   sys_log.info('client({0}): CN cannot complete SciMeta sync'.format(util.request_to_string(request)))
@@ -1073,13 +1016,9 @@ def monitor_event_get(request, head):
 def node(request):
   '''
   '''
-  if request.method == 'GET':
-    return node_get(request)
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
 
-  # Only GET accepted.
-  return HttpResponseNotAllowed(['GET'])
-
-def node_get(request):
   return {'type': 'node' }
 
 #<node replicate="true" synchronize="true" type="mn">
@@ -1147,7 +1086,58 @@ def test_get_request(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
-def test_inject_log(request):
+def test_delete_all_objects(request):
+  '''
+  Remove all objects from db.
+  :return:
+  
+  TODO: Also remove objects from disk if they are managed.
+  '''
+
+  # Only GET accepted.
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+  
+  # Clear the DB.
+  models.Object.objects.all().delete()
+  models.Object_format.objects.all().delete()
+  models.Checksum_algorithm.objects.all().delete()
+  
+  models.DB_update_status.objects.all().delete()
+
+  # Clear the SysMeta cache.
+  try:
+    for sysmeta_file in os.listdir(settings.SYSMETA_CACHE_PATH):
+      if os.path.isfile(sysmeta_file):
+        os.unlink(os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_file))
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not clear SysMeta cache\n'
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+
+  # Log this operation.
+  sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
+
+  return HttpResponse('OK')
+
+def test_delete_event_log(request):
+  '''
+  Remove all log records.
+  Not part of spec.
+  :return:
+  '''
+
+  # Clear the access log.
+  models.Event_log.objects.all().delete()
+  models.Event_log_ip_address.objects.all().delete()
+  models.Event_log_event.objects.all().delete()
+
+  # Log this operation.
+  sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(request))
+
+  return HttpResponse('OK')
+  
+def test_inject_event_log(request):
   '''Inject a fake log for testing.
   
   The corresponding test object set must have already been created.
@@ -1160,7 +1150,7 @@ def test_inject_log(request):
 
   util.validate_post(request, (('file', 'csv'),))
   
-  # Create log entries.
+  # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
 
   for row in csv_reader:

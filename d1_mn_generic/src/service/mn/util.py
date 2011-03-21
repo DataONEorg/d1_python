@@ -225,6 +225,10 @@ def traceback_to_trace_info():
   return tb
 
 
+def traceback_to_text():
+  return '\n\n'.join(traceback_to_trace_info())
+
+
 def clear_db():
   '''
   Clear the database. Used for testing and debugging.

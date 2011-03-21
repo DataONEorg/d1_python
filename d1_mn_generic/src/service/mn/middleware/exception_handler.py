@@ -93,7 +93,7 @@ class exception_handler():
           request, exception
         )
       )
-      exception.traceInformation = util.traceback_to_trace_info()
+      exception.traceInformation = util.traceback_to_text()
       exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
         exception
       )
