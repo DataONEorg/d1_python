@@ -19,21 +19,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_client.d1sysmeta
-============================
+Module d1_client.systemmetadata
+===============================
 
-:Created: 20100111
+Implements a wrapper that makes it a bit simpler to pull values from
+an instance of SystemMetadata.
+
+:Created: 2010-01-11
 :Author: vieglais
-
 :Dependencies:
-
   - dateutil useful python library for parsing dates, available from
     http://labix.org/python-dateutil or easy_install python-dateutil
-
   - minixsv, required for validation against schemas.
-
-This module implements a wrapper that makes it a bit simpler to pull values from
-an instance of SystemMetadata.
 
 Example:
   >>> target = "http://localhost:8000/mn"

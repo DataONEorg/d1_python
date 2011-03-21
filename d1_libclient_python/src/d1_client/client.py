@@ -24,13 +24,10 @@
 This module implements DataOneClient which provides a client supporting basic 
 interaction with the DataONE infrastructure.
 
-:Created: 20100111
+:Created: 2010-01-11
 :Author: DataONE (vieglais, dahl)
-
 :Dependencies:
-
   - python 2.6
-
 '''
 
 # Stdlib.
@@ -508,6 +505,7 @@ class DataOneClient(object):
 
     url = urlparse.urljoin(self.getResolveUrl(), urllib.quote(pid, ''))
     self.logger.debug_("pid({0}) url({1})".format(pid, url))
+
     if headers is None:
       headers = self.headers
     # Fetch.
@@ -777,30 +775,11 @@ class DataOneClient(object):
     return deser.deserialize(response.read(), format)
 
 
-class SimpleDataOneClient(object):
+class SimpleDataOneClient(DataOneClient):
   '''Provides high level access to the DataONE infrastructure
   from Python. It is easier to use than DataONEClient (see above)
   but it does not provide the same level of control.
   '''
-
-  #  def __init__(self, target=d1_common.const.URL_DATAONE_ROOT,
-  #                     userAgent=d1_common.const.USER_AGENT,
-  #                     clientClass=RESTClient,
-  #                     timeout=d1_common.const.RESPONSE_TIMEOUT,
-  #                     ):
-  #    '''Initialize the test client.
-  #    
-  #    :param target: URL of the service to contact.
-  #    :param UserAgent: The userAgent string being passed in the request headers
-  #    :param clientClass: Class that will be used for HTTP connections.
-  #    :return: (None)
-  #    '''
-  #
-  #    self.logger = clientClass.logger
-  #    self.userAgent = userAgent
-  #    self._BASE_DETAIL_CODE = '11000'
-  #    #TODO: Need to define this detailCode base value
-  #    self.client = clientClass(target, timeout)
 
   def resolve(self, pid):
     '''Resolve an pid to object location
@@ -812,7 +791,7 @@ class SimpleDataOneClient(object):
     return a single service interface at a MN that the DataOneClient() can be
     instantiated with.
     '''
-    client_root = DataOneClient(self.target)
+    client_root = DataOneClient(self.client.target)
 
     # Get a copy of the node registry.
     nodes = client_root.node()
@@ -824,12 +803,12 @@ class SimpleDataOneClient(object):
     for object_location in object_location_list.objectLocation:
       # Use registry to look up baseURL.
       for node in nodes.node:
-        if node.pid == object_location.nodeIdentifier:
+        if node.identifier == object_location.nodeIdentifier:
           return node.baseURL
 
     raise d1_common.types.exceptions.NotFound(0, 'Could not resolve pid', pid)
 
-  def get(self, pid):
+  def get(self, pid, headers=None):
     '''Retrieve a Science Object from DataONE.
     :param: (string) Identifier of object to retrieve.
     :return: (file) Open file stream.
@@ -837,13 +816,11 @@ class SimpleDataOneClient(object):
 
     # Resolve.
     mn = self.resolve(pid)
-
     # Get.
     client_mn = DataOneClient(target=mn)
+    return client_mn.get(pid, headers)
 
-    return client_mn.get(pid)
-
-  def getSysMeta(self, pid):
+  def getSystemMetadata(self, pid, headers=None):
     '''Get de-serialized SystemMetadata object.
     :param: (string) Identifier of object for which to retrieve SysMeta
     :return: (class) De-serialized SystemMetadata object.
@@ -851,76 +828,6 @@ class SimpleDataOneClient(object):
 
     # Resolve.
     mn = self.resolve(pid)
-
     # Get.
     client_mn = DataOneClient(target=mn)
-
-    response = client_mn.getSystemMetadataResponse(pid)
-
-    format = response.headers['content-type']
-    return d1_common.types.systemmetadata.CreateFromDocument(response.read(), format)
-
-  def getLogRecords(
-    self,
-    startTime=None,
-    endTime=None,
-    objectFormat=None,
-    start=0,
-    count=d1_common.const.MAX_LISTOBJECTS
-  ):
-
-    client_root = DataOneClient(self.target)
-
-    response = client_root.getLogRecords(startTime, endTime, objectFormat, start, count)
-
-    return response
-
-  def listObjects(
-    self,
-    startTime=None,
-    endTime=None,
-    objectFormat=None,
-    start=0,
-    count=d1_common.const.MAX_LISTOBJECTS,
-    requestFormat="text/xml"
-  ):
-
-    client_root = DataOneClient(self.target)
-
-    response = client_root.listObjects(
-      startTime, endTime, objectFormat, start, count, requestFormat
-    )
-
-    return response
-
-  def create(self, pid, scidata, sysmeta):
-    '''Create an object in DataONE.
-    :param: (string) Identifier of object to create.
-    :param: (flo) SciData.
-    :param: (flo) SysMeta.
-    :return: (None)
-    '''
-
-    # Data to post.
-    files = []
-    files.append(('object', 'object', scidata))
-    files.append(('systemmetadata', 'systemmetadata', sysmeta))
-
-    # Send REST POST call to register object.
-
-    crud_create_url = urlparse.urljoin(self.getObjectUrl(), urllib.quote(pid, ''))
-    self.logger.debug_('url({0}) pid({1})'.format(crud_create_url, pid))
-
-    multipart = mime_multipart.multipart({}, [], files)
-    try:
-      status, reason, page = multipart.post(crud_create_url)
-      if status != 200:
-        raise Exception(page)
-    except Exception as e:
-      logging.error('REST call failed: {0}'.format(str(e)))
-      raise
-
-  def enumerateObjectFormats(self):
-    client_root = DataOneClient(self.target)
-
-    return client_root.enumerateObjectFormats()
+    return client_mn.getSystemMetadata(pid, headers)

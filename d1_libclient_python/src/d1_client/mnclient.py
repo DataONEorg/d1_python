@@ -1,4 +1,33 @@
-'''
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''Module d1_client.mnclient
+============================
+
+:Created: 2011-01-21
+:Author: DataONE (vieglais, dahl)
+:Dependencies:
+  - python 2.6
+
+This module implements MemberNodeClient, which extends DataONEBaseClient
+with functionality specific to Member Nodes.
 '''
 import logging
 import urlparse
@@ -24,13 +53,18 @@ class MemberNodeClient(DataONEBaseClient):
       strictHttps=strictHttps
     )
     self.logger = logging.getLogger('MemberNodeClient')
-    self.methodmap['create'] = u'object/%(pid)s'
-    self.methodmap['getchecksum'] = u'checksum/%(pid)s'
-    self.methodmap['getobjectstatistics'] = u'monitor/object'
-    self.methodmap['getoperationstatistics'] = u'monitor/event'
-    self.methodmap['getcapabilities'] = u'node'
 
-  def create(self, token, pid, obj, sysmeta):
+    self.methodmap.update(
+      {
+        'create': u'object/%(pid)s',
+        'getchecksum': u'checksum/%(pid)s',
+        'getobjectstatistics': u'monitor/object',
+        'getoperationstatistics': u'monitor/event',
+        'getcapabilities': u'node',
+      }
+    )
+
+  def create(self, token, pid, obj, sysmeta, vendor_specific={}):
     '''
     :param token:
     :type token: Authentication Token
@@ -43,18 +77,21 @@ class MemberNodeClient(DataONEBaseClient):
     :returns: True on successful completion
     :return type: Boolean
     '''
-    data = None
-    files = []
-    if isinstance(basestring, obj):
-      data['object'] = obj
-    else:
-      files.append(('object', 'content.bin', obj))
-    if isinstance(basestring, sysmeta):
-      data['systemmetadata'] = sysmeta
-    else:
-      files.append(('sysmeta', 'systemmetadata.xml', sysmeta))
+    #    data = None
+    #    files = []
+    #    if isinstance(basestring, obj):
+    #      data['object'] = obj
+    #    else:
+    #      files.append(('object', 'content.bin', obj))
+    #    if isinstance(basestring, sysmeta):
+    #      data['systemmetadata'] = sysmeta
+    #    else:
+    #      files.append(('sysmeta','systemmetadata.xml', sysmeta))
     url = self._makeUrl('create', pid=pid)
-    response = self.POST(url, data=data, files=files, headers=self._getAuthHeader(token))
+    headers = self._getAuthHeader(token)
+    headers.update(vendor_specific)
+    files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
+    response = self.POST(url, files=files, headers=headers)
     return self.isHttpStatusOK(response.status)
 
   def update(self, token, pid, obj, obsoletedPid, sysmeta):

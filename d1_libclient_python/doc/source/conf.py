@@ -18,16 +18,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
+'''
 :mod:`conf`
 ===========
 
 :Synopsis:
   Sphinx documentation building system configuration.
 
-.. moduleauthor:: Dave Vieglais
-.. moduleauthor:: Roger Dahl
-"""
+:Author:
+  DataONE (vieglais, dahl)
+'''
 
 # Member Node REST Interface documentation build configuration file, created by
 # sphinx-quickstart on Wed Jan 20 23:39:55 2010.
@@ -46,14 +46,22 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.append(os.path.abspath('../../src'))
+sys.path.append(os.path.abspath('../../src/d1_client'))
+sys.path.append(os.path.abspath('../../src/tests'))
 sys.path.append(os.path.abspath('../../../d1_common_python/src/'))
 
 # -- General configuration -----------------------------------------------------
 
+autosummary_generate = True
+
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo']
+extensions = [
+  'sphinx.ext.autodoc',
+  'sphinx.ext.doctest',
+  'sphinx.ext.todo',
+  'sphinx.ext.autosummary',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -69,7 +77,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'DataONE'
-copyright = u'2010, Participating institutions in DataONE'
+copyright = u'2010,2011 Participating institutions in DataONE'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
