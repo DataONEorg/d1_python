@@ -1,27 +1,27 @@
 Installing d1_libclient_python
 ==============================
 
-Note that ``d1_libclient_python`` is in the early stages of development and will
-likely change significantly over time. 
+First, install ``d1_common_python`` according to the instructions in the
+documentation for that project. It is a dependency of ``d1_libclient_python``.
 
-Use it at your own risk of frustration.
-
-The simplest way to utilize the library is to check out the source from 
-subversion and work from there.  This makes it easy to keep up to date with
+The simplest way to utilize the library is to check out the source from
+`subversion`_ and work from there. This makes it easy to keep up to date with
 changes.
 
-A package will be released at some point in the future once things stabilize 
+A package will be released at some point in the future once things stabilize
 a bit.
 
-To set things up in ``$HOME/dataone-python``::
+To set the library up in ``~/dataone-python`` on Linux, using `Bash`_ (which
+is often the default shell)::
 
-  mkdir $HOME/dataone-python
-  cd $HOME/dataone-python
-  svn co https://repository.dataone.org/software/cicore/trunk/api-common-python
-  svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python
-  export PYTHONPATH="$PWD/api-common-python/src:$PWD/d1-python/src:$PYTHONPATH"
-  cd d1-python/src
-  python d1cli.py --help
+  $ cd ~/dataone-python
+  $ svn co https://repository.dataone.org/software/cicore/trunk/d1_libclient_python d1_libclient_python
+  $ export PYTHONPATH=~/"dataone-python/d1_libclient_python:$PYTHONPATH"
 
+To update your copy of the library::
 
-Use the usual ``svn update`` operations to update your copy.
+  $ cd ~/dataone-python/d1_libclient_python
+  $ svn update
+
+.. _subversion: http://subversion.tigris.org/
+.. _Bash: http://www.gnu.org/software/bash/

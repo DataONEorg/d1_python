@@ -22,6 +22,14 @@
 Module d1_client.objectlistiterator
 ===================================
 
+Implements an iterator that iterates over the entire ObjectList for a 
+DataONE node. Data is retrieved from the target only when required.
+  
+:Created: 2010-04-07
+:Author: DataONE (vieglais)
+:Dependencies:
+  - python 2.6
+
 Example::
 
   $python objectlistiterator.py -b "http://knb-mn.ecoinformatics.org/knb/d1" \
@@ -70,8 +78,6 @@ Example::
     size     : 1519909
     checksum : 0D2EA212DB6D60C53E456C145C331D65
     algorithm: MD5
-
-
 '''
 import logging
 

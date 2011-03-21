@@ -20,11 +20,39 @@
 # limitations under the License.
 ''' 
 Module d1_client.logrecorditerator
-====================================
- 
-:Created: 20100724
-:Author: vieglais
+==================================
 
+Implements an iterator that iterates over the entire set of LogRecords 
+for a DataONE node.  Data is retrieved from the target only when required.
+
+:Created: 2010-07-24
+:Author: DataONE (vieglais)
+:Dependencies:
+  - python 2.6
+
+
+Example::
+
+  import d1_client.client
+  import sys
+  logging.basicConfig(level=logging.INFO)
+  target = "http://dev-dryad-mn.dataone.org/mn"
+  #target = "http://129.24.0.15/mn"
+  #target = "http://knb-mn.ecoinformatics.org/knb"
+  if len(sys.argv) > 1:
+    target = sys.argv[1]
+  client = d1_client.client.DataOneClient(target=target)
+  rl = LogRecordIterator(client)
+  counter = 0
+  for e in rl:
+    counter += 1
+    print "==== #%d ====" % counter 
+    print "Event      = %s" % e.event
+    print "Timestamp  = %s" % e.dateLogged.isoformat()
+    print "IP Addres  = %s" % e.ipAddress
+    print "Identifier = %s" % e.identifier
+    print "User agent = %s" % e.userAgent
+    print "Principal  = %s" % e.principal
 '''
 
 import logging
@@ -78,29 +106,3 @@ class LogRecordIterator(object):
       start=start, count=self._pagesize,
       startTime=self.startTime
     )
-
-#===============================================================================
-if __name__ == "__main__":
-  '''A simple demonstration of the iterator.  Walks over the list of log 
-  entries available from a given node.
-  '''
-  import d1_client.client
-  import sys
-  logging.basicConfig(level=logging.INFO)
-  target = "http://dev-dryad-mn.dataone.org/mn"
-  #target = "http://129.24.0.15/mn"
-  #target = "http://knb-mn.ecoinformatics.org/knb"
-  if len(sys.argv) > 1:
-    target = sys.argv[1]
-  client = d1_client.client.DataOneClient(target=target)
-  rl = LogRecordIterator(client)
-  counter = 0
-  for e in rl:
-    counter += 1
-    print "==== #%d ====" % counter
-    print "Event      = %s" % e.event
-    print "Timestamp  = %s" % e.dateLogged.isoformat()
-    print "IP Addres  = %s" % e.ipAddress
-    print "Identifier = %s" % e.identifier
-    print "User agent = %s" % e.userAgent
-    print "Principal  = %s" % e.principal
