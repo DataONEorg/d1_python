@@ -22,7 +22,7 @@
 Module d1_common.tests.test_mime_multipart
 ==========================================
 
-Unit tests for XML document comparison utility.
+Unit tests for MIME Multipart document generator.
 
 :Created: 2011-03-17
 :Author: DataONE (dahl)
@@ -192,7 +192,7 @@ short_data\x0d\n\
 
 
 class TestMimeMultipart(unittest.TestCase):
-  def _convert_bin_to_string_literal(in_path, out_path):
+  def _convert_bin_to_string_literal(self, in_path, out_path):
     '''Convert a binary file to a Python string literal.
     '''
     i = open(in_path, 'rb')

@@ -94,12 +94,7 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
     root = ElementTree.Element(u'error', attrs)
     ElementTree.SubElement(root, u'description').text = \
        self.dataone_exception.description
-    #    for v in self.dataone_exception.traceInformation:
-    #      ElementTree.SubElement(root, u'traceInformation').text = unicode(v)
-    # TODO: For the Feb 2011 NSF demo, we keep traceInformation blank as
-    # the serialization format of traceInformation is different between
-    # Python and Java stacks. We only do this for XML because that is
-    # the only serialization format used in the Java stack.
+    # TODO: See if the "is not None" test is neccesary.
     if self.dataone_exception.traceInformation is not None:
       ElementTree.SubElement(root, u'traceInformation').text = \
         self.dataone_exception.traceInformation

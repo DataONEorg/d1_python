@@ -33,6 +33,7 @@ Unit tests for serializaton and de-serialization of the MonitorList type.
 import logging
 import sys
 import unittest
+import datetime
 
 from d1_common import xmlrunner
 from d1_common.types import monitorlist_serialization
@@ -64,24 +65,31 @@ EG_BAD_MONITORLIST_2 = """<?xml version="1.0" ?>
 
 
 class TestMonitorList(unittest.TestCase):
+  def deserialize_and_check(self, doc, shouldfail=False):
+    deserializer = monitorlist_serialization.MonitorList()
+    try:
+      monitor_list = deserializer.deserialize(doc, content_type="text/xml")
+    except:
+      if shouldfail:
+        return
+      else:
+        raise
+
+    self.assertEquals(len(monitor_list.monitorInfo), 3)
+
+    for monitor_info in monitor_list.monitorInfo:
+      self.assertTrue(monitor_info.count in (1, 2, 3))
+      # Check for valid date.
+      self.assertTrue(datetime.datetime(*map(int, str(monitor_info.date).split('-'))))
+
   def test_serialization(self):
-    loader = monitorlist_serialization.MonitorList()
-
-    def doctest(doc, shouldfail=False):
-      try:
-        checksum = loader.deserialize(doc, content_type="text/xml")
-      except:
-        if shouldfail:
-          pass
-        else:
-          raise
-
-    doctest(EG_MONITORLIST_GMN)
+    self.deserialize_and_check(EG_MONITORLIST_GMN)
     #doctest(EG_MONITORLIST_KNB)
-    doctest(EG_BAD_MONITORLIST_1, shouldfail=True)
-    doctest(EG_BAD_MONITORLIST_2, shouldfail=True)
+    self.deserialize_and_check(EG_BAD_MONITORLIST_1, shouldfail=True)
+    self.deserialize_and_check(EG_BAD_MONITORLIST_2, shouldfail=True)
 
 #===============================================================================
+
 if __name__ == "__main__":
   argv = sys.argv
   if "--debug" in argv:

@@ -46,6 +46,9 @@ class multipart(object):
   The document can either be automatically posted to a web server with HTTP
   POST, retrieved in chunks using iteration or retrieved in chunks using the
   read interface.
+  
+  TODO: Because the POST method has been factored out, it is no longer
+  necessary for this class to take a headers argument.
   '''
 
   def __init__(self, headers, fields, files, chunk_size=1024**2):
