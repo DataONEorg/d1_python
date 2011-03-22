@@ -72,16 +72,17 @@ class MonitorList(serialization_base.Serialization):
       #d1_common.const.MIMETYPE_LOG,
     ]
 
-    self.monitorlist = d1_common.types.generated.dataoneTypes.monitorList()
+    self.monitor_list = d1_common.types.generated.dataoneTypes.monitorList()
 
   def serialize_xml(self, pretty=False, jsonvar=False):
     '''Serialize MonitorList to XML.
     '''
-    return self.monitorlist.toxml()
+    return self.monitor_list.toxml()
 
     #===============================================================================
 
   def deserialize_xml(self, doc):
     '''Deserialize MonitorList from XML.
     '''
-    self.monitorList = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
+    self.monitor_list = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
+    return self.monitor_list

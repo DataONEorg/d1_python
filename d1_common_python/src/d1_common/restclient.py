@@ -85,7 +85,7 @@ class RESTClient(object):
     parts = urlparse.urlsplit(url)
     res = {
       'scheme': parts.scheme,
-      'host': parts.netloc,
+      'host': parts.netloc.split(':')[0],
       'path': parts.path,
       'query': parts.query,
       'fragment': parts.fragment
@@ -154,7 +154,7 @@ class RESTClient(object):
       data = []
     if files is None:
       files = []
-    mm = multipart(headers, data, files)
+    mm = multipart({}, data, files)
     headers['Content-Type'] = mm._get_content_type()
     headers['Content-Length'] = mm.getContentLength()
     if self.logger.getEffectiveLevel() == logging.DEBUG:
@@ -170,7 +170,8 @@ class RESTClient(object):
     for d in data:
       self._curlrequest.append('-F %s=%s' % (d[0], d[1]))
     for f in files:
-      self._curlrequest.append('-F %s=@%s' % (f['name'], f['filename']))
+      #self._curlrequest.append('-F %s=@%s' % (f['name'], f['filename']))
+      self._curlrequest.append('-F %s=@%s' % (f[0], f[1]))
     self._curlrequest.append('"%s"' % self._lasturl)
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
