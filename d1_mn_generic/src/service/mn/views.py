@@ -913,8 +913,8 @@ def monitor_object_get(request, head):
     query_unsliced = query
 
   # Filter by pid.
-  if 'id' in request.GET:
-    query = util.add_wildcard_filter(query, 'pid', request.GET['id'])
+  if 'pid' in request.GET:
+    query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
   
   # Filter by URL.
   if 'url' in request.GET:
@@ -975,8 +975,8 @@ def monitor_event_get(request, head):
     query_unsliced = query
 
   # Filter by referenced object pid.
-  if 'id' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__pid', request.GET['id'])
+  if 'pid' in request.GET:
+    query = util.add_wildcard_filter(query, 'object__pid', request.GET['pid'])
     query_unsliced = query
   
    # Filter by referenced object created date.

@@ -105,9 +105,12 @@ import gmn_test_client
 
 # Constants related to MN test object collection.
 OBJECTS_TOTAL_DATA = 100
-#OBJECTS_TOTAL_SCIMETA = 77
+OBJECTS_UNIQUE_DATES = 99
+OBJECTS_UNIQUE_DATE_AND_FORMAT_EML = 99
 #OBJECTS_TOTAL_SYSMETA= 177
 #OBJECTS_PID_STARTSWITH_1 = 18
+OBJECTS_PID_STARTSWITH_F = 5
+OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 5
 #OBJECTS_CHECKSUM_STARTSWITH_1 = 21
 #OBJECTS_PID_AND_CHECKSUM_STARTSWITH_1 = 2
 #OBJECTS_PID_AND_CHECKSUM_ENDSWITH_1 = 1
@@ -118,7 +121,7 @@ OBJECTS_CREATED_IN_90S = 32
 #OBJECTS_WITH_PID_ENDS_WITH_UNICODE = 1 # PID=*ǍǏǏǑǑǓǕǕǗǗǙǙǛ
 
 # CONSTANTS RELATED TO LOG COLLECTION.
-LOG_TOTAL = 552
+LOG_TOTAL = 452
 #LOG_REQUESTOR_1_1_1_1 = 538
 #LOG_OPERATION_GET_BYTES = 981
 #LOG_REQUESTOR_1_1_1_1_AND_OPERATION_GET_BYTES = 240
@@ -160,6 +163,9 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertIn('Last-Modified', response)
     self.assertIn('Content-Length', response)
     self.assertIn('Content-Type', response)
+
+  def assert_valid_date(self, date_str):
+    self.assertTrue(datetime.datetime(*map(int, date_str.split('-'))))
 
   def find_valid_pid(self, client):
     '''Find the PID of an object that exists on the server.
@@ -520,25 +526,95 @@ class TestSequenceFunctions(unittest.TestCase):
     # in the ISO1601 rendering of the timestamp.
     #d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
   
-  def monitor_xml_validation(self):
-    '''Returned XML document validates against the schema.
+  def monitor_object_cumulative_no_filter(self):
+    '''Monitor Objects: Cumulative, no filter.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.client.GET(client.getMonitorObjectUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
-    xml_doc = response.read()
-    d1_common.util.validate_xml(xml_doc)
+    monitor_list = client.getObjectStatistics('<dummy token>')
+    self.assertEqual(len(monitor_list.monitorInfo), 1)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
 
-  def pxby_monitor_xml(self):
-    xml_doc = open('test.xml').read()
-    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = object_list_1.serialize('text/xml')
+  def monitor_object_cumulative_filter_by_time(self):
+    '''Monitor Objects: Cumulative, filter by object creation time.
+    '''
+    # TODO: Story #1424
+    pass
+  
+  def monitor_object_cumulative_filter_by_format(self):
+    '''Monitor Objects: Cumulative, filter by object format.
+    '''
+    # TODO: Test set currently contains only one format. Create
+    # some more formats so this can be tested properly.
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    monitor_list = client.getObjectStatistics('<dummy token>',
+                                              format='eml://ecoinformatics.org/eml-2.0.0')
+    self.assertEqual(len(monitor_list.monitorInfo), 1)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
+
+  def monitor_object_cumulative_filter_by_time_and_format(self):
+    '''Monitor Objects: Cumulative, filter by time and format.
+    '''
+    # TODO: Story #1424
+    pass
+
+  def monitor_object_cumulative_filter_by_pid(self):
+    '''Monitor Objects: Cumulative, filter by object PID.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    monitor_list = client.getObjectStatistics('<dummy token>', pid='f*')
+    self.assertEqual(len(monitor_list.monitorInfo), 1)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_PID_STARTSWITH_F)
+
+  def monitor_object_daily_no_filter(self):
+    '''Monitor Objects: Daily, no filter.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    monitor_list = client.getObjectStatistics('<dummy token>', day=True)
+    self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATES)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    found_date = False
+    for monitor_info in monitor_list.monitorInfo:
+      if str(monitor_info.date) == '1982-08-17':
+        found_date = True
+        self.assertEqual(monitor_info.count, 2)
+    self.assertTrue(found_date)
     
-    object_list_2 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_2.deserialize(doc, 'text/xml')
-    xml_doc_out, content_type = object_list_2.serialize('text/xml')
-    
-    d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
+  def monitor_object_daily_filter_by_time(self):
+    '''Monitor Objects: Daily, filter by object creation time.
+    '''
+    # TODO: Story #1424
+    pass
+
+  def monitor_object_daily_filter_by_format(self):
+    '''Monitor Objects: Daily, filter by object format.
+    '''
+    # TODO: Test set currently contains only one format. Create
+    # some more formats so this can be tested properly.
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    monitor_list = client.getObjectStatistics('<dummy token>',
+                                              format='eml://ecoinformatics.org/eml-2.0.0',
+                                              day=True)
+    self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_FORMAT_EML)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    self.assertEqual(monitor_list.monitorInfo[0].count, 1)
+
+  def monitor_object_daily_filter_by_time_and_format(self):
+    '''Monitor Objects: Daily, filter by time and format.
+    '''
+    # TODO: Story #1424
+    pass
+
+  def monitor_object_daily_filter_by_pid(self):
+    '''Monitor Objects: Daily, filter by object PID.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    monitor_list = client.getObjectStatistics('<dummy token>', pid='f*', day=True)
+    self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    self.assertEqual(monitor_list.monitorInfo[0].count, 1)
     
   def orderby_size(self):
     '''ObjectList orderby: size.
@@ -751,27 +827,17 @@ class TestSequenceFunctions(unittest.TestCase):
 
   # Local.
 
-  def test_1010_delete_all_objects(self):
+  def test_1010_A_delete_all_objects(self):
     '''Managed: Delete all objects.
     '''
     self.delete_all_objects()
     
-  def test_1020_object_collection_is_empty(self):
+  def test_1010_B_object_collection_is_empty(self):
     '''Managed: Object collection is empty.
     '''
     self.object_collection_is_empty()
 
-  def test_1030_clear_event_log(self):
-    '''Managed: Clear event log.
-    '''
-    self.clear_event_log()
-  
-  def test_1040_event_log_is_empty(self):
-    '''Managed: Event log is empty.
-    '''
-    self.event_log_is_empty()
-  
-  def test_1050_create_objects(self):
+  def test_1010_C_create_objects(self):
     '''Managed: Populate MN with set of test objects (local).
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
@@ -794,27 +860,37 @@ class TestSequenceFunctions(unittest.TestCase):
       # and the SysMeta as a string.
       client.create('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
 
-  def test_1055_object_collection_is_populated(self):
+  def test_1010_D_object_collection_is_populated(self):
     '''Managed: Object collection is populated.
     '''
     self.object_collection_is_populated()
 
-  def test_1060_inject_event_log(self):
+  def test_1020_A_clear_event_log(self):
+    '''Managed: Clear event log.
+    '''
+    self.clear_event_log()
+  
+  def test_1020_B_event_log_is_empty(self):
+    '''Managed: Event log is empty.
+    '''
+    self.event_log_is_empty()
+  
+  def test_1020_C_inject_event_log(self):
     '''Managed: Inject a set of fictitious events for each object.
     '''
     self.inject_event_log()
 
-  def test_1070_event_log_is_populated(self):
+  def test_1020_D_event_log_is_populated(self):
     '''Managed: Event log is populated.
     '''
     self.event_log_is_populated()
   
-  def test_1080_compare_byte_by_byte(self):
+  def test_1030_compare_byte_by_byte(self):
     '''Managed: Read set of test objects back from MN and do byte-by-byte comparison with local copies.
     '''
     self.compare_byte_by_byte()
        
-  def test_1090_object_properties(self):
+  def test_1040_object_properties(self):
     '''Managed: Read complete object collection and compare object properties with values stored in local SysMeta files.
     '''
     self.object_properties()
@@ -903,94 +979,128 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.pxby_objectlist_json()
 
-##  def test_1260_pxby_objectlist_rdf_xml(self):
-##    '''Managed: Serialization: ObjectList -> RDF XML.
-##    '''
-##    self.pxby_objectlist_rdf_xml()
+#  def test_1260_pxby_objectlist_rdf_xml(self):
+#    '''Managed: Serialization: ObjectList -> RDF XML.
+#    '''
+#    self.pxby_objectlist_rdf_xml()
     
   def test_1270_pxby_objectlist_csv(self):
     '''Managed: Serialization: ObjectList -> CSV.
     '''
     self.pxby_objectlist_csv()
 
-#  def test_1280_monitor_xml_validation(self):
-#    '''Managed: Returned XML document validates against the MonitorList schema.
+
+  def test_1280_monitor_object_cumulative_no_filter(self):
+    '''Managed: Monitor Objects: Cumulative, no filter.
+    '''
+    self.monitor_object_cumulative_no_filter()
+
+  def test_1281_monitor_object_cumulative_filter_by_time(self):
+    '''Managed: Monitor Objects: Cumulative, filter by object creation time.
+    '''
+    self.monitor_object_cumulative_filter_by_time()
+
+  def test_1282_monitor_object_cumulative_filter_by_format(self):
+    '''Managed: Monitor Objects: Cumulative, filter by object format.
+    '''
+    self.monitor_object_cumulative_filter_by_format()
+
+  def test_1283_monitor_object_cumulative_filter_by_time_and_format(self):
+    '''Managed: Monitor Objects: Cumulative, filter by time and format.
+    '''
+    self.monitor_object_cumulative_filter_by_time_and_format()
+
+  def test_1284_monitor_object_cumulative_filter_by_pid(self):
+    '''Managed: Monitor Objects: Cumulative, filter by object PID.
+    '''
+    self.monitor_object_cumulative_filter_by_pid()
+  
+
+  def test_1290_monitor_object_daily_no_filter(self):
+    '''Managed: Monitor Objects: Daily, no filter.
+    '''
+    self.monitor_object_daily_no_filter()
+
+  def test_1291_monitor_object_daily_filter_by_time(self):
+    '''Managed: Monitor Objects: Daily, filter by object creation time.
+    '''
+    self.monitor_object_daily_filter_by_time()
+
+  def test_1292_monitor_object_daily_filter_by_format(self):
+    '''Managed: Monitor Objects: Daily, filter by object format.
+    '''
+    self.monitor_object_daily_filter_by_format()
+
+  def test_1293_monitor_object_daily_filter_by_time_and_format(self):
+    '''Managed: Monitor Objects: Daily, filter by time and format.
+    '''
+    self.monitor_object_daily_filter_by_time_and_format()
+
+  def test_1294_monitor_object_daily_filter_by_pid(self):
+    '''Managed: Monitor Objects: Daily, filter by object PID.
+    '''
+    self.monitor_object_daily_filter_by_pid()
+
+
+
+  def test_1300_orderby_size(self):
+    '''Managed: ObjectList orderby: size.
+    '''
+    self.orderby_size()
+
+  def test_1310_orderby_size_desc(self):
+    '''Managed: ObjectList orderby: desc_size.
+    '''
+    self.orderby_size_desc()
+
+  def test_1320_checksum_serialization_1(self):
+    '''Managed: Serialization: Checksum -> XML -> Checksum.
+    '''
+    self.checksum_serialization_1()
+  
+  def test_1321_checksum_serialization_2(self):
+    '''Managed: Serialization: Checksum -> JSON.
+    '''
+    self.checksum_serialization_2()
+
+  def test_1322_checksum_serialization_3(self):
+    '''Managed: Serialization: Checksum -> CSV.
+    '''
+    self.checksum_serialization_3()
+
+  def test_1330_delete(self):
+    '''Managed: MN_crud.delete() in GMN and libraries.
+    '''
+    self.delete_test()
+
+  def test_1340_describe(self):
+    '''Managed: MN_crud.describe in GMN and libraries.
+    '''
+    self.describe()
+  
+  def test_1350_replication(self):
+    '''Managed: Replication. Requires fake CN.
+    '''
+    self.replication()
+
+#  def test_1360_unicode_test_1(self):
+#    '''Managed: GMN and libraries handle Unicode correctly.
 #    '''
-#    self.monitor_xml_validation()
-#
-#  def test_1290_pxby_monitor_xml(self):
-#    '''Managed: Serialization: MonitorList -> XML.
-#    '''
-#    self.pxby_monitor_xml()
-#
-#  def test_1300_orderby_size(self):
-#    '''Managed: ObjectList orderby: size.
-#    '''
-#    self.orderby_size()
-#
-#  def test_1310_orderby_size_desc(self):
-#    '''Managed: ObjectList orderby: desc_size.
-#    '''
-#    self.orderby_size_desc()
-#
-#  def test_1320_checksum_serialization_1(self):
-#    '''Managed: Serialization: Checksum -> XML -> Checksum.
-#    '''
-#    self.checksum_serialization_1()
-#  
-#  def test_1321_checksum_serialization_2(self):
-#    '''Managed: Serialization: Checksum -> JSON.
-#    '''
-#    self.checksum_serialization_2()
-#
-#  def test_1322_checksum_serialization_3(self):
-#    '''Managed: Serialization: Checksum -> CSV.
-#    '''
-#    self.checksum_serialization_3()
-#
-#  def test_1330_delete(self):
-#    '''Managed: MN_crud.delete() in GMN and libraries.
-#    '''
-#    self.delete_test()
-#
-#  def test_1340_describe(self):
-#    '''Managed: MN_crud.describe in GMN and libraries.
-#    '''
-#    self.describe()
-#  
-#  def test_1350_replication(self):
-#    '''Managed: Replication. Requires fake CN.
-#    '''
-#    self.replication()
-#
-##  def test_1360_unicode_test_1(self):
-##    '''Managed: GMN and libraries handle Unicode correctly.
-##    '''
-##    self.unicode_test_1()
-#
-#  # Remote.
-#
-  def test_2010_delete_all_objects(self):
+#    self.unicode_test_1()
+
+  # Remote.
+
+  def test_2010_A_delete_all_objects(self):
     '''Wrapped: Delete all objects.
     '''
     self.delete_all_objects()
     
-  def test_2020_object_collection_is_empty(self):
+  def test_2010_B_object_collection_is_empty(self):
     '''Wrapped: Object collection is empty.
     '''
     self.object_collection_is_empty()
   
-  def test_2030_clear_event_log(self):
-    '''Wrapped: Clear event log.
-    '''
-    self.clear_event_log()
-  
-  def test_2040_event_log_is_empty(self):
-    '''Wrapped: Event log is empty.
-    '''
-    self.event_log_is_empty()
-
-  def test_2050_create_objects(self):
+  def test_2010_C_create_objects(self):
     '''Wrapped: Populate MN with set of test objects (Remote).
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
@@ -1019,27 +1129,37 @@ class TestSequenceFunctions(unittest.TestCase):
       client.create('<dummy token>', sysmeta_obj.identifier, object_file,
                     sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
     
-  def test_1055_object_collection_is_populated(self):
+  def test_2010_D_object_collection_is_populated(self):
     '''Wrapped: Object collection is populated.
     '''
     self.object_collection_is_populated()
 
-  def test_2060_inject_event_log(self):
+  def test_2020_A_clear_event_log(self):
+    '''Wrapped: Clear event log.
+    '''
+    self.clear_event_log()
+  
+  def test_2020_B_event_log_is_empty(self):
+    '''Wrapped: Event log is empty.
+    '''
+    self.event_log_is_empty()
+
+  def test_2020_C_inject_event_log(self):
     '''Wrapped: Inject a set of fictitious events for each object.
     '''
     self.inject_event_log()
 
-  def test_2070_event_log_is_populated(self):
+  def test_2020_D_event_log_is_populated(self):
     '''Wrapped: Event log is populated.
     '''
     self.event_log_is_populated()
 
-  def test_2080_compare_byte_by_byte(self):
+  def test_2030_compare_byte_by_byte(self):
     '''Wrapped: Read set of test objects back from MN and do byte-by-byte comparison with Remote copies.
     '''
     self.compare_byte_by_byte()
        
-  def test_2090_object_properties(self):
+  def test_2040_object_properties(self):
     '''Wrapped: Read complete object collection and compare with values stored in Remote SysMeta files.
     '''
     self.object_properties()
@@ -1128,25 +1248,65 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     self.pxby_objectlist_json()
 
-##  def test_2260_pxby_objectlist_rdf_xml(self):
-##    '''Wrapped: Serialization: ObjectList -> RDF XML.
-##    '''
-##    self.pxby_objectlist_rdf_xml()
+#  def test_2260_pxby_objectlist_rdf_xml(self):
+#    '''Wrapped: Serialization: ObjectList -> RDF XML.
+#    '''
+#    self.pxby_objectlist_rdf_xml()
     
   def test_2270_pxby_objectlist_csv(self):
     '''Wrapped: Serialization: ObjectList -> CSV.
     '''
     self.pxby_objectlist_csv()
 
-  def test_2280_monitor_xml_validation(self):
-    '''Wrapped: Returned XML document validates against the MonitorList schema.
+  def test_2280_monitor_object_cumulative_no_filter(self):
+    '''Wrapped: Monitor Objects: Cumulative, no filter.
     '''
-    self.monitor_xml_validation()
+    self.monitor_object_cumulative_no_filter()
 
-#  def test_2290_pxby_monitor_xml(self):
-#    '''Wrapped: Serialization: MonitorList -> XML.
-#    '''
-#    self.pxby_monitor_xml()
+  def test_2281_monitor_object_cumulative_filter_by_time(self):
+    '''Wrapped: Monitor Objects: Cumulative, filter by object creation time.
+    '''
+    self.monitor_object_cumulative_filter_by_time()
+
+  def test_2282_monitor_object_cumulative_filter_by_format(self):
+    '''Wrapped: Monitor Objects: Cumulative, filter by object format.
+    '''
+    self.monitor_object_cumulative_filter_by_format()
+
+  def test_2283_monitor_object_cumulative_filter_by_time_and_format(self):
+    '''Wrapped: Monitor Objects: Cumulative, filter by time and format.
+    '''
+    self.monitor_object_cumulative_filter_by_time_and_format()
+
+  def test_2284_monitor_object_cumulative_filter_by_pid(self):
+    '''Wrapped: Monitor Objects: Cumulative, filter by object PID.
+    '''
+    self.monitor_object_cumulative_filter_by_pid()
+  
+  def test_2290_monitor_object_daily_no_filter(self):
+    '''Wrapped: Monitor Objects: Daily, no filter.
+    '''
+    self.monitor_object_daily_no_filter()
+
+  def test_2291_monitor_object_daily_filter_by_time(self):
+    '''Wrapped: Monitor Objects: Daily, filter by object creation time.
+    '''
+    self.monitor_object_daily_filter_by_time()
+
+  def test_2292_monitor_object_daily_filter_by_format(self):
+    '''Wrapped: Monitor Objects: Daily, filter by object format.
+    '''
+    self.monitor_object_daily_filter_by_format()
+
+  def test_2293_monitor_object_daily_filter_by_time_and_format(self):
+    '''Wrapped: Monitor Objects: Daily, filter by time and format.
+    '''
+    self.monitor_object_daily_filter_by_time_and_format()
+
+  def test_2294_monitor_object_daily_filter_by_pid(self):
+    '''Wrapped: Monitor Objects: Daily, filter by object PID.
+    '''
+    self.monitor_object_daily_filter_by_pid()
 #
 #  def test_2300_orderby_size(self):
 #    '''Wrapped: ObjectList orderby: size.

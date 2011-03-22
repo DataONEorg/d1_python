@@ -135,12 +135,12 @@ class MonitorList(d1_common.types.monitorlist_serialization.MonitorList):
         monitorInfo = d1_common.types.generated.dataoneTypes.MonitorInfo()
         monitorInfo.date = row['day']
         monitorInfo.count = row['count']
-        self.monitorlist.append(monitorInfo)
+        self.monitor_list.append(monitorInfo)
     else:
       monitorInfo = d1_common.types.generated.dataoneTypes.MonitorInfo()
       monitorInfo.date = datetime.date.today()
       monitorInfo.count = query.aggregate(count=Count('id'))['count']
-      self.monitorlist.append(monitorInfo)
+      self.monitor_list.append(monitorInfo)
 
 
 class NodeList(d1_common.types.nodelist_serialization.NodeList):
