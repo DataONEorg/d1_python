@@ -1,7 +1,8 @@
 General
 =======
 
-Modules that facilitate interacting with the DataONE infrastructure.
+Modules that facilitate interacting with distributed systems such as the DataONE
+infrastructure.
 
 .. autosummary::
   :toctree: generated/
