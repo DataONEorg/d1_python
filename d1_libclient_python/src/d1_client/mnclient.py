@@ -37,6 +37,8 @@ from d1baseclient import DataONEBaseClient
 from d1_common.types import checksum_serialization
 from d1_common.types import monitorlist_serialization
 from d1_common.types import nodelist_serialization
+from d1_common.types import pid_serialization
+import objectlistiterator
 
 
 class MemberNodeClient(DataONEBaseClient):
@@ -97,8 +99,18 @@ class MemberNodeClient(DataONEBaseClient):
   def update(self, token, pid, obj, obsoletedPid, sysmeta):
     raise Exception('Not Implemented')
 
+  def deleteResponse(self, token, pid):
+    '''Delete a SciObj from MN.
+    '''
+    url = self._makeUrl('get', pid=pid)
+    response = self.DELETE(url, headers=self._getAuthHeader(token))
+    return response
+
   def delete(self, token, pid):
-    raise Exception('Not Implemented')
+    response = self.deleteResponse(token, pid)
+    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
+    deser = pid_serialization.Identifier()
+    return deser.deserialize(response.read(), format)
 
   def getChecksumResponse(self, token, pid, checksumAlgorithm=None):
     url = self._makeUrl('getchecksum', pid=pid)
@@ -208,3 +220,41 @@ class MemberNodeClient(DataONEBaseClient):
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
     return deser.deserialize(response.read(), format)
+
+  def enumerateObjectFormats(self, object_formats={}):
+    '''Get a list of object formats available on the target.
+    :param: (dict) Dictionary to add discovered objects to
+    :return: (object format, count) object formats.
+    
+    TODO: Preserved from obsoleted client.py for now, but may need to be completely
+    removed (since clients should use CNs for object discovery).
+    '''
+
+    object_list = objectlistiterator.ObjectListIterator(self)
+    object_formats = {}
+    for info in object_list:
+      logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat))
+      try:
+        object_formats[info.objectFormat] += 1
+      except KeyError:
+        object_formats[info.objectFormat] = 1
+    return object_formats
+
+  def describeResponse(self, token, pid):
+    url = self._makeUrl('get', pid=pid)
+    response = self.HEAD(url, headers=self._getAuthHeader(token))
+    return response
+
+  def describe(self, token, pid):
+    '''This method provides a lighter weight mechanism than
+    MN_crud.getSystemMetadata() for a client to determine basic properties of
+    the referenced object.
+
+    :param: (string) Identifier of object to retrieve.
+    :return: mimetools.Message or raises DataONEException.
+
+    TODO: May need to be completely removed (since clients should use CNs for
+    object discovery).
+    '''
+    response = self.describeResponse(token, pid)
+    return response.info()
