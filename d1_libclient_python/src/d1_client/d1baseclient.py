@@ -224,6 +224,25 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     :return type: ObjectList
     '''
+    # Sanity.
+    params = {}
+    if start < 0:
+      raise exceptions.InvalidRequest(10002, "'start' must be a positive integer")
+    try:
+      if count < 0:
+        raise ValueError
+      if count > const.MAX_LISTOBJECTS:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(
+        10002, "'count' must be an integer between 1 and {0}".format(
+          d1_common.const.MAX_LISTOBJECTS
+        )
+      )
+
+    if endTime is not None and startTime is not None and startTime >= endTime:
+      raise exceptions.InvalidRequest(10002, "startTime must be before endTime")
+
     res = self.listObjectsResponse(
       token,
       startTime=startTime,
