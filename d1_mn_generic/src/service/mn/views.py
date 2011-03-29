@@ -71,6 +71,7 @@ import pickle
 # Django.
 from django.http import HttpResponse
 from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseBadRequest
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -133,43 +134,17 @@ def object_collection_get(request, head):
   :return:
   '''
   
-  # Sort order.  
-  if 'orderby' in request.GET:
-    orderby = request.GET['orderby']
-    # Prefix for ascending or descending order.
-    prefix = ''
-    m = re.match(r'(asc_|desc_)(.*)', orderby)
-    if m:
-      orderby = m.group(2)
-      if m.group(1) == 'desc_':
-          prefix = '-'
-    # Map attribute to field.
-    try:
-      order_field = {
-        'pid': 'pid',
-        'url': 'url',
-        'objectFormat': 'format__format',
-        'checksum': 'checksum',
-        'checksum_algorithm': 'checksum_algorithm__checksum_algorithm',
-        'modified': 'mtime',
-        'dbModified': 'db_mtime',
-        'size': 'size',
-      }[orderby]
-    except KeyError:
-      raise d1_common.types.exceptions.InvalidRequest(0, 'Invalid orderby value requested: {0}'.format(orderby))
-      
-    # Set up query with requested sorting.
-    query = models.Object.objects.order_by(prefix + order_field)
-  else:       
-    # Default ordering is by mtime ascending.
-    query = models.Object.objects.order_by('mtime')
+  # Default ordering is by mtime ascending.
+  query = models.Object.objects.order_by('mtime')
   
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
 
-  # Documented filters
-
+  # Filters.
+  
+  # Current spec for listObjects requires separate start time and end time parameters.
+  
   # startTime
   query, changed = util.add_range_operator_filter(query, request, 'mtime', 'starttime', 'ge')
   if changed == True:
@@ -180,49 +155,17 @@ def object_collection_get(request, head):
   if changed == True:
     query_unsliced = query
   
-  # Undocumented filters.
-
-  # Filter by format.
+  # New spec should conform to the monitoring API which uses ISO8601 ranges.
+  if 'time' in request.GET:
+    query = util.add_datetime_span_filter(query, request, 'mtime', request.GET['time'])
+    query_unsliced = query
+    
+  # objectFormat
   if 'objectformat' in request.GET:
     query = util.add_wildcard_filter(query, 'format__format', request.GET['objectformat'])
     query_unsliced = query
 
-  # Filter by PID.
-  if 'pid' in request.GET:
-    query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
-    query_unsliced = query
-  
-  # Filter by checksum.
-  if 'checksum' in request.GET:
-    query = util.add_wildcard_filter(query, 'checksum', request.GET['checksum'])
-    query_unsliced = query
-
-  # Filter by checksum_algorithm.
-  if 'checksum_algorithm' in request.GET:
-    query = util.add_wildcard_filter(query, 'checksum_algorithm__checksum_algorithm', request.GET['checksum_algorithm'])
-    query_unsliced = query
-
-  # Filter by last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'modified')
-  if changed == True:
-    query_unsliced = query
-
-  # Event Log based filters.
-
-  # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'event_log__access_time', 'lastaccessed')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by ip_address.
-  if 'ip_address' in request.GET:
-    query = util.add_wildcard_filter(query, 'event_log__ip_address__ip_address', request.GET['ip_address'])
-    query_unsliced = query
-
-  # Filter by access operation type.
-  if 'operationtype' in request.GET:
-    query = util.add_wildcard_filter(query, 'event_log__operation_type__operation_type', request.GET['operationtype'])
-    query_unsliced = query
+  # TODO. Filter by replicaStatus. May be removed from API.
 
   if head == False:
     # Create a slice of a query based on request start and count parameters.
@@ -1008,7 +951,7 @@ def monitor_event_get(request, head):
     query, start, count = util.add_slice_filter(query, request)    
   else:
     query = query.none()
-  
+    
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
@@ -1074,6 +1017,18 @@ def test_exception(request, exc):
   pid_ser = d1_common.types.pid_serialization.Identifier('testpid')
   doc, content_type = pid_ser.serialize('text/xml')
   return HttpResponse(doc, content_type)
+
+def test_invalid_return(request, type):
+  if type == "200_html":
+    return HttpResponse("invalid") #200, html
+  elif type == "200_xml":
+    return HttpResponse("invalid", "text/xml") #200, xml
+  elif type == "400_html":
+    return HttpResponseBadRequest("invalid") #400, html
+  elif type == "400_xml":
+    return HttpResponseBadRequest("invalid", "text/xml") #400, xml
+  
+  return HttpResponse("OK")
 
 def test_get_request(request):
   '''

@@ -72,6 +72,8 @@ except ImportError, e:
 # MN API.
 import d1_common.types.exceptions
 import d1_common.const
+import d1_common.datetime_span
+import d1_common.util
 
 # App.
 import event_log
@@ -337,7 +339,7 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
         )
       )
     date_str = request.GET[key]
-    # parse_date() needs date-time, so if we only have date, add time
+    # parse_date() needs date-time, so if we only have date, add time                                                                                                                                                             
     # (midnight).
     if not re.search('T', date_str):
       date_str += 'T00:00:00Z'
@@ -357,6 +359,26 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
     changed = True
 
   return query.filter(**filter_kwargs), changed
+
+
+def add_datetime_span_filter(query, request, col_name, datetime_):
+  '''
+  '''
+  dts = d1_common.datetime_span.DateTimeSpan()
+  try:
+    dts.update_span_path_element(datetime_)
+  except d1_common.datetime_span.ParseError:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid time span: {0}'.format(d1_common.util.decodePathElement(datetime_))
+    )
+
+  filter_kwargs = {}
+  filter_arg = '{0}__gt'.format(col_name)
+  filter_kwargs[filter_arg] = dts.first
+  filter_arg = '{0}__lte'.format(col_name)
+  filter_kwargs[filter_arg] = dts.second
+
+  return query.filter(**filter_kwargs)
 
 
 def add_wildcard_filter(query, col_name, value):
