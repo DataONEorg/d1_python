@@ -307,7 +307,7 @@ class multipart(object):
     :returns: Mimetype.
     :returns type: string
     '''
-    return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+    return mimetypes.guess_type(filename)[0] or d1_common.const.MIMETYPE_OCTETSTREAM
 
   def _form_fields(self):
     '''Generate the MIME Multipart form fields.

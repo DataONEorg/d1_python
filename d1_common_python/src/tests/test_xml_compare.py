@@ -239,35 +239,35 @@ class TestXMLCompare(unittest.TestCase):
     )
 
   def test_error_missing_count(self):
-    '''Verify that comparision fails when an attribute is missing.'''
+    '''Verify that comparison fails when an attribute is missing.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
       StringIO.StringIO(xml_correct), StringIO.StringIO(xml_missing_count)
     )
 
   def test_error_missing_entry(self):
-    '''Verify that comparision fails when an element is missing.'''
+    '''Verify that comparison fails when an element is missing.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
       StringIO.StringIO(xml_correct), StringIO.StringIO(xml_missing_entry)
     )
 
   def test_error_wrong_order(self):
-    '''Verify that comparision fails when to elements appear in the wrong order.'''
+    '''Verify that comparison fails when to elements appear in the wrong order.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
       StringIO.StringIO(xml_correct), StringIO.StringIO(xml_wrong_order)
     )
 
   def test_error_missing_text(self):
-    '''Verify that comparision fails when an element is missing text.'''
+    '''Verify that comparison fails when an element is missing text.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
       StringIO.StringIO(xml_correct), StringIO.StringIO(xml_missing_text)
     )
 
   def test_error_xml_syntax_error(self):
-    '''Verify that comparision fails when the document is not well formed.'''
+    '''Verify that comparison fails when the document is not well formed.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
       StringIO.StringIO(xml_correct), StringIO.StringIO(xml_syntax_error)
