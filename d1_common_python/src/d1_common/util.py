@@ -150,6 +150,11 @@ def urlencode(query, doseq=0):
   parameters in the output will match the order of parameters in the
   input.
   '''
+  # Remove None parameters from query.
+  for k in query.keys():
+    if query[k] is None:
+      del query[k]
+
   if hasattr(query, "items"):
     # mapping objects
     query = query.items()

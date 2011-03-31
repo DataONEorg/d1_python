@@ -76,22 +76,22 @@ class TestRESTClient(TestCaseWithURLCompare):
     self.assertEqual(res.status, 404)
     res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm")
     self.assertEqual(res.status, 200)
-    data = {'a': '1', 'key': 'value'}
-    res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm", data=data)
+    url_params = {'a': '1', 'key': 'value'}
+    res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
     self.assertEqual(res.status, 200)
     #logging.info(res.read())
 
   def testPOST(self):
-    data = {'a': '1', 'key': 'value'}
+    url_params = {'a': '1', 'key': 'value'}
     cli = restclient.RESTClient()
-    res = cli.POST("http://dev-testing.dataone.org/testsvc/echomm", data=data)
+    res = cli.POST("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
     self.assertEqual(res.status, 200)
     #logging.info(res.read())
 
   def testPUT(self):
-    data = {'a': '1', 'key': 'value'}
+    url_params = {'a': '1', 'key': 'value'}
     cli = restclient.RESTClient()
-    res = cli.PUT("http://dev-testing.dataone.org/testsvc/echomm", data=data)
+    res = cli.PUT("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
     self.assertEqual(res.status, 200)
     #logging.info(res.read())
 

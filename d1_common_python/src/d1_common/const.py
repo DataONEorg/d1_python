@@ -105,8 +105,9 @@ MIMETYPE_RDF = 'application/rdf+xml'
 MIMETYPE_HTML = 'text/html'
 MIMETYPE_LOG = 'text/log'
 MIMETYPE_TEXT = 'text/plain'
+MIMETYPE_OCTETSTREAM = 'application/octet-stream'
 
-# The default mimetype used by DataONE services
+# The default mimetype used by DataONE services.
 DEFAULT_MIMETYPE = MIMETYPE_XML
 
 DEFAULT_CHARSET = 'utf-8'

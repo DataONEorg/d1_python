@@ -61,35 +61,47 @@ class DateTimeSpan(object):
     self.datetime_first = None
     self.datetime_second = None
     if interval is not None:
-      self.update_span(interval)
+      self.update_span_with_interval_iso(interval)
 
-  def _parse(self, datetime_):
+  def __unicode__(self):
+    return unicode(self.interval_iso)
+
+  def __str__(self):
+    return self.interval_iso
+
+  def _parse_iso(self, datetime_):
     try:
       return iso8601.parse_date(datetime_)
     except (iso8601.iso8601.ParseError, TypeError):
       raise ParseError('Invalid ISO8601 datetime \'{0}\''.format(datetime_))
 
-  def update_span(self, datetime_first, datetime_second):
+  def update_span_with_datetime(self, datetime_first, datetime_second):
     if datetime_first is not None:
-      _self.datetime_first = self._parse(datetime_first)
+      self.datetime_first = datetime_first
     if datetime_second is not None:
-      self.datetime_second = self._parse(datetime_second)
+      self.datetime_second = datetime_second
 
-  def update_span(self, interval):
+  def update_span_with_iso(self, iso_first, iso_second):
+    if iso_first is not None:
+      _self.datetime_first = self._parse_iso(iso_first)
+    if iso_second is not None:
+      self.datetime_second = self._parse_iso(iso_second)
+
+  def update_span_with_interval_iso(self, interval):
     parts = interval.split(self.ISODATESEPARATOR)
     if len(parts) != 2:
       raise ParseError(
         'Invalid span (found {0} "{1}" separators)'.format(
           len(parts), self.ISODATESEPARATOR)
       )
-    self.datetime_first = self._parse(parts[0])
-    self.datetime_second = self._parse(parts[1])
+    self.datetime_first = self._parse_iso(parts[0])
+    self.datetime_second = self._parse_iso(parts[1])
 
-  def update_span_path_element(self, interval_path_element):
+  def update_span_with_path_element(self, interval_path_element):
     '''Set the span using a path element.
     '''
     interval = util.decodePathElement(interval_path_element)
-    self.update_span(interval)
+    self.update_span_with_interval_iso(interval)
 
   @property
   def first(self):
@@ -116,7 +128,13 @@ class DateTimeSpan(object):
     return datetime.datetime.isoformat(self.datetime_second)
 
   @property
-  def path_element(self):
+  def interval_iso(self):
+    '''Return interval.
+    '''
+    return '{1}{0}{2}'.format(self.ISODATESEPARATOR, self.first_iso, self.second_iso)
+
+  @property
+  def interval_as_path_element_iso(self):
     '''Return interval encoded as a URL path element.
     '''
-    return util.encodePathElement('{0}/{1}'.format(self.first_iso, self.second_iso))
+    return util.encodePathElement(self.interval_iso)
