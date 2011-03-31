@@ -56,26 +56,26 @@ class UnitTest_DataONEBaseClient(TestCaseWithURLCompare):
     self.assertEqual(u0, cli._normalizeTarget(u2))
     self.assertEqual(u0, cli._normalizeTarget(u3))
 
-  def test_makeUrl(self):
+  def testRESTResourceURL(self):
     cli = d1baseclient.DataONEBaseClient("http://bogus.target/mn")
-    self.assertRaises(KeyError, cli._makeUrl, 'no_such_method')
-    self.assertEqual('http://bogus.target/mn/object', cli._makeUrl('listobjects'))
-    self.assertEqual('http://bogus.target/mn/object', cli._makeUrl('listOBJects'))
-    self.assertEqual('http://bogus.target/mn/node', cli._makeUrl('listnodes'))
+    self.assertRaises(KeyError, cli.RESTResourceURL, 'no_such_method')
+    self.assertEqual('http://bogus.target/mn/object', cli.RESTResourceURL('listobjects'))
+    self.assertEqual('http://bogus.target/mn/object', cli.RESTResourceURL('listOBJects'))
+    self.assertEqual('http://bogus.target/mn/node', cli.RESTResourceURL('listnodes'))
     self.assertEqual(
       'http://bogus.target/mn/object/1234xyz',
-      cli._makeUrl('get', pid='1234xyz')
+      cli.RESTResourceURL('get', pid='1234xyz')
     )
     self.assertEqual(
       'http://bogus.target/mn/object/1234%2Fxyz',
-      cli._makeUrl('get', pid='1234/xyz')
+      cli.RESTResourceURL('get', pid='1234/xyz')
     )
     self.assertEqual(
       'http://bogus.target/mn/meta/1234xyz',
-      cli._makeUrl('getsystemmetadata', pid='1234xyz')
+      cli.RESTResourceURL('getsystemmetadata', pid='1234xyz')
     )
-    self.assertEqual('http://bogus.target/mn/log', cli._makeUrl('getlogrecords'))
-    self.assertEqual('http://bogus.target/mn/health/ping', cli._makeUrl('ping'))
+    self.assertEqual('http://bogus.target/mn/log', cli.RESTResourceURL('getlogrecords'))
+    self.assertEqual('http://bogus.target/mn/health/ping', cli.RESTResourceURL('ping'))
 
 
 class TestDataONEClient(TestCaseWithURLCompare):
