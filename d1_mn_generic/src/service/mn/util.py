@@ -361,22 +361,21 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
   return query.filter(**filter_kwargs), changed
 
 
-def add_datetime_span_filter(query, request, col_name, datetime_):
+def add_datetime_span_filter(query, request, col_name, datetime_span_iso):
   '''
   '''
   dts = d1_common.datetime_span.DateTimeSpan()
   try:
-    dts.update_span_path_element(datetime_)
+    dts.update_span_with_interval_iso(datetime_span_iso)
   except d1_common.datetime_span.ParseError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid time span: {0}'.format(d1_common.util.decodePathElement(datetime_))
+      0, 'Invalid time span: {0}'.format(datetime_span_iso)
     )
 
-  filter_kwargs = {}
-  filter_arg = '{0}__gt'.format(col_name)
-  filter_kwargs[filter_arg] = dts.first
-  filter_arg = '{0}__lte'.format(col_name)
-  filter_kwargs[filter_arg] = dts.second
+  filter_kwargs = {
+    '{0}__gt'.format(col_name): dts.first,
+    '{0}__lte'.format(col_name): dts.second,
+  }
 
   return query.filter(**filter_kwargs)
 

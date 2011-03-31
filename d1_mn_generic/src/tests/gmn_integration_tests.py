@@ -84,6 +84,7 @@ try:
   import d1_common.types.objectlist_serialization
   import d1_common.util
   import d1_common.const
+  import d1_common.datetime_span
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
@@ -111,7 +112,7 @@ OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 5
 OBJECTS_CREATED_IN_90S = 32
 
 # CONSTANTS RELATED TO LOG COLLECTION.
-EVENTS_TOTAL = 554
+EVENTS_TOTAL = 452#554
 EVENTS_READ = 198
 EVENTS_UNIQUE_DATES = 351
 EVENTS_UNIQUE_DATES_WITH_READ = 96
@@ -230,7 +231,7 @@ class TestSequenceFunctions(unittest.TestCase):
     pass
   
   def D_object_collection_is_populated(self):
-    '''Object collection is empty.
+    '''Object collection is populated.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Get object collection.
@@ -245,7 +246,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     client.delete_event_log()
 
-  def event_log_is_empty(self):
+  def B_event_log_is_empty(self):
     '''Event log is empty.
     '''
     '''Object collection is empty.
@@ -254,19 +255,19 @@ class TestSequenceFunctions(unittest.TestCase):
     logRecords = client.getLogRecords('<dummy token>', datetime.datetime(1800, 1, 1))
     self.assertEqual(len(logRecords.logEntry), 0)
   
-  def inject_event_log(self):
+  def C_inject_event_log(self):
     '''Inject a set of fictitious events for each object.
     '''
     csv_file = open('test_log.csv', 'rb')
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     client.inject_event_log(csv_file)
 
-  def event_log_is_populated(self):
+  def D_event_log_is_populated(self):
     '''Event log is populated.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     logRecords = client.getLogRecords('<dummy token>', datetime.datetime(1800, 1, 1))
-    self.assertEqual(len(logRecords.logEntry), LOG_TOTAL)
+    self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
     found = False
     for o in logRecords.logEntry:
       if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' and o.event == 'create': 
@@ -547,8 +548,14 @@ class TestSequenceFunctions(unittest.TestCase):
   def monitor_object_cumulative_filter_by_time(self):
     '''Monitor Objects: Cumulative, filter by object creation time.
     '''
-    # TODO: Story #1424
-    pass
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    time = d1_common.datetime_span.DateTimeSpan()
+    time.update_span_with_datetime(datetime.datetime(2000, 01, 01),
+                                   datetime.datetime(2005, 01, 01))
+    monitor_list = client.getObjectStatistics('<dummy token>', time=time)
+    self.assertEqual(len(monitor_list.monitorInfo), 1)
+    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
+    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
   
   def monitor_object_cumulative_filter_by_format(self):
     '''Monitor Objects: Cumulative, filter by object format.
@@ -726,26 +733,6 @@ class TestSequenceFunctions(unittest.TestCase):
   #
   #
 
-# TODO: Orderby is not supported in the current API spec. It will probably be completely removed.
-#  def orderby_size(self):
-#    '''ObjectList orderby: size.
-#    '''
-#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-#    response = client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=size', {'Accept': d1_common.const.MIMETYPE_JSON})
-#    doc = json.loads(response.read())
-#    self.assertEqual(doc['objectInfo'][0]['size'], 1982)
-#    self.assertEqual(doc['objectInfo'][9]['size'], 2746)
-#
-#  def orderby_size_desc(self):
-#    '''ObjectList orderby: desc_size.
-#    '''
-#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-#    response = client.client.GET(client.getObjectListUrl() + '?pretty&count=10&orderby=desc_size', {'Accept': d1_common.const.MIMETYPE_JSON})
-#    doc = json.loads(response.read())
-#    self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
-#    self.assertEqual(doc['objectInfo'][9]['size'], 717851)
-
-
   def delete(self):
     '''MN_crud.delete() in GMN and libraries.
     '''
@@ -920,10 +907,10 @@ class TestSequenceFunctions(unittest.TestCase):
   #
 
   def test_1010_managed_A_delete_all_objects(self):
-    self.delete_all_objects()
+    self.A_delete_all_objects()
     
   def test_1010_managed_B_object_collection_is_empty(self):
-    self.object_collection_is_empty()
+    self.B_object_collection_is_empty()
 
   def test_1010_managed_C_create_objects(self):
     '''Managed: Populate MN with set of test objects (local).
@@ -949,19 +936,19 @@ class TestSequenceFunctions(unittest.TestCase):
       client.create('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
 
   def test_1010_managed_D_object_collection_is_populated(self):
-    self.object_collection_is_populated()
+    self.D_object_collection_is_populated()
 
   def test_1020_managed_A_clear_event_log(self):
-    self.clear_event_log()
+    self.A_clear_event_log()
   
   def test_1020_managed_B_event_log_is_empty(self):
-    self.event_log_is_empty()
+    self.B_event_log_is_empty()
   
   def test_1020_managed_C_inject_event_log(self):
-    self.inject_event_log()
+    self.C_inject_event_log()
 
   def test_1020_managed_D_event_log_is_populated(self):
-    self.event_log_is_populated()
+    self.D_event_log_is_populated()
   
   def test_1030_managed_compare_byte_by_byte(self):
     self.compare_byte_by_byte()
@@ -1083,14 +1070,6 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_1299_managed_monitor_event_daily_filter_by_principal(self):
     self.monitor_event_daily_filter_by_principal()
 
-#  # TODO: Orderby will probably be completely removed.
-#  def test_1300_managed_orderby_size(self):
-#    self.orderby_size()
-
-#  # TODO: Orderby will probably be completely removed.
-#  def test_1310_managed_orderby_size_desc(self):
-#    self.orderby_size_desc()
-
 # TODO: Include checksum tests if we keep getChecksum().
 
   def test_1330_managed_delete(self):
@@ -1110,10 +1089,10 @@ class TestSequenceFunctions(unittest.TestCase):
   #
   
   def test_2010_wrapped_A_delete_all_objects(self):
-    self.delete_all_objects()
+    self.A_delete_all_objects()
     
   def test_2010_wrapped_B_object_collection_is_empty(self):
-    self.object_collection_is_empty()
+    self.B_object_collection_is_empty()
   
   def test_2010_wrapped_C_create_objects(self):
     '''Wrapped: Populate MN with set of test objects (Remote).
@@ -1145,19 +1124,19 @@ class TestSequenceFunctions(unittest.TestCase):
                     sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
     
   def test_2010_wrapped_D_object_collection_is_populated(self):
-    self.object_collection_is_populated()
+    self.D_object_collection_is_populated()
 
   def test_2020_wrapped_A_clear_event_log(self):
-    self.clear_event_log()
+    self.A_clear_event_log()
   
   def test_2020_wrapped_B_event_log_is_empty(self):
-    self.event_log_is_empty()
+    self.B_event_log_is_empty()
 
   def test_2020_wrapped_C_inject_event_log(self):
-    self.inject_event_log()
+    self.C_inject_event_log()
 
   def test_2020_wrapped_D_event_log_is_populated(self):
-    self.event_log_is_populated()
+    self.D_event_log_is_populated()
 
   def test_2030_wrapped_compare_byte_by_byte(self):
     self.compare_byte_by_byte()
@@ -1195,28 +1174,28 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_2190_wrapped_get_object_by_invalid_pid(self):
     self.get_object_by_invalid_pid()
 
-  def test_1200_wrapped_get_object_by_valid_pid(self):
+  def test_2200_wrapped_get_object_by_valid_pid(self):
     self.get_object_by_valid_pid()
 
-  def test_1210_wrapped_get_sysmeta_by_invalid_pid(self):
+  def test_2210_wrapped_get_sysmeta_by_invalid_pid(self):
     self.get_sysmeta_by_invalid_pid()
 
-  def test_1220_wrapped_get_sysmeta_by_valid_pid(self):
+  def test_2220_wrapped_get_sysmeta_by_valid_pid(self):
     self.get_sysmeta_by_valid_pid()
 
-  def test_1230_wrapped_xml_validation(self):
+  def test_2230_wrapped_xml_validation(self):
     self.xml_validation()
 
-  def test_1240_wrapped_pxby_objectlist_xml(self):
+  def test_2240_wrapped_pxby_objectlist_xml(self):
     self.pxby_objectlist_xml()
   
-  def test_1250_wrapped_pxby_objectlist_json(self):
+  def test_2250_wrapped_pxby_objectlist_json(self):
     self.pxby_objectlist_json()
 
 #  def test_1260_wrapped_pxby_objectlist_rdf_xml(self):
 #    self.pxby_objectlist_rdf_xml()
     
-  def test_1270_wrapped_pxby_objectlist_csv(self):
+  def test_2270_wrapped_pxby_objectlist_csv(self):
     self.pxby_objectlist_csv()
 
   def test_2280_wrapped_monitor_object_cumulative_no_filter(self):
@@ -1278,14 +1257,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
   def test_2299_wrapped_monitor_event_daily_filter_by_principal(self):
     self.monitor_event_daily_filter_by_principal()
-
-#  # TODO: Orderby will probably be completely removed.
-  def test_2300_wrapped_orderby_size(self):
-    self.orderby_size()
-
-#  # TODO: Orderby will probably be completely removed.
-  def test_2310_wrapped_orderby_size_desc(self):
-    self.orderby_size_desc()
   
   def test_2330_wrapped_delete(self):
     self.delete_test()
@@ -1298,7 +1269,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
 #  def test_2360_wrapped_unicode_test_1(self):
 #    self.unicode_test_1()
-
 
 def main():
   log_setup()

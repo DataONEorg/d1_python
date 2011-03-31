@@ -234,7 +234,7 @@ def object_pid_get(request, pid, head):
   # TODO: Keep track of Content-Type instead of guessing.
   response['Content-Length'] = sciobj.size
   response['Date'] = datetime.datetime.isoformat(sciobj.mtime) 
-  response['Content-Type'] = mimetypes.guess_type(url_split.path)[0] or 'application/octet-stream'
+  response['Content-Type'] = mimetypes.guess_type(url_split.path)[0] or d1_common.const.MIMETYPE_OCTETSTREAM
 
   # Log the access of this object.
   event_log.log(pid, 'read', request)
@@ -849,10 +849,10 @@ def monitor_object_get(request, head):
   '''
   # Set up query with requested sorting.
   query = models.Object.objects.all()
-
+  
   # Filter by created date.
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'time')
-  if changed == True:
+  if 'time' in request.GET:
+    query = util.add_datetime_span_filter(query, request, 'mtime', request.GET['time'])
     query_unsliced = query
 
   # Filter by pid.
