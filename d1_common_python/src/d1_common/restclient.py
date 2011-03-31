@@ -109,19 +109,19 @@ class RESTClient(object):
   def _getResponse(self, conn):
     return conn.getresponse()
 
-  def _doRequestNoBody(self, method, url, data=None, headers=None):
+  def _doRequestNoBody(self, method, url, url_params=None, headers=None):
     parts = self._parseURL(url)
     targeturl = parts['path']
     headers = self._mergeHeaders(headers)
-    if not data is None:
-      #URL encode data and append to URL
+    if not url_params is None:
+      #URL encode url_params and append to URL
       if self.logger.getEffectiveLevel() == logging.DEBUG:
-        self.logger.debug("DATA=%s" % str(data))
+        self.logger.debug("DATA=%s" % str(url_params))
       if parts['query'] == '':
-        parts['query'] = util.urlencode(data)
+        parts['query'] = util.urlencode(url_params)
       else:
         parts['query'] = '%s&%s' % (parts['query'], \
-                                    util.urlencode(data))
+                                    util.urlencode(url_params))
       targeturl = urlparse.urljoin(targeturl, "?%s" % parts['query'])
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       self.logger.debug('targetURL=%s' % targeturl)
@@ -137,24 +137,31 @@ class RESTClient(object):
     conn.request(method, targeturl, None, headers)
     return self._getResponse(conn)
 
-  def _doRequestMMBody(self, method, url, data=None, files=None, headers=None):
+  def _doRequestMMBody(
+    self, method,
+    url, url_params=None,
+    headers=None,
+    fields=None, files=None
+  ):
     parts = self._parseURL(url)
     targeturl = parts['path']
     headers = self._mergeHeaders(headers)
-    if not data is None:
+    if not url_params is None:
       try:
-        data.__getattribute__('keys')
+        url_params.__getattribute__('keys')
         fdata = []
-        for k in data.keys():
-          fdata.append((k, data[k]))
+        for k in url_params.keys():
+          fdata.append((k, url_params[k]))
       except:
         pass
-      data = fdata
-    else:
-      data = []
+      url_params = fdata
+    if headers is None:
+      headers = {}
+    if fields is None:
+      fields = {}
     if files is None:
       files = []
-    mm = multipart({}, data, files)
+    mm = multipart({}, fields, files)
     headers['Content-Type'] = mm._get_content_type()
     headers['Content-Length'] = mm.getContentLength()
     if self.logger.getEffectiveLevel() == logging.DEBUG:
@@ -167,7 +174,7 @@ class RESTClient(object):
     self._curlrequest = ['curl', '-X %s' % method]
     for h in headers.keys():
       self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
-    for d in data:
+    for d in fields:
       self._curlrequest.append('-F %s=%s' % (d[0], d[1]))
     for f in files:
       #self._curlrequest.append('-F %s=@%s' % (f['name'], f['filename']))
@@ -191,64 +198,64 @@ class RESTClient(object):
     '''
     return self._lasturl
 
-  def GET(self, url, data=None, headers=None):
+  def GET(self, url, url_params=None, headers=None):
     '''Perform a HTTP GET and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
     
     :param url: The full URL to the target
     :type url: String
-    :param data: Parameters that will be encoded in the query portion of the 
+    :param url_params: Parameters that will be encoded in the query portion of the 
       final URL.
-    :type data: dictionary of key-value pairs, or list of (key, value)
+    :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestNoBody('GET', url, data=data, headers=headers)
+    return self._doRequestNoBody('GET', url, url_params=url_params, headers=headers)
 
-  def HEAD(self, url, data=None, headers=None):
+  def HEAD(self, url, url_params=None, headers=None):
     '''Perform a HTTP HEAD and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. Note that HEAD 
     requests return no body.
     
     :param url: The full URL to the target
     :type url: String
-    :param data: Parameters that will be encoded in the query portion of the 
+    :param url_params: Parameters that will be encoded in the query portion of the 
       final URL.
-    :type data: dictionary of key-value pairs, or list of (key, value)
+    :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestNoBody('HEAD', url, data, headers)
+    return self._doRequestNoBody('HEAD', url, url_params, headers)
 
-  def DELETE(self, url, data=None, headers=None):
+  def DELETE(self, url, url_params=None, headers=None):
     '''Perform a HTTP DELETE and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
     
     :param url: The full URL to the target
     :type url: String
-    :param data: Parameters that will be encoded in the query portion of the 
+    :param url_params: Parameters that will be encoded in the query portion of the 
       final URL.
-    :type data: dictionary of key-value pairs, or list of (key, value)
+    :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
     :return: The result of the HTTP request
     :type return: httplib.HTTPResponse 
     '''
-    return self._doRequestNoBody('DELETE', url, data, headers)
+    return self._doRequestNoBody('DELETE', url, url_params, headers)
 
-  def POST(self, url, data=None, files=None, headers=None):
+  def POST(self, url, url_params=None, headers=None, fields=None, files=None):
     '''Perform a HTTP POST and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
     message is encoded using MIME multipart-mixed.
     
     :param url: The full URL to the target
     :type url: String
-    :param data: Parameters that will be send in the message body.
-    :type data: dictionary of key-value pairs, or list of (key, value)
+    :param url_params: Parameters that will be send in the message body.
+    :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param files: List of files that will be sent with the POST request. The
       "name" is the name of the parameter in the MM body, "filename" is the 
       value of the "filename" parameter in the MM body, and "value" is a 
@@ -259,17 +266,17 @@ class RESTClient(object):
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestMMBody('POST', url, data, files, headers)
+    return self._doRequestMMBody('POST', url, url_params, headers, fields, files)
 
-  def PUT(self, url, data=None, files=None, headers=None):
+  def PUT(self, url, url_params=None, headers=None, fields=None, files=None):
     '''Perform a HTTP PUT and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
     message is encoded using MIME multipart-mixed.
     
     :param url: The full URL to the target
     :type url: String
-    :param data: Parameters that will be send in the message body.
-    :type data: dictionary of key-value pairs, or list of (key, value)
+    :param url_params: Parameters that will be send in the message body.
+    :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param files: List of files that will be sent with the POST request. The
       "name" is the name of the parameter in the MM body, "filename" is the 
       value of the "filename" parameter in the MM body, and "value" is a 
@@ -280,4 +287,4 @@ class RESTClient(object):
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestMMBody('PUT', url, data, files, headers)
+    return self._doRequestMMBody('PUT', url, url_params, headers, fields, files)

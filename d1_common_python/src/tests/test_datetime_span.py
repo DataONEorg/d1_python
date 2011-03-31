@@ -101,7 +101,7 @@ class TestDateTimeSpan(unittest.TestCase):
     self.assertEquals(dts.first_iso, '2008-02-12T12:23:34+00:00')
     self.assertEquals(dts.second_iso, '2008-02-12T12:23:34+00:00')
 
-  def test_get_as_path_element(self):
+  def interval_as_path_element_iso(self):
     dts = DateTimeSpan('{0}/{1}'.format(VALID_ISO8601_DATES[0], VALID_ISO8601_DATES[1]))
     self.assertEquals(
       dts.path_element, '1994-11-05T08:15:30-05:00%2F1994-11-05T13:15:30%2B00:00'
@@ -109,7 +109,7 @@ class TestDateTimeSpan(unittest.TestCase):
 
   def test_update_by_path_element(self):
     dts = DateTimeSpan()
-    dts.update_span_path_element(
+    dts.update_span_with_path_element(
       '1994-11-05T08:15:30-05:00%2F1994-11-05T13:15:30%2B00:00'
     )
     self.assertEquals(dts.first_iso, '1994-11-05T08:15:30-05:00')
