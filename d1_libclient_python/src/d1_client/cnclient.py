@@ -55,12 +55,16 @@ class CoordinatingNodeClient(DataONEBaseClient):
       strictHttps=strictHttps
     )
     self.logger = logging.getLogger('CoordinatingNodeClient')
-    self.methodmap['resolve'] = u'resolve/%(pid)s'
-    self.methodmap['search'] = u'object'
-    self.methodmap['listobjects'] = u'object?qt=path'
+    self.methodmap.update(
+      {
+        'resolve': u'resolve/%(pid)s',
+        'search': u'object',
+        'listobjects': u'object?qt=path',
+      }
+    )
 
   def resolveResponse(self, token, pid):
-    url = self._makeUrl('resolve', pid=pid)
+    url = self.RESTResourceURL('resolve', pid=pid)
     return self.GET(url, headers=self._getAuthHeader(token))
 
   def resolve(self, token, pid):
@@ -76,11 +80,9 @@ class CoordinatingNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def searchResponse(self, token, query):
-    url = self._makeUrl('search')
-    params = {}
-    if query is not None:
-      params['query'] = query
-    return self.GET(url, data=params, headers=self._getAuthHeader(token))
+    url = self.RESTResourceURL('search')
+    url_params = {'query': query, }
+    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
 
   def search(self, token, query):
     res = self.searchResponse(token, query)

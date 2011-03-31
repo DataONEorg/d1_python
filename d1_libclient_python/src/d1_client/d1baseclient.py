@@ -135,7 +135,7 @@ class DataONEBaseClient(restclient.RESTClient):
       return target + '/'
     return self._normalizeTarget(target)
 
-  def _makeUrl(self, meth, **args):
+  def RESTResourceURL(self, meth, **args):
     meth = meth.lower()
     for k in args.keys():
       args[k] = util.encodePathElement(args[k])
@@ -159,7 +159,7 @@ class DataONEBaseClient(restclient.RESTClient):
     :returns: HTTPResponse instance, a file like object that supports read().
     :return type: HTTPResponse
     '''
-    url = self._makeUrl('get', pid=pid)
+    url = self.RESTResourceURL('get', pid=pid)
     self.logger.info("URL = %s" % url)
     return self.GET(url, headers=self._getAuthHeader(token))
 
@@ -170,7 +170,7 @@ class DataONEBaseClient(restclient.RESTClient):
     
     :return type: HTTPResponse
     '''
-    url = self._makeUrl('getSystemMetadata', pid=pid)
+    url = self.RESTResourceURL('getSystemMetadata', pid=pid)
     self.logger.info("URL = %s" % url)
     return self.GET(url, headers=self._getAuthHeader(token))
 
@@ -195,21 +195,21 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     :return type: HTTPResponse
     '''
-    url = self._makeUrl('listObjects')
-    params = {}
+    url = self.RESTResourceURL('listObjects')
+    url_params = {}
     if startTime is not None:
-      params['startTime'] = startTime
+      url_params['startTime'] = startTime
     if endTime is not None:
-      params['endTime'] = endTime
+      url_params['endTime'] = endTime
     if objectFormat is not None:
-      params['objectFormat'] = objectFormat
+      url_params['objectFormat'] = objectFormat
     if replicaStatus is not None:
-      params['replicaStatus'] = replicaStatus
+      url_params['replicaStatus'] = replicaStatus
     if start is not None:
-      params['start'] = str(int(start))
+      url_params['start'] = str(int(start))
     if count is not None:
-      params['count'] = str(int(count))
-    return self.GET(url, data=params, headers=self._getAuthHeader(token))
+      url_params['count'] = str(int(count))
+    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
 
   def listObjects(
     self,
@@ -225,7 +225,7 @@ class DataONEBaseClient(restclient.RESTClient):
     :return type: ObjectList
     '''
     # Sanity.
-    params = {}
+    url_params = {}
     if start < 0:
       raise exceptions.InvalidRequest(10002, "'start' must be a positive integer")
     try:
@@ -260,13 +260,13 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     :return type: HTTPResponse
     '''
-    url = self._makeUrl('getlogrecords')
-    params = {'fromDate': fromDate}
+    url = self.RESTResourceURL('getlogrecords')
+    url_params = {'fromDate': fromDate}
     if not toDate is None:
-      params['toDate'] = toDate
+      url_params['toDate'] = toDate
     if not event is None:
-      params['event'] = event
-    return self.GET(url, data=params, headers=self._getAuthHeader(token))
+      url_params['event'] = event
+    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
 
   def getLogRecords(self, token, fromDate, toDate=None, event=None):
     '''
@@ -282,7 +282,7 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     :return type: Boolean
     '''
-    url = self._makeUrl('ping')
+    url = self.RESTResourceURL('ping')
     try:
       response = self.GET(url)
     except Exception, e:
@@ -303,7 +303,7 @@ class DataONEBaseClient(restclient.RESTClient):
     raise Exception('Not Implemented')
 
   def listNodesResponse(self):
-    url = self._makeUrl('listnodes')
+    url = self.RESTResourceURL('listnodes')
     response = self.GET(url)
     return response
 

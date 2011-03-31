@@ -89,7 +89,7 @@ class MemberNodeClient(DataONEBaseClient):
     #      data['systemmetadata'] = sysmeta
     #    else:
     #      files.append(('sysmeta','systemmetadata.xml', sysmeta))
-    url = self._makeUrl('create', pid=pid)
+    url = self.RESTResourceURL('create', pid=pid)
     headers = self._getAuthHeader(token)
     headers.update(vendor_specific)
     files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
@@ -102,7 +102,7 @@ class MemberNodeClient(DataONEBaseClient):
   def deleteResponse(self, token, pid):
     '''Delete a SciObj from MN.
     '''
-    url = self._makeUrl('get', pid=pid)
+    url = self.RESTResourceURL('get', pid=pid)
     response = self.DELETE(url, headers=self._getAuthHeader(token))
     return response
 
@@ -113,11 +113,9 @@ class MemberNodeClient(DataONEBaseClient):
     return deser.deserialize(response.read(), format)
 
   def getChecksumResponse(self, token, pid, checksumAlgorithm=None):
-    url = self._makeUrl('getchecksum', pid=pid)
-    data = None
-    if not checksumAlgorithm is None:
-      data = {'checksumAgorithm': checksumAlgorithm}
-    response = self.GET(url, data=data, headers=self._getAuthHeader(token))
+    url = self.RESTResourceURL('getchecksum', pid=pid)
+    url_params = {'checksumAgorithm': checksumAlgorithm, }
+    response = self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
     return response
 
   def getChecksum(self, token, pid, checksumAlgorithm=None):
@@ -136,17 +134,9 @@ class MemberNodeClient(DataONEBaseClient):
     self, token, time=None, format=None,
     day=None, pid=None
   ):
-    url = self._makeUrl('getobjectstatistics')
-    data = {}
-    if not time is None:
-      data['time'] = time
-    if not format is None:
-      data['format'] = format
-    if not day is None:
-      data['day'] = day
-    if not pid is None:
-      data['pid'] = pid
-    return self.GET(url, data=data, headers=self._getAuthHeader(token))
+    url = self.RESTResourceURL('getobjectstatistics')
+    url_params = {'time': time, 'format': format, 'day': day, 'pid': pid, }
+    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
 
   def getObjectStatistics(self, token, time=None, format=None, day=None, pid=None):
     response = self.getObjectStatisticsResponse(
@@ -169,21 +159,16 @@ class MemberNodeClient(DataONEBaseClient):
     eventTime=None,
     format=None
   ):
-    url = self._makeUrl('getoperationstatistics')
-    data = {}
-    if not time is None:
-      data['time'] = time
-    if not requestor is None:
-      data['requestor'] = requestor
-    if not day is None:
-      data['day'] = day
-    if not event is None:
-      data['event'] = event
-    if not eventTime is None:
-      data['eventTime'] = eventTime
-    if not format is None:
-      data['format'] = format
-    return self.GET(url, data=data, headers=self._getAuthHeader(token))
+    url = self.RESTResourceURL('getoperationstatistics')
+    url_params = {
+      'time': time,
+      'requestor': requestor,
+      'day': day,
+      'event': event,
+      'eventTime': eventTime,
+      'format': format,
+    }
+    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
 
   def getOperationStatistics(
     self,
@@ -212,7 +197,7 @@ class MemberNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def getCapabilitiesResponse(self):
-    url = self._makeUrl('getcapabilities')
+    url = self.RESTResourceURL('getcapabilities')
     return self.GET(url)
 
   def getCapabilities(self):
@@ -221,27 +206,8 @@ class MemberNodeClient(DataONEBaseClient):
     deser = nodelist_serialization.NodeList()
     return deser.deserialize(response.read(), format)
 
-  def enumerateObjectFormats(self, object_formats={}):
-    '''Get a list of object formats available on the target.
-    :param: (dict) Dictionary to add discovered objects to
-    :return: (object format, count) object formats.
-    
-    TODO: Preserved from obsoleted client.py for now, but may need to be completely
-    removed (since clients should use CNs for object discovery).
-    '''
-
-    object_list = objectlistiterator.ObjectListIterator(self)
-    object_formats = {}
-    for info in object_list:
-      logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat))
-      try:
-        object_formats[info.objectFormat] += 1
-      except KeyError:
-        object_formats[info.objectFormat] = 1
-    return object_formats
-
   def describeResponse(self, token, pid):
-    url = self._makeUrl('get', pid=pid)
+    url = self.RESTResourceURL('get', pid=pid)
     response = self.HEAD(url, headers=self._getAuthHeader(token))
     return response
 
