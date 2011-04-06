@@ -53,6 +53,21 @@ except ImportError, e:
 import const
 
 
+def normalize_to_utc(datetime_):
+  '''Normalize datetime to UTC and remove time zone information.
+  Requirements: The provided datetime must contain time zone information and
+  the information must include an absolute offset from UTC so that a
+  timezone database is not required for the normalization.
+  '''
+  if datetime_ is None:
+    return None
+  if datetime_.tzinfo is None:
+    return datetime_
+  datetime_ -= datetime_.utcoffset()
+  datetime_ = datetime_.replace(tzinfo=None)
+  return datetime_
+
+
 def pretty_xml(xml_doc):
   '''Pretty formatting of XML.
 
