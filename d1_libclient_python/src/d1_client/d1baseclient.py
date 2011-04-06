@@ -41,6 +41,7 @@ from d1_common.types import systemmetadata
 from d1_common.types import objectlist_serialization
 from d1_common.types import logrecords_serialization
 from d1_common.types import nodelist_serialization
+from d1_common.types import exceptions
 
 #=============================================================================
 
@@ -111,6 +112,13 @@ class DataONEBaseClient(restclient.RESTClient):
         raise (serializer.deserialize_xml(res.body))
       elif format.startswith(const.MIMETYPE_JSON):
         raise (serializer.deserialize_json(res.body))
+      # Experimental: Return invalid response wrapped in ServiceFailure
+      # exception.
+      #      raise exceptions.ServiceFailure(
+      #        0, # detailCode
+      #        'No DataONE exception in response. content-type = {0}'.format(format),
+      #        res.body
+      #      )
       raise Exception(u"No DataONE exception in response. " + \
                       u"content-type = %s" % format)
     except ValueError, e:

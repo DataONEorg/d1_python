@@ -66,7 +66,7 @@ class MemberNodeClient(DataONEBaseClient):
       }
     )
 
-  def create(self, token, pid, obj, sysmeta, vendor_specific={}):
+  def createResponse(self, token, pid, obj, sysmeta, vendor_specific={}):
     '''
     :param token:
     :type token: Authentication Token
@@ -93,7 +93,10 @@ class MemberNodeClient(DataONEBaseClient):
     headers = self._getAuthHeader(token)
     headers.update(vendor_specific)
     files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
-    response = self.POST(url, files=files, headers=headers)
+    return self.POST(url, files=files, headers=headers)
+
+  def create(self, token, pid, obj, sysmeta, vendor_specific={}):
+    response = self.createResponse(self, token, pid, obj, sysmeta, vendor_specific)
     return self.isHttpStatusOK(response.status)
 
   def update(self, token, pid, obj, obsoletedPid, sysmeta):
@@ -131,17 +134,30 @@ class MemberNodeClient(DataONEBaseClient):
     raise Exception('Not Implemented')
 
   def getObjectStatisticsResponse(
-    self, token, time=None, format=None,
+    self, token, fromDate=None,
+    toDate=None, format=None,
     day=None, pid=None
   ):
     url = self.RESTResourceURL('getobjectstatistics')
-    url_params = {'time': time, 'format': format, 'day': day, 'pid': pid, }
+    url_params = {
+      'fromDate': fromDate,
+      'toDate': toDate,
+      'format': format,
+      'day': day,
+      'pid': pid,
+    }
     return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
 
-  def getObjectStatistics(self, token, time=None, format=None, day=None, pid=None):
+  def getObjectStatistics(
+    self, token, fromDate=None,
+    toDate=None, format=None,
+    day=None, pid=None
+  ):
     response = self.getObjectStatisticsResponse(
-      token, time=time, format=format, day=day,
-      pid=pid
+      token, fromDate=fromDate,
+      toDate=toDate,
+      format=format,
+      day=day, pid=pid
     )
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = monitorlist_serialization.MonitorList()
@@ -152,20 +168,24 @@ class MemberNodeClient(DataONEBaseClient):
   def getOperationStatisticsResponse(
     self,
     token,
-    time=None,
+    fromDate=None,
+    toDate=None,
+    objectFromDate=None,
+    objectToDate=None,
     requestor=None,
     day=None,
     event=None,
-    eventTime=None,
     format=None
   ):
     url = self.RESTResourceURL('getoperationstatistics')
     url_params = {
-      'time': time,
+      'fromDate': fromDate,
+      'toDate': toDate,
+      'objectFromDate': objectFromDate,
+      'objectToDate': objectToDate,
       'requestor': requestor,
       'day': day,
       'event': event,
-      'eventTime': eventTime,
       'format': format,
     }
     return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
@@ -173,20 +193,24 @@ class MemberNodeClient(DataONEBaseClient):
   def getOperationStatistics(
     self,
     token,
-    time=None,
+    fromDate=None,
+    toDate=None,
+    objectFromDate=None,
+    objectToDate=None,
     requestor=None,
     day=None,
     event=None,
-    eventTime=None,
     format=None
   ):
     response = self.getOperationStatisticsResponse(
       token,
-      time=time,
+      fromDate=fromDate,
+      toDate=toDate,
+      objectFromDate=objectFromDate,
+      objectToDate=objectToDate,
       requestor=requestor,
       day=day,
       event=event,
-      eventTime=eventTime,
       format=format
     )
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
