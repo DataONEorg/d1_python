@@ -89,7 +89,7 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
       self.getSetReplicationStatusUrl(), urllib.quote(status, '') + '/' + urllib.quote(
         node_ref, '') + '/' + urllib.quote(pid, '')
     )
-    mn.sys_log.debug_(
+    mn.sys_log.debug(
       "status({0}) node_ref({1}) pid({2}) url({3})".format(
         status, node_ref, pid, url
       )
@@ -155,7 +155,7 @@ def replicate_object(obj):
       break
   if base_url == '':
     err_msg = 'Could not resolve source_node: {0}'.format(obj.source_node.source_node)
-    mn.sys_log.error_(err_msg)
+    mn.sys_log.error(err_msg)
     # Update queue with failed message for current replication item.
     obj.set_status('Error: {0}'.format(err_msg))
     obj.save()
@@ -182,7 +182,7 @@ class Command(NoArgsCommand):
 
   def handle_noargs(self, **options):
     log_setup()
-    mn.sys_log.info_('Admin: process_replication_queue')
+    mn.sys_log.info('Admin: process_replication_queue')
 
     verbosity = int(options.get('verbosity', 1))
 
@@ -192,7 +192,7 @@ class Command(NoArgsCommand):
     # Loop through registration queue.
     for obj in mn.models.Replication_work_queue.objects.filter(status__status='new'):
       #for obj in mn.models.Replication_work_queue.objects.all():
-      mn.sys_log.info_('Replicating object: {0}'.format(obj.pid))
+      mn.sys_log.info('Replicating object: {0}'.format(obj.pid))
       try:
         replicate_object(obj)
       except d1_common.types.exceptions.DataONEException as e:

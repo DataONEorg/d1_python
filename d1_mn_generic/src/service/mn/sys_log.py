@@ -24,30 +24,29 @@
 
 '''
 
-from logging import *
+import logging
 import os
 import sys
 
 
-def log(d, x):
+def log(log_flo, message):
   '''Log a message with context.
-  
   :param log: The log to log to.
-  :type log: flo
+  :type log: File like object.
   :param message: The message to add to the log.
   :type message: string
-   
   :return: None
+  :return type: NoneType
   '''
-  d(
+  log_flo(
     'file({0}) func({1}) line({2}): {3}'.format(
       os.path.basename(sys._getframe(2).f_code.co_filename), sys._getframe(
-        2).f_code.co_name, sys._getframe(2).f_lineno, x
+        2).f_code.co_name, sys._getframe(2).f_lineno, message
     )
   )
 
 
-info_ = lambda *x: log(info, x)
-debug_ = lambda *x: log(debug, x)
-warning_ = lambda *x: log(warn, x)
-error_ = lambda *x: log(error, x)
+info = lambda *message: log(logging.info, message)
+debug = lambda *message: log(logging.debug, message)
+warning = lambda *message: log(logging.warn, message)
+error = lambda *message: log(logging.error, message)

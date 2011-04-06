@@ -76,19 +76,6 @@ class view_handler():
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
 
-    # The D1 REST interface spec requires keys in the query string part of URLs
-    # to be case insensitive. We handle this by setting all the keys in the GET
-    # map to lower case here and using lower case keys in the views.
-    #
-    # This destroys and rebuilds the entire map. Is there a faster way?
-    #
-    # We don't need to process the POST and HEAD maps in this way because we
-    # don't have any REST interfaces using those that take parameters.
-    get = {}
-    for k in request.GET.keys():
-      get[k.lower()] = request.GET[k]
-    request.GET = get
-
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.
     view_args_list = []

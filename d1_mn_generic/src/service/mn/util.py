@@ -68,11 +68,16 @@ except ImportError, e:
     '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
   )
   raise
+#try:
+#  import pytz
+#except ImportError, e:
+#  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+#  sys.stderr.write('Try: sudo easy_install pytz\n')
+#  raise
 
 # MN API.
 import d1_common.types.exceptions
 import d1_common.const
-import d1_common.datetime_span
 import d1_common.util
 
 # App.
@@ -82,6 +87,16 @@ import models
 import settings
 import sys_log
 import util
+
+#def normalize_datetime(datetime_, tz_):
+#  '''Change datetime to UTC.
+#  '''
+#  d = datetime(2009, 8, 31, 22, 30, 30)
+#  tz = timezone('US/Pacific')
+#
+#  d_tz = tz.normalize(tz.localize(d))
+#  utc = pytz.timezone('UTC')
+#  d_utc = d_tz.astimezone(utc)
 
 
 def validate_post(request, parts):
@@ -307,39 +322,26 @@ def file_to_dict(path):
   return d
 
 
-def add_range_operator_filter(query, request, col_name, name, default='eq'):
-  ''':param:
-  :return:
+def add_datetime_filter(query, request, column_name, param_name, operator):
+  '''Add datetime filter to a QuerySet. If the provided parameter name is
+  not present in the request, no filtering is performed.
+  :param query: The query to which to add the filters.
+  :type query: QuerySet
+  :param request: The request object to get parameter from.
+  :type request: HttpRequest
+  :param param_name: Name of URL parameter to get datetime from.
+  :type param_name: string
+  :param column_name: Table column name.
+  :type column_name: string
+  :return: Filtered query.
+  :return type: QuerySet
   '''
-  filter_kwargs = {}
-
-  operator_translation = {
-    'eq': 'exact',
-    'lt': 'lt',
-    'le': 'lte',
-    'gt': 'gt',
-    'ge': 'gte',
-  }
-
-  # Keep track of if if any filters were added.
-  changed = False
-
-  # Last modified date filter.
   for key in request.GET:
-    m = re.match('{0}(_(.+))?'.format(name), key)
+    m = re.match(param_name, key)
     if not m:
       continue
-    operator = m.group(2)
-    if operator is None:
-      operator = default
-    if operator not in operator_translation:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, 'Invalid argument: {0}'.format(
-          key
-        )
-      )
     date_str = request.GET[key]
-    # parse_date() needs date-time, so if we only have date, add time                                                                                                                                                             
+    # parse_date() needs date-time, so if we only have date, add time
     # (midnight).
     if not re.search('T', date_str):
       date_str += 'T00:00:00Z'
@@ -353,31 +355,36 @@ def add_range_operator_filter(query, request, col_name, name, default='eq'):
           )
         )
       )
-    filter_arg = '{0}__{1}'.format(col_name, operator_translation[operator])
-    filter_kwargs[filter_arg] = date
+    filter_arg = '{0}__{1}'.format(column_name, operator)
     sys_log.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
-    changed = True
+    return query.filter(**{filter_arg: date}), True
 
-  return query.filter(**filter_kwargs), changed
+  return query, False
 
 
-def add_datetime_span_filter(query, request, col_name, datetime_span_iso):
+def add_string_filter(query, request, column_name, param_name):
+  '''Add a string filter to a QuerySet. If the provided parameter name is
+  not present in the request, no filtering is performed.
+  :param query: The query to which to add the filters.
+  :type query: QuerySet
+  :param request: The request object to get parameter from.
+  :type request: HttpRequest
+  :param param_name: Name of URL parameter to get string from.
+  :type param_name: string
+  :param column_name: Table column name.
+  :type column_name: string
+  :return: Filtered query.
+  :return type: QuerySet
   '''
-  '''
-  dts = d1_common.datetime_span.DateTimeSpan()
-  try:
-    dts.update_span_with_interval_iso(datetime_span_iso)
-  except d1_common.datetime_span.ParseError:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid time span: {0}'.format(datetime_span_iso)
-    )
+  for key in request.GET:
+    m = re.match(param_name, key)
+    if not m:
+      continue
+    value = request.GET[key]
+    sys_log.info('Applied filter: {0} = {1}'.format(column_name, value))
+    return query.filter(**{column_name: value}), True
 
-  filter_kwargs = {
-    '{0}__gt'.format(col_name): dts.first,
-    '{0}__lte'.format(col_name): dts.second,
-  }
-
-  return query.filter(**filter_kwargs)
+  return query, False
 
 
 def add_wildcard_filter(query, col_name, value):

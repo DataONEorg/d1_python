@@ -84,7 +84,6 @@ try:
   import d1_common.types.objectlist_serialization
   import d1_common.util
   import d1_common.const
-  import d1_common.datetime_span
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
@@ -112,8 +111,8 @@ OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 5
 OBJECTS_CREATED_IN_90S = 32
 
 # CONSTANTS RELATED TO LOG COLLECTION.
-EVENTS_TOTAL = 452#554
-EVENTS_READ = 198
+EVENTS_TOTAL = 656
+EVENTS_READ = 300
 EVENTS_UNIQUE_DATES = 351
 EVENTS_UNIQUE_DATES_WITH_READ = 96
 EVENTS_WITH_OBJECT_FORMAT_EML = 351
@@ -549,10 +548,9 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Objects: Cumulative, filter by object creation time.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    time = d1_common.datetime_span.DateTimeSpan()
-    time.update_span_with_datetime(datetime.datetime(2000, 01, 01),
-                                   datetime.datetime(2005, 01, 01))
-    monitor_list = client.getObjectStatistics('<dummy token>', time=time)
+    monitor_list = client.getObjectStatistics('<dummy token>',
+                                              fromDate=datetime.datetime(2000, 01, 01),
+                                              toDate=datetime.datetime(2005, 01, 01))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -652,7 +650,7 @@ class TestSequenceFunctions(unittest.TestCase):
     pass
   
   def monitor_event_cumulative_filter_by_event_type(self):
-    '''Monitor Events: Cumulative, filter by event format.
+    '''Monitor Events: Cumulative, filter by event type.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics('<dummy token>',
@@ -906,49 +904,53 @@ class TestSequenceFunctions(unittest.TestCase):
   # Managed (object byte storage handled locally by GMN).
   #
 
-  def test_1010_managed_A_delete_all_objects(self):
-    self.A_delete_all_objects()
-    
-  def test_1010_managed_B_object_collection_is_empty(self):
-    self.B_object_collection_is_empty()
-
-  def test_1010_managed_C_create_objects(self):
-    '''Managed: Populate MN with set of test objects (local).
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
-  
-      # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-          
-      # To create a valid URL, we must quote the pid twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
-  
-      # To test the MIME Multipart poster, we provide the Sci object as a file
-      # and the SysMeta as a string.
-      client.create('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
-
-  def test_1010_managed_D_object_collection_is_populated(self):
-    self.D_object_collection_is_populated()
-
-  def test_1020_managed_A_clear_event_log(self):
-    self.A_clear_event_log()
-  
-  def test_1020_managed_B_event_log_is_empty(self):
-    self.B_event_log_is_empty()
-  
-  def test_1020_managed_C_inject_event_log(self):
-    self.C_inject_event_log()
-
-  def test_1020_managed_D_event_log_is_populated(self):
-    self.D_event_log_is_populated()
+#  def test_1010_managed_A_delete_all_objects(self):
+#    self.A_delete_all_objects()
+#    
+#  def test_1010_managed_B_object_collection_is_empty(self):
+#    self.B_object_collection_is_empty()
+#
+#  def test_1010_managed_C_create_objects(self):
+#    '''Managed: Populate MN with set of test objects (local).
+#    '''
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+#    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
+#      # Get name of corresponding object and open it.
+#      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+#      object_file = open(object_path, 'r')
+#  
+#      # The pid is stored in the sysmeta.
+#      sysmeta_file = open(sysmeta_path, 'r')
+#      sysmeta_xml = sysmeta_file.read()
+#      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
+#          
+#      # To create a valid URL, we must quote the pid twice. First, so
+#      # that the URL will match what's on disk and then again so that the
+#      # quoting survives being passed to the web server.
+#      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
+#  
+#      # To test the MIME Multipart poster, we provide the Sci object as a file
+#      # and the SysMeta as a string.
+#      try:
+#        response = client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
+#      except Exception as e:
+#        open('out.htm', 'w').write(e.traceInformation)
+#        raise
+#      #  print response.read()
+#  def test_1010_managed_D_object_collection_is_populated(self):
+#    self.D_object_collection_is_populated()
+#
+#  def test_1020_managed_A_clear_event_log(self):
+#    self.A_clear_event_log()
+#  
+#  def test_1020_managed_B_event_log_is_empty(self):
+#    self.B_event_log_is_empty()
+#  
+#  def test_1020_managed_C_inject_event_log(self):
+#    self.C_inject_event_log()
+#
+#  def test_1020_managed_D_event_log_is_populated(self):
+#    self.D_event_log_is_populated()
   
   def test_1030_managed_compare_byte_by_byte(self):
     self.compare_byte_by_byte()

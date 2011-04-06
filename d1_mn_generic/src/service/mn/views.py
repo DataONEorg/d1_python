@@ -143,26 +143,19 @@ def object_collection_get(request, head):
 
   # Filters.
   
-  # Current spec for listObjects requires separate start time and end time parameters.
-  
   # startTime
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'starttime', 'ge')
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'startTime', 'gte')
   if changed == True:
     query_unsliced = query
   
   # endTime
-  query, changed = util.add_range_operator_filter(query, request, 'mtime', 'endtime', 'le')
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime', 'lt')
   if changed == True:
     query_unsliced = query
-  
-  # New spec should conform to the monitoring API which uses ISO8601 ranges.
-  if 'time' in request.GET:
-    query = util.add_datetime_span_filter(query, request, 'mtime', request.GET['time'])
-    query_unsliced = query
-    
+      
   # objectFormat
-  if 'objectformat' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format', request.GET['objectformat'])
+  if 'objectFormat' in request.GET:
+    query = util.add_wildcard_filter(query, 'format__format', request.GET['objectFormat'])
     query_unsliced = query
 
   # TODO. Filter by replicaStatus. May be removed from API.
@@ -233,6 +226,7 @@ def object_pid_get(request, pid, head):
   # Add header info about object.
   # TODO: Keep track of Content-Type instead of guessing.
   response['Content-Length'] = sciobj.size
+  # sciobj.mtime was normalized to UTC when it was inserted into the db.
   response['Date'] = datetime.datetime.isoformat(sciobj.mtime) 
   response['Content-Type'] = mimetypes.guess_type(url_split.path)[0] or d1_common.const.MIMETYPE_OCTETSTREAM
 
@@ -365,11 +359,13 @@ def object_pid_post(request, pid):
   object.set_format(sysmeta.objectFormat)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = sysmeta.dateSysMetadataModified
+  object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)
   object.size = sysmeta.size
   object.save_unique()
 
-  # Successfully updated the db, so put current datetime in status.mtime.
+  # Successfully updated the db, so put current datetime in status.mtime. This
+  # should store the status.mtime in UTC and for that to work, Django must be
+  # running with settings.TIME_ZONE = 'UTC'.
   db_update_status = models.DB_update_status()
   db_update_status.status = 'update successful'
   db_update_status.save()
@@ -603,44 +599,20 @@ def event_log_view_get(request, head):
   obj = {}
   obj['logRecord'] = []
 
-  # Filter by referenced object format.
-  if 'objectformat' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['objectformat'])
+
+  # Filter by fromDate.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'fromDate', 'gte')
+  if changed:
     query_unsliced = query
 
-  # Filter by referenced object PID.
-  if 'pid' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__pid', request.GET['pid'])
-    query_unsliced = query
-  
-  # Filter by referenced object checksum.
-  if 'checksum' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__checksum', request.GET['checksum'])
+  # Filter by toDate.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'toDate', 'lt')
+  if changed:
     query_unsliced = query
 
-  # Filter by referenced object checksum_algorithm.
-  if 'checksum_algorithm' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__checksum_algorithm__checksum_algorithm', request.GET['checksum_algorithm'])
-    query_unsliced = query
-
-  # Filter by referenced object last modified date.
-  query, changed = util.add_range_operator_filter(query, request, 'object__mtime', 'modified')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'lastaccessed')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by ip_address.
-  if 'ip_address' in request.GET:
-    query = util.add_wildcard_filter(query, 'ip_address__ip_address', request.GET['ip_address'])
-    query_unsliced = query
-      
-  # Filter by operation type.
-  if 'event' in request.GET:
-    query = util.add_wildcard_filter(query, 'event__event', request.GET['event'])
+  # Filter by event type.
+  query, changed = util.add_string_filter(query, request, 'event__event', 'event')
+  if changed:
     query_unsliced = query
 
   if head == False:
@@ -750,11 +722,13 @@ def _replicate_store(request):
   object.set_format(sysmeta.objectFormat)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = sysmeta.dateSysMetadataModified
+  object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)
   object.size = sysmeta.size
   object.save_unique()
 
-  # Successfully updated the db, so put current datetime in status.mtime.
+  # Successfully updated the db, so put current datetime in status.mtime. This
+  # should store the status.mtime in UTC and for that to work, Django must be
+  # running with settings.TIME_ZONE = 'UTC'.
   db_update_status = models.DB_update_status()
   db_update_status.status = 'update successful'
   db_update_status.save()
@@ -839,33 +813,30 @@ def monitor_object(request):
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
 def monitor_object_get(request, head):
-  '''
-  - number of objects, cumulative
-  - number of objects, per day
-  - filters:
-    - modified
-    - format
-  :return:
+  '''MN_core.getObjectStatistics(token[, time][, format][, day][, pid]) -> MonitorList
   '''
   # Set up query with requested sorting.
   query = models.Object.objects.all()
   
-  # Filter by created date.
-  if 'time' in request.GET:
-    query = util.add_datetime_span_filter(query, request, 'mtime', request.GET['time'])
+  # startTime
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'startTime', 'gte')
+  if changed == True:
+    query_unsliced = query
+  
+  # endTime
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime', 'lt')
+  if changed == True:
     query_unsliced = query
 
-  # Filter by pid.
+  # Filter by pid (with wildcards).
   if 'pid' in request.GET:
     query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
-  
-  # Filter by URL.
-  if 'url' in request.GET:
-    query = util.add_wildcard_filter(query, 'url', request.GET['url'])
-
-  # Filter by objectFormat.
-  if 'format' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format', request.GET['format'])
+    query_unsliced = query
+    
+  # Filter by referenced object format.
+  query, changed = util.add_string_filter(query, request, 'format__format', 'format')
+  if changed:
+    query_unsliced = query
 
   # Prepare to group by day.
   if 'day' in request.GET:
@@ -894,15 +865,8 @@ def monitor_event(request):
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
 def monitor_event_get(request, head):
+  '''MN_core.getOperationStatistics(token[, time][, requestor][, day][, event][, eventTime][, format]) -> MonitorList
   '''
-  - number of events, cumulative
-  - number of events, per day
-  - filters:
-    - type of event
-    - object format of object that event relates to
-  :return:
-  '''
-  
   # select objects ordered by mtime desc.
   query = models.Event_log.objects.order_by('-date_logged')
   # Create a copy of the query that we will not slice, for getting the total
@@ -913,31 +877,31 @@ def monitor_event_get(request, head):
   obj['logRecord'] = []
 
   # Filter by referenced object format.
-  if 'format' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__format__format', request.GET['format'])
-    query_unsliced = query
-
-  # Filter by referenced object pid.
-  if 'pid' in request.GET:
-    query = util.add_wildcard_filter(query, 'object__pid', request.GET['pid'])
+  query, changed = util.add_string_filter(query, request, 'object__format__format', 'format')
+  if changed:
     query_unsliced = query
   
-   # Filter by referenced object created date.
-  query, changed = util.add_range_operator_filter(query, request, 'object__mtime', 'modified')
+  # Filter by referenced object created date, from.
+  query, changed = util.add_datetime_filter(query, request, 'object__mtime', 'objectFromDate', 'gte')
+  if changed == True:
+    query_unsliced = query
+  
+    # Filter by referenced object created date, to.
+  query, changed = util.add_datetime_filter(query, request, 'object__mtime', 'objectToDate', 'lt')
   if changed == True:
     query_unsliced = query
 
-  # Filter by last accessed date.
-  query, changed = util.add_range_operator_filter(query, request, 'date_logged', 'eventtime')
+  # Filter by event date, from.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'fromDate', 'gte')
+  if changed == True:
+    query_unsliced = query
+  
+    # Filter by event date, to.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'toDate', 'lt')
   if changed == True:
     query_unsliced = query
 
-  # Filter by ip_address.
-  if 'ip_address' in request.GET:
-    query = util.add_wildcard_filter(query, 'ip_address__ip_address', request.GET['ip_address'])
-    query_unsliced = query
-      
-  # Filter by operation type.
+  # Filter by event type.
   if 'event' in request.GET:
     query = util.add_wildcard_filter(query, 'event__event', request.GET['event'])
     query_unsliced = query
