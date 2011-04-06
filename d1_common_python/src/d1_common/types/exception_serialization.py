@@ -186,6 +186,7 @@ class DataONEExceptionSerialization(serialization_base.Serialization):
 
   #== Deserialization =========================================================
 
+  @classmethod
   def dataone_exception_factory(
     self, exception_name,
     detailCode,
