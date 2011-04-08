@@ -82,8 +82,9 @@ class exception_handler():
 
     # When debugging from a web browser, we want to return None to get Django's
     # extremely useful exception page.
-    #    if settings.GMN_DEBUG == True and request.META['HTTP_USER_AGENT'] != d1_common.const.USER_AGENT:
-    #      return None
+    if settings.GMN_DEBUG == True and request.META['HTTP_USER_AGENT'
+                                                   ] != d1_common.const.USER_AGENT:
+      return None
 
     # If the exception is a DataONE exception, we serialize it out.
     if isinstance(exception, d1_common.types.exceptions.DataONEException):
@@ -115,7 +116,7 @@ class exception_handler():
         request, exception
       )
     )
-    exception.traceInformation = util.traceback_to_trace_info()
+    exception.traceInformation = util.traceback_to_text()
     exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
       exception
     )

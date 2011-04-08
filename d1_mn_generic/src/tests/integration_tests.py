@@ -371,7 +371,7 @@ class TestSequenceFunctions(unittest.TestCase):
   
     files = [('csv', 'csv', csv_file.read())]
     
-    multipart = d1_common.mime_multipart.multipart({}, [], files)
+    multipart = d1_common.mime_multipart.multipart([], files)
     inject_log_url = urlparse.urljoin(self.opts.mn_url, 'inject_log')
     status, reason, page = multipart.post(inject_log_url)
     

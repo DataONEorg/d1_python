@@ -77,11 +77,6 @@ except ImportError, e:
 def test_replicate(src_node_ref, pid):
   '''Build the mime multipart document that will be sent to /mn/replicate.
   '''
-
-  headers = {}
-  headers[u'Content-type'] = 'multipart/form-data'
-  headers[u'token'] = u'<dummy token>'
-
   files = []
   sysmeta_filename, sysmeta_obj = get_sysmeta(pid)
   files.append(('sysmeta', 'sysmeta', sysmeta_obj.toxml()))
@@ -89,7 +84,7 @@ def test_replicate(src_node_ref, pid):
   fields = []
   fields.append(('sourceNode', src_node_ref))
 
-  multipart_obj = d1_common.mime_multipart.multipart(headers, fields, files)
+  multipart_obj = d1_common.mime_multipart.multipart(fields, files)
 
   multipart_doc = StringIO.StringIO()
   for part in multipart_obj:

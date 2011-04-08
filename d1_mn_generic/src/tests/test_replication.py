@@ -112,13 +112,11 @@ def replicate(opts, args):
 
   # Add replication task to the destination GMN work queue.
   #   Create the MMP document that is submitted to dst to request a replication.
-  headers = {}
-  headers[u'token'] = u'<dummy token>'
   files = []
   files.append(('sysmeta', 'sysmeta', sysmeta_doc))
   fields = []
   fields.append(('sourceNode', src_ref))
-  multipart = d1_common.mime_multipart.multipart(headers, fields, files)
+  multipart = d1_common.mime_multipart.multipart(fields, files)
   #   Post the MMP doc to /replicate on GMN.
   replicate_url = urlparse.urljoin(client_dst.client.target, '/replicate')
   multipart.post(replicate_url)

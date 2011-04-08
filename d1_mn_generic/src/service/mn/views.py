@@ -974,6 +974,7 @@ def test_exception(request, exc):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
+  raise Exception("not a dataone exception")
   #raise d1_common.types.exceptions.InvalidRequest(0, 'Test exception')
   #raise d1_common.types.exceptions.NotFound(0, 'Test exception', '123')
 

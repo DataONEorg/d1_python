@@ -115,7 +115,7 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
     )
     self.logger.debug_(u'url({0}) pid({1})'.format(crud_create_url, pid))
 
-    multipart = mime_multipart.multipart(vendor_specific, [], files)
+    multipart = mime_multipart.multipart([], files)
     try:
       status, reason, page = multipart.post(crud_create_url)
       if status != 200:
