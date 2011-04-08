@@ -209,12 +209,6 @@ class TestMimeMultipart(unittest.TestCase):
         o.write('\\x%02x' % ord(q))
 
   def test_correct_mmp_generation(self):
-    headers = {
-      'header_name_1': 'header_value_1',
-      'header_name_2': 'header_value_2',
-      'header_name_3': 'header_value_3',
-    }
-
     fields = [
       ('field_name_1', 'field_value_1'),
       ('field_name_2', 'field_value_2'),
@@ -228,7 +222,7 @@ class TestMimeMultipart(unittest.TestCase):
       ('file_key_4', 'file_name_4', 'short_data'),
     ]
 
-    mmp = d1_common.mime_multipart.multipart(headers, fields, files)
+    mmp = d1_common.mime_multipart.multipart(fields, files)
     self.assertEquals(mmp.read(), mmp_doc)
 
 #===============================================================================
