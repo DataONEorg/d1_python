@@ -66,7 +66,7 @@ class MemberNodeClient(DataONEBaseClient):
       }
     )
 
-  def createResponse(self, token, pid, obj, sysmeta, vendor_specific={}):
+  def createResponse(self, token, pid, obj, sysmeta, vendor_specific=None):
     '''
     :param token:
     :type token: Authentication Token
@@ -79,24 +79,28 @@ class MemberNodeClient(DataONEBaseClient):
     :returns: True on successful completion
     :return type: Boolean
     '''
-    #    data = None
-    #    files = []
-    #    if isinstance(basestring, obj):
-    #      data['object'] = obj
-    #    else:
-    #      files.append(('object', 'content.bin', obj))
-    #    if isinstance(basestring, sysmeta):
-    #      data['systemmetadata'] = sysmeta
-    #    else:
-    #      files.append(('sysmeta','systemmetadata.xml', sysmeta))
+    if vendor_specific is None:
+      vendor_specific = {}
+#    data = None
+#    files = []
+#    if isinstance(basestring, obj):
+#      data['object'] = obj
+#    else:
+#      files.append(('object', 'content.bin', obj))
+#    if isinstance(basestring, sysmeta):
+#      data['systemmetadata'] = sysmeta
+#    else:
+#      files.append(('sysmeta','systemmetadata.xml', sysmeta))
     url = self.RESTResourceURL('create', pid=pid)
     headers = self._getAuthHeader(token)
     headers.update(vendor_specific)
     files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
     return self.POST(url, files=files, headers=headers)
 
-  def create(self, token, pid, obj, sysmeta, vendor_specific={}):
-    response = self.createResponse(self, token, pid, obj, sysmeta, vendor_specific)
+  def create(self, token, pid, obj, sysmeta, vendor_specific=None):
+    if vendor_specific is None:
+      vendor_specific = {}
+    response = self.createResponse(token, pid, obj, sysmeta, vendor_specific)
     return self.isHttpStatusOK(response.status)
 
   def update(self, token, pid, obj, obsoletedPid, sysmeta):

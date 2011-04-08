@@ -38,7 +38,7 @@ from d1_common.types import systemmetadata
 from d1_common import const
 import d1_common.testcasewithurlcompare
 
-from d1_client import client
+from d1_client import d1client
 import d1_common.util
 
 MEMBER_NODES = {
@@ -52,13 +52,13 @@ COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn', }
 #===============================================================================
 
 
-class TestDataOneClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     self.target = MEMBER_NODES['dryad']
 
   def testGet(self):
     return
-    cli = client.DataOneClient(target=self.target)
+    cli = d1client.DataONEClient(target=self.target)
     #try loading some random object
     start = 23
     count = 1
@@ -81,7 +81,7 @@ class TestDataOneClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
     self.assertEqual(sysmeta.identifier, id)
 
   def testGetFail(self):
-    cli = client.DataOneClient(target=self.target)
+    cli = d1client.DataONEClient(target=self.target)
     # see if failure works
     id = 'some bogus id'
     self.assertRaises(exceptions.NotFound, cli.get, id)
@@ -91,7 +91,7 @@ class TestDataOneClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
     pass
 
   def _subListObjectTest(self, requestformat):
-    cli = client.DataOneClient(target=self.target)
+    cli = d1client.DataONEClient(target=self.target)
     start = 0
     count = 10
     startTime = None
@@ -148,7 +148,7 @@ class TestListObjects(unittest.TestCase):
   def testValidListObjects(self):
     return
     objectListUrl = "https://repository.dataone.org/software/cicore/trunk/schemas/dataoneTypes.xsd"
-    cli = client.DataOneClient(target=self.target)
+    cli = d1client.DataONEClient(target=self.target)
     response = cli.listObjects(start=0, count=5)
     logging.error("====")
     logging.error(response)
