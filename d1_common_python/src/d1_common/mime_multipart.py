@@ -48,11 +48,8 @@ class multipart(object):
   read interface.
   '''
 
-  def __init__(self, headers, fields, files, chunk_size=1024**2):
+  def __init__(self, fields, files, chunk_size=1024**2):
     '''Constructor for multipart.
-    
-    :param headers: sequence of (name, value) elements for headers
-    :type headers: { string: string, }
     :param fields: sequence of (name, value) elements for regular form fields
     :type fields: [(string, string), ]
     :param files: sequence of (name, filename, value) elements for data to be
@@ -64,20 +61,7 @@ class multipart(object):
     :type chunk_size: integer
     :returns: None
     '''
-    # Remove any provided headers that we need to generate ourselves.
-    #   headers.keys() is a copy of the dictionary keys, so it's safe to
-    #   mutate the dictionary while iterating.
-    for header_key in headers.keys():
-      if header_key.lower() in ('content-type', 'content-length', 'user-agent'):
-        logging.info(
-          '{0} header was provided but overridden by internally generated version'.format(
-            header_key
-          )
-        )
-        del headers[header_key]
-
     self.chunk_size = chunk_size
-    self.headers = headers
     self.fields = fields
     self.files = files
     self.file_idx = 0
@@ -86,64 +70,19 @@ class multipart(object):
     self.BOUNDARY = '----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
     self.io = StringIO.StringIO()
 
-  def getContentLength(self):
+  def get_content_length(self):
     '''Get the length, in bytes, of the MIME Multipart document that will be
     generated.
     
     :returns: length
     :returns type: integer
     '''
-    m = multipart(
-      self.headers, self.fields, [
-        (
-          file[0], file[1], ''
-        ) for file in self.files
-      ]
-    )
+    m = multipart(self.fields, [(file[0], file[1], '') for file in self.files])
     content_length = len(m.read())
     for file in self.files:
       content_length += self._get_len(file)
     self.reset()
     return content_length
-
-  def post(self, url):
-    '''Submit the generated MIME Multipart document to a web server using HTTP
-    POST.
-
-    :returns: response status, response reason, response body
-    :returns type: (integer, string, string)
-    
-    TODO: Remove this method. Use restclient instead.
-    '''
-    scheme, host, path = urlparse.urlsplit(url)[:3]
-
-    # Determine full length. We create a new multipart object that is a copy of
-    # this one, but with empty files. We then add in the length of the files
-    # separately.
-    m = multipart(
-      self.headers, self.fields, [
-        (
-          file[0], file[1], ''
-        ) for file in self.files
-      ]
-    )
-    content_length = len(m.read())
-    for file in self.files:
-      content_length += self._get_len(file)
-
-    self.reset()
-
-    # The headers do not count towards the size of the MIME Multipart doc.
-    self.headers['Content-Type'] = self._get_content_type()
-    self.headers['Content-Length'] = content_length
-    self.headers['User-Agent'] = d1_common.const.USER_AGENT
-
-    # "self" refers this class, which returns the wrapped files in a mime
-    # multipart structure when iterated by httplib.HTTPConnection().
-    http_connection = httplib.HTTPConnection(host)
-    http_connection.request('POST', path, self, self.headers)
-    res = http_connection.getresponse()
-    return res.status, res.reason, res.read()
 
   def reset(self):
     '''Reset the mime_multipart object to its initial state.
@@ -291,7 +230,7 @@ class multipart(object):
     except AttributeError:
       return len(file[2])
 
-  def _get_content_type(self):
+  def get_content_type_header(self):
     '''Get the contents for the Content-Type header.
     '''
     return 'multipart/form-data; boundary={0}'.format(self.BOUNDARY)

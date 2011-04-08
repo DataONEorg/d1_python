@@ -161,9 +161,9 @@ class RESTClient(object):
       fields = {}
     if files is None:
       files = []
-    mm = multipart({}, fields, files)
-    headers['Content-Type'] = mm._get_content_type()
-    headers['Content-Length'] = mm.getContentLength()
+    mm = multipart(fields, files)
+    headers['Content-Type'] = mm.get_content_type_header()
+    headers['Content-Length'] = mm.get_content_length()
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
