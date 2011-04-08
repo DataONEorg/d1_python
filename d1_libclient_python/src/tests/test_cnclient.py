@@ -32,8 +32,8 @@ Unit tests for cnclient.
 import unittest
 import logging
 from d1_client import cnclient
-import d1_common.exceptions
-from testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.types.exceptions
+from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 
 class TestCNClient(TestCaseWithURLCompare):
@@ -74,7 +74,7 @@ class TestCNClient(TestCaseWithURLCompare):
         except:
           msg = res.read(512)
         raise Exception('NotFound expected (%s):\n%s' % (test['baseurl'], msg))
-      except d1_common.exceptions.NotFound, e:
+      except d1_common.types.exceptions.NotFound, e:
         pass
 
   def test_reserveIdentifier(self):
