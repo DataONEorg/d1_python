@@ -18,10 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_logrecorditerator
-================================================
+'''Module d1_client.tests.test_objectlistiterator
+=================================================
 
-Unit tests for logrecorditerator.
+Unit tests for objectlistiterator.
 
 :Created:
 :Author: DataONE (vieglais, dahl)
@@ -34,20 +34,30 @@ import urlparse
 import sys
 
 import d1_client.mnclient
-import d1_client.logrecorditerator
+import d1_client.objectlistiterator
 import d1_common.types.generated.dataoneTypes
 
 
-class testcase_logrecorditerator(unittest.TestCase):
+class testcase_objectlistiterator(unittest.TestCase):
   '''Utility class that check whether two URLs are equal.  Not really as simple
   as it might seem at first.
   '''
 
-  def test_logrecorditerator(self):
-    pass
-
-  # TODO: LogRecordIterator relies on slicing, which was never in the API but
-  # was initially supported by GMN.
+  def test_objectlistiterator(self):
+    '''Walk over the list of log entries available from a given node.
+    '''
+    target = "http://dev-dryad-mn.dataone.org/mn"
+    #target = "http://129.24.0.15/mn"
+    #target = "http://knb-mn.ecoinformatics.org/knb"
+    if len(sys.argv) > 1:
+      target = sys.argv[1]
+    client = d1_client.mnclient.MemberNodeClient(baseurl=target)
+    rl = d1_client.objectlistiterator.ObjectListIterator(client)
+    counter = 0
+    for e in rl:
+      counter += 1
+      self.assertTrue(isinstance(e, d1_common.types.generated.dataoneTypes.ObjectInfo))
+      # TODO: Check if ObjectInfo members are valid.
 
 
 if __name__ == "__main__":

@@ -83,7 +83,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     self.token = None
     self.ignore_not_implemented = True
 
-  def testSchemaVersion(self):
+  def passes_testSchemaVersion(self):
     '''Simple test to check if the correct schema version is being returned
     '''
 
@@ -98,14 +98,15 @@ class TestDataONEClient(TestCaseWithURLCompare):
 
     for test in TEST_DATA['MN']:
       dotest(test['baseurl'])
+
     for test in TEST_DATA['CN']:
       dotest(test['baseurl'])
 
-  def testGet(self):
+  def test_get_valid_pid(self):
     '''Check the CRUD.get operation
     '''
-    return
-    for test in TEST_DATA['MN']:
+
+    def dotest(test):
       logging.info("GET %s" % test['baseurl'])
       cli = d1baseclient.DataONEBaseClient(test['baseurl'])
       try:
@@ -119,7 +120,31 @@ class TestDataONEClient(TestCaseWithURLCompare):
       except d1_common.types.exceptions.NotFound:
         pass
 
-  def testPing(self):
+    for test in TEST_DATA['MN']:
+      dotest(test)
+
+  def test_get_invalid_pid(self):
+    '''Check the CRUD.get operation
+    '''
+
+    def dotest(test):
+      logging.info("GET %s" % test['baseurl'])
+      cli = d1baseclient.DataONEBaseClient(test['baseurl'])
+      try:
+        res = cli.get(self.token, test['boguspid'])
+        if hasattr(res, 'body'):
+          msg = res.body[:512]
+        else:
+          msg = res.read(512)
+        raise Exception('NotFound not raised for get on %s. Detail: %s' \
+                        % (test['baseurl'], msg))
+      except d1_common.types.exceptions.NotFound:
+        pass
+
+    for test in TEST_DATA['MN']:
+      dotest(test)
+
+  def xtestPing(self):
     '''Attempt to Ping the target.
     '''
     return
@@ -138,7 +163,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['CN']:
       dotest(test['baseurl'])
 
-  def testGetLogRecords(self):
+  def xtestGetLogRecords(self):
     '''Return and deserialize log records
     '''
     return
@@ -149,7 +174,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     if not self.ignore_not_implemented:
       raise Exception("Not Implemented - discrepancy in REST docs")
 
-  def testGetSystemMetadata(self):
+  def xtestGetSystemMetadata(self):
     '''Return and successfully deserialize SystemMetadata
     '''
 
@@ -166,7 +191,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['CN']:
       dotest(test['baseurl'].test['existingpid'], test['boguspid'])
 
-  def testListObjects(self):
+  def xtestListObjects(self):
     '''Return and successfully deserialize listObjects
     '''
 
@@ -185,15 +210,16 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['MN']:
       dotest(test['baseurl'])
 
-  def testIsAuthorized(self):
+  def xtestIsAuthorized(self):
     if not self.ignore_not_implemented:
       raise Exception('Not Implemented')
 
-  def testSetAccess(self):
+  def xtestSetAccess(self):
     if not self.ignore_not_implemented:
       raise Exception('Not Implemented')
 
 #===============================================================================
+
 if __name__ == "__main__":
   from node_test_common import loadTestInfo, initMain
   TEST_DATA = initMain()
