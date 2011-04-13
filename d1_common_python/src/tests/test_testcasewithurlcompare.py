@@ -50,6 +50,7 @@ class Test_URLCompare(TestCaseWithURLCompare):
     self.failUnlessRaises(AssertionError, self.assertUrlEqual, a, b)
 
 #===============================================================================
+
 if __name__ == "__main__":
   argv = sys.argv
   if "--debug" in argv:
