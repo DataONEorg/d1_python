@@ -67,24 +67,25 @@ sys.path.append(
 
 # MN API.
 try:
-  import d1common.mime_multipart
-  import d1common.exceptions
-  import d1common.types.objectlist_serialization
+  import d1_common.mime_multipart
+  import d1_common.types.exceptions
+  import d1_common.types.objectlist_serialization
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1common\n'
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
   raise
 try:
-  import d1pythonitk
-  import d1pythonitk.xmlvalidator
-  import d1pythonitk.client
-  import d1pythonitk.systemmetadata
+  import d1_client
+  import d1_client.mnclient
+  import d1_client.cnclient
+  import d1_client.systemmetadata
+  import d1_client.objectlistiterator
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1pythonitk\n'
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
   raise
 
@@ -197,16 +198,16 @@ class DataONECLI():
       logging.error('Create failed: {0}'.format(err_msg))
       return
 
-    client = d1pythonitk.client.DataOneClient(self.opts['mn_url'])
+    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
 
     try:
-      client.create(identifier, scimeta_file, sysmeta_file)
+      client.create('<dummy token>', identifier, scimeta_file, sysmeta_file)
     except:
       logging.error('Create failed')
       raise
 
     try:
-      client.create(identifier, scidata_file, sysmeta_file)
+      client.create('<dummy token>', identifier, scidata_file, sysmeta_file)
     except:
       logging.error('Create failed')
       raise
@@ -223,9 +224,9 @@ class DataONECLI():
     identifier = self.args[0]
 
     # Get
-    client = d1pythonitk.client.SimpleDataOneClient(self.opts['dataone_url'])
+    client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
 
-    sci_obj = client.get(identifier)
+    sci_obj = client.get('<dummy token>', identifier)
 
     self.output(sci_obj)
 
@@ -241,8 +242,8 @@ class DataONECLI():
     identifier = self.args[0]
 
     # Get SysMeta.
-    client = d1pythonitk.client.SimpleDataOneClient(self.opts['dataone_url'])
-    sci_meta = client.getSysMeta(identifier)
+    client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
+    sci_meta = client.getSystemMetadata('<dummy token>', identifier)
     sci_meta_xml = sci_meta.toxml()
 
     if self.opts['pretty']:
@@ -263,9 +264,8 @@ class DataONECLI():
     identifier = self.args[0]
 
     # Get
-    client = d1pythonitk.client.SimpleDataOneClient(self.opts['dataone_url'])
-
-    sci_meta = client.getSysMeta(identifier)
+    client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
+    sci_meta = client.getSystemMetadata('<dummy token>', identifier)
 
     print 'Describes:'
     if len(sci_meta.describes) > 0:
@@ -293,9 +293,9 @@ class DataONECLI():
     identifier = self.args[0]
 
     # Get
-    client = d1pythonitk.client.DataOneClient(target=self.opts['dataone_url'])
+    client = d1_client.cnclient.CoordinatingNodeClient(baseurl=self.opts['dataone_url'])
 
-    object_location_list = client.resolve(identifier)
+    object_location_list = client.resolve('<dummy token>', identifier)
 
     for object_location in object_location_list.objectLocation:
       print object_location.url
@@ -306,19 +306,20 @@ class DataONECLI():
     if len(self.args) != 0:
       logging.error('Invalid arguments')
       logging.error(
-        'Usage: list --mn_url [--start-time] [--end-time] [--object-format] [--slice-start] [--slice-count] [--request-format]'
+        'Usage: list --mn_url [--start-time] [--end-time] '
+        '[--object-format] [--slice-start] [--slice-count] '
       )
       return
 
-    client = d1pythonitk.client.SimpleDataOneClient(self.opts['mn_url'])
+    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
 
     object_list = client.listObjects(
+      '<dummy token>',
       startTime=self.opts['start_time'],
       endTime=self.opts['end_time'],
       objectFormat=self.opts['object_format'],
       start=self.opts['slice_start'],
-      count=self.opts['slice_count'],
-      requestFormat=self.opts['request_format']
+      count=self.opts['slice_count']
     )
 
     object_list_xml = object_list.toxml()
@@ -335,14 +336,24 @@ class DataONECLI():
     print 'Not implemented'
 
   def log(self):
-    client = d1pythonitk.client.SimpleDataOneClient(self.opts['mn_url'])
+    '''MN log.
+    '''
+    if len(self.args) != 0:
+      logging.error('Invalid arguments')
+      logging.error(
+        'Usage: log --mn_url [--start-time] [--end-time] '
+        '[--slice-start] [--slice-count] '
+      )
+      return
+
+    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
 
     object_list = client.getLogRecords(
-      startTime=self.opts['start_time'],
-      endTime=self.opts['end_time'],
-      objectFormat=self.opts['object_format'],
-      start=self.opts['slice_start'],
-      count=self.opts['slice_count']
+      '<dummy token>',
+      fromDate=self.opts['start_time'],
+      toDate=self.opts['end_time'],
+      #start=self.opts['slice_start'],
+      #count=self.opts['slice_count']
     )
 
     object_list_xml = object_list.toxml()
@@ -354,9 +365,29 @@ class DataONECLI():
     self.output(StringIO.StringIO(object_list_xml))
 
   def objectformats(self):
-    client = d1pythonitk.client.SimpleDataOneClient(self.opts['mn_url'])
+    '''Get a list of object formats available on the target.
+    :return: (object format, count) object formats.
 
-    unique_objects = client.enumerateObjectFormats()
+    TODO: May need to be completely
+    removed (since clients should use CNs for object discovery).
+    '''
+
+    if len(self.args) != 0:
+      logging.error('Invalid arguments')
+      logging.error('Usage: objectformats')
+      return
+
+    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
+
+    object_list = d1_client.objectlistiterator.ObjectListIterator(client)
+
+    unique_objects = {}
+    for info in object_list:
+      logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat))
+      try:
+        unique_objects[info.objectFormat] += 1
+      except KeyError:
+        unique_objects[info.objectFormat] = 1
 
     self.output(StringIO.StringIO('\n'.join(unique_objects) + '\n'))
 
@@ -372,7 +403,7 @@ def main():
     dest='dataone_url',
     action='store',
     type='string',
-    default=d1pythonitk.const.URL_DATAONE_ROOT,
+    default=d1_common.const.URL_DATAONE_ROOT,
     help='URL to DataONE Root'
   )
   parser.add_option(
@@ -433,7 +464,7 @@ def main():
     dest='slice_count',
     action='store',
     type='int',
-    default=d1pythonitk.const.MAX_LISTOBJECTS,
+    default=d1_common.const.MAX_LISTOBJECTS,
     help='Max number of elements in sliced resultset'
   )
   parser.add_option(
@@ -481,7 +512,7 @@ def main():
   # Examples:
   #
   # create:
-  # ./dataone.py --verbose --dataone-url http://localhost:8000/cn create 1234 test_objects/sysmeta/knb-lter-gce10911 test_objects/scimeta/knb-lter-gce10911 test_objects/harvested/knb-lter-gce10911_MERGED.xml 
+  # ./dataone.py --verbose --dataone-url http://localhost:8000/cn create 1234 test_objects/sysmeta/knb-lter-gce10911 test_objects/scimeta/knb-lter-gce10911 test_objects/harvested/knb-lter-gce10911_MERGED.xml
   #
   # resolve:
   # ./dataone.py --verbose --dataone-url http://localhost:8000/cn resolve 'hdl:10255/dryad.669/mets.xml'
@@ -491,7 +522,7 @@ def main():
   #
   # meta:
   # ./dataone.py --verbose --pretty --dataone-url http://localhost:8000/cn meta 'hdl:10255/dryad.669/mets.xml'
-  #  
+  #
   # related:
   # ./dataone.py --dataone-url http://localhost:8000/cn related 'hdl:10255/dryad.669/mets.xml'
   #
@@ -518,24 +549,16 @@ def main():
   # Sanity.
   if len(args) == 0 or args[0] not in dataONECLI.command_map.keys():
     parser.error(
-      '<command> is required and must be one of: {0}'.format(
-        ', '.join(
-          dataONECLI.command_map.keys(
-          )
-        )
-      )
+      '<command> is required and must be one of: {0}'
+      .format(', '.join(dataONECLI.command_map.keys()))
     )
 
-  if opts.slice_count > d1pythonitk.const.MAX_LISTOBJECTS:
+  if opts.slice_count > d1_common.const.MAX_LISTOBJECTS:
     parser.error(
       '--slice-count must be {0} or less'.format(
         parser.error(
-          '<command> is required and must be one of: {0}'.format(
-            ', '.join(
-              dataONECLI.command_map.keys(
-              )
-            )
-          )
+          '<command> is required and must be one of: {0}'
+          .format(', '.join(dataONECLI.command_map.keys()))
         )
       )
     )
