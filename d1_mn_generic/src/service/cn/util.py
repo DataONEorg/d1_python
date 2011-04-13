@@ -1,4 +1,5 @@
 import os
+import sys
 import StringIO
 
 import settings
@@ -30,7 +31,7 @@ import pyxb.exceptions_
 
 try:
   import d1_client
-  import d1_client.client
+  import d1_client.cnclient
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(

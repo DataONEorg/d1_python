@@ -63,7 +63,7 @@ except ImportError, e:
 # MN API.
 import d1_common.types.exceptions
 import d1_client.systemmetadata
-import d1_client.client
+import d1_client.cnclient
 import d1_common.types.objectlocationlist_serialization
 import d1_common.types.pid_serialization
 import d1_common.types.nodelist_serialization
