@@ -165,15 +165,21 @@ def urlencode(query, doseq=0):
   parameters in the output will match the order of parameters in the
   input.
   '''
-  # Remove None parameters from query.
-  for k in query.keys():
-    if query[k] is None:
-      del query[k]
-
   if hasattr(query, "items"):
+    # Remove None parameters from query. Dictionaries are mutable, so we can
+    # remove the the items directly. dict.keys() creates a copy of the
+    # dictionary keys, making it safe to remove elements from the dictionary
+    # while iterating.
+    for k in query.keys():
+      if query[k] is None:
+        del query[k]
     # mapping objects
     query = query.items()
   else:
+    # Remove None parameters from query. Tuples are immutable, so we have to
+    # build a new version that does not contain the elements we want to remove,
+    # and replace the original with it.
+    query = filter((lambda x: x[1] is not None), query)
     # it's a bother at times that strings and string-like objects are
     # sequences...
     try:
