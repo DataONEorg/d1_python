@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Generic Member Node Setup &mdash; Member Node REST Interface v0.3 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Member Node REST Interface v0.3 documentation" href="index.html" />
+    <link rel="next" title="Implementation" href="gmn-generated.html" />
+    <link rel="prev" title="Overview" href="gmn-overview.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gmn-generated.html" title="Implementation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gmn-overview.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Member Node REST Interface v0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="generic-member-node-setup">
+<h1>Generic Member Node Setup<a class="headerlink" href="#generic-member-node-setup" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These instructions focus on installing the DAAC instance of the Generic Member
+Node (GMN). GMN can be configured as a standalone Member Node or as an adapter
+for an existing repository. These instructions desribe how to install GMN as
+an adapter.</p>
+</div>
+<div class="section" id="terminology">
+<h2>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">GMN:</th><td class="field-body">Generic Member Node.</td>
+</tr>
+<tr class="field"><th class="field-name">MN:</th><td class="field-body">DataONE Member Node.</td>
+</tr>
+<tr class="field"><th class="field-name">CN:</th><td class="field-body">DataONE Coordinating Node.</td>
+</tr>
+<tr class="field"><th class="field-name">SciData:</th><td class="field-body">An object (file) that contains scienctific observational data.</td>
+</tr>
+<tr class="field"><th class="field-name">SciMeta:</th><td class="field-body">An object (file) that contains information about a SciData object.</td>
+</tr>
+<tr class="field"><th class="field-name">SysMeta:</th><td class="field-body">An object (file) that contains system level information about a SciData or a
+SciMeta object.</td>
+</tr>
+<tr class="field"><th class="field-name">Adaptee:</th><td class="field-body">A 3rd party system that uses GMN to expose its data through DataONE.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="system-overview">
+<h2>System overview<a class="headerlink" href="#system-overview" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>GMN is installed on a physical or virtual machine. Network connectivity is
+arranged so that GMN can be reached from the Internet and from the adaptee and
+can itself reach the adaptee&#8217;s storage facilities.</li>
+<li>The adaptee calls into GMN with a REST call for each object that it wants to
+expose through DataONE. Each REST call provides GMN with either a full SciMeta
+or SciData object (in standalone mode) or URL to such an object (in adapter
+mode), and a corresponding SysMeta object.</li>
+<li>GMN will then serve collection related calls directly from its database.</li>
+<li>When the bytes of a SciData or SciMeta object are requested, GMN serves the
+object from local storage in standalone mode or uses the URL stored in its
+database to retrieve the object from the adaptee&#8217;s storage facilities and
+streams it out, acting as a streaming proxy in adapter mode.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="system-requirements">
+<h1>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="hardware">
+<h2>Hardware<a class="headerlink" href="#hardware" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Component</th>
+<th class="head">Minimum</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>RAM</td>
+<td>Workload dependent</td>
+</tr>
+<tr><td>CPU</td>
+<td>Workload dependent</td>
+</tr>
+<tr><td>Disk</td>
+<td>Workload dependent</td>
+</tr>
+<tr><td>Network</td>
+<td>Workload dependent</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="software">
+<h2>Software<a class="headerlink" href="#software" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="os-and-environment">
+<h3>OS and Environment<a class="headerlink" href="#os-and-environment" title="Permalink to this headline">¶</a></h3>
+<p>Required pakages that are not installed by default in Ubuntu 9.10.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Component</th>
+<th class="head">Minimum Version</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Ubuntu</td>
+<td>9.10+</td>
+</tr>
+<tr><td>Apache</td>
+<td>2</td>
+</tr>
+<tr><td>Python</td>
+<td>2.6</td>
+</tr>
+<tr><td>sqlite</td>
+<td>3</td>
+</tr>
+<tr><td>gcc</td>
+<td></td>
+</tr>
+<tr><td>apache2</td>
+<td></td>
+</tr>
+<tr><td>libapache2-mod-wsgi</td>
+<td></td>
+</tr>
+<tr><td>apache2-threaded-dev</td>
+<td></td>
+</tr>
+<tr><td>openssh-server</td>
+<td></td>
+</tr>
+<tr><td>libxml2-dev</td>
+<td></td>
+</tr>
+<tr><td>libxslt-dev</td>
+<td></td>
+</tr>
+<tr><td>python-dev</td>
+<td>2.6</td>
+</tr>
+<tr><td>python-django</td>
+<td>1.1</td>
+</tr>
+<tr><td>python-setuptools</td>
+<td></td>
+</tr>
+<tr><td>python-dateutil</td>
+<td></td>
+</tr>
+<tr><td>sqlite3</td>
+<td></td>
+</tr>
+<tr><td>subversion</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="python-modules">
+<h3>Python Modules<a class="headerlink" href="#python-modules" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Module</th>
+<th class="head">Minimum Version</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>iso8601</td>
+<td></td>
+</tr>
+<tr><td>Lxml</td>
+<td>2.2.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install-dependencies">
+<h2>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Packages:</p>
+<div class="highlight-python"><pre>$ sudo apt-get install gcc apache2-threaded-dev openssh-server libxml2-dev libxslt-dev python-dev python-django libapache2-mod-wsgi python-setuptools python-dateutil apache2 sqlite3 subversion</pre>
+</div>
+<p>Python dependencies:</p>
+<div class="highlight-python"><pre>$ sudo easy_install iso8601 lxml</pre>
+</div>
+<p>PyXB XML bindings generator:</p>
+<div class="highlight-python"><pre>$ wget http://surfnet.dl.sourceforge.net/project/pyxb/pyxb/1.1.2%20%28Beta%29/PyXB-base-1.1.2.tar.gz
+$ tar xzf PyXB-base-1.1.2.tar.gz
+$ cd PyXB-1.1.2
+$ sudo python setup.py install</pre>
+</div>
+</div>
+<div class="section" id="install-gmn-daac">
+<h2>Install GMN DAAC<a class="headerlink" href="#install-gmn-daac" title="Permalink to this headline">¶</a></h2>
+<p>The distribution of GMN is SVN based.</p>
+<p>Create and/or enter the folder where you wish to install GMN DAAC:</p>
+<div class="highlight-python"><pre>$ cd /var/local</pre>
+</div>
+<p>Download the GMN DAAC &#8220;package&#8221;:</p>
+<div class="highlight-python"><pre>$ sudo svn co https://repository.dataone.org/software/python_products/mn mn</pre>
+</div>
+<p>Enter the DataONE Common library for Python:</p>
+<div class="highlight-python"><pre>$ cd mn/d1_common</pre>
+</div>
+<p>Install the library:</p>
+<div class="highlight-python"><pre>$ sudo python setup.py develop</pre>
+</div>
+<p>Enter the DataONE Client library for Python:</p>
+<div class="highlight-python"><pre>$ cd ../d1_libclient</pre>
+</div>
+<p>Install the library:</p>
+<div class="highlight-python"><pre>$ sudo python setup.py develop</pre>
+</div>
+</div>
+<div class="section" id="install-the-gmn-service">
+<h2>Install the GMN service<a class="headerlink" href="#install-the-gmn-service" title="Permalink to this headline">¶</a></h2>
+<p>Edit the gmn.cfg file and change <em>name</em> and <em>identifier</em> to values that are
+unique for this instance of GMN:</p>
+<div class="highlight-python"><pre>$ cd ../mn_generic/service
+$ vi gmn.cfg</pre>
+</div>
+<p>Setup GMN:</p>
+<div class="highlight-python"><pre>$ sudo ../install/config.py</pre>
+</div>
+<p>config.py performs the following tasks:</p>
+<ul class="simple">
+<li>Create sqlite database file for GMN.</li>
+<li>Make sure logfile can be written by group www-data.</li>
+<li>Make sure db file and parent folder of db file is writeable by www-data.</li>
+<li>Copy fixed config values from .cfg file to database.</li>
+<li>Update GMN version from SVN revision number.</li>
+</ul>
+</div>
+<div class="section" id="apache-configuration">
+<h2>Apache configuration<a class="headerlink" href="#apache-configuration" title="Permalink to this headline">¶</a></h2>
+<p>GMN has been tested with Apache 2.2.</p>
+<p>These instructions have been tested on Ubuntu 10.04 LTS. Adjust the paths to
+match your configuration.</p>
+<ul>
+<li><p class="first">Set up mod_wsgi:</p>
+<ul>
+<li><p class="first">Create a file:</p>
+<div class="highlight-python"><pre>/etc/apache2/mods-available/wsgi.load</pre>
+</div>
+<p>with the following contents:</p>
+<div class="highlight-python"><pre>LoadModule wsgi_module /usr/lib/apache2/modules/mod_wsgi.so</pre>
+</div>
+</li>
+<li><p class="first">Enable the wsgi module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># a2enmod wsgi</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p class="first">Set up GMN in a new or existing VirtualHost section. An example site file
+is included below. It is a modified version of the default site file at:</p>
+<div class="highlight-python"><pre>/etc/apache2/sites-available/default</pre>
+</div>
+<p>Note that the settings for AllowEncodedSlashes and AcceptPathInfo that are
+included at the top of the VirtualHost section are required for GMN to
+function properly. Also see <a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration">Apache Configuration for DataONE Services</a> for
+other important information about these settings.</p>
+</li>
+<li><p class="first">Restart Apache:</p>
+<div class="highlight-python"><pre>apache2ctl restart</pre>
+</div>
+</li>
+</ul>
+<p>Example default site file:</p>
+<div class="highlight-python"><pre>&lt;VirtualHost *:80&gt;
+  AllowEncodedSlashes On
+  AcceptPathInfo On
+
+  ServerAdmin dahl@unm.edu
+
+  DocumentRoot /var/www
+
+  &lt;Directory /&gt;
+    Options FollowSymLinks
+    AllowOverride None
+  &lt;/Directory&gt;
+
+  &lt;Directory /var/www/&gt;
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  &lt;/Directory&gt;
+
+  ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+  &lt;Directory "/usr/lib/cgi-bin"&gt;
+    AllowOverride None
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+  &lt;/Directory&gt;
+
+  ErrorLog /var/log/apache2/error.log
+
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel debug
+
+  CustomLog /var/log/apache2/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    &lt;Directory "/usr/share/doc/"&gt;
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    &lt;/Directory&gt;
+
+  # Generic Member Node (GMN)
+
+  WSGIScriptAlias /mn /var/local/mn/mn_generic/service/gmn.wsgi
+
+  DocumentRoot /var/local/mn/mn_generic/service
+
+  &lt;Directory /var/local/mn/mn_generic/service&gt;
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+  &lt;/Directory&gt;
+
+&lt;/VirtualHost&gt;</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Generic Member Node Setup</a><ul>
+<li><a class="reference internal" href="#terminology">Terminology</a></li>
+<li><a class="reference internal" href="#system-overview">System overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#system-requirements">System requirements</a><ul>
+<li><a class="reference internal" href="#hardware">Hardware</a></li>
+<li><a class="reference internal" href="#software">Software</a><ul>
+<li><a class="reference internal" href="#os-and-environment">OS and Environment</a></li>
+<li><a class="reference internal" href="#python-modules">Python Modules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#install-dependencies">Install dependencies</a></li>
+<li><a class="reference internal" href="#install-gmn-daac">Install GMN DAAC</a></li>
+<li><a class="reference internal" href="#install-the-gmn-service">Install the GMN service</a></li>
+<li><a class="reference internal" href="#apache-configuration">Apache configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gmn-overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gmn-generated.html"
+                        title="next chapter">Implementation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gmn-setup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="gmn-generated.html" title="Implementation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gmn-overview.html" title="Overview"
+             >previous</a> |</li>
+        <li><a href="index.html">Member Node REST Interface v0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Roger Dahl.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>
