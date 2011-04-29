@@ -42,6 +42,7 @@ import shutil
 
 # 3rd party.
 try:
+  import minixsv
   import minixsv.pyxsval
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))

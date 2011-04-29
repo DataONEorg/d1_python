@@ -56,7 +56,8 @@ USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
 
 #: The root of all DataONE.  Used to perform introspection on the system when
 #: no other node information is provided.
-URL_DATAONE_ROOT = 'http://cn.dataone.org/cn/' # "http://cn.dataone.org/"
+URL_DATAONE_ROOT = 'http://cn.dataone.org/cn/'
+#URL_DATAONE_ROOT = 'http://localhost:8000/cn/'
 
 #: Path to append to target base for the object collection
 #: TODO: retrieve this from D1 root
