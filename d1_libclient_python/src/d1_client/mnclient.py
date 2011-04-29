@@ -63,6 +63,7 @@ class MemberNodeClient(DataONEBaseClient):
         'getobjectstatistics': u'monitor/object',
         'getoperationstatistics': u'monitor/event',
         'getcapabilities': u'node',
+        'update': u'object_put/%(pid)s',
       }
     )
 
@@ -98,13 +99,39 @@ class MemberNodeClient(DataONEBaseClient):
     return self.POST(url, files=files, headers=headers)
 
   def create(self, token, pid, obj, sysmeta, vendor_specific=None):
-    if vendor_specific is None:
-      vendor_specific = {}
     response = self.createResponse(token, pid, obj, sysmeta, vendor_specific)
     return self.isHttpStatusOK(response.status)
 
-  def update(self, token, pid, obj, obsoletedPid, sysmeta):
-    raise Exception('Not Implemented')
+  def updateResponse(self, token, pid, obj, new_pid, sysmeta, vendor_specific=None):
+    '''
+    :param token:
+    :type token: Authentication Token
+    :param pid: The identifier of the object that is being updated 
+    :type pid: Identifier
+    :param obj: Science Data
+    :type obj: Unicode or file like object
+    :param new_pid: The identifier that will become the replacement
+                    identifier for the existing object after the
+                    update.
+    :type new_pid: Identifier
+    :param sysmeta:
+    :type: sysmeta: Unicode or file like object
+    :returns: True on successful completion
+    :return type: Boolean
+    '''
+    if vendor_specific is None:
+      vendor_specific = {}
+
+    url = self.RESTResourceURL('update', pid=pid)
+    headers = self._getAuthHeader(token)
+    headers['newPid'] = new_pid
+    headers.update(vendor_specific)
+    files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
+    return self.POST(url, files=files, headers=headers)
+
+  def update(self, token, pid, obj, new_pid, sysmeta, vendor_specific=None):
+    response = self.updateResponse(token, pid, obj, new_pid, sysmeta, vendor_specific)
+    return self.isHttpStatusOK(response.status)
 
   def deleteResponse(self, token, pid):
     '''Delete a SciObj from MN.
