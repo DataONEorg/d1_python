@@ -89,7 +89,8 @@ class DataONEBaseClient(restclient.RESTClient):
       'getsystemmetadata': u'meta/%(pid)s',
       'listobjects': u'object',
       'getlogrecords': u'log',
-      'ping': u'health/ping',
+      'ping': u'monitor/ping',
+      'status': u'monitor/status',
       'listnodes': u'node',
     }
     self.lastresponse = None
@@ -243,9 +244,8 @@ class DataONEBaseClient(restclient.RESTClient):
         raise ValueError
     except ValueError:
       raise exceptions.InvalidRequest(
-        10002, "'count' must be an integer between 1 and {0}".format(
-          d1_common.const.MAX_LISTOBJECTS
-        )
+        10002,
+        "'count' must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
       )
 
     if endTime is not None and startTime is not None and startTime >= endTime:
@@ -299,6 +299,19 @@ class DataONEBaseClient(restclient.RESTClient):
     if response.status == 200:
       return True
     return False
+
+  def getStatusResponse(self):
+    '''
+    :return type: HTTPResponse
+    '''
+    url = self.RESTResourceURL('status')
+    return self.GET(url)
+
+  def getStatus(self):
+    '''TODO: When the StatusResponse object is defined, this will return a
+    deserialized version of that object.
+    '''
+    raise Exception('Not Implemented')
 
   def isAuthorized(self, token, pid, action):
     '''
