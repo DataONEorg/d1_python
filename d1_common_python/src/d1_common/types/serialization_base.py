@@ -90,6 +90,8 @@ class Serialization(object):
       d1_common.const.MIMETYPE_TEXT: self.deserialize_text,
     }
 
+    self.not_implemented = 'Serialization method not implemented.'
+
   def serialize(
     self, accept=d1_common.const.DEFAULT_MIMETYPE,
     pretty=False,
@@ -108,87 +110,58 @@ class Serialization(object):
     except ValueError:
       self.log.debug(
         'Invalid HTTP_ACCEPT value. Defaulting to "{0}"'.format(
-          d1_common.const.DEFAULT_MIMETYPE
-        )
+          d1_common.const.DEFAULT_MIMETYPE)
       )
       content_type = d1_common.const.DEFAULT_MIMETYPE
     self.log.debug("serializing, content-type=%s" % content_type)
-    return self.serialize_map[d1_common.util.get_content_type(content_type)](
-      pretty, jsonvar
-    ), content_type
+    return self.serialize_map[d1_common.util.get_content_type(content_type)] \
+      (pretty, jsonvar), content_type
 
   def serialize_xml(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def serialize_json(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def serialize_csv(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def serialize_rdf(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def serialize_html(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def serialize_log(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def serialize_text(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   #== Deserialization =========================================================
 
   def deserialize(self, doc, content_type=d1_common.const.DEFAULT_MIMETYPE):
     self.log.debug("de-serialize, content-type=%s" % content_type)
-    return self.deserialize_map[d1_common.util.get_content_type(content_type)](doc)
+    return self.deserialize_map[d1_common.util.get_content_type(content_type)] \
+      (doc)
 
   def deserialize_xml(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def deserialize_json(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def deserialize_csv(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def deserialize_rdf(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def deserialize_html(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def deserialize_log(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
 
   def deserialize_text(self, pretty=False, jsonvar=False):
-    raise d1_common.types.exceptions.NotImplemented(
-      0, 'Serialization method not implemented.'
-    )
+    raise d1_common.types.exceptions.NotImplemented(0, self.not_implemented)
