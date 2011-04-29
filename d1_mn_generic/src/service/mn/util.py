@@ -457,15 +457,14 @@ def add_slice_filter(query, request):
   try:
     count = int(request.GET['count'])
     # Enforce max count.
-    if count > d1_common.const.MAX_LISTOBJECTS:
+    if count < 0 or count > d1_common.const.MAX_LISTOBJECTS:
       raise ValueError
   except KeyError:
     count = d1_common.const.MAX_LISTOBJECTS
   except ValueError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid count value: {0} (count must be 0 <= count >= {1}'.format(
-        request.GET['count'], d1_common.const.MAX_LISTOBJECTS
-      )
+      0, 'Invalid count value: {0} (count must be 0 <= count <= {1}'.format(
+        request.GET['count'], d1_common.const.MAX_LISTOBJECTS)
     )
 
   # If both start and count are present but set to 0, we just tweak the query

@@ -44,15 +44,15 @@ urlpatterns = patterns(
   (r'^meta/(.+)$', 'meta_pid'),
   (r'^object/(.+)$', 'object_pid'),
   (r'^checksum/(.+)$', 'checksum_pid'),
+  # Hack to support update() until we get PUT working in Django.
+  (r'^object_put/?$', 'object_pid_put'),
 
   # /log/
   (r'^log/?$', 'event_log_view'),
 
-  # /health/
-  (r'^health/ping/?$', 'health_ping'),
-  (r'^health/status/?$', 'health_status'),
-
   # /monitor/
+  (r'^monitor/ping/?$', 'monitor_ping'),
+  (r'^monitor/status/?$', 'monitor_status'),
   (r'^monitor/object/?$', 'monitor_object'),
   (r'^monitor/event/?$', 'monitor_event'),
 

@@ -169,9 +169,9 @@ def object_collection_get(request, head):
   # Return query data for further processing in middleware layer.
   return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'object' }
 
-#
+# ------------------------------------------------------------------------------  
 # CRUD interface.
-#
+# ------------------------------------------------------------------------------  
 
 @auth.cn_check_required
 def object_pid(request, pid):
@@ -397,16 +397,21 @@ def object_pid_put(request, pid):
   '''MN_crud.update(token, pid, object, obsoletedPid, sysmeta) → Identifier
   Creates a new object on the Member Node that explicitly updates and
   obsoletes a previous object (identified by obsoletedPid).
+  
+  MN_storage.update(token, pid, object, newPid, sysmeta) → Identifier
+  pid is the pid of the object being updated.
+  
   :return:
   '''
-  util.validate_post(request, ( #('header', 'token'), TODO: Add check for token back in after we settle on a name for it.
-                               ('file', 'object'),
-                               ('file', 'sysmeta'),
-                               ('field', 'obsoletedPid')))
-
-  object_pid_delete(request, request.POST['obsoletedPid'])
-  
-  object_pid_post(request, pid)
+#  util.validate_post(request, ( #('header', 'token'), TODO: Add check for token back in after we settle on a name for it.
+#                               ('file', 'object'),
+#                               ('file', 'sysmeta'),
+#                               ('field', 'obsoletedPid')))
+#
+#  object_pid_delete(request, request.POST['obsoletedPid'])
+#  
+#  object_pid_post(request, pid)
+  pass
 
 def object_pid_delete(request, pid):
   '''
@@ -472,9 +477,9 @@ def object_pid_delete(request, pid):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
-#  
+# ------------------------------------------------------------------------------  
 # Sysmeta.
-#
+# ------------------------------------------------------------------------------  
 
 @auth.cn_check_required
 def meta_pid(request, pid):
@@ -556,9 +561,9 @@ def checksum_pid_get(request, pid):
   doc, content_type = checksum_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
-#  
+# ------------------------------------------------------------------------------  
 # Event Log.
-#
+# ------------------------------------------------------------------------------  
 
 @auth.cn_check_required
 def event_log_view(request):
@@ -624,9 +629,9 @@ def event_log_view_get(request, head):
   # Return query data for further processing in middleware layer.  
   return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'log' }
 
-#
+# ------------------------------------------------------------------------------  
 # Replication.
-#
+# ------------------------------------------------------------------------------  
 
 # MN_replication.replicate(token, id, sourceNode) → boolean
 
@@ -782,22 +787,26 @@ def error_post(request):
 
   return HttpResponse('')
 
-#
-# Health.
-#
+# ------------------------------------------------------------------------------  
+# Monitoring.
+# ------------------------------------------------------------------------------
 
-def health_ping(request):
+def monitor_ping(request):
+  '''MN_core.ping() -> Boolean.
+  Low level “are you alive” operation. Response is simple ACK, but may be
+  reasonable to overload with a couple of flags that could indicate availability
+  of new data or change in capabilities.
+  :return: Null body or Exception
   '''
+  return HttpResponse('')
+
+def monitor_status(request):
+  '''MN_core.getStatus() -> StatusResponse/
+  This function is similar to MN_health.ping() but returns a more complete
+  status which may include information such as planned service outages.
+  :return: Undefined
   '''
-  return HttpResponse('OK')
-  
-def health_status(request):
-  '''
-  '''
-  # Not implemented.
-  raise d1_common.types.exceptions.NotImplemented(0, 'Targeted for later version.')
-  
-# Monitoring
+  return HttpResponse('OK (response not yet defined)')
 
 @auth.cn_check_required
 def monitor_object(request):
@@ -946,9 +955,9 @@ def node(request):
 #</synchronization>
 #</node>
 
-#
+# ------------------------------------------------------------------------------  
 # Diagnostics, debugging and testing.
-#
+# ------------------------------------------------------------------------------  
 
 def test(request):
   if request.method != 'GET':

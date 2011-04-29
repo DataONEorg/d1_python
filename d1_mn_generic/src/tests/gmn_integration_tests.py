@@ -338,6 +338,28 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertEqual(object_info.checksum.value(), sysmeta_obj.checksum)
       self.assertEqual(object_info.checksum.algorithm, sysmeta_obj.checksumAlgorithm)
 
+
+  def object_update(self):
+    '''Update an object.
+    '''
+    # New object.
+    # SysMeta
+    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
+    sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
+    sysmeta_str = open(sysmeta_path).read()
+    # SciData
+    object_path = os.path.splitext(sysmeta_path)[0]
+    object_str = open(object_path, 'rb')
+    # 
+    obsoleted_pid = 'AnserMatrix.htm'
+    new_pid = 'update_object_pid'
+    # Update.
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    response = client.updateResponse('<dummy token>', obsoleted_pid,
+                                     object_str, new_pid, sysmeta_str)
+    return response
+
+
   def slicing_1(self):
     '''Slicing: Starting at 0 and getting half of the available objects.
     '''
@@ -994,6 +1016,9 @@ class TestSequenceFunctions(unittest.TestCase):
        
   def test_1040_managed_object_properties(self):
     self.object_properties()
+
+  def test_1050_managed_object_update(self):
+    self.object_update()
 
   def test_1100_managed_slicing_1(self):
     self.slicing_1()
