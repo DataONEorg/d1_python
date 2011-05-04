@@ -1,0 +1,6 @@
+node_test_common.loadTestInfo
+=============================
+
+.. currentmodule:: node_test_common
+
+.. autofunction:: loadTestInfo

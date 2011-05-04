@@ -1,0 +1,57 @@
+test_d1client.TestDataONEClient
+===============================
+
+.. currentmodule:: test_d1client
+
+.. autoclass:: TestDataONEClient
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_d1client.TestDataONEClient.__init__
+  .. automethod:: test_d1client.TestDataONEClient.assertAlmostEqual
+  .. automethod:: test_d1client.TestDataONEClient.assertAlmostEquals
+  .. automethod:: test_d1client.TestDataONEClient.assertEqual
+  .. automethod:: test_d1client.TestDataONEClient.assertEquals
+  .. automethod:: test_d1client.TestDataONEClient.assertFalse
+  .. automethod:: test_d1client.TestDataONEClient.assertNotAlmostEqual
+  .. automethod:: test_d1client.TestDataONEClient.assertNotAlmostEquals
+  .. automethod:: test_d1client.TestDataONEClient.assertNotEqual
+  .. automethod:: test_d1client.TestDataONEClient.assertNotEquals
+  .. automethod:: test_d1client.TestDataONEClient.assertRaises
+  .. automethod:: test_d1client.TestDataONEClient.assertTrue
+  .. automethod:: test_d1client.TestDataONEClient.assertUrlEqual
+  .. automethod:: test_d1client.TestDataONEClient.assert_
+  .. automethod:: test_d1client.TestDataONEClient.countTestCases
+  .. automethod:: test_d1client.TestDataONEClient.debug
+  .. automethod:: test_d1client.TestDataONEClient.defaultTestResult
+  .. automethod:: test_d1client.TestDataONEClient.fail
+  .. automethod:: test_d1client.TestDataONEClient.failIf
+  .. automethod:: test_d1client.TestDataONEClient.failIfAlmostEqual
+  .. automethod:: test_d1client.TestDataONEClient.failIfEqual
+  .. automethod:: test_d1client.TestDataONEClient.failUnless
+  .. automethod:: test_d1client.TestDataONEClient.failUnlessAlmostEqual
+  .. automethod:: test_d1client.TestDataONEClient.failUnlessEqual
+  .. automethod:: test_d1client.TestDataONEClient.failUnlessRaises
+  .. automethod:: test_d1client.TestDataONEClient.id
+  .. automethod:: test_d1client.TestDataONEClient.run
+  .. automethod:: test_d1client.TestDataONEClient.setUp
+  .. automethod:: test_d1client.TestDataONEClient.shortDescription
+  .. automethod:: test_d1client.TestDataONEClient.tearDown
+  .. automethod:: test_d1client.TestDataONEClient.testGet
+  .. automethod:: test_d1client.TestDataONEClient.testGetFail
+  .. automethod:: test_d1client.TestDataONEClient.testGetSystemMetadata
+  .. automethod:: test_d1client.TestDataONEClient.testListObjectsJson
+  .. automethod:: test_d1client.TestDataONEClient.testListObjectsXml
+
+
+
+
+
+

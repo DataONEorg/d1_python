@@ -1,0 +1,24 @@
+test_cnclient
+=============
+
+.. automodule:: test_cnclient
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCNClient
+    TestCaseWithURLCompare
+  
+  
+  
+  
+  
+  

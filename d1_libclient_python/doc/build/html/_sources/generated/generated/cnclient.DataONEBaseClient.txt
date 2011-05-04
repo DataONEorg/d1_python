@@ -1,0 +1,46 @@
+cnclient.DataONEBaseClient
+==========================
+
+.. currentmodule:: cnclient
+
+.. autoclass:: DataONEBaseClient
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: cnclient.DataONEBaseClient.DELETE
+  .. automethod:: cnclient.DataONEBaseClient.GET
+  .. automethod:: cnclient.DataONEBaseClient.HEAD
+  .. automethod:: cnclient.DataONEBaseClient.POST
+  .. automethod:: cnclient.DataONEBaseClient.PUT
+  .. automethod:: cnclient.DataONEBaseClient.RESTResourceURL
+  .. automethod:: cnclient.DataONEBaseClient.__init__
+  .. automethod:: cnclient.DataONEBaseClient.get
+  .. automethod:: cnclient.DataONEBaseClient.getLastRequestAsCurlCommand
+  .. automethod:: cnclient.DataONEBaseClient.getLogRecords
+  .. automethod:: cnclient.DataONEBaseClient.getLogRecordsResponse
+  .. automethod:: cnclient.DataONEBaseClient.getStatus
+  .. automethod:: cnclient.DataONEBaseClient.getStatusResponse
+  .. automethod:: cnclient.DataONEBaseClient.getSystemMetadata
+  .. automethod:: cnclient.DataONEBaseClient.getSystemMetadataResponse
+  .. automethod:: cnclient.DataONEBaseClient.getlastUrl
+  .. automethod:: cnclient.DataONEBaseClient.isAuthorized
+  .. automethod:: cnclient.DataONEBaseClient.isHttpStatusOK
+  .. automethod:: cnclient.DataONEBaseClient.listNodes
+  .. automethod:: cnclient.DataONEBaseClient.listNodesResponse
+  .. automethod:: cnclient.DataONEBaseClient.listObjects
+  .. automethod:: cnclient.DataONEBaseClient.listObjectsResponse
+  .. automethod:: cnclient.DataONEBaseClient.ping
+  .. automethod:: cnclient.DataONEBaseClient.setAccess
+
+
+
+
+
+

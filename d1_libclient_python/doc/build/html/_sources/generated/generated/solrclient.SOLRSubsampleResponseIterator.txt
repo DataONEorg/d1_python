@@ -1,0 +1,25 @@
+solrclient.SOLRSubsampleResponseIterator
+========================================
+
+.. currentmodule:: solrclient
+
+.. autoclass:: SOLRSubsampleResponseIterator
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: solrclient.SOLRSubsampleResponseIterator.__init__
+  .. automethod:: solrclient.SOLRSubsampleResponseIterator.next
+  .. automethod:: solrclient.SOLRSubsampleResponseIterator.processRow
+
+
+
+
+
+

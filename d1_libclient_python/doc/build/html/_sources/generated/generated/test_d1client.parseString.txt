@@ -1,0 +1,6 @@
+test_d1client.parseString
+=========================
+
+.. currentmodule:: test_d1client
+
+.. autofunction:: parseString

@@ -1,0 +1,61 @@
+test_d1baseclient.TestDataONEClient
+===================================
+
+.. currentmodule:: test_d1baseclient
+
+.. autoclass:: TestDataONEClient
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_d1baseclient.TestDataONEClient.__init__
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertAlmostEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertAlmostEquals
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertEquals
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertFalse
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertNotAlmostEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertNotAlmostEquals
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertNotEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertNotEquals
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertRaises
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertTrue
+  .. automethod:: test_d1baseclient.TestDataONEClient.assertUrlEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.assert_
+  .. automethod:: test_d1baseclient.TestDataONEClient.countTestCases
+  .. automethod:: test_d1baseclient.TestDataONEClient.debug
+  .. automethod:: test_d1baseclient.TestDataONEClient.defaultTestResult
+  .. automethod:: test_d1baseclient.TestDataONEClient.fail
+  .. automethod:: test_d1baseclient.TestDataONEClient.failIf
+  .. automethod:: test_d1baseclient.TestDataONEClient.failIfAlmostEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.failIfEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.failUnless
+  .. automethod:: test_d1baseclient.TestDataONEClient.failUnlessAlmostEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.failUnlessEqual
+  .. automethod:: test_d1baseclient.TestDataONEClient.failUnlessRaises
+  .. automethod:: test_d1baseclient.TestDataONEClient.id
+  .. automethod:: test_d1baseclient.TestDataONEClient.passes_testSchemaVersion
+  .. automethod:: test_d1baseclient.TestDataONEClient.run
+  .. automethod:: test_d1baseclient.TestDataONEClient.setUp
+  .. automethod:: test_d1baseclient.TestDataONEClient.shortDescription
+  .. automethod:: test_d1baseclient.TestDataONEClient.tearDown
+  .. automethod:: test_d1baseclient.TestDataONEClient.test_get_invalid_pid
+  .. automethod:: test_d1baseclient.TestDataONEClient.test_get_valid_pid
+  .. automethod:: test_d1baseclient.TestDataONEClient.xtestGetLogRecords
+  .. automethod:: test_d1baseclient.TestDataONEClient.xtestGetSystemMetadata
+  .. automethod:: test_d1baseclient.TestDataONEClient.xtestIsAuthorized
+  .. automethod:: test_d1baseclient.TestDataONEClient.xtestListObjects
+  .. automethod:: test_d1baseclient.TestDataONEClient.xtestPing
+  .. automethod:: test_d1baseclient.TestDataONEClient.xtestSetAccess
+
+
+
+
+
+

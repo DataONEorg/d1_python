@@ -1,0 +1,6 @@
+d1client.showHelp
+=================
+
+.. currentmodule:: d1client
+
+.. autofunction:: showHelp

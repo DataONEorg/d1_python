@@ -1,0 +1,153 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.7.1.6. solrclient.SOLRSubsampleResponseIterator &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="3.7. solrclient" href="../solrclient.html" />
+    <link rel="next" title="3.7.1.7. solrclient.SOLRValuesResponseIterator" href="solrclient.SOLRValuesResponseIterator.html" />
+    <link rel="prev" title="3.7.1.5. solrclient.SOLRSearchResponseIterator" href="solrclient.SOLRSearchResponseIterator.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SOLRValuesResponseIterator.html" title="3.7.1.7. solrclient.SOLRValuesResponseIterator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SOLRSearchResponseIterator.html" title="3.7.1.5. solrclient.SOLRSearchResponseIterator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../solrclient.html" accesskey="U">3.7. solrclient</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="solrclient-solrsubsampleresponseiterator">
+<h1>3.7.1.6. solrclient.SOLRSubsampleResponseIterator<a class="headerlink" href="#solrclient-solrsubsampleresponseiterator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="solrclient.SOLRSubsampleResponseIterator">
+<em class="property">class </em><tt class="descclassname">solrclient.</tt><tt class="descname">SOLRSubsampleResponseIterator</tt><big>(</big><em>client</em>, <em>q</em>, <em>fq=None</em>, <em>fields='*'</em>, <em>pagesize=100</em>, <em>nsamples=10000</em>, <em>transformer=&lt;solrclient.SOLRRecordTransformer object at 0x2e0afd0&gt;</em><big>)</big><a class="headerlink" href="#solrclient.SOLRSubsampleResponseIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pseudo-random subsample of the result set.  Works by calculating
+the number of pages required for the entire data set and taking a random sample
+of pages until nsamples can be retrieved.  So pages are random, but records
+within a page are not.</p>
+<dl class="method">
+<dt id="solrclient.SOLRSubsampleResponseIterator.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>client</em>, <em>q</em>, <em>fq=None</em>, <em>fields='*'</em>, <em>pagesize=100</em>, <em>nsamples=10000</em>, <em>transformer=&lt;solrclient.SOLRRecordTransformer object at 0x2e0afd0&gt;</em><big>)</big><a class="headerlink" href="#solrclient.SOLRSubsampleResponseIterator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt>
+<tt class="descname">__init__</tt><big>(</big><em>client</em>, <em>q</em>, <em>fq=None</em>, <em>fields='*'</em>, <em>pagesize=100</em>, <em>nsamples=10000</em>, <em>transformer=&lt;solrclient.SOLRRecordTransformer object at 0x2e0afd0&gt;</em><big>)</big></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="solrclient.SOLRSubsampleResponseIterator.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#solrclient.SOLRSubsampleResponseIterator.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides the default iteration by sequencing through records within a page
+and when necessary selecting the next page from the randomly generated list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="solrclient.SOLRSubsampleResponseIterator.processRow">
+<tt class="descname">processRow</tt><big>(</big><em>row</em><big>)</big><a class="headerlink" href="#solrclient.SOLRSubsampleResponseIterator.processRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method in derived classes to reformat the row response</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="solrclient.SOLRSearchResponseIterator.html"
+                        title="previous chapter">3.7.1.5. solrclient.SOLRSearchResponseIterator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="solrclient.SOLRValuesResponseIterator.html"
+                        title="next chapter">3.7.1.7. solrclient.SOLRValuesResponseIterator</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/solrclient.SOLRSubsampleResponseIterator.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SOLRValuesResponseIterator.html" title="3.7.1.7. solrclient.SOLRValuesResponseIterator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SOLRSearchResponseIterator.html" title="3.7.1.5. solrclient.SOLRSearchResponseIterator"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../solrclient.html" >3.7. solrclient</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

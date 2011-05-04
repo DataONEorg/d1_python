@@ -1,0 +1,45 @@
+systemmetadata.SystemMetadata
+=============================
+
+.. currentmodule:: systemmetadata
+
+.. autoclass:: SystemMetadata
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: systemmetadata.SystemMetadata.__init__
+  .. automethod:: systemmetadata.SystemMetadata.isValid
+  .. automethod:: systemmetadata.SystemMetadata.toXml
+
+
+
+
+
+
+  .. rubric:: Attributes
+
+  .. autosummary::
+
+   ~SystemMetadata.accessRule
+   ~SystemMetadata.checksum
+   ~SystemMetadata.checksumAlgorithm
+   ~SystemMetadata.dateSysMetadataModified
+   ~SystemMetadata.dateUploaded
+   ~SystemMetadata.derivedFrom
+   ~SystemMetadata.describedBy
+   ~SystemMetadata.describes
+   ~SystemMetadata.embargoExpires
+   ~SystemMetadata.objectFormat
+   ~SystemMetadata.obsoletedBy
+   ~SystemMetadata.obsoletes
+   ~SystemMetadata.pid
+   ~SystemMetadata.replica
+   ~SystemMetadata.size
+

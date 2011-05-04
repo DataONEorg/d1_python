@@ -1,0 +1,52 @@
+test_d1client.TestListObjects
+=============================
+
+.. currentmodule:: test_d1client
+
+.. autoclass:: TestListObjects
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_d1client.TestListObjects.__init__
+  .. automethod:: test_d1client.TestListObjects.assertAlmostEqual
+  .. automethod:: test_d1client.TestListObjects.assertAlmostEquals
+  .. automethod:: test_d1client.TestListObjects.assertEqual
+  .. automethod:: test_d1client.TestListObjects.assertEquals
+  .. automethod:: test_d1client.TestListObjects.assertFalse
+  .. automethod:: test_d1client.TestListObjects.assertNotAlmostEqual
+  .. automethod:: test_d1client.TestListObjects.assertNotAlmostEquals
+  .. automethod:: test_d1client.TestListObjects.assertNotEqual
+  .. automethod:: test_d1client.TestListObjects.assertNotEquals
+  .. automethod:: test_d1client.TestListObjects.assertRaises
+  .. automethod:: test_d1client.TestListObjects.assertTrue
+  .. automethod:: test_d1client.TestListObjects.assert_
+  .. automethod:: test_d1client.TestListObjects.countTestCases
+  .. automethod:: test_d1client.TestListObjects.debug
+  .. automethod:: test_d1client.TestListObjects.defaultTestResult
+  .. automethod:: test_d1client.TestListObjects.fail
+  .. automethod:: test_d1client.TestListObjects.failIf
+  .. automethod:: test_d1client.TestListObjects.failIfAlmostEqual
+  .. automethod:: test_d1client.TestListObjects.failIfEqual
+  .. automethod:: test_d1client.TestListObjects.failUnless
+  .. automethod:: test_d1client.TestListObjects.failUnlessAlmostEqual
+  .. automethod:: test_d1client.TestListObjects.failUnlessEqual
+  .. automethod:: test_d1client.TestListObjects.failUnlessRaises
+  .. automethod:: test_d1client.TestListObjects.id
+  .. automethod:: test_d1client.TestListObjects.run
+  .. automethod:: test_d1client.TestListObjects.setUp
+  .. automethod:: test_d1client.TestListObjects.shortDescription
+  .. automethod:: test_d1client.TestListObjects.tearDown
+  .. automethod:: test_d1client.TestListObjects.testValidListObjects
+
+
+
+
+
+
