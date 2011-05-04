@@ -1,0 +1,6 @@
+util.urlencode
+==============
+
+.. currentmodule:: util
+
+.. autofunction:: urlencode

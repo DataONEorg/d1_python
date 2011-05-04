@@ -1,0 +1,39 @@
+pid_serialization.Identifier
+============================
+
+.. currentmodule:: pid_serialization
+
+.. autoclass:: Identifier
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: pid_serialization.Identifier.__init__
+  .. automethod:: pid_serialization.Identifier.deserialize
+  .. automethod:: pid_serialization.Identifier.deserialize_csv
+  .. automethod:: pid_serialization.Identifier.deserialize_html
+  .. automethod:: pid_serialization.Identifier.deserialize_json
+  .. automethod:: pid_serialization.Identifier.deserialize_log
+  .. automethod:: pid_serialization.Identifier.deserialize_rdf
+  .. automethod:: pid_serialization.Identifier.deserialize_text
+  .. automethod:: pid_serialization.Identifier.deserialize_xml
+  .. automethod:: pid_serialization.Identifier.serialize
+  .. automethod:: pid_serialization.Identifier.serialize_csv
+  .. automethod:: pid_serialization.Identifier.serialize_html
+  .. automethod:: pid_serialization.Identifier.serialize_json
+  .. automethod:: pid_serialization.Identifier.serialize_log
+  .. automethod:: pid_serialization.Identifier.serialize_rdf
+  .. automethod:: pid_serialization.Identifier.serialize_text
+  .. automethod:: pid_serialization.Identifier.serialize_xml
+
+
+
+
+
+

@@ -1,0 +1,29 @@
+systemmetadata
+==============
+
+.. automodule:: systemmetadata
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    CreateFromDocument
+    fromCSV
+    fromJSON
+    systemMetadata
+    toCSV
+    toJSON
+    toText
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

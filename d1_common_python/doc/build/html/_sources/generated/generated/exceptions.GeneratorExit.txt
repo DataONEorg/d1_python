@@ -1,0 +1,30 @@
+exceptions.GeneratorExit
+========================
+
+.. currentmodule:: exceptions
+
+.. autoclass:: GeneratorExit
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: exceptions.GeneratorExit.__init__
+
+
+
+
+
+
+  .. rubric:: Attributes
+
+  .. autosummary::
+
+   ~GeneratorExit.args
+   ~GeneratorExit.message
+

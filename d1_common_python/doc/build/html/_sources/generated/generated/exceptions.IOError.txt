@@ -1,0 +1,6 @@
+exceptions.IOError
+==================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: IOError

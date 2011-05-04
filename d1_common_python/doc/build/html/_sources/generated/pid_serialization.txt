@@ -1,0 +1,23 @@
+pid_serialization
+=================
+
+.. automodule:: pid_serialization
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    Identifier
+  
+  
+  
+  
+  
+  

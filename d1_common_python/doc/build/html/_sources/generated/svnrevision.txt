@@ -1,0 +1,23 @@
+svnrevision
+===========
+
+.. automodule:: svnrevision
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    getSvnRevision
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

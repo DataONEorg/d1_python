@@ -1,0 +1,6 @@
+exceptions.UnicodeWarning
+=========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: UnicodeWarning

@@ -1,0 +1,6 @@
+systemmetadata.systemMetadata
+=============================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: systemMetadata

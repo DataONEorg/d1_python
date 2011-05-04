@@ -1,0 +1,52 @@
+test_logrecords.TestObjectList
+==============================
+
+.. currentmodule:: test_logrecords
+
+.. autoclass:: TestObjectList
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_logrecords.TestObjectList.__init__
+  .. automethod:: test_logrecords.TestObjectList.assertAlmostEqual
+  .. automethod:: test_logrecords.TestObjectList.assertAlmostEquals
+  .. automethod:: test_logrecords.TestObjectList.assertEqual
+  .. automethod:: test_logrecords.TestObjectList.assertEquals
+  .. automethod:: test_logrecords.TestObjectList.assertFalse
+  .. automethod:: test_logrecords.TestObjectList.assertNotAlmostEqual
+  .. automethod:: test_logrecords.TestObjectList.assertNotAlmostEquals
+  .. automethod:: test_logrecords.TestObjectList.assertNotEqual
+  .. automethod:: test_logrecords.TestObjectList.assertNotEquals
+  .. automethod:: test_logrecords.TestObjectList.assertRaises
+  .. automethod:: test_logrecords.TestObjectList.assertTrue
+  .. automethod:: test_logrecords.TestObjectList.assert_
+  .. automethod:: test_logrecords.TestObjectList.countTestCases
+  .. automethod:: test_logrecords.TestObjectList.debug
+  .. automethod:: test_logrecords.TestObjectList.defaultTestResult
+  .. automethod:: test_logrecords.TestObjectList.fail
+  .. automethod:: test_logrecords.TestObjectList.failIf
+  .. automethod:: test_logrecords.TestObjectList.failIfAlmostEqual
+  .. automethod:: test_logrecords.TestObjectList.failIfEqual
+  .. automethod:: test_logrecords.TestObjectList.failUnless
+  .. automethod:: test_logrecords.TestObjectList.failUnlessAlmostEqual
+  .. automethod:: test_logrecords.TestObjectList.failUnlessEqual
+  .. automethod:: test_logrecords.TestObjectList.failUnlessRaises
+  .. automethod:: test_logrecords.TestObjectList.id
+  .. automethod:: test_logrecords.TestObjectList.run
+  .. automethod:: test_logrecords.TestObjectList.setUp
+  .. automethod:: test_logrecords.TestObjectList.shortDescription
+  .. automethod:: test_logrecords.TestObjectList.tearDown
+  .. automethod:: test_logrecords.TestObjectList.test_serialization
+
+
+
+
+
+

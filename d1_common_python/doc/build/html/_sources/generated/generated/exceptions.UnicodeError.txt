@@ -1,0 +1,6 @@
+exceptions.UnicodeError
+=======================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: UnicodeError

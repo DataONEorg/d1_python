@@ -1,0 +1,6 @@
+exceptions.ImportWarning
+========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: ImportWarning

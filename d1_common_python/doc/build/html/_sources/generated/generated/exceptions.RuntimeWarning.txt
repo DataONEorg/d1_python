@@ -1,0 +1,6 @@
+exceptions.RuntimeWarning
+=========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: RuntimeWarning

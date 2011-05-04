@@ -1,0 +1,23 @@
+test_xml_compare
+================
+
+.. automodule:: test_xml_compare
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestXMLCompare
+  
+  
+  
+  
+  
+  

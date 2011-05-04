@@ -1,0 +1,24 @@
+test_restclient
+===============
+
+.. automodule:: test_restclient
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCaseWithURLCompare
+    TestRESTClient
+  
+  
+  
+  
+  
+  

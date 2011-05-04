@@ -1,0 +1,6 @@
+exceptions.IndexError
+=====================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: IndexError

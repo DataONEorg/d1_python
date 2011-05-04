@@ -1,0 +1,6 @@
+exceptions.FutureWarning
+========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: FutureWarning

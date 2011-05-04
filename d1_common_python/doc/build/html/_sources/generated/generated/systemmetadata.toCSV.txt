@@ -1,0 +1,6 @@
+systemmetadata.toCSV
+====================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: toCSV

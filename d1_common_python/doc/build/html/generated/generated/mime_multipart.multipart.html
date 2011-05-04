@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.2.1.1. mime_multipart.multipart &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="4.2. mime_multipart" href="../mime_multipart.html" />
+    <link rel="next" title="4.3. restclient" href="../restclient.html" />
+    <link rel="prev" title="4.2.1.1. mime_multipart.multipart" href="" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../restclient.html" title="4.3. restclient"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="#" title="4.2.1.1. mime_multipart.multipart"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >4. General</a> &raquo;</li>
+          <li><a href="../mime_multipart.html" accesskey="U">4.2. mime_multipart</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mime-multipart-multipart">
+<h1>4.2.1.1. mime_multipart.multipart<a class="headerlink" href="#mime-multipart-multipart" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mime_multipart.multipart">
+<em class="property">class </em><tt class="descclassname">mime_multipart.</tt><tt class="descname">multipart</tt><big>(</big><em>fields</em>, <em>files</em>, <em>chunk_size=1048576</em><big>)</big><a class="headerlink" href="#mime_multipart.multipart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a MIME Multipart document based on a set of files and fields.</p>
+<p>The document can either be automatically posted to a web server with HTTP
+POST, retrieved in chunks using iteration or retrieved in chunks using the
+read interface.</p>
+<dl class="method">
+<dt id="mime_multipart.multipart.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>fields</em>, <em>files</em>, <em>chunk_size=1048576</em><big>)</big><a class="headerlink" href="#mime_multipart.multipart.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for multipart.
+:param fields: sequence of (name, value) elements for regular form fields
+:type fields: [(string, string), ]
+:param files: sequence of (name, filename, value) elements for data to be</p>
+<blockquote>
+uploaded as files.</blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chunk_size</strong> (<em>integer</em>) &#8211; Max number of bytes to return in a single iteration.
+If chunk_size is set lower than a few hundred bytes, chunks that include
+MMP headers and boundaries may exceed this number.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt>
+<tt class="descname">__init__</tt><big>(</big><em>fields</em>, <em>files</em>, <em>chunk_size=1048576</em><big>)</big></dt>
+<dd><p>Constructor for multipart.
+:param fields: sequence of (name, value) elements for regular form fields
+:type fields: [(string, string), ]
+:param files: sequence of (name, filename, value) elements for data to be</p>
+<blockquote>
+uploaded as files.</blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chunk_size</strong> (<em>integer</em>) &#8211; Max number of bytes to return in a single iteration.
+If chunk_size is set lower than a few hundred bytes, chunks that include
+MMP headers and boundaries may exceed this number.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mime_multipart.multipart.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#mime_multipart.multipart.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over the multipart object and return the next chunk of MIME
+Multipart data.</p>
+<p>The returned number of bytes will match the chunk_size with which the
+multipart object was instantiated when chunks of files are returned. When
+parts of the MIME Multipart structure is returned, the number of bytes
+returned will be between zero and a few hundred.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The next chunk of MIME Multipart data.</td>
+</tr>
+<tr class="field"><th class="field-name">Returns type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mime_multipart.multipart.read">
+<tt class="descname">read</tt><big>(</big><em>n=None</em><big>)</big><a class="headerlink" href="#mime_multipart.multipart.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a chunk of the generated MIME Multipart document.</p>
+<p>The returned number of bytes will be equal to n for all chunks but the last
+one, which will most likely be smaller. When the method returns an empty
+string, there is no more data to be retrieved.</p>
+<p>If n is None, the entire MIME Multipart document is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<em>integer</em>) &#8211; Minimum number of bytes to read.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The bytes that were read.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns type:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mime_multipart.multipart.reset">
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="headerlink" href="#mime_multipart.multipart.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the mime_multipart object to its initial state.</p>
+<p>This allows the MIME Multipart document to be regenerated from the data with
+which the multipart object was instantiated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href=""
+                        title="previous chapter">4.2.1.1. mime_multipart.multipart</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../restclient.html"
+                        title="next chapter">4.3. restclient</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/mime_multipart.multipart.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../restclient.html" title="4.3. restclient"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="#" title="4.2.1.1. mime_multipart.multipart"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >4. General</a> &raquo;</li>
+          <li><a href="../mime_multipart.html" >4.2. mime_multipart</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

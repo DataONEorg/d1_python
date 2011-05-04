@@ -1,0 +1,6 @@
+systemmetadata.toJSON
+=====================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: toJSON
