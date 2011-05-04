@@ -1,0 +1,6 @@
+exceptions.ReferenceError
+=========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: ReferenceError

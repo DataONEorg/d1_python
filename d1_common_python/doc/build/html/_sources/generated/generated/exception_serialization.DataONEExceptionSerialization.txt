@@ -1,0 +1,41 @@
+exception_serialization.DataONEExceptionSerialization
+=====================================================
+
+.. currentmodule:: exception_serialization
+
+.. autoclass:: DataONEExceptionSerialization
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.__init__
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.dataone_exception_factory
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_csv
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_html
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_json
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_log
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_rdf
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_text
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.deserialize_xml
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.get_element_text
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_csv
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_html
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_json
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_log
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_rdf
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_text
+  .. automethod:: exception_serialization.DataONEExceptionSerialization.serialize_xml
+
+
+
+
+
+

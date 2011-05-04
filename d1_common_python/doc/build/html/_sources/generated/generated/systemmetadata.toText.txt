@@ -1,0 +1,6 @@
+systemmetadata.toText
+=====================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: toText

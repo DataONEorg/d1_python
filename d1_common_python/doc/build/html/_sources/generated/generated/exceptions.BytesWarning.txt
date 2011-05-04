@@ -1,0 +1,6 @@
+exceptions.BytesWarning
+=======================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: BytesWarning

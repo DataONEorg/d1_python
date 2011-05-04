@@ -1,0 +1,6 @@
+exceptions.Warning
+==================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: Warning

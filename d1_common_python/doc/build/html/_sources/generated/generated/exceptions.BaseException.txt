@@ -1,0 +1,30 @@
+exceptions.BaseException
+========================
+
+.. currentmodule:: exceptions
+
+.. autoclass:: BaseException
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: exceptions.BaseException.__init__
+
+
+
+
+
+
+  .. rubric:: Attributes
+
+  .. autosummary::
+
+   ~BaseException.args
+   ~BaseException.message
+

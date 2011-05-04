@@ -1,0 +1,6 @@
+systemmetadata.fromCSV
+======================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: fromCSV

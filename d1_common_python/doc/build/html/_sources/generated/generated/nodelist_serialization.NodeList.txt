@@ -1,0 +1,39 @@
+nodelist_serialization.NodeList
+===============================
+
+.. currentmodule:: nodelist_serialization
+
+.. autoclass:: NodeList
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: nodelist_serialization.NodeList.__init__
+  .. automethod:: nodelist_serialization.NodeList.deserialize
+  .. automethod:: nodelist_serialization.NodeList.deserialize_csv
+  .. automethod:: nodelist_serialization.NodeList.deserialize_html
+  .. automethod:: nodelist_serialization.NodeList.deserialize_json
+  .. automethod:: nodelist_serialization.NodeList.deserialize_log
+  .. automethod:: nodelist_serialization.NodeList.deserialize_rdf
+  .. automethod:: nodelist_serialization.NodeList.deserialize_text
+  .. automethod:: nodelist_serialization.NodeList.deserialize_xml
+  .. automethod:: nodelist_serialization.NodeList.serialize
+  .. automethod:: nodelist_serialization.NodeList.serialize_csv
+  .. automethod:: nodelist_serialization.NodeList.serialize_html
+  .. automethod:: nodelist_serialization.NodeList.serialize_json
+  .. automethod:: nodelist_serialization.NodeList.serialize_log
+  .. automethod:: nodelist_serialization.NodeList.serialize_rdf
+  .. automethod:: nodelist_serialization.NodeList.serialize_text
+  .. automethod:: nodelist_serialization.NodeList.serialize_xml
+
+
+
+
+
+

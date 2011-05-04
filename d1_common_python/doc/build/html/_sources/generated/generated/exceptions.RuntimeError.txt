@@ -1,0 +1,6 @@
+exceptions.RuntimeError
+=======================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: RuntimeError

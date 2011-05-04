@@ -1,0 +1,6 @@
+exceptions.DeprecationWarning
+=============================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: DeprecationWarning

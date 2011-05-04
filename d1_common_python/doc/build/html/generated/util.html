@@ -1,0 +1,179 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.6. util &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../index.html" />
+    <link rel="up" title="4. General" href="../general.html" />
+    <link rel="next" title="4.6.1.1. util.decodePathElement" href="generated/util.decodePathElement.html" />
+    <link rel="prev" title="4.5.1.1. testcasewithurlcompare.TestCaseWithURLCompare" href="generated/testcasewithurlcompare.TestCaseWithURLCompare.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/util.decodePathElement.html" title="4.6.1.1. util.decodePathElement"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="generated/testcasewithurlcompare.TestCaseWithURLCompare.html" title="4.5.1.1. testcasewithurlcompare.TestCaseWithURLCompare"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../general.html" accesskey="U">4. General</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-util">
+<span id="util"></span><h1>4.6. util<a class="headerlink" href="#module-util" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-d1-common-util">
+<h2>4.6.1. Module d1_common.util<a class="headerlink" href="#module-d1-common-util" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Created:</th><td class="field-body"><p class="first">2010-08-07</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Author:</th><td class="field-body"><p class="first">DataONE (vieglais, dahl)</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first last simple">
+<li>python 2.6</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Utilities.</p>
+<p class="rubric">Functions</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/util.decodePathElement.html#util.decodePathElement" title="util.decodePathElement"><tt class="xref py py-obj docutils literal"><span class="pre">decodePathElement</span></tt></a>(element)</td>
+<td>Decodes a URL path element according to RFC3986.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/util.encodePathElement.html#util.encodePathElement" title="util.encodePathElement"><tt class="xref py py-obj docutils literal"><span class="pre">encodePathElement</span></tt></a>(element)</td>
+<td>Encodes a URL path element according to RFC3986.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/util.encodeQueryElement.html#util.encodeQueryElement" title="util.encodeQueryElement"><tt class="xref py py-obj docutils literal"><span class="pre">encodeQueryElement</span></tt></a>(element)</td>
+<td>Encodes a URL query element according to RFC3986.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/util.get_content_type.html#util.get_content_type" title="util.get_content_type"><tt class="xref py py-obj docutils literal"><span class="pre">get_content_type</span></tt></a>(content_type)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/util.pretty_xml.html#util.pretty_xml" title="util.pretty_xml"><tt class="xref py py-obj docutils literal"><span class="pre">pretty_xml</span></tt></a>(xml_doc)</td>
+<td>Pretty formatting of XML.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/util.urlencode.html#util.urlencode" title="util.urlencode"><tt class="xref py py-obj docutils literal"><span class="pre">urlencode</span></tt></a>(query[,&nbsp;doseq])</td>
+<td>Modified version of the standard urllib.urlencode that is conformant</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/util.validate_xml.html#util.validate_xml" title="util.validate_xml"><tt class="xref py py-obj docutils literal"><span class="pre">validate_xml</span></tt></a>(xml_doc)</td>
+<td>Validate the supplied XML document text against the D1 schema.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4.6. util</a><ul>
+<li><a class="reference internal" href="#module-d1-common-util">4.6.1. Module d1_common.util</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="generated/testcasewithurlcompare.TestCaseWithURLCompare.html"
+                        title="previous chapter">4.5.1.1. testcasewithurlcompare.TestCaseWithURLCompare</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/util.decodePathElement.html"
+                        title="next chapter">4.6.1.1. util.decodePathElement</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/generated/util.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/util.decodePathElement.html" title="4.6.1.1. util.decodePathElement"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="generated/testcasewithurlcompare.TestCaseWithURLCompare.html" title="4.5.1.1. testcasewithurlcompare.TestCaseWithURLCompare"
+             >previous</a> |</li>
+        <li><a href="../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../general.html" >4. General</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.6.1.6. util.urlencode &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="4.6. util" href="../util.html" />
+    <link rel="next" title="4.6.1.7. util.validate_xml" href="util.validate_xml.html" />
+    <link rel="prev" title="4.6.1.5. util.pretty_xml" href="util.pretty_xml.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.validate_xml.html" title="4.6.1.7. util.validate_xml"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="util.pretty_xml.html" title="4.6.1.5. util.pretty_xml"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >4. General</a> &raquo;</li>
+          <li><a href="../util.html" accesskey="U">4.6. util</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="util-urlencode">
+<h1>4.6.1.6. util.urlencode<a class="headerlink" href="#util-urlencode" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="util.urlencode">
+<tt class="descclassname">util.</tt><tt class="descname">urlencode</tt><big>(</big><em>query</em>, <em>doseq=0</em><big>)</big><a class="headerlink" href="#util.urlencode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified version of the standard urllib.urlencode that is conformant
+with RFC3986. The urllib version encodes spaces as &#8216;+&#8217; which can lead
+to inconsistency. This version will always encode spaces as &#8216;%20&#8217;.</p>
+<p>TODO: verify the unicode encoding process - looks a bit suspect.</p>
+<p>Encode a sequence of two-element tuples or dictionary into a URL query string.</p>
+<p>If any values in the query arg are sequences and doseq is true, each
+sequence element is converted to a separate parameter.</p>
+<p>If the query arg is a sequence of two-element tuples, the order of the
+parameters in the output will match the order of parameters in the
+input.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="util.pretty_xml.html"
+                        title="previous chapter">4.6.1.5. util.pretty_xml</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="util.validate_xml.html"
+                        title="next chapter">4.6.1.7. util.validate_xml</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/util.urlencode.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.validate_xml.html" title="4.6.1.7. util.validate_xml"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="util.pretty_xml.html" title="4.6.1.5. util.pretty_xml"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >4. General</a> &raquo;</li>
+          <li><a href="../util.html" >4.6. util</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

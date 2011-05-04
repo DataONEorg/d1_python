@@ -1,0 +1,31 @@
+exceptions.SystemExit
+=====================
+
+.. currentmodule:: exceptions
+
+.. autoclass:: SystemExit
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: exceptions.SystemExit.__init__
+
+
+
+
+
+
+  .. rubric:: Attributes
+
+  .. autosummary::
+
+   ~SystemExit.args
+   ~SystemExit.code
+   ~SystemExit.message
+

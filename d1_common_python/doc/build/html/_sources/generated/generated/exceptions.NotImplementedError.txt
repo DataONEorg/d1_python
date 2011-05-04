@@ -1,0 +1,6 @@
+exceptions.NotImplementedError
+==============================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: NotImplementedError

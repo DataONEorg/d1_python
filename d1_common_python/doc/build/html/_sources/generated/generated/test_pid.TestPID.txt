@@ -1,0 +1,52 @@
+test_pid.TestPID
+================
+
+.. currentmodule:: test_pid
+
+.. autoclass:: TestPID
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_pid.TestPID.__init__
+  .. automethod:: test_pid.TestPID.assertAlmostEqual
+  .. automethod:: test_pid.TestPID.assertAlmostEquals
+  .. automethod:: test_pid.TestPID.assertEqual
+  .. automethod:: test_pid.TestPID.assertEquals
+  .. automethod:: test_pid.TestPID.assertFalse
+  .. automethod:: test_pid.TestPID.assertNotAlmostEqual
+  .. automethod:: test_pid.TestPID.assertNotAlmostEquals
+  .. automethod:: test_pid.TestPID.assertNotEqual
+  .. automethod:: test_pid.TestPID.assertNotEquals
+  .. automethod:: test_pid.TestPID.assertRaises
+  .. automethod:: test_pid.TestPID.assertTrue
+  .. automethod:: test_pid.TestPID.assert_
+  .. automethod:: test_pid.TestPID.countTestCases
+  .. automethod:: test_pid.TestPID.debug
+  .. automethod:: test_pid.TestPID.defaultTestResult
+  .. automethod:: test_pid.TestPID.fail
+  .. automethod:: test_pid.TestPID.failIf
+  .. automethod:: test_pid.TestPID.failIfAlmostEqual
+  .. automethod:: test_pid.TestPID.failIfEqual
+  .. automethod:: test_pid.TestPID.failUnless
+  .. automethod:: test_pid.TestPID.failUnlessAlmostEqual
+  .. automethod:: test_pid.TestPID.failUnlessEqual
+  .. automethod:: test_pid.TestPID.failUnlessRaises
+  .. automethod:: test_pid.TestPID.id
+  .. automethod:: test_pid.TestPID.run
+  .. automethod:: test_pid.TestPID.setUp
+  .. automethod:: test_pid.TestPID.shortDescription
+  .. automethod:: test_pid.TestPID.tearDown
+  .. automethod:: test_pid.TestPID.test_serialization
+
+
+
+
+
+

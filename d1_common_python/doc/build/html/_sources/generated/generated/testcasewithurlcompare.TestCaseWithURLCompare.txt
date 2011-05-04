@@ -1,0 +1,52 @@
+testcasewithurlcompare.TestCaseWithURLCompare
+=============================================
+
+.. currentmodule:: testcasewithurlcompare
+
+.. autoclass:: TestCaseWithURLCompare
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.__init__
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertAlmostEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertAlmostEquals
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertEquals
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertFalse
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertNotAlmostEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertNotAlmostEquals
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertNotEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertNotEquals
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertRaises
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertTrue
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assertUrlEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.assert_
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.countTestCases
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.debug
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.defaultTestResult
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.fail
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failIf
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failIfAlmostEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failIfEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failUnless
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failUnlessAlmostEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failUnlessEqual
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.failUnlessRaises
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.id
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.run
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.setUp
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.shortDescription
+  .. automethod:: testcasewithurlcompare.TestCaseWithURLCompare.tearDown
+
+
+
+
+
+

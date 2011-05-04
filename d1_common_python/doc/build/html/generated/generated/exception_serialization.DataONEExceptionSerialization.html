@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.2.1.2. exception_serialization.DataONEExceptionSerialization &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="3.2. exception_serialization" href="../exception_serialization.html" />
+    <link rel="next" title="3.3. exceptions" href="../exceptions.html" />
+    <link rel="prev" title="3.2.1.1. exception_serialization.instanceToSimpleType" href="exception_serialization.instanceToSimpleType.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../exceptions.html" title="3.3. exceptions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="exception_serialization.instanceToSimpleType.html" title="3.2.1.1. exception_serialization.instanceToSimpleType"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../types.html" >3. Types</a> &raquo;</li>
+          <li><a href="../exception_serialization.html" accesskey="U">3.2. exception_serialization</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="exception-serialization-dataoneexceptionserialization">
+<h1>3.2.1.2. exception_serialization.DataONEExceptionSerialization<a class="headerlink" href="#exception-serialization-dataoneexceptionserialization" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="exception_serialization.DataONEExceptionSerialization">
+<em class="property">class </em><tt class="descclassname">exception_serialization.</tt><tt class="descname">DataONEExceptionSerialization</tt><big>(</big><em>dataone_exception</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialization and deserialization of the DataONE Exception type.</p>
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>dataone_exception</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt>
+<tt class="descname">__init__</tt><big>(</big><em>dataone_exception</em><big>)</big></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="exception_serialization.DataONEExceptionSerialization.dataone_exception_factory">
+<em class="property">classmethod </em><tt class="descname">dataone_exception_factory</tt><big>(</big><em>exception_name</em>, <em>detailCode</em>, <em>description</em>, <em>pid=None</em>, <em>traceInformation=None</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.dataone_exception_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a simple factory that generates a DataONE exception object.</p>
+<p>This class would normally be used by the client to re-raise an exception on 
+the client side from an error that occurred on the server.</p>
+<p>Returns an instance of some subclass of DataONEException.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>exception_name</strong> &#8211; The class name of the exception to create. Raises a 
+LookupError based exception if the name is invalid.</li>
+<li><strong>detailCode</strong> &#8211; </li>
+<li><strong>description</strong> &#8211; </li>
+<li><strong>traceInformation</strong> &#8211; </li>
+<li><strong>pid</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize">
+<tt class="descname">deserialize</tt><big>(</big><em>doc</em>, <em>content_type='text/xml'</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_csv">
+<tt class="descname">deserialize_csv</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_html">
+<tt class="descname">deserialize_html</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_html" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_json">
+<tt class="descname">deserialize_json</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize DataONEException from JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>string</em>) &#8211; The exception rendered as a JSON string</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataONEException</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_log">
+<tt class="descname">deserialize_log</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_rdf">
+<tt class="descname">deserialize_rdf</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_rdf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_text">
+<tt class="descname">deserialize_text</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.deserialize_xml">
+<tt class="descname">deserialize_xml</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.deserialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize DataONEException from XML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>UTF-8 encoded XML string</em>) &#8211; XML serialized DataONEException</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A DataONEException based object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.get_element_text">
+<tt class="descname">get_element_text</tt><big>(</big><em>el</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.get_element_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get text contents for element. Return empty string if element does
+not contain any text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>element</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize">
+<tt class="descname">serialize</tt><big>(</big><em>accept='text/xml'</em>, <em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_csv">
+<tt class="descname">serialize_csv</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_html">
+<tt class="descname">serialize_html</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize DataONE Exception to HTML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">UTF-8 encoded HTML string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_json">
+<tt class="descname">serialize_json</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize DataONE Exception to JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">UTF-8 encoded JSON string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_log">
+<tt class="descname">serialize_log</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_rdf">
+<tt class="descname">serialize_rdf</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_rdf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_text">
+<tt class="descname">serialize_text</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize DataONE Exception to text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exception_serialization.DataONEExceptionSerialization.serialize_xml">
+<tt class="descname">serialize_xml</tt><big>(</big><em>pretty=False</em>, <em>jsonvar=False</em><big>)</big><a class="headerlink" href="#exception_serialization.DataONEExceptionSerialization.serialize_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize DataONE Exception to XML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">UTF-8 encoded XML string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="exception_serialization.instanceToSimpleType.html"
+                        title="previous chapter">3.2.1.1. exception_serialization.instanceToSimpleType</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../exceptions.html"
+                        title="next chapter">3.3. exceptions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/exception_serialization.DataONEExceptionSerialization.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../exceptions.html" title="3.3. exceptions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="exception_serialization.instanceToSimpleType.html" title="3.2.1.1. exception_serialization.instanceToSimpleType"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../types.html" >3. Types</a> &raquo;</li>
+          <li><a href="../exception_serialization.html" >3.2. exception_serialization</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

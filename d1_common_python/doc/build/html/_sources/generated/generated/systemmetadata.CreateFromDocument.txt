@@ -1,0 +1,6 @@
+systemmetadata.CreateFromDocument
+=================================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: CreateFromDocument

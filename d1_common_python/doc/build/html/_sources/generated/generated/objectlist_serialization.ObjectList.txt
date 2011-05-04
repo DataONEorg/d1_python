@@ -1,0 +1,40 @@
+objectlist_serialization.ObjectList
+===================================
+
+.. currentmodule:: objectlist_serialization
+
+.. autoclass:: ObjectList
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: objectlist_serialization.ObjectList.__init__
+  .. automethod:: objectlist_serialization.ObjectList.deserialize
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_csv
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_html
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_json
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_log
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_rdf
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_text
+  .. automethod:: objectlist_serialization.ObjectList.deserialize_xml
+  .. automethod:: objectlist_serialization.ObjectList.serialize
+  .. automethod:: objectlist_serialization.ObjectList.serialize_csv
+  .. automethod:: objectlist_serialization.ObjectList.serialize_html
+  .. automethod:: objectlist_serialization.ObjectList.serialize_json
+  .. automethod:: objectlist_serialization.ObjectList.serialize_log
+  .. automethod:: objectlist_serialization.ObjectList.serialize_rdf
+  .. automethod:: objectlist_serialization.ObjectList.serialize_rdf_xml
+  .. automethod:: objectlist_serialization.ObjectList.serialize_text
+  .. automethod:: objectlist_serialization.ObjectList.serialize_xml
+
+
+
+
+
+

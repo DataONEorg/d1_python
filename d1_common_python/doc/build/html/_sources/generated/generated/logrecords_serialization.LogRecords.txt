@@ -1,0 +1,39 @@
+logrecords_serialization.LogRecords
+===================================
+
+.. currentmodule:: logrecords_serialization
+
+.. autoclass:: LogRecords
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: logrecords_serialization.LogRecords.__init__
+  .. automethod:: logrecords_serialization.LogRecords.deserialize
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_csv
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_html
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_json
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_log
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_rdf
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_text
+  .. automethod:: logrecords_serialization.LogRecords.deserialize_xml
+  .. automethod:: logrecords_serialization.LogRecords.serialize
+  .. automethod:: logrecords_serialization.LogRecords.serialize_csv
+  .. automethod:: logrecords_serialization.LogRecords.serialize_html
+  .. automethod:: logrecords_serialization.LogRecords.serialize_json
+  .. automethod:: logrecords_serialization.LogRecords.serialize_log
+  .. automethod:: logrecords_serialization.LogRecords.serialize_rdf
+  .. automethod:: logrecords_serialization.LogRecords.serialize_text
+  .. automethod:: logrecords_serialization.LogRecords.serialize_xml
+
+
+
+
+
+

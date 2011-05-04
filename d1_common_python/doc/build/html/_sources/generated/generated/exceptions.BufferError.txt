@@ -1,0 +1,6 @@
+exceptions.BufferError
+======================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: BufferError

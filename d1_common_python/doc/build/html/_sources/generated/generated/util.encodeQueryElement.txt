@@ -1,0 +1,6 @@
+util.encodeQueryElement
+=======================
+
+.. currentmodule:: util
+
+.. autofunction:: encodeQueryElement

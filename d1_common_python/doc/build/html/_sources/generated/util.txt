@@ -1,0 +1,29 @@
+util
+====
+
+.. automodule:: util
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    decodePathElement
+    encodePathElement
+    encodeQueryElement
+    get_content_type
+    pretty_xml
+    urlencode
+    validate_xml
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,23 @@
+test_logrecords
+===============
+
+.. automodule:: test_logrecords
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestObjectList
+  
+  
+  
+  
+  
+  

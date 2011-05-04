@@ -1,0 +1,30 @@
+exceptions.KeyboardInterrupt
+============================
+
+.. currentmodule:: exceptions
+
+.. autoclass:: KeyboardInterrupt
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: exceptions.KeyboardInterrupt.__init__
+
+
+
+
+
+
+  .. rubric:: Attributes
+
+  .. autosummary::
+
+   ~KeyboardInterrupt.args
+   ~KeyboardInterrupt.message
+

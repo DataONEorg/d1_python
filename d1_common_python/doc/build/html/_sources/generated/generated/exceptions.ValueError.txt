@@ -1,0 +1,6 @@
+exceptions.ValueError
+=====================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: ValueError

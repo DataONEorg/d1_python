@@ -1,0 +1,6 @@
+util.encodePathElement
+======================
+
+.. currentmodule:: util
+
+.. autofunction:: encodePathElement

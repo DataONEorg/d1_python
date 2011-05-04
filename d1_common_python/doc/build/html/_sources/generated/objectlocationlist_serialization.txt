@@ -1,0 +1,23 @@
+objectlocationlist_serialization
+================================
+
+.. automodule:: objectlocationlist_serialization
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    ObjectLocationList
+  
+  
+  
+  
+  
+  
