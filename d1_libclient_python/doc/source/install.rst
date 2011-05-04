@@ -11,17 +11,23 @@ changes.
 A package will be released at some point in the future once things stabilize
 a bit.
 
-To set the library up in ``~/dataone-python`` on Linux, using `Bash`_ (which
-is often the default shell)::
+To set the library up in ``/var/local/dataone/d1_client_python`` on Linux, using
+`Bash`_ (which is often the default shell)::
 
-  $ cd ~/dataone-python
-  $ svn co https://repository.dataone.org/software/cicore/trunk/d1_libclient_python d1_libclient_python
-  $ export PYTHONPATH=~/"dataone-python/d1_libclient_python:$PYTHONPATH"
+  $ sudo -s
+  # mkdir -p d1_client_python
+  # cd /var/local/dataone
+  # svn co https://repository.dataone.org/software/cicore/trunk/d1_client_python d1_client_python
+  # cd d1_client_python/d1_client/src
+  # python setup.py develop
+  $ exit
 
 To update your copy of the library::
 
-  $ cd ~/dataone-python/d1_libclient_python
+  $ cd /var/local/dataone/d1_client_python
   $ svn update
 
 .. _subversion: http://subversion.tigris.org/
 .. _Bash: http://www.gnu.org/software/bash/
+
+

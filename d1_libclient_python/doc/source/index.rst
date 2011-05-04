@@ -21,7 +21,6 @@ Index
   install
   general
   tests
-  todo
 
 
 Indices and tables
