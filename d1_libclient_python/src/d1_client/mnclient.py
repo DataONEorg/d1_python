@@ -277,5 +277,4 @@ class MemberNodeClient(DataONEBaseClient):
     TODO: May need to be completely removed (since clients should use CNs for
     object discovery).
     '''
-    response = self.describeResponse(token, pid)
-    return response.info()
+    return self.describeResponse(token, pid)
