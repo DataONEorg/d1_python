@@ -1,0 +1,23 @@
+test_logrecorditerator
+======================
+
+.. automodule:: test_logrecorditerator
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    testcase_logrecorditerator
+  
+  
+  
+  
+  
+  

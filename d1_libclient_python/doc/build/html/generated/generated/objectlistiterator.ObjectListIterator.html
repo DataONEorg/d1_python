@@ -1,0 +1,187 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.6.1.1. objectlistiterator.ObjectListIterator &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="3.6. objectlistiterator" href="../objectlistiterator.html" />
+    <link rel="next" title="3.7. solrclient" href="../solrclient.html" />
+    <link rel="prev" title="3.6.1.1. objectlistiterator.ObjectListIterator" href="" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../solrclient.html" title="3.7. solrclient"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="#" title="3.6.1.1. objectlistiterator.ObjectListIterator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../objectlistiterator.html" accesskey="U">3.6. objectlistiterator</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="objectlistiterator-objectlistiterator">
+<h1>3.6.1.1. objectlistiterator.ObjectListIterator<a class="headerlink" href="#objectlistiterator-objectlistiterator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="objectlistiterator.ObjectListIterator">
+<em class="property">class </em><tt class="descclassname">objectlistiterator.</tt><tt class="descname">ObjectListIterator</tt><big>(</big><em>client</em>, <em>start=0</em>, <em>startTime=None</em>, <em>authtoken=None</em>, <em>pagesize=500</em>, <em>max=-1</em><big>)</big><a class="headerlink" href="#objectlistiterator.ObjectListIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements an iterator that iterates over the entire ObjectList for a 
+DataONE node.  Data is retrieved from the target only when required.</p>
+<dl class="method">
+<dt id="objectlistiterator.ObjectListIterator.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>client</em>, <em>start=0</em>, <em>startTime=None</em>, <em>authtoken=None</em>, <em>pagesize=500</em>, <em>max=-1</em><big>)</big><a class="headerlink" href="#objectlistiterator.ObjectListIterator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the iterator.</p>
+<blockquote>
+TODO: Extend this with date range and other restrictions</blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>client</strong> (<em>DataONEBaseClient or derivative</em>) &#8211; The client instance for retrieving stuff.</li>
+<li><strong>start</strong> (<em>integer</em>) &#8211; The zero based starting index value (0)</li>
+<li><strong>startTime</strong> (<em>DateTime</em>) &#8211; </li>
+<li><strong>pagesize</strong> (<em>integer</em>) &#8211; Number of items to retrieve in a single request (page, 500)</li>
+<li><strong>max</strong> (<em>integer</em>) &#8211; Maximum number of items to retrieve (all)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt>
+<tt class="descname">__init__</tt><big>(</big><em>client</em>, <em>start=0</em>, <em>startTime=None</em>, <em>authtoken=None</em>, <em>pagesize=500</em>, <em>max=-1</em><big>)</big></dt>
+<dd><p>Initializes the iterator.</p>
+<blockquote>
+TODO: Extend this with date range and other restrictions</blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>client</strong> (<em>DataONEBaseClient or derivative</em>) &#8211; The client instance for retrieving stuff.</li>
+<li><strong>start</strong> (<em>integer</em>) &#8211; The zero based starting index value (0)</li>
+<li><strong>startTime</strong> (<em>DateTime</em>) &#8211; </li>
+<li><strong>pagesize</strong> (<em>integer</em>) &#8211; Number of items to retrieve in a single request (page, 500)</li>
+<li><strong>max</strong> (<em>integer</em>) &#8211; Maximum number of items to retrieve (all)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="objectlistiterator.ObjectListIterator.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#objectlistiterator.ObjectListIterator.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the next() method for the iterator.  Returns the next 
+ObjectInfo instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="objectlistiterator.ObjectListIterator.totalObjectCount">
+<tt class="descname">totalObjectCount</tt><big>(</big><big>)</big><a class="headerlink" href="#objectlistiterator.ObjectListIterator.totalObjectCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the total number of objects in the</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href=""
+                        title="previous chapter">3.6.1.1. objectlistiterator.ObjectListIterator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../solrclient.html"
+                        title="next chapter">3.7. solrclient</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/objectlistiterator.ObjectListIterator.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../solrclient.html" title="3.7. solrclient"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="#" title="3.6.1.1. objectlistiterator.ObjectListIterator"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../objectlistiterator.html" >3.6. objectlistiterator</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

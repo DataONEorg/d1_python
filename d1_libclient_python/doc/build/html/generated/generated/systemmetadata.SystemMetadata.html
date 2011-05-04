@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.9.1.2. systemmetadata.SystemMetadata &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="3.9. systemmetadata" href="../systemmetadata.html" />
+    <link rel="next" title="4. Unit Tests" href="../../tests.html" />
+    <link rel="prev" title="3.9.1.1. systemmetadata.parseDateString" href="systemmetadata.parseDateString.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../tests.html" title="4. Unit Tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="systemmetadata.parseDateString.html" title="3.9.1.1. systemmetadata.parseDateString"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../systemmetadata.html" accesskey="U">3.9. systemmetadata</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="systemmetadata-systemmetadata">
+<h1>3.9.1.2. systemmetadata.SystemMetadata<a class="headerlink" href="#systemmetadata-systemmetadata" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="systemmetadata.SystemMetadata">
+<em class="property">class </em><tt class="descclassname">systemmetadata.</tt><tt class="descname">SystemMetadata</tt><big>(</big><em>xmldoc</em><big>)</big><a class="headerlink" href="#systemmetadata.SystemMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around a system metadata entry.  Provides convenience properties
+for accessing the parsed content of the document.</p>
+<dl class="method">
+<dt id="systemmetadata.SystemMetadata.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>xmldoc</em><big>)</big><a class="headerlink" href="#systemmetadata.SystemMetadata.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xmldoc</strong> &#8211; (Unicode) The XML document to parse as system metadata.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt>
+<tt class="descname">__init__</tt><big>(</big><em>xmldoc</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xmldoc</strong> &#8211; (Unicode) The XML document to parse as system metadata.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="systemmetadata.SystemMetadata.isValid">
+<tt class="descname">isValid</tt><big>(</big><big>)</big><a class="headerlink" href="#systemmetadata.SystemMetadata.isValid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the document.
+:rtype: None if all good, otherwise an exception is raised.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="systemmetadata.SystemMetadata.toXml">
+<tt class="descname">toXml</tt><big>(</big><em>encoding='utf-8'</em>, <em>pretty=True</em><big>)</big><a class="headerlink" href="#systemmetadata.SystemMetadata.toXml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spits out representation of the parsed xml.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pretty</strong> &#8211; Output is a bit easier for human digestion if True</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(string) UTF-8 encoded string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">accessRule</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(list of 3-tuple) [(type, service, principal), ... ]</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">checksum</span></tt></td>
+<td></td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">checksumAlgorithm</span></tt></td>
+<td></td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">dateSysMetadataModified</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(DateTime or None)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">dateUploaded</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(DateTime)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">derivedFrom</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(list of unicode)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">describedBy</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(lsit of unicode)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">describes</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(list of unicode)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">embargoExpires</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(DateTime or None)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">objectFormat</span></tt></td>
+<td></td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">obsoletedBy</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(list of unicode)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">obsoletes</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(list of unicode)</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">pid</span></tt></td>
+<td></td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">replica</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(list of dictionaries)  Each entry contains replica details</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">size</span></tt></td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">rtype:</th><td class="field-body">(integer) The reported size of the object from the sysmeta</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="systemmetadata.parseDateString.html"
+                        title="previous chapter">3.9.1.1. systemmetadata.parseDateString</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../tests.html"
+                        title="next chapter">4. Unit Tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/systemmetadata.SystemMetadata.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../tests.html" title="4. Unit Tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="systemmetadata.parseDateString.html" title="3.9.1.1. systemmetadata.parseDateString"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../systemmetadata.html" >3.9. systemmetadata</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

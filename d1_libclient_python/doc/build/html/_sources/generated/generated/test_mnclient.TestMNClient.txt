@@ -1,0 +1,63 @@
+test_mnclient.TestMNClient
+==========================
+
+.. currentmodule:: test_mnclient
+
+.. autoclass:: TestMNClient
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_mnclient.TestMNClient.__init__
+  .. automethod:: test_mnclient.TestMNClient.assertAlmostEqual
+  .. automethod:: test_mnclient.TestMNClient.assertAlmostEquals
+  .. automethod:: test_mnclient.TestMNClient.assertEqual
+  .. automethod:: test_mnclient.TestMNClient.assertEquals
+  .. automethod:: test_mnclient.TestMNClient.assertFalse
+  .. automethod:: test_mnclient.TestMNClient.assertNotAlmostEqual
+  .. automethod:: test_mnclient.TestMNClient.assertNotAlmostEquals
+  .. automethod:: test_mnclient.TestMNClient.assertNotEqual
+  .. automethod:: test_mnclient.TestMNClient.assertNotEquals
+  .. automethod:: test_mnclient.TestMNClient.assertRaises
+  .. automethod:: test_mnclient.TestMNClient.assertTrue
+  .. automethod:: test_mnclient.TestMNClient.assertUrlEqual
+  .. automethod:: test_mnclient.TestMNClient.assert_
+  .. automethod:: test_mnclient.TestMNClient.countTestCases
+  .. automethod:: test_mnclient.TestMNClient.debug
+  .. automethod:: test_mnclient.TestMNClient.defaultTestResult
+  .. automethod:: test_mnclient.TestMNClient.fail
+  .. automethod:: test_mnclient.TestMNClient.failIf
+  .. automethod:: test_mnclient.TestMNClient.failIfAlmostEqual
+  .. automethod:: test_mnclient.TestMNClient.failIfEqual
+  .. automethod:: test_mnclient.TestMNClient.failUnless
+  .. automethod:: test_mnclient.TestMNClient.failUnlessAlmostEqual
+  .. automethod:: test_mnclient.TestMNClient.failUnlessEqual
+  .. automethod:: test_mnclient.TestMNClient.failUnlessRaises
+  .. automethod:: test_mnclient.TestMNClient.id
+  .. automethod:: test_mnclient.TestMNClient.run
+  .. automethod:: test_mnclient.TestMNClient.setUp
+  .. automethod:: test_mnclient.TestMNClient.shortDescription
+  .. automethod:: test_mnclient.TestMNClient.tearDown
+  .. automethod:: test_mnclient.TestMNClient.test_create
+  .. automethod:: test_mnclient.TestMNClient.test_delete
+  .. automethod:: test_mnclient.TestMNClient.test_getCapabilities
+  .. automethod:: test_mnclient.TestMNClient.test_getChecksum
+  .. automethod:: test_mnclient.TestMNClient.test_getChecksumFail
+  .. automethod:: test_mnclient.TestMNClient.test_getObjectStatistics
+  .. automethod:: test_mnclient.TestMNClient.test_getOperationStatistics
+  .. automethod:: test_mnclient.TestMNClient.test_getStatus
+  .. automethod:: test_mnclient.TestMNClient.test_replicate
+  .. automethod:: test_mnclient.TestMNClient.test_synchronizationFailed
+  .. automethod:: test_mnclient.TestMNClient.test_update
+
+
+
+
+
+

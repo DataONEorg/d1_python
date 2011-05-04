@@ -1,0 +1,6 @@
+systemmetadata.parseDateString
+==============================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: parseDateString

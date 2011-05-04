@@ -1,0 +1,24 @@
+test_d1client
+=============
+
+.. automodule:: test_d1client
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestDataONEClient
+    TestListObjects
+  
+  
+  
+  
+  
+  

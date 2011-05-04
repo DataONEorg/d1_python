@@ -1,0 +1,46 @@
+d1baseclient.DataONEBaseClient
+==============================
+
+.. currentmodule:: d1baseclient
+
+.. autoclass:: DataONEBaseClient
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: d1baseclient.DataONEBaseClient.DELETE
+  .. automethod:: d1baseclient.DataONEBaseClient.GET
+  .. automethod:: d1baseclient.DataONEBaseClient.HEAD
+  .. automethod:: d1baseclient.DataONEBaseClient.POST
+  .. automethod:: d1baseclient.DataONEBaseClient.PUT
+  .. automethod:: d1baseclient.DataONEBaseClient.RESTResourceURL
+  .. automethod:: d1baseclient.DataONEBaseClient.__init__
+  .. automethod:: d1baseclient.DataONEBaseClient.get
+  .. automethod:: d1baseclient.DataONEBaseClient.getLastRequestAsCurlCommand
+  .. automethod:: d1baseclient.DataONEBaseClient.getLogRecords
+  .. automethod:: d1baseclient.DataONEBaseClient.getLogRecordsResponse
+  .. automethod:: d1baseclient.DataONEBaseClient.getStatus
+  .. automethod:: d1baseclient.DataONEBaseClient.getStatusResponse
+  .. automethod:: d1baseclient.DataONEBaseClient.getSystemMetadata
+  .. automethod:: d1baseclient.DataONEBaseClient.getSystemMetadataResponse
+  .. automethod:: d1baseclient.DataONEBaseClient.getlastUrl
+  .. automethod:: d1baseclient.DataONEBaseClient.isAuthorized
+  .. automethod:: d1baseclient.DataONEBaseClient.isHttpStatusOK
+  .. automethod:: d1baseclient.DataONEBaseClient.listNodes
+  .. automethod:: d1baseclient.DataONEBaseClient.listNodesResponse
+  .. automethod:: d1baseclient.DataONEBaseClient.listObjects
+  .. automethod:: d1baseclient.DataONEBaseClient.listObjectsResponse
+  .. automethod:: d1baseclient.DataONEBaseClient.ping
+  .. automethod:: d1baseclient.DataONEBaseClient.setAccess
+
+
+
+
+
+

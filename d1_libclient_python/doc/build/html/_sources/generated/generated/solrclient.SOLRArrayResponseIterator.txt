@@ -1,0 +1,25 @@
+solrclient.SOLRArrayResponseIterator
+====================================
+
+.. currentmodule:: solrclient
+
+.. autoclass:: SOLRArrayResponseIterator
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: solrclient.SOLRArrayResponseIterator.__init__
+  .. automethod:: solrclient.SOLRArrayResponseIterator.next
+  .. automethod:: solrclient.SOLRArrayResponseIterator.processRow
+
+
+
+
+
+

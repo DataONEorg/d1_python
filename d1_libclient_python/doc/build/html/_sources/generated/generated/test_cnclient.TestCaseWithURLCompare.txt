@@ -1,0 +1,52 @@
+test_cnclient.TestCaseWithURLCompare
+====================================
+
+.. currentmodule:: test_cnclient
+
+.. autoclass:: TestCaseWithURLCompare
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.__init__
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertAlmostEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertAlmostEquals
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertEquals
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertFalse
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertNotAlmostEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertNotAlmostEquals
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertNotEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertNotEquals
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertRaises
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertTrue
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assertUrlEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.assert_
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.countTestCases
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.debug
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.defaultTestResult
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.fail
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failIf
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failIfAlmostEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failIfEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failUnless
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failUnlessAlmostEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failUnlessEqual
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.failUnlessRaises
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.id
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.run
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.setUp
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.shortDescription
+  .. automethod:: test_cnclient.TestCaseWithURLCompare.tearDown
+
+
+
+
+
+

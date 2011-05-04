@@ -1,0 +1,30 @@
+d1baseclient
+============
+
+.. automodule:: d1baseclient
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    DataONEBaseClient
+  
+  
+  
+  
+  
+  .. rubric:: Exceptions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    HTTPException
+  
+  

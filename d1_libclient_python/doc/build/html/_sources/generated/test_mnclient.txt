@@ -1,0 +1,24 @@
+test_mnclient
+=============
+
+.. automodule:: test_mnclient
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCaseWithURLCompare
+    TestMNClient
+  
+  
+  
+  
+  
+  

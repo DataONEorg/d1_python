@@ -1,0 +1,6 @@
+solrclient.SolrException
+========================
+
+.. currentmodule:: solrclient
+
+.. autoexception:: SolrException

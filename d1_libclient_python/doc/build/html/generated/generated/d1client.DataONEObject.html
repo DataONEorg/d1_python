@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.3.1.3. d1client.DataONEObject &mdash; DataONE v0.5 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE v0.5 documentation" href="../../index.html" />
+    <link rel="up" title="3.3. d1client" href="../d1client.html" />
+    <link rel="next" title="3.4. logrecorditerator" href="../logrecorditerator.html" />
+    <link rel="prev" title="3.3.1.2. d1client.DataONEClient" href="d1client.DataONEClient.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../logrecorditerator.html" title="3.4. logrecorditerator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="d1client.DataONEClient.html" title="3.3.1.2. d1client.DataONEClient"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../d1client.html" accesskey="U">3.3. d1client</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="d1client-dataoneobject">
+<h1>3.3.1.3. d1client.DataONEObject<a class="headerlink" href="#d1client-dataoneobject" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="d1client.DataONEObject">
+<em class="property">class </em><tt class="descclassname">d1client.</tt><tt class="descname">DataONEObject</tt><big>(</big><em>pid</em>, <em>cnBaseUrl='http://cn.dataone.org/cn/'</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="d1client.DataONEObject.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>pid</em>, <em>cnBaseUrl='http://cn.dataone.org/cn/'</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt>
+<tt class="descname">__init__</tt><big>(</big><em>pid</em>, <em>cnBaseUrl='http://cn.dataone.org/cn/'</em><big>)</big></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#d1client.DataONEObject.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.getCredentials">
+<tt class="descname">getCredentials</tt><big>(</big><big>)</big><a class="headerlink" href="#d1client.DataONEObject.getCredentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method to retrieve credentials that can be used to
+authenticate and retrieve a token for further operations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.getLocations">
+<tt class="descname">getLocations</tt><big>(</big><em>forcenew=False</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject.getLocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of node base urls known to hold a copy of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.getRelatedObjects">
+<tt class="descname">getRelatedObjects</tt><big>(</big><em>forcenew=False</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject.getRelatedObjects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.getSystemMetadata">
+<tt class="descname">getSystemMetadata</tt><big>(</big><em>forcenew=False</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject.getSystemMetadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.load">
+<tt class="descname">load</tt><big>(</big><em>outstr</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Persist a copy of the bytes of this object to outstr, which is a 
+file like object open for writing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="d1client.DataONEObject.save">
+<tt class="descname">save</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#d1client.DataONEObject.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the object to a local file</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="d1client.DataONEClient.html"
+                        title="previous chapter">3.3.1.2. d1client.DataONEClient</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../logrecorditerator.html"
+                        title="next chapter">3.4. logrecorditerator</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/d1client.DataONEObject.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../logrecorditerator.html" title="3.4. logrecorditerator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="d1client.DataONEClient.html" title="3.3.1.2. d1client.DataONEClient"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE v0.5 documentation</a> &raquo;</li>
+          <li><a href="../../general.html" >3. General</a> &raquo;</li>
+          <li><a href="../d1client.html" >3.3. d1client</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

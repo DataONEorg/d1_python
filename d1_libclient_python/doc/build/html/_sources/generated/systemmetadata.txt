@@ -1,0 +1,30 @@
+systemmetadata
+==============
+
+.. automodule:: systemmetadata
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    parseDateString
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    SystemMetadata
+  
+  
+  
+  
+  
+  
