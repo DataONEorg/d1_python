@@ -33,8 +33,8 @@ Use with caution and care since it iterates over every object on the node.
 '''
 import sys
 import logging
-import d1pythonitk.client
-import d1pythonitk.objectlist
+import d1_client.mnclient
+import d1_client.objectlistiterator
 
 
 def read_chunk(fobj, chunk_size=1024):
@@ -56,8 +56,8 @@ def walkNode(target, start=0):
   '''Given a DataOne node, retrieve each object and it's associated system 
   metadata.
   '''
-  client = d1pythonitk.client.DataOneClient(target=target)
-  objects = d1pythonitk.objectlist.ObjectListIterator(client, start=start)
+  client = d1_client.mnclient.MemberNodeClient.DataOneClient(target=target)
+  objects = d1_client.objectlistiterator.ObjectListIterator(client, start=start)
   logging.info("%d objects on target" % len(objects))
   counter = 0
   for obj in objects:
