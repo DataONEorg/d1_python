@@ -75,7 +75,7 @@ class UnitTest_DataONEBaseClient(TestCaseWithURLCompare):
       cli.RESTResourceURL('getsystemmetadata', pid='1234xyz')
     )
     self.assertEqual('http://bogus.target/mn/log', cli.RESTResourceURL('getlogrecords'))
-    self.assertEqual('http://bogus.target/mn/health/ping', cli.RESTResourceURL('ping'))
+    self.assertEqual('http://bogus.target/mn/monitor/ping', cli.RESTResourceURL('ping'))
 
 
 class TestDataONEClient(TestCaseWithURLCompare):
