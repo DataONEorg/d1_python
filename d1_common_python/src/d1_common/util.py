@@ -100,7 +100,7 @@ def validate_xml(xml_doc):
     tmp_schema_file.close()
     # Validate the downloaded schema. Raises GenXmlIfError or XsvalError on
     # error.
-    minixsv.parseAndValidateXmlSchema(tmp_schema_path)
+    minixsv.pyxsval.parseAndValidateXmlSchema(tmp_schema_path)
 
   xsValidator = minixsv.pyxsval.XsValidator()
   inputTreeWrapper = xsValidator.parseString(xml_doc)

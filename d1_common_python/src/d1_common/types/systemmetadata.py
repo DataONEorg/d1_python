@@ -22,7 +22,7 @@
 Module d1_common.types.systemmetadata
 =====================================
 
-Extends the PyXB generated class to enable serialization to and from CSV and 
+Extends the PyXB generated class to enable serialization to and from CSV and
 JSON.
 
 :Created: 2010-06-29
@@ -31,9 +31,9 @@ JSON.
   - python 2.6
 
 Note that the approach for handling serializers here is quite different from
-the other types wrapped here.  In this case, the additional serialization 
-methods are added dynamically to the class instantiated by the generated code.  
-Hence the created object behaves exactly the same as the PyXB generated object, 
+the other types wrapped here.  In this case, the additional serialization
+methods are added dynamically to the class instantiated by the generated code.
+Hence the created object behaves exactly the same as the PyXB generated object,
 except with the additional serialization methods.
 
 Example de-serialization::
@@ -48,10 +48,11 @@ Example serialization::
   sysm = systemMetadata()
   #set sysm properties
   # ...
-  doc = sysm.toxml() 
+  doc = sysm.toxml()
 '''
 
 import new
+import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes
 
@@ -96,9 +97,9 @@ def toText(self):
 
 
 def systemMetadata():
-  '''Returns a new, blank instance of SystemMetadata that can be modified and 
+  '''Returns a new, blank instance of SystemMetadata that can be modified and
   subsequently serialized to one of the supported formats.
-  
+
   :returns: Instance of SystemMetadata, blank
   :rtype: SystemMetadata
   '''
@@ -113,7 +114,7 @@ def systemMetadata():
 def CreateFromDocument(data, format='text/xml'):
   '''Returns an instance of SystemMetadata with elements and attributes set from
   the values in the provided document.
-  
+
   :param string data: The document to be deserialized
   :param string format: The mime-type of the data.
   :returns: The deserialized document as a SystemMetadata object

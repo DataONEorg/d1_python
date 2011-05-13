@@ -106,6 +106,7 @@ class Identifier(serialization_base.Serialization):
   def deserialize_xml(self, doc):
     '''Deserialize Identifier from XML.
     '''
+    print doc
     self.pid = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
     return self.pid
 
