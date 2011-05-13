@@ -40,7 +40,7 @@ import d1_common.xml_compare
 
 xml_correct = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -67,7 +67,7 @@ xml_correct = """<?xml version="1.0" ?>
 
 xml_correct_swapped_attributes = """<?xml version="1.0" ?>
 <ns1:objectList total="100" start="0" count="5"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -94,7 +94,7 @@ xml_correct_swapped_attributes = """<?xml version="1.0" ?>
 
 xml_missing_count = """<?xml version="1.0" ?>
 <ns1:objectList start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -121,7 +121,7 @@ xml_missing_count = """<?xml version="1.0" ?>
 
 xml_missing_entry = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -141,7 +141,7 @@ xml_missing_entry = """<?xml version="1.0" ?>
 
 xml_wrong_order = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -168,7 +168,7 @@ xml_wrong_order = """<?xml version="1.0" ?>
 
 xml_missing_text = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier></identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -195,7 +195,7 @@ xml_missing_text = """<?xml version="1.0" ?>
 
 xml_syntax_error = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://dataone.org/service/types/0.5.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
     <objectInfo>
         <identifier></identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
