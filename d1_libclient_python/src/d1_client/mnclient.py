@@ -59,11 +59,11 @@ class MemberNodeClient(DataONEBaseClient):
     self.methodmap.update(
       {
         'create': u'object/%(pid)s',
+        'update': u'object_put/%(pid)s',
         'getchecksum': u'checksum/%(pid)s',
         'getobjectstatistics': u'monitor/object',
         'getoperationstatistics': u'monitor/event',
         'getcapabilities': u'node',
-        'update': u'object_put/%(pid)s',
       }
     )
 
@@ -127,6 +127,8 @@ class MemberNodeClient(DataONEBaseClient):
     headers['newPid'] = new_pid
     headers.update(vendor_specific)
     files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
+    # TODO: Should be PUT against /object. Instead is POST against
+    # /object_put. Change when PUT support in Django is fixed.
     return self.POST(url, files=files, headers=headers)
 
   def update(self, token, pid, obj, new_pid, sysmeta, vendor_specific=None):
