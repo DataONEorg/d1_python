@@ -78,7 +78,7 @@ class TestPID(unittest.TestCase):
         else:
           raise
       else:
-        self.assertEqual(pid.value(), doc[1])
+        self.assertEqual(pid.value().strip(), doc[1].strip())
 
     doctest(EG_PID_GMN)
     # TODO.
