@@ -92,6 +92,7 @@ import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.checksum_serialization
 import d1_common.types.pid_serialization
+import d1_common.types.accesspolicy_serialization
 import d1_client.systemmetadata
 
 # App.
@@ -107,10 +108,8 @@ import util
 
 # TODO: Stub.
 def session(request):
-  ''':param:
-  :return:
-  '''
   return HttpResponse('<sessionId>bogusID</sessionId>')
+
 
 @auth.cn_check_required
 def object_collection(request):
@@ -127,11 +126,11 @@ def object_collection(request):
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
+
 def object_collection_get(request, head):
   '''
   Retrieve the list of objects present on the MN that match the calling parameters.
-  MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) → ObjectList
-  :return:
+  MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) -> ObjectList
   '''
   
   # Default ordering is by mtime ascending.
@@ -181,7 +180,6 @@ def object_pid(request, pid):
   MN_crud.create()   POST   /object/<pid>
   MN_crud.update()   PUT    /object/<pid>
   MN_crud.delete()   DELETE /object/<pid>
-  :return:
   '''
   
   if request.method == 'GET':
@@ -193,6 +191,8 @@ def object_pid(request, pid):
   if request.method == 'POST':
     return object_pid_post(request, pid)
 
+  # TODO: PUT currently not supported (issue with Django).
+  # Instead, this call is handled as a POST against a separate URL.
 #  if request.method == 'PUT':
 #    return object_pid_put(request, pid)
 
@@ -200,13 +200,24 @@ def object_pid(request, pid):
     return object_pid_delete(request, pid)
   
   # All verbs allowed, so should never get here.
-  return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
+  # TODO: Add "PUT" to list.
+  return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
+
+
+def object_pid_put_workaround(request, pid):
+  '''
+  MN_crud.update()   PUT    /object/<pid>
+  '''
+  if request.method == 'POST':
+    return object_pid_put(request, pid)
+
+  return HttpResponseNotAllowed(['POST'])
+
 
 def object_pid_get(request, pid, head):
   '''
   Retrieve an object identified by pid from the node.
-  MN_crud.get(token, pid) → bytes
-  :return:
+  MN_crud.get(token, pid) -> bytes
   '''
 
   # Find object based on pid.
@@ -246,6 +257,7 @@ def object_pid_get(request, pid, head):
   else:
     raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
+
 def object_pid_get_remote(request, response, pid, url, url_split):
   # Handle 302 Found.  
   try:
@@ -280,6 +292,7 @@ def object_pid_get_remote(request, response, pid, url, url_split):
   response._is_str = False
   return response
 
+
 def object_pid_get_local(request, response, pid):
   file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
   try:
@@ -294,20 +307,13 @@ def object_pid_get_local(request, response, pid):
   response._is_str = False
   return response
 
+
 def object_pid_post(request, pid):
   '''
+  MN_crud.create(token, pid, object, sysmeta) -> Identifier
+
   Adds a new object to the Member Node, where the object is either a data object
   or a science metadata object.
-
-  MN_crud.create(token, pid, object, sysmeta) → Identifier
-
-  POST format: The DataONE authorization token should be placed in the
-  appropriate HTTP Header field (to be determined), the PID to be used is in
-  the request URI, and the object content and sysmeta content are encoded in the
-  request body using MIME-multipart Mixed Media Type, where the object part has
-  the name ‘object’, and the sysmeta part has the name ‘systemmetadata’.
-  Parameter names are not case sensitive.
-  :return:
   '''
   
   util.validate_post(request, (#('header', 'token'),
@@ -378,6 +384,7 @@ def object_pid_post(request, pid):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
+
 def object_pid_post_store_local(request, pid):
   sys_log.info('pid({0}): Writing object to disk'.format(pid))
 
@@ -392,38 +399,95 @@ def object_pid_post_store_local(request, pid):
     err_msg = 'Could not write object file: {0}\n'.format(object_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+        
 
 def object_pid_put(request, pid):
-  '''MN_crud.update(token, pid, object, obsoletedPid, sysmeta) → Identifier
-  Creates a new object on the Member Node that explicitly updates and
-  obsoletes a previous object (identified by obsoletedPid).
-  
-  MN_storage.update(token, pid, object, newPid, sysmeta) → Identifier
-  pid is the pid of the object being updated.
-  
-  :return:
   '''
-#  util.validate_post(request, ( #('header', 'token'), TODO: Add check for token back in after we settle on a name for it.
-#                               ('file', 'object'),
-#                               ('file', 'sysmeta'),
-#                               ('field', 'obsoletedPid')))
-#
-#  object_pid_delete(request, request.POST['obsoletedPid'])
-#  
-#  object_pid_post(request, pid)
-  pass
+  MN_storage.update(cert, pid, object, newPid, sysmeta) -> Identifier
+  
+  Updates an existing object by creating a new object identified by newPid on
+  the Member Node which explicitly obsoletes the object identified by pid
+  through appropriate changes to the SystemMetadata of pid and newPid.
+  '''
+  
+  util.validate_post(request, (#('header', 'token'),
+                               ('file', 'object'),
+                               ('file', 'sysmeta')))
+
+  # Validate SysMeta.
+  sysmeta_str = request.FILES['sysmeta'].read()
+  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+  try:
+    sysmeta.isValid()
+  except:
+    err = sys.exc_info()[1]
+    raise d1_common.types.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+  
+  # Write SysMeta bytes to cache folder.
+  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
+  try:
+    file = open(sysmeta_path, 'wb')
+    file.write(sysmeta_str)
+    file.close()
+  except EnvironmentError as (errno, strerror):
+    err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
+    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+
+  # MN_crud.create() has a GMN specific extension. Instead of providing
+  # an object for GMN to manage, the object can be left empty and
+  # a URL to a remote location be provided instead. In that case, GMN
+  # will stream the object bytes from the remote server while handling
+  # all other object related operations like usual. 
+  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
+    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
+    try:
+      url_split = urlparse.urlparse(url)
+      if url_split.scheme != 'http':
+        raise ValueError
+    except ValueError:
+      raise d1_common.types.exceptions.InvalidRequest(0, 'url({0}): Invalid URL specified for remote storage'.format(url)) 
+  else:
+    # http://en.wikipedia.org/wiki/File_URI_scheme
+    url = 'file:///{0}'.format(urllib.quote(pid, ''))
+    object_pid_post_store_local(request, pid)
+        
+  # Create database entry for object.
+  object = models.Object()
+  object.pid = pid
+  object.url = url
+  object.set_format(sysmeta.objectFormat)
+  object.checksum = sysmeta.checksum
+  object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
+  object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)
+  object.size = sysmeta.size
+  object.save_unique()
+
+  # Successfully updated the db, so put current datetime in status.mtime. This
+  # should store the status.mtime in UTC and for that to work, Django must be
+  # running with settings.TIME_ZONE = 'UTC'.
+  db_update_status = models.DB_update_status()
+  db_update_status.status = 'update successful'
+  db_update_status.save()
+  
+  # Log this object creation.
+  event_log.log(pid, 'create', request)
+  
+  # Return the pid.
+  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
+  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
+  return HttpResponse(doc, content_type)
+
 
 def object_pid_delete(request, pid):
   '''
-  MN_crud.delete(token, pid) → Identifier
+  MN_crud.delete(token, pid) -> Identifier
   Deletes an object from the Member Node, where the object is either a data
   object or a science metadata object.
   
   TODO: This method removes all traces that the object ever existed, which is
   likely not what we will want to do when we decide how to support object
   deletion in DataONE.
-  
-  :return:
   '''
 
   # Find object based on pid.
@@ -497,18 +561,18 @@ def meta_pid(request, pid):
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
   
+
 def meta_pid_get(request, pid, head):
   '''
   Get:
     Describes the science metadata or data object (and likely other objects in the
     future) identified by pid by returning the associated system metadata object.
     
-    MN_crud.getSystemMetadata(token, pid) → SystemMetadata
+    MN_crud.getSystemMetadata(token, pid) -> SystemMetadata
 
   Head:
     Describe sysmeta for scidata or scimeta.
     0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<pid>
-  :return:
   '''
 
   # Verify that object exists. 
@@ -533,6 +597,7 @@ def meta_pid_get(request, pid, head):
   # Return the raw bytes of the object.
   return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype=d1_common.const.MIMETYPE_XML)
 
+
 def checksum_pid(request, pid):
   '''
   '''
@@ -542,6 +607,7 @@ def checksum_pid(request, pid):
 
   # Only GET.
   return HttpResponseNotAllowed(['GET'])
+
 
 def checksum_pid_get(request, pid):
   # Find object based on pid.
@@ -570,7 +636,6 @@ def event_log_view(request):
   '''
   0.3 MN_crud.getLogRecords()      GET  /log
   0.3 MN_crud.describeLogRecords() HEAD /log
-  :return:
   '''
 
   if request.method == 'GET':
@@ -581,18 +646,18 @@ def event_log_view(request):
     
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
+
 def event_log_view_get(request, head):
   '''
   Get:
     Get event_log.
     0.3   MN_crud.getLogRecords()       GET     /log
     
-    MN_crud.getLogRecords(token, fromDate[, toDate][, event]) → LogRecords
+    MN_crud.getLogRecords(token, fromDate[, toDate][, event]) -> LogRecords
   
   Head:
     Describe event_log.
     0.3   MN_crud.describeLogRecords()       HEAD     /log
-  :return:
   '''
 
   # select objects ordered by mtime desc.
@@ -633,7 +698,7 @@ def event_log_view_get(request, head):
 # Replication.
 # ------------------------------------------------------------------------------  
 
-# MN_replication.replicate(token, id, sourceNode) → boolean
+# MN_replication.replicate(token, id, sourceNode) -> boolean
 
 @auth.cn_check_required
 def replicate(request):
@@ -643,6 +708,7 @@ def replicate(request):
     return replicate_post(request)
   
   return HttpResponseNotAllowed(['POST'])
+
 
 def replicate_post(request):
   '''
@@ -690,6 +756,7 @@ def replicate_post(request):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
+
 def _replicate_store(request):
   '''
   '''
@@ -698,6 +765,7 @@ def _replicate_store(request):
     return _replicate_store(request)
   
   return HttpResponseNotAllowed(['POST'])
+
 
 def _replicate_store(request):
   '''
@@ -746,15 +814,18 @@ def _replicate_store(request):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
+
 # For testing via browser.
 def test_replicate_post(request):
   return replicate_post(request)
+
 
 def test_replicate_get(request):
   '''
   '''
   return render_to_response('replicate_get.html',
                            {'replication_queue': models.Replication_work_queue.objects.all() })
+
 
 def test_replicate_get_xml(request):
   '''
@@ -763,10 +834,12 @@ def test_replicate_get_xml(request):
                             {'replication_queue': models.Replication_work_queue.objects.all() },
                             mimetype=d1_common.const.MIMETYPE_XML)
 
+
 # For testing via browser.
 def test_replicate_clear(request):
   models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
+
 
 @auth.cn_check_required
 def error(request):
@@ -778,6 +851,7 @@ def error(request):
   
   return HttpResponseNotAllowed(['POST'])
 
+
 def error_post(request):
   # TODO: Deserialize exception in message and log full information.
   util.validate_post(request, ( #('header', 'token'),
@@ -788,6 +862,81 @@ def error_post(request):
   return HttpResponse('')
 
 # ------------------------------------------------------------------------------  
+# Authentication and authorization.
+# ------------------------------------------------------------------------------
+
+@auth.cn_check_required
+def access_rules_pid(request, pid):
+  # TODO: PUT currently not supported (issue with Django).
+  # Instead, this call is handled as a POST against a separate URL.
+#  if request.method == 'PUT':
+#    return object_pid_put(request, pid)
+  
+  # All verbs allowed, so should never get here.
+  # TODO: Add "PUT" to list.
+  return HttpResponseNotAllowed([])
+
+
+def access_rules_pid_put_workaround(request, pid):
+  '''
+  '''
+  if request.method == 'POST':
+    return access_rules_pid_put(request, pid)
+
+  return HttpResponseNotAllowed(['POST'])
+
+
+def access_rules_pid_put(request, pid):
+  '''
+  MN_auth.setAccess(cert, pid, accessPolicy) -> Boolean
+
+  Sets the access permissions for an object identified by pid.
+  '''
+  util.validate_post(request, (#('header', 'token'),
+                               ('file', 'accesspolicy'),))
+
+  # Validate and deserialize accessPolicy.
+  access_policy_str = request.FILES['accesspolicy'].read()
+
+  access_policy_serializer = \
+    d1_common.types.accesspolicy_serialization.AccessPolicy()
+
+  try:
+    access_policy = access_policy_serializer.deserialize(access_policy_str)
+  except:
+    err = sys.exc_info()[1]
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Could not deserialize AccessPolicy: {0}'.format(str(err)))
+
+  # Iterate over AccessPolicy and create db entries.
+
+  for allow_rule in access_policy.allow:
+    for principal in allow_rule.principal:
+      for permission in allow_rule.permission:
+        for resource in allow_rule.resource:
+          print principal
+          print permission
+          print resource.value()
+          print
+          
+          # http://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys
+          
+          # Check if row already exists.
+          try:
+            models.Permission.objects.filter(object__pid=resource.value(),
+                                             principal__distinguished_name=principal,
+                                             action__action=permission)[0]
+          except LookupError:
+            # Create.
+            permission_row = models.Permission()
+            permission_row.set_permission(resource.value(), principal, permission)
+            permission_row.save()
+    
+  # Return Boolean (200 OK)
+  return HttpResponse('')
+
+
+# ------------------------------------------------------------------------------  
 # Monitoring.
 # ------------------------------------------------------------------------------
 
@@ -796,7 +945,6 @@ def monitor_ping(request):
   Low level “are you alive” operation. Response is simple ACK, but may be
   reasonable to overload with a couple of flags that could indicate availability
   of new data or change in capabilities.
-  :return: Null body or Exception
   '''
   return HttpResponse('')
 
@@ -804,7 +952,6 @@ def monitor_status(request):
   '''MN_core.getStatus() -> StatusResponse/
   This function is similar to MN_health.ping() but returns a more complete
   status which may include information such as planned service outages.
-  :return: Undefined
   '''
   return HttpResponse('OK (response not yet defined)')
 
@@ -1018,7 +1165,6 @@ def test_get_request(request):
 def test_delete_all_objects(request):
   '''
   Remove all objects from db.
-  :return:
   
   TODO: Also remove objects from disk if they are managed.
   '''
@@ -1053,7 +1199,6 @@ def test_delete_event_log(request):
   '''
   Remove all log records.
   Not part of spec.
-  :return:
   '''
 
   # Clear the access log.
@@ -1070,7 +1215,6 @@ def test_inject_event_log(request):
   '''Inject a fake log for testing.
   
   The corresponding test object set must have already been created.
-  :return:
   '''
   
   # Only POST accepted.

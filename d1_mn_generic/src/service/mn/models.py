@@ -49,7 +49,9 @@ class DB_update_status(models.Model):
   mtime = models.DateTimeField(auto_now=True)
   status = models.CharField(max_length=100)
 
+# ------------------------------------------------------------------------------
 # Registered MN objects.
+# ------------------------------------------------------------------------------
 
 
 class Checksum_algorithm(models.Model):
@@ -102,7 +104,9 @@ class Object(models.Model):
       me.delete()
       self.save()
 
+# ------------------------------------------------------------------------------
 # Access Log
+# ------------------------------------------------------------------------------
 
 
 class Event_log_event(models.Model):
@@ -201,7 +205,9 @@ class Node(models.Model):
 
   set = Callable(set)
 
+# ------------------------------------------------------------------------------
 # MN object replication work queue.
+# ------------------------------------------------------------------------------
 
 
 class Replication_queue_status(models.Model):
@@ -234,3 +240,44 @@ class Replication_work_queue(models.Model):
     self.checksum_algorithm = Checksum_algorithm.objects.get_or_create(
       checksum_algorithm=checksum_algorithm_string
     )[0]
+
+# ------------------------------------------------------------------------------
+# Principal
+# ------------------------------------------------------------------------------
+
+
+class Principal(models.Model):
+  distinguished_name = models.CharField(max_length=100, unique=True, db_index=True)
+
+# ------------------------------------------------------------------------------
+# Action
+# ------------------------------------------------------------------------------
+
+
+class Action(models.Model):
+  action = models.CharField(max_length=10, unique=True, db_index=True)
+
+# ------------------------------------------------------------------------------
+# Permission
+# ------------------------------------------------------------------------------
+
+
+class Permission(models.Model):
+  object = models.ForeignKey(Object)
+  principal = models.ForeignKey(Principal)
+  action = models.ForeignKey(Action)
+
+  def set_permission(self, pid, distinguished_name, action):
+    # Object must exist.
+    try:
+      self.object = Object.objects.filter(pid=pid)[0]
+    except IndexError:
+      raise d1_common.types.exceptions.NotFound(
+        0, 'Attempted to set access for non-existing object', pid
+      )
+    # Principal created on the fly.
+    self.principal = Principal.objects.get_or_create(
+      distinguished_name=distinguished_name
+    )[0]
+    # Action created on the fly.
+    self.action = Action.objects.get_or_create(action=action)[0]

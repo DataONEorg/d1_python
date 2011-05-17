@@ -47,7 +47,7 @@ except ImportError, e:
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-namespaces = {'D1': 'http://dataone.org/service/types/SystemMetadata/0.1', }
+namespaces = {'D1': 'http://ns.dataone.org/service/types/SystemMetadata/0.1', }
 
 
 def main():

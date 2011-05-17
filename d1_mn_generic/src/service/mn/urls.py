@@ -43,9 +43,8 @@ urlpatterns = patterns(
   (r'^object/?$', 'object_collection'),
   (r'^meta/(.+)$', 'meta_pid'),
   (r'^object/(.+)$', 'object_pid'),
+  (r'^object_put/(.+)$', 'object_pid_put_workaround'),
   (r'^checksum/(.+)$', 'checksum_pid'),
-  # Hack to support update() until we get PUT working in Django.
-  (r'^object_put/?$', 'object_pid_put'),
 
   # /log/
   (r'^log/?$', 'event_log_view'),
@@ -65,6 +64,10 @@ urlpatterns = patterns(
   (r'^error/(.+)$', 'error'),
   # Internal
   (r'^_replicate_store/?$', '_replicate_store'),
+
+  # Authentication and authorization
+  (r'^accessRules/(.+)$', 'access_rules_pid'),
+  (r'^accessRules_put/(.+)$', 'access_rules_pid_put_workaround'),
 
   # Diagnostics, debugging and testing.
   (r'^test/?$', 'test'),

@@ -78,10 +78,12 @@ from xml.sax.saxutils import escape
 
 # MN API.
 try:
+  from d1_common.types.generated import dataoneTypes 
   #import d1_common.mime_multipart
   import d1_common.types.exceptions
   import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
+  import d1_common.types.accesspolicy_serialization
   import d1_common.util
   import d1_common.const
 except ImportError, e:
@@ -202,7 +204,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
   def gen_sysmeta(self, pid, size, md5, now):
     return u'''<?xml version="1.0" encoding="UTF-8"?>
-<D1:systemMetadata xmlns:D1="http://dataone.org/service/types/0.5.1">
+<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/0.6.1">
   <identifier>{0}</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
   <size>{1}</size>
@@ -239,7 +241,37 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Populate MN with set of test objects.
     '''
     pass
-  
+
+
+  def set_access_1(self):
+    '''SetAccess 1.
+    '''
+    # Build an AccessPolicy object.
+    access_policy = dataoneTypes.accessPolicy()
+    
+    access_rule = dataoneTypes.AccessRule()
+    access_rule.principal.append('principal1')
+    access_rule.principal.append('principal2')
+    access_rule.permission.append(dataoneTypes.Permission.read)
+    access_rule.permission.append(dataoneTypes.Permission.execute)
+    access_rule.resource.append('hdl:10255/dryad.1228/mets.xml')
+    access_rule.resource.append('hdl:10255/dryad.1073/mets.xml')
+
+    access_policy.append(access_rule)
+    
+    access_rule = dataoneTypes.AccessRule()
+    access_rule.principal.append('principal3')
+    access_rule.principal.append('principal4')
+    access_rule.permission.append(dataoneTypes.Permission.write)
+    access_rule.resource.append('hdl:10255/dryad.1073/mets.xml')
+    access_rule.resource.append('AnserMatrix.htm')
+
+    access_policy.append(access_rule)
+
+    # Send access policy.
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    ret = client.setAccess('<dummy cert>', 'access_pid', access_policy)
+
   def D_object_collection_is_populated(self):
     '''Object collection is populated.
     '''
@@ -350,6 +382,10 @@ class TestSequenceFunctions(unittest.TestCase):
     # SciData
     object_path = os.path.splitext(sysmeta_path)[0]
     object_str = open(object_path, 'rb')
+    object_str = ''
+    for i in range(10 * 1024 * 1024):
+      object_str += 'a'
+    object_str += 'z'
     # 
     obsoleted_pid = 'AnserMatrix.htm'
     new_pid = 'update_object_pid'
@@ -962,389 +998,392 @@ class TestSequenceFunctions(unittest.TestCase):
   # Managed (object byte storage handled locally by GMN).
   #
 
-  def test_1010_managed_A_delete_all_objects(self):
-    self.A_delete_all_objects()
-    
-  def test_1010_managed_B_object_collection_is_empty(self):
-    self.B_object_collection_is_empty()
-
-  def test_1010_managed_C_create_objects(self):
-    '''Managed: Populate MN with set of test objects (local).
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
-  
-      # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-          
-      # To create a valid URL, we must quote the pid twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
-  
-      # To test the MIME Multipart poster, we provide the Sci object as a file
-      # and the SysMeta as a string.
-      try:
-        response = client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
-      except Exception as e:
-        open('out.htm', 'w').write(e.traceInformation)
-        raise
-      #  print response.read()
-
-  def test_1010_managed_D_object_collection_is_populated(self):
-    self.D_object_collection_is_populated()
-
-  def test_1020_managed_A_clear_event_log(self):
-    self.A_clear_event_log()
-  
-  def test_1020_managed_B_event_log_is_empty(self):
-    self.B_event_log_is_empty()
-  
-  def test_1020_managed_C_inject_event_log(self):
-    self.C_inject_event_log()
-
-  def test_1020_managed_D_event_log_is_populated(self):
-    self.D_event_log_is_populated()
-  
-  def test_1030_managed_compare_byte_by_byte(self):
-    self.compare_byte_by_byte()
-       
-  def test_1040_managed_object_properties(self):
-    self.object_properties()
-
-  def test_1050_managed_object_update(self):
-    self.object_update()
-
-  def test_1100_managed_slicing_1(self):
-    self.slicing_1()
-
-  def test_1110_managed_slicing_2(self):
-    self.slicing_2()
-
-  def test_1120_managed_slicing_3(self):
-    self.slicing_3()
-
-  def test_1130_managed_slicing_4(self):
-    self.slicing_4()
-
-  def test_1140_managed_date_range_1(self):
-    self.date_range_1()
-
-  def test_1150_managed_date_range_2(self):
-    self.date_range_2()
-
-  def test_1160_managed_date_range_3(self):
-    self.date_range_3()
-
-  def test_1170_managed_date_range_4(self):
-    self.date_range_4()
-
-  def test_1180_managed_get_object_count(self):
-    self.get_object_count()
-
-  def test_1190_managed_get_object_by_invalid_pid(self):
-    self.get_object_by_invalid_pid()
-
-  def test_1200_managed_get_object_by_valid_pid(self):
-    self.get_object_by_valid_pid()
-
-  def test_1210_managed_get_sysmeta_by_invalid_pid(self):
-    self.get_sysmeta_by_invalid_pid()
-
-  def test_1220_managed_get_sysmeta_by_valid_pid(self):
-    self.get_sysmeta_by_valid_pid()
-
-  def test_1230_managed_xml_validation(self):
-    self.xml_validation()
-
-  def test_1240_managed_pxby_objectlist_xml(self):
-    self.pxby_objectlist_xml()
-  
-  def test_1250_managed_pxby_objectlist_json(self):
-    self.pxby_objectlist_json()
-
-#  def test_1260_managed_pxby_objectlist_rdf_xml(self):
-#    self.pxby_objectlist_rdf_xml()
-    
-  def test_1270_managed_pxby_objectlist_csv(self):
-    self.pxby_objectlist_csv()
-
-  def test_1280_managed_monitor_object_cumulative_no_filter(self):
-    self.monitor_object_cumulative_no_filter()
-
-  def test_1281_managed_monitor_object_cumulative_filter_by_time(self):
-    self.monitor_object_cumulative_filter_by_time()
-
-  def test_1282_managed_monitor_object_cumulative_filter_by_format(self):
-    self.monitor_object_cumulative_filter_by_format()
-
-  def test_1283_managed_monitor_object_cumulative_filter_by_time_and_format(self):
-    self.monitor_object_cumulative_filter_by_time_and_format()
-
-  def test_1284_managed_monitor_object_cumulative_filter_by_pid(self):
-    self.monitor_object_cumulative_filter_by_pid()
-  
-  def test_1285_managed_monitor_object_daily_no_filter(self):
-    self.monitor_object_daily_no_filter()
-
-  def test_1286_managed_monitor_object_daily_filter_by_time(self):
-    self.monitor_object_daily_filter_by_time()
-
-  def test_1287_managed_monitor_object_daily_filter_by_format(self):
-    self.monitor_object_daily_filter_by_format()
-
-  def test_1288_managed_monitor_object_daily_filter_by_time_and_format(self):
-    self.monitor_object_daily_filter_by_time_and_format()
-
-  def test_1289_managed_monitor_object_daily_filter_by_pid(self):
-    self.monitor_object_daily_filter_by_pid()
-
-  def test_1290_managed_monitor_event_cumulative_no_filter(self):
-    self.monitor_event_cumulative_no_filter()
-
-  def test_1291_managed_monitor_event_cumulative_filter_by_time(self):
-    self.monitor_event_cumulative_filter_by_time()
-
-  def test_1292_managed_monitor_event_cumulative_filter_by_event_type(self):
-    self.monitor_event_cumulative_filter_by_event_type()
-
-  def test_1293_managed_monitor_event_cumulative_filter_by_object_format(self):
-    self.monitor_event_cumulative_filter_by_object_format()
-
-  def test_1294_managed_monitor_event_cumulative_filter_by_principal(self):
-    self.monitor_event_cumulative_filter_by_principal()
-
-  def test_1295_managed_monitor_event_daily_no_filter(self):
-    self.monitor_event_daily_no_filter()
-
-  def test_1296_managed_monitor_event_daily_filter_by_time_1(self):
-    self.monitor_event_daily_filter_by_time_1()
-
-  def test_1296_managed_monitor_event_daily_filter_by_time_2(self):
-    self.monitor_event_daily_filter_by_time_2()
-
-  def test_1296_managed_monitor_event_daily_filter_by_time_3(self):
-    self.monitor_event_daily_filter_by_time_3()
-
-  def test_1297_managed_monitor_event_daily_filter_by_event_type(self):
-    self.monitor_event_daily_filter_by_event_type()
-
-  def test_1298_managed_monitor_event_daily_filter_by_object_format(self):
-    self.monitor_event_daily_filter_by_object_format()
-
-  def test_1299_managed_monitor_event_daily_filter_by_principal(self):
-    self.monitor_event_daily_filter_by_principal()
-
-# TODO: Include checksum tests if we keep getChecksum().
-
-#  def test_1330_managed_delete(self):
-#    self.delete()
+#  def test_1010_managed_A_delete_all_objects(self):
+#    self.A_delete_all_objects()
+#    
+#  def test_1010_managed_B_object_collection_is_empty(self):
+#    self.B_object_collection_is_empty()
 #
-#  def test_1340_managed_describe(self):
-#    self.describe()
+#  def test_1010_managed_C_create_objects(self):
+#    '''Managed: Populate MN with set of test objects (local).
+#    '''
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+#    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
+#      # Get name of corresponding object and open it.
+#      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+#      object_file = open(object_path, 'r')
 #  
-#  def test_1350_managed_replication(self):
-#    self.replication()
+#      # The pid is stored in the sysmeta.
+#      sysmeta_file = open(sysmeta_path, 'r')
+#      sysmeta_xml = sysmeta_file.read()
+#      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
+#          
+#      # To create a valid URL, we must quote the pid twice. First, so
+#      # that the URL will match what's on disk and then again so that the
+#      # quoting survives being passed to the web server.
+#      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
+#  
+#      # To test the MIME Multipart poster, we provide the Sci object as a file
+#      # and the SysMeta as a string.
+#      try:
+#        response = client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
+#      except Exception as e:
+#        open('out.htm', 'w').write(e.traceInformation)
+#        raise
+#      #  print response.read()
 #
-#  def test_1360_managed_unicode_test_1(self):
-#    self.unicode_test_1()
-
-  #
-  # Wrapped (object bytes store by remote web server).
-  #
-  
-  def test_2010_wrapped_A_delete_all_objects(self):
-    self.A_delete_all_objects()
-    
-  def test_2010_wrapped_B_object_collection_is_empty(self):
-    self.B_object_collection_is_empty()
-  
-  def test_2010_wrapped_C_create_objects(self):
-    '''Wrapped: Populate MN with set of test objects (Remote).
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
-  
-      # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-          
-      # This test requires the objects to also be available on a web server
-      # (http://localhost:80/test_client_objects by default). This simulates
-      # remote storage of the objects.
-
-      # To create a valid URL, we must quote the pid twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      sciobj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(sysmeta_obj.identifier, ''), ''))
-      scimeta_abs_url = urlparse.urljoin(self.opts.obj_url, sciobj_url)
-    
-      # To test the MIME Multipart poster, we provide the Sci object as a file
-      # and the SysMeta as a string.
-      client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file,
-                    sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
-    
-  def test_2010_wrapped_D_object_collection_is_populated(self):
-    self.D_object_collection_is_populated()
-
-  def test_2020_wrapped_A_clear_event_log(self):
-    self.A_clear_event_log()
-  
-  def test_2020_wrapped_B_event_log_is_empty(self):
-    self.B_event_log_is_empty()
-
-  def test_2020_wrapped_C_inject_event_log(self):
-    self.C_inject_event_log()
-
-  def test_2020_wrapped_D_event_log_is_populated(self):
-    self.D_event_log_is_populated()
-
-  def test_2030_wrapped_compare_byte_by_byte(self):
-    self.compare_byte_by_byte()
-       
-  def test_2040_wrapped_object_properties(self):
-    self.object_properties()
-
-  def test_2100_wrapped_slicing_1(self):
-    self.slicing_1()
-
-  def test_2110_wrapped_slicing_2(self):
-    self.slicing_2()
-
-  def test_2120_wrapped_slicing_3(self):
-    self.slicing_3()
-
-  def test_2130_wrapped_slicing_4(self):
-    self.slicing_4()
-
-  def test_2140_wrapped_date_range_1(self):
-    self.date_range_1()
-
-  def test_2150_wrapped_date_range_2(self):
-    self.date_range_2()
-
-  def test_2160_wrapped_date_range_3(self):
-    self.date_range_3()
-
-  def test_2170_wrapped_date_range_4(self):
-    self.date_range_4()
-
-  def test_2180_wrapped_get_object_count(self):
-    self.get_object_count()
-
-  def test_2190_wrapped_get_object_by_invalid_pid(self):
-    self.get_object_by_invalid_pid()
-
-  def test_2200_wrapped_get_object_by_valid_pid(self):
-    self.get_object_by_valid_pid()
-
-  def test_2210_wrapped_get_sysmeta_by_invalid_pid(self):
-    self.get_sysmeta_by_invalid_pid()
-
-  def test_2220_wrapped_get_sysmeta_by_valid_pid(self):
-    self.get_sysmeta_by_valid_pid()
-
-  def test_2230_wrapped_xml_validation(self):
-    self.xml_validation()
-
-  def test_2240_wrapped_pxby_objectlist_xml(self):
-    self.pxby_objectlist_xml()
-  
-  def test_2250_wrapped_pxby_objectlist_json(self):
-    self.pxby_objectlist_json()
-
-#  def test_1260_wrapped_pxby_objectlist_rdf_xml(self):
-#    self.pxby_objectlist_rdf_xml()
-    
-  def test_2270_wrapped_pxby_objectlist_csv(self):
-    self.pxby_objectlist_csv()
-
-  def test_2280_wrapped_monitor_object_cumulative_no_filter(self):
-    self.monitor_object_cumulative_no_filter()
-
-  def test_2281_wrapped_monitor_object_cumulative_filter_by_time(self):
-    self.monitor_object_cumulative_filter_by_time()
-
-  def test_2282_wrapped_monitor_object_cumulative_filter_by_format(self):
-    self.monitor_object_cumulative_filter_by_format()
-
-  def test_2283_wrapped_monitor_object_cumulative_filter_by_time_and_format(self):
-    self.monitor_object_cumulative_filter_by_time_and_format()
-
-  def test_2284_wrapped_monitor_object_cumulative_filter_by_pid(self):
-    self.monitor_object_cumulative_filter_by_pid()
-  
-  def test_2285_wrapped_monitor_object_daily_no_filter(self):
-    self.monitor_object_daily_no_filter()
-
-  def test_2286_wrapped_monitor_object_daily_filter_by_time(self):
-    self.monitor_object_daily_filter_by_time()
-
-  def test_2287_wrapped_monitor_object_daily_filter_by_format(self):
-    self.monitor_object_daily_filter_by_format()
-
-  def test_2288_wrapped_monitor_object_daily_filter_by_time_and_format(self):
-    self.monitor_object_daily_filter_by_time_and_format()
-
-  def test_2289_wrapped_monitor_object_daily_filter_by_pid(self):
-    self.monitor_object_daily_filter_by_pid()
-
-  def test_2290_wrapped_monitor_event_cumulative_no_filter(self):
-    self.monitor_event_cumulative_no_filter()
-
-  def test_2291_wrapped_monitor_event_cumulative_filter_by_time(self):
-    self.monitor_event_cumulative_filter_by_time()
-
-  def test_2292_wrapped_monitor_event_cumulative_filter_by_event_type(self):
-    self.monitor_event_cumulative_filter_by_event_type()
-
-  def test_2293_wrapped_monitor_event_cumulative_filter_by_object_format(self):
-    self.monitor_event_cumulative_filter_by_object_format()
-
-  def test_2294_wrapped_monitor_event_cumulative_filter_by_principal(self):
-    self.monitor_event_cumulative_filter_by_principal()
-
-  def test_2295_wrapped_monitor_event_daily_no_filter(self):
-    self.monitor_event_daily_no_filter()
-
-  def test_2296_wrapped_monitor_event_daily_filter_by_time_1(self):
-    self.monitor_event_daily_filter_by_time_1()
-
-  def test_2296_wrapped_monitor_event_daily_filter_by_time_2(self):
-    self.monitor_event_daily_filter_by_time_2()
-
-  def test_2296_wrapped_monitor_event_daily_filter_by_time_3(self):
-    self.monitor_event_daily_filter_by_time_3()
-
-  def test_2297_wrapped_monitor_event_daily_filter_by_event_type(self):
-    self.monitor_event_daily_filter_by_event_type()
-
-  def test_2298_wrapped_monitor_event_daily_filter_by_object_format(self):
-    self.monitor_event_daily_filter_by_object_format()
-
-  def test_2299_wrapped_monitor_event_daily_filter_by_principal(self):
-    self.monitor_event_daily_filter_by_principal()
-  
-#  def test_2330_wrapped_delete(self):
-#    self.delete_test()
+#  def test_1010_managed_D_object_collection_is_populated(self):
+#    self.D_object_collection_is_populated()
 #
-#  def test_2340_wrapped_describe(self):
-#    self.describe()
+#  def test_1020_managed_A_clear_event_log(self):
+#    self.A_clear_event_log()
+#  
+#  def test_1020_managed_B_event_log_is_empty(self):
+#    self.B_event_log_is_empty()
+#  
+#  def test_1020_managed_C_inject_event_log(self):
+#    self.C_inject_event_log()
 #
-#  def test_2350_wrapped_replication(self):
-#    self.replication(self)
+#  def test_1020_managed_D_event_log_is_populated(self):
+#    self.D_event_log_is_populated()
+  
+  def test_1025_managed_set_access_1(self):
+    self.set_access_1()
+
+#  def test_1030_managed_compare_byte_by_byte(self):
+#    self.compare_byte_by_byte()
+#       
+#  def test_1040_managed_object_properties(self):
+#    self.object_properties()
 #
-#  def test_2360_wrapped_unicode_test_1(self):
-#    self.unicode_test_1()
+#  def test_1050_managed_object_update(self):
+#    self.object_update()
+#
+#  def test_1100_managed_slicing_1(self):
+#    self.slicing_1()
+#
+#  def test_1110_managed_slicing_2(self):
+#    self.slicing_2()
+#
+#  def test_1120_managed_slicing_3(self):
+#    self.slicing_3()
+#
+#  def test_1130_managed_slicing_4(self):
+#    self.slicing_4()
+#
+#  def test_1140_managed_date_range_1(self):
+#    self.date_range_1()
+#
+#  def test_1150_managed_date_range_2(self):
+#    self.date_range_2()
+#
+#  def test_1160_managed_date_range_3(self):
+#    self.date_range_3()
+#
+#  def test_1170_managed_date_range_4(self):
+#    self.date_range_4()
+#
+#  def test_1180_managed_get_object_count(self):
+#    self.get_object_count()
+#
+#  def test_1190_managed_get_object_by_invalid_pid(self):
+#    self.get_object_by_invalid_pid()
+#
+#  def test_1200_managed_get_object_by_valid_pid(self):
+#    self.get_object_by_valid_pid()
+#
+#  def test_1210_managed_get_sysmeta_by_invalid_pid(self):
+#    self.get_sysmeta_by_invalid_pid()
+#
+#  def test_1220_managed_get_sysmeta_by_valid_pid(self):
+#    self.get_sysmeta_by_valid_pid()
+#
+#  def test_1230_managed_xml_validation(self):
+#    self.xml_validation()
+#
+#  def test_1240_managed_pxby_objectlist_xml(self):
+#    self.pxby_objectlist_xml()
+#  
+#  def test_1250_managed_pxby_objectlist_json(self):
+#    self.pxby_objectlist_json()
+#
+##  def test_1260_managed_pxby_objectlist_rdf_xml(self):
+##    self.pxby_objectlist_rdf_xml()
+#    
+#  def test_1270_managed_pxby_objectlist_csv(self):
+#    self.pxby_objectlist_csv()
+#
+#  def test_1280_managed_monitor_object_cumulative_no_filter(self):
+#    self.monitor_object_cumulative_no_filter()
+#
+#  def test_1281_managed_monitor_object_cumulative_filter_by_time(self):
+#    self.monitor_object_cumulative_filter_by_time()
+#
+#  def test_1282_managed_monitor_object_cumulative_filter_by_format(self):
+#    self.monitor_object_cumulative_filter_by_format()
+#
+#  def test_1283_managed_monitor_object_cumulative_filter_by_time_and_format(self):
+#    self.monitor_object_cumulative_filter_by_time_and_format()
+#
+#  def test_1284_managed_monitor_object_cumulative_filter_by_pid(self):
+#    self.monitor_object_cumulative_filter_by_pid()
+#  
+#  def test_1285_managed_monitor_object_daily_no_filter(self):
+#    self.monitor_object_daily_no_filter()
+#
+#  def test_1286_managed_monitor_object_daily_filter_by_time(self):
+#    self.monitor_object_daily_filter_by_time()
+#
+#  def test_1287_managed_monitor_object_daily_filter_by_format(self):
+#    self.monitor_object_daily_filter_by_format()
+#
+#  def test_1288_managed_monitor_object_daily_filter_by_time_and_format(self):
+#    self.monitor_object_daily_filter_by_time_and_format()
+#
+#  def test_1289_managed_monitor_object_daily_filter_by_pid(self):
+#    self.monitor_object_daily_filter_by_pid()
+#
+#  def test_1290_managed_monitor_event_cumulative_no_filter(self):
+#    self.monitor_event_cumulative_no_filter()
+#
+#  def test_1291_managed_monitor_event_cumulative_filter_by_time(self):
+#    self.monitor_event_cumulative_filter_by_time()
+#
+#  def test_1292_managed_monitor_event_cumulative_filter_by_event_type(self):
+#    self.monitor_event_cumulative_filter_by_event_type()
+#
+#  def test_1293_managed_monitor_event_cumulative_filter_by_object_format(self):
+#    self.monitor_event_cumulative_filter_by_object_format()
+#
+#  def test_1294_managed_monitor_event_cumulative_filter_by_principal(self):
+#    self.monitor_event_cumulative_filter_by_principal()
+#
+#  def test_1295_managed_monitor_event_daily_no_filter(self):
+#    self.monitor_event_daily_no_filter()
+#
+#  def test_1296_managed_monitor_event_daily_filter_by_time_1(self):
+#    self.monitor_event_daily_filter_by_time_1()
+#
+#  def test_1296_managed_monitor_event_daily_filter_by_time_2(self):
+#    self.monitor_event_daily_filter_by_time_2()
+#
+#  def test_1296_managed_monitor_event_daily_filter_by_time_3(self):
+#    self.monitor_event_daily_filter_by_time_3()
+#
+#  def test_1297_managed_monitor_event_daily_filter_by_event_type(self):
+#    self.monitor_event_daily_filter_by_event_type()
+#
+#  def test_1298_managed_monitor_event_daily_filter_by_object_format(self):
+#    self.monitor_event_daily_filter_by_object_format()
+#
+#  def test_1299_managed_monitor_event_daily_filter_by_principal(self):
+#    self.monitor_event_daily_filter_by_principal()
+#
+## TODO: Include checksum tests if we keep getChecksum().
+#
+##  def test_1330_managed_delete(self):
+##    self.delete()
+##
+##  def test_1340_managed_describe(self):
+##    self.describe()
+##  
+##  def test_1350_managed_replication(self):
+##    self.replication()
+##
+##  def test_1360_managed_unicode_test_1(self):
+##    self.unicode_test_1()
+#
+#  #
+#  # Wrapped (object bytes store by remote web server).
+#  #
+#  
+#  def test_2010_wrapped_A_delete_all_objects(self):
+#    self.A_delete_all_objects()
+#    
+#  def test_2010_wrapped_B_object_collection_is_empty(self):
+#    self.B_object_collection_is_empty()
+#  
+#  def test_2010_wrapped_C_create_objects(self):
+#    '''Wrapped: Populate MN with set of test objects (Remote).
+#    '''
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+#    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
+#      # Get name of corresponding object and open it.
+#      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+#      object_file = open(object_path, 'r')
+#  
+#      # The pid is stored in the sysmeta.
+#      sysmeta_file = open(sysmeta_path, 'r')
+#      sysmeta_xml = sysmeta_file.read()
+#      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
+#          
+#      # This test requires the objects to also be available on a web server
+#      # (http://localhost:80/test_client_objects by default). This simulates
+#      # remote storage of the objects.
+#
+#      # To create a valid URL, we must quote the pid twice. First, so
+#      # that the URL will match what's on disk and then again so that the
+#      # quoting survives being passed to the web server.
+#      sciobj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(sysmeta_obj.identifier, ''), ''))
+#      scimeta_abs_url = urlparse.urljoin(self.opts.obj_url, sciobj_url)
+#    
+#      # To test the MIME Multipart poster, we provide the Sci object as a file
+#      # and the SysMeta as a string.
+#      client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file,
+#                    sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
+#    
+#  def test_2010_wrapped_D_object_collection_is_populated(self):
+#    self.D_object_collection_is_populated()
+#
+#  def test_2020_wrapped_A_clear_event_log(self):
+#    self.A_clear_event_log()
+#  
+#  def test_2020_wrapped_B_event_log_is_empty(self):
+#    self.B_event_log_is_empty()
+#
+#  def test_2020_wrapped_C_inject_event_log(self):
+#    self.C_inject_event_log()
+#
+#  def test_2020_wrapped_D_event_log_is_populated(self):
+#    self.D_event_log_is_populated()
+#
+#  def test_2030_wrapped_compare_byte_by_byte(self):
+#    self.compare_byte_by_byte()
+#       
+#  def test_2040_wrapped_object_properties(self):
+#    self.object_properties()
+#
+#  def test_2100_wrapped_slicing_1(self):
+#    self.slicing_1()
+#
+#  def test_2110_wrapped_slicing_2(self):
+#    self.slicing_2()
+#
+#  def test_2120_wrapped_slicing_3(self):
+#    self.slicing_3()
+#
+#  def test_2130_wrapped_slicing_4(self):
+#    self.slicing_4()
+#
+#  def test_2140_wrapped_date_range_1(self):
+#    self.date_range_1()
+#
+#  def test_2150_wrapped_date_range_2(self):
+#    self.date_range_2()
+#
+#  def test_2160_wrapped_date_range_3(self):
+#    self.date_range_3()
+#
+#  def test_2170_wrapped_date_range_4(self):
+#    self.date_range_4()
+#
+#  def test_2180_wrapped_get_object_count(self):
+#    self.get_object_count()
+#
+#  def test_2190_wrapped_get_object_by_invalid_pid(self):
+#    self.get_object_by_invalid_pid()
+#
+#  def test_2200_wrapped_get_object_by_valid_pid(self):
+#    self.get_object_by_valid_pid()
+#
+#  def test_2210_wrapped_get_sysmeta_by_invalid_pid(self):
+#    self.get_sysmeta_by_invalid_pid()
+#
+#  def test_2220_wrapped_get_sysmeta_by_valid_pid(self):
+#    self.get_sysmeta_by_valid_pid()
+#
+#  def test_2230_wrapped_xml_validation(self):
+#    self.xml_validation()
+#
+#  def test_2240_wrapped_pxby_objectlist_xml(self):
+#    self.pxby_objectlist_xml()
+#  
+#  def test_2250_wrapped_pxby_objectlist_json(self):
+#    self.pxby_objectlist_json()
+#
+##  def test_1260_wrapped_pxby_objectlist_rdf_xml(self):
+##    self.pxby_objectlist_rdf_xml()
+#    
+#  def test_2270_wrapped_pxby_objectlist_csv(self):
+#    self.pxby_objectlist_csv()
+#
+#  def test_2280_wrapped_monitor_object_cumulative_no_filter(self):
+#    self.monitor_object_cumulative_no_filter()
+#
+#  def test_2281_wrapped_monitor_object_cumulative_filter_by_time(self):
+#    self.monitor_object_cumulative_filter_by_time()
+#
+#  def test_2282_wrapped_monitor_object_cumulative_filter_by_format(self):
+#    self.monitor_object_cumulative_filter_by_format()
+#
+#  def test_2283_wrapped_monitor_object_cumulative_filter_by_time_and_format(self):
+#    self.monitor_object_cumulative_filter_by_time_and_format()
+#
+#  def test_2284_wrapped_monitor_object_cumulative_filter_by_pid(self):
+#    self.monitor_object_cumulative_filter_by_pid()
+#  
+#  def test_2285_wrapped_monitor_object_daily_no_filter(self):
+#    self.monitor_object_daily_no_filter()
+#
+#  def test_2286_wrapped_monitor_object_daily_filter_by_time(self):
+#    self.monitor_object_daily_filter_by_time()
+#
+#  def test_2287_wrapped_monitor_object_daily_filter_by_format(self):
+#    self.monitor_object_daily_filter_by_format()
+#
+#  def test_2288_wrapped_monitor_object_daily_filter_by_time_and_format(self):
+#    self.monitor_object_daily_filter_by_time_and_format()
+#
+#  def test_2289_wrapped_monitor_object_daily_filter_by_pid(self):
+#    self.monitor_object_daily_filter_by_pid()
+#
+#  def test_2290_wrapped_monitor_event_cumulative_no_filter(self):
+#    self.monitor_event_cumulative_no_filter()
+#
+#  def test_2291_wrapped_monitor_event_cumulative_filter_by_time(self):
+#    self.monitor_event_cumulative_filter_by_time()
+#
+#  def test_2292_wrapped_monitor_event_cumulative_filter_by_event_type(self):
+#    self.monitor_event_cumulative_filter_by_event_type()
+#
+#  def test_2293_wrapped_monitor_event_cumulative_filter_by_object_format(self):
+#    self.monitor_event_cumulative_filter_by_object_format()
+#
+#  def test_2294_wrapped_monitor_event_cumulative_filter_by_principal(self):
+#    self.monitor_event_cumulative_filter_by_principal()
+#
+#  def test_2295_wrapped_monitor_event_daily_no_filter(self):
+#    self.monitor_event_daily_no_filter()
+#
+#  def test_2296_wrapped_monitor_event_daily_filter_by_time_1(self):
+#    self.monitor_event_daily_filter_by_time_1()
+#
+#  def test_2296_wrapped_monitor_event_daily_filter_by_time_2(self):
+#    self.monitor_event_daily_filter_by_time_2()
+#
+#  def test_2296_wrapped_monitor_event_daily_filter_by_time_3(self):
+#    self.monitor_event_daily_filter_by_time_3()
+#
+#  def test_2297_wrapped_monitor_event_daily_filter_by_event_type(self):
+#    self.monitor_event_daily_filter_by_event_type()
+#
+#  def test_2298_wrapped_monitor_event_daily_filter_by_object_format(self):
+#    self.monitor_event_daily_filter_by_object_format()
+#
+#  def test_2299_wrapped_monitor_event_daily_filter_by_principal(self):
+#    self.monitor_event_daily_filter_by_principal()
+#  
+##  def test_2330_wrapped_delete(self):
+##    self.delete_test()
+##
+##  def test_2340_wrapped_describe(self):
+##    self.describe()
+##
+##  def test_2350_wrapped_replication(self):
+##    self.replication(self)
+##
+##  def test_2360_wrapped_unicode_test_1(self):
+##    self.unicode_test_1()
 
 def main():
   log_setup()

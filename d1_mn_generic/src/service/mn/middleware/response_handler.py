@@ -481,7 +481,7 @@ class response_handler():
     else:
       response = view_result
 
-    # For debugging, if pretty printed outout was requested, we force the
+    # For debugging, if pretty printed output was requested, we force the
     # content type to text. This causes the browser to not try to format
     # the output in any way.
     if settings.GMN_DEBUG == True and 'pretty' in request.REQUEST:
