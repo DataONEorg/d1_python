@@ -84,6 +84,5 @@ class AccessPolicy(serialization_base.Serialization):
   def deserialize_xml(self, doc):
     '''Deserialize AccessPolicy from XML.
     '''
-    print doc
     self.access_policy = d1_common.types.generated.dataoneTypes.CreateFromDocument(doc)
     return self.access_policy

@@ -38,16 +38,9 @@ import datetime
 from d1_common import xmlrunner
 from d1_common.types import accesspolicy_serialization
 
-EG_ACCESSPOLICY_GMN = u"""<?xml version="1.0" encoding="UTF-8"?>
-<systemMetadata xmlns="http://ns.dataone.org/service/types/0.6.1"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/0.6.1">
-    <identifier xmlns="">identifier0</identifier>
-    <objectFormat xmlns="">eml://ecoinformatics.org/eml-2.0.0</objectFormat>
-    <size xmlns="">-1073741773</size>
-    <submitter xmlns="">submitter0</submitter>
-    <rightsHolder xmlns="">rightsHolder0</rightsHolder>
-    <accessPolicy xmlns="">
+EG_ACCESSPOLICY_GMN = \
+u"""<?xml version="1.0" encoding="UTF-8"?>
+    <ns1:accessPolicy xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
         <allow>
             <principal>principal0</principal>
             <principal>principal1</principal>
@@ -64,13 +57,8 @@ EG_ACCESSPOLICY_GMN = u"""<?xml version="1.0" encoding="UTF-8"?>
             <resource>resource2</resource>
             <resource>resource3</resource>
         </allow>
-    </accessPolicy>
-    <checksum xmlns="" algorithm="SHA-1">checksum0</checksum>
-    <dateUploaded xmlns="">2006-05-04T18:13:51.0Z</dateUploaded>
-    <dateSysMetadataModified xmlns="">2006-05-04T18:13:51.0Z</dateSysMetadataModified>
-    <originMemberNode xmlns="">originMemberNode0</originMemberNode>
-    <authoritativeMemberNode xmlns="">authoritativeMemberNode0</authoritativeMemberNode>
-</systemMetadata>"""
+    </ns1:accessPolicy>
+"""
 
 
 class TestAccessPolicy(unittest.TestCase):
