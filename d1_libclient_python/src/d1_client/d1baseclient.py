@@ -41,6 +41,7 @@ from d1_common.types import systemmetadata
 from d1_common.types import objectlist_serialization
 from d1_common.types import logrecords_serialization
 from d1_common.types import nodelist_serialization
+from d1_common.types import accesspolicy_serialization
 from d1_common.types import exceptions
 
 #=============================================================================
@@ -92,19 +93,25 @@ class DataONEBaseClient(restclient.RESTClient):
       'ping': u'monitor/ping',
       'status': u'monitor/status',
       'listnodes': u'node',
+      'setaccess': u'accessRules_put/%(pid)s',
     }
     self.lastresponse = None
 
   def _getResponse(self, conn):
     '''Returns the HTTP response object and sets self.lastresponse. 
     
-    If response status is not OK, then an attempt to raise a DataONE exception 
-    is made.
+    If response status is not OK, then a DataONE exception is raised.
     '''
     res = conn.getresponse()
+    # TODO: Remove lastresponse.
     self.lastresponse = res
+    # If server returned a non-error status code, return the response body,
+    # which contains a serialized DataONE type.
     if self.isHttpStatusOK(res.status):
       return res
+    # Server returned error. Together with an error, the server is required to
+    # return a serialized DataONEException in the response. Attempt to
+    # deserialize the response and raise the corresponding DataONEException.
     res.body = res.read()
     serializer = exception_serialization.DataONEExceptionSerialization(None)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
@@ -113,22 +120,28 @@ class DataONEBaseClient(restclient.RESTClient):
         raise (serializer.deserialize_xml(res.body))
       elif format.startswith(const.MIMETYPE_JSON):
         raise (serializer.deserialize_json(res.body))
-      # Experimental: Return invalid response wrapped in ServiceFailure
-      # exception.
-      #      raise exceptions.ServiceFailure(
-      #        0, # detailCode
-      #        'No DataONE exception in response. content-type = {0}'.format(format),
-      #        res.body
-      #      )
-      raise Exception(u"No DataONE exception in response. " + \
-                      u"content-type = %s" % format)
+      else:
+        raise ValueError('Invalid mimetype: {0}'.format(format))
     except ValueError, e:
-      msg = u"Invalid error message returned. " + \
-            u"Deserializing raised: %s" % unicode(e)
-      logging.error(msg)
-      raise HTTPException(msg)
-    #should never reach here
-    return None
+      # Deserializing the response to a DataONEException failed. Return the
+      # invalid response wrapped in ServiceFailure exception.
+      description = []
+      description.append(u'Server returned error without valid DataONEException.')
+      description.append(
+        u'Attempt to deserialize DataONEException raised: {0}'.format(
+          unicode(
+            e
+          )
+        )
+      )
+      description.append(u'Content-type: {0}'.format(format))
+      description = u'\n'.join(description)
+      logging.error(description)
+
+      raise exceptions.ServiceFailure(0, # detailCode
+                                      description,
+                                      res.body)
+    # TODO: Catch all exceptions deserialization may raise.
 
   def _getAuthHeader(self, token):
     if token is not None:
@@ -318,11 +331,6 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     raise Exception('Not Implemented')
 
-  def setAccess(self, token, pid, accessPolicy):
-    '''
-    '''
-    raise Exception('Not Implemented')
-
   def listNodesResponse(self):
     url = self.RESTResourceURL('listnodes')
     response = self.GET(url)
@@ -333,3 +341,41 @@ class DataONEBaseClient(restclient.RESTClient):
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
     return deser.deserialize(res.read(), format)
+
+  # ----------------------------------------------------------------------------  
+  # Authentication and authorization.
+  # ----------------------------------------------------------------------------
+
+  def setAccessResponse(self, cert, pid, accessPolicy, vendor_specific=None):
+    '''MN_auth.setAccess(cert, pid, accessPolicy) -> Boolean
+
+    Sets the access permissions for an object identified by pid.
+    :param token: Authentication token
+    :param pid: Identifier
+    :param accessPolicy:
+    :type accessPolicy: AccessPolicy object
+    :returns: Success
+    :return type: Boolean
+    '''
+    # Serialize AccessPolicy object to XML.
+    access_policy_serializer = accesspolicy_serialization.AccessPolicy()
+    access_policy_serializer.access_policy = accessPolicy
+    accesspolicy_doc, content_type = \
+      access_policy_serializer.serialize('text/xml')
+    # PUT.
+    url = self.RESTResourceURL('setaccess', pid=pid)
+    self.logger.info("URL = %s" % url)
+    headers = self._getAuthHeader(cert)
+    if vendor_specific is None:
+      vendor_specific = {}
+    headers.update(vendor_specific)
+    print accesspolicy_doc
+    files = [('accesspolicy', 'content.bin', accesspolicy_doc), ]
+    # TODO: Change to PUT when Django PUT issue if fixed.
+    return self.POST(url, files=files, headers=headers)
+
+  def setAccess(self, cert, pid, accessPolicy):
+    '''
+    '''
+    response = self.setAccessResponse(cert, pid, accessPolicy)
+    return self.isHttpStatusOK(response.status)
