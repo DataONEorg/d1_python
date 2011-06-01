@@ -75,16 +75,16 @@ import settings
 
 class exception_handler():
   def process_exception(self, request, exception):
-    # An exception within this function causes a generic 500 to be returned.
+    # An exception within this function causes a Django exception page
+    # to be returned if debugging is on and a generic 500 otherwise.
 
     # Log the exception.
     util.log_exception(10)
 
-    # When debugging from a web browser, we want to return None to get Django's
-    # extremely useful exception page.
-    if settings.GMN_DEBUG == True and request.META['HTTP_USER_AGENT'
-                                                   ] != d1_common.const.USER_AGENT:
-      return None
+    #    # When debugging from a web browser, we want to return None to get Django's
+    #    # extremely useful exception page.
+    #    if settings.GMN_DEBUG == True and request.META['HTTP_USER_AGENT'] != d1_common.const.USER_AGENT:
+    #      return None
 
     # If the exception is a DataONE exception, we serialize it out.
     if isinstance(exception, d1_common.types.exceptions.DataONEException):

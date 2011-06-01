@@ -55,7 +55,6 @@ def log(pid, event, request, timestamp=None):
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
   principal = request.META['REMOTE_ADDR']
-  member_node = settings.MN_NAME
 
   # We support logging events that are not associated with an object.
   object_row = None
@@ -74,7 +73,6 @@ def log(pid, event, request, timestamp=None):
   event_log_row.set_ip_address(ip_address)
   event_log_row.set_user_agent(user_agent)
   event_log_row.set_principal(principal)
-  event_log_row.set_member_node(member_node)
 
   event_log_row.save()
 

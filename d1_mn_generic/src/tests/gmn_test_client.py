@@ -39,8 +39,15 @@ import d1_client.mnclient
 
 
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
-  def __init__(self, baseurl, defaultHeaders={}, timeout=1000, keyfile=None,
-               certfile=None, strictHttps=True):
+  def __init__(
+    self,
+    baseurl,
+    defaultHeaders=None,
+    timeout=1000,
+    keyfile=None,
+    certfile=None,
+    strictHttps=True
+  ):
 
     d1_client.mnclient.MemberNodeClient.__init__(
       self,

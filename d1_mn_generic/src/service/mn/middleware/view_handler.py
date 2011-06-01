@@ -72,6 +72,10 @@ class view_handler():
     )
 
     if settings.GMN_DEBUG == True:
+      # For simulating an HTTPS connection with client authentication when
+      # debugging via regular HTTP, we inject certificate variables here.
+      if 'SSL_CLIENT_S_DN' not in request.META:
+        request.META['SSL_CLIENT_S_DN'] = 'test_dn_1'
       # For debugging, simulate an accept header with a regular parameter.
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']

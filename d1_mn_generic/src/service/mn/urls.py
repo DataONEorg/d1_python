@@ -80,6 +80,7 @@ urlpatterns = patterns(
   (r'^test_delete_all_objects/?$', 'test_delete_all_objects'),
   (r'^test_delete_event_log/?$', 'test_delete_event_log'),
   (r'^test_inject_event_log/?$', 'test_inject_event_log'),
+  (r'^test_cert/?$', 'test_cert'),
 
   # Admin.
   (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),

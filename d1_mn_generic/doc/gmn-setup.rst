@@ -55,7 +55,7 @@ System overview
   object from local storage in standalone mode or uses the URL stored in its
   database to retrieve the object from the adaptee's storage facilities and
   streams it out, acting as a streaming proxy in adapter mode.
-  
+
 
 System requirements
 ===================
@@ -124,11 +124,15 @@ Install dependencies
 
 Packages::
 
-  $ sudo apt-get install gcc apache2-threaded-dev openssh-server libxml2-dev libxslt-dev python-dev python-django libapache2-mod-wsgi python-setuptools python-dateutil apache2 sqlite3 subversion
-  
+  $ sudo apt-get install gcc apache2-threaded-dev openssh-server libxml2-dev \
+  libxslt-dev python-dev python-django libapache2-mod-wsgi python-setuptools \
+  python-dateutil apache2 sqlite3 subversion
+
 Python dependencies::
 
   $ sudo easy_install iso8601 lxml
+
+  minixsv
 
 PyXB XML bindings generator::
 
@@ -138,45 +142,36 @@ PyXB XML bindings generator::
   $ sudo python setup.py install
 
 
-Install GMN DAAC
-----------------
+DataONE dependencies
+````````````````````
 
-The distribution of GMN is SVN based.
-
-Create and/or enter the folder where you wish to install GMN DAAC::
-
-  $ cd /var/local
-
-Download the GMN DAAC "package"::
-
-  $ sudo svn co https://repository.dataone.org/software/python_products/mn mn
-
-Enter the DataONE Common library for Python::
-
-  $ cd mn/d1_common
-
-Install the library::
-
-  $ sudo python setup.py develop
-  
-Enter the DataONE Client library for Python::
-
-  $ cd ../d1_libclient
-
-Install the library::
-
-  $ sudo python setup.py develop
+Install the d1_common_python and d1_client_python DataONE libraries by following
+the installation instructions in the documentation for those libraries.
 
 
 Install the GMN service
 -----------------------
 
+The distribution of GMN is SVN based.
+
+Create and/or enter the folder where you wish to install GMN DAAC::
+
+  $ cd /var/local/dataone
+
+Download the GMN DAAC "package"::
+
+  $ sudo svn co https://repository.dataone.org/software/python_products/mn gmn
+
+gmn.cfg.template had that in there and there wasn't a gmn.cfg file, so I cp'd
+the file and modified it, only touching the identifier and name as it says to in
+the build docs
+
 Edit the gmn.cfg file and change *name* and *identifier* to values that are
 unique for this instance of GMN::
 
-  $ cd ../mn_generic/service
+  $ cd gmn/service
   $ vi gmn.cfg
-  
+
 Setup GMN::
 
   $ sudo ../install/config.py
@@ -190,6 +185,40 @@ config.py performs the following tasks:
 * Update GMN version from SVN revision number.
 
 
+Installation on CentOS
+----------------------
+
+CentOS requires Python 2.4 while Django and GMN requires Python 2.6. These
+requirements are met by installing the two versions of Python side by side and
+making sure that Python 2.6 is used by Django and the GMN scripts.
+
+Install Python 2.6
+``````````````````
+
+Instructions from
+http://markkoberlein.com/getting-python-26-with-django-11-together-on::
+
+  # ./configure --prefix=/opt/python2.6 --with-threads --enable-shared --with-zlib=/usr/include
+  # ln -s /opt/python2.6/lib/libpython2.6.so /usr/lib 
+  # ln -s /opt/python2.6/lib/libpython2.6.so.1.0 /usr/lib
+  # ln -s /opt/python2.6/bin/python /usr/local/bin/python
+  # ln -s /opt/python2.6/bin/python /usr/bin/python2.6 
+  # ln -s /opt/python2.6/lib/python2.6.so /opt/python2.6/lib/python2.6/config/
+  # /sbin/ldconfig -v 
+
+The ./configure line specifies /opt/python2.6 as the install directory.
+Soft links to /opt/python2.6 to are put in /usr/lib and /usr/local/bin.
+
+ldconfig updates the links to the shared libraries.
+
+- Wiped out that 2.6 installation and reinstalled from Chris Lea's repo so that yum manages the installation instead of me
+now the executable is /usr/bin/python26
+
+- modified the *.py files that execute other scripts to call python26
+
+- Run the GMN install script with: sudo python26 ../install/config.py
+
+
 Apache configuration
 --------------------
 
@@ -201,27 +230,27 @@ match your configuration.
 * Set up mod_wsgi:
 
   * Create a file::
-  
+
       /etc/apache2/mods-available/wsgi.load
-      
+
     with the following contents::
-  
+
       LoadModule wsgi_module /usr/lib/apache2/modules/mod_wsgi.so
-  
+
   * Enable the wsgi module::
-  
+
     # a2enmod wsgi
 
 * Set up GMN in a new or existing VirtualHost section. An example site file
   is included below. It is a modified version of the default site file at::
-  
+
     /etc/apache2/sites-available/default
 
   Note that the settings for AllowEncodedSlashes and AcceptPathInfo that are
   included at the top of the VirtualHost section are required for GMN to
   function properly. Also see `Apache Configuration for DataONE Services`_ for
   other important information about these settings.
-  
+
 * Restart Apache::
 
     apache2ctl restart
@@ -231,23 +260,23 @@ Example default site file::
   <VirtualHost *:80>
     AllowEncodedSlashes On
     AcceptPathInfo On
-  
+
     ServerAdmin dahl@unm.edu
-  
+
     DocumentRoot /var/www
-  
+
     <Directory />
       Options FollowSymLinks
       AllowOverride None
     </Directory>
-  
+
     <Directory /var/www/>
       Options Indexes FollowSymLinks MultiViews
       AllowOverride None
       Order allow,deny
       allow from all
     </Directory>
-  
+
     ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
     <Directory "/usr/lib/cgi-bin">
       AllowOverride None
@@ -255,15 +284,15 @@ Example default site file::
       Order allow,deny
       Allow from all
     </Directory>
-  
+
     ErrorLog /var/log/apache2/error.log
-  
+
     # Possible values include: debug, info, notice, warn, error, crit,
     # alert, emerg.
     LogLevel debug
-  
+
     CustomLog /var/log/apache2/access.log combined
-  
+
       Alias /doc/ "/usr/share/doc/"
       <Directory "/usr/share/doc/">
           Options Indexes MultiViews FollowSymLinks
@@ -272,21 +301,20 @@ Example default site file::
           Deny from all
           Allow from 127.0.0.0/255.0.0.0 ::1/128
       </Directory>
-  
+
     # Generic Member Node (GMN)
-  
+
     WSGIScriptAlias /mn /var/local/mn/mn_generic/service/gmn.wsgi
-  
+
     DocumentRoot /var/local/mn/mn_generic/service
-  
+
     <Directory /var/local/mn/mn_generic/service>
       WSGIApplicationGroup %{GLOBAL}
       Order deny,allow
       Allow from all
     </Directory>
-  
+
   </VirtualHost>
 
 .. _`Apache Configuration for DataONE Services`:
   http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration
-

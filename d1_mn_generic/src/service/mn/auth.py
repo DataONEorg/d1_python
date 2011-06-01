@@ -23,7 +23,7 @@
 ===========
 
 :Synopsis:
-  Authentication. For now, based on IP only.
+  Authentication and authorization. 
 
 .. moduleauthor:: Roger Dahl
 '''
@@ -45,53 +45,86 @@ import d1_common.types.exceptions
 import settings
 import sys_log
 import util
+import models
+
+# How to use session object
+#if 'cn_user' not in request.session.keys()
+#request.session['cn_user'] = True
+
+# ------------------------------------------------------------------------------
+# Set permissions.
+# ------------------------------------------------------------------------------
 
 
-def cn_check_required(f):
-  '''Function decorator that checks if the IP address of the client matches a
-  known CN IP and blocks acccess to the decorated function if there is no match.
-  
-  For now, it's not really necessary to tap into Django's authentication system.
-  We could just check the IP each time, but we set up a session because it'll
-  come in handy shortly.
-  
-  Raises d1_common.types.exceptions.NotAuthorized (errorCode=401, detailCode=1040)
+def set_access_rules(access_policy):
+  # This function assumes that TransactionMiddleware is enabled.
+  # 'django.middleware.transaction.TransactionMiddleware'
+
+  # Iterate over AccessPolicy and create db entries.
+  for allow_rule in access_policy.allow:
+    for principal in allow_rule.principal:
+      for resource in allow_rule.resource:
+        # TODO: Check if principal has CHANGEPERMISSION on resource.
+
+        # Remove any existing permissions for this principal on this resource.
+        # Because TransactionMiddleware is enabled, the temporary absence of
+        # permissions is hidden in a transaction.
+        #
+        # The deletes are cascaded.
+        #
+        # TODO: Because Django does not (as of 1.3) support indexes that cover
+        # multiple fields, this filter will be slow. When Django gets support
+        # for indexes that cover multiple fields, create an index for the
+        # combination of the two fields in the Permission table.
+        #
+        # http://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys
+        models.Permission.objects.filter(
+          object__pid=resource.value(),
+          principal__distinguished_name=principal
+        ).delete()
+        # Add the new permissions.
+        for permission in allow_rule.permission:
+          # Permission does not exist. Create it.
+          permission_row = models.Permission()
+          permission_row.set_permission(resource.value(), principal, permission)
+          permission_row.save()
+
+# ------------------------------------------------------------------------------
+# Check permissions.
+# ------------------------------------------------------------------------------
+
+
+def check_permission(principal, action, resource):
+  '''Check if principal is allowed to perform action on resource.
+  :param principal:
+  :type principal:
+  :param action:
+  :type action:
+  :param resource:
+  :type resource:
+  :return: NoneType or raises.
+  '''
+  if not models.Permission.objects.filter(
+    principal__distinguished_name=principal,
+    action__action=action,
+    object__pid=resource
+  ).exists():
+    raise d1_common.types.exceptions.NotAuthorized(
+      0, '{0} on {1} denied for {2} or object does not exist'.format(
+        action, resource, principal
+      ), resource
+    )
+
+
+# Anyone.
+def permission_public(f):
+  '''Function decorator that checks if public principal is allowed to perform
+  action.
   '''
 
   def wrap(request, *args, **kwargs):
-    # Check if we already have a session for this user.
-    if 'cn_user' not in request.session.keys() and settings.ENABLE_IP_AUTH == True:
-      sys_log.info(
-        'client({0}): Session not found for user at IP'.format(
-          util.request_to_string(
-            request
-          )
-        )
-      )
-      # Check if IP belongs to a CN.
-      if request.META['REMOTE_ADDR'] in settings.CN_IP:
-        # This is a valid IP, so we create a session object.
-        sys_log.info(
-          'client({0}): IP is valid CN IP'.format(
-            util.request_to_string(
-              request
-            )
-          )
-        )
-        request.session['cn_user'] = True
-      else:
-        raise d1_common.types.exceptions.NotAuthorized(
-          0, 'Attempted to access functionality only available to Coordinating Nodes'
-        )
-    else:
-      sys_log.info(
-        'client({0}): User has session'.format(
-          util.request_to_string(
-            request
-          )
-        )
-      )
-
+    # Run function without any checks.
+    # TODO: Add check when certificate support is in place.
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -100,46 +133,62 @@ def cn_check_required(f):
   return wrap
 
 
-def mn_check_required(f):
-  '''Function decorator that checks if the IP address of the client matches a
-  known MN IP and blocks acccess to the decorated function if there is no match.
-  :return:
+# Anyone with read permission for the given object.
+def permission_read(f):
+  '''Function decorator that checks if principal is allowed to read resource.
   '''
 
   def wrap(request, *args, **kwargs):
-    # Check if we already have a session for this user.
-    if 'mn_user' not in request.session.keys() and settings.ENABLE_IP_AUTH == True:
-      sys_log.info(
-        'client({0}): Session not found for user at IP'.format(
-          util.request_to_string(
-            request
-          )
-        )
-      )
-      # Check if IP belongs to a MN.
-      if request.META['REMOTE_ADDR'] in settings.MN_IP:
-        # This is a valid IP, so we create a session object.
-        sys_log.info(
-          'client({0}): IP is valid MN IP'.format(
-            util.request_to_string(
-              request
-            )
-          )
-        )
-        request.session['mn_user'] = True
-      else:
-        raise d1_common.types.exceptions.NotAuthorized(
-          0, 'Attempted to access functionality only available to Member Nodes.'
-        )
-    else:
-      sys_log.info(
-        'client({0}): User has session'.format(
-          util.request_to_string(
-            request
-          )
-        )
-      )
+    # For checking that access is correctly denied.
+    # TODO: Improve this when I have a set of test certificates.
+    check_permission('anotheruser', 'read', args[0])
+    #check_permission(request.META['SSL_CLIENT_S_DN'], 'read', args[0])
+    return f(request, *args, **kwargs)
 
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+
+  return wrap
+
+
+def permission_update(f):
+  '''Function decorator that checks if principal is allowed to update resource.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    #check_permission(principal, 'update', resource)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+
+  return wrap
+
+
+def permission_change_permissions(f):
+  '''Function decorator that checks if principal is allowed to change
+  permissions on resource.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    #check_permission(principal, 'read', resource)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+
+  return wrap
+
+
+# Only D1 infrastructure.
+def permission_trusted(f):
+  '''Function decorator that checks if principal is a trusted DataONE
+  infrastructure component.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    # Run function without any checks.
+    # TODO: Add check when certificate support is in place.
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__

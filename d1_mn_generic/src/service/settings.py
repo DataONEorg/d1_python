@@ -32,37 +32,24 @@
 import os
 import sys
 
-# Member Node configuration.
-
-ENABLE_IP_AUTH = False
-
-# Enable functionality that should only be accessible during testing and debugging.
-GMN_DEBUG = True
-
-MN_NAME = 'dryad_mn'
-
-MN_IP = [
-  '68.35.3.230', # Roger
-  '74.107.75.34', # Dave
-  '152.3.105.16', # Karya
-  '127.0.0.1' # localhost
-]
-
-# CN IPs.
-CN_IP = [
-  '68.35.3.230', # Roger
-  '74.107.75.34', # Dave
-  '152.3.105.16', # Karya
-  '127.0.0.1', # localhost
-]
-
-# Django settings for service project.
-
 # Discover the path of this module
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
+# Member Node configuration.
+
+# Enable functionality that should only be accessible during testing and
+# debugging.
+GMN_DEBUG = True
+
+# Enable Django debug mode. Causes Django to return a page with extensive
+# debug information if a bug is encountered while servicing a request.
 DEBUG = True
+
+# TODO: Check this setting.
 TEMPLATE_DEBUG = DEBUG
+
+# Only set cookies when running through SSL.
+SESSION_COOKIE_SECURE = True
 
 ADMINS = (
   # ('roger', 'dahl@unm.edu'),
@@ -70,6 +57,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# Database setup.
 DATABASE_ENGINE = 'sqlite3' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = _here('gmn.sq3')
 DATABASE_USER = '' # Not used with sqlite3.
@@ -77,12 +65,9 @@ DATABASE_PASSWORD = '' # Not used with sqlite3.
 DATABASE_HOST = '' # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '' # Set to empty string for default. Not used with sqlite3.
 
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
-#TIME_ZONE = 'America/Chicago'
+# GMN must run in the UTC time zone. This is not compatible with running
+# Django under Windows because under Windows, Django's time zone must be set
+# to match the system time zone.
 TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
@@ -124,6 +109,10 @@ MIDDLEWARE_CLASSES = (
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.contrib.auth.middleware.AuthenticationMiddleware',
   #'django.middleware.profile.ProfileMiddleware',
+  # TransactionMiddleware causes each view to be wrapped in an implicit
+  # transaction. The transaction is automatically committed on successfull
+  # return from the view and rolled back otherwise.
+  'django.middleware.transaction.TransactionMiddleware',
   'service.mn.middleware.request_handler.request_handler',
   'service.mn.middleware.exception_handler.exception_handler',
   'service.mn.middleware.response_handler.response_handler',
@@ -153,6 +142,7 @@ INSTALLED_APPS = (
   'django.contrib.admindocs',
 )
 
+# TODO: May be able to simplify url regexes by turning this on.
 APPEND_SLASH = False
 
 LOG_PATH = _here('./gmn.log')

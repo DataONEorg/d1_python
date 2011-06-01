@@ -90,9 +90,9 @@ class Object(models.Model):
   def save_unique(self):
     '''If attempting to save an object that has the same pid and/or url as an
     old object, we delete the old object before saving the new.
-    :return:
+    TODO: This makes debugging easier but will need change when semantics of
+    update and delete are finalized.
     '''
-
     try:
       me = Object.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
     except IndexError:
@@ -136,7 +136,6 @@ class Event_log(models.Model):
   user_agent = models.ForeignKey(Event_log_user_agent, db_index=True)
   principal = models.ForeignKey(Event_log_principal, db_index=True)
   date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
-  member_node = models.ForeignKey(Event_log_member_node, db_index=True)
 
   def set_event(self, event_string):
     ''':param:
@@ -171,16 +170,8 @@ class Event_log(models.Model):
     self.principal = Event_log_principal.objects.get_or_create(principal=principal_string
                                                                )[0]
 
-  def set_member_node(self, member_node_string):
-    ''':param:
-    :return:
-    '''
-    self.member_node = Event_log_member_node.objects.get_or_create(
-      member_node=member_node_string
-    )[0]
 
-
-# This is easy to solve with a simple tiny wrapper:
+  # This is easy to solve with a simple tiny wrapper:
 class Callable:
   def __init__(self, anycallable):
     self.__call__ = anycallable

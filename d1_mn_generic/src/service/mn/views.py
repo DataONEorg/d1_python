@@ -111,7 +111,7 @@ def session(request):
   return HttpResponse('<sessionId>bogusID</sessionId>')
 
 
-@auth.cn_check_required
+# TODO: auth
 def object_collection(request):
   '''
   0.3 MN_replication.listObjects() GET    /object
@@ -172,7 +172,6 @@ def object_collection_get(request, head):
 # CRUD interface.
 # ------------------------------------------------------------------------------  
 
-@auth.cn_check_required
 def object_pid(request, pid):
   '''
   MN_crud.get()      GET    /object/<pid>
@@ -204,6 +203,7 @@ def object_pid(request, pid):
   return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
 
 
+@auth.permission_update
 def object_pid_put_workaround(request, pid):
   '''
   MN_crud.update()   PUT    /object/<pid>
@@ -214,6 +214,7 @@ def object_pid_put_workaround(request, pid):
   return HttpResponseNotAllowed(['POST'])
 
 
+@auth.permission_read
 def object_pid_get(request, pid, head):
   '''
   Retrieve an object identified by pid from the node.
@@ -250,15 +251,15 @@ def object_pid_get(request, pid, head):
 
   if url_split.scheme == 'http':
     sys_log.info('pid({0}) url({1}): Object is wrapped. Proxying from original location'.format(pid, sciobj.url))
-    return object_pid_get_remote(request, response, pid, sciobj.url, url_split)
+    return _object_pid_get_remote(request, response, pid, sciobj.url, url_split)
   elif url_split.scheme == 'file':
     sys_log.info('pid({0}) url({1}): Object is managed. Streaming from disk'.format(pid, sciobj.url))
-    return object_pid_get_local(request, response, pid)
+    return _object_pid_get_local(request, response, pid)
   else:
     raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
 
-def object_pid_get_remote(request, response, pid, url, url_split):
+def _object_pid_get_remote(request, response, pid, url, url_split):
   # Handle 302 Found.  
   try:
     conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
@@ -293,7 +294,7 @@ def object_pid_get_remote(request, response, pid, url, url_split):
   return response
 
 
-def object_pid_get_local(request, response, pid):
+def _object_pid_get_local(request, response, pid):
   file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
   try:
     file = open(file_in_path, 'rb')
@@ -308,6 +309,12 @@ def object_pid_get_local(request, response, pid):
   return response
 
 
+
+
+
+
+
+@auth.permission_update
 def object_pid_post(request, pid):
   '''
   MN_crud.create(token, pid, object, sysmeta) -> Identifier
@@ -319,6 +326,19 @@ def object_pid_post(request, pid):
   util.validate_post(request, (#('header', 'token'),
                                ('file', 'object'),
                                ('file', 'sysmeta')))
+
+#  # Validate and deserialize accessPolicy.
+#  access_policy_str = request.FILES['accesspolicy'].read()
+#
+#  access_policy_serializer = \
+#    d1_common.types.accesspolicy_serialization.AccessPolicy()
+#
+#  try:
+#    access_policy = access_policy_serializer.deserialize(access_policy_str)
+#  except:
+#    err = sys.exc_info()[1]
+#    raise d1_common.types.exceptions.InvalidRequest(
+#      0, 'Could not deserialize AccessPolicy: {0}'.format(str(err)))
 
   # Validate SysMeta.
   sysmeta_str = request.FILES['sysmeta'].read()
@@ -356,7 +376,7 @@ def object_pid_post(request, pid):
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(urllib.quote(pid, ''))
-    object_pid_post_store_local(request, pid)
+    _object_pid_post_store_local(request, pid)
         
   # Create database entry for object.
   object = models.Object()
@@ -376,6 +396,19 @@ def object_pid_post(request, pid):
   db_update_status.status = 'update successful'
   db_update_status.save()
   
+  # Set permissions for this object. Until the permissions are set, the object
+  # is unavailable to everyone, including the owner.
+  # TODO: This currently just demonstrates the most basic functionality of
+  # pulling the principal from the client side certificate and limiting access
+  # of the object to that principal.
+  dn = request.META['SSL_CLIENT_S_DN']
+  models.Permission.objects.filter(
+    object__pid=pid,
+    principal__distinguished_name=dn).delete()
+  permission_row = models.Permission()
+  permission_row.set_permission(pid, dn, 'read')
+  permission_row.save()
+
   # Log this object creation.
   event_log.log(pid, 'create', request)
   
@@ -385,7 +418,7 @@ def object_pid_post(request, pid):
   return HttpResponse(doc, content_type)
 
 
-def object_pid_post_store_local(request, pid):
+def _object_pid_post_store_local(request, pid):
   sys_log.info('pid({0}): Writing object to disk'.format(pid))
 
   object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
@@ -401,6 +434,7 @@ def object_pid_post_store_local(request, pid):
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
         
 
+@auth.permission_update
 def object_pid_put(request, pid):
   '''
   MN_storage.update(cert, pid, object, newPid, sysmeta) -> Identifier
@@ -450,7 +484,7 @@ def object_pid_put(request, pid):
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(urllib.quote(pid, ''))
-    object_pid_post_store_local(request, pid)
+    _object_pid_post_store_local(request, pid)
         
   # Create database entry for object.
   object = models.Object()
@@ -478,74 +512,10 @@ def object_pid_put(request, pid):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
-
-def object_pid_delete(request, pid):
-  '''
-  MN_crud.delete(token, pid) -> Identifier
-  Deletes an object from the Member Node, where the object is either a data
-  object or a science metadata object.
-  
-  TODO: This method removes all traces that the object ever existed, which is
-  likely not what we will want to do when we decide how to support object
-  deletion in DataONE.
-  '''
-
-  # Find object based on pid.
-  try:
-    sciobj = models.Object.objects.get(pid=pid)
-  except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0, 'Attempted to delete a non-existing object', pid)
-
-  # If the object is wrapped, we only delete the reference. If it's managed, we
-  # delete both the object and the reference.
-
-  try:
-    url_split = urlparse.urlparse(sciobj.url)
-  except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
-
-  if url_split.scheme == 'file':
-    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
-    try:
-      os.unlink(sciobj_path)
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not delete managed SciObj: {0}\n'.format(sciobj_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
- 
-  # At this point, the object was either managed and successfully deleted or
-  # wrapped and ignored.
-    
-  # Delete the SysMeta object.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
-  try:
-    os.unlink(sysmeta_path)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not delete SciMeta: {0}\n'.format(sysmeta_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
-
-  # Delete the DB entry.
-
-  # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
-  # CASCADE -- in other words, any objects with foreign keys pointing at the
-  # objects to be deleted will be deleted along with them.
-  sciobj.delete()
-
-  # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log. Instead, we log it in the sys_log.
-  sys_log.info('client({0}) pid({1}) Deleted object'.format(util.request_to_string(request), pid))
-
-  # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
-
 # ------------------------------------------------------------------------------  
 # Sysmeta.
 # ------------------------------------------------------------------------------  
 
-@auth.cn_check_required
 def meta_pid(request, pid):
   '''
   0.3 MN_crud.getSystemMetadata()      GET  /meta/<pid>
@@ -562,6 +532,7 @@ def meta_pid(request, pid):
   return HttpResponseNotAllowed(['GET', 'HEAD'])
   
 
+@auth.permission_read
 def meta_pid_get(request, pid, head):
   '''
   Get:
@@ -598,6 +569,7 @@ def meta_pid_get(request, pid, head):
   return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype=d1_common.const.MIMETYPE_XML)
 
 
+@auth.permission_read
 def checksum_pid(request, pid):
   '''
   '''
@@ -609,6 +581,7 @@ def checksum_pid(request, pid):
   return HttpResponseNotAllowed(['GET'])
 
 
+@auth.permission_read
 def checksum_pid_get(request, pid):
   # Find object based on pid.
   query = models.Object.objects.filter(pid=pid)
@@ -631,7 +604,7 @@ def checksum_pid_get(request, pid):
 # Event Log.
 # ------------------------------------------------------------------------------  
 
-@auth.cn_check_required
+@auth.permission_trusted
 def event_log_view(request):
   '''
   0.3 MN_crud.getLogRecords()      GET  /log
@@ -647,6 +620,7 @@ def event_log_view(request):
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
 
+@auth.permission_trusted
 def event_log_view_get(request, head):
   '''
   Get:
@@ -700,7 +674,7 @@ def event_log_view_get(request, head):
 
 # MN_replication.replicate(token, id, sourceNode) -> boolean
 
-@auth.cn_check_required
+@auth.permission_trusted
 def replicate(request):
   '''
   '''
@@ -710,6 +684,7 @@ def replicate(request):
   return HttpResponseNotAllowed(['POST'])
 
 
+@auth.permission_trusted
 def replicate_post(request):
   '''
   '''
@@ -757,6 +732,7 @@ def replicate_post(request):
   return HttpResponse(doc, content_type)
 
 
+@auth.permission_trusted
 def _replicate_store(request):
   '''
   '''
@@ -767,6 +743,7 @@ def _replicate_store(request):
   return HttpResponseNotAllowed(['POST'])
 
 
+@auth.permission_trusted
 def _replicate_store(request):
   '''
   '''
@@ -816,10 +793,12 @@ def _replicate_store(request):
 
 
 # For testing via browser.
+@auth.permission_trusted
 def test_replicate_post(request):
   return replicate_post(request)
 
 
+@auth.permission_trusted
 def test_replicate_get(request):
   '''
   '''
@@ -827,6 +806,7 @@ def test_replicate_get(request):
                            {'replication_queue': models.Replication_work_queue.objects.all() })
 
 
+@auth.permission_trusted
 def test_replicate_get_xml(request):
   '''
   '''
@@ -836,12 +816,13 @@ def test_replicate_get_xml(request):
 
 
 # For testing via browser.
+@auth.permission_trusted
 def test_replicate_clear(request):
   models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
 
 
-@auth.cn_check_required
+@auth.permission_trusted
 def error(request):
   '''
   '''
@@ -852,6 +833,7 @@ def error(request):
   return HttpResponseNotAllowed(['POST'])
 
 
+@auth.permission_trusted
 def error_post(request):
   # TODO: Deserialize exception in message and log full information.
   util.validate_post(request, ( #('header', 'token'),
@@ -865,7 +847,7 @@ def error_post(request):
 # Authentication and authorization.
 # ------------------------------------------------------------------------------
 
-@auth.cn_check_required
+@auth.permission_change_permissions
 def access_rules_pid(request, pid):
   # TODO: PUT currently not supported (issue with Django).
   # Instead, this call is handled as a POST against a separate URL.
@@ -877,6 +859,7 @@ def access_rules_pid(request, pid):
   return HttpResponseNotAllowed([])
 
 
+@auth.permission_change_permissions
 def access_rules_pid_put_workaround(request, pid):
   '''
   '''
@@ -886,6 +869,7 @@ def access_rules_pid_put_workaround(request, pid):
   return HttpResponseNotAllowed(['POST'])
 
 
+@auth.permission_change_permissions
 def access_rules_pid_put(request, pid):
   '''
   MN_auth.setAccess(cert, pid, accessPolicy) -> Boolean
@@ -908,29 +892,36 @@ def access_rules_pid_put(request, pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Could not deserialize AccessPolicy: {0}'.format(str(err)))
 
-  # Iterate over AccessPolicy and create db entries.
+  # This function assumes that TransactionMiddleware is enabled.
+  # 'django.middleware.transaction.TransactionMiddleware'
 
+  # Iterate over AccessPolicy and create db entries.
   for allow_rule in access_policy.allow:
     for principal in allow_rule.principal:
-      for permission in allow_rule.permission:
-        for resource in allow_rule.resource:
-          print principal
-          print permission
-          print resource.value()
-          print
-          
-          # http://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys
-          
-          # Check if row already exists.
-          try:
-            models.Permission.objects.filter(object__pid=resource.value(),
-                                             principal__distinguished_name=principal,
-                                             action__action=permission)[0]
-          except LookupError:
-            # Create.
-            permission_row = models.Permission()
-            permission_row.set_permission(resource.value(), principal, permission)
-            permission_row.save()
+      for resource in allow_rule.resource:
+        # TODO: Check if principal has CHANGEPERMISSION on resource.
+
+        # Remove any existing permissions for this principal on this resource.
+        # Because TransactionMiddleware is enabled, the temporary absence of
+        # permissions is hidden in a transaction.
+        #
+        # The deletes are cascaded.
+        #
+        # TODO: Because Django does not (as of 1.3) support indexes that cover
+        # multiple fields, this filter will be slow. When Django gets support
+        # for indexes that cover multiple fields, create an index for the
+        # combination of the two fields in the Permission table.
+        #
+        # http://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys
+        models.Permission.objects.filter(
+          object__pid=resource.value(),
+          principal__distinguished_name=principal).delete()
+        # Add the new permissions.
+        for permission in allow_rule.permission:
+          # Permission does not exist. Create it.
+          permission_row = models.Permission()
+          permission_row.set_permission(resource.value(), principal, permission)
+          permission_row.save()
     
   # Return Boolean (200 OK)
   return HttpResponse('')
@@ -940,6 +931,7 @@ def access_rules_pid_put(request, pid):
 # Monitoring.
 # ------------------------------------------------------------------------------
 
+@auth.permission_public
 def monitor_ping(request):
   '''MN_core.ping() -> Boolean.
   Low level “are you alive” operation. Response is simple ACK, but may be
@@ -948,6 +940,8 @@ def monitor_ping(request):
   '''
   return HttpResponse('')
 
+
+@auth.permission_public
 def monitor_status(request):
   '''MN_core.getStatus() -> StatusResponse/
   This function is similar to MN_health.ping() but returns a more complete
@@ -955,7 +949,8 @@ def monitor_status(request):
   '''
   return HttpResponse('OK (response not yet defined)')
 
-@auth.cn_check_required
+
+@auth.permission_trusted
 def monitor_object(request):
   '''
   '''
@@ -968,6 +963,8 @@ def monitor_object(request):
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
+
+@auth.permission_trusted
 def monitor_object_get(request, head):
   '''MN_core.getObjectStatistics(token[, time][, format][, day][, pid]) -> MonitorList
   '''
@@ -1007,7 +1004,8 @@ def monitor_object_get(request, head):
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
-@auth.cn_check_required
+
+@auth.permission_trusted
 def monitor_event(request):
   '''
   '''
@@ -1020,6 +1018,8 @@ def monitor_event(request):
   # Only GET and HEAD accepted.
   return HttpResponseNotAllowed(['GET', 'HEAD'])
 
+
+@auth.permission_trusted
 def monitor_event_get(request, head):
   '''MN_core.getOperationStatistics(token[, time][, requestor][, day][, event][, eventTime][, format]) -> MonitorList
   '''
@@ -1075,7 +1075,8 @@ def monitor_event_get(request, head):
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
-@auth.cn_check_required
+
+@auth.permission_trusted
 def node(request):
   '''
   '''
@@ -1106,12 +1107,29 @@ def node(request):
 # Diagnostics, debugging and testing.
 # ------------------------------------------------------------------------------  
 
+
+@auth.permission_trusted
 def test(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
   return render_to_response('test.html', {})  
 
+
+@auth.permission_trusted
+def test_cert(request):
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  permission_row = models.Permission()
+  permission_row.set_permission('security_obj_3', 'test_dn', 'read_1')
+  permission_row.save()
+
+  return HttpResponse('ok')
+  # Validate certificate.
+  #return HttpResponse(pprint.pformat(request, 2))
+
+@auth.permission_trusted
 def test_slash(request, p1, p2, p3):
   '''
   '''
@@ -1122,6 +1140,8 @@ def test_slash(request, p1, p2, p3):
 
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
+
+@auth.permission_trusted
 def test_exception(request, exc):
   '''
   '''
@@ -1139,6 +1159,8 @@ def test_exception(request, exc):
   doc, content_type = pid_ser.serialize('text/xml')
   return HttpResponse(doc, content_type)
 
+
+@auth.permission_trusted
 def test_invalid_return(request, type):
   if type == "200_html":
     return HttpResponse("invalid") #200, html
@@ -1151,6 +1173,8 @@ def test_invalid_return(request, type):
   
   return HttpResponse("OK")
 
+
+@auth.permission_trusted
 def test_get_request(request):
   '''
   '''
@@ -1162,6 +1186,8 @@ def test_get_request(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
+
+@auth.permission_trusted
 def test_delete_all_objects(request):
   '''
   Remove all objects from db.
@@ -1195,6 +1221,8 @@ def test_delete_all_objects(request):
 
   return HttpResponse('OK')
 
+
+@auth.permission_trusted
 def test_delete_event_log(request):
   '''
   Remove all log records.
@@ -1211,8 +1239,10 @@ def test_delete_event_log(request):
 
   return HttpResponse('OK')
   
+
+@auth.permission_trusted
 def test_inject_event_log(request):
-  '''Inject a fake log for testing.
+  '''Inject a fictional log for testing.
   
   The corresponding test object set must have already been created.
   '''
