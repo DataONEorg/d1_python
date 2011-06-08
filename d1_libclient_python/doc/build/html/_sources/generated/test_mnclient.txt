@@ -1,0 +1,6 @@
+test_mnclient
+=============
+
+.. currentmodule:: 
+
+.. autodata:: test_mnclient

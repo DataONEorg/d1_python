@@ -1,0 +1,6 @@
+test_cnclient
+=============
+
+.. currentmodule:: 
+
+.. autodata:: test_cnclient

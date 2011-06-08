@@ -1,0 +1,6 @@
+node_test_common
+================
+
+.. currentmodule:: 
+
+.. autodata:: node_test_common
