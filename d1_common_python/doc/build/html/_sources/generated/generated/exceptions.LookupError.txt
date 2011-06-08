@@ -1,6 +1,0 @@
-exceptions.LookupError
-======================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: LookupError

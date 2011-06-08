@@ -1,6 +1,0 @@
-util.validate_xml
-=================
-
-.. currentmodule:: util
-
-.. autofunction:: validate_xml

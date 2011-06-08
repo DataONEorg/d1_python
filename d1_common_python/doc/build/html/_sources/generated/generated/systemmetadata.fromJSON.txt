@@ -1,6 +1,0 @@
-systemmetadata.fromJSON
-=======================
-
-.. currentmodule:: systemmetadata
-
-.. autofunction:: fromJSON

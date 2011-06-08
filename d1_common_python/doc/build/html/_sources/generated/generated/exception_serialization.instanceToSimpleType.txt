@@ -1,6 +1,0 @@
-exception_serialization.instanceToSimpleType
-============================================
-
-.. currentmodule:: exception_serialization
-
-.. autofunction:: instanceToSimpleType

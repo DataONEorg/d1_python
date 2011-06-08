@@ -1,6 +1,0 @@
-exceptions.TabError
-===================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: TabError

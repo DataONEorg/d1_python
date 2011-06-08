@@ -1,6 +1,0 @@
-exceptions.TypeError
-====================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: TypeError
