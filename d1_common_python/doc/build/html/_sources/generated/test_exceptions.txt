@@ -1,0 +1,6 @@
+test_exceptions
+===============
+
+.. currentmodule:: 
+
+.. autodata:: test_exceptions

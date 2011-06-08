@@ -1,0 +1,6 @@
+test_systemmetadata
+===================
+
+.. currentmodule:: 
+
+.. autodata:: test_systemmetadata

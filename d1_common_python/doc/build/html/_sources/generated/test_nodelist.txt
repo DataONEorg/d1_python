@@ -1,0 +1,6 @@
+test_nodelist
+=============
+
+.. currentmodule:: 
+
+.. autodata:: test_nodelist

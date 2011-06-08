@@ -1,0 +1,113 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Updating the library &mdash; DataONE Common Library for Python v0.beta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Common Library for Python v0.beta documentation" href="index.html" />
+    <link rel="prev" title="2.3.14. test_xml_compare" href="generated/test_xml_compare.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="generated/test_xml_compare.html" title="2.3.14. test_xml_compare"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Common Library for Python v0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="generated/test_xml_compare.html"
+                        title="previous chapter">2.3.14. test_xml_compare</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/update.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="updating-the-library">
+<h1>3. Updating the library<a class="headerlink" href="#updating-the-library" title="Permalink to this headline">¶</a></h1>
+<p>How to update your copy of the library.</p>
+<p>Update your copy of the code with Subversion (modify the path if the library was
+not installed in the suggested location):</p>
+<div class="highlight-python"><pre>$ cd /var/local/dataone/d1_common_python
+$ svn update</pre>
+</div>
+<p>The python code under <tt class="docutils literal"><span class="pre">d1_common/types/generated</span></tt> contains PyXB binding
+classes. It is generated from the DataONE <a class="reference external" href="https://repository.dataone.org/software/cicore/trunk/schemas/">schemas</a> using <a class="reference internal" href="glossary.html#term-pyxb"><em class="xref std std-term">PyXB</em></a>.
+Currently, the latest version of the binding classes is included with the
+library, so generating them after a Subversion update should not be necessary.
+However, if the library is modified locally, they can be generated with:</p>
+<div class="highlight-python"><pre>$ cd /var/local/dataone/d1_common_python
+$ ./pyxbgen_all.py</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="generated/test_xml_compare.html" title="2.3.14. test_xml_compare"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Common Library for Python v0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

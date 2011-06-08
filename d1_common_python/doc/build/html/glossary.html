@@ -1,0 +1,163 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; DataONE Common Library for Python v0.beta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Common Library for Python v0.beta documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">DataONE Common Library for Python v0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/glossary.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <dl class="glossary docutils">
+<dt id="term-dataone-common-library-for-python">DataONE Common Library for Python</dt>
+<dd>Part of the DataONE <a class="reference internal" href="#term-investigator-toolkit-itk"><em class="xref std std-term">Investigator Toolkit (ITK)</em></a>. Provides
+functionality commonly needed by projects that interact with the
+<a class="reference internal" href="#term-dataone"><em class="xref std std-term">DataONE</em></a> infrastructure via Python. It is a dependency of
+<a class="reference internal" href="#term-dataone-client-library-for-python"><em class="xref std std-term">DataONE Client Library for Python</em></a>, <a class="reference internal" href="#term-gmn"><em class="xref std std-term">GMN</em></a> and all other DataONE
+components written in Python.</dd>
+<dt id="term-dataone-client-library-for-python">DataONE Client Library for Python</dt>
+<dd>Part of the DataONE <a class="reference internal" href="#term-investigator-toolkit-itk"><em class="xref std std-term">Investigator Toolkit (ITK)</em></a>. Provides
+programmatic access to the DataONE infrastructure and may be used to form
+the basis of larger applications or to extend existing applications
+to utilize the services of DataONE.</dd>
+<dt id="term-dataone">DataONE</dt>
+<dd><p class="first">Data Observation Network for Earth</p>
+<p class="last"><a class="reference external" href="https://dataone.org">https://dataone.org</a></p>
+</dd>
+<dt id="term-investigator-toolkit-itk">Investigator Toolkit (ITK)</dt>
+<dd><p class="first">The Investigator Toolkit provides a suite of software tools that are useful
+for the various audiences that DataONE serves. The tools fall in a number of
+categories, which are further developed here, with examples of potential
+applications that would fit into each category.</p>
+<p class="last"><a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html">http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html</a></p>
+</dd>
+<dt id="term-gmn">GMN</dt>
+<dd><p class="first">DataONE Generic Member Node</p>
+<p>GMN is an implementation of a <a class="reference internal" href="#term-mn"><em class="xref std std-term">MN</em></a>. It provides an implementation
+of all MN APIs. GMN can be used as a as a workbone or as a reference for a
+3rd party MN implementation. GMN can also be used as an &#8220;adapter&#8221;, making it
+possible for a 3rd party system to become a MN and expose its objects to
+DataONE with a minimum of effort. In this mode, we refer to GMN as the
+adapter and the 3rd party system as the adaptee.</p>
+<p class="last">When used as an adapter, GMN provides a minimal REST API that the adaptee
+can call into to expose its objects, in a process we refer to as object
+registration. After registration, GMN exposes objects on behalf of the
+<a class="reference internal" href="#term-adaptee"><em class="xref std std-term">adaptee</em></a>.</p>
+</dd>
+<dt id="term-mn">MN</dt>
+<dd>DataONE Member Node.</dd>
+<dt id="term-adaptee">Adaptee</dt>
+<dd>A 3rd party system that uses GMN to expose its data through DataONE.</dd>
+<dt id="term-subversion">Subversion</dt>
+<dd><p class="first">Version control system</p>
+<p class="last"><a class="reference external" href="http://subversion.apache.org/">http://subversion.apache.org/</a></p>
+</dd>
+<dt id="term-bash">Bash</dt>
+<dd><p class="first">GNU Bourne-Again Shell</p>
+<p class="last"><a class="reference external" href="http://www.gnu.org/software/bash/">http://www.gnu.org/software/bash/</a></p>
+</dd>
+<dt id="term-pyxb">PyXB</dt>
+<dd><p class="first">Python XML Schema Bindings</p>
+<p class="last"><a class="reference external" href="http://pyxb.sourceforge.net/">http://pyxb.sourceforge.net/</a></p>
+</dd>
+<dt id="term-lxml">lxml</dt>
+<dd><p class="first">A library for processing XML and HTML with Python</p>
+<p class="last"><a class="reference external" href="http://lxml.de/">http://lxml.de/</a></p>
+</dd>
+<dt id="term-minixsv">minixsv</dt>
+<dd><p class="first">A Lightweight XML schema validator</p>
+<p class="last"><a class="reference external" href="http://www.familieleuthe.de/MiniXsv.html">http://www.familieleuthe.de/MiniXsv.html</a></p>
+</dd>
+<dt id="term-python-dateutil">python-dateutil</dt>
+<dd><p class="first">Extends the standard datetime module</p>
+<p class="last"><a class="reference external" href="http://labix.org/python-dateutil">http://labix.org/python-dateutil</a></p>
+</dd>
+<dt id="term-setuptools">setuptools</dt>
+<dd><p class="first">A package manager for Python</p>
+<p class="last"><a class="reference external" href="http://pypi.python.org/pypi/setuptools">http://pypi.python.org/pypi/setuptools</a></p>
+</dd>
+<dt id="term-iso8601">ISO8601</dt>
+<dd><p class="first">International standard covering the exchange of date and time-related data</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/ISO_8601">http://en.wikipedia.org/wiki/ISO_8601</a></p>
+</dd>
+<dt id="term-python-iso8601">python-iso8601</dt>
+<dd><p class="first">Python library implementing basic support for <a class="reference internal" href="#term-iso8601"><em class="xref std std-term">ISO8601</em></a></p>
+<p class="last"><a class="reference external" href="http://pypi.python.org/pypi/iso8601/">http://pypi.python.org/pypi/iso8601/</a></p>
+</dd>
+</dl>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">DataONE Common Library for Python v0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

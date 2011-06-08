@@ -1,0 +1,6 @@
+test_logrecords
+===============
+
+.. currentmodule:: 
+
+.. autodata:: test_logrecords

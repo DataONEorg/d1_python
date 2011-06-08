@@ -1,0 +1,6 @@
+test_checksum
+=============
+
+.. currentmodule:: 
+
+.. autodata:: test_checksum
