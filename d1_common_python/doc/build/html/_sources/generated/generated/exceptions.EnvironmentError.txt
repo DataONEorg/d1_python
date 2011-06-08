@@ -1,6 +1,0 @@
-exceptions.EnvironmentError
-===========================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: EnvironmentError

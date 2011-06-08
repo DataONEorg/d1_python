@@ -1,6 +1,0 @@
-exceptions.KeyError
-===================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: KeyError

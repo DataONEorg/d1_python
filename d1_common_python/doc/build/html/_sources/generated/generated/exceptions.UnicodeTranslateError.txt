@@ -1,6 +1,0 @@
-exceptions.UnicodeTranslateError
-================================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: UnicodeTranslateError

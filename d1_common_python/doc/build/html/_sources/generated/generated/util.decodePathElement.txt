@@ -1,6 +1,0 @@
-util.decodePathElement
-======================
-
-.. currentmodule:: util
-
-.. autofunction:: decodePathElement

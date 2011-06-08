@@ -1,6 +1,0 @@
-exceptions.SystemError
-======================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: SystemError

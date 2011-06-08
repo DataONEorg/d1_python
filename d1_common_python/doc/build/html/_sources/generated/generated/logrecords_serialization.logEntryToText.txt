@@ -1,6 +1,0 @@
-logrecords_serialization.logEntryToText
-=======================================
-
-.. currentmodule:: logrecords_serialization
-
-.. autofunction:: logEntryToText
