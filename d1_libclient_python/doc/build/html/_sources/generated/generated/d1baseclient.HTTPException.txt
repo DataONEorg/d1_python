@@ -1,6 +1,0 @@
-d1baseclient.HTTPException
-==========================
-
-.. currentmodule:: d1baseclient
-
-.. autoexception:: HTTPException

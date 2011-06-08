@@ -1,6 +1,0 @@
-test_object_access.read_chunk
-=============================
-
-.. currentmodule:: test_object_access
-
-.. autofunction:: read_chunk

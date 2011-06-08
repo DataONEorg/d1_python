@@ -1,6 +1,0 @@
-test_object_access.readAll
-==========================
-
-.. currentmodule:: test_object_access
-
-.. autofunction:: readAll

@@ -1,14 +1,7 @@
-Documentation for d1_libclient_python - A DataONE Client for Python
-===================================================================
+DataONE Client Library for Python
+=================================
 
-``d1_libclient_python`` is a DataONE client library written in Python. It
-provides programmatic access to the DataONE infrastructure and may be used to
-form the basis of larger applications, or be used to extend existing
-applications to utilize the services of DataONE.
-
-``d1_libclient_python`` is a part of the DataONE Investigator Toolkit (ITK), and
-is developed as part of the `DataONE project`_.
-
+Installation and usage of the :term:`DataONE Client Library for Python`.
 
 Index
 -----
@@ -17,9 +10,8 @@ Index
   :numbered:
   :maxdepth: 2
 
-  overview
-  install
-  general
+  setup
+  api
   tests
 
 
@@ -30,5 +22,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-
-.. _DataONE project: http://dataone.org

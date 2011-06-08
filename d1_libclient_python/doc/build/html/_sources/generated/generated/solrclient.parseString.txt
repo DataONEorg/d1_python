@@ -1,6 +1,0 @@
-solrclient.parseString
-======================
-
-.. currentmodule:: solrclient
-
-.. autofunction:: parseString

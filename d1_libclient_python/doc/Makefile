@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
+GENDIR        = $(BUILDDIR)/generated
 SOURCE        = source
 CONFIG        = $(SOURCE)
 
@@ -30,10 +31,10 @@ help:
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
 clean:
-	-rm -rf $(BUILDDIR)/*
+	-rm -rf $(BUILDDIR)/* $(GENDIR)/*
 
 html:
-	@echo ${PYTHONPATH}
+	@echo "PYTHONPATH: ${PYTHONPATH}"
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
