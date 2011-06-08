@@ -1,0 +1,6 @@
+test_logrecorditerator
+======================
+
+.. currentmodule:: 
+
+.. autodata:: test_logrecorditerator

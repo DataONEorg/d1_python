@@ -1,0 +1,6 @@
+test_object_access
+==================
+
+.. currentmodule:: 
+
+.. autodata:: test_object_access

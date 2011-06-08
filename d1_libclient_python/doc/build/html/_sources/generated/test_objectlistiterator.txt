@@ -1,0 +1,6 @@
+test_objectlistiterator
+=======================
+
+.. currentmodule:: 
+
+.. autodata:: test_objectlistiterator

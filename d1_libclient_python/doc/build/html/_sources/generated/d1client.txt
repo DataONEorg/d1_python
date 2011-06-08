@@ -1,0 +1,6 @@
+d1client
+========
+
+.. currentmodule:: 
+
+.. autodata:: d1client

@@ -1,0 +1,6 @@
+svnrevision
+===========
+
+.. currentmodule:: 
+
+.. autodata:: svnrevision

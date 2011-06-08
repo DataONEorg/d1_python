@@ -1,0 +1,140 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Overview &mdash; DataONE Client Library for Python v0.beta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Client Library for Python v0.beta documentation" href="index.html" />
+    <link rel="up" title="2. API" href="api.html" />
+    <link rel="next" title="2. API and tests" href="generated.html" />
+    <link rel="prev" title="2. API" href="api.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="generated.html" title="2. API and tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="2. API"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">2. API</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="previous chapter">2. API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated.html"
+                        title="next chapter">2. API and tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/overview.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="overview">
+<h1>1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">d1baseclient:</th><td class="field-body">Implements DataONEBaseClient, which extends restclient.RESTClient with DataONE
+specific functionality common to CN and MN clients.</td>
+</tr>
+<tr class="field"><th class="field-name">mnclient:</th><td class="field-body">Implements MemberNodeClient, which extends d1baseclient.DataONEBaseClient
+with MN specific functionality.</td>
+</tr>
+<tr class="field"><th class="field-name">cnclient:</th><td class="field-body">Implements CoordinatingNodeClient, which extends
+d1baseclient.DataONEBaseClient with CN specific functionality.</td>
+</tr>
+<tr class="field"><th class="field-name">d1client:</th><td class="field-body">Implements:
+- DataONEClient, which uses cn- and mn clients to perform high level operations
+against the DataONE infrastructure.
+- DataONEObject, which wraps a single object and adds functionality such as
+resolve and get.</td>
+</tr>
+<tr class="field"><th class="field-name">solrclient:</th><td class="field-body">Functionality for working with the Solr index behind Mercury. Will probably be
+moved into d1common. Ignore for now.</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">logrecorditerator:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Implements an iterator that iterates over the entire set of LogRecords
+for a DataONE node. Data is retrieved from the target only when required.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="generated.html" title="2. API and tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="2. API"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+          <li><a href="api.html" >2. API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

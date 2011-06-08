@@ -1,0 +1,6 @@
+objectlistiterator
+==================
+
+.. currentmodule:: 
+
+.. autodata:: objectlistiterator

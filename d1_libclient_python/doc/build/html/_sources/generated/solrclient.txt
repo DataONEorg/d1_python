@@ -1,0 +1,6 @@
+solrclient
+==========
+
+.. currentmodule:: 
+
+.. autodata:: solrclient

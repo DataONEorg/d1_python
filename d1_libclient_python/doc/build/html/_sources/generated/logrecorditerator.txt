@@ -1,0 +1,6 @@
+logrecorditerator
+=================
+
+.. currentmodule:: 
+
+.. autodata:: logrecorditerator
