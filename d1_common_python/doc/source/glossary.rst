@@ -1,6 +1,12 @@
 .. glossary::
 
 
+  DataONE
+    Data Observation Network for Earth
+
+    https://dataone.org
+
+
   DataONE Common Library for Python
     Part of the DataONE :term:`Investigator Toolkit (ITK)`. Provides
     functionality commonly needed by projects that interact with the
@@ -14,21 +20,6 @@
     programmatic access to the DataONE infrastructure and may be used to form
     the basis of larger applications or to extend existing applications
     to utilize the services of DataONE.
-
-
-  DataONE
-    Data Observation Network for Earth
-
-    https://dataone.org
-
-
-  Investigator Toolkit (ITK)
-    The Investigator Toolkit provides a suite of software tools that are useful
-    for the various audiences that DataONE serves. The tools fall in a number of
-    categories, which are further developed here, with examples of potential
-    applications that would fit into each category.
-
-    http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html
 
 
   GMN
@@ -46,13 +37,39 @@
     registration. After registration, GMN exposes objects on behalf of the
     :term:`adaptee`.
 
+
+  Investigator Toolkit (ITK)
+    The Investigator Toolkit provides a suite of software tools that are useful
+    for the various audiences that DataONE serves. The tools fall in a number of
+    categories, which are further developed here, with examples of potential
+    applications that would fit into each category.
+
+    http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html
+
   MN
     DataONE Member Node.
 
 
+  CN
+    DataONE Coordinating Node.
+
+
+  SciData
+    An object (file) that contains scienctific observational data.
+
+
+  SciMeta
+    An object (file) that contains information about a SciData object.
+
+
+  SysMeta
+    An object (file) that contains system level information about a SciData or a
+    SciMeta object.
+
+
   Adaptee
     A 3rd party system that uses GMN to expose its data through DataONE.
-  
+
 
   Subversion
     Version control system
@@ -64,6 +81,39 @@
     GNU Bourne-Again Shell
     
     http://www.gnu.org/software/bash/
+
+
+  Apache
+    HTTP server
+
+    http://httpd.apache.org/
+
+
+  Python
+    A dynamic programming language.
+    
+    www.python.org
+  
+
+  Django
+    High-level Python Web framework that encourages rapid development and clean,
+    pragmatic design.
+
+    https://www.djangoproject.com/
+
+
+  WSGI
+    Web Server Gateway Interface
+
+    http://www.wsgi.org/wsgi/
+
+
+  mod_wsgi
+    An :term:`Apache` module that implements :term:`WSGI`.
+
+
+  mod_ssl
+    An :term:`Apache` module that interfaces to :term:`OpenSSL`.
 
 
   PyXB
@@ -90,7 +140,7 @@
     http://labix.org/python-dateutil
 
 
-  setuptools
+  python-setuptools
     A package manager for Python
   
     http://pypi.python.org/pypi/setuptools
@@ -106,6 +156,41 @@
     
     http://pypi.python.org/pypi/iso8601/
 
+  X.509  
+    An ITU-T standard for a public key infrastructure (PKI) for single sign-on
+    (SSO) and Privilege Management Infrastructure (PMI). X.509 specifies, amongst
+    other things, standard formats for public key certificates, certificate
+    revocation lists, attribute certificates, and a certification path validation
+    algorithm.
+  
+    http://en.wikipedia.org/wiki/X509
 
+
+  certificate  
+    A public key certificate (also known as a digital certificate or identity
+    certificate) is an electronic document which uses a digital signature to bind
+    a public key with an identity — information such as the name of a person or an
+    organization, their address, and so forth. The certificate can be used to
+    verify that a public key belongs to an individual.
+  
+    http://en.wikipedia.org/wiki/Public_key_certificate
+
+  OpenSSL
+    Toolkit implementing the :term:`SSL` v2/v3 and :term:`TLS` v1 protocols as
+    well as a full-strength general purpose cryptography library.
+
+
+  SSL
+    Secure Sockets Layer
+
+    A protocol for transmitting private information via the Internet. SSL uses a
+    cryptographic system that uses two keys to encrypt data − a public key known
+    to everyone and a private or secret key known only to the recipient of the
+    message.
 
     
+  TLS
+    Transport Layer Security
+
+    Successor of :term:`SSL`.
+
