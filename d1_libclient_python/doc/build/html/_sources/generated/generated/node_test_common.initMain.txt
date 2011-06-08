@@ -1,6 +1,0 @@
-node_test_common.initMain
-=========================
-
-.. currentmodule:: node_test_common
-
-.. autofunction:: initMain
