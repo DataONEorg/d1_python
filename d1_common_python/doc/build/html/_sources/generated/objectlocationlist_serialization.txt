@@ -1,0 +1,6 @@
+objectlocationlist_serialization
+================================
+
+.. currentmodule:: 
+
+.. autodata:: objectlocationlist_serialization

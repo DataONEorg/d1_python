@@ -1,0 +1,6 @@
+exceptions
+==========
+
+.. currentmodule:: 
+
+.. autodata:: exceptions

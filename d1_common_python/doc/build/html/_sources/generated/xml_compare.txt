@@ -1,0 +1,6 @@
+xml_compare
+===========
+
+.. currentmodule:: 
+
+.. autodata:: xml_compare

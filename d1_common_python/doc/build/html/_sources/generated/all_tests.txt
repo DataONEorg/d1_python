@@ -1,0 +1,6 @@
+all_tests
+=========
+
+.. currentmodule:: 
+
+.. autodata:: all_tests
