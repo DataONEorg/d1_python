@@ -166,6 +166,40 @@
     http://en.wikipedia.org/wiki/X509
 
 
+  CA
+    Certificate Authority
+    
+    A certificate authority is an entity that issues digital :term:`certificate`
+    s. The digital certificate certifies the ownership of a public key by the
+    named subject of the certificate. This allows others (relying parties) to
+    rely upon signatures or assertions made by the private key that corresponds
+    to the public key that is certified. In this model of trust relationships, a
+    CA is a trusted third party that is trusted by both the subject (owner) of
+    the certificate and the party relying upon the certificate. CAs are
+    characteristic of many public key infrastructure (PKI) schemes.
+    
+    http://en.wikipedia.org/wiki/Certificate_authority
+
+
+  CA Signing Key
+    The key which the :term:`CA` uses for signing :term:`CSR` s.
+  
+  
+  Server Key
+    The private key that Apache will use for proving that it is the owner
+    of the :term:`certificate` that it provides to the client during the
+    SSL handshake.
+    
+  
+  CSR
+    Certificate Signing Request
+    
+    A message sent from an applicant to a :term:CA in order to apply for a
+    :term:certificate. 
+
+    http://en.wikipedia.org/wiki/Certificate_signing_request
+    
+
   certificate  
     A public key certificate (also known as a digital certificate or identity
     certificate) is an electronic document which uses a digital signature to bind
@@ -174,6 +208,7 @@
     verify that a public key belongs to an individual.
   
     http://en.wikipedia.org/wiki/Public_key_certificate
+
 
   OpenSSL
     Toolkit implementing the :term:`SSL` v2/v3 and :term:`TLS` v1 protocols as
@@ -194,3 +229,23 @@
 
     Successor of :term:`SSL`.
 
+
+  CILogon
+    The CILogon project facilitates secure access to CyberInfrastructure (CI).
+    
+    http://www.cilogon.org/
+    
+
+  LOA
+    Levels of Assurance
+    
+    CILogon operates three Certification Authorities (CAs) with consistent
+    operational and technical security controls. The CAs differ only in their
+    procedures for subscriber authentication, identity validation, and naming.
+    These differing procedures result in different Levels of Assurance (LOA)
+    regarding the strength of the identity contained in the certificate. For
+    this reason, relying parties may decide to accept certificates from only a
+    subset of the CILogon CAs.
+    
+    http://ca.cilogon.org/loa
+    
