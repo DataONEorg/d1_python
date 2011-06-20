@@ -12,6 +12,7 @@ Installation and usage of the :term:`GMN`.
   testing
   use
   generated
+  glossary
 
 
 Indices and tables

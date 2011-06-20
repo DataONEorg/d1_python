@@ -7,7 +7,7 @@ setup instructions for Ubuntu first and use the information below to adapt that
 information for a CentOS install.
 
 ==================== ==============================================
-Component            Minimum Version
+Component            Tested version(s)
 ==================== ==============================================
 CentOS               5.5
 ==================== ==============================================

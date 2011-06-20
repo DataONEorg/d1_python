@@ -1,18 +1,8 @@
-Step 6: DataONE libraries
+Step 8: DataONE libraries
 =========================
 
-==================== ==============================================
-Component            Minimum Version
-==================== ==============================================
-D1 deps              \
-==================== ==============================================
-
-
-DataONE dependencies
-````````````````````
-
-Install the d1_common_python and d1_client_python DataONE libraries by following
-the installation instructions in the documentation for those libraries.
-
+Install :term:`DataONE Client Library for Python` according to the instructions
+in the documentation for that project. It is a dependency of :term:`DataONE`
+:term:`GMN`.
 
 :doc:`setup-django`

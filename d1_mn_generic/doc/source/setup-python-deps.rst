@@ -1,10 +1,8 @@
-Step 5: Python dependencies
+Step 7: Python dependencies
 ===========================
 
-
-Install :term:`DataONE Client Library for Python` according to the instructions
-in the documentation for that project. It is a dependency of :term:`DataONE
-Generic Member Node`.
-
+GMN currently does not have any Python dependencies that are not also
+dependencies of the DataONE libraries for Python. Those dependencies are
+installed when setting up the DataONE libraries.
 
 :doc:`setup-d1-libs`

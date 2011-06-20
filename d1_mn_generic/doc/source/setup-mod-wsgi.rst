@@ -1,29 +1,44 @@
 Step 3: mod_wsgi
 ================
 
+Setting up :term:`mod_wsgi`.
+
+\
+
 ==================== ==============================================
-Component            Minimum Version
+Component            Tested version(s)
 ==================== ==============================================
-Apache               2
-libapache2-mod-wsgi  \
+libapache2-mod-wsgi  2.8-2ubuntu1
 ==================== ==============================================
 
 
-libapache2-mod-wsgi
+Install the mod_wsgi package::
 
-* Set up mod_wsgi:
+  $ sudo apt-get install libapache2-mod-wsgi
 
-  * Create a file::
+Enable the module::
 
-      /etc/apache2/mods-available/wsgi.load
+  $ sudo a2enmod wsgi
 
-    with the following contents::
+Set up :term:`WSGI` for :term:`GMN`:
 
-      LoadModule wsgi_module /usr/lib/apache2/modules/mod_wsgi.so
+Also see: :doc:`setup-example-default-ssl`.
 
-  * Enable the wsgi module::
+* A later section will have instructions on how to install GMN to
+  /var/local/dataone/gmn. If another location is used, update the paths
+  below accordingly.
 
-    # a2enmod wsgi
+Edit ``/etc/apache2/sites-available/default-ssl``.
+
+Add / modify::
+
+  WSGIScriptAlias /mn /var/local/dataone/gmn/src/service/gmn.wsgi
+
+  <Directory /var/local/dataone/gmn/src/service>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+  </Directory>
 
 
 :doc:`setup-mod-ssl`

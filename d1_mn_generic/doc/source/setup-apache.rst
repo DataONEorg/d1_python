@@ -1,58 +1,38 @@
 Step 2: Apache
 ==============
 
-Apache setup.
+Setting up Apache.
 
+\
 
 ==================== ==============================================
-Component            Minimum Version
+Component            Tested version(s)
 ==================== ==============================================
-Apache               2
-apache2              \
-libapache2-mod-wsgi  \
-apache2-threaded-dev \
-openssh-server       \
+Apache 2             2.2.14-5ubuntu8.4
+apache2-threaded-dev 2.2.14-5ubuntu8.4
 ==================== ==============================================
-
-viewing files:
-
-openssl rsa -noout -text -in server.key
-openssl req -noout -text -in server.csr
-openssl rsa -noout -text -in ca.key
-openssl x509 -noout -text -in ca.crt
-
 
 
 Install Apache2 packages::
 
-  $ sudo apt-get install apache2 apache2 apache2-threaded-dev 
+  $ sudo apt-get install apache2 apache2-threaded-dev 
 
-  \
-   
+Initial VirtualHost setup.
 
+Also see: :doc:`setup-example-default-ssl`.
 
-Apache
-``````
+Edit ``/etc/apache2/sites-available/default-ssl``.
 
-GMN has been tested with Apache 2.2.
+* These instructions use the existing VirtualHost section.
 
-These instructions have been tested on Ubuntu 10.04 LTS. Adjust the paths to
-match your configuration.
+* These settings are required for GMN to correctly handle the DataONE
+  :term:`REST` calls. See `Apache Configuration for DataONE Services`_ for more
+  information.
 
+In the VirtualHost section, add::
 
-* Set up GMN in a new or existing VirtualHost section. An example site file
-  is included below. It is a modified version of the default site file at::
-
-    /etc/apache2/sites-available/default
-
-  Note that the settings for AllowEncodedSlashes and AcceptPathInfo that are
-  included at the top of the VirtualHost section are required for GMN to
-  function properly. Also see `Apache Configuration for DataONE Services`_ for
-  other important information about these settings.
-
-* Restart Apache::
-
-    apache2ctl restart
+  AllowEncodedSlashes On
+  AcceptPathInfo On
 
 
 .. _`Apache Configuration for DataONE Services`:
