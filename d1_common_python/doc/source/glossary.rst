@@ -1,5 +1,7 @@
-.. glossary::
+Glossary
+========
 
+.. glossary::
 
   DataONE
     Data Observation Network for Earth
@@ -35,7 +37,12 @@
     When used as an adapter, GMN provides a minimal REST API that the adaptee
     can call into to expose its objects, in a process we refer to as object
     registration. After registration, GMN exposes objects on behalf of the
-    :term:`adaptee`.
+    adaptee.
+
+
+  Vendor specific extensions
+    Functionality that is not part of the DataONE APIs but is supported by
+    a DataONE component. DataONE has defined APIs for accessing such extensions.
 
 
   Investigator Toolkit (ITK)
@@ -45,6 +52,7 @@
     applications that would fit into each category.
 
     http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html
+    
 
   MN
     DataONE Member Node.
@@ -52,6 +60,11 @@
 
   CN
     DataONE Coordinating Node.
+
+  
+  client
+    An application that accesses the DataONE infrastructure on behalf of
+    a user.
 
 
   SciData
@@ -65,10 +78,6 @@
   SysMeta
     An object (file) that contains system level information about a SciData or a
     SciMeta object.
-
-
-  Adaptee
-    A 3rd party system that uses GMN to expose its data through DataONE.
 
 
   Subversion
@@ -150,11 +159,13 @@
     International standard covering the exchange of date and time-related data
     
     http://en.wikipedia.org/wiki/ISO_8601
+
     
   python-iso8601
     Python library implementing basic support for :term:`ISO8601`
     
     http://pypi.python.org/pypi/iso8601/
+
 
   X.509  
     An ITU-T standard for a public key infrastructure (PKI) for single sign-on
@@ -181,11 +192,11 @@
     http://en.wikipedia.org/wiki/Certificate_authority
 
 
-  CA Signing Key
-    The key which the :term:`CA` uses for signing :term:`CSR` s.
+  CA signing key
+    The private key which the :term:`CA` uses for signing :term:`CSR`\ s.
   
   
-  Server Key
+  Server key
     The private key that Apache will use for proving that it is the owner
     of the :term:`certificate` that it provides to the client during the
     SSL handshake.
@@ -194,22 +205,47 @@
   CSR
     Certificate Signing Request
     
-    A message sent from an applicant to a :term:CA in order to apply for a
-    :term:certificate. 
+    A message sent from an applicant to a :term:`CA` in order to apply for a
+    :term:`certificate`. 
 
     http://en.wikipedia.org/wiki/Certificate_signing_request
     
 
-  certificate  
+  Certificate  
     A public key certificate (also known as a digital certificate or identity
     certificate) is an electronic document which uses a digital signature to bind
-    a public key with an identity — information such as the name of a person or an
+    a public key with an identity -- information such as the name of a person or an
     organization, their address, and so forth. The certificate can be used to
     verify that a public key belongs to an individual.
   
     http://en.wikipedia.org/wiki/Public_key_certificate
 
 
+  CA certificate
+    A certificate that belongs to a :term:`CA` and serves as the root
+    certificate in a term:`chain of trust`.
+    
+    
+  Self signed certificate
+    A :term:`certificate` that is signed by its own creator. A self signed
+    certificate is not a part of a :term:`chain of trust` and so, it is not
+    possible to validate the information stored in the certificate. Because of
+    this, self signed certificates are useful mostly for testing in an
+    implicitly trusted environment.
+  
+    http://en.wikipedia.org/wiki/Self-signed_certificate
+
+
+  Chain of trust
+    The Chain of Trust of a Certificate Chain is an ordered list of
+    certificates, containing an end-user subscriber certificate and intermediate
+    certificates (that represents the Intermediate CA), that enables the
+    receiver to verify that the sender and all intermediates certificates are
+    trustworthy.
+
+    http://en.wikipedia.org/wiki/Chain_of_trust
+
+    
   OpenSSL
     Toolkit implementing the :term:`SSL` v2/v3 and :term:`TLS` v1 protocols as
     well as a full-strength general purpose cryptography library.
@@ -223,6 +259,14 @@
     to everyone and a private or secret key known only to the recipient of the
     message.
 
+
+  SSL handshake
+    The initial negotiation between two machines that communicate over SSL.
+
+    http://developer.connectopensource.org/display/CONNECTWIKI/SSL+Handshake
+  
+    http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png
+    
     
   TLS
     Transport Layer Security
@@ -230,6 +274,28 @@
     Successor of :term:`SSL`.
 
 
+  Client Side Authentication
+    :term:`SSL` Client Side Authentication is part of the :term:`SSL handshake`,
+    where the client proves its identity to the web server by providing a
+    :term:`certificate` to the server. The certificate provided by the client
+    must be signed by a :term:`CA` that is trusted by the server. Client Side
+    Authentication is not a required part of the handshake. The server can be
+    set up to not allow Client Side Authentication, to require it or to let it
+    be optional.
+
+
+  Server Side Authentication
+    :term:`SSL` Server Side Authentication is part of the :term:`SSL handshake`,
+    where the server proves its identity to the client by providing a
+    :term:`certificate` to the client. The certificate provided by the server
+    must be signed by a :term:`CA` that is trusted by the client. Server Side
+    Authentication is a required part of the handshake.
+  
+  
+  Client side certificate
+    :term:`Certificate` that is provided by the client during :term:`client side
+    authentication`.
+  
   CILogon
     The CILogon project facilitates secure access to CyberInfrastructure (CI).
     
@@ -248,4 +314,14 @@
     subset of the CILogon CAs.
     
     http://ca.cilogon.org/loa
+  
+
+  REST
+    Representational State Transfer
     
+    A style of software architecture for distributed hypermedia systems such as
+    the World Wide Web.
+
+    http://en.wikipedia.org/wiki/Representational_State_Transfer
+    
+  
