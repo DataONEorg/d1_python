@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Resources &mdash; DataONE Generic Member Node v0.beta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node v0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup" href="setup.html" />
+    <link rel="next" title="Setting up testing and debugging environment for GMN" href="testing.html" />
+    <link rel="prev" title="Complete default-ssl Apache configuration file" href="setup-example-default-ssl.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testing.html" title="Setting up testing and debugging environment for GMN"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-example-default-ssl.html" title="Complete default-ssl Apache configuration file"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node v0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Resources</a></li>
+<li><a class="reference internal" href="#integration-testing-using-certificates">Integration testing using certificates</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-example-default-ssl.html"
+                        title="previous chapter">Complete <tt class="docutils literal docutils literal docutils literal"><span class="pre">default-ssl</span></tt> Apache configuration file</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testing.html"
+                        title="next chapter">Setting up testing and debugging environment for GMN</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-resources.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="resources">
+<h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
+<p>Apache2 Configuration under Debian GNU/Linux:</p>
+<div class="highlight-python"><pre>$ zless /usr/share/doc/apache2.2-common/README.Debian.gz</pre>
+</div>
+<p>Viewing the files involved in the SSL handshake:</p>
+<div class="highlight-python"><pre>openssl rsa -noout -text -in server.key
+openssl req -noout -text -in server.csr
+openssl rsa -noout -text -in ca.key
+openssl x509 -noout -text -in ca.crt</pre>
+</div>
+<p>Overview of the SSL handshake:</p>
+<blockquote>
+<div><a class="reference external" href="http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png">SSL Handshake</a></div></blockquote>
+<p>How to add DataONE test certificate into the system wide trusted CA store:</p>
+<ul class="simple">
+<li>In the dpkg-reconfigure GUI, enable the dataone-gmn-test-ca.crt.</li>
+</ul>
+<div class="highlight-python"><pre>$ sudo -s
+# cp /var/local/dataone/gmn_certs/ca.crt /usr/share/ca-certificates/dataone-gmn-test-ca.crt
+# dpkg-reconfigure ca-certificates
+# update-ca-certificates</pre>
+</div>
+</div>
+<div class="section" id="integration-testing-using-certificates">
+<h1>Integration testing using certificates<a class="headerlink" href="#integration-testing-using-certificates" title="Permalink to this headline">¶</a></h1>
+<p>For running automated integration tests against GMN, test certificates
+that are trusted by GMN are needed. We accomplish this by adding the CA that was
+created in <a class="reference internal" href="setup-authn-server.html"><em>Step 5: Server Side Authentication</em></a> to the <a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a> CAs that were
+installed in <a class="reference internal" href="setup-authn-client.html"><em>Step 6: Client Side Authentication</em></a>.</p>
+<div class="highlight-python"><pre>$ sudo -s
+# cd /var/local/dataone/ca
+# cp ../gmn_certs/ca.crt dataone-gmn-test-ca.crt
+# c_rehash .
+# &lt;ctrl-d&gt;</pre>
+</div>
+<p>Then, we create two test certificates signed by the CA. We simulate valid
+and invalid sessions by using &#8220;valid&#8221; and &#8220;invalid&#8221; strings in the Common
+Names.</p>
+<div class="highlight-python"><pre>$ sudo -s
+# cd /var/local/dataone/gmn_certs</pre>
+</div>
+<p>Create the private keys:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl genrsa -des3 -out test_valid.key 4096</span>
+<span class="c"># openssl genrsa -des3 -out test_invalid.key 4096</span>
+</pre></div>
+</div>
+<p>Create <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a>s:</p>
+<ul class="simple">
+<li>When prompted for Common Name (CN), type &#8220;test_valid&#8221; for the certificate
+signed with the test_valid key and &#8220;test_invalid&#8221; for the certificate signed
+with the test_invalid key.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl req -new -key test_valid.key -out test_valid.csr</span>
+<span class="c"># openssl req -new -key test_invalid.key -out test_invalid.csr</span>
+</pre></div>
+</div>
+<p>Sign the <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a> with the <a class="reference internal" href="glossary.html#term-ca-signing-key"><em class="xref std std-term">CA signing key</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt</span>
+<span class="c"># openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt</span>
+</pre></div>
+</div>
+<p>Remove pass phrases from the private keys:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl rsa -in test_valid.key -out test_valid.nopassword.key</span>
+<span class="c"># openssl rsa -in test_invalid.key -out test_invalid.nopassword.key</span>
+</pre></div>
+</div>
+<p>Copy the keys to the integration tests:</p>
+<div class="highlight-python"><pre>cp test_valid.nopassword.key /var/local/dataone/gmn/src/tests
+cp test_invalid.nopassword.key /var/local/dataone/gmn/src/tests</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testing.html" title="Setting up testing and debugging environment for GMN"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-example-default-ssl.html" title="Complete default-ssl Apache configuration file"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node v0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Step 5: Server Side Authentication &mdash; DataONE Generic Member Node v0.beta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node v0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup" href="setup.html" />
+    <link rel="next" title="Step 6: Client Side Authentication" href="setup-authn-client.html" />
+    <link rel="prev" title="Step 4: mod_ssl" href="setup-mod-ssl.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="setup-authn-client.html" title="Step 6: Client Side Authentication"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-mod-ssl.html" title="Step 4: mod_ssl"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node v0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Step 5: Server Side Authentication</a><ul>
+<li><a class="reference internal" href="#create-ca-and-certificate-for-gmn">Create CA and certificate for GMN</a></li>
+<li><a class="reference internal" href="#apache-ssl-setup">Apache SSL setup</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-mod-ssl.html"
+                        title="previous chapter">Step 4: mod_ssl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-authn-client.html"
+                        title="next chapter">Step 6: Client Side Authentication</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-authn-server.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="step-5-server-side-authentication">
+<h1>Step 5: Server Side Authentication<a class="headerlink" href="#step-5-server-side-authentication" title="Permalink to this headline">¶</a></h1>
+<p>Create the certificate needed for GMN to prove its identity to <a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a>
+<a class="reference internal" href="glossary.html#term-client"><em class="xref std std-term">client</em></a>s and other parts of the DataONE infrastructure, such as
+<a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>s.</p>
+<p>We will set up our own <a class="reference internal" href="glossary.html#term-ca"><em class="xref std std-term">CA</em></a> and run <a class="reference internal" href="glossary.html#term-apache"><em class="xref std std-term">Apache</em></a> with a certificate
+signed by that CA. This procedure is similar to running Apache with a
+<a class="reference internal" href="glossary.html#term-self-signed-certificate"><em class="xref std std-term">self signed certificate</em></a> and is only a temporary solution.</p>
+<div class="section" id="create-ca-and-certificate-for-gmn">
+<h2>Create CA and certificate for GMN<a class="headerlink" href="#create-ca-and-certificate-for-gmn" title="Permalink to this headline">¶</a></h2>
+<p>Become root and set up a work area:</p>
+<div class="highlight-python"><pre>$ sudo -s
+# mkdir -p /var/local/dataone/gmn_certs
+# chmod 700 /var/local/dataone/gmn_certs
+# cd /var/local/dataone/gmn_certs</pre>
+</div>
+<p>Create a <a class="reference internal" href="glossary.html#term-ca-signing-key"><em class="xref std std-term">CA signing key</em></a>:</p>
+<ul class="simple">
+<li>OpenSSL will prompt for a pass phrase. It should be strong and should not be
+stored on disk.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl genrsa -des3 -out ca.key 4096</span>
+</pre></div>
+</div>
+<p>Create a <a class="reference internal" href="glossary.html#term-ca-certificate"><em class="xref std std-term">CA certificate</em></a>:</p>
+<ul class="simple">
+<li>When prompted for Common Name (CN), type the name of the GMN server followed
+by a space and &#8220;CA&#8221; (without the quotes).</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl req -new -x509 -days 36500 -key ca.key -out ca.crt</span>
+</pre></div>
+</div>
+<p>Create a <a class="reference internal" href="glossary.html#term-server-key"><em class="xref std std-term">server key</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl genrsa -des3 -out server.key 4096</span>
+</pre></div>
+</div>
+<p>Create a <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a> for the server, signed with the <a class="reference internal" href="glossary.html#term-server-key"><em class="xref std std-term">server key</em></a>:</p>
+<ul class="simple">
+<li>When prompted for Common Name (CN), type the IP address or DNS name of your
+server exactly as it appears for clients connecting to the server.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl req -new -key server.key -out server.csr</span>
+</pre></div>
+</div>
+<p>Sign the <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a> with the <a class="reference internal" href="glossary.html#term-ca-signing-key"><em class="xref std std-term">CA signing key</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl x509 -req -days 36500 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt</span>
+</pre></div>
+</div>
+<p>Remove pass phrase from <a class="reference internal" href="glossary.html#term-server-key"><em class="xref std std-term">server key</em></a> (optional):</p>
+<ul class="simple">
+<li>By default, the generated server key is password protected, causing
+Apache to prompt for the password each time it starts. Removing the password
+from the key enables Apache to start without prompting for the password.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl rsa -in server.key -out server.nopassword.key</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="apache-ssl-setup">
+<h2>Apache SSL setup<a class="headerlink" href="#apache-ssl-setup" title="Permalink to this headline">¶</a></h2>
+<p>Set Apache up to provide <a class="reference internal" href="glossary.html#term-ssl"><em class="xref std std-term">SSL</em></a> <a class="reference internal" href="glossary.html#term-server-side-authentication"><em class="xref std std-term">Server Side Authentication</em></a> for GMN.</p>
+<p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
+<p>Enable SSL in Apache:</p>
+<div class="highlight-python"><pre>$ sudo a2ensite default-ssl
+$ sudo a2enmod ssl</pre>
+</div>
+<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
+<p>Change:</p>
+<div class="highlight-python"><pre>&lt;VirtualHost _default_:443&gt;</pre>
+</div>
+<p>to:</p>
+<div class="highlight-python"><pre>&lt;VirtualHost *:443&gt;</pre>
+</div>
+<p>Add directives:</p>
+<ul class="simple">
+<li>Before adding the directives, check if they are already present in the file.
+If there is a commented version, uncomment it and edit it instead of creating
+a new line.</li>
+<li>If you did not create a server key without password above, replace
+<tt class="docutils literal"><span class="pre">server.nopassword.key</span></tt> with <tt class="docutils literal"><span class="pre">server.key</span></tt>.</li>
+</ul>
+<div class="highlight-python"><pre>SSLEngine on
+SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
+SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.nopassword.key</pre>
+</div>
+<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/ports.conf</span></tt>.</p>
+<p>In the <tt class="docutils literal"><span class="pre">&lt;IfModule</span> <span class="pre">mod_ssl.c&gt;</span></tt> section, add:</p>
+<div class="highlight-python"><pre>NameVirtualHost *:443</pre>
+</div>
+<p><a class="reference internal" href="setup-authn-client.html"><em>Step 6: Client Side Authentication</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="setup-authn-client.html" title="Step 6: Client Side Authentication"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-mod-ssl.html" title="Step 4: mod_ssl"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node v0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
