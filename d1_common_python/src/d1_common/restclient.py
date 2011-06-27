@@ -75,7 +75,12 @@ class RESTClient(object):
       conn = httplib.HTTPConnection(host, port, self.timeout)
     else:
       conn = httplib.HTTPSConnection(
-        host, port, self.keyfile, self.certfile, self.strictHttps, self.timeout
+        host=host,
+        port=port,
+        key_file=self.keyfile,
+        cert_file=self.certfile,
+        strict=self.strictHttps,
+        timeout=self.timeout
       )
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       conn.set_debuglevel(logging.DEBUG)
@@ -126,7 +131,9 @@ class RESTClient(object):
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
+    # Create the HTTP or HTTPS connection.
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
+    # Store URL and equivalent CURL request for debugging.
     self._lasturl = '%s://%s:%s%s' % (
       parts['scheme'], parts['host'], parts['port'], targeturl
     )
@@ -134,6 +141,7 @@ class RESTClient(object):
     for h in headers.keys():
       self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
     self._curlrequest.append('"%s"' % self._lasturl)
+    # Perform request using specified HTTP verb.
     conn.request(method, targeturl, None, headers)
     return self._getResponse(conn)
 
@@ -167,7 +175,9 @@ class RESTClient(object):
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       self.logger.debug('targetURL=%s' % targeturl)
       self.logger.debug('HEADERS=%s' % str(headers))
+    # Create the HTTP or HTTPS connection.
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
+    # Store URL and equivalent CURL request for debugging.
     self._lasturl = '%s://%s:%s%s' % (
       parts['scheme'], parts['host'], parts['port'], targeturl
     )
@@ -180,6 +190,7 @@ class RESTClient(object):
       #self._curlrequest.append('-F %s=@%s' % (f['name'], f['filename']))
       self._curlrequest.append('-F %s=@%s' % (f[0], f[1]))
     self._curlrequest.append('"%s"' % self._lasturl)
+    # Perform request using specified HTTP verb.
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
 

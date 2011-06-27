@@ -50,16 +50,16 @@ EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
     <rightsHolder xmlns="">rightsHolder0</rightsHolder>
     <accessPolicy xmlns="">
         <allow>
-            <principal>principal0</principal>
-            <principal>principal1</principal>
+            <subject>subject0</subject>
+            <subject>subject1</subject>
             <permission>read</permission>
             <permission>read</permission>
             <resource>resource0</resource>
             <resource>resource1</resource>
         </allow>
         <allow>
-            <principal>principal2</principal>
-            <principal>principal3</principal>
+            <subject>subject2</subject>
+            <subject>subject3</subject>
             <permission>read</permission>
             <permission>read</permission>
             <resource>resource2</resource>
@@ -125,7 +125,7 @@ EG_BAD_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
     <checksum algorithm="SHA-1">2e01e17467891f7c933dbaa00e1459d23db3fe4f</checksum>
     <embargoExpires>2006-05-04T18:13:51.0Z</embargoExpires>
     <accessRule rule="allow" service="read"/>
-    <accessRule rule="allow" service="read" principal="Principal1"/>
+    <accessRule rule="allow" service="read" subject="Subject1"/>
     <replicationPolicy replicationAllowed="true" numberReplicas="2">
         <preferredMemberNode>MemberNode12</preferredMemberNode>
         <preferredMemberNode>MemberNode13</preferredMemberNode>

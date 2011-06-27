@@ -112,7 +112,7 @@ class LogRecords(serialization_base.Serialization):
   #        <identifier>nceas.951.27</identifier>
   #        <ipAddress>128.111.220.17</ipAddress>
   #        <userAgent>Kepler/1.0.0</userAgent>
-  #        <principal>public</principal>
+  #        <subject>public</subject>
   #        <event>read</event>
   #        <dateLogged>2010-02-01T00:00:11.152</dateLogged>
   #        <memberNode>mnode:001:KNB</memberNode>
@@ -122,7 +122,7 @@ class LogRecords(serialization_base.Serialization):
   #        <identifier>nceas.962.1</identifier>
   #        <ipAddress>128.111.242.15</ipAddress>
   #        <userAgent>Morpho/1.8.0</userAgent>
-  #        <principal>uid=jones,o=unaffiliated,dc=ecoinformatics,dc=org</principal>
+  #        <subject>uid=jones,o=unaffiliated,dc=ecoinformatics,dc=org</subject>
   #        <event>create</event>
   #        <dateLogged>2010-02-01T09:51:46.068</dateLogged>
   #        <memberNode>mnode:002:Dryad</memberNode>
@@ -145,7 +145,7 @@ class LogRecords(serialization_base.Serialization):
       logEntry['identifier'] = o.identifier.value()
       logEntry['ipAddress'] = o.ipAddress
       logEntry['userAgent'] = o.userAgent
-      logEntry['principal'] = o.principal
+      logEntry['subject'] = o.subject
       logEntry['event'] = o.event
       logEntry['dateLogged'] = datetime.datetime.isoformat(o.dateLogged)
       logEntry['memberNode'] = o.memberNode
@@ -180,7 +180,7 @@ class LogRecords(serialization_base.Serialization):
       logEntry.append(o.identifier.value())
       logEntry.append(o.ipAddress)
       logEntry.append(o.userAgent)
-      logEntry.append(o.principal)
+      logEntry.append(o.subject)
       logEntry.append(o.event)
       logEntry.append(datetime.datetime.isoformat(o.dateLogged))
       logEntry.append(o.memberNode)
@@ -210,7 +210,7 @@ class LogRecords(serialization_base.Serialization):
       logEntry.identifier = o['identifier']
       logEntry.ipAddress = o['ipAddress']
       logEntry.userAgent = o['userAgent']
-      logEntry.principal = o['principal']
+      logEntry.subject = o['subject']
       logEntry.event = o['event']
       logEntry.dateLogged = datetime.datetime.isoformat(o['dateLogged'])
       logEntry.memberNode = o['memberNode']
