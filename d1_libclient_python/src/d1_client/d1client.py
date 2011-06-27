@@ -162,8 +162,7 @@ class DataONEClient(object):
     :return type: list of baseurl
     '''
     cn = self._getCN()
-    token = self.getAuthToken()
-    result = cn.resolve(token, pid)
+    result = cn.resolve(pid)
     #result.objectLocation.sort(key='priority')
     res = []
     for location in result.objectLocation:
@@ -176,12 +175,11 @@ class DataONEClient(object):
     :return type: HTTPResponse
     '''
     locations = self.resolve(pid)
-    token = self.getAuthToken()
     for location in locations:
       self.logger.debug(location)
       mn = self._getMN(location)
       try:
-        return mn.get(token, pid)
+        return mn.get(pid)
       except Exception, e:
         self.logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
@@ -198,8 +196,7 @@ class DataONEClient(object):
     if self._sysmetacache.has_key(pid):
       return self._sysmetacache[pid]
     cn = self._getCN()
-    token = self.getAuthToken()
-    self._sysmetacache[pid] = cn.getSystemMetadata(token, pid)
+    self._sysmetacache[pid] = cn.getSystemMetadata(pid)
     return self._sysmetacache[pid]
 
   def getRelatedObjects(self, pid):

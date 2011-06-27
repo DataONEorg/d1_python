@@ -63,12 +63,12 @@ class CoordinatingNodeClient(DataONEBaseClient):
       }
     )
 
-  def resolveResponse(self, token, pid):
+  def resolveResponse(self, pid):
     url = self.RESTResourceURL('resolve', pid=pid)
-    return self.GET(url, headers=self._getAuthHeader(token))
+    return self.GET(url)
 
-  def resolve(self, token, pid):
-    response = self.resolveResponse(token, pid)
+  def resolve(self, pid):
+    response = self.resolveResponse(pid)
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = objectlocationlist_serialization.ObjectLocationList()
     return deser.deserialize(response.read(), format)
@@ -76,16 +76,16 @@ class CoordinatingNodeClient(DataONEBaseClient):
   def reserveIdentifier(self, pid=None, scope=None, format=None):
     raise Exception('Not Implemented')
 
-  def assertRelation(self, token, pidOfSubject, relationship, pidOfObject):
+  def assertRelation(self, pidOfSubject, relationship, pidOfObject):
     raise Exception('Not Implemented')
 
-  def searchResponse(self, token, query):
+  def searchResponse(self, query):
     url = self.RESTResourceURL('search')
     url_params = {'query': query, }
-    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
+    return self.GET(url, url_params=url_params)
 
-  def search(self, token, query):
-    res = self.searchResponse(token, query)
+  def search(self, query):
+    res = self.searchResponse(query)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     serializer = objectlist_serialization.ObjectList()
     return serializer.deserialize(res.read(), format)
@@ -93,7 +93,7 @@ class CoordinatingNodeClient(DataONEBaseClient):
   def getAuthToken(self, cert):
     raise Exception('Not Implemented')
 
-  def setOwner(self, token, pid, userId):
+  def setOwner(self, pid, userId):
     raise Exception('Not Implemented')
 
   def newAccount(self, username, password, authSystem=None):

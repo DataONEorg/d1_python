@@ -46,7 +46,7 @@ Example:
     print "IP Addres  = %s" % event.ipAddress
     print "Identifier = %s" % event.identifier
     print "User agent = %s" % event.userAgent
-    print "Principal  = %s" % event.principal
+    print "Subject  = %s" % event.subject
     print '-' * 79
 '''
 
