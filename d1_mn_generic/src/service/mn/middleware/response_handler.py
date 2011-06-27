@@ -110,10 +110,10 @@ class LogRecords(d1_common.types.logrecords_serialization.LogRecords):
       logEntry.identifier = row.object.pid
       logEntry.ipAddress = row.ip_address.ip_address
       logEntry.userAgent = row.user_agent.user_agent
-      logEntry.principal = row.principal.principal
+      logEntry.subject = row.subject.subject
       logEntry.event = row.event.event
       logEntry.dateLogged = row.date_logged
-      logEntry.memberNode = row.member_node.member_node
+      logEntry.memberNode = 'dummy' # TODO: Should probably be removed from schema.
 
       self.log_records.logEntry.append(logEntry)
 

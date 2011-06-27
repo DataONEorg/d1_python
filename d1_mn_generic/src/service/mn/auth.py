@@ -29,6 +29,9 @@
 '''
 
 # Stdlib.
+import os
+import urllib
+
 try:
   from functools import update_wrapper
 except ImportError:
@@ -40,6 +43,8 @@ from django.http import HttpResponse
 
 # MN API.
 import d1_common.types.exceptions
+import d1_client.systemmetadata
+import d1_common.types.accesspolicy_serialization
 
 # App.
 import settings
@@ -47,151 +52,316 @@ import sys_log
 import util
 import models
 
-# How to use session object
-#if 'cn_user' not in request.session.keys()
-#request.session['cn_user'] = True
+# ------------------------------------------------------------------------------
+# Helpers.
+# ------------------------------------------------------------------------------
+
+# Actions have a relationship where each action implicitly includes the actions
+# of lower levels. The relationship is as follows:
+#
+# execute > changePermission > write > read
+#
+# Because of this, it is only necessary to store the allowed action of highest
+# level for a given subject and object.
+
+EXECUTE_STR = 'execute'
+EXECUTE_LEVEL = 3
+CHANGEPERMISSION_STR = 'changePermission'
+CHANGEPERMISSION_LEVEL = 2
+WRITE_STR = 'write'
+WRITE_LEVEL = 1
+READ_STR = 'read'
+READ_LEVEL = 0
+
+action_level_map = {
+  EXECUTE_STR: EXECUTE_LEVEL,
+  CHANGEPERMISSION_STR: CHANGEPERMISSION_LEVEL,
+  WRITE_STR: WRITE_LEVEL,
+  READ_STR: READ_LEVEL,
+}
+
+level_action_map = {
+  EXECUTE_LEVEL: EXECUTE_STR,
+  CHANGEPERMISSION_LEVEL: CHANGEPERMISSION_STR,
+  WRITE_LEVEL: WRITE_STR,
+  READ_LEVEL: READ_STR,
+}
+
+
+def action_to_level(action):
+  '''Map action name to action level.
+  '''
+  try:
+    return action_level_map[action]
+  except LookupError:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid action: {0}'.format(action)
+    )
+
+
+def level_to_action(level):
+  '''Map action level to action name.
+  '''
+  try:
+    return level_action_map[level]
+  except LookupError:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid action level: {0}'.format(level)
+    )
+
+
+def get_owner(pid):
+  '''Get the owner of an object.
+
+  :param pid: Object
+  :type pid: Identifier
+  :return:
+    The subject that owns PID.
+    If PID does not exist, returns "DATAONE_UNKNOWN".
+  :return type: str
+  '''
+  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
+  try:
+    with open(sysmeta_path, 'r') as file:
+      sysmeta_str = file.read()
+      sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+      return sysmeta.rightsHolder
+  except EnvironmentError as (errno, strerror):
+    return 'DATAONE_UNKNOWN'
+
+#def action_implicit(action_requested, action_allowed):
+#  '''Check if requested action is allowed.
+#  '''
+#  return action_to_id(action_requsted) <= action_to_id(action_allowed)
 
 # ------------------------------------------------------------------------------
 # Set permissions.
 # ------------------------------------------------------------------------------
 
 
-def set_access_rules(access_policy):
-  # This function assumes that TransactionMiddleware is enabled.
-  # 'django.middleware.transaction.TransactionMiddleware'
+def set_access_policy(pid, access_policy):
+  '''Apply an AccessPolicy to an object.
+
+  :param access_policy: AccessPolicy to apply to object. 
+  :type access_policy: AccessPolicy
+  :param pid: Object to which AccessPolicy is applied.
+  :type pid: Identifier
+  :return type: NoneType or exception.
+
+  Preconditions:
+
+  - Subject has changePermission for object.
+  - The Django transaction middleware layer must be enabled.
+    'django.middleware.transaction.TransactionMiddleware'
+  '''
+
+  # Verify that the object for which access policy is being set
+  # exists, and retrieve it.
+  try:
+    sci_obj = models.Object.objects.get(pid=pid)
+  except DoesNotExist:
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, 'Attempted to set access for non-existing object', pid
+    )
+
+  # Remove any existing permissions for this object. Because
+  # TransactionMiddleware is enabled, the temporary absence of permissions is
+  # hidden in a transaction.
+  #
+  # The deletes are cascaded so any subjects that are no longer referenced in
+  # any permissions are deleted as well.
+  models.Permission.objects.filter(object__pid=pid).delete()
 
   # Iterate over AccessPolicy and create db entries.
   for allow_rule in access_policy.allow:
-    for principal in allow_rule.principal:
-      for resource in allow_rule.resource:
-        # TODO: Check if principal has CHANGEPERMISSION on resource.
+    # Find the highest level action that this rule sets.
+    top_level = 0
+    for permission in allow_rule.permission:
+      level = action_to_level(permission)
+      if level > top_level:
+        top_level = level
 
-        # Remove any existing permissions for this principal on this resource.
-        # Because TransactionMiddleware is enabled, the temporary absence of
-        # permissions is hidden in a transaction.
-        #
-        # The deletes are cascaded.
-        #
+    # Set the highest level rule for all subjects in this rule.
+    for subject in allow_rule.subject:
+      # There can be multiple rules in a policy and each rule can contain
+      # multiple subjects. So there are two ways that the same subject can be
+      # specified multiple times in a policy. If this happens, multiple,
+      # conflicting action levels may be provided for the subject. This is
+      # handled by checking for an existing row for the subject for this object
+      # and updating it if it contains a lower action level. The end result is
+      # that there is one row for each subject for each object and this row
+      # contains the highest action level.
+      #
+      # If the subject exists, get it. Otherwise, create it.
+      # TODO: Find out how we will prevent a non-existing subject from being
+      # given permissions.
+      subject_row = models.Subject.objects.get_or_create(subject=subject.value())[0]
+      try:
         # TODO: Because Django does not (as of 1.3) support indexes that cover
-        # multiple fields, this filter will be slow. When Django gets support
-        # for indexes that cover multiple fields, create an index for the
+        # multiple fields, this get() will be slow. When Django gets support for
+        # indexes that cover multiple fields, create an index for the
         # combination of the two fields in the Permission table.
         #
         # http://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys
-        models.Permission.objects.filter(
-          object__pid=resource.value(),
-          principal__distinguished_name=principal
-        ).delete()
-        # Add the new permissions.
-        for permission in allow_rule.permission:
-          # Permission does not exist. Create it.
-          permission_row = models.Permission()
-          permission_row.set_permission(resource.value(), principal, permission)
-          permission_row.save()
+        permission = models.Permission.objects.get(object=sci_obj, subject=subject_row)
+      except models.Permission.DoesNotExist:
+        permission = models.Permission()
+        permission.object = sci_obj
+        permission.subject = subject_row
+        permission.level = level
+        permission.save()
+      else:
+        if permission.level < level:
+          permission.level = level
+          permission.save()
+
+#def set_access_policy_by_xml(pid, access_policy_xml):
+#  '''Apply an AccessPolicy to an object.
+#
+#  :param access_policy_xml: AccessPolicy XML to apply to object. 
+#  :type access_policy: AccessPolicy XML
+#  :param pid: Object to which AccessPolicy is applied.
+#  :type pid: Identifier
+#  :return type: NoneType
+#
+#  Preconditions:
+#
+#  - Subject has changePermission for object.
+#  - The Django transaction middleware layer must be enabled.
+#    'django.middleware.transaction.TransactionMiddleware'
+#  '''
+#  access_policy_serializer = \
+#    d1_common.types.accesspolicy_serialization.AccessPolicy()
+#
+#  try:
+#    access_policy = access_policy_serializer.deserialize(access_policy_str)
+#  except:
+#    err = sys.exc_info()[1]
+#    raise d1_common.types.exceptions.InvalidRequest(
+#      0, 'Could not deserialize AccessPolicy: {0}'.format(str(err)))
+#
+#  set_access_policy(pid, access_policy)
 
 # ------------------------------------------------------------------------------
 # Check permissions.
 # ------------------------------------------------------------------------------
 
 
-def check_permission(principal, action, resource):
-  '''Check if principal is allowed to perform action on resource.
-  :param principal:
-  :type principal:
-  :param action:
-  :type action:
-  :param resource:
-  :type resource:
-  :return: NoneType or raises.
+def is_allowed(subject, level, pid):
+  '''Check if subject is allowed to perform action on object.
+  :param subject: Subject for which permissions are being checked.
+  :type subject: str
+  :param level: Action level for which permissions are being checked. 
+  :type level: str
+  :param pid: Object for which permissions are being checked.
+  :type pid: Identifier
+  :return: True if action is allowed on subject.
+  :return type: Boolean
   '''
-  if not models.Permission.objects.filter(
-    principal__distinguished_name=principal,
-    action__action=action,
-    object__pid=resource
-  ).exists():
+  # If subject is the owner, subject has all permissions on the object.
+  if subject == get_owner(pid):
+    return True
+  # If subject is not the owner, a specific permission for subject
+  # must exist on object. The permission must be for an action level that
+  # is the same or higher than the requested action level.
+  return models.Permission.objects.filter(
+    object__pid=pid, subject__subject=subject,
+    level__lte=level
+  ).exists()
+
+
+def assert_allowed(subject, level, pid):
+  '''Assert that subject is allowed to perform action on object.
+  :param subject: Subject for which permissions are being asserted.
+  :type subject: str
+  :param level: Action level for which permissions are being asserted. 
+  :type level: str
+  :param pid: Object for which permissions are being asserted.
+  :type pid: Identifier
+  :return: NoneType or raises NotAuthorized.
+  '''
+  if not is_allowed(subject, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
       0, '{0} on {1} denied for {2} or object does not exist'.format(
-        action, resource, principal
-      ), resource
+        level_to_action(level), pid, subject
+      ), pid
     )
 
+# ------------------------------------------------------------------------------
+# Decorators.
+# ------------------------------------------------------------------------------
 
-# Anyone.
-def permission_public(f):
-  '''Function decorator that checks if public principal is allowed to perform
-  action.
-  '''
-
-  def wrap(request, *args, **kwargs):
-    # Run function without any checks.
-    # TODO: Add check when certificate support is in place.
-    return f(request, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-
-  return wrap
-
-
-# Anyone with read permission for the given object.
-def permission_read(f):
-  '''Function decorator that checks if principal is allowed to read resource.
-  '''
-
-  def wrap(request, *args, **kwargs):
-    # For checking that access is correctly denied.
-    # TODO: Improve this when I have a set of test certificates.
-    check_permission('anotheruser', 'read', args[0])
-    #check_permission(request.META['SSL_CLIENT_S_DN'], 'read', args[0])
-    return f(request, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-
-  return wrap
-
-
-def permission_update(f):
-  '''Function decorator that checks if principal is allowed to update resource.
-  '''
-
-  def wrap(request, *args, **kwargs):
-    #check_permission(principal, 'update', resource)
-    return f(request, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-
-  return wrap
-
-
-def permission_change_permissions(f):
-  '''Function decorator that checks if principal is allowed to change
-  permissions on resource.
-  '''
-
-  def wrap(request, *args, **kwargs):
-    #check_permission(principal, 'read', resource)
-    return f(request, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-
-  return wrap
+# The following decorators check if the subject in the provided client side
+# certificate has the permissions required to perform a given action. If
+# the required permissions are not present, a NotAuthorized exception is
+# return to the client.
 
 
 # Only D1 infrastructure.
-def permission_trusted(f):
-  '''Function decorator that checks if principal is a trusted DataONE
-  infrastructure component.
-  '''
-
+def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
-    # Run function without any checks.
-    # TODO: Add check when certificate support is in place.
+    if request.META['SSL_CLIENT_S_DN'] != 'DATAONE_TRUSTED':
+      raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
+  return wrap
 
+
+# Anyone with a valid session.
+def assert_authenticated(f):
+  def wrap(request, *args, **kwargs):
+    if request.META['SSL_CLIENT_S_DN'] == 'DATAONE_PUBLIC':
+      raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+# The following decorators assume that the first argument to the wrapped
+# function is the PID for which the permission is being asserted.
+def assert_execute_permission(f):
+  def wrap(request, *args, **kwargs):
+    pid = args[0]
+    assert_allowed(request.META['SSL_CLIENT_S_DN'], EXECUTE_LEVEL, pid)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+def assert_changepermission_permission(f):
+  def wrap(request, *args, **kwargs):
+    pid = args[0]
+    assert_allowed(request.META['SSL_CLIENT_S_DN'], CHANGEPERMISSION_LEVEL, pid)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+def assert_write_permission(f):
+  def wrap(request, *args, **kwargs):
+    pid = args[0]
+    assert_allowed(request.META['SSL_CLIENT_S_DN'], WRITE_LEVEL, pid)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+def assert_read_permission(f):
+  def wrap(request, *args, **kwargs):
+    pid = args[0]
+    assert_allowed(request.META['SSL_CLIENT_S_DN'], READ_LEVEL, pid)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
   return wrap

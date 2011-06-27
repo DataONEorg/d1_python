@@ -66,8 +66,9 @@ urlpatterns = patterns(
   (r'^_replicate_store/?$', '_replicate_store'),
 
   # Authentication and authorization
-  (r'^accessRules/(.+)$', 'access_rules_pid'),
-  (r'^accessRules_put/(.+)$', 'access_rules_pid_put_workaround'),
+  (r'^isAuthorized/(.+)/(.+)/?$', 'is_authorized'),
+  (r'^setAccessPolicy/(.+)$', 'access_policy_pid'),
+  (r'^setAccessPolicy_put/(.+)$', 'access_policy_pid_put_workaround'),
 
   # Diagnostics, debugging and testing.
   (r'^test/?$', 'test'),
@@ -78,8 +79,10 @@ urlpatterns = patterns(
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
   (r'^test_exception/(.+?)/?$', 'test_exception'),
   (r'^test_delete_all_objects/?$', 'test_delete_all_objects'),
+  (r'^test_delete_single_object/(.+?)/?$', 'test_delete_single_object'),
   (r'^test_delete_event_log/?$', 'test_delete_event_log'),
   (r'^test_inject_event_log/?$', 'test_inject_event_log'),
+  (r'^test_delete_all_access_rules/?$', 'test_delete_all_access_rules'),
   (r'^test_cert/?$', 'test_cert'),
 
   # Admin.

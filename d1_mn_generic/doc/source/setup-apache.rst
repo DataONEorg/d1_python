@@ -21,13 +21,13 @@ Initial VirtualHost setup.
 
 Also see: :doc:`setup-example-default-ssl`.
 
-Edit ``/etc/apache2/sites-available/default-ssl``.
-
 * These instructions use the existing VirtualHost section.
 
 * These settings are required for GMN to correctly handle the DataONE
   :term:`REST` calls. See `Apache Configuration for DataONE Services`_ for more
   information.
+
+Edit ``/etc/apache2/sites-available/default-ssl``.
 
 In the VirtualHost section, add::
 

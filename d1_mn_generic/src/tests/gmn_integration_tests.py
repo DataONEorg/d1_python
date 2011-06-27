@@ -65,6 +65,7 @@ import json
 import logging
 import optparse
 import os
+import pprint
 import random
 import re
 import stat
@@ -75,6 +76,7 @@ import unittest
 import urllib
 import urlparse
 import uuid
+import xml.parsers.expat
 from xml.sax.saxutils import escape
 
 # MN API.
@@ -111,7 +113,7 @@ OBJECTS_UNIQUE_DATES = 99
 OBJECTS_UNIQUE_DATE_AND_FORMAT_EML = 99
 OBJECTS_PID_STARTSWITH_F = 5
 OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 5
-OBJECTS_CREATED_IN_90S = 32
+OBJECTS_CREATED_IN_90S = 33
 
 # CONSTANTS RELATED TO LOG COLLECTION.
 
@@ -185,7 +187,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Find the PID of an object that exists on the server.
     '''
     # Verify that there's at least one object on server.
-    object_list = client.listObjects('<dummy token>')
+    object_list = client.listObjects()
     self.assertTrue(object_list.count > 0, 'No objects to perform test on')
     # Get the first PID listed. The list is in random order.
     return object_list.objectInfo[0].identifier.value()
@@ -194,7 +196,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
-    object_list = client.listObjects('<dummy token>')
+    object_list = client.listObjects()
     
     for o in object_list['objectInfo']:
       if o["identifier"].value() == pid:
@@ -203,38 +205,50 @@ class TestSequenceFunctions(unittest.TestCase):
     # Object not found
     assertTrue(False)
 
-  def gen_sysmeta(self, pid, size, md5, now):
-    return u'''<?xml version="1.0" encoding="UTF-8"?>
-<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/0.6.1">
-  <identifier>{0}</identifier>
-  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
-  <size>{1}</size>
-  <submitter>test</submitter>
-  <rightsHolder>test</rightsHolder>
-  <checksum algorithm="MD5">{2}</checksum>
-  <dateUploaded>{3}</dateUploaded>
-  <dateSysMetadataModified>{3}</dateSysMetadataModified>
-  <originMemberNode>MN1</originMemberNode>
-  <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</D1:systemMetadata>
-'''.format(escape(pid), size, md5, datetime.datetime.isoformat(now))
+#  def gen_sysmeta(self, pid, size, md5, now, owner):
+#    return u'''<?xml version="1.0" encoding="UTF-8"?>
+#<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/0.6.1">
+#  <identifier>{0}</identifier>
+#  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
+#  <size>{1}</size>
+#  <submitter>{2}</submitter>
+#  <rightsHolder>{2}</rightsHolder>
+#  <checksum algorithm="MD5">{3}</checksum>
+#  <dateUploaded>{4}</dateUploaded>
+#  <dateSysMetadataModified>{4}</dateSysMetadataModified>
+#  <originMemberNode>MN1</originMemberNode>
+#  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+#</D1:systemMetadata>
+#'''.format(escape(pid), size, owner, md5, datetime.datetime.isoformat(now))
 
-
-  def gen_access_rule(self, principals, permissions, resources):
-    '''Create an AccessRule object.
-    '''
-    access_rule = dataoneTypes.AccessRule()
-    access_rule.principal.extend(principals)
-    access_rule.permission.extend(permissions)
-    access_rule.resource.extend(resources)
-    return access_rule
+  def gen_sysmeta(self, pid, size, md5, now, owner):
+    sysmeta = d1_common.types.generated.dataoneTypes.systemMetadata()
+    sysmeta.identifier = pid
+    sysmeta.objectFormat = 'eml://ecoinformatics.org/eml-2.0.0'
+    sysmeta.size = size
+    sysmeta.submitter = 'subm'
+    sysmeta.rightsHolder = 'subm'
+    sysmeta.checksum = d1_common.types.generated.dataoneTypes.checksum(md5)
+    sysmeta.checksum.algorithm = 'MD5'
+    sysmeta.dateUploaded = now
+    sysmeta.dateSysMetadataModified = now
+    sysmeta.originMemberNode = 'MN1'
+    sysmeta.authoritativeMemberNode = 'MN1'
+    return sysmeta
 
 
   def gen_access_policy(self, access_rules):
-    access_policy = dataoneTypes.accessPolicy()    
-    access_policy.extend(access_rules)
-    return access_policy
-  
+    accessPolicy = d1_common.types.generated.dataoneTypes.accessPolicy()
+    for access_rule in access_rules:
+      accessRule = d1_common.types.generated.dataoneTypes.AccessRule()
+      for subject in access_rule[0]:
+        accessRule.subject.append(subject)
+      for permission in access_rule[1]:
+        permission = d1_common.types.generated.dataoneTypes.Permission('read')
+        accessRule.permission.append(permission)
+      accessRule.resource.append('<dummy. field will be removed>')
+      accessPolicy.append(accessRule)
+    return accessPolicy
   
   #
   # Tests that are run for both local and remote objects.
@@ -244,14 +258,14 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Delete all objects.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.delete_all_objects()
+    client.delete_all_objects(headers=self.session('DATAONE_TRUSTED'))
 
   def B_object_collection_is_empty(self):
     '''Object collection is empty.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Get object collection.
-    object_list = client.listObjects('<dummy token>')
+    object_list = client.listObjects()
     # Check header.
     self.assert_counts(object_list, 0, 0, 0)
   
@@ -266,8 +280,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Get object collection.
-    object_list = client.listObjects('<dummy token>',
-                                     count=d1_common.const.MAX_LISTOBJECTS)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS)
     # Check header.
     self.assert_counts(object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA)
 
@@ -275,7 +288,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Clear event log.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.delete_event_log()
+    client.delete_event_log(headers=self.session('DATAONE_TRUSTED'))
 
   def B_event_log_is_empty(self):
     '''Event log is empty.
@@ -283,7 +296,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Object collection is empty.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    logRecords = client.getLogRecords('<dummy token>', datetime.datetime(1800, 1, 1))
+    logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1))
     self.assertEqual(len(logRecords.logEntry), 0)
   
   def C_inject_event_log(self):
@@ -291,33 +304,37 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     csv_file = open('test_log.csv', 'rb')
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.inject_event_log(csv_file)
+    client.inject_event_log(csv_file, headers=self.session('DATAONE_TRUSTED'))
 
   def D_event_log_is_populated(self):
     '''Event log is populated.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    logRecords = client.getLogRecords('<dummy token>', datetime.datetime(1800, 1, 1))
+    logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1))
     self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
     found = False
     for o in logRecords.logEntry:
-      if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' and o.event == 'create': 
+      if o.identifier.value() == 'hdl:10255/dryad.654/mets.xml' \
+                                 and o.event == 'create': 
         found = True
         break
     self.assertTrue(found)
   
   def compare_byte_by_byte(self):
-    '''Read set of test objects back from MN and do byte-by-byte comparison with local copies.
+    '''Read from MN and do byte-by-byte comparison with local copies.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
 
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+                                                      '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = urllib.unquote(os.path.basename(object_path))
       #sysmeta_str_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'r').read()
       #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
-      object_str_d1 = client.get('<dummy token>', pid).read(1024**2)
+      object_str_d1 = client.get(pid,
+                                 vendorSpecific=self.session('test_user_1')) \
+                                 .read(1024**2)
       #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
       self.assertEqual(object_str_disk, object_str_d1)
       
@@ -329,11 +346,11 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     # Get object collection.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
-    object_list = client.listObjects('<dummy token>',
-                                     count=d1_common.const.MAX_LISTOBJECTS)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS)
     
     # Loop through our local test objects.
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+                                                      '*.sysmeta'))):
       # Get name of corresponding object and check that it exists on disk.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       self.assertTrue(os.path.exists(object_path))
@@ -350,14 +367,17 @@ class TestSequenceFunctions(unittest.TestCase):
           found = True
           break;
   
-      self.assertTrue(found, 'Couldn\'t find object with pid "{0}"'.format(sysmeta_obj.identifier))
+      self.assertTrue(found,
+        'Couldn\'t find object with pid "{0}"'.format(sysmeta_obj.identifier))
       
       self.assertEqual(object_info.identifier.value(), sysmeta_obj.identifier)
       self.assertEqual(object_info.objectFormat, sysmeta_obj.objectFormat)
-      self.assertEqual(object_info.dateSysMetadataModified, sysmeta_obj.dateSysMetadataModified)
+      self.assertEqual(object_info.dateSysMetadataModified,
+                       sysmeta_obj.dateSysMetadataModified)
       self.assertEqual(object_info.size, sysmeta_obj.size)
       self.assertEqual(object_info.checksum.value(), sysmeta_obj.checksum)
-      self.assertEqual(object_info.checksum.algorithm, sysmeta_obj.checksumAlgorithm)
+      self.assertEqual(object_info.checksum.algorithm,
+                       sysmeta_obj.checksumAlgorithm)
 
 
   def object_update(self):
@@ -380,8 +400,9 @@ class TestSequenceFunctions(unittest.TestCase):
     new_pid = 'update_object_pid'
     # Update.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.updateResponse('<dummy token>', obsoleted_pid,
-                                     object_str, new_pid, sysmeta_str)
+    response = client.updateResponse(obsoleted_pid,
+                                     object_str, new_pid, sysmeta_str,
+                                     vendorSpecific=self.session('test_user_1'))
     return response
 
 
@@ -392,7 +413,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # Starting at 0 and getting half of the available objects.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     #client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    object_list = client.listObjects('<dummy token>', start=0,
+    object_list = client.listObjects(start=0,
                                      count=object_cnt_half)
     self.assert_counts(object_list, 0, object_cnt_half,
                        OBJECTS_TOTAL_DATA)
@@ -403,7 +424,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     object_cnt_half = OBJECTS_TOTAL_DATA / 2  
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    object_list = client.listObjects('<dummy token>', start=object_cnt_half,
+    object_list = client.listObjects(start=object_cnt_half,
                                      count=d1_common.const.MAX_LISTOBJECTS)
     self.assert_counts(object_list, object_cnt_half, object_cnt_half,
                        OBJECTS_TOTAL_DATA)
@@ -412,8 +433,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Slicing: Starting above number of objects that we have.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    object_list = client.listObjects('<dummy token>',
-                                     start=OBJECTS_TOTAL_DATA * 2,
+    object_list = client.listObjects(start=OBJECTS_TOTAL_DATA * 2,
                                      count=1)
     self.assert_counts(object_list, OBJECTS_TOTAL_DATA * 2, 0,
                        OBJECTS_TOTAL_DATA)
@@ -423,7 +443,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     object_cnt_half = OBJECTS_TOTAL_DATA / 2
-    self.assertRaises(Exception, client.listObjects, '<dummy token>',
+    self.assertRaises(Exception, client.listObjects,
                       count=d1_common.const.MAX_LISTOBJECTS + 1)
 
   def date_range_1(self):
@@ -431,8 +451,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects('<dummy token>',
-                                     count=d1_common.const.MAX_LISTOBJECTS,
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
                                      startTime=datetime.datetime(1990, 1, 1),
                                      endTime=datetime.datetime(1999, 12, 31))
     self.assert_counts(object_list, 0, OBJECTS_CREATED_IN_90S, OBJECTS_CREATED_IN_90S)
@@ -443,8 +462,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''    
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects('<dummy token>',
-                                     start=0,
+    object_list = client.listObjects(start=0,
                                      count=10,
                                      startTime=datetime.datetime(1990, 1, 1),
                                      endTime=datetime.datetime(1999, 12, 31))
@@ -456,21 +474,19 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects('<dummy token>',
-                                     start=0,
+    object_list = client.listObjects(start=0,
                                      count=10,
                                      startTime=datetime.datetime(1990, 1, 1),
                                      endTime=datetime.datetime(1999, 12, 31),
                                      objectFormat='eml://ecoinformatics.org/eml-2.0.0')
-    self.assert_counts(object_list, 0, 10, 32)
+    self.assert_counts(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
   
   def date_range_4(self):
     '''Date range query: Get 10 first objects from non-existing date range.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects('<dummy token>',
-                                     start=0,                      
+    object_list = client.listObjects(start=0,                      
                                      count=10,
                                      startTime=datetime.datetime(2500, 1, 1),
                                      endTime=datetime.datetime(2500, 12, 31),
@@ -482,8 +498,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects('<dummy token>',
-                                     start=0,
+    object_list = client.listObjects(start=0,
                                      count=0)
     self.assert_counts(object_list, 0, 0, OBJECTS_TOTAL_DATA)
   
@@ -495,7 +510,6 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotFound, client.get,
-                      '<dummy token>',
                       '_invalid_pid_')
 
   def get_object_by_valid_pid(self):
@@ -503,7 +517,8 @@ class TestSequenceFunctions(unittest.TestCase):
     /object/valid_pid.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.get('<dummy token>', '10Dappend2.txt')
+    response = client.get('10Dappend2.txt',
+                          vendorSpecific=self.session('test_user_1'))
     # Todo: Verify that we got the right object.
   
   # Todo: Unicode tests.
@@ -517,24 +532,24 @@ class TestSequenceFunctions(unittest.TestCase):
     '''404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    self.assertRaises(d1_common.types.exceptions.NotFound,
+    self.assertRaises(d1_common.types.exceptions.NotAuthorized,
                       client.getSystemMetadata,
-                      '<dummy token>',
-                      '_invalid_pid_')
+                      '_invalid_pid_',
+                      vendorSpecific=self.session('test_user_1'))
 
   def get_sysmeta_by_valid_pid(self):
     '''Successful retrieval of valid object /meta/valid_pid.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.getSystemMetadata('<dummy token>', '10Dappend2.txt')
+    response = client.getSystemMetadata('10Dappend2.txt',
+      vendorSpecific=self.session('test_user_1'))
     self.assertTrue(response)
   
   def xml_validation(self):
     '''Returned XML document validates against the ObjectList schema.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.listObjectsResponse('<dummy token>',
-                                          count=d1_common.const.MAX_LISTOBJECTS) 
+    response = client.listObjectsResponse(count=d1_common.const.MAX_LISTOBJECTS) 
     xml_doc = response.read()
     d1_common.util.validate_xml(xml_doc)
 
@@ -597,7 +612,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Objects: Cumulative, no filter.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>')
+    monitor_list = client.getObjectStatistics(
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -606,9 +622,10 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Objects: Cumulative, filter by object creation time.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>',
-                                              fromDate=datetime.datetime(2000, 01, 01),
-                                              toDate=datetime.datetime(2005, 01, 01))
+    monitor_list = client.getObjectStatistics(
+      fromDate=datetime.datetime(2000, 01, 01),
+      toDate=datetime.datetime(2005, 01, 01),
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -619,8 +636,9 @@ class TestSequenceFunctions(unittest.TestCase):
     # TODO: Test set currently contains only one format. Create
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>',
-                                              format='eml://ecoinformatics.org/eml-2.0.0')
+    monitor_list = client.getObjectStatistics(
+      format='eml://ecoinformatics.org/eml-2.0.0',
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -635,7 +653,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Objects: Cumulative, filter by object PID.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>', pid='f*')
+    monitor_list = client.getObjectStatistics(pid='f*',
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_PID_STARTSWITH_F)
@@ -644,7 +663,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Objects: Daily, no filter.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>', day=True)
+    monitor_list = client.getObjectStatistics(day=True,
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATES)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     found_date = False
@@ -666,9 +686,10 @@ class TestSequenceFunctions(unittest.TestCase):
     # TODO: Test set currently contains only one format. Create
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>',
-                                              format='eml://ecoinformatics.org/eml-2.0.0',
-                                              day=True)
+    monitor_list = client.getObjectStatistics(
+      format='eml://ecoinformatics.org/eml-2.0.0',
+      day=True,
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_FORMAT_EML)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, 1)
@@ -683,7 +704,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Objects: Daily, filter by object PID.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics('<dummy token>', pid='f*', day=True)
+    monitor_list = client.getObjectStatistics(pid='f*', day=True,
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, 1)
@@ -696,10 +718,12 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Events: Cumulative, no filter.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>')
+    monitor_list = client.getOperationStatistics(
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_TOTAL_NO_FILTER)
+    self.assertEqual(monitor_list.monitorInfo[0].count,
+      EVENTS_TOTAL_EVENT_TOTAL_NO_FILTER)
 
   def monitor_event_cumulative_filter_by_time(self):
     '''Monitor Events: Cumulative, filter by event time.
@@ -711,8 +735,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Events: Cumulative, filter by event type.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                              event='read')
+    monitor_list = client.getOperationStatistics(event='read',
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_READ)
@@ -723,13 +747,14 @@ class TestSequenceFunctions(unittest.TestCase):
     # TODO: Test set currently contains only one format. Create
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                                 format='eml://ecoinformatics.org/eml-2.0.0')
+    monitor_list = client.getOperationStatistics(
+      format='eml://ecoinformatics.org/eml-2.0.0',
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_TOTAL_TIME_FORMAT)
 
-  def monitor_event_cumulative_filter_by_principal(self):
+  def monitor_event_cumulative_filter_by_subject(self):
     '''Monitor Events: Cumulative, filter by event PID.
     '''
     # TODO: Ticket
@@ -739,7 +764,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Events: Daily, no filter.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>', day=True)
+    monitor_list = client.getOperationStatistics(day=True,
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), EVENTS_UNIQUE_DATES)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     found_date = False
@@ -753,8 +779,9 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Events: Daily, filter by event creation time. 1980->.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                                 fromDate=datetime.datetime(1980, 1, 1))
+    monitor_list = client.getOperationStatistics(
+      fromDate=datetime.datetime(1980, 1, 1),
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_UNI_TIME_FROM_1980)
@@ -763,31 +790,37 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Monitor Events: Daily, filter by event creation time. 1980-1990.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                                 fromDate=datetime.datetime(1980, 1, 1),
-                                                 toDate=datetime.datetime(1990, 1, 1))
+    monitor_list = client.getOperationStatistics(
+      fromDate=datetime.datetime(1980, 1, 1),
+      toDate=datetime.datetime(1990, 1, 1),
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_UNI_TIME_FROM_1980_TO_1990)
+    self.assertEqual(monitor_list.monitorInfo[0].count,
+                     EVENTS_TOTAL_EVENT_UNI_TIME_FROM_1980_TO_1990)
 
   def monitor_event_daily_filter_by_time_3(self):
     '''Monitor Events: Daily, filter by event creation time. <-1990.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                                 toDate=datetime.datetime(1990, 1, 1))
+    monitor_list = client.getOperationStatistics(
+      toDate=datetime.datetime(1990, 1, 1),
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_UNI_TIME_TO_1990)
+    self.assertEqual(monitor_list.monitorInfo[0].count,
+                     EVENTS_TOTAL_EVENT_UNI_TIME_TO_1990)
 
   def monitor_event_daily_filter_by_event_type(self):
     '''Monitor Events: Daily, filter by event format.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                              event='read',
-                                              day=True)
-    self.assertEqual(len(monitor_list.monitorInfo), EVENTS_UNIQUE_DATES_WITH_READ)
+    monitor_list = client.getOperationStatistics(
+      event='read',
+      day=True,
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
+    self.assertEqual(len(monitor_list.monitorInfo),
+                     EVENTS_UNIQUE_DATES_WITH_READ)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, 1)
 
@@ -797,14 +830,16 @@ class TestSequenceFunctions(unittest.TestCase):
     # TODO: Test set currently contains only one format. Create
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getOperationStatistics('<dummy token>',
-                                              format='eml://ecoinformatics.org/eml-2.0.0',
-                                              day=True)
-    self.assertEqual(len(monitor_list.monitorInfo), EVENTS_WITH_OBJECT_FORMAT_EML)
+    monitor_list = client.getOperationStatistics(
+      format='eml://ecoinformatics.org/eml-2.0.0',
+      day=True,
+      vendorSpecific=self.session('DATAONE_TRUSTED'))
+    self.assertEqual(len(monitor_list.monitorInfo),
+                     EVENTS_WITH_OBJECT_FORMAT_EML)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_COUNT_OF_FIRST)
 
-  def monitor_event_daily_filter_by_principal(self):
+  def monitor_event_daily_filter_by_subject(self):
     '''Monitor Events: Daily, filter by time and format.
     '''
     # TODO: Story
@@ -821,13 +856,13 @@ class TestSequenceFunctions(unittest.TestCase):
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)
     # Delete the object on GMN.
-    pid_deleted = client.delete('<dummy token>', pid)
+    pid_deleted = client.delete(pid)
     self.assertEqual(pid, pid_deleted.value())
     # Verify that the object no longer exists.
     # We check for SyntaxError raised by the XML deserializer when it attempts
     # to deserialize a DataONEException. The exception is caused by the body
     # being empty since describe() uses a HEAD request.
-    self.assertRaises(SyntaxError, client.describe, '<dummy token>', pid)
+    self.assertRaises(SyntaxError, client.describe, pid)
 
   def describe(self):
     '''MN_crud.describe in GMN and libraries.
@@ -974,43 +1009,119 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertEqual(scidata_retrieved, scidata)
       self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
 
-  def security_1(self):
-    '''Create object accessible only by owner.
+
+#  def access_control_1_with_cert(self):
+#    '''Create object accessible only by owner.
+#    '''
+#    pid = 'access_control_obj_3'
+#    # Create an access rule.
+#    # TODO: Access rules for the owner must be handled in some implicit way.
+#    access_rule = self.gen_access_rule(
+#      ['test_owner_1'],
+#      ['dataoneTypes.Permission.write', 'dataoneTypes.Permission.read'],
+#    )
+#    # Create an access policy.
+#    access_policy = self.gen_access_policy([access_rule])
+#    # Create object containing random bytes.
+#    obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
+#    # Create sysmeta.
+#    sysmeta_xml = self.gen_sysmeta(pid, 1024, 
+#                                   hashlib.md5(obj_str).hexdigest(),
+#                                   datetime.datetime.now())
+#    # Create client authenticated connection to MN.    
+##    user_cred = '/home/roger/eclipse_workspace_d1/cert/cilogon/usercred.p12'
+##    user_key = '/home/roger/eclipse_workspace_d1/cert/cilogon/userkey.pem'
+##    user_cert = '/home/roger/eclipse_workspace_d1/cert/cilogon/usercert.pem'
+#
+#    user_key = './test_valid.nopassword.key'
+#    user_cert = './test_valid.crt'
+#    
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url,
+#                                           keyfile=user_key,
+#                                           certfile=user_cert)
+#    # POST the new object to MN.
+#    response = client.createResponse(pid=pid,
+#                          obj=obj_str, sysmeta=sysmeta_xml)
+#    
+#    print response.read()
+#    
+#    # Verify that object is accessible by owner.
+#    obj_get_str = client.get(pid).read()
+#    self.assertEqual(obj_str, obj_get_str)
+# 
+#    # Verify that object is not accessible by someone other that the owner.
+#
+#    user_key = './test_invalid.nopassword.key'
+#    user_cert = './test_invalid.crt'
+#    
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url,
+#                                           keyfile=user_key,
+#                                           certfile=user_cert)
+#
+#    self.assertRaises(Exception, client.get, pid)
+
+  
+  def session(self, subject):
+    return {'VENDOR_OVERRIDE_SESSION': subject}
+
+
+  def set_access_policy_1(self):
+    '''setAccessPolicy 1.
     '''
-    pid = 'security_obj_3'
-    # Create an access rule.
-    # TODO: Access rules for the owner must be handled in some implicit way.
-    access_rule = self.gen_access_rule(
-      ['test_owner_1'],
-      ['dataoneTypes.Permission.write', 'dataoneTypes.Permission.read'],
-      [pid]
-    )
-    # Create an access policy.
-    access_policy = self.gen_access_policy([access_rule])
+    test_pid = 'test_obj_1'
+    
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+
+    # Delete all permissions.
+    client.delete_all_access_rules(headers=self.session('DATAONE_TRUSTED'))
+
+    #exit()
+
+    # Delete the test object.
+    client.test_delete_single_object(test_pid)
+
+    # Verify that the test object no longer exists.
+    self.assertRaises(xml.parsers.expat.ExpatError, client.describe, test_pid)
+
     # Create object containing random bytes.
     obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
+
     # Create sysmeta.
-    sysmeta_xml = self.gen_sysmeta(pid, 1024, 
-                                   hashlib.md5(obj_str).hexdigest(),
-                                   datetime.datetime.now())
-    # Create client authenticated connection to MN.    
-    user_cred = '/home/roger/eclipse_workspace_d1/cert/cilogon/usercred.p12'
-    user_key = '/home/roger/eclipse_workspace_d1/cert/cilogon/userkey.pem'
-    user_cert = '/home/roger/eclipse_workspace_d1/cert/cilogon/usercert.pem'
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url,
-                                           keyfile=user_key,
-                                           certfile=user_cert)
+    sysmeta = self.gen_sysmeta(test_pid, 1024, 
+                               hashlib.md5(obj_str).hexdigest(),
+                               datetime.datetime.now(),
+                               owner='test_owner_1')
+
+    # Create an access policy.
+    access_policy = self.gen_access_policy((
+      (('test_owner_1', 'test_owner2'), ('read', 'write')),
+      (('test_owner_3', 'test_owner4'), ('execute', )),
+    ))
+
+    # Add the access policy to the SysMeta.
+    sysmeta.accessPolicy = access_policy
+    
     # POST the new object to MN.
-    response = client.createResponse('<dummy token>', pid=pid,
-                          obj=obj_str, sysmeta=sysmeta_xml)
-      
-    # Verify that object is accessible by owner.
-    obj_get_str = client.get('<dummy token>', pid).read()
-    self.assertEqual(obj_str, obj_get_str)
- 
-    # Verify that object is not accessible by someone other that the owner.
+    response = client.createResponse(pid=test_pid,
+      obj=obj_str, sysmeta=sysmeta,
+      vendorSpecific=self.session('test_user_1'))
+
+#    print response.read()
+#    
+#    # Verify that object is accessible by owner.
+#    obj_get_str = client.get(pid).read()
+#    self.assertEqual(obj_str, obj_get_str)
+# 
+#    # Verify that object is not accessible by someone other that the owner.
+#    
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+#
+#    self.assertRaises(Exception, client.get, pid)
+#
+#    # 
     
-    
+
+   
   #
   # Tests.
   #
@@ -1034,7 +1145,8 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Managed: Populate MN with set of test objects (local).
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+                                                      '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       object_file = open(object_path, 'r')
@@ -1042,8 +1154,13 @@ class TestSequenceFunctions(unittest.TestCase):
       # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-          
+      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(
+        sysmeta_xml)
+      # TODO: Current spec says that rightsHolder should be supplied by
+      # client, so we copy the owner in here. I think the spec must be changed
+      # to derive this value from the session in the cert.
+      #
+      sysmeta_obj.rightsHolder = 'test_user_1'
       # To create a valid URL, we must quote the pid twice. First, so
       # that the URL will match what's on disk and then again so that the
       # quoting survives being passed to the web server.
@@ -1051,12 +1168,9 @@ class TestSequenceFunctions(unittest.TestCase):
   
       # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
-      try:
-        response = client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file, sysmeta_xml, {})
-      except Exception as e:
-        open('out.htm', 'w').write(e.traceInformation)
-        raise
-      #  print response.read()
+      response = client.createResponse(sysmeta_obj.identifier.value(),
+                                       object_file, sysmeta_obj,
+                                       self.session('test_user_1'))
 
   def test_1010_managed_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
@@ -1178,8 +1292,8 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_1293_managed_monitor_event_cumulative_filter_by_object_format(self):
     self.monitor_event_cumulative_filter_by_object_format()
 
-  def test_1294_managed_monitor_event_cumulative_filter_by_principal(self):
-    self.monitor_event_cumulative_filter_by_principal()
+  def test_1294_managed_monitor_event_cumulative_filter_by_subject(self):
+    self.monitor_event_cumulative_filter_by_subject()
 
   def test_1295_managed_monitor_event_daily_no_filter(self):
     self.monitor_event_daily_no_filter()
@@ -1199,8 +1313,8 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_1298_managed_monitor_event_daily_filter_by_object_format(self):
     self.monitor_event_daily_filter_by_object_format()
 
-  def test_1299_managed_monitor_event_daily_filter_by_principal(self):
-    self.monitor_event_daily_filter_by_principal()
+  def test_1299_managed_monitor_event_daily_filter_by_subject(self):
+    self.monitor_event_daily_filter_by_subject()
 
 # TODO: Include checksum tests if we keep getChecksum().
 
@@ -1252,7 +1366,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
       # To test the MIME Multipart poster, we provide the Sci object as a file
       # and the SysMeta as a string.
-      client.createResponse('<dummy token>', sysmeta_obj.identifier, object_file,
+      client.createResponse(sysmeta_obj.identifier, object_file,
                     sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
     
   def test_2010_wrapped_D_object_collection_is_populated(self):
@@ -1372,8 +1486,8 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_2293_wrapped_monitor_event_cumulative_filter_by_object_format(self):
     self.monitor_event_cumulative_filter_by_object_format()
 
-  def test_2294_wrapped_monitor_event_cumulative_filter_by_principal(self):
-    self.monitor_event_cumulative_filter_by_principal()
+  def test_2294_wrapped_monitor_event_cumulative_filter_by_subject(self):
+    self.monitor_event_cumulative_filter_by_subject()
 
   def test_2295_wrapped_monitor_event_daily_no_filter(self):
     self.monitor_event_daily_no_filter()
@@ -1393,8 +1507,8 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_2298_wrapped_monitor_event_daily_filter_by_object_format(self):
     self.monitor_event_daily_filter_by_object_format()
 
-  def test_2299_wrapped_monitor_event_daily_filter_by_principal(self):
-    self.monitor_event_daily_filter_by_principal()
+  def test_2299_wrapped_monitor_event_daily_filter_by_subject(self):
+    self.monitor_event_daily_filter_by_subject()
   
 #  def test_2330_wrapped_delete(self):
 #    self.delete_test()

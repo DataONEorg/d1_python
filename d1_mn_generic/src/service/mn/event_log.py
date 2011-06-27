@@ -54,7 +54,7 @@ def log(pid, event, request, timestamp=None):
   # Gather info from request object.
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  principal = request.META['REMOTE_ADDR']
+  subject = request.META['REMOTE_ADDR']
 
   # We support logging events that are not associated with an object.
   object_row = None
@@ -72,7 +72,7 @@ def log(pid, event, request, timestamp=None):
   event_log_row.set_event(event)
   event_log_row.set_ip_address(ip_address)
   event_log_row.set_user_agent(user_agent)
-  event_log_row.set_principal(principal)
+  event_log_row.set_subject(subject)
 
   event_log_row.save()
 

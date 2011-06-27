@@ -218,7 +218,7 @@ class TestSequenceFunctions(unittest.TestCase):
     #self.assertTrue(dateutil.parser.parse(o.dateLogged))
     self.assertEqual(o.pid, "hdl:10255/dryad.654/mets.xml")
     self.assertEqual(o.event, "update")
-    self.assertTrue(o.principal)
+    self.assertTrue(o.subject)
   
   def assert_mn_compare_byte_by_byte(self):
     '''MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies

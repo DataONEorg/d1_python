@@ -36,6 +36,7 @@ and are only enabled when GMN runs in debug mode.
 import logging
 
 import d1_client.mnclient
+import d1_common.types.exceptions
 
 
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
@@ -66,29 +67,46 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
         'delete_all_objects': u'test_delete_all_objects',
         'delete_event_log': u'test_delete_event_log',
         'inject_event_log': u'test_inject_event_log',
+        'delete_single_object': u'test_delete_single_object/%(pid)s',
+        'delete_all_access_rules': u'test_delete_all_access_rules',
       }
     )
 
-  def delete_all_objects(self):
+  def delete_all_objects(self, headers=None):
     '''Delete all the objects on an instance of GMN that is running in Debug
     mode.
     '''
     url = self.RESTResourceURL('delete_all_objects')
-    response = self.GET(url)
+    response = self.GET(url, headers=headers)
+    # TODO: Handle D1 exception.
     return self.isHttpStatusOK(response.status)
 
-  def delete_event_log(self):
-    '''Delete event log for all objects on an instance of GMN that is running
-    in Debug mode.
+  def test_delete_single_object(self, pid, headers=None):
+    url = self.RESTResourceURL('delete_single_object', pid=pid)
+    try:
+      response = self.GET(url, headers=headers)
+    except d1_common.types.exceptions.DataONEException:
+      return False
+    return self.isHttpStatusOK(response.status)
+
+  def delete_event_log(self, headers=None):
+    '''Delete event log for all objects.
     '''
     url = self.RESTResourceURL('delete_event_log')
-    response = self.GET(url)
+    response = self.GET(url, headers=headers)
     return self.isHttpStatusOK(response.status)
 
-  def inject_event_log(self, event_log_csv):
-    '''Inject a fake event log for testing.
+  def inject_event_log(self, event_log_csv, headers=None):
+    '''Inject a fake event log.
     '''
     files = [('csv', 'csv', event_log_csv)]
     url = self.RESTResourceURL('inject_event_log')
-    response = self.POST(url, files=files, headers=self._getAuthHeader('<dummy token>'))
+    response = self.POST(url, files=files, headers=headers)
+    return self.isHttpStatusOK(response.status)
+
+  def delete_all_access_rules(self, headers=None):
+    '''Delete all access rules.
+    '''
+    url = self.RESTResourceURL('delete_all_access_rules')
+    response = self.GET(url, headers=headers)
     return self.isHttpStatusOK(response.status)

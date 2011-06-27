@@ -121,8 +121,9 @@ class Event_log_user_agent(models.Model):
   user_agent = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Event_log_principal(models.Model):
-  principal = models.CharField(max_length=100, unique=True, db_index=True)
+class Event_log_subject(models.Model):
+  # TODO: Reference Subject table instead.
+  subject = models.CharField(max_length=100, unique=True, db_index=True)
 
 
 class Event_log_member_node(models.Model):
@@ -134,7 +135,7 @@ class Event_log(models.Model):
   event = models.ForeignKey(Event_log_event, db_index=True)
   ip_address = models.ForeignKey(Event_log_ip_address, db_index=True)
   user_agent = models.ForeignKey(Event_log_user_agent, db_index=True)
-  principal = models.ForeignKey(Event_log_principal, db_index=True)
+  subject = models.ForeignKey(Event_log_subject, db_index=True)
   date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
 
   def set_event(self, event_string):
@@ -163,12 +164,11 @@ class Event_log(models.Model):
       user_agent=user_agent_string
     )[0]
 
-  def set_principal(self, principal_string):
+  def set_subject(self, subject_string):
     ''':param:
     :return:
     '''
-    self.principal = Event_log_principal.objects.get_or_create(principal=principal_string
-                                                               )[0]
+    self.subject = Event_log_subject.objects.get_or_create(subject=subject_string)[0]
 
 
   # This is easy to solve with a simple tiny wrapper:
@@ -233,20 +233,12 @@ class Replication_work_queue(models.Model):
     )[0]
 
 # ------------------------------------------------------------------------------
-# Principal
+# Subject
 # ------------------------------------------------------------------------------
 
 
-class Principal(models.Model):
-  distinguished_name = models.CharField(max_length=100, unique=True, db_index=True)
-
-# ------------------------------------------------------------------------------
-# Action
-# ------------------------------------------------------------------------------
-
-
-class Action(models.Model):
-  action = models.CharField(max_length=10, unique=True, db_index=True)
+class Subject(models.Model):
+  subject = models.CharField(max_length=100, unique=True, db_index=True)
 
 # ------------------------------------------------------------------------------
 # Permission
@@ -255,20 +247,5 @@ class Action(models.Model):
 
 class Permission(models.Model):
   object = models.ForeignKey(Object)
-  principal = models.ForeignKey(Principal)
-  action = models.ForeignKey(Action)
-
-  def set_permission(self, pid, distinguished_name, action):
-    # Object must exist.
-    try:
-      self.object = Object.objects.filter(pid=pid)[0]
-    except IndexError:
-      raise d1_common.types.exceptions.NotFound(
-        0, 'Attempted to set access for non-existing object', pid
-      )
-    # Principal created on the fly.
-    self.principal = Principal.objects.get_or_create(
-      distinguished_name=distinguished_name
-    )[0]
-    # Action created on the fly.
-    self.action = Action.objects.get_or_create(action=action)[0]
+  subject = models.ForeignKey(Subject)
+  level = models.PositiveSmallIntegerField()

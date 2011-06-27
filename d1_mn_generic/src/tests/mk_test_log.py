@@ -88,7 +88,7 @@ user_agents = [
   'msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm)',
 ]
 
-principals = [
+subjects = [
   '1.2.3.4',
   '5.6.7.8',
   '9.10.11.12',
@@ -169,7 +169,7 @@ def main():
         events[0], # "create" only.
         pick_random(ip_addresses),
         pick_random(user_agents),
-        pick_random(principals),
+        pick_random(subjects),
         datetime.datetime.fromtimestamp(random.randint(0, 60 * 60 * 24 * 7)).isoformat(),
         pick_random(member_nodes),
       ]
@@ -188,7 +188,7 @@ def main():
           events[random.randint(1, len(events) - 1)], # excludes "create".
           pick_random(ip_addresses),
           pick_random(user_agents),
-          pick_random(principals),
+          pick_random(subjects),
           datetime.datetime.fromtimestamp(
             random.randint(
               60 * 60 * 24 * 7, 60 * 60 * 24 * 365 * 30

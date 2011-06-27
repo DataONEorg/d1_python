@@ -73,12 +73,21 @@ class view_handler():
 
     if settings.GMN_DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
-      # debugging via regular HTTP, we inject certificate variables here.
-      if 'SSL_CLIENT_S_DN' not in request.META:
-        request.META['SSL_CLIENT_S_DN'] = 'test_dn_1'
+      # debugging via regular HTTP, passing in a session string by using a
+      # vendor specific extension is supported.
+      if 'HTTP_VENDOR_OVERRIDE_SESSION' in request.META:
+        request.META['SSL_CLIENT_S_DN'] = request.META['HTTP_VENDOR_OVERRIDE_SESSION']
       # For debugging, simulate an accept header with a regular parameter.
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
+
+    # If a session string was not passed in by either a certificate or by a
+    # vendor specific extension, we default it to "Public".
+
+    # TODO: Create a specific key for the session instead of using
+    # SSL_CLIENT_S_DN.
+    if 'SSL_CLIENT_S_DN' not in request.META:
+      request.META['SSL_CLIENT_S_DN'] = 'DATAONE_PUBLIC'
 
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.
