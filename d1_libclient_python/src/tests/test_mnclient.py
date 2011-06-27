@@ -40,23 +40,19 @@ TEST_DATA = {}
 
 class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
-    self.token = None
-    self.ignore_not_implemented = True
+    pass
 
   def tearDown(self):
     pass
 
-  def test_create(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_create(self):
+    raise Exception('Not Implemented')
 
-  def test_update(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_update(self):
+    raise Exception('Not Implemented')
 
-  def test_delete(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_delete(self):
+    raise Exception('Not Implemented')
 
   def test_getChecksum(self):
     '''Verify checksum response deserializes and value matches expected
@@ -91,13 +87,11 @@ class TestMNClient(TestCaseWithURLCompare):
       except d1_common.exceptions.NotFound, e:
         pass
 
-  def test_replicate(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_replicate(self):
+    raise Exception('Not Implemented')
 
-  def test_synchronizationFailed(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_synchronizationFailed(self):
+    raise Exception('Not Implemented')
 
   def test_getObjectStatistics(self):
     '''Verify that object statistics response deserializes
@@ -125,11 +119,10 @@ class TestMNClient(TestCaseWithURLCompare):
         msg += "\nRequest URL=%s" % cli._lasturl
         raise Exception(msg, str(e))
 
-  def test_getStatus(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_getStatus(self):
+    raise Exception('Not Implemented')
 
-  def test_getCapabilities(self):
+  def _disabled_test_getCapabilities(self):
     '''Deserialize getCapabilities response
     '''
     for test in TEST_DATA['MN']:

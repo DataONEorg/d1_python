@@ -46,7 +46,7 @@ class TestCNClient(TestCaseWithURLCompare):
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255/dryad.105/mets.xml
     self.token = None
-    self.ignore_not_implemented = True
+    TEST_DATA = initMain()
 
   def tearDown(self):
     pass
@@ -77,69 +77,53 @@ class TestCNClient(TestCaseWithURLCompare):
       except d1_common.types.exceptions.NotFound, e:
         pass
 
-  def test_reserveIdentifier(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_reserveIdentifier(self):
+    raise Exception('Not Implemented')
 
-  def test_assertRelation(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_assertRelation(self):
+    raise Exception('Not Implemented')
 
-  def test_search(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_search(self):
+    raise Exception('Not Implemented')
 
-  def test_getAuthToken(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_getAuthToken(self):
+    raise Exception('Not Implemented')
 
-  def test_setOwner(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_setOwner(self):
+    raise Exception('Not Implemented')
 
-  def test_newAccount(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_newAccount(self):
+    raise Exception('Not Implemented')
 
-  def test_verifyToken(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_verifyToken(self):
+    raise Exception('Not Implemented')
 
-  def test_mapIdentity(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_mapIdentity(self):
+    raise Exception('Not Implemented')
 
-  def test_createGroup(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_createGroup(self):
+    raise Exception('Not Implemented')
 
-  def test_addGroupMembers(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_addGroupMembers(self):
+    raise Exception('Not Implemented')
 
-  def test_removeGroupMembers(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_removeGroupMembers(self):
+    raise Exception('Not Implemented')
 
-  def test_setReplicationStatus(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_setReplicationStatus(self):
+    raise Exception('Not Implemented')
 
-  def test_listNodes(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_listNodes(self):
+    raise Exception('Not Implemented')
 
-  def test_addNodeCapabilities(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_addNodeCapabilities(self):
+    raise Exception('Not Implemented')
 
-  def test_register(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_test_register(self):
+    raise Exception('Not Implemented')
 
 
 if __name__ == "__main__":
   import sys
   from node_test_common import loadTestInfo, initMain
-  TEST_DATA = initMain()
   unittest.main(argv=sys.argv)

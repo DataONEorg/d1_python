@@ -38,7 +38,7 @@ import d1_client.objectlistiterator
 import d1_common.types.generated.dataoneTypes
 
 
-class testcase_objectlistiterator(unittest.TestCase):
+class TestObjectListIterator(unittest.TestCase):
   '''Utility class that check whether two URLs are equal.  Not really as simple
   as it might seem at first.
   '''

@@ -40,7 +40,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 TEST_DATA = {}
 
 
-class UnitTest_DataONEBaseClient(TestCaseWithURLCompare):
+class TestDataONEBaseClient(TestCaseWithURLCompare):
   def setUp(self):
     self.turl = ''
     pass
@@ -81,7 +81,6 @@ class UnitTest_DataONEBaseClient(TestCaseWithURLCompare):
 class TestDataONEClient(TestCaseWithURLCompare):
   def setUp(self):
     self.token = None
-    self.ignore_not_implemented = True
 
   def passes_testSchemaVersion(self):
     '''Simple test to check if the correct schema version is being returned
@@ -144,7 +143,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['MN']:
       dotest(test)
 
-  def xtestPing(self):
+  def _disabled_testPing(self):
     '''Attempt to Ping the target.
     '''
     return
@@ -163,7 +162,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['CN']:
       dotest(test['baseurl'])
 
-  def xtestGetLogRecords(self):
+  def _disabled_testGetLogRecords(self):
     '''Return and deserialize log records
     '''
     return
@@ -171,10 +170,8 @@ class TestDataONEClient(TestCaseWithURLCompare):
     #cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
     #fromDate = ''
     #res = cli.getLogRecords(self.token, fromDate)
-    if not self.ignore_not_implemented:
-      raise Exception("Not Implemented - discrepancy in REST docs")
 
-  def xtestGetSystemMetadata(self):
+  def _disabled_testGetSystemMetadata(self):
     '''Return and successfully deserialize SystemMetadata
     '''
 
@@ -191,7 +188,7 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['CN']:
       dotest(test['baseurl'].test['existingpid'], test['boguspid'])
 
-  def xtestListObjects(self):
+  def _disabled_testListObjects(self):
     '''Return and successfully deserialize listObjects
     '''
 
@@ -210,13 +207,11 @@ class TestDataONEClient(TestCaseWithURLCompare):
     for test in TEST_DATA['MN']:
       dotest(test['baseurl'])
 
-  def xtestIsAuthorized(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_testIsAuthorized(self):
+    raise Exception('Not Implemented')
 
-  def xtestSetAccess(self):
-    if not self.ignore_not_implemented:
-      raise Exception('Not Implemented')
+  def _disabled_testSetAccess(self):
+    raise Exception('Not Implemented')
 
 #===============================================================================
 

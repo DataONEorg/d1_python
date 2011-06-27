@@ -24,7 +24,7 @@
 This script exercises a node by retrieving the list of all objects and
 for each attempts to retrieve the associated metadata and the object.
 
-Use with caution and care since it iterates over every object on the node.
+Use with caution since it iterates over every object on the node.
 
 :Created:
 :Author: DataONE (vieglais)

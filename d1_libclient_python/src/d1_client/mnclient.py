@@ -42,7 +42,6 @@ import objectlistiterator
 
 
 class MemberNodeClient(DataONEBaseClient):
-
   def __init__(self, baseurl, defaultHeaders={}, timeout=10, keyfile=None,
                certfile=None, strictHttps=True):
     DataONEBaseClient.__init__(
@@ -67,45 +66,40 @@ class MemberNodeClient(DataONEBaseClient):
       }
     )
 
-  def createResponse(self, token, pid, obj, sysmeta, vendor_specific=None):
+  def createResponse(self, pid, obj, sysmeta, vendorSpecific=None):
     '''
-    :param token:
-    :type token: Authentication Token
-    :param pid: 
+    Create a Science Object.
+    
+    :param pid: The DataONE Persistent Identifier of the object being created. 
     :type pid: Identifier
-    :param obj:
-    :type obj: Unicode or file like object
-    :param sysmeta:
-    :type: sysmeta: Unicode or file like object
-    :returns: True on successful completion
-    :return type: Boolean
+    :param obj: The bytes of the object to create.
+    :type obj: String or File Like Object
+    :param sysmeta: System Metadata for the object being created.
+    :type sysmeta: PyXB SystemMetadata
+    :returns: Unprocessed response from server.
+    :return type: httplib.HTTPResponse 
     '''
-    if vendor_specific is None:
-      vendor_specific = {}
-#    data = None
-#    files = []
-#    if isinstance(basestring, obj):
-#      data['object'] = obj
-#    else:
-#      files.append(('object', 'content.bin', obj))
-#    if isinstance(basestring, sysmeta):
-#      data['systemmetadata'] = sysmeta
-#    else:
-#      files.append(('sysmeta','systemmetadata.xml', sysmeta))
     url = self.RESTResourceURL('create', pid=pid)
-    headers = self._getAuthHeader(token)
-    headers.update(vendor_specific)
-    files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    # Serialize sysmeta to XML.
+    sysmeta_xml = sysmeta.toxml()
+    # Set up structure for use in generating the MIME multipart document
+    # that will be POSTed to the server.
+    files = [
+      ('object', 'content.bin', obj),
+      ('sysmeta', 'systemmetadata.xml', sysmeta_xml),
+    ]
+    # Generate MIME multipart document and post to server.
     return self.POST(url, files=files, headers=headers)
 
-  def create(self, token, pid, obj, sysmeta, vendor_specific=None):
-    response = self.createResponse(token, pid, obj, sysmeta, vendor_specific)
+  def create(self, pid, obj, sysmeta, vendorSpecific=None):
+    response = self.createResponse(pid, obj, sysmeta, vendorSpecific=vendorSpecific)
     return self.isHttpStatusOK(response.status)
 
-  def updateResponse(self, token, pid, obj, new_pid, sysmeta, vendor_specific=None):
+  def updateResponse(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
     '''
-    :param token:
-    :type token: Authentication Token
     :param pid: The identifier of the object that is being updated 
     :type pid: Identifier
     :param obj: Science Data
@@ -119,57 +113,70 @@ class MemberNodeClient(DataONEBaseClient):
     :returns: True on successful completion
     :return type: Boolean
     '''
-    if vendor_specific is None:
-      vendor_specific = {}
-
     url = self.RESTResourceURL('update', pid=pid)
-    headers = self._getAuthHeader(token)
+    headers = {}
     headers['newPid'] = new_pid
-    headers.update(vendor_specific)
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
     files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
     # TODO: Should be PUT against /object. Instead is POST against
     # /object_put. Change when PUT support in Django is fixed.
     return self.POST(url, files=files, headers=headers)
 
-  def update(self, token, pid, obj, new_pid, sysmeta, vendor_specific=None):
-    response = self.updateResponse(token, pid, obj, new_pid, sysmeta, vendor_specific)
+  def update(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
+    response = self.updateResponse(
+      pid, obj, new_pid, sysmeta,
+      vendorSpecific=vendorSpecific
+    )
     return self.isHttpStatusOK(response.status)
 
-  def deleteResponse(self, token, pid):
+  def deleteResponse(self, pid, vendorSpecific=None):
     '''Delete a SciObj from MN.
     '''
     url = self.RESTResourceURL('get', pid=pid)
-    response = self.DELETE(url, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    response = self.DELETE(url, headers=headers)
     return response
 
-  def delete(self, token, pid):
-    response = self.deleteResponse(token, pid)
+  def delete(self, pid, vendorSpecific=None):
+    response = self.deleteResponse(pid, vendorSpecific=vendorSpecific)
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = pid_serialization.Identifier()
     return deser.deserialize(response.read(), format)
 
-  def getChecksumResponse(self, token, pid, checksumAlgorithm=None):
+  def getChecksumResponse(self, pid, checksumAlgorithm=None, vendorSpecific=None):
     url = self.RESTResourceURL('getchecksum', pid=pid)
     url_params = {'checksumAgorithm': checksumAlgorithm, }
-    response = self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    response = self.GET(url, url_params=url_params, headers=headers)
     return response
 
-  def getChecksum(self, token, pid, checksumAlgorithm=None):
-    response = self.getChecksumResponse(token, pid, checksumAlgorithm)
+  def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
+    response = self.getChecksumResponse(
+      pid, checksumAlgorithm, vendorSpecific=vendorSpecific
+    )
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = checksum_serialization.Checksum('<dummy>')
     return deser.deserialize(response.read(), format)
 
-  def replicate(self, token, sysmeta, sourceNode):
+  def replicate(self, sysmeta, sourceNode, vendorSpecific=None):
     raise Exception('Not Implemented')
 
   def synchronizationFailed(self, message):
     raise Exception('Not Implemented')
 
   def getObjectStatisticsResponse(
-    self, token, fromDate=None,
-    toDate=None, format=None,
-    day=None, pid=None
+    self,
+    fromDate=None,
+    toDate=None,
+    format=None,
+    day=None,
+    pid=None,
+    vendorSpecific=None
   ):
     url = self.RESTResourceURL('getobjectstatistics')
     url_params = {
@@ -179,18 +186,27 @@ class MemberNodeClient(DataONEBaseClient):
       'day': day,
       'pid': pid,
     }
-    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, url_params=url_params, headers=headers)
 
   def getObjectStatistics(
-    self, token, fromDate=None,
-    toDate=None, format=None,
-    day=None, pid=None
+    self,
+    fromDate=None,
+    toDate=None,
+    format=None,
+    day=None,
+    pid=None,
+    vendorSpecific=None
   ):
     response = self.getObjectStatisticsResponse(
-      token, fromDate=fromDate,
+      fromDate=fromDate,
       toDate=toDate,
       format=format,
-      day=day, pid=pid
+      day=day,
+      pid=pid,
+      vendorSpecific=vendorSpecific
     )
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = monitorlist_serialization.MonitorList()
@@ -200,7 +216,6 @@ class MemberNodeClient(DataONEBaseClient):
 
   def getOperationStatisticsResponse(
     self,
-    token,
     fromDate=None,
     toDate=None,
     objectFromDate=None,
@@ -208,7 +223,8 @@ class MemberNodeClient(DataONEBaseClient):
     requestor=None,
     day=None,
     event=None,
-    format=None
+    format=None,
+    vendorSpecific=None
   ):
     url = self.RESTResourceURL('getoperationstatistics')
     url_params = {
@@ -221,11 +237,13 @@ class MemberNodeClient(DataONEBaseClient):
       'event': event,
       'format': format,
     }
-    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, url_params=url_params, headers=headers)
 
   def getOperationStatistics(
     self,
-    token,
     fromDate=None,
     toDate=None,
     objectFromDate=None,
@@ -233,10 +251,10 @@ class MemberNodeClient(DataONEBaseClient):
     requestor=None,
     day=None,
     event=None,
-    format=None
+    format=None,
+    vendorSpecific=None
   ):
     response = self.getOperationStatisticsResponse(
-      token,
       fromDate=fromDate,
       toDate=toDate,
       objectFromDate=objectFromDate,
@@ -244,31 +262,41 @@ class MemberNodeClient(DataONEBaseClient):
       requestor=requestor,
       day=day,
       event=event,
-      format=format
+      format=format,
+      vendorSpecific=vendorSpecific
     )
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = monitorlist_serialization.MonitorList()
     return deser.deserialize(response.read(), format)
 
-  def getStatus(self):
+  def getStatusResponse(self, vendorSpecific=None):
+    raise Exception('Not implemented')
+
+  def getStatus(self, vendorSpecific=None):
     raise Exception('Not Implemented')
 
-  def getCapabilitiesResponse(self):
+  def getCapabilitiesResponse(self, vendorSpecific=None):
     url = self.RESTResourceURL('getcapabilities')
-    return self.GET(url)
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, headers=headers)
 
-  def getCapabilities(self):
-    response = self.getCapabilitiesResponse()
+  def getCapabilities(self, vendorSpecific=None):
+    response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
     return deser.deserialize(response.read(), format)
 
-  def describeResponse(self, token, pid):
+  def describeResponse(self, pid, vendorSpecific=None):
     url = self.RESTResourceURL('get', pid=pid)
-    response = self.HEAD(url, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    response = self.HEAD(url, headers=headers)
     return response
 
-  def describe(self, token, pid):
+  def describe(self, pid, vendorSpecific=None):
     '''This method provides a lighter weight mechanism than
     MN_crud.getSystemMetadata() for a client to determine basic properties of
     the referenced object.
@@ -279,4 +307,4 @@ class MemberNodeClient(DataONEBaseClient):
     TODO: May need to be completely removed (since clients should use CNs for
     object discovery).
     '''
-    return self.describeResponse(token, pid)
+    return self.describeResponse(pid, vendorSpecific=vendorSpecific)

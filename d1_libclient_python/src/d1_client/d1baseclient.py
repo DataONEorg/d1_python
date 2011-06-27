@@ -60,19 +60,25 @@ class DataONEBaseClient(restclient.RESTClient):
   the HTTPResponse object, otherwise the de-serialized object is returned.
   '''
 
-  def __init__(self,
-               baseurl,
-               defaultHeaders={},
-               timeout=const.RESPONSE_TIMEOUT,
-               keyfile=None,
-               certfile=None,
-               strictHttps=True):
-    if not defaultHeaders.has_key('Accept'):
+  def __init__(
+    self,
+    baseurl,
+    defaultHeaders=None,
+    timeout=const.RESPONSE_TIMEOUT,
+    keyfile=None,
+    certfile=None,
+    strictHttps=True
+  ):
+    # Set default headers.
+    if defaultHeaders is None:
+      defaultHeaders = {}
+    if 'Accept' not in defaultHeaders:
       defaultHeaders['Accept'] = const.DEFAULT_MIMETYPE
-    if not defaultHeaders.has_key('User-Agent'):
+    if 'User-Agent' not in defaultHeaders:
       defaultHeaders['User-Agent'] = const.USER_AGENT
-    if not defaultHeaders.has_key('Charset'):
+    if 'Charset' not in defaultHeaders:
       defaultHeaders['Charset'] = const.DEFAULT_CHARSET
+    # Init the rest client base class.
     restclient.RESTClient.__init__(
       self,
       defaultHeaders=defaultHeaders,
@@ -113,6 +119,8 @@ class DataONEBaseClient(restclient.RESTClient):
     # return a serialized DataONEException in the response. Attempt to
     # deserialize the response and raise the corresponding DataONEException.
     res.body = res.read()
+    if res.body == '':
+      res.body = '<empty response>'
     serializer = exception_serialization.DataONEExceptionSerialization(None)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     try:
@@ -143,11 +151,6 @@ class DataONEBaseClient(restclient.RESTClient):
                                       res.body)
     # TODO: Catch all exceptions deserialization may raise.
 
-  def _getAuthHeader(self, token):
-    if token is not None:
-      return {const.AUTH_HEADER_NAME: str(token)}
-    return None
-
   def _normalizeTarget(self, target):
     if target.endswith('/'):
       return target
@@ -173,19 +176,21 @@ class DataONEBaseClient(restclient.RESTClient):
       return True
     return False
 
-  def get(self, token, pid):
+  def get(self, pid, vendorSpecific=None):
     '''Implements CRUD.get()
     
-    :param token: Authentication token
     :param pid: Identifier
     :returns: HTTPResponse instance, a file like object that supports read().
     :return type: HTTPResponse
     '''
     url = self.RESTResourceURL('get', pid=pid)
     self.logger.info("URL = %s" % url)
-    return self.GET(url, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, headers=headers)
 
-  def getSystemMetadataResponse(self, token, pid):
+  def getSystemMetadataResponse(self, pid, vendorSpecific=None):
     '''Implements the MN getSystemMetadata call, returning a HTTPResponse 
     object. See getSystemMetada() for method that returns a deserialized
     system metadata object.
@@ -194,25 +199,28 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     url = self.RESTResourceURL('getSystemMetadata', pid=pid)
     self.logger.info("URL = %s" % url)
-    return self.GET(url, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, headers=headers)
 
-  def getSystemMetadata(self, token, pid):
+  def getSystemMetadata(self, pid, vendorSpecific=None):
     '''
     :return type: SystemMetadata
     '''
-    res = self.getSystemMetadataResponse(token, pid)
+    res = self.getSystemMetadataResponse(pid, vendorSpecific=vendorSpecific)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     return systemmetadata.CreateFromDocument(res.read(), )
 
   def listObjectsResponse(
     self,
-    token,
     startTime=None,
     endTime=None,
     objectFormat=None,
     replicaStatus=None,
     start=0,
-    count=const.DEFAULT_LISTOBJECTS
+    count=const.DEFAULT_LISTOBJECTS,
+    vendorSpecific=None
   ):
     '''
     :return type: HTTPResponse
@@ -231,17 +239,20 @@ class DataONEBaseClient(restclient.RESTClient):
       url_params['start'] = str(int(start))
     if count is not None:
       url_params['count'] = str(int(count))
-    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, url_params=url_params, headers=headers)
 
   def listObjects(
     self,
-    token,
     startTime=None,
     endTime=None,
     objectFormat=None,
     replicaStatus=None,
     start=0,
-    count=const.DEFAULT_LISTOBJECTS
+    count=const.DEFAULT_LISTOBJECTS,
+    vendorSpecific=None
   ):
     '''
     :return type: ObjectList
@@ -265,19 +276,19 @@ class DataONEBaseClient(restclient.RESTClient):
       raise exceptions.InvalidRequest(10002, "startTime must be before endTime")
 
     res = self.listObjectsResponse(
-      token,
       startTime=startTime,
       endTime=endTime,
       objectFormat=objectFormat,
       replicaStatus=replicaStatus,
       start=start,
-      count=count
+      count=count,
+      vendorSpecific=vendorSpecific
     )
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     serializer = objectlist_serialization.ObjectList()
     return serializer.deserialize(res.read(), format)
 
-  def getLogRecordsResponse(self, token, fromDate, toDate=None, event=None):
+  def getLogRecordsResponse(self, fromDate, toDate=None, event=None, vendorSpecific=None):
     '''
     :return type: HTTPResponse
     '''
@@ -287,25 +298,34 @@ class DataONEBaseClient(restclient.RESTClient):
       url_params['toDate'] = toDate
     if not event is None:
       url_params['event'] = event
-    return self.GET(url, url_params=url_params, headers=self._getAuthHeader(token))
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, url_params=url_params, headers=headers)
 
-  def getLogRecords(self, token, fromDate, toDate=None, event=None):
+  def getLogRecords(self, fromDate, toDate=None, event=None, vendorSpecific=None):
     '''
     :return type: LogRecords
     '''
-    response = self.getLogRecordsResponse(token, fromDate, toDate=toDate, event=event)
+    response = self.getLogRecordsResponse(
+      fromDate, toDate=toDate,
+      event=event, vendorSpecific=vendorSpecific
+    )
 
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = logrecords_serialization.LogRecords()
     return deser.deserialize(response.read(), format)
 
-  def ping(self):
+  def ping(self, vendorSpecific=None):
     '''
     :return type: Boolean
     '''
     url = self.RESTResourceURL('ping')
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
     try:
-      response = self.GET(url)
+      response = self.GET(url, headers=headers)
     except Exception, e:
       logging.exception(e)
       return False
@@ -313,31 +333,32 @@ class DataONEBaseClient(restclient.RESTClient):
       return True
     return False
 
-  def getStatusResponse(self):
+  def getStatusResponse(self, vendorSpecific=None):
     '''
     :return type: HTTPResponse
     '''
     url = self.RESTResourceURL('status')
-    return self.GET(url)
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, headers=headers)
 
-  def getStatus(self):
+  def getStatus(self, vendorSpecific=None):
     '''TODO: When the StatusResponse object is defined, this will return a
     deserialized version of that object.
     '''
     raise Exception('Not Implemented')
 
-  def isAuthorized(self, token, pid, action):
-    '''
-    '''
-    raise Exception('Not Implemented')
-
-  def listNodesResponse(self):
+  def listNodesResponse(self, vendorSpecific=None):
     url = self.RESTResourceURL('listnodes')
-    response = self.GET(url)
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    response = self.GET(url, headers=headers)
     return response
 
-  def listNodes(self):
-    res = self.listNodesResponse()
+  def listNodes(self, vendorSpecific=None):
+    res = self.listNodesResponse(vendorSpecific=vendorSpecific)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
     return deser.deserialize(res.read(), format)
@@ -346,11 +367,15 @@ class DataONEBaseClient(restclient.RESTClient):
   # Authentication and authorization.
   # ----------------------------------------------------------------------------
 
-  def setAccessResponse(self, cert, pid, accessPolicy, vendor_specific=None):
-    '''MN_auth.setAccess(cert, pid, accessPolicy) -> Boolean
+  def isAuthorized(self, pid, action, vendorSpecific=None):
+    '''
+    '''
+    raise Exception('Not Implemented')
+
+  def setAccessPolicyResponse(self, pid, accessPolicy, vendorSpecific=None):
+    '''MN_auth.setAccessPolicy(pid, accessPolicy) -> Boolean
 
     Sets the access permissions for an object identified by pid.
-    :param token: Authentication token
     :param pid: Identifier
     :param accessPolicy:
     :type accessPolicy: AccessPolicy object
@@ -365,17 +390,18 @@ class DataONEBaseClient(restclient.RESTClient):
     # PUT.
     url = self.RESTResourceURL('setaccess', pid=pid)
     self.logger.info("URL = %s" % url)
-    headers = self._getAuthHeader(cert)
-    if vendor_specific is None:
-      vendor_specific = {}
-    headers.update(vendor_specific)
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
     print accesspolicy_doc
     files = [('accesspolicy', 'content.bin', accesspolicy_doc), ]
     # TODO: Change to PUT when Django PUT issue if fixed.
     return self.POST(url, files=files, headers=headers)
 
-  def setAccess(self, cert, pid, accessPolicy):
+  def setAccessPolicy(self, pid, accessPolicy, vendorSpecific=None):
     '''
     '''
-    response = self.setAccessResponse(cert, pid, accessPolicy)
+    response = self.setAccessPolicyResponse(
+      pid, accessPolicy, vendorSpecific=vendorSpecific
+    )
     return self.isHttpStatusOK(response.status)
