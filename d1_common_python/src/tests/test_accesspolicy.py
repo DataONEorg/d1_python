@@ -42,16 +42,16 @@ EG_ACCESSPOLICY_GMN = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
     <ns1:accessPolicy xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
         <allow>
-            <principal>principal0</principal>
-            <principal>principal1</principal>
+            <subject>subject0</subject>
+            <subject>subject1</subject>
             <permission>read</permission>
             <permission>read</permission>
             <resource>resource0</resource>
             <resource>resource1</resource>
         </allow>
         <allow>
-            <principal>principal2</principal>
-            <principal>principal3</principal>
+            <subject>subject2</subject>
+            <subject>subject3</subject>
             <permission>read</permission>
             <permission>read</permission>
             <resource>resource2</resource>
