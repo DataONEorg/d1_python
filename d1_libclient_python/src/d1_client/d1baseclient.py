@@ -99,7 +99,8 @@ class DataONEBaseClient(restclient.RESTClient):
       'ping': u'monitor/ping',
       'status': u'monitor/status',
       'listnodes': u'node',
-      'setaccess': u'accessRules_put/%(pid)s',
+      'setaccesspolicy': u'setAccessPolicy_put/%(pid)s',
+      'assertauthorized': u'assertAuthorized/%(pid)s'
     }
     self.lastresponse = None
 
@@ -367,18 +368,42 @@ class DataONEBaseClient(restclient.RESTClient):
   # Authentication and authorization.
   # ----------------------------------------------------------------------------
 
-  def isAuthorized(self, pid, action, vendorSpecific=None):
+  def assertAuthorizedResponse(self, pid, action, vendorSpecific=None):
+    '''MN_auth.assertAuthorized(pid, action) -> Boolean
+
+    Assert that subject is allowed to perform action on object.
+    
+    :param pid: Object on which to assert access.
+    :type pid: Identifier
+    :param action: Action to use for access.
+    :type action: String
+    :returns:
+      NoneType if access is allowed.
+      Raises NotAuthorized if access is not allowed.
+    :return type: NoneType
+    '''
+    url = self.RESTResourceURL('assertauthorized', pid=pid, action=action)
+    self.logger.info("URL = %s" % url)
+    url_params = {'action': action, }
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    return self.GET(url, url_params=url_params, headers=headers)
+
+  def assertAuthorized(self, pid, access, vendorSpecific=None):
     '''
     '''
-    raise Exception('Not Implemented')
+    response = self.assertAuthorizedResponse(pid, access, vendorSpecific=vendorSpecific)
+    return self.isHttpStatusOK(response.status)
 
   def setAccessPolicyResponse(self, pid, accessPolicy, vendorSpecific=None):
     '''MN_auth.setAccessPolicy(pid, accessPolicy) -> Boolean
 
     Sets the access permissions for an object identified by pid.
-    :param pid: Identifier
-    :param accessPolicy:
-    :type accessPolicy: AccessPolicy object
+    :param pid: Object on which to set access policy.
+    :type pid: Identifier
+    :param accessPolicy: The access policy to apply.
+    :type accessPolicy: AccessPolicy
     :returns: Success
     :return type: Boolean
     '''
@@ -388,12 +413,11 @@ class DataONEBaseClient(restclient.RESTClient):
     accesspolicy_doc, content_type = \
       access_policy_serializer.serialize('text/xml')
     # PUT.
-    url = self.RESTResourceURL('setaccess', pid=pid)
+    url = self.RESTResourceURL('setaccesspolicy', pid=pid)
     self.logger.info("URL = %s" % url)
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
-    print accesspolicy_doc
     files = [('accesspolicy', 'content.bin', accesspolicy_doc), ]
     # TODO: Change to PUT when Django PUT issue if fixed.
     return self.POST(url, files=files, headers=headers)
