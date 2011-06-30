@@ -36,46 +36,87 @@ admin.autodiscover()
 
 urlpatterns = patterns(
   'service.mn.views',
-  # /session/
-  (r'^session/?$', 'session'),
+  # Django's URL dispatcher does not take HTTP verb into account, so in the
+  # cases where the DataONE REST API specifies different methods as different
+  # verbs against the same URL, the methods are dispatched to the same view
+  # function, which checks the verb and dispatches to the appropriate handler.
 
-  # /object
-  (r'^object/?$', 'object_collection'),
-  (r'^meta/(.+)$', 'meta_pid'),
-  (r'^object/(.+)$', 'object_pid'),
-  (r'^object_put/(.+)$', 'object_pid_put_workaround'),
-  (r'^checksum/(.+)$', 'checksum_pid'),
+  # ----------------------------------------------------------------------------
+  # Public API
+  # ----------------------------------------------------------------------------
 
-  # /log/
-  (r'^log/?$', 'event_log_view'),
+  # Tier 1: Core API  
 
-  # /monitor/
+  # GET /monitor/ping
   (r'^monitor/ping/?$', 'monitor_ping'),
+  # GET /monitor/status  
   (r'^monitor/status/?$', 'monitor_status'),
+  # GET /monitor/object
   (r'^monitor/object/?$', 'monitor_object'),
+  # GET /monitor/event  
   (r'^monitor/event/?$', 'monitor_event'),
-
-  # /node/ (also available at root)
-  (r'^node/?$', 'node'),
+  # GET /log
+  (r'^log/?$', 'event_log_view'),
+  # GET /  or  GET /node
   (r'^/?$', 'node'),
+  (r'^node/?$', 'node'),
 
-  # /replicate/
-  (r'^replicate/?$', 'replicate'),
-  (r'^error/(.+)$', 'error'),
-  # Internal
-  (r'^_replicate_store/?$', '_replicate_store'),
+  # Tier 1: Read API
 
-  # Authentication and authorization
-  (r'^isAuthorized/(.+)/(.+)/?$', 'is_authorized'),
+  # GET /object/{pid}
+  # HEAD /object/{pid}
+  (r'^object/(.+)$', 'object_pid'),
+  # GET /meta/{pid}
+  (r'^meta/(.+)$', 'meta_pid'),
+  # GET /checksum/{pid}[?checksumAlgorithm={checksumAlgorithm}]
+  (r'^checksum/(.+)$', 'checksum_pid'),
+  # GET /object <filters>
+  (r'^object/?$', 'object'),
+  # POST /error
+  (r'^error/?$', 'error'),
+
+  # Tier 2: Authorization API
+
+  # GET /isAuthorized/{pid}?action={action}
+  (r'^assertAuthorized/(.+)/?$', 'assert_authorized'),
+  # PUT /accessRules/{pid}
   (r'^setAccessPolicy/(.+)$', 'access_policy_pid'),
   (r'^setAccessPolicy_put/(.+)$', 'access_policy_pid_put_workaround'),
 
-  # Diagnostics, debugging and testing.
+  # Tier 3: Storage API
+
+  # POST /object/{pid}
+  # Handled by the object_pid dispatcher.
+  # PUT /object/{pid}
+  # TODO: This is a workaround for issue with PUT in Django.
+  (r'^object_put/(.+)$', 'object_pid_put'),
+  # DELETE /object/{pid}
+  # Handled by the object_pid dispatcher.
+
+  # Tier 4: Replication API
+
+  # POST /replicate  
+  (r'^replicate/?$', 'replicate'),
+
+  # ----------------------------------------------------------------------------
+  # Private API
+  # ----------------------------------------------------------------------------
+
+  # replicate_store
+  (r'^replicate_store/?$', 'replicate_store'),
+
+  # ----------------------------------------------------------------------------
+  # Diagnostics, debugging and testing
+  # ----------------------------------------------------------------------------
+
+  # Test portal.
   (r'^test/?$', 'test'),
+  # Replication.
   (r'^test_replicate_post/?$', 'test_replicate_post'),
   (r'^test_replicate_get/?$', 'test_replicate_get'),
   (r'^test_replicate_get_xml/?$', 'test_replicate_get_xml'),
   (r'^test_replicate_clear/?$', 'test_replicate_clear'),
+  # Misc.
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
   (r'^test_exception/(.+?)/?$', 'test_exception'),
   (r'^test_delete_all_objects/?$', 'test_delete_all_objects'),
@@ -85,7 +126,9 @@ urlpatterns = patterns(
   (r'^test_delete_all_access_rules/?$', 'test_delete_all_access_rules'),
   (r'^test_cert/?$', 'test_cert'),
 
-  # Admin.
+  # ----------------------------------------------------------------------------
+  # Administration.
+  # ----------------------------------------------------------------------------
   (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),
   (r'^admin/?$', include(admin.site.urls)),
 )

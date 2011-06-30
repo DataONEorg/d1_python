@@ -36,6 +36,7 @@ import datetime
 import os
 import sys
 import StringIO
+import urllib
 
 # 3rd party.
 try:
@@ -85,6 +86,8 @@ import sys_log
 # </ns1:systemMetadata>
 
 
+# TODO: Refactor into sysmeta class and replace scan through directory with
+# direct read since the filename is now the PID.
 def read_sysmeta(pid):
   '''Get a SysMeta object based on PID.
   :param pid: PID
@@ -93,8 +96,8 @@ def read_sysmeta(pid):
   :rtype: (str, SystemMetadata)
   '''
   sysmeta_found = False
-  for sysmeta_filename in os.listdir(settings.SYSMETA_CACHE_PATH):
-    sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_filename)
+  for sysmeta_filename in os.listdir(settings.SYSMETA_STORE_PATH):
+    sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
     sysmeta_xml = open(sysmeta_path).read()
@@ -121,7 +124,7 @@ def write_sysmeta(sysmeta_filename, sysmeta_obj):
   :return: ServiceFailure exception on error.
   :rtype: DataONEException
   '''
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_filename)
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
   try:
     sysmeta_file = open(sysmeta_path, 'w')
   except EnvironmentError as (errno, strerror):
@@ -176,8 +179,8 @@ def get_replication_status_list(pid=None):
   status_list = []
 
   # Iterate over sysmeta objects.
-  for sysmeta_filename in os.listdir(settings.SYSMETA_CACHE_PATH):
-    sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_filename)
+  for sysmeta_filename in os.listdir(settings.SYSMETA_STORE_PATH):
+    sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
     sysmeta_xml = open(sysmeta_path).read()
@@ -235,8 +238,8 @@ def clear_replication_status(node_ref=None, pid=None):
   removed_count = 0
 
   # Iterate over sysmeta objects.
-  for sysmeta_filename in os.listdir(settings.SYSMETA_CACHE_PATH):
-    sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_filename)
+  for sysmeta_filename in os.listdir(settings.SYSMETA_STORE_PATH):
+    sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
     sysmeta_xml = open(sysmeta_path).read()
@@ -258,3 +261,79 @@ def clear_replication_status(node_ref=None, pid=None):
       set_sysmeta(sysmeta_filename, sysmeta_obj)
 
   return removed_count
+
+# ------------------------------------------------------------------------------
+# Based on PyXB.
+# ------------------------------------------------------------------------------
+'''
+Example:
+
+with sysmeta('mypid') as m:
+  m.accessPolicy = access_policy
+'''
+
+
+# TODO: Handle concurrency.
+class sysmeta():
+  '''Manipulate SysMeta objects in the SysMeta store.
+  '''
+
+  def __init__(self, pid):
+    self.sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid, ''))
+    # Read.
+    try:
+      file = open(self.sysmeta_path, 'r')
+    except EnvironmentError as (errno, strerror):
+      err_msg = 'Could not open SysMeta object for reading: {0}\n'\
+        .format(self.sysmeta_path)
+      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+    with file:
+      sysmeta_str = file.read()
+    # Deserialize.
+    self.sysmeta_pyxb = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)
+
+  def __enter__(self):
+    return self.sysmeta_pyxb
+
+  def __exit__(self, exc_type, exc_value, traceback):
+    self.save()
+    return False
+
+  def save(self, update_modified_datetime=True):
+    '''Save the SysMeta object in the store.
+    '''
+    if update_modified_datetime:
+      self.set_modified_datetime()
+    # Write new SysMeta object to disk.
+    try:
+      file = open(self.sysmeta_path, 'w')
+    except EnvironmentError as (errno, strerror):
+      err_msg = 'Could not open SysMeta object for writing: {0}\n'\
+        .format(self.sysmeta_path)
+      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+    with file:
+      file.write(self.sysmeta_pyxb.toxml())
+
+  def set_modified_datetime(self, timestamp=None):
+    '''Update the dateSysMetadataModified field.
+    '''
+    if timestamp is None:
+      timestamp = datetime.datetime.now()
+    self.sysmeta_pyxb.dateSysMetadataModified = datetime.datetime.isoformat(timestamp)
+
+  #  def get_owner(self, owner):
+  #      
+  #  def set_owner(self, owner):
+  #      sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH,
+  #                              urllib.quote(pid, ''))
+  #  try:
+  #    file = open(sysmeta_path, 'r')
+  #  except EnvironmentError:
+  #    return 'DATAONE_UNKNOWN'
+  #  with file: 
+  #    sysmeta_str = file.read()
+  #    sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+  #    return sysmeta.rightsHolder
+  #

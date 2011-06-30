@@ -19,35 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''
-:mod:`views`
-============
-
-:module: views
-:platform: Linux
+'''Module views.py
+==================
 
 :Synopsis:
-  Implements the following REST calls:
-  
-  0.3 MN_replication.listObjects()     GET    /object
-  N/A MN_replication.listObjects()     HEAD   /object
-  N/A MN_replication.listObjects()     DELETE /object
-
-  0.3 MN_crud.get ()                   GET    /object/<pid>
-  0.4 MN_crud.create()                 POST   /object/<pid>
-  0.4 MN_crud.update()                 PUT    /object/<pid>
-  0.9 MN_crud.delete()                 DELETE /object/<pid>
-  0.3 MN_crud.describe()               HEAD   /object/<pid>
-
-  0.3 MN_crud.getSystemMetadata()      GET    /meta/<pid>
-  0.3 MN_crud.describeSystemMetadata() HEAD   /meta/<pid>
-
-  0.3 MN_crud.getLogRecords()          GET    /log
-  0.3 MN_crud.describeLogRecords()     HEAD   /log
-
-.. moduleauthor:: Roger Dahl
+  REST call handlers.
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
-
 # Stdlib.
 import cgi
 import csv
@@ -66,8 +46,6 @@ import urllib
 import urlparse
 import uuid
 
-import pickle
-
 # Django.
 from django.http import HttpResponse
 from django.http import HttpResponseNotAllowed
@@ -84,10 +62,12 @@ try:
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
+  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/' \
+                   '2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
   raise
 
 # MN API.
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.checksum_serialization
@@ -102,139 +82,295 @@ import models
 import settings
 import sys_log
 import util
+import sysmeta
 
-# REST interface: Object Collection
-# Member Node API: Replication API
+# ==============================================================================
+# Secondary dispatchers (resolve on HTTP verb)
+# ==============================================================================
 
-# TODO: Stub.
-# Unrestricted.
-def session(request):
-  return HttpResponse('<sessionId>bogusID</sessionId>')
-
-
-# TODO: auth
-# Unrestricted.
-def object_collection(request):
-  '''
-  0.3 MN_replication.listObjects() GET    /object
-  N/A MN_replication.listObjects() HEAD   /object
-  '''
+def object_pid(request, pid):
   if request.method == 'GET':
-    return object_collection_get(request, head=False)
+    return object_pid_get(request, pid, False)
+  elif request.method == 'HEAD':
+    return object_pid_get(request, pid, True)
+  elif request.method == 'POST':
+    return object_pid_post(request, pid)
+  # TODO: PUT currently not supported (issue with Django).
+  # Instead, this call is handled as a POST against a separate URL.
+  # elif request.method == 'PUT':
+  #   return object_pid_put(request, pid)
+  elif request.method == 'DELETE':
+    return object_pid_delete(request, pid)
+  else:
+    # TODO: Add "PUT" to list.
+    return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
   
-  if request.method == 'HEAD':
-    return object_collection_get(request, head=True)
-      
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
+
+def event_log_view(request):
+  if request.method == 'GET':
+    return event_log_view_get(request, head=False)
+  elif request.method == 'HEAD':
+    return event_log_view_get(request, head=True)
+  else:
+    return HttpResponseNotAllowed(['GET', 'HEAD'])
+  
+
+# ==============================================================================
+# Public API
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Tier 1: Core API  
+# ------------------------------------------------------------------------------
+
+# Unrestricted.
+def monitor_ping(request):
+  '''MNCore.ping() → Boolean
+
+  Low level “are you alive” operation. A valid ping response is indicated by a
+  HTTP status of 200.
+  '''
+  return HttpResponse('')
 
 
 # Unrestricted.
-def object_collection_get(request, head):
-  '''
-  Retrieve the list of objects present on the MN that match the calling parameters.
-  MN_replication.listObjects(startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) -> ObjectList
-  '''
-  
-  # Default ordering is by mtime ascending.
-  query = models.Object.objects.order_by('mtime')
-  
-  # Create a copy of the query that we will not slice, for getting the total
-  # count for this type of objects.
-  query_unsliced = query
+def monitor_status(request):
+  '''MNCore.getStatus() → StatusResponse
 
-  # Filters.
+  This function is similar to MN_health.ping() but returns a more complete
+  status which may include information such as planned service outages.
+  '''
+  return HttpResponse('OK (response not yet defined)')
+
+
+# Unrestricted.
+def monitor_object(request):
+  '''MNCore.getObjectStatistics([format][, pid]) → ObjectStatistics
+
+  Returns the number of objects stored on the Member Node at the time the call
+  is serviced. The count may be restricted to a particular object format or a
+  filter on the PID.
+  '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  # Set up query with requested sorting.
+  query = models.Object.objects.all()
   
   # startTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'startTime', 'gte')
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 
+                                            'startTime', 'gte')
   if changed == True:
     query_unsliced = query
   
   # endTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime', 'lt')
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime',
+                                            'lt')
   if changed == True:
     query_unsliced = query
-      
-  # objectFormat
-  if 'objectFormat' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format', request.GET['objectFormat'])
+
+  # Filter by pid (with wildcards).
+  if 'pid' in request.GET:
+    query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
+    query_unsliced = query
+    
+  # Filter by referenced object format.
+  query, changed = util.add_string_filter(query, request, 'format__format',
+                                          'format')
+  if changed:
     query_unsliced = query
 
-  # TODO. Filter by replicaStatus. May be removed from API.
+  # Prepare to group by day.
+  if 'day' in request.GET:
+    query = query.extra({'day' : "date(mtime)"}).values('day').annotate(
+      count=Count('id')).order_by()
+
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)
+
+  return {'query': query, 'start': start, 'count': count, 'total':
+    0, 'day': 'day' in request.GET, 'type': 'monitor' }
+
+
+@auth.assert_trusted_permission
+def monitor_event(request, head):
+  '''MNCore.getOperationStatistics(session[, period][, requestor][, event]
+  [, format]) → MonitorList
+
+  Returns the number of operations that have been serviced by the node over time
+  periods of one and 24 hours.
+  '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+  
+  # select objects ordered by mtime desc.
+  query = models.Event_log.objects.order_by('-date_logged')
+  # Create a copy of the query that we will not slice, for getting the total
+  # count for this type of objects.
+  query_unsliced = query
+
+  obj = {}
+  obj['logRecord'] = []
+
+  # Filter by referenced object format.
+  query, changed = util.add_string_filter(query, request,
+                                          'object__format__format', 'format')
+  if changed:
+    query_unsliced = query
+  
+  # Filter by referenced object created date, from.
+  query, changed = util.add_datetime_filter(query, request,
+                                            'object__mtime', 'objectFromDate',
+                                            'gte')
+  if changed == True:
+    query_unsliced = query
+  
+    # Filter by referenced object created date, to.
+  query, changed = util.add_datetime_filter(query, request, 'object__mtime', 
+                                            'objectToDate', 'lt')
+  if changed == True:
+    query_unsliced = query
+
+  # Filter by event date, from.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged',
+                                            'fromDate', 'gte')
+  if changed == True:
+    query_unsliced = query
+  
+    # Filter by event date, to.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged', 
+                                            'toDate', 'lt')
+  if changed == True:
+    query_unsliced = query
+
+  # Filter by event type.
+  if 'event' in request.GET:
+    query = util.add_wildcard_filter(query, 'event__event',
+                                     request.GET['event'])
+    query_unsliced = query
+
+  # Prepare to group by day.
+  if 'day' in request.GET:
+    query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(
+      count=Count('id')).order_by()
 
   if head == False:
     # Create a slice of a query based on request start and count parameters.
-    query, start, count = util.add_slice_filter(query, request)
+    query, start, count = util.add_slice_filter(query, request)    
   else:
     query = query.none()
+    
+  return {'query': query, 'start': start, 'count': count, 'total':
+    0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
-  # Return query data for further processing in middleware layer.
-  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'object' }
 
-# ------------------------------------------------------------------------------  
-# CRUD interface.
-# ------------------------------------------------------------------------------  
+# TODO: Filter by permissions.
+def event_log_view(request):
+  '''MNCore.getLogRecords(session, fromDate[, toDate][, event][, start=0]
+  [, count=1000]) → Log
 
-# Unrestricted.
-def object_pid(request, pid):
+  Retrieve log information from the Member Node for the specified date range and
+  even type.
   '''
-  MN_crud.get()      GET    /object/<pid>
-  MN_crud.describe() HEAD   /object/<pid>
-  MN_crud.create()   POST   /object/<pid>
-  MN_crud.update()   PUT    /object/<pid>
-  MN_crud.delete()   DELETE /object/<pid>
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  # select objects ordered by mtime desc.
+  query = models.Event_log.objects.order_by('-date_logged')
+  # Create a copy of the query that we will not slice, for getting the total
+  # count for this type of objects.
+  query_unsliced = query
+
+  obj = {}
+  obj['logRecord'] = []
+
+  # Filter by fromDate.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged',
+                                            'fromDate', 'gte')
+  if changed:
+    query_unsliced = query
+
+  # Filter by toDate.
+  query, changed = util.add_datetime_filter(query, request, 'date_logged',
+                                            'toDate', 'lt')
+  if changed:
+    query_unsliced = query
+
+  # Filter by event type.
+  query, changed = util.add_string_filter(query, request, 'event__event',
+                                          'event')
+  if changed:
+    query_unsliced = query
+
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)    
+
+  # Return query data for further processing in middleware layer.  
+  return {'query': query, 'start': start, 'count': count,
+          'total': query_unsliced.count(), 'type': 'log' }
+
+
+@auth.assert_trusted_permission
+def node(request):
+  '''MNCore.getCapabilities() → Node
+
+  Returns a document describing the capabilities of the Member Node.
   '''
-  
-  if request.method == 'GET':
-    return object_pid_get(request, pid, False)
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
 
-  if request.method == 'HEAD':
-    return object_pid_get(request, pid, True)
+  return {'type': 'node' }
 
-  if request.method == 'POST':
-    return object_pid_post(request, pid)
+#<node replicate="true" synchronize="true" type="mn">
+#<pid>http://cn-rpw</pid>
+#<name>DataONESamples</name>
+#<baseURL>http://cn-rpw/mn/</baseURL>
+#−
+#<services>
+#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="get" rest="object/${PID}"/>
+#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="getSystemMetadata" rest="meta/${PID}"/>
+#<service api="mn_replicate" available="true" datechecked="1900-01-01T00:00:00Z" method="listObjects" rest="object"/>
+#</services>
+#−
+#<synchronization>
+#<schedule hour="12" mday="*" min="00" mon="*" sec="00" wday="*" year="*"/>
+#<lastHarvested>1900-01-01T00:00:00Z</lastHarvested>
+#<lastCompleteHarvest>1900-01-01T00:00:00Z</lastCompleteHarvest>
+#</synchronization>
+#</node>
 
-  # TODO: PUT currently not supported (issue with Django).
-  # Instead, this call is handled as a POST against a separate URL.
-#  if request.method == 'PUT':
-#    return object_pid_put(request, pid)
-
-  if request.method == 'DELETE':
-    return object_pid_delete(request, pid)
-  
-  # All verbs allowed, so should never get here.
-  # TODO: Add "PUT" to list.
-  return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
 
 
-@auth.assert_write_permission
-def object_pid_put_workaround(request, pid):
-  '''
-  MN_crud.update()   PUT    /object/<pid>
-  '''
-  if request.method == 'POST':
-    return object_pid_put(request, pid)
-
-  return HttpResponseNotAllowed(['POST'])
-
+# ------------------------------------------------------------------------------
+# Tier 1: Read API  
+# ------------------------------------------------------------------------------
 
 @auth.assert_read_permission
 def object_pid_get(request, pid, head):
-  '''
-  Retrieve an object identified by pid from the node.
-  MN_crud.get(pid) -> bytes
-  '''
+  '''GET: MNRead.get(session, pid) → OctetStream
 
+  Retrieve an object identified by pid from the node.
+
+  HEAD:
+    MNRead.describe(session, pid) → DescribeResponse
+
+    This method provides a lighter weight mechanism than
+    MN_read.getSystemMetadata() for a client to determine basic properties of
+    the referenced object.
+  '''
   # Find object based on pid.
   try:
     sciobj = models.Object.objects.get(pid=pid)
   except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0, 'Attempted to get a non-existing object', pid)
+    raise d1_common.types.exceptions.NotFound(0,
+      'Attempted to get a non-existing object', pid)
 
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(sciobj.url)
   except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
 
   response = HttpResponse()
 
@@ -243,7 +379,8 @@ def object_pid_get(request, pid, head):
   response['Content-Length'] = sciobj.size
   # sciobj.mtime was normalized to UTC when it was inserted into the db.
   response['Date'] = datetime.datetime.isoformat(sciobj.mtime) 
-  response['Content-Type'] = mimetypes.guess_type(url_split.path)[0] or d1_common.const.MIMETYPE_OCTETSTREAM
+  response['Content-Type'] = mimetypes.guess_type(url_split.path)[0] or \
+    d1_common.const.MIMETYPE_OCTETSTREAM
 
   # Log the access of this object.
   event_log.log(pid, 'read', request)
@@ -253,13 +390,16 @@ def object_pid_get(request, pid, head):
     return response
 
   if url_split.scheme == 'http':
-    sys_log.info('pid({0}) url({1}): Object is wrapped. Proxying from original location'.format(pid, sciobj.url))
+    sys_log.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
+                 ' location'.format(pid, sciobj.url))
     return _object_pid_get_remote(request, response, pid, sciobj.url, url_split)
   elif url_split.scheme == 'file':
-    sys_log.info('pid({0}) url({1}): Object is managed. Streaming from disk'.format(pid, sciobj.url))
+    sys_log.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
+                 .format(pid, sciobj.url))
     return _object_pid_get_local(request, response, pid)
   else:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
 
 # Unrestricted.
@@ -273,7 +413,8 @@ def _object_pid_get_remote(request, response, pid, url, url_split):
     if remote_response.status == httplib.FOUND:
       url = remote_response.getheader('location')
   except httplib.HTTPException as e:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while checking for "302 Found"')
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'HTTPException while checking for "302 Found"')
 
   # Open the object to proxy.
   try:
@@ -283,7 +424,8 @@ def _object_pid_get_remote(request, response, pid, url, url_split):
     remote_response = conn.getresponse()
     if remote_response.status != httplib.OK:
       raise d1_common.types.exceptions.ServiceFailure(0,
-        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'.format(url, remote_response.status))
+        'HTTP server error while opening object for proxy. URL: {0} Error: {1}'\
+        .format(url, remote_response.status))
   except httplib.HTTPException as e:
     raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
 
@@ -314,10 +456,220 @@ def _object_pid_get_local(request, response, pid):
   return response
 
 
+@auth.assert_read_permission
+def meta_pid(request, pid):
+  '''MNRead.getSystemMetadata(session, pid) → SystemMetadata
+
+  Describes the science metadata or data object (and likely other objects in the
+  future) identified by pid by returning the associated system metadata object.
+  '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  # Verify that object exists. 
+  try:
+    url = models.Object.objects.filter(pid=pid)[0]
+  except IndexError:
+    raise d1_common.types.exceptions.NotFound(0,
+      'Non-existing System Metadata object was requested', pid)
+  
+  # Open file for streaming.  
+  file_in_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
+  try:
+    file = open(file_in_path, 'r')
+  except EnvironmentError as (errno, strerror):
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'I/O error({0}): {1}\n'.format(errno, strerror))
+
+  # Log access of the SysMeta of this object.
+  event_log.log(pid, 'read', request)
+
+  # Return the raw bytes of the object.
+  return HttpResponse(util.fixed_chunk_size_iterator(file),
+                      mimetype=d1_common.const.MIMETYPE_XML)
+
+
+@auth.assert_read_permission
+def checksum_pid(request, pid):
+  '''MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
+
+  Returns a Types.Checksum for the specified object using an accepted hashing
+  algorithm.
+  '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  # Find object based on pid.
+  query = models.Object.objects.filter(pid=pid)
+  try:
+    checksum = query[0].checksum
+    checksum_algorithm = query[0].checksum_algorithm.checksum_algorithm
+  except IndexError:
+    raise d1_common.types.exceptions.NotFound(0,
+      'Non-existing object was requested', pid)
+
+  # Log the access of this object.
+  # TODO: look into log type other than 'read'
+  event_log.log(pid, 'read', request)
+
+  # Return the checksum.
+  checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
+  checksum_ser.checksum.algorithm = checksum_algorithm
+  doc, content_type = checksum_ser.serialize(request.META.get('HTTP_ACCEPT',
+                                                              None))
+  return HttpResponse(doc, content_type)
+
+
+# Unrestricted.
+def object(request):
+  '''MNRead.listObjects(session[, startTime][, endTime][, objectFormat]
+  [, replicaStatus][, start=0][, count=1000]) → ObjectList
+
+  Retrieve the list of objects present on the MN that match the calling
+  parameters.
+  '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  # Default ordering is by mtime ascending.
+  query = models.Object.objects.order_by('mtime')
+  
+  # Create a copy of the query that we will not slice, for getting the total
+  # count for this type of objects.
+  query_unsliced = query
+
+  # Filters.
+  
+  # startTime
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'startTime',
+                                            'gte')
+  if changed == True:
+    query_unsliced = query
+  
+  # endTime
+  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime',
+                                            'lt')
+  if changed == True:
+    query_unsliced = query
+      
+  # objectFormat
+  if 'objectFormat' in request.GET:
+    query = util.add_wildcard_filter(query, 'format__format',
+                                     request.GET['objectFormat'])
+    query_unsliced = query
+
+  # TODO. Filter by replicaStatus. May be removed from API.
+
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)
+
+  # Return query data for further processing in middleware layer.
+  return {'query': query, 'start': start, 'count': count,
+          'total': query_unsliced.count(), 'type': 'object' }
+
+
+@auth.assert_trusted_permission
+def error(request):
+  '''MNRead.synchronizationFailed(session, message)
+
+  This is a callback method used by a CN to indicate to a MN that it cannot
+  complete synchronization of the science metadata identified by pid.
+  '''
+  if request.method != 'POST':
+    return HttpResponseNotAllowed(['POST'])
+
+  # TODO: Deserialize exception in message and log full information.
+  util.validate_post(request, (('field', 'message')))
+  
+  sys_log.info('client({0}): CN cannot complete SciMeta sync'.format(
+    util.request_to_string(request)))
+
+  return HttpResponse('')
+
+# ------------------------------------------------------------------------------  
+# Tier 2: Authorization API
+# ------------------------------------------------------------------------------  
+
+# Unrestricted.
+def assert_authorized(request, pid):
+  '''MNAuthorization.assertAuthorized(pid, action) -> Boolean
+
+  Test if the user identified by the provided token has authorization for
+  operation on the specified object.
+  '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
+
+  if 'action' not in request.GET:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Missing required argument: "action"')
+
+  # Convert action string to action level. Raises InvalidRequest if the
+  # action string is not valid.
+  level = auth.action_to_level(request.GET['action'])
+  # Assert that subject is allowed to perform action on object. 
+  auth.assert_allowed(request.META['SSL_CLIENT_S_DN'], level, pid)
+
+  # Return Boolean (200 OK)
+  return HttpResponse('')
+
+# Unrestricted.
+def access_policy_pid(request, pid):
+  # TODO: PUT currently not supported (issue with Django).
+  # Instead, this call is handled as a POST against a separate URL.
+#  if request.method == 'PUT':
+#    return object_pid_put(request, pid)
+  
+  # All verbs allowed, so should never get here.
+  # TODO: Add "PUT" to list.
+  return HttpResponseNotAllowed([])
+
+
+# Unrestricted.
+def access_policy_pid_put_workaround(request, pid):
+  '''
+  '''
+  if request.method == 'POST':
+    return access_policy_pid_put(request, pid)
+
+  return HttpResponseNotAllowed(['POST'])
+
+
+@auth.assert_changepermission_permission
+def access_policy_pid_put(request, pid):
+  '''
+  MNAuthorization.setAccessPolicy(pid, accessPolicy) -> Boolean
+
+  Sets the access policy for an object identified by pid.
+  '''
+  util.validate_post(request, (('file', 'accesspolicy'),))
+
+  # Validate and deserialize accessPolicy.
+  access_policy_str = request.FILES['accesspolicy'].read()
+  access_policy = dataoneTypes.CreateFromDocument(access_policy_str)
+
+  # Set access policy for the object. Raises if the access
+  # policy is invalid.
+  auth.set_access_policy(pid, access_policy)
+
+  # Set access policy in SysMeta. Because TransactionMiddleware is enabled, the
+  # database modifications made in auth.set_access_policy() will be rolled back
+  # if the SysMeta update fails.
+  with sysmeta.sysmeta(pid) as s:
+    s.accessPolicy = access_policy
+
+  # Return Boolean (200 OK)
+  return HttpResponse('')
+
+
+# ------------------------------------------------------------------------------  
+# Tier 3: Storage API
+# ------------------------------------------------------------------------------  
+
 @auth.assert_authenticated
 def object_pid_post(request, pid):
-  '''
-  MN_crud.create(pid, object, sysmeta) -> Identifier
+  '''MNStorage.create(session, pid, object, sysmeta) → Identifier
 
   Adds a new object to the Member Node, where the object is either a data object
   or a science metadata object.
@@ -337,7 +689,7 @@ def object_pid_post(request, pid):
       'System metadata validation failed: {0}'.format(str(err)))
   
   # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid,
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
                                                                         ''))
   try:
     file = open(sysmeta_path, 'wb')
@@ -374,7 +726,8 @@ def object_pid_post(request, pid):
   object.set_format(sysmeta.objectFormat)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)
+  object.mtime = d1_common.util.normalize_to_utc(
+    sysmeta.dateSysMetadataModified)
   object.size = sysmeta.size
   object.save_unique()
 
@@ -419,14 +772,12 @@ def _object_pid_post_store_local(request, pid):
 
 @auth.assert_write_permission
 def object_pid_put(request, pid):
-  '''
-  MN_storage.update(pid, object, newPid, sysmeta) -> Identifier
-  
+  '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
+
   Updates an existing object by creating a new object identified by newPid on
   the Member Node which explicitly obsoletes the object identified by pid
   through appropriate changes to the SystemMetadata of pid and newPid.
   '''
-  
   util.validate_post(request, (('file', 'object'),
                                ('file', 'sysmeta')))
 
@@ -437,10 +788,12 @@ def object_pid_put(request, pid):
     sysmeta.isValid()
   except:
     err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'System metadata validation failed: {0}'.format(str(err)))
   
   # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
   try:
     file = open(sysmeta_path, 'wb')
     file.write(sysmeta_str)
@@ -462,7 +815,8 @@ def object_pid_put(request, pid):
       if url_split.scheme != 'http':
         raise ValueError
     except ValueError:
-      raise d1_common.types.exceptions.InvalidRequest(0, 'url({0}): Invalid URL specified for remote storage'.format(url)) 
+      raise d1_common.types.exceptions.InvalidRequest(0,
+        'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(urllib.quote(pid, ''))
@@ -475,7 +829,8 @@ def object_pid_put(request, pid):
   object.set_format(sysmeta.objectFormat)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)
+  object.mtime = d1_common.util.normalize_to_utc(
+    sysmeta.dateSysMetadataModified)
   object.size = sysmeta.size
   object.save_unique()
 
@@ -497,22 +852,17 @@ def object_pid_put(request, pid):
 
 # Unrestricted.
 def object_pid_delete(request, pid):
-  '''
-  MN_crud.delete(pid) → Identifier
+  '''MNStorage.delete(session, pid) → Identifier
 
   Deletes an object from the Member Node, where the object is either a data
   object or a science metadata object.
-  
-  TODO: This method removes all traces that the object ever existed, which is
-  likely not what we will want to do when we decide how to support object
-  deletion in DataONE.
   '''
-
   # Find object based on pid.
   try:
     sciobj = models.Object.objects.get(pid=pid)
   except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0, 'Attempted to delete a non-existing object', pid)
+    raise d1_common.types.exceptions.NotFound(0,
+      'Attempted to delete a non-existing object', pid)
 
   # If the object is wrapped, we only delete the reference. If it's managed, we
   # delete both the object and the reference.
@@ -520,10 +870,12 @@ def object_pid_delete(request, pid):
   try:
     url_split = urlparse.urlparse(sciobj.url)
   except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
 
   if url_split.scheme == 'file':
-    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
+    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
     try:
       os.unlink(sciobj_path)
     except EnvironmentError as (errno, strerror):
@@ -535,7 +887,8 @@ def object_pid_delete(request, pid):
   # wrapped and ignored.
     
   # Delete the SysMeta object.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
   try:
     os.unlink(sysmeta_path)
   except EnvironmentError as (errno, strerror):
@@ -552,7 +905,8 @@ def object_pid_delete(request, pid):
 
   # Log this operation. Event logs are tied to particular objects, so we can't
   # log this event in the event log. Instead, we log it in the sys_log.
-  sys_log.info('client({0}) pid({1}) Deleted object'.format(util.request_to_string(request), pid))
+  sys_log.info('client({0}) pid({1}) Deleted object'.format(
+    util.request_to_string(request), pid))
 
   # Return the pid.
   pid_ser = d1_common.types.pid_serialization.Identifier(pid)
@@ -560,180 +914,20 @@ def object_pid_delete(request, pid):
   return HttpResponse(doc, content_type)
 
 # ------------------------------------------------------------------------------  
-# Sysmeta.
+# Tier Replication API.
 # ------------------------------------------------------------------------------  
-
-# Unrestricted.
-def meta_pid(request, pid):
-  '''
-  0.3 MN_crud.getSystemMetadata()      GET  /meta/<pid>
-  0.3 MN_crud.describeSystemMetadata() HEAD /meta/<pid>
-  '''
-
-  if request.method == 'GET':
-    return meta_pid_get(request, pid, head=False)
-    
-  if request.method == 'HEAD':
-    return meta_pid_head(request, pid, head=True)
-
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
-  
-
-@auth.assert_read_permission
-def meta_pid_get(request, pid, head):
-  '''
-  Get:
-    Describes the science metadata or data object (and likely other objects in the
-    future) identified by pid by returning the associated system metadata object.
-    
-    MN_crud.getSystemMetadata(pid) -> SystemMetadata
-
-  Head:
-    Describe sysmeta for scidata or scimeta.
-    0.3   MN_crud.describeSystemMetadata()       HEAD     /meta/<pid>
-  '''
-
-  # Verify that object exists. 
-  try:
-    url = models.Object.objects.filter(pid=pid)[0]
-  except IndexError:
-    raise d1_common.types.exceptions.NotFound(0, 'Non-existing System Metadata object was requested', pid)
-
-  if head == True:
-    return HttpResponse('', mimetype=d1_common.const.MIMETYPE_XML)
-  
-  # Open file for streaming.  
-  file_in_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
-  try:
-    file = open(file_in_path, 'r')
-  except EnvironmentError as (errno, strerror):
-    raise d1_common.types.exceptions.ServiceFailure(0, 'I/O error({0}): {1}\n'.format(errno, strerror))
-
-  # Log access of the SysMeta of this object.
-  event_log.log(pid, 'read', request)
-
-  # Return the raw bytes of the object.
-  return HttpResponse(util.fixed_chunk_size_iterator(file), mimetype=d1_common.const.MIMETYPE_XML)
-
-
-@auth.assert_read_permission
-def checksum_pid(request, pid):
-  '''
-  '''
-
-  if request.method == 'GET':
-    return checksum_pid_get(request, pid)
-
-  return HttpResponseNotAllowed(['GET'])
-
-
-@auth.assert_read_permission
-def checksum_pid_get(request, pid):
-  # Find object based on pid.
-  query = models.Object.objects.filter(pid=pid)
-  try:
-    checksum = query[0].checksum
-    checksum_algorithm = query[0].checksum_algorithm.checksum_algorithm
-  except IndexError:
-    raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
-
-  # Log the access of this object.
-  event_log.log(pid, 'read', request) # TODO: look into log type other than 'read'
-
-  # Return the checksum.
-  checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
-  checksum_ser.checksum.algorithm = checksum_algorithm
-  doc, content_type = checksum_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
-
-# ------------------------------------------------------------------------------  
-# Event Log.
-# ------------------------------------------------------------------------------  
-
-# Unrestricted.
-def event_log_view(request):
-  '''
-  0.3 MN_crud.getLogRecords()      GET  /log
-  0.3 MN_crud.describeLogRecords() HEAD /log
-  '''
-
-  if request.method == 'GET':
-    return event_log_view_get(request, head=False)
-  
-  if request.method == 'HEAD':
-    return event_log_view_get(request, head=True)
-    
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
-
-
-# TODO: Filter by permissions.
-def event_log_view_get(request, head):
-  '''
-  Get:
-    Get event_log.
-    0.3   MN_crud.getLogRecords()       GET     /log
-    
-    MN_crud.getLogRecords(fromDate[, toDate][, event]) -> LogRecords
-  
-  Head:
-    Describe event_log.
-    0.3   MN_crud.describeLogRecords()       HEAD     /log
-  '''
-
-  # select objects ordered by mtime desc.
-  query = models.Event_log.objects.order_by('-date_logged')
-  # Create a copy of the query that we will not slice, for getting the total
-  # count for this type of objects.
-  query_unsliced = query
-
-  obj = {}
-  obj['logRecord'] = []
-
-
-  # Filter by fromDate.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'fromDate', 'gte')
-  if changed:
-    query_unsliced = query
-
-  # Filter by toDate.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'toDate', 'lt')
-  if changed:
-    query_unsliced = query
-
-  # Filter by event type.
-  query, changed = util.add_string_filter(query, request, 'event__event', 'event')
-  if changed:
-    query_unsliced = query
-
-  if head == False:
-    # Create a slice of a query based on request start and count parameters.
-    query, start, count = util.add_slice_filter(query, request)    
-  else:
-    query = query.none()
-
-  # Return query data for further processing in middleware layer.  
-  return {'query': query, 'start': start, 'count': count, 'total': query_unsliced.count(), 'type': 'log' }
-
-# ------------------------------------------------------------------------------  
-# Replication.
-# ------------------------------------------------------------------------------  
-
-# MN_replication.replicate(id, sourceNode) -> boolean
 
 @auth.assert_trusted_permission
 def replicate(request):
-  '''
-  '''
-  if request.method == 'POST':
-    return replicate_post(request)
-  
-  return HttpResponseNotAllowed(['POST'])
+  '''MNReplication.replicate(session, sysmeta, sourceNode) → boolean
 
+  Called by a Coordinating Node to request that the Member Node create a copy of
+  the specified object by retrieving it from another Member Nodeode and storing
+  it locally so that it can be made accessible to the DataONE system.
+  '''
+  if request.method != 'POST':
+    return HttpResponseNotAllowed(['POST'])
 
-@auth.assert_trusted_permission
-def replicate_post(request):
-  '''
-  '''
   util.validate_post(request,
                      (('field', 'sourceNode'),
                       ('file', 'sysmeta')))
@@ -745,14 +939,17 @@ def replicate_post(request):
     sysmeta.isValid()
   except:
     err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidRequest(0, 'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'System metadata validation failed: {0}'.format(str(err)))
 
   # Verify that this is not an object we already have.
   if models.Object.objects.filter(pid=sysmeta.pid):
-    raise d1_common.types.exceptions.InvalidRequest(0, 'Requested replication of object that already exists: {0}'.format(sysmeta.pid))
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Requested replication of object that already exists: {0}'.format(
+        sysmeta.pid))
 
   # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(sysmeta.pid, ''))
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(sysmeta.pid, ''))
   try:
     file = open(sysmeta_path, 'wb')
     file.write(sysmeta_str)
@@ -778,22 +975,17 @@ def replicate_post(request):
   return HttpResponse(doc, content_type)
 
 
-@auth.assert_trusted_permission
-def _replicate_store(request):
-  '''
-  '''
-
-  if request.method == 'POST':
-    return _replicate_store(request)
-  
-  return HttpResponseNotAllowed(['POST'])
-
+# ==============================================================================
+# Private API
+# ==============================================================================
 
 @auth.assert_trusted_permission
 def _replicate_store(request):
   '''
   '''
-  
+  if request.method != 'POST':
+    return HttpResponseNotAllowed(['POST'])
+
   util.validate_post(request, (('file', 'pid'), ('file', 'scidata')))
   
   pid = request.FILES['pid'].read()
@@ -837,6 +1029,10 @@ def _replicate_store(request):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
+# ------------------------------------------------------------------------------  
+# Diagnostics, debugging and testing.
+# ------------------------------------------------------------------------------  
+
 
 # For testing via browser.
 @auth.assert_trusted_permission
@@ -849,7 +1045,7 @@ def test_replicate_get(request):
   '''
   '''
   return render_to_response('replicate_get.html',
-                           {'replication_queue': models.Replication_work_queue.objects.all() })
+    {'replication_queue': models.Replication_work_queue.objects.all() })
 
 
 @auth.assert_trusted_permission
@@ -857,8 +1053,8 @@ def test_replicate_get_xml(request):
   '''
   '''
   return render_to_response('replicate_get.xml',
-                            {'replication_queue': models.Replication_work_queue.objects.all() },
-                            mimetype=d1_common.const.MIMETYPE_XML)
+    {'replication_queue': models.Replication_work_queue.objects.all() },
+    mimetype=d1_common.const.MIMETYPE_XML)
 
 
 # For testing via browser.
@@ -866,273 +1062,6 @@ def test_replicate_get_xml(request):
 def test_replicate_clear(request):
   models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
-
-
-@auth.assert_trusted_permission
-def error(request):
-  '''
-  '''
-
-  if request.method == 'POST':
-    return error_post(request)
-  
-  return HttpResponseNotAllowed(['POST'])
-
-
-@auth.assert_trusted_permission
-def error_post(request):
-  # TODO: Deserialize exception in message and log full information.
-  util.validate_post(request, (('field', 'message')))
-  
-  sys_log.info('client({0}): CN cannot complete SciMeta sync'.format(util.request_to_string(request)))
-
-  return HttpResponse('')
-
-# ------------------------------------------------------------------------------  
-# Authentication and authorization.
-# ------------------------------------------------------------------------------
-
-# Unrestricted.
-def is_authorized(request, pid, action):
-  if request.method == 'GET':
-    return is_authorized_get(request, pid, action)
-  
-  return HttpResponseNotAllowed(['GET'])
-
-
-# Unrestricted.
-def is_authorized_get(request, pid, action):
-  '''MNAuthorization.isAuthorized(pid, action) -> Boolean
-
-  Test if the user identified by the provided token has authorization for
-  operation on the specified object.
-  '''
-  # Convert action string to action level. Throws InvalidRequest if the
-  # action string is not valid.
-  level = auth.action_to_level(action)
-  # Assert that subject is allowed to perform action on object. 
-  assert_allowed(request.META['SSL_CLIENT_S_DN'], level, pid)
-
-
-# Unrestricted.
-def access_policy_pid(request, pid):
-  # TODO: PUT currently not supported (issue with Django).
-  # Instead, this call is handled as a POST against a separate URL.
-#  if request.method == 'PUT':
-#    return object_pid_put(request, pid)
-  
-  # All verbs allowed, so should never get here.
-  # TODO: Add "PUT" to list.
-  return HttpResponseNotAllowed([])
-
-
-# Unrestricted.
-def access_policy_pid_put_workaround(request, pid):
-  '''
-  '''
-  if request.method == 'POST':
-    return access_policy_pid_put(request, pid)
-
-  return HttpResponseNotAllowed(['POST'])
-
-
-@auth.assert_changepermission_permission
-def access_policy_pid_put(request, pid):
-  '''
-  MNAuthorization.setAccessPolicy(pid, accessPolicy) -> Boolean
-
-  Sets the access policy for an object identified by pid.
-  '''
-  util.validate_post(request, (('file', 'accesspolicy'),))
-
-  # Validate and deserialize accessPolicy.
-  access_policy_str = request.FILES['accesspolicy'].read()
-
-  # Set access policy for the object. Raises if the access
-  # policy is invalid.
-  auth.set_access_policy_by_xml(pid, access_policy_str)
-    
-  # Return Boolean (200 OK)
-  return HttpResponse('')
-
-
-# ------------------------------------------------------------------------------  
-# Monitoring.
-# ------------------------------------------------------------------------------
-
-# Unrestricted.
-def monitor_ping(request):
-  '''MN_core.ping() -> Boolean.
-  Low level “are you alive” operation. Response is simple ACK, but may be
-  reasonable to overload with a couple of flags that could indicate availability
-  of new data or change in capabilities.
-  '''
-  return HttpResponse('')
-
-
-# Unrestricted.
-def monitor_status(request):
-  '''MN_core.getStatus() -> StatusResponse/
-  This function is similar to MN_health.ping() but returns a more complete
-  status which may include information such as planned service outages.
-  '''
-  return HttpResponse('OK (response not yet defined)')
-
-
-@auth.assert_trusted_permission
-def monitor_object(request):
-  '''
-  '''
-  if request.method == 'GET':
-    return monitor_object_get(request, False)
-
-  if request.method == 'HEAD':
-    return monitor_object_get(request, True)
-
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
-
-
-@auth.assert_trusted_permission
-def monitor_object_get(request, head):
-  '''MN_core.getObjectStatistics([time][, format][, day][, pid]) -> MonitorList
-  '''
-  # Set up query with requested sorting.
-  query = models.Object.objects.all()
-  
-  # startTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'startTime', 'gte')
-  if changed == True:
-    query_unsliced = query
-  
-  # endTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime', 'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by pid (with wildcards).
-  if 'pid' in request.GET:
-    query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
-    query_unsliced = query
-    
-  # Filter by referenced object format.
-  query, changed = util.add_string_filter(query, request, 'format__format', 'format')
-  if changed:
-    query_unsliced = query
-
-  # Prepare to group by day.
-  if 'day' in request.GET:
-    query = query.extra({'day' : "date(mtime)"}).values('day').annotate(count=Count('id')).order_by()
-
-  if head == False:
-    # Create a slice of a query based on request start and count parameters.
-    query, start, count = util.add_slice_filter(query, request)
-  else:
-    query = query.none()
-  
-  return {'query': query, 'start': start, 'count': count, 'total':
-    0, 'day': 'day' in request.GET, 'type': 'monitor' }
-
-
-@auth.assert_trusted_permission
-def monitor_event(request):
-  '''
-  '''
-  if request.method == 'GET':
-    return monitor_event_get(request, False)
-
-  if request.method == 'HEAD':
-    return monitor_event_get(request, True)
-
-  return HttpResponseNotAllowed(['GET', 'HEAD'])
-
-
-@auth.assert_trusted_permission
-def monitor_event_get(request, head):
-  '''MN_core.getOperationStatistics([time][, requestor][, day][, event][, eventTime][, format]) -> MonitorList
-  '''
-  # select objects ordered by mtime desc.
-  query = models.Event_log.objects.order_by('-date_logged')
-  # Create a copy of the query that we will not slice, for getting the total
-  # count for this type of objects.
-  query_unsliced = query
-
-  obj = {}
-  obj['logRecord'] = []
-
-  # Filter by referenced object format.
-  query, changed = util.add_string_filter(query, request, 'object__format__format', 'format')
-  if changed:
-    query_unsliced = query
-  
-  # Filter by referenced object created date, from.
-  query, changed = util.add_datetime_filter(query, request, 'object__mtime', 'objectFromDate', 'gte')
-  if changed == True:
-    query_unsliced = query
-  
-    # Filter by referenced object created date, to.
-  query, changed = util.add_datetime_filter(query, request, 'object__mtime', 'objectToDate', 'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by event date, from.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'fromDate', 'gte')
-  if changed == True:
-    query_unsliced = query
-  
-    # Filter by event date, to.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged', 'toDate', 'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by event type.
-  if 'event' in request.GET:
-    query = util.add_wildcard_filter(query, 'event__event', request.GET['event'])
-    query_unsliced = query
-
-  # Prepare to group by day.
-  if 'day' in request.GET:
-    query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(count=Count('id')).order_by()
-
-  if head == False:
-    # Create a slice of a query based on request start and count parameters.
-    query, start, count = util.add_slice_filter(query, request)    
-  else:
-    query = query.none()
-    
-  return {'query': query, 'start': start, 'count': count, 'total':
-    0, 'day': 'day' in request.GET, 'type': 'monitor' }
-
-
-@auth.assert_trusted_permission
-def node(request):
-  '''
-  '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
-  return {'type': 'node' }
-
-#<node replicate="true" synchronize="true" type="mn">
-#<pid>http://cn-rpw</pid>
-#<name>DataONESamples</name>
-#<baseURL>http://cn-rpw/mn/</baseURL>
-#−
-#<services>
-#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="get" rest="object/${PID}"/>
-#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="getSystemMetadata" rest="meta/${PID}"/>
-#<service api="mn_replicate" available="true" datechecked="1900-01-01T00:00:00Z" method="listObjects" rest="object"/>
-#</services>
-#−
-#<synchronization>
-#<schedule hour="12" mday="*" min="00" mon="*" sec="00" wday="*" year="*"/>
-#<lastHarvested>1900-01-01T00:00:00Z</lastHarvested>
-#<lastCompleteHarvest>1900-01-01T00:00:00Z</lastCompleteHarvest>
-#</synchronization>
-#</node>
-
-# ------------------------------------------------------------------------------  
-# Diagnostics, debugging and testing.
-# ------------------------------------------------------------------------------  
 
 
 @auth.assert_trusted_permission
@@ -1228,16 +1157,17 @@ def test_delete_all_objects(request):
 
   # Clear the SysMeta cache.
   try:
-    for sysmeta_file in os.listdir(settings.SYSMETA_CACHE_PATH):
+    for sysmeta_file in os.listdir(settings.SYSMETA_STORE_PATH):
       if os.path.isfile(sysmeta_file):
-        os.unlink(os.path.join(settings.SYSMETA_CACHE_PATH, sysmeta_file))
+        os.unlink(os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_file))
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not clear SysMeta cache\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
-  sys_log.info('client({0}): Deleted all repository object records'.format(util.request_to_string(request)))
+  sys_log.info('client({0}): Deleted all repository object records'.format(
+    util.request_to_string(request)))
 
   return HttpResponse('OK')
 
@@ -1259,7 +1189,8 @@ def test_delete_single_object(request, pid):
   try:
     sciobj = models.Object.objects.get(pid=pid)
   except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0, 'Attempted to delete a non-existing object', pid)
+    raise d1_common.types.exceptions.NotFound(0,
+      'Attempted to delete a non-existing object', pid)
 
   # If the object is wrapped, we only delete the reference. If it's managed, we
   # delete both the object and the reference.
@@ -1267,10 +1198,12 @@ def test_delete_single_object(request, pid):
   try:
     url_split = urlparse.urlparse(sciobj.url)
   except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
 
   if url_split.scheme == 'file':
-    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
+    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
     try:
       os.unlink(sciobj_path)
     except EnvironmentError as (errno, strerror):
@@ -1282,7 +1215,8 @@ def test_delete_single_object(request, pid):
   # wrapped and ignored.
     
   # Delete the SysMeta object.
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
   try:
     os.unlink(sysmeta_path)
   except EnvironmentError as (errno, strerror):
@@ -1299,7 +1233,8 @@ def test_delete_single_object(request, pid):
 
   # Log this operation. Event logs are tied to particular objects, so we can't
   # log this event in the event log. Instead, we log it in the sys_log.
-  sys_log.info('client({0}) pid({1}) Deleted object'.format(util.request_to_string(request), pid))
+  sys_log.info('client({0}) pid({1}) Deleted object'.format(
+    util.request_to_string(request), pid))
 
   # Return the pid.
   pid_ser = d1_common.types.pid_serialization.Identifier(pid)
@@ -1320,7 +1255,8 @@ def test_delete_event_log(request):
   models.Event_log_event.objects.all().delete()
 
   # Log this operation.
-  sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(request))
+  sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(
+    request))
 
   return HttpResponse('OK')
   

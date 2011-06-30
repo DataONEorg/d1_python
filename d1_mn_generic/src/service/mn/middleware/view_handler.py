@@ -108,8 +108,8 @@ class view_handler():
       # If the view raised an exception, run it through exception middleware,
       # and if the exception middleware returns a response, use that. Otherwise,
       # reraise the exception.
-      for middleware_method in inspect.currentframe().f_back.f_locals[
-        'self']._exception_middleware:
+      for middleware_method in inspect.currentframe().f_back.f_locals['self']\
+          ._exception_middleware:
         response = middleware_method(request, e)
         if response:
           return response

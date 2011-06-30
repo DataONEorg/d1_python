@@ -51,6 +51,7 @@ import settings
 import sys_log
 import util
 import models
+import sysmeta
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -118,15 +119,16 @@ def get_owner(pid):
   :return:
     The subject that owns PID.
     If PID does not exist, returns "DATAONE_UNKNOWN".
-  :return type: str
+  :return type: String
+  
+  "DATAONE_UNKNOWN" is returned for non-existing objects to prevent subjects
+  from learning about the existence of objects for which they do not have
+  permissions.
   '''
-  sysmeta_path = os.path.join(settings.SYSMETA_CACHE_PATH, urllib.quote(pid, ''))
   try:
-    with open(sysmeta_path, 'r') as file:
-      sysmeta_str = file.read()
-      sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
-      return sysmeta.rightsHolder
-  except EnvironmentError as (errno, strerror):
+    with sysmeta.sysmeta(pid) as s:
+      return s.rightsHolder.value()
+  except EnvironmentError:
     return 'DATAONE_UNKNOWN'
 
 #def action_implicit(action_requested, action_allowed):
@@ -142,10 +144,10 @@ def get_owner(pid):
 def set_access_policy(pid, access_policy):
   '''Apply an AccessPolicy to an object.
 
-  :param access_policy: AccessPolicy to apply to object. 
-  :type access_policy: AccessPolicy
   :param pid: Object to which AccessPolicy is applied.
   :type pid: Identifier
+  :param access_policy: AccessPolicy to apply to object. 
+  :type access_policy: AccessPolicy
   :return type: NoneType or exception.
 
   Preconditions:
@@ -215,6 +217,19 @@ def set_access_policy(pid, access_policy):
           permission.level = level
           permission.save()
 
+  # When setAccessPolicy is called explicitly or implicitly as part of a
+  # create() call, the db tables are updated immediately and so, locally, the
+  # new permissions take effect immediately. However, for the new permissions
+  # to take effect on replicas of the object on other MNs, the new permissions
+  # must be discovered by a CN and applied to the other MNs. This is done by
+  # updating the permissions in the local copy of the SysMeta and updating its
+  # modified date so that it will be discovered by a CN the next time it
+  # synchronizes this MN.
+
+  # Update the SysMeta object with the new access policy.
+  with sysmeta.sysmeta(pid) as s:
+    s.accessPolicy = access_policy
+
 #def set_access_policy_by_xml(pid, access_policy_xml):
 #  '''Apply an AccessPolicy to an object.
 #
@@ -249,15 +264,27 @@ def set_access_policy(pid, access_policy):
 
 def is_allowed(subject, level, pid):
   '''Check if subject is allowed to perform action on object.
+  
   :param subject: Subject for which permissions are being checked.
   :type subject: str
   :param level: Action level for which permissions are being checked. 
   :type level: str
   :param pid: Object for which permissions are being checked.
   :type pid: Identifier
-  :return: True if action is allowed on subject.
+  :return:
+    True if subject is allowed to perform action on object.
+    False if subject is not allowed to perform action on object.
+    False if subject does not exist.
+    False if PID does not exist.
+    False if level is invalid.
   :return type: Boolean
+  
+  If subject holds permissions for one action level on object, all lower
+  action levels are also allowed.
   '''
+  # DataONE trusted infrastructure has all rights.
+  if subject == 'DATAONE_TRUSTED':
+    return True
   # If subject is the owner, subject has all permissions on the object.
   if subject == get_owner(pid):
     return True
@@ -266,12 +293,13 @@ def is_allowed(subject, level, pid):
   # is the same or higher than the requested action level.
   return models.Permission.objects.filter(
     object__pid=pid, subject__subject=subject,
-    level__lte=level
+    level__gte=level
   ).exists()
 
 
 def assert_allowed(subject, level, pid):
   '''Assert that subject is allowed to perform action on object.
+
   :param subject: Subject for which permissions are being asserted.
   :type subject: str
   :param level: Action level for which permissions are being asserted. 
@@ -279,6 +307,7 @@ def assert_allowed(subject, level, pid):
   :param pid: Object for which permissions are being asserted.
   :type pid: Identifier
   :return: NoneType or raises NotAuthorized.
+
   '''
   if not is_allowed(subject, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(

@@ -250,6 +250,9 @@ class TestSequenceFunctions(unittest.TestCase):
       accessPolicy.append(accessRule)
     return accessPolicy
   
+  def session(self, subject):
+    return {'VENDOR_OVERRIDE_SESSION': subject}
+
   #
   # Tests that are run for both local and remote objects.
   #
@@ -1008,118 +1011,6 @@ class TestSequenceFunctions(unittest.TestCase):
       # Round-trip validation.
       self.assertEqual(scidata_retrieved, scidata)
       self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
-
-
-#  def access_control_1_with_cert(self):
-#    '''Create object accessible only by owner.
-#    '''
-#    pid = 'access_control_obj_3'
-#    # Create an access rule.
-#    # TODO: Access rules for the owner must be handled in some implicit way.
-#    access_rule = self.gen_access_rule(
-#      ['test_owner_1'],
-#      ['dataoneTypes.Permission.write', 'dataoneTypes.Permission.read'],
-#    )
-#    # Create an access policy.
-#    access_policy = self.gen_access_policy([access_rule])
-#    # Create object containing random bytes.
-#    obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
-#    # Create sysmeta.
-#    sysmeta_xml = self.gen_sysmeta(pid, 1024, 
-#                                   hashlib.md5(obj_str).hexdigest(),
-#                                   datetime.datetime.now())
-#    # Create client authenticated connection to MN.    
-##    user_cred = '/home/roger/eclipse_workspace_d1/cert/cilogon/usercred.p12'
-##    user_key = '/home/roger/eclipse_workspace_d1/cert/cilogon/userkey.pem'
-##    user_cert = '/home/roger/eclipse_workspace_d1/cert/cilogon/usercert.pem'
-#
-#    user_key = './test_valid.nopassword.key'
-#    user_cert = './test_valid.crt'
-#    
-#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url,
-#                                           keyfile=user_key,
-#                                           certfile=user_cert)
-#    # POST the new object to MN.
-#    response = client.createResponse(pid=pid,
-#                          obj=obj_str, sysmeta=sysmeta_xml)
-#    
-#    print response.read()
-#    
-#    # Verify that object is accessible by owner.
-#    obj_get_str = client.get(pid).read()
-#    self.assertEqual(obj_str, obj_get_str)
-# 
-#    # Verify that object is not accessible by someone other that the owner.
-#
-#    user_key = './test_invalid.nopassword.key'
-#    user_cert = './test_invalid.crt'
-#    
-#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url,
-#                                           keyfile=user_key,
-#                                           certfile=user_cert)
-#
-#    self.assertRaises(Exception, client.get, pid)
-
-  
-  def session(self, subject):
-    return {'VENDOR_OVERRIDE_SESSION': subject}
-
-
-  def set_access_policy_1(self):
-    '''setAccessPolicy 1.
-    '''
-    test_pid = 'test_obj_1'
-    
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-
-    # Delete all permissions.
-    client.delete_all_access_rules(headers=self.session('DATAONE_TRUSTED'))
-
-    #exit()
-
-    # Delete the test object.
-    client.test_delete_single_object(test_pid)
-
-    # Verify that the test object no longer exists.
-    self.assertRaises(xml.parsers.expat.ExpatError, client.describe, test_pid)
-
-    # Create object containing random bytes.
-    obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
-
-    # Create sysmeta.
-    sysmeta = self.gen_sysmeta(test_pid, 1024, 
-                               hashlib.md5(obj_str).hexdigest(),
-                               datetime.datetime.now(),
-                               owner='test_owner_1')
-
-    # Create an access policy.
-    access_policy = self.gen_access_policy((
-      (('test_owner_1', 'test_owner2'), ('read', 'write')),
-      (('test_owner_3', 'test_owner4'), ('execute', )),
-    ))
-
-    # Add the access policy to the SysMeta.
-    sysmeta.accessPolicy = access_policy
-    
-    # POST the new object to MN.
-    response = client.createResponse(pid=test_pid,
-      obj=obj_str, sysmeta=sysmeta,
-      vendorSpecific=self.session('test_user_1'))
-
-#    print response.read()
-#    
-#    # Verify that object is accessible by owner.
-#    obj_get_str = client.get(pid).read()
-#    self.assertEqual(obj_str, obj_get_str)
-# 
-#    # Verify that object is not accessible by someone other that the owner.
-#    
-#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-#
-#    self.assertRaises(Exception, client.get, pid)
-#
-#    # 
-    
 
    
   #

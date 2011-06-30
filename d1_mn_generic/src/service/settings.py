@@ -52,27 +52,20 @@ TEMPLATE_DEBUG = DEBUG
 SESSION_COOKIE_SECURE = True
 
 ADMINS = (
-  # ('roger', 'dahl@unm.edu'),
+  # ('<name>', '<email address>'),
 )
 
 MANAGERS = ADMINS
 
-## Database setup.
-#DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#DATABASE_NAME = _here('gmn.sq3')
-#DATABASE_USER = ''             # Not used with sqlite3.
-#DATABASE_PASSWORD = ''         # Not used with sqlite3.
-#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    'NAME': _here('gmn.sq3'),        # Or path to database file if using sqlite3.
-    'USER': '',                      # Not used with sqlite3.
-    'PASSWORD': '',                  # Not used with sqlite3.
-    'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-    'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': _here('gmn.sq3'), # Or path to database file if using sqlite3.
+    'USER': '', # Not used with sqlite3.
+    'PASSWORD': '', # Not used with sqlite3.
+    'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
+    'PORT': '', # Set to empty string for default. Not used with sqlite3.
   }
 }
 
@@ -121,7 +114,7 @@ MIDDLEWARE_CLASSES = (
   'django.contrib.auth.middleware.AuthenticationMiddleware',
   #'django.middleware.profile.ProfileMiddleware',
   # TransactionMiddleware causes each view to be wrapped in an implicit
-  # transaction. The transaction is automatically committed on successfull
+  # transaction. The transaction is automatically committed on successful
   # return from the view and rolled back otherwise.
   'django.middleware.transaction.TransactionMiddleware',
   'service.mn.middleware.request_handler.request_handler',
@@ -161,7 +154,7 @@ XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
 # GMN.
-SYSMETA_CACHE_PATH = _here('./sysmeta_cache')
+SYSMETA_STORE_PATH = _here('./sysmeta_store')
 OBJECT_STORE_PATH = _here('./object_store')
 STATIC_STORE_PATH = _here('./static_store')
 
