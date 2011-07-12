@@ -98,10 +98,19 @@ Glossary
     http://httpd.apache.org/
 
 
+  MPM
+    Multi-Processing Module
+    
+    The component within Apache that manages the processes and threads used for
+    serving requests.
+    
+    http://httpd.apache.org/docs/2.0/mpm.html
+    
+    
   Python
     A dynamic programming language.
     
-    www.python.org
+    http://www.python.org
   
 
   Django
