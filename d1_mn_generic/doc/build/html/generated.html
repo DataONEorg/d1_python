@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Implementation &mdash; DataONE Generic Member Node v0.beta documentation</title>
+    <title>Automatically generated documentation &mdash; DataONE Generic Member Node v0.beta documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="DataONE Generic Member Node v0.beta documentation" href="index.html" />
     <link rel="next" title="Glossary" href="glossary.html" />
-    <link rel="prev" title="Using GMN" href="use.html" /> 
+    <link rel="prev" title="PID level locking" href="impl-locking.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="glossary.html" title="Glossary"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="use.html" title="Using GMN"
+          <a href="impl-locking.html" title="PID level locking"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">DataONE Generic Member Node v0.beta documentation</a> &raquo;</li> 
       </ul>
@@ -49,7 +49,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Implementation</a><ul>
+<li><a class="reference internal" href="#">Automatically generated documentation</a><ul>
 <li><a class="reference internal" href="#settings"><tt class="docutils literal"><span class="pre">settings</span></tt></a></li>
 <li><a class="reference internal" href="#urls"><tt class="docutils literal"><span class="pre">urls</span></tt></a></li>
 <li><a class="reference internal" href="#sys-log"><tt class="docutils literal"><span class="pre">sys_log</span></tt></a></li>
@@ -70,8 +70,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="use.html"
-                        title="previous chapter">Using GMN</a></p>
+  <p class="topless"><a href="impl-locking.html"
+                        title="previous chapter">PID level locking</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="glossary.html"
                         title="next chapter">Glossary</a></p>
@@ -102,7 +102,7 @@
           <div class="body">
             
   <div class="section" id="module-settings">
-<span id="implementation"></span><h1>Implementation<a class="headerlink" href="#module-settings" title="Permalink to this headline">¶</a></h1>
+<span id="automatically-generated-documentation"></span><h1>Automatically generated documentation<a class="headerlink" href="#module-settings" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="settings">
 <h2><a class="reference internal" href="#module-settings" title="settings"><tt class="xref py py-mod docutils literal"><span class="pre">settings</span></tt></a><a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
@@ -157,58 +157,91 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">module:</th><td class="field-body"><p class="first">views</p>
+<tr class="field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">REST call handlers.</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">platform:</th><td class="field-body"><p class="first">Linux</p>
+<tr class="field"><th class="field-name">Author:</th><td class="field-body"><p class="first">DataONE (dahl)</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Implements the following REST calls:</p>
-<p>0.3 MN_replication.listObjects()     GET    /object
-N/A MN_replication.listObjects()     HEAD   /object
-N/A MN_replication.listObjects()     DELETE /object</p>
-<p>0.3 MN_crud.get ()                   GET    /object/&lt;pid&gt;
-0.4 MN_crud.create()                 POST   /object/&lt;pid&gt;
-0.4 MN_crud.update()                 PUT    /object/&lt;pid&gt;
-0.9 MN_crud.delete()                 DELETE /object/&lt;pid&gt;
-0.3 MN_crud.describe()               HEAD   /object/&lt;pid&gt;</p>
-<p>0.3 MN_crud.getSystemMetadata()      GET    /meta/&lt;pid&gt;
-0.3 MN_crud.describeSystemMetadata() HEAD   /meta/&lt;pid&gt;</p>
-<p class="last">0.3 MN_crud.getLogRecords()          GET    /log
-0.3 MN_crud.describeLogRecords()     HEAD   /log</p>
+<tr class="field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first last simple">
+<li>python 2.6</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="function">
-<dt id="mn.views.meta_pid">
-<tt class="descclassname">mn.views.</tt><tt class="descname">meta_pid</tt><big>(</big><em>request</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.views.meta_pid" title="Permalink to this definition">¶</a></dt>
-<dd><p>0.3 MN_crud.getSystemMetadata()      GET  /meta/&lt;pid&gt;
-0.3 MN_crud.describeSystemMetadata() HEAD /meta/&lt;pid&gt;</p>
+<dt id="mn.views.access_policy_pid_put_workaround">
+<tt class="descclassname">mn.views.</tt><tt class="descname">access_policy_pid_put_workaround</tt><big>(</big><em>request</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.views.access_policy_pid_put_workaround" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mn.views.assert_authorized">
+<tt class="descclassname">mn.views.</tt><tt class="descname">assert_authorized</tt><big>(</big><em>request</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.views.assert_authorized" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNAuthorization.assertAuthorized(pid, action) -&gt; Boolean</p>
+<p>Test if the user identified by the provided token has authorization for
+operation on the specified object.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.views.object_collection">
-<tt class="descclassname">mn.views.</tt><tt class="descname">object_collection</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#mn.views.object_collection" title="Permalink to this definition">¶</a></dt>
-<dd><p>0.3 MN_replication.listObjects() GET    /object
-N/A MN_replication.listObjects() HEAD   /object</p>
+<dt id="mn.views.event_log_view">
+<tt class="descclassname">mn.views.</tt><tt class="descname">event_log_view</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#mn.views.event_log_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNCore.getLogRecords(session, fromDate[, toDate][, event][, start=0]
+[, count=1000]) → Log</p>
+<p>Retrieve log information from the Member Node for the specified date range and
+even type.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.views.object_collection_get">
-<tt class="descclassname">mn.views.</tt><tt class="descname">object_collection_get</tt><big>(</big><em>request</em>, <em>head</em><big>)</big><a class="headerlink" href="#mn.views.object_collection_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve the list of objects present on the MN that match the calling parameters.
-MN_replication.listObjects(token, startTime[, endTime][, objectFormat][, replicaStatus][, start=0][, count=1000]) -&gt; ObjectList</p>
+<dt id="mn.views.monitor_object">
+<tt class="descclassname">mn.views.</tt><tt class="descname">monitor_object</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#mn.views.monitor_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNCore.getObjectStatistics([format][, pid]) → ObjectStatistics</p>
+<p>Returns the number of objects stored on the Member Node at the time the call
+is serviced. The count may be restricted to a particular object format or a
+filter on the PID.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.views.object_pid">
-<tt class="descclassname">mn.views.</tt><tt class="descname">object_pid</tt><big>(</big><em>request</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.views.object_pid" title="Permalink to this definition">¶</a></dt>
-<dd><p>MN_crud.get()      GET    /object/&lt;pid&gt;
-MN_crud.describe() HEAD   /object/&lt;pid&gt;
-MN_crud.create()   POST   /object/&lt;pid&gt;
-MN_crud.update()   PUT    /object/&lt;pid&gt;
-MN_crud.delete()   DELETE /object/&lt;pid&gt;</p>
+<dt id="mn.views.monitor_ping">
+<tt class="descclassname">mn.views.</tt><tt class="descname">monitor_ping</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#mn.views.monitor_ping" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNCore.ping() → Boolean</p>
+<p>Low level “are you alive” operation. A valid ping response is indicated by a
+HTTP status of 200.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mn.views.monitor_status">
+<tt class="descclassname">mn.views.</tt><tt class="descname">monitor_status</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#mn.views.monitor_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNCore.getStatus() → StatusResponse</p>
+<p>This function is similar to MN_health.ping() but returns a more complete
+status which may include information such as planned service outages.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mn.views.object">
+<tt class="descclassname">mn.views.</tt><tt class="descname">object</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#mn.views.object" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNRead.listObjects(session[, startTime][, endTime][, objectFormat]
+[, replicaStatus][, start=0][, count=1000]) → ObjectList</p>
+<p>Retrieve the list of objects present on the MN that match the calling
+parameters.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mn.views.object_pid_delete">
+<tt class="descclassname">mn.views.</tt><tt class="descname">object_pid_delete</tt><big>(</big><em>request</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.views.object_pid_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>MNStorage.delete(session, pid) → Identifier</p>
+<p>Deletes an object from the Member Node, where the object is either a data
+object or a science metadata object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mn.views.test_delete_single_object">
+<tt class="descclassname">mn.views.</tt><tt class="descname">test_delete_single_object</tt><big>(</big><em>request</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.views.test_delete_single_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete an object from the Member Node, where the object is either a data
+object or a science metadata object.</p>
+<p>Note: The semantics for this method are different than for the production
+method that deletes an object. This method removes all traces that the object
+ever existed.</p>
 </dd></dl>
 
 </div>
@@ -382,12 +415,6 @@ part_type field: request.POST[&#8216;&lt;name&gt;&#8217;]</p>
 </tbody>
 </table>
 <dl class="class">
-<dt id="mn.models.Action">
-<em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Action</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Action(id, action)</p>
-</dd></dl>
-
-<dl class="class">
 <dt id="mn.models.Checksum_algorithm">
 <em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Checksum_algorithm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Checksum_algorithm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checksum_algorithm(id, checksum_algorithm)</p>
@@ -402,7 +429,7 @@ part_type field: request.POST[&#8216;&lt;name&gt;&#8217;]</p>
 <dl class="class">
 <dt id="mn.models.Event_log">
 <em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Event_log</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Event_log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event_log(id, object_id, event_id, ip_address_id, user_agent_id, principal_id, date_logged)</p>
+<dd><p>Event_log(id, object_id, event_id, ip_address_id, user_agent_id, subject_id, date_logged)</p>
 <dl class="method">
 <dt id="mn.models.Event_log.set_event">
 <tt class="descname">set_event</tt><big>(</big><em>event_string</em><big>)</big><a class="headerlink" href="#mn.models.Event_log.set_event" title="Permalink to this definition">¶</a></dt>
@@ -434,8 +461,8 @@ part_type field: request.POST[&#8216;&lt;name&gt;&#8217;]</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="mn.models.Event_log.set_principal">
-<tt class="descname">set_principal</tt><big>(</big><em>principal_string</em><big>)</big><a class="headerlink" href="#mn.models.Event_log.set_principal" title="Permalink to this definition">¶</a></dt>
+<dt id="mn.models.Event_log.set_subject">
+<tt class="descname">set_subject</tt><big>(</big><em>subject_string</em><big>)</big><a class="headerlink" href="#mn.models.Event_log.set_subject" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -484,9 +511,9 @@ part_type field: request.POST[&#8216;&lt;name&gt;&#8217;]</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mn.models.Event_log_principal">
-<em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Event_log_principal</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Event_log_principal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event_log_principal(id, principal)</p>
+<dt id="mn.models.Event_log_subject">
+<em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Event_log_subject</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Event_log_subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event_log_subject(id, subject)</p>
 </dd></dl>
 
 <dl class="class">
@@ -555,13 +582,7 @@ update and delete are finalized.</p>
 <dl class="class">
 <dt id="mn.models.Permission">
 <em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Permission</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Permission" title="Permalink to this definition">¶</a></dt>
-<dd><p>Permission(id, object_id, principal_id, action_id)</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="mn.models.Principal">
-<em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Principal</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Principal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Principal(id, distinguished_name)</p>
+<dd><p>Permission(id, object_id, subject_id, level)</p>
 </dd></dl>
 
 <dl class="class">
@@ -582,6 +603,12 @@ update and delete are finalized.</p>
 <dd><p>Replication_work_queue(id, status_id, pid, source_node_id, checksum, checksum_algorithm_id, timestamp)</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="mn.models.Subject">
+<em class="property">class </em><tt class="descclassname">mn.models.</tt><tt class="descname">Subject</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mn.models.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subject(id, subject)</p>
+</dd></dl>
+
 </div>
 <span class="target" id="module-mn.auth"></span><div class="section" id="auth">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">auth</span></tt><a class="headerlink" href="#auth" title="Permalink to this headline">¶</a></h2>
@@ -589,54 +616,131 @@ update and delete are finalized.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Synopsis:</th><td class="field-body">Authentication and authorization.</td>
+<tr class="field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Authentication and authorization.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Author:</th><td class="field-body"><p class="first">DataONE (dahl)</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first last simple">
+<li>python 2.6</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 <dl class="function">
-<dt id="mn.auth.check_permission">
-<tt class="descclassname">mn.auth.</tt><tt class="descname">check_permission</tt><big>(</big><em>principal</em>, <em>action</em>, <em>resource</em><big>)</big><a class="headerlink" href="#mn.auth.check_permission" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if principal is allowed to perform action on resource.
-:param principal:
-:type principal:
-:param action:
-:type action:
-:param resource:
-:type resource:
-:return: NoneType or raises.</p>
+<dt id="mn.auth.action_to_level">
+<tt class="descclassname">mn.auth.</tt><tt class="descname">action_to_level</tt><big>(</big><em>action</em><big>)</big><a class="headerlink" href="#mn.auth.action_to_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map action name to action level.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.auth.permission_change_permissions">
-<tt class="descclassname">mn.auth.</tt><tt class="descname">permission_change_permissions</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#mn.auth.permission_change_permissions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function decorator that checks if principal is allowed to change
-permissions on resource.</p>
+<dt id="mn.auth.assert_allowed">
+<tt class="descclassname">mn.auth.</tt><tt class="descname">assert_allowed</tt><big>(</big><em>subject</em>, <em>level</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.auth.assert_allowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that subject is allowed to perform action on object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subject</strong> (<em>str</em>) &#8211; Subject for which permissions are being asserted.</li>
+<li><strong>level</strong> (<em>str</em>) &#8211; Action level for which permissions are being asserted.</li>
+<li><strong>pid</strong> (<em>Identifier</em>) &#8211; Object for which permissions are being asserted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">NoneType or raises NotAuthorized.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.auth.permission_public">
-<tt class="descclassname">mn.auth.</tt><tt class="descname">permission_public</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#mn.auth.permission_public" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function decorator that checks if public principal is allowed to perform
-action.</p>
+<dt id="mn.auth.get_owner">
+<tt class="descclassname">mn.auth.</tt><tt class="descname">get_owner</tt><big>(</big><em>pid</em><big>)</big><a class="headerlink" href="#mn.auth.get_owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the owner of an object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pid</strong> (<em>Identifier</em>) &#8211; Object</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The subject that owns PID.
+If PID does not exist, returns &#8220;DATAONE_UNKNOWN&#8221;.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">String</td>
+</tr>
+</tbody>
+</table>
+<p>&#8220;DATAONE_UNKNOWN&#8221; is returned for non-existing objects to prevent subjects
+from learning about the existence of objects for which they do not have
+permissions.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.auth.permission_read">
-<tt class="descclassname">mn.auth.</tt><tt class="descname">permission_read</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#mn.auth.permission_read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function decorator that checks if principal is allowed to read resource.</p>
+<dt id="mn.auth.is_allowed">
+<tt class="descclassname">mn.auth.</tt><tt class="descname">is_allowed</tt><big>(</big><em>subject</em>, <em>level</em>, <em>pid</em><big>)</big><a class="headerlink" href="#mn.auth.is_allowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if subject is allowed to perform action on object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subject</strong> (<em>str</em>) &#8211; Subject for which permissions are being checked.</li>
+<li><strong>level</strong> (<em>str</em>) &#8211; Action level for which permissions are being checked.</li>
+<li><strong>pid</strong> (<em>Identifier</em>) &#8211; Object for which permissions are being checked.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if subject is allowed to perform action on object.
+False if subject is not allowed to perform action on object.
+False if subject does not exist.
+False if PID does not exist.
+False if level is invalid.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If subject holds permissions for one action level on object, all lower
+action levels are also allowed.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.auth.permission_trusted">
-<tt class="descclassname">mn.auth.</tt><tt class="descname">permission_trusted</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#mn.auth.permission_trusted" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function decorator that checks if principal is a trusted DataONE
-infrastructure component.</p>
+<dt id="mn.auth.level_to_action">
+<tt class="descclassname">mn.auth.</tt><tt class="descname">level_to_action</tt><big>(</big><em>level</em><big>)</big><a class="headerlink" href="#mn.auth.level_to_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map action level to action name.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mn.auth.permission_update">
-<tt class="descclassname">mn.auth.</tt><tt class="descname">permission_update</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#mn.auth.permission_update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function decorator that checks if principal is allowed to update resource.</p>
+<dt id="mn.auth.set_access_policy">
+<tt class="descclassname">mn.auth.</tt><tt class="descname">set_access_policy</tt><big>(</big><em>pid</em>, <em>access_policy</em><big>)</big><a class="headerlink" href="#mn.auth.set_access_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an AccessPolicy to an object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pid</strong> (<em>Identifier</em>) &#8211; Object to which AccessPolicy is applied.</li>
+<li><strong>access_policy</strong> (<em>AccessPolicy</em>) &#8211; AccessPolicy to apply to object.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">NoneType or exception.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Preconditions:</p>
+<ul class="simple">
+<li>Subject has changePermission for object.</li>
+<li>The Django transaction middleware layer must be enabled.
+&#8216;django.middleware.transaction.TransactionMiddleware&#8217;</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -789,7 +893,7 @@ UnsupportedType</p>
           <a href="glossary.html" title="Glossary"
              >next</a> |</li>
         <li class="right" >
-          <a href="use.html" title="Using GMN"
+          <a href="impl-locking.html" title="PID level locking"
              >previous</a> |</li>
         <li><a href="index.html">DataONE Generic Member Node v0.beta documentation</a> &raquo;</li> 
       </ul>

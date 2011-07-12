@@ -19,8 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Module views.py
-==================
+''':mod:`views`
+===============
 
 :Synopsis:
   REST call handlers.
@@ -30,11 +30,13 @@
 '''
 # Stdlib.
 import cgi
+import collections
 import csv
 import datetime
 import glob
 import hashlib
 import httplib
+import logging
 import mimetypes
 import os
 import pprint
@@ -76,13 +78,17 @@ import d1_common.types.systemmetadata
 import d1_client.systemmetadata
 
 # App.
-import event_log
 import auth
+import event_log
+import lock_pid
 import models
 import settings
-import sys_log
-import util
 import sysmeta
+import urls
+import util
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP verb)
@@ -120,7 +126,7 @@ def event_log_view(request):
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Tier 1: Core API  
+# Public API: Tier 1: Core API  
 # ------------------------------------------------------------------------------
 
 # Unrestricted.
@@ -193,6 +199,7 @@ def monitor_object(request):
 
 
 @auth.assert_trusted_permission
+#@lock_pid.for_read
 def monitor_event(request, head):
   '''MNCore.getOperationStatistics(session[, period][, requestor][, event]
   [, format]) → MonitorList
@@ -311,6 +318,7 @@ def event_log_view(request):
 
 
 @auth.assert_trusted_permission
+#@lock_pid.for_read
 def node(request):
   '''MNCore.getCapabilities() → Node
 
@@ -342,10 +350,11 @@ def node(request):
 
 
 # ------------------------------------------------------------------------------
-# Tier 1: Read API  
+# Public API: Tier 1: Read API  
 # ------------------------------------------------------------------------------
 
 @auth.assert_read_permission
+@lock_pid.for_read
 def object_pid_get(request, pid, head):
   '''GET: MNRead.get(session, pid) → OctetStream
 
@@ -390,11 +399,11 @@ def object_pid_get(request, pid, head):
     return response
 
   if url_split.scheme == 'http':
-    sys_log.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
+    logger.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
                  ' location'.format(pid, sciobj.url))
     return _object_pid_get_remote(request, response, pid, sciobj.url, url_split)
   elif url_split.scheme == 'file':
-    sys_log.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
+    logger.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
                  .format(pid, sciobj.url))
     return _object_pid_get_local(request, response, pid)
   else:
@@ -450,13 +459,14 @@ def _object_pid_get_local(request, response, pid):
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
 
-  # Return the raw bytes of the object.
+  # Return the raw bytes of the object in chunks.
   response._container = util.fixed_chunk_size_iterator(file)
   response._is_str = False
   return response
 
 
 @auth.assert_read_permission
+@lock_pid.for_read
 def meta_pid(request, pid):
   '''MNRead.getSystemMetadata(session, pid) → SystemMetadata
 
@@ -485,12 +495,13 @@ def meta_pid(request, pid):
   # Log access of the SysMeta of this object.
   event_log.log(pid, 'read', request)
 
-  # Return the raw bytes of the object.
+  # Return the raw bytes of the object in chunks.
   return HttpResponse(util.fixed_chunk_size_iterator(file),
                       mimetype=d1_common.const.MIMETYPE_XML)
 
 
 @auth.assert_read_permission
+@lock_pid.for_read
 def checksum_pid(request, pid):
   '''MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
 
@@ -570,6 +581,7 @@ def object(request):
 
 
 @auth.assert_trusted_permission
+#@lock_pid.for_read
 def error(request):
   '''MNRead.synchronizationFailed(session, message)
 
@@ -582,13 +594,13 @@ def error(request):
   # TODO: Deserialize exception in message and log full information.
   util.validate_post(request, (('field', 'message')))
   
-  sys_log.info('client({0}): CN cannot complete SciMeta sync'.format(
+  logger.info('client({0}): CN cannot complete SciMeta sync'.format(
     util.request_to_string(request)))
 
   return HttpResponse('')
 
 # ------------------------------------------------------------------------------  
-# Tier 2: Authorization API
+# Public API: Tier 2: Authorization API
 # ------------------------------------------------------------------------------  
 
 # Unrestricted.
@@ -637,6 +649,7 @@ def access_policy_pid_put_workaround(request, pid):
 
 
 @auth.assert_changepermission_permission
+@lock_pid.for_write
 def access_policy_pid_put(request, pid):
   '''
   MNAuthorization.setAccessPolicy(pid, accessPolicy) -> Boolean
@@ -664,17 +677,33 @@ def access_policy_pid_put(request, pid):
 
 
 # ------------------------------------------------------------------------------  
-# Tier 3: Storage API
+# Public API: Tier 3: Storage API
 # ------------------------------------------------------------------------------  
 
 @auth.assert_authenticated
+@lock_pid.for_write
 def object_pid_post(request, pid):
   '''MNStorage.create(session, pid, object, sysmeta) → Identifier
 
   Adds a new object to the Member Node, where the object is either a data object
   or a science metadata object.
+  
+  Preconditions:
+  - The Django transaction middleware layer must be enabled.
+
+  Because TransactionMiddleware layer is enabled, the db modifications all
+  become visible simultaneously after this function completes. The added files
+  in the filesystem become visible once they are created, but GMN will not
+  attempt to reference them before their corresponding database entries are
+  visible.
   '''
   
+  # Make sure PID does not already exist.
+  if models.Object.objects.exists(pid=pid):
+    raise d1_common.types.exceptions.Exceptions.IdentifierNotUnique(0, '', pid)
+
+  # Check that a valid MIME multipart document has been provided and that it
+  # contains the required sections.
   util.validate_post(request, (('file', 'object'),
                                ('file', 'sysmeta')))
 
@@ -688,28 +717,25 @@ def object_pid_post(request, pid):
     raise d1_common.types.exceptions.InvalidRequest(0,
       'System metadata validation failed: {0}'.format(str(err)))
   
-  # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
+  # Write SysMeta bytes to store.
+  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,                                                                        ''))
   try:
-    file = open(sysmeta_path, 'wb')
-    file.write(sysmeta_str)
-    file.close()
+    with open(sysmeta_path, 'wb') as file:
+      file.write(sysmeta_str)
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
-  # MN_crud.create() has a GMN specific extension. Instead of providing
-  # an object for GMN to manage, the object can be left empty and
-  # a URL to a remote location be provided instead. In that case, GMN
-  # will stream the object bytes from the remote server while handling
-  # all other object related operations like usual. 
+  # create() has a GMN specific extension. Instead of providing an object for
+  # GMN to manage, the object can be left empty and a URL to a remote location
+  # be provided instead. In that case, GMN will stream the object bytes from the
+  # remote server while handling all other object related operations like usual.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
     try:
       url_split = urlparse.urlparse(url)
-      if url_split.scheme != 'http':
+      if url_split.scheme not in ('http', 'https'):
         raise ValueError
     except ValueError:
       raise d1_common.types.exceptions.InvalidRequest(0,
@@ -717,33 +743,50 @@ def object_pid_post(request, pid):
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(urllib.quote(pid, ''))
-    _object_pid_post_store_local(request, pid)
-        
-  # Create database entry for object.
-  object = models.Object()
-  object.pid = pid
-  object.url = url
-  object.set_format(sysmeta.objectFormat)
-  object.checksum = sysmeta.checksum
-  object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = d1_common.util.normalize_to_utc(
-    sysmeta.dateSysMetadataModified)
-  object.size = sysmeta.size
-  object.save_unique()
-
-  # Successfully updated the db, so put current datetime in status.mtime. This
-  # should store the status.mtime in UTC and for that to work, Django must be
-  # running with settings.TIME_ZONE = 'UTC'.
-  db_update_status = models.DB_update_status()
-  db_update_status.status = 'update successful'
-  db_update_status.save()
+    try:
+      _object_pid_post_store_local(request, pid)
+    except EnvironmentError as (errno, strerror):
+      # Storing the SciObj on the filesystem failed so remove the SysMeta object
+      # as well.
+      os.unlink(sysmeta_path)
+      err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
+      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
   
-  # If an access policy was provided for this object, set it. Until the access
-  # policy is set, the object is unavailable to everyone except the owner.
-  sysmeta_pyxb = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)
-  if sysmeta_pyxb.accessPolicy:
-    auth.set_access_policy(pid, sysmeta_pyxb.accessPolicy)
-
+  # Catch any exceptions when creating the db entries, so that the filesystem
+  # objects can be cleaned up.
+  try:
+    # Create database entry for object.
+    object = models.Object()
+    object.pid = pid
+    object.url = url
+    object.set_format(sysmeta.objectFormat)
+    object.checksum = sysmeta.checksum
+    object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
+    object.mtime = d1_common.util.normalize_to_utc(
+      sysmeta.dateSysMetadataModified)
+    object.size = sysmeta.size
+    object.save_unique()
+  
+    # Successfully updated the db, so put current datetime in status.mtime. This
+    # should store the status.mtime in UTC and for that to work, Django must be
+    # running with settings.TIME_ZONE = 'UTC'.
+    db_update_status = models.DB_update_status()
+    db_update_status.status = 'update successful'
+    db_update_status.save()
+    
+    # If an access policy was provided for this object, set it. Until the access
+    # policy is set, the object is unavailable to everyone except the owner.
+    sysmeta_pyxb = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)
+    if sysmeta_pyxb.accessPolicy:
+      auth.set_access_policy(pid, sysmeta_pyxb.accessPolicy)
+  except:
+    os.unlink(sysmeta_path)
+    object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid,
+                                                                        ''))
+    os.unlink(object_path)
+    raise
+  
   # Log this object creation.
   event_log.log(pid, 'create', request)
   
@@ -755,22 +798,25 @@ def object_pid_post(request, pid):
 
 # Unrestricted.
 def _object_pid_post_store_local(request, pid):
-  sys_log.info('pid({0}): Writing object to disk'.format(pid))
+  logger.info('pid({0}): Writing object to disk'.format(pid))
 
   object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
 
   try:
-    file = open(object_path, 'wb')
-    for chunk in request.FILES['object'].chunks():
-      file.write(chunk)
-    file.close()
+    with open(object_path, 'wb') as file:
+      for chunk in request.FILES['object'].chunks():
+        file.write(chunk)
   except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write object file: {0}\n'.format(object_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+    # The object may have been partially created. If so, delete the file.
+    try:
+      os.unlink(object_path)
+    except:
+      pass
+    raise
         
 
 @auth.assert_write_permission
+@lock_pid.for_write
 def object_pid_put(request, pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
 
@@ -795,9 +841,8 @@ def object_pid_put(request, pid):
   sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
                                                                         ''))
   try:
-    file = open(sysmeta_path, 'wb')
-    file.write(sysmeta_str)
-    file.close()
+    with open(sysmeta_path, 'wb') as file:
+      file.write(sysmeta_str)
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
@@ -904,8 +949,8 @@ def object_pid_delete(request, pid):
   sciobj.delete()
 
   # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log. Instead, we log it in the sys_log.
-  sys_log.info('client({0}) pid({1}) Deleted object'.format(
+  # log this event in the event log. Instead, we log it.
+  logger.info('client({0}) pid({1}) Deleted object'.format(
     util.request_to_string(request), pid))
 
   # Return the pid.
@@ -914,7 +959,7 @@ def object_pid_delete(request, pid):
   return HttpResponse(doc, content_type)
 
 # ------------------------------------------------------------------------------  
-# Tier Replication API.
+# Public API: Tier 4: Replication API.
 # ------------------------------------------------------------------------------  
 
 @auth.assert_trusted_permission
@@ -922,8 +967,8 @@ def replicate(request):
   '''MNReplication.replicate(session, sysmeta, sourceNode) → boolean
 
   Called by a Coordinating Node to request that the Member Node create a copy of
-  the specified object by retrieving it from another Member Nodeode and storing
-  it locally so that it can be made accessible to the DataONE system.
+  the specified object by retrieving it from another Member Node and storing it
+  locally so that it can be made accessible to the DataONE system.
   '''
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
@@ -951,9 +996,8 @@ def replicate(request):
   # Write SysMeta bytes to cache folder.
   sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(sysmeta.pid, ''))
   try:
-    file = open(sysmeta_path, 'wb')
-    file.write(sysmeta_str)
-    file.close()
+    with open(sysmeta_path, 'wb') as file:
+      file.write(sysmeta_str)
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
@@ -979,6 +1023,10 @@ def replicate(request):
 # Private API
 # ==============================================================================
 
+# ------------------------------------------------------------------------------  
+# Private API: Replication.
+# ------------------------------------------------------------------------------  
+
 @auth.assert_trusted_permission
 def _replicate_store(request):
   '''
@@ -991,13 +1039,12 @@ def _replicate_store(request):
   pid = request.FILES['pid'].read()
 
   # Write SciData to object store.  
-  sys_log.info('pid({0}): Writing object to disk'.format(pid))
+  logger.info('pid({0}): Writing object to disk'.format(pid))
   object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
   try:
-    file = open(object_path, 'wb')
-    for chunk in request.FILES['object'].chunks():
-      file.write(chunk)
-    file.close()
+    with open(object_path, 'wb') as file:
+      for chunk in request.FILES['object'].chunks():
+        file.write(chunk)
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write object file: {0}\n'.format(object_path)
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
@@ -1030,9 +1077,8 @@ def _replicate_store(request):
   return HttpResponse(doc, content_type)
 
 # ------------------------------------------------------------------------------  
-# Diagnostics, debugging and testing.
+# Test: Diagnostics, debugging and testing.
 # ------------------------------------------------------------------------------  
-
 
 # For testing via browser.
 @auth.assert_trusted_permission
@@ -1166,7 +1212,7 @@ def test_delete_all_objects(request):
     raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Log this operation.
-  sys_log.info('client({0}): Deleted all repository object records'.format(
+  logger.info('client({0}): Deleted all repository object records'.format(
     util.request_to_string(request)))
 
   return HttpResponse('OK')
@@ -1232,8 +1278,8 @@ def test_delete_single_object(request, pid):
   sciobj.delete()
 
   # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log. Instead, we log it in the sys_log.
-  sys_log.info('client({0}) pid({1}) Deleted object'.format(
+  # log this event in the event log. Instead, we log it.
+  logger.info('client({0}) pid({1}) Deleted object'.format(
     util.request_to_string(request), pid))
 
   # Return the pid.
@@ -1255,7 +1301,7 @@ def test_delete_event_log(request):
   models.Event_log_event.objects.all().delete()
 
   # Log this operation.
-  sys_log.info(None, 'client({0}): delete_event_log', util.request_to_string(
+  logger.info(None, 'client({0}): delete_event_log', util.request_to_string(
     request))
 
   return HttpResponse('OK')
@@ -1300,3 +1346,41 @@ def test_delete_all_access_rules(request):
   # The deletes are cascaded so all subjects are also deleted.
   models.Permission.objects.all().delete()
   return HttpResponse('OK')
+
+# ------------------------------------------------------------------------------
+# Test Concurrency.
+# ------------------------------------------------------------------------------  
+
+#test_shared_dict = collections.defaultdict(lambda: '<undef>')
+
+test_shared_dict = urls.test_shared_dict
+
+def test_concurrency_clear(request):
+  test_shared_dict.clear()
+  return HttpResponse('')
+
+@auth.assert_trusted_permission
+@lock_pid.for_read
+def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
+  time.sleep(float(sleep_before))
+  #ret = test_shared_dict
+  ret = test_shared_dict[key]
+  time.sleep(float(sleep_after))
+  return HttpResponse('{0}'.format(ret))
+
+@auth.assert_trusted_permission
+@lock_pid.for_write
+def test_concurrency_write_lock(request, key, val, sleep_before, sleep_after):
+  time.sleep(float(sleep_before))
+  test_shared_dict[key] = val  
+  time.sleep(float(sleep_after))
+  return HttpResponse('ok')
+
+@auth.assert_trusted_permission
+# No locking.
+def test_concurrency_get_dictionary_id(request):
+  time.sleep(3)
+  ret = id(test_shared_dict)
+  time.sleep(3)
+  return HttpResponse('{0}'.format(ret))
+  

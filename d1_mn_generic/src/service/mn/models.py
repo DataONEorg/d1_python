@@ -27,10 +27,11 @@
 
 .. moduleauthor:: Roger Dahl
 '''
+# Stdlib.
+import logging
 
 # App.
 import settings
-import sys_log
 import util
 
 from django.db import models
@@ -38,6 +39,9 @@ from django.db.models import Q
 
 # MN API.
 import d1_common.types.exceptions
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 # Django creates automatically:
 # "id" serial NOT NULL PRIMARY KEY
@@ -98,9 +102,9 @@ class Object(models.Model):
     except IndexError:
       self.save()
     else:
-      sys_log.warning('Overwriting object with duplicate PID or URL:')
-      sys_log.warning('URL: {0}'.format(self.url))
-      sys_log.warning('PID: {0}'.format(self.pid))
+      logger.warning('Overwriting object with duplicate PID or URL:')
+      logger.warning('URL: {0}'.format(self.url))
+      logger.warning('PID: {0}'.format(self.pid))
       me.delete()
       self.save()
 

@@ -33,6 +33,7 @@
 # Stdlib.
 import csv
 import datetime
+import logging
 import os
 import StringIO
 import sys
@@ -67,9 +68,11 @@ import d1_common.types.nodelist_serialization
 
 # App.
 import mn.models as models
-import mn.sys_log as sys_log
 import mn.util as util
 import settings
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 
 class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
@@ -414,7 +417,7 @@ def monitor_serialize_object(request, response, monitor):
   # we use the default defined in d1_common.const.DEFAULT_MIMETYPE.
   content_type = d1_common.const.DEFAULT_MIMETYPE
   if 'HTTP_ACCEPT' not in request.META:
-    sys_log.debug(
+    logger.debug(
       'client({0}): No HTTP_ACCEPT header. Defaulting to {0}'.format(
         util.request_to_string(
           request
@@ -427,7 +430,7 @@ def monitor_serialize_object(request, response, monitor):
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also use the default defined in d1_common.const.DEFAULT_MIMETYPE.
-      sys_log.debug(
+      logger.debug(
         'client({0}): Invalid HTTP_ACCEPT header. Defaulting to {0}'.format(
           util.request_to_string(
             request

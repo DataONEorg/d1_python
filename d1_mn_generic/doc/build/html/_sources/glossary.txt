@@ -28,8 +28,8 @@ Glossary
     DataONE Generic Member Node
 
     GMN is an implementation of a :term:`MN`. It provides an implementation
-    of all MN APIs. GMN can be used as a as a workbone or as a reference for a
-    3rd party MN implementation. GMN can also be used as an "adapter", making it
+    of all MN APIs. GMN can be used as a workbone or as a reference for a 3rd
+    party MN implementation. GMN can also be used as an "adapter", making it
     possible for a 3rd party system to become a MN and expose its objects to
     DataONE with a minimum of effort. In this mode, we refer to GMN as the
     adapter and the 3rd party system as the adaptee.
@@ -98,10 +98,19 @@ Glossary
     http://httpd.apache.org/
 
 
+  MPM
+    Multi-Processing Module
+    
+    The component within Apache that manages the processes and threads used for
+    serving requests.
+    
+    http://httpd.apache.org/docs/2.0/mpm.html
+    
+    
   Python
     A dynamic programming language.
     
-    www.python.org
+    http://www.python.org
   
 
   Django

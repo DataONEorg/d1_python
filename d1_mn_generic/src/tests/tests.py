@@ -13,6 +13,7 @@
 
 # Stdlib.
 import json
+import logging
 import StringIO
 
 # Django.
@@ -27,6 +28,9 @@ import d1_common.const
 import settings
 import util
 #import sysmeta
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 ## Constants related to simulated MN object collection.
 #mn_objects_total = 354
@@ -456,11 +460,11 @@ class mn_tests(TestCase):
 #  #  try:
 #  #    xsd_file = open(settings.XSD_PATH, 'r')
 #  #  except EnvironmentError as (errno, strerror):
-#  #    sys_log.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-#  #    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
+#  #    logger.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
+#  #    logger.error('I/O error({0}): {1}'.format(errno, strerror))
 #  #    return
 #  #  except:
-#  #    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+#  #    logger.error('Unexpected error: ', sys.exc_info()[0])
 #  #    raise
 #  #
 #  #  xmlschema_doc = sysmeta.etree.parse(settings.XSD_PATH)
@@ -680,11 +684,11 @@ class mn_tests(TestCase):
 #  #  try:
 #  #    xsd_file = open(settings.XSD_PATH, 'r')
 #  #  except EnvironmentError as (errno, strerror):
-#  #    sys_log.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-#  #    sys_log.error('I/O error({0}): {1}'.format(errno, strerror))
+#  #    logger.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
+#  #    logger.error('I/O error({0}): {1}'.format(errno, strerror))
 #  #    return
 #  #  except:
-#  #    sys_log.error('Unexpected error: ', sys.exc_info()[0])
+#  #    logger.error('Unexpected error: ', sys.exc_info()[0])
 #  #    raise
 #  #
 #  #  xmlschema_doc = etree.parse(settings.XSD_PATH)

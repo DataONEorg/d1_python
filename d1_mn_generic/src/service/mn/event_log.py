@@ -28,6 +28,9 @@
 .. moduleauthor:: Roger Dahl
 '''
 
+# Stdlib.
+import logging
+
 # Django.
 from django.http import HttpResponse
 from django.http import Http404
@@ -42,8 +45,10 @@ import d1_common.types.exceptions
 import auth
 import models
 import settings
-import sys_log
 import util
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 
 def log(pid, event, request, timestamp=None):
@@ -85,7 +90,7 @@ def log(pid, event, request, timestamp=None):
     event_log_row.save()
 
   # Log in syslog as well.
-  sys_log.info(
+  logger.info(
     'client({0}): Created log entry: pid({1}) event({2})'.format(
       util.request_to_string(request), pid, event)
   )

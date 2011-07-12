@@ -18,17 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
-:mod:`auth`
-===========
+''':mod:`auth`
+==============
 
 :Synopsis:
   Authentication and authorization. 
-
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
+import logging
 import os
 import urllib
 
@@ -48,10 +49,12 @@ import d1_common.types.accesspolicy_serialization
 
 # App.
 import settings
-import sys_log
 import util
 import models
 import sysmeta
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -324,6 +327,9 @@ def assert_allowed(subject, level, pid):
 # certificate has the permissions required to perform a given action. If
 # the required permissions are not present, a NotAuthorized exception is
 # return to the client.
+#
+# The decorators require the first argument to be request and the second to
+# be PID.
 
 
 # Only D1 infrastructure.
@@ -353,10 +359,9 @@ def assert_authenticated(f):
 # The following decorators assume that the first argument to the wrapped
 # function is the PID for which the permission is being asserted.
 def assert_execute_permission(f):
-  def wrap(request, *args, **kwargs):
-    pid = args[0]
+  def wrap(request, pid, *args, **kwargs):
     assert_allowed(request.META['SSL_CLIENT_S_DN'], EXECUTE_LEVEL, pid)
-    return f(request, *args, **kwargs)
+    return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
@@ -364,10 +369,9 @@ def assert_execute_permission(f):
 
 
 def assert_changepermission_permission(f):
-  def wrap(request, *args, **kwargs):
-    pid = args[0]
+  def wrap(request, pid, *args, **kwargs):
     assert_allowed(request.META['SSL_CLIENT_S_DN'], CHANGEPERMISSION_LEVEL, pid)
-    return f(request, *args, **kwargs)
+    return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
@@ -375,10 +379,9 @@ def assert_changepermission_permission(f):
 
 
 def assert_write_permission(f):
-  def wrap(request, *args, **kwargs):
-    pid = args[0]
+  def wrap(request, pid, *args, **kwargs):
     assert_allowed(request.META['SSL_CLIENT_S_DN'], WRITE_LEVEL, pid)
-    return f(request, *args, **kwargs)
+    return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
@@ -386,10 +389,9 @@ def assert_write_permission(f):
 
 
 def assert_read_permission(f):
-  def wrap(request, *args, **kwargs):
-    pid = args[0]
+  def wrap(request, pid, *args, **kwargs):
     assert_allowed(request.META['SSL_CLIENT_S_DN'], READ_LEVEL, pid)
-    return f(request, *args, **kwargs)
+    return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__

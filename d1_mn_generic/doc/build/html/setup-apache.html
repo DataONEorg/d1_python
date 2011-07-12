@@ -49,6 +49,15 @@
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Step 2: Apache</a><ul>
+<li><a class="reference internal" href="#mpm-setup"><tt class="docutils literal"><span class="pre">MPM</span></tt> setup</a></li>
+<li><a class="reference internal" href="#initial-virtualhost-setup">Initial VirtualHost setup</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="setup-hardware.html"
                         title="previous chapter">Step 1: Hardware</a></p>
@@ -107,20 +116,38 @@
 <p>Install Apache2 packages:</p>
 <div class="highlight-python"><pre>$ sudo apt-get install apache2 apache2-threaded-dev</pre>
 </div>
-<p>Initial VirtualHost setup.</p>
+<div class="section" id="mpm-setup">
+<h2><a class="reference internal" href="glossary.html#term-mpm"><em class="xref std std-term">MPM</em></a> setup<a class="headerlink" href="#mpm-setup" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">GMN</em></a> must currently run within a single process as it uses thread based
+locking.</li>
+<li>The default Apache2 package for Ubuntu is built with the &#8220;worker&#8221; MPM.</li>
+</ul>
+<p>Configure the &#8220;worker&#8221; MPM to use a single process and multiple threads:</p>
+<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/apache2.conf</span></tt>.</p>
+<p>In the <tt class="docutils literal"><span class="pre">IfModule</span> <span class="pre">mpm_worker_module</span></tt> section, add or edit:</p>
+<div class="highlight-python"><pre>StartServers          1
+ServerLimit           1
+ThreadsPerChild      64
+MaxClients           64</pre>
+</div>
+</div>
+<div class="section" id="initial-virtualhost-setup">
+<h2>Initial VirtualHost setup<a class="headerlink" href="#initial-virtualhost-setup" title="Permalink to this headline">¶</a></h2>
 <p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
-<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
 <ul class="simple">
 <li>These instructions use the existing VirtualHost section.</li>
 <li>These settings are required for GMN to correctly handle the DataONE
 <a class="reference internal" href="glossary.html#term-rest"><em class="xref std std-term">REST</em></a> calls. See <a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration">Apache Configuration for DataONE Services</a> for more
 information.</li>
 </ul>
-<p>In the VirtualHost section, add:</p>
+<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit:</p>
 <div class="highlight-python"><pre>AllowEncodedSlashes On
 AcceptPathInfo On</pre>
 </div>
 <p><a class="reference internal" href="setup-mod-wsgi.html"><em>Step 3: mod_wsgi</em></a></p>
+</div>
 </div>
 
 

@@ -34,6 +34,7 @@ import exceptions
 import glob
 import hashlib
 import htmlentitydefs
+import logging
 import os
 import re
 import stat
@@ -85,8 +86,10 @@ import event_log
 import auth
 import models
 import settings
-import sys_log
 import util
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 #def normalize_datetime(datetime_, tz_):
 #  '''Change datetime to UTC.
@@ -162,25 +165,25 @@ def log_exception(max_traceback_levels=5, msg=None):
   ''':param:
   :return:
   '''
-  sys_log.error('Exception:')
+  logger.error('Exception:')
   # Message.
   if msg is not None:
-    sys_log.error('  Message: {0}'.format(msg))
+    logger.error('  Message: {0}'.format(msg))
 
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
   # Name.
-  sys_log.error('  Name: {0}'.format(exc_class.__name__))
+  logger.error('  Name: {0}'.format(exc_class.__name__))
   # Value.
-  sys_log.error('  Value: {0}'.format(exc_msgs))
+  logger.error('  Value: {0}'.format(exc_msgs))
   # Args.
   try:
     exc_args = exc_msgs.__dict__["args"]
   except KeyError:
     exc_args = "<no args>"
-  sys_log.error('  Args: {0}'.format(exc_args))
+  logger.error('  Args: {0}'.format(exc_args))
   # Traceback.
   exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
-  sys_log.error('  Traceback: {0}'.format(exc_formatted_traceback))
+  logger.error('  Traceback: {0}'.format(exc_formatted_traceback))
 
 
 def exception_to_dot_str():
@@ -356,7 +359,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
         )
       )
     filter_arg = '{0}__{1}'.format(column_name, operator)
-    sys_log.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
+    logger.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
     return query.filter(**{filter_arg: date}), True
 
   return query, False
@@ -381,7 +384,7 @@ def add_string_filter(query, request, column_name, param_name):
     if not m:
       continue
     value = request.GET[key]
-    sys_log.info('Applied filter: {0} = {1}'.format(column_name, value))
+    logger.info('Applied filter: {0} = {1}'.format(column_name, value))
     return query.filter(**{column_name: value}), True
 
   return query, False
@@ -409,13 +412,13 @@ def add_wildcard_filter(query, col_name, value):
   if re.match(r'\*(.*)$', value):
     filter_arg = '{0}__endswith'.format(col_name)
     filter_kwargs[filter_arg] = value_trimmed
-    sys_log.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
+    logger.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
     wild_beginning = True
 
   if re.match(r'(.*)\*$', value):
     filter_arg = '{0}__startswith'.format(col_name)
     filter_kwargs[filter_arg] = value_trimmed
-    sys_log.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
+    logger.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
     wild_end = True
 
   if wild_beginning == True and wild_end == True:
@@ -428,7 +431,7 @@ def add_wildcard_filter(query, col_name, value):
   # If no wildcards are used, we add a regular "equals" filter.
   elif wild_beginning == False and wild_end == False:
     filter_kwargs[col_name] = value
-    sys_log.info('Applied wildcard filter: {0} = {1}'.format(col_name, value))
+    logger.info('Applied wildcard filter: {0} = {1}'.format(col_name, value))
 
   return query.filter(**filter_kwargs)
 
@@ -478,12 +481,12 @@ def add_slice_filter(query, request):
     # as [value : None] is valid and equivalent to [value:]
   elif start and count:
     query = query[start:start + count]
-    sys_log.info('Applied slice filter: start({0}) count({1})'.format(start, count))
+    logger.info('Applied slice filter: start({0}) count({1})'.format(start, count))
   elif start:
     query = query[start:]
-    sys_log.info('Applied slice filter: start({0})'.format(start))
+    logger.info('Applied slice filter: start({0})'.format(start))
   elif count:
     query = query[:count]
-    sys_log.info('Applied slice filter: count({0})'.format(count))
+    logger.info('Applied slice filter: count({0})'.format(count))
 
   return query, start, count

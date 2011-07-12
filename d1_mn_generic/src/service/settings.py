@@ -86,12 +86,17 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = _here('stores')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
+
+# GMN stores.
+SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
+OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
+STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -153,12 +158,78 @@ LOG_PATH = _here('./gmn.log')
 XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
-# GMN.
-SYSMETA_STORE_PATH = _here('./sysmeta_store')
-OBJECT_STORE_PATH = _here('./object_store')
-STATIC_STORE_PATH = _here('./static_store')
-
 # Test CN.
 CN_SYSMETA_STORE_PATH = _here('./cn_sysmeta_store')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
+
+## Set up logging.
+## We output everything to both file and stdout.
+#logging.getLogger('').setLevel(logging.DEBUG)
+#formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
+## Log file.
+#file_logger = logging.FileHandler(settings.LOG_PATH, 'a')
+#file_logger.setFormatter(formatter)
+#logging.getLogger('').addHandler(file_logger)
+## Console.
+##console_logger = StreamHandler(sys.stdout)
+##console_logger.setFormatter(formatter)
+##getLogger('').addHandler(console_logger)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s %(module)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+  #    'filters': {
+  #        'special': {
+  #            '()': 'project.logging.SpecialFilter',
+  #            'foo': 'bar',
+  #        }
+  #    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOG_PATH,
+            'formatter': 'verbose'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+      #        'mail_admins': {
+      #            'level': 'ERROR',
+      #            'class': 'django.utils.log.AdminEmailHandler',
+      #            'filters': ['special']
+      #        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['null'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+      #        'django.request': {
+      #            'handlers': ['mail_admins'],
+      #            'level': 'ERROR',
+      #            'propagate': False,
+      #        },
+      #        'myproject.custom': {
+      #            'handlers': ['console', 'mail_admins'],
+      #            'level': 'INFO',
+      #            'filters': ['special']
+      #        }
+    }
+}

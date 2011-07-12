@@ -1,5 +1,5 @@
-Implementation
-==============
+Automatically generated documentation
+=====================================
 
 .. automodule:: settings
    :members:

@@ -52,6 +52,7 @@
 
 # Stdlib.
 import inspect
+import logging
 import os
 import sys
 import traceback
@@ -67,10 +68,12 @@ import d1_common.types.exceptions
 import d1_common.types.exception_serialization
 
 # App.
-import mn.sys_log as sys_log
 import mn.util as util
 import detail_codes
 import settings
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 
 class exception_handler():

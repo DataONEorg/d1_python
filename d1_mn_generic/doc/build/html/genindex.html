@@ -72,14 +72,17 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="generated.html#mn.models.Action">Action (class in mn.models)</a></dt>
+    <dt><a href="generated.html#mn.views.access_policy_pid_put_workaround">access_policy_pid_put_workaround() (in module mn.views)</a></dt>
+    <dt><a href="generated.html#mn.auth.action_to_level">action_to_level() (in module mn.auth)</a></dt>
     <dt><a href="generated.html#mn.util.add_datetime_filter">add_datetime_filter() (in module mn.util)</a></dt>
     <dt><a href="generated.html#mn.util.add_slice_filter">add_slice_filter() (in module mn.util)</a></dt>
+    <dt><a href="generated.html#mn.util.add_string_filter">add_string_filter() (in module mn.util)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="generated.html#mn.util.add_string_filter">add_string_filter() (in module mn.util)</a></dt>
     <dt><a href="generated.html#mn.util.add_wildcard_filter">add_wildcard_filter() (in module mn.util)</a></dt>
     <dt><a href="glossary.html#term-apache">Apache</a></dt>
+    <dt><a href="generated.html#mn.auth.assert_allowed">assert_allowed() (in module mn.auth)</a></dt>
+    <dt><a href="generated.html#mn.views.assert_authorized">assert_authorized() (in module mn.views)</a></dt>
 </dl></td>
 </tr></table>
 
@@ -98,11 +101,10 @@
     <dt><a href="glossary.html#term-ca-signing-key">CA signing key</a></dt>
     <dt><a href="glossary.html#term-certificate">Certificate</a></dt>
     <dt><a href="glossary.html#term-chain-of-trust">Chain of trust</a></dt>
-    <dt><a href="generated.html#mn.auth.check_permission">check_permission() (in module mn.auth)</a></dt>
     <dt><a href="generated.html#mn.models.Checksum_algorithm">Checksum_algorithm (class in mn.models)</a></dt>
+    <dt><a href="glossary.html#term-cilogon">CILogon</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="glossary.html#term-cilogon">CILogon</a></dt>
     <dt><a href="generated.html#mn.util.clear_db">clear_db() (in module mn.util)</a></dt>
     <dt><a href="glossary.html#term-client">client</a></dt>
     <dt><a href="glossary.html#term-client-side-authentication">Client Side Authentication</a></dt>
@@ -131,11 +133,12 @@
     <dt><a href="generated.html#mn.models.Event_log">Event_log (class in mn.models)</a></dt>
     <dt><a href="generated.html#mn.models.Event_log_event">Event_log_event (class in mn.models)</a></dt>
     <dt><a href="generated.html#mn.models.Event_log_ip_address">Event_log_ip_address (class in mn.models)</a></dt>
+    <dt><a href="generated.html#mn.models.Event_log_member_node">Event_log_member_node (class in mn.models)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="generated.html#mn.models.Event_log_member_node">Event_log_member_node (class in mn.models)</a></dt>
-    <dt><a href="generated.html#mn.models.Event_log_principal">Event_log_principal (class in mn.models)</a></dt>
+    <dt><a href="generated.html#mn.models.Event_log_subject">Event_log_subject (class in mn.models)</a></dt>
     <dt><a href="generated.html#mn.models.Event_log_user_agent">Event_log_user_agent (class in mn.models)</a></dt>
+    <dt><a href="generated.html#mn.views.event_log_view">event_log_view() (in module mn.views)</a></dt>
 </dl></td>
 </tr></table>
 
@@ -152,6 +155,9 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="generated.html#mn.auth.get_owner">get_owner() (in module mn.auth)</a></dt>
+</dl></td>
+  <td style="width: 33%" valign="top"><dl>
     <dt><a href="glossary.html#term-gmn">GMN</a></dt>
 </dl></td>
 </tr></table>
@@ -160,6 +166,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="glossary.html#term-investigator-toolkit-itk">Investigator Toolkit (ITK)</a></dt>
+    <dt><a href="generated.html#mn.auth.is_allowed">is_allowed() (in module mn.auth)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="glossary.html#term-iso8601">ISO8601</a></dt>
@@ -169,6 +176,7 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="generated.html#mn.auth.level_to_action">level_to_action() (in module mn.auth)</a></dt>
     <dt><a href="glossary.html#term-loa">LOA</a></dt>
     <dt><a href="generated.html#mn.event_log.log">log() (in module mn.event_log)</a></dt>
     <dd><dl>
@@ -184,7 +192,6 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="generated.html#mn.views.meta_pid">meta_pid() (in module mn.views)</a></dt>
     <dt><a href="glossary.html#term-minixsv">minixsv</a></dt>
     <dt><a href="glossary.html#term-mn">MN</a></dt>
     <dt><a href="generated.html#module-mn.auth">mn.auth (module)</a></dt>
@@ -195,18 +202,22 @@
     <dt><a href="generated.html#module-mn.middleware.request_handler">mn.middleware.request_handler (module)</a></dt>
     <dt><a href="generated.html#module-mn.middleware.response_handler">mn.middleware.response_handler (module)</a></dt>
     <dt><a href="generated.html#module-mn.middleware.view_handler">mn.middleware.view_handler (module)</a></dt>
-</dl></td>
-  <td style="width: 33%" valign="top"><dl>
     <dt><a href="generated.html#module-mn.models">mn.models (module)</a></dt>
     <dt><a href="generated.html#module-mn.sys_log">mn.sys_log (module)</a></dt>
+</dl></td>
+  <td style="width: 33%" valign="top"><dl>
     <dt><a href="generated.html#module-mn.urls">mn.urls (module)</a></dt>
     <dt><a href="generated.html#module-mn.util">mn.util (module)</a></dt>
     <dt><a href="generated.html#module-mn.views">mn.views (module)</a></dt>
     <dt><a href="glossary.html#term-mod-ssl">mod_ssl</a></dt>
     <dt><a href="glossary.html#term-mod-wsgi">mod_wsgi</a></dt>
+    <dt><a href="generated.html#mn.views.monitor_object">monitor_object() (in module mn.views)</a></dt>
+    <dt><a href="generated.html#mn.views.monitor_ping">monitor_ping() (in module mn.views)</a></dt>
     <dt><a href="generated.html#mn.middleware.response_handler.monitor_serialize_json">monitor_serialize_json() (in module mn.middleware.response_handler)</a></dt>
     <dt><a href="generated.html#mn.middleware.response_handler.monitor_serialize_null">monitor_serialize_null() (in module mn.middleware.response_handler)</a></dt>
     <dt><a href="generated.html#mn.middleware.response_handler.monitor_serialize_xml">monitor_serialize_xml() (in module mn.middleware.response_handler)</a></dt>
+    <dt><a href="generated.html#mn.views.monitor_status">monitor_status() (in module mn.views)</a></dt>
+    <dt><a href="glossary.html#term-mpm">MPM</a></dt>
 </dl></td>
 </tr></table>
 
@@ -224,12 +235,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="generated.html#mn.models.Object">Object (class in mn.models)</a></dt>
-    <dt><a href="generated.html#mn.views.object_collection">object_collection() (in module mn.views)</a></dt>
-    <dt><a href="generated.html#mn.views.object_collection_get">object_collection_get() (in module mn.views)</a></dt>
+    <dt><a href="generated.html#mn.views.object">object() (in module mn.views)</a></dt>
+    <dt><a href="generated.html#mn.models.Object_format">Object_format (class in mn.models)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
-    <dt><a href="generated.html#mn.models.Object_format">Object_format (class in mn.models)</a></dt>
-    <dt><a href="generated.html#mn.views.object_pid">object_pid() (in module mn.views)</a></dt>
+    <dt><a href="generated.html#mn.views.object_pid_delete">object_pid_delete() (in module mn.views)</a></dt>
     <dt><a href="glossary.html#term-openssl">OpenSSL</a></dt>
 </dl></td>
 </tr></table>
@@ -238,17 +248,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="generated.html#mn.models.Permission">Permission (class in mn.models)</a></dt>
-    <dt><a href="generated.html#mn.auth.permission_change_permissions">permission_change_permissions() (in module mn.auth)</a></dt>
-    <dt><a href="generated.html#mn.auth.permission_public">permission_public() (in module mn.auth)</a></dt>
-    <dt><a href="generated.html#mn.auth.permission_read">permission_read() (in module mn.auth)</a></dt>
-    <dt><a href="generated.html#mn.auth.permission_trusted">permission_trusted() (in module mn.auth)</a></dt>
-    <dt><a href="generated.html#mn.auth.permission_update">permission_update() (in module mn.auth)</a></dt>
     <dt><a href="generated.html#mn.util.pretty_xml">pretty_xml() (in module mn.util)</a></dt>
-</dl></td>
-  <td style="width: 33%" valign="top"><dl>
-    <dt><a href="generated.html#mn.models.Principal">Principal (class in mn.models)</a></dt>
     <dt><a href="glossary.html#term-python">Python</a></dt>
     <dt><a href="glossary.html#term-python-dateutil">python-dateutil</a></dt>
+</dl></td>
+  <td style="width: 33%" valign="top"><dl>
     <dt><a href="glossary.html#term-python-iso8601">python-iso8601</a></dt>
     <dt><a href="glossary.html#term-python-setuptools">python-setuptools</a></dt>
     <dt><a href="glossary.html#term-pyxb">PyXB</a></dt>
@@ -277,6 +281,7 @@
     <dt><a href="glossary.html#term-self-signed-certificate">Self signed certificate</a></dt>
     <dt><a href="glossary.html#term-server-key">Server key</a></dt>
     <dt><a href="glossary.html#term-server-side-authentication">Server Side Authentication</a></dt>
+    <dt><a href="generated.html#mn.auth.set_access_policy">set_access_policy() (in module mn.auth)</a></dt>
     <dt><a href="generated.html#mn.models.Object.set_checksum_algorithm">set_checksum_algorithm() (mn.models.Object method)</a></dt>
     <dt><a href="generated.html#mn.models.Event_log.set_event">set_event() (mn.models.Event_log method)</a></dt>
     <dt><a href="generated.html#mn.models.Object.set_format">set_format() (mn.models.Object method)</a></dt>
@@ -284,11 +289,12 @@
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="generated.html#mn.middleware.response_handler.set_header">set_header() (in module mn.middleware.response_handler)</a></dt>
     <dt><a href="generated.html#mn.models.Event_log.set_ip_address">set_ip_address() (mn.models.Event_log method)</a></dt>
-    <dt><a href="generated.html#mn.models.Event_log.set_principal">set_principal() (mn.models.Event_log method)</a></dt>
+    <dt><a href="generated.html#mn.models.Event_log.set_subject">set_subject() (mn.models.Event_log method)</a></dt>
     <dt><a href="generated.html#mn.models.Event_log.set_user_agent">set_user_agent() (mn.models.Event_log method)</a></dt>
     <dt><a href="generated.html#module-settings">settings (module)</a></dt>
     <dt><a href="glossary.html#term-ssl">SSL</a></dt>
     <dt><a href="glossary.html#term-ssl-handshake">SSL handshake</a></dt>
+    <dt><a href="generated.html#mn.models.Subject">Subject (class in mn.models)</a></dt>
     <dt><a href="glossary.html#term-subversion">Subversion</a></dt>
     <dt><a href="glossary.html#term-sysmeta">SysMeta</a></dt>
 </dl></td>
@@ -297,6 +303,7 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+    <dt><a href="generated.html#mn.views.test_delete_single_object">test_delete_single_object() (in module mn.views)</a></dt>
     <dt><a href="glossary.html#term-tls">TLS</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>

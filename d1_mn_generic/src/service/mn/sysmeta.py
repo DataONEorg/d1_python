@@ -31,8 +31,9 @@
   - python 2.6
 '''
 
-# Std.
+# Stdlib.
 import datetime
+import logging
 import os
 import sys
 import StringIO
@@ -61,7 +62,9 @@ import d1_common.types.systemmetadata
 import d1_common.types.exceptions
 
 import util
-import sys_log
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 # Schema entries for obsoletes and obsoletedBy.
 #
@@ -107,7 +110,7 @@ def read_sysmeta(pid):
         sysmeta_found = True
         break
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      mn.sys_log.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
 
   if sysmeta_found == False:
     raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
@@ -187,7 +190,7 @@ def get_replication_status_list(pid=None):
     try:
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      mn.sys_log.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
       continue
 
     if pid is None or pid == sysmeta_obj.identifier.value():
@@ -246,7 +249,7 @@ def clear_replication_status(node_ref=None, pid=None):
     try:
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      mn.sys_log.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
       continue
 
     sysmeta_updated = False
@@ -262,20 +265,19 @@ def clear_replication_status(node_ref=None, pid=None):
 
   return removed_count
 
+
 # ------------------------------------------------------------------------------
 # Based on PyXB.
 # ------------------------------------------------------------------------------
-'''
-Example:
-
-with sysmeta('mypid') as m:
-  m.accessPolicy = access_policy
-'''
-
-
-# TODO: Handle concurrency.
 class sysmeta():
   '''Manipulate SysMeta objects in the SysMeta store.
+  
+  Preconditions:
+    - Exclusive access to the given PID must be ensured by the caller.
+
+  Example:
+    with sysmeta('mypid') as m:
+      m.accessPolicy = access_policy
   '''
 
   def __init__(self, pid):

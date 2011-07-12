@@ -59,9 +59,10 @@ import d1_client.client
 import settings
 import mn.models
 import mn.auth
-import mn.sys_log
 import mn.util
-import mn.sys_log
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 
 class DataOneClientWrapper(d1_client.client.DataOneClient):
@@ -89,7 +90,7 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
       self.getSetReplicationStatusUrl(), urllib.quote(status, '') + '/' + urllib.quote(
         node_ref, '') + '/' + urllib.quote(pid, '')
     )
-    mn.sys_log.debug(
+    logger.debug(
       "status({0}) node_ref({1}) pid({2}) url({3})".format(
         status, node_ref, pid, url
       )
@@ -155,7 +156,7 @@ def replicate_object(obj):
       break
   if base_url == '':
     err_msg = 'Could not resolve source_node: {0}'.format(obj.source_node.source_node)
-    mn.sys_log.error(err_msg)
+    logger.error(err_msg)
     # Update queue with failed message for current replication item.
     obj.set_status('Error: {0}'.format(err_msg))
     obj.save()
@@ -182,7 +183,7 @@ class Command(NoArgsCommand):
 
   def handle_noargs(self, **options):
     log_setup()
-    mn.sys_log.info('Admin: process_replication_queue')
+    logger.info('Admin: process_replication_queue')
 
     verbosity = int(options.get('verbosity', 1))
 
@@ -192,14 +193,14 @@ class Command(NoArgsCommand):
     # Loop through registration queue.
     for obj in mn.models.Replication_work_queue.objects.filter(status__status='new'):
       #for obj in mn.models.Replication_work_queue.objects.all():
-      mn.sys_log.info('Replicating object: {0}'.format(obj.pid))
+      logger.info('Replicating object: {0}'.format(obj.pid))
       try:
         replicate_object(obj)
       except d1_common.types.exceptions.DataONEException as e:
-        mn.sys_log.error(str(e))
+        logger.error(str(e))
       except Exception:
         err_msg = mn.util.traceback_to_detail_code()
-        mn.sys_log.error(err_msg)
+        logger.error(err_msg)
       else:
         obj.set_status('completed')
         obj.save()

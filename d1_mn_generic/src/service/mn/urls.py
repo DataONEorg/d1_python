@@ -34,6 +34,14 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
+# Django does not have a location that is designated for setting up global
+# objects. For testing, we need a global dictionary and the top level urls.py
+# file is suggested as a good location for this.
+
+# TODO: Only set dictionary up in debug mode.
+import collections
+test_shared_dict = collections.defaultdict(lambda: '<undef>')
+
 urlpatterns = patterns(
   'service.mn.views',
   # Django's URL dispatcher does not take HTTP verb into account, so in the
@@ -102,6 +110,8 @@ urlpatterns = patterns(
   # Private API
   # ----------------------------------------------------------------------------
 
+  # Replication.
+
   # replicate_store
   (r'^replicate_store/?$', 'replicate_store'),
 
@@ -111,11 +121,13 @@ urlpatterns = patterns(
 
   # Test portal.
   (r'^test/?$', 'test'),
+
   # Replication.
   (r'^test_replicate_post/?$', 'test_replicate_post'),
   (r'^test_replicate_get/?$', 'test_replicate_get'),
   (r'^test_replicate_get_xml/?$', 'test_replicate_get_xml'),
   (r'^test_replicate_clear/?$', 'test_replicate_clear'),
+
   # Misc.
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
   (r'^test_exception/(.+?)/?$', 'test_exception'),
@@ -125,6 +137,15 @@ urlpatterns = patterns(
   (r'^test_inject_event_log/?$', 'test_inject_event_log'),
   (r'^test_delete_all_access_rules/?$', 'test_delete_all_access_rules'),
   (r'^test_cert/?$', 'test_cert'),
+
+  # Concurrency.
+  (r'^test_concurrency_clear/?$', 'test_concurrency_clear'),
+  (r'^test_concurrency_read_lock/(.+?)/(.+?)/(.+?)/?$', 'test_concurrency_read_lock'),
+  (
+    r'^test_concurrency_write_lock/(.+?)/(.+?)/(.+?)/(.+?)/?$',
+    'test_concurrency_write_lock'
+  ),
+  (r'^test_concurrency_get_dictionary_id/?$', 'test_concurrency_get_dictionary_id'),
 
   # ----------------------------------------------------------------------------
   # Administration.

@@ -7,10 +7,10 @@ Installation and usage of the :term:`GMN`.
 .. toctree::
   :maxdepth: 2
 
-  overview
   setup
   testing
   use
+  impl
   generated
   glossary
 

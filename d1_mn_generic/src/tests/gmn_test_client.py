@@ -69,6 +69,13 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
         'inject_event_log': u'test_inject_event_log',
         'delete_single_object': u'test_delete_single_object/%(pid)s',
         'delete_all_access_rules': u'test_delete_all_access_rules',
+        # Concurrency tests.
+        'test_concurrency_clear': u'test_concurrency_clear',
+        'test_concurrency_read_lock':
+          u'test_concurrency_read_lock/%(key)s/%(sleep_before)s/%(sleep_after)s',
+        'test_concurrency_write_lock':
+          u'test_concurrency_write_lock/%(key)s/%(val)s/%(sleep_before)s/%(sleep_after)s',
+        'test_concurrency_get_dictionary_id': u'test_concurrency_get_dictionary_id',
       }
     )
 
@@ -110,3 +117,45 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     url = self.RESTResourceURL('delete_all_access_rules')
     response = self.GET(url, headers=headers)
     return self.isHttpStatusOK(response.status)
+
+  # ----------------------------------------------------------------------------
+  # Concurrency.
+  # ----------------------------------------------------------------------------
+
+  def test_concurrency_clear(self, headers=None):
+    '''Clear test key/vals.
+    '''
+    url = self.RESTResourceURL('test_concurrency_clear')
+    return self.GET(url, headers=headers)
+
+  def test_concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
+    '''Test PID read locking.
+    '''
+    url = self.RESTResourceURL(
+      'test_concurrency_read_lock',
+      key=key,
+      sleep_before=sleep_before,
+      sleep_after=sleep_after
+    )
+    return self.GET(url, headers=headers)
+
+  def test_concurrency_write_lock(
+    self, key, val, sleep_before, sleep_after,
+    headers=None
+  ):
+    '''Test PID write locking.
+    '''
+    url = self.RESTResourceURL(
+      'test_concurrency_write_lock',
+      key=key,
+      val=val,
+      sleep_before=sleep_before,
+      sleep_after=sleep_after
+    )
+    return self.GET(url, headers=headers)
+
+  def test_concurrency_get_dictionary_id(self, headers=None):
+    '''Get dictionary ID.
+    '''
+    url = self.RESTResourceURL('test_concurrency_get_dictionary_id')
+    return self.GET(url, headers=headers)

@@ -31,6 +31,7 @@
 
 # Stdlib.
 import csv
+import logging
 import os
 import StringIO
 import sys
@@ -58,15 +59,17 @@ import d1_common.types.exceptions
 import d1_common.util
 
 # App.
-import mn.sys_log as sys_log
 import mn.models as models
 import settings
+
+# Get an instance of a logger.
+logger = logging.getLogger(__name__)
 
 
 class view_handler():
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
-    sys_log.info(
+    logger.info(
       'View: func_name({0}) method({1}) args({2}) kwargs({3})'
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
