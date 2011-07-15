@@ -24,8 +24,9 @@
 
 :Synopsis:
   App level settings.
-
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -57,15 +58,26 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+#DATABASES = {
+#  'default': {
+#    # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#    'ENGINE': 'django.db.backends.sqlite3',
+#    'NAME': _here('gmn.sq3'), # Path to database file if using sqlite3.
+#    'USER': '', # Not used with sqlite3.
+#    'PASSWORD': '', # Not used with sqlite3.
+#    'HOST': '', # Not used with sqlite3.
+#    'PORT': '', # Not used with sqlite3.
+#  }
+#}
 DATABASES = {
   'default': {
     # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': _here('gmn.sq3'), # Or path to database file if using sqlite3.
-    'USER': '', # Not used with sqlite3.
-    'PASSWORD': '', # Not used with sqlite3.
-    'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
-    'PORT': '', # Set to empty string for default. Not used with sqlite3.
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'gmn',
+    'USER': 'gmn',
+    'PASSWORD': 'gmn',
+    'HOST': '', # Set to empty string for localhost.
+    'PORT': '', # Set to empty string for default.
   }
 }
 
@@ -198,13 +210,13 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
         },
-        'console': {
+        'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': LOG_PATH,
             'formatter': 'verbose'
         },
-        'file': {
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'

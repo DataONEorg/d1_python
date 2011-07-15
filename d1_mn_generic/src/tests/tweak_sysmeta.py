@@ -47,14 +47,14 @@ except ImportError, e:
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-namespaces = {'D1': 'http://ns.dataone.org/service/types/SystemMetadata/0.1', }
+namespaces = {'D1': 'http://ns.dataone.org/service/types/0.6.2', }
 
 
 def main():
   for sysmeta_path in sorted(
     glob.glob(
       os.path.join(
-        '/var/www/test_client_objects', '*.sysmeta'
+        './test_client_objects', '*.sysmeta'
       )
     )
   ):
@@ -67,22 +67,48 @@ def main():
     #el[0].text = datetime.datetime.fromtimestamp(random.randint(0, 60 * 60 * 24 * 365 * 30)).isoformat()
 
     # Fix pid (want it to be filename).
-    object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-    pid = urllib.unquote(os.path.basename(object_path))
-    el = sysmeta_tree.xpath('/D1:systemMetadata/pid', namespaces=namespaces)
-    el[0].text = pid
+    #object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+    #pid = urllib.unquote(os.path.basename(object_path))
+    #el = sysmeta_tree.xpath('/D1:systemMetadata/pid', namespaces=namespaces)
+    #el[0].text = pid
 
-    #print(etree.tostring(sysmeta_tree, pretty_print = True,  encoding = 'UTF-8', xml_declaration=True))
+    obj_format = sysmeta_tree.xpath(
+      '/D1:systemMetadata/objectFormat',
+      namespaces=namespaces
+    )[0].text
 
-    sysmeta_file = open(sysmeta_path, 'w')
-    sysmeta_file.write(
-      etree.tostring(
-        sysmeta_tree,
-        pretty_print=True,
-        encoding='UTF-8',
-        xml_declaration=True
-      )
+    #root = sysmeta_tree.getroot()
+    #root.remove(sysmeta_tree.xpath('/D1:systemMetadata/objectFormat', namespaces=namespaces)[0])
+    #el1 = etree.Element('objectFormat')
+    #el2 = etree.Element('fmtid')
+    #el2.text = obj_format
+    #el1.append(el2)
+    #root.append(el1)
+    #del sysmeta_tree.objectFormat
+
+    el = sysmeta_tree.xpath('/D1:systemMetadata/objectFormat', namespaces=namespaces)[0]
+    el.text = ''
+    el2 = etree.Element('fmtid')
+    el2.text = obj_format
+    el.append(el2)
+    el2 = etree.Element('formatName')
+    el2.text = 'eml-2.0.0'
+    el.append(el2)
+    el2 = etree.Element('scienceMetadata')
+    el2.text = 'false'
+    el.append(el2)
+
+    sysmeta_xml = etree.tostring(
+      sysmeta_tree,
+      pretty_print=True,
+      encoding='UTF-8',
+      xml_declaration=True
     )
+
+    #print sysmeta_xml
+    #break
+    sysmeta_file = open(sysmeta_path, 'w')
+    sysmeta_file.write(sysmeta_xml)
     sysmeta_file.close()
 
 

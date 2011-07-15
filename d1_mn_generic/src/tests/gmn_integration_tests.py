@@ -72,7 +72,7 @@ import stat
 import StringIO
 import sys
 import time
-import unittest
+import unittest2
 import urllib
 import urlparse
 import uuid
@@ -87,6 +87,7 @@ try:
   import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
   import d1_common.types.accesspolicy_serialization
+  import d1_common.types.systemmetadata
   import d1_common.util
   import d1_common.const
 except ImportError, e:
@@ -149,9 +150,9 @@ def log_setup():
 class GMNException(Exception):
   pass
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(unittest2.TestCase):
   def __init__(self, methodName='runTest'):
-    unittest.TestCase.__init__(self, methodName)
+    unittest2.TestCase.__init__(self, methodName)
     # Copy docstrings from the tests that are being called so that the unit
     # test framework can display the strings.
     for member_name in dir(self):
@@ -207,7 +208,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
 #  def gen_sysmeta(self, pid, size, md5, now, owner):
 #    return u'''<?xml version="1.0" encoding="UTF-8"?>
-#<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/0.6.1">
+#<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/0.6.2">
 #  <identifier>{0}</identifier>
 #  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
 #  <size>{1}</size>
@@ -361,26 +362,30 @@ class TestSequenceFunctions(unittest.TestCase):
       pid = urllib.unquote(os.path.basename(object_path))
       # Get sysmeta xml for corresponding object from disk.
       sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_file)
+      sysmeta_str = sysmeta_file.read()
+      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)  
   
       # Get corresponding object from objectList.
       found = False
       for object_info in object_list.objectInfo:
-        if object_info.identifier.value() == sysmeta_obj.identifier:
+        if object_info.identifier.value() == sysmeta_obj.identifier.value():
           found = True
           break;
   
       self.assertTrue(found,
         'Couldn\'t find object with pid "{0}"'.format(sysmeta_obj.identifier))
       
-      self.assertEqual(object_info.identifier.value(), sysmeta_obj.identifier)
-      self.assertEqual(object_info.objectFormat, sysmeta_obj.objectFormat)
+      self.assertEqual(object_info.identifier.value(),
+                       sysmeta_obj.identifier.value())
+      self.assertEqual(object_info.objectFormat.fmtid,
+                       sysmeta_obj.objectFormat.fmtid)
       self.assertEqual(object_info.dateSysMetadataModified,
                        sysmeta_obj.dateSysMetadataModified)
       self.assertEqual(object_info.size, sysmeta_obj.size)
-      self.assertEqual(object_info.checksum.value(), sysmeta_obj.checksum)
+      self.assertEqual(object_info.checksum.value(),
+                       sysmeta_obj.checksum.value())
       self.assertEqual(object_info.checksum.algorithm,
-                       sysmeta_obj.checksumAlgorithm)
+                       sysmeta_obj.checksum.algorithm)
 
 
   def object_update(self):
@@ -1084,8 +1089,8 @@ class TestSequenceFunctions(unittest.TestCase):
   def test_1040_managed_object_properties(self):
     self.object_properties()
 
-  def test_1050_managed_object_update(self):
-    self.object_update()
+#  def test_1050_managed_object_update(self):
+#    self.object_update()
 
   def test_1100_managed_slicing_1(self):
     self.slicing_1()
@@ -1442,15 +1447,15 @@ def main():
   s.opts = opts
  
   if opts.test != '':
-    suite = unittest.TestSuite(map(s, [opts.test]))
+    suite = unittest2.TestSuite(map(s, [opts.test]))
     #suite.debug()
   else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+    suite = unittest2.TestLoader().loadTestsFromTestCase(s)
 
 #  if opts.debug == True:    
-#    unittest.TextTestRunner(verbosity=2).debug(suite)
+#    unittest2.TextTestRunner(verbosity=2).debug(suite)
 #  else:
-  unittest.TextTestRunner(verbosity=2).run(suite)
+  unittest2.TextTestRunner(verbosity=2, failfast=True).run(suite)
 
 if __name__ == '__main__':
   main()

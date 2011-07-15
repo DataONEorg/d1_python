@@ -82,6 +82,7 @@ import auth
 import event_log
 import lock_pid
 import models
+import psycopg_adapter
 import settings
 import sysmeta
 import urls
@@ -89,6 +90,7 @@ import util
 
 # Get an instance of a logger.
 logger = logging.getLogger(__name__)
+
 
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP verb)
@@ -200,7 +202,7 @@ def monitor_object(request):
 
 @auth.assert_trusted_permission
 #@lock_pid.for_read
-def monitor_event(request, head):
+def monitor_event(request):
   '''MNCore.getOperationStatistics(session[, period][, requestor][, event]
   [, format]) → MonitorList
 
@@ -261,12 +263,9 @@ def monitor_event(request, head):
     query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(
       count=Count('id')).order_by()
 
-  if head == False:
-    # Create a slice of a query based on request start and count parameters.
-    query, start, count = util.add_slice_filter(query, request)    
-  else:
-    query = query.none()
-    
+  # Create a slice of a query based on request start and count parameters.
+  query, start, count = util.add_slice_filter(query, request)    
+
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
@@ -566,7 +565,7 @@ def object(request):
       
   # objectFormat
   if 'objectFormat' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format',
+    query = util.add_wildcard_filter(query, 'format__format_id',
                                      request.GET['objectFormat'])
     query_unsliced = query
 
@@ -699,7 +698,7 @@ def object_pid_post(request, pid):
   '''
   
   # Make sure PID does not already exist.
-  if models.Object.objects.exists(pid=pid):
+  if models.Object.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.Exceptions.IdentifierNotUnique(0, '', pid)
 
   # Check that a valid MIME multipart document has been provided and that it
@@ -707,11 +706,11 @@ def object_pid_post(request, pid):
   util.validate_post(request, (('file', 'object'),
                                ('file', 'sysmeta')))
 
-  # Validate SysMeta.
+  # Deserialize metadata (implicit validation).
   sysmeta_str = request.FILES['sysmeta'].read()
-  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+
   try:
-    sysmeta.isValid()
+    sysmeta = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)  
   except:
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidRequest(0,
@@ -760,9 +759,11 @@ def object_pid_post(request, pid):
     object = models.Object()
     object.pid = pid
     object.url = url
-    object.set_format(sysmeta.objectFormat)
-    object.checksum = sysmeta.checksum
-    object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
+    object.set_format(sysmeta.objectFormat.fmtid,
+                      sysmeta.objectFormat.formatName,
+                      sysmeta.objectFormat.scienceMetadata)
+    object.checksum = sysmeta.checksum.value()
+    object.set_checksum_algorithm(sysmeta.checksum.algorithm)
     object.mtime = d1_common.util.normalize_to_utc(
       sysmeta.dateSysMetadataModified)
     object.size = sysmeta.size
@@ -777,8 +778,7 @@ def object_pid_post(request, pid):
     
     # If an access policy was provided for this object, set it. Until the access
     # policy is set, the object is unavailable to everyone except the owner.
-    sysmeta_pyxb = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)
-    if sysmeta_pyxb.accessPolicy:
+    if sysmeta.accessPolicy:
       auth.set_access_policy(pid, sysmeta_pyxb.accessPolicy)
   except:
     os.unlink(sysmeta_path)
@@ -824,75 +824,7 @@ def object_pid_put(request, pid):
   the Member Node which explicitly obsoletes the object identified by pid
   through appropriate changes to the SystemMetadata of pid and newPid.
   '''
-  util.validate_post(request, (('file', 'object'),
-                               ('file', 'sysmeta')))
-
-  # Validate SysMeta.
-  sysmeta_str = request.FILES['sysmeta'].read()
-  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
-  try:
-    sysmeta.isValid()
-  except:
-    err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'System metadata validation failed: {0}'.format(str(err)))
-  
-  # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
-  try:
-    with open(sysmeta_path, 'wb') as file:
-      file.write(sysmeta_str)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
-
-  # MN_crud.create() has a GMN specific extension. Instead of providing
-  # an object for GMN to manage, the object can be left empty and
-  # a URL to a remote location be provided instead. In that case, GMN
-  # will stream the object bytes from the remote server while handling
-  # all other object related operations like usual. 
-  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
-    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-    try:
-      url_split = urlparse.urlparse(url)
-      if url_split.scheme != 'http':
-        raise ValueError
-    except ValueError:
-      raise d1_common.types.exceptions.InvalidRequest(0,
-        'url({0}): Invalid URL specified for remote storage'.format(url)) 
-  else:
-    # http://en.wikipedia.org/wiki/File_URI_scheme
-    url = 'file:///{0}'.format(urllib.quote(pid, ''))
-    _object_pid_post_store_local(request, pid)
-        
-  # Create database entry for object.
-  object = models.Object()
-  object.pid = pid
-  object.url = url
-  object.set_format(sysmeta.objectFormat)
-  object.checksum = sysmeta.checksum
-  object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = d1_common.util.normalize_to_utc(
-    sysmeta.dateSysMetadataModified)
-  object.size = sysmeta.size
-  object.save_unique()
-
-  # Successfully updated the db, so put current datetime in status.mtime. This
-  # should store the status.mtime in UTC and for that to work, Django must be
-  # running with settings.TIME_ZONE = 'UTC'.
-  db_update_status = models.DB_update_status()
-  db_update_status.status = 'update successful'
-  db_update_status.save()
-  
-  # Log this object creation.
-  event_log.log(pid, 'create', request)
-  
-  # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
+  raise Exception('Not implemented')
 
 
 # Unrestricted.
@@ -1054,7 +986,9 @@ def _replicate_store(request):
   object = models.Object()
   object.pid = pid
   object.url = 'file:///{0}'.format(urllib.quote(pid, ''))
-  object.set_format(sysmeta.objectFormat)
+  object.set_format(sysmeta.objectFormat.fmtid,
+                    sysmeta.objectFormat.formatName,
+                    sysmeta.objectFormat.scienceMetadata)
   object.checksum = sysmeta.checksum
   object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
   object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)

@@ -78,6 +78,8 @@ logger = logging.getLogger(__name__)
 
 class exception_handler():
   def process_exception(self, request, exception):
+    #return None
+
     # An exception within this function causes a Django exception page
     # to be returned if debugging is on and a generic 500 otherwise.
 

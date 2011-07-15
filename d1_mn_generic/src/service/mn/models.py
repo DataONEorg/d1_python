@@ -64,7 +64,9 @@ class Checksum_algorithm(models.Model):
 
 # Format = The format of the object.
 class Object_format(models.Model):
-  format = models.CharField(max_length=10, unique=True, db_index=True)
+  format_id = models.CharField(max_length=100, unique=True, db_index=True)
+  format_name = models.CharField(max_length=1000, db_index=True)
+  sci_meta = models.BooleanField()
 
 
 class Object(models.Model):
@@ -77,18 +79,21 @@ class Object(models.Model):
   db_mtime = models.DateTimeField(auto_now=True, db_index=True)
   size = models.PositiveIntegerField(db_index=True)
 
-  def set_format(self, format_string):
+  def set_format(self, format_id, format_name, sci_meta):
     ''':param:
     :return:
     '''
-    self.format = Object_format.objects.get_or_create(format=format_string)[0]
+    self.format = Object_format.objects.get_or_create(
+      format_id=format_id, format_name=format_name,
+      sci_meta=sci_meta
+    )[0]
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
     ''':param:
     :return:
     '''
     self.checksum_algorithm = Checksum_algorithm.objects.get_or_create(
-      checksum_algorithm=checksum_algorithm_string
+      checksum_algorithm=str(checksum_algorithm_string)
     )[0]
 
   def save_unique(self):
@@ -118,11 +123,11 @@ class Event_log_event(models.Model):
 
 
 class Event_log_ip_address(models.Model):
-  ip_address = models.CharField(max_length=100, unique=True, db_index=True)
+  ip_address = models.CharField(max_length=20, unique=True, db_index=True)
 
 
 class Event_log_user_agent(models.Model):
-  user_agent = models.CharField(max_length=100, unique=True, db_index=True)
+  user_agent = models.CharField(max_length=200, unique=True, db_index=True)
 
 
 class Event_log_subject(models.Model):

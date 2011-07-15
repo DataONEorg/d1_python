@@ -84,11 +84,18 @@ class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
 
     for row in view_result['query']:
       objectInfo = d1_common.types.generated.dataoneTypes.ObjectInfo()
-
       objectInfo.identifier = row.pid
-      objectInfo.objectFormat = row.format.format
-      objectInfo.checksum = row.checksum
-      objectInfo.checksum.algorithm = row.checksum_algorithm.checksum_algorithm
+
+      objectFormat = d1_common.types.generated.dataoneTypes.ObjectFormat()
+      objectFormat.fmtid = row.format.format_id
+      objectFormat.formatName = row.format.format_name
+      objectFormat.scienceMetadata = row.format.sci_meta
+      objectInfo.objectFormat = objectFormat
+
+      checksum = d1_common.types.generated.dataoneTypes.Checksum(row.checksum)
+      checksum.algorithm = row.checksum_algorithm.checksum_algorithm
+      objectInfo.checksum = checksum
+
       objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(row.mtime)
       objectInfo.size = row.size
 

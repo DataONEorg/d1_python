@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ns1:nodeList xmlns:ns1="http://dataone.org/service/types/0.5.1">
+<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 
   <node replicate="true" synchronize="true" type="mn">
     <identifier>gmn_test</identifier>

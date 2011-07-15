@@ -33,7 +33,7 @@ Unit tests for GMN access control.
 import datetime
 import hashlib
 import random
-import unittest
+import unittest2
 import logging
 #from d1_client import cnclient
 #import d1_common.types.exceptions
