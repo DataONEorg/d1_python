@@ -40,7 +40,7 @@ from d1_common.types import accesspolicy_serialization
 
 EG_ACCESSPOLICY_GMN = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
-    <ns1:accessPolicy xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+    <ns1:accessPolicy xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
         <allow>
             <subject>subject0</subject>
             <subject>subject1</subject>

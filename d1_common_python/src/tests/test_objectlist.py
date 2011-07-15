@@ -40,7 +40,7 @@ import d1_common.types.objectlist_serialization
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
-    xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+    xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
     <objectInfo>
         <identifier>hdl:10255/dryad.1228/mets.xml</identifier>
         <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
@@ -79,7 +79,7 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 </ns1:objectList>"""
 
 EG_OBJECTLIST_KNB = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectList xmlns:d1="http://ns.dataone.org/service/types/0.6.1" count="5" start="0"
+<d1:objectList xmlns:d1="http://ns.dataone.org/service/types/0.6.2" count="5" start="0"
     total="673">
     <objectInfo>
         <identifier>knb:testid:201020217324403 </identifier>
@@ -122,7 +122,7 @@ EG_OBJECTLIST_KNB = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 EG_BAD_OBJECTLIST = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:objectList xmlns:d1="http://ns.dataone.org/service/types/0.6.1" count="5" start="0"
+<d1:objectList xmlns:d1="http://ns.dataone.org/service/types/0.6.2" count="5" start="0"
     total="0">
     <objectInfo>
         <identifier>knb:testid:201020217324403 </identifier>

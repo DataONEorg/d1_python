@@ -38,7 +38,7 @@ from d1_common import xmlrunner
 from d1_common.types import objectlocationlist_serialization
 
 EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 <identifier>testobj</identifier>
 <objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
 <objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
@@ -48,14 +48,14 @@ EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" ?>
 EG_OBJECTLOCATIONLIST_KNB = """"""
 
 EG_BAD_OBJECTLOCATIONLIST_1 = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 <identifier>hdl:10255/dryad.1073/mets.xml</identifier>
 <objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
 <objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
 </ns1:objectLocationList>"""
 
 EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 <identifier>hdl:10255/dryad.1073/mets.xml</identifier>
 <objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
 <objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>

@@ -38,7 +38,7 @@ from d1_common.types import checksum_serialization
 import d1_common.const
 
 EG_CHECKSUM_GMN = (
-  """<?xml version="1.0" ?><ns1:checksum algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
+  """<?xml version="1.0" ?><ns1:checksum algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
   'SHA-1', '3f56de593b6ffc536253b799b429453e3673fc19'
 )
 
@@ -46,12 +46,12 @@ EG_CHECKSUM_GMN = (
 EG_CHECKSUM_KNB = ("""""", '', '')
 
 EG_BAD_CHECKSUM_1 = (
-  """<?xml version="1.0" ?><ns1:checksum algorithm="INVALID" xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
+  """<?xml version="1.0" ?><ns1:checksum algorithm="INVALID" xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
   '', ''
 )
 
 EG_BAD_CHECKSUM_2 = (
-  """<?xml version="1.0" ?><ns1:checksumINVALID algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
+  """<?xml version="1.0" ?><ns1:checksumINVALID algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
   '', ''
 )
 
@@ -84,7 +84,7 @@ class TestChecksum(unittest.TestCase):
     f = checksum_serialization.Checksum('1' * 32)
     f.checksum.algorithm = 'MD5'
     xml_doc, content_type = f.serialize(d1_common.const.MIMETYPE_XML)
-    #<?xml version="1.0" ?><ns1:checksum algorithm="MD5" xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">11111111111111111111111111111111</ns1:checksum>
+    #<?xml version="1.0" ?><ns1:checksum algorithm="MD5" xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">11111111111111111111111111111111</ns1:checksum>
     f.deserialize(xml_doc, d1_common.const.MIMETYPE_XML)
 
   def test_checksum_serialization_2(self):

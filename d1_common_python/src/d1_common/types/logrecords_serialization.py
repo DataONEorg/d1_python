@@ -104,9 +104,9 @@ class LogRecords(serialization_base.Serialization):
     self.log_records = d1_common.types.generated.dataoneTypes.log()
 
   #<?xml version="1.0" encoding="UTF-8"?>
-  #<d1:log xmlns:d1="http://dataone.org/service/types/logging/0.1"
+  #<d1:log xmlns:d1="http://ns.dataone.org/service/types/logging/0.1"
   #     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  #     xsi:schemaLocation="http://dataone.org/service/types/logging/0.1 https://repository.dataone.org/software/cicore/trunk/schemas/logging.xsd">
+  #     xsi:schemaLocation="http://ns.dataone.org/service/types/logging/0.1 https://repository.dataone.org/software/cicore/trunk/schemas/logging.xsd">
   #    <logEntry>
   #        <entryId>845797</entryId>
   #        <identifier>nceas.951.27</identifier>
