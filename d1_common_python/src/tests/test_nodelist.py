@@ -38,7 +38,7 @@ from d1_common import xmlrunner
 from d1_common.types import nodelist_serialization
 
 EG_NODELIST_GMN = """<?xml version="1.0" ?>
-<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 
   <node replicate="true" synchronize="true" type="mn">
     <identifier>gmn_test</identifier>
@@ -93,7 +93,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" ?>
 EG_NODELIST_KNB = """"""
 
 EG_BAD_NODELIST_1 = """<?xml version="1.0" ?>
-<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 
   <node replicate="true" synchronize="true" type="mn">
     <identifier>gmn_test</identifier>
@@ -146,7 +146,7 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" ?>
 
 # Missing nodeList/node/service/name.
 EG_BAD_NODELIST_2 = """<?xml version="1.0" ?>
-<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.1">
+<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
 
   <node replicate="true" synchronize="true" type="mn">
     <identifier>gmn_test</identifier>

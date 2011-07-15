@@ -97,10 +97,10 @@ class ObjectList(serialization_base.Serialization):
 
     #<?xml version="1.0" encoding="UTF-8"?>
     #<p:objectList count="0" start="0" total="0"
-    #  xmlns:p="http://dataone.org/service/types/ObjectList/0.1"
-    #  xmlns:p1="http://dataone.org/service/types/common/0.1"
+    #  xmlns:p="http://ns.dataone.org/service/types/ObjectList/0.1"
+    #  xmlns:p1="http://ns.dataone.org/service/types/common/0.1"
     #  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    #  xsi:schemaLocation="http://dataone.org/service/types/ObjectList/0.1 objectlist.xsd ">
+    #  xsi:schemaLocation="http://ns.dataone.org/service/types/ObjectList/0.1 objectlist.xsd ">
     #  <objectInfo>
     #    <identifier>identifier</identifier>
     #    <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>

@@ -27,6 +27,14 @@ def main():
     type='string',
     default='./d1_common/types/generated'
   )
+  parser.add_option(
+    '-b',
+    '--binding',
+    dest='types_generated_binding',
+    action='store',
+    type='string',
+    default='dataoneTypes.py'
+  )
 
   (opts, args) = parser.parse_args()
 
@@ -34,6 +42,10 @@ def main():
     print 'This script should be run from ./d1_common_python/src'
     exit()
 
+  # pyxbgen sometimes does not want to overwrite existing binding classes.
+  os.unlink(os.path.join(opts.types_generated_path, opts.types_generated_binding))
+
+  # Generate.
   args = []
 
   args.append('--binding-root=\'{0}\''.format(opts.types_generated_path))
@@ -44,7 +56,7 @@ def main():
   )
 
   for xsd in glob.glob(os.path.join(opts.schema_path, '*.xsd')):
-    if os.path.basename(xsd) not in ('dataoneTypes.xsd'):
+    if os.path.basename(xsd) not in (opts.types_generated_binding):
       continue
     args.append(
       '-u \'{0}\' -m \'{1}\''.format(
