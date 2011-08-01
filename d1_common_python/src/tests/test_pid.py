@@ -39,7 +39,7 @@ from d1_common.types import pid_serialization
 
 EG_PID_GMN = (
   """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">
   testpid
   </ns1:identifier>""",
   'testpid',
@@ -50,7 +50,7 @@ EG_PID_KNB = ("""""", '', )
 
 EG_BAD_PID_1 = (
   """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">
   testpid
   </ns1:identifier>""",
   'testpid',
@@ -58,7 +58,7 @@ EG_BAD_PID_1 = (
 
 EG_BAD_PID_2 = (
   """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">
   testpid
   </ns1:identifier>""",
   'testpid',

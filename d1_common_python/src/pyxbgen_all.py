@@ -33,7 +33,7 @@ def main():
     dest='types_generated_binding',
     action='store',
     type='string',
-    default='dataoneTypes.py'
+    default='dataoneTypes.xsd'
   )
 
   (opts, args) = parser.parse_args()
@@ -43,7 +43,10 @@ def main():
     exit()
 
   # pyxbgen sometimes does not want to overwrite existing binding classes.
-  os.unlink(os.path.join(opts.types_generated_path, opts.types_generated_binding))
+  try:
+    os.unlink(os.path.join(opts.types_generated_path, opts.types_generated_binding))
+  except:
+    pass
 
   # Generate.
   args = []
