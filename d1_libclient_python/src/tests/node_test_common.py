@@ -34,7 +34,7 @@ import logging
 entries for baseurl, existingpid, and boguspid.
 '''
 TEST_INFO = {
-  'schema_version': 'http://ns.dataone.org/service/types/0.6.2',
+  'schema_version': 'http://ns.dataone.org/service/types/v1',
 
   'MN': [
     {'baseurl': 'http://localhost:8000',
