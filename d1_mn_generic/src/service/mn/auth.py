@@ -128,11 +128,8 @@ def get_owner(pid):
   from learning about the existence of objects for which they do not have
   permissions.
   '''
-  try:
-    with sysmeta.sysmeta(pid) as s:
-      return s.rightsHolder.value()
-  except EnvironmentError:
-    return 'DATAONE_UNKNOWN'
+  with sysmeta.sysmeta(pid) as s:
+    return s.rightsHolder.value()
 
 #def action_implicit(action_requested, action_allowed):
 #  '''Check if requested action is allowed.
@@ -309,14 +306,24 @@ def assert_allowed(subject, level, pid):
   :type level: str
   :param pid: Object for which permissions are being asserted.
   :type pid: Identifier
-  :return: NoneType or raises NotAuthorized.
-
+  :return:
+    - NoneType if subject is allowed.
+    - NotAuthorized if object exists and subject is not allowed.
+    - NotFound if object does not exist.
   '''
+  # Return NotFound if the object that assertion is being performed does not
+  # exist. The only operation that can be performed against a non-existing
+  # object is create(), which requires only assert_authenticated and does
+  # not use this call.
+  if not models.Object.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.NotFound(
+      0, 'Attempted to perform operation on non-existing object', pid
+    )
+  # Return NotAuthorized if subject is not allowed to perform action on object.
   if not is_allowed(subject, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, '{0} on {1} denied for {2} or object does not exist'.format(
-        level_to_action(level), pid, subject
-      ), pid
+      0, '"{0}" on "{1}" denied for "{2}"'.format(
+        level_to_action(level), pid, subject), pid
     )
 
 # ------------------------------------------------------------------------------

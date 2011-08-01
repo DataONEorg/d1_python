@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <identifier>AnserMatrix.htm</identifier>
   <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
   <size>11048</size>

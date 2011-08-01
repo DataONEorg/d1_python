@@ -26,6 +26,8 @@
 :Author: DataONE (dahl)
 :Dependencies:
   - python 2.6
+  
+Does not require that the PID to be locked exists.
 '''
 
 # Stdlib.

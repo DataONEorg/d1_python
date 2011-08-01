@@ -182,8 +182,8 @@ def monitor_object(request):
     query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
     query_unsliced = query
     
-  # Filter by referenced object format.
-  query, changed = util.add_string_filter(query, request, 'format__format',
+  # Filter by referenced object format name.
+  query, changed = util.add_string_filter(query, request, 'format__format_name',
                                           'format')
   if changed:
     query_unsliced = query
@@ -200,8 +200,8 @@ def monitor_object(request):
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
 
-@auth.assert_trusted_permission
 #@lock_pid.for_read
+@auth.assert_trusted_permission
 def monitor_event(request):
   '''MNCore.getOperationStatistics(session[, period][, requestor][, event]
   [, format]) → MonitorList
@@ -223,7 +223,8 @@ def monitor_event(request):
 
   # Filter by referenced object format.
   query, changed = util.add_string_filter(query, request,
-                                          'object__format__format', 'format')
+                                          'object__format__format_name',
+                                          'format')
   if changed:
     query_unsliced = query
   
@@ -316,8 +317,8 @@ def event_log_view(request):
           'total': query_unsliced.count(), 'type': 'log' }
 
 
-@auth.assert_trusted_permission
 #@lock_pid.for_read
+@auth.assert_trusted_permission
 def node(request):
   '''MNCore.getCapabilities() → Node
 
@@ -352,8 +353,8 @@ def node(request):
 # Public API: Tier 1: Read API  
 # ------------------------------------------------------------------------------
 
-@auth.assert_read_permission
 @lock_pid.for_read
+@auth.assert_read_permission
 def object_pid_get(request, pid, head):
   '''GET: MNRead.get(session, pid) → OctetStream
 
@@ -464,8 +465,8 @@ def _object_pid_get_local(request, response, pid):
   return response
 
 
-@auth.assert_read_permission
 @lock_pid.for_read
+@auth.assert_read_permission
 def meta_pid(request, pid):
   '''MNRead.getSystemMetadata(session, pid) → SystemMetadata
 
@@ -499,8 +500,8 @@ def meta_pid(request, pid):
                       mimetype=d1_common.const.MIMETYPE_XML)
 
 
-@auth.assert_read_permission
 @lock_pid.for_read
+@auth.assert_read_permission
 def checksum_pid(request, pid):
   '''MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
 
@@ -552,8 +553,8 @@ def object(request):
   # Filters.
   
   # startTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'startTime',
-                                            'gte')
+  query, changed = util.add_datetime_filter(query, request, 'mtime',
+                                            'startTime', 'gte')
   if changed == True:
     query_unsliced = query
   
@@ -579,8 +580,8 @@ def object(request):
           'total': query_unsliced.count(), 'type': 'object' }
 
 
-@auth.assert_trusted_permission
 #@lock_pid.for_read
+@auth.assert_trusted_permission
 def error(request):
   '''MNRead.synchronizationFailed(session, message)
 
@@ -647,8 +648,8 @@ def access_policy_pid_put_workaround(request, pid):
   return HttpResponseNotAllowed(['POST'])
 
 
-@auth.assert_changepermission_permission
 @lock_pid.for_write
+@auth.assert_changepermission_permission
 def access_policy_pid_put(request, pid):
   '''
   MNAuthorization.setAccessPolicy(pid, accessPolicy) -> Boolean
@@ -679,8 +680,8 @@ def access_policy_pid_put(request, pid):
 # Public API: Tier 3: Storage API
 # ------------------------------------------------------------------------------  
 
-@auth.assert_authenticated
 @lock_pid.for_write
+@auth.assert_authenticated
 def object_pid_post(request, pid):
   '''MNStorage.create(session, pid, object, sysmeta) → Identifier
 
@@ -699,7 +700,7 @@ def object_pid_post(request, pid):
   
   # Make sure PID does not already exist.
   if models.Object.objects.filter(pid=pid).exists():
-    raise d1_common.types.exceptions.Exceptions.IdentifierNotUnique(0, '', pid)
+    raise d1_common.types.exceptions.IdentifierNotUnique(0, '', pid)
 
   # Check that a valid MIME multipart document has been provided and that it
   # contains the required sections.
@@ -731,12 +732,34 @@ def object_pid_post(request, pid):
   # be provided instead. In that case, GMN will stream the object bytes from the
   # remote server while handling all other object related operations like usual.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
-    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
+    # To create a valid URL, we must quote the pid twice. First, so
+    # that the URL will match what's on disk and then again so that the
+    # quoting survives being passed to the web server.
+    url = '{0}{1}'.format(request.META['HTTP_VENDOR_GMN_REMOTE_URL'],
+                       urllib.quote(urllib.quote(pid, ''), ''))
     try:
+      # Validate URL syntax.
       url_split = urlparse.urlparse(url)
       if url_split.scheme not in ('http', 'https'):
         raise ValueError
+      # Validate URL.
+      if url_split.scheme == 'http':
+        conn = httplib.HTTPConnection(url_split.netloc)
+      else:
+        conn = httplib.HTTPSConnection(url_split.netloc)
+      conn.request('HEAD', url_split.path)        
+      res = conn.getresponse()
+      if res.status != 200:
+        raise ValueError
     except ValueError:
+      # Storing the SciObj on the filesystem failed so remove the SysMeta object
+      # as well.
+      try:
+        os.unlink(sysmeta_path)
+      except EnvironmentError as (errno, strerror): 
+        err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
+        err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+        raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
       raise d1_common.types.exceptions.InvalidRequest(0,
         'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
@@ -747,8 +770,14 @@ def object_pid_post(request, pid):
     except EnvironmentError as (errno, strerror):
       # Storing the SciObj on the filesystem failed so remove the SysMeta object
       # as well.
-      os.unlink(sysmeta_path)
-      err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
+      try:
+        os.unlink(sysmeta_path)
+      except EnvironmentError as (errno, strerror): 
+        err_msg = 'Could not delete sysmeta file: {0}\n'.format(sysmeta_path)
+        err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
+        raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+
+      err_msg = 'Could not create science object file for : {0}\n'.format(pid)
       err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
   
@@ -815,8 +844,8 @@ def _object_pid_post_store_local(request, pid):
     raise
         
 
-@auth.assert_write_permission
 @lock_pid.for_write
+@auth.assert_write_permission
 def object_pid_put(request, pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
 
@@ -1293,8 +1322,8 @@ def test_concurrency_clear(request):
   test_shared_dict.clear()
   return HttpResponse('')
 
-@auth.assert_trusted_permission
 @lock_pid.for_read
+@auth.assert_trusted_permission
 def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   #ret = test_shared_dict
@@ -1302,8 +1331,8 @@ def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
   time.sleep(float(sleep_after))
   return HttpResponse('{0}'.format(ret))
 
-@auth.assert_trusted_permission
 @lock_pid.for_write
+@auth.assert_trusted_permission
 def test_concurrency_write_lock(request, key, val, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   test_shared_dict[key] = val  

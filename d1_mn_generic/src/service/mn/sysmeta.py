@@ -265,10 +265,11 @@ def clear_replication_status(node_ref=None, pid=None):
 
   return removed_count
 
-
 # ------------------------------------------------------------------------------
 # Based on PyXB.
 # ------------------------------------------------------------------------------
+
+
 class sysmeta():
   '''Manipulate SysMeta objects in the SysMeta store.
   
@@ -323,7 +324,8 @@ class sysmeta():
     '''
     if timestamp is None:
       timestamp = datetime.datetime.now()
-    self.sysmeta_pyxb.dateSysMetadataModified = datetime.datetime.isoformat(timestamp)
+    self.sysmeta_pyxb.dateSysMetadataModified = \
+      datetime.datetime.isoformat(timestamp)
 
   #  def get_owner(self, owner):
   #      
