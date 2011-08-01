@@ -292,10 +292,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       # to derive this value from the session in the cert.
       #
       sysmeta_obj.rightsHolder = 'test_user_1'
-      # To create a valid URL, we must quote the pid twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
       
       headers = self.session('test_user_1')
       headers.update(vendor_specific)
@@ -1336,8 +1332,8 @@ def main():
   parser.add_option('--gmn-replicate-src-ref', dest='replicate_src_ref', action='store', type='string', default='gmn_dryad')
   parser.add_option('--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
   parser.add_option('--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
-  parser.add_option('--obj-path', dest='obj_path', action='store', type='string', default='./test_client_objects')
-  parser.add_option('--obj-url', dest='obj_url', action='store', type='string', default='http://localhost:80/test_client_objects/')
+  parser.add_option('--obj-path', dest='obj_path', action='store', type='string', default='./test_objects')
+  parser.add_option('--obj-url', dest='obj_url', action='store', type='string', default='http://localhost/test_objects/')
   parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
   parser.add_option('--quick', action='store_true', default=False, dest='quick')
   parser.add_option('--test', action='store', default='', dest='test', help='run a single test')
