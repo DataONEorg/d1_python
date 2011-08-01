@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
+  <identifier>combined.nex</identifier>
+  <objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat>
+  <size>143640</size>
+  <checksum algorithm="MD5">656a0dd558953f4676a58e7771938e0f</checksum><submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <dateUploaded>2010-04-26T07:23:46.245486</dateUploaded>
+  <dateSysMetadataModified>1998-03-14T07:23:35</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>

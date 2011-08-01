@@ -47,7 +47,7 @@ except ImportError, e:
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 
-namespaces = {'D1': 'http://ns.dataone.org/service/types/0.6.2', }
+namespaces = {'D1': 'http://ns.dataone.org/service/types/v1', }
 
 
 def main():
@@ -72,10 +72,7 @@ def main():
     #el = sysmeta_tree.xpath('/D1:systemMetadata/pid', namespaces=namespaces)
     #el[0].text = pid
 
-    obj_format = sysmeta_tree.xpath(
-      '/D1:systemMetadata/objectFormat',
-      namespaces=namespaces
-    )[0].text
+    #obj_format = sysmeta_tree.xpath('/D1:systemMetadata/objectFormat', namespaces=namespaces)[0].text
 
     #root = sysmeta_tree.getroot()
     #root.remove(sysmeta_tree.xpath('/D1:systemMetadata/objectFormat', namespaces=namespaces)[0])
@@ -86,17 +83,32 @@ def main():
     #root.append(el1)
     #del sysmeta_tree.objectFormat
 
-    el = sysmeta_tree.xpath('/D1:systemMetadata/objectFormat', namespaces=namespaces)[0]
-    el.text = ''
-    el2 = etree.Element('fmtid')
-    el2.text = obj_format
-    el.append(el2)
-    el2 = etree.Element('formatName')
-    el2.text = 'eml-2.0.0'
-    el.append(el2)
-    el2 = etree.Element('scienceMetadata')
-    el2.text = 'false'
-    el.append(el2)
+    #el = sysmeta_tree.xpath('/D1:systemMetadata/objectFormat', namespaces=namespaces)[0]
+    #el.text = ''
+    #el2 = etree.Element('fmtid')
+    #el2.text = obj_format
+    #el.append(el2)
+    #el2 = etree.Element('formatName')
+    #el2.text = 'eml-2.0.0'
+    #el.append(el2)
+    #el2 = etree.Element('scienceMetadata')
+    #el2.text = 'false'
+    #el.append(el2)
+
+    root = sysmeta_tree.getroot()
+    el0 = sysmeta_tree.xpath('/D1:systemMetadata/checksum', namespaces=namespaces)[0]
+    el1 = etree.Element('checksum')
+    el1.text = el0.text
+    el1.attrib['algorithm'] = el0.attrib['algorithm']
+    size_el = sysmeta_tree.xpath('/D1:systemMetadata/size', namespaces=namespaces)[0]
+    size_idx = root.index(size_el)
+    root.remove(el0)
+    root.insert(size_idx + 1, el1)
+
+    #root.append(el1)
+
+    #el = sysmeta_tree.xpath('/D1:systemMetadata/dateSysMetadataModified', namespaces=namespaces)
+    #el[0].text = datetime.datetime.fromtimestamp(random.randint(0, 60 * 60 * 24 * 365 * 30)).isoformat()
 
     sysmeta_xml = etree.tostring(
       sysmeta_tree,
@@ -105,11 +117,13 @@ def main():
       xml_declaration=True
     )
 
-    #print sysmeta_xml
-    #break
-    sysmeta_file = open(sysmeta_path, 'w')
-    sysmeta_file.write(sysmeta_xml)
-    sysmeta_file.close()
+    if False:
+      print sysmeta_xml
+      break
+    else:
+      sysmeta_file = open(sysmeta_path, 'w')
+      sysmeta_file.write(sysmeta_xml)
+      sysmeta_file.close()
 
 
 if __name__ == '__main__':

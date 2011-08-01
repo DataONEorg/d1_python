@@ -54,7 +54,6 @@
 '''
 
 # Stdlib.
-import csv
 import codecs
 import datetime
 import dateutil
@@ -112,9 +111,9 @@ import gmn_test_client
 OBJECTS_TOTAL_DATA = 100
 OBJECTS_UNIQUE_DATES = 99
 OBJECTS_UNIQUE_DATE_AND_FORMAT_EML = 99
-OBJECTS_PID_STARTSWITH_F = 5
-OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 5
-OBJECTS_CREATED_IN_90S = 33
+OBJECTS_PID_STARTSWITH_F = 3
+OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 2
+OBJECTS_CREATED_IN_90S = 32
 
 # CONSTANTS RELATED TO LOG COLLECTION.
 
@@ -133,7 +132,7 @@ EVENTS_READ = 198
 EVENTS_UNIQUE_DATES = 351
 EVENTS_UNIQUE_DATES_WITH_READ = 96
 EVENTS_WITH_OBJECT_FORMAT_EML = 351
-EVENTS_COUNT_OF_FIRST = 3
+EVENTS_COUNT_OF_FIRST = 1
 
 def log_setup():
   # Set up logging.
@@ -208,7 +207,7 @@ class TestSequenceFunctions(unittest2.TestCase):
 
 #  def gen_sysmeta(self, pid, size, md5, now, owner):
 #    return u'''<?xml version="1.0" encoding="UTF-8"?>
-#<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/0.6.2">
+#<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
 #  <identifier>{0}</identifier>
 #  <objectFormat>eml://ecoinformatics.org/eml-2.0.0</objectFormat>
 #  <size>{1}</size>
@@ -273,11 +272,37 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Check header.
     self.assert_counts(object_list, 0, 0, 0)
   
-  def C_create_objects(self):
+  def C_create_objects(self, vendor_specific):
     '''Populate MN with set of test objects.
     '''
-    pass
-
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+                                                      '*.sysmeta'))):
+      # Get name of corresponding object and open it.
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      object_file = open(object_path, 'r')
+  
+      # The pid is stored in the sysmeta.
+      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_xml = sysmeta_file.read()
+      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(
+        sysmeta_xml)
+      # TODO: Current spec says that rightsHolder should be supplied by
+      # client, so we copy the owner in here. I think the spec must be changed
+      # to derive this value from the session in the cert.
+      #
+      sysmeta_obj.rightsHolder = 'test_user_1'
+      # To create a valid URL, we must quote the pid twice. First, so
+      # that the URL will match what's on disk and then again so that the
+      # quoting survives being passed to the web server.
+      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
+      
+      headers = self.session('test_user_1')
+      headers.update(vendor_specific)
+                                   
+      response = client.createResponse(sysmeta_obj.identifier.value(),
+                                       object_file, sysmeta_obj,
+                                       vendorSpecific=headers)
 
   def D_object_collection_is_populated(self):
     '''Object collection is populated.
@@ -540,10 +565,11 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    self.assertRaises(d1_common.types.exceptions.NotAuthorized,
+    self.assertRaises(d1_common.types.exceptions.NotFound,
                       client.getSystemMetadata,
                       '_invalid_pid_',
                       vendorSpecific=self.session('test_user_1'))
+
 
   def get_sysmeta_by_valid_pid(self):
     '''Successful retrieval of valid object /meta/valid_pid.
@@ -552,65 +578,15 @@ class TestSequenceFunctions(unittest2.TestCase):
     response = client.getSystemMetadata('10Dappend2.txt',
       vendorSpecific=self.session('test_user_1'))
     self.assertTrue(response)
+
   
-  def xml_validation(self):
+  def objectlist_xml_validation(self):
     '''Returned XML document validates against the ObjectList schema.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.listObjectsResponse(count=d1_common.const.MAX_LISTOBJECTS) 
     xml_doc = response.read()
     d1_common.util.validate_xml(xml_doc)
-
-  def pxby_objectlist_xml(self):
-    '''Serialization: ObjectList -> XML.
-    '''
-    xml_doc = open('test_objectlist.xml').read()
-    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = object_list_1.serialize('text/xml')
-    
-    object_list_2 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_2.deserialize(doc, 'text/xml')
-    xml_doc_out, content_type = object_list_2.serialize('text/xml')
-    d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
-  
-  def pxby_objectlist_json(self):
-    '''Serialization: ObjectList -> JSON.
-    '''
-    xml_doc = open('test_objectlist.xml').read()
-    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = object_list_1.serialize(d1_common.const.MIMETYPE_JSON)
-    
-    object_list_2 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_2.deserialize(doc, d1_common.const.MIMETYPE_JSON)
-    xml_doc_out, content_type = object_list_2.serialize('text/xml')
-    
-    d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
-  
-#  def pxby_objectlist_rdf_xml(self):
-#    '''Serialization: ObjectList -> RDF XML.
-#    '''
-#    xml_doc = open('test.xml').read()
-#    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
-#    object_list_1.deserialize(xml_doc, 'text/xml')
-#    doc, content_type = object_list_1.serialize('application/rdf+xml')
-    
-  def pxby_objectlist_csv(self):
-    '''Serialization: ObjectList -> CSV.
-    '''
-    xml_doc = open('test_objectlist.xml').read()
-    object_list_1 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = object_list_1.serialize(d1_common.const.MIMETYPE_CSV)
-  
-    object_list_2 = d1_common.types.objectlist_serialization.ObjectList()
-    object_list_2.deserialize(doc, d1_common.const.MIMETYPE_CSV)
-    xml_doc_out, content_type = object_list_2.serialize('text/xml')
-    
-    # This assert currently does not pass because there is a slight difference
-    # in the ISO1601 rendering of the timestamp.
-    #d1_common.xml_compare.assert_xml_equal(xml_doc, xml_doc_out)
   
   #
   # Monitor Objects
@@ -645,7 +621,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getObjectStatistics(
-      format='eml://ecoinformatics.org/eml-2.0.0',
+      #format='eml://ecoinformatics.org/eml-2.0.0',
+      format='eml-2.0.0',
       vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
@@ -661,11 +638,12 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Monitor Objects: Cumulative, filter by object PID.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(pid='f*',
+    monitor_list = client.getObjectStatistics(pid='F*',
       vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_PID_STARTSWITH_F)
+    self.assertEqual(monitor_list.monitorInfo[0].count,
+                     OBJECTS_PID_STARTSWITH_F)
 
   def monitor_object_daily_no_filter(self):
     '''Monitor Objects: Daily, no filter.
@@ -695,7 +673,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getObjectStatistics(
-      format='eml://ecoinformatics.org/eml-2.0.0',
+      #format='eml://ecoinformatics.org/eml-2.0.0',
+      format='eml-2.0.0',
       day=True,
       vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_FORMAT_EML)
@@ -756,11 +735,13 @@ class TestSequenceFunctions(unittest2.TestCase):
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(
-      format='eml://ecoinformatics.org/eml-2.0.0',
+      #format='eml://ecoinformatics.org/eml-2.0.0',
+      format='eml-2.0.0',
       vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_TOTAL_TIME_FORMAT)
+    self.assertEqual(monitor_list.monitorInfo[0].count,
+                     EVENTS_TOTAL_EVENT_TOTAL_TIME_FORMAT)
 
   def monitor_event_cumulative_filter_by_subject(self):
     '''Monitor Events: Cumulative, filter by event PID.
@@ -839,7 +820,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     # some more formats so this can be tested properly.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(
-      format='eml://ecoinformatics.org/eml-2.0.0',
+      #format='eml://ecoinformatics.org/eml-2.0.0',
+      format='eml-2.0.0',
       day=True,
       vendorSpecific=self.session('DATAONE_TRUSTED'))
     self.assertEqual(len(monitor_list.monitorInfo),
@@ -1038,35 +1020,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.B_object_collection_is_empty()
 
   def test_1010_managed_C_create_objects(self):
-    '''Managed: Populate MN with set of test objects (local).
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
-                                                      '*.sysmeta'))):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
-  
-      # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(
-        sysmeta_xml)
-      # TODO: Current spec says that rightsHolder should be supplied by
-      # client, so we copy the owner in here. I think the spec must be changed
-      # to derive this value from the session in the cert.
-      #
-      sysmeta_obj.rightsHolder = 'test_user_1'
-      # To create a valid URL, we must quote the pid twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      #obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
-  
-      # To test the MIME Multipart poster, we provide the Sci object as a file
-      # and the SysMeta as a string.
-      response = client.createResponse(sysmeta_obj.identifier.value(),
-                                       object_file, sysmeta_obj,
-                                       self.session('test_user_1'))
+    self.C_create_objects({})
 
   def test_1010_managed_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
@@ -1131,20 +1085,8 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1220_managed_get_sysmeta_by_valid_pid(self):
     self.get_sysmeta_by_valid_pid()
 
-  def test_1230_managed_xml_validation(self):
-    self.xml_validation()
-
-  def test_1240_managed_pxby_objectlist_xml(self):
-    self.pxby_objectlist_xml()
-  
-  def test_1250_managed_pxby_objectlist_json(self):
-    self.pxby_objectlist_json()
-
-#  def test_1260_managed_pxby_objectlist_rdf_xml(self):
-#    self.pxby_objectlist_rdf_xml()
-    
-  def test_1270_managed_pxby_objectlist_csv(self):
-    self.pxby_objectlist_csv()
+  def test_1230_managed_objectlist_xml_validation(self):
+    self.objectlist_xml_validation()
 
   def test_1280_managed_monitor_object_cumulative_no_filter(self):
     self.monitor_object_cumulative_no_filter()
@@ -1237,34 +1179,11 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.B_object_collection_is_empty()
   
   def test_2010_wrapped_C_create_objects(self):
-    '''Wrapped: Populate MN with set of test objects (Remote).
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
-  
-      # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
-          
-      # This test requires the objects to also be available on a web server
-      # (http://localhost:80/test_client_objects by default). This simulates
-      # remote storage of the objects.
+    # This test requires the objects to also be available on a web server
+    # (http://localhost:80/test_client_objects by default). This simulates
+    # remote storage of the objects.
+    self.C_create_objects({'vendor_gmn_remote_url': self.opts.obj_url})
 
-      # To create a valid URL, we must quote the pid twice. First, so
-      # that the URL will match what's on disk and then again so that the
-      # quoting survives being passed to the web server.
-      sciobj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(sysmeta_obj.identifier, ''), ''))
-      scimeta_abs_url = urlparse.urljoin(self.opts.obj_url, sciobj_url)
-    
-      # To test the MIME Multipart poster, we provide the Sci object as a file
-      # and the SysMeta as a string.
-      client.createResponse(sysmeta_obj.identifier, object_file,
-                    sysmeta_xml, {'vendor_gmn_remote_url': scimeta_abs_url})
-    
   def test_2010_wrapped_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
 
@@ -1325,20 +1244,8 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2220_wrapped_get_sysmeta_by_valid_pid(self):
     self.get_sysmeta_by_valid_pid()
 
-  def test_2230_wrapped_xml_validation(self):
-    self.xml_validation()
-
-  def test_2240_wrapped_pxby_objectlist_xml(self):
-    self.pxby_objectlist_xml()
-  
-  def test_2250_wrapped_pxby_objectlist_json(self):
-    self.pxby_objectlist_json()
-
-#  def test_1260_wrapped_pxby_objectlist_rdf_xml(self):
-#    self.pxby_objectlist_rdf_xml()
-    
-  def test_2270_wrapped_pxby_objectlist_csv(self):
-    self.pxby_objectlist_csv()
+  def test_2230_wrapped_objectlist_xml_validation(self):
+    self.objectlist_xml_validation()
 
   def test_2280_wrapped_monitor_object_cumulative_no_filter(self):
     self.monitor_object_cumulative_no_filter()

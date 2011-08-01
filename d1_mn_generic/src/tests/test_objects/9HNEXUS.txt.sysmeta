@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
+  <identifier>9HNEXUS.txt</identifier>
+  <objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat>
+  <size>22274</size>
+  <checksum algorithm="MD5">f0f7b7dd090540313da908395d747834</checksum><submitter>test</submitter>
+  <rightsHolder>test</rightsHolder>
+  <dateUploaded>2010-04-26T07:25:18.942496</dateUploaded>
+  <dateSysMetadataModified>1982-12-17T13:25:14</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</D1:systemMetadata>
