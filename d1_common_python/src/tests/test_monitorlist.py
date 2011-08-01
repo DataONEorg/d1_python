@@ -39,7 +39,7 @@ from d1_common import xmlrunner
 from d1_common.types import monitorlist_serialization
 
 EG_MONITORLIST_GMN = """<?xml version="1.0" ?>
-<ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+<ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/v1">
 <monitorInfo><date>2000-01-01</date><count>1</count></monitorInfo>
 <monitorInfo><date>2001-03-21</date><count>2</count></monitorInfo>
 <monitorInfo><date>1999-12-31</date><count>3</count></monitorInfo>
@@ -49,7 +49,7 @@ EG_MONITORLIST_GMN = """<?xml version="1.0" ?>
 EG_MONITORLIST_KNB = """"""
 
 EG_BAD_MONITORLIST_1 = """<?xml version="1.0" ?>
-<ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+<ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/v1">
 <INVALID><date>2000-01-01</date><count>1</count></monitorInfo>
 <monitorInfo><date>2001-03-21</date><count>2</count></monitorInfo>
 <monitorInfo><date>1999-12-31</date><count>3</count></monitorInfo>
@@ -57,7 +57,7 @@ EG_BAD_MONITORLIST_1 = """<?xml version="1.0" ?>
 
 # Invalid date.
 EG_BAD_MONITORLIST_2 = """<?xml version="1.0" ?>
-<ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/0.6.2">
+<ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/v1">
 <monitorInfo><date>2000-01-01</date><count>1</count></monitorInfo>
 <monitorInfo><date>2001-02-29</date><count>2</count></monitorInfo>
 <monitorInfo><date>1999-12-31</date><count>3</count></monitorInfo>

@@ -40,9 +40,9 @@ from d1_common import xmlrunner
 import d1_common.mime_multipart
 
 sysmeta_xml_correct = u"""<?xml version="1.0" encoding="UTF-8"?>
-<systemMetadata xmlns="http://ns.dataone.org/service/types/0.6.2"
+<systemMetadata xmlns="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/0.6.2">
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
     <identifier xmlns="">identifier0</identifier>
     <objectFormat xmlns="">eml://ecoinformatics.org/eml-2.0.0</objectFormat>
     <size xmlns="">-1073741773</size>
