@@ -40,65 +40,57 @@ import d1_common.types.exceptions
 from d1_common.types import systemmetadata
 
 EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
-<systemMetadata xmlns="http://ns.dataone.org/service/types/v1"
+<d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
-    <identifier xmlns="">identifier0</identifier>
-    <objectFormat xmlns="">eml://ecoinformatics.org/eml-2.0.0</objectFormat>
-    <size xmlns="">-1073741773</size>
-    <submitter xmlns="">submitter0</submitter>
-    <rightsHolder xmlns="">rightsHolder0</rightsHolder>
-    <accessPolicy xmlns="">
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+    <identifier>identifier0</identifier>
+    <objectFormat>
+        <fmtid>fmtid0</fmtid>
+        <formatName>formatName0</formatName>
+        <scienceMetadata>false</scienceMetadata>
+    </objectFormat>
+    <size>-1073741773</size>
+    <checksum algorithm="SHA-1">checksum0</checksum>
+    <submitter>submitter0</submitter>
+    <rightsHolder>rightsHolder0</rightsHolder>
+    <accessPolicy>
         <allow>
             <subject>subject0</subject>
             <subject>subject1</subject>
             <permission>read</permission>
             <permission>read</permission>
-            <resource>resource0</resource>
-            <resource>resource1</resource>
         </allow>
         <allow>
             <subject>subject2</subject>
             <subject>subject3</subject>
             <permission>read</permission>
             <permission>read</permission>
-            <resource>resource2</resource>
-            <resource>resource3</resource>
         </allow>
     </accessPolicy>
-    <replicationPolicy xmlns="" replicationAllowed="false" numberReplicas="0">
+    <replicationPolicy replicationAllowed="false" numberReplicas="0">
         <preferredMemberNode>preferredMemberNode0</preferredMemberNode>
         <preferredMemberNode>preferredMemberNode1</preferredMemberNode>
         <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
         <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
     </replicationPolicy>
-    <obsoletes xmlns="">obsoletes0</obsoletes>
-    <obsoletes xmlns="">obsoletes1</obsoletes>
-    <obsoletedBy xmlns="">obsoletedBy0</obsoletedBy>
-    <obsoletedBy xmlns="">obsoletedBy1</obsoletedBy>
-    <derivedFrom xmlns="">derivedFrom0</derivedFrom>
-    <derivedFrom xmlns="">derivedFrom1</derivedFrom>
-    <describes xmlns="">describes0</describes>
-    <describes xmlns="">describes1</describes>
-    <describedBy xmlns="">describedBy0</describedBy>
-    <describedBy xmlns="">describedBy1</describedBy>
-    <checksum xmlns="" algorithm="SHA-1">checksum0</checksum>
-    <embargoExpires xmlns="">2006-05-04T18:13:51.0Z</embargoExpires>
-    <dateUploaded xmlns="">2006-05-04T18:13:51.0Z</dateUploaded>
-    <dateSysMetadataModified xmlns="">2006-05-04T18:13:51.0Z</dateSysMetadataModified>
-    <originMemberNode xmlns="">originMemberNode0</originMemberNode>
-    <authoritativeMemberNode xmlns="">authoritativeMemberNode0</authoritativeMemberNode>
-    <replica xmlns="">
+    <obsoletes>obsoletes0</obsoletes>
+    <obsoletedBy>obsoletedBy0</obsoletedBy>
+    <dateUploaded>2006-05-04T18:13:51.0Z</dateUploaded>
+    <dateSysMetadataModified>2006-05-04T18:13:51.0Z</dateSysMetadataModified>
+    <originMemberNode>originMemberNode0</originMemberNode>
+    <authoritativeMemberNode>authoritativeMemberNode0</authoritativeMemberNode>
+    <replica>
         <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
         <replicationStatus>queued</replicationStatus>
         <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
     </replica>
-    <replica xmlns="">
+    <replica>
         <replicaMemberNode>replicaMemberNode1</replicaMemberNode>
         <replicationStatus>queued</replicationStatus>
         <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
     </replica>
-</systemMetadata>"""
+</d1:systemMetadata>
+"""
 
 EG_BAD_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
@@ -170,27 +162,18 @@ class TestSystemMetadata(unittest.TestCase):
     self.assertRaises(d1_common.types.exceptions.NotImplemented, sysm.toCSV)
 
   def testValidateSystemMetadata(self):
-    #Try loading a bad document with validation turned on.
-    #Should fail with an "UnrecognizedContentError"
-    try:
-      sysm = systemmetadata.CreateFromDocument(EG_BAD_SYSMETA)
-      self.assertFalse(sysm)
-    except Exception, e:
-      logging.debug(repr(e))
-      self.assertTrue(isinstance(e, pyxb.UnrecognizedContentError))
-    #Turning off validation should not raise an exception
-    pyxb.RequireValidWhenParsing(False)
-    try:
-      sysm = systemmetadata.CreateFromDocument(EG_BAD_SYSMETA)
-      self.assertTrue(True)
-    except Exception, e:
-      logging.debug(repr(e))
-      self.assertFalse(isinstance(e, pyxb.UnrecognizedContentError))
-    #Turn validation back on and check for error
+    # Try loading a bad document with validation turned on.
+    # Should fail with a PyXBException.
     pyxb.RequireValidWhenParsing(True)
-    sysm = systemmetadata.CreateFromDocument(EG_SYSMETA)
+    try:
+      sysm = systemmetadata.CreateFromDocument(EG_BAD_SYSMETA)
+    except pyxb.PyXBException, e:
+      logging.debug(repr(e))
+    else:
+      self.assertFalse(True)
 
 #===============================================================================
+
 if __name__ == "__main__":
   argv = sys.argv
   if "--debug" in argv:

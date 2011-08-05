@@ -40,65 +40,57 @@ from d1_common import xmlrunner
 import d1_common.mime_multipart
 
 sysmeta_xml_correct = u"""<?xml version="1.0" encoding="UTF-8"?>
-<systemMetadata xmlns="http://ns.dataone.org/service/types/v1"
+<d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
-    <identifier xmlns="">identifier0</identifier>
-    <objectFormat xmlns="">eml://ecoinformatics.org/eml-2.0.0</objectFormat>
-    <size xmlns="">-1073741773</size>
-    <submitter xmlns="">submitter0</submitter>
-    <rightsHolder xmlns="">rightsHolder0</rightsHolder>
-    <accessPolicy xmlns="">
+    <identifier>identifier0</identifier>
+    <objectFormat>
+        <fmtid>fmtid0</fmtid>
+        <formatName>formatName0</formatName>
+        <scienceMetadata>false</scienceMetadata>
+    </objectFormat>
+    <size>-1073741773</size>
+    <checksum algorithm="SHA-1">checksum0</checksum>
+    <submitter>submitter0</submitter>
+    <rightsHolder>rightsHolder0</rightsHolder>
+    <accessPolicy>
         <allow>
             <subject>subject0</subject>
             <subject>subject1</subject>
             <permission>read</permission>
             <permission>read</permission>
-            <resource>resource0</resource>
-            <resource>resource1</resource>
         </allow>
         <allow>
             <subject>subject2</subject>
             <subject>subject3</subject>
             <permission>read</permission>
             <permission>read</permission>
-            <resource>resource2</resource>
-            <resource>resource3</resource>
         </allow>
     </accessPolicy>
-    <replicationPolicy xmlns="" replicationAllowed="false" numberReplicas="0">
+    <replicationPolicy replicationAllowed="false" numberReplicas="0">
         <preferredMemberNode>preferredMemberNode0</preferredMemberNode>
         <preferredMemberNode>preferredMemberNode1</preferredMemberNode>
         <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
         <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
     </replicationPolicy>
-    <obsoletes xmlns="">obsoletes0</obsoletes>
-    <obsoletes xmlns="">obsoletes1</obsoletes>
-    <obsoletedBy xmlns="">obsoletedBy0</obsoletedBy>
-    <obsoletedBy xmlns="">obsoletedBy1</obsoletedBy>
-    <derivedFrom xmlns="">derivedFrom0</derivedFrom>
-    <derivedFrom xmlns="">derivedFrom1</derivedFrom>
-    <describes xmlns="">describes0</describes>
-    <describes xmlns="">describes1</describes>
-    <describedBy xmlns="">describedBy0</describedBy>
-    <describedBy xmlns="">describedBy1</describedBy>
-    <checksum xmlns="" algorithm="SHA-1">checksum0</checksum>
-    <embargoExpires xmlns="">2006-05-04T18:13:51.0Z</embargoExpires>
-    <dateUploaded xmlns="">2006-05-04T18:13:51.0Z</dateUploaded>
-    <dateSysMetadataModified xmlns="">2006-05-04T18:13:51.0Z</dateSysMetadataModified>
-    <originMemberNode xmlns="">originMemberNode0</originMemberNode>
-    <authoritativeMemberNode xmlns="">authoritativeMemberNode0</authoritativeMemberNode>
-    <replica xmlns="">
+    <obsoletes>obsoletes0</obsoletes>
+    <obsoletedBy>obsoletedBy0</obsoletedBy>
+    <dateUploaded>2006-05-04T18:13:51.0Z</dateUploaded>
+    <dateSysMetadataModified>2006-05-04T18:13:51.0Z</dateSysMetadataModified>
+    <originMemberNode>originMemberNode0</originMemberNode>
+    <authoritativeMemberNode>authoritativeMemberNode0</authoritativeMemberNode>
+    <replica>
         <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
         <replicationStatus>queued</replicationStatus>
         <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
     </replica>
-    <replica xmlns="">
+    <replica>
         <replicaMemberNode>replicaMemberNode1</replicaMemberNode>
         <replicationStatus>queued</replicationStatus>
         <replicaVerified>2006-05-04T18:13:51.0Z</replicaVerified>
     </replica>
-</systemMetadata>"""
+</d1:systemMetadata>
+"""
 
 binary_data = "\
 \x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\
@@ -135,65 +127,57 @@ Content-Disposition\x3a\x20form-data\x3b\x20name\x3d\x22file_key_1\x22\x3b\x20fi
 Content-Type\x3a\x20application\x2foctet-stream\x0d\n\
 \x0d\n\
 \x3c\x3fxml\x20version\x3d\x221\x2e0\x22\x20encoding\x3d\x22UTF-8\x22\x3f\x3e\n\
-\x3csystemMetadata\x20xmlns\x3d\x22http\x3a\x2f\x2fns\x2edataone\x2eorg\x2fservice\x2ftypes\x2f0\x2e6\x2e1\x22\n\
+\x3cd1\x3asystemMetadata\x20xmlns\x3ad1\x3d\x22http\x3a\x2f\x2fns\x2edataone\x2eorg\x2fservice\x2ftypes\x2fv1\x22\n\
 \x20xmlns\x3axsi\x3d\x22http\x3a\x2f\x2fwww\x2ew3\x2eorg\x2f2001\x2fXMLSchema-instance\x22\n\
-\x20xsi\x3aschemaLocation\x3d\x22http\x3a\x2f\x2fns\x2edataone\x2eorg\x2fservice\x2ftypes\x2f0\x2e6\x2e1\x22\x3e\n\
-\x20\x20\x20\x20\x3cidentifier\x20xmlns\x3d\x22\x22\x3eidentifier0\x3c\x2fidentifier\x3e\n\
-\x20\x20\x20\x20\x3cobjectFormat\x20xmlns\x3d\x22\x22\x3eeml\x3a\x2f\x2fecoinformatics\x2eorg\x2feml-2\x2e0\x2e0\x3c\x2fobjectFormat\x3e\n\
-\x20\x20\x20\x20\x3csize\x20xmlns\x3d\x22\x22\x3e-1073741773\x3c\x2fsize\x3e\n\
-\x20\x20\x20\x20\x3csubmitter\x20xmlns\x3d\x22\x22\x3esubmitter0\x3c\x2fsubmitter\x3e\n\
-\x20\x20\x20\x20\x3crightsHolder\x20xmlns\x3d\x22\x22\x3erightsHolder0\x3c\x2frightsHolder\x3e\n\
-\x20\x20\x20\x20\x3caccessPolicy\x20xmlns\x3d\x22\x22\x3e\n\
+\x20xsi\x3aschemaLocation\x3d\x22http\x3a\x2f\x2fns\x2edataone\x2eorg\x2fservice\x2ftypes\x2fv1\x22\x3e\n\
+\x20\x20\x20\x20\x3cidentifier\x3eidentifier0\x3c\x2fidentifier\x3e\n\
+\x20\x20\x20\x20\x3cobjectFormat\x3e\n\
+\x20\x20\x20\x20\x20\x20\x20\x20\x3cfmtid\x3efmtid0\x3c\x2ffmtid\x3e\n\
+\x20\x20\x20\x20\x20\x20\x20\x20\x3cformatName\x3eformatName0\x3c\x2fformatName\x3e\n\
+\x20\x20\x20\x20\x20\x20\x20\x20\x3cscienceMetadata\x3efalse\x3c\x2fscienceMetadata\x3e\n\
+\x20\x20\x20\x20\x3c\x2fobjectFormat\x3e\n\
+\x20\x20\x20\x20\x3csize\x3e-1073741773\x3c\x2fsize\x3e\n\
+\x20\x20\x20\x20\x3cchecksum\x20algorithm\x3d\x22SHA-1\x22\x3echecksum0\x3c\x2fchecksum\x3e\n\
+\x20\x20\x20\x20\x3csubmitter\x3esubmitter0\x3c\x2fsubmitter\x3e\n\
+\x20\x20\x20\x20\x3crightsHolder\x3erightsHolder0\x3c\x2frightsHolder\x3e\n\
+\x20\x20\x20\x20\x3caccessPolicy\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3callow\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3csubject\x3esubject0\x3c\x2fsubject\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3csubject\x3esubject1\x3c\x2fsubject\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cpermission\x3eread\x3c\x2fpermission\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cpermission\x3eread\x3c\x2fpermission\x3e\n\
-\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cresource\x3eresource0\x3c\x2fresource\x3e\n\
-\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cresource\x3eresource1\x3c\x2fresource\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3c\x2fallow\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3callow\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3csubject\x3esubject2\x3c\x2fsubject\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3csubject\x3esubject3\x3c\x2fsubject\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cpermission\x3eread\x3c\x2fpermission\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cpermission\x3eread\x3c\x2fpermission\x3e\n\
-\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cresource\x3eresource2\x3c\x2fresource\x3e\n\
-\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x3cresource\x3eresource3\x3c\x2fresource\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3c\x2fallow\x3e\n\
 \x20\x20\x20\x20\x3c\x2faccessPolicy\x3e\n\
-\x20\x20\x20\x20\x3creplicationPolicy\x20xmlns\x3d\x22\x22\x20replicationAllowed\x3d\x22false\x22\x20numberReplicas\x3d\x220\x22\x3e\n\
+\x20\x20\x20\x20\x3creplicationPolicy\x20replicationAllowed\x3d\x22false\x22\x20numberReplicas\x3d\x220\x22\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3cpreferredMemberNode\x3epreferredMemberNode0\x3c\x2fpreferredMemberNode\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3cpreferredMemberNode\x3epreferredMemberNode1\x3c\x2fpreferredMemberNode\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3cblockedMemberNode\x3eblockedMemberNode0\x3c\x2fblockedMemberNode\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3cblockedMemberNode\x3eblockedMemberNode1\x3c\x2fblockedMemberNode\x3e\n\
 \x20\x20\x20\x20\x3c\x2freplicationPolicy\x3e\n\
-\x20\x20\x20\x20\x3cobsoletes\x20xmlns\x3d\x22\x22\x3eobsoletes0\x3c\x2fobsoletes\x3e\n\
-\x20\x20\x20\x20\x3cobsoletes\x20xmlns\x3d\x22\x22\x3eobsoletes1\x3c\x2fobsoletes\x3e\n\
-\x20\x20\x20\x20\x3cobsoletedBy\x20xmlns\x3d\x22\x22\x3eobsoletedBy0\x3c\x2fobsoletedBy\x3e\n\
-\x20\x20\x20\x20\x3cobsoletedBy\x20xmlns\x3d\x22\x22\x3eobsoletedBy1\x3c\x2fobsoletedBy\x3e\n\
-\x20\x20\x20\x20\x3cderivedFrom\x20xmlns\x3d\x22\x22\x3ederivedFrom0\x3c\x2fderivedFrom\x3e\n\
-\x20\x20\x20\x20\x3cderivedFrom\x20xmlns\x3d\x22\x22\x3ederivedFrom1\x3c\x2fderivedFrom\x3e\n\
-\x20\x20\x20\x20\x3cdescribes\x20xmlns\x3d\x22\x22\x3edescribes0\x3c\x2fdescribes\x3e\n\
-\x20\x20\x20\x20\x3cdescribes\x20xmlns\x3d\x22\x22\x3edescribes1\x3c\x2fdescribes\x3e\n\
-\x20\x20\x20\x20\x3cdescribedBy\x20xmlns\x3d\x22\x22\x3edescribedBy0\x3c\x2fdescribedBy\x3e\n\
-\x20\x20\x20\x20\x3cdescribedBy\x20xmlns\x3d\x22\x22\x3edescribedBy1\x3c\x2fdescribedBy\x3e\n\
-\x20\x20\x20\x20\x3cchecksum\x20xmlns\x3d\x22\x22\x20algorithm\x3d\x22SHA-1\x22\x3echecksum0\x3c\x2fchecksum\x3e\n\
-\x20\x20\x20\x20\x3cembargoExpires\x20xmlns\x3d\x22\x22\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2fembargoExpires\x3e\n\
-\x20\x20\x20\x20\x3cdateUploaded\x20xmlns\x3d\x22\x22\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2fdateUploaded\x3e\n\
-\x20\x20\x20\x20\x3cdateSysMetadataModified\x20xmlns\x3d\x22\x22\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2fdateSysMetadataModified\x3e\n\
-\x20\x20\x20\x20\x3coriginMemberNode\x20xmlns\x3d\x22\x22\x3eoriginMemberNode0\x3c\x2foriginMemberNode\x3e\n\
-\x20\x20\x20\x20\x3cauthoritativeMemberNode\x20xmlns\x3d\x22\x22\x3eauthoritativeMemberNode0\x3c\x2fauthoritativeMemberNode\x3e\n\
-\x20\x20\x20\x20\x3creplica\x20xmlns\x3d\x22\x22\x3e\n\
+\x20\x20\x20\x20\x3cobsoletes\x3eobsoletes0\x3c\x2fobsoletes\x3e\n\
+\x20\x20\x20\x20\x3cobsoletedBy\x3eobsoletedBy0\x3c\x2fobsoletedBy\x3e\n\
+\x20\x20\x20\x20\x3cdateUploaded\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2fdateUploaded\x3e\n\
+\x20\x20\x20\x20\x3cdateSysMetadataModified\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2fdateSysMetadataModified\x3e\n\
+\x20\x20\x20\x20\x3coriginMemberNode\x3eoriginMemberNode0\x3c\x2foriginMemberNode\x3e\n\
+\x20\x20\x20\x20\x3cauthoritativeMemberNode\x3eauthoritativeMemberNode0\x3c\x2fauthoritativeMemberNode\x3e\n\
+\x20\x20\x20\x20\x3creplica\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3creplicaMemberNode\x3ereplicaMemberNode0\x3c\x2freplicaMemberNode\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3creplicationStatus\x3equeued\x3c\x2freplicationStatus\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3creplicaVerified\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2freplicaVerified\x3e\n\
 \x20\x20\x20\x20\x3c\x2freplica\x3e\n\
-\x20\x20\x20\x20\x3creplica\x20xmlns\x3d\x22\x22\x3e\n\
+\x20\x20\x20\x20\x3creplica\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3creplicaMemberNode\x3ereplicaMemberNode1\x3c\x2freplicaMemberNode\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3creplicationStatus\x3equeued\x3c\x2freplicationStatus\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3creplicaVerified\x3e2006-05-04T18\x3a13\x3a51\x2e0Z\x3c\x2freplicaVerified\x3e\n\
 \x20\x20\x20\x20\x3c\x2freplica\x3e\n\
-\x3c\x2fsystemMetadata\x3e\x0d\n\
+\x3c\x2fd1\x3asystemMetadata\x3e\n\
+\x0d\n\
 ------------6B3C785C-6290-11DF-A355-A6ECDED72085_\x24\x0d\n\
 Content-Disposition\x3a\x20form-data\x3b\x20name\x3d\x22file_key_2\x22\x3b\x20filename\x3d\x22file_name_2\x22\x0d\n\
 Content-Type\x3a\x20application\x2foctet-stream\x0d\n\

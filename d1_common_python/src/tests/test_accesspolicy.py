@@ -40,24 +40,22 @@ from d1_common.types import accesspolicy_serialization
 
 EG_ACCESSPOLICY_GMN = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
-    <ns1:accessPolicy xmlns:ns1="http://ns.dataone.org/service/types/v1">
-        <allow>
-            <subject>subject0</subject>
-            <subject>subject1</subject>
-            <permission>read</permission>
-            <permission>read</permission>
-            <resource>resource0</resource>
-            <resource>resource1</resource>
-        </allow>
-        <allow>
-            <subject>subject2</subject>
-            <subject>subject3</subject>
-            <permission>read</permission>
-            <permission>read</permission>
-            <resource>resource2</resource>
-            <resource>resource3</resource>
-        </allow>
-    </ns1:accessPolicy>
+<d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
+    <allow>
+        <subject>subject0</subject>
+        <subject>subject1</subject>
+        <permission>read</permission>
+        <permission>read</permission>
+    </allow>
+    <allow>
+        <subject>subject2</subject>
+        <subject>subject3</subject>
+        <permission>read</permission>
+        <permission>read</permission>
+    </allow>
+</d1:accessPolicy>
 """
 
 
