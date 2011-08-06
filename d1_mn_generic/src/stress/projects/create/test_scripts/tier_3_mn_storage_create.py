@@ -30,6 +30,7 @@
 
 # Std.
 import datetime
+import os
 import random
 import sys
 import StringIO
@@ -41,21 +42,23 @@ import xml.sax.saxutils
 import iso8601
 
 # D1.
-sys.path.append('./client')
-sys.path.append('./projects/gmn/test_scripts/client')
 import d1_common.const
 import d1_common.types.exceptions
-import d1_test_case
 
 # App.
-sys.path.append('./client')
-sys.path.append('./projects/gmn/test_scripts/client')
+
+# Path to modules shared between projects.
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+import sys
+sys.path.append(_here('../../../projects/_shared/'))
+
 import d1_common.const
 import test_client
 import test_utilities
+import d1_test_case
 import generate_random_sysmeta
 
-baseurl = 'http://localhost/mn'
+baseurl = 'https://129.24.0.110/mn'
 
 
 class Transaction(object):
