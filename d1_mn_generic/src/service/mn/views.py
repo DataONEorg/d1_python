@@ -451,13 +451,8 @@ def _object_pid_get_remote(request, response, pid, url, url_split):
 
 # Unrestricted.
 def _object_pid_get_local(request, response, pid):
-  file_in_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
-  try:
-    file = open(file_in_path, 'rb')
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not open disk object: {0}\n'.format(file_in_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
+  file_in_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
+  file = open(file_in_path, 'rb')
 
   # Return the raw bytes of the object in chunks.
   response._container = util.fixed_chunk_size_iterator(file)
@@ -484,13 +479,8 @@ def meta_pid(request, pid):
       'Non-existing System Metadata object was requested', pid)
   
   # Open file for streaming.  
-  file_in_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
-  try:
-    file = open(file_in_path, 'r')
-  except EnvironmentError as (errno, strerror):
-    raise d1_common.types.exceptions.ServiceFailure(0,
-      'I/O error({0}): {1}\n'.format(errno, strerror))
+  file_in_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
+  file = open(file_in_path, 'rb')
 
   # Log access of the SysMeta of this object.
   event_log.log(pid, 'read', request)
@@ -716,16 +706,15 @@ def object_pid_post(request, pid):
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidRequest(0,
       'System metadata validation failed: {0}'.format(str(err)))
-  
+
   # Write SysMeta bytes to store.
-  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,                                                                        ''))
+  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
   try:
-    with open(sysmeta_path, 'wb') as file:
-      file.write(sysmeta_str)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+    os.makedirs(os.path.dirname(sysmeta_path))
+  except OSError:
+    pass
+  with open(sysmeta_path, 'wb') as file:
+    file.write(sysmeta_str)
 
   # create() has a GMN specific extension. Instead of providing an object for
   # GMN to manage, the object can be left empty and a URL to a remote location
@@ -754,12 +743,7 @@ def object_pid_post(request, pid):
     except ValueError:
       # Storing the SciObj on the filesystem failed so remove the SysMeta object
       # as well.
-      try:
-        os.unlink(sysmeta_path)
-      except EnvironmentError as (errno, strerror): 
-        err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
-        err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-        raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+      os.unlink(sysmeta_path)
       raise d1_common.types.exceptions.InvalidRequest(0,
         'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
@@ -767,19 +751,11 @@ def object_pid_post(request, pid):
     url = 'file:///{0}'.format(urllib.quote(pid, ''))
     try:
       _object_pid_post_store_local(request, pid)
-    except EnvironmentError as (errno, strerror):
+    except EnvironmentError:
       # Storing the SciObj on the filesystem failed so remove the SysMeta object
       # as well.
-      try:
-        os.unlink(sysmeta_path)
-      except EnvironmentError as (errno, strerror): 
-        err_msg = 'Could not delete sysmeta file: {0}\n'.format(sysmeta_path)
-        err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-        raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
-
-      err_msg = 'Could not create science object file for : {0}\n'.format(pid)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+      os.unlink(sysmeta_path)
+      raise
   
   # Catch any exceptions when creating the db entries, so that the filesystem
   # objects can be cleaned up.
@@ -811,8 +787,7 @@ def object_pid_post(request, pid):
       auth.set_access_policy(pid, sysmeta_pyxb.accessPolicy)
   except:
     os.unlink(sysmeta_path)
-    object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
+    object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
     os.unlink(object_path)
     raise
   
@@ -828,19 +803,18 @@ def object_pid_post(request, pid):
 # Unrestricted.
 def _object_pid_post_store_local(request, pid):
   logger.info('pid({0}): Writing object to disk'.format(pid))
-
-  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
-
+  object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
+  try:
+    os.makedirs(os.path.dirname(object_path))
+  except OSError:
+    pass
   try:
     with open(object_path, 'wb') as file:
       for chunk in request.FILES['object'].chunks():
         file.write(chunk)
-  except EnvironmentError as (errno, strerror):
+  except EnvironmentError:
     # The object may have been partially created. If so, delete the file.
-    try:
-      os.unlink(object_path)
-    except:
-      pass
+    os.unlink(object_path)
     raise
         
 
@@ -880,27 +854,15 @@ def object_pid_delete(request, pid):
       'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
 
   if url_split.scheme == 'file':
-    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
-    try:
-      os.unlink(sciobj_path)
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not delete managed SciObj: {0}\n'.format(sciobj_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
+    sciobj_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
+    os.unlink(sciobj_path)
  
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
     
   # Delete the SysMeta object.
-  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
-  try:
-    os.unlink(sysmeta_path)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not delete SciMeta: {0}\n'.format(sysmeta_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
+  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
+  os.unlink(sysmeta_path)
 
   # Delete the DB entry.
 
@@ -955,14 +917,13 @@ def replicate(request):
         sysmeta.pid))
 
   # Write SysMeta bytes to cache folder.
-  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(sysmeta.pid, ''))
+  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, sysmeta.pid)
   try:
-    with open(sysmeta_path, 'wb') as file:
-      file.write(sysmeta_str)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write sysmeta file: {0}\n'.format(sysmeta_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+    os.makedirs(os.path.dirname(sysmeta_path))
+  except OSError:
+    pass
+  with open(sysmeta_path, 'wb') as file:
+    file.write(sysmeta_str)
 
   # Create replication work item for this replication.  
   replication_item = models.Replication_work_queue()
@@ -1001,15 +962,14 @@ def _replicate_store(request):
 
   # Write SciData to object store.  
   logger.info('pid({0}): Writing object to disk'.format(pid))
-  object_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid, ''))
+  object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
   try:
-    with open(object_path, 'wb') as file:
-      for chunk in request.FILES['object'].chunks():
-        file.write(chunk)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not write object file: {0}\n'.format(object_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+    os.makedirs(os.path.dirname(object_path))
+  except OSError:
+    pass
+  with open(object_path, 'wb') as file:
+    for chunk in request.FILES['object'].chunks():
+      file.write(chunk)
 
   # Create database entry for object.
   object = models.Object()
@@ -1165,14 +1125,9 @@ def test_delete_all_objects(request):
   models.DB_update_status.objects.all().delete()
 
   # Clear the SysMeta cache.
-  try:
-    for sysmeta_file in os.listdir(settings.SYSMETA_STORE_PATH):
-      if os.path.isfile(sysmeta_file):
-        os.unlink(os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_file))
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not clear SysMeta cache\n'
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
+  for root, dirs, files in os.walk(settings.SYSMETA_STORE_PATH):
+    for file in files:
+      os.unlink(os.path.join(root, file))
 
   # Log this operation.
   logger.info('client({0}): Deleted all repository object records'.format(
@@ -1211,27 +1166,15 @@ def test_delete_single_object(request, pid):
       'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
 
   if url_split.scheme == 'file':
-    sciobj_path = os.path.join(settings.OBJECT_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
-    try:
-      os.unlink(sciobj_path)
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not delete managed SciObj: {0}\n'.format(sciobj_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
- 
+    sciobj_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
+    os.unlink(sciobj_path)
+
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
     
   # Delete the SysMeta object.
-  sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid,
-                                                                        ''))
-  try:
-    os.unlink(sysmeta_path)
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Could not delete SciMeta: {0}\n'.format(sysmeta_path)
-    err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-    raise d1_common.types.exceptions.ServiceFailure(0, err_msg)    
+  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
+  os.unlink(sysmeta_path)
 
   # Delete the DB entry.
 

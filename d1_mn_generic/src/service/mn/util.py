@@ -41,9 +41,11 @@ import stat
 import sys
 import time
 import traceback
+import urllib
 import uuid
 import inspect
 import json
+import zlib
 
 # Django.
 from django.core.exceptions import ImproperlyConfigured
@@ -100,6 +102,27 @@ logger = logging.getLogger(__name__)
 #  d_tz = tz.normalize(tz.localize(d))
 #  utc = pytz.timezone('UTC')
 #  d_utc = d_tz.astimezone(utc)
+
+
+def store_path(root, pid):
+  '''Determine the location in the object or system metadata store of the file
+  holding an object's bytes.
+  
+  :param pid: The object's persistent identifier.
+  :type pid: Identifier
+  :return: Object store relative path to the file.
+  :type: string
+
+  Because it may be inefficient to store millions of files in a single folder
+  and because such a folder is hard to deal with when performing backups and
+  maintenance, GMN stores the objects in a folder hierarchy of 256 folders, each
+  holding 256 folders (for a total of 65535 folders). The location in the
+  hierarchy for a given object is determined based on its PID.
+  '''
+  z = zlib.adler32(pid)
+  a = z & 0xff ^ (z >> 8 & 0xff)
+  b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
+  return os.path.join(root, '{0:03}'.format(a), '{0:03}'.format(b), urllib.quote(pid, ''))
 
 
 def validate_post(request, parts):

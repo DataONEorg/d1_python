@@ -91,8 +91,37 @@ class exception_handler():
     #    if settings.GMN_DEBUG == True and request.META['HTTP_USER_AGENT'] != d1_common.const.USER_AGENT:
     #      return None
 
+    # If the exception is an EnvironmentError (file IO or OS error), we
+    # translate it to a DataONE ServiceFailure error that includes details
+    # of the error.
+    if isinstance(exception, EnvironmentError):
+      errno, strerror = exception
+      err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
+      exception = d1_common.types.exceptions.ServiceFailure(0, err_msg)
+
     # If the exception is a DataONE exception, we serialize it out.
     if isinstance(exception, d1_common.types.exceptions.DataONEException):
+      # Add trace information to the given DataONE exception.
+      exception.detailCode = str(
+        detail_codes.dataone_exception_to_detail_code().detail_code(
+          request, exception
+        )
+      )
+      exception.traceInformation = util.traceback_to_text()
+      exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
+        exception
+      )
+      exception_serialized, content_type = exception_serializer.serialize(
+        request.META.get(
+          'HTTP_ACCEPT', None
+        )
+      )
+      return HttpResponse(
+        exception_serialized,
+        status=exception.errorCode,
+        mimetype=content_type
+      )
+
       # Add trace information to the given DataONE exception.
       exception.detailCode = str(
         detail_codes.dataone_exception_to_detail_code().detail_code(

@@ -179,91 +179,15 @@ def add_obsoleted_by(sysmeta_obj, pid):
 
 
 def get_replication_status_list(pid=None):
-  status_list = []
-
-  # Iterate over sysmeta objects.
-  for sysmeta_filename in os.listdir(settings.SYSMETA_STORE_PATH):
-    sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
-    if not os.path.isfile(sysmeta_path):
-      continue
-    sysmeta_xml = open(sysmeta_path).read()
-    try:
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
-    except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
-      continue
-
-    if pid is None or pid == sysmeta_obj.identifier.value():
-      for replica in sysmeta_obj.replica:
-        status_list.append(
-          (
-            sysmeta_obj.identifier.value(
-            ), replica.replicaMemberNode, replica.replicationStatus,
-            replica.replicaVerified
-          )
-        )
-
-  return status_list
+  raise d1_common.types.exceptions.NotImplemented(0, '')
 
 
 def set_replication_status(status, node_ref, pid):
-  if status not in ('queued', 'requested', 'completed', 'invalidated'):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid status: {0}'.format(
-        status
-      )
-    )
-
-  sysmeta_filename, sysmeta_obj = get_sysmeta(pid)
-
-  # Find out if there is an existing Replica for this node.
-  replica_found = False
-  for replica in sysmeta_obj.replica:
-    if replica.replicaMemberNode == node_ref:
-      replica_found = True
-      break
-  if replica_found == True:
-    # Found existing Replica node. Update it with new status.
-    replica.replicationStatus = status
-  else:
-    # No existing Replica node for this node_ref. Create one.
-    replica = d1_common.types.generated.dataoneTypes.Replica()
-    replica.replicationStatus = status
-    replica.replicaMemberNode = node_ref
-    replica.replicaVerified = datetime.datetime.isoformat(datetime.datetime.now())
-    sysmeta_obj.replica.append(replica)
-
-  sysmeta_set_modified(sysmeta_obj)
-  set_sysmeta(sysmeta_filename, sysmeta_obj)
+  raise d1_common.types.exceptions.NotImplemented(0, '')
 
 
 def clear_replication_status(node_ref=None, pid=None):
-  removed_count = 0
-
-  # Iterate over sysmeta objects.
-  for sysmeta_filename in os.listdir(settings.SYSMETA_STORE_PATH):
-    sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
-    if not os.path.isfile(sysmeta_path):
-      continue
-    sysmeta_xml = open(sysmeta_path).read()
-    try:
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
-    except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
-      continue
-
-    sysmeta_updated = False
-    if pid is None or pid == sysmeta_obj.identifier.value():
-      for i, replica in enumerate(sysmeta_obj.replica):
-        if node_ref is None or node_ref == replica.replicaMemberNode:
-          del sysmeta_obj.replica[i]
-          removed_count += 1
-          sysmeta_updated = True
-
-    if sysmeta_updated == True:
-      set_sysmeta(sysmeta_filename, sysmeta_obj)
-
-  return removed_count
+  raise d1_common.types.exceptions.NotImplemented(0, '')
 
 # ------------------------------------------------------------------------------
 # Based on PyXB.
@@ -282,16 +206,9 @@ class sysmeta():
   '''
 
   def __init__(self, pid):
-    self.sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, urllib.quote(pid, ''))
+    self.sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
     # Read.
-    try:
-      file = open(self.sysmeta_path, 'r')
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not open SysMeta object for reading: {0}\n'\
-        .format(self.sysmeta_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
-    with file:
+    with open(self.sysmeta_path, 'rb') as file:
       sysmeta_str = file.read()
     # Deserialize.
     self.sysmeta_pyxb = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)
@@ -309,14 +226,7 @@ class sysmeta():
     if update_modified_datetime:
       self.set_modified_datetime()
     # Write new SysMeta object to disk.
-    try:
-      file = open(self.sysmeta_path, 'w')
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not open SysMeta object for writing: {0}\n'\
-        .format(self.sysmeta_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
-    with file:
+    with open(self.sysmeta_path, 'wb') as file:
       file.write(self.sysmeta_pyxb.toxml())
 
   def set_modified_datetime(self, timestamp=None):
