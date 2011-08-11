@@ -17,6 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 '''
 Module d1_common.xml_compare
 ============================
@@ -28,11 +29,12 @@ Module d1_common.xml_compare
 
 Compare two XML documents for functional equality.
 '''
-
+#There's changes in etree between 2.6 and 2.7 
+import sys
+import logging
 import StringIO
-
 import xml.etree.ElementTree
-
+import xml.parsers.expat
 
 class CompareError(Exception):
   '''Raised when a difference is found between the two XML documents.
@@ -40,8 +42,10 @@ class CompareError(Exception):
   pass
 
 
-class Xml_compare(object):
-  def __init__(self, xml_first, xml_second):
+
+class XmlCompare(object):
+ 
+  def __init__(self, xml_first, xml_second, encoding='UTF-8'):
     '''Constructor for Xml_compare.
     
     :param xml_first: The XML document to use as basis for comparison.
@@ -50,8 +54,19 @@ class Xml_compare(object):
       with the first.
     :type xml_second: string
     '''
-    self.tree_first = xml.etree.ElementTree.parse(xml_first)
-    self.tree_second = xml.etree.ElementTree.parse(xml_second)
+    self.logger = logging.getLogger('XmlCompare')
+    parser1 = None
+    parser2 = None
+    self.isGtPython26 = False
+    if sys.version_info[1] > 6:
+      self.isGtPython26 = True
+      self.logger.debug("using 2.7 features")
+    if self.isGtPython26:
+      parser1 = xml.etree.ElementTree.XMLParser(encoding=encoding)
+      parser2 = xml.etree.ElementTree.XMLParser(encoding=encoding)
+    self.tree_first = xml.etree.ElementTree.parse(xml_first, parser=parser1)
+    self.tree_second = xml.etree.ElementTree.parse(xml_second, parser=parser2)
+
 
   def _compare_strings(self, s1, s2):
     '''Compare two strings, treating None as empty string and stripping
@@ -62,7 +77,8 @@ class Xml_compare(object):
     :param s2: Second string.
     :type s2: string
     '''
-    return (s1.strip() if s1 else '') == (s2.strip() if s2 else '')
+    return (s1.strip() if s1 else '') == (s2.strip() if s2 else '') 
+
 
   def _get_path(self, tree, el):
     '''Get path to element.
@@ -72,7 +88,10 @@ class Xml_compare(object):
     :param el: The element to get the path for.
     :type el: Element
     '''
-    parents = dict((c, p) for p in tree.getiterator() for c in p)
+    if self.isGtPython26:
+      parents = dict((c, p) for p in tree.iter() for c in p)
+    else:
+      parents = dict((c, p) for p in tree.getiterator() for c in p)
     path = []
     while True:
       path.append(el.tag)
@@ -80,7 +99,10 @@ class Xml_compare(object):
         el = parents[el]
       except KeyError:
         break
+    if self.isGtPython26:
+      return '.' + '/'.join(reversed(path[:-1]))
     return '/'.join(reversed(path[:-1]))
+    
 
   def _find_instance(self, tree, path, find_i):
     '''Find an element based by path and sibling index.
@@ -99,6 +121,7 @@ class Xml_compare(object):
       if find_i == i:
         return el
     raise CompareError('path({0}): Too few elements with path'.format(path))
+    
 
   def _find_instance_idx(self, tree, find_el):
     '''Find sibling index of element.
@@ -110,9 +133,14 @@ class Xml_compare(object):
     :returns type: integer
     '''
     path = self._get_path(tree, find_el)
-    for i, el in enumerate(tree.findall(path)):
+    self.logger.debug("element=%s, path=%s" % (find_el.tag, path))
+    elements = tree.findall(path)
+    self.logger.debug("ELEMENTS=%s" % str(elements))
+    for i, el in enumerate(elements):
       if el is find_el:
         return i
+    return None
+
 
   def _find_corresponding_element(self, el_first):
     '''Given an element in tree_first, find the corresponding element in
@@ -123,12 +151,13 @@ class Xml_compare(object):
     :type el_first: Element
     :returns: Element from tree_second or raises CompareError.
     :returns type: Element | Exception
-    '''
+    '''    
     # Find the instance index of this element.
     i_first = self._find_instance_idx(self.tree_first, el_first)
     # Find the corresponding element in the second doc.
     path = self._get_path(self.tree_first, el_first)
-    return self._find_instance(self.tree_second, path, i_first)
+    return self._find_instance(self.tree_second, path, i_first)    
+
 
   # Check if an element exists that has the given level, name and attribute.
   def _validate_element_attr(self, tree, el, attr_name_expected, attr_val_expected):
@@ -147,19 +176,15 @@ class Xml_compare(object):
     '''
     try:
       if not self._compare_strings(el.attrib[attr_name_expected], attr_val_expected):
-        raise CompareError(
-          'path({0}) attr({1}) val_found({2}) val_expected({3}): '
-          'Attribute contains invalid value'.format(
-            self._get_path(tree, el), attr_name_expected, el.attrib[attr_name_expected
-                                                                    ], attr_val_expected
-          )
-        )
+        raise CompareError('path({0}) attr({1}) val_found({2}) val_expected({3}): '
+                              'Attribute contains invalid value'
+                              .format(self._get_path(tree, el), attr_name_expected,
+                                      el.attrib[attr_name_expected], attr_val_expected))
     except LookupError:
-      raise CompareError(
-        'path({0}) attr({1}): '
-        'Attribute does not exist'.format(
-          self._get_path(tree, el), attr_name_expected)
-      )
+      raise CompareError('path({0}) attr({1}): '
+                            'Attribute does not exist'
+                            .format(self._get_path(tree, el), attr_name_expected))
+
 
   def compare_attr(self):
     '''Compare the attributes of two XML files. Raise CompareError if comparison
@@ -178,6 +203,7 @@ class Xml_compare(object):
         # the correct value in the second doc.
         self._validate_element_attr(self.tree_second, el_second, attr_name, attr_val)
 
+
   def compare_text(self):
     '''Compare the text values of two XML files. Raise CompareError if
     comparison fails.
@@ -186,19 +212,22 @@ class Xml_compare(object):
     :returns type: None | Exception
     '''
     # Loop through all elements in the first doc.
-    for el_first in self.tree_first.getiterator():
+    if self.isGtPython26:
+      iter = self.tree_first.iter()
+    else:
+      iter = self.tree_first.getiterator()
+    for el_first in iter:
       # Find the corresponding element in tree_second.
       el_second = self._find_corresponding_element(el_first)
       # Compare the text.
       if not self._compare_strings(el_first.text, el_second.text):
-        raise CompareError(
-          'path({0}): Text mismatch'.format(self._get_path(self.tree_first, el_first))
-        )
+        raise CompareError('path({0}): Text mismatch'
+                           .format(self._get_path(self.tree_first, el_first)))
+
+
 #
 # Convenience.
 #
-
-
 def compare(xml_first, xml_second):
   '''Compare two XML files. Raise CompareError if comparison fails.
   
@@ -213,11 +242,11 @@ def compare(xml_first, xml_second):
   following in xml_second:
   
   - All elements are present.
-  - All elements are in the correct order.
+  - All elements are in the same order.
   - All attributes are present.
   - All attributes contain the correct values.
   - All element text values are present.
-  - All element text values are correct.
+  - All element text values are the same.
   
   This does NOT check if there is any information present in xml_second that
   does not exist in xml_first.
@@ -226,7 +255,7 @@ def compare(xml_first, xml_second):
   in any D1 types.
   '''
   try:
-    xml_compare = Xml_compare(xml_first, xml_second)
+    xml_compare = XmlCompare(xml_first, xml_second)
     xml_compare.compare_attr()
     xml_compare.compare_text()
   except xml.parsers.expat.ExpatError as e:
@@ -243,3 +272,33 @@ def assert_xml_equal(xml_first, xml_second):
     compare(StringIO.StringIO(xml_first), StringIO.StringIO(xml_second))
   except CompareError as e:
     raise AssertionError(str(e))
+
+
+################################################################################
+if __name__ == '__main__':
+  #run some self tests
+  import unittest
+
+  EXAMPLE_1 = '''<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>id_oJnណCᓐaុص</identifier>
+  <objectFormat>
+    <fmtid>test</fmtid>
+    <formatName>just a test</formatName>
+    <scienceMetadata>false</scienceMetadata>
+  </objectFormat>
+  <size>194945732</size>
+</ns1:systemMetadata>
+  '''
+  
+  class TestXmlCompare(unittest.TestCase):
+    
+    def testSanity(self):
+      d1 = StringIO.StringIO(EXAMPLE_1)
+      d2 = StringIO.StringIO(EXAMPLE_1)
+      cmp = XmlCompare(d1, d2)
+      #cmp.compare_attr()
+      cmp.compare_text()
+  
+  logging.basicConfig(level=logging.DEBUG)
+  unittest.main()
