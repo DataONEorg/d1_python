@@ -79,6 +79,7 @@ import d1_client.systemmetadata
 
 # App.
 import auth
+import db_filter
 import event_log
 import lock_pid
 import models
@@ -166,24 +167,24 @@ def monitor_object(request):
   query = models.Object.objects.all()
   
   # startTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 
+  query, changed = db_filter.add_datetime_filter(query, request, 'mtime', 
                                             'startTime', 'gte')
   if changed == True:
     query_unsliced = query
   
   # endTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime',
+  query, changed = db_filter.add_datetime_filter(query, request, 'mtime', 'endTime',
                                             'lt')
   if changed == True:
     query_unsliced = query
 
   # Filter by pid (with wildcards).
   if 'pid' in request.GET:
-    query = util.add_wildcard_filter(query, 'pid', request.GET['pid'])
+    query = db_filter.add_wildcard_filter(query, 'pid', request.GET['pid'])
     query_unsliced = query
     
   # Filter by referenced object format name.
-  query, changed = util.add_string_filter(query, request, 'format__format_name',
+  query, changed = db_filter.add_string_filter(query, request, 'format__format_name',
                                           'format')
   if changed:
     query_unsliced = query
@@ -194,7 +195,7 @@ def monitor_object(request):
       count=Count('id')).order_by()
 
   # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)
+  query, start, count = db_filter.add_slice_filter(query, request)
 
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
@@ -222,40 +223,40 @@ def monitor_event(request):
   obj['logRecord'] = []
 
   # Filter by referenced object format.
-  query, changed = util.add_string_filter(query, request,
+  query, changed = db_filter.add_string_filter(query, request,
                                           'object__format__format_name',
                                           'format')
   if changed:
     query_unsliced = query
   
   # Filter by referenced object created date, from.
-  query, changed = util.add_datetime_filter(query, request,
+  query, changed = db_filter.add_datetime_filter(query, request,
                                             'object__mtime', 'objectFromDate',
                                             'gte')
   if changed == True:
     query_unsliced = query
   
     # Filter by referenced object created date, to.
-  query, changed = util.add_datetime_filter(query, request, 'object__mtime', 
+  query, changed = db_filter.add_datetime_filter(query, request, 'object__mtime', 
                                             'objectToDate', 'lt')
   if changed == True:
     query_unsliced = query
 
   # Filter by event date, from.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged',
+  query, changed = db_filter.add_datetime_filter(query, request, 'date_logged',
                                             'fromDate', 'gte')
   if changed == True:
     query_unsliced = query
   
     # Filter by event date, to.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged', 
+  query, changed = db_filter.add_datetime_filter(query, request, 'date_logged', 
                                             'toDate', 'lt')
   if changed == True:
     query_unsliced = query
 
   # Filter by event type.
   if 'event' in request.GET:
-    query = util.add_wildcard_filter(query, 'event__event',
+    query = db_filter.add_wildcard_filter(query, 'event__event',
                                      request.GET['event'])
     query_unsliced = query
 
@@ -265,7 +266,7 @@ def monitor_event(request):
       count=Count('id')).order_by()
 
   # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)    
+  query, start, count = db_filter.add_slice_filter(query, request)    
 
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
@@ -292,25 +293,25 @@ def event_log_view(request):
   obj['logRecord'] = []
 
   # Filter by fromDate.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged',
+  query, changed = db_filter.add_datetime_filter(query, request, 'date_logged',
                                             'fromDate', 'gte')
   if changed:
     query_unsliced = query
 
   # Filter by toDate.
-  query, changed = util.add_datetime_filter(query, request, 'date_logged',
+  query, changed = db_filter.add_datetime_filter(query, request, 'date_logged',
                                             'toDate', 'lt')
   if changed:
     query_unsliced = query
 
   # Filter by event type.
-  query, changed = util.add_string_filter(query, request, 'event__event',
+  query, changed = db_filter.add_string_filter(query, request, 'event__event',
                                           'event')
   if changed:
     query_unsliced = query
 
   # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)    
+  query, start, count = db_filter.add_slice_filter(query, request)    
 
   # Return query data for further processing in middleware layer.  
   return {'query': query, 'start': start, 'count': count,
@@ -533,37 +534,47 @@ def object(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  # Default ordering is by mtime ascending.
-  query = models.Object.objects.order_by('mtime')
-  
+  # The ObjectList is returned ordered by mtime ascending. The order has 
+  # been left undefined in the spec, to allow MNs to select what is optimal
+  # for them.
+  query = models.Object.objects.order_by('mtime').select_related()
+
+  # Anyone can call listObjects but only objects to which they have read access
+  # or higher are returned. No access control is applied if called by trusted D1
+  # infrastructure.
+  if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
+    query = db_filter.add_access_policy_filter(query, request)
+
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
+  # TODO: Is this really creating a copy? Can the assignment to query_unsliced
+  # be moved to a single location just before add_slice_filter()?
   query_unsliced = query
 
   # Filters.
   
   # startTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime',
+  query, changed = db_filter.add_datetime_filter(query, request, 'mtime',
                                             'startTime', 'gte')
   if changed == True:
     query_unsliced = query
   
   # endTime
-  query, changed = util.add_datetime_filter(query, request, 'mtime', 'endTime',
+  query, changed = db_filter.add_datetime_filter(query, request, 'mtime', 'endTime',
                                             'lt')
   if changed == True:
     query_unsliced = query
       
   # objectFormat
   if 'objectFormat' in request.GET:
-    query = util.add_wildcard_filter(query, 'format__format_id',
+    query = db_filter.add_wildcard_filter(query, 'format__format_id',
                                      request.GET['objectFormat'])
     query_unsliced = query
 
   # TODO. Filter by replicaStatus. May be removed from API.
 
   # Create a slice of a query based on request start and count parameters.
-  query, start, count = util.add_slice_filter(query, request)
+  query, start, count = db_filter.add_slice_filter(query, request)
 
   # Return query data for further processing in middleware layer.
   return {'query': query, 'start': start, 'count': count,
@@ -647,21 +658,12 @@ def access_policy_pid_put(request, pid):
   Sets the access policy for an object identified by pid.
   '''
   util.validate_post(request, (('file', 'accesspolicy'),))
-
   # Validate and deserialize accessPolicy.
   access_policy_str = request.FILES['accesspolicy'].read()
   access_policy = dataoneTypes.CreateFromDocument(access_policy_str)
-
   # Set access policy for the object. Raises if the access
   # policy is invalid.
   auth.set_access_policy(pid, access_policy)
-
-  # Set access policy in SysMeta. Because TransactionMiddleware is enabled, the
-  # database modifications made in auth.set_access_policy() will be rolled back
-  # if the SysMeta update fails.
-  with sysmeta.sysmeta(pid) as s:
-    s.accessPolicy = access_policy
-
   # Return Boolean (200 OK)
   return HttpResponse('')
 
@@ -699,7 +701,6 @@ def object_pid_post(request, pid):
 
   # Deserialize metadata (implicit validation).
   sysmeta_str = request.FILES['sysmeta'].read()
-
   try:
     sysmeta = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)  
   except:
@@ -782,9 +783,12 @@ def object_pid_post(request, pid):
     db_update_status.save()
     
     # If an access policy was provided for this object, set it. Until the access
-    # policy is set, the object is unavailable to everyone except the owner.
+    # policy is set, the object is unavailable to everyone, even the owner.
     if sysmeta.accessPolicy:
-      auth.set_access_policy(pid, sysmeta_pyxb.accessPolicy)
+      auth.set_access_policy(pid, sysmeta.accessPolicy)
+    else:
+      auth.set_access_policy(pid)
+
   except:
     os.unlink(sysmeta_path)
     object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
@@ -1107,6 +1111,14 @@ def test_get_request(request):
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
+def test_clear_database(request):
+  models.Object.objects.all().delete()
+  models.Object_format.objects.all().delete()
+  models.Checksum_algorithm.objects.all().delete()
+  
+  models.DB_update_status.objects.all().delete()
+
+
 @auth.assert_trusted_permission
 def test_delete_all_objects(request):
   '''
@@ -1117,17 +1129,8 @@ def test_delete_all_objects(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
   
-  # Clear the DB.
-  models.Object.objects.all().delete()
-  models.Object_format.objects.all().delete()
-  models.Checksum_algorithm.objects.all().delete()
-  
-  models.DB_update_status.objects.all().delete()
-
-  # Clear the SysMeta cache.
-  for root, dirs, files in os.walk(settings.SYSMETA_STORE_PATH):
-    for file in files:
-      os.unlink(os.path.join(root, file))
+  for object_ in models.Object.objects.all():
+    _delete_object(object_.pid)
 
   # Log this operation.
   logger.info('client({0}): Deleted all repository object records'.format(
@@ -1136,7 +1139,7 @@ def test_delete_all_objects(request):
   return HttpResponse('OK')
 
 
-# Unrestricted.
+@auth.assert_trusted_permission
 def test_delete_single_object(request, pid):
   '''
   Delete an object from the Member Node, where the object is either a data
@@ -1149,6 +1152,18 @@ def test_delete_single_object(request, pid):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
+  # Log this operation. Event logs are tied to particular objects, so we can't
+  # log this event in the event log. Instead, we log it.
+  logger.info('client({0}) pid({1}) Deleted object'.format(
+    util.request_to_string(request), pid))
+
+  # Return the pid.
+  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
+  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
+  return HttpResponse(doc, content_type)
+
+
+def _delete_object(pid):
   # Find object based on pid.
   try:
     sciobj = models.Object.objects.get(pid=pid)
@@ -1167,31 +1182,27 @@ def test_delete_single_object(request, pid):
 
   if url_split.scheme == 'file':
     sciobj_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
-    os.unlink(sciobj_path)
+    try:
+      os.unlink(sciobj_path)
+    except EnvironmentError:
+      pass
 
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
     
   # Delete the SysMeta object.
   sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  os.unlink(sysmeta_path)
+  try:
+    os.unlink(sysmeta_path)
+  except EnvironmentError:
+    pass
 
   # Delete the DB entry.
 
   # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
-  # CASCADE -- in other words, any objects with foreign keys pointing at the
+  # CASCADE. In other words, any objects with foreign keys pointing at the
   # objects to be deleted will be deleted along with them.
   sciobj.delete()
-
-  # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log. Instead, we log it.
-  logger.info('client({0}) pid({1}) Deleted object'.format(
-    util.request_to_string(request), pid))
-
-  # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
 
 
 @auth.assert_trusted_permission

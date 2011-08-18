@@ -27,44 +27,48 @@ import os
 import settings
 
 
-class ProfileMiddleware():
+class profiling_handler():
   def __init__(self):
-    pass
+    # Disable this middleware layer if Django is not running in debug mode.
+    if settings.DEBUG == False:
+      raise django.core.exceptions.MiddlewareNotUsed
 
   def process_view(self, request, view, *args, **kwargs):
-    if settings.GMN_DEBUG == False:
+    # This middleware layer is disabled if Django is not running in debug mode
+    # (see __init__()).
+
+    # If profiling is not requested, resume normal processing.
+    if 'HTTP_VENDOR_PROFILE_PYTHON' not in request.META:
+      # Returning None causes he regular view handler to be called.
       return None
 
-    for item in request.META['QUERY_STRING'].split('&'):
-      if item.split('=')[0] == 'profile': # profile in query string
-        # catch the output, must happen before stats object is created
-        # see https://bugs.launchpad.net/webpy/+bug/133080 for the details
-        std_old, std_new = sys.stdout, StringIO.StringIO()
-        sys.stdout = std_new
+    # Call view with profiling.
 
-        # now let's do some profiling
-        request.session['profile'] = 1 #just to set the sessionid variable in cookie.
-        tmpfile = '/tmp/%s' % request.COOKIES['sessionid']
-        prof = hotshot.Profile(tmpfile)
+    # Catch the output, must happen before stats object is created.
+    # See https://bugs.launchpad.net/webpy/+bug/133080 for the details.
+    std_old, std_new = sys.stdout, StringIO.StringIO()
+    sys.stdout = std_new
 
-        # make a call to the actual view function with the given arguments
-        response = prof.runcall(view, request, *args[0], **args[1])
-        prof.close()
+    # Path for storing the profiling data.
+    tmpfile = os.tempnam()
 
-        # and then statistical reporting
-        stats = hotshot.stats.load(tmpfile)
-        stats.strip_dirs()
-        stats.sort_stats('time')
+    # Profile the view.
+    prof = hotshot.Profile(tmpfile)
+    prof.runcall(view, request, *args[0], **args[1])
+    prof.close()
 
-        # do the output
-        stats.print_stats(1.0)
+    # Parse the profiler results and generate report.
+    stats = hotshot.stats.load(tmpfile)
+    stats.strip_dirs()
+    stats.sort_stats('time')
+    stats.print_stats(1.0)
 
-        # restore default output
-        sys.stdout = std_old
+    # Restore default output.
+    sys.stdout = std_old
 
-        # delete file
-        os.remove(tmpfile)
+    # Delete the profiling data.
+    os.remove(tmpfile)
 
-        return HttpResponse('<pre>%s</pre>' % std_new.getvalue())
-
-    return None
+    # Return the profiler report. This prevents the regular view
+    # handler from being called.
+    return HttpResponse('<pre>%s</pre>' % std_new.getvalue(), 'text/plain')

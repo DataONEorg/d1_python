@@ -42,10 +42,12 @@ except ImportError:
 from django.http import Http404
 from django.http import HttpResponse
 
-# MN API.
+# D1.
+from d1_common.types.generated import dataoneTypes
 import d1_common.types.exceptions
 import d1_client.systemmetadata
 import d1_common.types.accesspolicy_serialization
+import d1_common.const
 
 # App.
 import settings
@@ -113,24 +115,6 @@ def level_to_action(level):
       0, 'Invalid action level: {0}'.format(level)
     )
 
-
-def get_owner(pid):
-  '''Get the owner of an object.
-
-  :param pid: Object
-  :type pid: Identifier
-  :return:
-    The subject that owns PID.
-    If PID does not exist, returns "DATAONE_UNKNOWN".
-  :return type: String
-  
-  "DATAONE_UNKNOWN" is returned for non-existing objects to prevent subjects
-  from learning about the existence of objects for which they do not have
-  permissions.
-  '''
-  with sysmeta.sysmeta(pid) as s:
-    return s.rightsHolder.value()
-
 #def action_implicit(action_requested, action_allowed):
 #  '''Check if requested action is allowed.
 #  '''
@@ -141,7 +125,7 @@ def get_owner(pid):
 # ------------------------------------------------------------------------------
 
 
-def set_access_policy(pid, access_policy):
+def set_access_policy(pid, access_policy=None):
   '''Apply an AccessPolicy to an object.
 
   :param pid: Object to which AccessPolicy is applied.
@@ -150,22 +134,35 @@ def set_access_policy(pid, access_policy):
   :type access_policy: AccessPolicy
   :return type: NoneType or exception.
 
+  If called without an access policy, any existing permissions on the object
+  are removed and the access policy for the owner is recreated.
+
   Preconditions:
 
+  - Each subject has been verified to a valid DataONE account.
   - Subject has changePermission for object.
   - The Django transaction middleware layer must be enabled.
     'django.middleware.transaction.TransactionMiddleware'
+    
+  Postconditions:
+  
+  - The Permission and related tables contain the new access policy.
+  - The SysMeta object in the filesystem contains the new access policy.
   '''
 
-  # Verify that the object for which access policy is being set
-  # exists, and retrieve it.
+  # Verify that the object for which access policy is being set exists, and
+  # retrieve it.
   try:
     sci_obj = models.Object.objects.get(pid=pid)
   except DoesNotExist:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Attempted to set access for non-existing object', pid
     )
-
+  # Handle call without access policy.
+  if access_policy is None:
+    allow = []
+  else:
+    allow = access_policy.allow
   # Remove any existing permissions for this object. Because
   # TransactionMiddleware is enabled, the temporary absence of permissions is
   # hidden in a transaction.
@@ -173,16 +170,20 @@ def set_access_policy(pid, access_policy):
   # The deletes are cascaded so any subjects that are no longer referenced in
   # any permissions are deleted as well.
   models.Permission.objects.filter(object__pid=pid).delete()
-
+  # Add an implicit allow rule with all permissions for the owner.
+  allow_owner = dataoneTypes.AccessRule()
+  with sysmeta.sysmeta(pid, read_only=True) as s:
+    allow_owner.subject.append(s.rightsHolder.value())
+  permission = d1_common.types.generated.dataoneTypes.Permission('execute')
+  allow_owner.permission.append(permission)
   # Iterate over AccessPolicy and create db entries.
-  for allow_rule in access_policy.allow:
+  for allow_rule in allow: # + [allow_owner]:
     # Find the highest level action that this rule sets.
     top_level = 0
     for permission in allow_rule.permission:
       level = action_to_level(permission)
       if level > top_level:
         top_level = level
-
     # Set the highest level rule for all subjects in this rule.
     for subject in allow_rule.subject:
       # There can be multiple rules in a policy and each rule can contain
@@ -195,12 +196,10 @@ def set_access_policy(pid, access_policy):
       # contains the highest action level.
       #
       # If the subject exists, get it. Otherwise, create it.
-      # TODO: Find out how we will prevent a non-existing subject from being
-      # given permissions.
       subject_row = models.Subject.objects.get_or_create(subject=subject.value())[0]
       try:
         # TODO: Because Django does not (as of 1.3) support indexes that cover
-        # multiple fields, this get() will be slow. When Django gets support for
+        # multiple fields, this get() may be slow. When Django gets support for
         # indexes that cover multiple fields, create an index for the
         # combination of the two fields in the Permission table.
         #
@@ -216,17 +215,9 @@ def set_access_policy(pid, access_policy):
         if permission.level < level:
           permission.level = level
           permission.save()
-
-  # When setAccessPolicy is called explicitly or implicitly as part of a
-  # create() call, the db tables are updated immediately and so, locally, the
-  # new permissions take effect immediately. However, for the new permissions
-  # to take effect on replicas of the object on other MNs, the new permissions
-  # must be discovered by a CN and applied to the other MNs. This is done by
-  # updating the permissions in the local copy of the SysMeta and updating its
-  # modified date so that it will be discovered by a CN the next time it
-  # synchronizes this MN.
-
-  # Update the SysMeta object with the new access policy.
+  # Update the SysMeta object with the new access policy. Because
+  # TransactionMiddleware is enabled, the database modifications made above will
+  # be rolled back if the SysMeta update fails.
   with sysmeta.sysmeta(pid) as s:
     s.accessPolicy = access_policy
 
@@ -283,16 +274,19 @@ def is_allowed(subject, level, pid):
   action levels are also allowed.
   '''
   # DataONE trusted infrastructure has all rights.
-  if subject == 'DATAONE_TRUSTED':
+  if subject == d1_common.const.SUBJECT_TRUSTED:
     return True
-  # If subject is the owner, subject has all permissions on the object.
-  if subject == get_owner(pid):
-    return True
-  # If subject is not the owner, a specific permission for subject
-  # must exist on object. The permission must be for an action level that
-  # is the same or higher than the requested action level.
+  # - If subject is not trusted infrastructure, a specific permission for
+  # subject must exist on object.
+  # - Full permissions for owner are set implicitly when the object is created
+  # and when the ACL is updated.
+  # - The permission must be for an action level that is the same or higher than
+  # the requested action level.
   return models.Permission.objects.filter(
-    object__pid=pid, subject__subject=subject,
+    object__pid=pid,
+    subject__subject__in=[
+      subject, d1_common.const.SUBJECT_PUBLIC
+    ],
     level__gte=level
   ).exists()
 
@@ -342,7 +336,7 @@ def assert_allowed(subject, level, pid):
 # Only D1 infrastructure.
 def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
-    if request.META['SSL_CLIENT_S_DN'] != 'DATAONE_TRUSTED':
+    if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 
@@ -354,7 +348,7 @@ def assert_trusted_permission(f):
 # Anyone with a valid session.
 def assert_authenticated(f):
   def wrap(request, *args, **kwargs):
-    if request.META['SSL_CLIENT_S_DN'] == 'DATAONE_PUBLIC':
+    if request.META['SSL_CLIENT_S_DN'] == d1_common.const.SUBJECT_PUBLIC:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 

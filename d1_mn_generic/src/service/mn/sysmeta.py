@@ -103,7 +103,7 @@ def read_sysmeta(pid):
     sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
-    sysmeta_xml = open(sysmeta_path).read()
+    sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
       if sysmeta_obj.identifier.value() == pid:
@@ -129,7 +129,7 @@ def write_sysmeta(sysmeta_filename, sysmeta_obj):
   '''
   sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH, sysmeta_filename)
   try:
-    sysmeta_file = open(sysmeta_path, 'w')
+    sysmeta_file = open(sysmeta_path, 'wb')
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
@@ -205,8 +205,9 @@ class sysmeta():
       m.accessPolicy = access_policy
   '''
 
-  def __init__(self, pid):
+  def __init__(self, pid, read_only=False):
     self.sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
+    self.read_only = read_only
     # Read.
     with open(self.sysmeta_path, 'rb') as file:
       sysmeta_str = file.read()
@@ -217,7 +218,8 @@ class sysmeta():
     return self.sysmeta_pyxb
 
   def __exit__(self, exc_type, exc_value, traceback):
-    self.save()
+    if not self.read_only:
+      self.save()
     return False
 
   def save(self, update_modified_datetime=True):
@@ -237,17 +239,15 @@ class sysmeta():
     self.sysmeta_pyxb.dateSysMetadataModified = \
       datetime.datetime.isoformat(timestamp)
 
-  #  def get_owner(self, owner):
-  #      
-  #  def set_owner(self, owner):
-  #      sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH,
-  #                              urllib.quote(pid, ''))
-  #  try:
-  #    file = open(sysmeta_path, 'r')
-  #  except EnvironmentError:
-  #    return 'DATAONE_UNKNOWN'
-  #  with file: 
-  #    sysmeta_str = file.read()
-  #    sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
-  #    return sysmeta.rightsHolder
-  #
+#  def set_owner(self, owner):
+#      sysmeta_path = os.path.join(settings.SYSMETA_STORE_PATH,
+#                              urllib.quote(pid, ''))
+#  try:
+#    file = open(sysmeta_path, 'rb')
+#  except EnvironmentError:
+#    return 'DATAONE_UNKNOWN'
+#  with file: 
+#    sysmeta_str = file.read()
+#    sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+#    return sysmeta.rightsHolder
+#

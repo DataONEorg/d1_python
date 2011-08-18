@@ -78,87 +78,30 @@ logger = logging.getLogger(__name__)
 
 class exception_handler():
   def process_exception(self, request, exception):
-    #return None
-
-    # An exception within this function causes a Django exception page
-    # to be returned if debugging is on and a generic 500 otherwise.
-
+    # An exception within this function causes a Django exception page to be
+    # returned if debugging is on and a generic 500 otherwise.
     # Log the exception.
     util.log_exception(10)
-
-    #    # When debugging from a web browser, we want to return None to get Django's
-    #    # extremely useful exception page.
-    #    if settings.GMN_DEBUG == True and request.META['HTTP_USER_AGENT'] != d1_common.const.USER_AGENT:
-    #      return None
-
-    # If the exception is an EnvironmentError (file IO or OS error), we
-    # translate it to a DataONE ServiceFailure error that includes details
-    # of the error.
-    if isinstance(exception, EnvironmentError):
-      errno, strerror = exception
-      err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
-      exception = d1_common.types.exceptions.ServiceFailure(0, err_msg)
-
-    # If the exception is a DataONE exception, we serialize it out.
-    if isinstance(exception, d1_common.types.exceptions.DataONEException):
-      # Add trace information to the given DataONE exception.
-      exception.detailCode = str(
-        detail_codes.dataone_exception_to_detail_code().detail_code(
-          request, exception
-        )
-      )
-      exception.traceInformation = util.traceback_to_text()
-      exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
-        exception
-      )
-      exception_serialized, content_type = exception_serializer.serialize(
-        request.META.get(
-          'HTTP_ACCEPT', None
-        )
-      )
-      return HttpResponse(
-        exception_serialized,
-        status=exception.errorCode,
-        mimetype=content_type
-      )
-
-      # Add trace information to the given DataONE exception.
-      exception.detailCode = str(
-        detail_codes.dataone_exception_to_detail_code().detail_code(
-          request, exception
-        )
-      )
-      exception.traceInformation = util.traceback_to_text()
-      exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
-        exception
-      )
-      exception_serialized, content_type = exception_serializer.serialize(
-        request.META.get(
-          'HTTP_ACCEPT', None
-        )
-      )
-      return HttpResponse(
-        exception_serialized,
-        status=exception.errorCode,
-        mimetype=content_type
-      )
-
-    # If we get here, we got an unexpected exception. Wrap it in a DataONE exception.
-    exception = d1_common.types.exceptions.ServiceFailure(0, '', '')
-    exception.detailCode = str(
-      detail_codes.dataone_exception_to_detail_code().detail_code(
-        request, exception
-      )
-    )
+    # When debugging from a web browser, returning None returns Django's
+    # extremely useful exception page.
+    if settings.DEBUG == True and request.META['HTTP_USER_AGENT'] != \
+                                              d1_common.const.USER_AGENT:
+      return None
+    # If the exception is not a DataONE exception, wrap it in a DataONE
+    # exception.
+    if not isinstance(exception, d1_common.types.exceptions.DataONEException):
+      exception = d1_common.types.exceptions.ServiceFailure(0, '', '')
+    # Add detail code and trace information to the exception.
+    exception.detailCode = str(detail_codes.dataone_exception_to_detail_code()\
+                               .detail_code(request, exception))
     exception.traceInformation = util.traceback_to_text()
-    exception_serializer = d1_common.types.exception_serialization.DataONEExceptionSerialization(
-      exception
-    )
+    # Serialize the exception.
+    exception_serializer = d1_common.types.exception_serialization\
+      .DataONEExceptionSerialization(exception)
     exception_serialized, content_type = exception_serializer.serialize(
-      request.META.get(
-        'HTTP_ACCEPT', None
-      )
+      request.META.get('HTTP_ACCEPT', None)
     )
+    # Return the exception to the client.
     return HttpResponse(
       exception_serialized,
       status=exception.errorCode,

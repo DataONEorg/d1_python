@@ -19,10 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`tier_3_mn_storage_create`
-===============================
+:mod:`tier_2_mn_auth_set_access_policy`
+=======================================
 
-:Created: 2011-04-22
+:Created: 2011-08-09
 :Author: DataONE (dahl)
 :Dependencies:
   - python 2.6
@@ -34,6 +34,7 @@ import os
 import random
 import sys
 import StringIO
+import threading
 import time
 import uuid
 import xml.sax.saxutils
@@ -60,62 +61,39 @@ import generate_random_sysmeta
 
 
 class Transaction(object):
-  def __init__(self):
-    self.custom_timers = {}
+  '''listObjects, public subject, unfiltered, randomly distributed.
+  '''
 
-  def session(self, subject):
-    return {'VENDOR_OVERRIDE_SESSION': subject}
+  def __init__(self, profile=False):
+    self.client = test_client.TestClient(settings.BASEURL)
+    # Get page count.
+    object_list = self.client.listObjects(start=0, count=0)
+    # The integer divide causes n_pages to not include the last page, in the
+    # likely case that the last page is less than PAGESIZE long.
+    self.n_pages = object_list.total / settings.PAGESIZE
+    self.profile = profile
 
-  def generate_random_file(self, num_bytes):
-    return StringIO.StringIO(
-      "".join(chr(random.randrange(0, 255)) for i in xrange(num_bytes))
+  def list_objects(self):
+    page_idx = random.randint(0, self.n_pages)
+    if self.profile:
+      vendor_specific = test_utilities.gmn_vse_enable_sql_profiling()
+    else:
+      vendor_specific = {}
+    response = self.client.listObjectsResponse(
+      start=page_idx * settings.PAGESIZE,
+      count=settings.PAGESIZE,
+      vendorSpecific=vendor_specific
     )
-
-  def create_random_object(self):
-    '''Create a single test object.
-    '''
-    client = test_client.TestClient(settings.BASEURL)
-
-    #scidata_path = test_utilities.get_resource_path(
-    #  'd1_testdocs/test_objects/hdl%3A10255%2Fdryad.167%2Fmets.xml')
-    #sysmeta_path = test_utilities.get_resource_path(
-    #  'd1_testdocs/test_objects/hdl%3A10255%2Fdryad.167%2Fmets.xml.sysmeta')
-
-    pid_created = '__invalid_test_object__' + str(uuid.uuid1())
-
-    scidata_size = random.randint(1, 2000)
-    checksum_algorithm = 'SHA-1'
-
-    scidata_file = self.generate_random_file(scidata_size)
-
-    scidata_file.seek(0)
-    checksum = test_utilities.calculate_checksum(scidata_file, checksum_algorithm)
-
-    sysmeta = generate_random_sysmeta.generate_random_sysmeta(
-      pid_created, scidata_size, checksum
-    )
-
-    scidata_file.seek(0)
-    try:
-      client.create(
-        pid_created,
-        scidata_file,
-        sysmeta,
-        vendorSpecific=self.session('test_user_1')
-      )
-    except:
-      pass
+    assert (response.status == 200), 'Exception returned by listObjectsResponse'
+    if self.profile:
+      print response.read()
 
   def run(self):
-    start_timer = time.time()
-    self.create_random_object()
-    latency = time.time() - start_timer
-
-    self.custom_timers['create'] = latency
+    self.list_objects()
 
 
 if __name__ == '__main__':
-  trans = Transaction()
+  trans = Transaction(profile=True)
   trans.run()
   #import cProfile
   #cProfile.run('trans.run()', 'profile')

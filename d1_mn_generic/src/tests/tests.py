@@ -458,7 +458,7 @@ class mn_tests(TestCase):
 #  #  self.check_response_headers_present(response)
 #  #  # Check that this sysmeta validates against the schema.
 #  #  try:
-#  #    xsd_file = open(settings.XSD_PATH, 'r')
+#  #    xsd_file = open(settings.XSD_PATH, 'rb')
 #  #  except EnvironmentError as (errno, strerror):
 #  #    logger.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
 #  #    logger.error('I/O error({0}): {1}'.format(errno, strerror))
@@ -682,7 +682,7 @@ class mn_tests(TestCase):
 #  #  self.check_response_headers_present(response)
 #  #  # Check that this sysmeta validates against the schema.
 #  #  try:
-#  #    xsd_file = open(settings.XSD_PATH, 'r')
+#  #    xsd_file = open(settings.XSD_PATH, 'rb')
 #  #  except EnvironmentError as (errno, strerror):
 #  #    logger.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
 #  #    logger.error('I/O error({0}): {1}'.format(errno, strerror))

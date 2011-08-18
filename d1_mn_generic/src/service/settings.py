@@ -38,12 +38,11 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
 # Member Node configuration.
 
-# Enable functionality that should only be accessible during testing and
+# Enable debug mode.
+# Causes Django to return a page with extensive debug information if a bug is
+# encountered while servicing a request.
+# Enables GMN functionality that should be accessible only during testing and
 # debugging.
-GMN_DEBUG = True
-
-# Enable Django debug mode. Causes Django to return a page with extensive
-# debug information if a bug is encountered while servicing a request.
 DEBUG = True
 
 # TODO: Check this setting.
@@ -58,17 +57,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-#DATABASES = {
-#  'default': {
-#    # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#    'ENGINE': 'django.db.backends.sqlite3',
-#    'NAME': _here('gmn.sq3'), # Path to database file if using sqlite3.
-#    'USER': '', # Not used with sqlite3.
-#    'PASSWORD': '', # Not used with sqlite3.
-#    'HOST': '', # Not used with sqlite3.
-#    'PORT': '', # Not used with sqlite3.
-#  }
-#}
 DATABASES = {
   'default': {
     # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -137,6 +125,7 @@ MIDDLEWARE_CLASSES = (
   'service.mn.middleware.request_handler.request_handler',
   'service.mn.middleware.exception_handler.exception_handler',
   'service.mn.middleware.response_handler.response_handler',
+  #'service.mn.middleware.profiling_handler.profiling_handler',
   'service.mn.middleware.view_handler.view_handler',
 
   #    'service.cn.middleware.request_handler.request_handler',

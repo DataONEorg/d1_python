@@ -41,7 +41,7 @@ Create and/or enter the folder where you wish to install GMN::
 
 Download GMN::
 
-  $ sudo svn co https://repository.dataone.org/software/python_products/mn gmn
+  $ sudo svn co https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/ gmn
 
 Configure GMN:
 
@@ -49,14 +49,14 @@ Create the gmn.cfg file and change *name* and *identifier* to values that are
 unique for this instance of GMN::
 
   $ sudo -s
-  # cd /var/local/dataone/gmn/service
+  # cd /var/local/dataone/gmn/src/service
   # cp gmn.cfg.template gmn.cfg
   # vi gmn.cfg
 
 Setup GMN:
 
   $ sudo -s
-  # cd /var/local/dataone/gmn/service
+  # cd /var/local/dataone/gmn/src/service
   # sudo ../install/config.py
 
 config.py performs the following tasks:

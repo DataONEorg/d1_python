@@ -54,9 +54,10 @@ import d1_common.ext.mimeparser
 # Django.
 from django.http import HttpResponse
 
-# MN API.
+# D1.
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.const
 
 # App.
 import mn.models as models
@@ -74,7 +75,7 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
-    if settings.GMN_DEBUG == True:
+    if settings.DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
       # debugging via regular HTTP, passing in a session string by using a
       # vendor specific extension is supported.
@@ -90,7 +91,7 @@ class view_handler():
     # TODO: Create a specific key for the session instead of using
     # SSL_CLIENT_S_DN.
     if 'SSL_CLIENT_S_DN' not in request.META:
-      request.META['SSL_CLIENT_S_DN'] = 'DATAONE_PUBLIC'
+      request.META['SSL_CLIENT_S_DN'] = d1_common.const.SUBJECT_PUBLIC
 
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.

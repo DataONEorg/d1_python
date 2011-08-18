@@ -112,7 +112,7 @@ class TestAccessControl(unittest.TestCase):
     client = gmn_test_client.GMNTestClient(context.gmn_url)
 
     # Delete all permissions.
-    client.delete_all_access_rules(headers=self.session('DATAONE_TRUSTED'))
+    client.delete_all_access_rules(headers=self.session(d1_common.const.SUBJECT_TRUSTED))
 
     # Delete the test object.
     client.test_delete_single_object(context.test_pid)
@@ -166,10 +166,13 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(context.obj_str, obj.read())
 
   def test_040_read_by_trusted(self):
-    '''Access is allowed for DATAONE_TRUSTED.
+    '''Access is allowed for SUBJECT_TRUSTED.
     '''
     client = gmn_test_client.GMNTestClient(context.gmn_url)
-    obj = client.get(context.test_pid, vendorSpecific=self.session('DATAONE_TRUSTED'))
+    obj = client.get(
+      context.test_pid,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED)
+    )
     self.assertEqual(context.obj_str, obj.read())
 
   def test_050_read_by_permitted_subject_with_exact_rule(self):
@@ -194,14 +197,14 @@ class TestAccessControl(unittest.TestCase):
     self.assertEqual(context.obj_str, obj.read())
 
   def test_080_read_by_public(self):
-    '''Access is denied for DATAONE_PUBLIC.
+    '''Access is denied for SUBJECT_PUBLIC.
     '''
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized,
       client.get,
       context.test_pid,
-      vendorSpecific=self.session('DATAONE_PUBLIC')
+      vendorSpecific=self.session(d1_common.const.SUBJECT_PUBLIC)
     )
 
   def test_090_read_by_regular_subject(self):

@@ -17,6 +17,10 @@ psycopg2.extensions.register_adapter(
   d1_common.types.generated.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
 )
 
+psycopg2.extensions.register_adapter(
+  d1_common.types.generated.dataoneTypes.NonEmptyString, adapt_pyxb_binding
+)
+
 psycopg2.extensions.register_adapter(pyxb.binding.datatypes.string, adapt_pyxb_binding)
 
 psycopg2.extensions.register_adapter(pyxb.binding.datatypes.boolean, adapt_pyxb_binding)

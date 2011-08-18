@@ -107,7 +107,7 @@ import gmn_test_client
 
 # Constants.
 
-# Constants related to MN test object collection.
+# Test objects.
 OBJECTS_TOTAL_DATA = 100
 OBJECTS_UNIQUE_DATES = 99
 OBJECTS_UNIQUE_DATE_AND_FORMAT_EML = 99
@@ -115,8 +115,8 @@ OBJECTS_PID_STARTSWITH_F = 3
 OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F = 2
 OBJECTS_CREATED_IN_90S = 32
 
-# CONSTANTS RELATED TO LOG COLLECTION.
-
+# Event log.
+#
 # EVENTS_TOTAL is also the number of records in the test_log.csv file. Note:
 # Because the tests themselves cause events to be generated, EVENTS_TOTAL is
 # only correct just after the events have been injected. For the same reason,
@@ -133,6 +133,13 @@ EVENTS_UNIQUE_DATES = 351
 EVENTS_UNIQUE_DATES_WITH_READ = 96
 EVENTS_WITH_OBJECT_FORMAT_EML = 351
 EVENTS_COUNT_OF_FIRST = 1
+
+# Access control.
+AUTH_PUBLIC_OBJECTS = 12
+AUTH_SPECIFIC_USER = 'singing.3369'
+AUTH_SPECIFIC_USER_OWNS = 19
+AUTH_SPECIFIC_AND_OBJ_FORMAT = 19
+
 
 def log_setup():
   # Set up logging.
@@ -187,7 +194,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Find the PID of an object that exists on the server.
     '''
     # Verify that there's at least one object on server.
-    object_list = client.listObjects()
+    object_list = client.listObjects(
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertTrue(object_list.count > 0, 'No objects to perform test on')
     # Get the first PID listed. The list is in random order.
     return object_list.objectInfo[0].identifier.value()
@@ -196,7 +204,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = d1_client.client.DataOneClient(self.opts.gmn_url)
   
     # Get object collection.
-    object_list = client.listObjects()
+    object_list = client.listObjects(
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     
     for o in object_list['objectInfo']:
       if o["identifier"].value() == pid:
@@ -261,14 +270,16 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Delete all objects.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.delete_all_objects(headers=self.session('DATAONE_TRUSTED'))
+    client.delete_all_objects(
+      headers=self.session(d1_common.const.SUBJECT_TRUSTED))
 
   def B_object_collection_is_empty(self):
     '''Object collection is empty.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Get object collection.
-    object_list = client.listObjects()
+    object_list = client.listObjects(
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     # Check header.
     self.assert_counts(object_list, 0, 0, 0)
   
@@ -305,7 +316,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     # Get object collection.
-    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     # Check header.
     self.assert_counts(object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA)
 
@@ -313,7 +325,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Clear event log.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.delete_event_log(headers=self.session('DATAONE_TRUSTED'))
+    client.delete_event_log(
+      headers=self.session(d1_common.const.SUBJECT_TRUSTED))
 
   def B_event_log_is_empty(self):
     '''Event log is empty.
@@ -329,7 +342,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     csv_file = open('test_log.csv', 'rb')
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.inject_event_log(csv_file, headers=self.session('DATAONE_TRUSTED'))
+    client.inject_event_log(csv_file,
+      headers=self.session(d1_common.const.SUBJECT_TRUSTED))
 
   def D_event_log_is_populated(self):
     '''Event log is populated.
@@ -355,11 +369,11 @@ class TestSequenceFunctions(unittest2.TestCase):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = urllib.unquote(os.path.basename(object_path))
       #sysmeta_str_disk = open(sysmeta_path, 'r').read()
-      object_str_disk = open(object_path, 'r').read()
+      object_str_disk = open(object_path, 'rb').read()
       #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
       object_str_d1 = client.get(pid,
-                                 vendorSpecific=self.session('test_user_1')) \
-                                 .read(1024**2)
+        vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED)) \
+        .read(1024**2)
       #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
       self.assertEqual(object_str_disk, object_str_d1)
       
@@ -371,7 +385,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     # Get object collection.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
-    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     
     # Loop through our local test objects.
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
@@ -382,7 +397,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       # Get pid for object.
       pid = urllib.unquote(os.path.basename(object_path))
       # Get sysmeta xml for corresponding object from disk.
-      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_file = open(sysmeta_path, 'rb')
       sysmeta_str = sysmeta_file.read()
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)  
   
@@ -416,7 +431,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # SysMeta
     sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
     sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
-    sysmeta_str = open(sysmeta_path).read()
+    sysmeta_str = open(sysmeta_path, 'rb').read()
     # SciData
     object_path = os.path.splitext(sysmeta_path)[0]
     object_str = open(object_path, 'rb')
@@ -442,8 +457,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Starting at 0 and getting half of the available objects.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     #client = d1_client.client.DataOneClient(self.opts.gmn_url)
-    object_list = client.listObjects(start=0,
-                                     count=object_cnt_half)
+    object_list = client.listObjects(start=0, count=object_cnt_half,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, 0, object_cnt_half,
                        OBJECTS_TOTAL_DATA)
     
@@ -454,7 +469,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     object_cnt_half = OBJECTS_TOTAL_DATA / 2  
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     object_list = client.listObjects(start=object_cnt_half,
-                                     count=d1_common.const.MAX_LISTOBJECTS)
+      count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, object_cnt_half, object_cnt_half,
                        OBJECTS_TOTAL_DATA)
   
@@ -462,8 +478,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Slicing: Starting above number of objects that we have.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    object_list = client.listObjects(start=OBJECTS_TOTAL_DATA * 2,
-                                     count=1)
+    object_list = client.listObjects(start=OBJECTS_TOTAL_DATA * 2, count=1,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, OBJECTS_TOTAL_DATA * 2, 0,
                        OBJECTS_TOTAL_DATA)
     
@@ -473,7 +489,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     object_cnt_half = OBJECTS_TOTAL_DATA / 2
     self.assertRaises(Exception, client.listObjects,
-                      count=d1_common.const.MAX_LISTOBJECTS + 1)
+      count=d1_common.const.MAX_LISTOBJECTS + 1,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
 
   def date_range_1(self):
     '''Date range query: Get all objects from the 1990s.
@@ -481,9 +498,11 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
-                                     startTime=datetime.datetime(1990, 1, 1),
-                                     endTime=datetime.datetime(1999, 12, 31))
-    self.assert_counts(object_list, 0, OBJECTS_CREATED_IN_90S, OBJECTS_CREATED_IN_90S)
+      startTime=datetime.datetime(1990, 1, 1),
+      endTime=datetime.datetime(1999, 12, 31),
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
+    self.assert_counts(object_list, 0,
+                       OBJECTS_CREATED_IN_90S, OBJECTS_CREATED_IN_90S)
   
   
   def date_range_2(self):
@@ -491,10 +510,10 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''    
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(start=0,
-                                     count=10,
-                                     startTime=datetime.datetime(1990, 1, 1),
-                                     endTime=datetime.datetime(1999, 12, 31))
+    object_list = client.listObjects(start=0, count=10,
+      startTime=datetime.datetime(1990, 1, 1),
+      endTime=datetime.datetime(1999, 12, 31),
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
   
   def date_range_3(self):
@@ -503,11 +522,11 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(start=0,
-                                     count=10,
-                                     startTime=datetime.datetime(1990, 1, 1),
-                                     endTime=datetime.datetime(1999, 12, 31),
-                                     objectFormat='eml://ecoinformatics.org/eml-2.0.0')
+    object_list = client.listObjects(start=0, count=10,
+      startTime=datetime.datetime(1990, 1, 1),
+      endTime=datetime.datetime(1999, 12, 31),
+      objectFormat='eml://ecoinformatics.org/eml-2.0.0',
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
   
   def date_range_4(self):
@@ -515,11 +534,11 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(start=0,                      
-                                     count=10,
-                                     startTime=datetime.datetime(2500, 1, 1),
-                                     endTime=datetime.datetime(2500, 12, 31),
-                                     objectFormat='eml://ecoinformatics.org/eml-2.0.0')
+    object_list = client.listObjects(start=0, count=10,
+      startTime=datetime.datetime(2500, 1, 1),
+      endTime=datetime.datetime(2500, 12, 31),
+      objectFormat='eml://ecoinformatics.org/eml-2.0.0',
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, 0, 0, 0)
   
   def get_object_count(self):
@@ -527,8 +546,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
-    object_list = client.listObjects(start=0,
-                                     count=0)
+    object_list = client.listObjects(start=0, count=0,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assert_counts(object_list, 0, 0, OBJECTS_TOTAL_DATA)
   
   
@@ -547,7 +566,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.get('10Dappend2.txt',
-                          vendorSpecific=self.session('test_user_1'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     # Todo: Verify that we got the right object.
   
   # Todo: Unicode tests.
@@ -562,9 +581,9 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotFound,
-                      client.getSystemMetadata,
-                      '_invalid_pid_',
-                      vendorSpecific=self.session('test_user_1'))
+      client.getSystemMetadata,
+      '_invalid_pid_',
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
 
 
   def get_sysmeta_by_valid_pid(self):
@@ -572,7 +591,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.getSystemMetadata('10Dappend2.txt',
-      vendorSpecific=self.session('test_user_1'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertTrue(response)
 
   
@@ -580,7 +599,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Returned XML document validates against the ObjectList schema.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.listObjectsResponse(count=d1_common.const.MAX_LISTOBJECTS) 
+    response = client.listObjectsResponse(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED)) 
     xml_doc = response.read()
     d1_common.util.validate_xml(xml_doc)
   
@@ -593,7 +613,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getObjectStatistics(
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -605,7 +625,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     monitor_list = client.getObjectStatistics(
       fromDate=datetime.datetime(2000, 01, 01),
       toDate=datetime.datetime(2005, 01, 01),
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -619,7 +639,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     monitor_list = client.getObjectStatistics(
       #format='eml://ecoinformatics.org/eml-2.0.0',
       format='eml-2.0.0',
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
@@ -635,7 +655,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getObjectStatistics(pid='F*',
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count,
@@ -646,7 +666,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getObjectStatistics(day=True,
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATES)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     found_date = False
@@ -672,7 +692,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       #format='eml://ecoinformatics.org/eml-2.0.0',
       format='eml-2.0.0',
       day=True,
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_FORMAT_EML)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, 1)
@@ -688,7 +708,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getObjectStatistics(pid='f*', day=True,
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, 1)
@@ -702,7 +722,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count,
@@ -719,7 +739,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(event='read',
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_READ)
@@ -733,7 +753,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     monitor_list = client.getOperationStatistics(
       #format='eml://ecoinformatics.org/eml-2.0.0',
       format='eml-2.0.0',
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count,
@@ -750,7 +770,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(day=True,
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), EVENTS_UNIQUE_DATES)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     found_date = False
@@ -766,7 +786,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(
       fromDate=datetime.datetime(1980, 1, 1),
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count, EVENTS_TOTAL_EVENT_UNI_TIME_FROM_1980)
@@ -778,7 +798,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     monitor_list = client.getOperationStatistics(
       fromDate=datetime.datetime(1980, 1, 1),
       toDate=datetime.datetime(1990, 1, 1),
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count,
@@ -790,7 +810,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     monitor_list = client.getOperationStatistics(
       toDate=datetime.datetime(1990, 1, 1),
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo), 1)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
     self.assertEqual(monitor_list.monitorInfo[0].count,
@@ -803,7 +823,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     monitor_list = client.getOperationStatistics(
       event='read',
       day=True,
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo),
                      EVENTS_UNIQUE_DATES_WITH_READ)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
@@ -819,7 +839,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       #format='eml://ecoinformatics.org/eml-2.0.0',
       format='eml-2.0.0',
       day=True,
-      vendorSpecific=self.session('DATAONE_TRUSTED'))
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(monitor_list.monitorInfo),
                      EVENTS_WITH_OBJECT_FORMAT_EML)
     self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
@@ -965,7 +985,7 @@ class TestSequenceFunctions(unittest2.TestCase):
                                  'src', 'test', 'resources', 'd1_testdocs', 'encodingTestSet')
     test_ascii_strings_path = os.path.join(test_doc_path, 'testAsciiStrings.utf8.txt')
 
-    file_obj = codecs.open(test_ascii_strings_path, 'r', 'utf-8')
+    file_obj = codecs.open(test_ascii_strings_path, 'rb', 'utf-8')
     for line in file_obj:
       line = line.strip()
       try:
@@ -995,7 +1015,57 @@ class TestSequenceFunctions(unittest2.TestCase):
       self.assertEqual(scidata_retrieved, scidata)
       self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
 
-   
+  
+  def auth_listobjects_1(self):
+    '''listObjects returns all objects when called by trusted user.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
+    self.assertEqual(object_list.count, OBJECTS_TOTAL_DATA)
+
+  def auth_listobjects_2(self):
+    '''listObjects returns only public objects when called by public user.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(d1_common.const.SUBJECT_PUBLIC))
+    self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
+    
+  def auth_listobjects_3(self):
+    '''listObjects returns only public objects when called by unknown user.
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session('unknown user'))
+    self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
+  
+  def auth_listobjects_4(self):
+    '''listObjects returns only public + specific user's objects
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.session(AUTH_SPECIFIC_USER))
+    self.assertEqual(object_list.count, AUTH_SPECIFIC_USER_OWNS)
+
+  def auth_listobjects_5(self):
+    '''listObjects: slicing + specific user
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects(count=5,
+      vendorSpecific=self.session(AUTH_SPECIFIC_USER))
+    self.assert_counts(object_list, 0, 5, AUTH_SPECIFIC_USER_OWNS)
+
+  def auth_listobjects_6(self):
+    '''listObjects: slicing + specific user + objectFormat
+    '''
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    object_list = client.listObjects(count=5,
+      objectFormat='eml://ecoinformatics.org/eml-2.0.0',
+      vendorSpecific=self.session(AUTH_SPECIFIC_USER))
+    self.assert_counts(object_list, 0, 5, AUTH_SPECIFIC_AND_OBJ_FORMAT)
+
+
   #
   # Tests.
   #

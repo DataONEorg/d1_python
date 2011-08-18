@@ -230,8 +230,8 @@ class TestSequenceFunctions(unittest.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       sci_object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = urllib.unquote(os.path.basename(sci_object_path))
-      #sysmeta_str_disk = open(sysmeta_path, 'r').read()
-      sci_object_str_disk = open(sci_object_path, 'r').read()
+      #sysmeta_str_disk = open(sysmeta_path, 'rb').read()
+      sci_object_str_disk = open(sci_object_path, 'rb').read()
       #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
       sci_object_str_d1 = client.get(pid).read()
       #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
@@ -245,7 +245,7 @@ class TestSequenceFunctions(unittest.TestCase):
     
     client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', pid)
-    sci_object_str_disk = open(sci_object_path, 'r').read()
+    sci_object_str_disk = open(sci_object_path, 'rb').read()
     sci_object_str_node = client.get(pid).read()
     self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
@@ -260,7 +260,7 @@ class TestSequenceFunctions(unittest.TestCase):
     else:
       client = d1_client.client.DataOneClient(cn_url)
     sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', pid)
-    sci_object_str_disk = open(sci_object_path, 'r').read()
+    sci_object_str_disk = open(sci_object_path, 'rb').read()
     sci_object_str_node = client.get(pid).read()
     self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
@@ -394,10 +394,10 @@ class TestSequenceFunctions(unittest.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, 'sysmeta/*'))):
       # Get name of corresponding SciObject and open it.
       sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', os.path.split(sysmeta_path)[1])
-      sci_object_file = open(sci_object_path, 'r')
+      sci_object_file = open(sci_object_path, 'rb')
   
       # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_file = open(sysmeta_path, 'rb')
       sysmeta_xml = sysmeta_file.read()
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
       pid = sysmeta_obj.pid
@@ -429,7 +429,7 @@ class TestSequenceFunctions(unittest.TestCase):
       # Get pid for SciObject.
       pid = urllib.unquote(os.path.basename(sci_object_path))
       # Get sysmeta xml for corresponding SciObject from disk.
-      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_file = open(sysmeta_path, 'rb')
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_file)
   
       # Get corresponding SciObject from objectList.
@@ -651,7 +651,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: ObjectList deserialization, XML')
     
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test.xml', 'rb').read()
     sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('text/xml')
@@ -667,7 +667,7 @@ class TestSequenceFunctions(unittest.TestCase):
     ''' 
     logging.info('MN: ObjectList deserialization, JSON')
     
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test.xml', 'rb').read()
     sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('application/json')
@@ -683,7 +683,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: ObjectList deserialization, RDF XML')
     
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test.xml', 'rb').read()
     sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('application/rdf+xml')
@@ -693,7 +693,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: ObjectList deserialization, CSV')
     
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test.xml', 'rb').read()
     sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('text/csv')
@@ -722,7 +722,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     logging.info('MN: MonitorList deserialization, XML')
     
-    xml_doc = open('test.xml').read()
+    xml_doc = open('test.xml', 'rb').read()
     sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_1.deserialize(xml_doc, 'text/xml')
     doc, content_type = sci_objects_1.serialize('text/xml')
@@ -1117,7 +1117,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
     # The pid is stored in the sysmeta.
-    sysmeta_file = open(sysmeta_path, 'r')
+    sysmeta_file = open(sysmeta_path, 'rb')
     sysmeta_xml = sysmeta_file.read()
     sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
     pid = sysmeta_obj.pid

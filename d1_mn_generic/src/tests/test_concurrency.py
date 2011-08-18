@@ -86,7 +86,7 @@ class concurrent_read(threading.Thread):
       self.key,
       str(self.sleep_before),
       str(self.sleep_after),
-      headers=session('DATAONE_TRUSTED')
+      headers=session(d1_common.const.SUBJECT_TRUSTED)
     )
 
     self.val = self.response.read()
@@ -118,7 +118,7 @@ class concurrent_write(threading.Thread):
       self.val,
       str(self.sleep_before),
       str(self.sleep_after),
-      headers=session('DATAONE_TRUSTED')
+      headers=session(d1_common.const.SUBJECT_TRUSTED)
     )
 
     #print 'ended write({0}, {1}, {2})'.format(self.key,
@@ -140,7 +140,7 @@ class concurrent_dictionary_id(threading.Thread):
     #print 'starting id'
 
     self.response = client.test_concurrency_get_dictionary_id(
-      headers=session('DATAONE_TRUSTED')
+      headers=session(d1_common.const.SUBJECT_TRUSTED)
     )
 
     id = self.response.read()

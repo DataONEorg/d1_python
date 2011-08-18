@@ -134,7 +134,7 @@ def get_sysmeta(pid):
     sysmeta_path = os.path.join(settings.CN_SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
-    sysmeta_xml = open(sysmeta_path).read()
+    sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
       if sysmeta_obj.identifier.value() == pid:
@@ -157,7 +157,7 @@ def get_replication_status_list(pid=None):
     sysmeta_path = os.path.join(settings.CN_SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
-    sysmeta_xml = open(sysmeta_path).read()
+    sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
@@ -180,7 +180,7 @@ def get_replication_status_list(pid=None):
 def set_sysmeta(sysmeta_filename, sysmeta_obj):
   sysmeta_path = os.path.join(settings.CN_SYSMETA_STORE_PATH, sysmeta_filename)
   try:
-    sysmeta_file = open(sysmeta_path, 'w')
+    sysmeta_file = open(sysmeta_path, 'wb')
   except EnvironmentError as (errno, strerror):
     err_msg = 'Could not write sysmeta file\n'
     err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
@@ -233,7 +233,7 @@ def clear_replication_status(node_ref=None, pid=None):
     sysmeta_path = os.path.join(settings.CN_SYSMETA_STORE_PATH, sysmeta_filename)
     if not os.path.isfile(sysmeta_path):
       continue
-    sysmeta_xml = open(sysmeta_path).read()
+    sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
       sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):

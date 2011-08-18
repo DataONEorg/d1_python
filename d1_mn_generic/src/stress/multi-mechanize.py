@@ -71,9 +71,9 @@ def run_test(remote_starter=None):
   )
 
   run_localtime = time.localtime()
-
-  output_dir = 'projects/' + project_name + '/results/'
-  #output_dir = time.strftime('projects/' + project_name + '/results/results_%Y.%m.%d_%H.%M.%S/', run_localtime)
+  output_dir = time.strftime(
+    'projects/' + project_name + '/results/results_%Y.%m.%d_%H.%M.%S/', run_localtime
+  )
 
   # this queue is shared between all processes/threads
   queue = multiprocessing.Queue()
@@ -363,9 +363,8 @@ class ResultsWriter(threading.Thread):
     try:
       os.makedirs(self.output_dir, 0755)
     except OSError:
-      pass
-      #sys.stderr.write('ERROR: Can not create output directory\n')
-      #sys.exit(1)
+      sys.stderr.write('ERROR: Can not create output directory\n')
+      sys.exit(1)
 
   def run(self):
     with open(self.output_dir + 'results.csv', 'w') as f:

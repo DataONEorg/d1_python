@@ -131,6 +131,7 @@ urlpatterns = patterns(
   # Misc.
   (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
   (r'^test_exception/(.+?)/?$', 'test_exception'),
+  (r'^test_clear_database/(.+?)/?$', 'test_clear_database'),
   (r'^test_delete_all_objects/?$', 'test_delete_all_objects'),
   (r'^test_delete_single_object/(.+?)/?$', 'test_delete_single_object'),
   (r'^test_delete_event_log/?$', 'test_delete_event_log'),

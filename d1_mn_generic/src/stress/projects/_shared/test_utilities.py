@@ -33,6 +33,21 @@ import sys
 import hashlib
 
 
+def gmn_vse_provide_subject(subject):
+  '''GMN Vendor Specific Extension: Simulate subject.'''
+  return {'VENDOR_OVERRIDE_SESSION': subject}
+
+
+def gmn_vse_enable_sql_profiling():
+  '''GMN Vendor Specific Extension: Enable SQL profiling.'''
+  return {'VENDOR_PROFILE_SQL': 1}
+
+
+def gmn_vse_enable_python_profiling():
+  '''GMN Vendor Specific Extension: Enable Python profiling.'''
+  return {'VENDOR_PROFILE_PYTHON': 1}
+
+
 def get_resource_path(path):
   '''Get path to test resources.'''
   resource_path = os.path.abspath(

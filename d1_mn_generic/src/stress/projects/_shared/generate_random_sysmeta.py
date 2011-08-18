@@ -276,5 +276,24 @@ def generate_random_sysmeta(pid, size, md5):
   return sysmeta
 
 
+def generate_random_access_policy():
+  access_policy = d1_common.types.generated.dataoneTypes.accessPolicy()
+  selected_subjects = {}
+  for i in range(random.randint(1, 20)):
+    selected_subjects[random.choice(subjects)] = True
+  access_rule = d1_common.types.generated.dataoneTypes.AccessRule()
+  for selected_subject in selected_subjects.keys():
+    access_rule.subject.append(selected_subject)
+  permission = d1_common.types.generated.dataoneTypes.Permission('read')
+  access_rule.permission.append(permission)
+  access_policy.append(access_rule)
+  return access_policy
+
+
 if __name__ == '__main__':
-  print generate_random_sysmeta()
+  # Debugging.
+  #import pyxb
+  #pyxb.RequireValidWhenGenerating(False)
+
+  #print generate_random_sysmeta().toxml()
+  print generate_random_access_policy().toxml()

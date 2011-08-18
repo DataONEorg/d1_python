@@ -33,23 +33,28 @@ import datetime
 import sys
 import time
 
-# App.
-sys.path.append('./client')
-sys.path.append('./projects/gmn/test_scripts/client')
+# D1.
 import d1_common.const
-import test_client
 
-baseurl = 'http://localhost/mn'
+# App.
+
+# Path to modules shared between projects.
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+import sys
+sys.path.append(_here('../../../projects/_shared/'))
+
+import settings
+import test_client
 
 
 class Transaction(object):
-  def __init__(self):
+  def __init__(self, profile=False):
     self.custom_timers = {}
 
   def list_objects(self):
     '''Get first page of log records.
     '''
-    client = test_client.TestClient(baseurl)
+    client = test_client.TestClient(settings.BASEURL)
 
     object_list = client.listObjects(start=0, count=0)
 
@@ -70,6 +75,7 @@ class Transaction(object):
 
 
 if __name__ == '__main__':
-  trans = Transaction()
+  trans = Transaction(profile=True)
   trans.run()
-  print trans.custom_timers
+  #import cProfile
+  #cProfile.run('trans.run()', 'profile')

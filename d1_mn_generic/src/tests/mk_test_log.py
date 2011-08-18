@@ -153,7 +153,7 @@ def main():
   csv_writer = csv.writer(csv_file)
 
   for sysmeta_path in sorted(glob.glob(os.path.join(options.obj_path, 'sysmeta', '*'))):
-    sysmeta_file = open(sysmeta_path, 'r')
+    sysmeta_file = open(sysmeta_path, 'rb')
     sysmeta_tree = etree.parse(sysmeta_file)
     sysmeta_file.close()
 

@@ -55,6 +55,7 @@ except ImportError, e:
 import d1_common.ext.mimeparser
 
 # Django.
+import django.db
 from django.db import models
 from django.http import HttpResponse
 from django.db.models import Avg, Max, Min, Count
@@ -81,7 +82,6 @@ class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
     :param:
     :return:
     '''
-
     for row in view_result['query']:
       objectInfo = d1_common.types.generated.dataoneTypes.ObjectInfo()
       objectInfo.identifier = row.pid
@@ -473,10 +473,7 @@ def set_header(response, last_modified, content_length, content_type):
       last_modified = status_row.mtime
 
   response['Last-Modified'] = wsgiref.handlers.format_date_time(
-    time.mktime(
-      last_modified.timetuple(
-      )
-    )
+    time.mktime(last_modified.timetuple())
   )
   response['Content-Length'] = content_length
   response['Content-Type'] = content_type
@@ -491,11 +488,17 @@ class response_handler():
     else:
       response = view_result
 
-    # For debugging, if pretty printed output was requested, we force the
-    # content type to text. This causes the browser to not try to format
-    # the output in any way.
-    if settings.GMN_DEBUG == True and 'pretty' in request.REQUEST:
-      response['Content-Type'] = 'text/plain'
+    # Extra functionality available in debug mode.
+    if settings.DEBUG == True:
+      # If pretty printed output was requested, force the content type to text.
+      # This causes the browser to not try to format the output in any way.
+      if 'pretty' in request.REQUEST:
+        response['Content-Type'] = 'text/plain'
 
-    # If view_result is a HttpResponse, we return it unprocessed.
+      if 'HTTP_VENDOR_PROFILE_SQL' in request.META:
+        response_list = []
+        for query in django.db.connection.queries:
+          response_list.append('{0}\n{1}'.format(query['time'], query['sql']))
+          response = HttpResponse('\n\n'.join(response_list), 'text/plain')
+
     return response
