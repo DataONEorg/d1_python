@@ -1,12 +1,1 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
-  <identifier>hdl:10255/dryad.167/mets.xml</identifier>
-  <objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat>
-  <size>4542</size>
-  <checksum algorithm="SHA-1">341a325765375533160692c115a7591911110813</checksum><submitter>test</submitter>
-  <rightsHolder>test</rightsHolder>
-  <dateUploaded>2010-04-26T07:23:47.662810</dateUploaded>
-  <dateSysMetadataModified>1991-09-28T12:57:19</dateSysMetadataModified>
-  <originMemberNode>MN1</originMemberNode>
-  <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</D1:systemMetadata>
+<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>hdl:10255/dryad.167/mets.xml</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>4542</size><checksum algorithm="SHA-1">341a325765375533160692c115a7591911110813</checksum><submitter>test</submitter><rightsHolder>folding_5087</rightsHolder><accessPolicy><allow><subject>5227@manuscript@objectively</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:23:47.66281</dateUploaded><dateSysMetadataModified>1991-09-28T12:57:19</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>

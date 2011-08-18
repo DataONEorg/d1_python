@@ -1,12 +1,1 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
-  <identifier>hdl:10255/dryad.174/mets.xml</identifier>
-  <objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat>
-  <size>3194</size>
-  <checksum algorithm="SHA-1">46b64aafeeba5c0edc4c626fee7133fcf96ab1f0</checksum><submitter>test</submitter>
-  <rightsHolder>test</rightsHolder>
-  <dateUploaded>2010-04-26T07:23:43.661045</dateUploaded>
-  <dateSysMetadataModified>1985-10-28T14:32:18</dateSysMetadataModified>
-  <originMemberNode>MN1</originMemberNode>
-  <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</D1:systemMetadata>
+<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>hdl:10255/dryad.174/mets.xml</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>3194</size><checksum algorithm="SHA-1">46b64aafeeba5c0edc4c626fee7133fcf96ab1f0</checksum><submitter>test</submitter><rightsHolder>santa=purposefully=3775</rightsHolder><accessPolicy><allow><subject>975@shadily</subject><subject>sparingly~renault~9208</subject><subject>melanie~1855</subject><subject>3934~senators</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:23:43.661045</dateUploaded><dateSysMetadataModified>1985-10-28T14:32:18</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>

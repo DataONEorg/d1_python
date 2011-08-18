@@ -1,12 +1,1 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
-  <identifier>command_files.zip</identifier>
-  <objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat>
-  <size>2102</size>
-  <checksum algorithm="MD5">8452c14661100497aaf081a7850b42fd</checksum><submitter>test</submitter>
-  <rightsHolder>test</rightsHolder>
-  <dateUploaded>2010-04-26T07:25:19.820675</dateUploaded>
-  <dateSysMetadataModified>1985-08-28T17:55:58</dateSysMetadataModified>
-  <originMemberNode>MN1</originMemberNode>
-  <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</D1:systemMetadata>
+<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>command_files.zip</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>2102</size><checksum algorithm="MD5">8452c14661100497aaf081a7850b42fd</checksum><submitter>test</submitter><rightsHolder>8335_flick_cogitate</rightsHolder><dateUploaded>2010-04-26T07:25:19.820675</dateUploaded><dateSysMetadataModified>1985-08-28T17:55:58</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
