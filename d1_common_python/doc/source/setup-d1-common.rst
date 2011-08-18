@@ -21,7 +21,7 @@ To set the library up in ``/var/local/dataone/d1_common_python`` using
   # mkdir -p /var/local/dataone
   # cd /var/local/dataone
   # svn co https://repository.dataone.org/software/cicore/trunk/d1_common_python d1_common_python
-  # cd d1_common_python/d1_common/src
+  # cd d1_common_python/src/
   # python setup.py develop
 
 

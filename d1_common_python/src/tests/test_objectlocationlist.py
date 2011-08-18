@@ -81,6 +81,7 @@ class TestObjectLocationList(unittest.TestCase):
     doctest(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
 
 #===============================================================================
+
 if __name__ == "__main__":
   argv = sys.argv
   if "--debug" in argv:
