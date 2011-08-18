@@ -118,3 +118,9 @@ URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="
 URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 
 AUTH_HEADER_NAME = 'Authorization'
+
+# Special subjects.
+SUBJECT_PUBLIC = 'public'
+SUBJECT_AUTHENTICATED = 'authenticated'
+SUBJECT_VERIFIED = 'verified'
+SUBJECT_TRUSTED = 'trusted'

@@ -21,7 +21,7 @@ PyXB                 \
 
 Install :term:`setuptools`::
 
-  $ sudo easy_install python-setuptools
+  $ sudo apt-get install python-setuptools
 
 
 Install :term:`minixsv`::
