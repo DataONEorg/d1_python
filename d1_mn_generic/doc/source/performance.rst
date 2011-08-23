@@ -3,17 +3,26 @@ Performance
 
 <scratch>
 
+Optimizing GMN for performance.
 
-The listObjects call does ordered, sliced and filtered selects from the object
-table. The object table should be clustered on mtime. With PostgreSQL, this
-can be done with the CLUSTER command::
+The MNRead.listObjects() call does ordered, sliced and filtered selects from the
+object table. The object table should be clustered on mtime. With PostgreSQL,
+this can be done with the CLUSTER command::
 
-  cluster object using mtime;
+  cluster mn_object using mtime;
   
 PostgreSQL will not automatically keep the table clustered. Instead, the
 table must be clustered whenever sufficient changes have been accumulated.
 
 To keep the table clustered for longer, adjust the fill factor.
+
+--
+
+MNCore.getLogRecords() can be optimized in the same ways as MNRead.listObjects().
+
+The mn_event_log should be clustered on date_logged::
+
+  cluster mn_event_log using date_logged
 
 --
 

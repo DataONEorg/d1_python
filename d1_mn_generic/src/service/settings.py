@@ -45,6 +45,12 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 # debugging.
 DEBUG = True
 
+# Set log level: DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
+if DEBUG:
+  LOG_LEVEL = 'DEBUG'
+else:
+  LOG_LEVEL = 'WARNING'
+
 # TODO: Check this setting.
 TEMPLATE_DEBUG = DEBUG
 
@@ -164,25 +170,14 @@ CN_SYSMETA_STORE_PATH = _here('./cn_sysmeta_store')
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
 
-## Set up logging.
-## We output everything to both file and stdout.
-#logging.getLogger('').setLevel(logging.DEBUG)
-#formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
-## Log file.
-#file_logger = logging.FileHandler(settings.LOG_PATH, 'a')
-#file_logger.setFormatter(formatter)
-#logging.getLogger('').addHandler(file_logger)
-## Console.
-##console_logger = StreamHandler(sys.stdout)
-##console_logger.setFormatter(formatter)
-##getLogger('').addHandler(console_logger)
-
+# Set up logging.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': ('%(asctime)s %(module)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
+              'format': '%(asctime)s %(module)s %(levelname)-8s %(message)s',
+              'datefmt': '%y/%m/%d %H:%M:%S'
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -195,21 +190,21 @@ LOGGING = {
   #        }
   #    },
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
+      #        'null': {
+      #            'level': 'DEBUG',
+      #            'class': 'django.utils.log.NullHandler',
+      #        },
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': LOG_PATH,
             'formatter': 'verbose'
         },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
+      #        'console': {
+      #            'level': 'DEBUG',
+      #            'class': 'logging.StreamHandler',
+      #            'formatter': 'verbose'
+      #        },
       #        'mail_admins': {
       #            'level': 'ERROR',
       #            'class': 'django.utils.log.AdminEmailHandler',
@@ -218,10 +213,15 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers': ['file'],
             'propagate': True,
-            'level': 'INFO',
+            'level': LOG_LEVEL,
         },
+      #        'django': {
+      #            'handlers': ['null'],
+      #            'propagate': True,
+      #            'level': 'DEBUG',
+      #        },
       #        'django.request': {
       #            'handlers': ['mail_admins'],
       #            'level': 'ERROR',

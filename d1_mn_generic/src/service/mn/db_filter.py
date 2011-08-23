@@ -41,12 +41,31 @@ import d1_common.types.exceptions
 logger = logging.getLogger(__name__)
 
 
-def add_access_policy_filter(query, request):
-  return query.filter(
-    permission__subject__subject__in=[
-      d1_common.const.SUBJECT_PUBLIC, request.META['SSL_CLIENT_S_DN']
-    ]
-  )
+def add_access_policy_filter(query, request, column_name):
+  '''Add access control filter to a QuerySet.
+  :param query: The query to which to add the filters.
+  :type query: QuerySet
+  :param request: The request object to get parameter from.
+  :type request: HttpRequest
+  :param column_name: Table column name.
+  :type column_name: string
+  :return: Filtered query.
+  :return type: QuerySet
+  '''
+  filter_arg = '{0}__subject__subject__in'.format(column_name)
+  allowed_subjects = [d1_common.const.SUBJECT_PUBLIC, request.META['SSL_CLIENT_S_DN']]
+  logger.info('Applied access control filter')
+  return query.filter(**{filter_arg: allowed_subjects})
+
+
+def add_bool_filter(query, column_name, bool_val):
+  if bool_val not in (True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'):
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid boolean format: {0}'.format(bool_val)
+    )
+  logger.info('Applied bool filter')
+  filter_arg = '{0}'.format(column_name)
+  return query.filter(**{filter_arg: bool_val})
 
 
 def add_datetime_filter(query, request, column_name, param_name, operator):
@@ -76,11 +95,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
       date = iso8601.parse_date(date_str)
     except iso8601.ParseError, e:
       raise d1_common.types.exceptions.InvalidRequest(
-        0, 'Invalid date format: {0} {1}'.format(
-          request.GET[key], str(
-            e
-          )
-        )
+        0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))
       )
     filter_arg = '{0}__{1}'.format(column_name, operator)
     logger.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
@@ -121,9 +136,7 @@ def add_wildcard_filter(query, col_name, value):
   # Make sure there are no wildcards except at beginning and/or end of value.
   if re.match(r'.+\*.+$', value):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Wildcard is only supported at start OR end of value: {0}'.format(
-        value
-      )
+      0, 'Wildcard is only supported at start OR end of value: {0}'.format(value)
     )
 
   value_trimmed = re.match(r'\*?(.*?)\*?$', value).group(1)
@@ -147,9 +160,7 @@ def add_wildcard_filter(query, col_name, value):
 
   if wild_beginning == True and wild_end == True:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Wildcard is only supported at start OR end of value: {0}'.format(
-        value
-      )
+      0, 'Wildcard is only supported at start OR end of value: {0}'.format(value)
     )
 
   # If no wildcards are used, we add a regular "equals" filter.
@@ -173,9 +184,7 @@ def add_slice_filter(query, request):
     start = 0
   except ValueError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid start value: {0}'.format(
-        request.GET['start']
-      )
+      0, 'Invalid start value: {0}'.format(request.GET['start'])
     )
   # Get and validate the 'count' argument, used for setting the number of
   # records to retrieve.

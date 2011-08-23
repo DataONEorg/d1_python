@@ -96,7 +96,8 @@ class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
 
-      objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(row.mtime)
+      objectInfo.dateSysMetadataModified = \
+        datetime.datetime.isoformat(row.mtime)
       objectInfo.size = row.size
 
       self.object_list.objectInfo.append(objectInfo)
@@ -153,125 +154,6 @@ class MonitorList(d1_common.types.monitorlist_serialization.MonitorList):
       self.monitor_list.append(monitorInfo)
 
 
-class NodeList(d1_common.types.nodelist_serialization.NodeList):
-  def deserialize_db(self, view_result):
-    '''
-    :param:
-    :return:
-    '''
-    cfg = lambda key: models.Node.objects.get(key=key).val
-
-    # Node
-
-    # El.
-    node = d1_common.types.generated.dataoneTypes.Node()
-    node.identifier = cfg('identifier')
-    node.name = cfg('version')
-    node.description = cfg('description')
-    node.baseURL = cfg('base_url')
-    # Attr
-    node.replicate = cfg('replicate')
-    node.synchronize = cfg('synchronize')
-    node.type = cfg('node_type')
-
-    # Services
-
-    services = d1_common.types.generated.dataoneTypes.Services()
-
-    svc = d1_common.types.generated.dataoneTypes.Service()
-    svc.name = cfg('service_name')
-    svc.version = cfg('service_version')
-    svc.available = cfg('service_available')
-
-    # Methods
-
-    methods = []
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'session'
-    method.rest = 'session/'
-    method.implemented = 'true'
-    methods.append(method)
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'object_collection'
-    method.rest = 'object'
-    method.implemented = 'true'
-    methods.append(method)
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'get_object'
-    method.rest = 'object/'
-    method.implemented = 'true'
-    methods.append(method)
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'get_meta'
-    method.rest = 'meta/'
-    method.implemented = 'true'
-    methods.append(method)
-
-    # Log
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'log_collection'
-    method.rest = 'log'
-    method.implemented = 'true'
-    methods.append(method)
-
-    # Health
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'health_ping'
-    method.rest = 'health/ping'
-    method.implemented = 'true'
-    methods.append(method)
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'health_status'
-    method.rest = 'health/status'
-    method.implemented = 'true'
-    methods.append(method)
-
-    # Monitor
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'monitor_object'
-    method.rest = 'monitor/object'
-    method.implemented = 'true'
-    methods.append(method)
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'monitor_event'
-    method.rest = 'monitor/event'
-    method.implemented = 'true'
-    methods.append(method)
-
-    # Node
-
-    method = d1_common.types.generated.dataoneTypes.ServiceMethod()
-    method.name = 'node'
-    method.rest = 'node'
-    method.implemented = 'true'
-    methods.append(method)
-
-    # Diagnostics, debugging and testing.
-    # inject_log
-    # get_ip
-
-    # Admin.
-    # admin/doc
-    # admin
-
-    svc.method = methods
-
-    services.append(svc)
-
-    node.services = services
-
-    self.node_list.append(node)
-
-
 def serialize_object(request, view_result):
   # The "pretty" parameter generates pretty response.
   pretty = 'pretty' in request.REQUEST
@@ -289,7 +171,6 @@ def serialize_object(request, view_result):
     'object': ObjectList(),
     'log': LogRecords(),
     'monitor': MonitorList(),
-    'node': NodeList()
   }[view_result['type']]
 
   type.deserialize_db(view_result)
@@ -493,12 +374,16 @@ class response_handler():
       # If pretty printed output was requested, force the content type to text.
       # This causes the browser to not try to format the output in any way.
       if 'pretty' in request.REQUEST:
-        response['Content-Type'] = 'text/plain'
+        response['Content-Type'] = d1_common.const.MIMETYPE_TEXT
 
       if 'HTTP_VENDOR_PROFILE_SQL' in request.META:
         response_list = []
         for query in django.db.connection.queries:
           response_list.append('{0}\n{1}'.format(query['time'], query['sql']))
-          response = HttpResponse('\n\n'.join(response_list), 'text/plain')
+          response = HttpResponse(
+            '\n\n'.join(
+              response_list
+            ), d1_common.const.MIMETYPE_TEXT
+          )
 
     return response

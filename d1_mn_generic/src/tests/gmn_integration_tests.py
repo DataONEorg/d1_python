@@ -349,7 +349,8 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Event log is populated.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1))
+    logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1),
+      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
     found = False
     for o in logRecords.logEntry:

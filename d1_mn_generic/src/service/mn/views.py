@@ -272,19 +272,27 @@ def monitor_event(request):
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
 
 
-# TODO: Filter by permissions.
+# Unrestricted.
 def event_log_view(request):
   '''MNCore.getLogRecords(session, fromDate[, toDate][, event][, start=0]
   [, count=1000]) → Log
 
   Retrieve log information from the Member Node for the specified date range and
-  even type.
+  event type.
   '''
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
   # select objects ordered by mtime desc.
-  query = models.Event_log.objects.order_by('-date_logged')
+  query = models.Event_log.objects.order_by('-date_logged').select_related()
+
+  # Anyone can call listObjects but only objects to which they have read access
+  # or higher are returned. No access control is applied if called by trusted D1
+  # infrastructure.
+  if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
+    query = db_filter.add_access_policy_filter(query, request,
+                                               'object__permission')
+  
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
@@ -318,8 +326,7 @@ def event_log_view(request):
           'total': query_unsliced.count(), 'type': 'log' }
 
 
-#@lock_pid.for_read
-@auth.assert_trusted_permission
+# Unrestricted.
 def node(request):
   '''MNCore.getCapabilities() → Node
 
@@ -328,27 +335,11 @@ def node(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  return {'type': 'node' }
-
-#<node replicate="true" synchronize="true" type="mn">
-#<pid>http://cn-rpw</pid>
-#<name>DataONESamples</name>
-#<baseURL>http://cn-rpw/mn/</baseURL>
-#−
-#<services>
-#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="get" rest="object/${PID}"/>
-#<service api="mn_crud" available="true" datechecked="1900-01-01T00:00:00Z" method="getSystemMetadata" rest="meta/${PID}"/>
-#<service api="mn_replicate" available="true" datechecked="1900-01-01T00:00:00Z" method="listObjects" rest="object"/>
-#</services>
-#−
-#<synchronization>
-#<schedule hour="12" mday="*" min="00" mon="*" sec="00" wday="*" year="*"/>
-#<lastHarvested>1900-01-01T00:00:00Z</lastHarvested>
-#<lastCompleteHarvest>1900-01-01T00:00:00Z</lastCompleteHarvest>
-#</synchronization>
-#</node>
-
-
+  node_registry_path = os.path.join(settings.STATIC_STORE_PATH,
+                                       'nodeRegistry.xml')
+  # Django closes the file. (Can't use "with".)
+  file = open(node_registry_path, 'rb')
+  return HttpResponse(file, d1_common.const.MIMETYPE_XML)
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 1: Read API  
@@ -412,7 +403,7 @@ def object_pid_get(request, pid, head):
       'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
 
-# Unrestricted.
+# Internal.
 def _object_pid_get_remote(request, response, pid, url, url_split):
   # Handle 302 Found.  
   try:
@@ -450,12 +441,12 @@ def _object_pid_get_remote(request, response, pid, url, url_split):
   return response
 
 
-# Unrestricted.
+# Internal.
 def _object_pid_get_local(request, response, pid):
   file_in_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
-  file = open(file_in_path, 'rb')
-
   # Return the raw bytes of the object in chunks.
+  # Django closes the file. (Can't use "with".)
+  file = open(file_in_path, 'rb')
   response._container = util.fixed_chunk_size_iterator(file)
   response._is_str = False
   return response
@@ -478,15 +469,14 @@ def meta_pid(request, pid):
   except IndexError:
     raise d1_common.types.exceptions.NotFound(0,
       'Non-existing System Metadata object was requested', pid)
-  
-  # Open file for streaming.  
-  file_in_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  file = open(file_in_path, 'rb')
 
   # Log access of the SysMeta of this object.
   event_log.log(pid, 'read', request)
 
   # Return the raw bytes of the object in chunks.
+  file_in_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
+  # Django closes the file. (Can't use "with".)
+  file = open(file_in_path, 'rb')
   return HttpResponse(util.fixed_chunk_size_iterator(file),
                       mimetype=d1_common.const.MIMETYPE_XML)
 
@@ -514,6 +504,14 @@ def checksum_pid(request, pid):
   # Log the access of this object.
   # TODO: look into log type other than 'read'
   event_log.log(pid, 'read', request)
+
+  # If the checksumAlgorithm argument was provided, the checksum algorithm
+  # used by GMN must match the requested algorithm, or an exception is returned
+  # with the name of the supported algorithm.
+  if 'checksumAlgorithm' in request.GET \
+    and request.GET['checksumAlgorithm'] != checksum_algorithm:
+      raise d1_common.types.exceptions.InvalidRequest(0,
+        'Must use supported checksum algorithm: {0}'.format(checksum_algorithm))
 
   # Return the checksum.
   checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
@@ -543,7 +541,7 @@ def object(request):
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
   if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
-    query = db_filter.add_access_policy_filter(query, request)
+    query = db_filter.add_access_policy_filter(query, request, 'permission')
 
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
@@ -560,8 +558,8 @@ def object(request):
     query_unsliced = query
   
   # endTime
-  query, changed = db_filter.add_datetime_filter(query, request, 'mtime', 'endTime',
-                                            'lt')
+  query, changed = db_filter.add_datetime_filter(query, request, 'mtime',
+                                                 'endTime', 'lt')
   if changed == True:
     query_unsliced = query
       
@@ -571,8 +569,12 @@ def object(request):
                                      request.GET['objectFormat'])
     query_unsliced = query
 
-  # TODO. Filter by replicaStatus. May be removed from API.
-
+  # replicaStatus
+  if 'replicaStatus' in request.GET:
+    db_filter.add_bool_filter(query, 'replica', request.GET['replicaStatus'])
+  else:
+    db_filter.add_bool_filter(query, 'replica', True)
+    
   # Create a slice of a query based on request start and count parameters.
   query, start, count = db_filter.add_slice_filter(query, request)
 
@@ -773,6 +775,7 @@ def object_pid_post(request, pid):
     object.mtime = d1_common.util.normalize_to_utc(
       sysmeta.dateSysMetadataModified)
     object.size = sysmeta.size
+    object.replica = False
     object.save_unique()
   
     # Successfully updated the db, so put current datetime in status.mtime. This
@@ -804,7 +807,7 @@ def object_pid_post(request, pid):
   return HttpResponse(doc, content_type)
 
 
-# Unrestricted.
+# Internal.
 def _object_pid_post_store_local(request, pid):
   logger.info('pid({0}): Writing object to disk'.format(pid))
   object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)

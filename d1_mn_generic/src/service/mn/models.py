@@ -78,6 +78,7 @@ class Object(models.Model):
   mtime = models.DateTimeField(db_index=True)
   db_mtime = models.DateTimeField(auto_now=True, db_index=True)
   size = models.PositiveIntegerField(db_index=True)
+  replica = models.BooleanField(db_index=True)
 
   def set_format(self, format_id, format_name, sci_meta):
     ''':param:
@@ -140,7 +141,7 @@ class Event_log_member_node(models.Model):
 
 
 class Event_log(models.Model):
-  object = models.ForeignKey(Object, null=True)
+  object = models.ForeignKey(Object)
   event = models.ForeignKey(Event_log_event, db_index=True)
   ip_address = models.ForeignKey(Event_log_ip_address, db_index=True)
   user_agent = models.ForeignKey(Event_log_user_agent, db_index=True)
@@ -242,16 +243,12 @@ class Replication_work_queue(models.Model):
     )[0]
 
 # ------------------------------------------------------------------------------
-# Subject
+# Access Control
 # ------------------------------------------------------------------------------
 
 
 class Subject(models.Model):
   subject = models.CharField(max_length=100, unique=True, db_index=True)
-
-# ------------------------------------------------------------------------------
-# Permission
-# ------------------------------------------------------------------------------
 
 
 class Permission(models.Model):
