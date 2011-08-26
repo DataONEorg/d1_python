@@ -44,55 +44,60 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
         <identifier>__invalid_test_object__81e0e944-bf2d-11e0-a5cd-8122f1474081</identifier>
-        <objectFormat>
+        <fmtid>CF-1.2</fmtid>
+        <!-- <objectFormat>
             <fmtid>CF-1.2</fmtid>
             <formatName>CF-1.2</formatName>
             <scienceMetadata>false</scienceMetadata>
-        </objectFormat>
+        </objectFormat> -->
         <checksum algorithm="MD5">9d7d2447d5e1e37b647ad7c836f9a1b950f4d950</checksum>
         <dateSysMetadataModified>2011-08-05T06:38:19.532139</dateSysMetadataModified>
         <size>1772</size>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81ef3846-bf2d-11e0-92e1-8122f1474081</identifier>
-        <objectFormat>
+        <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>        
+        <!-- <objectFormat>
             <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
             <formatName>eml://ecoinformatics.org/eml-2.0.0</formatName>
             <scienceMetadata>false</scienceMetadata>
-        </objectFormat>
+        </objectFormat> -->
         <checksum algorithm="MD5">37f32730fcfb5f32be3c213c0918750b2c867704</checksum>
         <dateSysMetadataModified>2011-08-05T06:38:19.582158</dateSysMetadataModified>
         <size>1889</size>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81e412b8-bf2d-11e0-abbc-8122f1474081</identifier>
-        <objectFormat>
+        <fmtid>text/plain</fmtid>
+        <!-- <objectFormat>
             <fmtid>text/plain</fmtid>
             <formatName>text/plain</formatName>
             <scienceMetadata>false</scienceMetadata>
-        </objectFormat>
+        </objectFormat> -->
         <checksum algorithm="MD5">2368785aa1a11e4ea4e6ef7cde9ff744f0e0194b</checksum>
         <dateSysMetadataModified>2011-08-05T06:38:19.599811</dateSysMetadataModified>
         <size>1363</size>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81f9356c-bf2d-11e0-8cb7-8122f1474081</identifier>
-        <objectFormat>
+        <fmtid>FGDC-STD-001.1-1999</fmtid>
+        <!-- <objectFormat>
             <fmtid>FGDC-STD-001.1-1999</fmtid>
             <formatName>FGDC-STD-001.1-1999</formatName>
             <scienceMetadata>false</scienceMetadata>
-        </objectFormat>
+        </objectFormat> -->
         <checksum algorithm="MD5">dcb5e13466d55b430e5bfc08917c3fb62764a6fc</checksum>
         <dateSysMetadataModified>2011-08-05T06:38:19.623681</dateSysMetadataModified>
         <size>550</size>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81fb4226-bf2d-11e0-8b16-8122f1474081</identifier>
-        <objectFormat>
+        <fmtid>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</fmtid>
+        <!-- <objectFormat>
             <fmtid>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</fmtid>
             <formatName>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatName>
             <scienceMetadata>false</scienceMetadata>
-        </objectFormat>
+        </objectFormat> -->
         <checksum algorithm="MD5">df6f8379c36acb5be04d01b2997672a7bbb5652b</checksum>
         <dateSysMetadataModified>2011-08-05T06:38:19.632426</dateSysMetadataModified>
         <size>794</size>

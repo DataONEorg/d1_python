@@ -44,12 +44,13 @@ EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
     <identifier>identifier0</identifier>
-    <objectFormat>
+    <fmtid>fmtid0</fmtid>
+    <!-- <objectFormat>
         <fmtid>fmtid0</fmtid>
         <formatName>formatName0</formatName>
         <scienceMetadata>false</scienceMetadata>
-    </objectFormat>
-    <size>-1073741773</size>
+    </objectFormat> -->
+    <size>1073741773</size>
     <checksum algorithm="SHA-1">checksum0</checksum>
     <submitter>submitter0</submitter>
     <rightsHolder>rightsHolder0</rightsHolder>
@@ -146,7 +147,7 @@ class TestSystemMetadata(unittest.TestCase):
   def testLoadSystemMetadata(self):
     sysm = systemmetadata.CreateFromDocument(EG_SYSMETA)
     self.assertEqual(sysm.identifier.value(), 'identifier0')
-    self.assertEqual(sysm.size, -1073741773)
+    self.assertEqual(sysm.size, 1073741773)
     self.assertEqual(sysm.checksum.algorithm, 'SHA-1')
     self.assertEqual(sysm.checksum.value(), 'checksum0')
     rep = sysm.replica
