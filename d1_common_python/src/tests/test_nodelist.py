@@ -47,8 +47,8 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
         <description>description0</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service version="version0" available="false">
-                <name>name1</name>
+            <service version="version0" available="false" name="name1">
+<!--                <name>name1</name>
                 <restriction name="name2" rest="rest0">
                     <allowed>
                     </allowed>
@@ -56,10 +56,10 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name3" rest="rest1">
                     <allowed>
                     </allowed>
-                </restriction>
+                </restriction> -->
             </service>
-            <service version="version1" available="false">
-                <name>name4</name>
+            <service version="version1" available="false" name="name4">
+<!--                <name>name4</name>
                 <restriction name="name5" rest="rest2">
                     <allowed>
                     </allowed>
@@ -67,7 +67,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name6" rest="rest3">
                     <allowed>
                     </allowed>
-                </restriction>
+                </restriction> -->
             </service>
         </services>
         <synchronization>
@@ -86,8 +86,8 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
         <description>description1</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service version="version2" available="false">
-                <name>name8</name>
+            <service version="version2" available="false" name="name8">
+<!--                <name>name8</name>
                 <restriction name="name9" rest="rest4">
                     <allowed>
                     </allowed>
@@ -95,10 +95,10 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name10" rest="rest5">
                     <allowed>
                     </allowed>
-                </restriction>
+                </restriction> -->
             </service>
-            <service version="version3" available="false">
-                <name>name11</name>
+            <service version="version3" available="false" name="name11">
+<!--                <name>name11</name>
                 <restriction name="name12" rest="rest6">
                     <allowed>
                     </allowed>
@@ -106,7 +106,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name13" rest="rest7">
                     <allowed>
                     </allowed>
-                </restriction>
+                </restriction> -->
             </service>
         </services>
         <synchronization>
