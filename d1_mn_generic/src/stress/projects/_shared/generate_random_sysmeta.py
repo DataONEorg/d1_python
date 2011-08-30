@@ -1,4 +1,32 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+:mod:`generate_random_sysmeta`
+==============================
+
+:Synopsis:
+  Generate a System Metadata object with randomized content for testing.
+
+.. moduleauthor:: Roger Dahl
+'''
 
 # Stdlib.
 import datetime
@@ -6,6 +34,9 @@ import random
 
 # D1.
 import d1_common.types.generated.dataoneTypes
+
+# App.
+import select_random_subject
 
 object_formats = [
   'eml://ecoinformatics.org/eml-2.0.0',
@@ -38,109 +69,6 @@ object_formats = [
   'http://rs.tdwg.org/dwc/xsd/simpledarwincore/',
   'http://digir.net/schema/conceptual/darwin/2003/1.0/darwin2.xsd',
   'application/octet-stream',
-]
-
-subjects = [
-  'santa=purposefully=3775',
-  '4782@rigorously@seekers',
-  '5227@manuscript@objectively',
-  '6011~recoiled~apologist',
-  'stalled/squawk/5912',
-  'blocking_687',
-  '3934~senators',
-  '8335_flick_cogitate',
-  'sparingly~renault~9208',
-  '8920_skye_fondled',
-  'folding_5087',
-  '9810_paranormal',
-  'authenticators-733',
-  'artfully/3822',
-  'singing.3369',
-  '7408@outskirts@absorbency',
-  'profiteers=7446',
-  'melanie~1855',
-  '975@shadily',
-  'slugs@6367',
-  '5790=customizations',
-  'dressed_sublist_1687',
-  'equilibrate_8593',
-  'stoles=propane=9017',
-  '357~western',
-  '7491~mystery',
-  '1316.ploys',
-  'reentered~2695',
-  '9376.freon.purporter',
-  '7009~observance~roving',
-  '4664~tapestries',
-  'render.stewardess.5267',
-  '789@netherlands@paraboloid',
-  'conferred=lurches=5154',
-  'selectric~2975',
-  '6705.touch.avignon',
-  '4320@missionaries@mutability',
-  'wronged-7700',
-  '9615@breach@magill',
-  'deplorable=5891',
-  '6592~unicorns',
-  '2775~leona~preempt',
-  '7309/optical',
-  '3724~responsive~ministries',
-  '275_martians_aquarius',
-  '3974.treetops',
-  'exchanging-reinforcements-7818',
-  'awarder~7223',
-  'tiber~justifying~1796',
-  '8067_diffuse',
-  '1871-indomitable-straggle',
-  '6212.malay.platforms',
-  'reworked~8676',
-  '433-fission-malta',
-  'vegetated/1650',
-  '851@combines',
-  '7484@zeroed@rehearsal',
-  'clenches-2049',
-  '8145@punished@alleviation',
-  'eros=6864',
-  '8841-moment-disarms',
-  '1594-flatness',
-  '9397~paroling',
-  'gaped/9228',
-  '1825_redouble',
-  '8255~detective',
-  'matrimonial~beachhead~3578',
-  'instructor.radially.2226',
-  '9395@scares@shulman',
-  '5819~operate',
-  '5161-hebe',
-  'descends=knolls=8054',
-  'unfamiliarly@citizen@4703',
-  '5495-disgusts-ledger',
-  'zaire.5691',
-  'solvents=zeroing=8956',
-  'whitewater/sours/4623',
-  'bivouac-seers-2425',
-  '9491=comparably',
-  'all~babe~9779',
-  'pedagogic.salesian.1738',
-  'cellular_stouffer_4330',
-  '6191.perfectionist',
-  '7365.esoteric',
-  '1845-inbreed-depths',
-  'lays-9905',
-  '8416-oxidized',
-  'enmity-5176',
-  'plurality.design.4874',
-  '6390/subspace',
-  'observant=reconstruction=6040',
-  'vanishingly~fixing~3170',
-  'cohesively@1058',
-  '607/chided/chesterfield',
-  '5685@abolishers',
-  'propagated=hoard=3091',
-  '846=dostoevsky',
-  'evensen.9937',
-  'mailmen-6496',
-  '2215_sunned',
 ]
 
 rights_holders = [
@@ -259,7 +187,7 @@ def generate_random_sysmeta(pid, size, md5):
   sysmeta.objectFormat = object_format
 
   sysmeta.size = size
-  sysmeta.submitter = random.choice(subjects)
+  sysmeta.submitter = select_random_subject.select_random_subject()
   sysmeta.rightsHolder = random.choice(rights_holders)
   sysmeta.checksum = d1_common.types.generated.dataoneTypes.checksum(md5)
   sysmeta.checksum.algorithm = 'MD5'

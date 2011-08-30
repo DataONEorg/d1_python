@@ -30,28 +30,44 @@ d1_client.mnclient.MemberNodeClient with test functionality.
   - python 2.6
 
 '''
-# Std.
+# Stdlib.
 import logging
+import os
+import urllib
 
+# D1.
 import d1_client.mnclient
+
+# App.
+import settings
+import test_utilities
+
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+test_subject_certs = _here('test_subject_certs')
 
 
 class TestClient(d1_client.mnclient.MemberNodeClient):
-  def __init__(self, baseurl, defaultHeaders={}, timeout=1000, keyfile=None,
-               certfile=None, strictHttps=True):
-
+  def __init__(self, baseurl, subject, defaultHeaders={}, timeout=1000, strictHttps=True):
+    # When using certificates, the subject is passed in via a client side
+    # certificate when creating the connection.
+    if settings.USE_CERTS:
+      cert_path = self._get_cert_path(subject, 'crt')
+      key_path = self._get_cert_path(subject, 'key')
+    else:
+      cert_path = None
+      key_path = None
+    # Init d1_libclient and connect to MN.
     d1_client.mnclient.MemberNodeClient.__init__(
       self,
       baseurl,
       defaultHeaders=defaultHeaders,
       timeout=timeout,
-      keyfile=keyfile,
-      certfile=certfile,
+      keyfile=key_path,
+      certfile=cert_path,
       strictHttps=strictHttps
     )
-
+    self.subject = subject
     self.logger = logging.getLogger('MemberNodeTestClient')
-
     self.methodmap.update(
       {
         'delete_all_objects': u'test_delete_all_objects',
@@ -59,6 +75,30 @@ class TestClient(d1_client.mnclient.MemberNodeClient):
         'inject_event_log': u'test_inject_event_log',
       }
     )
+
+  def _get_cert_path(self, subject, ext):
+    subject_quoted = urllib.quote(subject)
+    return os.path.abspath(
+      os.path.join(
+        os.path.dirname(__file__), test_subject_certs, '{0}.{1}'.format(subject_quoted,
+                                                                        ext)
+      )
+    )
+
+  def rest_call(self, func, python_profile=False, sql_profile=False, *args, **kwargs):
+    '''Wrap a rest call up with automatic handling of vendor specific extensions
+    for profiling and select subject.'''
+    vendor_specific = {}
+    # When not using certificates, the subject is passed in via a vendor
+    # specific extension that is supported by all the REST calls in GMN.
+    if not settings.USE_CERTS:
+      vendor_specific.update(test_utilities.gmn_vse_provide_subject(self.subject))
+    # Enable python profiling if requested.
+    if python_profile:
+      vendor_specific.update(test_utilities.gmn_vse_enable_python_profiling())
+    if sql_profile:
+      vendor_specific.update(test_utilities.gmn_vse_enable_sql_profiling())
+    return func(vendorSpecific=vendor_specific, *args, **kwargs)
 
   def delete_all_objects(self):
     '''Delete all the objects on an instance of GMN that is running in Debug
