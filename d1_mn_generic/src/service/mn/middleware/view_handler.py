@@ -54,7 +54,15 @@ import d1_common.ext.mimeparser
 # Django.
 from django.http import HttpResponse
 
+# 3rd party.
+try:
+  from OpenSSL import crypto
+except ImportError:
+  print 'Try: sudo easy_install pyopenssl'
+  raise
+
 # D1.
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.const
@@ -75,15 +83,31 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
+    # Extract session from cert.
+    client_cert_str = request.META['SSL_CLIENT_CERT']
+    client_cert = crypto.load_certificate(crypto.FILETYPE_PEM, client_cert_str)
+    if client_cert.get_extension_count() != 1:
+      raise d1_common.types.exceptions.NotAuthorized(0, 'Missing session')
+    session_str = client_cert.get_extension(0).get_data()
+    try:
+      session = dataoneTypes.CreateFromDocument(session_str)
+    except:
+      raise d1_common.types.exceptions.NotAuthorized(0, 'Invalid session')
+
+    return HttpResponse(session_str, 'text/plain')
     if settings.DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
       # debugging via regular HTTP, passing in a session string by using a
       # vendor specific extension is supported.
       if 'HTTP_VENDOR_OVERRIDE_SESSION' in request.META:
-        request.META['SSL_CLIENT_S_DN'] = request.META['HTTP_VENDOR_OVERRIDE_SESSION']
+        request.META['SSL_CLIENT_S_DN'] = \
+        request.META['HTTP_VENDOR_OVERRIDE_SESSION']
       # For debugging, simulate an accept header with a regular parameter.
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
+
+    if 'SSL_CLIENT_S_DN_CN' in request.META:
+      request.META['SSL_CLIENT_S_DN'] = request.META['SSL_CLIENT_S_DN_CN']
 
     # If a session string was not passed in by either a certificate or by a
     # vendor specific extension, we default it to "Public".
