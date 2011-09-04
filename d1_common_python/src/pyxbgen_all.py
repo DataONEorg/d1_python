@@ -12,7 +12,11 @@ def generateVersion(schemaFile, destfolder="./d1_common/types/generated"):
   contains version information about the file.
   '''
   from xml.etree.ElementTree import parse
-  import pysvn
+  try:
+    import pysvn
+  except ImportError:
+    print 'Try: sudo apt-get install python-svn'
+    raise
   import datetime
 
   cli = pysvn.Client()
@@ -92,10 +96,11 @@ def main():
 
   print opts.types_generated_binding
   for xsd in glob.glob(os.path.join(opts.schema_path, '*.xsd')):
-    print xsd
+    if os.path.basename(xsd) not in (opts.types_generated_binding):
+      print 'Skipped: {0}'.format(xsd)
+      continue
+    print 'Processing: {0}'.format(xsd)
     generateVersion(xsd)
-    #if os.path.basename(xsd) not in (opts.types_generated_binding):
-    #  continue
     args.append(
       '-u \'{0}\' -m \'{1}\''.format(
         xsd, os.path.splitext(
