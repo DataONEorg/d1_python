@@ -1,1 +1,21 @@
-<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>hdl:10255/dryad.1076/mets.xml</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>3184</size><checksum algorithm="SHA-1">b9348d72cd5569418925ec3b2615e6de0795a83d</checksum><submitter>test</submitter><rightsHolder>blocking_687</rightsHolder><accessPolicy><allow><subject>7408@outskirts@absorbency</subject><subject>melanie~1855</subject><subject>blocking_687</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:23:42.929723</dateUploaded><dateSysMetadataModified>1974-05-04T11:10:52</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>hdl:10255/dryad.1076/mets.xml</identifier>
+  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <size>3184</size>
+  <checksum algorithm="SHA-1">b9348d72cd5569418925ec3b2615e6de0795a83d</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>blocking_687</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>7408@outskirts@absorbency</subject>
+      <subject>melanie~1855</subject>
+      <subject>blocking_687</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:42.929723</dateUploaded>
+  <dateSysMetadataModified>1974-05-04T11:10:52</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

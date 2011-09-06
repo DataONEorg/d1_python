@@ -1,1 +1,20 @@
-<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>hdl:10255/dryad.135/mets.xml</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>2925</size><checksum algorithm="SHA-1">9a83b69f1c11cae7ea9e9bbdb3fca70275fd432f</checksum><submitter>test</submitter><rightsHolder>melanie~1855</rightsHolder><accessPolicy><allow><subject>9810_paranormal</subject><subject>8335_flick_cogitate</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:25:20.019212</dateUploaded><dateSysMetadataModified>1981-07-19T04:14:51</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>hdl:10255/dryad.135/mets.xml</identifier>
+  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <size>2925</size>
+  <checksum algorithm="SHA-1">9a83b69f1c11cae7ea9e9bbdb3fca70275fd432f</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>melanie~1855</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>9810_paranormal</subject>
+      <subject>8335_flick_cogitate</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:25:20.019212</dateUploaded>
+  <dateSysMetadataModified>1981-07-19T04:14:51</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

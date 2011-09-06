@@ -1,1 +1,19 @@
-<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>Expression on Metabolite.xls</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>1487872</size><checksum algorithm="MD5">3d9078eda2354d74ec52099167a1ed44</checksum><submitter>test</submitter><rightsHolder>6011~recoiled~apologist</rightsHolder><accessPolicy><allow><subject>5227@manuscript@objectively</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:23:44.635054</dateUploaded><dateSysMetadataModified>1997-03-31T07:28:44</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>Expression on Metabolite.xls</identifier>
+  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <size>1487872</size>
+  <checksum algorithm="MD5">3d9078eda2354d74ec52099167a1ed44</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>6011~recoiled~apologist</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>5227@manuscript@objectively</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:44.635054</dateUploaded>
+  <dateSysMetadataModified>1997-03-31T07:28:44</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

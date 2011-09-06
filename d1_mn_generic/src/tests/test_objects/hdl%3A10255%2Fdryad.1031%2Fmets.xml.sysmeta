@@ -1,1 +1,21 @@
-<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>hdl:10255/dryad.1031/mets.xml</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>2755</size><checksum algorithm="SHA-1">8668404ae39dee6d8fd46fbd7c10cd768ecae3e7</checksum><submitter>test</submitter><rightsHolder>folding_5087</rightsHolder><accessPolicy><allow><subject>8335_flick_cogitate</subject><subject>public</subject><subject>stalled/squawk/5912</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:23:45.160475</dateUploaded><dateSysMetadataModified>1988-08-26T08:14:58</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>hdl:10255/dryad.1031/mets.xml</identifier>
+  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <size>2755</size>
+  <checksum algorithm="SHA-1">8668404ae39dee6d8fd46fbd7c10cd768ecae3e7</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>folding_5087</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>8335_flick_cogitate</subject>
+      <subject>public</subject>
+      <subject>stalled/squawk/5912</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:45.160475</dateUploaded>
+  <dateSysMetadataModified>1988-08-26T08:14:58</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

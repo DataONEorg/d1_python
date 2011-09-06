@@ -1,1 +1,19 @@
-<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>Appendices final.doc</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>1573376</size><checksum algorithm="MD5">dfa4ac839014fbec3dd05ba3c44f6e57</checksum><submitter>test</submitter><rightsHolder>8920_skye_fondled</rightsHolder><accessPolicy><allow><subject>8335_flick_cogitate</subject><permission>read</permission></allow></accessPolicy><dateUploaded>2010-04-26T07:23:46.512428</dateUploaded><dateSysMetadataModified>1976-03-13T00:48:09</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>Appendices final.doc</identifier>
+  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <size>1573376</size>
+  <checksum algorithm="MD5">dfa4ac839014fbec3dd05ba3c44f6e57</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>8920_skye_fondled</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>8335_flick_cogitate</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:46.512428</dateUploaded>
+  <dateSysMetadataModified>1976-03-13T00:48:09</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

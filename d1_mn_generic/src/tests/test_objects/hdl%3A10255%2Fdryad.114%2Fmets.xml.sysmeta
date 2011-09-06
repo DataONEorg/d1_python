@@ -1,1 +1,13 @@
-<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>hdl:10255/dryad.114/mets.xml</identifier><objectFormat><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><formatName>eml-2.0.0</formatName><scienceMetadata>false</scienceMetadata></objectFormat><size>2904</size><checksum algorithm="SHA-1">a69b83d5983a3c1672a8d50471f7751f3bc09e25</checksum><submitter>test</submitter><rightsHolder>9810_paranormal</rightsHolder><dateUploaded>2010-04-26T07:25:18.344759</dateUploaded><dateSysMetadataModified>1983-06-15T06:48:30</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <identifier>hdl:10255/dryad.114/mets.xml</identifier>
+  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <size>2904</size>
+  <checksum algorithm="SHA-1">a69b83d5983a3c1672a8d50471f7751f3bc09e25</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>9810_paranormal</rightsHolder>
+  <dateUploaded>2010-04-26T07:25:18.344759</dateUploaded>
+  <dateSysMetadataModified>1983-06-15T06:48:30</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>
