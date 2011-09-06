@@ -1,7 +1,7 @@
 # ./d1_common/types/generated/dataoneTypes.py
 # PyXB bindings for NamespaceModule
 # NSM:b5056e9f5bcbaa65eac428b50fd841172c48ddf9
-# Generated 2011-09-03 20:18:24.009618 by PyXB version 1.1.2
+# Generated 2011-09-06 01:59:49.383112 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2a7a4412-d69c-11e0-9e3d-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:318cebe2-d85e-11e0-8a1e-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -43,45 +43,6 @@ def CreateFromDOM (node, default_namespace=None):
 
 
 # Atomic SimpleTypeDefinition
-class NonEmptyString (pyxb.binding.datatypes.string):
-
-    """A derived string type with at least length 1 and it must contain non-whitespace."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
-    _Documentation = u'A derived string type with at least length 1 and it must contain non-whitespace.'
-NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
-NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_pattern,
-   NonEmptyString._CF_minLength)
-Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
-
-# Atomic SimpleTypeDefinition
-class ObjectFormatIdentifier (NonEmptyString):
-
-    """ An ObjectFormatIdentifier is a string identifying
-          the object format. It must be unique in the containing ObjectFormatList.
-          """
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormatIdentifier')
-    _Documentation = u' An ObjectFormatIdentifier is a string identifying\n          the object format. It must be unique in the containing ObjectFormatList.\n          '
-ObjectFormatIdentifier._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'ObjectFormatIdentifier', ObjectFormatIdentifier)
-
-# Atomic SimpleTypeDefinition
-class NonEmptyString800 (NonEmptyString):
-
-    """ An NonEmptyString800 is a NonEmptyString string 
-          with a maximum length of 800.
-          """
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString800')
-    _Documentation = u' An NonEmptyString800 is a NonEmptyString string \n          with a maximum length of 800.\n          '
-NonEmptyString800._CF_maxLength = pyxb.binding.facets.CF_maxLength(value=pyxb.binding.datatypes.nonNegativeInteger(800L))
-NonEmptyString800._InitializeFacetMap(NonEmptyString800._CF_maxLength)
-Namespace.addCategoryObject('typeBinding', u'NonEmptyString800', NonEmptyString800)
-
-# Atomic SimpleTypeDefinition
 class ReplicationStatus (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
     """A controlled string value indicating the current
@@ -106,43 +67,6 @@ ReplicationStatus.completed = ReplicationStatus._CF_enumeration.addEnumeration(u
 ReplicationStatus.invalidated = ReplicationStatus._CF_enumeration.addEnumeration(unicode_value=u'invalidated')
 ReplicationStatus._InitializeFacetMap(ReplicationStatus._CF_enumeration)
 Namespace.addCategoryObject('typeBinding', u'ReplicationStatus', ReplicationStatus)
-
-# Atomic SimpleTypeDefinition
-class ChecksumAlgorithm (pyxb.binding.datatypes.string):
-
-    """The checksum algorithm used to calculate a checksum.
-			DataONE will publish a known list of algorithm names that can be supported,
-			but compliant implementations must support at least SHA-1. 
-			"""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ChecksumAlgorithm')
-    _Documentation = u'The checksum algorithm used to calculate a checksum.\n\t\t\tDataONE will publish a known list of algorithm names that can be supported,\n\t\t\tbut compliant implementations must support at least SHA-1. \n\t\t\t'
-ChecksumAlgorithm._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'ChecksumAlgorithm', ChecksumAlgorithm)
-
-# Atomic SimpleTypeDefinition
-class Permission (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
-
-    """A string value indicating the set of actions that
-				can be performed on a resource as specified in an access policy. The
-				set of permissions include the ability to read a resource, modify a
-				resource (write), and to change the set of access control policies
-				for a resource (changePermission). In addition, there is a permission
-				that controls ability to execute a service (execute), and a 
-				permission that controls the ability of a node to replicate an object 
-				to itself from another node.
-			"""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Permission')
-    _Documentation = u'A string value indicating the set of actions that\n\t\t\t\tcan be performed on a resource as specified in an access policy. The\n\t\t\t\tset of permissions include the ability to read a resource, modify a\n\t\t\t\tresource (write), and to change the set of access control policies\n\t\t\t\tfor a resource (changePermission). In addition, there is a permission\n\t\t\t\tthat controls ability to execute a service (execute), and a \n\t\t\t\tpermission that controls the ability of a node to replicate an object \n\t\t\t\tto itself from another node.\n\t\t\t'
-Permission._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=Permission, enum_prefix=None)
-Permission.read = Permission._CF_enumeration.addEnumeration(unicode_value=u'read')
-Permission.write = Permission._CF_enumeration.addEnumeration(unicode_value=u'write')
-Permission.changePermission = Permission._CF_enumeration.addEnumeration(unicode_value=u'changePermission')
-Permission.execute = Permission._CF_enumeration.addEnumeration(unicode_value=u'execute')
-Permission.replicate = Permission._CF_enumeration.addEnumeration(unicode_value=u'replicate')
-Permission._InitializeFacetMap(Permission._CF_enumeration)
-Namespace.addCategoryObject('typeBinding', u'Permission', Permission)
 
 # Atomic SimpleTypeDefinition
 class NodeType (pyxb.binding.datatypes.NMTOKEN, pyxb.binding.basis.enumeration_mixin):
@@ -173,6 +97,70 @@ NodeState._InitializeFacetMap(NodeState._CF_enumeration)
 Namespace.addCategoryObject('typeBinding', u'NodeState', NodeState)
 
 # Atomic SimpleTypeDefinition
+class NonEmptyString (pyxb.binding.datatypes.string):
+
+    """A derived string type with at least length 1 and it must contain non-whitespace."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
+    _Documentation = u'A derived string type with at least length 1 and it must contain non-whitespace.'
+NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
+NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
+NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
+NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
+   NonEmptyString._CF_pattern)
+Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
+
+# Atomic SimpleTypeDefinition
+class CrontabEntry (pyxb.binding.datatypes.token):
+
+    """An atomic simple type."""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'CrontabEntry')
+    _Documentation = None
+CrontabEntry._CF_pattern = pyxb.binding.facets.CF_pattern()
+CrontabEntry._CF_pattern.addPattern(pattern=u'([\\*\\d]{1,2}[\\-,]?)+')
+CrontabEntry._InitializeFacetMap(CrontabEntry._CF_pattern)
+Namespace.addCategoryObject('typeBinding', u'CrontabEntry', CrontabEntry)
+
+# Atomic SimpleTypeDefinition
+class NonEmptyString800 (NonEmptyString):
+
+    """ An NonEmptyString800 is a NonEmptyString string 
+          with a maximum length of 800.
+          """
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString800')
+    _Documentation = u' An NonEmptyString800 is a NonEmptyString string \n          with a maximum length of 800.\n          '
+NonEmptyString800._CF_maxLength = pyxb.binding.facets.CF_maxLength(value=pyxb.binding.datatypes.nonNegativeInteger(800L))
+NonEmptyString800._InitializeFacetMap(NonEmptyString800._CF_maxLength)
+Namespace.addCategoryObject('typeBinding', u'NonEmptyString800', NonEmptyString800)
+
+# Atomic SimpleTypeDefinition
+class ChecksumAlgorithm (pyxb.binding.datatypes.string):
+
+    """The checksum algorithm used to calculate a checksum.
+			DataONE will publish a known list of algorithm names that can be supported,
+			but compliant implementations must support at least SHA-1. 
+			"""
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ChecksumAlgorithm')
+    _Documentation = u'The checksum algorithm used to calculate a checksum.\n\t\t\tDataONE will publish a known list of algorithm names that can be supported,\n\t\t\tbut compliant implementations must support at least SHA-1. \n\t\t\t'
+ChecksumAlgorithm._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ChecksumAlgorithm', ChecksumAlgorithm)
+
+# Atomic SimpleTypeDefinition
+class ObjectFormatIdentifier (NonEmptyString):
+
+    """ An ObjectFormatIdentifier is a string identifying
+          the object format. It must be unique in the containing ObjectFormatList.
+          """
+
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormatIdentifier')
+    _Documentation = u' An ObjectFormatIdentifier is a string identifying\n          the object format. It must be unique in the containing ObjectFormatList.\n          '
+ObjectFormatIdentifier._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ObjectFormatIdentifier', ObjectFormatIdentifier)
+
+# Atomic SimpleTypeDefinition
 class Event (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
     """The controlled list of events that are logged, 
@@ -193,16 +181,14 @@ Event._InitializeFacetMap(Event._CF_enumeration)
 Namespace.addCategoryObject('typeBinding', u'Event', Event)
 
 # Atomic SimpleTypeDefinition
-class CrontabEntry (pyxb.binding.datatypes.token):
+class ServiceVersion (NonEmptyString):
 
     """An atomic simple type."""
 
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'CrontabEntry')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceVersion')
     _Documentation = None
-CrontabEntry._CF_pattern = pyxb.binding.facets.CF_pattern()
-CrontabEntry._CF_pattern.addPattern(pattern=u'([\\*\\d]{1,2}[\\-,]?)+')
-CrontabEntry._InitializeFacetMap(CrontabEntry._CF_pattern)
-Namespace.addCategoryObject('typeBinding', u'CrontabEntry', CrontabEntry)
+ServiceVersion._InitializeFacetMap()
+Namespace.addCategoryObject('typeBinding', u'ServiceVersion', ServiceVersion)
 
 # Atomic SimpleTypeDefinition
 class ServiceName (NonEmptyString):
@@ -215,14 +201,191 @@ ServiceName._InitializeFacetMap()
 Namespace.addCategoryObject('typeBinding', u'ServiceName', ServiceName)
 
 # Atomic SimpleTypeDefinition
-class ServiceVersion (NonEmptyString):
+class Permission (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
 
-    """An atomic simple type."""
+    """A string value indicating the set of actions that
+				can be performed on a resource as specified in an access policy. The
+				set of permissions include the ability to read a resource, modify a
+				resource (write), and to change the set of access control policies
+				for a resource (changePermission). In addition, there is a permission
+				that controls ability to execute a service (execute), and a 
+				permission that controls the ability of a node to replicate an object 
+				to itself from another node.
+			"""
 
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceVersion')
-    _Documentation = None
-ServiceVersion._InitializeFacetMap()
-Namespace.addCategoryObject('typeBinding', u'ServiceVersion', ServiceVersion)
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Permission')
+    _Documentation = u'A string value indicating the set of actions that\n\t\t\t\tcan be performed on a resource as specified in an access policy. The\n\t\t\t\tset of permissions include the ability to read a resource, modify a\n\t\t\t\tresource (write), and to change the set of access control policies\n\t\t\t\tfor a resource (changePermission). In addition, there is a permission\n\t\t\t\tthat controls ability to execute a service (execute), and a \n\t\t\t\tpermission that controls the ability of a node to replicate an object \n\t\t\t\tto itself from another node.\n\t\t\t'
+Permission._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=Permission, enum_prefix=None)
+Permission.read = Permission._CF_enumeration.addEnumeration(unicode_value=u'read')
+Permission.write = Permission._CF_enumeration.addEnumeration(unicode_value=u'write')
+Permission.changePermission = Permission._CF_enumeration.addEnumeration(unicode_value=u'changePermission')
+Permission.execute = Permission._CF_enumeration.addEnumeration(unicode_value=u'execute')
+Permission.replicate = Permission._CF_enumeration.addEnumeration(unicode_value=u'replicate')
+Permission._InitializeFacetMap(Permission._CF_enumeration)
+Namespace.addCategoryObject('typeBinding', u'Permission', Permission)
+
+# Complex type Node with content type ELEMENT_ONLY
+class Node (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Node')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element name uses Python identifier name
+    __name = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpns_dataone_orgservicetypesv1_Node_name', False)
+
+    
+    name = property(__name.value, __name.set, None, u'A human readable name of the Node. \n                        The name of the node is being used in Mercury currently to assign a path,\n                        so format should be consistent with dataone directory naming conventions\n                    ')
+
+    
+    # Element description uses Python identifier description
+    __description = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__httpns_dataone_orgservicetypesv1_Node_description', False)
+
+    
+    description = property(__description.value, __description.set, None, u'Description of content maintained by this node and any other free style\n                        notes. May be we should allow CDATA element with the purpose of using for display\n                    ')
+
+    
+    # Element baseURL uses Python identifier baseURL
+    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpns_dataone_orgservicetypesv1_Node_baseURL', False)
+
+    
+    baseURL = property(__baseURL.value, __baseURL.set, None, None)
+
+    
+    # Element services uses Python identifier services
+    __services = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'services'), 'services', '__httpns_dataone_orgservicetypesv1_Node_services', False)
+
+    
+    services = property(__services.value, __services.set, None, None)
+
+    
+    # Element synchronization uses Python identifier synchronization
+    __synchronization = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'synchronization'), 'synchronization', '__httpns_dataone_orgservicetypesv1_Node_synchronization', False)
+
+    
+    synchronization = property(__synchronization.value, __synchronization.set, None, None)
+
+    
+    # Element ping uses Python identifier ping
+    __ping = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'ping'), 'ping', '__httpns_dataone_orgservicetypesv1_Node_ping', False)
+
+    
+    ping = property(__ping.value, __ping.set, None, None)
+
+    
+    # Element identifier uses Python identifier identifier
+    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_Node_identifier', False)
+
+    
+    identifier = property(__identifier.value, __identifier.set, None, u'A unique identifier for the node. This may initially be the same as the\n                        baseURL, however this value should not change for future implementations of the same\n                        node, whereas the baseURL may change in the future. \n                    ')
+
+    
+    # Element subject uses Python identifier subject
+    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Node_subject', True)
+
+    
+    subject = property(__subject.value, __subject.set, None, u'The Subject of this node, which can be repeated as needed.  \n                    The Node.subject represents the identifier of the node that would be found in X.509 \n                    certificates that would be used to securely communicate with this node.  Thus, it is\n                    an X.509 Distinguished Name that applies to the host on which the Node is operating. \n                    When (and if) this hostname changes the new subject for the node would be added to the\n                    Node so that we can track the subject that has been used in various access control \n                    rules over time.\n                    ')
+
+    
+    # Attribute synchronize uses Python identifier synchronize
+    __synchronize = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'synchronize'), 'synchronize', '__httpns_dataone_orgservicetypesv1_Node_synchronize', pyxb.binding.datatypes.boolean, required=True)
+    
+    synchronize = property(__synchronize.value, __synchronize.set, None, None)
+
+    
+    # Attribute state uses Python identifier state
+    __state = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'state'), 'state', '__httpns_dataone_orgservicetypesv1_Node_state', NodeState, required=True)
+    
+    state = property(__state.value, __state.set, None, None)
+
+    
+    # Attribute type uses Python identifier type
+    __type = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'type'), 'type', '__httpns_dataone_orgservicetypesv1_Node_type', NodeType, required=True)
+    
+    type = property(__type.value, __type.set, None, None)
+
+    
+    # Attribute replicate uses Python identifier replicate
+    __replicate = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'replicate'), 'replicate', '__httpns_dataone_orgservicetypesv1_Node_replicate', pyxb.binding.datatypes.boolean, required=True)
+    
+    replicate = property(__replicate.value, __replicate.set, None, None)
+
+
+    _ElementMap = {
+        __name.name() : __name,
+        __description.name() : __description,
+        __baseURL.name() : __baseURL,
+        __services.name() : __services,
+        __synchronization.name() : __synchronization,
+        __ping.name() : __ping,
+        __identifier.name() : __identifier,
+        __subject.name() : __subject
+    }
+    _AttributeMap = {
+        __synchronize.name() : __synchronize,
+        __state.name() : __state,
+        __type.name() : __type,
+        __replicate.name() : __replicate
+    }
+Namespace.addCategoryObject('typeBinding', u'Node', Node)
+
+
+# Complex type ObjectInfo with content type ELEMENT_ONLY
+class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectInfo')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element size uses Python identifier size
+    __size = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'size'), 'size', '__httpns_dataone_orgservicetypesv1_ObjectInfo_size', False)
+
+    
+    size = property(__size.value, __size.set, None, None)
+
+    
+    # Element identifier uses Python identifier identifier
+    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_ObjectInfo_identifier', False)
+
+    
+    identifier = property(__identifier.value, __identifier.set, None, None)
+
+    
+    # Element checksum uses Python identifier checksum
+    __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpns_dataone_orgservicetypesv1_ObjectInfo_checksum', False)
+
+    
+    checksum = property(__checksum.value, __checksum.set, None, None)
+
+    
+    # Element fmtid uses Python identifier fmtid
+    __fmtid = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'fmtid'), 'fmtid', '__httpns_dataone_orgservicetypesv1_ObjectInfo_fmtid', False)
+
+    
+    fmtid = property(__fmtid.value, __fmtid.set, None, None)
+
+    
+    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
+    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpns_dataone_orgservicetypesv1_ObjectInfo_dateSysMetadataModified', False)
+
+    
+    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
+
+
+    _ElementMap = {
+        __size.name() : __size,
+        __identifier.name() : __identifier,
+        __checksum.name() : __checksum,
+        __fmtid.name() : __fmtid,
+        __dateSysMetadataModified.name() : __dateSysMetadataModified
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'ObjectInfo', ObjectInfo)
+
 
 # Complex type Subject with content type SIMPLE
 class Subject (pyxb.binding.basis.complexTypeDefinition):
@@ -239,6 +402,403 @@ class Subject (pyxb.binding.basis.complexTypeDefinition):
         
     }
 Namespace.addCategoryObject('typeBinding', u'Subject', Subject)
+
+
+# Complex type Slice with content type EMPTY
+class Slice (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Slice')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Attribute count uses Python identifier count
+    __count = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpns_dataone_orgservicetypesv1_Slice_count', pyxb.binding.datatypes.int, required=True)
+    
+    count = property(__count.value, __count.set, None, None)
+
+    
+    # Attribute start uses Python identifier start
+    __start = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'start'), 'start', '__httpns_dataone_orgservicetypesv1_Slice_start', pyxb.binding.datatypes.int, required=True)
+    
+    start = property(__start.value, __start.set, None, None)
+
+    
+    # Attribute total uses Python identifier total
+    __total = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'total'), 'total', '__httpns_dataone_orgservicetypesv1_Slice_total', pyxb.binding.datatypes.int, required=True)
+    
+    total = property(__total.value, __total.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __count.name() : __count,
+        __start.name() : __start,
+        __total.name() : __total
+    }
+Namespace.addCategoryObject('typeBinding', u'Slice', Slice)
+
+
+# Complex type ObjectFormatList with content type ELEMENT_ONLY
+class ObjectFormatList (Slice):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormatList')
+    # Base type is Slice
+    
+    # Element objectFormat uses Python identifier objectFormat
+    __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpns_dataone_orgservicetypesv1_ObjectFormatList_objectFormat', True)
+
+    
+    objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
+
+    
+    # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
+    
+    # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
+    
+    # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
+
+    _ElementMap = Slice._ElementMap.copy()
+    _ElementMap.update({
+        __objectFormat.name() : __objectFormat
+    })
+    _AttributeMap = Slice._AttributeMap.copy()
+    _AttributeMap.update({
+        
+    })
+Namespace.addCategoryObject('typeBinding', u'ObjectFormatList', ObjectFormatList)
+
+
+# Complex type Schedule with content type EMPTY
+class Schedule (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Schedule')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Attribute hour uses Python identifier hour
+    __hour = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'hour'), 'hour', '__httpns_dataone_orgservicetypesv1_Schedule_hour', CrontabEntry, required=True)
+    
+    hour = property(__hour.value, __hour.set, None, None)
+
+    
+    # Attribute sec uses Python identifier sec
+    __sec = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'sec'), 'sec', '__httpns_dataone_orgservicetypesv1_Schedule_sec', CrontabEntry, required=True)
+    
+    sec = property(__sec.value, __sec.set, None, None)
+
+    
+    # Attribute wday uses Python identifier wday
+    __wday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'wday'), 'wday', '__httpns_dataone_orgservicetypesv1_Schedule_wday', CrontabEntry, required=True)
+    
+    wday = property(__wday.value, __wday.set, None, None)
+
+    
+    # Attribute year uses Python identifier year
+    __year = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'year'), 'year', '__httpns_dataone_orgservicetypesv1_Schedule_year', CrontabEntry, required=True)
+    
+    year = property(__year.value, __year.set, None, None)
+
+    
+    # Attribute mday uses Python identifier mday
+    __mday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'mday'), 'mday', '__httpns_dataone_orgservicetypesv1_Schedule_mday', CrontabEntry, required=True)
+    
+    mday = property(__mday.value, __mday.set, None, None)
+
+    
+    # Attribute min uses Python identifier min
+    __min = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'min'), 'min', '__httpns_dataone_orgservicetypesv1_Schedule_min', CrontabEntry, required=True)
+    
+    min = property(__min.value, __min.set, None, None)
+
+    
+    # Attribute mon uses Python identifier mon
+    __mon = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'mon'), 'mon', '__httpns_dataone_orgservicetypesv1_Schedule_mon', CrontabEntry, required=True)
+    
+    mon = property(__mon.value, __mon.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __hour.name() : __hour,
+        __sec.name() : __sec,
+        __wday.name() : __wday,
+        __year.name() : __year,
+        __mday.name() : __mday,
+        __min.name() : __min,
+        __mon.name() : __mon
+    }
+Namespace.addCategoryObject('typeBinding', u'Schedule', Schedule)
+
+
+# Complex type Log with content type ELEMENT_ONLY
+class Log (Slice):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Log')
+    # Base type is Slice
+    
+    # Element logEntry uses Python identifier logEntry
+    __logEntry = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'logEntry'), 'logEntry', '__httpns_dataone_orgservicetypesv1_Log_logEntry', True)
+
+    
+    logEntry = property(__logEntry.value, __logEntry.set, None, None)
+
+    
+    # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
+    
+    # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
+    
+    # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
+
+    _ElementMap = Slice._ElementMap.copy()
+    _ElementMap.update({
+        __logEntry.name() : __logEntry
+    })
+    _AttributeMap = Slice._AttributeMap.copy()
+    _AttributeMap.update({
+        
+    })
+Namespace.addCategoryObject('typeBinding', u'Log', Log)
+
+
+# Complex type Services with content type ELEMENT_ONLY
+class Services (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Services')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element service uses Python identifier service
+    __service = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'service'), 'service', '__httpns_dataone_orgservicetypesv1_Services_service', True)
+
+    
+    service = property(__service.value, __service.set, None, None)
+
+
+    _ElementMap = {
+        __service.name() : __service
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'Services', Services)
+
+
+# Complex type Ping with content type EMPTY
+class Ping (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Ping')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Attribute lastSuccess uses Python identifier lastSuccess
+    __lastSuccess = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'lastSuccess'), 'lastSuccess', '__httpns_dataone_orgservicetypesv1_Ping_lastSuccess', pyxb.binding.datatypes.dateTime)
+    
+    lastSuccess = property(__lastSuccess.value, __lastSuccess.set, None, None)
+
+    
+    # Attribute success uses Python identifier success
+    __success = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'success'), 'success', '__httpns_dataone_orgservicetypesv1_Ping_success', pyxb.binding.datatypes.boolean)
+    
+    success = property(__success.value, __success.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __lastSuccess.name() : __lastSuccess,
+        __success.name() : __success
+    }
+Namespace.addCategoryObject('typeBinding', u'Ping', Ping)
+
+
+# Complex type LogEntry with content type ELEMENT_ONLY
+class LogEntry (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'LogEntry')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element memberNode uses Python identifier memberNode
+    __memberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'memberNode'), 'memberNode', '__httpns_dataone_orgservicetypesv1_LogEntry_memberNode', False)
+
+    
+    memberNode = property(__memberNode.value, __memberNode.set, None, None)
+
+    
+    # Element ipAddress uses Python identifier ipAddress
+    __ipAddress = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'ipAddress'), 'ipAddress', '__httpns_dataone_orgservicetypesv1_LogEntry_ipAddress', False)
+
+    
+    ipAddress = property(__ipAddress.value, __ipAddress.set, None, None)
+
+    
+    # Element entryId uses Python identifier entryId
+    __entryId = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'entryId'), 'entryId', '__httpns_dataone_orgservicetypesv1_LogEntry_entryId', False)
+
+    
+    entryId = property(__entryId.value, __entryId.set, None, None)
+
+    
+    # Element identifier uses Python identifier identifier
+    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_LogEntry_identifier', False)
+
+    
+    identifier = property(__identifier.value, __identifier.set, None, None)
+
+    
+    # Element dateLogged uses Python identifier dateLogged
+    __dateLogged = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateLogged'), 'dateLogged', '__httpns_dataone_orgservicetypesv1_LogEntry_dateLogged', False)
+
+    
+    dateLogged = property(__dateLogged.value, __dateLogged.set, None, None)
+
+    
+    # Element userAgent uses Python identifier userAgent
+    __userAgent = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'userAgent'), 'userAgent', '__httpns_dataone_orgservicetypesv1_LogEntry_userAgent', False)
+
+    
+    userAgent = property(__userAgent.value, __userAgent.set, None, None)
+
+    
+    # Element subject uses Python identifier subject
+    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_LogEntry_subject', False)
+
+    
+    subject = property(__subject.value, __subject.set, None, None)
+
+    
+    # Element event uses Python identifier event
+    __event = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'event'), 'event', '__httpns_dataone_orgservicetypesv1_LogEntry_event', False)
+
+    
+    event = property(__event.value, __event.set, None, None)
+
+
+    _ElementMap = {
+        __memberNode.name() : __memberNode,
+        __ipAddress.name() : __ipAddress,
+        __entryId.name() : __entryId,
+        __identifier.name() : __identifier,
+        __dateLogged.name() : __dateLogged,
+        __userAgent.name() : __userAgent,
+        __subject.name() : __subject,
+        __event.name() : __event
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'LogEntry', LogEntry)
+
+
+# Complex type Identifier with content type SIMPLE
+class Identifier (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = NonEmptyString800
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
+    # Base type is NonEmptyString800
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
+
+
+# Complex type Group with content type ELEMENT_ONLY
+class Group (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Group')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element hasMember uses Python identifier hasMember
+    __hasMember = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'hasMember'), 'hasMember', '__httpns_dataone_orgservicetypesv1_Group_hasMember', True)
+
+    
+    hasMember = property(__hasMember.value, __hasMember.set, None, None)
+
+    
+    # Element subject uses Python identifier subject
+    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Group_subject', False)
+
+    
+    subject = property(__subject.value, __subject.set, None, None)
+
+    
+    # Element groupName uses Python identifier groupName
+    __groupName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'groupName'), 'groupName', '__httpns_dataone_orgservicetypesv1_Group_groupName', False)
+
+    
+    groupName = property(__groupName.value, __groupName.set, None, None)
+
+
+    _ElementMap = {
+        __hasMember.name() : __hasMember,
+        __subject.name() : __subject,
+        __groupName.name() : __groupName
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'Group', Group)
+
+
+# Complex type Checksum with content type SIMPLE
+class Checksum (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = pyxb.binding.datatypes.string
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Checksum')
+    # Base type is pyxb.binding.datatypes.string
+    
+    # Attribute algorithm uses Python identifier algorithm
+    __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'algorithm'), 'algorithm', '__httpns_dataone_orgservicetypesv1_Checksum_algorithm', ChecksumAlgorithm, required=True)
+    
+    algorithm = property(__algorithm.value, __algorithm.set, None, None)
+
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        __algorithm.name() : __algorithm
+    }
+Namespace.addCategoryObject('typeBinding', u'Checksum', Checksum)
+
+
+# Complex type NodeReference with content type SIMPLE
+class NodeReference (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = NonEmptyString
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeReference')
+    # Base type is NonEmptyString
+
+    _ElementMap = {
+        
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'NodeReference', NodeReference)
 
 
 # Complex type SubjectList with content type ELEMENT_ONLY
@@ -318,171 +878,48 @@ class ReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'ReplicationPolicy', ReplicationPolicy)
 
 
-# Complex type Identifier with content type SIMPLE
-class Identifier (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = NonEmptyString800
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
-    # Base type is NonEmptyString800
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
-
-
-# Complex type QueryType with content type SIMPLE
-class QueryType (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = pyxb.binding.datatypes.string
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'QueryType')
-    # Base type is pyxb.binding.datatypes.string
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'QueryType', QueryType)
-
-
-# Complex type NodeReference with content type SIMPLE
-class NodeReference (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = NonEmptyString
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeReference')
-    # Base type is NonEmptyString
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'NodeReference', NodeReference)
-
-
-# Complex type Slice with content type EMPTY
-class Slice (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Slice')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Attribute count uses Python identifier count
-    __count = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpns_dataone_orgservicetypesv1_Slice_count', pyxb.binding.datatypes.int, required=True)
-    
-    count = property(__count.value, __count.set, None, None)
-
-    
-    # Attribute start uses Python identifier start
-    __start = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'start'), 'start', '__httpns_dataone_orgservicetypesv1_Slice_start', pyxb.binding.datatypes.int, required=True)
-    
-    start = property(__start.value, __start.set, None, None)
-
-    
-    # Attribute total uses Python identifier total
-    __total = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'total'), 'total', '__httpns_dataone_orgservicetypesv1_Slice_total', pyxb.binding.datatypes.int, required=True)
-    
-    total = property(__total.value, __total.set, None, None)
-
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        __count.name() : __count,
-        __start.name() : __start,
-        __total.name() : __total
-    }
-Namespace.addCategoryObject('typeBinding', u'Slice', Slice)
-
-
-# Complex type ObjectList with content type ELEMENT_ONLY
-class ObjectList (Slice):
+# Complex type Service with content type ELEMENT_ONLY
+class Service (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectList')
-    # Base type is Slice
-    
-    # Element objectInfo uses Python identifier objectInfo
-    __objectInfo = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectInfo'), 'objectInfo', '__httpns_dataone_orgservicetypesv1_ObjectList_objectInfo', True)
-
-    
-    objectInfo = property(__objectInfo.value, __objectInfo.set, None, None)
-
-    
-    # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
-    # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
-    # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
-
-    _ElementMap = Slice._ElementMap.copy()
-    _ElementMap.update({
-        __objectInfo.name() : __objectInfo
-    })
-    _AttributeMap = Slice._AttributeMap.copy()
-    _AttributeMap.update({
-        
-    })
-Namespace.addCategoryObject('typeBinding', u'ObjectList', ObjectList)
-
-
-# Complex type Checksum with content type SIMPLE
-class Checksum (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = pyxb.binding.datatypes.string
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Checksum')
-    # Base type is pyxb.binding.datatypes.string
-    
-    # Attribute algorithm uses Python identifier algorithm
-    __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'algorithm'), 'algorithm', '__httpns_dataone_orgservicetypesv1_Checksum_algorithm', ChecksumAlgorithm, required=True)
-    
-    algorithm = property(__algorithm.value, __algorithm.set, None, None)
-
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        __algorithm.name() : __algorithm
-    }
-Namespace.addCategoryObject('typeBinding', u'Checksum', Checksum)
-
-
-# Complex type NodeList with content type ELEMENT_ONLY
-class NodeList (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeList')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Service')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element node uses Python identifier node
-    __node = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'node'), 'node', '__httpns_dataone_orgservicetypesv1_NodeList_node', True)
+    # Element restriction uses Python identifier restriction
+    __restriction = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'restriction'), 'restriction', '__httpns_dataone_orgservicetypesv1_Service_restriction', True)
 
     
-    node = property(__node.value, __node.set, None, None)
+    restriction = property(__restriction.value, __restriction.set, None, None)
+
+    
+    # Attribute available uses Python identifier available
+    __available = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'available'), 'available', '__httpns_dataone_orgservicetypesv1_Service_available', pyxb.binding.datatypes.boolean)
+    
+    available = property(__available.value, __available.set, None, None)
+
+    
+    # Attribute version uses Python identifier version
+    __version = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'version'), 'version', '__httpns_dataone_orgservicetypesv1_Service_version', ServiceVersion, required=True)
+    
+    version = property(__version.value, __version.set, None, None)
+
+    
+    # Attribute name uses Python identifier name
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpns_dataone_orgservicetypesv1_Service_name', ServiceName, required=True)
+    
+    name = property(__name.value, __name.set, None, None)
 
 
     _ElementMap = {
-        __node.name() : __node
+        __restriction.name() : __restriction
     }
     _AttributeMap = {
-        
+        __available.name() : __available,
+        __version.name() : __version,
+        __name.name() : __name
     }
-Namespace.addCategoryObject('typeBinding', u'NodeList', NodeList)
+Namespace.addCategoryObject('typeBinding', u'Service', Service)
 
 
 # Complex type ObjectFormat with content type ELEMENT_ONLY
@@ -557,232 +994,76 @@ class Session (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'Session', Session)
 
 
-# Complex type Person with content type ELEMENT_ONLY
-class Person (pyxb.binding.basis.complexTypeDefinition):
+# Complex type ObjectLocation with content type ELEMENT_ONLY
+class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Person')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectLocation')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element subject uses Python identifier subject
-    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Person_subject', False)
+    # Element preference uses Python identifier preference
+    __preference = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'preference'), 'preference', '__httpns_dataone_orgservicetypesv1_ObjectLocation_preference', False)
 
     
-    subject = property(__subject.value, __subject.set, None, None)
+    preference = property(__preference.value, __preference.set, None, u'A weighting parameter that provides a hint to the caller \n                        for the relative preference for nodes from which the content should be retrieved.\n                    ')
 
     
-    # Element equivalentIdentity uses Python identifier equivalentIdentity
-    __equivalentIdentity = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'equivalentIdentity'), 'equivalentIdentity', '__httpns_dataone_orgservicetypesv1_Person_equivalentIdentity', True)
+    # Element nodeIdentifier uses Python identifier nodeIdentifier
+    __nodeIdentifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), 'nodeIdentifier', '__httpns_dataone_orgservicetypesv1_ObjectLocation_nodeIdentifier', False)
 
     
-    equivalentIdentity = property(__equivalentIdentity.value, __equivalentIdentity.set, None, None)
-
-    
-    # Element givenName uses Python identifier givenName
-    __givenName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'givenName'), 'givenName', '__httpns_dataone_orgservicetypesv1_Person_givenName', True)
-
-    
-    givenName = property(__givenName.value, __givenName.set, None, None)
-
-    
-    # Element familyName uses Python identifier familyName
-    __familyName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'familyName'), 'familyName', '__httpns_dataone_orgservicetypesv1_Person_familyName', False)
-
-    
-    familyName = property(__familyName.value, __familyName.set, None, None)
-
-    
-    # Element email uses Python identifier email
-    __email = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'email'), 'email', '__httpns_dataone_orgservicetypesv1_Person_email', True)
-
-    
-    email = property(__email.value, __email.set, None, None)
-
-    
-    # Element isMemberOf uses Python identifier isMemberOf
-    __isMemberOf = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'isMemberOf'), 'isMemberOf', '__httpns_dataone_orgservicetypesv1_Person_isMemberOf', True)
-
-    
-    isMemberOf = property(__isMemberOf.value, __isMemberOf.set, None, None)
-
-
-    _ElementMap = {
-        __subject.name() : __subject,
-        __equivalentIdentity.name() : __equivalentIdentity,
-        __givenName.name() : __givenName,
-        __familyName.name() : __familyName,
-        __email.name() : __email,
-        __isMemberOf.name() : __isMemberOf
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'Person', Person)
-
-
-# Complex type Node with content type ELEMENT_ONLY
-class Node (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Node')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element synchronization uses Python identifier synchronization
-    __synchronization = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'synchronization'), 'synchronization', '__httpns_dataone_orgservicetypesv1_Node_synchronization', False)
-
-    
-    synchronization = property(__synchronization.value, __synchronization.set, None, None)
-
-    
-    # Element name uses Python identifier name
-    __name = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpns_dataone_orgservicetypesv1_Node_name', False)
-
-    
-    name = property(__name.value, __name.set, None, u'A human readable name of the Node. \n                        The name of the node is being used in Mercury currently to assign a path,\n                        so format should be consistent with dataone directory naming conventions\n                    ')
-
-    
-    # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_Node_identifier', False)
-
-    
-    identifier = property(__identifier.value, __identifier.set, None, u'A unique identifier for the node. This may initially be the same as the\n                        baseURL, however this value should not change for future implementations of the same\n                        node, whereas the baseURL may change in the future. \n                    ')
-
-    
-    # Element state uses Python identifier state
-    __state = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'state'), 'state', '__httpns_dataone_orgservicetypesv1_Node_state', False)
-
-    
-    state = property(__state.value, __state.set, None, None)
-
-    
-    # Element services uses Python identifier services
-    __services = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'services'), 'services', '__httpns_dataone_orgservicetypesv1_Node_services', False)
-
-    
-    services = property(__services.value, __services.set, None, None)
-
-    
-    # Element subject uses Python identifier subject
-    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Node_subject', True)
-
-    
-    subject = property(__subject.value, __subject.set, None, u'The Subject of this node, which can be repeated as needed.  \n                    The Node.subject represents the identifier of the node that would be found in X.509 \n                    certificates that would be used to securely communicate with this node.  Thus, it is\n                    an X.509 Distinguished Name that applies to the host on which the Node is operating. \n                    When (and if) this hostname changes the new subject for the node would be added to the\n                    Node so that we can track the subject that has been used in various access control \n                    rules over time.\n                    ')
-
-    
-    # Element description uses Python identifier description
-    __description = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__httpns_dataone_orgservicetypesv1_Node_description', False)
-
-    
-    description = property(__description.value, __description.set, None, u'Description of content maintained by this node and any other free style\n                        notes. May be we should allow CDATA element with the purpose of using for display\n                    ')
-
-    
-    # Element ping uses Python identifier ping
-    __ping = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'ping'), 'ping', '__httpns_dataone_orgservicetypesv1_Node_ping', False)
-
-    
-    ping = property(__ping.value, __ping.set, None, None)
+    nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, u'Identifier of the node (the same identifier used\n                        in the node registry for identifying the node.\n                    ')
 
     
     # Element baseURL uses Python identifier baseURL
-    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpns_dataone_orgservicetypesv1_Node_baseURL', False)
+    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpns_dataone_orgservicetypesv1_ObjectLocation_baseURL', False)
 
     
-    baseURL = property(__baseURL.value, __baseURL.set, None, None)
+    baseURL = property(__baseURL.value, __baseURL.set, None, u'The current base URL for services implemented on the target node.\n                    ')
 
     
-    # Attribute synchronize uses Python identifier synchronize
-    __synchronize = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'synchronize'), 'synchronize', '__httpns_dataone_orgservicetypesv1_Node_synchronize', pyxb.binding.datatypes.boolean, required=True)
-    
-    synchronize = property(__synchronize.value, __synchronize.set, None, None)
+    # Element url uses Python identifier url
+    __url = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'url'), 'url', '__httpns_dataone_orgservicetypesv1_ObjectLocation_url', False)
 
     
-    # Attribute replicate uses Python identifier replicate
-    __replicate = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'replicate'), 'replicate', '__httpns_dataone_orgservicetypesv1_Node_replicate', pyxb.binding.datatypes.boolean, required=True)
-    
-    replicate = property(__replicate.value, __replicate.set, None, None)
-
-    
-    # Attribute type uses Python identifier type
-    __type = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'type'), 'type', '__httpns_dataone_orgservicetypesv1_Node_type', NodeType, required=True)
-    
-    type = property(__type.value, __type.set, None, None)
+    url = property(__url.value, __url.set, None, u'The full (absolute) URL that can be used to\n                        retrieve the object using the get() method of the rest interface.\n                    ')
 
 
     _ElementMap = {
-        __synchronization.name() : __synchronization,
-        __name.name() : __name,
-        __identifier.name() : __identifier,
-        __state.name() : __state,
-        __services.name() : __services,
-        __subject.name() : __subject,
-        __description.name() : __description,
-        __ping.name() : __ping,
-        __baseURL.name() : __baseURL
-    }
-    _AttributeMap = {
-        __synchronize.name() : __synchronize,
-        __replicate.name() : __replicate,
-        __type.name() : __type
-    }
-Namespace.addCategoryObject('typeBinding', u'Node', Node)
-
-
-# Complex type MonitorInfo with content type ELEMENT_ONLY
-class MonitorInfo (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'MonitorInfo')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element count uses Python identifier count
-    __count = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpns_dataone_orgservicetypesv1_MonitorInfo_count', False)
-
-    
-    count = property(__count.value, __count.set, None, None)
-
-    
-    # Element date uses Python identifier date
-    __date = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'date'), 'date', '__httpns_dataone_orgservicetypesv1_MonitorInfo_date', False)
-
-    
-    date = property(__date.value, __date.set, None, None)
-
-
-    _ElementMap = {
-        __count.name() : __count,
-        __date.name() : __date
+        __preference.name() : __preference,
+        __nodeIdentifier.name() : __nodeIdentifier,
+        __baseURL.name() : __baseURL,
+        __url.name() : __url
     }
     _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'MonitorInfo', MonitorInfo)
+Namespace.addCategoryObject('typeBinding', u'ObjectLocation', ObjectLocation)
 
 
-# Complex type AccessPolicy with content type ELEMENT_ONLY
-class AccessPolicy (pyxb.binding.basis.complexTypeDefinition):
+# Complex type NodeList with content type ELEMENT_ONLY
+class NodeList (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'AccessPolicy')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeList')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element allow uses Python identifier allow
-    __allow = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'allow'), 'allow', '__httpns_dataone_orgservicetypesv1_AccessPolicy_allow', True)
+    # Element node uses Python identifier node
+    __node = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'node'), 'node', '__httpns_dataone_orgservicetypesv1_NodeList_node', True)
 
     
-    allow = property(__allow.value, __allow.set, None, None)
+    node = property(__node.value, __node.set, None, None)
 
 
     _ElementMap = {
-        __allow.name() : __allow
+        __node.name() : __node
     }
     _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'AccessPolicy', AccessPolicy)
+Namespace.addCategoryObject('typeBinding', u'NodeList', NodeList)
 
 
 # Complex type MonitorList with content type ELEMENT_ONLY
@@ -841,36 +1122,204 @@ class ObjectLocationList (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'ObjectLocationList', ObjectLocationList)
 
 
-# Complex type AccessRule with content type ELEMENT_ONLY
-class AccessRule (pyxb.binding.basis.complexTypeDefinition):
+# Complex type Person with content type ELEMENT_ONLY
+class Person (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'AccessRule')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Person')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element permission uses Python identifier permission
-    __permission = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'permission'), 'permission', '__httpns_dataone_orgservicetypesv1_AccessRule_permission', True)
+    # Element isMemberOf uses Python identifier isMemberOf
+    __isMemberOf = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'isMemberOf'), 'isMemberOf', '__httpns_dataone_orgservicetypesv1_Person_isMemberOf', True)
 
     
-    permission = property(__permission.value, __permission.set, None, None)
+    isMemberOf = property(__isMemberOf.value, __isMemberOf.set, None, None)
+
+    
+    # Element equivalentIdentity uses Python identifier equivalentIdentity
+    __equivalentIdentity = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'equivalentIdentity'), 'equivalentIdentity', '__httpns_dataone_orgservicetypesv1_Person_equivalentIdentity', True)
+
+    
+    equivalentIdentity = property(__equivalentIdentity.value, __equivalentIdentity.set, None, None)
+
+    
+    # Element email uses Python identifier email
+    __email = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'email'), 'email', '__httpns_dataone_orgservicetypesv1_Person_email', True)
+
+    
+    email = property(__email.value, __email.set, None, None)
 
     
     # Element subject uses Python identifier subject
-    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_AccessRule_subject', True)
+    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Person_subject', False)
 
     
     subject = property(__subject.value, __subject.set, None, None)
 
+    
+    # Element givenName uses Python identifier givenName
+    __givenName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'givenName'), 'givenName', '__httpns_dataone_orgservicetypesv1_Person_givenName', True)
+
+    
+    givenName = property(__givenName.value, __givenName.set, None, None)
+
+    
+    # Element familyName uses Python identifier familyName
+    __familyName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'familyName'), 'familyName', '__httpns_dataone_orgservicetypesv1_Person_familyName', False)
+
+    
+    familyName = property(__familyName.value, __familyName.set, None, None)
+
 
     _ElementMap = {
-        __permission.name() : __permission,
-        __subject.name() : __subject
+        __isMemberOf.name() : __isMemberOf,
+        __equivalentIdentity.name() : __equivalentIdentity,
+        __email.name() : __email,
+        __subject.name() : __subject,
+        __givenName.name() : __givenName,
+        __familyName.name() : __familyName
     }
     _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'AccessRule', AccessRule)
+Namespace.addCategoryObject('typeBinding', u'Person', Person)
+
+
+# Complex type SystemMetadata with content type ELEMENT_ONLY
+class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SystemMetadata')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element originMemberNode uses Python identifier originMemberNode
+    __originMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'originMemberNode'), 'originMemberNode', '__httpns_dataone_orgservicetypesv1_SystemMetadata_originMemberNode', False)
+
+    
+    originMemberNode = property(__originMemberNode.value, __originMemberNode.set, None, None)
+
+    
+    # Element rightsHolder uses Python identifier rightsHolder
+    __rightsHolder = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'rightsHolder'), 'rightsHolder', '__httpns_dataone_orgservicetypesv1_SystemMetadata_rightsHolder', False)
+
+    
+    rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, None)
+
+    
+    # Element authoritativeMemberNode uses Python identifier authoritativeMemberNode
+    __authoritativeMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), 'authoritativeMemberNode', '__httpns_dataone_orgservicetypesv1_SystemMetadata_authoritativeMemberNode', False)
+
+    
+    authoritativeMemberNode = property(__authoritativeMemberNode.value, __authoritativeMemberNode.set, None, None)
+
+    
+    # Element accessPolicy uses Python identifier accessPolicy
+    __accessPolicy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'accessPolicy'), 'accessPolicy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_accessPolicy', False)
+
+    
+    accessPolicy = property(__accessPolicy.value, __accessPolicy.set, None, None)
+
+    
+    # Element replicationPolicy uses Python identifier replicationPolicy
+    __replicationPolicy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), 'replicationPolicy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_replicationPolicy', False)
+
+    
+    replicationPolicy = property(__replicationPolicy.value, __replicationPolicy.set, None, None)
+
+    
+    # Element identifier uses Python identifier identifier
+    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_SystemMetadata_identifier', False)
+
+    
+    identifier = property(__identifier.value, __identifier.set, None, None)
+
+    
+    # Element obsoletes uses Python identifier obsoletes
+    __obsoletes = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletes'), 'obsoletes', '__httpns_dataone_orgservicetypesv1_SystemMetadata_obsoletes', False)
+
+    
+    obsoletes = property(__obsoletes.value, __obsoletes.set, None, None)
+
+    
+    # Element fmtid uses Python identifier fmtid
+    __fmtid = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'fmtid'), 'fmtid', '__httpns_dataone_orgservicetypesv1_SystemMetadata_fmtid', False)
+
+    
+    fmtid = property(__fmtid.value, __fmtid.set, None, None)
+
+    
+    # Element obsoletedBy uses Python identifier obsoletedBy
+    __obsoletedBy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), 'obsoletedBy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_obsoletedBy', False)
+
+    
+    obsoletedBy = property(__obsoletedBy.value, __obsoletedBy.set, None, None)
+
+    
+    # Element size uses Python identifier size
+    __size = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'size'), 'size', '__httpns_dataone_orgservicetypesv1_SystemMetadata_size', False)
+
+    
+    size = property(__size.value, __size.set, None, None)
+
+    
+    # Element dateUploaded uses Python identifier dateUploaded
+    __dateUploaded = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateUploaded'), 'dateUploaded', '__httpns_dataone_orgservicetypesv1_SystemMetadata_dateUploaded', False)
+
+    
+    dateUploaded = property(__dateUploaded.value, __dateUploaded.set, None, None)
+
+    
+    # Element checksum uses Python identifier checksum
+    __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpns_dataone_orgservicetypesv1_SystemMetadata_checksum', False)
+
+    
+    checksum = property(__checksum.value, __checksum.set, None, None)
+
+    
+    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
+    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpns_dataone_orgservicetypesv1_SystemMetadata_dateSysMetadataModified', False)
+
+    
+    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
+
+    
+    # Element replica uses Python identifier replica
+    __replica = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replica'), 'replica', '__httpns_dataone_orgservicetypesv1_SystemMetadata_replica', True)
+
+    
+    replica = property(__replica.value, __replica.set, None, None)
+
+    
+    # Element submitter uses Python identifier submitter
+    __submitter = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'submitter'), 'submitter', '__httpns_dataone_orgservicetypesv1_SystemMetadata_submitter', False)
+
+    
+    submitter = property(__submitter.value, __submitter.set, None, None)
+
+
+    _ElementMap = {
+        __originMemberNode.name() : __originMemberNode,
+        __rightsHolder.name() : __rightsHolder,
+        __authoritativeMemberNode.name() : __authoritativeMemberNode,
+        __accessPolicy.name() : __accessPolicy,
+        __replicationPolicy.name() : __replicationPolicy,
+        __identifier.name() : __identifier,
+        __obsoletes.name() : __obsoletes,
+        __fmtid.name() : __fmtid,
+        __obsoletedBy.name() : __obsoletedBy,
+        __size.name() : __size,
+        __dateUploaded.name() : __dateUploaded,
+        __checksum.name() : __checksum,
+        __dateSysMetadataModified.name() : __dateSysMetadataModified,
+        __replica.name() : __replica,
+        __submitter.name() : __submitter
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
 
 
 # Complex type Synchronization with content type ELEMENT_ONLY
@@ -913,84 +1362,60 @@ class Synchronization (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'Synchronization', Synchronization)
 
 
-# Complex type LogEntry with content type ELEMENT_ONLY
-class LogEntry (pyxb.binding.basis.complexTypeDefinition):
+# Complex type MonitorInfo with content type ELEMENT_ONLY
+class MonitorInfo (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'LogEntry')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'MonitorInfo')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element userAgent uses Python identifier userAgent
-    __userAgent = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'userAgent'), 'userAgent', '__httpns_dataone_orgservicetypesv1_LogEntry_userAgent', False)
+    # Element count uses Python identifier count
+    __count = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'count'), 'count', '__httpns_dataone_orgservicetypesv1_MonitorInfo_count', False)
 
     
-    userAgent = property(__userAgent.value, __userAgent.set, None, None)
+    count = property(__count.value, __count.set, None, None)
 
     
-    # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_LogEntry_identifier', False)
+    # Element date uses Python identifier date
+    __date = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'date'), 'date', '__httpns_dataone_orgservicetypesv1_MonitorInfo_date', False)
 
     
-    identifier = property(__identifier.value, __identifier.set, None, None)
-
-    
-    # Element subject uses Python identifier subject
-    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_LogEntry_subject', False)
-
-    
-    subject = property(__subject.value, __subject.set, None, None)
-
-    
-    # Element ipAddress uses Python identifier ipAddress
-    __ipAddress = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'ipAddress'), 'ipAddress', '__httpns_dataone_orgservicetypesv1_LogEntry_ipAddress', False)
-
-    
-    ipAddress = property(__ipAddress.value, __ipAddress.set, None, None)
-
-    
-    # Element event uses Python identifier event
-    __event = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'event'), 'event', '__httpns_dataone_orgservicetypesv1_LogEntry_event', False)
-
-    
-    event = property(__event.value, __event.set, None, None)
-
-    
-    # Element dateLogged uses Python identifier dateLogged
-    __dateLogged = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateLogged'), 'dateLogged', '__httpns_dataone_orgservicetypesv1_LogEntry_dateLogged', False)
-
-    
-    dateLogged = property(__dateLogged.value, __dateLogged.set, None, None)
-
-    
-    # Element memberNode uses Python identifier memberNode
-    __memberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'memberNode'), 'memberNode', '__httpns_dataone_orgservicetypesv1_LogEntry_memberNode', False)
-
-    
-    memberNode = property(__memberNode.value, __memberNode.set, None, None)
-
-    
-    # Element entryId uses Python identifier entryId
-    __entryId = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'entryId'), 'entryId', '__httpns_dataone_orgservicetypesv1_LogEntry_entryId', False)
-
-    
-    entryId = property(__entryId.value, __entryId.set, None, None)
+    date = property(__date.value, __date.set, None, None)
 
 
     _ElementMap = {
-        __userAgent.name() : __userAgent,
-        __identifier.name() : __identifier,
-        __subject.name() : __subject,
-        __ipAddress.name() : __ipAddress,
-        __event.name() : __event,
-        __dateLogged.name() : __dateLogged,
-        __memberNode.name() : __memberNode,
-        __entryId.name() : __entryId
+        __count.name() : __count,
+        __date.name() : __date
     }
     _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'LogEntry', LogEntry)
+Namespace.addCategoryObject('typeBinding', u'MonitorInfo', MonitorInfo)
+
+
+# Complex type AccessPolicy with content type ELEMENT_ONLY
+class AccessPolicy (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'AccessPolicy')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element allow uses Python identifier allow
+    __allow = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'allow'), 'allow', '__httpns_dataone_orgservicetypesv1_AccessPolicy_allow', True)
+
+    
+    allow = property(__allow.value, __allow.set, None, None)
+
+
+    _ElementMap = {
+        __allow.name() : __allow
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'AccessPolicy', AccessPolicy)
 
 
 # Complex type Replica with content type ELEMENT_ONLY
@@ -1033,19 +1458,19 @@ class Replica (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'Replica', Replica)
 
 
-# Complex type Log with content type ELEMENT_ONLY
-class Log (Slice):
+# Complex type ObjectList with content type ELEMENT_ONLY
+class ObjectList (Slice):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Log')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectList')
     # Base type is Slice
     
-    # Element logEntry uses Python identifier logEntry
-    __logEntry = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'logEntry'), 'logEntry', '__httpns_dataone_orgservicetypesv1_Log_logEntry', True)
+    # Element objectInfo uses Python identifier objectInfo
+    __objectInfo = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectInfo'), 'objectInfo', '__httpns_dataone_orgservicetypesv1_ObjectList_objectInfo', True)
 
     
-    logEntry = property(__logEntry.value, __logEntry.set, None, None)
+    objectInfo = property(__objectInfo.value, __objectInfo.set, None, None)
 
     
     # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
@@ -1056,69 +1481,13 @@ class Log (Slice):
 
     _ElementMap = Slice._ElementMap.copy()
     _ElementMap.update({
-        __logEntry.name() : __logEntry
+        __objectInfo.name() : __objectInfo
     })
     _AttributeMap = Slice._AttributeMap.copy()
     _AttributeMap.update({
         
     })
-Namespace.addCategoryObject('typeBinding', u'Log', Log)
-
-
-# Complex type ObjectInfo with content type ELEMENT_ONLY
-class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectInfo')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element size uses Python identifier size
-    __size = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'size'), 'size', '__httpns_dataone_orgservicetypesv1_ObjectInfo_size', False)
-
-    
-    size = property(__size.value, __size.set, None, None)
-
-    
-    # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_ObjectInfo_identifier', False)
-
-    
-    identifier = property(__identifier.value, __identifier.set, None, None)
-
-    
-    # Element fmtid uses Python identifier fmtid
-    __fmtid = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'fmtid'), 'fmtid', '__httpns_dataone_orgservicetypesv1_ObjectInfo_fmtid', False)
-
-    
-    fmtid = property(__fmtid.value, __fmtid.set, None, None)
-
-    
-    # Element checksum uses Python identifier checksum
-    __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpns_dataone_orgservicetypesv1_ObjectInfo_checksum', False)
-
-    
-    checksum = property(__checksum.value, __checksum.set, None, None)
-
-    
-    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
-    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpns_dataone_orgservicetypesv1_ObjectInfo_dateSysMetadataModified', False)
-
-    
-    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
-
-
-    _ElementMap = {
-        __size.name() : __size,
-        __identifier.name() : __identifier,
-        __fmtid.name() : __fmtid,
-        __checksum.name() : __checksum,
-        __dateSysMetadataModified.name() : __dateSysMetadataModified
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'ObjectInfo', ObjectInfo)
+Namespace.addCategoryObject('typeBinding', u'ObjectList', ObjectList)
 
 
 # Complex type ServiceMethodRestriction with content type ELEMENT_ONLY
@@ -1158,436 +1527,49 @@ class ServiceMethodRestriction (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'ServiceMethodRestriction', ServiceMethodRestriction)
 
 
-# Complex type Group with content type ELEMENT_ONLY
-class Group (pyxb.binding.basis.complexTypeDefinition):
+# Complex type AccessRule with content type ELEMENT_ONLY
+class AccessRule (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Group')
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'AccessRule')
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element hasMember uses Python identifier hasMember
-    __hasMember = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'hasMember'), 'hasMember', '__httpns_dataone_orgservicetypesv1_Group_hasMember', True)
+    # Element permission uses Python identifier permission
+    __permission = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'permission'), 'permission', '__httpns_dataone_orgservicetypesv1_AccessRule_permission', True)
 
     
-    hasMember = property(__hasMember.value, __hasMember.set, None, None)
+    permission = property(__permission.value, __permission.set, None, None)
 
     
     # Element subject uses Python identifier subject
-    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_Group_subject', False)
+    __subject = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'subject'), 'subject', '__httpns_dataone_orgservicetypesv1_AccessRule_subject', True)
 
     
     subject = property(__subject.value, __subject.set, None, None)
 
-    
-    # Element groupName uses Python identifier groupName
-    __groupName = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'groupName'), 'groupName', '__httpns_dataone_orgservicetypesv1_Group_groupName', False)
-
-    
-    groupName = property(__groupName.value, __groupName.set, None, None)
-
 
     _ElementMap = {
-        __hasMember.name() : __hasMember,
-        __subject.name() : __subject,
-        __groupName.name() : __groupName
+        __permission.name() : __permission,
+        __subject.name() : __subject
     }
     _AttributeMap = {
         
     }
-Namespace.addCategoryObject('typeBinding', u'Group', Group)
+Namespace.addCategoryObject('typeBinding', u'AccessRule', AccessRule)
 
 
-# Complex type SystemMetadata with content type ELEMENT_ONLY
-class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SystemMetadata')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element accessPolicy uses Python identifier accessPolicy
-    __accessPolicy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'accessPolicy'), 'accessPolicy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_accessPolicy', False)
+node = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'node'), Node)
+Namespace.addCategoryObject('elementBinding', node.name().localName(), node)
 
-    
-    accessPolicy = property(__accessPolicy.value, __accessPolicy.set, None, None)
+objectFormatList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'objectFormatList'), ObjectFormatList)
+Namespace.addCategoryObject('elementBinding', objectFormatList.name().localName(), objectFormatList)
 
-    
-    # Element fmtid uses Python identifier fmtid
-    __fmtid = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'fmtid'), 'fmtid', '__httpns_dataone_orgservicetypesv1_SystemMetadata_fmtid', False)
+log = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'log'), Log)
+Namespace.addCategoryObject('elementBinding', log.name().localName(), log)
 
-    
-    fmtid = property(__fmtid.value, __fmtid.set, None, None)
-
-    
-    # Element replicationPolicy uses Python identifier replicationPolicy
-    __replicationPolicy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), 'replicationPolicy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_replicationPolicy', False)
-
-    
-    replicationPolicy = property(__replicationPolicy.value, __replicationPolicy.set, None, None)
-
-    
-    # Element submitter uses Python identifier submitter
-    __submitter = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'submitter'), 'submitter', '__httpns_dataone_orgservicetypesv1_SystemMetadata_submitter', False)
-
-    
-    submitter = property(__submitter.value, __submitter.set, None, None)
-
-    
-    # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv1_SystemMetadata_identifier', False)
-
-    
-    identifier = property(__identifier.value, __identifier.set, None, None)
-
-    
-    # Element obsoletedBy uses Python identifier obsoletedBy
-    __obsoletedBy = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), 'obsoletedBy', '__httpns_dataone_orgservicetypesv1_SystemMetadata_obsoletedBy', False)
-
-    
-    obsoletedBy = property(__obsoletedBy.value, __obsoletedBy.set, None, None)
-
-    
-    # Element replica uses Python identifier replica
-    __replica = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'replica'), 'replica', '__httpns_dataone_orgservicetypesv1_SystemMetadata_replica', True)
-
-    
-    replica = property(__replica.value, __replica.set, None, None)
-
-    
-    # Element dateSysMetadataModified uses Python identifier dateSysMetadataModified
-    __dateSysMetadataModified = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), 'dateSysMetadataModified', '__httpns_dataone_orgservicetypesv1_SystemMetadata_dateSysMetadataModified', False)
-
-    
-    dateSysMetadataModified = property(__dateSysMetadataModified.value, __dateSysMetadataModified.set, None, None)
-
-    
-    # Element checksum uses Python identifier checksum
-    __checksum = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'checksum'), 'checksum', '__httpns_dataone_orgservicetypesv1_SystemMetadata_checksum', False)
-
-    
-    checksum = property(__checksum.value, __checksum.set, None, None)
-
-    
-    # Element obsoletes uses Python identifier obsoletes
-    __obsoletes = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'obsoletes'), 'obsoletes', '__httpns_dataone_orgservicetypesv1_SystemMetadata_obsoletes', False)
-
-    
-    obsoletes = property(__obsoletes.value, __obsoletes.set, None, None)
-
-    
-    # Element originMemberNode uses Python identifier originMemberNode
-    __originMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'originMemberNode'), 'originMemberNode', '__httpns_dataone_orgservicetypesv1_SystemMetadata_originMemberNode', False)
-
-    
-    originMemberNode = property(__originMemberNode.value, __originMemberNode.set, None, None)
-
-    
-    # Element authoritativeMemberNode uses Python identifier authoritativeMemberNode
-    __authoritativeMemberNode = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), 'authoritativeMemberNode', '__httpns_dataone_orgservicetypesv1_SystemMetadata_authoritativeMemberNode', False)
-
-    
-    authoritativeMemberNode = property(__authoritativeMemberNode.value, __authoritativeMemberNode.set, None, None)
-
-    
-    # Element rightsHolder uses Python identifier rightsHolder
-    __rightsHolder = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'rightsHolder'), 'rightsHolder', '__httpns_dataone_orgservicetypesv1_SystemMetadata_rightsHolder', False)
-
-    
-    rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, None)
-
-    
-    # Element size uses Python identifier size
-    __size = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'size'), 'size', '__httpns_dataone_orgservicetypesv1_SystemMetadata_size', False)
-
-    
-    size = property(__size.value, __size.set, None, None)
-
-    
-    # Element dateUploaded uses Python identifier dateUploaded
-    __dateUploaded = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'dateUploaded'), 'dateUploaded', '__httpns_dataone_orgservicetypesv1_SystemMetadata_dateUploaded', False)
-
-    
-    dateUploaded = property(__dateUploaded.value, __dateUploaded.set, None, None)
-
-
-    _ElementMap = {
-        __accessPolicy.name() : __accessPolicy,
-        __fmtid.name() : __fmtid,
-        __replicationPolicy.name() : __replicationPolicy,
-        __submitter.name() : __submitter,
-        __identifier.name() : __identifier,
-        __obsoletedBy.name() : __obsoletedBy,
-        __replica.name() : __replica,
-        __dateSysMetadataModified.name() : __dateSysMetadataModified,
-        __checksum.name() : __checksum,
-        __obsoletes.name() : __obsoletes,
-        __originMemberNode.name() : __originMemberNode,
-        __authoritativeMemberNode.name() : __authoritativeMemberNode,
-        __rightsHolder.name() : __rightsHolder,
-        __size.name() : __size,
-        __dateUploaded.name() : __dateUploaded
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
-
-
-# Complex type ObjectFormatList with content type ELEMENT_ONLY
-class ObjectFormatList (Slice):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormatList')
-    # Base type is Slice
-    
-    # Element objectFormat uses Python identifier objectFormat
-    __objectFormat = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'objectFormat'), 'objectFormat', '__httpns_dataone_orgservicetypesv1_ObjectFormatList_objectFormat', True)
-
-    
-    objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
-
-    
-    # Attribute count inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
-    # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
-    
-    # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
-
-    _ElementMap = Slice._ElementMap.copy()
-    _ElementMap.update({
-        __objectFormat.name() : __objectFormat
-    })
-    _AttributeMap = Slice._AttributeMap.copy()
-    _AttributeMap.update({
-        
-    })
-Namespace.addCategoryObject('typeBinding', u'ObjectFormatList', ObjectFormatList)
-
-
-# Complex type Schedule with content type EMPTY
-class Schedule (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Schedule')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Attribute hour uses Python identifier hour
-    __hour = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'hour'), 'hour', '__httpns_dataone_orgservicetypesv1_Schedule_hour', CrontabEntry, required=True)
-    
-    hour = property(__hour.value, __hour.set, None, None)
-
-    
-    # Attribute year uses Python identifier year
-    __year = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'year'), 'year', '__httpns_dataone_orgservicetypesv1_Schedule_year', CrontabEntry, required=True)
-    
-    year = property(__year.value, __year.set, None, None)
-
-    
-    # Attribute mday uses Python identifier mday
-    __mday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'mday'), 'mday', '__httpns_dataone_orgservicetypesv1_Schedule_mday', CrontabEntry, required=True)
-    
-    mday = property(__mday.value, __mday.set, None, None)
-
-    
-    # Attribute min uses Python identifier min
-    __min = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'min'), 'min', '__httpns_dataone_orgservicetypesv1_Schedule_min', CrontabEntry, required=True)
-    
-    min = property(__min.value, __min.set, None, None)
-
-    
-    # Attribute mon uses Python identifier mon
-    __mon = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'mon'), 'mon', '__httpns_dataone_orgservicetypesv1_Schedule_mon', CrontabEntry, required=True)
-    
-    mon = property(__mon.value, __mon.set, None, None)
-
-    
-    # Attribute sec uses Python identifier sec
-    __sec = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'sec'), 'sec', '__httpns_dataone_orgservicetypesv1_Schedule_sec', CrontabEntry, required=True)
-    
-    sec = property(__sec.value, __sec.set, None, None)
-
-    
-    # Attribute wday uses Python identifier wday
-    __wday = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'wday'), 'wday', '__httpns_dataone_orgservicetypesv1_Schedule_wday', CrontabEntry, required=True)
-    
-    wday = property(__wday.value, __wday.set, None, None)
-
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        __hour.name() : __hour,
-        __year.name() : __year,
-        __mday.name() : __mday,
-        __min.name() : __min,
-        __mon.name() : __mon,
-        __sec.name() : __sec,
-        __wday.name() : __wday
-    }
-Namespace.addCategoryObject('typeBinding', u'Schedule', Schedule)
-
-
-# Complex type Services with content type ELEMENT_ONLY
-class Services (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Services')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element service uses Python identifier service
-    __service = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'service'), 'service', '__httpns_dataone_orgservicetypesv1_Services_service', True)
-
-    
-    service = property(__service.value, __service.set, None, None)
-
-
-    _ElementMap = {
-        __service.name() : __service
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'Services', Services)
-
-
-# Complex type Ping with content type EMPTY
-class Ping (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_EMPTY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Ping')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Attribute lastSuccess uses Python identifier lastSuccess
-    __lastSuccess = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'lastSuccess'), 'lastSuccess', '__httpns_dataone_orgservicetypesv1_Ping_lastSuccess', pyxb.binding.datatypes.dateTime)
-    
-    lastSuccess = property(__lastSuccess.value, __lastSuccess.set, None, None)
-
-    
-    # Attribute success uses Python identifier success
-    __success = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'success'), 'success', '__httpns_dataone_orgservicetypesv1_Ping_success', pyxb.binding.datatypes.boolean)
-    
-    success = property(__success.value, __success.set, None, None)
-
-
-    _ElementMap = {
-        
-    }
-    _AttributeMap = {
-        __lastSuccess.name() : __lastSuccess,
-        __success.name() : __success
-    }
-Namespace.addCategoryObject('typeBinding', u'Ping', Ping)
-
-
-# Complex type Service with content type ELEMENT_ONLY
-class Service (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Service')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element restriction uses Python identifier restriction
-    __restriction = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'restriction'), 'restriction', '__httpns_dataone_orgservicetypesv1_Service_restriction', True)
-
-    
-    restriction = property(__restriction.value, __restriction.set, None, None)
-
-    
-    # Attribute available uses Python identifier available
-    __available = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'available'), 'available', '__httpns_dataone_orgservicetypesv1_Service_available', pyxb.binding.datatypes.boolean)
-    
-    available = property(__available.value, __available.set, None, None)
-
-    
-    # Attribute version uses Python identifier version
-    __version = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'version'), 'version', '__httpns_dataone_orgservicetypesv1_Service_version', ServiceVersion, required=True)
-    
-    version = property(__version.value, __version.set, None, None)
-
-    
-    # Attribute name uses Python identifier name
-    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpns_dataone_orgservicetypesv1_Service_name', ServiceName, required=True)
-    
-    name = property(__name.value, __name.set, None, None)
-
-
-    _ElementMap = {
-        __restriction.name() : __restriction
-    }
-    _AttributeMap = {
-        __available.name() : __available,
-        __version.name() : __version,
-        __name.name() : __name
-    }
-Namespace.addCategoryObject('typeBinding', u'Service', Service)
-
-
-# Complex type ObjectLocation with content type ELEMENT_ONLY
-class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectLocation')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element preference uses Python identifier preference
-    __preference = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'preference'), 'preference', '__httpns_dataone_orgservicetypesv1_ObjectLocation_preference', False)
-
-    
-    preference = property(__preference.value, __preference.set, None, u'A weighting parameter that provides a hint to the caller \n                        for the relative preference for nodes from which the content should be retrieved.\n                    ')
-
-    
-    # Element nodeIdentifier uses Python identifier nodeIdentifier
-    __nodeIdentifier = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), 'nodeIdentifier', '__httpns_dataone_orgservicetypesv1_ObjectLocation_nodeIdentifier', False)
-
-    
-    nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, u'Identifier of the node (the same identifier used\n                        in the node registry for identifying the node.\n                    ')
-
-    
-    # Element url uses Python identifier url
-    __url = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'url'), 'url', '__httpns_dataone_orgservicetypesv1_ObjectLocation_url', False)
-
-    
-    url = property(__url.value, __url.set, None, u'The full (absolute) URL that can be used to\n                        retrieve the object using the get() method of the rest interface.\n                    ')
-
-    
-    # Element baseURL uses Python identifier baseURL
-    __baseURL = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'baseURL'), 'baseURL', '__httpns_dataone_orgservicetypesv1_ObjectLocation_baseURL', False)
-
-    
-    baseURL = property(__baseURL.value, __baseURL.set, None, u'The current base URL for services implemented on the target node.\n                    ')
-
-
-    _ElementMap = {
-        __preference.name() : __preference,
-        __nodeIdentifier.name() : __nodeIdentifier,
-        __url.name() : __url,
-        __baseURL.name() : __baseURL
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'ObjectLocation', ObjectLocation)
-
-
-objectList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'objectList'), ObjectList)
-Namespace.addCategoryObject('elementBinding', objectList.name().localName(), objectList)
-
-checksum = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'checksum'), Checksum)
-Namespace.addCategoryObject('elementBinding', checksum.name().localName(), checksum)
-
-nodeList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'nodeList'), NodeList)
-Namespace.addCategoryObject('elementBinding', nodeList.name().localName(), nodeList)
-
-nodeReference = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'nodeReference'), NodeReference)
-Namespace.addCategoryObject('elementBinding', nodeReference.name().localName(), nodeReference)
+subject = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'subject'), Subject)
+Namespace.addCategoryObject('elementBinding', subject.name().localName(), subject)
 
 objectFormat = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'objectFormat'), ObjectFormat)
 Namespace.addCategoryObject('elementBinding', objectFormat.name().localName(), objectFormat)
@@ -1595,8 +1577,14 @@ Namespace.addCategoryObject('elementBinding', objectFormat.name().localName(), o
 session = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'session'), Session)
 Namespace.addCategoryObject('elementBinding', session.name().localName(), session)
 
-accessPolicy = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'accessPolicy'), AccessPolicy)
-Namespace.addCategoryObject('elementBinding', accessPolicy.name().localName(), accessPolicy)
+checksum = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'checksum'), Checksum)
+Namespace.addCategoryObject('elementBinding', checksum.name().localName(), checksum)
+
+nodeList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'nodeList'), NodeList)
+Namespace.addCategoryObject('elementBinding', nodeList.name().localName(), nodeList)
+
+identifier = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'identifier'), Identifier)
+Namespace.addCategoryObject('elementBinding', identifier.name().localName(), identifier)
 
 monitorList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'monitorList'), MonitorList)
 Namespace.addCategoryObject('elementBinding', monitorList.name().localName(), monitorList)
@@ -1607,26 +1595,136 @@ Namespace.addCategoryObject('elementBinding', objectLocationList.name().localNam
 person = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'person'), Person)
 Namespace.addCategoryObject('elementBinding', person.name().localName(), person)
 
-log = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'log'), Log)
-Namespace.addCategoryObject('elementBinding', log.name().localName(), log)
+systemMetadata = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'systemMetadata'), SystemMetadata)
+Namespace.addCategoryObject('elementBinding', systemMetadata.name().localName(), systemMetadata)
+
+accessPolicy = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'accessPolicy'), AccessPolicy)
+Namespace.addCategoryObject('elementBinding', accessPolicy.name().localName(), accessPolicy)
+
+objectList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'objectList'), ObjectList)
+Namespace.addCategoryObject('elementBinding', objectList.name().localName(), objectList)
+
+nodeReference = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'nodeReference'), NodeReference)
+Namespace.addCategoryObject('elementBinding', nodeReference.name().localName(), nodeReference)
 
 subjectList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'subjectList'), SubjectList)
 Namespace.addCategoryObject('elementBinding', subjectList.name().localName(), subjectList)
 
-systemMetadata = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'systemMetadata'), SystemMetadata)
-Namespace.addCategoryObject('elementBinding', systemMetadata.name().localName(), systemMetadata)
 
-identifier = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'identifier'), Identifier)
-Namespace.addCategoryObject('elementBinding', identifier.name().localName(), identifier)
 
-node = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'node'), Node)
-Namespace.addCategoryObject('elementBinding', node.name().localName(), node)
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'name'), NonEmptyString, scope=Node, documentation=u'A human readable name of the Node. \n                        The name of the node is being used in Mercury currently to assign a path,\n                        so format should be consistent with dataone directory naming conventions\n                    '))
 
-objectFormatList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'objectFormatList'), ObjectFormatList)
-Namespace.addCategoryObject('elementBinding', objectFormatList.name().localName(), objectFormatList)
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'description'), NonEmptyString, scope=Node, documentation=u'Description of content maintained by this node and any other free style\n                        notes. May be we should allow CDATA element with the purpose of using for display\n                    '))
 
-subject = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'subject'), Subject)
-Namespace.addCategoryObject('elementBinding', subject.name().localName(), subject)
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=Node))
+
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'services'), Services, scope=Node))
+
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'synchronization'), Synchronization, scope=Node))
+
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'ping'), Ping, scope=Node))
+
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), NodeReference, scope=Node, documentation=u'A unique identifier for the node. This may initially be the same as the\n                        baseURL, however this value should not change for future implementations of the same\n                        node, whereas the baseURL may change in the future. \n                    '))
+
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=Node, documentation=u'The Subject of this node, which can be repeated as needed.  \n                    The Node.subject represents the identifier of the node that would be found in X.509 \n                    certificates that would be used to securely communicate with this node.  Thus, it is\n                    an X.509 Distinguished Name that applies to the host on which the Node is operating. \n                    When (and if) this hostname changes the new subject for the node would be added to the\n                    Node so that we can track the subject that has been used in various access control \n                    rules over time.\n                    '))
+Node._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'name')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'description')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'baseURL')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'services')), min_occurs=0L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'synchronization')), min_occurs=0L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'ping')), min_occurs=0L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=0L, max_occurs=None)
+    )
+Node._ContentModel = pyxb.binding.content.ParticleModel(Node._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'size'), pyxb.binding.datatypes.unsignedLong, scope=ObjectInfo))
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), Identifier, scope=ObjectInfo))
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), Checksum, scope=ObjectInfo))
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'fmtid'), ObjectFormatIdentifier, scope=ObjectInfo))
+
+ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=ObjectInfo))
+ObjectInfo._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'fmtid')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'checksum')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'size')), min_occurs=1, max_occurs=1)
+    )
+ObjectInfo._ContentModel = pyxb.binding.content.ParticleModel(ObjectInfo._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+ObjectFormatList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), ObjectFormat, scope=ObjectFormatList))
+ObjectFormatList._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ObjectFormatList._UseForTag(pyxb.namespace.ExpandedName(None, u'objectFormat')), min_occurs=1L, max_occurs=None)
+    )
+ObjectFormatList._ContentModel = pyxb.binding.content.ParticleModel(ObjectFormatList._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+Log._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'logEntry'), LogEntry, scope=Log))
+Log._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Log._UseForTag(pyxb.namespace.ExpandedName(None, u'logEntry')), min_occurs=0L, max_occurs=None)
+    )
+Log._ContentModel = pyxb.binding.content.ParticleModel(Log._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+Services._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'service'), Service, scope=Services))
+Services._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Services._UseForTag(pyxb.namespace.ExpandedName(None, u'service')), min_occurs=1L, max_occurs=None)
+    )
+Services._ContentModel = pyxb.binding.content.ParticleModel(Services._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'memberNode'), NodeReference, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'ipAddress'), pyxb.binding.datatypes.string, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'entryId'), Identifier, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), Identifier, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateLogged'), pyxb.binding.datatypes.dateTime, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'userAgent'), pyxb.binding.datatypes.string, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=LogEntry))
+
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'event'), Event, scope=LogEntry))
+LogEntry._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'entryId')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'ipAddress')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'userAgent')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'event')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'dateLogged')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'memberNode')), min_occurs=1L, max_occurs=1L)
+    )
+LogEntry._ContentModel = pyxb.binding.content.ParticleModel(LogEntry._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'hasMember'), Subject, scope=Group))
+
+Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=Group))
+
+Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'groupName'), NonEmptyString, scope=Group))
+Group._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Group._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Group._UseForTag(pyxb.namespace.ExpandedName(None, u'groupName')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Group._UseForTag(pyxb.namespace.ExpandedName(None, u'hasMember')), min_occurs=0L, max_occurs=None)
+    )
+Group._ContentModel = pyxb.binding.content.ParticleModel(Group._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -1652,19 +1750,11 @@ ReplicationPolicy._ContentModel = pyxb.binding.content.ParticleModel(Replication
 
 
 
-ObjectList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectInfo'), ObjectInfo, scope=ObjectList))
-ObjectList._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ObjectList._UseForTag(pyxb.namespace.ExpandedName(None, u'objectInfo')), min_occurs=0L, max_occurs=None)
+Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'restriction'), ServiceMethodRestriction, scope=Service))
+Service._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Service._UseForTag(pyxb.namespace.ExpandedName(None, u'restriction')), min_occurs=0L, max_occurs=None)
     )
-ObjectList._ContentModel = pyxb.binding.content.ParticleModel(ObjectList._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-NodeList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'node'), Node, scope=NodeList))
-NodeList._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(NodeList._UseForTag(pyxb.namespace.ExpandedName(None, u'node')), min_occurs=1L, max_occurs=None)
-    )
-NodeList._ContentModel = pyxb.binding.content.ParticleModel(NodeList._GroupModel, min_occurs=1, max_occurs=1)
+Service._ContentModel = pyxb.binding.content.ParticleModel(Service._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -1693,77 +1783,28 @@ Session._ContentModel = pyxb.binding.content.ParticleModel(Session._GroupModel, 
 
 
 
-Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=Person))
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'preference'), pyxb.binding.datatypes.int, scope=ObjectLocation, documentation=u'A weighting parameter that provides a hint to the caller \n                        for the relative preference for nodes from which the content should be retrieved.\n                    '))
 
-Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'equivalentIdentity'), Subject, scope=Person))
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), NodeReference, scope=ObjectLocation, documentation=u'Identifier of the node (the same identifier used\n                        in the node registry for identifying the node.\n                    '))
 
-Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'givenName'), NonEmptyString, scope=Person))
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The current base URL for services implemented on the target node.\n                    '))
 
-Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'familyName'), NonEmptyString, scope=Person))
-
-Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'email'), NonEmptyString, scope=Person))
-
-Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'isMemberOf'), Subject, scope=Person))
-Person._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'givenName')), min_occurs=1L, max_occurs=None),
-    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'familyName')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'email')), min_occurs=1L, max_occurs=None),
-    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'isMemberOf')), min_occurs=0L, max_occurs=None),
-    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'equivalentIdentity')), min_occurs=0L, max_occurs=None)
+ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'url'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The full (absolute) URL that can be used to\n                        retrieve the object using the get() method of the rest interface.\n                    '))
+ObjectLocation._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'nodeIdentifier')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'baseURL')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'url')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'preference')), min_occurs=0L, max_occurs=1L)
     )
-Person._ContentModel = pyxb.binding.content.ParticleModel(Person._GroupModel, min_occurs=1, max_occurs=1)
+ObjectLocation._ContentModel = pyxb.binding.content.ParticleModel(ObjectLocation._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'synchronization'), Synchronization, scope=Node))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'name'), NonEmptyString, scope=Node, documentation=u'A human readable name of the Node. \n                        The name of the node is being used in Mercury currently to assign a path,\n                        so format should be consistent with dataone directory naming conventions\n                    '))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), NodeReference, scope=Node, documentation=u'A unique identifier for the node. This may initially be the same as the\n                        baseURL, however this value should not change for future implementations of the same\n                        node, whereas the baseURL may change in the future. \n                    '))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'state'), NodeState, scope=Node))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'services'), Services, scope=Node))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=Node, documentation=u'The Subject of this node, which can be repeated as needed.  \n                    The Node.subject represents the identifier of the node that would be found in X.509 \n                    certificates that would be used to securely communicate with this node.  Thus, it is\n                    an X.509 Distinguished Name that applies to the host on which the Node is operating. \n                    When (and if) this hostname changes the new subject for the node would be added to the\n                    Node so that we can track the subject that has been used in various access control \n                    rules over time.\n                    '))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'description'), NonEmptyString, scope=Node, documentation=u'Description of content maintained by this node and any other free style\n                        notes. May be we should allow CDATA element with the purpose of using for display\n                    '))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'ping'), Ping, scope=Node))
-
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=Node))
-Node._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'name')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'description')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'baseURL')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'services')), min_occurs=0L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'synchronization')), min_occurs=0L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'ping')), min_occurs=0L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'state')), min_occurs=0L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Node._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=0L, max_occurs=None)
+NodeList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'node'), Node, scope=NodeList))
+NodeList._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(NodeList._UseForTag(pyxb.namespace.ExpandedName(None, u'node')), min_occurs=1L, max_occurs=None)
     )
-Node._ContentModel = pyxb.binding.content.ParticleModel(Node._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-MonitorInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'count'), pyxb.binding.datatypes.int, scope=MonitorInfo))
-
-MonitorInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'date'), pyxb.binding.datatypes.date, scope=MonitorInfo))
-MonitorInfo._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(MonitorInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'date')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(MonitorInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'count')), min_occurs=1L, max_occurs=1L)
-    )
-MonitorInfo._ContentModel = pyxb.binding.content.ParticleModel(MonitorInfo._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-AccessPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'allow'), AccessRule, scope=AccessPolicy))
-AccessPolicy._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(AccessPolicy._UseForTag(pyxb.namespace.ExpandedName(None, u'allow')), min_occurs=1L, max_occurs=None)
-    )
-AccessPolicy._ContentModel = pyxb.binding.content.ParticleModel(AccessPolicy._GroupModel, min_occurs=1, max_occurs=1)
+NodeList._ContentModel = pyxb.binding.content.ParticleModel(NodeList._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -1786,153 +1827,58 @@ ObjectLocationList._ContentModel = pyxb.binding.content.ParticleModel(ObjectLoca
 
 
 
-AccessRule._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'permission'), Permission, scope=AccessRule))
+Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'isMemberOf'), Subject, scope=Person))
 
-AccessRule._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=AccessRule))
-AccessRule._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(AccessRule._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=None),
-    pyxb.binding.content.ParticleModel(AccessRule._UseForTag(pyxb.namespace.ExpandedName(None, u'permission')), min_occurs=1L, max_occurs=None)
+Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'equivalentIdentity'), Subject, scope=Person))
+
+Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'email'), NonEmptyString, scope=Person))
+
+Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=Person))
+
+Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'givenName'), NonEmptyString, scope=Person))
+
+Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'familyName'), NonEmptyString, scope=Person))
+Person._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'givenName')), min_occurs=1L, max_occurs=None),
+    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'familyName')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'email')), min_occurs=1L, max_occurs=None),
+    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'isMemberOf')), min_occurs=0L, max_occurs=None),
+    pyxb.binding.content.ParticleModel(Person._UseForTag(pyxb.namespace.ExpandedName(None, u'equivalentIdentity')), min_occurs=0L, max_occurs=None)
     )
-AccessRule._ContentModel = pyxb.binding.content.ParticleModel(AccessRule._GroupModel, min_occurs=1, max_occurs=1)
+Person._ContentModel = pyxb.binding.content.ParticleModel(Person._GroupModel, min_occurs=1, max_occurs=1)
 
 
-
-Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time all the data from a node was pulled from a member node\n                    '))
-
-Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'schedule'), Schedule, scope=Synchronization))
-
-Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastHarvested'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time the mn sychronization daemon ran and found new data to synchronize\n                    '))
-Synchronization._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'schedule')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastHarvested')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest')), min_occurs=1L, max_occurs=1L)
-    )
-Synchronization._ContentModel = pyxb.binding.content.ParticleModel(Synchronization._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'userAgent'), pyxb.binding.datatypes.string, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), Identifier, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'ipAddress'), pyxb.binding.datatypes.string, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'event'), Event, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateLogged'), pyxb.binding.datatypes.dateTime, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'memberNode'), NodeReference, scope=LogEntry))
-
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'entryId'), Identifier, scope=LogEntry))
-LogEntry._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'entryId')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'ipAddress')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'userAgent')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'event')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'dateLogged')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, u'memberNode')), min_occurs=1L, max_occurs=1L)
-    )
-LogEntry._ContentModel = pyxb.binding.content.ParticleModel(LogEntry._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaVerified'), pyxb.binding.datatypes.dateTime, scope=Replica))
-
-Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaMemberNode'), NodeReference, scope=Replica))
-
-Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationStatus'), ReplicationStatus, scope=Replica))
-Replica._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Replica._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaMemberNode')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(Replica._UseForTag(pyxb.namespace.ExpandedName(None, u'replicationStatus')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(Replica._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaVerified')), min_occurs=1, max_occurs=1)
-    )
-Replica._ContentModel = pyxb.binding.content.ParticleModel(Replica._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-Log._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'logEntry'), LogEntry, scope=Log))
-Log._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Log._UseForTag(pyxb.namespace.ExpandedName(None, u'logEntry')), min_occurs=0L, max_occurs=None)
-    )
-Log._ContentModel = pyxb.binding.content.ParticleModel(Log._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'size'), pyxb.binding.datatypes.unsignedLong, scope=ObjectInfo))
-
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), Identifier, scope=ObjectInfo))
-
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'fmtid'), ObjectFormatIdentifier, scope=ObjectInfo))
-
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), Checksum, scope=ObjectInfo))
-
-ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=ObjectInfo))
-ObjectInfo._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'fmtid')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'checksum')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified')), min_occurs=1, max_occurs=1),
-    pyxb.binding.content.ParticleModel(ObjectInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'size')), min_occurs=1, max_occurs=1)
-    )
-ObjectInfo._ContentModel = pyxb.binding.content.ParticleModel(ObjectInfo._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-ServiceMethodRestriction._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'allowed'), SubjectList, scope=ServiceMethodRestriction))
-ServiceMethodRestriction._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ServiceMethodRestriction._UseForTag(pyxb.namespace.ExpandedName(None, u'allowed')), min_occurs=1L, max_occurs=1L)
-    )
-ServiceMethodRestriction._ContentModel = pyxb.binding.content.ParticleModel(ServiceMethodRestriction._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'hasMember'), Subject, scope=Group))
-
-Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=Group))
-
-Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'groupName'), NonEmptyString, scope=Group))
-Group._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Group._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Group._UseForTag(pyxb.namespace.ExpandedName(None, u'groupName')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(Group._UseForTag(pyxb.namespace.ExpandedName(None, u'hasMember')), min_occurs=0L, max_occurs=None)
-    )
-Group._ContentModel = pyxb.binding.content.ParticleModel(Group._GroupModel, min_occurs=1, max_occurs=1)
-
-
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'accessPolicy'), AccessPolicy, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'fmtid'), ObjectFormatIdentifier, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), ReplicationPolicy, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'submitter'), Subject, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), Identifier, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), Identifier, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replica'), Replica, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), Checksum, scope=SystemMetadata))
-
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletes'), Identifier, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'originMemberNode'), NodeReference, scope=SystemMetadata))
 
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'rightsHolder'), Subject, scope=SystemMetadata))
+
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'authoritativeMemberNode'), NodeReference, scope=SystemMetadata))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'rightsHolder'), Subject, scope=SystemMetadata))
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'accessPolicy'), AccessPolicy, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationPolicy'), ReplicationPolicy, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'identifier'), Identifier, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletes'), Identifier, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'fmtid'), ObjectFormatIdentifier, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'obsoletedBy'), Identifier, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'size'), pyxb.binding.datatypes.unsignedLong, scope=SystemMetadata))
 
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateUploaded'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'checksum'), Checksum, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'dateSysMetadataModified'), pyxb.binding.datatypes.dateTime, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replica'), Replica, scope=SystemMetadata))
+
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'submitter'), Subject, scope=SystemMetadata))
 SystemMetadata._GroupModel = pyxb.binding.content.GroupSequence(
     pyxb.binding.content.ParticleModel(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, u'identifier')), min_occurs=1, max_occurs=1),
     pyxb.binding.content.ParticleModel(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, u'fmtid')), min_occurs=1, max_occurs=1),
@@ -1954,41 +1900,74 @@ SystemMetadata._ContentModel = pyxb.binding.content.ParticleModel(SystemMetadata
 
 
 
-ObjectFormatList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), ObjectFormat, scope=ObjectFormatList))
-ObjectFormatList._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ObjectFormatList._UseForTag(pyxb.namespace.ExpandedName(None, u'objectFormat')), min_occurs=1L, max_occurs=None)
+Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time all the data from a node was pulled from a member node\n                    '))
+
+Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'schedule'), Schedule, scope=Synchronization))
+
+Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastHarvested'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time the mn sychronization daemon ran and found new data to synchronize\n                    '))
+Synchronization._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'schedule')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastHarvested')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(Synchronization._UseForTag(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest')), min_occurs=1L, max_occurs=1L)
     )
-ObjectFormatList._ContentModel = pyxb.binding.content.ParticleModel(ObjectFormatList._GroupModel, min_occurs=1, max_occurs=1)
+Synchronization._ContentModel = pyxb.binding.content.ParticleModel(Synchronization._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
-Services._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'service'), Service, scope=Services))
-Services._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Services._UseForTag(pyxb.namespace.ExpandedName(None, u'service')), min_occurs=1L, max_occurs=None)
+MonitorInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'count'), pyxb.binding.datatypes.int, scope=MonitorInfo))
+
+MonitorInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'date'), pyxb.binding.datatypes.date, scope=MonitorInfo))
+MonitorInfo._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(MonitorInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'date')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(MonitorInfo._UseForTag(pyxb.namespace.ExpandedName(None, u'count')), min_occurs=1L, max_occurs=1L)
     )
-Services._ContentModel = pyxb.binding.content.ParticleModel(Services._GroupModel, min_occurs=1, max_occurs=1)
+MonitorInfo._ContentModel = pyxb.binding.content.ParticleModel(MonitorInfo._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
-Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'restriction'), ServiceMethodRestriction, scope=Service))
-Service._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(Service._UseForTag(pyxb.namespace.ExpandedName(None, u'restriction')), min_occurs=0L, max_occurs=None)
+AccessPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'allow'), AccessRule, scope=AccessPolicy))
+AccessPolicy._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(AccessPolicy._UseForTag(pyxb.namespace.ExpandedName(None, u'allow')), min_occurs=1L, max_occurs=None)
     )
-Service._ContentModel = pyxb.binding.content.ParticleModel(Service._GroupModel, min_occurs=1, max_occurs=1)
+AccessPolicy._ContentModel = pyxb.binding.content.ParticleModel(AccessPolicy._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'preference'), pyxb.binding.datatypes.int, scope=ObjectLocation, documentation=u'A weighting parameter that provides a hint to the caller \n                        for the relative preference for nodes from which the content should be retrieved.\n                    '))
+Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaVerified'), pyxb.binding.datatypes.dateTime, scope=Replica))
 
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), NodeReference, scope=ObjectLocation, documentation=u'Identifier of the node (the same identifier used\n                        in the node registry for identifying the node.\n                    '))
+Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaMemberNode'), NodeReference, scope=Replica))
 
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'url'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The full (absolute) URL that can be used to\n                        retrieve the object using the get() method of the rest interface.\n                    '))
-
-ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'baseURL'), pyxb.binding.datatypes.anyURI, scope=ObjectLocation, documentation=u'The current base URL for services implemented on the target node.\n                    '))
-ObjectLocation._GroupModel = pyxb.binding.content.GroupSequence(
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'nodeIdentifier')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'baseURL')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'url')), min_occurs=1L, max_occurs=1L),
-    pyxb.binding.content.ParticleModel(ObjectLocation._UseForTag(pyxb.namespace.ExpandedName(None, u'preference')), min_occurs=0L, max_occurs=1L)
+Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicationStatus'), ReplicationStatus, scope=Replica))
+Replica._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(Replica._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaMemberNode')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(Replica._UseForTag(pyxb.namespace.ExpandedName(None, u'replicationStatus')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(Replica._UseForTag(pyxb.namespace.ExpandedName(None, u'replicaVerified')), min_occurs=1, max_occurs=1)
     )
-ObjectLocation._ContentModel = pyxb.binding.content.ParticleModel(ObjectLocation._GroupModel, min_occurs=1, max_occurs=1)
+Replica._ContentModel = pyxb.binding.content.ParticleModel(Replica._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+ObjectList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectInfo'), ObjectInfo, scope=ObjectList))
+ObjectList._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ObjectList._UseForTag(pyxb.namespace.ExpandedName(None, u'objectInfo')), min_occurs=0L, max_occurs=None)
+    )
+ObjectList._ContentModel = pyxb.binding.content.ParticleModel(ObjectList._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+ServiceMethodRestriction._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'allowed'), SubjectList, scope=ServiceMethodRestriction))
+ServiceMethodRestriction._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(ServiceMethodRestriction._UseForTag(pyxb.namespace.ExpandedName(None, u'allowed')), min_occurs=1L, max_occurs=1L)
+    )
+ServiceMethodRestriction._ContentModel = pyxb.binding.content.ParticleModel(ServiceMethodRestriction._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+AccessRule._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'permission'), Permission, scope=AccessRule))
+
+AccessRule._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=AccessRule))
+AccessRule._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(AccessRule._UseForTag(pyxb.namespace.ExpandedName(None, u'subject')), min_occurs=1L, max_occurs=None),
+    pyxb.binding.content.ParticleModel(AccessRule._UseForTag(pyxb.namespace.ExpandedName(None, u'permission')), min_occurs=1L, max_occurs=None)
+    )
+AccessRule._ContentModel = pyxb.binding.content.ParticleModel(AccessRule._GroupModel, min_occurs=1, max_occurs=1)
