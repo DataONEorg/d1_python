@@ -103,6 +103,9 @@ class DataONEBaseClient(restclient.RESTClient):
       'assertauthorized': u'assertAuthorized/%(pid)s'
     }
     self.lastresponse = None
+    #Set this to True to preserve a copy of the last response.read() as the
+    #body attribute of self.lastresponse
+    self.keep_response_body = False
 
   def _getResponse(self, conn):
     '''Returns the HTTP response object and sets self.lastresponse. 
@@ -211,7 +214,10 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     res = self.getSystemMetadataResponse(pid, vendorSpecific=vendorSpecific)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    return systemmetadata.CreateFromDocument(res.read(), )
+    doc = res.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return systemmetadata.CreateFromDocument(doc, )
 
   def listObjectsResponse(
     self,
@@ -287,9 +293,20 @@ class DataONEBaseClient(restclient.RESTClient):
     )
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     serializer = objectlist_serialization.ObjectList()
-    return serializer.deserialize(res.read(), format)
+    doc = res.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return serializer.deserialize(doc, format)
 
-  def getLogRecordsResponse(self, fromDate, toDate=None, event=None, vendorSpecific=None):
+  def getLogRecordsResponse(
+    self,
+    fromDate,
+    toDate=None,
+    event=None,
+    start=0,
+    count=1000,
+    vendorSpecific=None
+  ):
     '''
     :return type: HTTPResponse
     '''
@@ -299,23 +316,40 @@ class DataONEBaseClient(restclient.RESTClient):
       url_params['toDate'] = toDate
     if not event is None:
       url_params['event'] = event
+    url_params['start'] = start
+    url_params['count'] = count
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
     return self.GET(url, url_params=url_params, headers=headers)
 
-  def getLogRecords(self, fromDate, toDate=None, event=None, vendorSpecific=None):
+  def getLogRecords(
+    self,
+    fromDate,
+    toDate=None,
+    event=None,
+    start=0,
+    count=1000,
+    vendorSpecific=None
+  ):
     '''
     :return type: LogRecords
     '''
     response = self.getLogRecordsResponse(
-      fromDate, toDate=toDate,
-      event=event, vendorSpecific=vendorSpecific
+      fromDate,
+      toDate=toDate,
+      event=event,
+      start=start,
+      count=count,
+      vendorSpecific=vendorSpecific
     )
 
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = logrecords_serialization.LogRecords()
-    return deser.deserialize(response.read(), format)
+    doc = response.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return deser.deserialize(doc, format)
 
   def ping(self, vendorSpecific=None):
     '''
@@ -327,6 +361,9 @@ class DataONEBaseClient(restclient.RESTClient):
       headers.update(vendorSpecific)
     try:
       response = self.GET(url, headers=headers)
+      doc = response.read()
+      if self.keep_response_body:
+        self.lastresponse.body = doc
     except Exception, e:
       logging.exception(e)
       return False
@@ -362,7 +399,10 @@ class DataONEBaseClient(restclient.RESTClient):
     res = self.listNodesResponse(vendorSpecific=vendorSpecific)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
-    return deser.deserialize(res.read(), format)
+    doc = res.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return deser.deserialize(doc, format)
 
   # ----------------------------------------------------------------------------  
   # Authentication and authorization.
@@ -394,6 +434,8 @@ class DataONEBaseClient(restclient.RESTClient):
     '''
     '''
     response = self.assertAuthorizedResponse(pid, access, vendorSpecific=vendorSpecific)
+    if self.keep_response_body:
+      self.lastresponse.body = response.read()
     return self.isHttpStatusOK(response.status)
 
   def setAccessPolicyResponse(self, pid, accessPolicy, vendorSpecific=None):
