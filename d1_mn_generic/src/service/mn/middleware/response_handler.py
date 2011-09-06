@@ -85,12 +85,7 @@ class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
     for row in view_result['query']:
       objectInfo = d1_common.types.generated.dataoneTypes.ObjectInfo()
       objectInfo.identifier = row.pid
-
-      objectFormat = d1_common.types.generated.dataoneTypes.ObjectFormat()
-      objectFormat.fmtid = row.format.format_id
-      objectFormat.formatName = row.format.format_name
-      objectFormat.scienceMetadata = row.format.sci_meta
-      objectInfo.objectFormat = objectFormat
+      objectInfo.fmtid = row.format.format_id
 
       checksum = d1_common.types.generated.dataoneTypes.Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm

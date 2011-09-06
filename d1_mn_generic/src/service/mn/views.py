@@ -115,15 +115,6 @@ def object_pid(request, pid):
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
   
 
-def event_log_view(request):
-  if request.method == 'GET':
-    return event_log_view_get(request, head=False)
-  elif request.method == 'HEAD':
-    return event_log_view_get(request, head=True)
-  else:
-    return HttpResponseNotAllowed(['GET', 'HEAD'])
-  
-
 # ==============================================================================
 # Public API
 # ==============================================================================
@@ -184,8 +175,8 @@ def monitor_object(request):
     query_unsliced = query
     
   # Filter by referenced object format name.
-  query, changed = db_filter.add_string_filter(query, request, 'format__format_name',
-                                          'format')
+  query, changed = db_filter.add_string_filter(query, request,
+                                               'format__format_id', 'format')
   if changed:
     query_unsliced = query
 
@@ -196,77 +187,6 @@ def monitor_object(request):
 
   # Create a slice of a query based on request start and count parameters.
   query, start, count = db_filter.add_slice_filter(query, request)
-
-  return {'query': query, 'start': start, 'count': count, 'total':
-    0, 'day': 'day' in request.GET, 'type': 'monitor' }
-
-
-#@lock_pid.for_read
-@auth.assert_trusted_permission
-def monitor_event(request):
-  '''MNCore.getOperationStatistics(session[, period][, requestor][, event]
-  [, format]) → MonitorList
-
-  Returns the number of operations that have been serviced by the node over time
-  periods of one and 24 hours.
-  '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-  
-  # select objects ordered by mtime desc.
-  query = models.Event_log.objects.order_by('-date_logged')
-  # Create a copy of the query that we will not slice, for getting the total
-  # count for this type of objects.
-  query_unsliced = query
-
-  obj = {}
-  obj['logRecord'] = []
-
-  # Filter by referenced object format.
-  query, changed = db_filter.add_string_filter(query, request,
-                                          'object__format__format_name',
-                                          'format')
-  if changed:
-    query_unsliced = query
-  
-  # Filter by referenced object created date, from.
-  query, changed = db_filter.add_datetime_filter(query, request,
-                                            'object__mtime', 'objectFromDate',
-                                            'gte')
-  if changed == True:
-    query_unsliced = query
-  
-    # Filter by referenced object created date, to.
-  query, changed = db_filter.add_datetime_filter(query, request, 'object__mtime', 
-                                            'objectToDate', 'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by event date, from.
-  query, changed = db_filter.add_datetime_filter(query, request, 'date_logged',
-                                            'fromDate', 'gte')
-  if changed == True:
-    query_unsliced = query
-  
-    # Filter by event date, to.
-  query, changed = db_filter.add_datetime_filter(query, request, 'date_logged', 
-                                            'toDate', 'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by event type.
-  if 'event' in request.GET:
-    query = db_filter.add_wildcard_filter(query, 'event__event',
-                                     request.GET['event'])
-    query_unsliced = query
-
-  # Prepare to group by day.
-  if 'day' in request.GET:
-    query = query.extra({'day' : "date(date_logged)"}).values('day').annotate(
-      count=Count('id')).order_by()
-
-  # Create a slice of a query based on request start and count parameters.
-  query, start, count = db_filter.add_slice_filter(query, request)    
 
   return {'query': query, 'start': start, 'count': count, 'total':
     0, 'day': 'day' in request.GET, 'type': 'monitor' }
@@ -338,7 +258,13 @@ def node(request):
   node_registry_path = os.path.join(settings.STATIC_STORE_PATH,
                                        'nodeRegistry.xml')
   # Django closes the file. (Can't use "with".)
-  file = open(node_registry_path, 'rb')
+  try:
+    file = open(node_registry_path, 'rb')
+  except EnvironmentError:
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'The administrator of this node has not yet provided Member Node '
+      'capabilities information.')
+
   return HttpResponse(file, d1_common.const.MIMETYPE_XML)
 
 # ------------------------------------------------------------------------------
@@ -767,9 +693,7 @@ def object_pid_post(request, pid):
     object = models.Object()
     object.pid = pid
     object.url = url
-    object.set_format(sysmeta.objectFormat.fmtid,
-                      sysmeta.objectFormat.formatName,
-                      sysmeta.objectFormat.scienceMetadata)
+    object.set_format(sysmeta.fmtid)
     object.checksum = sysmeta.checksum.value()
     object.set_checksum_algorithm(sysmeta.checksum.algorithm)
     object.mtime = d1_common.util.normalize_to_utc(

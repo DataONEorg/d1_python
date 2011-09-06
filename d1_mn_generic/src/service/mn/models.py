@@ -65,8 +65,6 @@ class Checksum_algorithm(models.Model):
 # Format = The format of the object.
 class Object_format(models.Model):
   format_id = models.CharField(max_length=100, unique=True, db_index=True)
-  format_name = models.CharField(max_length=1000, db_index=True)
-  sci_meta = models.BooleanField()
 
 
 class Object(models.Model):
@@ -80,14 +78,11 @@ class Object(models.Model):
   size = models.PositiveIntegerField(db_index=True)
   replica = models.BooleanField(db_index=True)
 
-  def set_format(self, format_id, format_name, sci_meta):
+  def set_format(self, format_id):
     ''':param:
     :return:
     '''
-    self.format = Object_format.objects.get_or_create(
-      format_id=format_id, format_name=format_name,
-      sci_meta=sci_meta
-    )[0]
+    self.format = Object_format.objects.get_or_create(format_id=format_id)[0]
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
     ''':param:

@@ -61,8 +61,6 @@ urlpatterns = patterns(
   (r'^monitor/status/?$', 'monitor_status'),
   # GET /monitor/object
   (r'^monitor/object/?$', 'monitor_object'),
-  # GET /monitor/event  
-  (r'^monitor/event/?$', 'monitor_event'),
   # GET /log
   (r'^log/?$', 'event_log_view'),
   # GET /  or  GET /node

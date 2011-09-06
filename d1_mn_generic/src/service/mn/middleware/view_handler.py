@@ -54,13 +54,6 @@ import d1_common.ext.mimeparser
 # Django.
 from django.http import HttpResponse
 
-# 3rd party.
-try:
-  from OpenSSL import crypto
-except ImportError:
-  print 'Try: sudo easy_install pyopenssl'
-  raise
-
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
@@ -70,6 +63,7 @@ import d1_common.const
 # App.
 import mn.models as models
 import settings
+import mn.x509
 
 # Get an instance of a logger.
 logger = logging.getLogger(__name__)
@@ -83,18 +77,15 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
-    # Extract session from cert.
-    client_cert_str = request.META['SSL_CLIENT_CERT']
-    client_cert = crypto.load_certificate(crypto.FILETYPE_PEM, client_cert_str)
-    if client_cert.get_extension_count() != 1:
-      raise d1_common.types.exceptions.NotAuthorized(0, 'Missing session')
-    session_str = client_cert.get_extension(0).get_data()
-    try:
-      session = dataoneTypes.CreateFromDocument(session_str)
-    except:
-      raise d1_common.types.exceptions.NotAuthorized(0, 'Invalid session')
+    # Extract the session object from the client side certificate and
+    # store it in the request (for easy access). If no certificate was
+    # provided by the client, create a default session object for the
+    # Public principal.
+    if 'SSL_CLIENT_CERT' in request.META:
+      session = mn.x509.get_session(request.META['SSL_CLIENT_CERT'])
+    else:
+      session = dataoneTypes.Session()
 
-    return HttpResponse(session_str, 'text/plain')
     if settings.DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
       # debugging via regular HTTP, passing in a session string by using a
