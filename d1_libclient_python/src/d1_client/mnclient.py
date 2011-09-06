@@ -161,118 +161,15 @@ class MemberNodeClient(DataONEBaseClient):
     )
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = checksum_serialization.Checksum('<dummy>')
-    return deser.deserialize(response.read(), format)
+    doc = response.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return deser.deserialize(doc, format)
 
   def replicate(self, sysmeta, sourceNode, vendorSpecific=None):
     raise Exception('Not Implemented')
 
   def synchronizationFailed(self, message):
-    raise Exception('Not Implemented')
-
-  def getObjectStatisticsResponse(
-    self,
-    fromDate=None,
-    toDate=None,
-    format=None,
-    day=None,
-    pid=None,
-    vendorSpecific=None
-  ):
-    url = self.RESTResourceURL('getobjectstatistics')
-    url_params = {
-      'fromDate': fromDate,
-      'toDate': toDate,
-      'format': format,
-      'day': day,
-      'pid': pid,
-    }
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    return self.GET(url, url_params=url_params, headers=headers)
-
-  def getObjectStatistics(
-    self,
-    fromDate=None,
-    toDate=None,
-    format=None,
-    day=None,
-    pid=None,
-    vendorSpecific=None
-  ):
-    response = self.getObjectStatisticsResponse(
-      fromDate=fromDate,
-      toDate=toDate,
-      format=format,
-      day=day,
-      pid=pid,
-      vendorSpecific=vendorSpecific
-    )
-    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = monitorlist_serialization.MonitorList()
-    if self.logger.getEffectiveLevel() == logging.DEBUG:
-      logging.debug("FORMAT = %s" % format)
-    return deser.deserialize(response.read(), format)
-
-  def getOperationStatisticsResponse(
-    self,
-    fromDate=None,
-    toDate=None,
-    objectFromDate=None,
-    objectToDate=None,
-    requestor=None,
-    day=None,
-    event=None,
-    format=None,
-    vendorSpecific=None
-  ):
-    url = self.RESTResourceURL('getoperationstatistics')
-    url_params = {
-      'fromDate': fromDate,
-      'toDate': toDate,
-      'objectFromDate': objectFromDate,
-      'objectToDate': objectToDate,
-      'requestor': requestor,
-      'day': day,
-      'event': event,
-      'format': format,
-    }
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    return self.GET(url, url_params=url_params, headers=headers)
-
-  def getOperationStatistics(
-    self,
-    fromDate=None,
-    toDate=None,
-    objectFromDate=None,
-    objectToDate=None,
-    requestor=None,
-    day=None,
-    event=None,
-    format=None,
-    vendorSpecific=None
-  ):
-    response = self.getOperationStatisticsResponse(
-      fromDate=fromDate,
-      toDate=toDate,
-      objectFromDate=objectFromDate,
-      objectToDate=objectToDate,
-      requestor=requestor,
-      day=day,
-      event=event,
-      format=format,
-      vendorSpecific=vendorSpecific
-    )
-    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = monitorlist_serialization.MonitorList()
-    return deser.deserialize(response.read(), format)
-
-  def getStatusResponse(self, vendorSpecific=None):
-    raise Exception('Not implemented')
-
-  def getStatus(self, vendorSpecific=None):
     raise Exception('Not Implemented')
 
   def getCapabilitiesResponse(self, vendorSpecific=None):
@@ -286,7 +183,10 @@ class MemberNodeClient(DataONEBaseClient):
     response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
     format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
     deser = nodelist_serialization.NodeList()
-    return deser.deserialize(response.read(), format)
+    doc = response.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return deser.deserialize(doc, format)
 
   def describeResponse(self, pid, vendorSpecific=None):
     url = self.RESTResourceURL('get', pid=pid)
