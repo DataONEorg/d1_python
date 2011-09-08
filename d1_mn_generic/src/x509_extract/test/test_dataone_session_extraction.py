@@ -19,25 +19,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:setup.py`
-==============
+:mod:test_dataone_session_extraction`
+=====================================
 
 :platform:
   Linux
 :Synopsis:
-  Build the DataONE Session object extraction Python extension.
+  Test DataONE Session object extraction from PEM formatted X.509 v3
+  certificate.
 :Author:
   DataONE (dahl)
 '''
 
-from distutils.core import setup, Extension
+import os
+import re
+import sys
 
-module1 = Extension('x509_extract_session', sources=['x509_extract_session.c'])
+sys.path.append('../build/lib.linux-x86_64-2.6/')
+import x509_extract_session
 
-setup(
-  name='ExtractDataONESession',
-  version='1.0',
-  description='Extract DataONE Session object from PEM formatted X.509'
-  'v3 certificate',
-  ext_modules=[module1]
-)
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+
+cert_file = open('./test_cert_dataone_session.pem', 'rb')
+cert_str = cert_file.read()
+session_str = x509_extract_session.extract(cert_str)
+
+print 'Extracted: {0}'.format(session_str)
+
+try:
+  session = dataoneTypes.CreateFromDocument(session_str)
+except:
+  raise Exception("Extracted Session object is invalid")
+else:
+  print "Session OK"
