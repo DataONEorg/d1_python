@@ -75,8 +75,9 @@ def main():
     dest='process_schemas',
     action='store',
     type='string',
-    default='dataoneTypes.xsd;dataoneErrors.xsd'
+    default='dataoneErrors.xsd'
   )
+  #parser.add_option('-p', '--process', dest='process_schemas', action='store', type='string', default='dataoneTypes.xsd;dataoneErrors.xsd')
 
   (opts, args) = parser.parse_args()
 
