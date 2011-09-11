@@ -17,6 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 '''
 Module d1_common.types.exceptions
 =================================
@@ -30,10 +31,61 @@ DataONE exceptions, shared between client and member node.
 '''
 
 
+
+
+
+  @classmethod
+  def dataone_exception_factory(self, exception_name, detailCode, description, 
+                                pid=None, traceInformation=None):
+    '''Implements a simple factory that generates a DataONE exception object.
+
+    This class would normally be used by the client to re-raise an exception on 
+    the client side from an error that occurred on the server.
+
+    Returns an instance of some subclass of DataONEException.
+    
+    :param exception_name: The class name of the exception to create. Raises a 
+                           LookupError based exception if the name is invalid.
+    :type data: str
+    
+    :param detailCode:
+    :type data: int
+
+    :param description:
+    :type data: str
+
+    :param traceInformation:
+    :type data: list
+
+    :param pid:
+    :type data: str
+    '''
+
+    exception_map = {
+      u'AuthenticationTimeout': d1_common.types.exceptions.AuthenticationTimeout,
+      u'IdentifierNotUnique': d1_common.types.exceptions.IdentifierNotUnique,
+      u'InsufficientResources': d1_common.types.exceptions.InsufficientResources,
+      u'InvalidCredentials': d1_common.types.exceptions.InvalidCredentials,
+      u'InvalidRequest': d1_common.types.exceptions.InvalidRequest,
+      u'InvalidSystemMetadata': d1_common.types.exceptions.InvalidSystemMetadata,
+      u'InvalidToken': d1_common.types.exceptions.InvalidToken,
+      u'NotAuthorized': d1_common.types.exceptions.NotAuthorized,
+      u'NotFound': d1_common.types.exceptions.NotFound,
+      u'NotImplemented': d1_common.types.exceptions.NotImplemented,
+      u'ServiceFailure': d1_common.types.exceptions.ServiceFailure,
+      u'UnsupportedMetadataType': d1_common.types.exceptions.UnsupportedMetadataType,
+      u'UnsupportedType': d1_common.types.exceptions.UnsupportedType,
+    }
+
+
+
+
+
+
+
 class DataONEException(Exception):
   '''Base class for exceptions raised by DataONE.
   '''
-
   def __init__(self, errorCode, detailCode, description, traceInformation=None):
     self.errorCode = errorCode
     self.detailCode = detailCode
@@ -43,6 +95,7 @@ class DataONEException(Exception):
       self.traceInformation = u"\n".join(traceInformation)
     else:
       self.traceInformation = traceInformation
+
 
   def __str__(self):
     res = []
@@ -72,6 +125,8 @@ class DataONEException(Exception):
 #    
 #    return u'\n'.join(res)
 
+  
+
   @property
   def name(self):
     return self.__class__.__name__
@@ -80,83 +135,136 @@ class DataONEException(Exception):
 class DataONEIdentifierException(DataONEException):
   '''Base class for exceptions that include a PID in the constructor.
   '''
-
-  def __init__(self, errorCode, detailCode, description, pid, traceInformation=None):
-    DataONEException.__init__(self, errorCode, detailCode, description, traceInformation)
+  def __init__(self, errorCode, 
+               detailCode, description, pid, traceInformation=None):
+    DataONEException.__init__(self, 
+                              errorCode,
+                              detailCode,
+                              description,
+                              traceInformation)
     self.pid = pid
 
 
 class NotFound(DataONEIdentifierException):
   '''Implements NotFound exception
   '''
-
   def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 404, detailCode, description, pid, traceInformation
-    )
+    DataONEIdentifierException.__init__(self, 
+                                        404,
+                                        detailCode,
+                                        description,
+                                        pid,
+                                        traceInformation)
     #TODO: add link to resolve()
 
 
 class IdentifierNotUnique(DataONEIdentifierException):
   '''Implements IdentifierNotUnique exception
   '''
-
   def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 409, detailCode, description, pid, traceInformation
-    )
+    DataONEIdentifierException.__init__(self, 
+                                        409,
+                                        detailCode,
+                                        description,
+                                        pid,
+                                        traceInformation)
 
 
 class AuthenticationTimeout(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 408, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              408,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class InsufficientResources(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 413, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              413,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class InvalidCredentials(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 401, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              401,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class InvalidRequest(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              400,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class InvalidSystemMetadata(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              400,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class InvalidToken(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 401, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              401,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class NotAuthorized(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 401, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              401,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class NotImplemented(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 501, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              501,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class ServiceFailure(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 500, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              500,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class UnsupportedMetadataType(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              400,
+                              detailCode,
+                              description,
+                              traceInformation)
 
 
 class UnsupportedType(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+    DataONEException.__init__(self, 
+                              400,
+                              detailCode,
+                              description,
+                              traceInformation)
+
