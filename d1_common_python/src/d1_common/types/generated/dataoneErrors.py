@@ -1,7 +1,7 @@
 # ./d1_common/types/generated/dataoneErrors.py
 # PyXB bindings for NamespaceModule
 # NSM:e1c8105703d7da231af0d9fa96019858275c42c4
-# Generated 2011-09-11 08:19:28.015544 by PyXB version 1.1.2
+# Generated 2011-09-11 08:22:05.396480 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:0edb63c2-dc81-11e0-8bc0-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:6cad4362-dc81-11e0-9619-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -126,14 +126,11 @@ Namespace.addCategoryObject('elementBinding', ServiceFailure.name().localName(),
 UnsupportedMetadataType = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'UnsupportedMetadataType'), ErrorBase)
 Namespace.addCategoryObject('elementBinding', UnsupportedMetadataType.name().localName(), UnsupportedMetadataType)
 
-IdentifierNotUnique = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'IdentifierNotUnique'), ErrorPID)
-Namespace.addCategoryObject('elementBinding', IdentifierNotUnique.name().localName(), IdentifierNotUnique)
+UnsupportedType = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'UnsupportedType'), ErrorBase)
+Namespace.addCategoryObject('elementBinding', UnsupportedType.name().localName(), UnsupportedType)
 
 NotFound = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'NotFound'), ErrorPID)
 Namespace.addCategoryObject('elementBinding', NotFound.name().localName(), NotFound)
-
-NotAuthorized = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'NotAuthorized'), ErrorBase)
-Namespace.addCategoryObject('elementBinding', NotAuthorized.name().localName(), NotAuthorized)
 
 NotImplemented = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'NotImplemented'), ErrorBase)
 Namespace.addCategoryObject('elementBinding', NotImplemented.name().localName(), NotImplemented)
@@ -144,8 +141,8 @@ Namespace.addCategoryObject('elementBinding', AuthenticationTimeout.name().local
 InsufficientResources = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'InsufficientResources'), ErrorBase)
 Namespace.addCategoryObject('elementBinding', InsufficientResources.name().localName(), InsufficientResources)
 
-UnsupportedType = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'UnsupportedType'), ErrorBase)
-Namespace.addCategoryObject('elementBinding', UnsupportedType.name().localName(), UnsupportedType)
+IdentifierNotUnique = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'IdentifierNotUnique'), ErrorPID)
+Namespace.addCategoryObject('elementBinding', IdentifierNotUnique.name().localName(), IdentifierNotUnique)
 
 InvalidCredentials = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'InvalidCredentials'), ErrorBase)
 Namespace.addCategoryObject('elementBinding', InvalidCredentials.name().localName(), InvalidCredentials)
@@ -158,6 +155,9 @@ Namespace.addCategoryObject('elementBinding', InvalidSystemMetadata.name().local
 
 InvalidToken = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'InvalidToken'), ErrorBase)
 Namespace.addCategoryObject('elementBinding', InvalidToken.name().localName(), InvalidToken)
+
+NotAuthorized = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'NotAuthorized'), ErrorBase)
+Namespace.addCategoryObject('elementBinding', NotAuthorized.name().localName(), NotAuthorized)
 
 
 
