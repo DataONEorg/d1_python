@@ -25,29 +25,35 @@ Module d1_common.tests.all_tests
 Run all Unit tests.
 
 :Created: 2011-03-09
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import sys
 import logging
 import unittest
+
+# D1.
 from d1_common import xmlrunner
-from test_pid import TestPID
+
+# App.
+from test_accesspolicy import TestAccessPolicy
 from test_checksum import TestChecksum
 from test_exceptions import TestExceptions
 from test_logrecords import TestObjectList
+from test_mime_multipart import TestMimeMultipart
 from test_monitorlist import TestMonitorList
 from test_nodelist import TestNodeList
 from test_objectlist import TestObjectList
 from test_objectlocationlist import TestObjectLocationList
+from test_pid import TestPID
+from test_restclient import TestRESTClient
 from test_systemmetadata import TestSystemMetadata
 from test_testcasewithurlcompare import Test_URLCompare
 from test_utils import TestUtils
 from test_xml_compare import TestXMLCompare
-from test_restclient import TestRESTClient
-from test_mime_multipart import TestMimeMultipart
 
 #===============================================================================
 

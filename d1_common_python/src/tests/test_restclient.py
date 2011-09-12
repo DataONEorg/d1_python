@@ -25,14 +25,20 @@ Module d1_common.tests.test_restclient
 Unit tests for the generic REST client.
 
 :Created: 2011-03-09
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import sys
 import unittest
 import logging
+
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
 from d1_common import restclient
 import d1_common.types.exceptions

@@ -25,17 +25,23 @@ Module d1_common.tests.test_objectlocationlist
 Unit tests for serializaton and de-serialization of the ObjectLocationList type.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
+import xml.sax
 
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
-from d1_common.types import objectlocationlist_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v1">
@@ -63,22 +69,30 @@ EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" ?>
 
 
 class TestObjectLocationList(unittest.TestCase):
-  def test_serialization(self):
-    loader = objectlocationlist_serialization.ObjectLocationList()
+  def deserialize_and_check(self, doc, shouldfail=False):
+    try:
+      obj = dataoneTypes.CreateFromDocument(doc)
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
+      if shouldfail:
+        return
+      else:
+        raise
 
-    def doctest(doc, shouldfail=False):
-      try:
-        checksum = loader.deserialize(doc, content_type="text/xml")
-      except:
-        if shouldfail:
-          pass
-        else:
-          raise
+  def test_deserialize_gmn(self):
+    '''Deserialize: XML -> ObjectLocationList (GMN)'''
+    self.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
 
-    doctest(EG_OBJECTLOCATIONLIST_GMN)
-    #doctest(EG_OBJECTLOCATIONLIST_KNB)
-    doctest(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
-    doctest(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
+  def test_deserialize_knb(self):
+    '''Deserialize: XML -> ObjectLocationList (KNB)'''
+    #self.deserialize_and_check(EG_OBJECTLOCATIONLIST_KNB)
+
+  def test_deserialize_bad_1(self):
+    '''Deserialize: XML -> ObjectLocationList (bad 1)'''
+    self.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
+
+  def test_deserialize_bad_2(self):
+    '''Deserialize: XML -> ObjectLocationList (bad 2)'''
+    self.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
 
 #===============================================================================
 

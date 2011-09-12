@@ -25,30 +25,35 @@ Module d1_common.tests.test_nodelist
 Unit tests for serializaton and de-serialization of the NodeList type.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
+import xml.sax
 
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
-from d1_common.types import nodelist_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
-    <node replicate="false" synchronize="false" type="mn">
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+    <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier0</identifier>
         <name>name0</name>
         <description>description0</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service version="version0" available="false" name="name1">
-<!--                <name>name1</name>
+            <service name="name1" version="version0" available="false">
                 <restriction name="name2" rest="rest0">
                     <allowed>
                     </allowed>
@@ -56,10 +61,9 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name3" rest="rest1">
                     <allowed>
                     </allowed>
-                </restriction> -->
+                </restriction>
             </service>
-            <service version="version1" available="false" name="name4">
-<!--                <name>name4</name>
+            <service name="name4" version="version1" available="false">
                 <restriction name="name5" rest="rest2">
                     <allowed>
                     </allowed>
@@ -67,7 +71,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name6" rest="rest3">
                     <allowed>
                     </allowed>
-                </restriction> -->
+                </restriction>
             </service>
         </services>
         <synchronization>
@@ -75,19 +79,17 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
-        <health state="up">
-            <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-            <status success="false" dateChecked="2006-05-04T18:13:51.0Z"/>
-        </health>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject0</subject>
+        <subject>subject1</subject>
     </node>
-    <node replicate="false" synchronize="false" type="mn">
+    <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier1</identifier>
         <name>name7</name>
         <description>description1</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service version="version2" available="false" name="name8">
-<!--                <name>name8</name>
+            <service name="name8" version="version2" available="false">
                 <restriction name="name9" rest="rest4">
                     <allowed>
                     </allowed>
@@ -95,10 +97,9 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name10" rest="rest5">
                     <allowed>
                     </allowed>
-                </restriction> -->
+                </restriction>
             </service>
-            <service version="version3" available="false" name="name11">
-<!--                <name>name11</name>
+            <service name="name11" version="version3" available="false">
                 <restriction name="name12" rest="rest6">
                     <allowed>
                     </allowed>
@@ -106,7 +107,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
                 <restriction name="name13" rest="rest7">
                     <allowed>
                     </allowed>
-                </restriction> -->
+                </restriction>
             </service>
         </services>
         <synchronization>
@@ -114,139 +115,162 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
-        <health state="up">
-            <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-            <status success="false" dateChecked="2006-05-04T18:13:51.0Z"/>
-        </health>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject2</subject>
+        <subject>subject3</subject>
     </node>
-</d1:nodeList>
-"""
+</d1:nodeList>"""
 
 # TODO.
 EG_NODELIST_KNB = """"""
 
-EG_BAD_NODELIST_1 = """<?xml version="1.0" ?>
-<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/v1">
-
-  <node replicate="true" synchronize="true" type="mn">
-    <identifier>gmn_test</identifier>
-    <name>2796</name>
-    <description>'GMN'</description>
-    <INVALIDbaseURL>http://localhost:8000</baseURL>
-
-    <services>
-      <service available="true" version="'0.5'">
-        <name>"GMN test"</name>
-        <method implemented="true" name="session" rest="session/"/>
-        <method implemented="true" name="object_collection" rest="object"/>
-        <method implemented="true" name="get_object" rest="object/"/>
-        <method implemented="true" name="get_meta" rest="meta/"/>
-        <method implemented="true" name="log_collection" rest="log"/>
-
-        <method implemented="true" name="health_ping" rest="health/ping"/>
-        <method implemented="true" name="health_status" rest="health/status"/>
-        <method implemented="true" name="monitor_object" rest="monitor/object"/>
-        <method implemented="true" name="monitor_event" rest="monitor/event"/>
-        <method implemented="true" name="node" rest="node"/>
-      </service>
-    </services>
-  </node>
-
-  <node replicate="true" synchronize="true" type="mn">
-    <identifier>gmn_test_2</identifier>
-    <name>gmn_test_2</name>
-    <description>'GMN test 2'</description>
-    <baseURL>http://192.168.1.122/mn</baseURL>
-    <services>
-      <service available="true" version="'0.5'">
-
-        <name>"GMN test"</name>
-        <method implemented="true" name="session" rest="session/"/>
-        <method implemented="true" name="object_collection" rest="object"/>
-        <method implemented="true" name="get_object" rest="object/"/>
-        <method implemented="true" name="get_meta" rest="meta/"/>
-        <method implemented="true" name="log_collection" rest="log"/>
-        <method implemented="true" name="health_ping" rest="health/ping"/>
-        <method implemented="true" name="health_status" rest="health/status"/>
-
-        <method implemented="true" name="monitor_object" rest="monitor/object"/>
-        <method implemented="true" name="monitor_event" rest="monitor/event"/>
-        <method implemented="true" name="node" rest="node"/>
-      </service>
-    </services>
-  </node>
-</ns1:nodeList>"""
+# Wrong version.
+EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
+<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v2"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+    <node replicate="false" synchronize="false" type="mn" state="up">
+        <identifier>identifier0</identifier>
+        <name>name0</name>
+        <description>description0</description>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <services>
+            <service name="name1" version="version0" available="false">
+                <restriction name="name2" rest="rest0">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name3" rest="rest1">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+            <service name="name4" version="version1" available="false">
+                <restriction name="name5" rest="rest2">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name6" rest="rest3">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+        </services>
+        <synchronization>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
+            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
+        </synchronization>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject0</subject>
+        <subject>subject1</subject>
+    </node>
+    <node replicate="false" synchronize="false" type="mn" state="up">
+        <identifier>identifier1</identifier>
+        <name>name7</name>
+        <description>description1</description>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <services>
+            <service name="name8" version="version2" available="false">
+                <restriction name="name9" rest="rest4">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name10" rest="rest5">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+            <service name="name11" version="version3" available="false">
+                <restriction name="name12" rest="rest6">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name13" rest="rest7">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+        </services>
+        <synchronization>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
+            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
+        </synchronization>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject2</subject>
+        <subject>subject3</subject>
+    </node>
+</d1:nodeList>"""
 
 # Missing nodeList/node/service/name.
-EG_BAD_NODELIST_2 = """<?xml version="1.0" ?>
-<ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/v1">
-
-  <node replicate="true" synchronize="true" type="mn">
-    <identifier>gmn_test</identifier>
-    <name>2796</name>
-    <description>'GMN'</description>
-    <baseURL>http://localhost:8000</baseURL>
-
-    <services>
-      <service available="true" version="'0.5'">
-        <name>"GMN test"</name>
-        <method implemented="true" name="session" rest="session/"/>
-        <method implemented="true" name="object_collection" rest="object"/>
-        <method implemented="true" name="get_object" rest="object/"/>
-        <method implemented="true" name="get_meta" rest="meta/"/>
-        <method implemented="true" name="log_collection" rest="log"/>
-
-        <method implemented="true" name="health_ping" rest="health/ping"/>
-        <method implemented="true" name="health_status" rest="health/status"/>
-        <method implemented="true" name="monitor_object" rest="monitor/object"/>
-        <method implemented="true" name="monitor_event" rest="monitor/event"/>
-        <method implemented="true" name="node" rest="node"/>
-      </service>
-    </services>
-  </node>
-
-  <node replicate="true" synchronize="true" type="mn">
-    <identifier>gmn_test_2</identifier>
-    <name>gmn_test_2</name>
-    <description>'GMN test 2'</description>
-    <baseURL>http://192.168.1.122/mn</baseURL>
-    <services>
-      <service available="true" version="'0.5'">
-
-        <method implemented="true" name="session" rest="session/"/>
-        <method implemented="true" name="object_collection" rest="object"/>
-        <method implemented="true" name="get_object" rest="object/"/>
-        <method implemented="true" name="get_meta" rest="meta/"/>
-        <method implemented="true" name="log_collection" rest="log"/>
-        <method implemented="true" name="health_ping" rest="health/ping"/>
-        <method implemented="true" name="health_status" rest="health/status"/>
-
-        <method implemented="true" name="monitor_object" rest="monitor/object"/>
-        <method implemented="true" name="monitor_event" rest="monitor/event"/>
-        <method implemented="true" name="node" rest="node"/>
-      </service>
-    </services>
-  </node>
-</ns1:nodeList>"""
+EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
+<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+    <node replicate="false" synchronize="false" type="mn" state="up">
+        <identifier>identifier0</identifier>
+        <name>name0</name>
+        <description>description0</description>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <services>
+            <service version="version0" available="false">
+                <restriction name="name2" rest="rest0">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name3" rest="rest1">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+            <service name="name4" version="version1" available="false">
+                <restriction name="name5" rest="rest2">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name6" rest="rest3">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+        </services>
+        <synchronization>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
+            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
+        </synchronization>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject0</subject>
+        <subject>subject1</subject>
+    </node>"""
 
 
 class TestNodeList(unittest.TestCase):
-  def test_serialization(self):
-    loader = nodelist_serialization.NodeList()
+  def deserialize_and_check(self, doc, shouldfail=False):
+    try:
+      obj = dataoneTypes.CreateFromDocument(doc)
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
+      if shouldfail:
+        return
+      else:
+        raise
 
-    def doctest(doc, shouldfail=False):
-      try:
-        checksum = loader.deserialize(doc, content_type="text/xml")
-      except:
-        if shouldfail:
-          pass
-        else:
-          raise
+  def test_serialization_gmn(self):
+    '''Deserialize: XML -> NodeList (GMN)'''
+    self.deserialize_and_check(EG_NODELIST_GMN)
 
-    doctest(EG_NODELIST_GMN)
-    #doctest(EG_NODELIST_KNB)
-    doctest(EG_BAD_NODELIST_1, shouldfail=True)
-    doctest(EG_BAD_NODELIST_2, shouldfail=True)
+  def test_serialization_knb(self):
+    '''Deserialize: XML -> NodeList (KNB)'''
+    #self.deserialize_and_check(EG_NODELIST_KNB)
+
+  def test_serialization_bad_1(self):
+    '''Deserialize: XML -> NodeList (bad 1)'''
+    self.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
+
+  def test_serialization_bad_2(self):
+    '''Deserialize: XML -> NodeList (bad 2)'''
+    self.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)
 
 #===============================================================================
 if __name__ == "__main__":

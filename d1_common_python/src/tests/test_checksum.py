@@ -25,17 +25,24 @@ Module d1_common.tests.test_checksum
 Unit tests for serializaton and de-serialization of the Checksum type.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import sys
 import logging
 import unittest
+import xml.sax
+
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
-from d1_common.types import checksum_serialization
 import d1_common.const
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_CHECKSUM_GMN = (
   """<?xml version="1.0" ?><ns1:checksum algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
@@ -46,7 +53,7 @@ EG_CHECKSUM_GMN = (
 EG_CHECKSUM_KNB = ("""""", '', '')
 
 EG_BAD_CHECKSUM_1 = (
-  """<?xml version="1.0" ?><ns1:checksum algorithm="INVALID" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
+  """<?xml version="1.0" ?><ns1:checksum invalid_attribute="invalid" algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
   '', ''
 )
 
@@ -57,55 +64,48 @@ EG_BAD_CHECKSUM_2 = (
 
 
 class TestChecksum(unittest.TestCase):
-  def doctest(self, doc, shouldfail=False):
-    loader = checksum_serialization.Checksum('dummy')
+  def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      checksum = loader.deserialize(doc[0], content_type="text/xml")
-    except:
+      obj = dataoneTypes.CreateFromDocument(doc[0])
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
-        pass
+        return
       else:
         raise
     else:
-      self.assertEqual(checksum.algorithm, doc[1])
-      self.assertEqual(checksum.value(), doc[2])
+      self.assertEqual(obj.algorithm, doc[1])
+      self.assertEqual(obj.value(), doc[2])
 
-  def test_checksum_serialization_0(self):
+  def test_serialization_gmn(self):
+    '''Deserialize: XML -> Checksum (GMN)'''
+    self.deserialize_and_check(EG_CHECKSUM_GMN)
 
-    self.doctest(EG_CHECKSUM_GMN)
+  def test_serialization_knb(self):
+    '''Deserialize: XML -> Checksum (KNB)'''
     # TODO.
     #self.doctest(EG_CHECKSUM_KNB)
-    self.doctest(EG_BAD_CHECKSUM_1, shouldfail=True)
-    self.doctest(EG_BAD_CHECKSUM_2, shouldfail=True)
 
-  def test_checksum_serialization_1(self):
+  def test_serialization_bad_1(self):
+    '''Deserialize: XML -> Checksum (bad 1)'''
+    self.deserialize_and_check(EG_BAD_CHECKSUM_1, shouldfail=True)
+
+  def test_serialization_bad_2(self):
+    '''Deserialize: XML -> Checksum (bad 2)'''
+    self.deserialize_and_check(EG_BAD_CHECKSUM_2, shouldfail=True)
+
+  def test_serialization_roundtrip(self):
     '''Serialization: Checksum -> XML -> Checksum.
     '''
-    f = checksum_serialization.Checksum('1' * 32)
-    f.checksum.algorithm = 'MD5'
-    xml_doc, content_type = f.serialize(d1_common.const.MIMETYPE_XML)
-    #<?xml version="1.0" ?><ns1:checksum algorithm="MD5" xmlns:ns1="http://ns.dataone.org/service/types/v1">11111111111111111111111111111111</ns1:checksum>
-    f.deserialize(xml_doc, d1_common.const.MIMETYPE_XML)
+    checksum_obj_in = dataoneTypes.checksum('1' * 32)
+    checksum_obj_in.algorithm = 'MD5'
+    checksum_xml = checksum_obj_in.toxml()
+    checksum_obj_out = dataoneTypes.CreateFromDocument(checksum_xml)
+    self.assertEqual(checksum_obj_in.value(), checksum_obj_out.value())
+    self.assertEqual(checksum_obj_in.algorithm, checksum_obj_out.algorithm)
 
-  def test_checksum_serialization_2(self):
-    '''Serialization: Checksum -> JSON.
-    '''
-    f = checksum_serialization.Checksum('1' * 32)
-    f.checksum.algorithm = 'MD5'
-    json_doc, content_type = f.serialize(d1_common.const.MIMETYPE_JSON)
-    # {"checksum": "11111111111111111111111111111111", "algorithm": "MD5"}
-    f.deserialize(json_doc, d1_common.const.MIMETYPE_JSON)
+    #===============================================================================
 
-  def test_checksum_serialization_3(self):
-    '''Serialization: Checksum -> CSV.
-    '''
-    f = checksum_serialization.Checksum('1' * 32)
-    f.checksum.algorithm = 'MD5'
-    csv_doc, content_type = f.serialize(d1_common.const.MIMETYPE_CSV)
-    # 11111111111111111111111111111111,MD5
-    f.deserialize(csv_doc, d1_common.const.MIMETYPE_CSV)
 
-#===============================================================================
 if __name__ == "__main__":
   argv = sys.argv
   if "--debug" in argv:

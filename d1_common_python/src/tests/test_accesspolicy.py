@@ -25,18 +25,24 @@ Module d1_common.tests.test_accesspolicy
 Unit tests for serializaton and de-serialization of the AccessPolicy type.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
 import datetime
+import xml.sax
 
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
-from d1_common.types import accesspolicy_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_ACCESSPOLICY_GMN = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
@@ -58,22 +64,47 @@ u"""<?xml version="1.0" encoding="UTF-8"?>
 </d1:accessPolicy>
 """
 
+# Invalid permission.
+EG_ACCESSPOLICY_BAD = \
+u"""<?xml version="1.0" encoding="UTF-8"?>
+<d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
+    <allow>
+        <subject>subject0</subject>
+        <subject>subject1</subject>
+        <permission>readx</permission>
+    </allow>
+    <allow>
+        <subject>subject2</subject>
+        <subject>subject3</subject>
+        <permission>read</permission>
+        <permission>read</permission>
+    </allow>
+</d1:accessPolicy>
+"""
+
 
 class TestAccessPolicy(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
-    deserializer = accesspolicy_serialization.AccessPolicy()
     try:
-      access_policy = deserializer.deserialize(doc, content_type="text/xml")
-    except:
+      obj = dataoneTypes.CreateFromDocument(doc)
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
       else:
         raise
 
-  def test_serialization(self):
+  def test_serialization_gmn(self):
+    '''Deserialize: XML -> AccessPolicy (GMN)'''
     self.deserialize_and_check(EG_ACCESSPOLICY_GMN)
 
-#===============================================================================
+  def test_serialization_bad_1(self):
+    '''Deserialize: XML -> AccessPolicy (bad)'''
+    self.deserialize_and_check(EG_ACCESSPOLICY_BAD, shouldfail=True)
+
+    #===============================================================================
+
 
 if __name__ == "__main__":
   argv = sys.argv

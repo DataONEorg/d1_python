@@ -25,109 +25,109 @@ Module d1_common.tests.test_exceptions
 Unit tests for serializaton and de-serialization of the DataONEException type.
 
 :Created: 2010-04-12
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
 import xml.dom.minidom
-import json
 
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common.types import exceptions
-from d1_common.types import exception_serialization
 from d1_common import const
-
 from d1_common import xmlrunner
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 #===============================================================================
 
+EG_ERROR_GMN = (
+  """<?xml version="1.0" encoding="UTF-8"?>
+  <d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://ns.dataone.org/service/types/exceptions"
+  detailCode="0" errorCode="0" name="IdentifierNotUnique" pid="somedataonepid">
+  <description>description0</description>
+  <traceInformation>traceInformation0</traceInformation>
+  </d1:error>""", 'SHA-1', '3f56de593b6ffc536253b799b429453e3673fc19'
+)
+
+# Missing detailCode.
+EG_ERROR_BAD = (
+  """<?xml version="1.0" encoding="UTF-8"?>
+  <d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://ns.dataone.org/service/types/exceptions"
+  errorCode="0" name="IdentifierNotUnique" pid="somedataonepid">
+  <description>description0</description>
+  <traceInformation>traceInformation0</traceInformation>
+  </d1:error>""", '', ''
+)
+
 
 class TestExceptions(unittest.TestCase):
+  def deserialize_and_check(self, doc, shouldfail=False):
+    try:
+      obj = dataoneTypes.CreateFromDocument(doc[0])
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
+      if shouldfail:
+        return
+      else:
+        raise
+
   def test_xml_round_trip(self):
-    '''XML round trip.
+    '''Test serialization and deserialization of DataONE Exceptions
     
-    Example XML:
-    <error detailCode="1010" 
-           errorCode="409" 
-           name="IdentifierNotUnique"
-           pid="test_pid">
-      <description>description_test</description>
-      <traceInformation>trace_test_1</traceInformation>
-    </error>"""
+    Test serialization and deserialization of DataONE Exceptions by performing
+    a round trip:
+    
+    1) Create a native DataONE Exception object.
+    2) Serialize the object to XML.
+    3) Deserialize XML to object.
+    4) Verify that the object contains the same information as in (1). 
     '''
 
-    # Create a DataONE IdentifierNotUnique Exception.
+    # Create a native DataONE IdentifierNotUnique Exception object.
     exc = exceptions.IdentifierNotUnique(
-      '1010', 'description_test', 'test_pid', ['trace_test_1', 'trace_test_2',
-                                               'trace_test_3']
+      1010, 'description_test', 'test_pid', 'test trace information'
     )
-    # Check serialization to XML.
-    exc_ser = exception_serialization.DataONEExceptionSerialization(exc)
-    xml_str, content_type = exc_ser.serialize(const.MIMETYPE_XML)
-    self.assertEqual(content_type, const.MIMETYPE_XML)
+    # Serialize to XML.
+    exc_ser_xml = exc.serialize()
     # Check deserialized XML.
-    dom = xml.dom.minidom.parseString(xml_str)
+    dom = xml.dom.minidom.parseString(exc_ser_xml)
     root = dom.firstChild
-    self.assertEqual(root.tagName, u'error')
+    self.assertEqual(root.tagName, u'ns1:error')
     self.assertEqual(root.attributes['detailCode'].value, u'1010')
     self.assertEqual(root.attributes['errorCode'].value, u'409')
     self.assertEqual(root.attributes['name'].value, u'IdentifierNotUnique')
     self.assertEqual(root.attributes['pid'].value, u'test_pid')
-    self.assertEqual(
-      root.getElementsByTagName('description')[0].childNodes[0].nodeValue,
-      u'description_test'
-    )
-    # TODO: For now, we exclude traceInformation from the XML round trip test
-    # because traceInformation has been disabled until the Java stack can be
-    # updated to match.
-    #    self.assertEqual(root.getElementsByTagName('traceInformation')[0].childNodes[0].nodeValue, u'trace_test_1')
-    #    self.assertEqual(root.getElementsByTagName('traceInformation')[1].childNodes[0].nodeValue, u'trace_test_2')
-    #    self.assertEqual(root.getElementsByTagName('traceInformation')[2].childNodes[0].nodeValue, u'trace_test_3')
-    # Check deserialize XML to exception (includes test of exception factory).
-    exc_deser = exception_serialization.DataONEExceptionSerialization(None)
-    e_deser = exc_deser.deserialize(xml_str, content_type)
-    self.assertEqual(e_deser.detailCode, '1010')
-    self.assertEqual(e_deser.errorCode, 409)
-    self.assertEqual(e_deser.name, 'IdentifierNotUnique')
-    self.assertEqual(e_deser.pid, 'test_pid')
-    self.assertEqual(e_deser.description, 'description_test')
-#    self.assertEqual(e_deser.traceInformation, ["trace_test_1", "trace_test_2", "trace_test_3"])
+    self.assertEqual(root.getElementsByTagName('description')[0].childNodes[0]\
+                     .nodeValue, u'description_test')
+    self.assertEqual(root.getElementsByTagName('traceInformation')[0]\
+                     .childNodes[0].nodeValue, u'test trace information')
+    # Deserialize XML.
+    exc_deser = exceptions.deserialize(exc_ser_xml)
+    # Check deserialized native object.
+    self.assertEqual(exc_deser.detailCode, 1010)
+    self.assertEqual(exc_deser.errorCode, 409)
+    self.assertEqual(exc_deser.name, 'IdentifierNotUnique')
+    self.assertEqual(exc_deser.pid, 'test_pid')
+    self.assertEqual(exc_deser.description, 'description_test')
+    self.assertEqual(exc_deser.traceInformation, 'test trace information')
 
-  def test_json_round_trip(self):
-    '''JSON round trip.
-    
-    Example JSON:
-    {"name": "NotFound", "pid": "test_pid", "errorCode": 404, "detailCode": "1010", "traceInformation": ["trace_test_1", "trace_test_2", "trace_test_3"], "description": "description_test"}"""
-    '''
+  def test_serialization_gmn(self):
+    '''Deserialize: XML -> Checksum (GMN)'''
+    self.deserialize_and_check(EG_ERROR_GMN)
 
-    # Create a DataONE NotFound Exception.
-    exc = exceptions.NotFound(
-      '1010', 'description_test', 'test_pid', [
-        'trace_test_1', 'trace_test_2', 'trace_test_3'
-      ]
-    )
-    # Check serialization to JSON.
-    exc_ser = exception_serialization.DataONEExceptionSerialization(exc)
-    json_str, content_type = exc_ser.serialize(const.MIMETYPE_JSON)
-    self.assertEqual(content_type, const.MIMETYPE_JSON)
-    # Check deserialize JSON to native.
-    json_obj = json.loads(json_str)
-    self.assertEqual(json_obj['errorCode'], 404)
-    self.assertEqual(json_obj['name'], 'NotFound')
-    self.assertEqual(json_obj['detailCode'], '1010')
-    self.assertEqual(
-      json_obj['traceInformation'], "trace_test_1\ntrace_test_2\ntrace_test_3"
-    )
-    # Check deserialize JSON to exception (includes test of exception factory).
-    exc_deser = exception_serialization.DataONEExceptionSerialization(None)
-    e_deser = exc_deser.deserialize(json_str, content_type)
-    self.assertEqual(e_deser.errorCode, 404)
-    self.assertEqual(e_deser.name, 'NotFound')
-    self.assertEqual(e_deser.detailCode, '1010')
-    self.assertEqual(e_deser.traceInformation, "trace_test_1\ntrace_test_2\ntrace_test_3")
+  def test_serialization_bad_1(self):
+    '''Deserialize: XML -> Checksum (bad 1)'''
+    self.deserialize_and_check(EG_ERROR_BAD, shouldfail=True)
 
 #===============================================================================
 if __name__ == "__main__":
