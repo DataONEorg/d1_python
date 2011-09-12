@@ -25,18 +25,24 @@ Module d1_common.tests.test_monitorlist
 Unit tests for serializaton and de-serialization of the MonitorList type.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
 import datetime
+import xml.sax
 
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
-from d1_common.types import monitorlist_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_MONITORLIST_GMN = """<?xml version="1.0" ?>
 <ns1:monitorList xmlns:ns1="http://ns.dataone.org/service/types/v1">
@@ -66,26 +72,35 @@ EG_BAD_MONITORLIST_2 = """<?xml version="1.0" ?>
 
 class TestMonitorList(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
-    deserializer = monitorlist_serialization.MonitorList()
     try:
-      monitor_list = deserializer.deserialize(doc, content_type="text/xml")
-    except:
+      obj = dataoneTypes.CreateFromDocument(doc)
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
       else:
         raise
 
-    self.assertEquals(len(monitor_list.monitorInfo), 3)
+    self.assertEquals(len(obj.monitorInfo), 3)
 
-    for monitor_info in monitor_list.monitorInfo:
+    for monitor_info in obj.monitorInfo:
       self.assertTrue(monitor_info.count in (1, 2, 3))
       # Check for valid date.
       self.assertTrue(datetime.datetime(*map(int, str(monitor_info.date).split('-'))))
 
-  def test_serialization(self):
+  def test_serialization_gmn(self):
+    '''Deserialize: XML -> MonitorList (GMN)'''
     self.deserialize_and_check(EG_MONITORLIST_GMN)
+
+  def test_serialization_knb(self):
+    '''Deserialize: XML -> MonitorList (KNB)'''
     #doctest(EG_MONITORLIST_KNB)
+
+  def test_serialization_bad_1(self):
+    '''Deserialize: XML -> MonitorList (bad 1)'''
     self.deserialize_and_check(EG_BAD_MONITORLIST_1, shouldfail=True)
+
+  def test_serialization_bad_2(self):
+    '''Deserialize: XML -> MonitorList (bad 2)'''
     self.deserialize_and_check(EG_BAD_MONITORLIST_2, shouldfail=True)
 
 #===============================================================================

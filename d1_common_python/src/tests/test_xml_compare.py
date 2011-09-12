@@ -25,16 +25,18 @@ Module d1_common.tests.test_xml_compare
 Unit tests for XML document comparison utility.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
 import StringIO
 
+# D1.
 from d1_common import xmlrunner
 import d1_common.xml_compare
 

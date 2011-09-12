@@ -25,19 +25,23 @@ Module d1_common.tests.test_systemmetadata
 Unit tests for serializaton and de-serialization of the SystemMetadata type.
 
 :Created: 2010-06-29
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
 
+# 3rd party.
 import pyxb
+
+# D1.
 from d1_common import xmlrunner
 import d1_common.types.exceptions
-from d1_common.types import systemmetadata
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
@@ -145,7 +149,7 @@ EG_BAD_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
 
 class TestSystemMetadata(unittest.TestCase):
   def testLoadSystemMetadata(self):
-    sysm = systemmetadata.CreateFromDocument(EG_SYSMETA)
+    sysm = dataoneTypes.CreateFromDocument(EG_SYSMETA)
     self.assertEqual(sysm.identifier.value(), 'identifier0')
     self.assertEqual(sysm.size, 1073741773)
     self.assertEqual(sysm.checksum.algorithm, 'SHA-1')
@@ -158,16 +162,13 @@ class TestSystemMetadata(unittest.TestCase):
     except Exception, e:
       pass
     self.assertTrue(isinstance(e, AttributeError))
-    #should fail with NotImplemented
-    self.assertRaises(d1_common.types.exceptions.NotImplemented, sysm.toJSON)
-    self.assertRaises(d1_common.types.exceptions.NotImplemented, sysm.toCSV)
 
   def testValidateSystemMetadata(self):
     # Try loading a bad document with validation turned on.
     # Should fail with a PyXBException.
     pyxb.RequireValidWhenParsing(True)
     try:
-      sysm = systemmetadata.CreateFromDocument(EG_BAD_SYSMETA)
+      sysm = dataoneTypes.CreateFromDocument(EG_BAD_SYSMETA)
     except pyxb.PyXBException, e:
       logging.debug(repr(e))
     else:

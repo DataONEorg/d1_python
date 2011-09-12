@@ -25,14 +25,20 @@ Module d1_common.tests.test_testcasewithurlcompare
 Unit tests for TestCaseWithURLCompare.
 
 :Created: 2011-03-09
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import sys
 import logging
 import unittest
+
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 

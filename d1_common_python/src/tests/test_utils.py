@@ -25,16 +25,19 @@ Module d1_common.tests.test_utils
 Unit tests for various utilities.
 
 :Created: 2011-01-21
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import sys
 import logging
 import unittest
 import codecs
 import os
+
+# D1.
 from d1_common import xmlrunner
 import d1_common.util
 

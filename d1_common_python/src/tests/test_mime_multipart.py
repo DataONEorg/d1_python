@@ -25,17 +25,19 @@ Module d1_common.tests.test_mime_multipart
 Unit tests for MIME Multipart document generator.
 
 :Created: 2011-03-17
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
 import StringIO
 import re
 
+# D1.
 from d1_common import xmlrunner
 import d1_common.mime_multipart
 

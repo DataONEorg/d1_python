@@ -25,19 +25,25 @@ Module d1_common.tests.test_objectlist
 Unit tests for serializaton and de-serialization of the ObjectList type.
 
 :Created: 2010-07-21
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import pyxb
 import sys
 import unittest
+import xml.sax
 
+# 3rd party.
+import pyxb
+
+# D1.
 import d1_common
 from d1_common import xmlrunner
-import d1_common.types.objectlist_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="154933"
@@ -184,40 +190,35 @@ EG_BAD_OBJECTLIST = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 class TestObjectList(unittest.TestCase):
-  def _test_deserialize(self, doc, shouldfail=False):
-    serializer = d1_common.types.objectlist_serialization.ObjectList()
+  def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      olist = serializer.deserialize(doc, content_type=d1_common.const.MIMETYPE_XML)
-    except pyxb.PyXBException, e:
+      obj = dataoneTypes.CreateFromDocument(doc)
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
-        pass
+        return
       else:
-        self.assertFalse(True)
+        raise
 
   def test_deserialize_xml_gmn(self):
-    self._test_deserialize(EG_OBJECTLIST_GMN)
+    self.deserialize_and_check(EG_OBJECTLIST_GMN)
 
     #  def test_deserialize_xml_knb(self):
-    #    self._test_deserialize(EG_OBJECTLIST_KNB)
+    #    self.deserialize_and_check(EG_OBJECTLIST_KNB)
 
   def test_deserialize_xml_bad(self):
-    self._test_deserialize(EG_BAD_OBJECTLIST, shouldfail=True)
+    self.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
-#RDF Serialization is not implemented yet
-#  def test_serialize_rdf(self):
-#    serializer = d1_common.types.objectlist_serialization.ObjectList()
-#    olist = serializer.deserialize(EG_OBJECTLIST_GMN, content_type=d1_common.const.MIMETYPE_XML)
-#    #olist.deserialize(content_type=d1_common.const.MIMETYPE_XML)
-#    #olist = serializer.deserialize(EG_OBJECTLIST_GMN, content_type="text/xml")
-#    #serialize_rdf_xml
-#    l2 = d1_common.types.objectlist_serialization.ObjectList()
-#    l2.object_list = olist
-#    l2.serialize(accept=d1_common.const.MIMETYPE_RDF)
-#    #oinfo = olist.objectInfo
-#    #if shouldfail:
-#    #  self.assertNotEqual(len(oinfo), olist.count)
-#    #else:
-#    #  self.assertEqual(len(oinfo), olist.count)
+  def test_serialization_gmn(self):
+    '''Deserialize: XML -> ObjectList (GMN)'''
+    self.deserialize_and_check(EG_OBJECTLIST_GMN)
+
+  def test_serialization_knb(self):
+    '''Deserialize: XML -> ObjectList (KNB)'''
+    #self.deserialize_and_check(EG_OBJECTLIST_KNB)
+
+  def test_serialization_bad(self):
+    '''Deserialize: XML -> ObjectList (bad)'''
+    self.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
 #===============================================================================
 

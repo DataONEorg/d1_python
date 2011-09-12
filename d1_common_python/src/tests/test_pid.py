@@ -25,23 +25,29 @@ Module d1_common.tests.test_pid
 Unit tests for serializaton and de-serialization of the PID type.
 
 :Created: 2011-03-03
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import sys
 import unittest
+import xml.sax
 
+# 3rd party.
+import pyxb
+
+# D1.
 from d1_common import xmlrunner
-from d1_common.types import pid_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 EG_PID_GMN = (
-  """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  testpid
-  </ns1:identifier>""",
+  """<?xml version="1.0" encoding="UTF-8"?>
+<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">testpid</d1:identifier>""",
   'testpid',
 )
 
@@ -50,41 +56,44 @@ EG_PID_KNB = ("""""", '', )
 
 EG_BAD_PID_1 = (
   """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  testpid
-  </ns1:identifier>""",
+  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">testpid</ns1:identifier>""",
   'testpid',
 )
 
 EG_BAD_PID_2 = (
   """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  testpid
-  </ns1:identifier>""",
+  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">testpid</ns1:identifier>""",
   'testpid',
 )
 
 
 class TestPID(unittest.TestCase):
-  def test_serialization(self):
-    loader = pid_serialization.Identifier('testpid')
-
-    def doctest(doc, shouldfail=False):
-      try:
-        pid = loader.deserialize(doc[0], content_type="text/xml")
-      except:
-        if shouldfail:
-          pass
-        else:
-          raise
+  def deserialize_and_check(self, doc, shouldfail=False):
+    try:
+      obj = dataoneTypes.CreateFromDocument(doc[0])
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
+      if shouldfail:
+        return
       else:
-        self.assertEqual(pid.value().strip(), doc[1].strip())
+        raise
+    self.assertEqual(obj.value(), doc[1])
 
-    doctest(EG_PID_GMN)
+  def test_deserialize_gmn(self):
+    '''Deserialize: XML -> PID (GMN)'''
+    self.deserialize_and_check(EG_PID_GMN)
+
+  def test_deserialize_knb(self):
+    '''Deserialize: XML -> PID (KNB)'''
     # TODO.
     #doctest(EG_PID_KNB)
-    doctest(EG_BAD_PID_1, shouldfail=True)
-    doctest(EG_BAD_PID_2, shouldfail=True)
+
+  def test_deserialize_bad_1(self):
+    '''Deserialize: XML -> PID (bad 1)'''
+    self.deserialize_and_check(EG_BAD_PID_1, shouldfail=True)
+
+  def test_deserialize_bad_2(self):
+    '''Deserialize: XML -> PID (bad 2)'''
+    self.deserialize_and_check(EG_BAD_PID_2, shouldfail=True)
 
 #===============================================================================
 if __name__ == "__main__":
