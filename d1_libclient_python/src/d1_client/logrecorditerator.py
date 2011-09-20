@@ -26,7 +26,7 @@ Implements an iterator that iterates over the entire set of LogRecords
 for a DataONE node.  Data is retrieved from the target only when required.
 
 :Created: 2010-07-24
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
   

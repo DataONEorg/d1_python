@@ -24,7 +24,7 @@
 Unit tests for d1baseclient.
 
 :Created: 2011-01-20
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''

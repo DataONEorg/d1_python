@@ -24,7 +24,7 @@
 Unit tests for objectlistiterator.
 
 :Created:
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -35,7 +35,7 @@ import sys
 
 import d1_client.mnclient
 import d1_client.objectlistiterator
-import d1_common.types.generated.dataoneTypes
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 
 class TestObjectListIterator(unittest.TestCase):
@@ -56,7 +56,7 @@ class TestObjectListIterator(unittest.TestCase):
     counter = 0
     for e in rl:
       counter += 1
-      self.assertTrue(isinstance(e, d1_common.types.generated.dataoneTypes.ObjectInfo))
+      self.assertTrue(isinstance(e, dataoneTypes.ObjectInfo))
       # TODO: Check if ObjectInfo members are valid.
 
 

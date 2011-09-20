@@ -25,7 +25,7 @@ Module d1_libclient.tests.all_tests
 Run all Unit tests.
 
 :Created: 2011-04-08
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''

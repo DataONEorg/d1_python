@@ -24,7 +24,7 @@
 Unit tests for logrecorditerator.
 
 :Created:
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -35,7 +35,7 @@ import sys
 
 import d1_client.mnclient
 import d1_client.logrecorditerator
-import d1_common.types.generated.dataoneTypes
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 
 class testcase_logrecorditerator(unittest.TestCase):
