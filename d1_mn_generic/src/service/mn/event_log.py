@@ -47,9 +47,6 @@ import models
 import settings
 import util
 
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
-
 
 def log(pid, event, request, timestamp=None):
   '''Log an object access.
@@ -90,7 +87,7 @@ def log(pid, event, request, timestamp=None):
     event_log_row.save()
 
   # Log in syslog as well.
-  logger.info(
+  logging.info(
     'client({0}): Created log entry: pid({1}) event({2})'.format(
       util.request_to_string(request), pid, event)
   )

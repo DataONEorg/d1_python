@@ -90,9 +90,6 @@ import models
 import settings
 import util
 
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
-
 #def normalize_datetime(datetime_, tz_):
 #  '''Change datetime to UTC.
 #  '''
@@ -122,7 +119,9 @@ def store_path(root, pid):
   z = zlib.adler32(pid)
   a = z & 0xff ^ (z >> 8 & 0xff)
   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
-  return os.path.join(root, '{0:03}'.format(a), '{0:03}'.format(b), urllib.quote(pid, ''))
+  return os.path.join(
+    root, '{0:03}'.format(a), '{0:03}'.format(b), d1_common.util.encodePathElement(pid)
+  )
 
 
 def validate_post(request, parts):
@@ -150,9 +149,7 @@ def validate_post(request, parts):
         missing.append('{0}: {1}'.format(part_type, part_name))
     else:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Invalid part_type: {0}'.format(
-          part_type
-        )
+        0, 'Invalid part_type: {0}'.format(part_type)
       )
 
   if len(missing) > 0:
@@ -188,25 +185,25 @@ def log_exception(max_traceback_levels=5, msg=None):
   ''':param:
   :return:
   '''
-  logger.error('Exception:')
+  logging.error('Exception:')
   # Message.
   if msg is not None:
-    logger.error('  Message: {0}'.format(msg))
+    logging.error('  Message: {0}'.format(msg))
 
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
   # Name.
-  logger.error('  Name: {0}'.format(exc_class.__name__))
+  logging.error('  Name: {0}'.format(exc_class.__name__))
   # Value.
-  logger.error('  Value: {0}'.format(exc_msgs))
+  logging.error('  Value: {0}'.format(exc_msgs))
   # Args.
   try:
     exc_args = exc_msgs.__dict__["args"]
   except KeyError:
     exc_args = "<no args>"
-  logger.error('  Args: {0}'.format(exc_args))
+  logging.error('  Args: {0}'.format(exc_args))
   # Traceback.
   exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
-  logger.error('  Traceback: {0}'.format(exc_formatted_traceback))
+  logging.error('  Traceback: {0}'.format(exc_formatted_traceback))
 
 
 def exception_to_dot_str():

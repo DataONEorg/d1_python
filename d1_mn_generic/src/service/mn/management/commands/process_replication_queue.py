@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
 :mod:`process_replication_queue`
 ================================
@@ -25,7 +26,7 @@ import time
 import urllib
 import urlparse
 import uuid
-
+  
 # 3rd party.
 # Lxml
 try:
@@ -50,19 +51,17 @@ from django.utils.html import escape
 # Add mn app path to the module search path.
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
-# MN API.
+# D1.
 import d1_common.types.exceptions
 import d1_common.types.pid_serialization
+import d1_common.util
 import d1_client.client
 
 # App.
 import settings
 import mn.models
 import mn.auth
-import mn.util
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
+import mn.util 
 
 
 class DataOneClientWrapper(d1_client.client.DataOneClient):
@@ -86,15 +85,12 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
     :param:
     :return:
     '''
-    url = urlparse.urljoin(
-      self.getSetReplicationStatusUrl(), urllib.quote(status, '') + '/' + urllib.quote(
-        node_ref, '') + '/' + urllib.quote(pid, '')
-    )
-    logger.debug(
-      "status({0}) node_ref({1}) pid({2}) url({3})".format(
-        status, node_ref, pid, url
-      )
-    )
+    url = urlparse.urljoin(self.getSetReplicationStatusUrl(),
+                           d1_common.util.encodePathElement(status) + '/' + 
+                           d1_common.util.encodePathElement(node_ref)  + '/' +
+                           d1_common.util.encodePathElement(pid)
+    logging.debug("status({0}) node_ref({1}) pid({2}) url({3})".format(status,
+      node_ref, pid, url))
 
     response = self.client.GET(url, {})
     format = response.headers['content-type']
@@ -110,11 +106,9 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
     files = []
     files.append(('scidata', 'scidata', scidata))
 
-    crud_create_url = urlparse.urljoin(
-      self.getReplicationStoreUrl(), urllib.quote(
-        pid.encode('utf-8'), '')
-    )
-    self.logger.debug_(u'url({0}) pid({1})'.format(crud_create_url, pid))
+    crud_create_url = urlparse.urljoin(self.getReplicationStoreUrl(),
+                                       d1_common.util.encodePathElement(pid))
+    self.logging.debug_(u'url({0}) pid({1})'.format(crud_create_url, pid))
 
     multipart = mime_multipart.multipart([], files)
     try:
@@ -124,21 +118,6 @@ class DataOneClientWrapper(d1_client.client.DataOneClient):
     except Exception as e:
       logging.error('REST call failed: {0}'.format(str(e)))
       raise
-
-
-def log_setup():
-  # Set up logging.
-  # We output everything to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  #file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  #file_logger.setFormatter(formatter)
-  #logging.getLogger('').addHandler(file_logger)
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
 
 
 def replicate_object(obj):
@@ -156,7 +135,7 @@ def replicate_object(obj):
       break
   if base_url == '':
     err_msg = 'Could not resolve source_node: {0}'.format(obj.source_node.source_node)
-    logger.error(err_msg)
+    logging.error(err_msg)
     # Update queue with failed message for current replication item.
     obj.set_status('Error: {0}'.format(err_msg))
     obj.save()
@@ -176,14 +155,13 @@ def replicate_object(obj):
 
   # Register the completed replication with the CN.
   root.set_replication_status('completed', obj.source_node.source_node, obj.pid)
-
-
+  
 class Command(NoArgsCommand):
   help = 'Process the object registration queue.'
 
-  def handle_noargs(self, **options):
+  def handle_noargs(self, **options):    
     log_setup()
-    logger.info('Admin: process_replication_queue')
+    logging.info('Admin: process_replication_queue')
 
     verbosity = int(options.get('verbosity', 1))
 
@@ -192,15 +170,15 @@ class Command(NoArgsCommand):
 
     # Loop through registration queue.
     for obj in mn.models.Replication_work_queue.objects.filter(status__status='new'):
-      #for obj in mn.models.Replication_work_queue.objects.all():
-      logger.info('Replicating object: {0}'.format(obj.pid))
+    #for obj in mn.models.Replication_work_queue.objects.all():
+      logging.info('Replicating object: {0}'.format(obj.pid))
       try:
         replicate_object(obj)
       except d1_common.types.exceptions.DataONEException as e:
-        logger.error(str(e))
+        logging.error(str(e))
       except Exception:
         err_msg = mn.util.traceback_to_detail_code()
-        logger.error(err_msg)
+        logging.error(err_msg)
       else:
         obj.set_status('completed')
         obj.save()

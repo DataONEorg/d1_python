@@ -33,7 +33,7 @@ import datetime
 import random
 
 # D1.
-import d1_common.types.generated.dataoneTypes
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
 import select_random_subject
@@ -176,11 +176,11 @@ rights_holders = [
 
 
 def generate_random_sysmeta(pid, size, md5):
-  sysmeta = d1_common.types.generated.dataoneTypes.systemMetadata()
+  sysmeta = dataoneTypes.systemMetadata()
   sysmeta.identifier = pid
 
   format_id = random.choice(object_formats)
-  object_format = d1_common.types.generated.dataoneTypes.ObjectFormat(format_id)
+  object_format = dataoneTypes.ObjectFormat(format_id)
   object_format.fmtid = format_id
   object_format.formatName = format_id
   object_format.scienceMetadata = False
@@ -189,7 +189,7 @@ def generate_random_sysmeta(pid, size, md5):
   sysmeta.size = size
   sysmeta.submitter = select_random_subject.select_random_subject()
   sysmeta.rightsHolder = random.choice(rights_holders)
-  sysmeta.checksum = d1_common.types.generated.dataoneTypes.checksum(md5)
+  sysmeta.checksum = dataoneTypes.checksum(md5)
   sysmeta.checksum.algorithm = 'MD5'
   sysmeta.dateUploaded = datetime.datetime.now()
   sysmeta.dateSysMetadataModified = datetime.datetime.now()
@@ -205,14 +205,14 @@ def generate_random_sysmeta(pid, size, md5):
 
 
 def generate_random_access_policy():
-  access_policy = d1_common.types.generated.dataoneTypes.accessPolicy()
+  access_policy = dataoneTypes.accessPolicy()
   selected_subjects = {}
   for i in range(random.randint(1, 20)):
     selected_subjects[random.choice(subjects)] = True
-  access_rule = d1_common.types.generated.dataoneTypes.AccessRule()
+  access_rule = dataoneTypes.AccessRule()
   for selected_subject in selected_subjects.keys():
     access_rule.subject.append(selected_subject)
-  permission = d1_common.types.generated.dataoneTypes.Permission('read')
+  permission = dataoneTypes.Permission('read')
   access_rule.permission.append(permission)
   access_policy.append(access_rule)
   return access_policy

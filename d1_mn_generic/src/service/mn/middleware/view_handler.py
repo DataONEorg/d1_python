@@ -63,56 +63,56 @@ import d1_common.const
 # App.
 import mn.models as models
 import settings
-import mn.x509
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
+import mn.x509_extract_session
 
 
 class view_handler():
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
-    logger.info(
+    logging.info(
       'View: func_name({0}) method({1}) args({2}) kwargs({3})'
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
+    # If a session string was not passed in by either a certificate or by a
+    # vendor specific extension, fall back to the Public principal.
+    request.session = dataoneTypes.session()
+    request.session.subject = dataoneTypes.subject(d1_common.const.SUBJECT_PUBLIC)
+
     # Extract the session object from the client side certificate and
-    # store it in the request (for easy access). If no certificate was
-    # provided by the client, create a default session object for the
-    # Public principal.
+    # store it in the request (for easy access).
     if 'SSL_CLIENT_CERT' in request.META:
-      session = mn.x509.get_session(request.META['SSL_CLIENT_CERT'])
-    else:
-      session = dataoneTypes.Session()
+      session_xml_str = x509_extract_session.extract(request.META['SSL_CLIENT_CERT'])
+      try:
+        request.session = dataoneTypes.CreateFromDocument(session_xml_str)
+      except:
+        raise d1_common.types.exceptions.NotAuthorized(
+          0, 'Invalid session: {0}'.format(request.META['HTTP_VENDOR_OVERRIDE_SESSION'])
+        )
 
     if settings.DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
-      # debugging via regular HTTP, passing in a session string by using a
-      # vendor specific extension is supported.
+      # debugging via regular HTTP, a Session string can be passed in by using a
+      # vendor specific extension.
       if 'HTTP_VENDOR_OVERRIDE_SESSION' in request.META:
-        request.META['SSL_CLIENT_S_DN'] = \
-        request.META['HTTP_VENDOR_OVERRIDE_SESSION']
-      # For debugging, simulate an accept header with a regular parameter.
+        try:
+          request.session = dataoneTypes.CreateFromDocument(
+            request.META['HTTP_VENDOR_OVERRIDE_SESSION']
+          )
+        except:
+          raise d1_common.types.exceptions.NotAuthorized(
+            0, 'Invalid session: {0}'.format(request.META['HTTP_VENDOR_OVERRIDE_SESSION'])
+          )
+
+          # For debugging, simulate an accept header with a regular parameter.
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
-
-    if 'SSL_CLIENT_S_DN_CN' in request.META:
-      request.META['SSL_CLIENT_S_DN'] = request.META['SSL_CLIENT_S_DN_CN']
-
-    # If a session string was not passed in by either a certificate or by a
-    # vendor specific extension, we default it to "Public".
-
-    # TODO: Create a specific key for the session instead of using
-    # SSL_CLIENT_S_DN.
-    if 'SSL_CLIENT_S_DN' not in request.META:
-      request.META['SSL_CLIENT_S_DN'] = d1_common.const.SUBJECT_PUBLIC
 
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.
     view_args_list = []
     for arg in view_args:
-      view_args_list.append(urllib.unquote(arg))
+      view_args_list.append(d1_common.util.decodeQueryElement(arg))
     view_args = tuple(view_args_list)
     for key, arg in view_kwargs:
       view_kwargs[key] = d1_common.util.decodePathElement(arg)

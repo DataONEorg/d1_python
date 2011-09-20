@@ -27,7 +27,7 @@
 #      Revision: 2161
 #      Node Kind: directory
 #      Schedule: normal
-#      Last Changed Author: dahl
+#      Last Changed Author: Dahl
 #      Last Changed Rev: 2116
 #      Last Changed Date: 2010-08-04 10:09:06 -0600 (Wed, 04 Aug 2010)
 '''

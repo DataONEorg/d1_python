@@ -24,7 +24,7 @@
 
 :Synopsis:
   App level settings.
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -39,10 +39,11 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 # Member Node configuration.
 
 # Enable debug mode.
-# Causes Django to return a page with extensive debug information if a bug is
-# encountered while servicing a request.
-# Enables GMN functionality that should be accessible only during testing and
-# debugging.
+# * Warning: In DEBUG mode, clients can override ALL access control rules. 
+# * Causes Django to return a page with extensive debug information if a bug is
+#   encountered while servicing a request.
+# * Enables GMN functionality that should be accessible only during testing and
+#   debugging.
 DEBUG = True
 
 # Set log level: DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
@@ -75,9 +76,9 @@ DATABASES = {
   }
 }
 
-# GMN must run in the UTC time zone. This is not compatible with running
-# Django under Windows because under Windows, Django's time zone must be set
-# to match the system time zone.
+# GMN MUST run in the UTC time zone. This is not compatible with running Django
+# under Windows because under Windows, Django's time zone must be set to match
+# the system time zone.
 TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
@@ -109,8 +110,9 @@ STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/'
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '(ok#4)+n++u0#x&j1-xsy)u8fijlyv&ycn2t(@cys$ozawzlb-'
+# GMN does not use any of the built in Django facilities that require a
+# secret key seed.
+SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

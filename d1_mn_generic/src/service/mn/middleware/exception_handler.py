@@ -65,15 +65,12 @@ from django.http import HttpResponse
 
 # MN API.
 import d1_common.types.exceptions
-import d1_common.types.exception_serialization
+import d1_common.types.generated.dataoneErrors as dataoneErrors
 
 # App.
 import mn.util as util
 import detail_codes
 import settings
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
 
 
 class exception_handler():
@@ -87,23 +84,19 @@ class exception_handler():
     if settings.DEBUG == True and request.META['HTTP_USER_AGENT'] != \
                                               d1_common.const.USER_AGENT:
       return None
-    # If the exception is not a DataONE exception, wrap it in a DataONE
-    # exception.
+    # An MN is required to always return a DataONE exception on errors. If the
+    # exception is not a DataONE exception, wrap it in a DataONE exception.
     if not isinstance(exception, d1_common.types.exceptions.DataONEException):
-      exception = d1_common.types.exceptions.ServiceFailure(0, '', '')
+      exception = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
     # Add detail code and trace information to the exception.
     exception.detailCode = str(detail_codes.dataone_exception_to_detail_code()\
                                .detail_code(request, exception))
     exception.traceInformation = util.traceback_to_text()
     # Serialize the exception.
-    exception_serializer = d1_common.types.exception_serialization\
-      .DataONEExceptionSerialization(exception)
-    exception_serialized, content_type = exception_serializer.serialize(
-      request.META.get('HTTP_ACCEPT', None)
-    )
+    exception_serialized = exception.serialize()
     # Return the exception to the client.
     return HttpResponse(
       exception_serialized,
       status=exception.errorCode,
-      mimetype=content_type
+      mimetype=d1_common.const.MIMETYPE_XML
     )

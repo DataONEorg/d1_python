@@ -19,8 +19,7 @@ except ImportError, e:
 
 import datetime
 
-import d1_common.types.generated.dataoneTypes
-import d1_common.types.systemmetadata
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.mime_multipart
 
@@ -38,9 +37,6 @@ except ImportError, e:
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
   raise
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
 
 # Replication schema.
 #
@@ -110,7 +106,7 @@ def baseurl_by_noderef(node_ref):
       0, 'Missing static node registry file'
     )
 
-  nodes = d1_common.types.generated.dataoneTypes.CreateFromDocument(node_registry)
+  nodes = dataoneTypes.CreateFromDocument(node_registry)
 
   base_url = ''
   for node in nodes.node:
@@ -136,12 +132,12 @@ def get_sysmeta(pid):
       continue
     sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
       if sysmeta_obj.identifier.value() == pid:
         sysmeta_found = True
         break
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+      logging.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
 
   if sysmeta_found == False:
     raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
@@ -159,9 +155,9 @@ def get_replication_status_list(pid=None):
       continue
     sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+      logging.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
       continue
 
     if pid is None or pid == sysmeta_obj.identifier.value():
@@ -215,7 +211,7 @@ def set_replication_status(status, node_ref, pid):
     replica.replicationStatus = status
   else:
     # No existing Replica node for this node_ref. Create one.
-    replica = d1_common.types.generated.dataoneTypes.Replica()
+    replica = dataoneTypes.Replica()
     replica.replicationStatus = status
     replica.replicaMemberNode = node_ref
     replica.replicaVerified = datetime.datetime.isoformat(datetime.datetime.now())
@@ -235,9 +231,9 @@ def clear_replication_status(node_ref=None, pid=None):
       continue
     sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
     except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+      logging.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
       continue
 
     sysmeta_updated = False

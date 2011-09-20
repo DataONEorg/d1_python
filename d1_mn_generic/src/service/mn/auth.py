@@ -23,7 +23,7 @@
 
 :Synopsis:
   Authentication and authorization. 
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -43,10 +43,9 @@ from django.http import Http404
 from django.http import HttpResponse
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_client.systemmetadata
-import d1_common.types.accesspolicy_serialization
 import d1_common.const
 
 # App.
@@ -54,9 +53,6 @@ import settings
 import util
 import models
 import sysmeta
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -174,7 +170,7 @@ def set_access_policy(pid, access_policy=None):
   allow_owner = dataoneTypes.AccessRule()
   with sysmeta.sysmeta(pid, read_only=True) as s:
     allow_owner.subject.append(s.rightsHolder.value())
-  permission = d1_common.types.generated.dataoneTypes.Permission('execute')
+  permission = dataoneTypes.Permission('execute')
   allow_owner.permission.append(permission)
   # Iterate over AccessPolicy and create db entries.
   for allow_rule in allow: # + [allow_owner]:
@@ -236,11 +232,9 @@ def set_access_policy(pid, access_policy=None):
 #  - The Django transaction middleware layer must be enabled.
 #    'django.middleware.transaction.TransactionMiddleware'
 #  '''
-#  access_policy_serializer = \
-#    d1_common.types.accesspolicy_serialization.AccessPolicy()
 #
 #  try:
-#    access_policy = access_policy_serializer.deserialize(access_policy_str)
+#    access_policy = dataoneTypes.CreateFromDocument(access_policy_str)
 #  except:
 #    err = sys.exc_info()[1]
 #    raise d1_common.types.exceptions.InvalidRequest(
@@ -336,7 +330,7 @@ def assert_allowed(subject, level, pid):
 # Only D1 infrastructure.
 def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
-    if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
+    if request.session.subject.value() != d1_common.const.SUBJECT_TRUSTED:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 
@@ -348,7 +342,7 @@ def assert_trusted_permission(f):
 # Anyone with a valid session.
 def assert_authenticated(f):
   def wrap(request, *args, **kwargs):
-    if request.META['SSL_CLIENT_S_DN'] == d1_common.const.SUBJECT_PUBLIC:
+    if request.session.subject.value() == d1_common.const.SUBJECT_PUBLIC:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 
@@ -361,7 +355,7 @@ def assert_authenticated(f):
 # function is the PID for which the permission is being asserted.
 def assert_execute_permission(f):
   def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.META['SSL_CLIENT_S_DN'], EXECUTE_LEVEL, pid)
+    assert_allowed(request.session.subject.value(), EXECUTE_LEVEL, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -371,7 +365,7 @@ def assert_execute_permission(f):
 
 def assert_changepermission_permission(f):
   def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.META['SSL_CLIENT_S_DN'], CHANGEPERMISSION_LEVEL, pid)
+    assert_allowed(request.session.subject.value(), CHANGEPERMISSION_LEVEL, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -381,7 +375,7 @@ def assert_changepermission_permission(f):
 
 def assert_write_permission(f):
   def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.META['SSL_CLIENT_S_DN'], WRITE_LEVEL, pid)
+    assert_allowed(request.session.subject.value(), WRITE_LEVEL, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -391,7 +385,7 @@ def assert_write_permission(f):
 
 def assert_read_permission(f):
   def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.META['SSL_CLIENT_S_DN'], READ_LEVEL, pid)
+    assert_allowed(request.session.subject.value(), READ_LEVEL, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__

@@ -28,7 +28,7 @@
   Test DataONE Session object extraction from PEM formatted X.509 v3
   certificate.
 :Author:
-  DataONE (dahl)
+  DataONE (Dahl)
 '''
 
 import os

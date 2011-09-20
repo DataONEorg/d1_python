@@ -23,7 +23,7 @@
 
 :Synopsis:
   Block concurrent reads and updates on PIDs.
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
   

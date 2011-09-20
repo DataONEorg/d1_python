@@ -1,6 +1,6 @@
 import psycopg2.extensions
 import pyxb.binding.datatypes
-import d1_common.types.generated.dataoneTypes
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
@@ -14,12 +14,10 @@ def adapt_pyxb_binding(binding):
 
 
 psycopg2.extensions.register_adapter(
-  d1_common.types.generated.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
+  dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
 )
 
-psycopg2.extensions.register_adapter(
-  d1_common.types.generated.dataoneTypes.NonEmptyString, adapt_pyxb_binding
-)
+psycopg2.extensions.register_adapter(dataoneTypes.NonEmptyString, adapt_pyxb_binding)
 
 psycopg2.extensions.register_adapter(pyxb.binding.datatypes.string, adapt_pyxb_binding)
 

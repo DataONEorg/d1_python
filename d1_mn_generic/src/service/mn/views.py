@@ -24,7 +24,7 @@
 
 :Synopsis:
   REST call handlers.
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -72,9 +72,6 @@ except ImportError, e:
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_common.types.exceptions
-import d1_common.types.checksum_serialization
-import d1_common.types.pid_serialization
-import d1_common.types.systemmetadata
 import d1_client.systemmetadata
 
 # App.
@@ -88,9 +85,6 @@ import settings
 import sysmeta
 import urls
 import util
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
 
 
 # ==============================================================================
@@ -134,16 +128,6 @@ def monitor_ping(request):
 
 
 # Unrestricted.
-def monitor_status(request):
-  '''MNCore.getStatus() → StatusResponse
-
-  This function is similar to MN_health.ping() but returns a more complete
-  status which may include information such as planned service outages.
-  '''
-  return HttpResponse('OK (response not yet defined)')
-
-
-# Unrestricted.
 def monitor_object(request):
   '''MNCore.getObjectStatistics([format][, pid]) → ObjectStatistics
 
@@ -180,16 +164,11 @@ def monitor_object(request):
   if changed:
     query_unsliced = query
 
-  # Prepare to group by day.
-  if 'day' in request.GET:
-    query = query.extra({'day' : "date(mtime)"}).values('day').annotate(
-      count=Count('id')).order_by()
-
   # Create a slice of a query based on request start and count parameters.
   query, start, count = db_filter.add_slice_filter(query, request)
 
   return {'query': query, 'start': start, 'count': count, 'total':
-    0, 'day': 'day' in request.GET, 'type': 'monitor' }
+    0, 'type': 'monitor' }
 
 
 # Unrestricted.
@@ -209,7 +188,7 @@ def event_log_view(request):
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
-  if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
+  if request.session.subject.value() != d1_common.const.SUBJECT_TRUSTED:
     query = db_filter.add_access_policy_filter(query, request,
                                                'object__permission')
   
@@ -317,11 +296,11 @@ def object_pid_get(request, pid, head):
     return response
 
   if url_split.scheme == 'http':
-    logger.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
+    logging.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
                  ' location'.format(pid, sciobj.url))
     return _object_pid_get_remote(request, response, pid, sciobj.url, url_split)
   elif url_split.scheme == 'file':
-    logger.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
+    logging.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
                  .format(pid, sciobj.url))
     return _object_pid_get_local(request, response, pid)
   else:
@@ -466,7 +445,7 @@ def object(request):
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
-  if request.META['SSL_CLIENT_S_DN'] != d1_common.const.SUBJECT_TRUSTED:
+  if request.session.subject.value() != d1_common.const.SUBJECT_TRUSTED:
     query = db_filter.add_access_policy_filter(query, request, 'permission')
 
   # Create a copy of the query that we will not slice, for getting the total
@@ -523,7 +502,7 @@ def error(request):
   # TODO: Deserialize exception in message and log full information.
   util.validate_post(request, (('field', 'message')))
   
-  logger.info('client({0}): CN cannot complete SciMeta sync'.format(
+  logging.info('client({0}): CN cannot complete SciMeta sync'.format(
     util.request_to_string(request)))
 
   return HttpResponse('')
@@ -550,7 +529,7 @@ def assert_authorized(request, pid):
   # action string is not valid.
   level = auth.action_to_level(request.GET['action'])
   # Assert that subject is allowed to perform action on object. 
-  auth.assert_allowed(request.META['SSL_CLIENT_S_DN'], level, pid)
+  auth.assert_allowed(request.session.subject.value(), level, pid)
 
   # Return Boolean (200 OK)
   return HttpResponse('')
@@ -630,7 +609,7 @@ def object_pid_post(request, pid):
   # Deserialize metadata (implicit validation).
   sysmeta_str = request.FILES['sysmeta'].read()
   try:
-    sysmeta = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)  
+    sysmeta = dataoneTypes.CreateFromDocument(sysmeta_str)  
   except:
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidRequest(0,
@@ -650,11 +629,7 @@ def object_pid_post(request, pid):
   # be provided instead. In that case, GMN will stream the object bytes from the
   # remote server while handling all other object related operations like usual.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
-    # To create a valid URL, we must quote the pid twice. First, so
-    # that the URL will match what's on disk and then again so that the
-    # quoting survives being passed to the web server.
-    url = '{0}{1}'.format(request.META['HTTP_VENDOR_GMN_REMOTE_URL'],
-                       urllib.quote(urllib.quote(pid, ''), ''))
+    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
     try:
       # Validate URL syntax.
       url_split = urlparse.urlparse(url)
@@ -677,7 +652,7 @@ def object_pid_post(request, pid):
         'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
-    url = 'file:///{0}'.format(urllib.quote(pid, ''))
+    url = 'file:///{0}'.format(d1_common.util.encodePathElement(pid))
     try:
       _object_pid_post_store_local(request, pid)
     except EnvironmentError:
@@ -726,14 +701,14 @@ def object_pid_post(request, pid):
   event_log.log(pid, 'create', request)
   
   # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
+  pid_pyxb = dataoneTypes.Identifier(pid)
+  pid_xml = pid_pyxb.toxml()
+  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
 
 
 # Internal.
 def _object_pid_post_store_local(request, pid):
-  logger.info('pid({0}): Writing object to disk'.format(pid))
+  logging.info('pid({0}): Writing object to disk'.format(pid))
   object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
   try:
     os.makedirs(os.path.dirname(object_path))
@@ -804,7 +779,7 @@ def object_pid_delete(request, pid):
 
   # Log this operation. Event logs are tied to particular objects, so we can't
   # log this event in the event log. Instead, we log it.
-  logger.info('client({0}) pid({1}) Deleted object'.format(
+  logging.info('client({0}) pid({1}) Deleted object'.format(
     util.request_to_string(request), pid))
 
   # Return the pid.
@@ -892,7 +867,7 @@ def _replicate_store(request):
   pid = request.FILES['pid'].read()
 
   # Write SciData to object store.  
-  logger.info('pid({0}): Writing object to disk'.format(pid))
+  logging.info('pid({0}): Writing object to disk'.format(pid))
   object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
   try:
     os.makedirs(os.path.dirname(object_path))
@@ -905,7 +880,7 @@ def _replicate_store(request):
   # Create database entry for object.
   object = models.Object()
   object.pid = pid
-  object.url = 'file:///{0}'.format(urllib.quote(pid, ''))
+  object.url = 'file:///{0}'.format(d1_common.util.encodePathElement(pid))
   object.set_format(sysmeta.objectFormat.fmtid,
                     sysmeta.objectFormat.formatName,
                     sysmeta.objectFormat.scienceMetadata)
@@ -935,12 +910,12 @@ def _replicate_store(request):
 # ------------------------------------------------------------------------------  
 
 # For testing via browser.
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_replicate_post(request):
   return replicate_post(request)
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_replicate_get(request):
   '''
   '''
@@ -948,7 +923,7 @@ def test_replicate_get(request):
     {'replication_queue': models.Replication_work_queue.objects.all() })
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_replicate_get_xml(request):
   '''
   '''
@@ -958,13 +933,13 @@ def test_replicate_get_xml(request):
 
 
 # For testing via browser.
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_replicate_clear(request):
   models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
@@ -972,7 +947,7 @@ def test(request):
   return render_to_response('test.html', {})  
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_cert(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
@@ -986,7 +961,7 @@ def test_cert(request):
 #  return HttpResponse('ok')
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_slash(request, p1, p2, p3):
   '''
   '''
@@ -996,7 +971,7 @@ def test_slash(request, p1, p2, p3):
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_exception(request, exc):
   '''
   '''
@@ -1013,7 +988,7 @@ def test_exception(request, exc):
   return HttpResponse(doc, content_type)
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_invalid_return(request, type):
   if type == "200_html":
     return HttpResponse("invalid") #200, html
@@ -1027,7 +1002,7 @@ def test_invalid_return(request, type):
   return HttpResponse("OK")
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_get_request(request):
   '''
   '''
@@ -1038,6 +1013,7 @@ def test_get_request(request):
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
+# Unrestricted access in debug mode. Disabled in production.
 def test_clear_database(request):
   models.Object.objects.all().delete()
   models.Object_format.objects.all().delete()
@@ -1046,7 +1022,7 @@ def test_clear_database(request):
   models.DB_update_status.objects.all().delete()
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_delete_all_objects(request):
   '''
   Remove all objects from db.
@@ -1060,13 +1036,13 @@ def test_delete_all_objects(request):
     _delete_object(object_.pid)
 
   # Log this operation.
-  logger.info('client({0}): Deleted all repository object records'.format(
+  logging.info('client({0}): Deleted all repository object records'.format(
     util.request_to_string(request)))
 
   return HttpResponse('OK')
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_delete_single_object(request, pid):
   '''
   Delete an object from the Member Node, where the object is either a data
@@ -1081,7 +1057,7 @@ def test_delete_single_object(request, pid):
 
   # Log this operation. Event logs are tied to particular objects, so we can't
   # log this event in the event log. Instead, we log it.
-  logger.info('client({0}) pid({1}) Deleted object'.format(
+  logging.info('client({0}) pid({1}) Deleted object'.format(
     util.request_to_string(request), pid))
 
   # Return the pid.
@@ -1090,6 +1066,7 @@ def test_delete_single_object(request, pid):
   return HttpResponse(doc, content_type)
 
 
+# Unrestricted access in debug mode. Disabled in production.
 def _delete_object(pid):
   # Find object based on pid.
   try:
@@ -1132,7 +1109,7 @@ def _delete_object(pid):
   sciobj.delete()
 
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_delete_event_log(request):
   '''
   Remove all log records.
@@ -1145,13 +1122,13 @@ def test_delete_event_log(request):
   models.Event_log_event.objects.all().delete()
 
   # Log this operation.
-  logger.info(None, 'client({0}): delete_event_log', util.request_to_string(
+  logging.info(None, 'client({0}): delete_event_log', util.request_to_string(
     request))
 
   return HttpResponse('OK')
   
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_inject_event_log(request):
   '''Inject a fictional log for testing.
   
@@ -1185,7 +1162,7 @@ def test_inject_event_log(request):
 
   return HttpResponse('OK')
 
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_delete_all_access_rules(request):
   # The deletes are cascaded so all subjects are also deleted.
   models.Permission.objects.all().delete()
@@ -1199,12 +1176,13 @@ def test_delete_all_access_rules(request):
 
 test_shared_dict = urls.test_shared_dict
 
+# Unrestricted access in debug mode. Disabled in production.
 def test_concurrency_clear(request):
   test_shared_dict.clear()
   return HttpResponse('')
 
 @lock_pid.for_read
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   #ret = test_shared_dict
@@ -1213,7 +1191,7 @@ def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
   return HttpResponse('{0}'.format(ret))
 
 @lock_pid.for_write
-@auth.assert_trusted_permission
+# Unrestricted access in debug mode. Disabled in production.
 def test_concurrency_write_lock(request, key, val, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   test_shared_dict[key] = val  
@@ -1222,9 +1200,9 @@ def test_concurrency_write_lock(request, key, val, sleep_before, sleep_after):
 
 @auth.assert_trusted_permission
 # No locking.
+# Unrestricted access in debug mode. Disabled in production.
 def test_concurrency_get_dictionary_id(request):
   time.sleep(3)
   ret = id(test_shared_dict)
   time.sleep(3)
   return HttpResponse('{0}'.format(ret))
-  

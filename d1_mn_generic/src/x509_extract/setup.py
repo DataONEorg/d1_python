@@ -27,7 +27,7 @@
 :Synopsis:
   Build the DataONE Session object extraction Python extension.
 :Author:
-  DataONE (dahl)
+  DataONE (Dahl)
 '''
 
 from distutils.core import setup, Extension

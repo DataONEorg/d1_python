@@ -37,9 +37,6 @@ import urllib
 
 import d1_common
 
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
-
 
 class request_handler():
   def process_request(self, request):
@@ -88,7 +85,7 @@ class request_handler():
 
     # Block access to the test functions if not in debug mode.
     if re.match(r'/test', request.path_info) and settings.DEBUG == False:
-      #logger.info('client({0}): Attempted to access {0} while not in DEBUG mode'.format(request.path_info))
+      #logging.info('client({0}): Attempted to access {0} while not in DEBUG mode'.format(request.path_info))
       # TODO: This exception is unhandled.
       raise d1_common.types.exceptions.InvalidRequest(0, 'Unsupported')
 

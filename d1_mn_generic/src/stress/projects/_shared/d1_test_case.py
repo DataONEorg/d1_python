@@ -24,7 +24,7 @@
 Extends unittest.TestCase with DataONE specific asserts.
 
 :Created: 2011-04-27
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 

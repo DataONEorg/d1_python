@@ -26,7 +26,7 @@
   Utilities for manipulating System Metadata documents.
   
 :Created: 2011-04-20
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -57,14 +57,10 @@ import pyxb.exceptions_
 # App.
 import settings
 
-import d1_common.types.generated.dataoneTypes
-import d1_common.types.systemmetadata
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 
 import util
-
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
 
 # Schema entries for obsoletes and obsoletedBy.
 #
@@ -105,12 +101,12 @@ def read_sysmeta(pid):
       continue
     sysmeta_xml = open(sysmeta_path, 'rb').read()
     try:
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_xml)
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
       if sysmeta_obj.identifier.value() == pid:
         sysmeta_found = True
         break
-    except (xml.sax._exceptions.SAXParseException, pyxb.exceptions_.DOMGenerationError):
-      logger.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
+    except (pyxb.PyXBException, xml.sax.SAXParseException):
+      logging.info('sysmeta_path({0}): Invalid SysMeta object'.format(sysmeta_path))
 
   if sysmeta_found == False:
     raise d1_common.types.exceptions.NotFound(0, 'Non-existing object was requested', pid)
@@ -212,7 +208,7 @@ class sysmeta():
     with open(self.sysmeta_path, 'rb') as file:
       sysmeta_str = file.read()
     # Deserialize.
-    self.sysmeta_pyxb = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)
+    self.sysmeta_pyxb = dataoneTypes.CreateFromDocument(sysmeta_str)
 
   def __enter__(self):
     return self.sysmeta_pyxb
@@ -248,6 +244,6 @@ class sysmeta():
 #    return 'DATAONE_UNKNOWN'
 #  with file: 
 #    sysmeta_str = file.read()
-#    sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+#    sysmeta = dataoneTypes.SystemMetadata(sysmeta_str)
 #    return sysmeta.rightsHolder
 #

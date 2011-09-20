@@ -45,23 +45,8 @@ import config_util
 import svn_update
 
 
-def log_setup():
-  # Set up logging.
-  # We output everything to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  file_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(file_logger)
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
 def db_setup(gmn_home_path):
-  '''Create sqlite db file for GMN.'''
+  '''Create db for GMN.'''
 
   res = os.system('./manage.py syncdb')
   if res != 0:
@@ -86,8 +71,6 @@ def update_version_from_svn():
 
 
 def main():
-  log_setup()
-
   # Command line options.
   parser = optparse.OptionParser()
   parser.add_option(

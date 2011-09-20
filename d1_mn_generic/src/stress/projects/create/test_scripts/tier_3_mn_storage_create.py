@@ -23,7 +23,7 @@
 ===============================
 
 :Created: 2011-04-22
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''

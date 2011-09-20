@@ -62,91 +62,92 @@ from django.db.models import Avg, Max, Min, Count
 
 # MN API.
 import d1_common.types.exceptions
-import d1_common.types.objectlist_serialization
-import d1_common.types.logrecords_serialization
-import d1_common.types.monitorlist_serialization
-import d1_common.types.nodelist_serialization
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
 import mn.models as models
 import mn.util as util
 import settings
 
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
+
+def db_to_object_list(view_result):
+  '''
+  :param view_result: Django DB query.
+  :type view_result: models.Object.objects
+  :returns: Populated DataONE ObjectList
+  :return type: dataoneTypes.ObjectList
+  '''
+  objectList = dataoneTypes.objectList()
+
+  for row in view_result['query']:
+    objectInfo = dataoneTypes.ObjectInfo()
+    objectInfo.identifier = row.pid
+    objectInfo.fmtid = row.format.format_id
+
+    checksum = dataoneTypes.Checksum(row.checksum)
+    checksum.algorithm = row.checksum_algorithm.checksum_algorithm
+    objectInfo.checksum = checksum
+
+    objectInfo.dateSysMetadataModified = \
+      datetime.datetime.isoformat(row.mtime)
+    objectInfo.size = row.size
+
+    objectList.objectInfo.append(objectInfo)
+
+  objectList.start = view_result['start']
+  objectList.count = len(objectList.objectInfo)
+  objectList.total = view_result['total']
+
+  return objectList
 
 
-class ObjectList(d1_common.types.objectlist_serialization.ObjectList):
-  def deserialize_db(self, view_result):
-    '''
-    :param:
-    :return:
-    '''
-    for row in view_result['query']:
-      objectInfo = d1_common.types.generated.dataoneTypes.ObjectInfo()
-      objectInfo.identifier = row.pid
-      objectInfo.fmtid = row.format.format_id
+def db_to_log_records(view_result):
+  '''
+  :param view_result: Django DB query.
+  :type view_result: models.Event_log.objects
+  :returns: Populated DataONE Log
+  :return type: dataoneTypes.Log
+  '''
+  log = dataoneTypes.log()
 
-      checksum = d1_common.types.generated.dataoneTypes.Checksum(row.checksum)
-      checksum.algorithm = row.checksum_algorithm.checksum_algorithm
-      objectInfo.checksum = checksum
+  for row in view_result['query']:
+    logEntry = dataoneTypes.LogEntry()
 
-      objectInfo.dateSysMetadataModified = \
-        datetime.datetime.isoformat(row.mtime)
-      objectInfo.size = row.size
+    logEntry.entryId = str(row.id)
+    logEntry.identifier = row.object.pid
+    logEntry.ipAddress = row.ip_address.ip_address
+    logEntry.userAgent = row.user_agent.user_agent
+    logEntry.subject = row.subject.subject
+    logEntry.event = row.event.event
+    logEntry.dateLogged = row.date_logged
+    logEntry.memberNode = 'dummy' # TODO: Should probably be removed from schema.
 
-      self.object_list.objectInfo.append(objectInfo)
+    log.logEntry.append(logEntry)
 
-    self.object_list.start = view_result['start']
-    self.object_list.count = len(self.object_list.objectInfo)
-    self.object_list.total = view_result['total']
+  log.start = view_result['start']
+  log.count = len(log.logEntry)
+  log.total = view_result['total']
 
-
-class LogRecords(d1_common.types.logrecords_serialization.LogRecords):
-  def deserialize_db(self, view_result):
-    '''
-    :param:
-    :return:
-    '''
-
-    for row in view_result['query']:
-      logEntry = d1_common.types.generated.dataoneTypes.LogEntry()
-
-      logEntry.entryId = str(row.id)
-      logEntry.identifier = row.object.pid
-      logEntry.ipAddress = row.ip_address.ip_address
-      logEntry.userAgent = row.user_agent.user_agent
-      logEntry.subject = row.subject.subject
-      logEntry.event = row.event.event
-      logEntry.dateLogged = row.date_logged
-      logEntry.memberNode = 'dummy' # TODO: Should probably be removed from schema.
-
-      self.log_records.logEntry.append(logEntry)
-
-    self.log_records.start = view_result['start']
-    self.log_records.count = len(self.log_records.logEntry)
-    self.log_records.total = view_result['total']
+  return log
 
 
-class MonitorList(d1_common.types.monitorlist_serialization.MonitorList):
-  def deserialize_db(self, view_result):
-    '''
-    :param:
-    :return:
-    '''
+def db_to_monitor_list(view_result):
+  '''
+  :param view_result: Django DB query.
+  :type view_result: models.Event_log.objects
+  :returns: Populated DataONE Log
+  :return type: dataoneTypes.MonitorList
+  '''
 
-    query = view_result['query']
-    if view_result['day'] == True:
-      for row in query:
-        monitorInfo = d1_common.types.generated.dataoneTypes.MonitorInfo()
-        monitorInfo.date = row['day']
-        monitorInfo.count = row['count']
-        self.monitor_list.append(monitorInfo)
-    else:
-      monitorInfo = d1_common.types.generated.dataoneTypes.MonitorInfo()
-      monitorInfo.date = datetime.date.today()
-      monitorInfo.count = query.aggregate(count=Count('id'))['count']
-      self.monitor_list.append(monitorInfo)
+  monitor_list = dataoneTypes.monitorList()
+
+  query = view_result['query']
+  monitorInfo = dataoneTypes.MonitorInfo()
+  monitorInfo.date = datetime.date.today()
+  monitorInfo.count = query.aggregate(count=Count('id'))['count']
+  monitor_list.append(monitorInfo)
+
+  return monitor_list
 
 
 def serialize_object(request, view_result):
@@ -162,24 +163,17 @@ def serialize_object(request, view_result):
   # Serialize to response in requested format.
   response = HttpResponse()
 
-  type = {
-    'object': ObjectList(),
-    'log': LogRecords(),
-    'monitor': MonitorList(),
-  }[view_result['type']]
+  name_to_func_map = {
+    'object': db_to_object_list,
+    'log': db_to_log_records,
+    'monitor': db_to_monitor_list,
+  }
 
-  type.deserialize_db(view_result)
-
-  if 'HTTP_ACCEPT' in request.META:
-    accept = request.META['HTTP_ACCEPT']
-  else:
-    accept = None
-
-  doc, content_type = type.serialize(accept, pretty, jsonvar)
-  response.write(doc)
+  d1_type = name_to_func_map[view_result['type']](view_result)
+  response.write(d1_type.toxml())
 
   # Set headers.
-  set_header(response, None, response.tell(), content_type)
+  set_header(response, None, response.tell(), d1_common.const.MIMETYPE_XML)
 
   return response
 
@@ -300,7 +294,7 @@ def monitor_serialize_object(request, response, monitor):
   # we use the default defined in d1_common.const.DEFAULT_MIMETYPE.
   content_type = d1_common.const.DEFAULT_MIMETYPE
   if 'HTTP_ACCEPT' not in request.META:
-    logger.debug(
+    logging.debug(
       'client({0}): No HTTP_ACCEPT header. Defaulting to {0}'.format(
         util.request_to_string(
           request
@@ -313,7 +307,7 @@ def monitor_serialize_object(request, response, monitor):
     except ValueError:
       # An invalid Accept header causes mimeparser to throw a ValueError. In
       # that case, we also use the default defined in d1_common.const.DEFAULT_MIMETYPE.
-      logger.debug(
+      logging.debug(
         'client({0}): Invalid HTTP_ACCEPT header. Defaulting to {0}'.format(
           util.request_to_string(
             request

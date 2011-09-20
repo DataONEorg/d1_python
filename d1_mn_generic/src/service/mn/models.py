@@ -40,9 +40,6 @@ from django.db.models import Q
 # MN API.
 import d1_common.types.exceptions
 
-# Get an instance of a logger.
-logger = logging.getLogger(__name__)
-
 # Django creates automatically:
 # "id" serial NOT NULL PRIMARY KEY
 
@@ -103,9 +100,9 @@ class Object(models.Model):
     except IndexError:
       self.save()
     else:
-      logger.warning('Overwriting object with duplicate PID or URL:')
-      logger.warning('URL: {0}'.format(self.url))
-      logger.warning('PID: {0}'.format(self.pid))
+      logging.warning('Overwriting object with duplicate PID or URL:')
+      logging.warning('URL: {0}'.format(self.url))
+      logging.warning('PID: {0}'.format(self.pid))
       me.delete()
       self.save()
 

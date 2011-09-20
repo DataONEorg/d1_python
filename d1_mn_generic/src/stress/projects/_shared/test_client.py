@@ -25,7 +25,7 @@ This module implements MemberNodeTestClient, which extends
 d1_client.mnclient.MemberNodeClient with test functionality.
 
 :Created: 2011-03-18
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 
@@ -37,6 +37,7 @@ import urllib
 
 # D1.
 import d1_client.mnclient
+import d1_common.util
 
 # App.
 import settings
@@ -77,7 +78,7 @@ class TestClient(d1_client.mnclient.MemberNodeClient):
     )
 
   def _get_cert_path(self, subject, ext):
-    subject_quoted = urllib.quote(subject)
+    subject_quoted = d1_common.util.encodePathElement(subject)
     return os.path.abspath(
       os.path.join(
         os.path.dirname(__file__), test_subject_certs, '{0}.{1}'.format(subject_quoted,
