@@ -29,7 +29,7 @@ import settings
 import util
 #import sysmeta
 
-# Get an instance of a logger.
+# Get an instance of a logging.
 logger = logging.getLogger(__name__)
 
 ## Constants related to simulated MN object collection.
@@ -460,11 +460,11 @@ class mn_tests(TestCase):
 #  #  try:
 #  #    xsd_file = open(settings.XSD_PATH, 'rb')
 #  #  except EnvironmentError as (errno, strerror):
-#  #    logger.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-#  #    logger.error('I/O error({0}): {1}'.format(errno, strerror))
+#  #    logging.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
+#  #    logging.error('I/O error({0}): {1}'.format(errno, strerror))
 #  #    return
 #  #  except:
-#  #    logger.error('Unexpected error: ', sys.exc_info()[0])
+#  #    logging.error('Unexpected error: ', sys.exc_info()[0])
 #  #    raise
 #  #
 #  #  xmlschema_doc = sysmeta.etree.parse(settings.XSD_PATH)
@@ -684,11 +684,11 @@ class mn_tests(TestCase):
 #  #  try:
 #  #    xsd_file = open(settings.XSD_PATH, 'rb')
 #  #  except EnvironmentError as (errno, strerror):
-#  #    logger.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-#  #    logger.error('I/O error({0}): {1}'.format(errno, strerror))
+#  #    logging.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
+#  #    logging.error('I/O error({0}): {1}'.format(errno, strerror))
 #  #    return
 #  #  except:
-#  #    logger.error('Unexpected error: ', sys.exc_info()[0])
+#  #    logging.error('Unexpected error: ', sys.exc_info()[0])
 #  #    raise
 #  #
 #  #  xmlschema_doc = etree.parse(settings.XSD_PATH)

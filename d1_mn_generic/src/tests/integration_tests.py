@@ -57,8 +57,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../m
 try:
   import d1_common.mime_multipart
   import d1_common.types.exceptions
-  import d1_common.types.objectlist_serialization
   import d1_common.util
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
@@ -115,10 +115,10 @@ def log_setup():
   logging.getLogger('').setLevel(logging.DEBUG)
   formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
   file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  file_logger.setFormatter(formatter)
+  file_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(file_logger)
   console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
+  console_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
   
 class MNException(Exception):
@@ -652,60 +652,16 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: ObjectList deserialization, XML')
     
     xml_doc = open('test.xml', 'rb').read()
-    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = sci_objects_1.serialize('text/xml')
+    sci_objects_1 = dataoneTypes.CreateFromDocument(xml_doc)
+    doc = sci_objects_1.toxml()
     
     sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
     sci_objects_2.deserialize(doc, 'text/xml')
     xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
     
     self.assert_xml_equals(xml_doc, xml_doc_out)
-  
-  def mn_pxby_sci_objectlist_json(self):
-    '''MN: ObjectList deserialization, JSON
-    ''' 
-    logging.info('MN: ObjectList deserialization, JSON')
-    
-    xml_doc = open('test.xml', 'rb').read()
-    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = sci_objects_1.serialize('application/json')
-    
-    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_2.deserialize(doc, 'application/json')
-    xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
-    
-    self.assert_xml_equals(xml_doc, xml_doc_out)
-  
-  def mn_pxby_sci_objectlist_rdf_xml(self):
-    '''MN: ObjectList deserialization, RDF XML
-    '''
-    logging.info('MN: ObjectList deserialization, RDF XML')
-    
-    xml_doc = open('test.xml', 'rb').read()
-    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = sci_objects_1.serialize('application/rdf+xml')
-    
-  def mn_pxby_sci_objectlist_csv(self):
-    '''MN: ObjectList deserialization, CSV
-    '''
-    logging.info('MN: ObjectList deserialization, CSV')
-    
-    xml_doc = open('test.xml', 'rb').read()
-    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = sci_objects_1.serialize('text/csv')
-  
-    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_2.deserialize(doc, 'text/csv')
-    xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
-    
-    # This assert currently does not pass because there is a slight difference
-    # in the ISO1601 rendering of the timestamp.
-    #self.assert_xml_equals(xml_doc, xml_doc_out)
-  
+
+
   def mn_monitor_xml_validation(self):
     '''MN: MonitorList XML validation
     '''

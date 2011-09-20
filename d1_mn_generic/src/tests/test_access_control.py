@@ -24,7 +24,7 @@
 Unit tests for GMN access control.
 
 :Created: 2011-06-27
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -41,7 +41,7 @@ import xml.parsers.expat
 
 # MN API.
 try:
-  from d1_common.types.generated import dataoneTypes
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
   import d1_common.types.exceptions
   import d1_common.const
 except ImportError, e:
@@ -74,13 +74,13 @@ class TestAccessControl(unittest.TestCase):
     pass
 
   def gen_sysmeta(self, pid, size, md5, now, owner):
-    sysmeta = d1_common.types.generated.dataoneTypes.systemMetadata()
+    sysmeta = dataoneTypes.systemMetadata()
     sysmeta.identifier = pid
     sysmeta.objectFormat = 'eml://ecoinformatics.org/eml-2.0.0'
     sysmeta.size = size
     sysmeta.submitter = owner
     sysmeta.rightsHolder = owner
-    sysmeta.checksum = d1_common.types.generated.dataoneTypes.checksum(md5)
+    sysmeta.checksum = dataoneTypes.checksum(md5)
     sysmeta.checksum.algorithm = 'MD5'
     sysmeta.dateUploaded = now
     sysmeta.dateSysMetadataModified = now
@@ -89,13 +89,13 @@ class TestAccessControl(unittest.TestCase):
     return sysmeta
 
   def gen_access_policy(self, access_rules):
-    accessPolicy = d1_common.types.generated.dataoneTypes.accessPolicy()
+    accessPolicy = dataoneTypes.accessPolicy()
     for access_rule in access_rules:
-      accessRule = d1_common.types.generated.dataoneTypes.AccessRule()
+      accessRule = dataoneTypes.AccessRule()
       for subject in access_rule[0]:
         accessRule.subject.append(subject)
       for action in access_rule[1]:
-        permission_obj = d1_common.types.generated.dataoneTypes.Permission(action)
+        permission_obj = dataoneTypes.Permission(action)
         accessRule.permission.append(permission_obj)
       accessRule.resource.append('<dummy. field will be removed>')
       accessPolicy.append(accessRule)

@@ -48,7 +48,7 @@
   be specified as a program argument.
   
 :Created:
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -80,13 +80,9 @@ from xml.sax.saxutils import escape
 
 # MN API.
 try:
-  from d1_common.types.generated import dataoneTypes 
+  import d1_common.types.generated.dataoneTypes as dataoneTypes 
   #import d1_common.mime_multipart
   import d1_common.types.exceptions
-  import d1_common.types.checksum_serialization
-  import d1_common.types.objectlist_serialization
-  import d1_common.types.accesspolicy_serialization
-  import d1_common.types.systemmetadata
   import d1_common.util
   import d1_common.const
 except ImportError, e:
@@ -145,16 +141,17 @@ AUTH_SPECIFIC_AND_OBJ_FORMAT = 19
 
 
 def log_setup():
-  # Set up logging.
-  # We output everything to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
-  formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
-  file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  file_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(file_logger)
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
+  pass
+#  # Set up logging.
+#  # We output everything to both file and stdout.
+#  logging.getLogger('').setLevel(logging.DEBUG)
+#  formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
+#  file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
+#  file_logging.setFormatter(formatter)
+#  logging.getLogger('').addHandler(file_logger)
+#  console_logger = logging.StreamHandler(sys.stdout)
+#  console_logging.setFormatter(formatter)
+#  logging.getLogger('').addHandler(console_logger)
   
 class GMNException(Exception):
   pass
@@ -244,13 +241,13 @@ class TestSequenceFunctions(unittest2.TestCase):
 #'''.format(escape(pid), size, owner, md5, datetime.datetime.isoformat(now))
 
   def gen_sysmeta(self, pid, size, md5, now, owner):
-    sysmeta = d1_common.types.generated.dataoneTypes.systemMetadata()
+    sysmeta = dataoneTypes.systemMetadata()
     sysmeta.identifier = pid
-    sysmeta.objectFormat = 'eml://ecoinformatics.org/eml-2.0.0'
+    sysmeta.fmtid = 'eml://ecoinformatics.org/eml-2.0.0'
     sysmeta.size = size
-    sysmeta.submitter = 'subm'
-    sysmeta.rightsHolder = 'subm'
-    sysmeta.checksum = d1_common.types.generated.dataoneTypes.checksum(md5)
+    sysmeta.submitter = owner
+    sysmeta.rightsHolder = owner
+    sysmeta.checksum = dataoneTypes.checksum(md5)
     sysmeta.checksum.algorithm = 'MD5'
     sysmeta.dateUploaded = now
     sysmeta.dateSysMetadataModified = now
@@ -260,20 +257,22 @@ class TestSequenceFunctions(unittest2.TestCase):
 
 
   def gen_access_policy(self, access_rules):
-    accessPolicy = d1_common.types.generated.dataoneTypes.accessPolicy()
+    accessPolicy = dataoneTypes.accessPolicy()
     for access_rule in access_rules:
-      accessRule = d1_common.types.generated.dataoneTypes.AccessRule()
+      accessRule = dataoneTypes.AccessRule()
       for subject in access_rule[0]:
         accessRule.subject.append(subject)
       for permission in access_rule[1]:
-        permission = d1_common.types.generated.dataoneTypes.Permission('read')
+        permission = dataoneTypes.Permission('read')
         accessRule.permission.append(permission)
       accessRule.resource.append('<dummy. field will be removed>')
       accessPolicy.append(accessRule)
     return accessPolicy
   
   def session(self, subject):
-    return {'VENDOR_OVERRIDE_SESSION': subject}
+    session = dataoneTypes.session()
+    session.subject = subject
+    return {'VENDOR_OVERRIDE_SESSION': session.toxml()}
 
   ##############################################################################
   # Tests that are run for both local and remote objects.
@@ -300,7 +299,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Check header.
     self.assert_object_list_slice(object_list, 0, 0, 0)
   
-  def C_create_objects(self, vendor_specific):
+  def C_create_objects(self, wrapped=False):
     '''Populate MN with set of test objects.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
@@ -313,7 +312,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(
+      sysmeta_obj = dataoneTypes.CreateFromDocument(
         sysmeta_xml)
       # TODO: Current spec says that rightsHolder should be supplied by
       # client, so we copy the owner in here. I think the spec must be changed
@@ -322,7 +321,16 @@ class TestSequenceFunctions(unittest2.TestCase):
       sysmeta_obj.rightsHolder = 'test_user_1'
       
       headers = self.session('test_user_1')
-      headers.update(vendor_specific)
+      
+      if wrapped:
+        vendor_specific = {
+          'vendor_gmn_remote_url': self.opts.obj_url + '/' + \
+          d1_common.util.encodePathElement(
+            d1_common.util.encodePathElement(sysmeta_obj.identifier.value()))
+        }
+        print sysmeta_obj.identifier.value()
+        print vendor_specific
+        headers.update(vendor_specific)
                                    
       response = client.createResponse(sysmeta_obj.identifier.value(),
                                        object_file, sysmeta_obj,
@@ -386,7 +394,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
                                                       '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      pid = urllib.unquote(os.path.basename(object_path))
+      pid = d1_common.util.decodePathElement(os.path.basename(object_path))
       #sysmeta_str_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'rb').read()
       #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
@@ -414,11 +422,11 @@ class TestSequenceFunctions(unittest2.TestCase):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       self.assertTrue(os.path.exists(object_path))
       # Get pid for object.
-      pid = urllib.unquote(os.path.basename(object_path))
+      pid = d1_common.util.decodePathElement(os.path.basename(object_path))
       # Get sysmeta xml for corresponding object from disk.
       sysmeta_file = open(sysmeta_path, 'rb')
       sysmeta_str = sysmeta_file.read()
-      sysmeta_obj = d1_common.types.systemmetadata.CreateFromDocument(sysmeta_str)  
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_str)  
   
       # Get corresponding object from objectList.
       found = False
@@ -777,57 +785,6 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertEqual(monitor_list.monitorInfo[0].count,
                      OBJECTS_PID_STARTSWITH_F)
 
-  def monitor_object_daily_no_filter(self):
-    '''Monitor Objects: Daily, no filter.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(day=True,
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATES)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    found_date = False
-    for monitor_info in monitor_list.monitorInfo:
-      if str(monitor_info.date) == '1982-08-17':
-        found_date = True
-        self.assertEqual(monitor_info.count, 2)
-    self.assertTrue(found_date)
-    
-  def monitor_object_daily_filter_by_time(self):
-    '''Monitor Objects: Daily, filter by object creation time.
-    '''
-    # TODO: Story #1424: Change to use the standard ISO 8601 time interval notation.
-    pass
-
-  def monitor_object_daily_filter_by_format(self):
-    '''Monitor Objects: Daily, filter by object format.
-    '''
-    # TODO: Test set currently contains only one format. Create
-    # some more formats so this can be tested properly.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(
-      format='eml://ecoinformatics.org/eml-2.0.0',
-      day=True,
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_FORMAT_EML)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, 1)
-
-  def monitor_object_daily_filter_by_time_and_format(self):
-    '''Monitor Objects: Daily, filter by time and format.
-    '''
-    # TODO: Story #1424
-    pass
-
-  def monitor_object_daily_filter_by_pid(self):
-    '''Monitor Objects: Daily, filter by object PID.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(pid='f*', day=True,
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), OBJECTS_UNIQUE_DATE_AND_PID_STARTSWITH_F)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, 1)
-
   ##############################################################################
   # Misc.
   ##############################################################################
@@ -883,9 +840,9 @@ class TestSequenceFunctions(unittest2.TestCase):
 
     # Call to /cn/test_replicate/<pid>/<src_node_ref>
     test_replicate_url = urlparse.urljoin(self.opts.d1_root,
-                                          'test_replicate/{0}/{1}'\
-                                          .format(urllib.quote(self.opts.replicate_src_ref, ''),
-                                                  urllib.quote(pid, '')))
+      'test_replicate/{0}/{1}'.format(
+        d1_common.util.encodePathElement(self.opts.replicate_src_ref),
+        d1_common.util.encodePathElement(pid)))
     
     root = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = root.client.GET(test_replicate_url)
@@ -957,37 +914,35 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''GMN and libraries handle Unicode correctly.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-
     test_doc_path = os.path.join(self.opts.int_path,
-                                 'src', 'test', 'resources', 'd1_testdocs', 'encodingTestSet')
-    test_ascii_strings_path = os.path.join(test_doc_path, 'testAsciiStrings.utf8.txt')
-
+                                 'src', 'test', 'resources', 'd1_testdocs',
+                                 'encodingTestSet')
+    test_ascii_strings_path = os.path.join(test_doc_path,
+                                           'testAsciiStrings.utf8.txt')
     file_obj = codecs.open(test_ascii_strings_path, 'rb', 'utf-8')
     for line in file_obj:
       line = line.strip()
       try:
         pid_unescaped, pid_escaped = line.split('\t')
       except ValueError:
-        pass
-
+        continue
       # Create a small test object containing only the pid. 
       scidata = pid_unescaped.encode('utf-8')
-
       # Create corresponding system metadata for the test object.
       size = len(scidata)
       # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
-      # of the internal Python encoding for the string. So we maintain scidata as a utf-8 string.
+      # of the internal Python encoding for the string. So we maintain scidata
+      # as a utf-8 string.
       md5 = hashlib.md5(scidata).hexdigest()
       now = datetime.datetime.now()
-      sysmeta_xml = self.gen_sysmeta(pid_unescaped, size, md5, now)
-
+      sysmeta_xml = self.gen_sysmeta(pid_unescaped, size, md5, now,
+                                     d1_common.const.SUBJECT_PUBLIC)
       # Create the object on GMN.
-      client.create(pid_unescaped, StringIO.StringIO(scidata), StringIO.StringIO(sysmeta_xml), {})
-
+      client.create(pid_unescaped, StringIO.StringIO(scidata), sysmeta_xml,
+        vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
       # Retrieve the object from GMN.
       scidata_retrieved = client.get(pid_unescaped).read()
       sysmeta_obj_retrieved = client.getSystemMetadata(pid_unescaped)
-      
       # Round-trip validation.
       self.assertEqual(scidata_retrieved, scidata)
       self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
@@ -1063,7 +1018,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.B_object_collection_is_empty()
 
   def test_1010_managed_C_create_objects(self):
-    self.C_create_objects({})
+    self.C_create_objects()
 
   def test_1010_managed_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
@@ -1170,21 +1125,6 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1284_managed_monitor_object_cumulative_filter_by_pid(self):
     self.monitor_object_cumulative_filter_by_pid()
   
-  def test_1285_managed_monitor_object_daily_no_filter(self):
-    self.monitor_object_daily_no_filter()
-
-  def test_1286_managed_monitor_object_daily_filter_by_time(self):
-    self.monitor_object_daily_filter_by_time()
-
-  def test_1287_managed_monitor_object_daily_filter_by_format(self):
-    self.monitor_object_daily_filter_by_format()
-
-  def test_1288_managed_monitor_object_daily_filter_by_time_and_format(self):
-    self.monitor_object_daily_filter_by_time_and_format()
-
-  def test_1289_managed_monitor_object_daily_filter_by_pid(self):
-    self.monitor_object_daily_filter_by_pid()
-
 # TODO: Include checksum tests if we keep getChecksum().
 
 #  def test_1330_managed_delete(self):
@@ -1196,8 +1136,8 @@ class TestSequenceFunctions(unittest2.TestCase):
 #  def test_1350_managed_replication(self):
 #    self.replication()
 #
-#  def test_1360_managed_unicode_test_1(self):
-#    self.unicode_test_1()
+  def test_1360_managed_unicode_test_1(self):
+    self.unicode_test_1()
 
   #
   # Wrapped (object bytes store by remote web server).
@@ -1213,7 +1153,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # This test requires the objects to also be available on a web server
     # (http://localhost:80/test_client_objects by default). This simulates
     # remote storage of the objects.
-    self.C_create_objects({'vendor_gmn_remote_url': self.opts.obj_url})
+    self.C_create_objects(wrapped=True)
 
   def test_2010_wrapped_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
@@ -1316,22 +1256,7 @@ class TestSequenceFunctions(unittest2.TestCase):
 
   def test_2284_wrapped_monitor_object_cumulative_filter_by_pid(self):
     self.monitor_object_cumulative_filter_by_pid()
-  
-  def test_2285_wrapped_monitor_object_daily_no_filter(self):
-    self.monitor_object_daily_no_filter()
-
-  def test_2286_wrapped_monitor_object_daily_filter_by_time(self):
-    self.monitor_object_daily_filter_by_time()
-
-  def test_2287_wrapped_monitor_object_daily_filter_by_format(self):
-    self.monitor_object_daily_filter_by_format()
-
-  def test_2288_wrapped_monitor_object_daily_filter_by_time_and_format(self):
-    self.monitor_object_daily_filter_by_time_and_format()
-
-  def test_2289_wrapped_monitor_object_daily_filter_by_pid(self):
-    self.monitor_object_daily_filter_by_pid()
-  
+    
 #  def test_2330_wrapped_delete(self):
 #    self.delete_test()
 #
@@ -1341,8 +1266,8 @@ class TestSequenceFunctions(unittest2.TestCase):
 #  def test_2350_wrapped_replication(self):
 #    self.replication(self)
 #
-#  def test_2360_wrapped_unicode_test_1(self):
-#    self.unicode_test_1()
+  def test_2360_wrapped_unicode_test_1(self):
+    self.unicode_test_1()
 
 def main():
   log_setup()

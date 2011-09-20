@@ -113,10 +113,10 @@ def log_setup():
     '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
   )
   file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  file_logger.setFormatter(formatter)
+  file_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(file_logger)
   console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
+  console_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
 
@@ -157,7 +157,7 @@ def main():
     sysmeta_tree = etree.parse(sysmeta_file)
     sysmeta_file.close()
 
-    pid = urllib.unquote(os.path.basename(sysmeta_path))
+    pid = d1_common.util.decodePathElement(os.path.basename(sysmeta_path))
 
     logging.info(pid)
 

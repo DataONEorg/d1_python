@@ -52,16 +52,17 @@ def log_setup():
   logging.getLogger('').setLevel(logging.DEBUG)
   formatter = logging.Formatter('%(levelname)-8s %(message)s')
   console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
+  console_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
 
 def baseurl_by_noderef(opts, node_ref):
   # Resolve dst_ref to URL.
   # Call to /cn/test_baseurl_by_noderef/<dst_node_ref>
-  baseurl_by_noderef_url = urlparse.urljoin(opts.d1_root,
-                                        'test_baseurl_by_noderef/{0}'\
-                                        .format(urllib.quote(node_ref, '')))
+  baseurl_by_noderef_url = urlparse.urljoin(
+    opts.d1_root,
+    'test_baseurl_by_noderef/{0}'.format(d1_common.util.encodePathElement(node_ref))
+  )
 
   client_root = d1_client.client.DataOneClient(opts.d1_root)
   response = client_root.client.GET(baseurl_by_noderef_url)

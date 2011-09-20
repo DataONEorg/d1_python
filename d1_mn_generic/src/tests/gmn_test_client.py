@@ -27,7 +27,7 @@ REST interfaces on GMN that provide this functionality are prefixed with "test_"
 and are only enabled when GMN runs in debug mode.
 
 :Created: 2011-03-18
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 

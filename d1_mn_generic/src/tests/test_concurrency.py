@@ -24,7 +24,7 @@
 Unit tests for GMN concurrency.
 
 :Created: 2011-07-06
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -37,7 +37,7 @@ import time
 
 # MN API.
 try:
-  from d1_common.types.generated import dataoneTypes
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
   import d1_common.types.exceptions
   import d1_common.const
 except ImportError, e:
