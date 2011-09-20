@@ -25,7 +25,7 @@ Module d1_common.const
 Provides various constants for the python DataONE client.
 
 :Created: 2010-01-20
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
   

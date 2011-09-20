@@ -25,7 +25,7 @@ HTTP client that supports core REST operations using MIME multipart mixed
 encoding.
 
 :Created: 2010-03-09
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''

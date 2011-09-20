@@ -25,7 +25,7 @@ Check subversion revision of the tree in which this file is contained
 and returns that value or the statically set value on failure.
 
 :Created: 2011-02-14
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''

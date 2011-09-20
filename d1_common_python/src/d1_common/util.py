@@ -22,23 +22,24 @@ Module d1_common.util
 =====================
 
 :Created: 2010-08-07
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 
 Utilities.
 '''
 
-import os
-import sys
-import re
+# Stdlib.
 import email.message
-import xml.dom.minidom
 import logging
-import StringIO
+import os
+import re
+import shutil
+import sys
 import tempfile
 import urllib
-import shutil
+import xml.dom.minidom
+import StringIO
 
 # 3rd party.
 try:
@@ -51,6 +52,7 @@ except ImportError, e:
   )
   raise
 
+# D1.
 import const
 
 
@@ -148,6 +150,49 @@ def encodeQueryElement(element):
   '''
   return urllib.quote(element.encode('utf-8'), \
                safe=const.URL_QUERYELEMENT_SAFE_CHARS)
+
+
+def decodeQueryElement(element):
+  '''Decodes a URL query element according to RFC3986.
+  
+  :param element: The query element to decode.
+  :type element: Unicode
+  :return: Decoded query element
+  :return type: UTF-8 encoded string. 
+  '''
+  return urllib.unquote(element).decode('utf-8')
+
+
+def str_to_unicode(f):
+  '''Decorator that converts string arguments to unicode. Assumes that strings
+  contains ASCII or UTF-8. All other argument types are passed through
+  untouched.
+
+  A UnicodeDecodeError raised here means that the wrapped function was called
+  with a string argument that did not contain ASCII or UTF-8. In such a case,
+  the user is required to convert the string to unicode before passing it to the
+  function. '''
+
+  def wrap(*args, **kwargs):
+    new_args = []
+    new_kwargs = {}
+    for arg in args:
+      if type(arg) is str:
+        # See function docstring if UnicodeDecodeError is raised here.
+        new_args.append(arg.decode('utf-8'))
+      else:
+        new_args.append(arg)
+    for key, arg in kwargs.items():
+      if type(arg) is str:
+        # See function docstring if UnicodeDecodeError is raised here.
+        new_kwargs[key] = arg.decode('utf-8')
+      else:
+        new_kwargs[key] = arg
+    return f(*new_args, **new_kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
 
 
 def urlencode(query, doseq=0):

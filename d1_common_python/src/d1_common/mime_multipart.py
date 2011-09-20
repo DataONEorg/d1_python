@@ -26,18 +26,21 @@ Wrap files and return the file data wrapped in a mime multipart structure when
 iterated, without buffering.
 
 :Created: 2010-09-07
-:Author: DataONE (dahl, vieglais)
+:Author: DataONE (Dahl, Vieglais)
 :Dependencies:
   - python 2.6
 '''
 
-import os
+# Stdlib.
 import httplib
+import logging
 import mimetypes
+import os
 import urlparse
 import StringIO
+
+# D1.
 import d1_common.const
-import logging
 
 
 class multipart(object):
@@ -54,7 +57,7 @@ class multipart(object):
     :type fields: [(string, string), ]
     :param files: sequence of (name, filename, value) elements for data to be
       uploaded as files.
-    :type files: [(string, string, file-like object | string | unicode), ]
+    :type files: [(string, string, file-like object | string), ]
     :param chunk_size: Max number of bytes to return in a single iteration.
       If chunk_size is set lower than a few hundred bytes, chunks that include
       MMP headers and boundaries may exceed this number.
@@ -171,8 +174,6 @@ class multipart(object):
       key, filename, val = self.files[self.file_idx]
       if isinstance(val, str):
         self.state = 'str_val'
-      elif isinstance(val, unicode):
-        self.state = 'unicode_val'
       else:
         self.state = 'file_chunk'
       return ''
@@ -180,10 +181,6 @@ class multipart(object):
     elif self.state == 'str_val':
       self.state = 'file_foot'
       return self._str_val()
-
-    elif self.state == 'unicode_val':
-      self.state = 'file_foot'
-      return self._unicode_val()
 
     elif self.state == 'file_chunk':
       data = self._file_chunk()
@@ -285,13 +282,6 @@ class multipart(object):
     '''
     key, filename, val = self.files[self.file_idx]
     return val
-
-  def _unicode_val(self):
-    '''Get information about the file currently being iterated. Used when the
-    file is represented as a Unicode string.
-    '''
-    key, filename, val = self.files[self.file_idx]
-    return val.encode('utf-8')
 
   def _body_foot(self):
     '''Get the footer used to designate the end of the MIME Multipart
