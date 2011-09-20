@@ -26,7 +26,7 @@
   Sphinx documentation building system configuration.
 
 :Author:
-  DataONE (vieglais, dahl)
+  DataONE (Vieglais, Dahl)
 '''
 
 # DataONE Common Library for Python documentation build configuration file.

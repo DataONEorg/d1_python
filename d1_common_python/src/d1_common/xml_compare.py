@@ -23,7 +23,7 @@ Module d1_common.xml_compare
 ============================
 
 :Created: 2011-03-03
-:Author: DataONE (dahl)
+:Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
 

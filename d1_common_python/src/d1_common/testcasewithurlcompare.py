@@ -24,7 +24,7 @@ Module d1_common.testcasewithurlcompare
 Utility that checks whether two URLs are equal.
 
 :Created: 2010-01-11
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''
