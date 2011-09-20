@@ -75,9 +75,6 @@ URL_SYSMETA_PATH = 'meta/'
 #: TODO: retrieve this from D1 root
 URL_ACCESS_LOG_PATH = 'log'
 
-#: Path to append to target base for the monitor object collection.
-URL_MONITOR_OBJECT_PATH = 'monitor/object'
-
 #: Path to append to target base for the resolve call.
 URL_RESOLVE_PATH = 'resolve/'
 
