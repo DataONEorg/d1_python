@@ -170,20 +170,6 @@ class NodeList(d1_common.types.nodelist_serialization.NodeList):
     method.implemented = 'true'
     methods.append(method)
 
-    # Monitor
-    
-    method = dataoneTypes.ServiceMethod()
-    method.name = 'monitor_object'
-    method.rest = 'monitor/object'
-    method.implemented = 'true'
-    methods.append(method)
-
-    method = dataoneTypes.ServiceMethod()
-    method.name = 'monitor_event'
-    method.rest = 'monitor/event'
-    method.implemented = 'true'
-    methods.append(method)
-
     # Node
     
     method = dataoneTypes.ServiceMethod()

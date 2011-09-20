@@ -128,50 +128,6 @@ def monitor_ping(request):
 
 
 # Unrestricted.
-def monitor_object(request):
-  '''MNCore.getObjectStatistics([format][, pid]) → ObjectStatistics
-
-  Returns the number of objects stored on the Member Node at the time the call
-  is serviced. The count may be restricted to a particular object format or a
-  filter on the PID.
-  '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
-  # Set up query with requested sorting.
-  query = models.Object.objects.all()
-  
-  # startTime
-  query, changed = db_filter.add_datetime_filter(query, request, 'mtime', 
-                                            'startTime', 'gte')
-  if changed == True:
-    query_unsliced = query
-  
-  # endTime
-  query, changed = db_filter.add_datetime_filter(query, request, 'mtime', 'endTime',
-                                            'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # Filter by pid (with wildcards).
-  if 'pid' in request.GET:
-    query = db_filter.add_wildcard_filter(query, 'pid', request.GET['pid'])
-    query_unsliced = query
-    
-  # Filter by referenced object format name.
-  query, changed = db_filter.add_string_filter(query, request,
-                                               'format__format_id', 'format')
-  if changed:
-    query_unsliced = query
-
-  # Create a slice of a query based on request start and count parameters.
-  query, start, count = db_filter.add_slice_filter(query, request)
-
-  return {'query': query, 'start': start, 'count': count, 'total':
-    0, 'type': 'monitor' }
-
-
-# Unrestricted.
 def event_log_view(request):
   '''MNCore.getLogRecords(session, fromDate[, toDate][, event][, start=0]
   [, count=1000]) → Log

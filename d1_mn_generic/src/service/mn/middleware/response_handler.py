@@ -131,198 +131,20 @@ def db_to_log_records(view_result):
   return log
 
 
-def db_to_monitor_list(view_result):
-  '''
-  :param view_result: Django DB query.
-  :type view_result: models.Event_log.objects
-  :returns: Populated DataONE Log
-  :return type: dataoneTypes.MonitorList
-  '''
-
-  monitor_list = dataoneTypes.monitorList()
-
-  query = view_result['query']
-  monitorInfo = dataoneTypes.MonitorInfo()
-  monitorInfo.date = datetime.date.today()
-  monitorInfo.count = query.aggregate(count=Count('id'))['count']
-  monitor_list.append(monitorInfo)
-
-  return monitor_list
-
-
 def serialize_object(request, view_result):
   # The "pretty" parameter generates pretty response.
   pretty = 'pretty' in request.REQUEST
 
-  # For JSON, we support giving a variable name.
-  if 'jsonvar' in request.REQUEST:
-    jsonvar = request.REQUEST['jsonvar']
-  else:
-    jsonvar = False
-
-  # Serialize to response in requested format.
+  # Serialize.
   response = HttpResponse()
 
-  name_to_func_map = {
-    'object': db_to_object_list,
-    'log': db_to_log_records,
-    'monitor': db_to_monitor_list,
-  }
+  name_to_func_map = {'object': db_to_object_list, 'log': db_to_log_records, }
 
   d1_type = name_to_func_map[view_result['type']](view_result)
   response.write(d1_type.toxml())
 
   # Set headers.
   set_header(response, None, response.tell(), d1_common.const.MIMETYPE_XML)
-
-  return response
-
-# Monitoring.
-
-#else:
-#  for row in query:
-#    monitor.append(((str(row['day']), str(row['count']))))
-#  monitor.append(('null', query.aggregate(count=Count('id'))['count']))
-#
-#response.monitor = monitor
-#return response
-
-
-#{
-#  [
-#    {
-#      'pid':<pid>,
-#      'oclass':<object class>,
-#      'checksum': {'algorithm': _algorithm used for checksum_, 'value': _checksum of object_}
-#      'modified':<date time last modified>,
-#      'size':<byte size of object>
-#    },
-#    ...
-#  ]
-#}
-def monitor_serialize_json(monitor, jsonvar=False):
-  '''Serialize object to JSON.
-  :return:
-  '''
-
-  if jsonvar is not False:
-    return jsonvar + '=' + json.dumps(monitor)
-  else:
-    return json.dumps(monitor)
-
-
-#<response xmlns='http://ns.dataone.org/core/objects'
-#  <data pid='_pid_'>
-#    <oclass>_object class_</oclass>
-#    <checksum>
-#     <algorithm>_algorithm used for checksum_</algorithm>
-#     <value>_checksum of object_</value>
-#    </checksum>
-#    <modified>_date time last modified_</modified>
-#    <size>_byte size of object_</size>
-#  </data>
-#  ...
-#</response>
-def monitor_serialize_xml(monitor, jsonvar=False):
-  '''Serialize object to XML.
-  :return:
-  '''
-
-  # Set up namespace for the xml response.
-  RESPONSE_NS = 'http://ns.dataone.org/core/objects'
-  RESPONSE = '{{{0}}}'.format(RESPONSE_NS)
-  NSMAP = {'d1': RESPONSE_NS} # the default namespace
-  xml = etree.Element(RESPONSE + 'monitor', nsmap=NSMAP)
-
-  #if 'objectInfo' in obj:
-  #  for d in obj['objectInfo']:
-  #    data = etree.SubElement(xml, 'objectInfo')
-  #    
-  #    for key in sorted(d.keys()):
-  #      ele = etree.SubElement(data, unicode(key))
-  #      ele.text = unicode(d[key])
-
-  for row in monitor:
-    data = etree.SubElement(xml, 'day')
-    ele = etree.SubElement(data, 'date')
-    ele.text = unicode(row[0])
-    ele = etree.SubElement(data, 'count')
-    ele.text = unicode(row[1])
-
-    # Return xml as string.
-  io = StringIO.StringIO()
-  io.write(etree.tostring(xml, encoding='UTF-8', xml_declaration=True))
-  return io.getvalue()
-
-
-def monitor_serialize_null(monitor, jsonvar=False):
-  '''For now, this NULL serializer just calls out to the json serializer.
-  :return:
-  '''
-
-  return monitor_serialize_json(monitor, jsonvar)
-
-
-def monitor_serialize_object(request, response, monitor):
-  map = {
-    'application/json': monitor_serialize_json,
-    'text/csv': monitor_serialize_null,
-    'text/xml': monitor_serialize_xml,
-    'application/xml': monitor_serialize_xml,
-    'application/rdf+xml': monitor_serialize_null,
-    'text/html': monitor_serialize_null,
-    'text/log': monitor_serialize_null,
-  }
-
-  pri = [
-    'application/json',
-    'text/csv',
-    'text/xml',
-    'application/xml',
-    'application/rdf+xml',
-    'text/html',
-    'text/log',
-  ]
-
-  # For JSON, we support giving a variable name.
-  if 'jsonvar' in request.GET:
-    jsonvar = request.GET['jsonvar']
-  else:
-    jsonvar = False
-
-  # Determine which serializer to use. If no client does not supply HTTP_ACCEPT,
-  # we use the default defined in d1_common.const.DEFAULT_MIMETYPE.
-  content_type = d1_common.const.DEFAULT_MIMETYPE
-  if 'HTTP_ACCEPT' not in request.META:
-    logging.debug(
-      'client({0}): No HTTP_ACCEPT header. Defaulting to {0}'.format(
-        util.request_to_string(
-          request
-        ), d1_common.const.DEFAULT_MIMETYPE
-      )
-    )
-  else:
-    try:
-      content_type = d1_common.ext.mimeparser.best_match(pri, request.META['HTTP_ACCEPT'])
-    except ValueError:
-      # An invalid Accept header causes mimeparser to throw a ValueError. In
-      # that case, we also use the default defined in d1_common.const.DEFAULT_MIMETYPE.
-      logging.debug(
-        'client({0}): Invalid HTTP_ACCEPT header. Defaulting to {0}'.format(
-          util.request_to_string(
-            request
-          ), d1_common.const.DEFAULT_MIMETYPE
-        )
-      )
-
-  # Serialize object.
-  obj_ser = map[content_type](monitor, jsonvar)
-
-  # Add the serialized object to the response.
-  response.write(obj_ser)
-
-  # Set headers.
-  set_header(response, None, len(obj_ser), content_type)
 
   return response
 

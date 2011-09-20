@@ -57,8 +57,6 @@ urlpatterns = patterns(
 
   # GET /monitor/ping
   (r'^monitor/ping/?$', 'monitor_ping'),
-  # GET /monitor/object
-  (r'^monitor/object/?$', 'monitor_object'),
   # GET /log
   (r'^log/?$', 'event_log_view'),
   # GET /  or  GET /node

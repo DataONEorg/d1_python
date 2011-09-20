@@ -209,38 +209,6 @@ class dataone_exception_to_detail_code():
       (r'/log/', 'MN_crud', 'log', 'InvalidRequest', 400, 1500),
       (r'/log/', 'MN_crud', 'log', 'ServiceFailure', 500, 1510),
       (r'/log/', 'MN_crud', 'log', 'NotImplemented', 501, 1501),
-      (r'/monitor/object$', 'MN_health', 'getObjectStatistics', 'NotImplemented', 501, 0),
-      (r'/monitor/object$', 'MN_health', 'getObjectStatistics', 'ServiceFailure', 500, 0),
-      (r'/monitor/object$', 'MN_health', 'getObjectStatistics', 'NotAuthorized', 401, 0),
-      (r'/monitor/object$', 'MN_health', 'getObjectStatistics', 'InvalidRequest', 400, 0),
-      (
-        r'/monitor/object$', 'MN_health', 'getObjectStatistics', 'InsufficientResources',
-        413, 0
-      ),
-      (r'/monitor/object$', 'MN_health', 'getObjectStatistics', 'UnsupportedType', 400,
-       0),
-      (
-        r'/monitor/event$', 'MN_health', 'getOperationStatistics', 'NotImplemented', 501,
-        0
-      ),
-      (
-        r'/monitor/event$', 'MN_health', 'getOperationStatistics', 'ServiceFailure', 500,
-        0
-      ),
-      (r'/monitor/event$', 'MN_health', 'getOperationStatistics', 'NotAuthorized', 401,
-       0),
-      (
-        r'/monitor/event$', 'MN_health', 'getOperationStatistics', 'InvalidRequest', 400,
-        0
-      ),
-      (
-        r'/monitor/event$', 'MN_health', 'getOperationStatistics',
-        'InsufficientResources', 413, 0
-      ),
-      (
-        r'/monitor/event$', 'MN_health', 'getOperationStatistics', 'UnsupportedType', 400,
-        0
-      ),
       (r'/object$', 'MN_replication', 'listObjects', 'NotAuthorized', 401, 1520),
       (r'/object$', 'MN_replication', 'listObjects', 'InvalidRequest', 400, 1540),
       (r'/object$', 'MN_replication', 'listObjects', 'NotImplemented', 501, 1560),

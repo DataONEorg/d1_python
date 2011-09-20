@@ -728,63 +728,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
     self.assertTrue(response)
 
-  
-  ##############################################################################
-  # Monitor Objects
-  ##############################################################################
-  
-  def monitor_object_cumulative_no_filter(self):
-    '''Monitor Objects: Cumulative, no filter.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), 1)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
-
-  def monitor_object_cumulative_filter_by_time(self):
-    '''Monitor Objects: Cumulative, filter by object creation time.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(
-      fromDate=datetime.datetime(2000, 01, 01),
-      toDate=datetime.datetime(2005, 01, 01),
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), 1)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
-  
-  def monitor_object_cumulative_filter_by_format(self):
-    '''Monitor Objects: Cumulative, filter by object format.
-    '''
-    # TODO: Test set currently contains only one format. Create
-    # some more formats so this can be tested properly.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(
-      format='eml://ecoinformatics.org/eml-2.0.0',
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), 1)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count, OBJECTS_TOTAL_DATA)
-
-  def monitor_object_cumulative_filter_by_time_and_format(self):
-    '''Monitor Objects: Cumulative, filter by time and format.
-    '''
-    # TODO: Story #1424
-    pass
-
-  def monitor_object_cumulative_filter_by_pid(self):
-    '''Monitor Objects: Cumulative, filter by object PID.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    monitor_list = client.getObjectStatistics(pid='F*',
-      vendorSpecific=self.session(d1_common.const.SUBJECT_TRUSTED))
-    self.assertEqual(len(monitor_list.monitorInfo), 1)
-    self.assert_valid_date(str(monitor_list.monitorInfo[0].date))
-    self.assertEqual(monitor_list.monitorInfo[0].count,
-                     OBJECTS_PID_STARTSWITH_F)
-
   ##############################################################################
   # Misc.
   ##############################################################################
@@ -1109,21 +1052,6 @@ class TestSequenceFunctions(unittest2.TestCase):
 
   def test_1239_managed_event_log_date_range_4(self):
     self.event_log_date_range_4()
-
-  def test_1280_managed_monitor_object_cumulative_no_filter(self):
-    self.monitor_object_cumulative_no_filter()
-
-  def test_1281_managed_monitor_object_cumulative_filter_by_time(self):
-    self.monitor_object_cumulative_filter_by_time()
-
-  def test_1282_managed_monitor_object_cumulative_filter_by_format(self):
-    self.monitor_object_cumulative_filter_by_format()
-
-  def test_1283_managed_monitor_object_cumulative_filter_by_time_and_format(self):
-    self.monitor_object_cumulative_filter_by_time_and_format()
-
-  def test_1284_managed_monitor_object_cumulative_filter_by_pid(self):
-    self.monitor_object_cumulative_filter_by_pid()
   
 # TODO: Include checksum tests if we keep getChecksum().
 
@@ -1241,21 +1169,6 @@ class TestSequenceFunctions(unittest2.TestCase):
 
   def test_1239_wrapped_event_log_date_range_4(self):
     self.event_log_date_range_4()
-
-  def test_2280_wrapped_monitor_object_cumulative_no_filter(self):
-    self.monitor_object_cumulative_no_filter()
-
-  def test_2281_wrapped_monitor_object_cumulative_filter_by_time(self):
-    self.monitor_object_cumulative_filter_by_time()
-
-  def test_2282_wrapped_monitor_object_cumulative_filter_by_format(self):
-    self.monitor_object_cumulative_filter_by_format()
-
-  def test_2283_wrapped_monitor_object_cumulative_filter_by_time_and_format(self):
-    self.monitor_object_cumulative_filter_by_time_and_format()
-
-  def test_2284_wrapped_monitor_object_cumulative_filter_by_pid(self):
-    self.monitor_object_cumulative_filter_by_pid()
     
 #  def test_2330_wrapped_delete(self):
 #    self.delete_test()

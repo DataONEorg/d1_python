@@ -138,14 +138,6 @@ class mn_tests(TestCase):
     response = self.client.get('/health/status', {}, HTTP_ACCEPT='application/json')
     self.failUnlessEqual(response.status_code, 501)
 
-  def test_trailing_slash__monitor_event_with_trailing(self):
-    response = self.client.get('/monitor/event/', {}, HTTP_ACCEPT='application/xml')
-    self.failUnlessEqual(response.status_code, 200)
-
-  def test_trailing_slash__monitor_event_without_trailing(self):
-    response = self.client.get('/monitor/event', {}, HTTP_ACCEPT='application/xml')
-    self.failUnlessEqual(response.status_code, 200)
-
   def test_trailing_slash__node_without_trailing(self):
     response = self.client.get('/node', {}, HTTP_ACCEPT='application/xml')
     self.failUnlessEqual(response.status_code, 200)

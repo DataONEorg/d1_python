@@ -661,33 +661,6 @@ class TestSequenceFunctions(unittest.TestCase):
     
     self.assert_xml_equals(xml_doc, xml_doc_out)
 
-
-  def mn_monitor_xml_validation(self):
-    '''MN: MonitorList XML validation
-    '''
-    logging.info('MN: MonitorList XML validation')
-    
-    client = d1_client.client.DataOneClient(self.opts.mn_url)
-    response = client.client.GET(client.getMonitorUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
-    xml_doc = response.read()
-
-    d1_common.util.validate_xml(xml_doc)
-  
-  def mn_pxby_monitor_xml(self):
-    '''MN: MonitorList deserialization, XML
-    '''
-    logging.info('MN: MonitorList deserialization, XML')
-    
-    xml_doc = open('test.xml', 'rb').read()
-    sci_objects_1 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_1.deserialize(xml_doc, 'text/xml')
-    doc, content_type = sci_objects_1.serialize('text/xml')
-    
-    sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
-    sci_objects_2.deserialize(doc, 'text/xml')
-    xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
-    
-    self.assert_xml_equals(xml_doc, xml_doc_out)
     
   def mn_orderby_size(self):
     '''MN: Verify ObjectList orderby: size
