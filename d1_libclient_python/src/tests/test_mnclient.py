@@ -24,7 +24,7 @@
 Unit tests for mnclient.
 
 :Created: 2011-01-20
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''
@@ -92,32 +92,6 @@ class TestMNClient(TestCaseWithURLCompare):
 
   def _disabled_test_synchronizationFailed(self):
     raise Exception('Not Implemented')
-
-  def test_getObjectStatistics(self):
-    '''Verify that object statistics response deserializes
-    '''
-    for test in TEST_DATA['MN']:
-      cli = mnclient.MemberNodeClient(test['baseurl'])
-      try:
-        stats = cli.getObjectStatistics(self.token)
-        self.assertTrue(0 <= stats.monitorInfo[0].count)
-      except Exception, e:
-        msg = "Invalid object statistics response from %s" % test['baseurl']
-        msg += "\nRequest URL=%s" % cli._lasturl
-        raise Exception(msg, str(e))
-
-  def test_getOperationStatistics(self):
-    '''Verify that operation statistics response deserializes
-    '''
-    for test in TEST_DATA['MN']:
-      cli = mnclient.MemberNodeClient(test['baseurl'])
-      try:
-        stats = cli.getOperationStatistics(self.token)
-        self.assertTrue(0 <= stats.monitorInfo[0].count)
-      except Exception, e:
-        msg = "Invalid operation statistics response from %s" % test['baseurl']
-        msg += "\nRequest URL=%s" % cli._lasturl
-        raise Exception(msg, str(e))
 
   def _disabled_test_getStatus(self):
     raise Exception('Not Implemented')

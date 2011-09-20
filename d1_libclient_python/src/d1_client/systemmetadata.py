@@ -26,7 +26,7 @@ Implements a wrapper that makes it a bit simpler to pull values from
 an instance of SystemMetadata.
 
 :Created: 2010-01-11
-:Author: vieglais
+:Author: Vieglais
 :Dependencies:
   - dateutil: useful python library for parsing dates, available from
     http://labix.org/python-dateutil or easy_install python-dateutil

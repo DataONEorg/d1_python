@@ -27,7 +27,7 @@ for each attempts to retrieve the associated metadata and the object.
 Use with caution since it iterates over every object on the node.
 
 :Created:
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''

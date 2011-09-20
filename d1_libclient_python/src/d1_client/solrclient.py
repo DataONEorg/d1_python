@@ -45,7 +45,7 @@ http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.p
 though has been modified in many respects.
 
 :Created: 2010-01-11
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
@@ -453,7 +453,7 @@ class SolrConnection:
     'optimized':True,
     'current':True,
     'hasDeletions':False,
-    'directory':'org.apache.lucene.store.FSDirectory:org.apache.lucene.store.FSDirectory@/Users/vieglais/opt/localsolr_svn/home/data/index',
+    'directory':'org.apache.lucene.store.FSDirectory:org.apache.lucene.store.FSDirectory@/Users/Vieglais/opt/localsolr_svn/home/data/index',
     'lastModified':'2009-03-12T18:27:59Z'},
  'fields':{
     'created':{

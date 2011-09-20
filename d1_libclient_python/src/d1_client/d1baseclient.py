@@ -25,24 +25,21 @@ This module implements DataONEBaseClient, which extends RESTClient with DataONE
 specific functionality common to Coordinating Nodes and Member Nodes.
 
 :Created: 2011-01-20
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
 import urlparse
-from httplib import HTTPException
+
+# D1.
 from d1_common import const
 from d1_common import util
 from d1_common import restclient
-from d1_common.types import exception_serialization
-from d1_common.types import systemmetadata
-from d1_common.types import objectlist_serialization
-from d1_common.types import logrecords_serialization
-from d1_common.types import nodelist_serialization
-from d1_common.types import accesspolicy_serialization
 from d1_common.types import exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 #=============================================================================
 
@@ -67,7 +64,8 @@ class DataONEBaseClient(restclient.RESTClient):
     timeout=const.RESPONSE_TIMEOUT,
     keyfile=None,
     certfile=None,
-    strictHttps=True
+    strictHttps=True,
+    keep_response_body=False
   ):
     # Set default headers.
     if defaultHeaders is None:
@@ -103,9 +101,9 @@ class DataONEBaseClient(restclient.RESTClient):
       'assertauthorized': u'assertAuthorized/%(pid)s'
     }
     self.lastresponse = None
-    #Set this to True to preserve a copy of the last response.read() as the
-    #body attribute of self.lastresponse
-    self.keep_response_body = False
+    # Set this to True to preserve a copy of the last response.read() as the
+    # body attribute of self.lastresponse
+    self.keep_response_body = keep_response_body
 
   def _getResponse(self, conn):
     '''Returns the HTTP response object and sets self.lastresponse. 
@@ -125,35 +123,9 @@ class DataONEBaseClient(restclient.RESTClient):
     res.body = res.read()
     if res.body == '':
       res.body = '<empty response>'
-    serializer = exception_serialization.DataONEExceptionSerialization(None)
-    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    try:
-      if format.startswith(const.MIMETYPE_XML):
-        raise (serializer.deserialize_xml(res.body))
-      elif format.startswith(const.MIMETYPE_JSON):
-        raise (serializer.deserialize_json(res.body))
-      else:
-        raise ValueError('Invalid mimetype: {0}'.format(format))
-    except ValueError, e:
-      # Deserializing the response to a DataONEException failed. Return the
-      # invalid response wrapped in ServiceFailure exception.
-      description = []
-      description.append(u'Server returned error without valid DataONEException.')
-      description.append(
-        u'Attempt to deserialize DataONEException raised: {0}'.format(
-          unicode(
-            e
-          )
-        )
-      )
-      description.append(u'Content-type: {0}'.format(format))
-      description = u'\n'.join(description)
-      logging.error(description)
-
-      raise exceptions.ServiceFailure(0, # detailCode
-                                      description,
-                                      res.body)
-    # TODO: Catch all exceptions deserialization may raise.
+    # If the deserialization of the exception is unsuccessful, a ServiceFailure
+    # exception containing the relevant information is raised.
+    raise exceptions.deserialize(res.body)
 
   def _normalizeTarget(self, target):
     if target.endswith('/'):
@@ -163,6 +135,24 @@ class DataONEBaseClient(restclient.RESTClient):
     if not target.endswith('/'):
       return target + '/'
     return self._normalizeTarget(target)
+
+  def _slice_sanity_check(self, start, count):
+    if start < 0:
+      raise exceptions.InvalidRequest(10002, "'start' must be a positive integer")
+    try:
+      if count < 0:
+        raise ValueError
+      if count > const.MAX_LISTOBJECTS:
+        raise ValueError
+    except ValueError:
+      raise exceptions.InvalidRequest(
+        10002,
+        "'count' must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
+      )
+
+  def _date_span_sanity_check(self, fromDate, toDate):
+    if toDate is not None and fromDate is not None and fromDate >= toDate:
+      raise exceptions.InvalidRequest(10002, "fromDate must be before toDate")
 
   def RESTResourceURL(self, meth, **args):
     meth = meth.lower()
@@ -180,12 +170,18 @@ class DataONEBaseClient(restclient.RESTClient):
       return True
     return False
 
+  @util.str_to_unicode
   def get(self, pid, vendorSpecific=None):
-    '''Implements CRUD.get()
+    '''Wrap the CNRead.get() and MNRead.get() DataONE REST calls.
+
+    Retrieves the object identified by pid from the node.
     
     :param pid: Identifier
-    :returns: HTTPResponse instance, a file like object that supports read().
-    :return type: HTTPResponse
+    :type pid: string containing ASCII or UTF-8 | unicode string
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: The bytes of the object, wrapped in a HTTPResponse instance.
+    :return type: HTTPResponse, a file like object that supports read()
     '''
     url = self.RESTResourceURL('get', pid=pid)
     self.logger.info("URL = %s" % url)
@@ -194,12 +190,23 @@ class DataONEBaseClient(restclient.RESTClient):
       headers.update(vendorSpecific)
     return self.GET(url, headers=headers)
 
+  @util.str_to_unicode
   def getSystemMetadataResponse(self, pid, vendorSpecific=None):
-    '''Implements the MN getSystemMetadata call, returning a HTTPResponse 
-    object. See getSystemMetada() for method that returns a deserialized
-    system metadata object.
+    '''Wraps the CNRead.getSystemMetadata() and MNRead.getSystemMetadata()
+    calls.
     
-    :return type: HTTPResponse
+    Returns the system metadata that contains DataONE specific information about
+    the object identified by pid.
+    
+    :param pid: Identifier
+    :type pid: string containing ASCII or UTF-8 | unicode string
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Serialized system metadata object.
+    :return type: SystemMetadata in HTTPResponse
+
+    See getSystemMetadata() for method that returns a deserialized system
+    metadata object.
     '''
     url = self.RESTResourceURL('getSystemMetadata', pid=pid)
     self.logger.info("URL = %s" % url)
@@ -208,17 +215,22 @@ class DataONEBaseClient(restclient.RESTClient):
       headers.update(vendorSpecific)
     return self.GET(url, headers=headers)
 
+  @util.str_to_unicode
   def getSystemMetadata(self, pid, vendorSpecific=None):
     '''
-    :return type: SystemMetadata
+    See getSystemMetadataResponse()
+    
+    :returns: System metadata object.
+    :return type: PyXB SystemMetadata
     '''
     res = self.getSystemMetadataResponse(pid, vendorSpecific=vendorSpecific)
     format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
     doc = res.read()
     if self.keep_response_body:
       self.lastresponse.body = doc
-    return systemmetadata.CreateFromDocument(doc, )
+    return dataoneTypes.CreateFromDocument(doc)
 
+  @util.str_to_unicode
   def listObjectsResponse(
     self,
     startTime=None,
@@ -229,9 +241,32 @@ class DataONEBaseClient(restclient.RESTClient):
     count=const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
   ):
+    '''Wrap the MNRead.listObjects() REST call.
+    
+    Retrieve the list of objects present on the MN that match the calling
+    parameters.
+    
+    :param startTime: Restrict result to objects created at or after date.
+    :type startTime: DateTime
+    :param endTime: Restrict result to objects created before date.
+    :type endTime: DateTime
+    :param objectFormat: Restrict results to the specified object format.
+    :type objectFormat: string containing ASCII or UTF-8 | unicode string
+    :param replicaStatus: Restrict result to objects which have been replicated.
+    :type replicaStatus: bool
+    :param start: Skip to location in the result set (slice).
+    :type start: int
+    :param count: Restrict number of returned entries (slice).
+    :type count: int
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Serialized list of objects.
+    :return type: ObjectList in HTTPResponse
+
+    See listObjects() for a method that returns a deserialized ObjectList.
     '''
-    :return type: HTTPResponse
-    '''
+    self._slice_sanity_check(start, count)
+    self._date_span_sanity_check(startTime, endTime)
     url = self.RESTResourceURL('listObjects')
     url_params = {}
     if startTime is not None:
@@ -251,6 +286,7 @@ class DataONEBaseClient(restclient.RESTClient):
       headers.update(vendorSpecific)
     return self.GET(url, url_params=url_params, headers=headers)
 
+  @util.str_to_unicode
   def listObjects(
     self,
     startTime=None,
@@ -261,27 +297,11 @@ class DataONEBaseClient(restclient.RESTClient):
     count=const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
   ):
+    '''See listObjectsResponse()
+    
+    :returns: List of objects
+    :return type: PyXB ObjectList.
     '''
-    :return type: ObjectList
-    '''
-    # Sanity.
-    url_params = {}
-    if start < 0:
-      raise exceptions.InvalidRequest(10002, "'start' must be a positive integer")
-    try:
-      if count < 0:
-        raise ValueError
-      if count > const.MAX_LISTOBJECTS:
-        raise ValueError
-    except ValueError:
-      raise exceptions.InvalidRequest(
-        10002,
-        "'count' must be an integer between 1 and {0}".format(const.MAX_LISTOBJECTS)
-      )
-
-    if endTime is not None and startTime is not None and startTime >= endTime:
-      raise exceptions.InvalidRequest(10002, "startTime must be before endTime")
-
     res = self.listObjectsResponse(
       startTime=startTime,
       endTime=endTime,
@@ -291,51 +311,76 @@ class DataONEBaseClient(restclient.RESTClient):
       count=count,
       vendorSpecific=vendorSpecific
     )
-    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    serializer = objectlist_serialization.ObjectList()
     doc = res.read()
     if self.keep_response_body:
       self.lastresponse.body = doc
-    return serializer.deserialize(doc, format)
+    return dataoneTypes.CreateFromDocument(doc)
 
+  @util.str_to_unicode
   def getLogRecordsResponse(
     self,
     fromDate,
     toDate=None,
     event=None,
     start=0,
-    count=1000,
+    count=const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
   ):
+    '''Wrap CNCore.getLogRecords() and MNCore.getLogRecords(). 
+    
+    Retrieve the list of log records that match the calling parameters.
+    
+    :param fromDate: Restrict result to events that occurred at or after date.
+    :type fromDate: DateTime
+    :param toDate: Restrict result to events that occurred before date.
+    :type fromDate: DateTime
+    :param objectFormat: Restrict results to events concerning the specified
+    object format.
+    :type objectFormat: string containing ASCII or UTF-8 | unicode string
+    :param start: Skip to location in the result set (slice).
+    :type start: int
+    :param count: Restrict number of returned entries (slice).
+    :type count: int
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Serialized log records.
+    :return type: Log in HTTPResponse
+
+    See getLogRecords() for a method that returns a deserialized Log.
     '''
-    :return type: HTTPResponse
-    '''
+    self._slice_sanity_check(start, count)
+    self._date_span_sanity_check(fromDate, toDate)
     url = self.RESTResourceURL('getlogrecords')
     url_params = {'fromDate': fromDate}
     if not toDate is None:
       url_params['toDate'] = toDate
     if not event is None:
       url_params['event'] = event
-    url_params['start'] = start
-    url_params['count'] = count
+    if start is not None:
+      url_params['start'] = str(int(start))
+    if count is not None:
+      url_params['count'] = str(int(count))
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
     return self.GET(url, url_params=url_params, headers=headers)
 
+  @util.str_to_unicode
   def getLogRecords(
     self,
     fromDate,
     toDate=None,
     event=None,
     start=0,
-    count=1000,
+    count=const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
   ):
+    '''See getLogRecordsResponse()
+    
+    :returns: Log records.
+    :return type: PyXB Log.
     '''
-    :return type: LogRecords
-    '''
-    response = self.getLogRecordsResponse(
+    res = self.getLogRecordsResponse(
       fromDate,
       toDate=toDate,
       event=event,
@@ -343,16 +388,18 @@ class DataONEBaseClient(restclient.RESTClient):
       count=count,
       vendorSpecific=vendorSpecific
     )
-
-    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = logrecords_serialization.LogRecords()
-    doc = response.read()
+    doc = res.read()
     if self.keep_response_body:
       self.lastresponse.body = doc
-    return deser.deserialize(doc, format)
+    return dataoneTypes.CreateFromDocument(doc)
 
   def ping(self, vendorSpecific=None):
-    '''
+    '''Wrap MNCore.Ping()
+        
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+
+    :returns: 200 OK.
     :return type: Boolean
     '''
     url = self.RESTResourceURL('ping')
@@ -371,23 +418,19 @@ class DataONEBaseClient(restclient.RESTClient):
       return True
     return False
 
-  def getStatusResponse(self, vendorSpecific=None):
-    '''
-    :return type: HTTPResponse
-    '''
-    url = self.RESTResourceURL('status')
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    return self.GET(url, headers=headers)
-
-  def getStatus(self, vendorSpecific=None):
-    '''TODO: When the StatusResponse object is defined, this will return a
-    deserialized version of that object.
-    '''
-    raise Exception('Not Implemented')
-
   def listNodesResponse(self, vendorSpecific=None):
+    '''Wrap CNCore.listNodes().
+    
+    Returns a list of nodes that have been registered with the DataONE
+    infrastructure.
+    
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Serialized list of nodes.
+    :return type: NodeList in HTTPResponse
+
+    See listNodes() for a method that returns a deserialized NodeList.
+    '''
     url = self.RESTResourceURL('listnodes')
     headers = {}
     if vendorSpecific is not None:
@@ -396,18 +439,22 @@ class DataONEBaseClient(restclient.RESTClient):
     return response
 
   def listNodes(self, vendorSpecific=None):
+    '''See listNodesResponse()
+    
+    :returns: List of nodes.
+    :return type: PyXB NodeList.
+    '''
     res = self.listNodesResponse(vendorSpecific=vendorSpecific)
-    format = res.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = nodelist_serialization.NodeList()
     doc = res.read()
     if self.keep_response_body:
       self.lastresponse.body = doc
-    return deser.deserialize(doc, format)
+    return dataoneTypes.CreateFromDocument(doc)
 
   # ----------------------------------------------------------------------------  
   # Authentication and authorization.
   # ----------------------------------------------------------------------------
 
+  @util.str_to_unicode
   def assertAuthorizedResponse(self, pid, action, vendorSpecific=None):
     '''MN_auth.assertAuthorized(pid, action) -> Boolean
 
@@ -430,6 +477,7 @@ class DataONEBaseClient(restclient.RESTClient):
       headers.update(vendorSpecific)
     return self.GET(url, url_params=url_params, headers=headers)
 
+  @util.str_to_unicode
   def assertAuthorized(self, pid, access, vendorSpecific=None):
     '''
     '''
@@ -438,6 +486,7 @@ class DataONEBaseClient(restclient.RESTClient):
       self.lastresponse.body = response.read()
     return self.isHttpStatusOK(response.status)
 
+  @util.str_to_unicode
   def setAccessPolicyResponse(self, pid, accessPolicy, vendorSpecific=None):
     '''MN_auth.setAccessPolicy(pid, accessPolicy) -> Boolean
 
@@ -450,22 +499,23 @@ class DataONEBaseClient(restclient.RESTClient):
     :return type: Boolean
     '''
     # Serialize AccessPolicy object to XML.
-    access_policy_serializer = accesspolicy_serialization.AccessPolicy()
-    access_policy_serializer.access_policy = accessPolicy
-    accesspolicy_doc, content_type = \
-      access_policy_serializer.serialize('text/xml')
+    access_policy_xml = accessPolicy.toxml()
     # PUT.
     url = self.RESTResourceURL('setaccesspolicy', pid=pid)
     self.logger.info("URL = %s" % url)
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
-    files = [('accesspolicy', 'content.bin', accesspolicy_doc), ]
+    files = [('accesspolicy', 'content.bin', access_policy_xml), ]
     # TODO: Change to PUT when Django PUT issue if fixed.
     return self.POST(url, files=files, headers=headers)
 
+  @util.str_to_unicode
   def setAccessPolicy(self, pid, accessPolicy, vendorSpecific=None):
     '''
+        :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+
     '''
     response = self.setAccessPolicyResponse(
       pid, accessPolicy, vendorSpecific=vendorSpecific

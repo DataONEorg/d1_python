@@ -22,7 +22,7 @@
 ==========================================
 
 :Created: 2011-01-27
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''

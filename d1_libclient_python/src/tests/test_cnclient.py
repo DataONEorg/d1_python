@@ -24,7 +24,7 @@
 Unit tests for cnclient.
 
 :Created: 2011-01-20
-:Author: DataONE (vieglais)
+:Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
 '''

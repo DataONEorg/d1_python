@@ -22,28 +22,29 @@
 ============================
 
 :Created: 2011-01-21
-:Author: DataONE (vieglais, dahl)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 
 This module implements MemberNodeClient, which extends DataONEBaseClient
 with functionality specific to Member Nodes.
 '''
+
+# Stdlib.
 import logging
 import urlparse
+
+# D1.
 from d1_common import const
 from d1_common import util
 from d1baseclient import DataONEBaseClient
-from d1_common.types import checksum_serialization
-from d1_common.types import monitorlist_serialization
-from d1_common.types import nodelist_serialization
-from d1_common.types import pid_serialization
 import objectlistiterator
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 
 class MemberNodeClient(DataONEBaseClient):
   def __init__(self, baseurl, defaultHeaders={}, timeout=10, keyfile=None,
-               certfile=None, strictHttps=True):
+               certfile=None, strictHttps=True, keep_response_body=False):
     DataONEBaseClient.__init__(
       self,
       baseurl,
@@ -60,12 +61,15 @@ class MemberNodeClient(DataONEBaseClient):
         'create': u'object/%(pid)s',
         'update': u'object_put/%(pid)s',
         'getchecksum': u'checksum/%(pid)s',
-        'getobjectstatistics': u'monitor/object',
-        'getoperationstatistics': u'monitor/event',
         'getcapabilities': u'node',
       }
     )
+    self.lastresponse = None
+    # Set this to True to preserve a copy of the last response.read() as the
+    # body attribute of self.lastresponse
+    self.keep_response_body = keep_response_body
 
+  @util.str_to_unicode
   def createResponse(self, pid, obj, sysmeta, vendorSpecific=None):
     '''
     Create a Science Object.
@@ -76,6 +80,9 @@ class MemberNodeClient(DataONEBaseClient):
     :type obj: String or File Like Object
     :param sysmeta: System Metadata for the object being created.
     :type sysmeta: PyXB SystemMetadata
+        :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+
     :returns: Unprocessed response from server.
     :return type: httplib.HTTPResponse 
     '''
@@ -89,15 +96,17 @@ class MemberNodeClient(DataONEBaseClient):
     # that will be POSTed to the server.
     files = [
       ('object', 'content.bin', obj),
-      ('sysmeta', 'systemmetadata.xml', sysmeta_xml),
+      ('sysmeta', 'systemmetadata.abc', sysmeta_xml.encode('utf-8')),
     ]
     # Generate MIME multipart document and post to server.
     return self.POST(url, files=files, headers=headers)
 
+  @util.str_to_unicode
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
     response = self.createResponse(pid, obj, sysmeta, vendorSpecific=vendorSpecific)
     return self.isHttpStatusOK(response.status)
 
+  @util.str_to_unicode
   def updateResponse(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
     '''
     :param pid: The identifier of the object that is being updated 
@@ -110,6 +119,8 @@ class MemberNodeClient(DataONEBaseClient):
     :type new_pid: Identifier
     :param sysmeta:
     :type: sysmeta: Unicode or file like object
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
     :returns: True on successful completion
     :return type: Boolean
     '''
@@ -123,6 +134,7 @@ class MemberNodeClient(DataONEBaseClient):
     # /object_put. Change when PUT support in Django is fixed.
     return self.POST(url, files=files, headers=headers)
 
+  @util.str_to_unicode
   def update(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
     response = self.updateResponse(
       pid, obj, new_pid, sysmeta,
@@ -130,8 +142,11 @@ class MemberNodeClient(DataONEBaseClient):
     )
     return self.isHttpStatusOK(response.status)
 
+  @util.str_to_unicode
   def deleteResponse(self, pid, vendorSpecific=None):
     '''Delete a SciObj from MN.
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
     '''
     url = self.RESTResourceURL('get', pid=pid)
     headers = {}
@@ -140,13 +155,20 @@ class MemberNodeClient(DataONEBaseClient):
     response = self.DELETE(url, headers=headers)
     return response
 
+  @util.str_to_unicode
   def delete(self, pid, vendorSpecific=None):
     response = self.deleteResponse(pid, vendorSpecific=vendorSpecific)
-    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = pid_serialization.Identifier()
-    return deser.deserialize(response.read(), format)
+    doc = response.read()
+    if self.keep_response_body:
+      self.lastresponse.body = doc
+    return dataoneTypes.CreateFromDocument(doc)
 
+  @util.str_to_unicode
   def getChecksumResponse(self, pid, checksumAlgorithm=None, vendorSpecific=None):
+    '''
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    '''
     url = self.RESTResourceURL('getchecksum', pid=pid)
     url_params = {'checksumAgorithm': checksumAlgorithm, }
     headers = {}
@@ -155,20 +177,21 @@ class MemberNodeClient(DataONEBaseClient):
     response = self.GET(url, url_params=url_params, headers=headers)
     return response
 
+  @util.str_to_unicode
   def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
     response = self.getChecksumResponse(
       pid, checksumAlgorithm, vendorSpecific=vendorSpecific
     )
-    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = checksum_serialization.Checksum('<dummy>')
     doc = response.read()
     if self.keep_response_body:
       self.lastresponse.body = doc
-    return deser.deserialize(doc, format)
+    return dataoneTypes.CreateFromDocument(doc)
 
+  @util.str_to_unicode
   def replicate(self, sysmeta, sourceNode, vendorSpecific=None):
     raise Exception('Not Implemented')
 
+  @util.str_to_unicode
   def synchronizationFailed(self, message):
     raise Exception('Not Implemented')
 
@@ -180,15 +203,22 @@ class MemberNodeClient(DataONEBaseClient):
     return self.GET(url, headers=headers)
 
   def getCapabilities(self, vendorSpecific=None):
+    '''
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    '''
     response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
-    format = response.getheader('content-type', const.DEFAULT_MIMETYPE)
-    deser = nodelist_serialization.NodeList()
     doc = response.read()
     if self.keep_response_body:
       self.lastresponse.body = doc
-    return deser.deserialize(doc, format)
+    return dataoneTypes.CreateFromDocument(doc)
 
+  @util.str_to_unicode
   def describeResponse(self, pid, vendorSpecific=None):
+    '''
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    '''
     url = self.RESTResourceURL('get', pid=pid)
     headers = {}
     if vendorSpecific is not None:
@@ -196,6 +226,7 @@ class MemberNodeClient(DataONEBaseClient):
     response = self.HEAD(url, headers=headers)
     return response
 
+  @util.str_to_unicode
   def describe(self, pid, vendorSpecific=None):
     '''This method provides a lighter weight mechanism than
     MN_crud.getSystemMetadata() for a client to determine basic properties of
