@@ -200,13 +200,19 @@ class DataONECLI():
 
     sysmeta = self._gen_sysmeta(pid, size, md5)
 
-    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['mn_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
 
     try:
-      client.create(pid, scidata_file, sysmeta)
+      response = client.createResponse(pid, scidata_file, sysmeta)
     except:
       logging.error('Create failed')
       raise
+
+    print response.read()
 
   def get(self):
     '''Use Case 01 - Get Object Identified by GUID.
@@ -220,7 +226,11 @@ class DataONECLI():
     pid = self.args[0]
 
     # Get
-    client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['dataone_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
 
     sci_obj = client.get(pid)
 
@@ -238,7 +248,11 @@ class DataONECLI():
     pid = self.args[0]
 
     # Get SysMeta.
-    client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['dataone_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
     sci_meta = client.getSystemMetadata(pid)
     sci_meta_xml = sci_meta.toxml()
 
@@ -262,8 +276,8 @@ class DataONECLI():
     # Get
     client = d1_client.mnclient.MemberNodeClient(
       self.opts['dataone_url'],
-      certfile=opts_dict['cert_path'],
-      keyfile=opts_dict['key_path']
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
     )
     sci_meta = client.getSystemMetadata(pid)
 
@@ -293,7 +307,11 @@ class DataONECLI():
     pid = self.args[0]
 
     # Get
-    client = d1_client.cnclient.CoordinatingNodeClient(baseurl=self.opts['dataone_url'])
+    client = d1_client.cnclient.CoordinatingNodeClient(
+      baseurl=self.opts['dataone_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
 
     object_location_list = client.resolve(pid)
 
@@ -311,7 +329,11 @@ class DataONECLI():
       )
       return
 
-    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['mn_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
 
     object_list = client.listObjects(
       startTime=self.opts['start_time'],
@@ -345,7 +367,11 @@ class DataONECLI():
       )
       return
 
-    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['mn_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
 
     object_list = client.getLogRecords(
       fromDate=self.opts['start_time'],
@@ -375,7 +401,11 @@ class DataONECLI():
       logging.error('Usage: objectformats')
       return
 
-    client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['mn_url'],
+      certfile=self.opts['cert_path'],
+      keyfile=self.opts['key_path']
+    )
 
     object_list = d1_client.objectlistiterator.ObjectListIterator(client)
 
