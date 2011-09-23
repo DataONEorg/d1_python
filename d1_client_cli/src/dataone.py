@@ -53,6 +53,7 @@ import uuid
 import xml.dom.minidom
 
 # 3rd party.
+import pyxb
 
 # If this was checked out as part of the MN service, the libraries can be found here.
 sys.path.append(
@@ -69,7 +70,7 @@ sys.path.append(
 try:
   import d1_common.mime_multipart
   import d1_common.types.exceptions
-  import d1_common.types.objectlist_serialization
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
@@ -120,7 +121,7 @@ def log_setup():
 class MNException(Exception):
   pass
 
-#------------------------------------------------------------------------------
+#===============================================================================
 
 
 class DataONECLI():
@@ -140,6 +141,21 @@ class DataONECLI():
       'objectformats': self.objectformats,
       'resolve': self.resolve,
     }
+
+  def _gen_sysmeta(self, pid, size, md5):
+    sysmeta = dataoneTypes.systemMetadata()
+    sysmeta.identifier = pid
+    sysmeta.fmtid = self.opts['sysmeta_object_format']
+    sysmeta.size = size
+    sysmeta.submitter = self.opts['sysmeta_submitter']
+    sysmeta.rightsHolder = self.opts['sysmeta_rightsholder']
+    sysmeta.checksum = dataoneTypes.checksum(md5)
+    sysmeta.checksum.algorithm = 'MD5'
+    sysmeta.dateUploaded = datetime.datetime.now()
+    sysmeta.dateSysMetadataModified = datetime.datetime.now()
+    sysmeta.originMemberNode = self.opts['sysmeta_origin_member_node']
+    sysmeta.authoritativeMemberNode = self.opts['sysmeta_authoritative_member_node']
+    return sysmeta
 
   def output(self, flo):
     # If no output file is specified, dump to stdout.
@@ -161,34 +177,14 @@ class DataONECLI():
     '''Use Case 04 - Create New Object.
     '''
 
-    if len(self.args) != 4:
+    if len(self.args) != 2:
       logging.error('Invalid arguments')
-      logging.error(
-        'Usage: create <identifier> <system metadata path> <science metadata path> <science data path>'
-      )
+      logging.error('Usage: create <pid> <science data path>')
       return
 
-    # create <identifier> <system metadata path> <science metadata path> <science data path>
-    identifier = self.args[0]
-    sysmeta_path = self.args[1]
-    scimeta_path = self.args[2]
-    scidata_path = self.args[3]
-
-    try:
-      sysmeta_file = open(sysmeta_path, 'r')
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not open System Metadata file: {0}\n'.format(sysmeta_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      logging.error('Create failed: {0}'.format(err_msg))
-      return
-
-    try:
-      scimeta_file = open(scimeta_path, 'r')
-    except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not open Science Metadata file: {0}\n'.format(scimeta_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      logging.error('Create failed: {0}'.format(err_msg))
-      return
+    # create <pid> <system metadata path> <science metadata path> <science data path>
+    pid = self.args[0]
+    scidata_path = self.args[1]
 
     try:
       scidata_file = open(scidata_path, 'r')
@@ -198,16 +194,16 @@ class DataONECLI():
       logging.error('Create failed: {0}'.format(err_msg))
       return
 
+    md5 = hashlib.md5(scidata_file.read()).hexdigest()
+    size = scidata_file.tell()
+    scidata_file.seek(0)
+
+    sysmeta = self._gen_sysmeta(pid, size, md5)
+
     client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
 
     try:
-      client.create('<dummy token>', identifier, scimeta_file, sysmeta_file)
-    except:
-      logging.error('Create failed')
-      raise
-
-    try:
-      client.create('<dummy token>', identifier, scidata_file, sysmeta_file)
+      client.create(pid, scidata_file, sysmeta)
     except:
       logging.error('Create failed')
       raise
@@ -218,15 +214,15 @@ class DataONECLI():
 
     if len(self.args) != 1:
       logging.error('Invalid arguments')
-      logging.error('Usage: get <identifier>')
+      logging.error('Usage: get <pid>')
       return
 
-    identifier = self.args[0]
+    pid = self.args[0]
 
     # Get
     client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
 
-    sci_obj = client.get('<dummy token>', identifier)
+    sci_obj = client.get(pid)
 
     self.output(sci_obj)
 
@@ -236,14 +232,14 @@ class DataONECLI():
 
     if len(self.args) != 1:
       logging.error('Invalid arguments')
-      logging.error('Usage: get <identifier>')
+      logging.error('Usage: get <pid>')
       return
 
-    identifier = self.args[0]
+    pid = self.args[0]
 
     # Get SysMeta.
     client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
-    sci_meta = client.getSystemMetadata('<dummy token>', identifier)
+    sci_meta = client.getSystemMetadata(pid)
     sci_meta_xml = sci_meta.toxml()
 
     if self.opts['pretty']:
@@ -258,14 +254,18 @@ class DataONECLI():
 
     if len(self.args) != 1:
       logging.error('Invalid arguments')
-      logging.error('Usage: related <identifier>')
+      logging.error('Usage: related <pid>')
       return
 
-    identifier = self.args[0]
+    pid = self.args[0]
 
     # Get
-    client = d1_client.mnclient.MemberNodeClient(self.opts['dataone_url'])
-    sci_meta = client.getSystemMetadata('<dummy token>', identifier)
+    client = d1_client.mnclient.MemberNodeClient(
+      self.opts['dataone_url'],
+      certfile=opts_dict['cert_path'],
+      keyfile=opts_dict['key_path']
+    )
+    sci_meta = client.getSystemMetadata(pid)
 
     print 'Describes:'
     if len(sci_meta.describes) > 0:
@@ -287,15 +287,15 @@ class DataONECLI():
 
     if len(self.args) != 1:
       logging.error('Invalid arguments')
-      logging.error('Usage: resolve <identifier>')
+      logging.error('Usage: resolve <pid>')
       return
 
-    identifier = self.args[0]
+    pid = self.args[0]
 
     # Get
     client = d1_client.cnclient.CoordinatingNodeClient(baseurl=self.opts['dataone_url'])
 
-    object_location_list = client.resolve('<dummy token>', identifier)
+    object_location_list = client.resolve(pid)
 
     for object_location in object_location_list.objectLocation:
       print object_location.url
@@ -314,7 +314,6 @@ class DataONECLI():
     client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
 
     object_list = client.listObjects(
-      '<dummy token>',
       startTime=self.opts['start_time'],
       endTime=self.opts['end_time'],
       objectFormat=self.opts['object_format'],
@@ -349,7 +348,6 @@ class DataONECLI():
     client = d1_client.mnclient.MemberNodeClient(self.opts['mn_url'])
 
     object_list = client.getLogRecords(
-      '<dummy token>',
       fromDate=self.opts['start_time'],
       toDate=self.opts['end_time'],
       #start=self.opts['slice_start'],
@@ -475,6 +473,56 @@ def main():
     default='text/xml',
     help='Request serialization format for response from server'
   )
+  # Auth
+  parser.add_option(
+    '--cert-path',
+    dest='cert_path',
+    action='store',
+    type='string',
+    default=''
+  )
+  parser.add_option(
+    '--key-path', dest='key_path',
+    action='store',
+    type='string',
+    default=''
+  )
+  # SysMeta.
+  parser.add_option(
+    '--sysmeta-object-format',
+    dest='sysmeta_object_format',
+    action='store',
+    type='string',
+    default=''
+  )
+  parser.add_option(
+    '--sysmeta-submitter',
+    dest='sysmeta_submitter',
+    action='store',
+    type='string',
+    default=''
+  )
+  parser.add_option(
+    '--sysmeta-rightsholder',
+    dest='sysmeta_rightsholder',
+    action='store',
+    type='string',
+    default=''
+  )
+  parser.add_option(
+    '--sysmeta-origin-member-node',
+    dest='sysmeta_origin_member_node',
+    action='store',
+    type='string',
+    default=''
+  )
+  parser.add_option(
+    '--sysmeta-authoritative-member-node',
+    dest='sysmeta_authoritative_member_node',
+    action='store',
+    type='string',
+    default=''
+  )
   # Search filters
   parser.add_option(
     '--start-time',
@@ -542,8 +590,15 @@ def main():
   if not opts.verbose:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  # args[1] is not guaranteed to exist but the slice args[1:] would still be
-  # valid and evaluate to an empty list.
+  # If certificate path was not provided, set it to the path CILogon downloads
+  # certificates to by default.
+  if opts_dict['cert_path'] == '':
+    opts_dict['cert_path'] = '/tmp/x509up_u{0}'.format(os.getuid())
+  if opts_dict['key_path'] == '':
+    key_path = None
+
+    # args[1] is not guaranteed to exist but the slice args[1:] would still be
+    # valid and evaluate to an empty list.
   dataONECLI = DataONECLI(opts_dict, args[1:])
 
   # Sanity.
