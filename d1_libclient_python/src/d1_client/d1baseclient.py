@@ -465,7 +465,7 @@ class DataONEBaseClient(restclient.RESTClient):
     :param action: Action to use for access.
     :type action: String
     :returns:
-      NoneType if access is allowed.
+      HTTP 200 OK with optional body in HttpResponse if access is allowed.
       Raises NotAuthorized if access is not allowed.
     :return type: NoneType
     '''
@@ -479,7 +479,12 @@ class DataONEBaseClient(restclient.RESTClient):
 
   @util.str_to_unicode
   def assertAuthorized(self, pid, access, vendorSpecific=None):
-    '''
+    '''See assertAuthorizedResponse()
+    
+    :returns:
+      True if access is allowed.
+      Raises NotAuthorized if access is not allowed.
+    :return type: bool
     '''
     response = self.assertAuthorizedResponse(pid, access, vendorSpecific=vendorSpecific)
     if self.keep_response_body:
@@ -495,8 +500,9 @@ class DataONEBaseClient(restclient.RESTClient):
     :type pid: Identifier
     :param accessPolicy: The access policy to apply.
     :type accessPolicy: AccessPolicy
-    :returns: Success
-    :return type: Boolean
+    :returns: HTTP 200 OK with optional body in HttpResponse if access is
+    allowed.
+    :return type: NoneType
     '''
     # Serialize AccessPolicy object to XML.
     access_policy_xml = accessPolicy.toxml()
@@ -512,10 +518,10 @@ class DataONEBaseClient(restclient.RESTClient):
 
   @util.str_to_unicode
   def setAccessPolicy(self, pid, accessPolicy, vendorSpecific=None):
-    '''
-        :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-
+    '''See setAccessPolicyResponse()
+    
+    :returns: True if access is allowed.
+    :return type: bool
     '''
     response = self.setAccessPolicyResponse(
       pid, accessPolicy, vendorSpecific=vendorSpecific

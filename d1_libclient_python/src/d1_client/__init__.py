@@ -21,15 +21,16 @@
 '''
 '''
 
-__version__ = "0.5"
+__version__ = "1.0"
 
 __all__ = [
-  'client',
   'cnclient',
+  'd1baseclient',
   'd1client',
   'logrecorditerator',
   'mnclient',
   'objectlistiterator',
-  'restclient',
+  'solrclient',
+  'svnrevision',
   'systemmetadata',
 ]

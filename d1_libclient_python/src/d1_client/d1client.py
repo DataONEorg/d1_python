@@ -35,16 +35,23 @@ This module implements:
   - python 2.6
 '''
 
+# Stdlib.
 import logging
+import time
 import urlparse
+
+# D1.
 from d1_common import const
 from d1_common.types import exceptions
+from d1_common import util
 import cnclient
 import mnclient
 import objectlistiterator
-import time
 
-MAX_CACHE_AGE = 60 #seconds data remains in cache
+# Config.
+
+# Seconds data remains in cache.
+MAX_CACHE_AGE = 60
 
 
 class DataONEObject(object):
@@ -77,6 +84,12 @@ class DataONEObject(object):
 
   def getLocations(self, forcenew=False):
     '''Retrieve a list of node base urls known to hold a copy of this object.
+    
+    :param forcenew: The locations are cached. This causes the cache to be
+    refreshed.
+    :type forcenew: bool
+    :returns: List of object locations. 
+    :return type: PyXB ObjectLocationList.
     '''
     if len(self._locations) < 1 or forcenew:
       cli = self._getClient()
@@ -84,6 +97,13 @@ class DataONEObject(object):
     return self._locations
 
   def getSystemMetadata(self, forcenew=False):
+    '''
+    :param forcenew: The system metadata objects are cached. This causes the
+    cache to be refreshed.
+    :type forcenew: bool
+    :returns: List of object locations. 
+    :return type: PyXB ObjectLocationList.
+    '''
     if self._systemmetadata is None or forcenew:
       cli = self._getClient()
       self._systemmetadata = cli.getSystemMetadata(self.pid)
@@ -99,9 +119,13 @@ class DataONEObject(object):
       self._relations_t = t
     return self._relations
 
-  def load(self, outstr):
-    '''Persist a copy of the bytes of this object to outstr, which is a 
-    file like object open for writing.
+  def save(self, out_flo):
+    '''Persist a copy of the bytes of this object.
+    
+    :param out_flo: file like object open for writing.
+    :type out_flo: File Like Object
+    :returns: None
+    :return type: NoneType
     '''
     cli = self._getClient()
     instr = cli.get(self.pid)
@@ -110,13 +134,6 @@ class DataONEObject(object):
       if not data:
         return
       outstr.write(data)
-
-  def save(self, filename):
-    '''Save the object to a local file
-    '''
-    outstr = file(filename, "wb")
-    self.realize(outstr)
-    outstr.close()
 
   def get(self):
     cli = self._getClient()
@@ -127,6 +144,9 @@ class DataONEObject(object):
 
 class DataONEClient(object):
   def __init__(self, cnBaseUrl=const.URL_DATAONE_ROOT, credentials={}):
+    '''DataONEClient, which uses CN- and MN clients to perform high level
+    operations against the DataONE infrastructure.
+    '''
     self.cnBaseUrl = cnBaseUrl
     self.cn = None
     self.mn = None
