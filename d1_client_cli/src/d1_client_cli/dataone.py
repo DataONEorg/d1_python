@@ -61,7 +61,7 @@ sys.path.append(
     os.path.join(
       os.path.dirname(
         __file__
-      ), '../../mn_prototype/'
+      ), '../../../mn_service/mn_prototype/'
     )
   )
 )
@@ -169,7 +169,9 @@ class DataONECLI():
     sysmeta.identifier = pid
     sysmeta.fmtid = self.opts['sysmeta_object_format']
     sysmeta.size = size
-    sysmeta.submitter = '<dummy>' #TODO: Mandatory but should be set by MN
+    #sysmeta.submitter = '<dummy>' #TODO: Mandatory but should be set by MN
+    sysmeta.submitter = self.opts['sysmeta_submitter'
+                                  ] #TODO: Mandatory but should be set by MN
     sysmeta.rightsHolder = self.opts['sysmeta_rightsholder']
     sysmeta.checksum = dataoneTypes.checksum(md5)
     sysmeta.checksum.algorithm = 'MD5'
@@ -177,7 +179,7 @@ class DataONECLI():
     ) #TODO: Mandatory but should be set by MN
     sysmeta.dateSysMetadataModified = datetime.datetime.now(
     ) #TODO: Mandatory but should be set by MN
-    #sysmeta.originMemberNode = self.opts['sysmeta_origin_member_node']
+    sysmeta.originMemberNode = self.opts['sysmeta_origin_member_node']
     sysmeta.authoritativeMemberNode = \
       self.opts['sysmeta_authoritative_member_node']
     sysmeta.accessPolicy = dataoneTypes.CreateFromDocument(

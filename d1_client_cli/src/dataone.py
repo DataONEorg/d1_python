@@ -61,7 +61,7 @@ sys.path.append(
     os.path.join(
       os.path.dirname(
         __file__
-      ), '../../mn_prototype/'
+      ), '../../../mn_service/mn_prototype/'
     )
   )
 )
@@ -142,19 +142,49 @@ class DataONECLI():
       'resolve': self.resolve,
     }
 
+  def _check_for_missing_sysmeta_params(self):
+    sysmeta_params = [
+      ('--sysmeta-object-format', 'sysmeta_object_format'),
+      #      ('--sysmeta-submitter', 'sysmeta_submitter'),
+      ('--sysmeta-rightsholder', 'sysmeta_rightsholder'),
+      #      ('--sysmeta-origin-member-node', 'sysmeta_origin_member_node'),
+      ('--sysmeta-authoritative-member-node', 'sysmeta_authoritative_member_node'),
+    ]
+    missing_params = []
+    for s in sysmeta_params:
+      if self.opts[s[1]] is None:
+        missing_params.append(s[0])
+    if len(missing_params):
+      logging.error(
+        'Missing system metadata parameters: {0}'.format(
+          ', '.join(missing_params)
+        )
+      )
+      exit()
+
   def _gen_sysmeta(self, pid, size, md5):
+    self._check_for_missing_sysmeta_params()
+
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.identifier = pid
     sysmeta.fmtid = self.opts['sysmeta_object_format']
     sysmeta.size = size
-    sysmeta.submitter = self.opts['sysmeta_submitter']
+    #sysmeta.submitter = '<dummy>' #TODO: Mandatory but should be set by MN
+    sysmeta.submitter = self.opts['sysmeta_submitter'
+                                  ] #TODO: Mandatory but should be set by MN
     sysmeta.rightsHolder = self.opts['sysmeta_rightsholder']
     sysmeta.checksum = dataoneTypes.checksum(md5)
     sysmeta.checksum.algorithm = 'MD5'
-    sysmeta.dateUploaded = datetime.datetime.now()
-    sysmeta.dateSysMetadataModified = datetime.datetime.now()
+    sysmeta.dateUploaded = datetime.datetime.now(
+    ) #TODO: Mandatory but should be set by MN
+    sysmeta.dateSysMetadataModified = datetime.datetime.now(
+    ) #TODO: Mandatory but should be set by MN
     sysmeta.originMemberNode = self.opts['sysmeta_origin_member_node']
-    sysmeta.authoritativeMemberNode = self.opts['sysmeta_authoritative_member_node']
+    sysmeta.authoritativeMemberNode = \
+      self.opts['sysmeta_authoritative_member_node']
+    sysmeta.accessPolicy = dataoneTypes.CreateFromDocument(
+      self.opts['sysmeta_access_policy']
+    )
     return sysmeta
 
   def output(self, flo):
@@ -212,7 +242,7 @@ class DataONECLI():
       logging.error('Create failed')
       raise
 
-    print response.read()
+    logging.debug(response.read())
 
   def get(self):
     '''Use Case 01 - Get Object Identified by GUID.
@@ -509,13 +539,14 @@ def main():
     dest='cert_path',
     action='store',
     type='string',
-    default=''
+    default=None
   )
   parser.add_option(
-    '--key-path', dest='key_path',
+    '--key-path',
+    dest='key_path',
     action='store',
     type='string',
-    default=''
+    default=None
   )
   # SysMeta.
   parser.add_option(
@@ -523,36 +554,44 @@ def main():
     dest='sysmeta_object_format',
     action='store',
     type='string',
-    default=''
+    default=None
   )
   parser.add_option(
     '--sysmeta-submitter',
     dest='sysmeta_submitter',
     action='store',
     type='string',
-    default=''
+    default=None
   )
   parser.add_option(
     '--sysmeta-rightsholder',
     dest='sysmeta_rightsholder',
     action='store',
     type='string',
-    default=''
+    default=None
   )
   parser.add_option(
     '--sysmeta-origin-member-node',
     dest='sysmeta_origin_member_node',
     action='store',
     type='string',
-    default=''
+    default=None
   )
   parser.add_option(
     '--sysmeta-authoritative-member-node',
     dest='sysmeta_authoritative_member_node',
     action='store',
     type='string',
-    default=''
+    default=None
   )
+  parser.add_option(
+    '--sysmeta-access-policy',
+    dest='sysmeta_access_policy',
+    action='store',
+    type='string',
+    default=None
+  )
+
   # Search filters
   parser.add_option(
     '--start-time',
@@ -618,17 +657,42 @@ def main():
   # ./dataone.py objectformats --verbose --mn_url=http://dataone.org/mn
 
   if not opts.verbose:
-    logging.getLogger('').setLevel(logging.ERROR)
+    logging.getLogger('').setLevel(logging.DEBUG)
 
-  # If certificate path was not provided, set it to the path CILogon downloads
-  # certificates to by default.
-  if opts_dict['cert_path'] == '':
+  # If cert path was not provided, set it to the path CILogon downloads certs to
+  # by default.
+  if opts_dict['cert_path'] is None:
     opts_dict['cert_path'] = '/tmp/x509up_u{0}'.format(os.getuid())
-  if opts_dict['key_path'] == '':
-    key_path = None
 
-    # args[1] is not guaranteed to exist but the slice args[1:] would still be
-    # valid and evaluate to an empty list.
+  # Tell user which cert is being used.
+  if os.path.exists(opts_dict['cert_path']):
+    logging.info('Using certificate: {0}'.format(opts_dict['cert_path']))
+  else:
+    logging.error('Could not find certificate: {0}'.format(opts_dict['cert_path']))
+    exit()
+
+    # Create access policy for public if access policy was not provided.
+  if opts_dict['sysmeta_access_policy'] is None:
+    access_policy = dataoneTypes.accessPolicy()
+    access_rule = dataoneTypes.AccessRule()
+    access_rule.subject.append(d1_common.const.SUBJECT_PUBLIC)
+    permission = dataoneTypes.Permission('read')
+    access_rule.permission.append(permission)
+    #access_rule.resource.append('<dummy. field will be removed>')
+    access_policy.append(access_rule)
+    opts_dict['sysmeta_access_policy'] = access_policy.toxml()
+    print opts_dict['sysmeta_access_policy']
+    logging.info('Access policy defaulted to public')
+  else:
+    # Validate access policy.
+    try:
+      dataoneTypes.CreateFromDocument(opts_dict['sysmeta_access_policy'])
+    except pyxb.PyXBError, e:
+      logging.error('Access policy is invalid.\n{0}'.format(str(e)))
+      exit()
+
+  # args[1] is not guaranteed to exist but the slice args[1:] would still be
+  # valid and evaluate to an empty list.
   dataONECLI = DataONECLI(opts_dict, args[1:])
 
   # Sanity.
