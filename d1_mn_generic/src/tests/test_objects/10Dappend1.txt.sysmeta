@@ -1,13 +1,1 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  <identifier>10Dappend1.txt</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
-  <size>2522</size>
-  <checksum algorithm="MD5">3cb179b163153779d8a7ab571a4ea469</checksum>
-  <submitter>test</submitter>
-  <rightsHolder>975@shadily</rightsHolder>
-  <dateUploaded>2010-04-26T07:23:42.494977</dateUploaded>
-  <dateSysMetadataModified>1995-08-25T06:59:00</dateSysMetadataModified>
-  <originMemberNode>MN1</originMemberNode>
-  <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</ns1:systemMetadata>
+<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>10Dappend1.txt</identifier><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><size>2522</size><checksum algorithm="MD5">3cb179b163153779d8a7ab571a4ea469</checksum><submitter>test</submitter><rightsHolder>975@shadily</rightsHolder><dateUploaded>2010-04-26T07:23:42.494977</dateUploaded><dateSysMetadataModified>1995-08-25T06:59:00</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>

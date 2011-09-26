@@ -1,13 +1,1 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  <identifier>Combined_Morocco.xls</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
-  <size>9689088</size>
-  <checksum algorithm="MD5">2ba03acbf7d2c0b17aff00832b82bd7e</checksum>
-  <submitter>test</submitter>
-  <rightsHolder>9810_paranormal</rightsHolder>
-  <dateUploaded>2010-04-26T07:23:42.96777</dateUploaded>
-  <dateSysMetadataModified>1994-06-08T03:13:49</dateSysMetadataModified>
-  <originMemberNode>MN1</originMemberNode>
-  <authoritativeMemberNode>MN1</authoritativeMemberNode>
-</ns1:systemMetadata>
+<?xml version="1.0" ?><ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1"><identifier>Combined_Morocco.xls</identifier><fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid><size>1048576</size><checksum algorithm="MD5">134ae630a636024dad1813c45d7781d3</checksum><submitter>test</submitter><rightsHolder>9810_paranormal</rightsHolder><dateUploaded>2010-04-26T07:23:42.96777</dateUploaded><dateSysMetadataModified>1994-06-08T03:13:49</dateSysMetadataModified><originMemberNode>MN1</originMemberNode><authoritativeMemberNode>MN1</authoritativeMemberNode></ns1:systemMetadata>
