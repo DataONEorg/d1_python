@@ -81,8 +81,9 @@ class exception_handler():
     util.log_exception(10)
     # When debugging from a web browser, returning None returns Django's
     # extremely useful exception page.
-    if settings.DEBUG == True and request.META['HTTP_USER_AGENT'] != \
-                                              d1_common.const.USER_AGENT:
+    if settings.DEBUG == True \
+        and settings.GET_DJANGO_EXCEPTION_IN_BROWSER == True \
+        and request.META['HTTP_USER_AGENT'] != d1_common.const.USER_AGENT:
       return None
     # An MN is required to always return a DataONE exception on errors. If the
     # exception is not a DataONE exception, wrap it in a DataONE exception.

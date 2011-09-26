@@ -46,6 +46,16 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 #   debugging.
 DEBUG = True
 
+# Enable Django exception page for internal errors.
+# * True: GMN will return a Django exception page for internal errors.
+# * False: GMN returns a stack trace in a DataONE ServiceFailure exception for
+#   internal errors.
+# * Only available in debug mode. In production, GMN never returns a Django
+#   exception page.
+GET_DJANGO_EXCEPTION_IN_BROWSER = False
+
+GMN_SERVICE_NAME = 'test_gmn'
+
 # Set log level: DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
 if DEBUG:
   LOG_LEVEL = 'DEBUG'

@@ -79,21 +79,30 @@ class view_handler():
     request.session = dataoneTypes.session()
     request.session.subject = dataoneTypes.subject(d1_common.const.SUBJECT_PUBLIC)
 
+    # TODO: THE CODE BELOW IS WHAT WILL BE USED ONCE THE SESSION OBJECT
+    # OFFICIALLY MOVES INTO A CERTIFICATE EXTENSION.
     # Extract the session object from the client side certificate and
     # store it in the request (for easy access).
-    if 'SSL_CLIENT_CERT' in request.META:
-      session_xml_str = x509_extract_session.extract(request.META['SSL_CLIENT_CERT'])
-      try:
-        request.session = dataoneTypes.CreateFromDocument(session_xml_str)
-      except:
-        raise d1_common.types.exceptions.NotAuthorized(
-          0, 'Invalid session: {0}'.format(request.META['HTTP_VENDOR_OVERRIDE_SESSION'])
-        )
+    #    if 'SSL_CLIENT_CERT' in request.META:
+    #      session_xml_str = x509_extract_session.extract(
+    #        request.META['SSL_CLIENT_CERT'])
+    #      try:
+    #        request.session = dataoneTypes.CreateFromDocument(session_xml_str)
+    #      except:
+    #          raise d1_common.types.exceptions.NotAuthorized(0,
+    #            'Invalid session: {0}'.format(
+    #              request.META['HTTP_VENDOR_OVERRIDE_SESSION']))
+
+    # For now, the principal is stored in the certificate subject. So just
+    # create a session object from that.
+    if 'SSL_CLIENT_S_DN' in request.META:
+      request.session = dataoneTypes.session()
+      request.session.subject = dataoneTypes.subject(request.META['SSL_CLIENT_S_DN'])
 
     if settings.DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
-      # debugging via regular HTTP, a Session string can be passed in by using a
-      # vendor specific extension.
+      # debugging via regular HTTP, a serialized Session object can be passed in
+      # by using a vendor specific extension.
       if 'HTTP_VENDOR_OVERRIDE_SESSION' in request.META:
         try:
           request.session = dataoneTypes.CreateFromDocument(

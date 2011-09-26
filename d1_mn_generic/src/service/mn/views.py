@@ -535,6 +535,58 @@ def access_policy_pid_put(request, pid):
 # Public API: Tier 3: Storage API
 # ------------------------------------------------------------------------------  
 
+def _validate_sysmeta_identifier(pid, sysmeta):
+  if sysmeta.identifier.value() != pid:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'PID in system metadata does not match that of the URL')
+
+  
+def _validate_sysmeta_filesize(request, sysmeta):
+  if sysmeta.size != request.FILES['object'].size:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Object size in system metadata does not match that of the uploaded '
+      'object')
+
+
+def _get_checksum_calculator(sysmeta):
+  try:
+    return hashlib.new(sysmeta.checksum.algorithm)
+  except TypeError:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Checksum algorithm is unsupported: {0}'.format(
+        sysmeta.checksum.algorithm))
+
+def _calculate_object_checksum(request, checksum_calculator):
+  for chunk in request.FILES['object'].chunks():
+    checksum_calculator.update(chunk)
+  return checksum_calculator.hexdigest()
+
+
+def _validate_sysmeta_checksum(request, sysmeta):
+  h = _get_checksum_calculator(sysmeta)
+  c = _calculate_object_checksum(request, h)
+  if sysmeta.checksum.value() != c:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Checksum in system metadata does not match that of the uploaded object')
+    
+  
+def _validate_sysmeta_against_uploaded(request, pid, sysmeta):
+  _validate_sysmeta_identifier(pid, sysmeta)
+  _validate_sysmeta_filesize(request, sysmeta)
+  _validate_sysmeta_checksum(request, sysmeta)
+
+
+def _update_sysmeta_with_mn_values(request, sysmeta):
+  sysmeta.submitter = request.session.subject
+  sysmeta.originMemberNode = settings.GMN_SERVICE_NAME
+  # If authoritativeMemberNode is not specified, set it to this MN.
+  if sysmeta.authoritativeMemberNode is None:
+    sysmeta.authoritativeMemberNode = settings.GMN_SERVICE_NAME
+  now = datetime.datetime.now()
+  sysmeta.dateUploaded = now
+  sysmeta.dateSysMetadataModified = now
+
+
 @lock_pid.for_write
 @auth.assert_authenticated
 def object_pid_post(request, pid):
@@ -570,6 +622,13 @@ def object_pid_post(request, pid):
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidRequest(0,
       'System metadata validation failed: {0}'.format(str(err)))
+
+  # Validating and updating system metadata can be turned off by a vendor
+  # specific extension when GMN is running in debug mode.
+  if settings.DEBUG == False or (settings.DEBUG == True and \
+                                 'HTTP_VENDOR_TEST_OBJECT' not in request.META):
+    _validate_sysmeta_against_uploaded(request, pid, sysmeta)
+    _update_sysmeta_with_mn_values(request, sysmeta)
 
   # Write SysMeta bytes to store.
   sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
@@ -980,10 +1039,7 @@ def test_clear_database(request):
 
 # Unrestricted access in debug mode. Disabled in production.
 def test_delete_all_objects(request):
-  '''
-  Remove all objects from db.
-  
-  TODO: Also remove objects from disk if they are managed.
+  '''Remove all objects from db.
   '''
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
@@ -1011,6 +1067,8 @@ def test_delete_single_object(request, pid):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
+  _delete_object(pid)
+  
   # Log this operation. Event logs are tied to particular objects, so we can't
   # log this event in the event log. Instead, we log it.
   logging.info('client({0}) pid({1}) Deleted object'.format(
@@ -1031,8 +1089,8 @@ def _delete_object(pid):
     raise d1_common.types.exceptions.NotFound(0,
       'Attempted to delete a non-existing object', pid)
 
-  # If the object is wrapped, we only delete the reference. If it's managed, we
-  # delete both the object and the reference.
+  # If the object is wrapped, only delete the reference. If it's managed, delete
+  # both the object and the reference.
 
   try:
     url_split = urlparse.urlparse(sciobj.url)
@@ -1058,10 +1116,14 @@ def _delete_object(pid):
     pass
 
   # Delete the DB entry.
-
+  #
   # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
   # CASCADE. In other words, any objects with foreign keys pointing at the
   # objects to be deleted will be deleted along with them.
+  #
+  # TODO: This causes associated permissions to be deleted, but any subjects
+  # that are no longer needed are not deleted. The orphaned subjects should
+  # not cause any issues and will be reused if they are needed again.
   sciobj.delete()
 
 

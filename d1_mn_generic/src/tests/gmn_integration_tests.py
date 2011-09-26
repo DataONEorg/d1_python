@@ -322,16 +322,16 @@ class TestSequenceFunctions(unittest2.TestCase):
       
       headers = self.session('test_user_1')
       
+      headers.update({'VENDOR_TEST_OBJECT': 1})
+      
       if wrapped:
         vendor_specific = {
-          'vendor_gmn_remote_url': self.opts.obj_url + '/' + \
+          'VENDOR_GMN_REMOTE_URL': self.opts.obj_url + '/' + \
           d1_common.util.encodePathElement(
             d1_common.util.encodePathElement(sysmeta_obj.identifier.value()))
         }
-        print sysmeta_obj.identifier.value()
-        print vendor_specific
         headers.update(vendor_specific)
-                                   
+        
       response = client.createResponse(sysmeta_obj.identifier.value(),
                                        object_file, sysmeta_obj,
                                        vendorSpecific=headers)
@@ -439,16 +439,16 @@ class TestSequenceFunctions(unittest2.TestCase):
         'Couldn\'t find object with pid "{0}"'.format(sysmeta_obj.identifier))
       
       self.assertEqual(object_info.identifier.value(),
-                       sysmeta_obj.identifier.value())
+                       sysmeta_obj.identifier.value(), sysmeta_path)
       self.assertEqual(object_info.fmtid,
-                       sysmeta_obj.fmtid)
+                       sysmeta_obj.fmtid, sysmeta_path)
       self.assertEqual(object_info.dateSysMetadataModified,
-                       sysmeta_obj.dateSysMetadataModified)
-      self.assertEqual(object_info.size, sysmeta_obj.size)
+                       sysmeta_obj.dateSysMetadataModified, sysmeta_path)
+      self.assertEqual(object_info.size, sysmeta_obj.size, sysmeta_path)
       self.assertEqual(object_info.checksum.value(),
-                       sysmeta_obj.checksum.value())
+                       sysmeta_obj.checksum.value(), sysmeta_path)
       self.assertEqual(object_info.checksum.algorithm,
-                       sysmeta_obj.checksum.algorithm)
+                       sysmeta_obj.checksum.algorithm, sysmeta_path)
 
 
   def object_update(self):

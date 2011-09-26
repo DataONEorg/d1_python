@@ -110,3 +110,12 @@ provide the header, install a Firefox extension such as `Modify Headers
 <TODO: Add instructions on how to use the Modify Headers extension to add a
 simulated certificate>
 
+
+Uploading test objects
+~~~~~~~~~~~~~~~~~~~~~~
+
+The create() call accept a :term:`vendor specific extension` called
+VENDOR_TEST_OBJECT. When this parameter is provided, the system metadata for
+the object is accepted without any information being added or overwritten by
+the MN.
+
