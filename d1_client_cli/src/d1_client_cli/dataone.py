@@ -674,6 +674,8 @@ def main():
     )
     exit()
 
+  self.opts['sysmeta_access_policy_obj'] = None
+
   if opts_dict['sysmeta_access_policy_public'] == True:
     access_policy = dataoneTypes.accessPolicy()
     access_rule = dataoneTypes.AccessRule()
