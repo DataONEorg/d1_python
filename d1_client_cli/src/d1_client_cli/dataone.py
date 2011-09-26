@@ -20,12 +20,13 @@
 # limitations under the License.
 '''
 :mod:`dataone`
-=======================
+==============
 
 :Synopsis:
   DataONE Command Line Client
-
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (Dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
@@ -145,9 +146,9 @@ class DataONECLI():
   def _check_for_missing_sysmeta_params(self):
     sysmeta_params = [
       ('--sysmeta-object-format', 'sysmeta_object_format'),
-      #      ('--sysmeta-submitter', 'sysmeta_submitter'),
+      ('--sysmeta-submitter', 'sysmeta_submitter'),
       ('--sysmeta-rightsholder', 'sysmeta_rightsholder'),
-      #      ('--sysmeta-origin-member-node', 'sysmeta_origin_member_node'),
+      ('--sysmeta-origin-member-node', 'sysmeta_origin_member_node'),
       ('--sysmeta-authoritative-member-node', 'sysmeta_authoritative_member_node'),
     ]
     missing_params = []
@@ -182,9 +183,8 @@ class DataONECLI():
     sysmeta.originMemberNode = self.opts['sysmeta_origin_member_node']
     sysmeta.authoritativeMemberNode = \
       self.opts['sysmeta_authoritative_member_node']
-    sysmeta.accessPolicy = dataoneTypes.CreateFromDocument(
-      self.opts['sysmeta_access_policy']
-    )
+    sysmeta.accessPolicy = self.opts['sysmeta_access_policy_obj']
+
     return sysmeta
 
   def output(self, flo):
@@ -204,9 +204,8 @@ class DataONECLI():
       shutil.copyfileobj(flo, sys.stdout)
 
   def create(self):
-    '''Use Case 04 - Create New Object.
+    '''Create New Object on MN.
     '''
-
     if len(self.args) != 2:
       logging.error('Invalid arguments')
       logging.error('Usage: create <pid> <science data path>')
@@ -245,9 +244,8 @@ class DataONECLI():
     logging.debug(response.read())
 
   def get(self):
-    '''Use Case 01 - Get Object Identified by GUID.
+    '''Get Object Identified by PID from MN.
     '''
-
     if len(self.args) != 1:
       logging.error('Invalid arguments')
       logging.error('Usage: get <pid>')
@@ -267,7 +265,7 @@ class DataONECLI():
     self.output(sci_obj)
 
   def meta(self):
-    '''Use Case 37 - Get System Metadata for Object.
+    '''Get System Metadata for Object from MN.
     '''
 
     if len(self.args) != 1:
@@ -469,7 +467,7 @@ def main():
     dest='mn_url',
     action='store',
     type='string',
-    default='http://localhost:8000/',
+    default='https://localhost/mn/',
     help='URL to Member Node'
   )
   parser.add_option(
@@ -477,16 +475,8 @@ def main():
     dest='cn_url',
     action='store',
     type='string',
-    default='http://localhost:8000/cn/',
+    default='https://localhost/cn/',
     help='URL to Coordinating Node'
-  )
-  parser.add_option(
-    '--xsd-path',
-    dest='xsd_url',
-    action='store',
-    type='string',
-    default='http://localhost/schemas/systemmetadata.xsd',
-    help='Location of System Metadata schema'
   )
   parser.add_option(
     '--output',
@@ -591,7 +581,12 @@ def main():
     type='string',
     default=None
   )
-
+  parser.add_option(
+    '--sysmeta-access-policy-public',
+    dest='sysmeta_access_policy_public',
+    action='store_true',
+    default=False
+  )
   # Search filters
   parser.add_option(
     '--start-time',
@@ -671,22 +666,29 @@ def main():
     logging.error('Could not find certificate: {0}'.format(opts_dict['cert_path']))
     exit()
 
-    # Create access policy for public if access policy was not provided.
-  if opts_dict['sysmeta_access_policy'] is None:
+  if opts_dict['sysmeta_access_policy_public'] == True and \
+                                opts_dict['sysmeta_access_policy'] is not None:
+    logging.error(
+      '--sysmeta-access-policy and --sysmeta-access-policy-public'
+      ' are mutually exclusive'
+    )
+    exit()
+
+  if opts_dict['sysmeta_access_policy_public'] == True:
     access_policy = dataoneTypes.accessPolicy()
     access_rule = dataoneTypes.AccessRule()
     access_rule.subject.append(d1_common.const.SUBJECT_PUBLIC)
     permission = dataoneTypes.Permission('read')
     access_rule.permission.append(permission)
-    #access_rule.resource.append('<dummy. field will be removed>')
     access_policy.append(access_rule)
-    opts_dict['sysmeta_access_policy'] = access_policy.toxml()
-    print opts_dict['sysmeta_access_policy']
-    logging.info('Access policy defaulted to public')
-  else:
-    # Validate access policy.
+    opts_dict['sysmeta_access_policy_obj'] = access_policy
+
+  # Validate and deserialize access policy.
+  if opts_dict['sysmeta_access_policy'] is not None:
     try:
-      dataoneTypes.CreateFromDocument(opts_dict['sysmeta_access_policy'])
+      self.opts['sysmeta_access_policy_obj'] = dataoneTypes.CreateFromDocument(
+        opts_dict['sysmeta_access_policy']
+      )
     except pyxb.PyXBError, e:
       logging.error('Access policy is invalid.\n{0}'.format(str(e)))
       exit()
