@@ -172,32 +172,6 @@ class Event_log(models.Model):
     '''
     self.subject = Event_log_subject.objects.get_or_create(subject=subject_string)[0]
 
-
-  # This is easy to solve with a simple tiny wrapper:
-class Callable:
-  def __init__(self, anycallable):
-    self.__call__ = anycallable
-
-# Node information.
-
-
-class Node(models.Model):
-  key = models.CharField(max_length=10, unique=True, db_index=True)
-  val = models.CharField(max_length=100)
-
-  def set(key, val):
-    ''':param:
-    :return:
-    '''
-    try:
-      node = Node.objects.get(key=key)
-    except models.ObjectDoesNotExist:
-      node = Node(key=key)
-    node.val = val
-    node.save()
-
-  set = Callable(set)
-
 # ------------------------------------------------------------------------------
 # MN object replication work queue.
 # ------------------------------------------------------------------------------
