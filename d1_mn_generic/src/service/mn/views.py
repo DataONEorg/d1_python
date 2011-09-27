@@ -289,7 +289,8 @@ def _object_pid_get_remote(request, response, pid, url, url_split):
         'HTTP server error while opening object for proxy. URL: {0} Error: {1}'\
         .format(url, remote_response.status))
   except httplib.HTTPException as e:
-    raise d1_common.types.exceptions.ServiceFailure(0, 'HTTPException while opening object for proxy: {0}'.format(e))
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'HTTPException while opening object for proxy: {0}'.format(e))
 
   # Return the raw bytes of the object.
 
@@ -444,7 +445,6 @@ def object(request):
           'total': query_unsliced.count(), 'type': 'object' }
 
 
-#@lock_pid.for_read
 @auth.assert_trusted_permission
 def error(request):
   '''MNRead.synchronizationFailed(session, message)

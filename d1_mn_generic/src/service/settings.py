@@ -24,7 +24,13 @@
 
 :Synopsis:
   App level settings.
-:Author: DataONE (Dahl)
+  
+  This file contains settings that do not normally need to be modified when
+  installing GMN. See settings_site.py for site specific settings.
+
+:Author:
+  DataONE (Dahl)
+  
 :Dependencies:
   - python 2.6
 '''
@@ -36,93 +42,42 @@ import sys
 # Discover the path of this module
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
-# Member Node configuration.
-
-# Enable debug mode.
-# * Warning: In DEBUG mode, clients can override ALL access control rules. 
-# * Causes Django to return a page with extensive debug information if a bug is
-#   encountered while servicing a request.
-# * Enables GMN functionality that should be accessible only during testing and
-#   debugging.
-DEBUG = True
-
-# Enable Django exception page for internal errors.
-# * True: GMN will return a Django exception page for internal errors.
-# * False: GMN returns a stack trace in a DataONE ServiceFailure exception for
-#   internal errors.
-# * Only available in debug mode. In production, GMN never returns a Django
-#   exception page.
-GET_DJANGO_EXCEPTION_IN_BROWSER = False
-
-GMN_SERVICE_NAME = 'test_gmn'
-
-# Set log level: DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
-if DEBUG:
-  LOG_LEVEL = 'DEBUG'
-else:
-  LOG_LEVEL = 'WARNING'
-
-# TODO: Check this setting.
-TEMPLATE_DEBUG = DEBUG
+# GMN does not use templates in production. However, some of the testing
+# functions use them.
+TEMPLATE_DEBUG = True
 
 # Only set cookies when running through SSL.
 SESSION_COOKIE_SECURE = True
 
+# When DEBUG=False and a view raises an exception, Django will send emails to
+# these addresses with the full exception information.
 ADMINS = (
   # ('<name>', '<email address>'),
 )
 
 MANAGERS = ADMINS
 
-DATABASES = {
-  'default': {
-    # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn',
-    'USER': 'gmn',
-    'PASSWORD': 'gmn',
-    'HOST': '', # Set to empty string for localhost.
-    'PORT': '', # Set to empty string for default.
-  }
-}
-
-# GMN MUST run in the UTC time zone. This is not compatible with running Django
-# under Windows because under Windows, Django's time zone must be set to match
-# the system time zone.
+# GMN MUST run in the UTC time zone. Under Windows, the system time zone must
+# also be set to UTC.
 TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
-
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
-
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = _here('stores')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
 
-# GMN stores.
-SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
-OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
-STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
-
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/'
-
-# GMN does not use any of the built in Django facilities that require a
-# secret key seed.
-SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -145,22 +100,14 @@ MIDDLEWARE_CLASSES = (
   'service.mn.middleware.response_handler.response_handler',
   #'service.mn.middleware.profiling_handler.profiling_handler',
   'service.mn.middleware.view_handler.view_handler',
-
-  #    'service.cn.middleware.request_handler.request_handler',
-  #    'service.cn.middleware.exception_handler.exception_handler',
-  #    'service.cn.middleware.response_handler.response_handler',
-  #    'service.cn.middleware.view_handler.view_handler',
 )
 
 ROOT_URLCONF = 'service.urls'
 
-TEMPLATE_DIRS = (_here('mn/templates'), _here('cn/templates'), )
-
-FIXTURE_DIRS = (_here('mn/fixtures'), _here('cn/fixtures'), )
+TEMPLATE_DIRS = (_here('mn/templates'), )
 
 INSTALLED_APPS = (
   'service.mn',
-  'service.cn',
 
   #    'django.contrib.auth',
   'django.contrib.contenttypes',
@@ -173,76 +120,4 @@ INSTALLED_APPS = (
 # TODO: May be able to simplify url regexes by turning this on.
 APPEND_SLASH = False
 
-LOG_PATH = _here('./gmn.log')
-XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
-ROOT_PATH = _here('./')
-
-# Test CN.
-CN_SYSMETA_STORE_PATH = _here('./cn_sysmeta_store')
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
-
-# Set up logging.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-              'format': '%(asctime)s %(module)s %(levelname)-8s %(message)s',
-              'datefmt': '%y/%m/%d %H:%M:%S'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-  #    'filters': {
-  #        'special': {
-  #            '()': 'project.logging.SpecialFilter',
-  #            'foo': 'bar',
-  #        }
-  #    },
-    'handlers': {
-      #        'null': {
-      #            'level': 'DEBUG',
-      #            'class': 'django.utils.log.NullHandler',
-      #        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': LOG_PATH,
-            'formatter': 'verbose'
-        },
-      #        'console': {
-      #            'level': 'DEBUG',
-      #            'class': 'logging.StreamHandler',
-      #            'formatter': 'verbose'
-      #        },
-      #        'mail_admins': {
-      #            'level': 'ERROR',
-      #            'class': 'django.utils.log.AdminEmailHandler',
-      #            'filters': ['special']
-      #        }
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'propagate': True,
-            'level': LOG_LEVEL,
-        },
-      #        'django': {
-      #            'handlers': ['null'],
-      #            'propagate': True,
-      #            'level': 'DEBUG',
-      #        },
-      #        'django.request': {
-      #            'handlers': ['mail_admins'],
-      #            'level': 'ERROR',
-      #            'propagate': False,
-      #        },
-      #        'myproject.custom': {
-      #            'handlers': ['console', 'mail_admins'],
-      #            'level': 'INFO',
-      #            'filters': ['special']
-      #        }
-    }
-}
