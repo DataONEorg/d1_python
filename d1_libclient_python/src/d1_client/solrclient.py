@@ -1,17 +1,24 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+'''
+:mod:`SolrClient`
+=================
 
-# This work was created by participants in the DataONE project, and is
-# jointly copyrighted by participating institutions in DataONE. For
-# more information on DataONE, see our web site at http://dataone.org.
+:Synopsis
+  Python SOLR Client Library
+
+  This client code is built from:
+  http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
+  though has been modified in many respects.
+
+
+'''
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 #
-#   Copyright ${year}
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,22 +40,6 @@
 # print c.search(q='id:[* TO *]', wt='python', rows='10',indent='on')
 # data = c.search(q='id:500', wt='python')
 # print 'first match=', eval(data)['response']['docs'][0]
-'''Module d1_client.solrclient
-==============================
-
-Functionality for working with the Solr index behind Mercury. Will probably be
-moved into d1common. Ignore for now.
-
-This client code is built from:
-http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
-
-though has been modified in many respects.
-
-:Created: 2010-01-11
-:Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
-'''
 
 import logging
 import httplib
@@ -56,7 +47,7 @@ import socket
 from xml.dom.minidom import parseString
 import codecs
 import urllib
-from mx import DateTime
+from datetime import datetime
 import random
 
 #===============================================================================
@@ -287,7 +278,10 @@ class SolrConnection:
         return None
     elif ftype == 'date':
       try:
-        v = DateTime.DateTimeFrom(value)
+        v = datetime.datetime(
+          value['year'], value['month'], value['day'], value['hour'], value['minute'],
+          value['second']
+        )
         v = v.strftime('%Y-%m-%dT%H:%M:%S.0Z')
         return v
       except:
@@ -453,7 +447,7 @@ class SolrConnection:
     'optimized':True,
     'current':True,
     'hasDeletions':False,
-    'directory':'org.apache.lucene.store.FSDirectory:org.apache.lucene.store.FSDirectory@/Users/Vieglais/opt/localsolr_svn/home/data/index',
+    'directory':'org.apache.lucene.store.FSDirectory:org.apache.lucene.store.FSDirectory@/Users/vieglais/opt/localsolr_svn/home/data/index',
     'lastModified':'2009-03-12T18:27:59Z'},
  'fields':{
     'created':{
@@ -485,7 +479,7 @@ class SolrConnection:
     self._fields = data
     return data
 
-  def fieldValues(self, name, q="*:*", fq=None, maxvalues=-1):
+  def fieldValues(self, name, q="*:*", fq=None, maxvalues=-1, sort=True):
     '''
     Retrieve the unique values for a field, along with their usage counts.
     http://localhost:8080/solr/select/?q=*:*&rows=0&facet=true&indent=on&wt=python&facet.field=genus_s&facet.limit=10&facet.zeros=false&facet.sort=false
@@ -505,13 +499,16 @@ class SolrConnection:
       'facet.limit': str(maxvalues),
       'facet.zeros': 'false',
       'wt': 'python',
-      'facet.sort': 'false'
+      'facet.sort': str(sort).lower()
     }
     if not fq is None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     rsp = self.doPost(self.solrBase + '/select', request, self.formheaders)
     data = eval(rsp.read())
+    response = data['facet_counts']['facet_fields']
+    response['numFound'] = data['response']['numFound']
+    return response
     return data['facet_counts']['facet_fields'] #, data['response']['numFound']
 
   def fieldMinMax(self, name, q='*:*', fq=None):
