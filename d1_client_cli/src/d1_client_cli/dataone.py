@@ -402,15 +402,16 @@ class DataONECLI():
     count = max number of records to return
     example: 
     records with origin MN = "DEMO3":
-      python dataone.py --dataone-url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3" search
+      python dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3" search
     
     records containing "barnacle":
-      python dataone.py --dataone-url="https://cn-dev.dataone.org/cn" --query "barnacle" search
+      python dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "barnacle" search
       
     records from DEMO3 that are of type text/csv:
-      python dataone.py --dataone-url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3 AND objectformat:text/csv" search
+      python dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3 AND objectformat:text/csv" search
     '''
-    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['dataone_url'])
+    print self.opts['cn_url']
+    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['cn_url'])
     kwargs = {'start': self.opts['slice_start'], 'count': self.opts['slice_count']}
     if self.opts['fields'] is not None:
       kwargs['fields'] = self.opts['fields']
@@ -424,7 +425,7 @@ class DataONECLI():
   def fields(self):
     '''List the CN search fields - enumerates the SOLR index fields.
     '''
-    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['dataone_url'])
+    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['cn_url'])
     res = client.getSearchFields()
     print "%-25s %-12s %-12s %-12s" % ('Name', 'Type', 'Unique', 'Records')
     keys = res.keys()
@@ -507,7 +508,8 @@ class DataONECLI():
 def getcfg(config, section, option, default=None):
   try:
     res = config.get(section, option).strip()
-    if res == '':
+    #logging.debug("Found %s:%s = %s" % (section, option, str(res)))
+    if res == '' or res == 'None':
       return default
     return res
   except:
@@ -765,6 +767,9 @@ def main():
     config.set('sysmeta', 'access_public', opts_dict['sysmeta_access_policy_public'])
     config.set('search', 'fields', opts_dict['fields'])
     config.set('search', 'query', opts_dict['query'])
+
+    with open(config_file, 'wb') as configfile:
+      config.write(configfile)
     sys.exit()
 
     # Examples:
