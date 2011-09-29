@@ -52,6 +52,7 @@ import urllib
 import urlparse
 import uuid
 import xml.dom.minidom
+import ConfigParser
 
 # 3rd party.
 import pyxb
@@ -135,7 +136,6 @@ class DataONECLI():
       'create': self.create,
       'get': self.get,
       'meta': self.meta,
-      'related': self.related,
       'list': self.list,
       'search': self.search,
       'log': self.log,
@@ -275,12 +275,16 @@ class DataONECLI():
       return
 
     pid = self.args[0]
+    certpath = self.opts['cert_path']
+    keypath = self.opts['key_path']
+    if not os.path.exists(certpath):
+      certpath = None
+      keypath = None
 
     # Get SysMeta.
     client = d1_client.mnclient.MemberNodeClient(
       self.opts['dataone_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
+      certfile=certpath, keyfile=keypath
     )
     sci_meta = client.getSystemMetadata(pid)
     sci_meta_xml = sci_meta.toxml()
@@ -334,12 +338,17 @@ class DataONECLI():
       return
 
     pid = self.args[0]
+    certpath = self.opts['cert_path']
+    keypath = self.opts['key_path']
+    if not os.path.exists(certpath):
+      certpath = None
+      keypath = None
 
     # Get
     client = d1_client.cnclient.CoordinatingNodeClient(
       baseurl=self.opts['dataone_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
+      certfile=certpath,
+      keyfile=keypath
     )
 
     object_location_list = client.resolve(pid)
@@ -357,11 +366,15 @@ class DataONECLI():
         '[--object-format] [--slice-start] [--slice-count] '
       )
       return
+    certpath = self.opts['cert_path']
+    keypath = self.opts['key_path']
+    if not os.path.exists(certpath):
+      certpath = None
+      keypath = None
 
     client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
+      self.opts['mn_url'], certfile=certpath,
+      keyfile=keypath
     )
 
     object_list = client.listObjects(
@@ -467,11 +480,15 @@ class DataONECLI():
       logging.error('Invalid arguments')
       logging.error('Usage: objectformats')
       return
+    certpath = self.opts['cert_path']
+    keypath = self.opts['key_path']
+    if not os.path.exists(certpath):
+      certpath = None
+      keypath = None
 
     client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
+      self.opts['mn_url'], certfile=certpath,
+      keyfile=keypath
     )
 
     object_list = d1_client.objectlistiterator.ObjectListIterator(client)
@@ -487,8 +504,28 @@ class DataONECLI():
     self.output(StringIO.StringIO('\n'.join(unique_objects) + '\n'))
 
 
+def getcfg(config, section, option, default=None):
+  try:
+    res = config.get(section, option).strip()
+    if res == '':
+      return default
+    return res
+  except:
+    return default
+
+
+def getcfgb(config, section, option, default=False):
+  try:
+    return config.getboolean(section, option)
+  except:
+    return default
+
+
 def main():
+  config_file = os.path.join(os.environ['HOME'], ".d1client.conf")
   log_setup()
+  config = ConfigParser.RawConfigParser()
+  config.read(config_file)
 
   # Command line options.
   parser = optparse.OptionParser('usage: %prog <command> [options] [arguments]')
@@ -498,7 +535,9 @@ def main():
     dest='dataone_url',
     action='store',
     type='string',
-    default=d1_common.const.URL_DATAONE_ROOT,
+    default=getcfg(
+      config, "cli", "dataone_url", d1_common.const.URL_DATAONE_ROOT
+    ),
     help='URL to DataONE Root'
   )
   parser.add_option(
@@ -506,7 +545,9 @@ def main():
     dest='mn_url',
     action='store',
     type='string',
-    default='https://localhost/mn/',
+    default=getcfg(
+      config, 'cli', 'mn_url', 'https://localhost/mn/'
+    ),
     help='URL to Member Node'
   )
   parser.add_option(
@@ -514,7 +555,9 @@ def main():
     dest='cn_url',
     action='store',
     type='string',
-    default='https://localhost/cn/',
+    default=getcfg(
+      config, 'cli', 'cn_url', 'https://localhost/cn/'
+    ),
     help='URL to Coordinating Node'
   )
   parser.add_option(
@@ -528,14 +571,18 @@ def main():
     '--pretty',
     dest='pretty',
     action='store_true',
-    default=False,
+    default=getcfgb(
+      config, 'output', 'pretty', False
+    ),
     help='render Pretty Printed XML'
   )
   parser.add_option(
     '--verbose',
     dest='verbose',
     action='store_true',
-    default=False,
+    default=getcfgb(
+      config, 'output', 'verbose', False
+    ),
     help='display more information'
   )
   parser.add_option(
@@ -568,14 +615,18 @@ def main():
     dest='cert_path',
     action='store',
     type='string',
-    default=None
+    default=getcfg(
+      config, 'auth', 'cert_path', None
+    )
   )
   parser.add_option(
     '--key-path',
     dest='key_path',
     action='store',
     type='string',
-    default=None
+    default=getcfg(
+      config, 'auth', 'key_path', None
+    )
   )
   # SysMeta.
   parser.add_option(
@@ -590,28 +641,36 @@ def main():
     dest='sysmeta_submitter',
     action='store',
     type='string',
-    default=None
+    default=getcfg(
+      config, 'sysmeta', 'submitter', None
+    )
   )
   parser.add_option(
     '--sysmeta-rightsholder',
     dest='sysmeta_rightsholder',
     action='store',
     type='string',
-    default=None
+    default=getcfg(
+      config, 'sysmeta', 'rightsholder', None
+    )
   )
   parser.add_option(
     '--sysmeta-origin-member-node',
     dest='sysmeta_origin_member_node',
     action='store',
     type='string',
-    default=None
+    default=getcfg(
+      config, 'sysmeta', 'origin_mn', None
+    )
   )
   parser.add_option(
     '--sysmeta-authoritative-member-node',
     dest='sysmeta_authoritative_member_node',
     action='store',
     type='string',
-    default=None
+    default=getcfg(
+      config, 'sysmeta', 'auth_mn', None
+    )
   )
   parser.add_option(
     '--sysmeta-access-policy',
@@ -624,7 +683,9 @@ def main():
     '--sysmeta-access-policy-public',
     dest='sysmeta_access_policy_public',
     action='store_true',
-    default=False
+    default=getcfgb(
+      config, 'sysmeta', 'access_public', False
+    )
   )
   # Search filters
   parser.add_option(
@@ -649,13 +710,32 @@ def main():
     default=None
   )
 
-  parser.add_option('--query', dest='query', action='store', type='string', default='*:*')
   parser.add_option(
-    '--fields', dest='fields',
-    action='store', type='string',
-    default=None
+    '--query',
+    dest='query',
+    action='store',
+    type='string',
+    default=getcfg(
+      config, 'search', 'query', '*:*'
+    )
+  )
+  parser.add_option(
+    '--fields',
+    dest='fields',
+    action='store',
+    type='string',
+    default=getcfg(
+      config, 'search', 'fields', None
+    )
   )
 
+  parser.add_option(
+    '--store-config',
+    dest='store_config',
+    action='store_true',
+    default=False,
+    help="Store config variables and exit"
+  )
   # Log
   parser.add_option(
     '--event-type',
@@ -668,35 +748,54 @@ def main():
 
   opts_dict = vars(opts)
 
-  # Examples:
-  #
-  # create:
-  # ./dataone.py --verbose --dataone-url http://localhost:8000/cn create 1234 test_objects/sysmeta/knb-lter-gce10911 test_objects/scimeta/knb-lter-gce10911 test_objects/harvested/knb-lter-gce10911_MERGED.xml
-  #
-  # resolve:
-  # ./dataone.py --verbose --dataone-url http://localhost:8000/cn resolve 'hdl:10255/dryad.669/mets.xml'
-  #
-  # get:
-  # ./dataone.py --verbose --dataone-url http://localhost:8000/cn get 'hdl:10255/dryad.669/mets.xml'
-  #
-  # meta:
-  # ./dataone.py --verbose --pretty --dataone-url http://localhost:8000/cn meta 'hdl:10255/dryad.669/mets.xml'
-  #
-  # related:
-  # ./dataone.py --dataone-url http://localhost:8000/cn related 'hdl:10255/dryad.669/mets.xml'
-  #
-  # list:
-  # ./dataone.py list --pretty --mn_url=http://dataone.org/mn
-  #
-  # search:
-  # ./dataone.py search --pretty --start-time=2020-01-01T05:00:00
-  # ./dataone.py search --pretty --objectFormat=abc
-  #
-  # log:
-  # ./dataone.py log --verbose --pretty --mn-url=http://localhost:8000/
-  #
-  # objectformats:
-  # ./dataone.py objectformats --verbose --mn_url=http://dataone.org/mn
+  if opts_dict['store_config']:
+    #Store configuration
+    print "Storing configuration options to %s" % config_file
+    config.set("cli", "dataone_url", opts_dict["dataone_url"])
+    config.set('cli', 'mn_url', opts_dict["mn_url"])
+    config.set('cli', 'cn_url', opts_dict["cn_url"])
+    config.set('output', 'pretty', opts_dict["pretty"])
+    config.set('output', 'verbose', opts_dict['verbose'])
+    config.set('auth', 'cert_path', opts_dict['cert_path'])
+    config.set('auth', 'key_path', opts_dict['key_path'])
+    config.set('sysmeta', 'submitter', opts_dict['sysmeta_submitter'])
+    config.set('sysmeta', 'rightsholder', opts_dict['sysmeta_rightsholder'])
+    config.set('sysmeta', 'origin_mn', opts_dict['sysmeta_origin_member_node'])
+    config.set('sysmeta', 'auth_mn', opts_dict['sysmeta_authoritative_member_node'])
+    config.set('sysmeta', 'access_public', opts_dict['sysmeta_access_policy_public'])
+    config.set('search', 'fields', opts_dict['fields'])
+    config.set('search', 'query', opts_dict['query'])
+    sys.exit()
+
+    # Examples:
+    #
+    # create:
+    # ./dataone.py --verbose --dataone-url http://localhost:8000/cn create 1234 test_objects/sysmeta/knb-lter-gce10911 test_objects/scimeta/knb-lter-gce10911 test_objects/harvested/knb-lter-gce10911_MERGED.xml
+    #
+    # resolve:
+    # ./dataone.py --verbose --dataone-url http://localhost:8000/cn resolve 'hdl:10255/dryad.669/mets.xml'
+    #
+    # get:
+    # ./dataone.py --verbose --dataone-url http://localhost:8000/cn get 'hdl:10255/dryad.669/mets.xml'
+    #
+    # meta:
+    # ./dataone.py --verbose --pretty --dataone-url http://localhost:8000/cn meta 'hdl:10255/dryad.669/mets.xml'
+    #
+    # related:
+    # ./dataone.py --dataone-url http://localhost:8000/cn related 'hdl:10255/dryad.669/mets.xml'
+    #
+    # list:
+    # ./dataone.py list --pretty --mn_url=http://dataone.org/mn
+    #
+    # search:
+    # ./dataone.py search --pretty --start-time=2020-01-01T05:00:00
+    # ./dataone.py search --pretty --objectFormat=abc
+    #
+    # log:
+    # ./dataone.py log --verbose --pretty --mn-url=http://localhost:8000/
+    #
+    # objectformats:
+    # ./dataone.py objectformats --verbose --mn_url=http://dataone.org/mn
 
   if not opts.verbose:
     logging.getLogger('').setLevel(logging.DEBUG)
