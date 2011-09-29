@@ -46,6 +46,10 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 # App.
 from d1baseclient import DataONEBaseClient
 
+#SOLRclient is used to support search against the SOLR instance running on the
+#coordinating node. 
+import solrclient
+
 
 class CoordinatingNodeClient(DataONEBaseClient):
   
@@ -141,14 +145,31 @@ class CoordinatingNodeClient(DataONEBaseClient):
 
 
   @util.str_to_unicode
-  def search(self, query):
-    '''See searchResponse().
-    
-    :returns: List of objects.
-    :return type: PyXB ObjectList.
+  def search(self, query, fields="pid,origin_mn,datemodified,size,objectformat,title",
+             start=0, count=100):
+    '''This is a place holder for search against the SOLR search engine.
+     
     '''
-    response = self.searchResponse(query)
-    return dataoneTypes.CreateFromDocument(response.read())
+    hostinfo = self._parseURL(self.baseurl)
+    solr = solrclient.SolrConnection(host=hostinfo['host'], solrBase="/solr",
+                                     persistent=True)
+    params = {'q':query,
+              'fl': fields,
+              'start':str(start),
+              'rows':str(count)}
+    sres = solr.search(params)
+    return sres['response']    
+    #response = self.searchResponse(query)
+    #return dataoneTypes.CreateFromDocument(response.read())
+
+
+  def getSearchFields(self):
+    #getFields
+    hostinfo = self._parseURL(self.baseurl)
+    solr = solrclient.SolrConnection(host=hostinfo['host'], solrBase="/solr",
+                                     persistent=True)
+    sres = solr.getFields()
+    return sres['fields']
 
 
   @util.str_to_unicode
