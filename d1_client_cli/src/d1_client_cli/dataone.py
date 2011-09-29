@@ -710,8 +710,8 @@ def main():
   if os.path.exists(opts_dict['cert_path']):
     logging.info('Using certificate: {0}'.format(opts_dict['cert_path']))
   else:
-    logging.error('Could not find certificate: {0}'.format(opts_dict['cert_path']))
-    exit()
+    logging.warn('Could not find certificate: {0}'.format(opts_dict['cert_path']))
+    #exit()
 
   if opts_dict['sysmeta_access_policy_public'] == True and \
                                 opts_dict['sysmeta_access_policy'] is not None:
