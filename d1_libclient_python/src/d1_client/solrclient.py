@@ -147,6 +147,7 @@ class SolrConnection:
       pass
 
   def doPost(self, url, body, headers):
+    self.logger.debug("URL: %s" % url)
     try:
       self.conn.request('POST', url, body, headers)
     except (socket.error, httplib.CannotSendRequest):
@@ -357,6 +358,7 @@ class SolrConnection:
       self.__add(lst, doc)
     lst.append(u'</add>')
     xstr = u''.join(lst)
+    logging.debug(xstr)
     return self.doUpdateXML(xstr)
 
   def commit(self, waitFlush=True, waitSearcher=True, optimize=False):
