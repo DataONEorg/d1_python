@@ -431,11 +431,14 @@ class DataONECLI():
     keys = res.keys()
     keys.sort()
     for f in keys:
-      print "%-25s %-12s %-12s %-12s" % (
-        f, res[f]['type'], str(res[f]['distinct']), str(
-          res[f]['docs']
+      try:
+        print "%-25s %-12s %-12s %-12s" % (
+          f, res[f]['type'], str(res[f]['distinct']), str(
+            res[f]['docs']
+          )
         )
-      )
+      except:
+        print "%-25s %-12s %-12s %-12s" % (f, res[f]['type'], '?', str(res[f]['docs']))
 
   def log(self):
     '''MN log.
