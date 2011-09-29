@@ -753,18 +753,38 @@ def main():
   if opts_dict['store_config']:
     #Store configuration
     print "Storing configuration options to %s" % config_file
+    try:
+      config.add_section("cli")
+    except:
+      pass
     config.set("cli", "dataone_url", opts_dict["dataone_url"])
     config.set('cli', 'mn_url', opts_dict["mn_url"])
     config.set('cli', 'cn_url', opts_dict["cn_url"])
+    try:
+      config.add_section("output")
+    except:
+      pass
     config.set('output', 'pretty', opts_dict["pretty"])
     config.set('output', 'verbose', opts_dict['verbose'])
+    try:
+      config.add_section("auth")
+    except:
+      pass
     config.set('auth', 'cert_path', opts_dict['cert_path'])
     config.set('auth', 'key_path', opts_dict['key_path'])
+    try:
+      config.add_section("sysmeta")
+    except:
+      pass
     config.set('sysmeta', 'submitter', opts_dict['sysmeta_submitter'])
     config.set('sysmeta', 'rightsholder', opts_dict['sysmeta_rightsholder'])
     config.set('sysmeta', 'origin_mn', opts_dict['sysmeta_origin_member_node'])
     config.set('sysmeta', 'auth_mn', opts_dict['sysmeta_authoritative_member_node'])
     config.set('sysmeta', 'access_public', opts_dict['sysmeta_access_policy_public'])
+    try:
+      config.add_section("search")
+    except:
+      pass
     config.set('search', 'fields', opts_dict['fields'])
     config.set('search', 'query', opts_dict['query'])
 
