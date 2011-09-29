@@ -141,6 +141,7 @@ class DataONECLI():
       'log': self.log,
       'objectformats': self.objectformats,
       'resolve': self.resolve,
+      'fields': self.fields,
     }
 
   def _check_for_missing_sysmeta_params(self):
@@ -381,8 +382,46 @@ class DataONECLI():
 
   def search(self):
     '''CN search.
+    dataone_url = cn base url
+    query = SOLR query string, default is all (*:*)
+    fields = comma delimited list of SOLR field names
+    start = 0 based offset for first record
+    count = max number of records to return
+    example: 
+    records with origin MN = "DEMO3":
+      python dataone.py --dataone-url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3" search
+    
+    records containing "barnacle":
+      python dataone.py --dataone-url="https://cn-dev.dataone.org/cn" --query "barnacle" search
+      
+    records from DEMO3 that are of type text/csv:
+      python dataone.py --dataone-url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3 AND objectformat:text/csv" search
     '''
-    print 'Not implemented'
+    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['dataone_url'])
+    kwargs = {'start': self.opts['slice_start'], 'count': self.opts['slice_count']}
+    if self.opts['fields'] is not None:
+      kwargs['fields'] = self.opts['fields']
+    res = client.search(self.opts['query'], **kwargs)
+    print "Num found = %d" % res['numFound']
+    for doc in res['docs']:
+      for k in doc.keys():
+        print "%s: %s" % (k, doc[k])
+      print "========"
+
+  def fields(self):
+    '''List the CN search fields - enumerates the SOLR index fields.
+    '''
+    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['dataone_url'])
+    res = client.getSearchFields()
+    print "%-25s %-12s %-12s %-12s" % ('Name', 'Type', 'Unique', 'Records')
+    keys = res.keys()
+    keys.sort()
+    for f in keys:
+      print "%-25s %-12s %-12s %-12s" % (
+        f, res[f]['type'], str(res[f]['distinct']), str(
+          res[f]['docs']
+        )
+      )
 
   def log(self):
     '''MN log.
@@ -609,6 +648,14 @@ def main():
     type='string',
     default=None
   )
+
+  parser.add_option('--query', dest='query', action='store', type='string', default='*:*')
+  parser.add_option(
+    '--fields', dest='fields',
+    action='store', type='string',
+    default=None
+  )
+
   # Log
   parser.add_option(
     '--event-type',
@@ -688,7 +735,7 @@ def main():
   # Validate and deserialize access policy.
   if opts_dict['sysmeta_access_policy'] is not None:
     try:
-      self.opts['sysmeta_access_policy_obj'] = dataoneTypes.CreateFromDocument(
+      opts_dict['sysmeta_access_policy_obj'] = dataoneTypes.CreateFromDocument(
         opts_dict['sysmeta_access_policy']
       )
     except pyxb.PyXBError, e:
