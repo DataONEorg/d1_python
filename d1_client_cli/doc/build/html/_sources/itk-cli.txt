@@ -195,32 +195,6 @@ log
 Retrieve event logs
 
 
-Set Defaults
-~~~~~~~~~~~~
-
-Set some defaults for the command line client::
-
-  ./d1_client_cli/src/d1_client_cli/dataone.py \
-  --mn-url https://demo1.test.dataone.org/knb/d1/mn/v1 \
-  --cn-url https://cn-dev.dataone.org/cn/v1 \
-  --sysmeta-submitter "CN=MATTJTEMP,DC=dataone,DC=org" \
-  --sysmeta-rightsholder "CN=MATTJTEMP,DC=dataone,DC=org" \
-  --sysmeta-origin-member-node DEMO1 \
-  --sysmeta-authoritative-member-node DEMO1 \
-  --sysmeta-access-policy-public \
-  --cert-path /etc/dataone/client/certs/myclientcert.pem \
-  --key-path /etc/dataone/client/certs/myclientcert.pem \
-  --fields "pid,origin_mn,datemodified,size,objectformat,title" \
-  --query "*:*" \
-  --store-config
-
-The configuration defaults are stored in $HOME/.d1client.conf
-
-Running::
-
-  ./d1_client_cli/src/d1_client_cli/dataone.py --store-config 
-
-will generate a configuration with the client defaults.
 
 
 
@@ -236,6 +210,130 @@ User stories
 * A scientist can discover relationships between Science Metadata and Science
   Data.
 
+
+Usage Examples
+--------------
+
+create
+~~~~~~
+
+Upload a Science Data object and a related Science Metadata object to DataONE
+and specify an identifier.
+
+Example::
+
+  $ ./dataone.py create my_identifier ./sysmeta/my_sysmeta.xml
+  ./scimeta/my_scimeta.xml ./scidata/my_scidata.csv
+
+
+get
+~~~
+
+Download a Science Object by its identifier::
+
+  $ ./dataone.py get my_identifier
+
+
+Download a Science Object by its identifier, storing the object in a file instead
+of displaying it on screen::
+
+  $ ./dataone.py get my_identifier --output="./my_file"
+
+meta
+~~~~
+
+Download the DataONE System Metadata for a Science Object::
+
+  $ ./dataone.py meta my_identifier
+
+Download the DataONE System Metadata for a Science Object, formatted for human
+reading::
+
+  $ ./dataone.py meta my_identifier --pretty
+
+
+related
+~~~~~~~
+
+Find Science Objects related to a given Science Object by identifier::
+
+  $ ./dataone.py related my_identifier
+
+
+list
+~~~~
+
+Download a list of the Science Objects stored on a given Member Node. The number
+of Objects in the list is limited to 1000 by default::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn
+
+Download a list of the first 100 Science Objects stored on a given Member Node::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
+
+Download a list of the first 100 Science Objects stored on a given Member Node.
+Store the list to a file instead of displaying it on screen::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
+  --output=my_list.xml
+
+Download a list of 100 Science Objects stored on a given Member Node, starting
+at the 100th object::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-start=100
+  --slice-count=100
+
+Download a list of 100 Science Objects stored on a given Member Node, starting
+at the 100th object. Format the list for human reading::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-start=100
+  --slice-count=100 --pretty
+
+Download a list of the first 100 Science Objects stored on a given Member Node,
+that were created in 2005::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
+  --start-time=2005-01-01 --end-time=2006-01-01.
+
+Download a list of the first 100 Science Objects of a given format stored on a
+given Member Node::
+
+  $ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
+  --object-format="my_format_string"
+
+
+search
+~~~~~~
+
+Search for Science Objects in the DataONE infrastructure matching an identifier
+that starts with "abc". Format the result for human reading::
+
+  $ ./dataone.py search "abc*" --pretty
+  
+Filter the search results for a given time period, format for human reading and
+store in a file::
+
+  $ ./dataone.py search "abc*" --pretty --output="./my_file"
+  --start-time=2010-01-01T05:00:00 --end-time=2010-01-01T06:00:00
+
+
+log
+~~~
+
+Retrieve logs related to a given identifier::
+
+  $ ./dataone.py log "abc*"
+  
+Retrieve logs related to a given identifier, filtered by event type, formatted
+for human reading::
+  
+  $ ./dataone.py log "abc*" --event-type=read --pretty
+
+Valid event types::
+
+  create, read, update, delete, replicate
+  
 
 objectformats
 ~~~~~~~~~~~~~
