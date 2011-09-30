@@ -4,18 +4,199 @@ DataONE Command Line Client (CLI)
 Synopsis
 --------
 
-The DataONE Command Line Client provides easy access to basic operations against
-the DataONE infrastructure. The operations include:
+The DataONE command line client simplifies access to low level operations of
+the DataONE infrastructure. 
 
-* **create**: Create a Science Objects
-* **get**: Retrieve Science Objects
-* **meta**: Retrieve DataONE System Metadata related to Science Objects
-* **related**: Discover relationships between Science Objects
-* **list**: List Science Objects on Member Nodes
-* **search**: Search for Science Objects on Coordinating Nodes
-* **log**: Retrieve event logs
-* **objectformats**: Retrieve list of object formats
-* **resolve**: Retrieve location list for object.
+Operation
+---------
+
+Basic syntax::
+
+  dataone.py [parameters] operation arguments
+
+Parameters
+----------
+
+  --dataone-url URL                         DataONE root
+  --mn-url URL                              Member node
+  --cn-url URL                              Coordinating node
+  --cert-path CERT_FILE                     Filesystem path to client certificate
+  --key-path KEY_FILE                       Filesystem path to the client certificate key
+  --anonymous                               Ignore any installed certificates and connect anonymously
+  --sysmeta-object-format FMTID             Specify the object format ID for system metadata
+  --sysmeta-submitter S_SUBJECT             Specify the subject of the submitter in system metadata
+  --sysmeta-rightsholder R_SUBJECT          Subject of the rights holder in system metadata  
+  --sysmeta-origin-member-node O_MN         Set the origin member node identifier in the system metadata
+  --sysmeta-authoritative-member-node A_MN  Set the authoritative member node identifier in the system metadata
+  --sysmeta-access-policy                   Set the access policy to be stored in the system metadata
+  --sysmeta-access-policy-public            If present, the system metadata will have public access policy
+  --start-time STARTTIME                    The start time for operations that accept a time range
+  --end-time ENDTIME                        The end time for operations that accept a time range
+  --object-format FMTID                     Object format for requests
+  --query QUERY                             Query string (SOLR_ or Lucene query syntax) for searches
+  --fields FIELDS                           Comma delimited list of index fields to return in search responses
+  --output FILE                             Store data to file instead of writing it to StdOut
+  --pretty                                  Render Pretty Printed XML
+  --verbose                                 Display more information
+  --slice-start START                       Start position for sliced resultset
+  --slice-count COUNT                       Max number of elements in sliced resultset
+  --store-config                            Store config variables and exit. Configuration defaults are stored 
+                                            in ``$HOME/.d1client.conf``
+
+
+Operations
+----------
+
+create
+~~~~~~
+
+Add content to a member node::
+
+  dataone.py --sysmeta-object-format FMTID 
+            [--mn-url URL ] 
+            [--sysmeta-submitter S_SUBJECT]
+            [--sysmeta-rightsholder R_SUBJEC]
+            [--sysmeta-origin-member-node O_MN]
+            [--sysmeta-authoritative-member-node A_MN]
+            [--sysmeta-access-policy-public]
+            [--cert-path CERT_FILE]
+            [--key-path KEY_FILE]
+   create PID OBJECT_PATH
+
+
+**Example**
+
+::
+
+  dataone.py --sysmeta-object-format text/csv \
+    --sysmeta-submitter "CN=MATTJTEMP,DC=dataone,DC=org" \
+    --sysmeta-rightsholder "CN=MATTJTEMP,DC=dataone,DC=org" \
+    --sysmeta-origin-member-node DEMO1 \
+    --sysmeta-authoritative-member-node DEMO1 \
+    --mn-url https://demo1.test.dataone.org/knb/d1/mn/v1 \
+    --cert-path /etc/dataone/client/certs/myclientcert.pem \
+    --sysmeta-access-policy-public \
+    create demo1.2.1 data/data-samples.csv
+
+
+get
+~~~
+
+Retrieve content from a member or coordinating node::
+
+  dataone.py [--dataone-url URL] 
+             [--cert-path CERT_FILE]
+             [--key-path KEY_FILE]
+   get PID 
+
+**Example**
+
+::
+
+  dataone.py --dataone-url https:/cn-dev.dataone.org/cn/v1 get demo3_3_2
+
+
+meta
+~~~~
+
+Retrieve system metadata for an object
+
+  dataone.py [--dataone-url URL] 
+             [--cert-path CERT_FILE]
+             [--key-path KEY_FILE]
+   meta PID 
+
+**Example**
+
+::
+
+  dataone.py --pretty --dataone-url https:/cn-dev.dataone.org/cn/v1 meta demo3_3_2
+
+
+list 
+~~~~
+
+List objects on a member or coordinating node
+
+  dataone.py [--mn-url URL] 
+             [--cert-path CERT_FILE]
+             [--key-path KEY_FILE]
+             [--start-time STARTTIME] 
+             [--end-time ENDTIME]
+             [--object-format FMTID] 
+             [--slice-start START] 
+             [--slice-count COUNT]
+             [--pretty]
+   list 
+
+**Example**
+
+::
+
+  dataone.py --anonymous \
+             --mn-url=https://cn-dev.dataone.org/cn/v1 \
+             --slice-count 10 \
+             list
+
+
+search
+~~~~~~
+
+Search system and science metadata indexed by a coordinating node::
+
+  dataone.py [--cn-url URL] 
+             [--query QUERY] 
+             [--fields FIELDS] search 
+
+**Examples**
+
+Find objects with origin member node ID = "DEMO3"::
+
+  dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3" search
+  
+Find objects that contain the text "barnacle" anywhere in system or science metadata::
+
+  dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "barnacle" search
+
+Find objects of type "text/csv" that originated from member node ID = DEMO3
+
+  dataone.py --cn-url="https://cn-dev.dataone.org/cn" \
+             --query "origin_mn:DEMO3 AND objectformat:text/csv" search
+
+
+Fields
+~~~~~~
+
+Return a list of fields available for search and retrieval from the
+coordinating node index.
+
+  dataone.py [--cn-url URL] fields
+
+**Examples**
+
+  dataone.py --cn-url="https://cn-dev.dataone.org/cn" fields
+
+
+
+objectformats
+~~~~~~~~~~~~~
+
+Retrieve list of object formats
+
+resolve
+~~~~~~~
+
+Retrieve location list for object.
+
+
+log
+~~~
+
+Retrieve event logs
+
+
+
+
 
 User stories 
 ------------
