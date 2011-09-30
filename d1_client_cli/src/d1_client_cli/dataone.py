@@ -113,7 +113,7 @@ except ImportError, e:
 def log_setup():
   # Set up logging.
   # We output everything to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
+  logging.getLogger('').setLevel(logging.INFO)
   formatter = logging.Formatter('%(levelname)-8s %(message)s')
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
@@ -485,6 +485,11 @@ class DataONECLI():
 
     self.output(StringIO.StringIO(object_list_xml))
 
+  def getObjectFormats(self):
+    '''List the format IDs from the CN
+    '''
+    pass
+
   def objectformats(self):
     '''Get a list of object formats available on the target.
     :return: (object format, count) object formats.
@@ -846,7 +851,7 @@ def main():
     # objectformats:
     # ./dataone.py objectformats --verbose --mn_url=http://dataone.org/mn
 
-  if not opts.verbose:
+  if opts.verbose:
     logging.getLogger('').setLevel(logging.DEBUG)
 
   if not opts_dict['anonymous']:
