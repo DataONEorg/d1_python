@@ -253,12 +253,17 @@ class DataONECLI():
       return
 
     pid = self.args[0]
+    certpath = self.opts['cert_path']
+    keypath = self.opts['key_path']
+    if certpath is not None:
+      if not os.path.exists(certpath):
+        certpath = None
+        keypath = None
 
     # Get
     client = d1_client.mnclient.MemberNodeClient(
       self.opts['dataone_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
+      certfile=certpath, keyfile=keypath
     )
 
     sci_obj = client.get(pid)
@@ -277,9 +282,10 @@ class DataONECLI():
     pid = self.args[0]
     certpath = self.opts['cert_path']
     keypath = self.opts['key_path']
-    if not os.path.exists(certpath):
-      certpath = None
-      keypath = None
+    if certpath is not None:
+      if not os.path.exists(certpath):
+        certpath = None
+        keypath = None
 
     # Get SysMeta.
     client = d1_client.mnclient.MemberNodeClient(
@@ -340,9 +346,10 @@ class DataONECLI():
     pid = self.args[0]
     certpath = self.opts['cert_path']
     keypath = self.opts['key_path']
-    if not os.path.exists(certpath):
-      certpath = None
-      keypath = None
+    if certpath is not None:
+      if not os.path.exists(certpath):
+        certpath = None
+        keypath = None
 
     # Get
     client = d1_client.cnclient.CoordinatingNodeClient(
@@ -368,9 +375,10 @@ class DataONECLI():
       return
     certpath = self.opts['cert_path']
     keypath = self.opts['key_path']
-    if not os.path.exists(certpath):
-      certpath = None
-      keypath = None
+    if certpath is not None:
+      if not os.path.exists(certpath):
+        certpath = None
+        keypath = None
 
     client = d1_client.mnclient.MemberNodeClient(
       self.opts['mn_url'], certfile=certpath,
@@ -450,11 +458,16 @@ class DataONECLI():
         '[--slice-start] [--slice-count] '
       )
       return
+    certpath = self.opts['cert_path']
+    keypath = self.opts['key_path']
+    if certpath is not None:
+      if not os.path.exists(certpath):
+        certpath = None
+        keypath = None
 
     client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
+      self.opts['mn_url'], certfile=certpath,
+      keyfile=keypath
     )
 
     object_list = client.getLogRecords(
@@ -486,9 +499,10 @@ class DataONECLI():
       return
     certpath = self.opts['cert_path']
     keypath = self.opts['key_path']
-    if not os.path.exists(certpath):
-      certpath = None
-      keypath = None
+    if certpath is not None:
+      if not os.path.exists(certpath):
+        certpath = None
+        keypath = None
 
     client = d1_client.mnclient.MemberNodeClient(
       self.opts['mn_url'], certfile=certpath,
@@ -615,6 +629,13 @@ def main():
     help='Request serialization format for response from server'
   )
   # Auth
+  parser.add_option(
+    '--anonymous',
+    dest='anonymous',
+    action='store_true',
+    default=False,
+    help='Request access as public user'
+  )
   parser.add_option(
     '--cert-path',
     dest='cert_path',
@@ -828,17 +849,22 @@ def main():
   if not opts.verbose:
     logging.getLogger('').setLevel(logging.DEBUG)
 
-  # If cert path was not provided, set it to the path CILogon downloads certs to
-  # by default.
-  if opts_dict['cert_path'] is None:
-    opts_dict['cert_path'] = '/tmp/x509up_u{0}'.format(os.getuid())
+  if not opts_dict['anonymous']:
+    # If cert path was not provided, set it to the path CILogon downloads certs to
+    # by default.
+    if opts_dict['cert_path'] is None:
+      opts_dict['cert_path'] = '/tmp/x509up_u{0}'.format(os.getuid())
 
-  # Tell user which cert is being used.
-  if os.path.exists(opts_dict['cert_path']):
-    logging.info('Using certificate: {0}'.format(opts_dict['cert_path']))
+    # Tell user which cert is being used.
+    if os.path.exists(opts_dict['cert_path']):
+      logging.info('Using certificate: {0}'.format(opts_dict['cert_path']))
+    else:
+      logging.warn('Could not find certificate: {0}'.format(opts_dict['cert_path']))
+      #exit()
   else:
-    logging.warn('Could not find certificate: {0}'.format(opts_dict['cert_path']))
-    #exit()
+    #set cert and key path to null
+    opts_dict['cert_path'] = None
+    opts_dict['key_path'] = None
 
   if opts_dict['sysmeta_access_policy_public'] == True and \
                                 opts_dict['sysmeta_access_policy'] is not None:
