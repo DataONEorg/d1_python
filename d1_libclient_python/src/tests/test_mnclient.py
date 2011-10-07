@@ -93,9 +93,6 @@ class TestMNClient(TestCaseWithURLCompare):
   def _disabled_test_synchronizationFailed(self):
     raise Exception('Not Implemented')
 
-  def _disabled_test_getStatus(self):
-    raise Exception('Not Implemented')
-
   def _disabled_test_getCapabilities(self):
     '''Deserialize getCapabilities response
     '''
