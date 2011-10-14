@@ -119,7 +119,7 @@ class DataONEObject(object):
       self._relations_t = t
     return self._relations
 
-  def save(self, out_flo):
+  def save(self, outstr):
     '''Persist a copy of the bytes of this object.
     
     :param out_flo: file like object open for writing.
@@ -147,6 +147,7 @@ class DataONEClient(object):
     '''DataONEClient, which uses CN- and MN clients to perform high level
     operations against the DataONE infrastructure.
     '''
+    self.apiVersion = "v1"
     self.cnBaseUrl = cnBaseUrl
     self.cn = None
     self.mn = None
@@ -161,6 +162,7 @@ class DataONEClient(object):
     return self.cn
 
   def _getMN(self, baseurl, forcenew=False):
+    baseurl = "%s/%s" % (baseurl, self.apiVersion)
     if self.mn is None or forcenew:
       self.mn = mnclient.MemberNodeClient(baseurl=baseurl)
     elif self.mn.baseurl != baseurl:
@@ -198,7 +200,7 @@ class DataONEClient(object):
     '''
     locations = self.resolve(pid)
     for location in locations:
-      self.logger.debug(location)
+      self.logger.debug("***" + location)
       mn = self._getMN(location)
       try:
         return mn.get(pid)
@@ -236,16 +238,23 @@ class DataONEClient(object):
       'describes': [],
     }
     sysmeta = self.getSystemMetadata(pid)
-    for pid in sysmeta.obsoletes:
-      relations['obsoletes'].append(pid.value())
-    for pid in sysmeta.obsoletedBy:
-      relations['obsoletedBy'].append(pid.value())
-    for pid in sysmeta.derivedFrom:
-      relations['derivedFrom'].append(pid.value())
-    for pid in sysmeta.describedBy:
-      relations['describedBy'].append(pid.value())
-    for pid in sysmeta.describes:
-      relations['describes'].append(pid.value())
+    try:
+      for pid in sysmeta.obsoletes:
+        relations['obsoletes'].append(pid.value())
+    except TypeError:
+      pass
+    try:
+      for pid in sysmeta.obsoletedBy:
+        relations['obsoletedBy'].append(pid.value())
+    except TypeError:
+      pass
+    #TODO: These need to be augmented by querying agains the appropriate resource map(s).
+    #    for pid in sysmeta.derivedFrom:
+    #      relations['derivedFrom'].append(pid.value())
+    #    for pid in sysmeta.describedBy:
+    #      relations['describedBy'].append(pid.value())
+    #    for pid in sysmeta.describes:
+    #      relations['describes'].append(pid.value())
     return relations
 
   @util.str_to_unicode
