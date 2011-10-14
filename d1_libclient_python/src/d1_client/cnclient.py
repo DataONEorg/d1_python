@@ -170,6 +170,13 @@ class CoordinatingNodeClient(DataONEBaseClient):
                                      persistent=True)
     sres = solr.getFields()
     return sres['fields']
+  
+  
+  def searchSolr(self, query):
+    '''Executes a search against SOLR. The literal query string is passed as
+    the q parameter to SOLR, so it must be properly escaped
+    '''
+    pass
 
 
   @util.str_to_unicode
