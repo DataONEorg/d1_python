@@ -1,7 +1,7 @@
 # ./d1_common/types/generated/dataoneErrors.py
 # PyXB bindings for NamespaceModule
-# NSM:e1c8105703d7da231af0d9fa96019858275c42c4
-# Generated 2011-09-19 12:52:19.357832 by PyXB version 1.1.2
+# NSM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
+# Generated 2011-10-25 19:38:44.155346 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,12 +11,12 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:80486846-e2f0-11e0-a108-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3d9e17e4-ff73-11e0-aa27-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 
-Namespace = pyxb.namespace.NamespaceForURI(u'http://ns.dataone.org/service/types/exceptions', create_if_missing=True)
+Namespace = pyxb.namespace.CreateAbsentNamespace()
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
 ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
 ModuleRecord._setModule(sys.modules[__name__])
@@ -51,41 +51,41 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element traceInformation uses Python identifier traceInformation
-    __traceInformation = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'traceInformation'), 'traceInformation', '__httpns_dataone_orgservicetypesexceptions_CTD_ANON_traceInformation', False)
+    __traceInformation = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'traceInformation'), 'traceInformation', '__AbsentNamespace0_CTD_ANON_traceInformation', False)
 
     
     traceInformation = property(__traceInformation.value, __traceInformation.set, None, None)
 
     
     # Element description uses Python identifier description
-    __description = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__httpns_dataone_orgservicetypesexceptions_CTD_ANON_description', False)
+    __description = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__AbsentNamespace0_CTD_ANON_description', False)
 
     
     description = property(__description.value, __description.set, None, None)
 
     
     # Attribute errorCode uses Python identifier errorCode
-    __errorCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'errorCode'), 'errorCode', '__httpns_dataone_orgservicetypesexceptions_CTD_ANON_errorCode', pyxb.binding.datatypes.int, required=True)
+    __errorCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'errorCode'), 'errorCode', '__AbsentNamespace0_CTD_ANON_errorCode', pyxb.binding.datatypes.int, required=True)
     
     errorCode = property(__errorCode.value, __errorCode.set, None, None)
 
     
     # Attribute detailCode uses Python identifier detailCode
-    __detailCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'detailCode'), 'detailCode', '__httpns_dataone_orgservicetypesexceptions_CTD_ANON_detailCode', pyxb.binding.datatypes.int, required=True)
+    __detailCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'detailCode'), 'detailCode', '__AbsentNamespace0_CTD_ANON_detailCode', pyxb.binding.datatypes.int, required=True)
     
     detailCode = property(__detailCode.value, __detailCode.set, None, None)
 
     
-    # Attribute pid uses Python identifier pid
-    __pid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'pid'), 'pid', '__httpns_dataone_orgservicetypesexceptions_CTD_ANON_pid', pyxb.binding.datatypes.string)
-    
-    pid = property(__pid.value, __pid.set, None, None)
-
-    
     # Attribute name uses Python identifier name
-    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__httpns_dataone_orgservicetypesexceptions_CTD_ANON_name', pyxb.binding.datatypes.string, required=True)
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__AbsentNamespace0_CTD_ANON_name', pyxb.binding.datatypes.string, required=True)
     
     name = property(__name.value, __name.set, None, None)
+
+    
+    # Attribute pid uses Python identifier pid
+    __pid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'pid'), 'pid', '__AbsentNamespace0_CTD_ANON_pid', pyxb.binding.datatypes.string)
+    
+    pid = property(__pid.value, __pid.set, None, None)
 
 
     _ElementMap = {
@@ -95,8 +95,8 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {
         __errorCode.name() : __errorCode,
         __detailCode.name() : __detailCode,
-        __pid.name() : __pid,
-        __name.name() : __name
+        __name.name() : __name,
+        __pid.name() : __pid
     }
 
 

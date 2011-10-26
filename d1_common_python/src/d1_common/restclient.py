@@ -17,6 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 '''
 Module d1_common.restclient
 ===========================
@@ -42,13 +43,13 @@ class RESTClient(object):
   '''REST HTTP client that encodes POST and PUT using MIME multipart encoding.
   '''
 
-  def __init__(self,
-               defaultHeaders={'User-Agent': const.USER_AGENT},
-               timeout=const.RESPONSE_TIMEOUT,
-               keyfile=None,
-               certfile=None,
+  def __init__(self, 
+               defaultHeaders={'User-Agent':const.USER_AGENT}, 
+               timeout=const.RESPONSE_TIMEOUT, 
+               keyfile=None, 
+               certfile=None, 
                strictHttps=True):
-    '''Constructor for RESTClient.
+    '''Connect to a DataONE Node.
     
     :param defaultHeaders: list of headers that will be sent with all requests.
     :type defaultHeaders: dictionary
@@ -58,8 +59,11 @@ class RESTClient(object):
     :type keyfile: string
     :param certfile: PEM formatted certificate chain file.
     :type certfile: string
-    :param strictHttps: 
+    :param strictHttps: Raise BadStatusLine if the status line can’t be parsed
+    as a valid HTTP/1.0 or 1.1 status line.
     :type strictHttps: boolean
+    :returns: None
+    :return type: NoneType
     '''
     self.defaultHeaders = defaultHeaders
     self.timeout = timeout
@@ -70,31 +74,29 @@ class RESTClient(object):
     self._lasturl = ''
     self._curlrequest = []
 
+
   def _getConnection(self, scheme, host, port):
     if scheme == 'http':
       conn = httplib.HTTPConnection(host, port, self.timeout)
     else:
-      conn = httplib.HTTPSConnection(
-        host=host,
-        port=port,
-        key_file=self.keyfile,
-        cert_file=self.certfile,
-        strict=self.strictHttps,
-        timeout=self.timeout
-      )
+      conn = httplib.HTTPSConnection(host=host,
+                                     port=port, 
+                                     key_file=self.keyfile,
+                                     cert_file=self.certfile, 
+                                     strict=self.strictHttps,
+                                     timeout=self.timeout)
     if self.logger.getEffectiveLevel() == logging.DEBUG:
       conn.set_debuglevel(logging.DEBUG)
     return conn
 
+
   def _parseURL(self, url):
     parts = urlparse.urlsplit(url)
-    res = {
-      'scheme': parts.scheme,
-      'host': parts.netloc.split(':')[0],
-      'path': parts.path,
-      'query': parts.query,
-      'fragment': parts.fragment
-    }
+    res =  {'scheme': parts.scheme,
+            'host': parts.netloc.split(':')[0],
+            'path': parts.path,
+            'query': parts.query,
+            'fragment': parts.fragment}
     try:
       res['port'] = int(parts.port)
     except:
@@ -104,19 +106,22 @@ class RESTClient(object):
         res['port'] = 80
     return res
 
+
   def _mergeHeaders(self, headers):
     res = self.defaultHeaders
     if headers is not None:
       for header in headers.keys():
         res[header] = headers[header]
     return res
+  
 
   def _getResponse(self, conn):
     return conn.getresponse()
 
+
   def _doRequestNoBody(self, method, url, url_params=None, headers=None):
     parts = self._parseURL(url)
-    targeturl = parts['path']
+    targeturl = parts['path']  
     headers = self._mergeHeaders(headers)
     if not url_params is None:
       #URL encode url_params and append to URL
@@ -134,9 +139,8 @@ class RESTClient(object):
     # Create the HTTP or HTTPS connection.
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     # Store URL and equivalent CURL request for debugging.
-    self._lasturl = '%s://%s:%s%s' % (
-      parts['scheme'], parts['host'], parts['port'], targeturl
-    )
+    self._lasturl = '%s://%s:%s%s' % (parts['scheme'], parts['host'], 
+                                      parts['port'], targeturl)
     self._curlrequest = ['curl', '-X %s' % method]
     for h in headers.keys():
       self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
@@ -144,13 +148,10 @@ class RESTClient(object):
     # Perform request using specified HTTP verb.
     conn.request(method, targeturl, None, headers)
     return self._getResponse(conn)
+    
 
-  def _doRequestMMBody(
-    self, method,
-    url, url_params=None,
-    headers=None,
-    fields=None, files=None
-  ):
+  def _doRequestMMBody(self, method, url, url_params=None, headers=None,
+                       fields=None, files=None):
     parts = self._parseURL(url)
     targeturl = parts['path']
     headers = self._mergeHeaders(headers)
@@ -178,9 +179,8 @@ class RESTClient(object):
     # Create the HTTP or HTTPS connection.
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     # Store URL and equivalent CURL request for debugging.
-    self._lasturl = '%s://%s:%s%s' % (
-      parts['scheme'], parts['host'], parts['port'], targeturl
-    )
+    self._lasturl = '%s://%s:%s%s' % (parts['scheme'], parts['host'], 
+                                      parts['port'], targeturl)
     self._curlrequest = ['curl', '-X %s' % method]
     for h in headers.keys():
       self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
@@ -194,6 +194,7 @@ class RESTClient(object):
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
 
+
   def getLastRequestAsCurlCommand(self):
     '''Returns a curl command line equivalent of the last request issued by
     this client instance.
@@ -202,6 +203,7 @@ class RESTClient(object):
     '''
     return u" ".join(self._curlrequest)
 
+
   def getlastUrl(self):
     '''Returns the last URL that was opened using this client instance.
     
@@ -209,14 +211,15 @@ class RESTClient(object):
     '''
     return self._lasturl
 
+
   def GET(self, url, url_params=None, headers=None):
     '''Perform a HTTP GET and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
     
     :param url: The full URL to the target
     :type url: String
-    :param url_params: Parameters that will be encoded in the query portion of the 
-      final URL.
+    :param url_params: Parameters that will be encoded in the query portion of
+    the final URL.
     :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
@@ -225,6 +228,7 @@ class RESTClient(object):
     '''
     return self._doRequestNoBody('GET', url, url_params=url_params, headers=headers)
 
+  
   def HEAD(self, url, url_params=None, headers=None):
     '''Perform a HTTP HEAD and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. Note that HEAD 
@@ -232,8 +236,8 @@ class RESTClient(object):
     
     :param url: The full URL to the target
     :type url: String
-    :param url_params: Parameters that will be encoded in the query portion of the 
-      final URL.
+    :param url_params: Parameters that will be encoded in the query portion of
+    the final URL.
     :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
@@ -242,14 +246,15 @@ class RESTClient(object):
     '''
     return self._doRequestNoBody('HEAD', url, url_params, headers)
 
+  
   def DELETE(self, url, url_params=None, headers=None):
     '''Perform a HTTP DELETE and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
     
     :param url: The full URL to the target
     :type url: String
-    :param url_params: Parameters that will be encoded in the query portion of the 
-      final URL.
+    :param url_params: Parameters that will be encoded in the query portion of
+    the final URL.
     :type url_params: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
@@ -258,6 +263,7 @@ class RESTClient(object):
     '''
     return self._doRequestNoBody('DELETE', url, url_params, headers)
 
+  
   def POST(self, url, url_params=None, headers=None, fields=None, files=None):
     '''Perform a HTTP POST and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
@@ -279,6 +285,7 @@ class RESTClient(object):
     '''
     return self._doRequestMMBody('POST', url, url_params, headers, fields, files)
 
+  
   def PUT(self, url, url_params=None, headers=None, fields=None, files=None):
     '''Perform a HTTP PUT and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
@@ -299,3 +306,4 @@ class RESTClient(object):
     :return type: httplib.HTTPResponse 
     '''
     return self._doRequestMMBody('PUT', url, url_params, headers, fields, files)
+
