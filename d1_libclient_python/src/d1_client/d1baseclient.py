@@ -98,7 +98,7 @@ class DataONEBaseClient(restclient.RESTClient):
       'status': u'monitor/status',
       'listnodes': u'node',
       'setaccesspolicy': u'setAccessPolicy_put/%(pid)s',
-      'assertauthorized': u'assertAuthorized/%(pid)s'
+      'isauthorized': u'isAuthorized/%(pid)s'
     }
     self.lastresponse = None
     # Set this to True to preserve a copy of the last response.read() as the
@@ -455,8 +455,8 @@ class DataONEBaseClient(restclient.RESTClient):
   # ----------------------------------------------------------------------------
 
   @util.str_to_unicode
-  def assertAuthorizedResponse(self, pid, action, vendorSpecific=None):
-    '''MN_auth.assertAuthorized(pid, action) -> Boolean
+  def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
+    '''MN_auth.isAuthorized(pid, action) -> Boolean
 
     Assert that subject is allowed to perform action on object.
     
@@ -469,7 +469,7 @@ class DataONEBaseClient(restclient.RESTClient):
       Raises NotAuthorized if access is not allowed.
     :return type: NoneType
     '''
-    url = self.RESTResourceURL('assertauthorized', pid=pid, action=action)
+    url = self.RESTResourceURL('isauthorized', pid=pid, action=action)
     self.logger.info("URL = %s" % url)
     url_params = {'action': action, }
     headers = {}
@@ -478,15 +478,15 @@ class DataONEBaseClient(restclient.RESTClient):
     return self.GET(url, url_params=url_params, headers=headers)
 
   @util.str_to_unicode
-  def assertAuthorized(self, pid, access, vendorSpecific=None):
-    '''See assertAuthorizedResponse()
+  def isAuthorized(self, pid, access, vendorSpecific=None):
+    '''See isAuthorizedResponse()
     
     :returns:
       True if access is allowed.
       Raises NotAuthorized if access is not allowed.
     :return type: bool
     '''
-    response = self.assertAuthorizedResponse(pid, access, vendorSpecific=vendorSpecific)
+    response = self.isAuthorizedResponse(pid, access, vendorSpecific=vendorSpecific)
     if self.keep_response_body:
       self.lastresponse.body = response.read()
     return self.isHttpStatusOK(response.status)

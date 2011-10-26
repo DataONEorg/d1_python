@@ -65,11 +65,11 @@ class DataONEObject(object):
     self.__client = None
     self._cnBaseUrl = cnBaseUrl
 
-  def getCredentials(self):
-    '''Override this method to retrieve credentials that can be used to
-    authenticate and retrieve a token for further operations.
-    '''
-    return {}
+#  def getCredentials(self):
+#    '''Override this method to retrieve credentials that can be used to
+#    authenticate and retrieve a token for further operations.
+#    '''
+#    return {}
 
   def _getClient(self, forcenew=False):
     '''Internal method used to retrieve an instance of a DataONE client that
