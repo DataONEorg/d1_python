@@ -34,7 +34,7 @@ import logging
 
 from d1_common import xmlrunner
 from d1_common.types import exceptions
-from d1_common.types import systemmetadata
+#from d1_common.types import systemmetadata
 from d1_common import const
 import d1_common.testcasewithurlcompare
 
