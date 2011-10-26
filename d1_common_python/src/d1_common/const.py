@@ -43,7 +43,7 @@ VERSION = d1_common.__version__
 MAX_LISTOBJECTS = 1000
 
 #: Default number of objects to retrieve in a list objects request
-DEFAULT_LISTOBJECTS = 10
+DEFAULT_LISTOBJECTS = 100
 
 #: HTTP Response timeout in seconds, float.
 #: TODO: retrieve this from D1 root
@@ -116,8 +116,7 @@ URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 
 AUTH_HEADER_NAME = 'Authorization'
 
-# Special subjects.
+# Symbolic subjects.
+SUBJECT_VERIFIED = 'verifiedUser'
+SUBJECT_AUTHENTICATED = 'authenticatedUser'
 SUBJECT_PUBLIC = 'public'
-SUBJECT_AUTHENTICATED = 'authenticated'
-SUBJECT_VERIFIED = 'verified'
-SUBJECT_TRUSTED = 'trusted'
