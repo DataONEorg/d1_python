@@ -80,7 +80,7 @@ urlpatterns = patterns(
   # Tier 2: Authorization API
 
   # GET /isAuthorized/{pid}?action={action}
-  (r'^assertAuthorized/(.+)/?$', 'assert_authorized'),
+  (r'^isAuthorized/(.+)/?$', 'is_authorized'),
   # PUT /accessRules/{pid}
   (r'^setAccessPolicy/(.+)$', 'access_policy_pid'),
   (r'^setAccessPolicy_put/(.+)$', 'access_policy_pid_put_workaround'),

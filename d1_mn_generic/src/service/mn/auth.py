@@ -268,7 +268,7 @@ def is_allowed(subject, level, pid):
   action levels are also allowed.
   '''
   # DataONE trusted infrastructure has all rights.
-  if subject == d1_common.const.SUBJECT_TRUSTED:
+  if subject in settings.DATAONE_TRUSTED_SUBJECTS:
     return True
   # - If subject is not trusted infrastructure, a specific permission for
   # subject must exist on object.
@@ -330,7 +330,7 @@ def assert_allowed(subject, level, pid):
 # Only D1 infrastructure.
 def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
-    if request.session.subject.value() != d1_common.const.SUBJECT_TRUSTED:
+    if request.session.subject.value() not in settings.DATAONE_TRUSTED_SUBJECTS:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 

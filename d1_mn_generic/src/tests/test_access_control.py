@@ -273,8 +273,8 @@ class TestAccessControl(unittest.TestCase):
       obj = client.get(context.test_pid, vendorSpecific=self.session(subject))
       self.assertEqual(context.obj_str, obj.read())
 
-  def test_300_assert_authorized_denied(self):
-    '''assertAuthorized returns access denied for previous subjects.
+  def test_300_is_authorized_denied(self):
+    '''isAuthorized returns access denied for previous subjects.
     '''
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     for subject in (
@@ -283,30 +283,30 @@ class TestAccessControl(unittest.TestCase):
     ):
       self.assertRaises(
         d1_common.types.exceptions.NotAuthorized,
-        client.assertAuthorized,
+        client.isAuthorized,
         context.test_pid,
         'read',
         vendorSpecific=self.session(subject)
       )
 
-  def test_310_assert_authorized_allowed(self):
-    '''assertAuthorized returns access allowed for current subjects.
+  def test_310_is_authorized_allowed(self):
+    '''isAuthorized returns access allowed for current subjects.
     '''
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     for subject in ('test_perm_7', 'test_perm_8'):
-      obj = client.assertAuthorized(
+      obj = client.isAuthorized(
         context.test_pid, 'read',
         vendorSpecific=self.session(subject)
       )
 
-  def test_320_assert_authorized_denied_higher(self):
-    '''assertAuthorized returns access denied for levels higher than allowed.
+  def test_320_is_authorized_denied_higher(self):
+    '''isAuthorized returns access denied for levels higher than allowed.
     '''
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     for subject in ('test_perm_7', 'test_perm_8'):
       self.assertRaises(
         d1_common.types.exceptions.NotAuthorized,
-        client.assertAuthorized,
+        client.isAuthorized,
         context.test_pid,
         'execute',
         vendorSpecific=self.session(subject)

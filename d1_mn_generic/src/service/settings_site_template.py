@@ -34,21 +34,28 @@
   - python 2.6
 '''
 
-# Generic Member Node instance configuration. These settings are unique for
-# a given instance of GMN.
+# Stdlib.
+import os
+import sys
 
-IDENTIFIER = 'GMN_TEST'
-NAME = 'GMN TEST'
-DESCRIPTION = 'GMN'
-BASE_URL = 'http://localhost:8000'
-REPLICATE = TRUE
-SYNCHRONIZE = TRUE
-NODE_TYPE = MN
+# Discover the path of this module
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
-SERVICE_NAME = "GMN TEST"
-SERVICE_VERSION = '0.5'
-SERVICE_AVAILABLE = TRUE
+#IDENTIFIER = 'GMN_TEST'
+#NAME = 'GMN TEST'
+#DESCRIPTION = 'GMN'
+#BASE_URL = 'http://localhost:8000'
+#REPLICATE = TRUE
+#SYNCHRONIZE = TRUE
+#NODE_TYPE = MN
+#
+#SERVICE_NAME = "GMN TEST"
+#SERVICE_VERSION = '0.5'
+#SERVICE_AVAILABLE = TRUE
+#
+#
 
+# The name under which this Member Node was registered with DataONE.
 GMN_SERVICE_NAME = 'test_gmn'
 
 # Enable debug mode.
@@ -75,6 +82,27 @@ if DEBUG:
 else:
   LOG_LEVEL = 'WARNING'
 
+# Implicitly trusted DataONE infrastructure. Connections containing client
+# side certificates with these subjects bypass access control rules and have
+# access to REST interfaces meant only for use by CNs.
+DATAONE_TRUSTED_SUBJECTS = [
+  'CN=testUserWriter,DC=dataone,DC=org',
+  'CN=testUserReader,DC=dataone,DC=org',
+  'CN=testUserNoRights,DC=dataone,DC=org',
+  'cn=test,dc=dataone,dc=org',
+  'cn=c3p0,dc=dataone,dc=org',
+]
+
+# In debug mode, a special test subject is added to the list of trusted
+# subjects.
+if DEBUG:
+  DATAONE_TRUSTED_SUBJECTS.append('gmn_test_subject_trusted')
+
+# When DEBUG=False and a view raises an exception, Django will send emails to
+# these addresses with the full exception information.
+ADMINS = (('Roger Dahl', 'dahl@unm.edu'), )
+
+# Database connection.
 DATABASES = {
   'default': {
     # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -97,7 +125,6 @@ OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
 
 LOG_PATH = _here('./gmn.log')
-XSD_PATH = _here('./coordinating_node_sysmeta.xsd')
 ROOT_PATH = _here('./')
 
 # Set up logging.

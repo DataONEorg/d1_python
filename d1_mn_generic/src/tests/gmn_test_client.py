@@ -38,6 +38,10 @@ import logging
 import d1_client.mnclient
 import d1_common.types.exceptions
 
+# Constants.
+GMN_TEST_SUBJECT_PUBLIC = 'public'
+GMN_TEST_SUBJECT_TRUSTED = 'gmn_test_subject_trusted'
+
 
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def __init__(

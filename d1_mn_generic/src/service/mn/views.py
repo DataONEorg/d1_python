@@ -144,7 +144,7 @@ def event_log_view(request):
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
-  if request.session.subject.value() != d1_common.const.SUBJECT_TRUSTED:
+  if request.session.subject.value() not in settings.DATAONE_TRUSTED_SUBJECTS:
     query = db_filter.add_access_policy_filter(query, request,
                                                'object__permission')
   
@@ -402,7 +402,7 @@ def object(request):
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
-  if request.session.subject.value() != d1_common.const.SUBJECT_TRUSTED:
+  if request.session.subject.value() not in settings.DATAONE_TRUSTED_SUBJECTS:
     query = db_filter.add_access_policy_filter(query, request, 'permission')
 
   # Create a copy of the query that we will not slice, for getting the total
@@ -468,8 +468,8 @@ def error(request):
 # ------------------------------------------------------------------------------  
 
 # Unrestricted.
-def assert_authorized(request, pid):
-  '''MNAuthorization.assertAuthorized(pid, action) -> Boolean
+def is_authorized(request, pid):
+  '''MNAuthorization.isAuthorized(pid, action) -> Boolean
 
   Test if the user identified by the provided token has authorization for
   operation on the specified object.

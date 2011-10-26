@@ -39,6 +39,9 @@
 import os
 import sys
 
+# Add site specific settings.
+from settings_site import *
+
 # Discover the path of this module
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
@@ -48,12 +51,6 @@ TEMPLATE_DEBUG = True
 
 # Only set cookies when running through SSL.
 SESSION_COOKIE_SECURE = True
-
-# When DEBUG=False and a view raises an exception, Django will send emails to
-# these addresses with the full exception information.
-ADMINS = (
-  # ('<name>', '<email address>'),
-)
 
 MANAGERS = ADMINS
 
@@ -119,5 +116,3 @@ INSTALLED_APPS = (
 
 # TODO: May be able to simplify url regexes by turning this on.
 APPEND_SLASH = False
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './lib')))
