@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>fitch2.mc</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>5748</size>
   <checksum algorithm="MD5">eb1076e9dc788cb830a0bc6ecb0049a6</checksum>
   <submitter>test</submitter>

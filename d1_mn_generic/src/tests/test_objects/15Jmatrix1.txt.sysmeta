@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>15Jmatrix1.txt</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>43617</size>
   <checksum algorithm="MD5">bc134c8f14382384330ec21db4f85382</checksum>
   <submitter>test</submitter>

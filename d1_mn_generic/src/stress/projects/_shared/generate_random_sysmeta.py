@@ -181,7 +181,7 @@ def generate_random_sysmeta(pid, size, md5):
 
   format_id = random.choice(object_formats)
   object_format = dataoneTypes.ObjectFormat(format_id)
-  object_format.fmtid = format_id
+  object_format.formatId = format_id
   object_format.formatName = format_id
   object_format.scienceMetadata = False
   sysmeta.objectFormat = object_format

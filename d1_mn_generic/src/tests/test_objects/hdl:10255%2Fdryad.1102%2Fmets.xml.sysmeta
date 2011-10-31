@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>hdl:10255/dryad.1102/mets.xml</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>3684</size>
   <checksum algorithm="MD5">1a62135d6c6f102beff70b31cd67e63e</checksum>
   <submitter>test</submitter>

@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>co2.nex</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>55803</size>
   <checksum algorithm="MD5">f18e255c8c93394f6039770e8c20803d</checksum>
   <submitter>test</submitter>

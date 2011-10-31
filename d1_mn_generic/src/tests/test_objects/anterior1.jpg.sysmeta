@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>anterior1.jpg</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>717851</size>
   <checksum algorithm="MD5">5b415607e35c1d367bad0ab3bce6ac25</checksum>
   <submitter>test</submitter>

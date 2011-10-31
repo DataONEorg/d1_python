@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>DPBG_EnhMethods.pdf</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>16331</size>
   <checksum algorithm="MD5">1873fe82afc55504c0904f8be651b726</checksum>
   <submitter>test</submitter>

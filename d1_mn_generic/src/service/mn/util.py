@@ -102,7 +102,7 @@ import util
 
 
 def store_path(root, pid):
-  '''Determine the location in the object or system metadata store of the file
+  '''Determine the location in the object or System Metadata store of the file
   holding an object's bytes.
   
   :param pid: The object's persistent identifier.

@@ -108,6 +108,22 @@ def object_pid(request, pid):
     # TODO: Add "PUT" to list.
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
   
+def meta_pid(request, pid):
+  if request.method == 'GET':
+    return meta_pid_get(request, pid)
+  elif request.method == 'POST':
+    return meta_pid_post(request, pid)
+  else:
+    return HttpResponseNotAllowed(['GET', 'POST'])
+
+# ==============================================================================
+# Helpers
+# ==============================================================================
+
+def _assert_object_exists(pid):
+  if not models.Object.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.NotFound(0,
+      'Specified non-existing Science Object', pid)
 
 # ==============================================================================
 # Public API
@@ -220,22 +236,18 @@ def object_pid_get(request, pid, head):
     MN_read.getSystemMetadata() for a client to determine basic properties of
     the referenced object.
   '''
-  # Find object based on pid.
-  try:
-    sciobj = models.Object.objects.get(pid=pid)
-  except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0,
-      'Attempted to get a non-existing object', pid)
+  _assert_object_exists(pid)
+
+  sciobj = models.Object.objects.get(pid=pid)
 
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(sciobj.url)
   except ValueError:
     raise d1_common.types.exceptions.ServiceFailure(0,
-      'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
+      'pid({0}) url({1}): Invalid URL'.format(sciobj.pid, sciobj.url))
 
   response = HttpResponse()
-
   # Add header info about object.
   # TODO: Keep track of Content-Type instead of guessing.
   response['Content-Length'] = sciobj.size
@@ -251,21 +263,39 @@ def object_pid_get(request, pid, head):
   if head:
     return response
 
+  # TODO: The HttpResponse object supports streaming with an iterator, but only
+  # when instantiated with the iterator. That behavior is not convenient here,
+  # so we set up the iterator by writing directly to the internal methods of an
+  # instantiated HttpResponse object.
+  response._container = _object_pid_get(sciobj)
+  response._is_str = False
+  return response
+
+
+# Internal.
+def _object_pid_get(sciobj):  
+  # Split URL into individual parts.
+  try:
+    url_split = urlparse.urlparse(sciobj.url)
+  except ValueError:
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'pid({0}) url({1}): Invalid URL'.format(sciobj.pid, sciobj.url))
+
   if url_split.scheme == 'http':
     logging.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
-                 ' location'.format(pid, sciobj.url))
-    return _object_pid_get_remote(request, response, pid, sciobj.url, url_split)
+                 ' location'.format(sciobj.pid, sciobj.url))
+    return _object_pid_get_remote(request, sciobj.url, url_split)
   elif url_split.scheme == 'file':
     logging.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
-                 .format(pid, sciobj.url))
-    return _object_pid_get_local(request, response, pid)
+                 .format(sciobj.pid, sciobj.url))
+    return _object_pid_get_local(sciobj.pid)
   else:
     raise d1_common.types.exceptions.ServiceFailure(0,
       'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
 
 
 # Internal.
-def _object_pid_get_remote(request, response, pid, url, url_split):
+def _object_pid_get_remote(url, url_split):
   # Handle 302 Found.  
   try:
     conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
@@ -292,46 +322,29 @@ def _object_pid_get_remote(request, response, pid, url, url_split):
     raise d1_common.types.exceptions.ServiceFailure(0,
       'HTTPException while opening object for proxy: {0}'.format(e))
 
-  # Return the raw bytes of the object.
-
-  # TODO: The HttpResponse object supports streaming with an iterator, but only
-  # when instantiated with the iterator. That behavior is not convenient here,
-  # so we set up the iterator by writing directly to the internal methods of an
-  # instantiated HttpResponse object.
-  response._container = util.fixed_chunk_size_iterator(remote_response)
-  response._is_str = False
-  return response
+  # Return an iterator that iterates over the raw bytes of the object in chunks.
+  return util.fixed_chunk_size_iterator(remote_response)
 
 
 # Internal.
-def _object_pid_get_local(request, response, pid):
+def _object_pid_get_local(pid):
   file_in_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
-  # Return the raw bytes of the object in chunks.
   # Django closes the file. (Can't use "with".)
   file = open(file_in_path, 'rb')
-  response._container = util.fixed_chunk_size_iterator(file)
-  response._is_str = False
-  return response
+  # Return an iterator that iterates over the raw bytes of the object in chunks.
+  return util.fixed_chunk_size_iterator(file)
 
 
 @lock_pid.for_read
 @auth.assert_read_permission
-def meta_pid(request, pid):
+def meta_pid_get(request, pid):
   '''MNRead.getSystemMetadata(session, pid) → SystemMetadata
 
   Describes the science metadata or data object (and likely other objects in the
-  future) identified by pid by returning the associated system metadata object.
+  future) identified by pid by returning the associated System Metadata object.
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
-  # Verify that object exists. 
-  try:
-    url = models.Object.objects.filter(pid=pid)[0]
-  except IndexError:
-    raise d1_common.types.exceptions.NotFound(0,
-      'Non-existing System Metadata object was requested', pid)
-
+  _assert_object_exists(pid)
+  
   # Log access of the SysMeta of this object.
   event_log.log(pid, 'read', request)
 
@@ -341,6 +354,81 @@ def meta_pid(request, pid):
   file = open(file_in_path, 'rb')
   return HttpResponse(util.fixed_chunk_size_iterator(file),
                       mimetype=d1_common.const.MIMETYPE_XML)
+
+
+@lock_pid.for_write
+@auth.assert_trusted_permission
+def meta_pid_post(request, pid):
+  '''MNStorage.updateSystemMetadata(session, pid, sysmeta) → Identifier
+
+  Updates the System Metadata for an existing Science Object.
+  
+  Preconditions:
+  - The Django transaction middleware layer must be enabled.
+
+  Because TransactionMiddleware layer is enabled, the db modifications all
+  become visible simultaneously after this function completes.
+  '''
+  _assert_object_exists(pid) 
+
+  # Check that a valid MIME multipart document has been provided and that it
+  # contains the required System Metadata section.
+  util.validate_post(request, (('file', 'sysmeta'), ))
+
+  # Deserialize metadata (implicit validation).
+  sysmeta_str = request.FILES['sysmeta'].read()
+  try:
+    sysmeta = dataoneTypes.CreateFromDocument(sysmeta_str)  
+  except:
+    err = sys.exc_info()[1]
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'System metadata validation failed: {0}'.format(str(err)))
+
+  # Note: No sanity checking is done on the provided System Metadata. It is
+  # assumed that what is being pushed from the DataONE Trusted Infrastructure
+  # component makes sense.
+
+  # Update database to match new System Metadata.
+  try:
+    sciobj = models.Object.objects.get(pid=pid)
+    sciobj.set_format(sysmeta.formatId)
+    sciobj.checksum = sysmeta.checksum.value()
+    sciobj.set_checksum_algorithm(sysmeta.checksum.algorithm)
+    sciobj.mtime = d1_common.util.normalize_to_utc(
+      sysmeta.dateSysMetadataModified)
+    sciobj.size = sysmeta.size
+    #sciobj.replica = False
+    sciobj.save()
+  except:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Invalid System metadata')
+    
+  # Successfully updated the db, so put current datetime in status.mtime. This
+  # should store the status.mtime in UTC and for that to work, Django must be
+  # running with settings.TIME_ZONE = 'UTC'.
+  db_update_status = models.DB_update_status()
+  db_update_status.status = 'update successful'
+  db_update_status.save()
+    
+  # If an access policy was provided in the System Metadata, set it.
+  if sysmeta.accessPolicy:
+    auth.set_access_policy(pid, sysmeta.accessPolicy)
+  else:
+    auth.set_access_policy(pid)
+
+  # Write SysMeta bytes to store. The existing file can be safely overwritten
+  # because a lock has been obtained on the PID.
+  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
+  with open(sysmeta_path, 'wb') as file:
+    file.write(sysmeta_str)
+  
+  # Log this System Metadata update.
+  event_log.log(pid, 'update', request)
+  
+  # Return the pid.
+  pid_pyxb = dataoneTypes.Identifier(pid)
+  pid_xml = pid_pyxb.toxml()
+  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
 
 
 @lock_pid.for_read
@@ -354,33 +442,43 @@ def checksum_pid(request, pid):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  # Find object based on pid.
-  query = models.Object.objects.filter(pid=pid)
+  _assert_object_exists(pid)
+
+  # If the checksumAlgorithm argument was not provided, it defaults to
+  # the system wide default checksum algorithm.
+  algorithm = request.GET.get('checksumAlgorithm',
+    d1_common.const.DEFAULT_CHECKSUM_ALGORITHM) 
+
+  # Instantiate a hash calculator by name.
   try:
-    checksum = query[0].checksum
-    checksum_algorithm = query[0].checksum_algorithm.checksum_algorithm
-  except IndexError:
-    raise d1_common.types.exceptions.NotFound(0,
-      'Non-existing object was requested', pid)
+    h = hashlib.new(algorithm)
+  except ValueError:
+    # Unsupported hash. Return an exception with the names of the supported
+    # algorithms.
+    #
+    # TODO: When we upgrade to Python 2.7, use hashlib.algorithms to get a list
+    # of the supported algorithms. 
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Invalid checksum algorithm, "{0}". Supported algorithms are: md5(), '
+      'sha1(), sha224(), sha256(), sha384(), sha512(). Additional algorithms '
+      'may also be available depending upon the OpenSSL library in use.'
+        .format(algorithm))
+
+  # Calculate the checksum.
+  sciobj = models.Object.objects.get(pid=pid)
+  for bytes in _object_pid_get(sciobj):
+    h.update(bytes)
 
   # Log the access of this object.
   # TODO: look into log type other than 'read'
   event_log.log(pid, 'read', request)
 
-  # If the checksumAlgorithm argument was provided, the checksum algorithm
-  # used by GMN must match the requested algorithm, or an exception is returned
-  # with the name of the supported algorithm.
-  if 'checksumAlgorithm' in request.GET \
-    and request.GET['checksumAlgorithm'] != checksum_algorithm:
-      raise d1_common.types.exceptions.InvalidRequest(0,
-        'Must use supported checksum algorithm: {0}'.format(checksum_algorithm))
-
   # Return the checksum.
-  checksum_ser = d1_common.types.checksum_serialization.Checksum(checksum)
-  checksum_ser.checksum.algorithm = checksum_algorithm
-  doc, content_type = checksum_ser.serialize(request.META.get('HTTP_ACCEPT',
-                                                              None))
-  return HttpResponse(doc, content_type)
+  checksum_serializer = dataoneTypes.checksum(h.hexdigest())
+  #checksum_serializer.checksum = 
+  checksum_serializer.algorithm = algorithm
+  checksum_xml = checksum_serializer.toxml() 
+  return HttpResponse(checksum_xml, d1_common.const.MIMETYPE_XML)
 
 
 # Unrestricted.
@@ -454,7 +552,7 @@ def error(request):
   '''
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
-
+  #raise Exception(','.join(request.POST.keys()))
   # TODO: Deserialize exception in message and log full information.
   util.validate_post(request, (('field', 'message')))
   
@@ -538,13 +636,13 @@ def access_policy_pid_put(request, pid):
 def _validate_sysmeta_identifier(pid, sysmeta):
   if sysmeta.identifier.value() != pid:
     raise d1_common.types.exceptions.InvalidRequest(0,
-      'PID in system metadata does not match that of the URL')
+      'PID in System Metadata does not match that of the URL')
 
   
 def _validate_sysmeta_filesize(request, sysmeta):
   if sysmeta.size != request.FILES['object'].size:
     raise d1_common.types.exceptions.InvalidRequest(0,
-      'Object size in system metadata does not match that of the uploaded '
+      'Object size in System Metadata does not match that of the uploaded '
       'object')
 
 
@@ -567,7 +665,7 @@ def _validate_sysmeta_checksum(request, sysmeta):
   c = _calculate_object_checksum(request, h)
   if sysmeta.checksum.value() != c:
     raise d1_common.types.exceptions.InvalidRequest(0,
-      'Checksum in system metadata does not match that of the uploaded object')
+      'Checksum in System Metadata does not match that of the uploaded object')
     
   
 def _validate_sysmeta_against_uploaded(request, pid, sysmeta):
@@ -623,7 +721,7 @@ def object_pid_post(request, pid):
     raise d1_common.types.exceptions.InvalidRequest(0,
       'System metadata validation failed: {0}'.format(str(err)))
 
-  # Validating and updating system metadata can be turned off by a vendor
+  # Validating and updating System Metadata can be turned off by a vendor
   # specific extension when GMN is running in debug mode.
   if settings.DEBUG == False or (settings.DEBUG == True and \
                                  'HTTP_VENDOR_TEST_OBJECT' not in request.META):
@@ -683,7 +781,7 @@ def object_pid_post(request, pid):
     object = models.Object()
     object.pid = pid
     object.url = url
-    object.set_format(sysmeta.fmtid)
+    object.set_format(sysmeta.formatId)
     object.checksum = sysmeta.checksum.value()
     object.set_checksum_algorithm(sysmeta.checksum.algorithm)
     object.mtime = d1_common.util.normalize_to_utc(
@@ -758,12 +856,9 @@ def object_pid_delete(request, pid):
   Deletes an object from the Member Node, where the object is either a data
   object or a science metadata object.
   '''
-  # Find object based on pid.
-  try:
-    sciobj = models.Object.objects.get(pid=pid)
-  except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0,
-      'Attempted to delete a non-existing object', pid)
+  _assert_object_exists(pid)
+
+  sciobj = models.Object.objects.get(pid=pid)
 
   # If the object is wrapped, we only delete the reference. If it's managed, we
   # delete both the object and the reference.
@@ -896,7 +991,7 @@ def _replicate_store(request):
   object = models.Object()
   object.pid = pid
   object.url = 'file:///{0}'.format(d1_common.util.encodePathElement(pid))
-  object.set_format(sysmeta.objectFormat.fmtid,
+  object.set_format(sysmeta.objectFormat.formatId,
                     sysmeta.objectFormat.formatName,
                     sysmeta.objectFormat.scienceMetadata)
   object.checksum = sysmeta.checksum
@@ -1082,12 +1177,8 @@ def test_delete_single_object(request, pid):
 
 # Unrestricted access in debug mode. Disabled in production.
 def _delete_object(pid):
-  # Find object based on pid.
-  try:
-    sciobj = models.Object.objects.get(pid=pid)
-  except ObjectDoesNotExist:
-    raise d1_common.types.exceptions.NotFound(0,
-      'Attempted to delete a non-existing object', pid)
+  _assert_object_exists(pid)
+  sciobj = models.Object.objects.get(pid=pid)
 
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.

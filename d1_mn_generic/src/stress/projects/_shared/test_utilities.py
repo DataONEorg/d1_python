@@ -170,7 +170,7 @@ def unicode_test_1():
     # Create a small test object containing only the pid.
     scidata = pid_unescaped.encode('utf-8')
 
-    # Create corresponding system metadata for the test object.
+    # Create corresponding System Metadata for the test object.
     size = len(scidata)
     # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
     # of the internal Python encoding for the string. So we maintain scidata as a utf-8 string.

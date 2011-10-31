@@ -94,6 +94,8 @@ urlpatterns = patterns(
   (r'^object_put/(.+)$', 'object_pid_put'),
   # DELETE /object/{pid}
   # Handled by the object_pid dispatcher.
+  # POST /meta/{pid}
+  # Handled by the meta_pid dispatcher.
 
   # Tier 4: Replication API
 

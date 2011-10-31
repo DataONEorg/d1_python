@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>Gurgel LSmeans.xls</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>1048576</size>
   <checksum algorithm="MD5">a8ce1bbf6ad919b6e26d6d08e2f6a42e</checksum>
   <submitter>test</submitter>

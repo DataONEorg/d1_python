@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>ApineOPSIN.nexus</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>11529</size>
   <checksum algorithm="MD5">0c539d940f2f72a76ca081f5c8780f5e</checksum>
   <submitter>test</submitter>

@@ -310,7 +310,7 @@ def assert_allowed(subject, level, pid):
   # Return NotAuthorized if subject is not allowed to perform action on object.
   if not is_allowed(subject, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, '"{0}" on "{1}" denied for "{2}"'.format(
+      0, '{0} on "{1}" denied for {2}'.format(
         level_to_action(level), pid, subject), pid
     )
 
@@ -331,7 +331,11 @@ def assert_allowed(subject, level, pid):
 def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
     if request.session.subject.value() not in settings.DATAONE_TRUSTED_SUBJECTS:
-      raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
+      raise d1_common.types.exceptions.NotAuthorized(
+        0, 'Action denied for subject: {0}. Trusted subjects: {1}'.format(
+          request.session.subject.value(), ', '.join(settings.DATAONE_TRUSTED_SUBJECTS)
+        )
+      )
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__

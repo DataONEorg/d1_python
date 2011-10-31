@@ -166,8 +166,12 @@ class TestSequenceFunctions(unittest2.TestCase):
         m = re.match(r'test_\d{4}_(managed|wrapped)_(.*)', member_obj.__name__)
         if m:
           fb = getattr(self, m.group(2))
-          member_obj.__func__.__doc__ = \
-            m.group(1)[0].upper() + m.group(1)[1:] + ': ' + fb.__doc__
+          try:
+            member_obj.__func__.__doc__ = \
+              m.group(1)[0].upper() + m.group(1)[1:] + ': ' + fb.__doc__
+          except TypeError:
+            raise Exception('Missing docstring in {0}'.format(
+              member_obj.__name__))
 
   def setUp(self):
     pass
@@ -223,7 +227,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Object not found
     assertTrue(False)
 
-#  def gen_sysmeta(self, pid, size, md5, now, owner):
+#  def generate_sysmeta(self, pid, size, md5, now, owner):
 #    return u'''<?xml version="1.0" encoding="UTF-8"?>
 #<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
 #  <identifier>{0}</identifier>
@@ -239,11 +243,11 @@ class TestSequenceFunctions(unittest2.TestCase):
 #</D1:systemMetadata>
 #'''.format(escape(pid), size, owner, md5, datetime.datetime.isoformat(now))
 
-  def gen_sysmeta(self, pid, size, md5, now, owner):
+  def generate_sysmeta(self, pid, size, md5, now, owner):
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.serialVersion = 1
     sysmeta.identifier = pid
-    sysmeta.fmtid = 'eml://ecoinformatics.org/eml-2.0.0'
+    sysmeta.formatId = 'eml://ecoinformatics.org/eml-2.0.0'
     sysmeta.size = size
     sysmeta.submitter = owner
     sysmeta.rightsHolder = owner
@@ -256,16 +260,16 @@ class TestSequenceFunctions(unittest2.TestCase):
     return sysmeta
 
 
-  def gen_access_policy(self, access_rules):
+  def generate_access_policy(self, access_rules):
     accessPolicy = dataoneTypes.accessPolicy()
     for access_rule in access_rules:
       accessRule = dataoneTypes.AccessRule()
       for subject in access_rule[0]:
         accessRule.subject.append(subject)
       for permission in access_rule[1]:
-        permission = dataoneTypes.Permission('read')
-        accessRule.permission.append(permission)
-      accessRule.resource.append('<dummy. field will be removed>')
+        permission_pyxb = dataoneTypes.Permission(permission)
+        accessRule.permission.append(permission_pyxb)
+      #accessRule.resource.append('<dummy. field will be removed>')
       accessPolicy.append(accessRule)
     return accessPolicy
   
@@ -400,7 +404,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       object_str_d1 = client.get(pid,
         vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)) \
         .read(1024**2)
-      #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
       self.assertEqual(object_str_disk, object_str_d1)
       
  #Read objectList from MN and compare the values for each object with values
@@ -439,8 +442,8 @@ class TestSequenceFunctions(unittest2.TestCase):
       
       self.assertEqual(object_info.identifier.value(),
                        sysmeta_obj.identifier.value(), sysmeta_path)
-      self.assertEqual(object_info.fmtid,
-                       sysmeta_obj.fmtid, sysmeta_path)
+      self.assertEqual(object_info.formatId,
+                       sysmeta_obj.formatId, sysmeta_path)
       self.assertEqual(object_info.dateSysMetadataModified,
                        sysmeta_obj.dateSysMetadataModified, sysmeta_path)
       self.assertEqual(object_info.size, sysmeta_obj.size, sysmeta_path)
@@ -448,6 +451,46 @@ class TestSequenceFunctions(unittest2.TestCase):
                        sysmeta_obj.checksum.value(), sysmeta_path)
       self.assertEqual(object_info.checksum.algorithm,
                        sysmeta_obj.checksum.algorithm, sysmeta_path)
+
+
+  def update_sysmeta(self):
+    '''Update System Metadata.
+    '''
+    pid = '12Cpaup.txt'
+    
+    # Generate a new System Metadata object with Access Policy.
+    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
+                                    datetime.datetime(1976, 7, 8),
+                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+
+    access_policy_spec = (
+      (('test_user_1',), ('read',)),
+      (('test_user_2',), ('read',))
+    )
+
+    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
+
+    sysmeta.rightsHolder = 'test_user_1'
+
+    # Serialize System Metadata to XML.
+    sysmeta_xml = sysmeta.toxml()
+
+    # Set up structure for use in generating the MIME multipart document
+    # that will be POSTed to the server. 
+    files = [
+      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
+    ]
+
+    # POST to /meta/pid.
+    test_update_sysmeta_url = urlparse.urljoin(self.opts.gmn_url,
+      'meta/{0}'.format(d1_common.util.encodePathElement(pid)))
+    
+    # Generate MIME multipart document and post to server.
+    root = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    response = root.POST(
+      test_update_sysmeta_url, files=files,
+      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    self.assertEqual(response.status, 200)
 
 
   def object_update(self):
@@ -681,7 +724,52 @@ class TestSequenceFunctions(unittest2.TestCase):
       toDate=datetime.datetime(2500, 12, 31),
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_log_slice(log, 0, 0, 0)
-      
+  
+  ##############################################################################
+  # getChecksum()
+  ##############################################################################
+
+  def get_checksum_test(self, pid, checksum, algorithm):
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    checksum_obj = client.getChecksum(pid, checksumAlgorithm=algorithm,
+      vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    self.assertEqual(checksum, checksum_obj.value())
+    self.assertEqual(algorithm, checksum_obj.algorithm)
+    
+    
+  def get_checksum_1(self):
+    '''getChecksum: md5'''
+    pid = 'Drug effect.xls'
+    checksum = '916a377112e3d4ed5812f8493a271966'
+    algorithm = 'MD5'
+    self.get_checksum_test(pid, checksum, algorithm)
+
+
+  def get_checksum_2(self):
+    '''getChecksum: sha1'''
+    pid = 'emerson.app'
+    checksum = '20b95b4c68c949f1a373efd3a4d612557d8e49b1'
+    algorithm = 'SHA1'
+    self.get_checksum_test(pid, checksum, algorithm)
+
+
+  def get_checksum_3(self):
+    '''getChecksum: sha224'''
+    pid = 'FigS2_Hsieh.pdf'
+    checksum = 'fb9534987c3dceaa45e1ba4c0ecfba3414d5a8042fabd772862942af'
+    algorithm = 'SHA224'
+    self.get_checksum_test(pid, checksum, algorithm)
+
+
+  def get_checksum_4(self):
+    '''getChecksum with unsupported algorithm returns InvalidRequest exception'''
+    pid = 'FigS2_Hsieh.pdf'
+    checksum = 'fb9534987c3dceaa45e1ba4c0ecfba3414d5a8042fabd772862942af'
+    algorithm = 'INVALID_ALGORITHM'
+    self.assertRaises(d1_common.types.exceptions.InvalidRequest,
+                      self.get_checksum_test, pid, checksum, algorithm)
+
+
   ##############################################################################
   # /object/<pid>
   ##############################################################################
@@ -870,14 +958,14 @@ class TestSequenceFunctions(unittest2.TestCase):
         continue
       # Create a small test object containing only the pid. 
       scidata = pid_unescaped.encode('utf-8')
-      # Create corresponding system metadata for the test object.
+      # Create corresponding System Metadata for the test object.
       size = len(scidata)
       # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
       # of the internal Python encoding for the string. So we maintain scidata
       # as a utf-8 string.
       md5 = hashlib.md5(scidata).hexdigest()
       now = datetime.datetime.now()
-      sysmeta_xml = self.gen_sysmeta(pid_unescaped, size, md5, now,
+      sysmeta_xml = self.generate_sysmeta(pid_unescaped, size, md5, now,
                                      gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
       # Create the object on GMN.
       client.create(pid_unescaped, StringIO.StringIO(scidata), sysmeta_xml,
@@ -983,6 +1071,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1040_managed_object_properties(self):
     self.object_properties()
 
+  def test_1060_managed_update_sysmeta(self):
+    self.update_sysmeta()
+    
 #  def test_1050_managed_object_update(self):
 #    self.object_update()
 
@@ -1051,9 +1142,16 @@ class TestSequenceFunctions(unittest2.TestCase):
 
   def test_1239_managed_event_log_date_range_4(self):
     self.event_log_date_range_4()
-  
-# TODO: Include checksum tests if we keep getChecksum().
 
+  def test_1250_managed_get_checksum_1(self):
+    self.get_checksum_1()
+    
+  def test_1251_managed_get_checksum_2(self):
+    self.get_checksum_2()
+    
+  def test_1252_managed_get_checksum_3(self):
+    self.get_checksum_3()
+    
 #  def test_1330_managed_delete(self):
 #    self.delete()
 #
@@ -1103,6 +1201,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2040_wrapped_object_properties(self):
     self.object_properties()
 
+  def test_2060_wrapped_update_sysmeta(self):
+    self.update_sysmeta()
+
   def test_2100_wrapped_get_object_count(self):
     self.get_object_count()
 
@@ -1142,33 +1243,42 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2220_wrapped_get_sysmeta_by_valid_pid(self):
     self.get_sysmeta_by_valid_pid()
 
-  def test_1231_wrapped_event_log_get_object_count(self):
+  def test_2231_wrapped_event_log_get_object_count(self):
     self.event_log_get_object_count()
 
-  def test_1232_wrapped_event_log_slicing_1(self):
+  def test_2232_wrapped_event_log_slicing_1(self):
     self.event_log_slicing_1()
 
-  def test_1233_wrapped_event_log_slicing_2(self):
+  def test_2233_wrapped_event_log_slicing_2(self):
     self.event_log_slicing_2()
 
-  def test_1234_wrapped_event_log_slicing_3(self):
+  def test_2234_wrapped_event_log_slicing_3(self):
     self.event_log_slicing_3()
 
-  def test_1235_wrapped_event_log_slicing_4(self):
+  def test_2235_wrapped_event_log_slicing_4(self):
     self.event_log_slicing_4()
 
-  def test_1236_wrapped_event_log_date_range_1(self):
+  def test_2236_wrapped_event_log_date_range_1(self):
     self.event_log_date_range_1()
 
-  def test_1237_wrapped_event_log_date_range_2(self):
+  def test_2237_wrapped_event_log_date_range_2(self):
     self.event_log_date_range_2()
 
-  def test_1238_wrapped_event_log_date_range_3(self):
+  def test_2238_wrapped_event_log_date_range_3(self):
     self.event_log_date_range_3()
 
-  def test_1239_wrapped_event_log_date_range_4(self):
+  def test_2239_wrapped_event_log_date_range_4(self):
     self.event_log_date_range_4()
     
+  def test_2250_wrapped_get_checksum_1(self):
+    self.get_checksum_1()
+    
+  def test_2251_wrapped_get_checksum_2(self):
+    self.get_checksum_2()
+    
+  def test_2252_wrapped_get_checksum_3(self):
+    self.get_checksum_3()
+
 #  def test_2330_wrapped_delete(self):
 #    self.delete_test()
 #

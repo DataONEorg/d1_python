@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>DPBG_SupplTables.pdf</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>12561</size>
   <checksum algorithm="MD5">9b5b215581d0d43890e6c4e360175c86</checksum>
   <submitter>test</submitter>

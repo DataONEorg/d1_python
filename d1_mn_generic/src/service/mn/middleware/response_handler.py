@@ -82,7 +82,7 @@ def db_to_object_list(view_result):
   for row in view_result['query']:
     objectInfo = dataoneTypes.ObjectInfo()
     objectInfo.identifier = row.pid
-    objectInfo.fmtid = row.format.format_id
+    objectInfo.formatId = row.format.format_id
 
     checksum = dataoneTypes.Checksum(row.checksum)
     checksum.algorithm = row.checksum_algorithm.checksum_algorithm

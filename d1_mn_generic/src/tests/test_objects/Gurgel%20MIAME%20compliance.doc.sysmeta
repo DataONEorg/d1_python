@@ -2,7 +2,7 @@
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <serialVersion>1</serialVersion>
   <identifier>Gurgel MIAME compliance.doc</identifier>
-  <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
   <size>31232</size>
   <checksum algorithm="MD5">910daaef7219d197cc2a891b64380c6f</checksum>
   <submitter>test</submitter>
