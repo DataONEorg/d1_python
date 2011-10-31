@@ -71,12 +71,12 @@ import d1_common.util
 
 
 class SystemMetadata(object):
-  '''Wrapper around a system metadata entry.  Provides convenience properties
+  '''Wrapper around a System Metadata entry.  Provides convenience properties
   for accessing the parsed content of the document.
   '''
 
   def __init__(self, xmldoc):
-    ''':param xmldoc: (Unicode) The XML document to parse as system metadata.
+    ''':param xmldoc: (Unicode) The XML document to parse as System Metadata.
     '''
     self.etree = None
     self.xmldoc = xmldoc
@@ -92,7 +92,7 @@ class SystemMetadata(object):
     '''Parse the content and generate the internal "etree" which is the 
     element tree instance that results from parsing.
     
-    :param xmldoc: (Unicode) The system metadata document to parse.
+    :param xmldoc: (Unicode) The System Metadata document to parse.
     '''
     if not isinstance(xmldoc, basestring):
       xmldoc = xmldoc.read()

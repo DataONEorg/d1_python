@@ -170,7 +170,7 @@ class MemberNodeClient(DataONEBaseClient):
     :type vendorSpecific: dict
     '''
     url = self.RESTResourceURL('getchecksum', pid=pid)
-    url_params = {'checksumAgorithm': checksumAlgorithm, }
+    url_params = {'checksumAlgorithm': checksumAlgorithm, }
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
