@@ -50,9 +50,9 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
         <identifier>__invalid_test_object__81e0e944-bf2d-11e0-a5cd-8122f1474081</identifier>
-        <fmtid>CF-1.2</fmtid>
+        <formatId>CF-1.2</formatId>
         <!-- <objectFormat>
-            <fmtid>CF-1.2</fmtid>
+            <formatId>CF-1.2</formatId>
             <formatName>CF-1.2</formatName>
             <scienceMetadata>false</scienceMetadata>
         </objectFormat> -->
@@ -62,9 +62,9 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81ef3846-bf2d-11e0-92e1-8122f1474081</identifier>
-        <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>        
+        <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>        
         <!-- <objectFormat>
-            <fmtid>eml://ecoinformatics.org/eml-2.0.0</fmtid>
+            <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
             <formatName>eml://ecoinformatics.org/eml-2.0.0</formatName>
             <scienceMetadata>false</scienceMetadata>
         </objectFormat> -->
@@ -74,9 +74,9 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81e412b8-bf2d-11e0-abbc-8122f1474081</identifier>
-        <fmtid>text/plain</fmtid>
+        <formatId>text/plain</formatId>
         <!-- <objectFormat>
-            <fmtid>text/plain</fmtid>
+            <formatId>text/plain</formatId>
             <formatName>text/plain</formatName>
             <scienceMetadata>false</scienceMetadata>
         </objectFormat> -->
@@ -86,9 +86,9 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81f9356c-bf2d-11e0-8cb7-8122f1474081</identifier>
-        <fmtid>FGDC-STD-001.1-1999</fmtid>
+        <formatId>FGDC-STD-001.1-1999</formatId>
         <!-- <objectFormat>
-            <fmtid>FGDC-STD-001.1-1999</fmtid>
+            <formatId>FGDC-STD-001.1-1999</formatId>
             <formatName>FGDC-STD-001.1-1999</formatName>
             <scienceMetadata>false</scienceMetadata>
         </objectFormat> -->
@@ -98,9 +98,9 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81fb4226-bf2d-11e0-8b16-8122f1474081</identifier>
-        <fmtid>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</fmtid>
+        <formatId>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatId>
         <!-- <objectFormat>
-            <fmtid>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</fmtid>
+            <formatId>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatId>
             <formatName>http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2</formatName>
             <scienceMetadata>false</scienceMetadata>
         </objectFormat> -->

@@ -283,7 +283,7 @@ if __name__ == '__main__':
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <identifier>id_oJnណCᓐaុص</identifier>
   <objectFormat>
-    <fmtid>test</fmtid>
+    <formatId>test</formatId>
     <formatName>just a test</formatName>
     <scienceMetadata>false</scienceMetadata>
   </objectFormat>

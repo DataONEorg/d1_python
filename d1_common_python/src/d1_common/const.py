@@ -52,6 +52,9 @@ RESPONSE_TIMEOUT = 30.0
 #: HTTP User Agent that this software is known as
 USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
 
+# The system wide default checksum algorithm.
+DEFAULT_CHECKSUM_ALGORITHM = 'MD5'
+
 # Note: Trailing slashes are important in the URLs.
 
 #: The root of all DataONE.  Used to perform introspection on the system when
@@ -67,7 +70,7 @@ URL_OBJECT_LIST_PATH = 'object'
 #: TODO: retrieve this from D1 root
 URL_OBJECT_PATH = 'object/'
 
-#: Path to append to target base for system metadata collection
+#: Path to append to target base for System Metadata collection
 #: TODO: retrieve this from D1 root
 URL_SYSMETA_PATH = 'meta/'
 
