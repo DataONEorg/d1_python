@@ -48,9 +48,9 @@ EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
     <identifier>identifier0</identifier>
-    <fmtid>fmtid0</fmtid>
+    <formatId>formatId0</formatId>
     <!-- <objectFormat>
-        <fmtid>fmtid0</fmtid>
+        <formatId>formatId0</formatId>
         <formatName>formatName0</formatName>
         <scienceMetadata>false</scienceMetadata>
     </objectFormat> -->

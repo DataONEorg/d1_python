@@ -47,7 +47,7 @@ sysmeta_xml_correct = u"""<?xml version="1.0" encoding="UTF-8"?>
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
     <identifier>identifier0</identifier>
     <objectFormat>
-        <fmtid>fmtid0</fmtid>
+        <formatId>formatId0</formatId>
         <formatName>formatName0</formatName>
         <scienceMetadata>false</scienceMetadata>
     </objectFormat>
@@ -134,7 +134,7 @@ Content-Type\x3a\x20application\x2foctet-stream\x0d\n\
 \x20xsi\x3aschemaLocation\x3d\x22http\x3a\x2f\x2fns\x2edataone\x2eorg\x2fservice\x2ftypes\x2fv1\x22\x3e\n\
 \x20\x20\x20\x20\x3cidentifier\x3eidentifier0\x3c\x2fidentifier\x3e\n\
 \x20\x20\x20\x20\x3cobjectFormat\x3e\n\
-\x20\x20\x20\x20\x20\x20\x20\x20\x3cfmtid\x3efmtid0\x3c\x2ffmtid\x3e\n\
+\x20\x20\x20\x20\x20\x20\x20\x20\x3cformatId\x3eformatId0\x3c\x2fformatId\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3cformatName\x3eformatName0\x3c\x2fformatName\x3e\n\
 \x20\x20\x20\x20\x20\x20\x20\x20\x3cscienceMetadata\x3efalse\x3c\x2fscienceMetadata\x3e\n\
 \x20\x20\x20\x20\x3c\x2fobjectFormat\x3e\n\
