@@ -98,7 +98,7 @@ class DataONEObject(object):
 
   def getSystemMetadata(self, forcenew=False):
     '''
-    :param forcenew: The system metadata objects are cached. This causes the
+    :param forcenew: The System Metadata objects are cached. This causes the
     cache to be refreshed.
     :type forcenew: bool
     :returns: List of object locations. 
@@ -261,7 +261,7 @@ class DataONEClient(object):
   def isData(self, pid):
     '''Returns True is pid refers to a data object.
     
-    Determine this by looking at the describes property of the system metadata.
+    Determine this by looking at the describes property of the System Metadata.
     '''
     sysmeta = self.getSystemMetadata(pid)
     return len(sysmeta.describes) == 0

@@ -195,14 +195,14 @@ class DataONEBaseClient(restclient.RESTClient):
     '''Wraps the CNRead.getSystemMetadata() and MNRead.getSystemMetadata()
     calls.
     
-    Returns the system metadata that contains DataONE specific information about
+    Returns the System Metadata that contains DataONE specific information about
     the object identified by pid.
     
     :param pid: Identifier
     :type pid: string containing ASCII or UTF-8 | unicode string
     :param vendorSpecific: Dictionary of vendor specific extensions.
     :type vendorSpecific: dict
-    :returns: Serialized system metadata object.
+    :returns: Serialized System Metadata object.
     :return type: SystemMetadata in HTTPResponse
 
     See getSystemMetadata() for method that returns a deserialized system
