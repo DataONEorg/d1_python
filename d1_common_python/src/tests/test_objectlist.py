@@ -45,6 +45,9 @@ import d1_common
 from d1_common import xmlrunner
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
 EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="154933"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
@@ -200,25 +203,25 @@ class TestObjectList(unittest.TestCase):
         raise
 
   def test_deserialize_xml_gmn(self):
-    self.deserialize_and_check(EG_OBJECTLIST_GMN)
+    util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
     #  def test_deserialize_xml_knb(self):
-    #    self.deserialize_and_check(EG_OBJECTLIST_KNB)
+    #    util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
   def test_deserialize_xml_bad(self):
-    self.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
+    util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
   def test_serialization_gmn(self):
     '''Deserialize: XML -> ObjectList (GMN)'''
-    self.deserialize_and_check(EG_OBJECTLIST_GMN)
+    util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
   def test_serialization_knb(self):
     '''Deserialize: XML -> ObjectList (KNB)'''
-    #self.deserialize_and_check(EG_OBJECTLIST_KNB)
+    #util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
   def test_serialization_bad(self):
     '''Deserialize: XML -> ObjectList (bad)'''
-    self.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
+    util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
 #===============================================================================
 

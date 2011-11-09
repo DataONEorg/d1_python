@@ -40,6 +40,9 @@ import StringIO
 from d1_common import xmlrunner
 import d1_common.xml_compare
 
+# App
+import util
+
 xml_correct = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">

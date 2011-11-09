@@ -43,19 +43,18 @@ from d1_common import xmlrunner
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
 EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+    <serialVersion>50</serialVersion>
     <identifier>identifier0</identifier>
     <formatId>formatId0</formatId>
-    <!-- <objectFormat>
-        <formatId>formatId0</formatId>
-        <formatName>formatName0</formatName>
-        <scienceMetadata>false</scienceMetadata>
-    </objectFormat> -->
-    <size>1073741773</size>
-    <checksum algorithm="SHA-1">checksum0</checksum>
+    <size>50</size>
+    <checksum algorithm="algorithm0">checksum0</checksum>
     <submitter>submitter0</submitter>
     <rightsHolder>rightsHolder0</rightsHolder>
     <accessPolicy>
@@ -151,8 +150,8 @@ class TestSystemMetadata(unittest.TestCase):
   def testLoadSystemMetadata(self):
     sysm = dataoneTypes.CreateFromDocument(EG_SYSMETA)
     self.assertEqual(sysm.identifier.value(), 'identifier0')
-    self.assertEqual(sysm.size, 1073741773)
-    self.assertEqual(sysm.checksum.algorithm, 'SHA-1')
+    self.assertEqual(sysm.size, 50)
+    self.assertEqual(sysm.checksum.algorithm, 'algorithm0')
     self.assertEqual(sysm.checksum.value(), 'checksum0')
     rep = sysm.replica
     self.assertEqual(len(rep), 2)

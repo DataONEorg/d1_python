@@ -41,6 +41,9 @@ import os
 from d1_common import xmlrunner
 import d1_common.util
 
+# App
+import util
+
 
 class TestUtils(unittest.TestCase):
   def testEncodePathElement(self):

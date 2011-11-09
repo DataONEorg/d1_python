@@ -44,6 +44,10 @@ import pyxb
 from d1_common import xmlrunner
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
+
 EG_ACCESSPOLICY_GMN = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1"
@@ -97,11 +101,11 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_serialization_gmn(self):
     '''Deserialize: XML -> AccessPolicy (GMN)'''
-    self.deserialize_and_check(EG_ACCESSPOLICY_GMN)
+    util.deserialize_and_check(EG_ACCESSPOLICY_GMN)
 
   def test_serialization_bad_1(self):
     '''Deserialize: XML -> AccessPolicy (bad)'''
-    self.deserialize_and_check(EG_ACCESSPOLICY_BAD, shouldfail=True)
+    util.deserialize_and_check(EG_ACCESSPOLICY_BAD, shouldfail=True)
 
     #===============================================================================
 

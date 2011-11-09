@@ -43,6 +43,9 @@ import pyxb
 from d1_common import xmlrunner
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
 EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" ?>
 <ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v1">
 <identifier>testobj</identifier>
@@ -53,17 +56,19 @@ EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" ?>
 # TODO.
 EG_OBJECTLOCATIONLIST_KNB = """"""
 
+# Bad version.
 EG_BAD_OBJECTLOCATIONLIST_1 = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v1">
+<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v999">
 <identifier>hdl:10255/dryad.1073/mets.xml</identifier>
 <objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
 <objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
 </ns1:objectLocationList>"""
 
+# Missing nodeIdentifier.
 EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" ?>
 <ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v1">
 <identifier>hdl:10255/dryad.1073/mets.xml</identifier>
-<objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
+<objectLocation><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
 <objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
 </ns1:objectLocationList>"""
 
@@ -80,19 +85,19 @@ class TestObjectLocationList(unittest.TestCase):
 
   def test_deserialize_gmn(self):
     '''Deserialize: XML -> ObjectLocationList (GMN)'''
-    self.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
+    util.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
 
   def test_deserialize_knb(self):
     '''Deserialize: XML -> ObjectLocationList (KNB)'''
-    #self.deserialize_and_check(EG_OBJECTLOCATIONLIST_KNB)
+    #util.deserialize_and_check(EG_OBJECTLOCATIONLIST_KNB)
 
   def test_deserialize_bad_1(self):
     '''Deserialize: XML -> ObjectLocationList (bad 1)'''
-    self.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
+    util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
 
   def test_deserialize_bad_2(self):
     '''Deserialize: XML -> ObjectLocationList (bad 2)'''
-    self.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
+    util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
 
 #===============================================================================
 

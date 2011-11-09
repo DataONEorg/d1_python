@@ -44,18 +44,17 @@ from d1_common.types import exceptions
 from d1_common import const
 from d1_common import xmlrunner
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.generated.dataoneErrors as dataoneErrors
 
-#===============================================================================
+# App
+import util
 
 EG_ERROR_GMN = (
   """<?xml version="1.0" encoding="UTF-8"?>
-  <d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://ns.dataone.org/service/types/exceptions"
-  detailCode="0" errorCode="0" name="IdentifierNotUnique" pid="somedataonepid">
+  <error detailCode="0" errorCode="0" name="IdentifierNotUnique" pid="somedataonepid">
   <description>description0</description>
   <traceInformation>traceInformation0</traceInformation>
-  </d1:error>""", 'SHA-1', '3f56de593b6ffc536253b799b429453e3673fc19'
+  </error>""", 'SHA-1', '3f56de593b6ffc536253b799b429453e3673fc19'
 )
 
 # Missing detailCode.
@@ -72,15 +71,6 @@ EG_ERROR_BAD = (
 
 
 class TestExceptions(unittest.TestCase):
-  def deserialize_and_check(self, doc, shouldfail=False):
-    try:
-      obj = dataoneTypes.CreateFromDocument(doc[0])
-    except (pyxb.PyXBException, xml.sax.SAXParseException):
-      if shouldfail:
-        return
-      else:
-        raise
-
   def test_xml_round_trip(self):
     '''Test serialization and deserialization of DataONE Exceptions
     
@@ -102,7 +92,7 @@ class TestExceptions(unittest.TestCase):
     # Check deserialized XML.
     dom = xml.dom.minidom.parseString(exc_ser_xml)
     root = dom.firstChild
-    self.assertEqual(root.tagName, u'ns1:error')
+    self.assertEqual(root.tagName, u'error')
     self.assertEqual(root.attributes['detailCode'].value, u'1010')
     self.assertEqual(root.attributes['errorCode'].value, u'409')
     self.assertEqual(root.attributes['name'].value, u'IdentifierNotUnique')
@@ -123,11 +113,11 @@ class TestExceptions(unittest.TestCase):
 
   def test_serialization_gmn(self):
     '''Deserialize: XML -> Checksum (GMN)'''
-    self.deserialize_and_check(EG_ERROR_GMN)
+    util.deserialize_exception_and_check(EG_ERROR_GMN[0])
 
   def test_serialization_bad_1(self):
     '''Deserialize: XML -> Checksum (bad 1)'''
-    self.deserialize_and_check(EG_ERROR_BAD, shouldfail=True)
+    util.deserialize_exception_and_check(EG_ERROR_BAD[0], shouldfail=True)
 
 #===============================================================================
 if __name__ == "__main__":
