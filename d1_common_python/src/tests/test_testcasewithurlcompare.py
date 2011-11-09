@@ -42,6 +42,9 @@ import pyxb
 from d1_common import xmlrunner
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
+# App
+import util
+
 
 class Test_URLCompare(TestCaseWithURLCompare):
   def test_assertUrlEqual(self):

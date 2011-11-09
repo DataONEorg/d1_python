@@ -44,6 +44,9 @@ from d1_common import xmlrunner
 import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
 EG_CHECKSUM_GMN = (
   """<?xml version="1.0" ?><ns1:checksum algorithm="SHA-1" xmlns:ns1="http://ns.dataone.org/service/types/v1">3f56de593b6ffc536253b799b429453e3673fc19</ns1:checksum>""",
   'SHA-1', '3f56de593b6ffc536253b799b429453e3673fc19'
@@ -64,7 +67,7 @@ EG_BAD_CHECKSUM_2 = (
 
 
 class TestChecksum(unittest.TestCase):
-  def deserialize_and_check(self, doc, shouldfail=False):
+  def deserialize_checksum_and_check(self, doc, shouldfail=False):
     try:
       obj = dataoneTypes.CreateFromDocument(doc[0])
     except (pyxb.PyXBException, xml.sax.SAXParseException):
@@ -78,7 +81,7 @@ class TestChecksum(unittest.TestCase):
 
   def test_serialization_gmn(self):
     '''Deserialize: XML -> Checksum (GMN)'''
-    self.deserialize_and_check(EG_CHECKSUM_GMN)
+    self.deserialize_checksum_and_check(EG_CHECKSUM_GMN)
 
   def test_serialization_knb(self):
     '''Deserialize: XML -> Checksum (KNB)'''
@@ -87,11 +90,11 @@ class TestChecksum(unittest.TestCase):
 
   def test_serialization_bad_1(self):
     '''Deserialize: XML -> Checksum (bad 1)'''
-    self.deserialize_and_check(EG_BAD_CHECKSUM_1, shouldfail=True)
+    self.deserialize_checksum_and_check(EG_BAD_CHECKSUM_1, shouldfail=True)
 
   def test_serialization_bad_2(self):
     '''Deserialize: XML -> Checksum (bad 2)'''
-    self.deserialize_and_check(EG_BAD_CHECKSUM_2, shouldfail=True)
+    self.deserialize_checksum_and_check(EG_BAD_CHECKSUM_2, shouldfail=True)
 
   def test_serialization_roundtrip(self):
     '''Serialization: Checksum -> XML -> Checksum.

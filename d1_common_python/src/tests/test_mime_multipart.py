@@ -41,6 +41,9 @@ import re
 from d1_common import xmlrunner
 import d1_common.mime_multipart
 
+# App
+import util
+
 sysmeta_xml_correct = u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -225,7 +228,7 @@ class TestMimeMultipart(unittest.TestCase):
     ]
 
     files = [
-      ('file_key_1', 'file_name_1', sysmeta_xml_correct),
+      ('file_key_1', 'file_name_1', sysmeta_xml_correct.encode('utf-8')),
       ('file_key_2', 'file_name_2', binary_data),
       ('file_key_3', 'file_name_3', StringIO.StringIO(binary_data)),
       ('file_key_4', 'file_name_4', 'short_data'),

@@ -43,6 +43,9 @@ import pyxb
 from d1_common import xmlrunner
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
 EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -82,6 +85,8 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
         <subject>subject0</subject>
         <subject>subject1</subject>
+        <contactSubject>contactSubject0</contactSubject>
+        <contactSubject>contactSubject1</contactSubject>
     </node>
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier1</identifier>
@@ -118,15 +123,18 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
         <subject>subject2</subject>
         <subject>subject3</subject>
+        <contactSubject>contactSubject2</contactSubject>
+        <contactSubject>contactSubject3</contactSubject>
     </node>
-</d1:nodeList>"""
+</d1:nodeList>
+"""
 
 # TODO.
 EG_NODELIST_KNB = """"""
 
-# Wrong version.
+# Missing version.
 EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v2"
+<d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
     <node replicate="false" synchronize="false" type="mn" state="up">
@@ -135,7 +143,7 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
         <description>description0</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service name="name1" version="version0" available="false">
+            <service name="name1" available="false">
                 <restriction name="name2" rest="rest0">
                     <allowed>
                     </allowed>
@@ -164,6 +172,8 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
         <subject>subject0</subject>
         <subject>subject1</subject>
+        <contactSubject>contactSubject0</contactSubject>
+        <contactSubject>contactSubject1</contactSubject>
     </node>
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier1</identifier>
@@ -200,8 +210,11 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
         <subject>subject2</subject>
         <subject>subject3</subject>
+        <contactSubject>contactSubject2</contactSubject>
+        <contactSubject>contactSubject3</contactSubject>
     </node>
-</d1:nodeList>"""
+</d1:nodeList>
+"""
 
 # Missing nodeList/node/service/name.
 EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
@@ -243,7 +256,49 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
         <subject>subject0</subject>
         <subject>subject1</subject>
-    </node>"""
+        <contactSubject>contactSubject0</contactSubject>
+        <contactSubject>contactSubject1</contactSubject>
+    </node>
+    <node replicate="false" synchronize="false" type="mn" state="up">
+        <identifier>identifier1</identifier>
+        <name>name7</name>
+        <description>description1</description>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <services>
+            <service name="name8" version="version2" available="false">
+                <restriction name="name9" rest="rest4">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name10" rest="rest5">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+            <service name="name11" version="version3" available="false">
+                <restriction name="name12" rest="rest6">
+                    <allowed>
+                    </allowed>
+                </restriction>
+                <restriction name="name13" rest="rest7">
+                    <allowed>
+                    </allowed>
+                </restriction>
+            </service>
+        </services>
+        <synchronization>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
+            <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
+        </synchronization>
+        <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
+        <subject>subject2</subject>
+        <subject>subject3</subject>
+        <contactSubject>contactSubject2</contactSubject>
+        <contactSubject>contactSubject3</contactSubject>
+    </node>
+</d1:nodeList>
+"""
 
 
 class TestNodeList(unittest.TestCase):
@@ -255,22 +310,24 @@ class TestNodeList(unittest.TestCase):
         return
       else:
         raise
+    if shouldfail:
+      raise Exception('Did not receive expected exception')
 
   def test_serialization_gmn(self):
     '''Deserialize: XML -> NodeList (GMN)'''
-    self.deserialize_and_check(EG_NODELIST_GMN)
+    util.deserialize_and_check(EG_NODELIST_GMN)
 
   def test_serialization_knb(self):
     '''Deserialize: XML -> NodeList (KNB)'''
-    #self.deserialize_and_check(EG_NODELIST_KNB)
+    #util.deserialize_and_check(EG_NODELIST_KNB)
 
   def test_serialization_bad_1(self):
     '''Deserialize: XML -> NodeList (bad 1)'''
-    self.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
+    util.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
 
   def test_serialization_bad_2(self):
     '''Deserialize: XML -> NodeList (bad 2)'''
-    self.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)
+    util.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)
 
 #===============================================================================
 if __name__ == "__main__":

@@ -43,6 +43,9 @@ import pyxb
 from d1_common import xmlrunner
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+# App
+import util
+
 EG_PID_GMN = (
   """<?xml version="1.0" encoding="UTF-8"?>
 <d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"
@@ -54,21 +57,21 @@ EG_PID_GMN = (
 # TODO.
 EG_PID_KNB = ("""""", '', )
 
+# Blank pid.
 EG_BAD_PID_1 = (
-  """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">testpid</ns1:identifier>""",
+  """<?xml version="1.0" encoding="UTF-8"?>
+<d1:identifier xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd"></d1:identifier>""",
   'testpid',
 )
 
-EG_BAD_PID_2 = (
-  """<?xml version="1.0" ?>
-  <ns1:identifier xmlns:ns1="http://ns.dataone.org/service/types/v1">testpid</ns1:identifier>""",
-  'testpid',
-)
+# Missing identifier.
+EG_BAD_PID_2 = ("""<?xml version="1.0" encoding="UTF-8"?>""", 'testpid', )
 
 
 class TestPID(unittest.TestCase):
-  def deserialize_and_check(self, doc, shouldfail=False):
+  def deserialize_pid_and_check(self, doc, shouldfail=False):
     try:
       obj = dataoneTypes.CreateFromDocument(doc[0])
     except (pyxb.PyXBException, xml.sax.SAXParseException):
@@ -76,11 +79,13 @@ class TestPID(unittest.TestCase):
         return
       else:
         raise
+    if shouldfail:
+      raise Exception('Did not receive expected exception')
     self.assertEqual(obj.value(), doc[1])
 
   def test_deserialize_gmn(self):
     '''Deserialize: XML -> PID (GMN)'''
-    self.deserialize_and_check(EG_PID_GMN)
+    self.deserialize_pid_and_check(EG_PID_GMN)
 
   def test_deserialize_knb(self):
     '''Deserialize: XML -> PID (KNB)'''
@@ -89,11 +94,11 @@ class TestPID(unittest.TestCase):
 
   def test_deserialize_bad_1(self):
     '''Deserialize: XML -> PID (bad 1)'''
-    self.deserialize_and_check(EG_BAD_PID_1, shouldfail=True)
+    self.deserialize_pid_and_check(EG_BAD_PID_1, shouldfail=True)
 
   def test_deserialize_bad_2(self):
     '''Deserialize: XML -> PID (bad 2)'''
-    self.deserialize_and_check(EG_BAD_PID_2, shouldfail=True)
+    self.deserialize_pid_and_check(EG_BAD_PID_2, shouldfail=True)
 
 #===============================================================================
 if __name__ == "__main__":

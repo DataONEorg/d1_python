@@ -44,6 +44,9 @@ from d1_common import restclient
 import d1_common.types.exceptions
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
+# App
+import util
+
 
 class TestRESTClient(TestCaseWithURLCompare):
   def setUp(self):
