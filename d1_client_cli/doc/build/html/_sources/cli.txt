@@ -1,0 +1,20 @@
+DataONE Command Line Client
+===========================
+
+The DataONE Command Line Client enables basic interactions with the DataONE
+infrastructure via the command line on any platform that supports Python.
+
+
+.. toctree::
+  :maxdepth: 2
+
+  examples
+  reference
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
