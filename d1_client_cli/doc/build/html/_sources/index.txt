@@ -1,15 +1,17 @@
 DataONE Command Line Interface (CLI)
 ====================================
 
-A command line tool for interacting with DataONE services.
-
+The DataONE Command Line Interface enables basic interactions with the DataONE
+infrastructure via the command line.
 
 Contents:
 
 .. toctree::
   :maxdepth: 2
 
-  itk-cli.rst
+  examples
+  reference
+  glossary
 
 
 Indices and tables

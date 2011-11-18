@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DataONE Command Line Client (CLI) &mdash; DataONE v0.3 documentation</title>
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <title>DataONE Command Line Client (CLI) &mdash; DataONE Command Line Client vbeta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3',
+        VERSION:     'beta',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE v0.3 documentation" href="index.html" />
+    <link rel="top" title="DataONE Command Line Client vbeta documentation" href="index.html" />
     <link rel="prev" title="DataONE Command Line Interface (CLI)" href="index.html" /> 
   </head>
   <body>
@@ -35,9 +35,62 @@
         <li class="right" >
           <a href="index.html" title="DataONE Command Line Interface (CLI)"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DataONE v0.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DataONE Command Line Client vbeta documentation</a> &raquo;</li> 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">DataONE Command Line Client (CLI)</a><ul>
+<li><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li><a class="reference internal" href="#operation">Operation</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#operations">Operations</a><ul>
+<li><a class="reference internal" href="#create">create</a></li>
+<li><a class="reference internal" href="#get">get</a></li>
+<li><a class="reference internal" href="#meta">meta</a></li>
+<li><a class="reference internal" href="#list">list</a></li>
+<li><a class="reference internal" href="#search">search</a></li>
+<li><a class="reference internal" href="#fields">Fields</a></li>
+<li><a class="reference internal" href="#objectformats">objectformats</a></li>
+<li><a class="reference internal" href="#resolve">resolve</a></li>
+<li><a class="reference internal" href="#log">log</a></li>
+<li><a class="reference internal" href="#set-defaults">Set Defaults</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#user-stories">User stories</a><ul>
+<li><a class="reference internal" href="#id1">objectformats</a></li>
+<li><a class="reference internal" href="#id2">resolve</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">DataONE Command Line Interface (CLI)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/itk-cli.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -127,7 +180,7 @@ the DataONE infrastructure.</p>
 <tr><td>&nbsp;</td><td>Object format for requests</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">--query <var>QUERY</var></span></kbd></td>
-<td>Query string (<a href="#id9"><span class="problematic" id="id10">SOLR_</span></a> or Lucene query syntax) for searches</td></tr>
+<td>Query string (<a href="#id3"><span class="problematic" id="id4">SOLR_</span></a> or Lucene query syntax) for searches</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">--fields <var>FIELDS</var></span></kbd></td>
 </tr>
@@ -271,6 +324,29 @@ coordinating node index.</p>
 <h3>log<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h3>
 <p>Retrieve event logs</p>
 </div>
+<div class="section" id="set-defaults">
+<h3>Set Defaults<a class="headerlink" href="#set-defaults" title="Permalink to this headline">¶</a></h3>
+<p>Set some defaults for the command line client:</p>
+<div class="highlight-python"><pre>./d1_client_cli/src/d1_client_cli/dataone.py \
+--mn-url https://demo1.test.dataone.org/knb/d1/mn/v1 \
+--cn-url https://cn-dev.dataone.org/cn/v1 \
+--sysmeta-submitter "CN=MATTJTEMP,DC=dataone,DC=org" \
+--sysmeta-rightsholder "CN=MATTJTEMP,DC=dataone,DC=org" \
+--sysmeta-origin-member-node DEMO1 \
+--sysmeta-authoritative-member-node DEMO1 \
+--sysmeta-access-policy-public \
+--cert-path /etc/dataone/client/certs/myclientcert.pem \
+--key-path /etc/dataone/client/certs/myclientcert.pem \
+--fields "pid,origin_mn,datemodified,size,objectformat,title" \
+--query "*:*" \
+--store-config</pre>
+</div>
+<p>The configuration defaults are stored in $HOME/.d1client.conf</p>
+<p>Running:</p>
+<div class="highlight-python"><pre>./d1_client_cli/src/d1_client_cli/dataone.py --store-config</pre>
+</div>
+<p>will generate a configuration with the client defaults.</p>
+</div>
 </div>
 <div class="section" id="user-stories">
 <h2>User stories<a class="headerlink" href="#user-stories" title="Permalink to this headline">¶</a></h2>
@@ -282,113 +358,14 @@ their own research.</li>
 <li>A scientist can discover relationships between Science Metadata and Science
 Data.</li>
 </ul>
-</div>
-<div class="section" id="usage-examples">
-<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id1">
-<h3>create<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<p>Upload a Science Data object and a related Science Metadata object to DataONE
-and specify an identifier.</p>
-<p>Example:</p>
-<div class="highlight-python"><pre>$ ./dataone.py create my_identifier ./sysmeta/my_sysmeta.xml
-./scimeta/my_scimeta.xml ./scidata/my_scidata.csv</pre>
-</div>
-</div>
-<div class="section" id="id2">
-<h3>get<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<p>Download a Science Object by its identifier:</p>
-<div class="highlight-python"><pre>$ ./dataone.py get my_identifier</pre>
-</div>
-<p>Download a Science Object by its identifier, storing the object in a file instead
-of displaying it on screen:</p>
-<div class="highlight-python"><pre>$ ./dataone.py get my_identifier --output="./my_file"</pre>
-</div>
-</div>
-<div class="section" id="id3">
-<h3>meta<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>Download the DataONE System Metadata for a Science Object:</p>
-<div class="highlight-python"><pre>$ ./dataone.py meta my_identifier</pre>
-</div>
-<p>Download the DataONE System Metadata for a Science Object, formatted for human
-reading:</p>
-<div class="highlight-python"><pre>$ ./dataone.py meta my_identifier --pretty</pre>
-</div>
-</div>
-<div class="section" id="related">
-<h3>related<a class="headerlink" href="#related" title="Permalink to this headline">¶</a></h3>
-<p>Find Science Objects related to a given Science Object by identifier:</p>
-<div class="highlight-python"><pre>$ ./dataone.py related my_identifier</pre>
-</div>
-</div>
-<div class="section" id="id4">
-<h3>list<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<p>Download a list of the Science Objects stored on a given Member Node. The number
-of Objects in the list is limited to 1000 by default:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn</pre>
-</div>
-<p>Download a list of the first 100 Science Objects stored on a given Member Node:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100</pre>
-</div>
-<p>Download a list of the first 100 Science Objects stored on a given Member Node.
-Store the list to a file instead of displaying it on screen:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
---output=my_list.xml</pre>
-</div>
-<p>Download a list of 100 Science Objects stored on a given Member Node, starting
-at the 100th object:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-start=100
---slice-count=100</pre>
-</div>
-<p>Download a list of 100 Science Objects stored on a given Member Node, starting
-at the 100th object. Format the list for human reading:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-start=100
---slice-count=100 --pretty</pre>
-</div>
-<p>Download a list of the first 100 Science Objects stored on a given Member Node,
-that were created in 2005:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
---start-time=2005-01-01 --end-time=2006-01-01.</pre>
-</div>
-<p>Download a list of the first 100 Science Objects of a given format stored on a
-given Member Node:</p>
-<div class="highlight-python"><pre>$ ./dataone.py list --mn-url=http://mn.invalid.com/mn --slice-count=100
---object-format="my_format_string"</pre>
-</div>
-</div>
-<div class="section" id="id5">
-<h3>search<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
-<p>Search for Science Objects in the DataONE infrastructure matching an identifier
-that starts with &#8220;abc&#8221;. Format the result for human reading:</p>
-<div class="highlight-python"><pre>$ ./dataone.py search "abc*" --pretty</pre>
-</div>
-<p>Filter the search results for a given time period, format for human reading and
-store in a file:</p>
-<div class="highlight-python"><pre>$ ./dataone.py search "abc*" --pretty --output="./my_file"
---start-time=2010-01-01T05:00:00 --end-time=2010-01-01T06:00:00</pre>
-</div>
-</div>
-<div class="section" id="id6">
-<h3>log<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
-<p>Retrieve logs related to a given identifier:</p>
-<div class="highlight-python"><pre>$ ./dataone.py log "abc*"</pre>
-</div>
-<p>Retrieve logs related to a given identifier, filtered by event type, formatted
-for human reading:</p>
-<div class="highlight-python"><pre>$ ./dataone.py log "abc*" --event-type=read --pretty</pre>
-</div>
-<p>Valid event types:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">create</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">replicate</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id7">
-<h3>objectformats<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<h3>objectformats<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>Retrieve list of object formats:</p>
 <div class="highlight-python"><pre>$ ./dataone.py objectformats</pre>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>resolve<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>resolve<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>Retrieve location list for object:</p>
 <div class="highlight-python"><pre>$ ./dataone.py resolve my_identifier</pre>
 </div>
@@ -398,66 +375,6 @@ for human reading:</p>
 
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">DataONE Command Line Client (CLI)</a><ul>
-<li><a class="reference internal" href="#synopsis">Synopsis</a></li>
-<li><a class="reference internal" href="#operation">Operation</a></li>
-<li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#operations">Operations</a><ul>
-<li><a class="reference internal" href="#create">create</a></li>
-<li><a class="reference internal" href="#get">get</a></li>
-<li><a class="reference internal" href="#meta">meta</a></li>
-<li><a class="reference internal" href="#list">list</a></li>
-<li><a class="reference internal" href="#search">search</a></li>
-<li><a class="reference internal" href="#fields">Fields</a></li>
-<li><a class="reference internal" href="#objectformats">objectformats</a></li>
-<li><a class="reference internal" href="#resolve">resolve</a></li>
-<li><a class="reference internal" href="#log">log</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#user-stories">User stories</a></li>
-<li><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
-<li><a class="reference internal" href="#id1">create</a></li>
-<li><a class="reference internal" href="#id2">get</a></li>
-<li><a class="reference internal" href="#id3">meta</a></li>
-<li><a class="reference internal" href="#related">related</a></li>
-<li><a class="reference internal" href="#id4">list</a></li>
-<li><a class="reference internal" href="#id5">search</a></li>
-<li><a class="reference internal" href="#id6">log</a></li>
-<li><a class="reference internal" href="#id7">objectformats</a></li>
-<li><a class="reference internal" href="#id8">resolve</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">DataONE Command Line Interface (CLI)</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/itk-cli.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -471,11 +388,11 @@ for human reading:</p>
         <li class="right" >
           <a href="index.html" title="DataONE Command Line Interface (CLI)"
              >previous</a> |</li>
-        <li><a href="index.html">DataONE v0.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DataONE Command Line Client vbeta documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, Participating institutions in DataONE.
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

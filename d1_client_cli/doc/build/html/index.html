@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -7,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DataONE Command Line Interface (CLI) &mdash; DataONE v0.3 documentation</title>
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <title>DataONE Command Line Interface (CLI) &mdash; v0.0.0</title>
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3',
+        VERSION:     '0.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,8 +21,13 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE v0.3 documentation" href="#" />
-    <link rel="next" title="DataONE Command Line Client (CLI)" href="itk-cli.html" /> 
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v0.0.0" href="#" />
+    <link rel="next" title="Examples" href="examples.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
   </head>
   <body>
     <div class="related">
@@ -33,9 +37,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="itk-cli.html" title="DataONE Command Line Client (CLI)"
+          <a href="examples.html" title="Examples"
              accesskey="N">next</a> |</li>
-        <li><a href="#">DataONE v0.3 documentation</a> &raquo;</li> 
+        <li><a href="#"></a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -46,19 +50,30 @@
             
   <div class="section" id="dataone-command-line-interface-cli">
 <h1>DataONE Command Line Interface (CLI)<a class="headerlink" href="#dataone-command-line-interface-cli" title="Permalink to this headline">¶</a></h1>
-<p>A command line tool for interacting with DataONE services.</p>
+<p>The DataONE Command Line Interface enables basic interactions with the DataONE
+infrastructure via the command line.</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="itk-cli.html">DataONE Command Line Client (CLI)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="itk-cli.html#synopsis">Synopsis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="itk-cli.html#operation">Operation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="itk-cli.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="itk-cli.html#operations">Operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="itk-cli.html#user-stories">User stories</a></li>
-<li class="toctree-l2"><a class="reference internal" href="itk-cli.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#viewing-and-manipulating-the-session-parameters">Viewing and manipulating the <tt class="docutils literal"><span class="pre">session</span> <span class="pre">parameters</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#searching-for-science-data">Searching for Science Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#downloading-science-data-objects">Downloading Science Data Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#downloading-system-metadata">Downloading System Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#uploading-science-data-objects">Uploading Science Data Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#misc-operations">Misc operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#using-the-cli-from-scripts">Using the CLI from scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#session-parameters">Session parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#startup">Startup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#command-line-arguments">Command line arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#overview-of-session-parameters">Overview of session parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 </ul>
 </div>
 </div>
@@ -67,7 +82,7 @@
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
 <li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+<li><a class="reference internal" href="reference.html#search"><em>search</em></a></li>
 </ul>
 </div>
 
@@ -77,6 +92,9 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">DataONE Command Line Interface (CLI)</a><ul>
@@ -84,15 +102,12 @@
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
-
-  <h4>Next topic</h4>
-  <p class="topless"><a href="itk-cli.html"
-                        title="next chapter">DataONE Command Line Client (CLI)</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation Overview</a><ul>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+</ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -110,21 +125,26 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="itk-cli.html" title="DataONE Command Line Client (CLI)"
-             >next</a> |</li>
-        <li><a href="#">DataONE v0.3 documentation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2010, Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      &copy; Copyright <a href="http:/www.dataone.org">2009-2011, DataONE</a>.
+        [ <a href="_sources/index.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/index.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
     </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
   </body>
 </html>
