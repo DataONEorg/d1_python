@@ -30,6 +30,8 @@
 '''
 
 # Stdlib.
+import ast
+import cmd
 import csv
 import datetime
 import dateutil
@@ -40,8 +42,11 @@ import json
 import logging
 import optparse
 import os
+import pprint
 import random
 import re
+import readline
+import shlex
 import shutil
 import stat
 import StringIO
@@ -52,10 +57,13 @@ import urllib
 import urlparse
 import uuid
 import xml.dom.minidom
-import ConfigParser
 
 # 3rd party.
 import pyxb
+
+# App.
+import cli_exceptions
+import session
 
 # If this was checked out as part of the MN service, the libraries can be found here.
 sys.path.append(
@@ -73,7 +81,7 @@ try:
   import d1_common.mime_multipart
   import d1_common.types.exceptions
   import d1_common.types.generated.dataoneTypes as dataoneTypes
-except ImportError, e:
+except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
@@ -85,23 +93,16 @@ try:
   import d1_client.cnclient
   import d1_client.systemmetadata
   import d1_client.objectlistiterator
-except ImportError, e:
+except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
   raise
 
-# 3rd party.
-try:
-  from lxml import etree, objectify
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
-  raise
 try:
   import iso8601
-except ImportError, e:
+except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
   sys.stderr.write(
@@ -111,379 +112,255 @@ except ImportError, e:
 
 
 def log_setup():
-  # Set up logging.
-  # We output everything to both file and stdout.
   logging.getLogger('').setLevel(logging.INFO)
   formatter = logging.Formatter('%(levelname)-8s %(message)s')
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
+#===============================================================================
 
-class MNException(Exception):
-  pass
+
+class CLIClient(d1_client.mnclient.MemberNodeClient):
+  def __init__(self, session, base_url):
+    try:
+      self.session = session
+      self.base_url = base_url
+      return super(CLIClient, self).__init__(
+        self.base_url,
+        certfile=self._get_certificate(),
+        keyfile=self._get_certificate_private_key()
+      )
+    except d1_common.types.exceptions.DataONEException as e:
+      err_msg = []
+      err_msg.append('Unable to connect to: {0}'.format(node_base_url))
+      err_msg.append('{0}'.format(str(e)))
+      raise cli_exceptions.CLIError('\n'.join(err_msg))
+
+  def _get_cilogon_certificate_path(self):
+    return '/tmp/x509up_u{0}'.format(os.getuid())
+
+  def _assert_certificate_present(self, path):
+    if not os.path.exists(path):
+      raise cli_exceptions.CLIError('Certificate not found')
+
+  def _get_certificate(self):
+    if self.session.get('auth', 'anonymous'):
+      return None
+    cert_path = self.session.get('auth', 'cert_path')
+    if not cert_path:
+      cert_path = self._get_cilogon_certificate_path()
+    self._assert_certificate_present(cert_path)
+    return cert_path
+
+  def _get_certificate_private_key(self):
+    if self.session.get('auth', 'anonymous'):
+      return None
+    key_path = self.session.get('auth', 'key_path')
+    self._assert_certificate_present(key_path)
+    return key_path
+
+#===============================================================================
+
+
+class CLIMNClient(CLIClient):
+  def __init__(self, session):
+    base_url = session.get('node', 'mn_url')
+    self._assert_base_url_set(base_url)
+    return super(CLIMNClient, self).__init__(session, base_url)
+
+  def _assert_base_url_set(self, base_url):
+    if not base_url:
+      raise cli_exceptions.CLIError('"mn_url" session parameter required')
+
+#===============================================================================
+
+
+class CLICNClient(CLIClient):
+  def __init__(self, session):
+    base_url = session.get('node', 'dataone_url')
+    self._assert_base_url_set(base_url)
+    return super(CLICNClient, self).__init__(session, base_url)
+
+  def _assert_base_url_set(self, base_url):
+    if not base_url:
+      raise cli_exceptions.CLIError('"dataone_url" session parameter required')
 
 #===============================================================================
 
 
 class DataONECLI():
-  def __init__(self, opts, args):
-    self.opts = opts
-    self.args = args
+  def __init__(self):
+    self.session = session.session()
+    self.session.load_session_from_ini_file(suppress_error=True)
 
-    # Command map.
-    self.command_map = {
-      'create': self.create,
-      'get': self.get,
-      'meta': self.meta,
-      'list': self.list,
-      'search': self.search,
-      'log': self.log,
-      'objectformats': self.objectformats,
-      'resolve': self.resolve,
-      'fields': self.fields,
-    }
+  def _get_file_size(self, path):
+    with open(path, 'r') as f:
+      f.seek(0, os.SEEK_END)
+      size = f.tell()
+    return size
 
-  def _check_for_missing_sysmeta_params(self):
-    sysmeta_params = [
-      ('--sysmeta-object-format', 'sysmeta_object_format'),
-      ('--sysmeta-submitter', 'sysmeta_submitter'),
-      ('--sysmeta-rightsholder', 'sysmeta_rightsholder'),
-      ('--sysmeta-origin-member-node', 'sysmeta_origin_member_node'),
-      ('--sysmeta-authoritative-member-node', 'sysmeta_authoritative_member_node'),
-    ]
-    missing_params = []
-    for s in sysmeta_params:
-      if self.opts[s[1]] is None:
-        missing_params.append(s[0])
-    if len(missing_params):
-      logging.error(
-        'Missing system metadata parameters: {0}'.format(
-          ', '.join(missing_params)
-        )
+  def _get_file_checksum(self, path, algorithm='SHA1', block_size=1024 * 1024):
+    h = hashlib.new(algorithm)
+    with open(path, 'r') as f:
+      while True:
+        data = f.read()
+        if not data:
+          break
+        h.update(data)
+    return h.hexdigest()
+
+  def _assert_file_exists(self, path):
+    if not os.path.isfile(path):
+      msg = 'Invalid file: {0}'.format(path)
+      raise cli_exceptions.InvalidArguments(msg)
+
+  def _set_invalid_checksum_to_default(self):
+    algorithm = self.session.get('sysmeta', 'algorithm')
+    try:
+      hashlib.new(algorithm)
+    except ValueError:
+      self.config['sysmeta']['algorithm'] = (
+        d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str
       )
-      exit()
+      logging.error(
+        'Invalid checksum algorithm, "{0}", set to default, "{1}"'
+        .format(algorithm, d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
+      )
 
-  def _gen_sysmeta(self, pid, size, md5):
-    self._check_for_missing_sysmeta_params()
-
-    sysmeta = dataoneTypes.systemMetadata()
-    sysmeta.identifier = pid
-    sysmeta.fmtid = self.opts['sysmeta_object_format']
-    sysmeta.size = size
-    #sysmeta.submitter = '<dummy>' #TODO: Mandatory but should be set by MN
-    sysmeta.submitter = self.opts['sysmeta_submitter'
-                                  ] #TODO: Mandatory but should be set by MN
-    sysmeta.rightsHolder = self.opts['sysmeta_rightsholder']
-    sysmeta.checksum = dataoneTypes.checksum(md5)
-    sysmeta.checksum.algorithm = 'MD5'
-    sysmeta.dateUploaded = datetime.datetime.now(
-    ) #TODO: Mandatory but should be set by MN
-    sysmeta.dateSysMetadataModified = datetime.datetime.now(
-    ) #TODO: Mandatory but should be set by MN
-    sysmeta.originMemberNode = self.opts['sysmeta_origin_member_node']
-    sysmeta.authoritativeMemberNode = \
-      self.opts['sysmeta_authoritative_member_node']
-    sysmeta.accessPolicy = self.opts['sysmeta_access_policy_obj']
-
+  def _create_system_metadata(self, pid, path):
+    checksum = self._get_file_checksum(path)
+    size = self._get_file_size(path)
+    sysmeta = self.session.create_system_metadata(pid, checksum, size)
     return sysmeta
 
-  def output(self, flo):
-    # If no output file is specified, dump to stdout.
-    if self.opts['output'] is not None:
+  def _create_system_metadata_xml(self, pid, path):
+    sysmeta = self._create_system_metadata(pid, path)
+    return sysmeta.toxml()
+
+  def _post_file_and_system_metadat_to_member_node(self, client, pid, path, sysmeta):
+    with open(path, 'r') as f:
       try:
-        file = open(self.opts['output'], 'wb')
-        shutil.copyfileobj(flo, file)
-        file.close()
-      except EnvironmentError as (errno, strerror):
-        err_msg = 'Could not write Science Object to file: {0}\n'.format(
-          self.opts['output']
-        )
-        err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-        logging.error(err_msg)
-    else:
-      shutil.copyfileobj(flo, sys.stdout)
+        response = client.createResponse(pid, f, sysmeta)
+      except d1_common.types.exceptions.DataONEException as e:
+        logging.error('Unable to create Science Object on Member Node.\n{0}'.format(e))
 
-  def create(self):
-    '''Create New Object on MN.
+  def science_object_create(self, pid, path):
+    '''Create a new Science Object on a Member Node
     '''
-    if len(self.args) != 2:
-      logging.error('Invalid arguments')
-      logging.error('Usage: create <pid> <science data path>')
-      return
+    self._assert_file_exists(path)
+    sysmeta = self._create_system_metadata(pid, path)
+    client = CLIMNClient(self.session)
+    self._post_file_and_system_metadat_to_member_node(client, pid, path, sysmeta)
 
-    # create <pid> <system metadata path> <science metadata path> <science data path>
-    pid = self.args[0]
-    scidata_path = self.args[1]
-
+  def _copy_file_like_object_to_file(self, response, path):
     try:
-      scidata_file = open(scidata_path, 'r')
+      file = open(path, 'wb')
+      shutil.copyfileobj(response, file)
+      file.close()
     except EnvironmentError as (errno, strerror):
-      err_msg = 'Could not open Science Data file: {0}\n'.format(scidata_path)
-      err_msg += 'I/O error({0}): {1}\n'.format(errno, strerror)
-      logging.error('Create failed: {0}'.format(err_msg))
-      return
+      error_message_lines = []
+      error_message_lines.append('Could not write to file: {0}'.format(path))
+      error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
+      error_message = '\n'.join(error_message_lines)
+      raise cli_exceptions.CLIError(error_message)
 
-    md5 = hashlib.md5(scidata_file.read()).hexdigest()
-    size = scidata_file.tell()
-    scidata_file.seek(0)
-
-    sysmeta = self._gen_sysmeta(pid, size, md5)
-
-    client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
-    )
-
+  def _get_science_object_from_member_node(self, client, pid):
     try:
-      response = client.createResponse(pid, scidata_file, sysmeta)
-    except:
-      logging.error('Create failed')
-      raise
+      return client.get(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise cli_exceptions.CLIError(
+        'Unable to get Science Object from Member Node.\n{0}'.format(e)
+      )
 
-    logging.debug(response.read())
+  def science_object_get(self, pid, path):
+    client = CLIMNClient(self.session)
+    response = self._get_science_object_from_member_node(client, pid)
+    self._copy_file_like_object_to_file(response, path)
 
-  def get(self):
-    '''Get Object Identified by PID from MN.
-    '''
-    if len(self.args) != 1:
-      logging.error('Invalid arguments')
-      logging.error('Usage: get <pid>')
-      return
+  def _get_system_metadata(self, client, pid):
+    try:
+      return client.getSystemMetadata(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise cli_exceptions.CLIError(
+        'Unable to get System Metadata from Coordinating Node.\n{0}'.format(e)
+      )
 
-    pid = self.args[0]
-    certpath = self.opts['cert_path']
-    keypath = self.opts['key_path']
-    if certpath is not None:
-      if not os.path.exists(certpath):
-        certpath = None
-        keypath = None
+  def _pretty(self, xml_doc):
+    if self.session.get('cli', 'pretty'):
+      dom = xml.dom.minidom.parseString(xml_doc)
+      return dom.toprettyxml(indent='  ')
+    return xml_doc
 
-    # Get
-    client = d1_client.mnclient.MemberNodeClient(
-      self.opts['dataone_url'],
-      certfile=certpath, keyfile=keypath
+  def system_metadata_get(self, pid, path):
+    client = CLICNClient(self.session)
+    metadata = self._get_system_metadata(client, pid)
+    sci_meta_xml = metadata.toxml()
+    self._copy_file_like_object_to_file(
+      StringIO.StringIO(self._pretty(sci_meta_xml())), path
     )
 
-    sci_obj = client.get(pid)
-
-    self.output(sci_obj)
-
-  def meta(self):
-    '''Get System Metadata for Object from MN.
-    '''
-
-    if len(self.args) != 1:
-      logging.error('Invalid arguments')
-      logging.error('Usage: get <pid>')
-      return
-
-    pid = self.args[0]
-    certpath = self.opts['cert_path']
-    keypath = self.opts['key_path']
-    if certpath is not None:
-      if not os.path.exists(certpath):
-        certpath = None
-        keypath = None
-
-    # Get SysMeta.
-    client = d1_client.mnclient.MemberNodeClient(
-      self.opts['dataone_url'],
-      certfile=certpath, keyfile=keypath
+  def update_access_policy(self, pid):
+    client = CLICNClient(self.session)
+    metadata = self._get_system_metadata(client, pid)
+    sci_meta_xml = metadata.toxml()
+    self._copy_file_like_object_to_file(
+      StringIO.StringIO(self._pretty(sci_meta_xml())), path
     )
-    sci_meta = client.getSystemMetadata(pid)
-    sci_meta_xml = sci_meta.toxml()
 
-    if self.opts['pretty']:
-      dom = xml.dom.minidom.parseString(sci_meta_xml)
-      sci_meta_xml = dom.toprettyxml()
-
-    self.output(StringIO.StringIO(sci_meta_xml))
-
-  def related(self):
-    '''
-    '''
-
-    if len(self.args) != 1:
-      logging.error('Invalid arguments')
-      logging.error('Usage: related <pid>')
-      return
-
-    pid = self.args[0]
-
-    # Get
-    client = d1_client.mnclient.MemberNodeClient(
-      self.opts['dataone_url'],
-      certfile=self.opts['cert_path'],
-      keyfile=self.opts['key_path']
-    )
-    sci_meta = client.getSystemMetadata(pid)
-
+  def related(self, pid):
+    client = CLICNClient(self.session)
+    metadata = self._get_system_metadata(client, pid)
     print 'Describes:'
-    if len(sci_meta.describes) > 0:
-      for describes in sci_meta.describes:
+    if len(metadata.describes) > 0:
+      for describes in metadata.describes:
         print '  {0}'.format(describes)
     else:
       print '  <none>'
-
     print 'Described By:'
-    if len(sci_meta.describedBy) > 0:
-      for describedBy in sci_meta.describedBy:
+    if len(metadata.describedBy) > 0:
+      for describedBy in metadata.describedBy:
         print '  {0}'.format(describedBy)
     else:
       print '  <none>'
 
-  def resolve(self):
+  # ----------------------------------------------------------------------------
+  # Misc
+  # ----------------------------------------------------------------------------
+
+  def resolve(self, pid):
     '''Get Object Locations for Object.
     '''
-
-    if len(self.args) != 1:
-      logging.error('Invalid arguments')
-      logging.error('Usage: resolve <pid>')
-      return
-
-    pid = self.args[0]
-    certpath = self.opts['cert_path']
-    keypath = self.opts['key_path']
-    if certpath is not None:
-      if not os.path.exists(certpath):
-        certpath = None
-        keypath = None
-
-    # Get
-    client = d1_client.cnclient.CoordinatingNodeClient(
-      baseurl=self.opts['dataone_url'],
-      certfile=certpath,
-      keyfile=keypath
-    )
-
+    client = CLIMNClient(self.session)
     object_location_list = client.resolve(pid)
-
-    for object_location in object_location_list.objectLocation:
-      print object_location.url
+    print StringIO.StringIO(self._pretty(object_location_list)).getvalue()
 
   def list(self):
     '''MN listObjects.
     '''
-    if len(self.args) != 0:
-      logging.error('Invalid arguments')
-      logging.error(
-        'Usage: list --mn_url [--start-time] [--end-time] '
-        '[--object-format] [--slice-start] [--slice-count] '
-      )
-      return
-    certpath = self.opts['cert_path']
-    keypath = self.opts['key_path']
-    if certpath is not None:
-      if not os.path.exists(certpath):
-        certpath = None
-        keypath = None
-
-    client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'], certfile=certpath,
-      keyfile=keypath
-    )
-
+    client = CLIMNClient(self.session)
     object_list = client.listObjects(
-      startTime=self.opts['start_time'],
-      endTime=self.opts['end_time'],
-      objectFormat=self.opts['object_format'],
-      start=self.opts['slice_start'],
-      count=self.opts['slice_count']
+      startTime=self.session.get('search', 'start_time'),
+      endTime=self.session.get('search', 'end_time'),
+      objectFormat=self.session.get('search', 'search_object_format'),
+      start=self.session.get('slice', 'start'),
+      count=self.session.get('slice', 'count')
     )
-
     object_list_xml = object_list.toxml()
-
-    if self.opts['pretty']:
-      dom = xml.dom.minidom.parseString(object_list_xml)
-      object_list_xml = dom.toprettyxml()
-
-    self.output(StringIO.StringIO(object_list_xml))
-
-  def search(self):
-    '''CN search.
-    dataone_url = cn base url
-    query = SOLR query string, default is all (*:*)
-    fields = comma delimited list of SOLR field names
-    start = 0 based offset for first record
-    count = max number of records to return
-    example: 
-    records with origin MN = "DEMO3":
-      python dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3" search
-    
-    records containing "barnacle":
-      python dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "barnacle" search
-      
-    records from DEMO3 that are of type text/csv:
-      python dataone.py --cn_url="https://cn-dev.dataone.org/cn" --query "origin_mn:DEMO3 AND objectformat:text/csv" search
-    '''
-    print self.opts['cn_url']
-    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['cn_url'])
-    kwargs = {'start': self.opts['slice_start'], 'count': self.opts['slice_count']}
-    if self.opts['fields'] is not None:
-      kwargs['fields'] = self.opts['fields']
-    res = client.search(self.opts['query'], **kwargs)
-    print "Num found = %d" % res['numFound']
-    for doc in res['docs']:
-      for k in doc.keys():
-        print "%s: %s" % (k, doc[k])
-      print "========"
-
-  def fields(self):
-    '''List the CN search fields - enumerates the SOLR index fields.
-    '''
-    client = d1_client.cnclient.CoordinatingNodeClient(self.opts['cn_url'])
-    res = client.getSearchFields()
-    print "%-25s %-12s %-12s %-12s" % ('Name', 'Type', 'Unique', 'Records')
-    keys = res.keys()
-    keys.sort()
-    for f in keys:
-      try:
-        print "%-25s %-12s %-12s %-12s" % (
-          f, res[f]['type'], str(res[f]['distinct']), str(
-            res[f]['docs']
-          )
-        )
-      except:
-        print "%-25s %-12s %-12s %-12s" % (f, res[f]['type'], '?', str(res[f]['docs']))
+    print StringIO.StringIO(self._pretty(object_list_xml)).getvalue()
 
   def log(self):
     '''MN log.
     '''
-    if len(self.args) != 0:
-      logging.error('Invalid arguments')
-      logging.error(
-        'Usage: log --mn_url [--start-time] [--end-time] '
-        '[--slice-start] [--slice-count] '
-      )
-      return
-    certpath = self.opts['cert_path']
-    keypath = self.opts['key_path']
-    if certpath is not None:
-      if not os.path.exists(certpath):
-        certpath = None
-        keypath = None
-
-    client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'], certfile=certpath,
-      keyfile=keypath
-    )
-
+    client = CLIMNClient(self.session)
     object_list = client.getLogRecords(
-      fromDate=self.opts['start_time'],
-      toDate=self.opts['end_time'],
-      #start=self.opts['slice_start'],
-      #count=self.opts['slice_count']
+      startTime=self.session.get('search', 'start_time'),
+      toDate=self.session.get('search', 'end_time'),
+      start=self.session.get('slice', 'start'),
+      count=self.session.get('slice', 'count')
     )
-
     object_list_xml = object_list.toxml()
-
-    if self.opts['pretty']:
-      dom = xml.dom.minidom.parseString(object_list_xml)
-      object_list_xml = dom.toprettyxml()
-
-    self.output(StringIO.StringIO(object_list_xml))
+    print StringIO.StringIO(self._pretty(object_list_xml)).getvalue()
 
   def getObjectFormats(self):
     '''List the format IDs from the CN
@@ -502,16 +379,15 @@ class DataONECLI():
       logging.error('Invalid arguments')
       logging.error('Usage: objectformats')
       return
-    certpath = self.opts['cert_path']
-    keypath = self.opts['key_path']
+    certpath = self.config['auth']['cert_path']
+    keypath = self.config['auth']['key_path']
     if certpath is not None:
       if not os.path.exists(certpath):
         certpath = None
         keypath = None
 
     client = d1_client.mnclient.MemberNodeClient(
-      self.opts['mn_url'], certfile=certpath,
-      keyfile=keypath
+      self.config['auth']['mn_url'], certfile=certpath, keyfile=keypath
     )
 
     object_list = d1_client.objectlistiterator.ObjectListIterator(client)
@@ -526,421 +402,467 @@ class DataONECLI():
 
     self.output(StringIO.StringIO('\n'.join(unique_objects) + '\n'))
 
+  # ----------------------------------------------------------------------------
+  # Search
+  # ----------------------------------------------------------------------------
 
-def getcfg(config, section, option, default=None):
-  try:
-    res = config.get(section, option).strip()
-    #logging.debug("Found %s:%s = %s" % (section, option, str(res)))
-    if res == '' or res == 'None':
-      return default
-    return res
-  except:
-    return default
+  def search(self):
+    '''CN search.
+    '''
+    print self.session.get('node', 'dataone_url')
+    client = d1_client.cnclient.CoordinatingNodeClient(
+      self.session.get(
+        'node', 'dataone_url'
+      )
+    )
+    kwargs = {
+      'start': self.session.get('slice', 'start'),
+      'count': self.session.get('slice', 'count')
+    }
+    if self.session.get('search', 'fields') is not None:
+      kwargs['fields'] = self.session.session['fields']
+    res = client.search(self.session.get('search', 'query'), **kwargs)
+    print "Num found = %d" % res['numFound']
+    for doc in res['docs']:
+      for k in doc.keys():
+        print "%s: %s" % (k, doc[k])
+      print "========"
+
+  def fields(self):
+    '''List the CN search fields - enumerates the SOLR index fields.
+    '''
+    client = d1_client.cnclient.CoordinatingNodeClient(
+      self.session.get(
+        'node', 'dataone_url'
+      )
+    )
+    res = client.getSearchFields()
+    print "%-25s %-12s %-12s %-12s" % ('Name', 'Type', 'Unique', 'Records')
+    keys = res.keys()
+    keys.sort()
+    for f in keys:
+      try:
+        print "%-25s %-12s %-12s %-12s" % (
+          f, res[f]['type'], str(res[f]['distinct']), str(
+            res[f]['docs']
+          )
+        )
+      except:
+        print "%-25s %-12s %-12s %-12s" % (f, res[f]['type'], '?', str(res[f]['docs']))
+
+  # ----------------------------------------------------------------------------
+  # Session Parameters
+  # ----------------------------------------------------------------------------
+
+  def reset(self):
+    return self.session.reset()
+
+  def load_session_from_ini_file(self, suppress_error=False, ini_file_path=None):
+    return self.session.load_session_from_ini_file(suppress_error, ini_file_path)
+
+  def save_session_to_ini_file(self, ini_file_path=None):
+    return self.session.save_session_to_ini_file(ini_file_path)
+
+  def print_session_parameter(self, name):
+    return self.session.print_parameter(name)
+
+  def set_session_parameter(self, name, value):
+    return self.session.set_with_conversion_implicit_section(name, value)
+
+  def clear_session_parameter(self, name):
+    return self.session.set_with_implicit_section(name, None)
+
+  def access_control_add_allowed_subject(self, subject, permission):
+    return self.session.access_control_add_allowed_subject(subject, permission)
+
+  def access_control_remove_allowed_subject(self, subject):
+    return self.session.access_control_remove_allowed_subject(subject)
+
+  def access_control_allow_public(self, allow):
+    self.session.access_control_allow_public(allow)
+
+  def access_control_remove_all_allowed_subjects(self, line):
+    self.session.access_control_remove_all_allowed_subjects(line)
+
+  #=============================================================================
+
+  def update_verbose(self):
+    if self.session.get('cli', 'verbose'):
+      logging.getLogger('').setLevel(logging.DEBUG)
+    else:
+      logging.getLogger('').setLevel(logging.INFO)
+
+#===============================================================================
 
 
-def getcfgb(config, section, option, default=False):
-  try:
-    return config.getboolean(section, option)
-  except:
-    return default
+class CLI(cmd.Cmd):
+  def __init__(self):
+    self.d1 = DataONECLI()
+    cmd.Cmd.__init__(self)
+    self.prompt = '> '
+    self.intro = 'DataONE Command Line Interface'
+
+  def _split_key_value(self, line):
+    try:
+      k, v = shlex.split(line)
+    except ValueError:
+      raise cli_exceptions.InvalidArguments('Need two arguments')
+    else:
+      return k, v
+
+  def _split_key_optional_value(self, line):
+    try:
+      return self._split_key_value(line)
+    except cli_exceptions.InvalidArguments:
+      try:
+        k, = shlex.split(line)
+      except ValueError:
+        raise cli_exceptions.InvalidArguments('Need one or two arguments')
+      else:
+        return k, None
+
+  #-----------------------------------------------------------------------------
+  # Session.
+  #-----------------------------------------------------------------------------
+
+  def do_reset(self, line):
+    '''reset
+    Set all session parameters to their default values
+    '''
+    try:
+      self.d1.reset()
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_load(self, line):
+    '''load [file]
+    Load session parameters from file
+    '''
+    if line.strip() == '':
+      line = None
+    try:
+      self.d1.load_session_from_ini_file(ini_file_path=line)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_save(self, line):
+    '''load [file]
+    Load session parameters from file
+    '''
+    if line.strip() == '':
+      line = None
+    try:
+      self.d1.save_session_to_ini_file(ini_file_path=line)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_get(self, line):
+    '''get [session parameter]
+    Display the value of a session parameter. Display all parameters if [session parameter] is omitted.
+    '''
+    try:
+      self.d1.print_session_parameter(line)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+#section = self.find_section_containing_session_parameter(k)
+#logging.info('{0}: {1}'.format(k, self.config[section][k][0]))
+
+  def do_set(self, line):
+    '''set <session parameter> <value>
+    Set the value of a session parameter
+    '''
+    try:
+      k, v = self._split_key_value(line)
+      self.d1.set_session_parameter(k, v)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_clear(self, line):
+    '''clear <session parameter>
+    Clear the value of a session parameter.
+    '''
+    try:
+      self.d1.clear_session_parameter(line)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  #-----------------------------------------------------------------------------
+  # Access control.
+  #-----------------------------------------------------------------------------
+
+  def do_allow(self, line):
+    '''allow <subject> [access level]
+    Allow access to subject
+    '''
+    try:
+      subject, permission = self._split_key_optional_value(line)
+      self.d1.access_control_add_allowed_subject(subject, permission)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_deny(self, line):
+    '''deny <subject>
+    Remove subject from access policy
+    '''
+    try:
+      self.d1.access_control_remove_allowed_subject(line)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_allowpublic(self, line):
+    '''allowpublic
+    Allow public read
+    '''
+    self.d1.access_control_allow_public(True)
+
+  def do_denypublic(self, line):
+    '''denypublic
+    Deny public read
+    '''
+    self.d1.access_control_allow_public(False)
+
+  def do_denyall(self, line):
+    '''denyall
+    Remove all subjects from access policy and deny public read
+    '''
+    try:
+      self.d1.access_control_remove_all_allowed_subjects(line)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  #-----------------------------------------------------------------------------
+  # System Metadata
+  #-----------------------------------------------------------------------------
+
+  #def do_printsysmetaxml(self, line):
+  #  try:
+  #    self.d1.sysmeta_print(line)
+  #  except cli_exceptions.InvalidArguments as e:
+  #    logging.error(e)
+
+  #-----------------------------------------------------------------------------
+  # Science Object Operations
+  #-----------------------------------------------------------------------------
+
+  def do_create(self, line):
+    '''create <pid> <file>
+    Create a new Science Object on a Member Node
+    '''
+    try:
+      pid, file = self._split_key_value(line)
+      self.d1.science_object_create(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_getdata(self, line):
+    '''getdata <pid> <file>
+    Get a Science Data Object from a Member Node
+    '''
+    try:
+      pid, file = self._split_key_value(line)
+      self.d1.science_object_get(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_meta(self, line):
+    '''meta <pid> [file]
+    Get System Metdata from a Coordinating Node
+    '''
+    try:
+      pid, file = self._split_key_optional_value(line)
+      self.d1.system_metadata_get(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_setaccess(self, line):
+    '''setaccess <pid>
+    Update the Access Policy on an existing Science Data Object
+    '''
+    try:
+      self.d1.update_access_policy(line)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_related(self, line):
+    '''related <pid>
+    Given the PID for a Science Data Object, find it's Science Metadata and vice versa
+    '''
+    try:
+      self.d1.related(line)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_resolve(self, line):
+    '''resolve <pid>
+    Given the PID for a Science Object, find all locations from which the Science Object can be downloaded
+    '''
+    try:
+      self.d1.resolve(line)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_list(self, line):
+    '''list
+    Retrieve a list of available Science Data Objects from a single MN with basic filtering
+    '''
+    try:
+      self.d1.list()
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_log(self, line):
+    '''log <pid>
+    Retrieve event log for a Science Object
+    '''
+    try:
+      self.d1.log(line)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  #-----------------------------------------------------------------------------
+  # Search
+  #-----------------------------------------------------------------------------
+
+  def do_search(self, line):
+    '''search
+    Comprehensive search for Science Data Objects across all available MNs
+    '''
+    try:
+      self.d1.search()
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_fields(self, line):
+    '''fields
+    List the SOLR index fields that are available for use in the search command
+    '''
+    try:
+      self.d1.fields()
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  #-----------------------------------------------------------------------------
+  # CLI
+  #-----------------------------------------------------------------------------
+
+  def do_history(self, args):
+    '''history
+    Display a list of commands that have been entered
+    '''
+    try:
+      print self._history
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
+
+  def do_exit(self, args):
+    '''exit
+    Exit from the CLI
+    '''
+    sys.exit()
+
+  def do_EOF(self, args):
+    '''Exit on system EOF character'''
+    return self.do_exit(args)
+
+  def do_help(self, args):
+    '''Get help on commands
+    'help' or '?' with no arguments displays a list of commands for which help is available
+    'help <command>' or '? <command>' gives help on <command>
+    '''
+    # The only reason to define this method is for the help text in the doc
+    # string
+    cmd.Cmd.do_help(self, args)
+
+  #-----------------------------------------------------------------------------
+  # Command processing.
+  #-----------------------------------------------------------------------------
+
+  ## Override methods in Cmd object ##
+  def preloop(self):
+    '''Initialization before prompting user for commands.
+       Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
+    '''
+    # Set up command completion.
+    cmd.Cmd.preloop(self)
+    self._history = []
+
+  def postloop(self):
+    '''Take care of any unfinished business.
+       Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
+    '''
+    cmd.Cmd.postloop(self) ## Clean up command completion
+    print "Exiting..."
+
+  def precmd(self, line):
+    ''' This method is called after the line has been input but before
+      it has been interpreted. If you want to modify the input line
+      before execution (for example, variable substitution) do it here.
+    '''
+    self._history += [line.strip()]
+    return line
+
+  def postcmd(self, stop, line):
+    '''If you want to stop the console, return something that evaluates to true.
+       If you want to do some post command processing, do it here.
+    '''
+    self.d1.update_verbose()
+    self.d1._set_invalid_checksum_to_default()
+    return stop
+
+  def emptyline(self):
+    '''Do nothing on empty input line'''
+    pass
+
+  def default(self, line):
+    '''Called on an input line when the command prefix is not recognized.
+    '''
+    logging.error('Unknown command')
+
+  def run_command_line_arguments(self, commands):
+    for command in commands:
+      self.onecmd(command)
 
 
 def main():
-  config_file = os.path.join(os.environ['HOME'], ".d1client.conf")
   log_setup()
-  config = ConfigParser.RawConfigParser()
-  config.read(config_file)
 
-  # Command line options.
-  parser = optparse.OptionParser('usage: %prog <command> [options] [arguments]')
-  # General
-  parser.add_option(
-    '--dataone-url',
-    dest='dataone_url',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, "cli", "dataone_url", d1_common.const.URL_DATAONE_ROOT
-    ),
-    help='URL to DataONE Root'
-  )
-  parser.add_option(
-    '--mn-url',
-    dest='mn_url',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'cli', 'mn_url', 'https://localhost/mn/'
-    ),
-    help='URL to Member Node'
-  )
-  parser.add_option(
-    '--cn-url',
-    dest='cn_url',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'cli', 'cn_url', 'https://localhost/cn/'
-    ),
-    help='URL to Coordinating Node'
-  )
-  parser.add_option(
-    '--output',
-    dest='output',
-    action='store',
-    type='string',
-    help='store data to file instead of writing it to StdOut'
-  )
-  parser.add_option(
-    '--pretty',
-    dest='pretty',
-    action='store_true',
-    default=getcfgb(
-      config, 'output', 'pretty', False
-    ),
-    help='render Pretty Printed XML'
-  )
-  parser.add_option(
-    '--verbose',
-    dest='verbose',
-    action='store_true',
-    default=getcfgb(
-      config, 'output', 'verbose', False
-    ),
-    help='display more information'
-  )
-  parser.add_option(
-    '--slice-start',
-    dest='slice_start',
-    action='store',
-    type='int',
-    default=0,
-    help='Start position for sliced resultset'
-  )
-  parser.add_option(
-    '--slice-count',
-    dest='slice_count',
-    action='store',
-    type='int',
-    default=d1_common.const.MAX_LISTOBJECTS,
-    help='Max number of elements in sliced resultset'
-  )
-  parser.add_option(
-    '--request-format',
-    dest='request_format',
-    action='store',
-    type='string',
-    default='text/xml',
-    help='Request serialization format for response from server'
-  )
-  # Auth
-  parser.add_option(
-    '--anonymous',
-    dest='anonymous',
-    action='store_true',
-    default=False,
-    help='Request access as public user'
-  )
-  parser.add_option(
-    '--cert-path',
-    dest='cert_path',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'auth', 'cert_path', None
-    )
-  )
-  parser.add_option(
-    '--key-path',
-    dest='key_path',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'auth', 'key_path', None
-    )
-  )
-  # SysMeta.
-  parser.add_option(
-    '--sysmeta-object-format',
-    dest='sysmeta_object_format',
-    action='store',
-    type='string',
-    default=None
-  )
-  parser.add_option(
-    '--sysmeta-submitter',
-    dest='sysmeta_submitter',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'sysmeta', 'submitter', None
-    )
-  )
-  parser.add_option(
-    '--sysmeta-rightsholder',
-    dest='sysmeta_rightsholder',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'sysmeta', 'rightsholder', None
-    )
-  )
-  parser.add_option(
-    '--sysmeta-origin-member-node',
-    dest='sysmeta_origin_member_node',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'sysmeta', 'origin_mn', None
-    )
-  )
-  parser.add_option(
-    '--sysmeta-authoritative-member-node',
-    dest='sysmeta_authoritative_member_node',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'sysmeta', 'auth_mn', None
-    )
-  )
-  parser.add_option(
-    '--sysmeta-access-policy',
-    dest='sysmeta_access_policy',
-    action='store',
-    type='string',
-    default=None
-  )
-  parser.add_option(
-    '--sysmeta-access-policy-public',
-    dest='sysmeta_access_policy_public',
-    action='store_true',
-    default=getcfgb(
-      config, 'sysmeta', 'access_public', False
-    )
-  )
-  # Search filters
-  parser.add_option(
-    '--start-time',
-    dest='start_time',
-    action='store',
-    type='string',
-    default=None
-  )
-  parser.add_option(
-    '--end-time',
-    dest='end_time',
-    action='store',
-    type='string',
-    default=None
-  )
-  parser.add_option(
-    '--object-format',
-    dest='object_format',
-    action='store',
-    type='string',
-    default=None
-  )
+  parser = optparse.OptionParser('usage: %prog [command] ...')
+  options, arguments = parser.parse_args()
 
-  parser.add_option(
-    '--query',
-    dest='query',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'search', 'query', '*:*'
-    )
-  )
-  parser.add_option(
-    '--fields',
-    dest='fields',
-    action='store',
-    type='string',
-    default=getcfg(
-      config, 'search', 'fields', None
-    )
-  )
+  ## args[1] is not guaranteed to exist but the slice args[1:] would still be
+  ## valid and evaluate to an empty list.
+  #dataONECLI = DataONECLI(opts_dict,  args[1:])
+  #
+  ## Sanity.
+  #if len(args) == 0 or args[0] not in dataONECLI.command_map.keys():
+  #  parser.error('<command> is required and must be one of: {0}'
+  #               .format(', '.join(dataONECLI.command_map.keys())))
+  #
+  #if opts.slice_count > d1_common.const.MAX_LISTOBJECTS:
+  #  parser.error('--slice-count must be {0} or less'
+  #               .format(parser.error('<command> is required and must be one of: {0}'
+  #                                    .format(', '.join(dataONECLI.command_map.keys())))))
+  #
+  ## Check dates and convert them from ISO 8601 to datetime.
+  #date_opts = ['start_time', 'end_time']
+  #error = False
+  #for date_opt in date_opts:
+  #  if opts_dict[date_opt] != None:
+  #    try:
+  #      opts.__dict__[date_opt] = iso8601.parse_date(opts_dict[date_opt])
+  #    except (TypeError, iso8601.iso8601.ParseError):
+  #      logging.error('Invalid date option {0}: {1}'.format(date_opt, opts_dict[date_opt]))
+  #      error = True
+  #
+  #if error == True:
+  #  return
 
-  parser.add_option(
-    '--store-config',
-    dest='store_config',
-    action='store_true',
-    default=False,
-    help="Store config variables and exit"
-  )
-  # Log
-  parser.add_option(
-    '--event-type',
-    dest='event_type',
-    action='store',
-    type='string',
-    default=None
-  )
-  (opts, args) = parser.parse_args()
-
-  opts_dict = vars(opts)
-
-  if opts_dict['store_config']:
-    #Store configuration
-    print "Storing configuration options to %s" % config_file
-    try:
-      config.add_section("cli")
-    except:
-      pass
-    config.set("cli", "dataone_url", opts_dict["dataone_url"])
-    config.set('cli', 'mn_url', opts_dict["mn_url"])
-    config.set('cli', 'cn_url', opts_dict["cn_url"])
-    try:
-      config.add_section("output")
-    except:
-      pass
-    config.set('output', 'pretty', opts_dict["pretty"])
-    config.set('output', 'verbose', opts_dict['verbose'])
-    try:
-      config.add_section("auth")
-    except:
-      pass
-    config.set('auth', 'cert_path', opts_dict['cert_path'])
-    config.set('auth', 'key_path', opts_dict['key_path'])
-    try:
-      config.add_section("sysmeta")
-    except:
-      pass
-    config.set('sysmeta', 'submitter', opts_dict['sysmeta_submitter'])
-    config.set('sysmeta', 'rightsholder', opts_dict['sysmeta_rightsholder'])
-    config.set('sysmeta', 'origin_mn', opts_dict['sysmeta_origin_member_node'])
-    config.set('sysmeta', 'auth_mn', opts_dict['sysmeta_authoritative_member_node'])
-    config.set('sysmeta', 'access_public', opts_dict['sysmeta_access_policy_public'])
-    try:
-      config.add_section("search")
-    except:
-      pass
-    config.set('search', 'fields', opts_dict['fields'])
-    config.set('search', 'query', opts_dict['query'])
-
-    with open(config_file, 'wb') as configfile:
-      config.write(configfile)
-    sys.exit()
-
-    # Examples:
-    #
-    # create:
-    # ./dataone.py --verbose --dataone-url http://localhost:8000/cn create 1234 test_objects/sysmeta/knb-lter-gce10911 test_objects/scimeta/knb-lter-gce10911 test_objects/harvested/knb-lter-gce10911_MERGED.xml
-    #
-    # resolve:
-    # ./dataone.py --verbose --dataone-url http://localhost:8000/cn resolve 'hdl:10255/dryad.669/mets.xml'
-    #
-    # get:
-    # ./dataone.py --verbose --dataone-url http://localhost:8000/cn get 'hdl:10255/dryad.669/mets.xml'
-    #
-    # meta:
-    # ./dataone.py --verbose --pretty --dataone-url http://localhost:8000/cn meta 'hdl:10255/dryad.669/mets.xml'
-    #
-    # related:
-    # ./dataone.py --dataone-url http://localhost:8000/cn related 'hdl:10255/dryad.669/mets.xml'
-    #
-    # list:
-    # ./dataone.py list --pretty --mn_url=http://dataone.org/mn
-    #
-    # search:
-    # ./dataone.py search --pretty --start-time=2020-01-01T05:00:00
-    # ./dataone.py search --pretty --objectFormat=abc
-    #
-    # log:
-    # ./dataone.py log --verbose --pretty --mn-url=http://localhost:8000/
-    #
-    # objectformats:
-    # ./dataone.py objectformats --verbose --mn_url=http://dataone.org/mn
-
-  if opts.verbose:
-    logging.getLogger('').setLevel(logging.DEBUG)
-
-  if not opts_dict['anonymous']:
-    # If cert path was not provided, set it to the path CILogon downloads certs to
-    # by default.
-    if opts_dict['cert_path'] is None:
-      opts_dict['cert_path'] = '/tmp/x509up_u{0}'.format(os.getuid())
-
-    # Tell user which cert is being used.
-    if os.path.exists(opts_dict['cert_path']):
-      logging.info('Using certificate: {0}'.format(opts_dict['cert_path']))
-    else:
-      logging.warn('Could not find certificate: {0}'.format(opts_dict['cert_path']))
-      #exit()
-  else:
-    #set cert and key path to null
-    opts_dict['cert_path'] = None
-    opts_dict['key_path'] = None
-
-  if opts_dict['sysmeta_access_policy_public'] == True and \
-                                opts_dict['sysmeta_access_policy'] is not None:
-    logging.error(
-      '--sysmeta-access-policy and --sysmeta-access-policy-public'
-      ' are mutually exclusive'
-    )
-    exit()
-
-  opts_dict['sysmeta_access_policy_obj'] = None
-
-  if opts_dict['sysmeta_access_policy_public'] == True:
-    access_policy = dataoneTypes.accessPolicy()
-    access_rule = dataoneTypes.AccessRule()
-    access_rule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission = dataoneTypes.Permission('read')
-    access_rule.permission.append(permission)
-    access_policy.append(access_rule)
-    opts_dict['sysmeta_access_policy_obj'] = access_policy
-
-  # Validate and deserialize access policy.
-  if opts_dict['sysmeta_access_policy'] is not None:
-    try:
-      opts_dict['sysmeta_access_policy_obj'] = dataoneTypes.CreateFromDocument(
-        opts_dict['sysmeta_access_policy']
-      )
-    except pyxb.PyXBError, e:
-      logging.error('Access policy is invalid.\n{0}'.format(str(e)))
-      exit()
-
-  # args[1] is not guaranteed to exist but the slice args[1:] would still be
-  # valid and evaluate to an empty list.
-  dataONECLI = DataONECLI(opts_dict, args[1:])
-
-  # Sanity.
-  if len(args) == 0 or args[0] not in dataONECLI.command_map.keys():
-    parser.error(
-      '<command> is required and must be one of: {0}'
-      .format(', '.join(dataONECLI.command_map.keys()))
-    )
-
-  if opts.slice_count > d1_common.const.MAX_LISTOBJECTS:
-    parser.error(
-      '--slice-count must be {0} or less'.format(
-        parser.error(
-          '<command> is required and must be one of: {0}'
-          .format(', '.join(dataONECLI.command_map.keys()))
-        )
-      )
-    )
-
-  # Check dates and convert them from ISO 8601 to datetime.
-  date_opts = ['start_time', 'end_time']
-  error = False
-  for date_opt in date_opts:
-    if opts_dict[date_opt] != None:
-      try:
-        opts.__dict__[date_opt] = iso8601.parse_date(opts_dict[date_opt])
-      except (TypeError, iso8601.iso8601.ParseError):
-        logging.error(
-          'Invalid date option {0}: {1}'.format(
-            date_opt, opts_dict[date_opt]
-          )
-        )
-        error = True
-
-  if error == True:
-    return
-
-  # Call out to specific command.
-  dataONECLI.command_map[args[0]]()
+  cli = CLI()
+  # Run any arguments passed on the command line.
+  cli.run_command_line_arguments(arguments)
+  # Start the command line interpreter loop.
+  cli.cmdloop()
 
 
 if __name__ == '__main__':
