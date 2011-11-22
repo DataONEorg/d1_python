@@ -9,8 +9,8 @@ Glossary
     https://dataone.org
 
 
-  PID
-    DataONE Persistent Identifier
+  DataONE Node
+    :term:`CN` or :term:`MN`.
 
 
   MN
@@ -19,6 +19,10 @@ Glossary
 
   CN
     DataONE Coordinating Node.
+
+
+  PID
+    DataONE Persistent Identifier
 
 
   Science Data Object
@@ -33,6 +37,10 @@ Glossary
   System Metadata
     An object (file) that contains system level information about a Science Data
     or a Science Metadata object.
+
+
+  Replication Target
+    An :term:`MN` that can receive copies of Science Objects.
 
 
   Python
@@ -109,4 +117,3 @@ Glossary
     The CILogon project facilitates secure access to CyberInfrastructure (CI).
 
     http://www.cilogon.org/
-

@@ -33,7 +33,7 @@ establish connections to :term:`MNs <MN>` and :term:`CNs <CN>`::
 
 
 Search results are returned as XML. Set the CLI to format XML to be more easily
-readable by setting **pretty** to True::
+readable by setting :ref:`pretty <pretty>` to **True**::
 
   > set pretty true
 
@@ -133,8 +133,8 @@ Start the CLI::
 
   $ dataone.py
 
-Set the CLI to format XML to be more easily readable by setting **pretty** to
-True::
+Set the CLI to format XML to be more easily readable by setting :ref:`pretty
+<pretty>` to **True**::
 
   > set pretty true
 
