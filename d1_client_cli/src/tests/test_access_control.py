@@ -18,11 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client_cli.tests.test_access_control
-=================================================
+'''
+Module d1_client_cli.tests.test_access_control
+==============================================
 
-Unit tests for access_control.
-
+:Synopsis:
+  Unit tests for access control.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
 :Dependencies:
@@ -101,27 +102,6 @@ class TESTCLIAccessControl(d1_common.testcasewithurlcompare.TestCaseWithURLCompa
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
-    self.assertEqual(len(a.allow), 3)
-    self.assertTrue('subject_1' in a.allow)
-    self.assertEqual(a.allow['subject_1'], 'read')
-    self.assertTrue('subject_2' in a.allow)
-    self.assertEqual(a.allow['subject_2'], 'write')
-    self.assertTrue('subject_3' in a.allow)
-    self.assertEqual(a.allow['subject_3'], 'changePermission')
-
-  def test_150(self):
-    '''repr() returns comma separated string representation'''
-    a = access_control.access_control()
-    a.add_allowed_subject('subject_1', None)
-    a.add_allowed_subject('subject_2', 'write')
-    a.add_allowed_subject('subject_3', 'changePermission')
-    p = 'subject_1=read,subject_2=write,subject_3=changePermission'
-    self.assertEquals(repr(a), p)
-
-  def test_160(self):
-    '''Populate object with comma separated string'''
-    a = access_control.access_control()
-    a.from_comma_string('subject_1=read,subject_2=write,subject_3=changePermission')
     self.assertEqual(len(a.allow), 3)
     self.assertTrue('subject_1' in a.allow)
     self.assertEqual(a.allow['subject_1'], 'read')

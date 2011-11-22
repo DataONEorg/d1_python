@@ -18,11 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client_cli.tests.test_session
-==========================================
+'''
+Module d1_client_cli.tests.test_session
+=======================================
 
-Unit tests for session.
-
+:Synopsis:
+  Unit tests for session parameters.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
 :Dependencies:
@@ -35,6 +36,7 @@ import logging
 import os
 import sys
 import uuid
+import StringIO
 
 # D1.
 import d1_common.const
@@ -62,17 +64,17 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''After instatiation, the default session parameters are available via get()'''
     s = session.session()
     self.assertEqual(s.get('cli', 'pretty'), True)
-    self.assertEqual(s.get('node', 'dataone_url'), d1_common.const.URL_DATAONE_ROOT)
+    self.assertEqual(s.get('node', 'dataoneurl'), d1_common.const.URL_DATAONE_ROOT)
     self.assertEqual(s.get('sysmeta', 'pid'), None)
 
   def test_030(self):
     '''Session parameters can be updated with set()'''
     s = session.session()
     s.set('cli', 'pretty', False),
-    s.set('node', 'dataone_url', 'test')
+    s.set('node', 'dataoneurl', 'test')
     s.set('sysmeta', 'pid', 'testpid'),
     self.assertEqual(s.get('cli', 'pretty'), False)
-    self.assertEqual(s.get('node', 'dataone_url'), 'test')
+    self.assertEqual(s.get('node', 'dataoneurl'), 'test')
     self.assertEqual(s.get('sysmeta', 'pid'), 'testpid')
 
   def test_040(self):
@@ -116,10 +118,8 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     s.access_control_add_allowed_subject('newsubject', 'write')
 
   def test_140(self):
-    '''print_session() is available appears to work'''
+    '''print_session() is available and appears to work'''
     # capture stdout
-    import sys
-    import StringIO
     old = sys.stdout
     sys.stdout = StringIO.StringIO()
     # run print
@@ -134,39 +134,32 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.assertTrue('None' in out)
 
   def test_200(self):
-    '''Session is successfully loaded from .ini file'''
-    s = session.session()
-    self.assertEqual(s.get('sysmeta', 'rightsholder'), None)
-    s.load_session_from_ini_file(False, './test_d1client.conf')
-    self.assertEqual(s.get('sysmeta', 'rightsholder'), 'TEST_RIGHTSHOLDER')
-
-  def test_210(self):
-    '''Session is successfully saved to .ini file and read back again'''
-    tmpini = './ini.tmp'
+    '''Session is successfully saved and then loaded (pickled and unpickled)'''
+    tmp_pickle = './pickle.tmp'
     try:
-      os.unlink(tmpini)
+      os.unlink(tmp_pickle)
     except OSError:
       pass
     s1 = session.session()
     u = str(uuid.uuid1())
     s1.set('sysmeta', 'rightsholder', u)
-    s1.save_session_to_ini_file(tmpini)
+    s1.save(tmp_pickle)
     s2 = session.session()
-    s2.load_session_from_ini_file(False, tmpini)
+    s2.load(False, tmp_pickle)
     self.assertEqual(s2.get('sysmeta', 'rightsholder'), u)
 
   def test_300(self):
-    '''assert_required_parameters_present() returns sucessfully on no missing parameters'''
+    '''assert_required_parameters_present() returns successfully on no missing parameters'''
     s = session.session()
-    s.assert_required_parameters_present(('dataone_url', 'count', 'algorithm'))
+    s.assert_required_parameters_present(('dataoneurl', 'count', 'algorithm'))
 
   def test_310(self):
     '''assert_required_parameters_present() raises exception on missing parameters'''
     s = session.session()
-    s.set('node', 'dataone_url', None)
+    s.set('node', 'dataoneurl', None)
     self.assertRaises(
       cli_exceptions.InvalidArguments, s.assert_required_parameters_present,
-      ('dataone_url', 'count', 'algorithm')
+      ('dataoneurl', 'count', 'algorithm')
     )
 
 

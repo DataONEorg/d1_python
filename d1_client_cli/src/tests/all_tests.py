@@ -22,8 +22,8 @@
 Module d1_client_cli.tests.all_tests
 ====================================
 
-Run all Unit tests.
-
+:Synopsis:
+  Run all Unit tests.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
 :Dependencies:
@@ -38,8 +38,9 @@ from d1_common import xmlrunner
 
 # App.
 
-from test_system_metadata import TESTCLISystemMetadata
+from test_replication_policy import TESTCLIReplicationPolicy
 from test_access_control import TESTCLIAccessControl
+from test_system_metadata import TESTCLISystemMetadata
 from test_session import TESTCLISession
 
 #===============================================================================

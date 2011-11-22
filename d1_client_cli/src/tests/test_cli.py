@@ -19,11 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`dataone`
+:mod:`test_cli`
 ==============
 
 :Synopsis:
-  Unit tests for DataONE Command Line Client
+  Unit tests for DataONE Command Line Interface
+:Created: 2011-11-20
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
