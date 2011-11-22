@@ -1,3 +1,35 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+:mod:`system_metadata`
+======================
+
+:Synopsis:
+  Create System Meta documents based on session parameters.
+:Created: 2011-11-20
+:Author: DataONE (Dahl)
+:Dependencies:
+  - python 2.6
+'''
+
 # Stdlib.
 import datetime
 import logging
@@ -40,11 +72,13 @@ class system_metadata():
       msg = 'Missing system metadata parameters: {0}'.format(', '.join(missing_values))
       raise MissingSysmetaParameters(msg)
 
-  def _create_pyxb_object(self, session, pid, size, checksum, access_policy):
+  def _create_pyxb_object(
+    self, session, pid, size, checksum, access_policy, replication_policy
+  ):
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.serialVersion = 1
     sysmeta.identifier = pid
-    sysmeta.formatId = session.get('sysmeta', 'object_format')
+    sysmeta.formatId = session.get('sysmeta', 'objectformat')
     sysmeta.size = size
     sysmeta.submitter = session.get('sysmeta', 'submitter')
     sysmeta.rightsHolder = session.get('sysmeta', 'rightsholder')
@@ -52,10 +86,10 @@ class system_metadata():
     sysmeta.checksum.algorithm = session.get('sysmeta', 'algorithm')
     sysmeta.dateUploaded = datetime.datetime.now()
     sysmeta.dateSysMetadataModified = datetime.datetime.now()
-    sysmeta.originMemberNode = session.get('sysmeta', 'origin_member_node')
-    sysmeta.authoritativeMemberNode = \
-      session.get('sysmeta', 'authoritative_member_node')
+    sysmeta.originmn = session.get('sysmeta', 'originmn')
+    sysmeta.authoritativemn = session.get('sysmeta', 'authoritativemn')
     sysmeta.accessPolicy = access_policy
+    sysmeta.replicationPolicy = replication_policy
     #pyxb.RequireValidWhenGenerating(False)
     return sysmeta
 

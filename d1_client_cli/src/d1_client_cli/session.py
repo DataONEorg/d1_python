@@ -1,7 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+:mod:`session`
+==============
+
+:Synopsis:
+  Hold and manipulate session parameters.
+:Created: 2011-11-20
+:Author: DataONE (Dahl)
+:Dependencies:
+  - python 2.6
+'''
+
 # Stdlib.
 import ast
 import logging
 import os
+import pickle
 import pprint
 import ConfigParser
 
@@ -12,12 +45,14 @@ import d1_common.const
 import cli_exceptions
 import system_metadata
 import access_control
+import replication_policy
 
 
 class session(object):
   def __init__(self):
     self.session = self.get_default_session()
     self.access_control = access_control.access_control()
+    self.replication_policy = replication_policy.replication_policy()
 
   def reset(self):
     self.__init__()
@@ -29,31 +64,31 @@ class session(object):
         'verbose': (False, bool),
       },
       'node': {
-        'dataone_url': (d1_common.const.URL_DATAONE_ROOT, str),
-        'mn_url': ('https://localhost/mn/', str),
+        'dataoneurl': (d1_common.const.URL_DATAONE_ROOT, str),
+        'mnurl': ('https://localhost/mn/', str),
       },
       'slice': {
         'start': (0, int),
         'count': (d1_common.const.MAX_LISTOBJECTS, int),
       },
       'auth': {
-        'anonymous': (False, bool),
-        'cert_path': (None, str),
-        'key_path': (None, str),
+        'anonymous': (True, bool),
+        'certpath': (None, str),
+        'keypath': (None, str),
       },
       'sysmeta': {
         'pid': (None, str),
-        'object_format': (None, str),
+        'objectformat': (None, str),
         'submitter': (None, str),
         'rightsholder': (None, str),
-        'origin_member_node': (None, str),
-        'authoritative_member_node': (None, str),
+        'originmn': (None, str),
+        'authoritativemn': (None, str),
         'algorithm': (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str),
       },
       'search': {
-        'start_time': (None, str),
-        'end_time': (None, str),
-        'search_object_format': (None, str),
+        'fromdate': (None, str),
+        'todate': (None, str),
+        'searchobjectformat': (None, str),
         'query': ('*:*', str),
         'fields': (None, str),
       },
@@ -62,7 +97,7 @@ class session(object):
   def get_session_section_ordering(self):
     return 'cli', 'node', 'slice', 'auth', 'sysmeta', 'search'
 
-  def get_default_ini_file_path(self):
+  def get_default_pickle_file_path(self):
     return os.path.join(os.environ['HOME'], '.d1client.conf')
 
   def _find_section_containing_session_parameter(self, name):
@@ -113,7 +148,7 @@ class session(object):
     self._assert_valid_session_parameter(section, name)
     try:
       v = ast.literal_eval(value_string)
-    except ValueError:
+    except (ValueError, SyntaxError):
       v = value_string
     if v is None:
       self.set(section, name, None)
@@ -130,6 +165,10 @@ class session(object):
     section = self._find_section_containing_session_parameter(name)
     self.set_with_conversion(section, name, value_string)
 
+  #=============================================================================
+  # Access control.
+  #=============================================================================
+
   def access_control_add_allowed_subject(self, subject, permission):
     self.access_control.add_allowed_subject(subject, permission)
 
@@ -141,6 +180,35 @@ class session(object):
 
   def access_control_remove_all_allowed_subjects(self, line):
     self.access_control.remove_all_allowed_subjects(line)
+
+  # ============================================================================
+  # Replication policy.
+  # ============================================================================
+
+  def replication_policy_clear(self):
+    return self.replication_policy.clear()
+
+  def replication_policy_add_preferred(self, mn):
+    return self.replication_policy.add_preferred(mn)
+
+  def replication_policy_add_blocked(self, mn):
+    return self.replication_policy.add_blocked(mn)
+
+  def replication_policy_remove(self, mn):
+    return self.replication_policy.remove(mn)
+
+  def replication_policy_set_replication_allowed(self, replication_allowed):
+    return self.replication_policy.set_replication_allowed(replication_allowed)
+
+  def replication_policy_set_number_of_replicas(self, number_of_replicas):
+    return self.replication_policy.set_number_of_replicas(number_of_replicas)
+
+  def replication_policy_print(self):
+    return self.replication_policy.print_replication_policy()
+
+  # ============================================================================
+  # Session.
+  # ============================================================================
 
   def print_single_parameter(self, name):
     section = self._find_section_containing_session_parameter(name)
@@ -156,57 +224,50 @@ class session(object):
       for k in sorted(self.session[section].keys()):
         print '  {0: <30s}{1}'.format(k, self.session[section][k][0])
     print str(self.access_control)
+    print str(self.replication_policy)
+    print
 
   def print_parameter(self, name):
-    if name.strip() == '':
+    if not name:
       self.print_all_parameters()
     else:
       self.print_single_parameter(name)
 
-  def load_session_from_ini_file(self, suppress_error=False, ini_file_path=None):
-    if ini_file_path is None:
-      ini_file_path = self.get_default_ini_file_path()
-    logging.debug("Loading session from .ini file: {0}".format(ini_file_path))
-    ini = ConfigParser.RawConfigParser()
-    file_count = len(ini.read([ini_file_path]))
-    if file_count == 1:
-      self.ini_to_session(ini)
-      self.access_control.from_ini(ini)
-      logging.debug('Loaded session from .ini file: {0}'.format(ini_file_path))
-    else:
+  def load(self, suppress_error=False, pickle_file_path=None):
+    if pickle_file_path is None:
+      pickle_file_path = self.get_default_pickle_file_path()
+    try:
+      with open(pickle_file_path, 'rb') as f:
+        self.__dict__.update(pickle.load(f))
+    except (NameError, IOError) as e:
       if not suppress_error:
-        logging.error('Unable to load session from .ini file: {0}'.format(ini_file_path))
+        logging.error(
+          'Unable to load session from file: {0}\n{1}'.format(
+            pickle_file_path, str(e)
+          )
+        )
 
-  def session_to_ini(self):
-    ini = ConfigParser.RawConfigParser()
-    sections = self.get_session_section_ordering()
-    for section in sections:
-      ini.add_section(section)
-      for k in sorted(self.session[section].keys()):
-        ini.set(section, k, repr(self.session[section][k][0]))
-    return ini
-
-  def add_access_control_to_ini(self, ini):
-    self.access_control.add_to_ini(ini)
-
-  def save_session_to_ini_file(self, ini_file_path=None):
-    if ini_file_path is None:
-      ini_file_path = self.get_default_ini_file_path()
-    logging.debug('Saving session to .ini file: {0}'.format(ini_file_path))
-    ini = self.session_to_ini()
-    self.add_access_control_to_ini(ini)
-    with open(ini_file_path, 'wb') as f:
-      ini.write(f)
-
-  def ini_to_session(self, ini):
-    for section in self.session:
-      for name in self.session[section]:
-        self.set_with_conversion(section, name, ini.get(section, name))
+  def save(self, pickle_file_path=None):
+    if pickle_file_path is None:
+      pickle_file_path = self.get_default_pickle_file_path()
+    try:
+      with open(pickle_file_path, 'wb') as f:
+        pickle.dump(self.__dict__, f, 2)
+    except (NameError, IOError) as e:
+      if not suppress_error:
+        logging.error(
+          'Unable to save session to file: {0}\n{1}'.format(
+            pickle_file_path, str(e)
+          )
+        )
 
   def create_system_metadata(self, pid, checksum, size):
     access_policy = self.access_control.to_pyxb()
+    replication_policy = self.replication_policy.to_pyxb()
     sysmeta_creator = system_metadata.system_metadata()
-    sysmeta = sysmeta_creator.create_pyxb_object(self, pid, size, checksum, access_policy)
+    sysmeta = sysmeta_creator.create_pyxb_object(
+      self, pid, size, checksum, access_policy, replication_policy
+    )
 
   def assert_required_parameters_present(self, names):
     missing_parameters = []

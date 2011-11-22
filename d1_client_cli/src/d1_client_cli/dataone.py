@@ -23,7 +23,8 @@
 ==============
 
 :Synopsis:
-  DataONE Command Line Client
+  DataONE Command Line Interface
+:Created: 2011-11-20
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
@@ -121,7 +122,7 @@ def log_setup():
 #===============================================================================
 
 
-class CLIClient(d1_client.mnclient.MemberNodeClient):
+class CLIClient(object):
   def __init__(self, session, base_url):
     try:
       self.session = session
@@ -147,7 +148,7 @@ class CLIClient(d1_client.mnclient.MemberNodeClient):
   def _get_certificate(self):
     if self.session.get('auth', 'anonymous'):
       return None
-    cert_path = self.session.get('auth', 'cert_path')
+    cert_path = self.session.get('auth', 'certpath')
     if not cert_path:
       cert_path = self._get_cilogon_certificate_path()
     self._assert_certificate_present(cert_path)
@@ -156,16 +157,16 @@ class CLIClient(d1_client.mnclient.MemberNodeClient):
   def _get_certificate_private_key(self):
     if self.session.get('auth', 'anonymous'):
       return None
-    key_path = self.session.get('auth', 'key_path')
+    key_path = self.session.get('auth', 'keypath')
     self._assert_certificate_present(key_path)
     return key_path
 
 #===============================================================================
 
 
-class CLIMNClient(CLIClient):
+class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, session):
-    base_url = session.get('node', 'mn_url')
+    base_url = session.get('node', 'mnurl')
     self._assert_base_url_set(base_url)
     return super(CLIMNClient, self).__init__(session, base_url)
 
@@ -176,9 +177,9 @@ class CLIMNClient(CLIClient):
 #===============================================================================
 
 
-class CLICNClient(CLIClient):
+class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def __init__(self, session):
-    base_url = session.get('node', 'dataone_url')
+    base_url = session.get('node', 'dataoneurl')
     self._assert_base_url_set(base_url)
     return super(CLICNClient, self).__init__(session, base_url)
 
@@ -192,7 +193,7 @@ class CLICNClient(CLIClient):
 class DataONECLI():
   def __init__(self):
     self.session = session.session()
-    self.session.load_session_from_ini_file(suppress_error=True)
+    self.session.load(suppress_error=True)
 
   def _get_file_size(self, path):
     with open(path, 'r') as f:
@@ -253,10 +254,10 @@ class DataONECLI():
     client = CLIMNClient(self.session)
     self._post_file_and_system_metadat_to_member_node(client, pid, path, sysmeta)
 
-  def _copy_file_like_object_to_file(self, response, path):
+  def _copy_file_like_object_to_file(self, file_like_object, path):
     try:
       file = open(path, 'wb')
-      shutil.copyfileobj(response, file)
+      shutil.copyfileobj(file_like_object, file)
       file.close()
     except EnvironmentError as (errno, strerror):
       error_message_lines = []
@@ -264,6 +265,14 @@ class DataONECLI():
       error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
       error_message = '\n'.join(error_message_lines)
       raise cli_exceptions.CLIError(error_message)
+
+  def output(self, file_like_object, path):
+    '''Display or save file like object'''
+    if not path:
+      for line in file_like_object:
+        logging.info(line.rstrip())
+    else:
+      self._copy_file_like_object_to_file(file_like_object, path)
 
   def _get_science_object_from_member_node(self, client, pid):
     try:
@@ -276,7 +285,7 @@ class DataONECLI():
   def science_object_get(self, pid, path):
     client = CLIMNClient(self.session)
     response = self._get_science_object_from_member_node(client, pid)
-    self._copy_file_like_object_to_file(response, path)
+    self.output(response, path)
 
   def _get_system_metadata(self, client, pid):
     try:
@@ -296,53 +305,27 @@ class DataONECLI():
     client = CLICNClient(self.session)
     metadata = self._get_system_metadata(client, pid)
     sci_meta_xml = metadata.toxml()
-    self._copy_file_like_object_to_file(
-      StringIO.StringIO(self._pretty(sci_meta_xml())), path
-    )
-
-  def update_access_policy(self, pid):
-    client = CLICNClient(self.session)
-    metadata = self._get_system_metadata(client, pid)
-    sci_meta_xml = metadata.toxml()
-    self._copy_file_like_object_to_file(
-      StringIO.StringIO(self._pretty(sci_meta_xml())), path
-    )
+    self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), path)
 
   def related(self, pid):
-    client = CLICNClient(self.session)
-    metadata = self._get_system_metadata(client, pid)
-    print 'Describes:'
-    if len(metadata.describes) > 0:
-      for describes in metadata.describes:
-        print '  {0}'.format(describes)
-    else:
-      print '  <none>'
-    print 'Described By:'
-    if len(metadata.describedBy) > 0:
-      for describedBy in metadata.describedBy:
-        print '  {0}'.format(describedBy)
-    else:
-      print '  <none>'
-
-  # ----------------------------------------------------------------------------
-  # Misc
-  # ----------------------------------------------------------------------------
+    raise cli_exceptions.CLIError('not implemented')
 
   def resolve(self, pid):
     '''Get Object Locations for Object.
     '''
-    client = CLIMNClient(self.session)
+    client = CLICNClient(self.session)
     object_location_list = client.resolve(pid)
-    print StringIO.StringIO(self._pretty(object_location_list)).getvalue()
+    for location in object_location_list.objectLocation:
+      logging.info(location.url)
 
   def list(self):
     '''MN listObjects.
     '''
     client = CLIMNClient(self.session)
     object_list = client.listObjects(
-      startTime=self.session.get('search', 'start_time'),
-      endTime=self.session.get('search', 'end_time'),
-      objectFormat=self.session.get('search', 'search_object_format'),
+      startTime=self.session.get('search', 'fromdate'),
+      endTime=self.session.get('search', 'todate'),
+      objectFormat=self.session.get('search', 'searchobjectformat'),
       start=self.session.get('slice', 'start'),
       count=self.session.get('slice', 'count')
     )
@@ -354,53 +337,60 @@ class DataONECLI():
     '''
     client = CLIMNClient(self.session)
     object_list = client.getLogRecords(
-      startTime=self.session.get('search', 'start_time'),
-      toDate=self.session.get('search', 'end_time'),
+      fromDate=self.session.get('search', 'fromdate'),
+      toDate=self.session.get('search', 'todate'),
       start=self.session.get('slice', 'start'),
       count=self.session.get('slice', 'count')
     )
     object_list_xml = object_list.toxml()
     print StringIO.StringIO(self._pretty(object_list_xml)).getvalue()
 
-  def getObjectFormats(self):
-    '''List the format IDs from the CN
-    '''
-    pass
+  def set_access_policy(self, pid):
+    raise cli_exceptions.CLIError('not implemented')
 
-  def objectformats(self):
-    '''Get a list of object formats available on the target.
-    :return: (object format, count) object formats.
+  def set_replication_policy(self, pid):
+    raise cli_exceptions.CLIError('not implemented')
 
-    TODO: May need to be completely
-    removed (since clients should use CNs for object discovery).
-    '''
-
-    if len(self.args) != 0:
-      logging.error('Invalid arguments')
-      logging.error('Usage: objectformats')
-      return
-    certpath = self.config['auth']['cert_path']
-    keypath = self.config['auth']['key_path']
-    if certpath is not None:
-      if not os.path.exists(certpath):
-        certpath = None
-        keypath = None
-
-    client = d1_client.mnclient.MemberNodeClient(
-      self.config['auth']['mn_url'], certfile=certpath, keyfile=keypath
-    )
-
-    object_list = d1_client.objectlistiterator.ObjectListIterator(client)
-
-    unique_objects = {}
-    for info in object_list:
-      logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat))
-      try:
-        unique_objects[info.objectFormat] += 1
-      except KeyError:
-        unique_objects[info.objectFormat] = 1
-
-    self.output(StringIO.StringIO('\n'.join(unique_objects) + '\n'))
+  #def getObjectFormats(self):
+  #  '''List the format IDs from the CN
+  #  '''
+  #  pass
+  #
+  #
+  #def objectformats(self):
+  #  '''Get a list of object formats available on the target.
+  #  :return: (object format, count) object formats.
+  #
+  #  TODO: May need to be completely
+  #  removed (since clients should use CNs for object discovery).
+  #  '''
+  #
+  #  if len(self.args) != 0:
+  #    logging.error('Invalid arguments')
+  #    logging.error('Usage: objectformats')
+  #    return
+  #  certpath = self.config['auth']['cert_path']
+  #  keypath = self.config['auth']['key_path']
+  #  if certpath is not None:
+  #    if not os.path.exists(certpath):
+  #      certpath = None
+  #      keypath = None
+  #
+  #  client = d1_client.mnclient.MemberNodeClient(self.config['auth']['mn_url'],
+  #                                               certfile=certpath,
+  #                                               keyfile=keypath)
+  #
+  #  object_list = d1_client.objectlistiterator.ObjectListIterator(client)
+  #
+  #  unique_objects = {}
+  #  for info in object_list:
+  #    logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat) )
+  #    try:
+  #      unique_objects[info.objectFormat] += 1
+  #    except KeyError:
+  #      unique_objects[info.objectFormat] = 1
+  #
+  #  self.output(StringIO.StringIO('\n'.join(unique_objects) + '\n'))
 
   # ----------------------------------------------------------------------------
   # Search
@@ -409,12 +399,7 @@ class DataONECLI():
   def search(self):
     '''CN search.
     '''
-    print self.session.get('node', 'dataone_url')
-    client = d1_client.cnclient.CoordinatingNodeClient(
-      self.session.get(
-        'node', 'dataone_url'
-      )
-    )
+    client = CLICNClient(self.session)
     kwargs = {
       'start': self.session.get('slice', 'start'),
       'count': self.session.get('slice', 'count')
@@ -433,7 +418,7 @@ class DataONECLI():
     '''
     client = d1_client.cnclient.CoordinatingNodeClient(
       self.session.get(
-        'node', 'dataone_url'
+        'node', 'dataoneurl'
       )
     )
     res = client.getSearchFields()
@@ -451,26 +436,30 @@ class DataONECLI():
         print "%-25s %-12s %-12s %-12s" % (f, res[f]['type'], '?', str(res[f]['docs']))
 
   # ----------------------------------------------------------------------------
-  # Session Parameters
+  # Session parameters
   # ----------------------------------------------------------------------------
 
   def reset(self):
     return self.session.reset()
 
-  def load_session_from_ini_file(self, suppress_error=False, ini_file_path=None):
-    return self.session.load_session_from_ini_file(suppress_error, ini_file_path)
+  def session_load(self, suppress_error=False, pickle_file_path=None):
+    return self.session.load(suppress_error, pickle_file_path)
 
-  def save_session_to_ini_file(self, ini_file_path=None):
-    return self.session.save_session_to_ini_file(ini_file_path)
+  def session_save(self, pickle_file_path=None):
+    return self.session.save(pickle_file_path)
 
-  def print_session_parameter(self, name):
+  def session_print_parameter(self, name):
     return self.session.print_parameter(name)
 
-  def set_session_parameter(self, name, value):
+  def session_set_parameter(self, name, value):
     return self.session.set_with_conversion_implicit_section(name, value)
 
-  def clear_session_parameter(self, name):
+  def session_clear_parameter(self, name):
     return self.session.set_with_implicit_section(name, None)
+
+  # ----------------------------------------------------------------------------
+  # Access control
+  # ----------------------------------------------------------------------------
 
   def access_control_add_allowed_subject(self, subject, permission):
     return self.session.access_control_add_allowed_subject(subject, permission)
@@ -484,13 +473,30 @@ class DataONECLI():
   def access_control_remove_all_allowed_subjects(self, line):
     self.session.access_control_remove_all_allowed_subjects(line)
 
-  #=============================================================================
+  # ----------------------------------------------------------------------------
+  # Replication policy
+  # ----------------------------------------------------------------------------
 
-  def update_verbose(self):
-    if self.session.get('cli', 'verbose'):
-      logging.getLogger('').setLevel(logging.DEBUG)
-    else:
-      logging.getLogger('').setLevel(logging.INFO)
+  def replication_policy_clear(self):
+    return self.session.replication_policy_clear()
+
+  def replication_policy_add_preferred(self, mn):
+    return self.session.replication_policy_add_preferred(mn)
+
+  def replication_policy_add_blocked(self, mn):
+    return self.session.replication_policy_add_blocked(mn)
+
+  def replication_policy_remove(self, mn):
+    return self.session.replication_policy_remove(mn)
+
+  def replication_policy_set_replication_allowed(self, replication_allowed):
+    return self.session.replication_policy_set_replication_allowed(replication_allowed)
+
+  def replication_policy_set_number_of_replicas(self, number_of_replicas):
+    return self.session.replication_policy_set_number_of_replicas(number_of_replicas)
+
+  def replication_policy_print(self):
+    return self.session.replication_policy_print()
 
 #===============================================================================
 
@@ -502,24 +508,25 @@ class CLI(cmd.Cmd):
     self.prompt = '> '
     self.intro = 'DataONE Command Line Interface'
 
-  def _split_key_value(self, line):
-    try:
-      k, v = shlex.split(line)
-    except ValueError:
-      raise cli_exceptions.InvalidArguments('Need two arguments')
-    else:
-      return k, v
+  def _split_args(self, line, n_required, n_optional):
+    args = shlex.split(line)
+    if len(args) < n_required or len(args) > n_required + n_optional:
+      msg = 'Need {0} required and {1} optional parameters'.format(
+        n_required if n_required else 'no', n_optional if n_optional else 'no'
+      )
+      raise cli_exceptions.InvalidArguments(msg)
+    # Pad the list out with None for any optional parameters that were not
+    # provided.
+    args += [None] * (n_required + n_optional - len(args))
+    if len(args) == 1:
+      return args[0]
+    return args
 
-  def _split_key_optional_value(self, line):
-    try:
-      return self._split_key_value(line)
-    except cli_exceptions.InvalidArguments:
-      try:
-        k, = shlex.split(line)
-      except ValueError:
-        raise cli_exceptions.InvalidArguments('Need one or two arguments')
-      else:
-        return k, None
+  def _update_verbose(self):
+    if self.d1.session.get('cli', 'verbose'):
+      logging.getLogger('').setLevel(logging.DEBUG)
+    else:
+      logging.getLogger('').setLevel(logging.INFO)
 
   #-----------------------------------------------------------------------------
   # Session.
@@ -530,6 +537,7 @@ class CLI(cmd.Cmd):
     Set all session parameters to their default values
     '''
     try:
+      self._split_args(line, 0, 0)
       self.d1.reset()
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
@@ -538,21 +546,19 @@ class CLI(cmd.Cmd):
     '''load [file]
     Load session parameters from file
     '''
-    if line.strip() == '':
-      line = None
     try:
-      self.d1.load_session_from_ini_file(ini_file_path=line)
+      file = self._split_args(line, 0, 1)
+      self.d1.session_load(pickle_file_path=file)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
   def do_save(self, line):
-    '''load [file]
-    Load session parameters from file
+    '''save [file]
+    Save session parameters to file
     '''
-    if line.strip() == '':
-      line = None
     try:
-      self.d1.save_session_to_ini_file(ini_file_path=line)
+      file = self._split_args(line, 0, 1)
+      self.d1.session_save(pickle_file_path=file)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
@@ -561,20 +567,18 @@ class CLI(cmd.Cmd):
     Display the value of a session parameter. Display all parameters if [session parameter] is omitted.
     '''
     try:
-      self.d1.print_session_parameter(line)
+      session_parameter = self._split_args(line, 0, 1)
+      self.d1.session_print_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
-
-#section = self.find_section_containing_session_parameter(k)
-#logging.info('{0}: {1}'.format(k, self.config[section][k][0]))
 
   def do_set(self, line):
     '''set <session parameter> <value>
     Set the value of a session parameter
     '''
     try:
-      k, v = self._split_key_value(line)
-      self.d1.set_session_parameter(k, v)
+      session_parameter, value = self._split_args(line, 2, 0)
+      self.d1.session_set_parameter(session_parameter, value)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
@@ -583,7 +587,8 @@ class CLI(cmd.Cmd):
     Clear the value of a session parameter.
     '''
     try:
-      self.d1.clear_session_parameter(line)
+      session_parameter = self._split_args(line, 1, 0)
+      self.d1.session_clear_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
@@ -596,7 +601,7 @@ class CLI(cmd.Cmd):
     Allow access to subject
     '''
     try:
-      subject, permission = self._split_key_optional_value(line)
+      subject, permission = self._split_args(line, 1, 1)
       self.d1.access_control_add_allowed_subject(subject, permission)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
@@ -606,7 +611,8 @@ class CLI(cmd.Cmd):
     Remove subject from access policy
     '''
     try:
-      self.d1.access_control_remove_allowed_subject(line)
+      subject = self._split_args(line, 1, 0)
+      self.d1.access_control_remove_allowed_subject(subject)
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
@@ -614,110 +620,104 @@ class CLI(cmd.Cmd):
     '''allowpublic
     Allow public read
     '''
-    self.d1.access_control_allow_public(True)
+    try:
+      self._split_args(line, 0, 0)
+      self.d1.access_control_allow_public(True)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
 
   def do_denypublic(self, line):
     '''denypublic
     Deny public read
     '''
-    self.d1.access_control_allow_public(False)
+    try:
+      self._split_args(line, 0, 0)
+      self.d1.access_control_allow_public(False)
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
 
   def do_denyall(self, line):
     '''denyall
     Remove all subjects from access policy and deny public read
     '''
     try:
-      self.d1.access_control_remove_all_allowed_subjects(line)
+      self._split_args(line, 0, 0)
+      self.d1.access_control_remove_all_allowed_subjects()
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
   #-----------------------------------------------------------------------------
-  # System Metadata
+  # Replication policy.
   #-----------------------------------------------------------------------------
 
-  #def do_printsysmetaxml(self, line):
-  #  try:
-  #    self.d1.sysmeta_print(line)
-  #  except cli_exceptions.InvalidArguments as e:
-  #    logging.error(e)
-
-  #-----------------------------------------------------------------------------
-  # Science Object Operations
-  #-----------------------------------------------------------------------------
-
-  def do_create(self, line):
-    '''create <pid> <file>
-    Create a new Science Object on a Member Node
+  def do_clearreplication(self, line):
+    '''clearreplication
+    Clear replication policy
     '''
     try:
-      pid, file = self._split_key_value(line)
-      self.d1.science_object_create(pid, file)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      self._split_args(line, 0, 0)
+      return self.d1.replication_policy_clear()
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_getdata(self, line):
-    '''getdata <pid> <file>
-    Get a Science Data Object from a Member Node
+  def do_addpreferred(self, line):
+    '''addpreferred <member node>
+    Add Member Node to list of preferred replication targets
     '''
     try:
-      pid, file = self._split_key_value(line)
-      self.d1.science_object_get(pid, file)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      mn = self._split_args(line, 1, 0)
+      return self.d1.replication_policy_add_preferred(mn)
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_meta(self, line):
-    '''meta <pid> [file]
-    Get System Metdata from a Coordinating Node
+  def do_addblocked(self, line):
+    '''addblocked <member node>
+    Add blocked Member Node to access policy
     '''
     try:
-      pid, file = self._split_key_optional_value(line)
-      self.d1.system_metadata_get(pid, file)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      mn = self._split_args(line, 1, 0)
+      return self.d1.replication_policy_add_blocked(mn)
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_setaccess(self, line):
-    '''setaccess <pid>
-    Update the Access Policy on an existing Science Data Object
+  def do_remove(self, line):
+    '''remove <member node>
+    Remove Member Node from access policy
     '''
     try:
-      self.d1.update_access_policy(line)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      mn = self._split_args(line, 1, 0)
+      return self.d1.replication_policy_remove(mn)
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_related(self, line):
-    '''related <pid>
-    Given the PID for a Science Data Object, find it's Science Metadata and vice versa
+  def do_allowreplication(self, line):
+    '''allowreplication
+    Allow object to be replicated
     '''
     try:
-      self.d1.related(line)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      self._split_args(line, 0, 0)
+      return self.d1.replication_policy_set_replication_allowed(True)
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_resolve(self, line):
-    '''resolve <pid>
-    Given the PID for a Science Object, find all locations from which the Science Object can be downloaded
+  def do_disallowreplication(self, line):
+    '''disallowreplication
+    Prevent object from being replicated
     '''
     try:
-      self.d1.resolve(line)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      self._split_args(line, 0, 0)
+      return self.d1.replication_policy_set_replication_allowed(False)
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_list(self, line):
-    '''list
-    Retrieve a list of available Science Data Objects from a single MN with basic filtering
+  def do_setreplicas(self, line):
+    '''setreplicas <number of replicas>
+    Set preferred number of replicas
     '''
     try:
-      self.d1.list()
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
-
-  def do_log(self, line):
-    '''log <pid>
-    Retrieve event log for a Science Object
-    '''
-    try:
-      self.d1.log(line)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      n_replicas = self._split_args(line, 1, 0)
+      return self.d1.replication_policy_get_number_of_replicas(n_replicas)
+    except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
   #-----------------------------------------------------------------------------
@@ -729,6 +729,7 @@ class CLI(cmd.Cmd):
     Comprehensive search for Science Data Objects across all available MNs
     '''
     try:
+      self._split_args(line, 0, 0)
       self.d1.search()
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       logging.error(e)
@@ -738,7 +739,102 @@ class CLI(cmd.Cmd):
     List the SOLR index fields that are available for use in the search command
     '''
     try:
+      self._split_args(line, 0, 0)
       self.d1.fields()
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  #-----------------------------------------------------------------------------
+  # Science Object Operations
+  #-----------------------------------------------------------------------------
+
+  def do_getdata(self, line):
+    '''getdata <pid> <file>
+    Get a Science Data Object from a Member Node
+    '''
+    try:
+      pid, file = self._split_args(line, 2, 0)
+      self.d1.science_object_get(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_meta(self, line):
+    '''meta <pid> [file]
+    Get System Metdata from a Coordinating Node
+    '''
+    try:
+      pid, file = self._split_args(line, 1, 1)
+      self.d1.system_metadata_get(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(str(e))
+
+  def do_create(self, line):
+    '''create <pid> <file>
+    Create a new Science Object on a Member Node
+    '''
+    try:
+      pid, file = self._split_args(line, 2, 0)
+      self.d1.science_object_create(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_related(self, line):
+    '''related <pid>
+    Given the PID for a Science Data Object, find it's Science Metadata and vice versa
+    '''
+    try:
+      pid = self._split_args(line, 1, 0)
+      self.d1.related(pid)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_resolve(self, line):
+    '''resolve <pid>
+    Given the PID for a Science Object, find all locations from which the Science Object can be downloaded
+    '''
+    try:
+      pid = self._split_args(line, 1, 0)
+      self.d1.resolve(pid)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_list(self, line):
+    '''list
+    Retrieve a list of available Science Data Objects from a single MN with basic filtering
+    '''
+    try:
+      self._split_args(line, 0, 0)
+      self.d1.list()
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_log(self, line):
+    '''log
+    Retrieve event log
+    '''
+    try:
+      pid = self._split_args(line, 1, 0)
+      self.d1.log()
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_setaccess(self, line):
+    '''setaccess <pid>
+    Update the Access Policy on an existing Science Data Object
+    '''
+    try:
+      pid = self._split_args(line, 1, 0)
+      self.d1.set_access_policy(pid)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      logging.error(e)
+
+  def do_setreplication(self, line):
+    '''setreplication <pid>
+    Update the Replication Policy on an existing Science Data Object
+    '''
+    try:
+      pid = self._split_args(line, 1, 0)
+      self.d1.set_replication_policy(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       logging.error(e)
 
@@ -746,33 +842,38 @@ class CLI(cmd.Cmd):
   # CLI
   #-----------------------------------------------------------------------------
 
-  def do_history(self, args):
+  def do_history(self, line):
     '''history
     Display a list of commands that have been entered
     '''
     try:
+      self._split_args(line, 0, 0)
       print self._history
     except cli_exceptions.InvalidArguments as e:
       logging.error(e)
 
-  def do_exit(self, args):
+  def do_exit(self, line):
     '''exit
     Exit from the CLI
     '''
-    sys.exit()
+    try:
+      self._split_args(line, 0, 0)
+      sys.exit()
+    except cli_exceptions.InvalidArguments as e:
+      logging.error(e)
 
-  def do_EOF(self, args):
+  def do_EOF(self, line):
     '''Exit on system EOF character'''
-    return self.do_exit(args)
+    return self.do_exit(line)
 
-  def do_help(self, args):
+  def do_help(self, line):
     '''Get help on commands
     'help' or '?' with no arguments displays a list of commands for which help is available
     'help <command>' or '? <command>' gives help on <command>
     '''
     # The only reason to define this method is for the help text in the doc
     # string
-    cmd.Cmd.do_help(self, args)
+    cmd.Cmd.do_help(self, line)
 
   #-----------------------------------------------------------------------------
   # Command processing.
@@ -806,7 +907,7 @@ class CLI(cmd.Cmd):
     '''If you want to stop the console, return something that evaluates to true.
        If you want to do some post command processing, do it here.
     '''
-    self.d1.update_verbose()
+    self._update_verbose()
     self.d1._set_invalid_checksum_to_default()
     return stop
 
@@ -822,6 +923,8 @@ class CLI(cmd.Cmd):
   def run_command_line_arguments(self, commands):
     for command in commands:
       self.onecmd(command)
+      self._update_verbose()
+      self.d1._set_invalid_checksum_to_default()
 
 
 def main():
