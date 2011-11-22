@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Science Object Operations &mdash; v0.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v0.0.0" href="index.html" />
+    <link rel="up" title="Reference" href="reference.html" />
+    <link rel="next" title="Glossary" href="glossary.html" />
+    <link rel="prev" title="Searching" href="ref_search.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="glossary.html" title="Glossary"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ref_search.html" title="Searching"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="science-object-operations">
+<span id="id1"></span><h1>Science Object Operations<a class="headerlink" href="#science-object-operations" title="Permalink to this headline">¶</a></h1>
+<p>Commands for creating and retrieving <a class="reference internal" href="glossary.html#term-science-data-object"><em class="xref std std-term">Science Data Objects</em></a> and <a class="reference internal" href="glossary.html#term-system-metadata"><em class="xref std std-term">System Metadata</em></a>.</p>
+<div class="section" id="getdata-pid-file">
+<span id="getdata"></span><h2>getdata &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt; &lt;file&gt;<a class="headerlink" href="#getdata-pid-file" title="Permalink to this headline">¶</a></h2>
+<p>Get a Science Data Object from a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a>.</p>
+<p>The Science Object is saved to <tt class="docutils literal"><span class="pre">file</span></tt>.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#mnurl"><em>mnurl</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+<div class="section" id="meta-pid-file">
+<span id="meta"></span><h2>meta &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt; [file]<a class="headerlink" href="#meta-pid-file" title="Permalink to this headline">¶</a></h2>
+<p>Get the System Metadata that is associated with a Science Object from a
+<a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>.</p>
+<p>Provide <tt class="docutils literal"><span class="pre">file</span></tt> if saving the System Metadata is desired.</p>
+<p>Connects to the <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a> set in the <a class="reference internal" href="ref_session.html#dataoneurl"><em>dataoneurl</em></a> session
+parameter.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#dataoneurl"><em>dataoneurl</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+<div class="section" id="create-pid-file">
+<span id="create"></span><h2>create &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt; &lt;file&gt;<a class="headerlink" href="#create-pid-file" title="Permalink to this headline">¶</a></h2>
+<p>Create a new Science Object on a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a>.</p>
+<p>The System Metadata that becomes associated with the new Science Object is
+generated from the values in the <a class="reference internal" href="ref_session.html#id2"><em>System Metadata</em></a>,
+<a class="reference internal" href="ref_access_policy.html#access-policy"><em>Access Policy</em></a> and <a class="reference internal" href="ref_replication_policy.html#replication-policy"><em>Replication Policy</em></a> session parameters.</p>
+<p>The algorithm set in <a class="reference internal" href="ref_session.html#algorithm"><em>algorithm</em></a> is used for calculating the checksum
+for the new object. If the value is unset, it defaults to the DataONE system
+wide default, which is currently SHA1.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#mnurl"><em>mnurl</em></a>, <a class="reference internal" href="ref_session.html#objectformat"><em>objectformat</em></a>, <a class="reference internal" href="ref_session.html#submitter"><em>submitter</em></a>, <a class="reference internal" href="ref_session.html#rightsholder"><em>rightsholder</em></a>, <a class="reference internal" href="ref_session.html#originmn"><em>originmn</em></a>, <a class="reference internal" href="ref_session.html#authoritativemn"><em>authoritativemn</em></a>, <a class="reference internal" href="ref_session.html#algorithm"><em>algorithm</em></a>, <a class="reference internal" href="ref_access_policy.html#access-policy"><em>Access Policy</em></a>,
+<a class="reference internal" href="ref_replication_policy.html#replication-policy"><em>Replication Policy</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+<div class="section" id="related-pid">
+<span id="related"></span><h2>related &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt;<a class="headerlink" href="#related-pid" title="Permalink to this headline">¶</a></h2>
+<p>Given the <a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a> for a Science Data Object, find it&#8217;s Science Metadata and
+vice versa.</p>
+<p>Provide <tt class="docutils literal"><span class="pre">file</span></tt> if saving the information is desired.</p>
+<p>Connects to the <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a> set with the <strong>dataone_url</strong> session
+parameter.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#dataoneurl"><em>dataoneurl</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+<div class="section" id="resolve-pid">
+<span id="resolve"></span><h2>resolve &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt;<a class="headerlink" href="#resolve-pid" title="Permalink to this headline">¶</a></h2>
+<p>Given the <a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a> for a Science Object, find all locations from which the
+Science Object can be downloaded.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#dataoneurl"><em>dataoneurl</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+<div class="section" id="list">
+<span id="id2"></span><h2>list<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h2>
+<p>Retrieve a list of available Science Data Objects from a single <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> with
+basic filtering.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#mnurl"><em>mnurl</em></a>, <a class="reference internal" href="ref_session.html#start"><em>start</em></a>,
+<a class="reference internal" href="ref_session.html#count"><em>count</em></a>, <a class="reference internal" href="ref_session.html#fromdate"><em>fromdate</em></a>, <a class="reference internal" href="ref_session.html#todate"><em>todate</em></a>,
+<a class="reference internal" href="ref_session.html#searchobjectformat"><em>searchobjectformat</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+<p>See also: <a class="reference internal" href="search.html"><em>Search Page</em></a></p>
+</div>
+<div class="section" id="log">
+<span id="id3"></span><h2>log<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h2>
+<p>Retrieve event log for a Science Object.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#mnurl"><em>mnurl</em></a>, <a class="reference internal" href="ref_session.html#start"><em>start</em></a>,
+<a class="reference internal" href="ref_session.html#count"><em>count</em></a>, <a class="reference internal" href="ref_session.html#fromdate"><em>fromdate</em></a>, <a class="reference internal" href="ref_session.html#todate"><em>todate</em></a>,
+<a class="reference internal" href="ref_session.html#searchobjectformat"><em>searchobjectformat</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+<div class="section" id="setaccess-pid">
+<span id="setaccess"></span><h2>setaccess &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt;<a class="headerlink" href="#setaccess-pid" title="Permalink to this headline">¶</a></h2>
+<p>Update the Access Policy on an existing Science Data Object.</p>
+<p>Requires that the calling subject has <a class="reference internal" href="ref_auth.html#authentication"><em>authenticated</em></a> and
+has changePermission access level on the object for which Access Policy is to be
+updated.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#dataoneurl"><em>dataoneurl</em></a>,
+<a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a>, <a class="reference internal" href="ref_access_policy.html#access-policy"><em>Access Policy</em></a></p>
+</div>
+<div class="section" id="setreplication-pid">
+<span id="setreplication"></span><h2>setreplication &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt;<a class="headerlink" href="#setreplication-pid" title="Permalink to this headline">¶</a></h2>
+<p>Update the Replication Policy on an existing Science Data Object.</p>
+<p>Requires that the calling subject has <a class="reference internal" href="ref_auth.html#authentication"><em>authenticated</em></a> and
+has changePermission access level on the object for which Replication Policy is
+to be updated.</p>
+<p>Active session parameters: <a class="reference internal" href="ref_session.html#dataoneurl"><em>dataoneurl</em></a>,
+<a class="reference internal" href="ref_replication_policy.html#replication-policy"><em>Replication Policy</em></a>, <a class="reference internal" href="ref_auth.html#authentication"><em>Authentication</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Science Object Operations</a><ul>
+<li><a class="reference internal" href="#getdata-pid-file">getdata &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt; &lt;file&gt;</a></li>
+<li><a class="reference internal" href="#meta-pid-file">meta &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt; [file]</a></li>
+<li><a class="reference internal" href="#create-pid-file">create &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt; &lt;file&gt;</a></li>
+<li><a class="reference internal" href="#related-pid">related &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt;</a></li>
+<li><a class="reference internal" href="#resolve-pid">resolve &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt;</a></li>
+<li><a class="reference internal" href="#list">list</a></li>
+<li><a class="reference internal" href="#log">log</a></li>
+<li><a class="reference internal" href="#setaccess-pid">setaccess &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt;</a></li>
+<li><a class="reference internal" href="#setreplication-pid">setreplication &lt;<tt class="docutils literal"><span class="pre">pid</span></tt>&gt;</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+  <li><a href="reference.html">Reference</a><ul>
+      <li>Previous: <a href="ref_search.html" title="previous chapter">Searching</a></li>
+      <li>Next: <a href="glossary.html" title="next chapter">Glossary</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2009-2011, DataONE</a>.
+        [ <a href="_sources/ref_sci.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/ref_sci.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>

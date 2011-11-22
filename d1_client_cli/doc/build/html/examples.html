@@ -2,13 +2,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Examples &mdash; v0.0.0</title>
+    
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -62,7 +65,7 @@ command, use the UP arrow to find a similar command, use text editing to
 modify that command and then hit Enter.</p>
 </div>
 <div class="section" id="viewing-and-manipulating-the-session-parameters">
-<h2>Viewing and manipulating the <a class="reference internal" href="reference.html#id16"><em>session parameters</em></a><a class="headerlink" href="#viewing-and-manipulating-the-session-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Viewing and manipulating the <a class="reference internal" href="ref_session.html#id2"><em>session parameters</em></a><a class="headerlink" href="#viewing-and-manipulating-the-session-parameters" title="Permalink to this headline">¶</a></h2>
 <p>Viewing and manipulating the values used when performing operations against the
 <a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a> infrastructure via the DataONE Command Line Interface (CLI).</p>
 <p>Start the CLI:</p>
@@ -80,7 +83,7 @@ establish connections to <a class="reference internal" href="glossary.html#term-
 &gt; set query *:*</pre>
 </div>
 <p>Search results are returned as XML. Set the CLI to format XML to be more easily
-readable by setting <strong>pretty</strong> to True:</p>
+readable by setting <a class="reference internal" href="ref_session.html#pretty"><em>pretty</em></a> to <strong>True</strong>:</p>
 <div class="highlight-python"><pre>&gt; set pretty true</pre>
 </div>
 <p>Include a restriction to only search for Science Data created at a specific
@@ -154,8 +157,7 @@ a Science Data Object.</p>
 <p>Start the CLI:</p>
 <div class="highlight-python"><pre>$ dataone.py</pre>
 </div>
-<p>Set the CLI to format XML to be more easily readable by setting <strong>pretty</strong> to
-True:</p>
+<p>Set the CLI to format XML to be more easily readable by setting <a class="reference internal" href="ref_session.html#pretty"><em>pretty</em></a> to <strong>True</strong>:</p>
 <div class="highlight-python"><pre>&gt; set pretty true</pre>
 </div>
 <p>Retrieve the System Metadata and display it:</p>
@@ -277,7 +279,7 @@ readability):</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
