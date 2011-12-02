@@ -246,3 +246,10 @@ class UnsupportedMetadataType(DataONEException):
 class UnsupportedType(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
     DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+
+
+class SynchronizationFailed(DataONEIdentifierException):
+  def __init__(self, detailCode, description, pid, traceInformation=None):
+    DataONEIdentifierException.__init__(
+      self, 0, detailCode, description, pid, traceInformation
+    )
