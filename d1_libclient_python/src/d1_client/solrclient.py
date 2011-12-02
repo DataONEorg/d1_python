@@ -147,7 +147,6 @@ class SolrConnection:
       pass
 
   def doPost(self, url, body, headers):
-    self.logger.debug("URL: %s" % url)
     try:
       self.conn.request('POST', url, body, headers)
     except (socket.error, httplib.CannotSendRequest):

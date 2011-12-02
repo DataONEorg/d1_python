@@ -200,7 +200,6 @@ class DataONEClient(object):
     '''
     locations = self.resolve(pid)
     for location in locations:
-      self.logger.debug("***" + location)
       mn = self._getMN(location)
       try:
         return mn.get(pid)
