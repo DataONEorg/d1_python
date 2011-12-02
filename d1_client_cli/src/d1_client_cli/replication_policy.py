@@ -38,6 +38,7 @@ import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
+from print_level import *
 import cli_exceptions
 
 
@@ -143,7 +144,7 @@ class replication_policy():
       self.replication_allowed = False
 
   def print_replication_policy(self):
-    print self._pretty_format()
+    print_info(self._pretty_format())
 
   def to_pyxb(self):
     replication_policy = self._list_to_pyxb()

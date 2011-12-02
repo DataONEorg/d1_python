@@ -63,6 +63,7 @@ import xml.dom.minidom
 import pyxb
 
 # App.
+from print_level import *
 import cli_exceptions
 import session
 
@@ -158,7 +159,8 @@ class CLIClient(object):
     if self.session.get('auth', 'anonymous'):
       return None
     key_path = self.session.get('auth', 'keypath')
-    self._assert_certificate_present(key_path)
+    if key_path is not None:
+      self._assert_certificate_present(key_path)
     return key_path
 
 #===============================================================================
@@ -221,16 +223,14 @@ class DataONECLI():
     try:
       hashlib.new(algorithm)
     except ValueError:
-      self.config['sysmeta']['algorithm'] = (
-        d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str
-      )
-      logging.error(
+      self.session.set('sysmeta', 'algorithm', d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
+      print_error(
         'Invalid checksum algorithm, "{0}", set to default, "{1}"'
         .format(algorithm, d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
       )
 
   def _create_system_metadata(self, pid, path):
-    checksum = self._get_file_checksum(path)
+    checksum = self._get_file_checksum(path, self.session.get('sysmeta', 'algorithm'))
     size = self._get_file_size(path)
     sysmeta = self.session.create_system_metadata(pid, checksum, size)
     return sysmeta
@@ -244,7 +244,7 @@ class DataONECLI():
       try:
         response = client.createResponse(pid, f, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
-        logging.error('Unable to create Science Object on Member Node.\n{0}'.format(e))
+        print_error('Unable to create Science Object on Member Node\n{0}'.format(e))
 
   def science_object_create(self, pid, path):
     '''Create a new Science Object on a Member Node
@@ -270,7 +270,7 @@ class DataONECLI():
     '''Display or save file like object'''
     if not path:
       for line in file_like_object:
-        logging.info(line.rstrip())
+        print_info(line.rstrip())
     else:
       self._copy_file_like_object_to_file(file_like_object, path)
 
@@ -279,7 +279,7 @@ class DataONECLI():
       return client.get(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
-        'Unable to get Science Object from Member Node.\n{0}'.format(e)
+        'Unable to get Science Object from Member Node\n{0}'.format(e)
       )
 
   def science_object_get(self, pid, path):
@@ -292,7 +292,7 @@ class DataONECLI():
       return client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
-        'Unable to get System Metadata from Coordinating Node.\n{0}'.format(e)
+        'Unable to get System Metadata from Coordinating Node\n{0}'.format(e)
       )
 
   def _pretty(self, xml_doc):
@@ -314,11 +314,14 @@ class DataONECLI():
     '''Get Object Locations for Object.
     '''
     client = CLICNClient(self.session)
-    object_location_list = client.resolve(pid)
+    try:
+      object_location_list = client.resolve(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise cli_exceptions.CLIError('Unable to get resolve: {0}\n{1}'.format(pid, e))
     for location in object_location_list.objectLocation:
-      logging.info(location.url)
+      print_info(location.url)
 
-  def list(self):
+  def list(self, path):
     '''MN listObjects.
     '''
     client = CLIMNClient(self.session)
@@ -330,20 +333,20 @@ class DataONECLI():
       count=self.session.get('slice', 'count')
     )
     object_list_xml = object_list.toxml()
-    print StringIO.StringIO(self._pretty(object_list_xml)).getvalue()
+    self.output(StringIO.StringIO(self._pretty(object_list_xml)), path)
 
-  def log(self):
+  def log(self, path):
     '''MN log.
     '''
     client = CLIMNClient(self.session)
-    object_list = client.getLogRecords(
+    object_log = client.getLogRecords(
       fromDate=self.session.get('search', 'fromdate'),
       toDate=self.session.get('search', 'todate'),
       start=self.session.get('slice', 'start'),
       count=self.session.get('slice', 'count')
     )
-    object_list_xml = object_list.toxml()
-    print StringIO.StringIO(self._pretty(object_list_xml)).getvalue()
+    object_log_xml = object_log.toxml()
+    self.output(StringIO.StringIO(self._pretty(object_log_xml)), path)
 
   def set_access_policy(self, pid):
     raise cli_exceptions.CLIError('not implemented')
@@ -366,8 +369,8 @@ class DataONECLI():
   #  '''
   #
   #  if len(self.args) != 0:
-  #    logging.error('Invalid arguments')
-  #    logging.error('Usage: objectformats')
+  #    print_error('Invalid arguments')
+  #    print_error('Usage: objectformats')
   #    return
   #  certpath = self.config['auth']['cert_path']
   #  keypath = self.config['auth']['key_path']
@@ -384,7 +387,7 @@ class DataONECLI():
   #
   #  unique_objects = {}
   #  for info in object_list:
-  #    logging.debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat) )
+  #    print_debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat) )
   #    try:
   #      unique_objects[info.objectFormat] += 1
   #    except KeyError:
@@ -405,13 +408,13 @@ class DataONECLI():
       'count': self.session.get('slice', 'count')
     }
     if self.session.get('search', 'fields') is not None:
-      kwargs['fields'] = self.session.session['fields']
+      kwargs['fields'] = self.session.get('search', 'fields')
     res = client.search(self.session.get('search', 'query'), **kwargs)
-    print "Num found = %d" % res['numFound']
+    print_info('Num found = %d' % res['numFound'])
     for doc in res['docs']:
       for k in doc.keys():
-        print "%s: %s" % (k, doc[k])
-      print "========"
+        print_info('%s: %s' % (k, doc[k]))
+      print_info('========')
 
   def fields(self):
     '''List the CN search fields - enumerates the SOLR index fields.
@@ -422,18 +425,22 @@ class DataONECLI():
       )
     )
     res = client.getSearchFields()
-    print "%-25s %-12s %-12s %-12s" % ('Name', 'Type', 'Unique', 'Records')
+    print_info('%-25s %-12s %-12s %-12s' % ('Name', 'Type', 'Unique', 'Records'))
     keys = res.keys()
     keys.sort()
     for f in keys:
       try:
-        print "%-25s %-12s %-12s %-12s" % (
-          f, res[f]['type'], str(res[f]['distinct']), str(
-            res[f]['docs']
+        print_info(
+          '%-25s %-12s %-12s %-12s' % (
+            f, res[f]['type'], str(res[f]['distinct']), str(res[f]['docs'])
           )
         )
       except:
-        print "%-25s %-12s %-12s %-12s" % (f, res[f]['type'], '?', str(res[f]['docs']))
+        print_info(
+          '%-25s %-12s %-12s %-12s' % (
+            f, res[f]['type'], '?', str(res[f]['docs'])
+          )
+        )
 
   # ----------------------------------------------------------------------------
   # Session parameters
@@ -540,7 +547,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       self.d1.reset()
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_load(self, line):
     '''load [file]
@@ -550,7 +557,7 @@ class CLI(cmd.Cmd):
       file = self._split_args(line, 0, 1)
       self.d1.session_load(pickle_file_path=file)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_save(self, line):
     '''save [file]
@@ -560,7 +567,7 @@ class CLI(cmd.Cmd):
       file = self._split_args(line, 0, 1)
       self.d1.session_save(pickle_file_path=file)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_get(self, line):
     '''get [session parameter]
@@ -570,7 +577,7 @@ class CLI(cmd.Cmd):
       session_parameter = self._split_args(line, 0, 1)
       self.d1.session_print_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_set(self, line):
     '''set <session parameter> <value>
@@ -580,7 +587,7 @@ class CLI(cmd.Cmd):
       session_parameter, value = self._split_args(line, 2, 0)
       self.d1.session_set_parameter(session_parameter, value)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_clear(self, line):
     '''clear <session parameter>
@@ -590,7 +597,7 @@ class CLI(cmd.Cmd):
       session_parameter = self._split_args(line, 1, 0)
       self.d1.session_clear_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   #-----------------------------------------------------------------------------
   # Access control.
@@ -604,7 +611,7 @@ class CLI(cmd.Cmd):
       subject, permission = self._split_args(line, 1, 1)
       self.d1.access_control_add_allowed_subject(subject, permission)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_deny(self, line):
     '''deny <subject>
@@ -614,7 +621,7 @@ class CLI(cmd.Cmd):
       subject = self._split_args(line, 1, 0)
       self.d1.access_control_remove_allowed_subject(subject)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_allowpublic(self, line):
     '''allowpublic
@@ -624,7 +631,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       self.d1.access_control_allow_public(True)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_denypublic(self, line):
     '''denypublic
@@ -634,7 +641,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       self.d1.access_control_allow_public(False)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_denyall(self, line):
     '''denyall
@@ -644,7 +651,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       self.d1.access_control_remove_all_allowed_subjects()
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   #-----------------------------------------------------------------------------
   # Replication policy.
@@ -658,7 +665,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       return self.d1.replication_policy_clear()
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_addpreferred(self, line):
     '''addpreferred <member node>
@@ -668,7 +675,7 @@ class CLI(cmd.Cmd):
       mn = self._split_args(line, 1, 0)
       return self.d1.replication_policy_add_preferred(mn)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_addblocked(self, line):
     '''addblocked <member node>
@@ -678,7 +685,7 @@ class CLI(cmd.Cmd):
       mn = self._split_args(line, 1, 0)
       return self.d1.replication_policy_add_blocked(mn)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_remove(self, line):
     '''remove <member node>
@@ -688,7 +695,7 @@ class CLI(cmd.Cmd):
       mn = self._split_args(line, 1, 0)
       return self.d1.replication_policy_remove(mn)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_allowreplication(self, line):
     '''allowreplication
@@ -698,7 +705,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       return self.d1.replication_policy_set_replication_allowed(True)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_disallowreplication(self, line):
     '''disallowreplication
@@ -708,7 +715,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       return self.d1.replication_policy_set_replication_allowed(False)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_setreplicas(self, line):
     '''setreplicas <number of replicas>
@@ -718,7 +725,7 @@ class CLI(cmd.Cmd):
       n_replicas = self._split_args(line, 1, 0)
       return self.d1.replication_policy_get_number_of_replicas(n_replicas)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   #-----------------------------------------------------------------------------
   # Search
@@ -731,8 +738,11 @@ class CLI(cmd.Cmd):
     try:
       self._split_args(line, 0, 0)
       self.d1.search()
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+    except (
+      cli_exceptions.InvalidArguments, cli_exceptions.CLIError,
+      d1_client.solrclient.SolrException
+    ) as e:
+      print_error(e)
 
   def do_fields(self, line):
     '''fields
@@ -741,22 +751,25 @@ class CLI(cmd.Cmd):
     try:
       self._split_args(line, 0, 0)
       self.d1.fields()
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+    except (
+      cli_exceptions.InvalidArguments, cli_exceptions.CLIError,
+      d1_client.solrclient.SolrException
+    ) as e:
+      print_error(e)
 
   #-----------------------------------------------------------------------------
   # Science Object Operations
   #-----------------------------------------------------------------------------
 
-  def do_getdata(self, line):
-    '''getdata <pid> <file>
+  def do_data(self, line):
+    '''data <pid> <file>
     Get a Science Data Object from a Member Node
     '''
     try:
       pid, file = self._split_args(line, 2, 0)
       self.d1.science_object_get(pid, file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_meta(self, line):
     '''meta <pid> [file]
@@ -766,7 +779,7 @@ class CLI(cmd.Cmd):
       pid, file = self._split_args(line, 1, 1)
       self.d1.system_metadata_get(pid, file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(str(e))
+      print_error(str(e))
 
   def do_create(self, line):
     '''create <pid> <file>
@@ -776,7 +789,7 @@ class CLI(cmd.Cmd):
       pid, file = self._split_args(line, 2, 0)
       self.d1.science_object_create(pid, file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_related(self, line):
     '''related <pid>
@@ -786,7 +799,7 @@ class CLI(cmd.Cmd):
       pid = self._split_args(line, 1, 0)
       self.d1.related(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_resolve(self, line):
     '''resolve <pid>
@@ -796,27 +809,27 @@ class CLI(cmd.Cmd):
       pid = self._split_args(line, 1, 0)
       self.d1.resolve(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_list(self, line):
     '''list
     Retrieve a list of available Science Data Objects from a single MN with basic filtering
     '''
     try:
-      self._split_args(line, 0, 0)
-      self.d1.list()
+      path = self._split_args(line, 0, 1)
+      self.d1.list(path)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_log(self, line):
     '''log
     Retrieve event log
     '''
     try:
-      pid = self._split_args(line, 1, 0)
-      self.d1.log()
+      path = self._split_args(line, 0, 1)
+      self.d1.log(path)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_setaccess(self, line):
     '''setaccess <pid>
@@ -826,7 +839,7 @@ class CLI(cmd.Cmd):
       pid = self._split_args(line, 1, 0)
       self.d1.set_access_policy(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   def do_setreplication(self, line):
     '''setreplication <pid>
@@ -836,7 +849,7 @@ class CLI(cmd.Cmd):
       pid = self._split_args(line, 1, 0)
       self.d1.set_replication_policy(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      logging.error(e)
+      print_error(e)
 
   #-----------------------------------------------------------------------------
   # CLI
@@ -848,9 +861,9 @@ class CLI(cmd.Cmd):
     '''
     try:
       self._split_args(line, 0, 0)
-      print self._history
+      print_info(self._history)
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_exit(self, line):
     '''exit
@@ -860,7 +873,7 @@ class CLI(cmd.Cmd):
       self._split_args(line, 0, 0)
       sys.exit()
     except cli_exceptions.InvalidArguments as e:
-      logging.error(e)
+      print_error(e)
 
   def do_EOF(self, line):
     '''Exit on system EOF character'''
@@ -893,7 +906,7 @@ class CLI(cmd.Cmd):
        Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
     '''
     cmd.Cmd.postloop(self) ## Clean up command completion
-    print "Exiting..."
+    print_info('Exiting...')
 
   def precmd(self, line):
     ''' This method is called after the line has been input but before
@@ -918,7 +931,7 @@ class CLI(cmd.Cmd):
   def default(self, line):
     '''Called on an input line when the command prefix is not recognized.
     '''
-    logging.error('Unknown command')
+    print_error('Unknown command')
 
   def run_command_line_arguments(self, commands):
     for command in commands:
@@ -955,7 +968,7 @@ def main():
   #    try:
   #      opts.__dict__[date_opt] = iso8601.parse_date(opts_dict[date_opt])
   #    except (TypeError, iso8601.iso8601.ParseError):
-  #      logging.error('Invalid date option {0}: {1}'.format(date_opt, opts_dict[date_opt]))
+  #      print_error('Invalid date option {0}: {1}'.format(date_opt, opts_dict[date_opt]))
   #      error = True
   #
   #if error == True:

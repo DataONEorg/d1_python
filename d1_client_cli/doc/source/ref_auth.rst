@@ -3,10 +3,10 @@
 Authentication
 --------------
 
-A user that accesses a :term:`DataONE Node` may connect anonymously or as an
-authenticated subject. The Node to which the user connects will allow access
-only to operations, Science Objects and other data to which permissions have
-been granted for the subject with which the user has authenticated.
+A user that accesses a :term:`Node` may connect either anonymously or as an
+authenticated subject. The Node to which the user connects will allow access to
+operations, Science Objects and other data based on the permissions that have
+been granted to the subject for which the user has authenticated.
 
 A user that connects anonymously is granted access only to publicly available
 operations and data. Access is typically denied for operations that create or

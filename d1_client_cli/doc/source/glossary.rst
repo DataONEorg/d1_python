@@ -9,7 +9,7 @@ Glossary
     https://dataone.org
 
 
-  DataONE Node
+  Node
     :term:`CN` or :term:`MN`.
 
 

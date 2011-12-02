@@ -1,17 +1,16 @@
 .. _access_policy:
 
+
 Access Policy
 -------------
 
-The Access Policy is a list of subjects with associated access levels. The
+The Access Policy is a list of subjects and their associated access levels. The
 Access Policy is applied to new objects as they are :ref:`created <create>`. The
 Access Policy can also be updated on existing Science Data Objects with
 :ref:`setaccess <setaccess>`.
 
 Use the :ref:`get <get>` command without any parameters to view the current
 Access Policy.
-
-Commands to manipulate the Access Policy:
 
 
 .. _allow:

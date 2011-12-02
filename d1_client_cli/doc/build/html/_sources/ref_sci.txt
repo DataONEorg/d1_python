@@ -7,9 +7,9 @@ Commands for creating and retrieving :term:`Science Data Objects <Science Data
 Object>` and :term:`System Metadata`.
 
 
-.. _getdata:
+.. _data:
 
-getdata <:term:`pid`> <file>
+data <:term:`pid`> <file>
 ````````````````````````````
 Get a Science Data Object from a :term:`MN`.
 
@@ -97,7 +97,7 @@ See also: :ref:`search`
 
 log
 ```
-Retrieve event log for a Science Object.
+Retrieve event log.
 
 Active session parameters: :ref:`mnurl <mnurl>`, :ref:`start <start>`,
 :ref:`count <count>`, :ref:`fromdate <fromdate>`, :ref:`todate <todate>`,

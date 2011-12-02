@@ -42,6 +42,7 @@ import ConfigParser
 import d1_common.const
 
 # App.
+from print_level import *
 import cli_exceptions
 import system_metadata
 import access_control
@@ -77,7 +78,6 @@ class session(object):
         'keypath': (None, str),
       },
       'sysmeta': {
-        'pid': (None, str),
         'objectformat': (None, str),
         'submitter': (None, str),
         'rightsholder': (None, str),
@@ -212,20 +212,20 @@ class session(object):
 
   def print_single_parameter(self, name):
     section = self._find_section_containing_session_parameter(name)
-    print '{0: <30s}{1}'.format(name, self.get(section, name))
+    print_info('{0: <30s}{1}'.format(name, self.get(section, name)))
 
   def print_all_parameters(self):
     # Debug: Print types.
-    pprint.pprint(self.session)
+    #pprint.pprint(self.session)
     #return
     sections = self.get_session_section_ordering()
     for section in sections:
-      print '{0}:'.format(section)
+      print_info('{0}:'.format(section))
       for k in sorted(self.session[section].keys()):
-        print '  {0: <30s}{1}'.format(k, self.session[section][k][0])
-    print str(self.access_control)
-    print str(self.replication_policy)
-    print
+        print_info('  {0: <30s}{1}'.format(k, self.session[section][k][0]))
+    print_info(str(self.access_control))
+    print_info(str(self.replication_policy))
+    print_info('\n')
 
   def print_parameter(self, name):
     if not name:
@@ -241,7 +241,7 @@ class session(object):
         self.__dict__.update(pickle.load(f))
     except (NameError, IOError) as e:
       if not suppress_error:
-        logging.error(
+        print_error(
           'Unable to load session from file: {0}\n{1}'.format(
             pickle_file_path, str(e)
           )
@@ -255,7 +255,7 @@ class session(object):
         pickle.dump(self.__dict__, f, 2)
     except (NameError, IOError) as e:
       if not suppress_error:
-        logging.error(
+        print_error(
           'Unable to save session to file: {0}\n{1}'.format(
             pickle_file_path, str(e)
           )
@@ -268,6 +268,7 @@ class session(object):
     sysmeta = sysmeta_creator.create_pyxb_object(
       self, pid, size, checksum, access_policy, replication_policy
     )
+    return sysmeta
 
   def assert_required_parameters_present(self, names):
     missing_parameters = []

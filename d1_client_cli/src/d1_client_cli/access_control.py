@@ -39,6 +39,7 @@ import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
+from print_level import *
 import cli_exceptions
 
 
@@ -58,6 +59,8 @@ class access_control():
     self.public = False
 
   def _list_to_pyxb(self):
+    if not self.allow:
+      return None
     access_policy = dataoneTypes.accessPolicy()
     for subject in sorted(self.allow.keys()):
       access_rule = dataoneTypes.AccessRule()
@@ -68,6 +71,8 @@ class access_control():
     return access_policy
 
   def _add_public_subject(self, access_policy):
+    if access_policy is None:
+      access_policy = dataoneTypes.accessPolicy()
     access_rule = dataoneTypes.AccessRule()
     access_rule.subject.append(d1_common.const.SUBJECT_PUBLIC)
     permission = dataoneTypes.Permission('read')

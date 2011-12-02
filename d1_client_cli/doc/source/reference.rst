@@ -63,11 +63,11 @@ and ``set count 10``::
 Commands
 ~~~~~~~~
 
-``[...]`` denotes optional arguments.
-
 ``<...>`` denotes required arguments.
 
-``file`` is the full filesystem path to a local file.
+``[...]`` denotes optional arguments.
+
+``file`` is the filesystem path to a local file.
 
 Commands are case sensitive.
 

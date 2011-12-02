@@ -59,10 +59,10 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Instead of retyping commands, use the the UP arrow to find previous
-commands and hit Enter to run them again. Instead of typing a modified
-command, use the UP arrow to find a similar command, use text editing to
-modify that command and then hit Enter.</p>
+<p class="last">Instead of retyping commands, use the the Up arrow key to find
+previous commands and hit Enter to run them again. Instead of typing a
+modified command, use the Uu arrow to find a similar command, use text editing
+to modify that command and then hit Enter.</p>
 </div>
 <div class="section" id="viewing-and-manipulating-the-session-parameters">
 <h2>Viewing and manipulating the <a class="reference internal" href="ref_session.html#id2"><em>session parameters</em></a><a class="headerlink" href="#viewing-and-manipulating-the-session-parameters" title="Permalink to this headline">¶</a></h2>
@@ -77,8 +77,8 @@ if they were modified by an existing <tt class="docutils literal"><span class="p
 </div>
 <p>Set some of the session parameters used by many of the operations when they
 establish connections to <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MNs</em></a> and <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CNs</em></a>:</p>
-<div class="highlight-python"><pre>&gt; set cert-path /etc/dataone/client/certs/myclientcert.pem
-&gt; set key-path /etc/dataone/client/certs/myclientcert.pem
+<div class="highlight-python"><pre>&gt; set certpath /etc/dataone/client/certs/myclientcert.pem
+&gt; set keypath /etc/dataone/client/certs/myclientcert.pem
 &gt; set fields pid,origin_mn,datemodified,size,objectformat,title
 &gt; set query *:*</pre>
 </div>
@@ -88,7 +88,7 @@ readable by setting <a class="reference internal" href="ref_session.html#pretty"
 </div>
 <p>Include a restriction to only search for Science Data created at a specific
 time or later:</p>
-<div class="highlight-python"><pre>&gt; set start-time 1998-01-01T05:00:00</pre>
+<div class="highlight-python"><pre>&gt; set fromdate 1998-01-01T05:00:00</pre>
 </div>
 <p>View all the session parameters:</p>
 <div class="highlight-python"><pre>&gt; get</pre>
@@ -141,13 +141,13 @@ the &#8220;DEMO3&#8221; <a class="reference internal" href="glossary.html#term-m
 <div class="highlight-python"><pre>$ dataone.py</pre>
 </div>
 <p>View the session parameters:</p>
-<div class="highlight-python"><pre>$ get</pre>
+<div class="highlight-python"><pre>&gt; get</pre>
 </div>
 <p>Set <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> from which to download the Science Data Object:</p>
-<div class="highlight-python"><pre>$ set mn-url https://dataone.member.node.com/mn/</pre>
+<div class="highlight-python"><pre>&gt; set mnurl https://dataone.member.node.com/mn/</pre>
 </div>
 <p>Download Science Data Object and save to local file:</p>
-<div class="highlight-python"><pre>$ getdata hdl:10255/dryad.669/mets.xml ~/my_dataone_files/dryad669.xml</pre>
+<div class="highlight-python"><pre>&gt; data hdl:10255/dryad.669/mets.xml ~/my_dataone_files/dryad669.xml</pre>
 </div>
 </div>
 <div class="section" id="downloading-system-metadata">
@@ -161,10 +161,10 @@ a Science Data Object.</p>
 <div class="highlight-python"><pre>&gt; set pretty true</pre>
 </div>
 <p>Retrieve the System Metadata and display it:</p>
-<div class="highlight-python"><pre>$ meta hdl:10255/dryad.669/mets.xml</pre>
+<div class="highlight-python"><pre>&gt; meta hdl:10255/dryad.669/mets.xml</pre>
 </div>
 <p>Retrieve the System Metadata and save it to a file:</p>
-<div class="highlight-python"><pre>$ meta hdl:10255/dryad.669/mets.xml ~/d1/dryad669_system_metadata.xml</pre>
+<div class="highlight-python"><pre>&gt; meta hdl:10255/dryad.669/mets.xml ~/d1/dryad669_system_metadata.xml</pre>
 </div>
 </div>
 <div class="section" id="uploading-science-data-objects">
@@ -175,7 +175,7 @@ provided by DataONE.</p>
 <div class="highlight-python"><pre>$ dataone.py</pre>
 </div>
 <p>Select <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> to which to upload the Science Data Object:</p>
-<div class="highlight-python"><pre>&gt; set mn-url https://demo1.test.dataone.org/knb/d1/mn/v1</pre>
+<div class="highlight-python"><pre>&gt; set mnurl https://dataone.member.node.com/mn/</pre>
 </div>
 <p>Configure the session parameters used when generating <a class="reference internal" href="glossary.html#term-system-metadata"><em class="xref std std-term">System Metadata</em></a>:</p>
 <div class="highlight-python"><pre>&gt; set submitter CN=MATTJTEMP,DC=dataone,DC=org
@@ -208,25 +208,20 @@ Science Data Objects later:</p>
 </div>
 <p>Display list of Science Data Objects on a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> or <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>:</p>
 <div class="highlight-python"><pre>&gt; set public true
-&gt; set mn-url https://dataone.org/mn
+&gt; set mnurl https://dataone.org/mn
 &gt; set start 100
 &gt; set count 10
 &gt; list</pre>
 </div>
-<p>Display event log for a PID on a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a>:</p>
+<p>Display event log on a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a>:</p>
 <div class="highlight-python"><pre>&gt; reset
-&gt; set cert-path /etc/dataone/client/certs/myclientcert.pem
-&gt; set key-path None
-&gt; set mn-url https://dataone.org/mn
-&gt; set pid mypid
+&gt; set certpath /etc/dataone/client/certs/myclientcert.pem
+&gt; set keypath None
+&gt; set mnurl https://dataone.org/mn
 &gt; log</pre>
 </div>
 <p>Download the event log and save it to a file:</p>
-<div class="highlight-python"><pre>&gt; log events_for_mypid</pre>
-</div>
-<p>Display object formats:</p>
-<div class="highlight-python"><pre>&gt; set mn-url https://dataone.org/mn
-&gt; objectformats</pre>
+<div class="highlight-python"><pre>&gt; log events.xml</pre>
 </div>
 </div>
 <div class="section" id="using-the-cli-from-scripts">
@@ -237,12 +232,12 @@ prevented from entering interactive mode.</p>
 based on previously prepared session parameters (newlines inserted for
 readability):</p>
 <div class="highlight-python"><pre>$ ./dataone.py
-  -x 'load myparams'
-  -x 'set mn-url https://first.mn.com/mn'
-  -x 'getdata pid1 myfile1'
-  -x 'set mn-url https://second.mn.com/mn'
-  -x 'getdata pid2 myfile2'
-  -x 'exit'</pre>
+  'load myparams'
+  'set mnurl https://first.mn.com/mn'
+  'data pid1 myfile1'
+  'set mnurl https://second.mn.com/mn'
+  'data pid2 myfile2'
+  exit</pre>
 </div>
 </div>
 </div>

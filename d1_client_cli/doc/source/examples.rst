@@ -1,10 +1,10 @@
 Examples
 ========
 
-.. note:: Instead of retyping commands, use the the UP arrow to find previous
-  commands and hit Enter to run them again. Instead of typing a modified
-  command, use the UP arrow to find a similar command, use text editing to
-  modify that command and then hit Enter.
+.. note:: Instead of retyping commands, use the the Up arrow key to find
+  previous commands and hit Enter to run them again. Instead of typing a
+  modified command, use the Uu arrow to find a similar command, use text editing
+  to modify that command and then hit Enter.
 
 
 Viewing and manipulating the :ref:`session parameters <session_parameters>`
@@ -26,8 +26,8 @@ if they were modified by an existing ``.d1client.conf`` file at startup)::
 Set some of the session parameters used by many of the operations when they
 establish connections to :term:`MNs <MN>` and :term:`CNs <CN>`::
 
-  > set cert-path /etc/dataone/client/certs/myclientcert.pem
-  > set key-path /etc/dataone/client/certs/myclientcert.pem
+  > set certpath /etc/dataone/client/certs/myclientcert.pem
+  > set keypath /etc/dataone/client/certs/myclientcert.pem
   > set fields pid,origin_mn,datemodified,size,objectformat,title
   > set query *:*
 
@@ -40,7 +40,7 @@ readable by setting :ref:`pretty <pretty>` to **True**::
 Include a restriction to only search for Science Data created at a specific
 time or later::
 
-  > set start-time 1998-01-01T05:00:00
+  > set fromdate 1998-01-01T05:00:00
 
 View all the session parameters::
 
@@ -80,6 +80,7 @@ Perform a search based on the current session parameters::
 
 Get list of fields available to search against::
 
+
   > fields
 
 Modify the search parameters to find only Science Data that originated from
@@ -111,15 +112,15 @@ Start the CLI::
 
 View the session parameters::
 
-  $ get
+  > get
 
 Set :term:`MN` from which to download the Science Data Object::
 
-  $ set mn-url https://dataone.member.node.com/mn/
+  > set mnurl https://dataone.member.node.com/mn/
 
 Download Science Data Object and save to local file::
 
-  $ getdata hdl:10255/dryad.669/mets.xml ~/my_dataone_files/dryad669.xml
+  > data hdl:10255/dryad.669/mets.xml ~/my_dataone_files/dryad669.xml
 
 
 
@@ -140,11 +141,11 @@ Set the CLI to format XML to be more easily readable by setting :ref:`pretty
 
 Retrieve the System Metadata and display it::
 
-  $ meta hdl:10255/dryad.669/mets.xml
+  > meta hdl:10255/dryad.669/mets.xml
 
 Retrieve the System Metadata and save it to a file::
 
-  $ meta hdl:10255/dryad.669/mets.xml ~/d1/dryad669_system_metadata.xml
+  > meta hdl:10255/dryad.669/mets.xml ~/d1/dryad669_system_metadata.xml
 
 
 
@@ -160,7 +161,7 @@ Start the CLI::
 
 Select :term:`MN` to which to upload the Science Data Object::
 
-  > set mn-url https://demo1.test.dataone.org/knb/d1/mn/v1
+  > set mnurl https://dataone.member.node.com/mn/
 
 Configure the session parameters used when generating :term:`System Metadata`::
 
@@ -203,28 +204,22 @@ Find replicas of Science Data Objects::
 Display list of Science Data Objects on a :term:`MN` or :term:`CN`::
 
   > set public true
-  > set mn-url https://dataone.org/mn
+  > set mnurl https://dataone.org/mn
   > set start 100
   > set count 10
   > list
 
-Display event log for a PID on a :term:`MN`::
+Display event log on a :term:`MN`::
 
   > reset
-  > set cert-path /etc/dataone/client/certs/myclientcert.pem
-  > set key-path None
-  > set mn-url https://dataone.org/mn
-  > set pid mypid
+  > set certpath /etc/dataone/client/certs/myclientcert.pem
+  > set keypath None
+  > set mnurl https://dataone.org/mn
   > log
 
 Download the event log and save it to a file::
 
-  > log events_for_mypid
-
-Display object formats::
-
-  > set mn-url https://dataone.org/mn
-  > objectformats
+  > log events.xml
 
 
 Using the CLI from scripts
@@ -238,9 +233,9 @@ based on previously prepared session parameters (newlines inserted for
 readability)::
 
   $ ./dataone.py
-    -x 'load myparams'
-    -x 'set mn-url https://first.mn.com/mn'
-    -x 'getdata pid1 myfile1'
-    -x 'set mn-url https://second.mn.com/mn'
-    -x 'getdata pid2 myfile2'
-    -x 'exit'
+    'load myparams'
+    'set mnurl https://first.mn.com/mn'
+    'data pid1 myfile1'
+    'set mnurl https://second.mn.com/mn'
+    'data pid2 myfile2'
+    exit

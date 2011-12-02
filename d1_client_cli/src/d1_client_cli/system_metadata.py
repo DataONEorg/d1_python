@@ -41,6 +41,7 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 import pyxb
 
 # App.
+from print_level import *
 import cli_exceptions
 
 
@@ -91,11 +92,16 @@ class system_metadata():
     sysmeta.accessPolicy = access_policy
     sysmeta.replicationPolicy = replication_policy
     #pyxb.RequireValidWhenGenerating(False)
+    #print sysmeta.toxml()
     return sysmeta
 
-  def create_pyxb_object(self, session, pid, size, checksum, access_policy):
+  def create_pyxb_object(
+    self, session, pid, size, checksum, access_policy, replication_policy
+  ):
     self._assert_no_missing_sysmeta_session_parameters(session.session['sysmeta'])
-    return self._create_pyxb_object(session, pid, size, checksum, access_policy)
+    return self._create_pyxb_object(
+      session, pid, size, checksum, access_policy, replication_policy
+    )
 
   def to_xml(self):
     return self.to_pyxb().toxml()

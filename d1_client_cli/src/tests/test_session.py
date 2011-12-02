@@ -65,17 +65,14 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     s = session.session()
     self.assertEqual(s.get('cli', 'pretty'), True)
     self.assertEqual(s.get('node', 'dataoneurl'), d1_common.const.URL_DATAONE_ROOT)
-    self.assertEqual(s.get('sysmeta', 'pid'), None)
 
   def test_030(self):
     '''Session parameters can be updated with set()'''
     s = session.session()
     s.set('cli', 'pretty', False),
     s.set('node', 'dataoneurl', 'test')
-    s.set('sysmeta', 'pid', 'testpid'),
     self.assertEqual(s.get('cli', 'pretty'), False)
     self.assertEqual(s.get('node', 'dataoneurl'), 'test')
-    self.assertEqual(s.get('sysmeta', 'pid'), 'testpid')
 
   def test_040(self):
     '''Session parameters can be brought back to their defaults with reset()'''
