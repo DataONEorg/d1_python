@@ -80,6 +80,8 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
         'test_concurrency_write_lock':
           u'test_concurrency_write_lock/%(key)s/%(val)s/%(sleep_before)s/%(sleep_after)s',
         'test_concurrency_get_dictionary_id': u'test_concurrency_get_dictionary_id',
+        'error': u'error',
+        'system_metadata_changed': u'dirtySystemMetadata',
       }
     )
 
@@ -120,6 +122,16 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     '''
     url = self.RESTResourceURL('delete_all_access_rules')
     response = self.GET(url, headers=headers)
+    return self.isHttpStatusOK(response.status)
+
+  def system_metadata_changed(self, fields, headers=None):
+    url = self.RESTResourceURL('system_metadata_changed')
+    response = self.POST(url, fields=fields, headers=headers)
+    return self.isHttpStatusOK(response.status)
+
+  def synchronization_failed(self, files, headers=None):
+    url = self.RESTResourceURL('error')
+    response = self.POST(url, files=files, headers=headers)
     return self.isHttpStatusOK(response.status)
 
   # ----------------------------------------------------------------------------

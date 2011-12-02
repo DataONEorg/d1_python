@@ -77,9 +77,8 @@ class LockPID(object):
 # Module scope dictionary of PID locks. Because modules get imported only
 # once in Python, all the views will share this dictionary.
 #
-# TODO: Test to see if there are Apache deployment scenarios where multiple
-# instances of this dictionary would be created. That would break the
-# locking.
+# For this to work, Apache must be configured to use multiple threads instead
+# of multiple processes for handling concurrent calls.
 lock_pid = LockPID()
 
 # ------------------------------------------------------------------------------

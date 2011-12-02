@@ -45,6 +45,9 @@ from settings_site import *
 # Discover the path of this module
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
+# Add path to gmn types.
+sys.path.append(_here('./types/generated'))
+
 # GMN does not use templates in production. However, some of the testing
 # functions use them.
 TEMPLATE_DEBUG = True
@@ -116,3 +119,8 @@ INSTALLED_APPS = (
 
 # TODO: May be able to simplify url regexes by turning this on.
 APPEND_SLASH = False
+
+# Because the entire XML document must be in memory while being deserialized
+# (and probably in several copies at that), limit the size that can be
+# handled.
+MAX_XML_DOCUMENT_SIZE = 1024**2

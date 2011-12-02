@@ -343,6 +343,21 @@ def assert_trusted_permission(f):
   return wrap
 
 
+# Only GMN worker process.
+def assert_internal_permission(f):
+  def wrap(request, *args, **kwargs):
+    if request.session.subject.value() != 'gmn_internal' and \
+      request.META['REMOTE_ADDR'] != '127.0.0.1':
+      raise d1_common.types.exceptions.NotAuthorized(
+        0, 'Action denied for subject: {0}.'.format(request.session.subject.value())
+      )
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
 # Anyone with a valid session.
 def assert_authenticated(f):
   def wrap(request, *args, **kwargs):

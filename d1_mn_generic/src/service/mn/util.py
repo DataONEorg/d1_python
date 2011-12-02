@@ -114,7 +114,7 @@ def store_path(root, pid):
   and because such a folder is hard to deal with when performing backups and
   maintenance, GMN stores the objects in a folder hierarchy of 256 folders, each
   holding 256 folders (for a total of 65536 folders). The location in the
-  hierarchy for a given object is determined based on its PID.
+  hierarchy for a given object is based on its PID.
   '''
   z = zlib.adler32(pid)
   a = z & 0xff ^ (z >> 8 & 0xff)

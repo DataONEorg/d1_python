@@ -272,6 +272,23 @@ class TestSequenceFunctions(unittest2.TestCase):
       #accessRule.resource.append('<dummy. field will be removed>')
       accessPolicy.append(accessRule)
     return accessPolicy
+
+
+  def generate_test_object(self, pid):
+    '''Generate a random, small, SciObj / SysMeta pair'''
+    # Create a small test object containing only the pid. 
+    sciobj = pid.encode('utf-8')
+    # Create corresponding System Metadata for the test object.
+    size = len(sciobj)
+    # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
+    # of the internal Python encoding for the string. So we maintain sciobj
+    # as a utf-8 string.
+    md5 = hashlib.md5(sciobj).hexdigest()
+    now = datetime.datetime.now()
+    sysmeta = self.generate_sysmeta(pid, size, md5, now,
+                                   gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
+    return sciobj, sysmeta
+
   
   def session(self, subject):
     session = dataoneTypes.session()
@@ -398,9 +415,9 @@ class TestSequenceFunctions(unittest2.TestCase):
                                                       '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = d1_common.util.decodePathElement(os.path.basename(object_path))
-      #sysmeta_str_disk = open(sysmeta_path, 'r').read()
+      #sysmeta_xml_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'rb').read()
-      #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
+      #sysmeta_xml_d1 = client.getSystemMetadata(pid).read()
       object_str_d1 = client.get(pid,
         vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)) \
         .read(1024**2)
@@ -427,8 +444,8 @@ class TestSequenceFunctions(unittest2.TestCase):
       pid = d1_common.util.decodePathElement(os.path.basename(object_path))
       # Get sysmeta xml for corresponding object from disk.
       sysmeta_file = open(sysmeta_path, 'rb')
-      sysmeta_str = sysmeta_file.read()
-      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_str)  
+      sysmeta_xml = sysmeta_file.read()
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)  
   
       # Get corresponding object from objectList.
       found = False
@@ -474,10 +491,7 @@ class TestSequenceFunctions(unittest2.TestCase):
 
     # Serialize System Metadata to XML.
     sysmeta_xml = sysmeta.toxml()
-
-    # Set up structure for use in generating the MIME multipart document
-    # that will be POSTed to the server. 
-    files = [
+    mime_multipart_files = [
       ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
     ]
 
@@ -485,10 +499,9 @@ class TestSequenceFunctions(unittest2.TestCase):
     test_update_sysmeta_url = urlparse.urljoin(self.opts.gmn_url,
       'meta/{0}'.format(d1_common.util.encodePathElement(pid)))
     
-    # Generate MIME multipart document and post to server.
     root = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = root.POST(
-      test_update_sysmeta_url, files=files,
+      test_update_sysmeta_url, files=mime_multipart_files,
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assertEqual(response.status, 200)
 
@@ -500,7 +513,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # SysMeta
     sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
     sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
-    sysmeta_str = open(sysmeta_path, 'rb').read()
+    sysmeta_xml = open(sysmeta_path, 'rb').read()
     # SciData
     object_path = os.path.splitext(sysmeta_path)[0]
     object_str = open(object_path, 'rb')
@@ -514,7 +527,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Update.
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     response = client.updateResponse(obsoleted_pid,
-                                     object_str, new_pid, sysmeta_str,
+                                     object_str, new_pid, sysmeta_xml,
                                      vendorSpecific=self.session('test_user_1'))
     return response
 
@@ -597,8 +610,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assert_object_list_slice(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
   
   def date_range_3(self):
-    '''listObjects: Date range query: Get 10 first objects from the 1990s, filtered by
-    objectFormat.
+    '''listObjects: Date range query: Get 10 first objects from the 1990s, filtered by objectFormat.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
   
@@ -702,8 +714,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assert_log_slice(log, 0, 10, EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S)
   
   def event_log_date_range_3(self):
-    '''getLogRecords: Date range query: Get all events from the 1990s, filtered by
-    event type.
+    '''getLogRecords: Date range query: Get all events from the 1990s, filtered by event type.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     log = client.getLogRecords(start=0, count=d1_common.const.MAX_LISTOBJECTS,
@@ -769,6 +780,61 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertRaises(d1_common.types.exceptions.InvalidRequest,
                       self.get_checksum_test, pid, checksum, algorithm)
 
+
+  ##############################################################################
+  # systemMetadataChanged
+  ##############################################################################
+
+  def system_metadata_changed_invalid_pid(self):
+    '''systemMetadataChanged fails when called with invalid PID'''
+    iso_now = datetime.datetime.isoformat(datetime.datetime.now())
+    fields = (('pid', '_bogus_pid_'), ('serialVersion', '1'),
+              ('dateSysMetaLastModified', iso_now))
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    self.assertRaises(d1_common.types.exceptions.NotFound,
+      client.system_metadata_changed, fields,
+      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
+  def system_metadata_changed_valid_pid(self):
+    '''systemMetadataChanged succeeds when called with valid PID'''
+    iso_now = datetime.datetime.isoformat(datetime.datetime.now())
+    fields = (('pid', 'fitch2.mc'), ('serialVersion', '1'),
+              ('dateSysMetaLastModified', iso_now))
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client.system_metadata_changed(fields,
+      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
+  def system_metadata_changed_valid_pid_invalid_subject(self):
+    '''systemMetadataChanged denies access to subjects other that CNs'''
+    iso_now = datetime.datetime.isoformat(datetime.datetime.now())
+    fields = (('pid', 'fitch2.mc_'), ('serialVersion', '1'),
+              ('dateSysMetaLastModified', iso_now))
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    self.assertRaises(d1_common.types.exceptions.NotAuthorized,
+      client.system_metadata_changed, fields,
+      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC))
+
+  ##############################################################################
+  # synchronizationFailed
+  ##############################################################################
+
+  def synchronization_failed(self):
+    '''synchronizationFailed returns 200 OK.
+    '''
+    # This test does not test if GMN actually does anything with the message
+    # passed to the synchronizationFailed() method. There is no way for the
+    # test to reach that information.
+    pid = '12Cpaup.txt'
+    msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
+    exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
+    exception_xml = exception.serialize()    
+    mime_multipart_files = [
+      ('message','message', exception_xml.encode('utf-8')),
+    ]
+    # Generate MIME multipart document and POST to /error on server.
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client.synchronization_failed(mime_multipart_files,
+      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
   ##############################################################################
   # /object/<pid>
@@ -845,100 +911,43 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertTrue(re.search(r'Content-Length', str(info))) 
     self.assertTrue(re.search(r'Date', str(info))) 
     self.assertTrue(re.search(r'Content-Type', str(info))) 
+
   
-  def replication(self):
-    '''Replication. Requires fake CN.
-    '''
-    # The object we will replicate.
-    pid = 'hdl:10255/dryad.105/mets.xml'
-    # Source and destination node references.
-
-    # Delete the object on the destination node if it exists there.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    try:
-      pid_deleted = client.delete(pid)
-      self.assertEqual(pid, pid_deleted.value())
-    except d1_common.types.exceptions.NotFound:
-      pass
-
-    # Verify that the object no longer exists.
-    # We check for SyntaxError raised by the XML deserializer when it attempts
-    # to deserialize a DataONEException. The exception is caused by the body
-    # being empty since describe() uses a HEAD request.
-    self.assertRaises(SyntaxError, client.describe, pid)
-
-
-    # Call to /cn/test_replicate/<pid>/<src_node_ref>
-    test_replicate_url = urlparse.urljoin(self.opts.d1_root,
-      'test_replicate/{0}/{1}'.format(
-        d1_common.util.encodePathElement(self.opts.replicate_src_ref),
-        d1_common.util.encodePathElement(pid)))
+  def replication_known_pid(self):
+    '''MNReplication.replicate(): Request to replicate existing object raises IdentifierNotUnique'''
+    known_pid = 'AnserMatrix.htm'
+    self.assertRaises(d1_common.types.exceptions.IdentifierNotUnique,
+                      self.replication, known_pid)
     
-    root = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = root.client.GET(test_replicate_url)
-    self.assertEqual(response.code, 200)
+  
+  def replication_unknown_pid(self):
+    '''MNReplication.replicate(): Request to replicate new object returns 200 OK'''
+    new_pid = 'boguspid'
+    self.replication(new_pid)
+    
+  
+  def replication(self, pid):
+    '''MNReplication.replicate(): Check for correct response to MNReplication.replicate()
+    Does NOT check if GMN acts on the request and actually performs the replication.
+    '''
+    scidata, sysmeta = self.generate_test_object(pid)
+    sysmeta_xml = sysmeta.toxml()
+    mime_multipart_files = [
+      ('sysmeta','sysmeta', sysmeta_xml.encode('utf-8')),
+    ]
+    mime_multipart_fields = [
+      ('sourceNode', 'test_mn_reference'),
+    ]
+    # POST to /meta/pid.
+    mnreplication_replicate_url = urlparse.urljoin(self.opts.gmn_url,
+      'replicate')
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    response = client.POST(
+      mnreplication_replicate_url, files=mime_multipart_files,
+      fields=mime_multipart_fields,
+      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    self.assertEqual(response.status, 200)
 
-    replicate_mime = response.read()
-    # Add replication task to the destination GMN work queue.
-    client_dst = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    replicate_url = urlparse.urljoin(client_dst.client.target, 'replicate')
-    headers = {}
-    headers['Content-Type'] = 'multipart/form-data; boundary=----------6B3C785C-6290-11DF-A355-A6ECDED72085_$'
-    headers['Content-Length'] = len(replicate_mime)
-    headers['User-Agent'] = d1_common.const.USER_AGENT
-    client_dst.client.POST(replicate_url, replicate_mime, headers)
-
-#  # Get the checksum of the object from the source GMN. This also checks if
-#  # we can reach the source server and that it has the object we will replicate.
-#  src_checksum_obj = client_src.checksum(pid)
-#  src_checksum = src_checksum_obj.value()
-#  src_algorithm = src_checksum_obj.algorithm
-#
-#  # Get the bytes of the object from the source server.
-#  src_obj_str = client_src.get(pid).read()
-#
-#  # Replicate.
-#
-#  # Clear any existing Replica items related to this pid and test
-#  # source node on the CN.
-#  clear_replication_status_url = urlparse.urljoin(client_dst.client.target,
-#                                                  '/cn/test_clear_replication_status/{0}/{1}'.format(src_node, pid))
-#  client_dst.client.GET(clear_replication_status_url)
-#  
-#  # Add replication task to the destination GMN work queue.
-#  replicate_url = urlparse.urljoin(client_dst.client.target,
-#                                                  '/replicate/{0}/{1}'.format(src_node, pid))
-#  client_dst.client.PUT(replicate_url, '')
-#  
-#  # Poll for completed replication.
-#  replication_completed = False
-#  while not replication_completed:
-#    test_get_replication_status_xml = urlparse.urljoin(client_dst.client.target,
-#                                                    '/cn/test_get_replication_status_xml/{0}'.format(pid))
-#    status_xml_str = client_dst.client.GET(test_get_replication_status_xml).read()
-#    status_xml_obj = lxml.etree.fromstring(status_xml_str)
-#
-#    for replica in status_xml_obj.xpath('/replicas/replica'):
-#      if replica.xpath('replicaMemberNode')[0].text == src_node:
-#        if replica.xpath('replicationStatus')[0].text == 'completed':
-#          replication_completed = True
-#          break
-#
-#    if not replication_completed:
-#      time.sleep(1)
-#
-#  # Get checksum of the object on the destination server and compare it to
-#  # the checksum retrieved from the source server.
-#  dst_checksum_obj = client_dst.checksum(pid)
-#  dst_checksum = dst_checksum_obj.value()
-#  dst_algorithm = dst_checksum_obj.algorithm
-#  self.assertEqual(src_checksum, dst_checksum)
-#  self.assertEqual(src_algorithm, dst_algorithm)
-#  
-#  # Get the bytes of the object on the destination and compare them with the
-#  # bytes retrieved from the source.
-#  dst_obj_str = client_dst.get(pid).read()
-#  self.assertEqual(src_obj_str, dst_obj_str)
 
   def unicode_test_1(self):
     '''GMN and libraries handle Unicode correctly.
@@ -956,17 +965,8 @@ class TestSequenceFunctions(unittest2.TestCase):
         pid_unescaped, pid_escaped = line.split('\t')
       except ValueError:
         continue
-      # Create a small test object containing only the pid. 
-      scidata = pid_unescaped.encode('utf-8')
-      # Create corresponding System Metadata for the test object.
-      size = len(scidata)
-      # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
-      # of the internal Python encoding for the string. So we maintain scidata
-      # as a utf-8 string.
-      md5 = hashlib.md5(scidata).hexdigest()
-      now = datetime.datetime.now()
-      sysmeta_xml = self.generate_sysmeta(pid_unescaped, size, md5, now,
-                                     gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
+      scidata, sysmeta = self.generate_test_object(pid_unescaped)
+      sysmeta_xml = sysmeta.toxml()
       # Create the object on GMN.
       client.create(pid_unescaped, StringIO.StringIO(scidata), sysmeta_xml,
         vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -1157,13 +1157,28 @@ class TestSequenceFunctions(unittest2.TestCase):
 #
 #  def test_1340_managed_describe(self):
 #    self.describe()
-#  
-#  def test_1350_managed_replication(self):
-#    self.replication()
 #
   def test_1360_managed_unicode_test_1(self):
     self.unicode_test_1()
 
+  def test_1380_managed_system_metadata_changed_invalid_pid(self):
+    self.system_metadata_changed_invalid_pid()
+    
+  def test_1381_managed_system_metadata_changed_valid_pid(self):
+    self.system_metadata_changed_valid_pid()
+    
+  def test_1382_managed_system_metadata_changed_valid_pid_invalid_subject(self):
+    self.system_metadata_changed_valid_pid_invalid_subject()
+
+  def test_1400_managed_synchronization_failed(self):
+    self.synchronization_failed()
+
+  def test_1500_managed_replication_known_pid(self):
+    self.replication_known_pid()
+    
+  def test_1510_managed_replication_unknown_pid(self):
+    self.replication_unknown_pid()
+  
   #
   # Wrapped (object bytes store by remote web server).
   #
@@ -1284,12 +1299,29 @@ class TestSequenceFunctions(unittest2.TestCase):
 #
 #  def test_2340_wrapped_describe(self):
 #    self.describe()
-#
-#  def test_2350_wrapped_replication(self):
-#    self.replication(self)
-#
+
   def test_2360_wrapped_unicode_test_1(self):
     self.unicode_test_1()
+
+  def test_2380_wrapped_system_metadata_changed_invalid_pid(self):
+    self.system_metadata_changed_invalid_pid()
+    
+  def test_2381_wrapped_system_metadata_changed_valid_pid(self):
+    self.system_metadata_changed_valid_pid()
+    
+  def test_2382_wrapped_system_metadata_changed_valid_pid_invalid_subject(self):
+    self.system_metadata_changed_valid_pid_invalid_subject()
+
+  def test_2400_wrapped_synchronization_failed(self):
+    self.synchronization_failed()
+
+  def test_2500_wrapped_replication_known_pid(self):
+    self.replication_known_pid()
+    
+  def test_2510_wrapped_replication_unknown_pid(self):
+    self.replication_unknown_pid()
+  
+
 
 def main():
   log_setup()

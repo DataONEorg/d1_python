@@ -53,7 +53,7 @@ urlpatterns = patterns(
   # Public API
   # ----------------------------------------------------------------------------
 
-  # Tier 1: Core API  
+  # Tier 1: Core API (MNCore)
 
   # GET /monitor/ping
   (r'^monitor/ping/?$', 'monitor_ping'),
@@ -63,13 +63,13 @@ urlpatterns = patterns(
   (r'^/?$', 'node'),
   (r'^node/?$', 'node'),
 
-  # Tier 1: Read API
+  # Tier 1: Read API (MNRead)
 
   # GET /object/{pid}
   # HEAD /object/{pid}
   (r'^object/(.+)$', 'object_pid'),
   # GET /meta/{pid}
-  (r'^meta/(.+)$', 'meta_pid'),
+  (r'^meta/(.+)$', 'meta_pid_get'),
   # GET /checksum/{pid}[?checksumAlgorithm={checksumAlgorithm}]
   (r'^checksum/(.+)$', 'checksum_pid'),
   # GET /object <filters>
@@ -77,39 +77,35 @@ urlpatterns = patterns(
   # POST /error
   (r'^error/?$', 'error'),
 
-  # Tier 2: Authorization API
+  # Tier 2: Authorization API  (MNAuthorization)
 
   # GET /isAuthorized/{pid}?action={action}
   (r'^isAuthorized/(.+)/?$', 'is_authorized'),
-  # PUT /accessRules/{pid}
-  (r'^setAccessPolicy/(.+)$', 'access_policy_pid'),
-  (r'^setAccessPolicy_put/(.+)$', 'access_policy_pid_put_workaround'),
 
-  # Tier 3: Storage API
+  # Tier 3: Storage API (MNStorage)
 
-  # POST /object/{pid}
+  # MNStorage.create() - POST /object/{pid}
   # Handled by the object_pid dispatcher.
-  # PUT /object/{pid}
+  # MNStorage.update() - PUT /object/{pid}
   # TODO: This is a workaround for issue with PUT in Django.
   (r'^object_put/(.+)$', 'object_pid_put'),
-  # DELETE /object/{pid}
+  # MNStorage.delete() - DELETE /object/{pid}
   # Handled by the object_pid dispatcher.
-  # POST /meta/{pid}
-  # Handled by the meta_pid dispatcher.
+  # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
+  (r'^dirtySystemMetadata/?$', 'dirty_system_metadata_post'),
 
-  # Tier 4: Replication API
+  # Tier 4: Replication API (MNReplication)
 
   # POST /replicate  
   (r'^replicate/?$', 'replicate'),
 
   # ----------------------------------------------------------------------------
-  # Private API
+  # Internal API
   # ----------------------------------------------------------------------------
-
-  # Replication.
-
-  # replicate_store
-  (r'^replicate_store/?$', 'replicate_store'),
+  (r'^internal_replicate_task_get$', '_internal_replicate_task_get'),
+  (r'^internal_replicate_task_update/(.+?)/(.+?)/?$', '_internal_replicate_task_update'),
+  (r'^internal_replicate_create/(.+)$', '_internal_replicate_create'),
+  (r'^internal_update_sysmeta/(.+)$', '_internal_update_sysmeta'),
 
   # ----------------------------------------------------------------------------
   # Diagnostics, debugging and testing

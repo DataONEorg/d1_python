@@ -230,11 +230,11 @@ class TestSequenceFunctions(unittest.TestCase):
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, '*.sysmeta'))):
       sci_object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = urllib.unquote(os.path.basename(sci_object_path))
-      #sysmeta_str_disk = open(sysmeta_path, 'rb').read()
+      #sysmeta_xml_disk = open(sysmeta_path, 'rb').read()
       sci_object_str_disk = open(sci_object_path, 'rb').read()
-      #sysmeta_str_d1 = client.getSystemMetadata(pid).read()
+      #sysmeta_xml_d1 = client.getSystemMetadata(pid).read()
       sci_object_str_d1 = client.get(pid).read()
-      #self.assertEqual(sysmeta_str_disk, sysmeta_str_d1)
+      #self.assertEqual(sysmeta_xml_disk, sysmeta_xml_d1)
       self.assertEqual(sci_object_str_disk, sci_object_str_d1)
 
   def assert_mn_sci_object_str(self, pid):

@@ -74,6 +74,7 @@ class Object(models.Model):
   db_mtime = models.DateTimeField(auto_now=True, db_index=True)
   size = models.PositiveIntegerField(db_index=True)
   replica = models.BooleanField(db_index=True)
+  system_metadata_refreshed = models.DateTimeField(null=True)
 
   def set_format(self, format_id):
     ''':param:
@@ -173,7 +174,7 @@ class Event_log(models.Model):
     self.subject = Event_log_subject.objects.get_or_create(subject=subject_string)[0]
 
 # ------------------------------------------------------------------------------
-# MN object replication work queue.
+# Science Object replication work queue.
 # ------------------------------------------------------------------------------
 
 
@@ -207,6 +208,35 @@ class Replication_work_queue(models.Model):
     self.checksum_algorithm = Checksum_algorithm.objects.get_or_create(
       checksum_algorithm=checksum_algorithm_string
     )[0]
+
+# ------------------------------------------------------------------------------
+# System Metadata dirty queue
+# ------------------------------------------------------------------------------
+
+
+class System_metadata_dirty_queue_status(models.Model):
+  status = models.CharField(max_length=1000, unique=True)
+
+
+class System_metadata_dirty_queue(models.Model):
+  object = models.ForeignKey(Object)
+  timestamp = models.DateTimeField(auto_now=True)
+  serial_version = models.BigIntegerField()
+  last_modified = models.DateTimeField()
+  status = models.ForeignKey(System_metadata_dirty_queue_status)
+
+  def set_status(self, status):
+    self.status = System_metadata_dirty_queue_status.objects.\
+      get_or_create(status=status)[0]
+
+  def save_unique(self):
+    try:
+      me = System_metadata_dirty_queue.objects.get(object=self.object)
+    except System_metadata_dirty_queue.DoesNotExist:
+      self.save()
+    else:
+      me.delete()
+      self.save()
 
 # ------------------------------------------------------------------------------
 # Access Control

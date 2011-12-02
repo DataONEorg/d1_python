@@ -60,11 +60,12 @@ from django.db import models
 from django.http import HttpResponse
 from django.db.models import Avg, Max, Min, Count
 
-# MN API.
+# DataONE APIs.
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
+import gmn_types
 import mn.models as models
 import mn.util as util
 import settings
@@ -131,6 +132,26 @@ def db_to_log_records(view_result):
   return log
 
 
+def db_to_replication_task(view_result):
+  '''
+  :param view_result: Django DB query.
+  :type view_result: models.Replication_work_queue.objects
+  :returns: Populated Replication Request
+  :return type: gmn_types.replicationRequest
+  '''
+  replication_request = gmn_types.replicationRequest()
+  row = view_result['query']
+  replication_request.taskId = row.id
+  replication_request.status = row.status.status
+  replication_request.pid = row.pid
+  replication_request.sourceNode = row.source_node.source_node
+  replication_request.checksum = row.checksum
+  replication_request.checksumAlgorithm = \
+    row.checksum_algorithm.checksum_algorithm
+  replication_request.timestamp = row.timestamp
+  return replication_request
+
+
 def serialize_object(request, view_result):
   # The "pretty" parameter generates pretty response.
   pretty = 'pretty' in request.REQUEST
@@ -138,7 +159,11 @@ def serialize_object(request, view_result):
   # Serialize.
   response = HttpResponse()
 
-  name_to_func_map = {'object': db_to_object_list, 'log': db_to_log_records, }
+  name_to_func_map = {
+    'object': db_to_object_list,
+    'log': db_to_log_records,
+    'replication_task': db_to_replication_task,
+  }
 
   d1_type = name_to_func_map[view_result['type']](view_result)
   response.write(d1_type.toxml())

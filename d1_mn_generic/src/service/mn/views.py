@@ -68,11 +68,11 @@ except ImportError, e:
                    '2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
   raise
 
-# MN API.
+# DataONE APIs.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.const
 import d1_common.types.exceptions
-import d1_client.systemmetadata
 
 # App.
 import auth
@@ -107,14 +107,6 @@ def object_pid(request, pid):
   else:
     # TODO: Add "PUT" to list.
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
-  
-def meta_pid(request, pid):
-  if request.method == 'GET':
-    return meta_pid_get(request, pid)
-  elif request.method == 'POST':
-    return meta_pid_post(request, pid)
-  else:
-    return HttpResponseNotAllowed(['GET', 'POST'])
 
 # ==============================================================================
 # Helpers
@@ -124,6 +116,14 @@ def _assert_object_exists(pid):
   if not models.Object.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.NotFound(0,
       'Specified non-existing Science Object', pid)
+
+def _reject_xml_document_if_too_large(flo):
+  '''Because the entire XML document must be in memory while being deserialized
+  (and probably in several copies at that), limit the size that can be
+  handled.'''
+  if flo.size > settings.MAX_XML_DOCUMENT_SIZE:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'Size restriction exceeded')
 
 # ==============================================================================
 # Public API
@@ -140,7 +140,7 @@ def monitor_ping(request):
   Low level “are you alive” operation. A valid ping response is indicated by a
   HTTP status of 200.
   '''
-  return HttpResponse('')
+  return HttpResponse('OK')
 
 
 # Unrestricted.
@@ -343,92 +343,12 @@ def meta_pid_get(request, pid):
   Describes the science metadata or data object (and likely other objects in the
   future) identified by pid by returning the associated System Metadata object.
   '''
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['GET'])
   _assert_object_exists(pid)
-  
-  # Log access of the SysMeta of this object.
   event_log.log(pid, 'read', request)
-
-  # Return the raw bytes of the object in chunks.
-  file_in_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  # Django closes the file. (Can't use "with".)
-  file = open(file_in_path, 'rb')
-  return HttpResponse(util.fixed_chunk_size_iterator(file),
+  return HttpResponse(sysmeta.read_sysmeta_from_store(pid),
                       mimetype=d1_common.const.MIMETYPE_XML)
-
-
-@lock_pid.for_write
-@auth.assert_trusted_permission
-def meta_pid_post(request, pid):
-  '''MNStorage.updateSystemMetadata(session, pid, sysmeta) → Identifier
-
-  Updates the System Metadata for an existing Science Object.
-  
-  Preconditions:
-  - The Django transaction middleware layer must be enabled.
-
-  Because TransactionMiddleware layer is enabled, the db modifications all
-  become visible simultaneously after this function completes.
-  '''
-  _assert_object_exists(pid) 
-
-  # Check that a valid MIME multipart document has been provided and that it
-  # contains the required System Metadata section.
-  util.validate_post(request, (('file', 'sysmeta'), ))
-
-  # Deserialize metadata (implicit validation).
-  sysmeta_str = request.FILES['sysmeta'].read()
-  try:
-    sysmeta = dataoneTypes.CreateFromDocument(sysmeta_str)  
-  except:
-    err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'System metadata validation failed: {0}'.format(str(err)))
-
-  # Note: No sanity checking is done on the provided System Metadata. It is
-  # assumed that what is being pushed from the DataONE Trusted Infrastructure
-  # component makes sense.
-
-  # Update database to match new System Metadata.
-  try:
-    sciobj = models.Object.objects.get(pid=pid)
-    sciobj.set_format(sysmeta.formatId)
-    sciobj.checksum = sysmeta.checksum.value()
-    sciobj.set_checksum_algorithm(sysmeta.checksum.algorithm)
-    sciobj.mtime = d1_common.util.normalize_to_utc(
-      sysmeta.dateSysMetadataModified)
-    sciobj.size = sysmeta.size
-    #sciobj.replica = False
-    sciobj.save()
-  except:
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'Invalid System metadata')
-    
-  # Successfully updated the db, so put current datetime in status.mtime. This
-  # should store the status.mtime in UTC and for that to work, Django must be
-  # running with settings.TIME_ZONE = 'UTC'.
-  db_update_status = models.DB_update_status()
-  db_update_status.status = 'update successful'
-  db_update_status.save()
-    
-  # If an access policy was provided in the System Metadata, set it.
-  if sysmeta.accessPolicy:
-    auth.set_access_policy(pid, sysmeta.accessPolicy)
-  else:
-    auth.set_access_policy(pid)
-
-  # Write SysMeta bytes to store. The existing file can be safely overwritten
-  # because a lock has been obtained on the PID.
-  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  with open(sysmeta_path, 'wb') as file:
-    file.write(sysmeta_str)
-  
-  # Log this System Metadata update.
-  event_log.log(pid, 'update', request)
-  
-  # Return the pid.
-  pid_pyxb = dataoneTypes.Identifier(pid)
-  pid_xml = pid_pyxb.toxml()
-  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
 
 
 @lock_pid.for_read
@@ -458,7 +378,7 @@ def checksum_pid(request, pid):
     #
     # TODO: When we upgrade to Python 2.7, use hashlib.algorithms to get a list
     # of the supported algorithms. 
-    raise d1_common.types.exceptions.InvalidRequest(0,
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'Invalid checksum algorithm, "{0}". Supported algorithms are: md5(), '
       'sha1(), sha224(), sha256(), sha384(), sha512(). Additional algorithms '
       'may also be available depending upon the OpenSSL library in use.'
@@ -543,7 +463,9 @@ def object(request):
           'total': query_unsliced.count(), 'type': 'object' }
 
 
-@auth.assert_trusted_permission
+#@auth.assert_trusted_permission
+# TODO: Docs say that this can be called without a cert. But that opens up
+# for spamming.
 def error(request):
   '''MNRead.synchronizationFailed(session, message)
 
@@ -552,14 +474,21 @@ def error(request):
   '''
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
-  #raise Exception(','.join(request.POST.keys()))
-  # TODO: Deserialize exception in message and log full information.
-  util.validate_post(request, (('field', 'message')))
-  
-  logging.info('client({0}): CN cannot complete SciMeta sync'.format(
-    util.request_to_string(request)))
 
-  return HttpResponse('')
+  util.validate_post(request, (('file', 'message'), ))
+  _reject_xml_document_if_too_large(request.FILES['message'])
+  # Validate and deserialize accessPolicy.
+  synchronization_failed_str = request.FILES['message'].read()
+  print synchronization_failed_str
+  synchronization_failed = dataoneErrors.CreateFromDocument(
+    synchronization_failed_str)
+
+  logging.info('CN cannot complete Science Metadata synchronization. '
+               'CN returned message: {0}'
+               .format(synchronization_failed.description))
+
+  return HttpResponse('OK')
+
 
 # ------------------------------------------------------------------------------  
 # Public API: Tier 2: Authorization API
@@ -586,47 +515,7 @@ def is_authorized(request, pid):
   auth.assert_allowed(request.session.subject.value(), level, pid)
 
   # Return Boolean (200 OK)
-  return HttpResponse('')
-
-# Unrestricted.
-def access_policy_pid(request, pid):
-  # TODO: PUT currently not supported (issue with Django).
-  # Instead, this call is handled as a POST against a separate URL.
-#  if request.method == 'PUT':
-#    return object_pid_put(request, pid)
-  
-  # All verbs allowed, so should never get here.
-  # TODO: Add "PUT" to list.
-  return HttpResponseNotAllowed([])
-
-
-# Unrestricted.
-def access_policy_pid_put_workaround(request, pid):
-  '''
-  '''
-  if request.method == 'POST':
-    return access_policy_pid_put(request, pid)
-
-  return HttpResponseNotAllowed(['POST'])
-
-
-@lock_pid.for_write
-@auth.assert_changepermission_permission
-def access_policy_pid_put(request, pid):
-  '''
-  MNAuthorization.setAccessPolicy(pid, accessPolicy) -> Boolean
-
-  Sets the access policy for an object identified by pid.
-  '''
-  util.validate_post(request, (('file', 'accesspolicy'),))
-  # Validate and deserialize accessPolicy.
-  access_policy_str = request.FILES['accesspolicy'].read()
-  access_policy = dataoneTypes.CreateFromDocument(access_policy_str)
-  # Set access policy for the object. Raises if the access
-  # policy is invalid.
-  auth.set_access_policy(pid, access_policy)
-  # Return Boolean (200 OK)
-  return HttpResponse('')
+  return HttpResponse('OK')
 
 
 # ------------------------------------------------------------------------------  
@@ -635,13 +524,13 @@ def access_policy_pid_put(request, pid):
 
 def _validate_sysmeta_identifier(pid, sysmeta):
   if sysmeta.identifier.value() != pid:
-    raise d1_common.types.exceptions.InvalidRequest(0,
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'PID in System Metadata does not match that of the URL')
 
   
 def _validate_sysmeta_filesize(request, sysmeta):
   if sysmeta.size != request.FILES['object'].size:
-    raise d1_common.types.exceptions.InvalidRequest(0,
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'Object size in System Metadata does not match that of the uploaded '
       'object')
 
@@ -650,7 +539,7 @@ def _get_checksum_calculator(sysmeta):
   try:
     return hashlib.new(sysmeta.checksum.algorithm)
   except TypeError:
-    raise d1_common.types.exceptions.InvalidRequest(0,
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'Checksum algorithm is unsupported: {0}'.format(
         sysmeta.checksum.algorithm))
 
@@ -663,8 +552,8 @@ def _calculate_object_checksum(request, checksum_calculator):
 def _validate_sysmeta_checksum(request, sysmeta):
   h = _get_checksum_calculator(sysmeta)
   c = _calculate_object_checksum(request, h)
-  if sysmeta.checksum.value() != c:
-    raise d1_common.types.exceptions.InvalidRequest(0,
+  if sysmeta.checksum.value().lower() != c.lower():
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'Checksum in System Metadata does not match that of the uploaded object')
     
   
@@ -702,40 +591,37 @@ def object_pid_post(request, pid):
   attempt to reference them before their corresponding database entries are
   visible.
   '''
-  
+  return _create(request, pid)
+
+
+# Internal.
+def _create(request, pid):
   # Make sure PID does not already exist.
   if models.Object.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(0, '', pid)
 
   # Check that a valid MIME multipart document has been provided and that it
   # contains the required sections.
-  util.validate_post(request, (('file', 'object'),
-                               ('file', 'sysmeta')))
+  util.validate_post(request, (('file', 'object'), ('file', 'sysmeta')))
+  _reject_xml_document_if_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
-  sysmeta_str = request.FILES['sysmeta'].read()
+  sysmeta_xml = request.FILES['sysmeta'].read()
   try:
-    sysmeta = dataoneTypes.CreateFromDocument(sysmeta_str)  
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)  
   except:
     err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'System Metadata validation failed: {0}'.format(str(err)))
 
   # Validating and updating System Metadata can be turned off by a vendor
   # specific extension when GMN is running in debug mode.
   if settings.DEBUG == False or (settings.DEBUG == True and \
                                  'HTTP_VENDOR_TEST_OBJECT' not in request.META):
-    _validate_sysmeta_against_uploaded(request, pid, sysmeta)
-    _update_sysmeta_with_mn_values(request, sysmeta)
+    _validate_sysmeta_against_uploaded(request, pid, sysmeta_obj)
+    _update_sysmeta_with_mn_values(request, sysmeta_obj)
 
-  # Write SysMeta bytes to store.
-  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  try:
-    os.makedirs(os.path.dirname(sysmeta_path))
-  except OSError:
-    pass
-  with open(sysmeta_path, 'wb') as file:
-    file.write(sysmeta_str)
+  sysmeta.write_sysmeta_to_store(pid, sysmeta_xml) 
 
   # create() has a GMN specific extension. Instead of providing an object for
   # GMN to manage, the object can be left empty and a URL to a remote location
@@ -760,7 +646,7 @@ def object_pid_post(request, pid):
     except ValueError:
       # Storing the SciObj on the filesystem failed so remove the SysMeta object
       # as well.
-      os.unlink(sysmeta_path)
+      sysmeta.delete_sysmeta_from_store(pid)
       raise d1_common.types.exceptions.InvalidRequest(0,
         'url({0}): Invalid URL specified for remote storage'.format(url)) 
   else:
@@ -771,7 +657,7 @@ def object_pid_post(request, pid):
     except EnvironmentError:
       # Storing the SciObj on the filesystem failed so remove the SysMeta object
       # as well.
-      os.unlink(sysmeta_path)
+      sysmeta.delete_sysmeta_from_store(pid)
       raise
   
   # Catch any exceptions when creating the db entries, so that the filesystem
@@ -781,12 +667,12 @@ def object_pid_post(request, pid):
     object = models.Object()
     object.pid = pid
     object.url = url
-    object.set_format(sysmeta.formatId)
-    object.checksum = sysmeta.checksum.value()
-    object.set_checksum_algorithm(sysmeta.checksum.algorithm)
+    object.set_format(sysmeta_obj.formatId)
+    object.checksum = sysmeta_obj.checksum.value()
+    object.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
     object.mtime = d1_common.util.normalize_to_utc(
-      sysmeta.dateSysMetadataModified)
-    object.size = sysmeta.size
+      sysmeta_obj.dateSysMetadataModified)
+    object.size = sysmeta_obj.size
     object.replica = False
     object.save_unique()
   
@@ -799,13 +685,13 @@ def object_pid_post(request, pid):
     
     # If an access policy was provided for this object, set it. Until the access
     # policy is set, the object is unavailable to everyone, even the owner.
-    if sysmeta.accessPolicy:
-      auth.set_access_policy(pid, sysmeta.accessPolicy)
+    if sysmeta_obj.accessPolicy:
+      auth.set_access_policy(pid, sysmeta_obj.accessPolicy)
     else:
       auth.set_access_policy(pid)
 
   except:
-    os.unlink(sysmeta_path)
+    sysmeta.delete_sysmeta_from_store(pid)
     object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
     os.unlink(object_path)
     raise
@@ -876,10 +762,8 @@ def object_pid_delete(request, pid):
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
     
-  # Delete the SysMeta object.
-  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  os.unlink(sysmeta_path)
-
+  sysmeta.delete_sysmeta_from_store(pid)
+  
   # Delete the DB entry.
 
   # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
@@ -897,6 +781,30 @@ def object_pid_delete(request, pid):
   doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
   return HttpResponse(doc, content_type)
 
+
+@auth.assert_trusted_permission
+def dirty_system_metadata_post(request):
+  '''MNStorage.systemMetadataChanged(session, pid, serialVersion,
+                                     dateSysMetaLastModified) → boolean
+
+  Notifies the Member Node that the authoritative copy of system metadata on
+  the Coordinating Nodes has changed.
+  '''
+  util.validate_post(request, (('field', 'pid'), ('field', 'serialVersion'),
+                               ('field', 'dateSysMetaLastModified'), ))
+
+  _assert_object_exists(request.POST['pid'])
+
+  dirty_queue = models.System_metadata_dirty_queue()
+  dirty_queue.object = models.Object.objects.get(pid=request.POST['pid'])
+  dirty_queue.serial_version = request.POST['serialVersion'] 
+  dirty_queue.last_modified = iso8601.parse_date(
+    request.POST['dateSysMetaLastModified'])
+  dirty_queue.set_status('new')
+  dirty_queue.save_unique()
+
+  return HttpResponse('OK')
+
 # ------------------------------------------------------------------------------  
 # Public API: Tier 4: Replication API.
 # ------------------------------------------------------------------------------  
@@ -912,108 +820,166 @@ def replicate(request):
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
 
-  util.validate_post(request,
-                     (('field', 'sourceNode'),
-                      ('file', 'sysmeta')))
+  util.validate_post(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
+  #_reject_xml_document_if_too_large(request.POST['sourceNode'])
+  _reject_xml_document_if_too_large(request.FILES['sysmeta'])
 
-  # Validate SysMeta.
-  sysmeta_str = request.FILES['sysmeta'].read()
-  sysmeta = d1_client.systemmetadata.SystemMetadata(sysmeta_str)
+  # Deserialize metadata (implicit validation).
+  sysmeta_xml = request.FILES['sysmeta'].read()
   try:
-    sysmeta.isValid()
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)  
   except:
     err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'System metadata validation failed: {0}'.format(str(err)))
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'System Metadata validation failed: {0}'.format(str(err)))
 
-  # Verify that this is not an object we already have.
-  if models.Object.objects.filter(pid=sysmeta.pid):
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'Requested replication of object that already exists: {0}'.format(
-        sysmeta.pid))
+  # Make sure PID does not already exist.
+  if models.Object.objects.filter(pid=unicode(sysmeta_obj.identifier.value())).exists():
+    raise d1_common.types.exceptions.IdentifierNotUnique(0,
+      'Requested replication of object that already exists',
+      sysmeta_obj.identifier.value())
 
-  # Write SysMeta bytes to cache folder.
-  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, sysmeta.pid)
-  try:
-    os.makedirs(os.path.dirname(sysmeta_path))
-  except OSError:
-    pass
-  with open(sysmeta_path, 'wb') as file:
-    file.write(sysmeta_str)
+  #sysmeta.write_sysmeta_to_store(sysmeta_obj.identifier, sysmeta_xml)
 
   # Create replication work item for this replication.  
   replication_item = models.Replication_work_queue()
   replication_item.set_status('new')
   replication_item.set_source_node(request.POST['sourceNode'])
-  replication_item.pid = sysmeta.pid
-  replication_item.checksum = 'unused'
-  replication_item.set_checksum_algorithm('unused')
+  replication_item.pid = sysmeta_obj.identifier.value()
+  replication_item.checksum = sysmeta_obj.checksum.value()
+  replication_item.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
   replication_item.save()
 
-  # Return the PID. All that is required for this response is that it's a 200
-  # OK.
-  pid_ser = d1_common.types.pid_serialization.Identifier(sysmeta.pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
-
+  return HttpResponse('OK')
 
 # ==============================================================================
-# Private API
+# Internal API
 # ==============================================================================
 
 # ------------------------------------------------------------------------------  
-# Private API: Replication.
+# Internal API: Replication.
 # ------------------------------------------------------------------------------  
 
-@auth.assert_trusted_permission
-def _replicate_store(request):
-  '''
-  '''
-  if request.method != 'POST':
-    return HttpResponseNotAllowed(['POST'])
-
-  util.validate_post(request, (('file', 'pid'), ('file', 'scidata')))
+@auth.assert_internal_permission
+def _internal_replicate_task_get(request):
+  '''Get next replication task.'''
   
-  pid = request.FILES['pid'].read()
+  if not models.Replication_work_queue.objects.filter(status__status='new')\
+    .exists():
+      raise d1_common.types.exceptions.NotFound(0,
+        'No pending replication requests', 'n/a')
+ 
+  query = models.Replication_work_queue.objects.filter(
+    status__status='new')[0]
 
-  # Write SciData to object store.  
-  logging.info('pid({0}): Writing object to disk'.format(pid))
-  object_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
+  # Return query data for further processing in middleware layer.  
+  return {'query': query, 'type': 'replication_task' }
+
+
+@auth.assert_internal_permission
+def _internal_replicate_task_update(request, task_id, status):
+  '''Update the status of a replication task.'''
+  try:  
+    task = models.Replication_work_queue.objects.get(id=task_id)
+  except models.Replication_work_queue.DoesNotExist:
+      raise d1_common.types.exceptions.NotFound(0,
+        'Replication task not found', str(task_id))
+  else:
+    task.set_status(status)
+    task.save()
+  return HttpResponse('OK')
+
+
+@lock_pid.for_write
+@auth.assert_internal_permission
+def _internal_replicate_create(request, pid):
+  '''Add a replica to the Member Node.
+  
+  This call is similar to MNStorage.create(). It is called by the GMN
+  replication worker process and requires the caller to be authenticated as a
+  internal GMN component. Objects created by this call are marked as replicas
+  in the database.
+  '''
+  return _create(request, pid)
+
+  return HttpResponse('OK')
+
+
+# ------------------------------------------------------------------------------  
+# Internal API: Refresh System Metadata (MNStorage.systemMetadataChanged()).
+# ------------------------------------------------------------------------------  
+
+@lock_pid.for_write
+@auth.assert_internal_permission
+def _internal_update_sysmeta(request, pid):
+  '''Updates the System Metadata for an existing Science Object.
+  
+  Preconditions:
+  - The Django transaction middleware layer must be enabled.
+
+  Because TransactionMiddleware layer is enabled, the db modifications all
+  become visible simultaneously after this function completes.
+  '''
+  _assert_object_exists(pid) 
+
+  # Check that a valid MIME multipart document has been provided and that it
+  # contains the required System Metadata section.
+  util.validate_post(request, (('file', 'sysmeta'), ))
+  _reject_xml_document_if_too_large(request.FILES['sysmeta'])
+
+  # Deserialize metadata (implicit validation).
+  sysmeta_xml = request.FILES['sysmeta'].read()
   try:
-    os.makedirs(os.path.dirname(object_path))
-  except OSError:
-    pass
-  with open(object_path, 'wb') as file:
-    for chunk in request.FILES['object'].chunks():
-      file.write(chunk)
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)  
+  except:
+    err = sys.exc_info()[1]
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'System Metadata validation failed: {0}'.format(str(err)))
 
-  # Create database entry for object.
-  object = models.Object()
-  object.pid = pid
-  object.url = 'file:///{0}'.format(d1_common.util.encodePathElement(pid))
-  object.set_format(sysmeta.objectFormat.formatId,
-                    sysmeta.objectFormat.formatName,
-                    sysmeta.objectFormat.scienceMetadata)
-  object.checksum = sysmeta.checksum
-  object.set_checksum_algorithm(sysmeta.checksumAlgorithm)
-  object.mtime = d1_common.util.normalize_to_utc(sysmeta.dateSysMetadataModified)
-  object.size = sysmeta.size
-  object.save_unique()
+  # Note: No sanity checking is done on the provided System Metadata. It is
+  # assumed that what the worker process pulls from the Coordinating Node makes
+  # sense.
 
+  # Update database to match new System Metadata.
+  try:
+    sciobj = models.Object.objects.get(pid=pid)
+    sciobj.set_format(sysmeta_obj.formatId)
+    sciobj.checksum = sysmeta_obj.checksum.value()
+    sciobj.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
+    sciobj.mtime = d1_common.util.normalize_to_utc(
+      sysmeta_obj.dateSysMetadataModified)
+    sciobj.size = sysmeta_obj.size
+    #sciobj.replica = False
+    sciobj.save()
+  except:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'Invalid System Metadata')
+    
   # Successfully updated the db, so put current datetime in status.mtime. This
   # should store the status.mtime in UTC and for that to work, Django must be
   # running with settings.TIME_ZONE = 'UTC'.
   db_update_status = models.DB_update_status()
   db_update_status.status = 'update successful'
   db_update_status.save()
-  
-  # Log this object creation.
-  event_log.log(pid, 'create', request)
+    
+  # If an access policy was provided in the System Metadata, set it.
+  if sysmeta_obj.accessPolicy:
+    auth.set_access_policy(pid, sysmeta_obj.accessPolicy)
+  else:
+    auth.set_access_policy(pid)
+
+  # Write SysMeta bytes to store. The existing file can be safely overwritten
+  # because a lock has been obtained on the PID.
+  sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
+
+  # Log this System Metadata update.
+  event_log.log(pid, 'update', request)
   
   # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
+  pid_pyxb = dataoneTypes.Identifier(pid)
+  pid_xml = pid_pyxb.toxml()
+  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
+
 
 # ------------------------------------------------------------------------------  
 # Test: Diagnostics, debugging and testing.
@@ -1068,7 +1034,7 @@ def test_cert(request):
 #  permission_row.set_permission('security_obj_3', 'test_dn', 'read_1')
 #  permission_row.save()
 #
-#  return HttpResponse('ok')
+#  return HttpResponse('OK')
 
 
 # Unrestricted access in debug mode. Disabled in production.
@@ -1199,12 +1165,7 @@ def _delete_object(pid):
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
     
-  # Delete the SysMeta object.
-  sysmeta_path = util.store_path(settings.SYSMETA_STORE_PATH, pid)
-  try:
-    os.unlink(sysmeta_path)
-  except EnvironmentError:
-    pass
+  sysmeta.delete_sysmeta_from_store(pid)
 
   # Delete the DB entry.
   #
@@ -1246,7 +1207,7 @@ def test_inject_event_log(request):
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
 
-  util.validate_post(request, (('file', 'csv'),))
+  util.validate_post(request, (('file', 'csv'), ))
   
   # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
@@ -1288,7 +1249,7 @@ test_shared_dict = urls.test_shared_dict
 # Unrestricted access in debug mode. Disabled in production.
 def test_concurrency_clear(request):
   test_shared_dict.clear()
-  return HttpResponse('')
+  return HttpResponse('OK')
 
 @lock_pid.for_read
 # Unrestricted access in debug mode. Disabled in production.
@@ -1305,7 +1266,7 @@ def test_concurrency_write_lock(request, key, val, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   test_shared_dict[key] = val  
   time.sleep(float(sleep_after))
-  return HttpResponse('ok')
+  return HttpResponse('OK')
 
 @auth.assert_trusted_permission
 # No locking.
