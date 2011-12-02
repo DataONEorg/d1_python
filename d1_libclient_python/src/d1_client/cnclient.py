@@ -85,7 +85,11 @@ class CoordinatingNodeClient(DataONEBaseClient):
       'resolve': u'resolve/%(pid)s',
       'search': u'object',
       'listobjects': u'object?qt=path',
+      'register': u'node/',
+      'setreplicationstatus': u'replicaNotifications/%(pid)s',
+      'setreplicationpolicy': u'replicaPolicies/%(pid)s',
     })
+
 
   @util.str_to_unicode
   def resolveResponse(self, pid):
@@ -147,8 +151,7 @@ class CoordinatingNodeClient(DataONEBaseClient):
   @util.str_to_unicode
   def search(self, query, fields="pid,origin_mn,datemodified,size,objectformat,title",
              start=0, count=100):
-    '''This is a place holder for search against the SOLR search engine.
-     
+    '''This is a place holder for search against the SOLR search engine.     
     '''
     hostinfo = self._parseURL(self.baseurl)
     solr = solrclient.SolrConnection(host=hostinfo['host'], solrBase="/solr",
@@ -179,6 +182,126 @@ class CoordinatingNodeClient(DataONEBaseClient):
     pass
 
 
+  @util.str_to_unicode
+  def registerResponse(self, node, vendorSpecific=None):
+    '''
+    Register a new Member Node with DataONE.
+    
+    :param sysmeta: Node registration document for the Member Node being
+      registered.
+    :type sysmeta: PyXB Node
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Unprocessed response from server.
+    :return type: httplib.HTTPResponse 
+    '''
+    url = self.RESTResourceURL('register')
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    node_xml = node.toxml()
+    mime_multipart_files = [
+      ('node', 'node', node_xml.encode('utf-8')),
+    ]
+    return self.POST(url, files=mime_multipart_files, headers=headers)
+
+
+  @util.str_to_unicode
+  def setReplicationStatus(self, pid, node, vendorSpecific=None):
+    response = self.createResponse(node,
+                                   vendorSpecific=vendorSpecific)
+    return self.isHttpStatusOK(response.status)
+
+  #=============================================================================
+  # Replication API
+  #=============================================================================
+
+  # CNReplication.setReplicationStatus()
+  
+  @util.str_to_unicode
+  def setReplicationStatusResponse(self, pid, nodeRef, status, serialVersion,
+                                   vendorSpecific=None):
+    '''
+    Update the status of a current replication request.
+
+    :param pid: Identifier of the object to be replicated between Member Nodes
+    :type pid: str
+    :param nodeRef: Reference to the Node which made the setReplicationStatus
+      call
+    :type nodeRef: str
+    :param status: Replication status. See system metadata schema for possible
+      values.
+    :type status: str
+    :param serialVersion: The serialVersion of the system metadata that is the
+      intended target for the change.
+    :type serialVersion: str
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Unprocessed response from server.
+    :return type: httplib.HTTPResponse 
+    '''
+    url = self.RESTResourceURL('setreplicationstatus', pid=pid)
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    mime_multipart_fields = [
+      ('nodeRef', nodeRef.encode('utf-8')),
+      ('status', status.encode('utf-8')),
+      ('serialVersion', str(serialVersion)),
+    ]
+    return self.PUT(url, fields=mime_multipart_fields, headers=headers)
+
+
+  @util.str_to_unicode
+  def setReplicationStatus(self, pid, nodeRef, status, serialVersion,
+                           vendorSpecific=None):
+    response = self.setReplicationStatusResponse(pid, nodeRef, status,
+                                                 serialVersion,
+                                                 vendorSpecific=vendorSpecific)
+    return self.isHttpStatusOK(response.status)
+
+  # CNReplication.updateReplicationMetadata()
+  # Not implemented.
+  
+  # CNReplication.setReplicationPolicy()
+  
+  @util.str_to_unicode
+  def setReplicationPolicyResponse(self, pid, policy, serialVersion,
+                                   vendorSpecific=None):
+    '''
+    Update the replication policy for an object.
+
+    :param pid: Identifier of the object to be replicated between Member Nodes
+    :type pid: str
+    :param policy: ReplicationPolicy
+    :type policy: PyXB ReplicationPolicy
+    :param serialVersion: The serialVersion of the system metadata that is the
+      intended target for the change.
+    :type serialVersion: str
+    :param vendorSpecific: Dictionary of vendor specific extensions.
+    :type vendorSpecific: dict
+    :returns: Unprocessed response from server.
+    :return type: httplib.HTTPResponse 
+    '''
+    url = self.RESTResourceURL('setreplicationstatus', pid=pid)
+    headers = {}
+    if vendorSpecific is not None:
+      headers.update(vendorSpecific)
+    mime_multipart_fields = [
+      ('nodeRef', nodeRef.encode('utf-8')),
+      ('status', status.encode('utf-8')),
+      ('serialVersion', str(serialVersion)),
+    ]
+    return self.PUT(url, fields=mime_multipart_fields, headers=headers)
+
+
+  @util.str_to_unicode
+  def setReplicationPolicy(self, pid, policy, serialVersion,
+                           vendorSpecific=None):
+    response = self.setReplicationPolicyResponse(pid, policy, serialVersion,
+                                   vendorSpecific=vendorSpecific)
+    return self.isHttpStatusOK(response.status)
+  
   @util.str_to_unicode
   def getAuthToken(self, cert):
     raise Exception('Not Implemented')
@@ -226,10 +349,5 @@ class CoordinatingNodeClient(DataONEBaseClient):
 
   @util.str_to_unicode
   def addNodeCapabilities(self, token, pid):
-    raise Exception('Not Implemented')
-
-
-  @util.str_to_unicode
-  def register(self, token):
     raise Exception('Not Implemented')
 

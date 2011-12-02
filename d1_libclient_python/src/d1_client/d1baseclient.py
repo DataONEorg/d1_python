@@ -46,7 +46,10 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 class DataONEBaseClient(restclient.RESTClient):
   '''Implements DataONE client functionality common between Member and 
-  Coordinating nodes by extending the RESTClient. 
+  Coordinating nodes by extending the RESTClient.
+  
+  Wraps REST methods that have the same signatures on Member Nodes and
+  Coordinating Nodes. 
   
   On error response, an attempt to raise a DataONE exception is made.
   
@@ -97,7 +100,6 @@ class DataONEBaseClient(restclient.RESTClient):
       'ping': u'monitor/ping',
       'status': u'monitor/status',
       'listnodes': u'node',
-      'setaccesspolicy': u'setAccessPolicy_put/%(pid)s',
       'isauthorized': u'isAuthorized/%(pid)s'
     }
     self.lastresponse = None
@@ -161,7 +163,6 @@ class DataONEBaseClient(restclient.RESTClient):
     base = self._normalizeTarget(self.baseurl)
     path = self.methodmap[meth] % args
     url = urlparse.urljoin(base, path)
-    self.logger.debug("%s URL=%s" % (meth, url))
     return url
 
   def isHttpStatusOK(self, status):
@@ -184,7 +185,6 @@ class DataONEBaseClient(restclient.RESTClient):
     :return type: HTTPResponse, a file like object that supports read()
     '''
     url = self.RESTResourceURL('get', pid=pid)
-    self.logger.info("URL = %s" % url)
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
@@ -209,7 +209,6 @@ class DataONEBaseClient(restclient.RESTClient):
     metadata object.
     '''
     url = self.RESTResourceURL('getSystemMetadata', pid=pid)
-    self.logger.info("URL = %s" % url)
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
@@ -470,7 +469,6 @@ class DataONEBaseClient(restclient.RESTClient):
     :return type: NoneType
     '''
     url = self.RESTResourceURL('isauthorized', pid=pid, action=action)
-    self.logger.info("URL = %s" % url)
     url_params = {'action': action, }
     headers = {}
     if vendorSpecific is not None:
@@ -489,41 +487,4 @@ class DataONEBaseClient(restclient.RESTClient):
     response = self.isAuthorizedResponse(pid, access, vendorSpecific=vendorSpecific)
     if self.keep_response_body:
       self.lastresponse.body = response.read()
-    return self.isHttpStatusOK(response.status)
-
-  @util.str_to_unicode
-  def setAccessPolicyResponse(self, pid, accessPolicy, vendorSpecific=None):
-    '''MN_auth.setAccessPolicy(pid, accessPolicy) -> Boolean
-
-    Sets the access permissions for an object identified by pid.
-    :param pid: Object on which to set access policy.
-    :type pid: Identifier
-    :param accessPolicy: The access policy to apply.
-    :type accessPolicy: AccessPolicy
-    :returns: HTTP 200 OK with optional body in HttpResponse if access is
-    allowed.
-    :return type: NoneType
-    '''
-    # Serialize AccessPolicy object to XML.
-    access_policy_xml = accessPolicy.toxml()
-    # PUT.
-    url = self.RESTResourceURL('setaccesspolicy', pid=pid)
-    self.logger.info("URL = %s" % url)
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    files = [('accesspolicy', 'content.bin', access_policy_xml), ]
-    # TODO: Change to PUT when Django PUT issue if fixed.
-    return self.POST(url, files=files, headers=headers)
-
-  @util.str_to_unicode
-  def setAccessPolicy(self, pid, accessPolicy, vendorSpecific=None):
-    '''See setAccessPolicyResponse()
-    
-    :returns: True if access is allowed.
-    :return type: bool
-    '''
-    response = self.setAccessPolicyResponse(
-      pid, accessPolicy, vendorSpecific=vendorSpecific
-    )
     return self.isHttpStatusOK(response.status)

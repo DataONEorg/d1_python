@@ -92,14 +92,11 @@ class MemberNodeClient(DataONEBaseClient):
       headers.update(vendorSpecific)
     # Serialize sysmeta to XML.
     sysmeta_xml = sysmeta.toxml()
-    # Set up structure for use in generating the MIME multipart document
-    # that will be POSTed to the server.
-    files = [
+    mime_multipart_files = [
       ('object', 'content.bin', obj),
-      ('sysmeta', 'systemmetadata.abc', sysmeta_xml.encode('utf-8')),
+      ('sysmeta', 'sysmeta.xml', sysmeta_xml.encode('utf-8')),
     ]
-    # Generate MIME multipart document and post to server.
-    return self.POST(url, files=files, headers=headers)
+    return self.POST(url, files=mime_multipart_files, headers=headers)
 
   @util.str_to_unicode
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
