@@ -125,17 +125,18 @@ class RESTClient(object):
     headers = self._mergeHeaders(headers)
     if not url_params is None:
       #URL encode url_params and append to URL
-      if self.logger.getEffectiveLevel() == logging.DEBUG:
-        self.logger.debug("DATA=%s" % str(url_params))
+      self.logger.debug("DATA=%s" % str(url_params))
       if parts['query'] == '':
         parts['query'] = util.urlencode(url_params)
       else:
         parts['query'] = '%s&%s' % (parts['query'], \
                                     util.urlencode(url_params))
       targeturl = urlparse.urljoin(targeturl, "?%s" % parts['query'])
-    if self.logger.getEffectiveLevel() == logging.DEBUG:
-      self.logger.debug('targetURL=%s' % targeturl)
-      self.logger.debug('HEADERS=%s' % str(headers))
+
+    self.logger.debug('operation: {0} {1}'.format(method, url))
+    self.logger.debug('targetURL: {0}'.format(targeturl))
+    self.logger.debug('headers: {0}'.format(str(headers)))
+    
     # Create the HTTP or HTTPS connection.
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     # Store URL and equivalent CURL request for debugging.
@@ -173,9 +174,11 @@ class RESTClient(object):
     mm = multipart(fields, files)
     headers['Content-Type'] = mm.get_content_type_header()
     headers['Content-Length'] = mm.get_content_length()
-    if self.logger.getEffectiveLevel() == logging.DEBUG:
-      self.logger.debug('targetURL=%s' % targeturl)
-      self.logger.debug('HEADERS=%s' % str(headers))
+
+    self.logger.debug('operation: {0} {1}'.format(method, url))
+    self.logger.debug('targetURL: {0}'.format(targeturl))
+    self.logger.debug('headers: {0}'.format(str(headers)))
+
     # Create the HTTP or HTTPS connection.
     conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
     # Store URL and equivalent CURL request for debugging.
@@ -191,6 +194,7 @@ class RESTClient(object):
       self._curlrequest.append('-F %s=@%s' % (f[0], f[1]))
     self._curlrequest.append('"%s"' % self._lasturl)
     # Perform request using specified HTTP verb.
+    #print mm.read()
     conn.request(method, targeturl, mm, headers)
     return self._getResponse(conn)
 
