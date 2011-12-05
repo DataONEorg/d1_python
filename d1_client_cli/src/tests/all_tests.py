@@ -33,10 +33,20 @@ Module d1_client_cli.tests.all_tests
 # Stdlib.
 import sys
 import logging
+import os
 import unittest
 from d1_common import xmlrunner
 
 # App.
+sys.path.append(
+  os.path.abspath(
+    os.path.join(
+      os.path.dirname(
+        __file__
+      ), '..', 'd1_client_cli'
+    )
+  )
+)
 
 from test_replication_policy import TESTCLIReplicationPolicy
 from test_access_control import TESTCLIAccessControl

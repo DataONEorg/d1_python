@@ -42,7 +42,6 @@ import d1_common.types.exceptions
 import d1_common.xmlrunner
 
 # App.
-sys.path.append('../d1_client_cli/')
 import access_control
 import cli_exceptions
 
