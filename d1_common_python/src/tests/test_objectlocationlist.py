@@ -46,31 +46,79 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 # App
 import util
 
-EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<identifier>testobj</identifier>
-<objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
-<objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
-</ns1:objectLocationList>"""
+EG_OBJECTLOCATIONLIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
+<d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
+    <identifier>identifier0</identifier>
+    <objectLocation>
+        <nodeIdentifier>nodeIdentifier0</nodeIdentifier>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <version>version0</version>
+        <version>version1</version>
+        <url>http://www.oxygenxml.com/</url>
+        <preference>0</preference>
+    </objectLocation>
+    <objectLocation>
+        <nodeIdentifier>nodeIdentifier1</nodeIdentifier>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <version>version2</version>
+        <version>version3</version>
+        <url>http://www.oxygenxml.com/</url>
+        <preference>0</preference>
+    </objectLocation>
+</d1:objectLocationList>
+"""
 
 # TODO.
 EG_OBJECTLOCATIONLIST_KNB = """"""
 
-# Bad version.
-EG_BAD_OBJECTLOCATIONLIST_1 = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v999">
-<identifier>hdl:10255/dryad.1073/mets.xml</identifier>
-<objectLocation><nodeIdentifier>test1</nodeIdentifier><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
-<objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
-</ns1:objectLocationList>"""
+# Missing version.
+EG_BAD_OBJECTLOCATIONLIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
+<d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
+    <identifier>identifier0</identifier>
+    <objectLocation>
+        <nodeIdentifier>nodeIdentifier0</nodeIdentifier>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <url>http://www.oxygenxml.com/</url>
+        <preference>0</preference>
+    </objectLocation>
+    <objectLocation>
+        <nodeIdentifier>nodeIdentifier1</nodeIdentifier>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <version>version2</version>
+        <version>version3</version>
+        <url>http://www.oxygenxml.com/</url>
+        <preference>0</preference>
+    </objectLocation>
+</d1:objectLocationList>
+"""
 
 # Missing nodeIdentifier.
-EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" ?>
-<ns1:objectLocationList xmlns:ns1="http://ns.dataone.org/service/types/v1">
-<identifier>hdl:10255/dryad.1073/mets.xml</identifier>
-<objectLocation><baseURL>http://localhost:8000</baseURL><url>http://localhost:8000/object/testobj</url></objectLocation>
-<objectLocation><nodeIdentifier>test2</nodeIdentifier><baseURL>http://testbogus.com/mn/something</baseURL><url>http://testbogus.com/mn/something/testobj</url></objectLocation>
-</ns1:objectLocationList>"""
+EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
+<d1:objectLocationList xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
+    <identifier>identifier0</identifier>
+    <objectLocation>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <version>version0</version>
+        <version>version1</version>
+        <url>http://www.oxygenxml.com/</url>
+        <preference>0</preference>
+    </objectLocation>
+    <objectLocation>
+        <nodeIdentifier>nodeIdentifier1</nodeIdentifier>
+        <baseURL>http://www.oxygenxml.com/</baseURL>
+        <version>version2</version>
+        <version>version3</version>
+        <url>http://www.oxygenxml.com/</url>
+        <preference>0</preference>
+    </objectLocation>
+</d1:objectLocationList>
+"""
 
 
 class TestObjectLocationList(unittest.TestCase):

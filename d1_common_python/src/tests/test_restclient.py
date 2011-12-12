@@ -84,24 +84,24 @@ class TestRESTClient(TestCaseWithURLCompare):
     res = cli.GET("http://www.google.com/something_bogus.html")
     self.assertEqual(res.status, 404)
     res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm")
-    self.assertEqual(res.status, 200)
+    self.assertEqual(res.status, 400)
     url_params = {'a': '1', 'key': 'value'}
     res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
-    self.assertEqual(res.status, 200)
+    self.assertEqual(res.status, 400)
     #logging.info(res.read())
 
   def testPOST(self):
     url_params = {'a': '1', 'key': 'value'}
     cli = restclient.RESTClient()
     res = cli.POST("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
-    self.assertEqual(res.status, 200)
+    self.assertEqual(res.status, 400)
     #logging.info(res.read())
 
   def testPUT(self):
     url_params = {'a': '1', 'key': 'value'}
     cli = restclient.RESTClient()
     res = cli.PUT("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
-    self.assertEqual(res.status, 200)
+    self.assertEqual(res.status, 400)
     #logging.info(res.read())
 
     #===============================================================================
