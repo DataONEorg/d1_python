@@ -57,23 +57,23 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
             <service name="name1" version="version0" available="false">
-                <restriction name="name2" rest="rest0">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName0">
+                    <subject>subject0</subject>
+                    <subject>subject1</subject>
                 </restriction>
-                <restriction name="name3" rest="rest1">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName1">
+                    <subject>subject2</subject>
+                    <subject>subject3</subject>
                 </restriction>
             </service>
-            <service name="name4" version="version1" available="false">
-                <restriction name="name5" rest="rest2">
-                    <allowed>
-                    </allowed>
+            <service name="name2" version="version1" available="false">
+                <restriction methodName="methodName2">
+                    <subject>subject4</subject>
+                    <subject>subject5</subject>
                 </restriction>
-                <restriction name="name6" rest="rest3">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName3">
+                    <subject>subject6</subject>
+                    <subject>subject7</subject>
                 </restriction>
             </service>
         </services>
@@ -83,35 +83,35 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject0</subject>
-        <subject>subject1</subject>
+        <subject>subject8</subject>
+        <subject>subject9</subject>
         <contactSubject>contactSubject0</contactSubject>
         <contactSubject>contactSubject1</contactSubject>
     </node>
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier1</identifier>
-        <name>name7</name>
+        <name>name3</name>
         <description>description1</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service name="name8" version="version2" available="false">
-                <restriction name="name9" rest="rest4">
-                    <allowed>
-                    </allowed>
+            <service name="name4" version="version2" available="false">
+                <restriction methodName="methodName4">
+                    <subject>subject10</subject>
+                    <subject>subject11</subject>
                 </restriction>
-                <restriction name="name10" rest="rest5">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName5">
+                    <subject>subject12</subject>
+                    <subject>subject13</subject>
                 </restriction>
             </service>
-            <service name="name11" version="version3" available="false">
-                <restriction name="name12" rest="rest6">
-                    <allowed>
-                    </allowed>
+            <service name="name5" version="version3" available="false">
+                <restriction methodName="methodName6">
+                    <subject>subject14</subject>
+                    <subject>subject15</subject>
                 </restriction>
-                <restriction name="name13" rest="rest7">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName7">
+                    <subject>subject16</subject>
+                    <subject>subject17</subject>
                 </restriction>
             </service>
         </services>
@@ -121,8 +121,8 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject2</subject>
-        <subject>subject3</subject>
+        <subject>subject18</subject>
+        <subject>subject19</subject>
         <contactSubject>contactSubject2</contactSubject>
         <contactSubject>contactSubject3</contactSubject>
     </node>
@@ -144,23 +144,23 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
             <service name="name1" available="false">
-                <restriction name="name2" rest="rest0">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName0">
+                    <subject>subject0</subject>
+                    <subject>subject1</subject>
                 </restriction>
-                <restriction name="name3" rest="rest1">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName1">
+                    <subject>subject2</subject>
+                    <subject>subject3</subject>
                 </restriction>
             </service>
-            <service name="name4" version="version1" available="false">
-                <restriction name="name5" rest="rest2">
-                    <allowed>
-                    </allowed>
+            <service name="name2" version="version1" available="false">
+                <restriction methodName="methodName2">
+                    <subject>subject4</subject>
+                    <subject>subject5</subject>
                 </restriction>
-                <restriction name="name6" rest="rest3">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName3">
+                    <subject>subject6</subject>
+                    <subject>subject7</subject>
                 </restriction>
             </service>
         </services>
@@ -170,35 +170,35 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject0</subject>
-        <subject>subject1</subject>
+        <subject>subject8</subject>
+        <subject>subject9</subject>
         <contactSubject>contactSubject0</contactSubject>
         <contactSubject>contactSubject1</contactSubject>
     </node>
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier1</identifier>
-        <name>name7</name>
+        <name>name3</name>
         <description>description1</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service name="name8" version="version2" available="false">
-                <restriction name="name9" rest="rest4">
-                    <allowed>
-                    </allowed>
+            <service name="name4" version="version2" available="false">
+                <restriction methodName="methodName4">
+                    <subject>subject10</subject>
+                    <subject>subject11</subject>
                 </restriction>
-                <restriction name="name10" rest="rest5">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName5">
+                    <subject>subject12</subject>
+                    <subject>subject13</subject>
                 </restriction>
             </service>
-            <service name="name11" version="version3" available="false">
-                <restriction name="name12" rest="rest6">
-                    <allowed>
-                    </allowed>
+            <service name="name5" version="version3" available="false">
+                <restriction methodName="methodName6">
+                    <subject>subject14</subject>
+                    <subject>subject15</subject>
                 </restriction>
-                <restriction name="name13" rest="rest7">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName7">
+                    <subject>subject16</subject>
+                    <subject>subject17</subject>
                 </restriction>
             </service>
         </services>
@@ -208,8 +208,8 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject2</subject>
-        <subject>subject3</subject>
+        <subject>subject18</subject>
+        <subject>subject19</subject>
         <contactSubject>contactSubject2</contactSubject>
         <contactSubject>contactSubject3</contactSubject>
     </node>
@@ -228,23 +228,23 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
             <service version="version0" available="false">
-                <restriction name="name2" rest="rest0">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName0">
+                    <subject>subject0</subject>
+                    <subject>subject1</subject>
                 </restriction>
-                <restriction name="name3" rest="rest1">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName1">
+                    <subject>subject2</subject>
+                    <subject>subject3</subject>
                 </restriction>
             </service>
-            <service name="name4" version="version1" available="false">
-                <restriction name="name5" rest="rest2">
-                    <allowed>
-                    </allowed>
+            <service name="name2" version="version1" available="false">
+                <restriction methodName="methodName2">
+                    <subject>subject4</subject>
+                    <subject>subject5</subject>
                 </restriction>
-                <restriction name="name6" rest="rest3">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName3">
+                    <subject>subject6</subject>
+                    <subject>subject7</subject>
                 </restriction>
             </service>
         </services>
@@ -254,35 +254,35 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject0</subject>
-        <subject>subject1</subject>
+        <subject>subject8</subject>
+        <subject>subject9</subject>
         <contactSubject>contactSubject0</contactSubject>
         <contactSubject>contactSubject1</contactSubject>
     </node>
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier1</identifier>
-        <name>name7</name>
+        <name>name3</name>
         <description>description1</description>
         <baseURL>http://www.oxygenxml.com/</baseURL>
         <services>
-            <service name="name8" version="version2" available="false">
-                <restriction name="name9" rest="rest4">
-                    <allowed>
-                    </allowed>
+            <service name="name4" version="version2" available="false">
+                <restriction methodName="methodName4">
+                    <subject>subject10</subject>
+                    <subject>subject11</subject>
                 </restriction>
-                <restriction name="name10" rest="rest5">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName5">
+                    <subject>subject12</subject>
+                    <subject>subject13</subject>
                 </restriction>
             </service>
-            <service name="name11" version="version3" available="false">
-                <restriction name="name12" rest="rest6">
-                    <allowed>
-                    </allowed>
+            <service name="name5" version="version3" available="false">
+                <restriction methodName="methodName6">
+                    <subject>subject14</subject>
+                    <subject>subject15</subject>
                 </restriction>
-                <restriction name="name13" rest="rest7">
-                    <allowed>
-                    </allowed>
+                <restriction methodName="methodName7">
+                    <subject>subject16</subject>
+                    <subject>subject17</subject>
                 </restriction>
             </service>
         </services>
@@ -292,8 +292,8 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
         <ping success="false" lastSuccess="2006-05-04T18:13:51.0Z"/>
-        <subject>subject2</subject>
-        <subject>subject3</subject>
+        <subject>subject18</subject>
+        <subject>subject19</subject>
         <contactSubject>contactSubject2</contactSubject>
         <contactSubject>contactSubject3</contactSubject>
     </node>

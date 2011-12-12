@@ -1,7 +1,7 @@
 # ./d1_common/types/generated/dataoneErrors.py
 # PyXB bindings for NamespaceModule
 # NSM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2011-11-30 08:58:54.637380 by PyXB version 1.1.2
+# Generated 2011-12-12 09:24:02.431768 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,7 +11,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3451a04c-1b6c-11e1-b256-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b3fb4fda-24dd-11e1-9e12-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
