@@ -78,7 +78,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
             </service>
         </services>
         <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
@@ -116,7 +116,7 @@ EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
             </service>
         </services>
         <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
@@ -165,7 +165,7 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
             </service>
         </services>
         <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
@@ -203,7 +203,7 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
             </service>
         </services>
         <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
@@ -249,7 +249,7 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
             </service>
         </services>
         <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
@@ -287,7 +287,7 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
             </service>
         </services>
         <synchronization>
-            <schedule hour="*" mday="*" min="*" mon="*" sec="*" wday="*" year="*"/>
+            <schedule hour="*" mday="*" min="*" mon="*" sec="1" wday="*" year="*"/>
             <lastHarvested>2006-05-04T18:13:51.0Z</lastHarvested>
             <lastCompleteHarvest>2006-05-04T18:13:51.0Z</lastCompleteHarvest>
         </synchronization>
