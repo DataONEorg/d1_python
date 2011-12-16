@@ -43,240 +43,208 @@ class RESTClient(object):
   '''REST HTTP client that encodes POST and PUT using MIME multipart encoding.
   '''
 
-  def __init__(self, 
-               defaultHeaders={'User-Agent':const.USER_AGENT}, 
+  def __init__(self,
+               host,
+               scheme="https",
+               port=None,
                timeout=const.RESPONSE_TIMEOUT, 
-               keyfile=None, 
-               certfile=None, 
-               strictHttps=True):
-    '''Connect to a DataONE Node.
-    
-    :param defaultHeaders: list of headers that will be sent with all requests.
-    :type defaultHeaders: dictionary
+               defaultHeaders=None, 
+               cert_path=None, 
+               key_path=None, 
+               strict=True):
+    '''Connect to an HTTP service.
+
+    :param host: Hostname.
+    :type host: string
+    :param scheme: HTTP protocol. Must be "http" or "https". Defaults to
+      "https".
+    :type scheme: string
+    :param port: TCP/IP port. Defaults to 80 for HTTP and 443 for HTTPS.
+    :type port: integer
     :param timeout: Time in seconds that requests will wait for a response.
     :type timeout: integer
-    :param keyfile: name of a PEM formatted file that contains a private key. 
-    :type keyfile: string
-    :param certfile: PEM formatted certificate chain file.
-    :type certfile: string
-    :param strictHttps: Raise BadStatusLine if the status line can’t be parsed
-    as a valid HTTP/1.0 or 1.1 status line.
-    :type strictHttps: boolean
+    :param defaultHeaders: headers that will be sent with all requests.
+    :type defaultHeaders: dictionary
+    :param cert_path: Path to a PEM formatted certificate file.
+    :type cert_path: string
+    :param key_path: Path to a PEM formatted file that contains the private key
+      for the certificate file. Only required if the certificate file does not
+      itself contain a private key. 
+    :type key_path: string
+    :param strict: Raise BadStatusLine if the status line can’t be parsed
+      as a valid HTTP/1.0 or 1.1 status line.
+    :type strict: boolean
     :returns: None
-    :return type: NoneType
     '''
+    if defaultHeaders is None:
+      defaultHeaders = {
+        'User-Agent': const.USER_AGENT,
+      }
+    self.connection = self._connect(scheme, host, port, timeout, cert_path,
+                                    key_path, strict)
     self.defaultHeaders = defaultHeaders
-    self.timeout = timeout
-    self.keyfile = keyfile
-    self.certfile = certfile
-    self.strictHttps = strictHttps
-    self.logger = logging.getLogger('RESTClient')
-    self._lasturl = ''
-    self._curlrequest = []
+    self.logger = logging.getLogger(__file__)
 
 
-  def _getConnection(self, scheme, host, port):
-    if scheme == 'http':
-      conn = httplib.HTTPConnection(host, port, self.timeout)
+  def _connect(self, scheme, host, port, timeout, cert_path, key_path, strict):
+    '''Create connection object. As of Python 2.6, this does not establish a
+    connection. Instead, a separate connection is established for each request.
+    http://bugs.python.org/issue9740
+    '''
+    if scheme == 'https':
+      return httplib.HTTPSConnection(host=host, port=port, timeout=timeout,
+        cert_file=cert_path, key_file=key_path, strict=strict)
     else:
-      conn = httplib.HTTPSConnection(host=host,
-                                     port=port, 
-                                     key_file=self.keyfile,
-                                     cert_file=self.certfile, 
-                                     strict=self.strictHttps,
-                                     timeout=self.timeout)
-    if self.logger.getEffectiveLevel() == logging.DEBUG:
-      conn.set_debuglevel(logging.DEBUG)
-    return conn
+      return httplib.HTTPConnection(host, port, timeout)
 
 
-  def _parseURL(self, url):
-    parts = urlparse.urlsplit(url)
-    res =  {'scheme': parts.scheme,
-            'host': parts.netloc.split(':')[0],
-            'path': parts.path,
-            'query': parts.query,
-            'fragment': parts.fragment}
-    try:
-      res['port'] = int(parts.port)
-    except:
-      if res['scheme'] == 'https':
-        res['port'] = 443
-      else:
-        res['port'] = 80
-    return res
+  def _merge_default_headers(self, headers=None):
+    if headers is None:
+      headers = {}
+    if self.defaultHeaders is not None:
+      headers.update(self.defaultHeaders)
+    return headers
 
 
-  def _mergeHeaders(self, headers):
-    res = self.defaultHeaders
-    if headers is not None:
-      for header in headers.keys():
-        res[header] = headers[header]
-    return res
-  
-
-  def _getResponse(self, conn):
-    return conn.getresponse()
+  def _join_url_with_query_params(self, selector, query):
+    if query is None:
+      return selector
+    else:
+      return u'{0}?{1}'.format(selector, util.urlencode(query))
 
 
-  def _doRequestNoBody(self, method, url, url_params=None, headers=None):
-    parts = self._parseURL(url)
-    targeturl = parts['path']  
-    headers = self._mergeHeaders(headers)
-    if not url_params is None:
-      #URL encode url_params and append to URL
-      self.logger.debug("DATA=%s" % str(url_params))
-      if parts['query'] == '':
-        parts['query'] = util.urlencode(url_params)
-      else:
-        parts['query'] = '%s&%s' % (parts['query'], \
-                                    util.urlencode(url_params))
-      targeturl = urlparse.urljoin(targeturl, "?%s" % parts['query'])
+  def _get_curl_request(self, method, selector, query=None, headers=None):
+    '''Get request as cURL command line for debugging.
+    '''
+    curl = []
+    curl.append('curl -X {0}'.format(method))
+    for k, v in headers.items():
+      curl.append('-H "{0}: {1}"'.format(k, v))    
+    curl.append('{0}'.format(self._join_url_with_query_params(selector, query)))
+    return ' '.join(curl)
 
+
+  def _get_response(self):
+    '''Override this to provide automatic processing of response.
+    '''
+    return self.connection.getresponse()
+
+
+  def _send_request(self, method, selector, body=None, query=None,
+                    headers=None):
+    '''Send request and retrieve response.
+
+    :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
+    :type method: string
+    :param selector: Selector URL.
+    :type selector: string
+    :param body: Request body
+    :type body: string or open file-like object
+    :param query: URL query parameters.
+    :type query: dictionary
+    :param headers: HTTP headers.
+    :type headers: dictionary
+    '''
+    headers = self._merge_default_headers(headers)
+    url = self._join_url_with_query_params(selector, query)
     self.logger.debug('operation: {0} {1}'.format(method, url))
-    self.logger.debug('targetURL: {0}'.format(targeturl))
     self.logger.debug('headers: {0}'.format(str(headers)))
-    
-    # Create the HTTP or HTTPS connection.
-    conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
-    # Store URL and equivalent CURL request for debugging.
-    self._lasturl = '%s://%s:%s%s' % (parts['scheme'], parts['host'], 
-                                      parts['port'], targeturl)
-    self._curlrequest = ['curl', '-X %s' % method]
-    for h in headers.keys():
-      self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
-    self._curlrequest.append('"%s"' % self._lasturl)
-    # Perform request using specified HTTP verb.
-    conn.request(method, targeturl, None, headers)
-    return self._getResponse(conn)
+    self.connection.request(method, url, body, headers)
+    return self._get_response()
     
 
-  def _doRequestMMBody(self, method, url, url_params=None, headers=None,
-                       fields=None, files=None):
-    parts = self._parseURL(url)
-    targeturl = parts['path']
-    headers = self._mergeHeaders(headers)
-    if not url_params is None:
-      try:
-        url_params.__getattribute__('keys')
-        fdata = []
-        for k in url_params.keys():
-          fdata.append((k, url_params[k]))
-      except:
-        pass
-      url_params = fdata
+  def _send_mime_multipart_request(self, method, selector, query=None,
+                                   headers=None, fields=None, files=None):
+    '''Generate MIME multipart document, send it and retrieve response.
+
+    :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
+    :type method: string
+    :param selector: Selector URL.
+    :type selector: string
+    :param query: URL query parameters.
+    :type query: dictionary
+    :param headers: HTTP headers.
+    :type headers: dictionary
+    :param fields: MIME multipart document fields
+    :type fields: dictionary of strings
+    :param files: MIME multipart document files
+    :type files: dictionary of file-like-objects
+    '''
     if headers is None:
       headers = {}
     if fields is None:
       fields = {}
     if files is None:
       files = []
-    mm = multipart(fields, files)
-    headers['Content-Type'] = mm.get_content_type_header()
-    headers['Content-Length'] = mm.get_content_length()
-
-    self.logger.debug('operation: {0} {1}'.format(method, url))
-    self.logger.debug('targetURL: {0}'.format(targeturl))
-    self.logger.debug('headers: {0}'.format(str(headers)))
-
-    # Create the HTTP or HTTPS connection.
-    conn = self._getConnection(parts['scheme'], parts['host'], parts['port'])
-    # Store URL and equivalent CURL request for debugging.
-    self._lasturl = '%s://%s:%s%s' % (parts['scheme'], parts['host'], 
-                                      parts['port'], targeturl)
-    self._curlrequest = ['curl', '-X %s' % method]
-    for h in headers.keys():
-      self._curlrequest.append('-H "%s: %s"' % (h, headers[h]))
-    for d in fields:
-      self._curlrequest.append('-F %s=%s' % (d[0], d[1]))
-    for f in files:
-      #self._curlrequest.append('-F %s=@%s' % (f['name'], f['filename']))
-      self._curlrequest.append('-F %s=@%s' % (f[0], f[1]))
-    self._curlrequest.append('"%s"' % self._lasturl)
-    # Perform request using specified HTTP verb.
-    #print mm.read()
-    conn.request(method, targeturl, mm, headers)
-    return self._getResponse(conn)
+    mmp_body = multipart(fields, files)
+    headers['Content-Type'] = mmp_body.get_content_type_header()
+    headers['Content-Length'] = mmp_body.get_content_length()
+    return self._send_request(method, selector, body=mmp_body,
+                              query=query, headers=headers)
 
 
-  def getLastRequestAsCurlCommand(self):
-    '''Returns a curl command line equivalent of the last request issued by
-    this client instance.
-    
-    :return type: unicode
-    '''
-    return u" ".join(self._curlrequest)
-
-
-  def getlastUrl(self):
-    '''Returns the last URL that was opened using this client instance.
-    
-    :return type: string
-    '''
-    return self._lasturl
-
-
-  def GET(self, url, url_params=None, headers=None):
+  def GET(self, url, query=None, headers=None):
     '''Perform a HTTP GET and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
-    
-    :param url: The full URL to the target
-    :type url: String
-    :param url_params: Parameters that will be encoded in the query portion of
+
+    :param url: The Selector URL to the target
+    :type url: string
+    :param query: Parameters that will be encoded in the query portion of
     the final URL.
-    :type url_params: dictionary of key-value pairs, or list of (key, value)
+    :type query: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestNoBody('GET', url, url_params=url_params, headers=headers)
+    return self._send_request('GET', url, query=query,
+                              headers=headers)
 
   
-  def HEAD(self, url, url_params=None, headers=None):
+  def HEAD(self, url, query=None, headers=None):
     '''Perform a HTTP HEAD and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. Note that HEAD 
     requests return no body.
     
-    :param url: The full URL to the target
-    :type url: String
-    :param url_params: Parameters that will be encoded in the query portion of
+    :param url: The Selector URL to the target
+    :type url: string
+    :param query: Parameters that will be encoded in the query portion of
     the final URL.
-    :type url_params: dictionary of key-value pairs, or list of (key, value)
+    :type query: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestNoBody('HEAD', url, url_params, headers)
+    return self._send_request('HEAD', url, query, headers)
 
   
-  def DELETE(self, url, url_params=None, headers=None):
+  def DELETE(self, url, query=None, headers=None):
     '''Perform a HTTP DELETE and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
     
-    :param url: The full URL to the target
-    :type url: String
-    :param url_params: Parameters that will be encoded in the query portion of
+    :param url: The Selector URL to the target
+    :type url: string
+    :param query: Parameters that will be encoded in the query portion of
     the final URL.
-    :type url_params: dictionary of key-value pairs, or list of (key, value)
+    :type query: dictionary of key-value pairs, or list of (key, value)
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
     :return: The result of the HTTP request
     :type return: httplib.HTTPResponse 
     '''
-    return self._doRequestNoBody('DELETE', url, url_params, headers)
+    return self._send_request('DELETE', url, query, headers)
 
   
-  def POST(self, url, url_params=None, headers=None, fields=None, files=None):
+  def POST(self, url, query=None, headers=None, fields=None, files=None):
     '''Perform a HTTP POST and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
     message is encoded using MIME multipart-mixed.
     
-    :param url: The full URL to the target
-    :type url: String
-    :param url_params: Parameters that will be send in the message body.
-    :type url_params: dictionary of key-value pairs, or list of (key, value)
+    :param url: The Selector URL to the target
+    :type url: string
+    :param query: Parameters that will be send in the message body.
+    :type query: dictionary of key-value pairs, or list of (key, value)
     :param files: List of files that will be sent with the POST request. The
       "name" is the name of the parameter in the MM body, "filename" is the 
       value of the "filename" parameter in the MM body, and "value" is a 
@@ -287,18 +255,19 @@ class RESTClient(object):
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestMMBody('POST', url, url_params, headers, fields, files)
+    return self._send_mime_multipart_request('POST', url, query, headers,
+                                             fields, files)
 
   
-  def PUT(self, url, url_params=None, headers=None, fields=None, files=None):
+  def PUT(self, url, query=None, headers=None, fields=None, files=None):
     '''Perform a HTTP PUT and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
     message is encoded using MIME multipart-mixed.
     
-    :param url: The full URL to the target
-    :type url: String
-    :param url_params: Parameters that will be send in the message body.
-    :type url_params: dictionary of key-value pairs, or list of (key, value)
+    :param url: The Selector URL to the target
+    :type url: string
+    :param query: Parameters that will be send in the message body.
+    :type query: dictionary of key-value pairs, or list of (key, value)
     :param files: List of files that will be sent with the POST request. The
       "name" is the name of the parameter in the MM body, "filename" is the 
       value of the "filename" parameter in the MM body, and "value" is a 
@@ -309,5 +278,6 @@ class RESTClient(object):
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._doRequestMMBody('PUT', url, url_params, headers, fields, files)
+    return self._send_mime_multipart_request('PUT', url, query, headers,
+                                             fields, files)
 
