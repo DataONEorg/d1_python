@@ -30,6 +30,7 @@ Utilities.
 '''
 
 # Stdlib.
+import StringIO
 import email.message
 import logging
 import os
@@ -39,7 +40,6 @@ import sys
 import tempfile
 import urllib
 import xml.dom.minidom
-import StringIO
 
 # 3rd party.
 try:
@@ -163,14 +163,42 @@ def decodeQueryElement(element):
   return urllib.unquote(element).decode('utf-8')
 
 
+def stripElementSlashes(element):
+  '''Strip any slashes from a URL element.
+  '''
+  m = re.match(r'/*(.*?)/*$', element)
+  return m.group(1)
+
+
+def joinPathElements(*elements):
+  '''Join two or more URL elements, inserting '/' as needed.
+  '''
+  url = []
+  for element in elements:
+    element = stripElementSlashes(element)
+    url.append(element)
+  return '/'.join(url)
+
+
+def normalizeTarget(target):
+  '''If necessary, modify target so that it ends with "/"'''
+  if target.endswith('/'):
+    return target
+  if target.endswith('?'):
+    target = target[:-1]
+  if not target.endswith('/'):
+    return target + '/'
+  return normalizeTarget(target)
+
+
 def str_to_unicode(f):
-  '''Decorator that converts string arguments to unicode. Assumes that strings
+  '''Decorator that converts string arguments to Unicode. Assumes that strings
   contains ASCII or UTF-8. All other argument types are passed through
   untouched.
 
   A UnicodeDecodeError raised here means that the wrapped function was called
   with a string argument that did not contain ASCII or UTF-8. In such a case,
-  the user is required to convert the string to unicode before passing it to the
+  the user is required to convert the string to Unicode before passing it to the
   function. '''
 
   def wrap(*args, **kwargs):

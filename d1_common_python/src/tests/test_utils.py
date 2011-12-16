@@ -80,7 +80,30 @@ class TestUtils(unittest.TestCase):
     test = d1_common.util.urlencode(data)
     self.assertEqual(test, expected)
 
+  def test_stripElementSlashes(self):
+    self.assertEqual('element', d1_common.util.stripElementSlashes('/element'))
+    self.assertEqual('element', d1_common.util.stripElementSlashes('//element/'))
+    self.assertEqual('element', d1_common.util.stripElementSlashes('element/'))
+    self.assertEqual('ele/ment', d1_common.util.stripElementSlashes('/ele/ment/'))
+    self.assertEqual('ele//ment', d1_common.util.stripElementSlashes('ele//ment'))
+
+  def test_joinPathElements(self):
+    self.assertEqual('a/b', d1_common.util.joinPathElements('a', 'b'))
+    self.assertEqual('a/b/c', d1_common.util.joinPathElements('a/', '/b', 'c'))
+
+  def test_normalizeTarget(self):
+    '''normalizeTarget()'''
+    u0 = "http://some.server/base/mn/"
+    u1 = "http://some.server/base/mn"
+    u2 = "http://some.server/base/mn?"
+    u3 = "http://some.server/base/mn/?"
+    self.assertEqual(u0, d1_common.util.normalizeTarget(u0))
+    self.assertEqual(u0, d1_common.util.normalizeTarget(u1))
+    self.assertEqual(u0, d1_common.util.normalizeTarget(u2))
+    self.assertEqual(u0, d1_common.util.normalizeTarget(u3))
+
 #===============================================================================
+
 if __name__ == "__main__":
   argv = sys.argv
   if "--debug" in argv:

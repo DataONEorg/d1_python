@@ -78,7 +78,10 @@ def deserialize(dataone_exception_xml):
     description_list.append('Deserialization failed with exception')
     description_list.append(traceback.format_exc())
     description_list.append('On input:')
-    description_list.append(dataone_exception_xml)
+    if dataone_exception_xml == '':
+      description_list.append('<empty response>')
+    else:
+      description_list.append(dataone_exception_xml)
     return ServiceFailure(0, '\n'.join(description_list))
 
   name_exception_map = {

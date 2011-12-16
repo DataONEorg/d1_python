@@ -31,21 +31,21 @@ Unit tests for the generic REST client.
 '''
 
 # Stdlib.
+import logging
 import sys
 import unittest
-import logging
 
 # 3rd party.
 import pyxb
 
 # D1.
 from d1_common import xmlrunner
-from d1_common import restclient
-import d1_common.types.exceptions
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.types.exceptions
 
 # App
 import util
+import d1_common.restclient
 
 
 class TestRESTClient(TestCaseWithURLCompare):
@@ -55,57 +55,74 @@ class TestRESTClient(TestCaseWithURLCompare):
   def tearDown(self):
     pass
 
-  def testGet(self):
-    cli = client.RESTClient()
-    #Google runs a fairly reliable server
-    res = cli.GET('http://www.google.com/')
-    self.assertEqual(cli.status, 200)
-    self.assertEqual(res.code, 200)
+  def test_010(self):
+    '''HTTP GET against http://www.google.com/ is successful'''
+    client = d1_common.restclient.RESTClient('www.google.com', scheme='http')
+    response = client.GET('/')
+    self.assertEqual(response.status, 200)
+    self.assertTrue(len(response.read()) > 1000)
 
-    #This should fail with a 404
-    try:
-      cli.GET('http://www.google.com/_bogus')
-    except Exception, e:
-      pass
-    self.assertTrue(isinstance(e, urllib2.HTTPError))
-    self.assertEqual(e.code, 404)
-    #This should fail
-    try:
-      cli.GET('http://some.bogus.address/')
-    except Exception, e:
-      pass
-    self.assertTrue(isinstance(e, urllib2.URLError))
-    #self.assertEqual(e.errno, socket.EAI_NONAME)
+  def test_020(self):
+    '''HTTP GET against http://www.google.com/_bugus_ fails with 404'''
+    client = d1_common.restclient.RESTClient('www.google.com', scheme='http')
+    response = client.GET('/_bogus_')
+    self.assertEqual(response.status, 404)
+    self.assertTrue(len(response.read()) > 1)
 
-  def testGet(self):
-    cli = restclient.RESTClient()
-    res = cli.GET("http://www.google.com/index.html")
-    self.assertEqual(res.status, 200)
-    res = cli.GET("http://www.google.com/something_bogus.html")
-    self.assertEqual(res.status, 404)
-    res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm")
-    self.assertEqual(res.status, 400)
-    url_params = {'a': '1', 'key': 'value'}
-    res = cli.GET("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
-    self.assertEqual(res.status, 400)
-    #logging.info(res.read())
+  def test_030(self):
+    '''HTTPS GET against https://www.google.com/ is successful (no certs)'''
+    client = d1_common.restclient.RESTClient('www.google.com')
+    response = client.GET('/')
+    self.assertEqual(response.status, 200)
+    self.assertTrue(len(response.read()) > 1000)
 
-  def testPOST(self):
-    url_params = {'a': '1', 'key': 'value'}
-    cli = restclient.RESTClient()
-    res = cli.POST("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
-    self.assertEqual(res.status, 400)
-    #logging.info(res.read())
+  def test_040(self):
+    '''HTTPS GET against https://www.google.com/a/cpanel/bogus fails with 404 (no certs)'''
+    client = d1_common.restclient.RESTClient('www.google.com')
+    response = client.GET('/a/cpanel/bogus')
+    self.assertEqual(response.status, 404)
+    self.assertTrue(len(response.read()) > 10)
 
-  def testPUT(self):
-    url_params = {'a': '1', 'key': 'value'}
-    cli = restclient.RESTClient()
-    res = cli.PUT("http://dev-testing.dataone.org/testsvc/echomm", url_params=url_params)
-    self.assertEqual(res.status, 400)
-    #logging.info(res.read())
+  def test_050(self):
+    '''HTTP GET against http://some.bogus.address/ raises exception'''
+    client = d1_common.restclient.RESTClient('some.bogus.address', scheme='http')
+    self.assertRaises(Exception, client.GET, '/')
 
-    #===============================================================================
+  def test_100(self):
+    '''HTTP POST against D1 echo server returns URL query parameters'''
+    query = {'abcd': '1234', 'efgh': '5678'}
+    client = d1_common.restclient.RESTClient('dev-testing.dataone.org', scheme='http')
+    response = client.POST('/testsvc/echomm', query=query)
+    self.assertEqual(response.status, 400)
+    doc = response.read()
+    self.assertTrue('request.REQUEST[ abcd ] = 1234' in doc)
+    self.assertTrue('request.REQUEST[ efgh ] = 5678' in doc)
 
+  def test_110(self):
+    '''HTTP POST against D1 echo server returns headers'''
+    headers = {'abcd': '1234', 'efgh': '5678'}
+    client = d1_common.restclient.RESTClient('dev-testing.dataone.org', scheme='http')
+    response = client.POST('/testsvc/echomm', headers=headers)
+    self.assertEqual(response.status, 400)
+    doc = response.read()
+    self.assertTrue('request.META[ HTTP_ABCD ] = 1234' in doc)
+    self.assertTrue('request.META[ HTTP_EFGH ] = 5678' in doc)
+
+  def test_200(self):
+    '''cURL command line retains query parameters and headers'''
+    query = {'abcd': '1234', 'efgh': '5678'}
+    headers = {'ijkl': '9876', 'mnop': '5432'}
+    client = d1_common.restclient.RESTClient('dev-testing.dataone.org', scheme='http')
+    curl = client._get_curl_request(
+      'GET', 'url_selector/a/b', query=query,
+      headers=headers
+    )
+    self.assertEqual(
+      curl, 'curl -X GET -H "ijkl: 9876" -H "mnop: 5432" '
+      'url_selector/a/b?abcd=1234&efgh=5678'
+    )
+
+#===============================================================================
 
 if __name__ == "__main__":
   argv = sys.argv
