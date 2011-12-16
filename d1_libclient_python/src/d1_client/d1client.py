@@ -41,9 +41,11 @@ import time
 import urlparse
 
 # D1.
-from d1_common import const
-from d1_common.types import exceptions
-from d1_common import util
+import d1_common.const
+import d1_common.types.exceptions
+import d1_common.util
+
+# App
 import cnclient
 import mnclient
 import objectlistiterator
@@ -55,7 +57,7 @@ MAX_CACHE_AGE = 60
 
 
 class DataONEObject(object):
-  def __init__(self, pid, cnBaseUrl=const.URL_DATAONE_ROOT):
+  def __init__(self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT):
     self.pid = pid
     self._locations = []
     self._relations = None
@@ -143,10 +145,12 @@ class DataONEObject(object):
 
 
 class DataONEClient(object):
-  def __init__(self, cnBaseUrl=const.URL_DATAONE_ROOT, credentials={}):
+  def __init__(self, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, credentials=None):
     '''DataONEClient, which uses CN- and MN clients to perform high level
     operations against the DataONE infrastructure.
     '''
+    if credentials is None:
+      credentials = {}
     self.apiVersion = "v1"
     self.cnBaseUrl = cnBaseUrl
     self.cn = None
@@ -179,7 +183,7 @@ class DataONEClient(object):
       self.authToken = None
     return self.authToken
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def resolve(self, pid):
     '''
     :return type: list of baseurl
@@ -192,7 +196,7 @@ class DataONEClient(object):
       res.append(location.baseURL)
     return res
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def get(self, pid):
     '''Returns a stream open for reading that returns the bytes of the object
     identified by PID. 
@@ -208,13 +212,13 @@ class DataONEClient(object):
     raise Exception('Object could not be retrieved from any resolved targets')
     return None
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def create(self, targetNodeId=None, ):
     '''
     '''
     pass
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def getSystemMetadata(self, pid):
     '''
     '''
@@ -224,7 +228,7 @@ class DataONEClient(object):
     self._sysmetacache[pid] = cn.getSystemMetadata(pid)
     return self._sysmetacache[pid]
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def getRelatedObjects(self, pid):
     '''
     :return type: list of DataONEObject
@@ -256,7 +260,7 @@ class DataONEClient(object):
     #      relations['describes'].append(pid.value())
     return relations
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def isData(self, pid):
     '''Returns True is pid refers to a data object.
     
@@ -265,14 +269,14 @@ class DataONEClient(object):
     sysmeta = self.getSystemMetadata(pid)
     return len(sysmeta.describes) == 0
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def isScienceMetadata(self, pid):
     '''return True if pid refers to a science metadata object
     '''
     sysmeta = self.getSystemMetadata(pid)
     return len(sysmeta.describes) > 0
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def getScienceMetadata(self, pid):
     '''Retrieve the pid for science metadata object for the specified PID. If 
     PID refers to a science metadata object, then that object is returned. 
@@ -285,7 +289,7 @@ class DataONEClient(object):
       res.append(id.value())
     return res
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def getData(self, pid):
     if self.isData(pid):
       return [pid, ]
@@ -295,14 +299,14 @@ class DataONEClient(object):
       res.append(id.value())
     return res
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
   def getObjects(self, pids):
     '''
     '''
     pass
 
-  @util.str_to_unicode
-  def listObjects(self, start=0, count=const.DEFAULT_LISTOBJECTS):
+  @d1_common.util.str_to_unicode
+  def listObjects(self, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS):
     '''
     '''
     cli = self._getCN()

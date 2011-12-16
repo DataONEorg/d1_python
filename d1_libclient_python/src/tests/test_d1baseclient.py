@@ -21,7 +21,7 @@
 '''Module d1_client.tests.test_d1baseclient
 ===========================================
 
-Unit tests for d1baseclient.
+Unit tests for d1_client.d1baseclient.
 
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
@@ -29,201 +29,320 @@ Unit tests for d1baseclient.
   - python 2.6
 '''
 
-import sys
-from d1_common import xmlrunner
-import unittest
-import logging
-from d1_client import d1baseclient
-import d1_common.types.exceptions
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+# TODO: Tests disabled with "WAITING_FOR_TEST_ENV_" are disabled until a
+# stable testing environment is available.
 
-TEST_DATA = {}
+# Stdlib.
+import datetime
+import logging
+import sys
+import unittest
+
+# D1.
+from d1_common import xmlrunner
+from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.const
+import d1_common.types.exceptions
+
+# App.
+import d1_client.d1baseclient
+import testing_utilities
+import testing_context
 
 
 class TestDataONEBaseClient(TestCaseWithURLCompare):
   def setUp(self):
-    self.turl = ''
-    pass
+    self.baseurl_cn = 'https://cn-dev.dataone.org/cn/'
+    self.baseurl_mn = 'https://gmn-dev.dataone.org/mn/'
 
-  def test_normalizeUrl(self):
-    u0 = "http://some.server/base/mn/"
-    u1 = "http://some.server/base/mn"
-    u2 = "http://some.server/base/mn?"
-    u3 = "http://some.server/base/mn/?"
-    cli = d1baseclient.DataONEBaseClient("http://bogus.target/mn")
-    self.assertEqual(u0, cli._normalizeTarget(u0))
-    self.assertEqual(u0, cli._normalizeTarget(u1))
-    self.assertEqual(u0, cli._normalizeTarget(u2))
-    self.assertEqual(u0, cli._normalizeTarget(u3))
-
-  def testRESTResourceURL(self):
-    cli = d1baseclient.DataONEBaseClient("http://bogus.target/mn")
-    self.assertRaises(KeyError, cli.RESTResourceURL, 'no_such_method')
-    self.assertEqual('http://bogus.target/mn/object', cli.RESTResourceURL('listobjects'))
-    self.assertEqual('http://bogus.target/mn/object', cli.RESTResourceURL('listOBJects'))
-    self.assertEqual('http://bogus.target/mn/node', cli.RESTResourceURL('listnodes'))
-    self.assertEqual(
-      'http://bogus.target/mn/object/1234xyz',
-      cli.RESTResourceURL('get', pid='1234xyz')
+  def test_010(self):
+    '''_slice_sanity_check()'''
+    client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidRequest, client._slice_sanity_check, 0,
+      d1_common.const.MAX_LISTOBJECTS + 1
     )
-    self.assertEqual(
-      'http://bogus.target/mn/object/1234%2Fxyz',
-      cli.RESTResourceURL('get', pid='1234/xyz')
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidRequest, client._slice_sanity_check, -1, 10
     )
-    self.assertEqual(
-      'http://bogus.target/mn/meta/1234xyz',
-      cli.RESTResourceURL('getsystemmetadata', pid='1234xyz')
+    self.assertEqual(None, client._slice_sanity_check(5, 10))
+    self.assertEqual(None, client._slice_sanity_check(5, d1_common.const.MAX_LISTOBJECTS))
+    self.assertEqual(None, client._slice_sanity_check(0, d1_common.const.MAX_LISTOBJECTS))
+
+  def test_020(self):
+    '''_date_span_sanity_check()'''
+    client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    old_date = datetime.datetime(1970, 4, 3)
+    new_date = datetime.datetime(2010, 10, 11)
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidRequest, client._date_span_sanity_check, new_date,
+      old_date
     )
-    self.assertEqual('http://bogus.target/mn/log', cli.RESTResourceURL('getlogrecords'))
-    self.assertEqual('http://bogus.target/mn/monitor/ping', cli.RESTResourceURL('ping'))
+    self.assertEqual(None, client._date_span_sanity_check(old_date, new_date))
 
+  def test_030(self):
+    '''_rest_url()'''
+    client = d1_client.d1baseclient.DataONEBaseClient(
+      "http://bogus.target/mn", version='v1'
+    )
+    self.assertRaises(KeyError, client._rest_url, 'no_such_method')
+    self.assertEqual('/mn/v1/object', client._rest_url('listObjects'))
+    self.assertEqual('/mn/v1/object/1234xyz', client._rest_url('get', pid='1234xyz'))
+    self.assertEqual('/mn/v1/object/1234%2Fxyz', client._rest_url('get', pid='1234/xyz'))
+    self.assertEqual(
+      '/mn/v1/meta/1234xyz',
+      client._rest_url(
+        'getSystemMetadata', pid='1234xyz'
+      )
+    )
+    self.assertEqual('/mn/v1/log', client._rest_url('getLogRecords'))
 
-class TestDataONEClient(TestCaseWithURLCompare):
-  def setUp(self):
-    self.token = None
+  def test_040(self):
+    '''get_schema_version()'''
+    client = d1_client.d1baseclient.DataONEBaseClient(self.baseurl_cn)
+    version = client.get_schema_version('listObjects')
+    self.assertTrue(version in ('v1', 'v2', 'v3'))
 
-  def passes_testSchemaVersion(self):
-    '''Simple test to check if the correct schema version is being returned
-    '''
+    # CNCore.getLogRecords()
+    # MNCore.getLogRecords()
 
-    def dotest(baseurl):
-      logging.info("Version test %s" % baseurl)
-      cli = d1baseclient.DataONEBaseClient(baseurl)
-      response = cli.GET(baseurl)
-      doc = response.read(1024)
-      if not doc.find(TEST_DATA['schema_version']):
-        raise Exception("Expected schema version not detected on %s:\n %s" \
-                        % (baseurl, doc))
+  def _getLogRecords(self, base_url):
+    '''getLogRecords() returns a valid Log that contains at least 2 entries'''
+    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    log = client.getLogRecords()
+    self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
+    self.assertTrue(len(log.logEntry) >= 2)
 
-    for test in TEST_DATA['MN']:
-      dotest(test['baseurl'])
+  def WAITING_FOR_TEST_ENV_test_110(self):
+    '''CNRead.getLogRecords()'''
+    self._getLogRecords(self.baseurl_cn)
 
-    for test in TEST_DATA['CN']:
-      dotest(test['baseurl'])
+  def WAITING_FOR_TEST_ENV_test_120(self):
+    '''MNRead.getLogRecords()'''
+    self._getLogRecords(self.baseurl_mn)
 
-  def test_get_valid_pid(self):
-    '''Check the CRUD.get operation
-    '''
+  # CNRead.get()
+  # MNRead.get()
 
-    def dotest(test):
-      logging.info("GET %s" % test['baseurl'])
-      cli = d1baseclient.DataONEBaseClient(test['baseurl'])
-      try:
-        res = cli.get(self.token, test['boguspid'])
-        if hasattr(res, 'body'):
-          msg = res.body[:512]
-        else:
-          msg = res.read(512)
-        raise Exception('NotFound not raised for get on %s. Detail: %s' \
-                        % (test['baseurl'], msg))
-      except d1_common.types.exceptions.NotFound:
-        pass
+  def _get(self, base_url, invalid_pid=False):
+    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    if invalid_pid:
+      pid = '_bogus_pid_845434598734598374534958'
+    else:
+      pid = testing_utilities.get_random_pid(client)
+    response = client.get(pid)
+    self.assertTrue(response.read() > 0)
 
-    for test in TEST_DATA['MN']:
-      dotest(test)
+  def WAITING_FOR_TEST_ENV_test_410(self):
+    '''CNRead.get()'''
+    self._get(self.baseurl_cn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._get, self.baseurl_cn, True
+    )
 
-  def test_get_invalid_pid(self):
-    '''Check the CRUD.get operation
-    '''
+  def WAITING_FOR_TEST_ENV_test_420(self):
+    '''MNRead.get()'''
+    self._get(self.baseurl_mn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._get, self.baseurl_mn, True
+    )
 
-    def dotest(test):
-      logging.info("GET %s" % test['baseurl'])
-      cli = d1baseclient.DataONEBaseClient(test['baseurl'])
-      try:
-        res = cli.get(self.token, test['boguspid'])
-        if hasattr(res, 'body'):
-          msg = res.body[:512]
-        else:
-          msg = res.read(512)
-        raise Exception('NotFound not raised for get on %s. Detail: %s' \
-                        % (test['baseurl'], msg))
-      except d1_common.types.exceptions.NotFound:
-        pass
+  # CNRead.getSystemMetadata()
+  # MNRead.getSystemMetadata()
 
-    for test in TEST_DATA['MN']:
-      dotest(test)
+  def _get_sysmeta(self, base_url, invalid_pid=False):
+    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    if invalid_pid:
+      pid = '_bogus_pid_845434598734598374534958'
+    else:
+      pid = testing_utilities.get_random_pid(client)
+    sysmeta = client.getSystemMetadata(pid)
+    self.assertTrue(
+      isinstance(
+        sysmeta, d1_common.types.generated.dataoneTypes.SystemMetadata
+      )
+    )
 
-  def _disabled_testPing(self):
-    '''Attempt to Ping the target.
-    '''
-    return
+  def WAITING_FOR_TEST_ENV_test_510(self):
+    '''CNRead.getSystemMetadata()'''
+    self._get_sysmeta(self.baseurl_cn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._get_sysmeta, self.baseurl_cn, True
+    )
 
-    def dotest(baseurl):
-      logging.info("PING %s" % baseurl)
-      cli = d1baseclient.DataONEBaseClient(baseurl)
-      res = cli.ping()
-      self.assertTrue(res)
+  def WAITING_FOR_TEST_ENV_test_520(self):
+    '''MNRead.getSystemMetadata()'''
+    self._get_sysmeta(self.baseurl_mn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._get_sysmeta, self.baseurl_mn, True
+    )
 
-    cli = d1baseclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/bogus")
-    res = cli.ping()
-    self.assertFalse(res)
-    for test in TEST_DATA['MN']:
-      dotest(test['baseurl'])
-    for test in TEST_DATA['CN']:
-      dotest(test['baseurl'])
+  # CNRead.describe()
+  # MNRead.describe()
 
-  def _disabled_testGetLogRecords(self):
-    '''Return and deserialize log records
-    '''
-    return
-    #basic deserialization test
-    #cli = restclient.DataONEBaseClient("http://dev-dryad-mn.dataone.org/mn")
-    #fromDate = ''
-    #res = cli.getLogRecords(self.token, fromDate)
+  def _describe(self, base_url, invalid_pid=False):
+    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    if invalid_pid:
+      pid = '_bogus_pid_4589734958791283794565'
+    else:
+      pid = testing_utilities.get_random_pid(client)
+    headers = client.describe(pid)
+    print headers
 
-  def _disabled_testGetSystemMetadata(self):
-    '''Return and successfully deserialize SystemMetadata
-    '''
+  def WAITING_FOR_TEST_ENV_test_610(self):
+    '''CNRead.describe()'''
+    self._describe(self.baseurl_cn)
+    self.assertRaises(
+      d1_common.types.exceptions.ServiceFailure,
+      self._describe,
+      self.baseurl_cn,
+      invalid_pid=True
+    )
 
-    def dotest(baseurl, existing, bogus):
-      logging.info("getSystemMetadata %s" % baseurl)
-      cli = d1baseclient.DataONEBaseClient(baseurl)
-      #self.assertRaises(d1_common.exceptions.NotFound,
-      #                  cli.getSystemMetadata, self.token, bogus)
-      res = cli.getSystemMetadata(self.token, existing)
+  def WAITING_FOR_TEST_ENV_test_620(self):
+    '''MNRead.describe()'''
+    self._describe(self.baseurl_mn)
+    self.assertRaises(
+      d1_common.types.exceptions.ServiceFailure,
+      self._describe,
+      self.baseurl_mn,
+      invalid_pid=True
+    )
 
-    return
-    for test in TEST_DATA['MN']:
-      dotest(test['baseurl'], test['existingpid'], test['boguspid'])
-    for test in TEST_DATA['CN']:
-      dotest(test['baseurl'].test['existingpid'], test['boguspid'])
+  # CNRead.getChecksum()
+  # MNRead.getChecksum()
 
-  def _disabled_testListObjects(self):
-    '''Return and successfully deserialize listObjects
-    '''
+  def _get_checksum(self, base_url, invalid_pid=False):
+    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    if invalid_pid:
+      pid = '_bogus_pid_845434598734598374534958'
+    else:
+      pid = testing_utilities.get_random_pid(client)
+    checksum = client.getChecksum(pid)
+    self.assertTrue(isinstance(checksum, d1_common.types.generated.dataoneTypes.Checksum))
 
-    def dotest(baseurl):
-      logging.info("listObjects %s" % baseurl)
-      cli = d1baseclient.DataONEBaseClient(baseurl)
-      start = 0
-      count = 2
-      res = cli.listObjects(self.token, start=start, count=count)
-      self.assertEqual(start, res.start)
-      self.assertEqual(count, res.count)
+  def WAITING_FOR_TEST_ENV_test_710(self):
+    '''CNRead.getChecksum()'''
+    self._get_checksum(self.baseurl_cn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._get_checksum, self.baseurl_cn, True
+    )
 
-    return
-    for test in TEST_DATA['CN']:
-      dotest(test['baseurl'])
-    for test in TEST_DATA['MN']:
-      dotest(test['baseurl'])
+  def WAITING_FOR_TEST_ENV_test_720(self):
+    '''MNRead.getChecksum()'''
+    self._get_checksum(self.baseurl_mn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._get_checksum, self.baseurl_mn, True
+    )
 
-  def _disabled_testIsAuthorized(self):
-    raise Exception('Not Implemented')
+  # CNCore.listObjects()
+  # MNCore.listObjects()
 
-  def _disabled_testSetAccess(self):
-    raise Exception('Not Implemented')
+  def _listObjects(self, baseURL):
+    '''listObjects() returns a valid ObjectList that contains at least 3 entries'''
+    client = d1_client.d1baseclient.DataONEBaseClient(baseURL)
+    list = client.listObjects(start=0, count=10, startTime=None, endTime=None)
+    self.assertTrue(isinstance(list, d1_common.types.generated.dataoneTypes.ObjectList))
+    self.assertEqual(list.count, len(list.objectInfo))
+    entry = list.objectInfo[0]
+    self.assertTrue(
+      isinstance(
+        entry.identifier, d1_common.types.generated.dataoneTypes.Identifier
+      )
+    )
+    self.assertTrue(
+      isinstance(
+        entry.formatId, d1_common.types.generated.dataoneTypes.ObjectFormatIdentifier
+      )
+    )
+
+  def WAITING_FOR_TEST_ENV_test_810(self):
+    '''CNCore.listObjects()'''
+    self._listObjects(self.baseurl_cn)
+
+  def WAITING_FOR_TEST_ENV_test_820(self):
+    '''MNCore.listObjects()'''
+    self._listObjects(self.baseurl_mn)
+
+    # CNAuthorization.isAuthorized()
+    # MNAuthorization.isAuthorized()
+
+  def _is_authorized(self, base_url, invalid_pid=False):
+    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    if invalid_pid:
+      pid = '_bogus_pid_845434598734598374534958'
+    else:
+      pid = testing_utilities.get_random_pid(client)
+    auth = client.isAuthorized(pid, 'read')
+    self.assertTrue(isinstance(auth, bool))
+
+  def WAITING_FOR_TEST_ENV_test_910(self):
+    '''CNAuthorization.isAuthorized()'''
+    self._is_authorized(self.baseurl_cn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._is_authorized, self.baseurl_cn, True
+    )
+
+  def WAITING_FOR_TEST_ENV_test_920(self):
+    '''MNAuthorization.isAuthorized()'''
+    self._is_authorized(self.baseurl_mn)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._is_authorized, self.baseurl_mn, True
+    )
 
 #===============================================================================
 
-if __name__ == "__main__":
-  from node_test_common import loadTestInfo, initMain
-  TEST_DATA = initMain()
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
+  parser.add_option(
+    '--cn-url',
+    dest='cn_url',
+    action='store',
+    type='string',
+    default='http://cn-dev.dataone.org/cn/'
+  )
+  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
   else:
-    unittest.main(argv=argv)
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestDataONEBaseClient
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()

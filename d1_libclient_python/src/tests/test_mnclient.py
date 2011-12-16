@@ -24,95 +24,128 @@
 Unit tests for mnclient.
 
 :Created: 2011-01-20
-:Author: DataONE (Vieglais)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
-import unittest
+# Stdlib.
 import logging
-from d1_client import mnclient
-import d1_common.types.exceptions
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import random
+import sys
+import unittest
+import uuid
+import StringIO
 
-TEST_DATA = {}
+# 3rd party.
+import pyxb
+
+# D1.
+from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import generator.accesspolicy
+import generator.identifier
+import generator.person
+import generator.random_data
+import generator.replicationpolicy
+import generator.subject
+import generator.systemmetadata
+
+# App.
+from d1_client import mnclient
+import testing_utilities
+import testing_context
 
 
 class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
-    pass
+    self.baseurl = 'https://localhost/mn/'
+    self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
 
   def tearDown(self):
     pass
 
-  def _disabled_test_create(self):
-    raise Exception('Not Implemented')
+  #=============================================================================
+  # MNCore
+  #=============================================================================
 
-  def _disabled_test_update(self):
-    raise Exception('Not Implemented')
+  def WAITING_FOR_STABLE_MN_test_1010(self):
+    '''MNCore.ping() returns True'''
+    ping = self.client.ping()
+    self.assertTrue(isinstance(ping, bool))
+    self.assertTrue(ping)
 
-  def _disabled_test_delete(self):
-    raise Exception('Not Implemented')
+  def WAITING_FOR_STABLE_MN_test_1020(self):
+    '''MNCore.getCapabilities() returns a valid Node'''
+    node = self.client.getCapabilities()
+    self.assertTrue(isinstance(node, dataoneTypes.Node))
 
-  def test_getChecksum(self):
-    '''Verify checksum response deserializes and value matches expected
-    '''
-    for test in TEST_DATA['MN']:
-      cli = mnclient.MemberNodeClient(test['baseurl'])
-      pid = test['existingpid']
-      try:
-        cksum = cli.getChecksum(self.token, pid, checksumAlgorithm=None)
-        self.assertEqual(test['existingpid_ck'], cksum.value())
-      except d1_common.exceptions.NotImplemented, e:
-        msg = 'Invalid checksum response from %s' % test['baseurl']
-        msg += "\nRequest URL=%s" % cli._lasturl
-        raise Exception(msg, str(e))
-      except Exception, e:
-        msg = 'Invalid checksum response from %s' % test['baseurl']
-        msg += "\nRequest URL=%s" % cli._lasturl
-        raise Exception(msg, str(e))
+  #=============================================================================
+  # MNStorage
+  #=============================================================================
 
-  def test_getChecksumFail(self):
-    '''Try and geta checksum for a bogus identifier
-    '''
-    for test in TEST_DATA['MN']:
-      cli = mnclient.MemberNodeClient(test['baseurl'])
-      try:
-        res = cli.getChecksumResponse(self.token, test['boguspid'])
-        try:
-          msg = res.body[:512]
-        except:
-          msg = res.read(512)
-        raise Exception("NotFound not raised: %s\n%s" % (test['baseurl'], msg))
-      except d1_common.exceptions.NotFound, e:
-        pass
+  # Only tested through GMN integration tests for now.
 
-  def _disabled_test_replicate(self):
-    raise Exception('Not Implemented')
+  #=============================================================================
+  # MNReplication
+  #=============================================================================
 
-  def _disabled_test_synchronizationFailed(self):
-    raise Exception('Not Implemented')
+  # Only tested through GMN integration tests for now.
 
-  def _disabled_test_getCapabilities(self):
-    '''Deserialize getCapabilities response
-    '''
-    for test in TEST_DATA['MN']:
-      cli = mnclient.MemberNodeClient(test['baseurl'])
-      try:
-        nodeinfo = cli.getCapabilities()
-        self.assertTrue(len(nodeinfo.node) > 0)
-      except d1_common.exceptions.NotImplemented, e:
-        msg = "Could not parse capabilities document for %s" % test['baseurl']
-        msg += "\nRequest URL=%s" % cli._lasturl
-        raise Exception(msg, str(e))
-      except Exception, e:
-        msg = "Could not parse capabilities document for %s" % test['baseurl']
-        msg += "\nRequest URL=%s" % cli._lasturl
-        raise Exception(msg, str(e))
+  #===============================================================================
 
 
-if __name__ == "__main__":
-  import sys
-  from node_test_common import loadTestInfo, initMain
-  TEST_DATA = initMain()
-  unittest.main(argv=sys.argv)
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
+  parser.add_option(
+    '--cn-url',
+    dest='cn_url',
+    action='store',
+    type='string',
+    default='http://cn-dev.dataone.org/cn/'
+  )
+  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestMNClient
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()
