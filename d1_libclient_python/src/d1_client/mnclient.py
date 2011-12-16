@@ -18,6 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 '''Module d1_client.mnclient
 ============================
 
@@ -32,207 +33,218 @@ with functionality specific to Member Nodes.
 
 # Stdlib.
 import logging
+import sys
 import urlparse
 
 # D1.
-from d1_common import const
-from d1_common import util
-from d1baseclient import DataONEBaseClient
-import objectlistiterator
+import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.util
+
+# App.
+import d1baseclient
+import objectlistiterator
 
 
-class MemberNodeClient(DataONEBaseClient):
-  def __init__(self, baseurl, defaultHeaders={}, timeout=10, keyfile=None,
-               certfile=None, strictHttps=True, keep_response_body=False):
-    DataONEBaseClient.__init__(
-      self,
-      baseurl,
-      defaultHeaders=defaultHeaders,
-      timeout=timeout,
-      keyfile=keyfile,
-      certfile=certfile,
-      strictHttps=strictHttps
-    )
-    self.logger = logging.getLogger('MemberNodeClient')
-
-    self.methodmap.update(
-      {
-        'create': u'object/%(pid)s',
-        'update': u'object_put/%(pid)s',
-        'getchecksum': u'checksum/%(pid)s',
-        'getcapabilities': u'node',
-      }
-    )
-    self.lastresponse = None
-    # Set this to True to preserve a copy of the last response.read() as the
-    # body attribute of self.lastresponse
-    self.keep_response_body = keep_response_body
-
-  @util.str_to_unicode
-  def createResponse(self, pid, obj, sysmeta, vendorSpecific=None):
-    '''
-    Create a Science Object.
+class MemberNodeClient(d1baseclient.DataONEBaseClient):
+  def __init__(self,
+               base_url,
+               timeout=d1_common.const.RESPONSE_TIMEOUT, 
+               defaultHeaders=None,
+               cert_path=None, 
+               key_path=None, 
+               strict=True, 
+               capture_response_body=False,
+               version='v1'):
+    '''Connect to a DataONE Member Node.
     
-    :param pid: The DataONE Persistent Identifier of the object being created. 
-    :type pid: Identifier
-    :param obj: The bytes of the object to create.
-    :type obj: String or File Like Object
-    :param sysmeta: System Metadata for the object being created.
-    :type sysmeta: PyXB SystemMetadata
-        :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-
-    :returns: Unprocessed response from server.
-    :return type: httplib.HTTPResponse 
+    :param base_url: DataONE Node REST service BaseURL
+    :type host: string
+    :param timeout: Time in seconds that requests will wait for a response.
+    :type timeout: integer
+    :param defaultHeaders: headers that will be sent with all requests.
+    :type defaultHeaders: dictionary
+    :param cert_path: Path to a PEM formatted certificate file.
+    :type cert_path: string
+    :param key_path: Path to a PEM formatted file that contains the private key
+      for the certificate file. Only required if the certificate file does not
+      itself contain a private key. 
+    :type key_path: string
+    :param strict: Raise BadStatusLine if the status line can’t be parsed
+      as a valid HTTP/1.0 or 1.1 status line.
+    :type strict: boolean
+    :param capture_response_body: Capture the response body from the last
+      operation and make it available in last_response_body.
+    :type capture_response_body: boolean
+    :returns: None    
     '''
-    url = self.RESTResourceURL('create', pid=pid)
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
+    d1baseclient.DataONEBaseClient.__init__(self, base_url=base_url,
+      timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
+      key_path=key_path, strict=strict,
+      capture_response_body=capture_response_body, version=version)
+    self.logger = logging.getLogger('MemberNodeClient')
+    # A dictionary that provides a mapping from method name (from the DataONE
+    # APIs) to a string format pattern that will be appended to the URL.
+    self.methodmap.update({
+      # MNCore
+      'ping': u'monitor/ping',
+      'getCapabilities': u'node',
+      # MNStorage
+      'create': u'object/%(pid)s',
+      'update': u'object_put/%(pid)s',
+      'delete': u'object/%(pid)s',
+      'systemMetadataChanged': 'dirtySystemMetadata',
+      # MNReplication
+      'replicate': 'replicate',
+      'getReplica': 'replica/%(pid)s',
+    })
+
+
+  # ============================================================================
+  # MNCore
+  # ============================================================================
+  
+  # MNCore.ping() → Boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.ping
+
+  def ping(self, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('ping')    
+    response = self.GET(url, headers=vendorSpecific)
+    return self._capture_and_get_ok_status(response)
+
+  # MNCore.getCapabilities() → Node
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getCapabilities
+
+  def getCapabilitiesResponse(self, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('getCapabilities')
+    return self.GET(url, headers=vendorSpecific)
+
+
+  def getCapabilities(self, vendorSpecific=None):
+    response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
+    return self._capture_and_deserialize(response)
+
+  # ============================================================================
+  # MNStorage
+  # ============================================================================
+
+  # MNStorage.create(session, pid, object, sysmeta) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.create
+  
+  @d1_common.util.str_to_unicode
+  def createResponse(self, pid, obj, sysmeta, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('create', pid=pid)
     # Serialize sysmeta to XML.
     sysmeta_xml = sysmeta.toxml()
     mime_multipart_files = [
       ('object', 'content.bin', obj),
-      ('sysmeta', 'sysmeta.xml', sysmeta_xml.encode('utf-8')),
+      ('sysmeta','sysmeta.xml', sysmeta_xml.encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files, headers=headers)
+    return self.POST(url, files=mime_multipart_files, headers=vendorSpecific)
 
-  @util.str_to_unicode
+
+  @d1_common.util.str_to_unicode
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
-    response = self.createResponse(pid, obj, sysmeta, vendorSpecific=vendorSpecific)
-    return self.isHttpStatusOK(response.status)
+    response = self.createResponse(pid, obj, sysmeta,
+                                   vendorSpecific=vendorSpecific)
+    return self.capture_and_get_ok_status(response)
 
-  @util.str_to_unicode
+  # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.update
+  
+  @d1_common.util.str_to_unicode
   def updateResponse(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
-    '''
-    :param pid: The identifier of the object that is being updated 
-    :type pid: Identifier
-    :param obj: Science Data
-    :type obj: Unicode or file like object
-    :param new_pid: The identifier that will become the replacement
-                    identifier for the existing object after the
-                    update.
-    :type new_pid: Identifier
-    :param sysmeta:
-    :type: sysmeta: Unicode or file like object
-    :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-    :returns: True on successful completion
-    :return type: Boolean
-    '''
-    url = self.RESTResourceURL('update', pid=pid)
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('update', pid=pid)
     headers = {}
     headers['newPid'] = new_pid
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    files = [('object', 'content.bin', obj), ('sysmeta', 'systemmetadata.xml', sysmeta), ]
+    headers.update(vendorSpecific)
+    files = [
+      ('object', 'content.bin', obj),
+      ('sysmeta','systemmetadata.xml', sysmeta),
+    ]
     # TODO: Should be PUT against /object. Instead is POST against
     # /object_put. Change when PUT support in Django is fixed.
     return self.POST(url, files=files, headers=headers)
 
-  @util.str_to_unicode
-  def update(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
-    response = self.updateResponse(
-      pid, obj, new_pid, sysmeta,
-      vendorSpecific=vendorSpecific
-    )
-    return self.isHttpStatusOK(response.status)
 
-  @util.str_to_unicode
+  @d1_common.util.str_to_unicode
+  def update(self, pid, obj, new_pid, sysmeta, vendorSpecific=None):
+    response = self.updateResponse(pid, obj, new_pid, sysmeta,
+                                   vendorSpecific=vendorSpecific)
+    return self.capture_and_get_ok_status(response)
+
+  # MNStorage.delete(session, pid) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.delete
+
+  @d1_common.util.str_to_unicode
   def deleteResponse(self, pid, vendorSpecific=None):
-    '''Delete a SciObj from MN.
-    :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-    '''
-    url = self.RESTResourceURL('get', pid=pid)
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    response = self.DELETE(url, headers=headers)
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('get', pid=pid)
+    response = self.DELETE(url, headers=vendorSpecific)
     return response
 
-  @util.str_to_unicode
+  
+  @d1_common.util.str_to_unicode
   def delete(self, pid, vendorSpecific=None):
     response = self.deleteResponse(pid, vendorSpecific=vendorSpecific)
-    doc = response.read()
-    if self.keep_response_body:
-      self.lastresponse.body = doc
-    return dataoneTypes.CreateFromDocument(doc)
+    return self._capture_and_deserialize(response)
 
-  @util.str_to_unicode
-  def getChecksumResponse(self, pid, checksumAlgorithm=None, vendorSpecific=None):
-    '''
-    :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-    '''
-    url = self.RESTResourceURL('getchecksum', pid=pid)
-    url_params = {'checksumAlgorithm': checksumAlgorithm, }
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    response = self.GET(url, url_params=url_params, headers=headers)
-    return response
+  # MNStorage.systemMetadataChanged(session, pid, serialVersion, dateSysMetaLastModified) → boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.systemMetadataChanged
+  
+  @d1_common.util.str_to_unicode
+  def systemMetadataChangedResponse(self, pid):
+    url = self._rest_url('systemMetadataChanged')
+    mime_multipart_files = [
+      ('pid', 'pid', pid.toxml().encode('utf-8')),
+    ]
+    return self.POST(url, files=mime_multipart_files)
 
-  @util.str_to_unicode
-  def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
-    response = self.getChecksumResponse(
-      pid, checksumAlgorithm, vendorSpecific=vendorSpecific
-    )
-    doc = response.read()
-    if self.keep_response_body:
-      self.lastresponse.body = doc
-    return dataoneTypes.CreateFromDocument(doc)
 
-  @util.str_to_unicode
-  def replicate(self, sysmeta, sourceNode, vendorSpecific=None):
-    raise Exception('Not Implemented')
+  @d1_common.util.str_to_unicode
+  def systemMetadataChanged(self, pid):
+    response = self.systemMetadataChangedResponse(pid)
+    return self._capture_and_get_ok_status(response)
 
-  @util.str_to_unicode
-  def synchronizationFailed(self, message):
-    raise Exception('Not Implemented')
 
-  def getCapabilitiesResponse(self, vendorSpecific=None):
-    url = self.RESTResourceURL('getcapabilities')
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    return self.GET(url, headers=headers)
+  # ============================================================================
+  # MNReplication
+  # ============================================================================
 
-  def getCapabilities(self, vendorSpecific=None):
-    '''
-    :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-    '''
-    response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
-    doc = response.read()
-    if self.keep_response_body:
-      self.lastresponse.body = doc
-    return dataoneTypes.CreateFromDocument(doc)
+  # MNReplication.replicate(session, sysmeta, sourceNode) → boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.replicate
 
-  @util.str_to_unicode
-  def describeResponse(self, pid, vendorSpecific=None):
-    '''
-    :param vendorSpecific: Dictionary of vendor specific extensions.
-    :type vendorSpecific: dict
-    '''
-    url = self.RESTResourceURL('get', pid=pid)
-    headers = {}
-    if vendorSpecific is not None:
-      headers.update(vendorSpecific)
-    response = self.HEAD(url, headers=headers)
-    return response
+  @d1_common.util.str_to_unicode
+  def replicateResponse(self, sysmeta, sourceNode):
+    url = self._rest_url('replicate')
+    mime_multipart_files = [
+      ('sysmeta', 'sysmeta', sysmeta.toxml().encode('utf-8')),
+      ('sourceNode', 'sourceNode', sourceNode.toxml().encode('utf-8')),
+    ]
+    return self.POST(url, files=mime_multipart_files)
 
-  @util.str_to_unicode
-  def describe(self, pid, vendorSpecific=None):
-    '''This method provides a lighter weight mechanism than
-    MN_crud.getSystemMetadata() for a client to determine basic properties of
-    the referenced object.
 
-    :param: (string) Identifier of object to retrieve.
-    :return: mimetools.Message or raises DataONEException.
+  @d1_common.util.str_to_unicode
+  def replicate(self, sysmeta, sourceNode):
+    response = self.replicateResponse(sysmeta, sourceNode)
+    return self._capture_and_get_ok_status(response)
 
-    TODO: May need to be completely removed (since clients should use CNs for
-    object discovery).
-    '''
-    return self.describeResponse(pid, vendorSpecific=vendorSpecific)
+  # MNReplication.getReplica(session) → boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.getReplica
+
+  @d1_common.util.str_to_unicode
+  def getReplica(self, pid, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('getReplica', pid=pid)
+    return self.GET(url, headers=vendorSpecific)
+

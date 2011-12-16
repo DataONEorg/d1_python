@@ -24,22 +24,27 @@
 Unit tests for d1client.
 
 :Created: 2010-01-08
-:Author: DataONE (Vieglais)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
-import unittest
+# Stdlib.
 import logging
+import sys
+import unittest
 
-from d1_common import xmlrunner
-from d1_common.types import exceptions
-#from d1_common.types import systemmetadata
-from d1_common import const
+# D1.
+import d1_common.const
 import d1_common.testcasewithurlcompare
-
-from d1_client import d1client
+import d1_common.types.exceptions
 import d1_common.util
+import d1_common.xmlrunner
+
+# App.
+import d1_client.d1client
+import testing_utilities
+import testing_context
 
 MEMBER_NODES = {
   'dryad': 'http://dev-dryad-mn.dataone.org/mn',
@@ -56,110 +61,59 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
   def setUp(self):
     self.target = MEMBER_NODES['dryad']
 
-  def testGet(self):
-    return
-    cli = d1client.DataONEClient(target=self.target)
-    #try loading some random object
-    start = 23
-    count = 1
-    startTime = None
-    endTime = None
-    requestFormat = 'text/xml'
-    objlist = cli.listObjects(
-      start=start,
-      count=count,
-      startTime=startTime,
-      endTime=endTime,
-      requestFormat=requestFormat
-    )
-    id = objlist.objectInfo[0].pid
-    logging.info("Attempting to get ID=%s" % id)
-    bytes = cli.get(id).read()
-    headers = cli.headers
-    headers['Accept'] = 'text/xml'
-    sysmeta = cli.getSystemMetadata(id, headers=headers)
-    self.assertEqual(sysmeta.identifier, id)
-
-  def testGetFail(self):
-    cli = d1client.DataONEClient(target=self.target)
-    # see if failure works
-    id = 'some bogus id'
-    self.assertRaises(exceptions.NotFound, cli.get, id)
-
-  def testGetSystemMetadata(self):
-    #TODO: test getSystemMetadata()
-    pass
-
-  def _subListObjectTest(self, requestformat):
-    cli = d1client.DataONEClient(target=self.target)
-    start = 0
-    count = 10
-    startTime = None
-    endTime = None
-    requestFormat = 'text/xml'
-    objlist = cli.listObjects(
-      start=start,
-      count=count,
-      startTime=startTime,
-      endTime=endTime,
-      requestFormat=requestFormat
-    )
-    self.assertEqual(objlist.count, len(objlist.objectInfo))
-    obj = objlist.objectInfo[0]
-    tmp = obj.size
-    tmp = obj.checksum
-    tmp = obj.dateSysMetadataModified
-    tmp = obj.identifier
-    tmp = obj.objectFormat
-
-    start = 4
-    count = 3
-    objlist2 = cli.listObjects(
-      start=start,
-      count=count,
-      startTime=startTime,
-      endTime=endTime,
-      requestFormat=requestFormat
-    )
-    self.assertEqual(objlist2.count, len(objlist2.objectInfo))
-    self.assertEqual(objlist2.count, count)
-    i = 0
-    for obj in objlist2.objectInfo:
-      self.assertEqual(objlist.objectInfo[4 + i].identifier, obj.identifier)
-      logging.info(obj.identifier)
-      i += 1
-
-  def testListObjectsJson(self):
-    #requestFormat = 'application/json'
-    #self._subListObjectTest(requestFormat)
-    pass
-
-  def testListObjectsXml(self):
-    requestFormat = 'text/xml'
-    self._subListObjectTest(requestFormat)
-
 #===============================================================================
 
 
-class TestListObjects(unittest.TestCase):
-  def setUp(self):
-    self.target = MEMBER_NODES['dryad']
-
-  def testValidListObjects(self):
-    return
-    objectListUrl = "https://repository.dataone.org/software/cicore/trunk/schemas/dataoneTypes.xsd"
-    cli = d1client.DataONEClient(target=self.target)
-    response = cli.listObjects(start=0, count=5)
-    logging.error("====")
-    logging.error(response)
-    # PyXB parser validates the object.
-
-    #  def testListSlice(self):
-    #    olist = objectlist.D1ObjectList(None)
-    #    a = olist[1:10]
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
 
 
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
-  #unittest.main(testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
+  parser.add_option(
+    '--cn-url',
+    dest='cn_url',
+    action='store',
+    type='string',
+    default='http://cn-dev.dataone.org/cn/'
+  )
+  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestDataONEClient
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()
