@@ -176,6 +176,8 @@ def joinPathElements(*elements):
   url = []
   for element in elements:
     element = stripElementSlashes(element)
+    if element == '':
+      continue
     url.append(element)
   return '/'.join(url)
 

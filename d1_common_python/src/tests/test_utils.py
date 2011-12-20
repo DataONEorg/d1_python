@@ -86,6 +86,8 @@ class TestUtils(unittest.TestCase):
     self.assertEqual('element', d1_common.util.stripElementSlashes('element/'))
     self.assertEqual('ele/ment', d1_common.util.stripElementSlashes('/ele/ment/'))
     self.assertEqual('ele//ment', d1_common.util.stripElementSlashes('ele//ment'))
+    self.assertEqual('', d1_common.util.stripElementSlashes('/'))
+    self.assertEqual('', d1_common.util.stripElementSlashes('//'))
 
   def test_joinPathElements(self):
     self.assertEqual('a/b', d1_common.util.joinPathElements('a', 'b'))
