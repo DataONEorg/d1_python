@@ -31,13 +31,16 @@ Utilities.
 
 # Stdlib.
 import StringIO
+import datetime
 import email.message
+import email.utils
 import logging
 import os
 import re
 import shutil
 import sys
 import tempfile
+import time
 import urllib
 import xml.dom.minidom
 
@@ -56,19 +59,47 @@ except ImportError, e:
 import const
 
 
-def normalize_to_utc(datetime_):
-  '''Normalize datetime to UTC and remove time zone information.
-  Requirements: The provided datetime must contain time zone information and
-  the information must include an absolute offset from UTC so that a
-  timezone database is not required for the normalization.
+def are_checksums_equal(c1, c2):
+  return c1.value().lower() == c2.value().lower() \
+    and c1.algorithm == c2.algorithm
+
+
+def to_http_datetime(datetime_):
+  '''Format datetime to the preferred HTTP Full Date format, which is a 
+  fixed-length subset of that defined by RFC 1123.
+  http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
   '''
-  if datetime_ is None:
-    return None
+  epoch_seconds = time.mktime(datetime_.timetuple())
+  return email.utils.formatdate(epoch_seconds, localtime=False, usegmt=True)
+
+
+def from_http_datetime(http_full_datetime):
+  '''Parse HTTP Full Date formats. Each of the allowed formats are supported:
+  Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+  Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+  Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+  http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+  '''
+  date_parts = list(email.utils.parsedate(http_full_datetime)[:6])
+  year = date_parts[0]
+  if year <= 99:
+    year = year + 2000 if year < 50 else year + 1900
+  return datetime.datetime(year, *date_parts[1:])
+
+
+def is_utc(datetime_):
+  '''Check that datetime contains time zone information and that the
+  timezone is UTC.
+  '''
   if datetime_.tzinfo is None:
-    return datetime_
-  datetime_ -= datetime_.utcoffset()
-  datetime_ = datetime_.replace(tzinfo=None)
-  return datetime_
+    return False
+  try:
+    utc_offset = datetime_.utcoffset()
+  except:
+    return False
+  if utc_offset.total_seconds():
+    return False
+  return True
 
 
 def pretty_xml(xml_doc):

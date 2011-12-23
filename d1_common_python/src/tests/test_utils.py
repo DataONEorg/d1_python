@@ -31,13 +31,15 @@ Unit tests for various utilities.
 '''
 
 # Stdlib.
-import sys
-import logging
-import unittest
 import codecs
+import datetime
+import logging
 import os
+import sys
+import unittest
 
 # D1.
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 from d1_common import xmlrunner
 import d1_common.util
 
@@ -46,6 +48,66 @@ import util
 
 
 class TestUtils(unittest.TestCase):
+  def test_010(self):
+    '''to_http_datetime()'''
+    dt = datetime.datetime(1999, 3, 19, 1, 2, 3)
+    dt_str = 'Fri, 19 Mar 1999 08:02:03 GMT' # adjusted to GMT
+    self.assertEqual(d1_common.util.to_http_datetime(dt), dt_str)
+
+  # from_http_datetime()
+
+  def _from_http_datetime(self, that_fateful_day_in_november_94):
+    dt = d1_common.util.from_http_datetime(that_fateful_day_in_november_94)
+    self.assertEqual(dt, datetime.datetime(1994, 11, 6, 8, 49, 37))
+
+  def test_020(self):
+    '''from_http_datetime(): RFC 822, updated by RFC 1123'''
+    self._from_http_datetime('Sun, 06 Nov 1994 08:49:37 GMT')
+
+  def test_021(self):
+    '''from_http_datetime(): RFC 850, obsoleted by RFC 1036'''
+    self._from_http_datetime('Sunday, 06-Nov-94 08:49:37 GMT')
+
+  def test_022(self):
+    '''from_http_datetime(): ANSI C's asctime() format'''
+    self._from_http_datetime('Sun Nov  6 08:49:37 1994')
+
+  # Checksum
+
+  def test_030(self):
+    '''are_checksums_equal(): Same checksum, same algorithm'''
+    c1 = dataoneTypes.Checksum('BAADF00D')
+    c1.algorithm = 'SHA-1'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'SHA-1'
+    self.assertTrue(d1_common.util.are_checksums_equal(c1, c2))
+
+  def test_031(self):
+    '''are_checksums_equal(): Same checksum, different algorithm'''
+    c1 = dataoneTypes.Checksum('BAADF00D')
+    c1.algorithm = 'SHA-1'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'MD5'
+    self.assertFalse(d1_common.util.are_checksums_equal(c1, c2))
+
+  def test_032(self):
+    '''are_checksums_equal(): Different checksum, same algorithm'''
+    c1 = dataoneTypes.Checksum('BAADF00DX')
+    c1.algorithm = 'MD5'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'MD5'
+    self.assertFalse(d1_common.util.are_checksums_equal(c1, c2))
+
+  def test_033(self):
+    '''are_checksums_equal(): Case insensitive checksum comparison'''
+    c1 = dataoneTypes.Checksum('baadf00d')
+    c1.algorithm = 'MD5'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'MD5'
+    self.assertTrue(d1_common.util.are_checksums_equal(c1, c2))
+
+  # Path elements.
+
   def testEncodePathElement(self):
     fpath = os.path.abspath(os.path.dirname(__file__))
     ftest = os.path.join(fpath, 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt')
@@ -106,13 +168,48 @@ class TestUtils(unittest.TestCase):
 
 #===============================================================================
 
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
   else:
-    unittest.main(argv=argv)
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestUtils
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()
