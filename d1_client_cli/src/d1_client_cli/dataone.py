@@ -207,7 +207,7 @@ class DataONECLI():
     h = hashlib.new(algorithm)
     with open(path, 'r') as f:
       while True:
-        data = f.read()
+        data = f.read(block_size)
         if not data:
           break
         h.update(data)
