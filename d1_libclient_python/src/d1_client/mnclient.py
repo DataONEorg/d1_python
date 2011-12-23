@@ -89,6 +89,8 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       # MNCore
       'ping': u'monitor/ping',
       'getCapabilities': u'node',
+      # MNRead
+      'getChecksum': u'checksum/%(pid)s',      
       # MNStorage
       'create': u'object/%(pid)s',
       'update': u'object_put/%(pid)s',
@@ -129,6 +131,31 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     return self._capture_and_deserialize(response)
 
   # ============================================================================
+  # MNRead
+  # ============================================================================
+
+  # MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getChecksum
+    
+  @d1_common.util.str_to_unicode
+  def getChecksumResponse(self, pid, checksumAlgorithm=None,
+                          vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}    
+    url = self._rest_url('getChecksum', pid=pid)
+    query = {
+      'checksumAlgorithm': checksumAlgorithm,
+    }
+    return self.GET(url, query=query, headers=vendorSpecific)
+
+  
+  @d1_common.util.str_to_unicode
+  def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
+    response = self.getChecksumResponse(pid, checksumAlgorithm, vendorSpecific)
+    return self._capture_and_deserialize(response)
+
+
+  # ============================================================================
   # MNStorage
   # ============================================================================
 
@@ -153,7 +180,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
     response = self.createResponse(pid, obj, sysmeta,
                                    vendorSpecific=vendorSpecific)
-    return self.capture_and_get_ok_status(response)
+    return self._capture_and_get_ok_status(response)
 
   # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.update
@@ -202,17 +229,19 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.systemMetadataChanged
   
   @d1_common.util.str_to_unicode
-  def systemMetadataChangedResponse(self, pid):
+  def systemMetadataChangedResponse(self, pid, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
     url = self._rest_url('systemMetadataChanged')
     mime_multipart_files = [
       ('pid', 'pid', pid.toxml().encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files)
+    return self.POST(url, files=mime_multipart_files, headers=vendorSpecific)
 
 
   @d1_common.util.str_to_unicode
-  def systemMetadataChanged(self, pid):
-    response = self.systemMetadataChangedResponse(pid)
+  def systemMetadataChanged(self, pid, vendorSpecific=None):
+    response = self.systemMetadataChangedResponse(pid, vendorSpecific)
     return self._capture_and_get_ok_status(response)
 
 
@@ -224,18 +253,23 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.replicate
 
   @d1_common.util.str_to_unicode
-  def replicateResponse(self, sysmeta, sourceNode):
+  def replicateResponse(self, sysmeta, sourceNode, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
     url = self._rest_url('replicate')
     mime_multipart_files = [
       ('sysmeta', 'sysmeta', sysmeta.toxml().encode('utf-8')),
-      ('sourceNode', 'sourceNode', sourceNode.toxml().encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files)
+    mime_multipart_fields = [
+      ('sourceNode', sourceNode.encode('utf-8')),
+    ]
+    return self.POST(url, files=mime_multipart_files,
+                     fields=mime_multipart_fields, headers=vendorSpecific)
 
 
   @d1_common.util.str_to_unicode
-  def replicate(self, sysmeta, sourceNode):
-    response = self.replicateResponse(sysmeta, sourceNode)
+  def replicate(self, sysmeta, sourceNode, vendorSpecific=None):
+    response = self.replicateResponse(sysmeta, sourceNode, vendorSpecific)
     return self._capture_and_get_ok_status(response)
 
   # MNReplication.getReplica(session) → boolean

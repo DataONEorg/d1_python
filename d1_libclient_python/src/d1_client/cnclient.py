@@ -111,6 +111,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
       # getSystemMetadata(): Implemented in d1baseclient
       'resolve': u'resolve/%(pid)s',
       # assertRelation(): Deprecated      
+      'getChecksum': u'checksum/%(pid)s',
       # listObjects(): implemented in d1baseclient
       'search': u'search',
       
@@ -303,6 +304,19 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def assertRelation(self, pidOfSubject, relationship, pidOfObject):
     raise Exception('Deprecated')
 
+  # CNRead.getChecksum(session, pid) → Checksum
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getChecksum
+
+  @d1_common.util.str_to_unicode
+  def getChecksumResponse(self, pid):
+    url = self._rest_url('getChecksum', pid=pid)
+    return self.GET(url)
+
+  
+  @d1_common.util.str_to_unicode
+  def getChecksum(self, pid):
+    response = self.getChecksumResponse(pid)
+    return self._capture_and_deserialize(response)
 
 
   # CNRead.search(session, queryType, query) → ObjectList

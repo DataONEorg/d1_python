@@ -31,7 +31,6 @@ CNCore/MNCore.getLogRecords()
 CNRead/MNRead.get()
 CNRead/MNRead.getSystemMetadata()
 CNRead/MNRead.describe()
-CNRead/MNRead.getChecksum()
 CNRead/MNRead.listObjects()
 CNAuthorization/MNAuthorization.isAuthorized()
 
@@ -128,7 +127,6 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       'get': u'object/%(pid)s',
       'getSystemMetadata': u'meta/%(pid)s',
       'describe': u'/object/%(pid)s',
-      'getChecksum': u'checksum/%(pid)s',
       'listObjects': u'object',
       # CNAuthorization / MNAuthorization
       'isAuthorized': u'isAuthorized/%(pid)s',
@@ -347,22 +345,6 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     '''
     response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
     return self._capture_and_get_headers(response)
-
-  # CNRead.getChecksum(session, pid) → Checksum
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getChecksum
-  # MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getChecksum
-    
-  @d1_common.util.str_to_unicode
-  def getChecksumResponse(self, pid):
-    url = self._rest_url('getChecksum', pid=pid)
-    return self.GET(url)
-
-  
-  @d1_common.util.str_to_unicode
-  def getChecksum(self, pid):
-    response = self.getChecksumResponse(pid)
-    return self._capture_and_deserialize(response)
 
   # CNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
