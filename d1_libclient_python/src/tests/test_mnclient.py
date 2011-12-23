@@ -60,7 +60,8 @@ import testing_context
 
 class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
-    self.baseurl = 'https://localhost/mn/'
+    #self.baseurl = 'https://localhost/mn/'
+    self.baseurl = 'http://127.0.0.1:8000'
     self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
 
   def tearDown(self):
@@ -80,6 +81,12 @@ class TestMNClient(TestCaseWithURLCompare):
     '''MNCore.getCapabilities() returns a valid Node'''
     node = self.client.getCapabilities()
     self.assertTrue(isinstance(node, dataoneTypes.Node))
+
+  # ============================================================================
+  # MNRead
+  # ============================================================================
+
+  # Only tested through GMN integration tests for now.
 
   #=============================================================================
   # MNStorage
