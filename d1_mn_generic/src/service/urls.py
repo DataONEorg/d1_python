@@ -39,8 +39,6 @@ admin.autodiscover()
 # URLconf for further processing.
 urlpatterns = patterns(
   '',
-  # CN.
-  (r'^cn/', include('service.cn.urls')),
   # GMN.
   (r'^', include('service.mn.urls')),
   # Admin.

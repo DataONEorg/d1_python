@@ -121,7 +121,7 @@ def db_to_log_records(view_result):
     logEntry.subject = row.subject.subject
     logEntry.event = row.event.event
     logEntry.dateLogged = row.date_logged
-    logEntry.memberNode = 'dummy' # TODO: Should probably be removed from schema.
+    logEntry.nodeIdentifier = settings.NODE_IDENTIFIER
 
     log.logEntry.append(logEntry)
 
@@ -166,7 +166,12 @@ def serialize_object(request, view_result):
   }
 
   d1_type = name_to_func_map[view_result['type']](view_result)
-  response.write(d1_type.toxml())
+  try:
+    response.write(d1_type.toxml())
+  except:
+    import pyxb
+    pyxb.RequireValidWhenGenerating(False)
+    response.write(d1_type.toxml())
 
   # Set headers.
   set_header(response, None, response.tell(), d1_common.const.MIMETYPE_XML)

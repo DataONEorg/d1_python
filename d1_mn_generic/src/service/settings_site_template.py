@@ -56,7 +56,7 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 #
 
 # The name under which this Member Node was registered with DataONE.
-GMN_SERVICE_NAME = 'test_gmn'
+NODE_IDENTIFIER = 'test_gmn'
 
 # Enable debug mode.
 # * WARNING: IN DEBUG MODE, CLIENTS CAN OVERRIDE ALL ACCESS CONTROL RULES AND

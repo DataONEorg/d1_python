@@ -286,7 +286,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     md5 = hashlib.md5(sciobj).hexdigest()
     now = datetime.datetime.now()
     sysmeta = self.generate_sysmeta(pid, size, md5, now,
-                                   gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
+                                    gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
     return sciobj, sysmeta
 
   
@@ -306,7 +306,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def A_delete_all_objects(self):
     '''Delete all objects.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
     client.delete_all_objects(
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
@@ -369,7 +369,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def A_clear_event_log(self):
     '''Clear event log.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
     client.delete_event_log(
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
@@ -386,7 +386,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Inject a set of fictitious events for each object.
     '''
     csv_file = open('test_log.csv', 'rb')
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
     client.inject_event_log(csv_file,
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
@@ -470,66 +470,65 @@ class TestSequenceFunctions(unittest2.TestCase):
                        sysmeta_obj.checksum.algorithm, sysmeta_path)
 
 
-  def update_sysmeta(self):
-    '''Update System Metadata.
-    '''
-    pid = '12Cpaup.txt'
-    
-    # Generate a new System Metadata object with Access Policy.
-    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
-                                    datetime.datetime(1976, 7, 8),
-                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+#  def update_sysmeta(self):
+#    '''Update System Metadata.
+#    '''
+#    pid = '12Cpaup.txt'
+#    
+#    # Generate a new System Metadata object with Access Policy.
+#    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
+#                                    datetime.datetime(1976, 7, 8),
+#                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+#
+#    access_policy_spec = (
+#      (('test_user_1',), ('read',)),
+#      (('test_user_2',), ('read',))
+#    )
+#
+#    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
+#
+#    sysmeta.rightsHolder = 'test_user_1'
+#
+#    # Serialize System Metadata to XML.
+#    sysmeta_xml = sysmeta.toxml()
+#    mime_multipart_files = [
+#      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
+#    ]
+#
+#    # POST to /meta/pid.
+#    test_update_sysmeta_url = urlparse.urljoin('/v1/meta/',
+#      d1_common.util.encodePathElement(pid))
+#    
+#    root = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
+#    response = root.POST(
+#      test_update_sysmeta_url, files=mime_multipart_files,
+#      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+#    self.assertEqual(response.status, 200)
 
-    access_policy_spec = (
-      (('test_user_1',), ('read',)),
-      (('test_user_2',), ('read',))
-    )
-
-    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
-
-    sysmeta.rightsHolder = 'test_user_1'
-
-    # Serialize System Metadata to XML.
-    sysmeta_xml = sysmeta.toxml()
-    mime_multipart_files = [
-      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
-    ]
-
-    # POST to /meta/pid.
-    test_update_sysmeta_url = urlparse.urljoin(self.opts.gmn_url,
-      'meta/{0}'.format(d1_common.util.encodePathElement(pid)))
-    
-    root = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = root.POST(
-      test_update_sysmeta_url, files=mime_multipart_files,
-      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
-    self.assertEqual(response.status, 200)
-
-
-  def object_update(self):
-    '''Update an object.
-    '''
-    # New object.
-    # SysMeta
-    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
-    sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
-    sysmeta_xml = open(sysmeta_path, 'rb').read()
-    # SciData
-    object_path = os.path.splitext(sysmeta_path)[0]
-    object_str = open(object_path, 'rb')
-    object_str = ''
-    for i in range(10 * 1024 * 1024):
-      object_str += 'a'
-    object_str += 'z'
-    # 
-    obsoleted_pid = 'AnserMatrix.htm'
-    new_pid = 'update_object_pid'
-    # Update.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.updateResponse(obsoleted_pid,
-                                     object_str, new_pid, sysmeta_xml,
-                                     vendorSpecific=self.session('test_user_1'))
-    return response
+#  def object_update(self):
+#    '''Update an object.
+#    '''
+#    # New object.
+#    # SysMeta
+#    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
+#    sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
+#    sysmeta_xml = open(sysmeta_path, 'rb').read()
+#    # SciData
+#    object_path = os.path.splitext(sysmeta_path)[0]
+#    object_str = open(object_path, 'rb')
+#    object_str = ''
+#    for i in range(10 * 1024 * 1024):
+#      object_str += 'a'
+#    object_str += 'z'
+#    # 
+#    obsoleted_pid = 'AnserMatrix.htm'
+#    new_pid = 'update_object_pid'
+#    # Update.
+#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+#    response = client.updateResponse(obsoleted_pid,
+#                                     object_str, new_pid, sysmeta_xml,
+#                                     vendorSpecific=self.session('test_user_1'))
+#    return response
 
   ##############################################################################
   # listObjects
@@ -744,43 +743,43 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
     checksum_obj = client.getChecksum(pid, checksumAlgorithm=algorithm,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    self.assertTrue(isinstance(checksum_obj, dataoneTypes.Checksum))
     self.assertEqual(checksum, checksum_obj.value())
     self.assertEqual(algorithm, checksum_obj.algorithm)
     
     
   def get_checksum_1(self):
-    '''getChecksum: md5'''
-    pid = 'Drug effect.xls'
+    '''getChecksum(): MD5'''
+    pid = 'Drugeffect.xls'
     checksum = '916a377112e3d4ed5812f8493a271966'
     algorithm = 'MD5'
     self.get_checksum_test(pid, checksum, algorithm)
 
 
   def get_checksum_2(self):
-    '''getChecksum: sha1'''
+    '''getChecksum(): SHA-1'''
     pid = 'emerson.app'
     checksum = '20b95b4c68c949f1a373efd3a4d612557d8e49b1'
-    algorithm = 'SHA1'
+    algorithm = 'SHA-1'
     self.get_checksum_test(pid, checksum, algorithm)
 
 
   def get_checksum_3(self):
-    '''getChecksum: sha224'''
+    '''getChecksum(): Unsupported algorithm returns InvalidRequest exception'''
     pid = 'FigS2_Hsieh.pdf'
-    checksum = 'fb9534987c3dceaa45e1ba4c0ecfba3414d5a8042fabd772862942af'
-    algorithm = 'SHA224'
-    self.get_checksum_test(pid, checksum, algorithm)
+    algorithm = 'INVALID_ALGORITHM'
+    self.assertRaises(d1_common.types.exceptions.InvalidRequest,
+                      self.get_checksum_test, pid, '', algorithm)
 
 
   def get_checksum_4(self):
-    '''getChecksum with unsupported algorithm returns InvalidRequest exception'''
-    pid = 'FigS2_Hsieh.pdf'
-    checksum = 'fb9534987c3dceaa45e1ba4c0ecfba3414d5a8042fabd772862942af'
-    algorithm = 'INVALID_ALGORITHM'
-    self.assertRaises(d1_common.types.exceptions.InvalidRequest,
-                      self.get_checksum_test, pid, checksum, algorithm)
+    '''getChecksum(): Non-existing object raises NotFound exception'''
+    pid = 'non-existing-pid'
+    algorithm = 'MD5'
+    self.assertRaises(d1_common.types.exceptions.NotFound,
+                      self.get_checksum_test, pid, '', algorithm)
 
-
+  
   ##############################################################################
   # systemMetadataChanged
   ##############################################################################
@@ -927,37 +926,28 @@ class TestSequenceFunctions(unittest2.TestCase):
     
   
   def replication(self, pid):
-    '''MNReplication.replicate(): Check for correct response to MNReplication.replicate()
+    '''MNReplication.replicate(): Check for correct response.
     Does NOT check if GMN acts on the request and actually performs the replication.
     '''
     scidata, sysmeta = self.generate_test_object(pid)
-    sysmeta_xml = sysmeta.toxml()
-    mime_multipart_files = [
-      ('sysmeta','sysmeta', sysmeta_xml.encode('utf-8')),
-    ]
-    mime_multipart_fields = [
-      ('sourceNode', 'test_mn_reference'),
-    ]
-    # POST to /meta/pid.
-    mnreplication_replicate_url = urlparse.urljoin(self.opts.gmn_url,
-      'replicate')
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    response = client.POST(
-      mnreplication_replicate_url, files=mime_multipart_files,
-      fields=mime_multipart_fields,
-      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
-    self.assertEqual(response.status, 200)
+    #source_node = dataoneTypes.nodeReference('test_source_node')
+    source_node = 'test_source_node'
+    success = client.replicate(sysmeta, source_node,
+      vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    self.assertTrue(success)
 
 
   def unicode_test_1(self):
     '''GMN and libraries handle Unicode correctly.
     '''
     client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    test_doc_path = os.path.join(self.opts.int_path,
-                                 'src', 'test', 'resources', 'd1_testdocs',
-                                 'encodingTestSet')
-    test_ascii_strings_path = os.path.join(test_doc_path,
-                                           'testAsciiStrings.utf8.txt')
+#    test_doc_path = os.path.join(self.opts.int_path,
+#                                 'src', 'test', 'resources', 'd1_testdocs',
+#                                 'encodingTestSet')
+#    test_ascii_strings_path = os.path.join(test_doc_path,
+#                                           'testAsciiStrings.utf8.txt')
+    test_ascii_strings_path = './tricky_identifiers_unicode.txt'
     file_obj = codecs.open(test_ascii_strings_path, 'rb', 'utf-8')
     for line in file_obj:
       line = line.strip()
@@ -966,16 +956,19 @@ class TestSequenceFunctions(unittest2.TestCase):
       except ValueError:
         continue
       scidata, sysmeta = self.generate_test_object(pid_unescaped)
-      sysmeta_xml = sysmeta.toxml()
       # Create the object on GMN.
-      client.create(pid_unescaped, StringIO.StringIO(scidata), sysmeta_xml,
+      client.create(pid_unescaped, StringIO.StringIO(scidata), sysmeta,
         vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
       # Retrieve the object from GMN.
-      scidata_retrieved = client.get(pid_unescaped).read()
-      sysmeta_obj_retrieved = client.getSystemMetadata(pid_unescaped)
+      scidata_retrieved = client.get(pid_unescaped,
+        vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))\
+          .read()
+      sysmeta_obj_retrieved = client.getSystemMetadata(pid_unescaped,
+        vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
       # Round-trip validation.
       self.assertEqual(scidata_retrieved, scidata)
-      self.assertEqual(sysmeta_obj_retrieved.identifier.value(), scidata)
+      self.assertEqual(sysmeta_obj_retrieved.identifier.value()\
+                       .encode('utf-8'), scidata)
 
   
   def auth_listobjects_1(self):
@@ -1071,11 +1064,11 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1040_managed_object_properties(self):
     self.object_properties()
 
-  def test_1060_managed_update_sysmeta(self):
-    self.update_sysmeta()
-    
 #  def test_1050_managed_object_update(self):
 #    self.object_update()
+
+#  def test_1060_managed_update_sysmeta(self):
+#    self.update_sysmeta()
 
   def test_1100_managed_get_object_count(self):
     self.get_object_count()
@@ -1152,12 +1145,15 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1252_managed_get_checksum_3(self):
     self.get_checksum_3()
     
+  def test_1253_managed_get_checksum_4(self):
+    self.get_checksum_4()
+
 #  def test_1330_managed_delete(self):
 #    self.delete()
 #
-#  def test_1340_managed_describe(self):
-#    self.describe()
-#
+  def test_1340_managed_describe(self):
+    self.describe()
+
   def test_1360_managed_unicode_test_1(self):
     self.unicode_test_1()
 
@@ -1216,8 +1212,11 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2040_wrapped_object_properties(self):
     self.object_properties()
 
-  def test_2060_wrapped_update_sysmeta(self):
-    self.update_sysmeta()
+#  def test_2050_wrapped_object_update(self):
+#    self.object_update()
+
+#  def test_2060_wrapped_update_sysmeta(self):
+#    self.update_sysmeta()
 
   def test_2100_wrapped_get_object_count(self):
     self.get_object_count()
@@ -1294,11 +1293,14 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2252_wrapped_get_checksum_3(self):
     self.get_checksum_3()
 
+  def test_2253_wrapped_get_checksum_4(self):
+    self.get_checksum_4()
+
 #  def test_2330_wrapped_delete(self):
 #    self.delete_test()
 #
-#  def test_2340_wrapped_describe(self):
-#    self.describe()
+  def test_2340_wrapped_describe(self):
+    self.describe()
 
   def test_2360_wrapped_unicode_test_1(self):
     self.unicode_test_1()
@@ -1329,7 +1331,7 @@ def main():
   # Command line opts.
   parser = optparse.OptionParser()
   parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
-  parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000')
   parser.add_option('--gmn2-url', dest='gmn2_url', action='store', type='string', default='http://0.0.0.0:8001/')
   parser.add_option('--gmn-replicate-src-ref', dest='replicate_src_ref', action='store', type='string', default='gmn_dryad')
   parser.add_option('--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')

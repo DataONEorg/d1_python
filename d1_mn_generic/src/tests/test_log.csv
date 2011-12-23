@@ -48,26 +48,26 @@
 26S.revised.nexus,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,9.10.11.12,1998-10-11T04:20:09,MN2
 26S.revised.nexus,replicate,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1987-10-25T12:27:14,MN1
 26S.revised.nexus,replicate,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1979-05-23T01:03:56,MN1
-5S Long (for 5S Short),create,21.22.23.24,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1970-01-01T03:04:21,MN2
-5S Long (for 5S Short),delete,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1992-10-27T10:59:12,MN4
-5S Long (for 5S Short),delete,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1988-08-11T05:10:13,MN3
-5S Long (for 5S Short),read,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1974-10-28T07:47:54,MN4
-5S Long and 5S Short,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1970-01-05T03:35:37,MN3
-5S Long and 5S Short,delete,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1971-06-06T07:20:20,MN3
-5S Long and 5S Short,read,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1981-09-07T12:53:03,MN3
-5S Long and 5S Short,delete,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1972-01-06T02:39:45,MN3
-5S Long and 5S Short,delete,5.6.7.8,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1984-03-09T20:21:09,MN2
-5S Long and 5S Short,delete,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1972-08-12T19:46:21,MN4
-5S Long and 5S Short,read,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1991-01-31T15:16:00,MN2
-5S Long and 5S Short,update,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1996-01-29T23:50:26,MN4
-5S Long and 5S Short,update,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1980-08-29T11:29:39,MN1
-5s Short and cpDNA,create,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1970-01-05T00:12:56,MN1
-5s Short and cpDNA,read,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",5.6.7.8,1971-10-19T13:10:22,MN3
-5s Short and cpDNA,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1985-07-09T09:33:18,MN1
-5s Short and cpDNA,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1988-01-14T03:16:35,MN2
-5s Short and cpDNA,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1972-07-01T23:34:02,MN1
-5s Short and cpDNA,update,17.18.19.20,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1994-05-02T08:33:29,MN1
-5s Short and cpDNA,replicate,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1975-03-02T16:35:34,MN3
+5SLong(for5SShort),create,21.22.23.24,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1970-01-01T03:04:21,MN2
+5SLong(for5SShort),delete,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1992-10-27T10:59:12,MN4
+5SLong(for5SShort),delete,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1988-08-11T05:10:13,MN3
+5SLong(for5SShort),read,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1974-10-28T07:47:54,MN4
+5SLongand5SShort,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1970-01-05T03:35:37,MN3
+5SLongand5SShort,delete,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1971-06-06T07:20:20,MN3
+5SLongand5SShort,read,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1981-09-07T12:53:03,MN3
+5SLongand5SShort,delete,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1972-01-06T02:39:45,MN3
+5SLongand5SShort,delete,5.6.7.8,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1984-03-09T20:21:09,MN2
+5SLongand5SShort,delete,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1972-08-12T19:46:21,MN4
+5SLongand5SShort,read,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1991-01-31T15:16:00,MN2
+5SLongand5SShort,update,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1996-01-29T23:50:26,MN4
+5SLongand5SShort,update,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1980-08-29T11:29:39,MN1
+5sShortandcpDNA,create,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1970-01-05T00:12:56,MN1
+5sShortandcpDNA,read,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",5.6.7.8,1971-10-19T13:10:22,MN3
+5sShortandcpDNA,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1985-07-09T09:33:18,MN1
+5sShortandcpDNA,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1988-01-14T03:16:35,MN2
+5sShortandcpDNA,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1972-07-01T23:34:02,MN1
+5sShortandcpDNA,update,17.18.19.20,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1994-05-02T08:33:29,MN1
+5sShortandcpDNA,replicate,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1975-03-02T16:35:34,MN3
 9HNEXUS.txt,create,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",5.6.7.8,1970-01-06T15:41:49,MN3
 9HNEXUS.txt,delete,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1986-01-22T21:22:12,MN2
 9HNEXUS.txt,delete,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1998-08-29T20:17:51,MN2
@@ -83,18 +83,18 @@ ApineOPSIN.nexus,read,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),17.18.19.20
 ApineOPSIN.nexus,read,25.26.27.28,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1975-06-07T08:20:19,MN4
 ApineOPSIN.nexus,update,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),25.26.27.28,1986-08-26T09:17:22,MN2
 ApineOPSIN.nexus,read,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1975-01-31T12:05:57,MN4
-Appendices final.doc,create,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1969-12-31T19:25:59,MN4
-Appendices final.doc,read,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1971-02-05T11:03:33,MN3
-Appendices final.doc,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1989-04-05T10:37:10,MN2
-Appendices final.doc,update,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1972-08-13T18:36:29,MN4
-Appendices final.doc,replicate,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,17.18.19.20,1990-12-23T00:00:17,MN3
-Appendices final.doc,read,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1977-06-25T07:48:14,MN3
+Appendicesfinal.doc,create,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1969-12-31T19:25:59,MN4
+Appendicesfinal.doc,read,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1971-02-05T11:03:33,MN3
+Appendicesfinal.doc,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1989-04-05T10:37:10,MN2
+Appendicesfinal.doc,update,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1972-08-13T18:36:29,MN4
+Appendicesfinal.doc,replicate,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,17.18.19.20,1990-12-23T00:00:17,MN3
+Appendicesfinal.doc,read,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1977-06-25T07:48:14,MN3
 CaseTDT.xls,create,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1970-01-01T21:16:01,MN1
 CaseTDT.xls,read,1.2.3.4,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1970-08-19T05:07:36,MN1
 CaseTDT.xls,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],5.6.7.8,1993-10-22T02:05:56,MN2
 CaseTDT.xls,update,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1990-09-21T23:55:38,MN3
 CaseTDT.xls,update,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1979-08-10T16:03:37,MN1
-Codeml Results .zip,create,25.26.27.28,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1970-01-03T08:34:39,MN2
+CodemlResults.zip,create,25.26.27.28,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1970-01-03T08:34:39,MN2
 Combined_Morocco.xls,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1970-01-02T06:01:58,MN4
 Combined_Morocco.xls,update,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1993-11-30T11:34:28,MN1
 Combined_Morocco.xls,delete,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1972-09-16T01:02:46,MN4
@@ -106,14 +106,14 @@ DPBG_EnhMethods.pdf,read,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 5.0; Window
 DPBG_EnhMethods.pdf,replicate,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",13.14.15.16,1987-05-10T15:17:24,MN3
 DPBG_SupplTables.pdf,create,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1970-01-05T11:31:32,MN1
 DPBG_SupplTables.pdf,replicate,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",25.26.27.28,1970-12-31T13:06:51,MN1
-Drug effect.xls,create,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1970-01-04T11:35:55,MN2
-Drug effect.xls,update,13.14.15.16,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1977-12-07T05:42:13,MN2
-Drug effect.xls,update,5.6.7.8,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1984-01-09T06:58:19,MN3
-Drug effect.xls,update,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1998-06-23T18:18:30,MN1
-Drug effect.xls,delete,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1973-09-01T17:03:05,MN1
-Drug effect.xls,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1987-01-04T19:20:38,MN4
-Drug effect.xls,delete,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1990-06-30T05:13:35,MN3
-Drug effect.xls,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1989-11-11T04:13:13,MN2
+Drugeffect.xls,create,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1970-01-04T11:35:55,MN2
+Drugeffect.xls,update,13.14.15.16,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1977-12-07T05:42:13,MN2
+Drugeffect.xls,update,5.6.7.8,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1984-01-09T06:58:19,MN3
+Drugeffect.xls,update,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1998-06-23T18:18:30,MN1
+Drugeffect.xls,delete,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1973-09-01T17:03:05,MN1
+Drugeffect.xls,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1987-01-04T19:20:38,MN4
+Drugeffect.xls,delete,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1990-06-30T05:13:35,MN3
+Drugeffect.xls,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1989-11-11T04:13:13,MN2
 Duputie.etal.MolEcol2009.DryadData.xls,create,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,5.6.7.8,1970-01-02T15:30:17,MN3
 Duputie.etal.MolEcol2009.DryadData.xls,delete,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",9.10.11.12,1999-08-29T12:58:50,MN3
 Duputie.etal.MolEcol2009.DryadData.xls,replicate,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1994-10-13T08:43:51,MN1
@@ -124,7 +124,7 @@ EGFRalleles.zip,create,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows N
 EGFRalleles.zip,replicate,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1985-07-11T22:03:24,MN1
 EGFRalleles.zip,read,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1973-10-29T16:40:33,MN3
 EGFRalleles.zip,read,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",25.26.27.28,1985-01-17T23:43:16,MN1
-Expression on Metabolite.xls,create,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1970-01-04T05:33:48,MN3
+ExpressiononMetabolite.xls,create,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1970-01-04T05:33:48,MN3
 FigS2_Hsieh.pdf,create,13.14.15.16,Googlebot/2.1 ( http://www.googlebot.com/bot.html),1.2.3.4,1970-01-04T16:15:10,MN2
 FigS2_Hsieh.pdf,update,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1971-05-11T07:28:56,MN4
 FigS2_Hsieh.pdf,read,25.26.27.28,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1989-08-03T11:55:14,MN4
@@ -138,13 +138,13 @@ FigS4_Hsieh.pdf,delete,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT
 FigS4_Hsieh.pdf,delete,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1999-03-08T13:46:12,MN2
 Fishbein.nexus,create,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),25.26.27.28,1970-01-06T15:05:07,MN2
 Fishbein.nexus,read,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],21.22.23.24,1996-06-01T09:50:26,MN2
-Gurgel LSmeans.xls,create,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1970-01-02T00:22:47,MN1
-Gurgel MIAME compliance.doc,create,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,17.18.19.20,1970-01-03T18:26:13,MN4
-Gurgel MIAME compliance.doc,update,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1985-11-11T00:53:19,MN1
-abundances-S California 2003.xls,create,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1970-01-06T16:07:59,MN2
-abundances-S California 2003.xls,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1997-02-12T08:30:20,MN1
-abundances-S California 2003.xls,replicate,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1980-11-22T20:36:42,MN4
-abundances-S California 2003.xls,read,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),5.6.7.8,1995-02-25T03:54:25,MN2
+GurgelLSmeans.xls,create,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1970-01-02T00:22:47,MN1
+GurgelMIAMEcompliance.doc,create,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,17.18.19.20,1970-01-03T18:26:13,MN4
+GurgelMIAMEcompliance.doc,update,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1985-11-11T00:53:19,MN1
+abundances-SCalifornia2003.xls,create,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1970-01-06T16:07:59,MN2
+abundances-SCalifornia2003.xls,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1997-02-12T08:30:20,MN1
+abundances-SCalifornia2003.xls,replicate,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1980-11-22T20:36:42,MN4
+abundances-SCalifornia2003.xls,read,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),5.6.7.8,1995-02-25T03:54:25,MN2
 anterior1.jpg,create,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1970-01-02T13:10:47,MN2
 anterior2.jpg,create,17.18.19.20,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1970-01-04T12:12:32,MN3
 anterior2.jpg,delete,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1989-07-24T22:35:07,MN4

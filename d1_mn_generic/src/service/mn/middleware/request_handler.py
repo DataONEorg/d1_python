@@ -83,12 +83,6 @@ class request_handler():
       request.META['REQUEST_URI'] = request.META['SCRIPT_NAME'] + '/'
       request.path_info = '/'
 
-    # Block access to the test functions if not in debug mode.
-    if re.match(r'/test', request.path_info) and settings.DEBUG == False:
-      #logging.info('client({0}): Attempted to access {0} while not in DEBUG mode'.format(request.path_info))
-      # TODO: This exception is unhandled.
-      raise d1_common.types.exceptions.InvalidRequest(0, 'Unsupported')
-
     if settings.DEBUG == False:
       return None
 

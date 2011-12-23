@@ -13,6 +13,10 @@ def adapt_pyxb_binding(binding):
   #.format(psycopg2.extensions.adapt(str(binding))))
 
 
+psycopg2.extensions.register_adapter(
+  dataoneTypes.NonEmptyNoWhitespaceString800, adapt_pyxb_binding
+)
+
 psycopg2.extensions.register_adapter(dataoneTypes.NonEmptyString800, adapt_pyxb_binding)
 
 psycopg2.extensions.register_adapter(dataoneTypes.ChecksumAlgorithm, adapt_pyxb_binding)

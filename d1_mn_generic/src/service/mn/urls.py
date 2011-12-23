@@ -41,108 +41,98 @@ admin.autodiscover()
 # TODO: Only set dictionary up in debug mode.
 import collections
 test_shared_dict = collections.defaultdict(lambda: '<undef>')
-
+import sys, os
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+sys.path.append(_here('./views'))
+print sys.path
 urlpatterns = patterns(
-  'service.mn.views',
+  'service.mn.views.v1',
   # Django's URL dispatcher does not take HTTP verb into account, so in the
   # cases where the DataONE REST API specifies different methods as different
   # verbs against the same URL, the methods are dispatched to the same view
   # function, which checks the verb and dispatches to the appropriate handler.
 
-  # ----------------------------------------------------------------------------
-  # Public API
-  # ----------------------------------------------------------------------------
-
   # Tier 1: Core API (MNCore)
-
   # GET /monitor/ping
-  (r'^monitor/ping/?$', 'monitor_ping'),
+  (r'^v1/monitor/ping/?$', 'monitor_ping'),
   # GET /log
-  (r'^log/?$', 'event_log_view'),
+  (r'^v1/log/?$', 'event_log_view'),
   # GET /  or  GET /node
-  (r'^/?$', 'node'),
-  (r'^node/?$', 'node'),
+  (r'^v1/?$', 'node'),
+  (r'^v1/node/?$', 'node'),
 
   # Tier 1: Read API (MNRead)
-
   # GET /object/{pid}
   # HEAD /object/{pid}
-  (r'^object/(.+)$', 'object_pid'),
+  (r'^v1/object/(.+)$', 'object_pid'),
   # GET /meta/{pid}
-  (r'^meta/(.+)$', 'meta_pid_get'),
+  (r'^v1/meta/(.+)$', 'meta_pid_get'),
   # GET /checksum/{pid}[?checksumAlgorithm={checksumAlgorithm}]
-  (r'^checksum/(.+)$', 'checksum_pid'),
+  (r'^v1/checksum/(.+)$', 'checksum_pid'),
   # GET /object <filters>
-  (r'^object/?$', 'object'),
+  (r'^v1/object/?$', 'object'),
   # POST /error
-  (r'^error/?$', 'error'),
+  (r'^v1/error/?$', 'error'),
 
   # Tier 2: Authorization API  (MNAuthorization)
-
   # GET /isAuthorized/{pid}?action={action}
-  (r'^isAuthorized/(.+)/?$', 'is_authorized'),
+  (r'^v1/isAuthorized/(.+)/?$', 'is_authorized'),
 
   # Tier 3: Storage API (MNStorage)
-
   # MNStorage.create() - POST /object/{pid}
   # Handled by the object_pid dispatcher.
   # MNStorage.update() - PUT /object/{pid}
   # TODO: This is a workaround for issue with PUT in Django.
-  (r'^object_put/(.+)$', 'object_pid_put'),
+  (r'^v1/object_put/(.+)$', 'object_pid_put'),
   # MNStorage.delete() - DELETE /object/{pid}
   # Handled by the object_pid dispatcher.
   # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
-  (r'^dirtySystemMetadata/?$', 'dirty_system_metadata_post'),
+  (r'^v1/dirtySystemMetadata/?$', 'dirty_system_metadata_post'),
 
   # Tier 4: Replication API (MNReplication)
-
   # POST /replicate  
-  (r'^replicate/?$', 'replicate'),
+  (r'^v1/replicate/?$', 'replicate'),
+)
 
-  # ----------------------------------------------------------------------------
-  # Internal API
-  # ----------------------------------------------------------------------------
-  (r'^internal_replicate_task_get$', '_internal_replicate_task_get'),
-  (r'^internal_replicate_task_update/(.+?)/(.+?)/?$', '_internal_replicate_task_update'),
-  (r'^internal_replicate_create/(.+)$', '_internal_replicate_create'),
-  (r'^internal_update_sysmeta/(.+)$', '_internal_update_sysmeta'),
+urlpatterns += patterns(
+  'service.mn.views.internal',
+  (r'^internal/replicate_task_get$', 'replicate_task_get'),
+  (r'^internal/replicate_task_update/(.+?)/(.+?)/?$', 'replicate_task_update'),
+  (r'^internal/replicate_create/(.+)$', 'replicate_create'),
+  (r'^internal/update_sysmeta/(.+)$', 'update_sysmeta'),
+)
 
-  # ----------------------------------------------------------------------------
-  # Diagnostics, debugging and testing
-  # ----------------------------------------------------------------------------
+# Block access to the GMN diagnostic functions if not in debug mode.
+if settings.DEBUG:
+  urlpatterns += patterns(
+    'service.mn.views.diagnostics',
+    # Test portal.
+    (r'^test/?$', 'test'),
+    # Replication.
+    (r'^test/replicate_post/?$', 'replicate_post'),
+    (r'^test/replicate_get/?$', 'replicate_get'),
+    (r'^test/replicate_get_xml/?$', 'replicate_get_xml'),
+    (r'^test/replicate_clear/?$', 'replicate_clear'),
+    # Misc.
+    (r'^test/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
+    (r'^test/exception/(.+?)/?$', 'exception'),
+    (r'^test/clear_database/(.+?)/?$', 'clear_database'),
+    (r'^test/delete_all_objects/?$', 'delete_all_objects'),
+    (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),
+    (r'^test/delete_event_log/?$', 'delete_event_log'),
+    (r'^test/inject_event_log/?$', 'inject_event_log'),
+    (r'^test/delete_all_access_rules/?$', 'delete_all_access_rules'),
+    (r'^test/cert/?$', 'cert'),
+    # Concurrency.
+    (r'^test/concurrency_clear/?$', 'concurrency_clear'),
+    (r'^test/concurrency_read_lock/(.+?)/(.+?)/(.+?)/?$', 'concurrency_read_lock'),
+    (r'^test/concurrency_write_lock/(.+?)/(.+?)/(.+?)/(.+?)/?$',
+     'concurrency_write_lock'),
+    (r'^test/concurrency_get_dictionary_id/?$', 'concurrency_get_dictionary_id'),
+  )
 
-  # Test portal.
-  (r'^test/?$', 'test'),
-
-  # Replication.
-  (r'^test_replicate_post/?$', 'test_replicate_post'),
-  (r'^test_replicate_get/?$', 'test_replicate_get'),
-  (r'^test_replicate_get_xml/?$', 'test_replicate_get_xml'),
-  (r'^test_replicate_clear/?$', 'test_replicate_clear'),
-
-  # Misc.
-  (r'^test_slash/(.+?)/(.+?)/(.+?)/?$', 'test_slash'),
-  (r'^test_exception/(.+?)/?$', 'test_exception'),
-  (r'^test_clear_database/(.+?)/?$', 'test_clear_database'),
-  (r'^test_delete_all_objects/?$', 'test_delete_all_objects'),
-  (r'^test_delete_single_object/(.+?)/?$', 'test_delete_single_object'),
-  (r'^test_delete_event_log/?$', 'test_delete_event_log'),
-  (r'^test_inject_event_log/?$', 'test_inject_event_log'),
-  (r'^test_delete_all_access_rules/?$', 'test_delete_all_access_rules'),
-  (r'^test_cert/?$', 'test_cert'),
-
-  # Concurrency.
-  (r'^test_concurrency_clear/?$', 'test_concurrency_clear'),
-  (r'^test_concurrency_read_lock/(.+?)/(.+?)/(.+?)/?$', 'test_concurrency_read_lock'),
-  (
-    r'^test_concurrency_write_lock/(.+?)/(.+?)/(.+?)/(.+?)/?$',
-    'test_concurrency_write_lock'
-  ),
-  (r'^test_concurrency_get_dictionary_id/?$', 'test_concurrency_get_dictionary_id'),
-
-  # ----------------------------------------------------------------------------
-  # Administration.
-  # ----------------------------------------------------------------------------
+urlpatterns += patterns(
+  'service.mn.views.admin',
   (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),
   (r'^admin/?$', include(admin.site.urls)),
 )

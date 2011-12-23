@@ -61,13 +61,11 @@ import sysmeta
 # Actions have a relationship where each action implicitly includes the actions
 # of lower levels. The relationship is as follows:
 #
-# execute > changePermission > write > read
+# changePermission > write > read
 #
 # Because of this, it is only necessary to store the allowed action of highest
 # level for a given subject and object.
 
-EXECUTE_STR = 'execute'
-EXECUTE_LEVEL = 3
 CHANGEPERMISSION_STR = 'changePermission'
 CHANGEPERMISSION_LEVEL = 2
 WRITE_STR = 'write'
@@ -76,14 +74,12 @@ READ_STR = 'read'
 READ_LEVEL = 0
 
 action_level_map = {
-  EXECUTE_STR: EXECUTE_LEVEL,
   CHANGEPERMISSION_STR: CHANGEPERMISSION_LEVEL,
   WRITE_STR: WRITE_LEVEL,
   READ_STR: READ_LEVEL,
 }
 
 level_action_map = {
-  EXECUTE_LEVEL: EXECUTE_STR,
   CHANGEPERMISSION_LEVEL: CHANGEPERMISSION_STR,
   WRITE_LEVEL: WRITE_STR,
   READ_LEVEL: READ_STR,
@@ -170,7 +166,7 @@ def set_access_policy(pid, access_policy=None):
   allow_owner = dataoneTypes.AccessRule()
   with sysmeta.sysmeta(pid, read_only=True) as s:
     allow_owner.subject.append(s.rightsHolder.value())
-  permission = dataoneTypes.Permission('execute')
+  permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
   allow_owner.permission.append(permission)
   # Iterate over AccessPolicy and create db entries.
   for allow_rule in allow: # + [allow_owner]:
@@ -364,18 +360,6 @@ def assert_authenticated(f):
     if request.session.subject.value() == d1_common.const.SUBJECT_PUBLIC:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
-
-
-# The following decorators assume that the first argument to the wrapped
-# function is the PID for which the permission is being asserted.
-def assert_execute_permission(f):
-  def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.session.subject.value(), EXECUTE_LEVEL, pid)
-    return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__

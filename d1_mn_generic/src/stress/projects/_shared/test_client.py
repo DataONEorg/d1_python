@@ -105,22 +105,22 @@ class TestClient(d1_client.mnclient.MemberNodeClient):
     '''Delete all the objects on an instance of GMN that is running in Debug
     mode.
     '''
-    url = self.RESTResourceURL('delete_all_objects')
+    url = self._rest_url('delete_all_objects')
     response = self.GET(url)
-    return self.isHttpStatusOK(response.status)
+    return self._is_response_status_ok(response)
 
   def delete_event_log(self):
     '''Delete event log for all objects on an instance of GMN that is running
     in Debug mode.
     '''
-    url = self.RESTResourceURL('delete_event_log')
+    url = self._rest_url('delete_event_log')
     response = self.GET(url)
-    return self.isHttpStatusOK(response.status)
+    return self._is_response_status_ok(response)
 
   def inject_event_log(self, event_log_csv):
     '''Inject a fake event log for testing.
     '''
     files = [('csv', 'csv', event_log_csv)]
-    url = self.RESTResourceURL('inject_event_log')
+    url = self._rest_url('inject_event_log')
     response = self.POST(url, files=files, headers=self._getAuthHeader(context.TOKEN))
-    return self.isHttpStatusOK(response.status)
+    return self._is_response_status_ok(response)

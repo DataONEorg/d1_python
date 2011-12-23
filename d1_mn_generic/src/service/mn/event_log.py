@@ -48,7 +48,7 @@ import settings
 import util
 
 
-def log(pid, event, request, timestamp=None):
+def _log(pid, request, event, timestamp=None):
   '''Log an object access.
   :return:
   '''
@@ -91,3 +91,31 @@ def log(pid, event, request, timestamp=None):
     'client({0}): Created log entry: pid({1}) event({2})'.format(
       util.request_to_string(request), pid, event)
   )
+
+
+def create(pid, request, timestamp=None):
+  return _log(pid, request, 'create', timestamp)
+
+
+def read(pid, request, timestamp=None):
+  return _log(pid, request, 'read', timestamp)
+
+
+def update(pid, request, timestamp=None):
+  return _log(pid, request, 'update', timestamp)
+
+
+def delete(pid, request, timestamp=None):
+  return _log(pid, request, 'delete', timestamp)
+
+
+def replicate(pid, request, timestamp=None):
+  return _log(pid, request, 'replicate', timestamp)
+
+
+def synchronization_failed(pid, request, timestamp=None):
+  return _log(pid, request, 'synchronization_failed', timestamp)
+
+
+def replication_failed(pid, request, timestamp=None):
+  return _log(pid, request, 'replication_failed', timestamp)

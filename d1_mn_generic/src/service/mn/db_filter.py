@@ -89,7 +89,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     if not re.search('T', date_str):
       date_str += 'T00:00:00Z'
     try:
-      date = d1_common.util.normalize_to_utc(iso8601.parse_date(date_str))
+      date = d1_common.util.is_utc(iso8601.parse_date(date_str))
     except iso8601.ParseError, e:
       raise d1_common.types.exceptions.InvalidRequest(
         0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))

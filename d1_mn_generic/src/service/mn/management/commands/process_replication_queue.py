@@ -85,7 +85,7 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
 
 
   def internal_replicate_task_get(self):
-    url = self.RESTResourceURL('replicate_task_get')
+    url = self._rest_url('replicate_task_get')
       
     response = self.GET(url)
 
@@ -93,17 +93,17 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
 
 
   def internal_replicate_task_update(self, task_id, status):
-    url = self.RESTResourceURL('replicate_task_update', task_id=str(task_id), 
+    url = self._rest_url('replicate_task_update', task_id=str(task_id), 
                                status=status)      
     response = self.GET(url)
-    return self.isHttpStatusOK(response.status)
+    return self._is_response_status_ok(response)
 
 
   #@util.str_to_unicode
   def internal_replicate_create(self, pid, scidata, sysmeta,
                                 vendorSpecific=None):
     '''Create replicate of object on GMN'''
-    url = self.RESTResourceURL('replicate_create', pid=pid)
+    url = self._rest_url('replicate_create', pid=pid)
     headers = {}
     if vendorSpecific is not None:
       headers.update(vendorSpecific)
