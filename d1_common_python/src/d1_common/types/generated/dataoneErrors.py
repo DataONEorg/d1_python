@@ -1,6 +1,6 @@
 # ./d1_common/types/generated/dataoneErrors.py
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2011-12-20 08:13:31.602692 by PyXB version 1.1.3
+# Generated 2011-12-29 12:09:17.518325 by PyXB version 1.1.3
 # Namespace AbsentNamespace0
 
 import pyxb
@@ -12,7 +12,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:2d882220-2b1d-11e1-82a8-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:d75523d7-323f-11e1-a0ca-c82a14063451')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -65,16 +65,16 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     description = property(__description.value, __description.set, None, None)
 
     
+    # Attribute pid uses Python identifier pid
+    __pid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'pid'), 'pid', '__AbsentNamespace0_CTD_ANON_pid', pyxb.binding.datatypes.string)
+    
+    pid = property(__pid.value, __pid.set, None, None)
+
+    
     # Attribute errorCode uses Python identifier errorCode
     __errorCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'errorCode'), 'errorCode', '__AbsentNamespace0_CTD_ANON_errorCode', pyxb.binding.datatypes.int, required=True)
     
     errorCode = property(__errorCode.value, __errorCode.set, None, None)
-
-    
-    # Attribute detailCode uses Python identifier detailCode
-    __detailCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'detailCode'), 'detailCode', '__AbsentNamespace0_CTD_ANON_detailCode', pyxb.binding.datatypes.int, required=True)
-    
-    detailCode = property(__detailCode.value, __detailCode.set, None, None)
 
     
     # Attribute name uses Python identifier name
@@ -83,10 +83,10 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     name = property(__name.value, __name.set, None, None)
 
     
-    # Attribute pid uses Python identifier pid
-    __pid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'pid'), 'pid', '__AbsentNamespace0_CTD_ANON_pid', pyxb.binding.datatypes.string)
+    # Attribute detailCode uses Python identifier detailCode
+    __detailCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'detailCode'), 'detailCode', '__AbsentNamespace0_CTD_ANON_detailCode', pyxb.binding.datatypes.int, required=True)
     
-    pid = property(__pid.value, __pid.set, None, None)
+    detailCode = property(__detailCode.value, __detailCode.set, None, None)
 
 
     _ElementMap = {
@@ -94,10 +94,10 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
         __description.name() : __description
     }
     _AttributeMap = {
+        __pid.name() : __pid,
         __errorCode.name() : __errorCode,
-        __detailCode.name() : __detailCode,
         __name.name() : __name,
-        __pid.name() : __pid
+        __detailCode.name() : __detailCode
     }
 
 
