@@ -24,15 +24,10 @@
 
 :Synopsis:
   App level settings.
-  
   This file contains settings that do not normally need to be modified when
   installing GMN. See settings_site.py for site specific settings.
-
 :Author:
   DataONE (Dahl)
-  
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.
@@ -91,9 +86,12 @@ MIDDLEWARE_CLASSES = (
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.contrib.auth.middleware.AuthenticationMiddleware',
   #'django.middleware.profile.ProfileMiddleware',
-  # TransactionMiddleware causes each view to be wrapped in an implicit
-  # transaction. The transaction is automatically committed on successful
-  # return from the view and rolled back otherwise.
+
+  # GMN requires that TransactionMiddleware is enabled. TransactionMiddleware
+  # causes each view to be wrapped in an implicit transaction. The transaction
+  # is rolled back if the view does not successfully return. Upon a successful
+  # return, the transaction is committed, thus making all modifications that
+  # the view made to the database visible simultaneously.
   'django.middleware.transaction.TransactionMiddleware',
   'service.mn.middleware.request_handler.request_handler',
   'service.mn.middleware.exception_handler.exception_handler',

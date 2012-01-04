@@ -21,13 +21,9 @@
 '''Module d1_test_case
 ======================
 
-Extends unittest.TestCase with DataONE specific asserts.
-
+:Synopsis: Extends unittest.TestCase with DataONE specific asserts.
 :Created: 2011-04-27
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
-
 '''
 
 import datetime

@@ -34,9 +34,8 @@
 :mod:`svn_update.py`
 ====================
 
-Update GMN version from SVN revision number.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Update GMN version from SVN revision number.
+:Author: DataONE (Dahl)
 '''
 
 import config_util

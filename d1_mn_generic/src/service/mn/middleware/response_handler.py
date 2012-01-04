@@ -20,14 +20,12 @@
 # limitations under the License.
 '''
 :mod:`response_handler`
-=========================
+=======================
 
-:platform: Linux
 :Synopsis:
   Serialize DataONE response objects according to Accept header and set header
   (Size and Content-Type) accordingly.
-
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.

@@ -20,11 +20,10 @@
 # limitations under the License.
 '''
 :mod:`request_handler`
-=========================
+======================
 
-:platform: Linux
-:Synopsis:
-.. moduleauthor:: Roger Dahl
+:Synopsis: Django request handler middleware.
+:Author: DataONE (Dahl)
 '''
 
 from django.http import HttpResponse

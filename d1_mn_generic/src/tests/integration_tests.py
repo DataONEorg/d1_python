@@ -23,10 +23,8 @@
 :mod:`integration_tests`
 ========================
 
-:Synopsis:
-  Round-trip test of the ITK and MN.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Round-trip test of the ITK and MN.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.

@@ -5,10 +5,8 @@
 :mod:`tests`
 ============
 
-:Synopsis:
-  Unit Tests.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Unit Tests.
+:Author: DataONE (Dahl)
 """
 
 # Stdlib.

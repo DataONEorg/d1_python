@@ -4,10 +4,8 @@
 :mod:`mk_fixtures`
 ==================
 
-:Synopsis:
-  Create fixtures used by unit tests.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Create fixtures used by unit tests.
+:Author: DataONE (Dahl)
 """
 
 import sys

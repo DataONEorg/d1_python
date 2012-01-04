@@ -22,10 +22,8 @@
 :mod:`models`
 =============
 
-:Synopsis:
-  Database models.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Database models.
+:Author: DataONE (Dahl)
 '''
 # Stdlib.
 import logging

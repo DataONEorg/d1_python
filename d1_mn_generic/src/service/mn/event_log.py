@@ -20,12 +20,10 @@
 # limitations under the License.
 '''
 :mod:`event_log`
-=================
+================
 
-:Synopsis:
-  Log DataONE object accesses.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Log DataONE object accesses.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.

@@ -22,10 +22,8 @@
 :mod:`urls`
 ===========
 
-:Synopsis:
-  Django URL to service mapping.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Django URL to service mapping.
+:Author: DataONE (Dahl)
 '''
 
 from django.conf.urls.defaults import *

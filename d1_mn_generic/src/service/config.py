@@ -29,7 +29,7 @@
 * Update GMN version from SVN revision number.
 * Restart Apache.
 
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (Dahl)
 '''
 
 # StdLib.

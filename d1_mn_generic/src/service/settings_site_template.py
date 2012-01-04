@@ -24,14 +24,9 @@
 
 :Synopsis:
   Site specific app level settings.
-
   This file contains settings that are specific for an instance of GMN.
-
 :Author:
   DataONE (Dahl)
-
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

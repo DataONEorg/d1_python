@@ -22,11 +22,8 @@
 :mod:`view_handler`
 ===================
 
-:platform: Linux
-:Synopsis:
-  Sanity checking on system state before view is executed.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Sanity checking on system state before view is executed.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.

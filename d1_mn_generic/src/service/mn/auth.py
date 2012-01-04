@@ -21,11 +21,8 @@
 ''':mod:`auth`
 ==============
 
-:Synopsis:
-  Authentication and authorization. 
+:Synopsis: Authentication and authorization. 
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.
@@ -120,26 +117,16 @@ def level_to_action(level):
 def set_access_policy(pid, access_policy=None):
   '''Apply an AccessPolicy to an object.
 
-  :param pid: Object to which AccessPolicy is applied.
-  :type pid: Identifier
-  :param access_policy: AccessPolicy to apply to object. 
-  :type access_policy: AccessPolicy
-  :return type: NoneType or exception.
-
   If called without an access policy, any existing permissions on the object
   are removed and the access policy for the owner is recreated.
 
   Preconditions:
-
-  - Each subject has been verified to a valid DataONE account.
-  - Subject has changePermission for object.
-  - The Django transaction middleware layer must be enabled.
-    'django.middleware.transaction.TransactionMiddleware'
+    - Each subject has been verified to a valid DataONE account.
+    - Subject has changePermission for object.
     
   Postconditions:
-  
-  - The Permission and related tables contain the new access policy.
-  - The SysMeta object in the filesystem contains the new access policy.
+    - The Permission and related tables contain the new access policy.
+    - The SysMeta object in the filesystem contains the new access policy.
   '''
 
   # Verify that the object for which access policy is being set exists, and

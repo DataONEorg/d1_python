@@ -22,10 +22,8 @@
 :mod:`detail_codes`
 =========================
 
-:Synopsis:
-  Get Detail Code for DataONE exception based on REST call path.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Get Detail Code for DataONE exception based on REST call path.
+:Author: DataONE (Dahl)
 '''
 
 import re

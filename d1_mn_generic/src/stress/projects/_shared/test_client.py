@@ -26,10 +26,8 @@ d1_client.mnclient.MemberNodeClient with test functionality.
 
 :Created: 2011-03-18
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
-
 '''
+
 # Stdlib.
 import logging
 import os

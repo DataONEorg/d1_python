@@ -23,9 +23,9 @@
 
 :Synopsis:
   REST call handlers for GMN diagnostic APIs.
+  These are used in various diagnostics, debugging and testing scenarios.
+  Access is unrestricted in debug mode. Disabled in production.
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 # Stdlib.
 import cgi
@@ -74,54 +74,40 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import mn.auth
+import d1_assert
 import mn.db_filter
 import mn.event_log
 import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta
+import mn.urls
 import mn.util
 import service.settings
 
-# ------------------------------------------------------------------------------  
-# Test: Diagnostics, debugging and testing.
-# ------------------------------------------------------------------------------
 
-
-# For testing via browser.
-# Unrestricted access in debug mode. Disabled in production.
-def test_replicate_post(request):
+def replicate_post(request):
   return replicate_post(request)
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_replicate_get(request):
-  '''
-  '''
+def replicate_get(request):
   return render_to_response(
     'replicate_get.html',
-    {'replication_queue': models.Replication_work_queue.objects.all()}
+    {'replication_queue': mn.models.Replication_work_queue.objects.all()}
   )
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_replicate_get_xml(request):
-  '''
-  '''
+def replicate_get_xml(request):
   return render_to_response('replicate_get.xml',
-    {'replication_queue': models.Replication_work_queue.objects.all() },
+    {'replication_queue': mn.models.Replication_work_queue.objects.all() },
     mimetype=d1_common.const.MIMETYPE_XML)
 
 
-# For testing via browser.
-# Unrestricted access in debug mode. Disabled in production.
-def test_replicate_clear(request):
-  models.Replication_work_queue.objects.all().delete()
+def replicate_clear(request):
+  mn.models.Replication_work_queue.objects.all().delete()
   return HttpResponse('OK')
 
 
-# Unrestricted access in debug mode. Disabled in production.
 def test(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
@@ -129,22 +115,14 @@ def test(request):
   return render_to_response('test.html', {})
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_cert(request):
+def cert(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
   return HttpResponse(pprint.pformat(request, 2))
 
-#  permission_row = models.Permission()
-#  permission_row.set_permission('security_obj_3', 'test_dn', 'read_1')
-#  permission_row.save()
-#
-#  return HttpResponse('OK')
 
-
-# Unrestricted access in debug mode. Disabled in production.
-def test_slash(request, p1, p2, p3):
+def slash(request, p1, p2, p3):
   '''
   '''
   if request.method != 'GET':
@@ -153,8 +131,7 @@ def test_slash(request, p1, p2, p3):
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_exception(request, exc):
+def exception(request, exc):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
@@ -168,8 +145,7 @@ def test_exception(request, exc):
   return HttpResponse(doc, content_type)
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_invalid_return(request, type):
+def invalid_return(request, type):
   if type == "200_html":
     return HttpResponse("invalid") #200, html
   elif type == "200_xml":
@@ -182,10 +158,7 @@ def test_invalid_return(request, type):
   return HttpResponse("OK")
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_get_request(request):
-  '''
-  '''
+def get_request(request):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
@@ -193,37 +166,34 @@ def test_get_request(request):
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_clear_database(request):
-  models.Object.objects.all().delete()
-  models.Object_format.objects.all().delete()
-  models.Checksum_algorithm.objects.all().delete()
+def clear_database(request):
+  mn.models.Object.objects.all().delete()
+  mn.models.Object_format.objects.all().delete()
+  mn.models.Checksum_algorithm.objects.all().delete()
 
-  models.DB_update_status.objects.all().delete()
+  mn.models.DB_update_status.objects.all().delete()
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_delete_all_objects(request):
+def delete_all_objects(request):
   '''Remove all objects from db.
   '''
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  for object_ in models.Object.objects.all():
+  for object_ in mn.models.Object.objects.all():
     _delete_object(object_.pid)
 
   # Log this operation.
   logging.info(
     'client({0}): Deleted all repository object records'.format(
-      util.request_to_string(request)
+      mn.util.request_to_string(request)
     )
   )
 
   return HttpResponse('OK')
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_delete_single_object(request, pid):
+def delete_single_object(request, pid):
   '''Delete an object from the Member Node, where the object is either a data
   object or a science metadata object.
   
@@ -240,7 +210,7 @@ def test_delete_single_object(request, pid):
   # log this event in the event log. Instead, we log it.
   logging.info(
     'client({0}) pid({1}) Deleted object'.format(
-      util.request_to_string(request), pid
+      mn.util.request_to_string(request), pid
     )
   )
 
@@ -250,10 +220,9 @@ def test_delete_single_object(request, pid):
   return HttpResponse(doc, content_type)
 
 
-# Unrestricted access in debug mode. Disabled in production.
 def _delete_object(pid):
-  _assert_object_exists(pid)
-  sciobj = models.Object.objects.get(pid=pid)
+  d1_assert.object_exists(pid)
+  sciobj = mn.models.Object.objects.get(pid=pid)
 
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.
@@ -266,7 +235,7 @@ def _delete_object(pid):
     )
 
   if url_split.scheme == 'file':
-    sciobj_path = util.store_path(settings.OBJECT_STORE_PATH, pid)
+    sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:
@@ -275,7 +244,7 @@ def _delete_object(pid):
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
 
-  sysmeta.delete_sysmeta_from_store(pid)
+  mn.sysmeta.delete_sysmeta_from_store(pid)
 
   # Delete the DB entry.
   #
@@ -289,29 +258,31 @@ def _delete_object(pid):
   sciobj.delete()
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_delete_event_log(request):
+def delete_event_log(request):
   '''Remove all log records.
   '''
   # Clear the access log.
-  models.Event_log.objects.all().delete()
-  models.Event_log_ip_address.objects.all().delete()
-  models.Event_log_event.objects.all().delete()
+  mn.models.Event_log.objects.all().delete()
+  mn.models.Event_log_ip_address.objects.all().delete()
+  mn.models.Event_log_event.objects.all().delete()
 
   # Log this operation.
-  logging.info(None, 'client({0}): delete_event_log', util.request_to_string(request))
+  logging.info(
+    None, 'client({0}): delete_mn.event_log', mn.util.request_to_string(
+      request
+    )
+  )
 
   return HttpResponse('OK')
 
 
-  # Unrestricted access in debug mode. Disabled in production.
-def test_inject_event_log(request):
+def inject_event_log(request):
   '''Inject a fictional log.
   '''
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
 
-  util.validate_post(request, (('file', 'csv'), ))
+  d1_assert.post_has_mime_parts(request, (('file', 'csv'), ))
 
   # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
@@ -332,15 +303,14 @@ def test_inject_event_log(request):
       'REMOTE_ADDR': subject,
     }
 
-    event_log._log(pid, request, event, timestamp)
+    mn.event_log._log(pid, request, event, timestamp)
 
   return HttpResponse('OK')
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_delete_all_access_rules(request):
+def delete_all_access_rules(request):
   # The deletes are cascaded so all subjects are also deleted.
-  models.Permission.objects.all().delete()
+  mn.models.Permission.objects.all().delete()
   return HttpResponse('OK')
 
 # ------------------------------------------------------------------------------
@@ -349,18 +319,16 @@ def test_delete_all_access_rules(request):
 
 #test_shared_dict = collections.defaultdict(lambda: '<undef>')
 
-test_shared_dict = urls.test_shared_dict
+test_shared_dict = mn.urls.test_shared_dict
 
 
-# Unrestricted access in debug mode. Disabled in production.
-def test_concurrency_clear(request):
+def concurrency_clear(request):
   test_shared_dict.clear()
   return HttpResponse('OK')
 
 
-@lock_pid.for_read
-# Unrestricted access in debug mode. Disabled in production.
-def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
+@mn.lock_pid.for_read
+def concurrency_read_lock(request, key, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   #ret = test_shared_dict
   ret = test_shared_dict[key]
@@ -368,19 +336,16 @@ def test_concurrency_read_lock(request, key, sleep_before, sleep_after):
   return HttpResponse('{0}'.format(ret))
 
 
-@lock_pid.for_write
-# Unrestricted access in debug mode. Disabled in production.
-def test_concurrency_write_lock(request, key, val, sleep_before, sleep_after):
+@mn.lock_pid.for_write
+def concurrency_write_lock(request, key, val, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   test_shared_dict[key] = val
   time.sleep(float(sleep_after))
   return HttpResponse('OK')
 
 
-@auth.assert_trusted_permission
 # No locking.
-# Unrestricted access in debug mode. Disabled in production.
-def test_concurrency_get_dictionary_id(request):
+def concurrency_get_dictionary_id(request):
   time.sleep(3)
   ret = id(test_shared_dict)
   time.sleep(3)

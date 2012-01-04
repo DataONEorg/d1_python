@@ -22,11 +22,8 @@
 ''':mod:`views.v1`
 ==================
 
-:Synopsis:
-  REST call handlers for v1 of the DataONE Member Node APIs.
+:Synopsis: REST call handlers for v1 of the DataONE Member Node APIs.
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 # Stdlib.
 import cgi
@@ -75,6 +72,7 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
+import d1_assert
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -85,16 +83,15 @@ import mn.sysmeta
 import mn.util
 import service.settings
 
-
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP verb)
 # ==============================================================================
 
 def object_pid(request, pid):
   if request.method == 'GET':
-    return object_pid_get(request, pid, False)
+    return object_pid_get(request, pid)
   elif request.method == 'HEAD':
-    return object_pid_get(request, pid, True)
+    return object_pid_head(request, pid)
   elif request.method == 'POST':
     return object_pid_post(request, pid)
   # TODO: PUT currently not supported (issue with Django).
@@ -106,23 +103,6 @@ def object_pid(request, pid):
   else:
     # TODO: Add "PUT" to list.
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
-
-# ==============================================================================
-# Helpers
-# ==============================================================================
-
-def _assert_object_exists(pid):
-  if not mn.models.Object.objects.filter(pid=pid).exists():
-    raise d1_common.types.exceptions.NotFound(0,
-      'Specified non-existing Science Object', pid)
-
-def _reject_xml_document_if_too_large(flo):
-  '''Because the entire XML document must be in memory while being deserialized
-  (and probably in several copies at that), limit the size that can be
-  handled.'''
-  if flo.size > service.settings.MAX_XML_DOCUMENT_SIZE:
-    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
-      'Size restriction exceeded')
 
 # ==============================================================================
 # Public API
@@ -161,8 +141,8 @@ def event_log_view(request):
   # infrastructure.
   if request.session.subject.value() not in service.settings.DATAONE_TRUSTED_SUBJECTS:
     query = mn.db_filter.add_access_policy_filter(query, request,
-                                               'object__permission')
-  
+                                                  'object__permission')
+
   # Create a copy of the query that we will not slice, for getting the total
   # count for this type of objects.
   query_unsliced = query
@@ -172,24 +152,24 @@ def event_log_view(request):
 
   # Filter by fromDate.
   query, changed = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
-                                                 'fromDate', 'gte')
+                                                    'fromDate', 'gte')
   if changed:
     query_unsliced = query
 
   # Filter by toDate.
   query, changed = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
-                                                 'toDate', 'lt')
+                                                    'toDate', 'lt')
   if changed:
     query_unsliced = query
 
   # Filter by event type.
   query, changed = mn.db_filter.add_string_filter(query, request, 'event__event',
-                                               'event')
+                                                  'event')
   if changed:
     query_unsliced = query
 
   # Create a slice of a query based on request start and count parameters.
-  query, start, count = mn.db_filter.add_slice_filter(query, request)    
+  query, start, count = mn.db_filter.add_slice_filter(query, request)
 
   # Return query data for further processing in middleware layer.  
   return {'query': query, 'start': start, 'count': count,
@@ -221,11 +201,11 @@ def node(request):
 
 def _add_object_properties_to_response_header(response, sciobj):
   # TODO: Keep track of Content-Type instead of guessing.
-  response['DataONE-formatId'] = sciobj.formatId
+  response['DataONE-formatId'] = sciobj.format.format_id
   response['Content-Length'] = sciobj.size
-  response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime) 
-  response['DataONE-Checksum'] = '{0},{1}'.format(sciobj.checksum_algorithm,
-                                                  sciobj.checksum)
+  response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime)
+  response['DataONE-Checksum'] = '{0},{1}'.format(
+    sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum)
   _add_http_date_to_response_header(response, datetime.datetime.now())
 
 
@@ -234,10 +214,10 @@ def _add_object_properties_to_response_header(response, sciobj):
 def object_pid_head(request, pid):
   '''MNRead.describe(session, pid) → DescribeResponse
   '''
-  _assert_object_exists(pid)
+  d1_assert.object_exists(pid)
   sciobj = mn.models.Object.objects.get(pid=pid)
   response = HttpResponse()
-  _add_object_properties_to_response_header(self, response, sciobj)
+  _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
   mn.event_log.read(pid, request)
   return response
@@ -245,10 +225,10 @@ def object_pid_head(request, pid):
 
 @mn.lock_pid.for_read
 @mn.auth.assert_read_permission
-def object_pid_get(request, pid, head):
+def object_pid_get(request, pid):
   '''GET: MNRead.get(session, pid) → OctetStream
   '''
-  _assert_object_exists(pid)
+  d1_assert.object_exists(pid)
   sciobj = mn.models.Object.objects.get(pid=pid)
 
 #  # Split URL into individual parts.
@@ -259,7 +239,7 @@ def object_pid_get(request, pid, head):
 #      'pid({0}) url({1}): Invalid URL'.format(sciobj.pid, sciobj.url))
 
   response = HttpResponse()
-  _add_object_properties_to_response_header(self, response, sciobj)
+  _add_object_properties_to_response_header(response, sciobj)
   # TODO: The HttpResponse object supports streaming with an iterator, but only
   # when instantiated with the iterator. That behavior is not convenient here,
   # so we set up the iterator by writing directly to the internal methods of an
@@ -269,12 +249,12 @@ def object_pid_get(request, pid, head):
 
   # Log the access of this object.
   mn.event_log.read(pid, request)
-  
+
   return response
 
 
 # Internal.
-def _object_pid_get(sciobj):  
+def _object_pid_get(sciobj):
   # Split URL into individual parts.
   try:
     url_split = urlparse.urlparse(sciobj.url)
@@ -285,7 +265,7 @@ def _object_pid_get(sciobj):
   if url_split.scheme == 'http':
     logging.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
                  ' location'.format(sciobj.pid, sciobj.url))
-    return _object_pid_get_remote(request, sciobj.url, url_split)
+    return _object_pid_get_remote(sciobj.url, url_split)
   elif url_split.scheme == 'file':
     logging.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
                  .format(sciobj.pid, sciobj.url))
@@ -343,7 +323,7 @@ def meta_pid_get(request, pid):
   '''
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
-  _assert_object_exists(pid)
+  d1_assert.object_exists(pid)
   mn.event_log.read(pid, request)
   return HttpResponse(mn.sysmeta.read_sysmeta_from_store(pid),
                       mimetype=d1_common.const.MIMETYPE_XML)
@@ -352,11 +332,11 @@ def meta_pid_get(request, pid):
 # Internal.
 def _get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
   dataone_to_python_checksum_algorithm_map = {
-    'MD5': hashlib.md5(), 
-    'SHA-1': hashlib.sha1(),
-  } 
+    'MD5': hashlib.md5,
+    'SHA-1': hashlib.sha1,
+  }
   try:
-    return dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]
+    return dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]()
   except KeyError:
     raise d1_common.types.exceptions.InvalidRequest(0,
       'Invalid checksum algorithm, "{0}". Supported algorithms are: {1}'\
@@ -372,12 +352,12 @@ def checksum_pid(request, pid):
   if request.method != 'GET':
     return HttpResponseNotAllowed(['GET'])
 
-  _assert_object_exists(pid)
+  d1_assert.object_exists(pid)
 
   # If the checksumAlgorithm argument was not provided, it defaults to
   # the system wide default checksum algorithm.
   algorithm = request.GET.get('checksumAlgorithm',
-    d1_common.const.DEFAULT_CHECKSUM_ALGORITHM) 
+    d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
 
   h = _get_checksum_calculator_by_dataone_designator(algorithm)
 
@@ -394,7 +374,7 @@ def checksum_pid(request, pid):
   checksum_serializer = dataoneTypes.checksum(h.hexdigest())
   #checksum_serializer.checksum = 
   checksum_serializer.algorithm = algorithm
-  checksum_xml = checksum_serializer.toxml() 
+  checksum_xml = checksum_serializer.toxml()
   return HttpResponse(checksum_xml, d1_common.const.MIMETYPE_XML)
 
 
@@ -424,19 +404,19 @@ def object(request):
   query_unsliced = query
 
   # Filters.
-  
+
   # startTime
   query, changed = mn.db_filter.add_datetime_filter(query, request, 'mtime',
                                             'startTime', 'gte')
   if changed == True:
     query_unsliced = query
-  
+
   # endTime
   query, changed = mn.db_filter.add_datetime_filter(query, request, 'mtime',
                                                  'endTime', 'lt')
   if changed == True:
     query_unsliced = query
-      
+
   # objectFormat
   if 'objectFormat' in request.GET:
     query = mn.db_filter.add_wildcard_filter(query, 'format__format_id',
@@ -448,7 +428,7 @@ def object(request):
     mn.db_filter.add_bool_filter(query, 'replica', request.GET['replicaStatus'])
   else:
     mn.db_filter.add_bool_filter(query, 'replica', True)
-    
+
   # Create a slice of a query based on request start and count parameters.
   query, start, count = mn.db_filter.add_slice_filter(query, request)
 
@@ -466,8 +446,8 @@ def error(request):
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
 
-  mn.util.validate_post(request, (('file', 'message'), ))
-  _reject_xml_document_if_too_large(request.FILES['message'])
+  d1_assert.post_has_mime_parts(request, (('file', 'message'),))
+  d1_assert.xml_document_not_too_large(request.FILES['message'])
   # Validate and deserialize accessPolicy.
   synchronization_failed_str = request.FILES['message'].read()
   print synchronization_failed_str
@@ -499,7 +479,7 @@ def is_authorized(request, pid):
   # Convert action string to action level. Raises InvalidRequest if the
   # action string is not valid.
   level = mn.auth.action_to_level(request.GET['action'])
-  # Assert that subject is allowed to perform action on object. 
+
   mn.auth.assert_allowed(request.session.subject.value(), level, pid)
 
   # Return Boolean (200 OK)
@@ -515,7 +495,7 @@ def _validate_sysmeta_identifier(pid, sysmeta):
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'PID in System Metadata does not match that of the URL')
 
-  
+
 def _validate_sysmeta_filesize(request, sysmeta):
   if sysmeta.size != request.FILES['object'].size:
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
@@ -531,6 +511,7 @@ def _get_checksum_calculator(sysmeta):
       'Checksum algorithm is unsupported: {0}'.format(
         sysmeta.checksum.algorithm))
 
+
 def _calculate_object_checksum(request, checksum_calculator):
   for chunk in request.FILES['object'].chunks():
     checksum_calculator.update(chunk)
@@ -543,8 +524,8 @@ def _validate_sysmeta_checksum(request, sysmeta):
   if sysmeta.checksum.value().lower() != c.lower():
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'Checksum in System Metadata does not match that of the uploaded object')
-    
-  
+
+
 def _validate_sysmeta_against_uploaded(request, pid, sysmeta):
   _validate_sysmeta_identifier(pid, sysmeta)
   _validate_sysmeta_filesize(request, sysmeta)
@@ -566,34 +547,24 @@ def _update_sysmeta_with_mn_values(request, sysmeta):
 @mn.auth.assert_authenticated
 def object_pid_post(request, pid):
   '''MNStorage.create(session, pid, object, sysmeta) → Identifier
-
-  Preconditions:
-  - The Django transaction middleware layer must be enabled.
-
-  Because TransactionMiddleware layer is enabled, the db modifications all
-  become visible simultaneously after this function completes. The added files
-  in the filesystem become visible once they are created, but GMN will not
-  attempt to reference them before their corresponding database entries are
-  visible.
   '''
   return _create(request, pid)
 
+def _assert_pid_is_available(pid):
+  if mn.models.Object.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.IdentifierNotUnique(0, 'Please try '
+      'again with another identifier', pid)
 
 # Internal.
 def _create(request, pid):
-  # Make sure PID does not already exist.
-  if mn.models.Object.objects.filter(pid=pid).exists():
-    raise d1_common.types.exceptions.IdentifierNotUnique(0, '', pid)
-
-  # Check that a valid MIME multipart document has been provided and that it
-  # contains the required sections.
-  mn.util.validate_post(request, (('file', 'object'), ('file', 'sysmeta')))
-  _reject_xml_document_if_too_large(request.FILES['sysmeta'])
+  _assert_pid_is_available(pid)
+  d1_assert.post_has_mime_parts(request, (('file', 'object'), ('file', 'sysmeta')))
+  d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
   sysmeta_xml = request.FILES['sysmeta'].read()
   try:
-    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)  
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
   except:
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
@@ -605,14 +576,15 @@ def _create(request, pid):
                                  'HTTP_VENDOR_TEST_OBJECT' not in request.META):
     _validate_sysmeta_against_uploaded(request, pid, sysmeta_obj)
     _update_sysmeta_with_mn_values(request, sysmeta_obj)
+    #d1_common.util.is_utc(sysmeta_obj.dateSysMetadataModified)
 
-  mn.sysmeta.write_sysmeta_to_store(pid, sysmeta_xml) 
+  mn.sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
 
   # create() has a GMN specific extension. Instead of providing an object for
   # GMN to manage, the object can be left empty and a URL to a remote location
   # be provided instead. In that case, GMN will stream the object bytes from the
   # remote server while handling all other object related operations like usual.
-  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:  
+  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
     try:
       # Validate URL syntax.
@@ -624,7 +596,7 @@ def _create(request, pid):
         conn = httplib.HTTPConnection(url_split.netloc)
       else:
         conn = httplib.HTTPSConnection(url_split.netloc)
-      conn.request('HEAD', url_split.path)        
+      conn.request('HEAD', url_split.path)
       res = conn.getresponse()
       if res.status != 200:
         raise ValueError
@@ -633,7 +605,7 @@ def _create(request, pid):
       # as well.
       mn.sysmeta.delete_sysmeta_from_store(pid)
       raise d1_common.types.exceptions.InvalidRequest(0,
-        'url({0}): Invalid URL specified for remote storage'.format(url)) 
+        'url({0}): Invalid URL specified for remote storage'.format(url))
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(d1_common.util.encodePathElement(pid))
@@ -644,7 +616,7 @@ def _create(request, pid):
       # as well.
       mn.sysmeta.delete_sysmeta_from_store(pid)
       raise
-  
+
   # Catch any exceptions when creating the db entries, so that the filesystem
   # objects can be cleaned up.
   try:
@@ -655,19 +627,18 @@ def _create(request, pid):
     object.set_format(sysmeta_obj.formatId)
     object.checksum = sysmeta_obj.checksum.value()
     object.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
-    object.mtime = d1_common.util.is_utc(
-      sysmeta_obj.dateSysMetadataModified)
+    object.mtime = sysmeta_obj.dateSysMetadataModified
     object.size = sysmeta_obj.size
     object.replica = False
     object.save_unique()
-  
+
     # Successfully updated the db, so put current datetime in status.mtime. This
     # should store the status.mtime in UTC and for that to work, Django must be
     # running with service.settings.TIME_ZONE = 'UTC'.
     db_update_status = mn.models.DB_update_status()
     db_update_status.status = 'update successful'
     db_update_status.save()
-    
+
     # If an access policy was provided for this object, set it. Until the access
     # policy is set, the object is unavailable to everyone, even the owner.
     if sysmeta_obj.accessPolicy:
@@ -680,10 +651,10 @@ def _create(request, pid):
     object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
     os.unlink(object_path)
     raise
-  
+
   # Log this object creation.
   mn.event_log.create(pid, request)
-  
+
   # Return the pid.
   pid_pyxb = dataoneTypes.Identifier(pid)
   pid_xml = pid_pyxb.toxml()
@@ -706,7 +677,7 @@ def _object_pid_post_store_local(request, pid):
     # The object may have been partially created. If so, delete the file.
     os.unlink(object_path)
     raise
-        
+
 
 @mn.lock_pid.for_write
 @mn.auth.assert_write_permission
@@ -720,7 +691,7 @@ def object_pid_put(request, pid):
 def object_pid_delete(request, pid):
   '''MNStorage.delete(session, pid) → Identifier
   '''
-  _assert_object_exists(pid)
+  d1_assert.object_exists(pid)
 
   sciobj = mn.models.Object.objects.get(pid=pid)
 
@@ -736,12 +707,12 @@ def object_pid_delete(request, pid):
   if url_split.scheme == 'file':
     sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
     os.unlink(sciobj_path)
- 
+
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
-    
+
   mn.sysmeta.delete_sysmeta_from_store(pid)
-  
+
   # Delete the DB entry.
 
   # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
@@ -750,7 +721,7 @@ def object_pid_delete(request, pid):
   sciobj.delete()
 
   # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log. Instead, we log it.
+  # log this event in the event log.
   logging.info('client({0}) pid({1}) Deleted object'.format(
     mn.util.request_to_string(request), pid))
 
@@ -765,14 +736,14 @@ def dirty_system_metadata_post(request):
   '''MNStorage.systemMetadataChanged(session, pid, serialVersion,
                                      dateSysMetaLastModified) → boolean
   '''
-  mn.util.validate_post(request, (('field', 'pid'), ('field', 'serialVersion'),
-                               ('field', 'dateSysMetaLastModified'), ))
+  d1_assert.post_has_mime_parts(request, (('field', 'pid'), ('field', 'serialVersion'),
+                                  ('field', 'dateSysMetaLastModified'),))
 
-  _assert_object_exists(request.POST['pid'])
+  d1_assert.object_exists(request.POST['pid'])
 
   dirty_queue = mn.models.System_metadata_dirty_queue()
   dirty_queue.object = mn.models.Object.objects.get(pid=request.POST['pid'])
-  dirty_queue.serial_version = request.POST['serialVersion'] 
+  dirty_queue.serial_version = request.POST['serialVersion']
   dirty_queue.last_modified = iso8601.parse_date(
     request.POST['dateSysMetaLastModified'])
   dirty_queue.set_status('new')
@@ -791,14 +762,14 @@ def replicate(request):
   if request.method != 'POST':
     return HttpResponseNotAllowed(['POST'])
 
-  mn.util.validate_post(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
-  #_reject_xml_document_if_too_large(request.POST['sourceNode'])
-  _reject_xml_document_if_too_large(request.FILES['sysmeta'])
+  d1_assert.post_has_mime_parts(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
+  #d1_assert.xml_document_not_too_large(request.POST['sourceNode'])
+  d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
   sysmeta_xml = request.FILES['sysmeta'].read()
   try:
-    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)  
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
   except:
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,

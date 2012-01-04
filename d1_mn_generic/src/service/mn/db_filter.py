@@ -22,10 +22,8 @@
 :mod:`db_filter`
 ================
 
-:Synopsis:
-  Database query filters.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Database query filters.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -89,7 +87,11 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     if not re.search('T', date_str):
       date_str += 'T00:00:00Z'
     try:
-      date = d1_common.util.is_utc(iso8601.parse_date(date_str))
+      date = iso8601.parse_date(date_str)
+      if not d1_common.util.is_utc(date):
+        raise d1_common.types.exceptions.InvalidRequest(
+          0, 'Date-time must be UTC: {0}'.format(request.GET[key])
+        )
     except iso8601.ParseError, e:
       raise d1_common.types.exceptions.InvalidRequest(
         0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))

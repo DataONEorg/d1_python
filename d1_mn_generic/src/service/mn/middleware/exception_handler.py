@@ -20,7 +20,7 @@
 # limitations under the License.
 '''
 :mod:`exception_handler`
-=========================
+========================
 
 :Synopsis:
   Catch, log and serialize DataONE exceptions.
@@ -46,8 +46,7 @@
   UnsupportedType
   
   These are not related to Python's exception system.
-
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.

@@ -21,11 +21,8 @@
 ''':mod:`register`
 ==================
 
-:Synopsis:
-  Register a new MN with DataONE.
+:Synopsis: Register a new Member Node with DataONE.
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

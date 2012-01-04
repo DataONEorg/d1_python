@@ -20,12 +20,10 @@
 # limitations under the License.
 '''
 :mod:`mk_test_log_csv`
-=======================
+======================
 
-:Synopsis:
-  Prepare a CSV file that contains fake log entries for testing.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Prepare a CSV file that contains fake log entries for testing.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.

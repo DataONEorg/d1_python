@@ -22,10 +22,9 @@
 :mod:`test_utilities`
 =====================
 
+:Synopsis: Testing utilities
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 import os

@@ -9,8 +9,7 @@
 
   This test will only work until security is added to the DataONE
   infrastructure as the test works in part by simulating a CN. 
-    
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (Dahl)
 """
 
 import logging

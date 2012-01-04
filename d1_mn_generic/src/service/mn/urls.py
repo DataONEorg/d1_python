@@ -22,10 +22,8 @@
 :mod:`urls`
 ===========
 
-:Synopsis:
-  Django URL to function mapping.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: URL to function mapping.
+:Author: DataONE (Dahl)
 '''
 
 from django.conf.urls.defaults import *
@@ -41,10 +39,13 @@ admin.autodiscover()
 # TODO: Only set dictionary up in debug mode.
 import collections
 test_shared_dict = collections.defaultdict(lambda: '<undef>')
-import sys, os
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('./views'))
-print sys.path
+
+import settings
+#import sys, os
+#_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+#sys.path.append(_here('./views'))
+#print sys.path
+
 urlpatterns = patterns(
   'service.mn.views.v1',
   # Django's URL dispatcher does not take HTTP verb into account, so in the

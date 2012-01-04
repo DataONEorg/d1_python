@@ -21,11 +21,8 @@
 ''':mod:`views.internal`
 ========================
 
-:Synopsis:
-  REST call handlers for GMN internal APIs used by worker processes.
+:Synopsis: REST call handlers for GMN internal APIs used by worker processes.
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 # Stdlib.
 import cgi
@@ -74,6 +71,7 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
+import d1_assert
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -94,7 +92,7 @@ import service.settings
 
 
 @auth.assert_internal_permission
-def _internal_replicate_task_get(request):
+def replicate_task_get(request):
   '''Get next replication task.'''
 
   if not models.Replication_work_queue.objects.filter(status__status='new')\
@@ -108,7 +106,7 @@ def _internal_replicate_task_get(request):
 
 
 @auth.assert_internal_permission
-def _internal_replicate_task_update(request, task_id, status):
+def replicate_task_update(request, task_id, status):
   '''Update the status of a replication task.'''
   try:
     task = models.Replication_work_queue.objects.get(id=task_id)
@@ -124,7 +122,7 @@ def _internal_replicate_task_update(request, task_id, status):
 
 @lock_pid.for_write
 @auth.assert_internal_permission
-def _internal_replicate_create(request, pid):
+def replicate_create(request, pid):
   '''Add a replica to the Member Node.
   '''
   return _create(request, pid)
@@ -138,21 +136,15 @@ def _internal_replicate_create(request, pid):
 
 @lock_pid.for_write
 @auth.assert_internal_permission
-def _internal_update_sysmeta(request, pid):
+def update_sysmeta(request, pid):
   '''Updates the System Metadata for an existing Science Object.
-  
-  Preconditions:
-  - The Django transaction middleware layer must be enabled.
-
-  Because TransactionMiddleware layer is enabled, the db modifications all
-  become visible simultaneously after this function completes.
   '''
-  _assert_object_exists(pid)
+  d1_assert.object_exists(pid)
 
   # Check that a valid MIME multipart document has been provided and that it
   # contains the required System Metadata section.
-  util.validate_post(request, (('file', 'sysmeta'), ))
-  _reject_xml_document_if_too_large(request.FILES['sysmeta'])
+  d1_assert.post_has_mime_parts(request, (('file', 'sysmeta'), ))
+  d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
   sysmeta_xml = request.FILES['sysmeta'].read()
@@ -181,9 +173,9 @@ def _internal_update_sysmeta(request, pid):
   except:
     raise d1_common.types.exceptions.InvalidSystemMetadata(0, 'Invalid System Metadata')
 
-    # Successfully updated the db, so put current datetime in status.mtime. This
-    # should store the status.mtime in UTC and for that to work, Django must be
-    # running with settings.TIME_ZONE = 'UTC'.
+  # Successfully updated the db, so put current datetime in status.mtime. This
+  # should store the status.mtime in UTC and for that to work, Django must be
+  # running with settings.TIME_ZONE = 'UTC'.
   db_update_status = models.DB_update_status()
   db_update_status.status = 'update successful'
   db_update_status.save()

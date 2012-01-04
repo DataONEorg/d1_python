@@ -22,10 +22,8 @@
 :mod:`util`
 ===========
 
-:Synopsis:
-  General utilities.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: General utilities.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -122,40 +120,6 @@ def store_path(root, pid):
   return os.path.join(
     root, '{0:03}'.format(a), '{0:03}'.format(b), d1_common.util.encodePathElement(pid)
   )
-
-
-def validate_post(request, parts):
-  '''Validate that a MMP POST contains all required sections.
-  :param parts: [(part_type, part_name), ...]
-  :return: None or raises exception.
-  
-  Where information is stored in the request:
-  part_type header: request.META['HTTP_<UPPER CASE NAME>']
-  part_type file: request.FILES['<name>']
-  part_type field: request.POST['<name>']
-  '''
-
-  missing = []
-
-  for part_type, part_name in parts:
-    if part_type == 'header':
-      if 'HTTP_' + part_name.upper() not in request.META:
-        missing.append('{0}: {1}'.format(part_type, part_name))
-    elif part_type == 'file':
-      if part_name not in request.FILES.keys():
-        missing.append('{0}: {1}'.format(part_type, part_name))
-    elif part_type == 'field':
-      if part_name not in request.POST.keys():
-        missing.append('{0}: {1}'.format(part_type, part_name))
-    else:
-      raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Invalid part_type: {0}'.format(part_type)
-      )
-
-  if len(missing) > 0:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Missing part(s) in MIME Multipart document: ' + ', '.join(missing)
-    )
 
 
 def pretty_xml(xml_str, encoding="UTF-8"):

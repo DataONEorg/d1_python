@@ -24,8 +24,7 @@
 
 :Synopsis:
   Generate a System Metadata object with randomized content for testing.
-
-.. moduleauthor:: Roger Dahl
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
