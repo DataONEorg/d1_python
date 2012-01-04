@@ -22,12 +22,9 @@
 Module d1_client_cli.tests.all_tests
 ====================================
 
-:Synopsis:
-  Run all Unit tests.
+:Synopsis: Run all Unit tests.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

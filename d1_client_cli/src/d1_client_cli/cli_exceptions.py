@@ -27,8 +27,6 @@
   DataONE Command Line Client.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 

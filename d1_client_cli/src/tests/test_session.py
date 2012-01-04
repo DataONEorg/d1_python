@@ -22,12 +22,9 @@
 Module d1_client_cli.tests.test_session
 =======================================
 
-:Synopsis:
-  Unit tests for session parameters.
+:Synopsis: Unit tests for session parameters.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

@@ -22,12 +22,9 @@
 Module d1_client_cli.tests.test_replication_policy
 ==================================================
 
-:Synopsis:
-  Unit tests for replication_policy.
+:Synopsis: Unit tests for replication_policy.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

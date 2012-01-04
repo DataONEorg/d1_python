@@ -22,12 +22,9 @@
 :mod:`system_metadata`
 ======================
 
-:Synopsis:
-  Create System Meta documents based on session parameters.
+:Synopsis: Create System Meta documents based on session parameters.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

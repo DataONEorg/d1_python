@@ -22,12 +22,9 @@
 :mod:`replication_policy`
 =========================
 
-:Synopsis:
-  Create and manipulate replication policies.
+:Synopsis: Create and manipulate replication policies.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

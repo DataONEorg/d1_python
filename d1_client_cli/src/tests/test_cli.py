@@ -22,12 +22,9 @@
 :mod:`test_cli`
 ==============
 
-:Synopsis:
-  Unit tests for DataONE Command Line Interface
+:Synopsis: Unit tests for DataONE Command Line Interface
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

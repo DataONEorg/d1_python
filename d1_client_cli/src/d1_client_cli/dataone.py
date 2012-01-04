@@ -22,12 +22,9 @@
 :mod:`dataone`
 ==============
 
-:Synopsis:
-  DataONE Command Line Interface
+:Synopsis: DataONE Command Line Interface
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

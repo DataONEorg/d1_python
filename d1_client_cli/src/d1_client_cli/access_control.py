@@ -22,12 +22,9 @@
 :mod:`access_control`
 =====================
 
-:Synopsis:
-  Create and manipulate access control.
+:Synopsis: Create and manipulate access control objects.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

@@ -22,12 +22,9 @@
 Module d1_client_cli.tests.test_system_metadata
 ===============================================
 
-:Synopsis:
-  Unit tests for system metadata.
+:Synopsis: Unit tests for system metadata.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

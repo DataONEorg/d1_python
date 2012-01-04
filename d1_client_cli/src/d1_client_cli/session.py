@@ -22,12 +22,9 @@
 :mod:`session`
 ==============
 
-:Synopsis:
-  Hold and manipulate session parameters.
+:Synopsis: Hold and manipulate session parameters.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

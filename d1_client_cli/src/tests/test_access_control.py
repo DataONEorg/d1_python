@@ -22,12 +22,9 @@
 Module d1_client_cli.tests.test_access_control
 ==============================================
 
-:Synopsis:
-  Unit tests for access control.
+:Synopsis: Unit tests for access control.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.
