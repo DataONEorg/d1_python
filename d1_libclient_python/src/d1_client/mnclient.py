@@ -22,13 +22,11 @@
 '''Module d1_client.mnclient
 ============================
 
+:Synopsis:
+  This module implements MemberNodeClient, which extends DataONEBaseClient
+  with functionality specific to Member Nodes.
 :Created: 2011-01-21
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
-
-This module implements MemberNodeClient, which extends DataONEBaseClient
-with functionality specific to Member Nodes.
 '''
 
 # Stdlib.

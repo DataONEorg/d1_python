@@ -4,10 +4,8 @@
 :mod:`setup`
 ====================
 
-:Synopsis:
-  Create egg.
-
-.. moduleauthor:: Roger Dahl
+:Synopsis: Create egg.
+:Author: DataONE (Dahl)
 """
 
 from setuptools import setup, find_packages

@@ -22,22 +22,20 @@
 '''Module d1_client.d1baseclient
 ================================
 
-This module implements DataONEBaseClient, which extends RESTClient with DataONE
-specific functionality common to Coordinating Nodes and Member Nodes.
+:Synopsis:
+  This module implements DataONEBaseClient, which extends RESTClient with
+  DataONE specific functionality common to Coordinating Nodes and Member Nodes.
 
-Methods that are common for CN and MN:
+  Methods that are common for CN and MN:
 
-CNCore/MNCore.getLogRecords()
-CNRead/MNRead.get()
-CNRead/MNRead.getSystemMetadata()
-CNRead/MNRead.describe()
-CNRead/MNRead.listObjects()
-CNAuthorization/MNAuthorization.isAuthorized()
-
+  CNCore/MNCore.getLogRecords()
+  CNRead/MNRead.get()
+  CNRead/MNRead.getSystemMetadata()
+  CNRead/MNRead.describe()
+  CNRead/MNRead.listObjects()
+  CNAuthorization/MNAuthorization.isAuthorized()
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

@@ -22,13 +22,11 @@
 '''Module d1_client.cnclient
 ============================
 
-This module implements CoordinatingNodeClient, which extends DataONEBaseClient
-with functionality specific to Coordinating Nodes.
-
+:Synopsis:
+  This module implements CoordinatingNodeClient, which extends DataONEBaseClient
+  with functionality specific to Coordinating Nodes.
 :Created: 2011-01-22
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

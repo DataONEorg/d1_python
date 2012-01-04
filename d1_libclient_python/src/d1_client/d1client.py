@@ -21,18 +21,14 @@
 '''Module d1_client.d1client
 ============================
 
-This module implements:
-
-- DataONEClient, which uses CN- and MN clients to perform high level operations
-  against the DataONE infrastructure.
-
-- DataONEObject, which wraps a single object and adds functionality such as
-  resolve and get.
-
+:Synopsis:
+  This module implements:
+  - DataONEClient, which uses CN- and MN clients to perform high level operations
+    against the DataONE infrastructure.
+  - DataONEObject, which wraps a single object and adds functionality such as
+    resolve and get.
 :Created: 2011-01-26
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

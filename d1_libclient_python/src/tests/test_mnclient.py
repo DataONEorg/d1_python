@@ -21,12 +21,9 @@
 '''Module d1_client.tests.test_mnclient
 =======================================
 
-Unit tests for mnclient.
-
+:Synopsis: Unit tests for mnclient.
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

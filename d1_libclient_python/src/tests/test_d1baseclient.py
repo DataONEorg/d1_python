@@ -21,12 +21,9 @@
 '''Module d1_client.tests.test_d1baseclient
 ===========================================
 
-Unit tests for d1_client.d1baseclient.
-
+:Synopsis: Unit tests for d1_client.d1baseclient.
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # TODO: Tests disabled with "WAITING_FOR_TEST_ENV_" are disabled until a
