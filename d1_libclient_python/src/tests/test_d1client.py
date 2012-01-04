@@ -21,12 +21,9 @@
 '''Module d1_client.tests.test_d1client
 =======================================
 
-Unit tests for d1client.
-
+:Synopsis: Unit tests for d1client.
 :Created: 2010-01-08
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.
