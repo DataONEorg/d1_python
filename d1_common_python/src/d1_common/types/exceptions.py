@@ -92,6 +92,8 @@ def deserialize(dataone_exception_xml):
     u'ServiceFailure': ServiceFailure,
     u'UnsupportedMetadataType': UnsupportedMetadataType,
     u'UnsupportedType': UnsupportedType,
+    u'SynchronizationFailed': SynchronizationFailed,
+    u'VersionMismatch': VersionMismatch,
   }
 
   try:
@@ -169,15 +171,9 @@ class DataONEIdentifierException(DataONEException):
     self.pid = pid
 
 
-class NotFound(DataONEIdentifierException):
-  '''Implements NotFound exception
-  '''
-
-  def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 404, detailCode, description, pid, traceInformation
-    )
-    #TODO: add link to resolve()
+class AuthenticationTimeout(DataONEException):
+  def __init__(self, detailCode, description, traceInformation=None):
+    DataONEException.__init__(self, 408, detailCode, description, traceInformation)
 
 
 class IdentifierNotUnique(DataONEIdentifierException):
@@ -188,11 +184,6 @@ class IdentifierNotUnique(DataONEIdentifierException):
     DataONEIdentifierException.__init__(
       self, 409, detailCode, description, pid, traceInformation
     )
-
-
-class AuthenticationTimeout(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 408, detailCode, description, traceInformation)
 
 
 class InsufficientResources(DataONEException):
@@ -225,6 +216,17 @@ class NotAuthorized(DataONEException):
     DataONEException.__init__(self, 401, detailCode, description, traceInformation)
 
 
+class NotFound(DataONEIdentifierException):
+  '''Implements NotFound exception
+  '''
+
+  def __init__(self, detailCode, description, pid, traceInformation=None):
+    DataONEIdentifierException.__init__(
+      self, 404, detailCode, description, pid, traceInformation
+    )
+    #TODO: add link to resolve()
+
+
 class NotImplemented(DataONEException):
   def __init__(self, detailCode, description, traceInformation=None):
     DataONEException.__init__(self, 501, detailCode, description, traceInformation)
@@ -249,4 +251,11 @@ class SynchronizationFailed(DataONEIdentifierException):
   def __init__(self, detailCode, description, pid, traceInformation=None):
     DataONEIdentifierException.__init__(
       self, 0, detailCode, description, pid, traceInformation
+    )
+
+
+class VersionMismatch(DataONEIdentifierException):
+  def __init__(self, detailCode, description, pid, traceInformation=None):
+    DataONEIdentifierException.__init__(
+      self, 409, detailCode, description, pid, traceInformation
     )
