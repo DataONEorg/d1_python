@@ -22,14 +22,9 @@
 Module d1_common.const
 ======================
 
-Provides various constants for the python DataONE client.
-
+:Synopsis: Provides system wide constants for the Python DataONE stack.
 :Created: 2010-01-20
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
-  
-TODO: Many of these parameters should be retrieved from the root node of D1.
 '''
 
 # Make contents of __init__ available.

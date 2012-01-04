@@ -22,13 +22,11 @@
 Module d1_common.mime_multipart
 ===============================
 
-Wrap files and return the file data wrapped in a mime multipart structure when
-iterated, without buffering.
-
+:Synopsis:
+  Wrap files and return the file data wrapped in a mime multipart structure when
+  iterated, without buffering.
 :Created: 2010-09-07
 :Author: DataONE (Dahl, Vieglais)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

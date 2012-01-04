@@ -22,13 +22,11 @@
 Module d1_common.restclient
 ===========================
 
-HTTP client that supports core REST operations using MIME multipart mixed
-encoding.
-
+:Synopsis:
+  HTTP client that supports core REST operations using MIME multipart mixed
+  encoding.
 :Created: 2010-03-09
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 import logging
@@ -47,10 +45,10 @@ class RESTClient(object):
                host,
                scheme="https",
                port=None,
-               timeout=const.RESPONSE_TIMEOUT, 
-               defaultHeaders=None, 
-               cert_path=None, 
-               key_path=None, 
+               timeout=const.RESPONSE_TIMEOUT,
+               defaultHeaders=None,
+               cert_path=None,
+               key_path=None,
                strict=True):
     '''Connect to an HTTP service.
 
@@ -119,7 +117,7 @@ class RESTClient(object):
     curl = []
     curl.append('curl -X {0}'.format(method))
     for k, v in headers.items():
-      curl.append('-H "{0}: {1}"'.format(k, v))    
+      curl.append('-H "{0}: {1}"'.format(k, v))
     curl.append('{0}'.format(self._join_url_with_query_params(selector, query)))
     return ' '.join(curl)
 
@@ -130,8 +128,8 @@ class RESTClient(object):
     return self.connection.getresponse()
 
 
-  def _send_request(self, method, selector, body=None, query=None,
-                    headers=None):
+  def _send_request(self, method, selector, query=None, headers=None,
+                    body=None):
     '''Send request and retrieve response.
 
     :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
@@ -151,7 +149,7 @@ class RESTClient(object):
     self.logger.debug('headers: {0}'.format(str(headers)))
     self.connection.request(method, url, body, headers)
     return self._get_response()
-    
+
 
   def _send_mime_multipart_request(self, method, selector, query=None,
                                    headers=None, fields=None, files=None):
@@ -179,8 +177,8 @@ class RESTClient(object):
     mmp_body = multipart(fields, files)
     headers['Content-Type'] = mmp_body.get_content_type_header()
     headers['Content-Length'] = mmp_body.get_content_length()
-    return self._send_request(method, selector, body=mmp_body,
-                              query=query, headers=headers)
+    return self._send_request(method, selector, query=query, headers=headers,
+                              body=mmp_body)
 
 
   def GET(self, url, query=None, headers=None):
@@ -197,10 +195,9 @@ class RESTClient(object):
     :returns: The result of the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._send_request('GET', url, query=query,
-                              headers=headers)
+    return self._send_request('GET', url, query, headers)
 
-  
+
   def HEAD(self, url, query=None, headers=None):
     '''Perform a HTTP HEAD and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. Note that HEAD 
@@ -218,7 +215,7 @@ class RESTClient(object):
     '''
     return self._send_request('HEAD', url, query, headers)
 
-  
+
   def DELETE(self, url, query=None, headers=None):
     '''Perform a HTTP DELETE and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method.
@@ -235,7 +232,7 @@ class RESTClient(object):
     '''
     return self._send_request('DELETE', url, query, headers)
 
-  
+
   def POST(self, url, query=None, headers=None, fields=None, files=None):
     '''Perform a HTTP POST and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
@@ -258,7 +255,7 @@ class RESTClient(object):
     return self._send_mime_multipart_request('POST', url, query, headers,
                                              fields, files)
 
-  
+
   def PUT(self, url, query=None, headers=None, fields=None, files=None):
     '''Perform a HTTP PUT and return the response. All values are to be UTF-8
     encoded - no Unicode encoding is done by this method. The body of the POST 
