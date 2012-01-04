@@ -22,12 +22,10 @@
 Module d1_common.tests.test_objectlocationlist
 ==============================================
 
-Unit tests for serializaton and de-serialization of the ObjectLocationList type.
-
+:Synopsis: Unit tests for serializaton and de-serialization of the
+  ObjectLocationList type.
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

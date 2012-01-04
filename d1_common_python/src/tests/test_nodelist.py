@@ -22,12 +22,10 @@
 Module d1_common.tests.test_nodelist
 ====================================
 
-Unit tests for serializaton and de-serialization of the NodeList type.
-
+:Synopsis: Unit tests for serializaton and de-serialization of the NodeList
+  type.
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.
@@ -49,7 +47,7 @@ import util
 EG_NODELIST_GMN = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier0</identifier>
         <name>name0</name>
@@ -136,7 +134,7 @@ EG_NODELIST_KNB = """"""
 EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier0</identifier>
         <name>name0</name>
@@ -220,7 +218,7 @@ EG_BAD_NODELIST_1 = """<?xml version="1.0" encoding="UTF-8"?>
 EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
 <d1:nodeList xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/roger/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneTypes.xsd">
     <node replicate="false" synchronize="false" type="mn" state="up">
         <identifier>identifier0</identifier>
         <name>name0</name>

@@ -21,12 +21,9 @@
 Module d1_common.util
 =====================
 
+:Synopsis: Utilities
 :Created: 2010-08-07
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
-
-Utilities.
 '''
 
 # Stdlib.
@@ -97,7 +94,7 @@ def is_utc(datetime_):
     utc_offset = datetime_.utcoffset()
   except:
     return False
-  if utc_offset.total_seconds():
+  if utc_offset:
     return False
   return True
 

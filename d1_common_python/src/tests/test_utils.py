@@ -22,12 +22,9 @@
 Module d1_common.tests.test_utils
 =================================
 
-Unit tests for various utilities.
-
+:Synopsis: Unit tests for various utilities.
 :Created: 2011-01-21
 :Author: DataONE (Vieglais, Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Stdlib.

@@ -20,17 +20,11 @@
 '''
 Module d1_common.types.exceptions
 =================================
-
-:Created:
-  2010-04-12
-:Author:
-  DataONE (Vieglais, Dahl)
 :Synopsis:
   - Native objects for holding DataONE Exceptions
   - XML Serialization and deserialization of DataONE Exceptions
-:Dependencies:
-  - python 2.6
-  - PyXB
+:Created: 2010-04-12
+:Author: DataONE (Vieglais, Dahl)
 '''
 
 # Stdlib.
