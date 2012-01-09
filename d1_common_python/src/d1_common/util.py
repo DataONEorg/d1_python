@@ -28,6 +28,7 @@ Module d1_common.util
 
 # Stdlib.
 import StringIO
+import calendar
 import datetime
 import email.message
 import email.utils
@@ -41,32 +42,48 @@ import time
 import urllib
 import xml.dom.minidom
 
-# 3rd party.
-try:
-  import minixsv
-  import minixsv.pyxsval
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write(
-    'Try: Download and install minixsv from http://www.familieleuthe.de/DownloadMiniXsv.html\n'
-  )
-  raise
-
 # D1.
 import const
+import util
 
 
-def are_checksums_equal(c1, c2):
+class UTC(datetime.tzinfo):
+  '''tzinfo class that is fixed to UTC'''
+
+  def utcoffset(self, dt):
+    return datetime.timedelta(0)
+
+  def tzname(self, dt):
+    return 'UTC'
+
+  def dst(self, dt):
+    return datetime.timedelta(0)
+
+# ==============================================================================
+
+
+def checksums_are_equal(c1, c2):
   return c1.value().lower() == c2.value().lower() \
     and c1.algorithm == c2.algorithm
 
 
-def to_http_datetime(datetime_):
+def datetime_to_seconds_since_epoch(date_time):
+  '''Convert datetime to epoch time / Unix timestamp. This is the number of
+  seconds since Midnight, January 1st, 1970, UTC.
+  - Takes timezone information into account if included in the datetime.
+  - A naive datetime (no timezone information) is assumed to be in UTC.
+  '''
+  return calendar.timegm(date_time.utctimetuple())
+
+
+def to_http_datetime(date_time):
   '''Format datetime to the preferred HTTP Full Date format, which is a 
   fixed-length subset of that defined by RFC 1123.
-  http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+  - http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+  - Takes timezone information into account if included in the datetime.
+  - A naive datetime (no timezone information) is assumed to be in UTC.
   '''
-  epoch_seconds = time.mktime(datetime_.timetuple())
+  epoch_seconds = datetime_to_seconds_since_epoch(date_time)
   return email.utils.formatdate(epoch_seconds, localtime=False, usegmt=True)
 
 
@@ -76,27 +93,75 @@ def from_http_datetime(http_full_datetime):
   Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
   Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
   http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+  - HTTP Full Dates are always in UTC.
+  - The returned datetime is timezone aware and fixed to UTC.  
   '''
   date_parts = list(email.utils.parsedate(http_full_datetime)[:6])
   year = date_parts[0]
   if year <= 99:
     year = year + 2000 if year < 50 else year + 1900
-  return datetime.datetime(year, *date_parts[1:])
+  return create_utc_datetime(year, *date_parts[1:])
 
 
-def is_utc(datetime_):
+def is_utc(date_time):
   '''Check that datetime contains time zone information and that the
   timezone is UTC.
   '''
-  if datetime_.tzinfo is None:
+  if date_time.tzinfo is None:
     return False
   try:
-    utc_offset = datetime_.utcoffset()
+    utc_offset = date_time.utcoffset()
   except:
     return False
   if utc_offset:
     return False
   return True
+
+
+def create_utc_datetime(*datetime_parts):
+  return datetime.datetime(*datetime_parts, tzinfo=UTC())
+
+
+def normalize_datetime_to_utc(date_time, timezone=None):
+  '''Adjust datetime to UTC by applying the timezone offset to the datetime and
+  setting the timezone to UTC.
+  
+  :param date_time: Datetime with or without timezone information.
+  :type date_time: datetime.datetime
+  :param timezone: Timezone specified as offset from UTC in minutes.
+  :type timezone: int
+
+  - Raises TypeError if datetime contains timezone, the timezone parameter is
+    provided, and the two are in conflict.
+  - Raises TypeError if datetime does not contain timezone information and the
+    timezone parameter is not provided.  
+  - If datetime does not contain timezone information, the timezone parameter
+    must be provided.
+  - If datetime is already UTC, does nothing.
+  '''
+  tz_dt_present = date_time.tzinfo is not None
+  tz_arg_present = timezone is not None
+
+  if not tz_dt_present and not tz_arg_present:
+    raise TypeError(
+      'Timezone information must be provided either within '
+      'datetime or as timezone argument'
+    )
+
+  if tz_dt_present and tz_arg_present and date_time.utcoffset() != \
+    datetime.timedelta(minutes=timezone):
+    raise TypeError(
+      'Timezone information was provided both within datetime '
+      'and as timezone argument and the two were in conflict'
+    )
+
+  if tz_dt_present:
+    date_time -= date_time.utcoffset()
+
+  if tz_arg_present:
+    date_time -= datetime.timedelta(minutes=timezone)
+
+  return date_time.replace(tzinfo=UTC())
 
 
 def pretty_xml(xml_doc):
@@ -110,33 +175,6 @@ def pretty_xml(xml_doc):
   except TypeError:
     xml = xml.dom.minidom.parse(xml_doc)
   return xml.toprettyxml()
-
-
-def validate_xml(xml_doc):
-  ''' Validate the supplied XML document text against the D1 schema.
-
-  :param xml_doc: xml text
-  :type xml_doc: basestring
-  '''
-  # TODO: Speed up validation by caching parsed schema tree in memory. 
-  # Cache the schema on local filesystem.
-  tmp_schema_filename = re.sub(r'[^\w]', '_', const.SCHEMA_URL)
-  tmp_schema_path = os.path.join(tempfile.gettempdir(), tmp_schema_filename)
-  # If the schema does not exist on local filesystem, download it from DataONE.
-  if not os.path.exists(tmp_schema_path):
-    tmp_schema_file = open(tmp_schema_path, 'wb')
-    schema_file = urllib.urlopen(const.SCHEMA_URL)
-    shutil.copyfileobj(schema_file, tmp_schema_file)
-    tmp_schema_file.close()
-    # Validate the downloaded schema. Raises GenXmlIfError or XsvalError on
-    # error.
-    minixsv.pyxsval.parseAndValidateXmlSchema(tmp_schema_path)
-
-  xsValidator = minixsv.pyxsval.XsValidator()
-  inputTreeWrapper = xsValidator.parseString(xml_doc)
-  # Validate the downloaded schema. Raises GenXmlIfError or XsvalError on
-  # error.
-  xsValidator.validateXmlInput(xml_doc, inputTreeWrapper, tmp_schema_path, 0)
 
 
 def get_content_type(content_type):

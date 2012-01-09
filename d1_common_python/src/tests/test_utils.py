@@ -45,17 +45,79 @@ import util
 
 
 class TestUtils(unittest.TestCase):
+  def _test_date_naive(self):
+    return datetime.datetime(1999, 3, 19, 1, 2, 3, tzinfo=None)
+
+  def _test_date_MST(self):
+    class tz_mst(datetime.tzinfo):
+      def utcoffset(self, dt):
+        return datetime.timedelta(hours=-7)
+
+    return datetime.datetime(1999, 3, 19, 1, 2, 3, tzinfo=tz_mst())
+
+  def _test_date_YEKT(self):
+    class tz_yekt(datetime.tzinfo):
+      def utcoffset(self, dt):
+        return datetime.timedelta(hours=6)
+
+    return datetime.datetime(1999, 3, 19, 1, 2, 3, tzinfo=tz_yekt())
+
+  def _test_date_UTC(self):
+    class tz_utc(datetime.tzinfo):
+      def utcoffset(self, dt):
+        return datetime.timedelta(0)
+
+    return datetime.datetime(1999, 3, 19, 1, 2, 3, tzinfo=tz_utc())
+
+  # datetime_to_seconds_since_epoch()
+
+  def test_001(self):
+    '''datetime_to_seconds_since_epoch() assumes naive datetime is in UTC'''
+    # Used http://www.epochconverter.com/ to verify.
+    dt = self._test_date_naive()
+    self.assertEqual(d1_common.util.datetime_to_seconds_since_epoch(dt), 921805323)
+
+  def test_002(self):
+    '''datetime_to_seconds_since_epoch() honors timezone (MST, UTC-7)'''
+    # Used http://www.epochconverter.com/ to verify.
+    dt = self._test_date_MST()
+    self.assertEqual(
+      d1_common.util.datetime_to_seconds_since_epoch(dt), 921805323 + (7 * 3600)
+    )
+
+  def test_003(self):
+    '''datetime_to_seconds_since_epoch() honors timezone (YEKT, UTC+6)'''
+    # Used http://www.epochconverter.com/ to verify.
+    dt = self._test_date_YEKT()
+    self.assertEqual(
+      d1_common.util.datetime_to_seconds_since_epoch(dt), 921805323 - (6 * 3600)
+    )
+
+  # to_http_datetime()
+
   def test_010(self):
-    '''to_http_datetime()'''
-    dt = datetime.datetime(1999, 3, 19, 1, 2, 3)
-    dt_str = 'Fri, 19 Mar 1999 08:02:03 GMT' # adjusted to GMT
+    '''to_http_datetime() assumes naive datetime is in UTC'''
+    dt = self._test_date_naive()
+    dt_str = 'Fri, 19 Mar 1999 01:02:03 GMT'
+    self.assertEqual(d1_common.util.to_http_datetime(dt), dt_str)
+
+  def test_011(self):
+    '''to_http_datetime() honors timezone (MST, UTC-7)'''
+    dt = self._test_date_MST()
+    dt_str = 'Fri, 19 Mar 1999 08:02:03 GMT'
+    self.assertEqual(d1_common.util.to_http_datetime(dt), dt_str)
+
+  def test_012(self):
+    '''to_http_datetime() honors timezone (YEKT, UTC+6)'''
+    dt = self._test_date_YEKT()
+    dt_str = 'Thu, 18 Mar 1999 19:02:03 GMT'
     self.assertEqual(d1_common.util.to_http_datetime(dt), dt_str)
 
   # from_http_datetime()
 
   def _from_http_datetime(self, that_fateful_day_in_november_94):
     dt = d1_common.util.from_http_datetime(that_fateful_day_in_november_94)
-    self.assertEqual(dt, datetime.datetime(1994, 11, 6, 8, 49, 37))
+    self.assertEqual(dt, d1_common.util.create_utc_datetime(1994, 11, 6, 8, 49, 37))
 
   def test_020(self):
     '''from_http_datetime(): RFC 822, updated by RFC 1123'''
@@ -69,43 +131,97 @@ class TestUtils(unittest.TestCase):
     '''from_http_datetime(): ANSI C's asctime() format'''
     self._from_http_datetime('Sun Nov  6 08:49:37 1994')
 
-  # Checksum
+  # is_utc()
 
   def test_030(self):
-    '''are_checksums_equal(): Same checksum, same algorithm'''
+    '''is_utc() is false for naive datetime'''
+    dt = self._test_date_naive()
+    self.assertFalse(d1_common.util.is_utc(dt))
+
+  def test_031(self):
+    '''is_utc() is false for timezone aware datetime not at UTC (MST, UTC-7)'''
+    dt = self._test_date_MST()
+    self.assertFalse(d1_common.util.is_utc(dt))
+
+  def test_032(self):
+    '''is_utc() is false for timezone aware datetime not at UTC (YEKT, UTC+6)'''
+    dt = self._test_date_YEKT()
+    self.assertFalse(d1_common.util.is_utc(dt))
+
+  def test_033(self):
+    '''is_utc() is true for timezone aware datetime at UTC'''
+    dt = self._test_date_UTC()
+    self.assertTrue(d1_common.util.is_utc(dt))
+
+  # normalize_datetime_to_utc()
+
+  def test_040(self):
+    '''normalize_datetime_to_utc() raises TypeError for naive datetime and no timezone arg'''
+    dt = self._test_date_naive()
+    self.assertRaises(TypeError, d1_common.util.normalize_datetime_to_utc, dt)
+
+  def test_041(self):
+    '''normalize_datetime_to_utc() does raise exception for non-conflicting timezones'''
+    dt = self._test_date_YEKT()
+    d1_common.util.normalize_datetime_to_utc(dt, 6 * 60)
+
+  def test_042(self):
+    '''normalize_datetime_to_utc() raises TypeError conflicting timezones'''
+    dt = self._test_date_YEKT()
+    self.assertRaises(TypeError, d1_common.util.normalize_datetime_to_utc, dt, 3 * 60)
+
+  def test_043(self):
+    '''normalize_datetime_to_utc() returns correct result for timezone aware datetime'''
+    dt = self._test_date_YEKT()
+    dt_utc = d1_common.util.normalize_datetime_to_utc(dt)
+    self.assertEqual(dt, dt_utc)
+    self.assertEqual(dt_utc.utcoffset(), datetime.timedelta(0))
+
+  def test_044(self):
+    '''normalize_datetime_to_utc() returns correct result for naive datetime and timezone arg'''
+    dt = self._test_date_naive()
+    dt_utc_norm = d1_common.util.normalize_datetime_to_utc(dt, 3 * 60)
+    dt_utc = d1_common.util.create_utc_datetime(1999, 3, 18, 22, 2, 3)
+    self.assertEqual(dt_utc_norm, dt_utc)
+
+  # Checksum
+
+  def test_050(self):
+    '''checksums_are_equal(): Same checksum, same algorithm'''
     c1 = dataoneTypes.Checksum('BAADF00D')
     c1.algorithm = 'SHA-1'
     c2 = dataoneTypes.Checksum('BAADF00D')
     c2.algorithm = 'SHA-1'
-    self.assertTrue(d1_common.util.are_checksums_equal(c1, c2))
+    self.assertTrue(d1_common.util.checksums_are_equal(c1, c2))
 
-  def test_031(self):
-    '''are_checksums_equal(): Same checksum, different algorithm'''
+  def test_051(self):
+    '''checksums_are_equal(): Same checksum, different algorithm'''
     c1 = dataoneTypes.Checksum('BAADF00D')
     c1.algorithm = 'SHA-1'
     c2 = dataoneTypes.Checksum('BAADF00D')
     c2.algorithm = 'MD5'
-    self.assertFalse(d1_common.util.are_checksums_equal(c1, c2))
+    self.assertFalse(d1_common.util.checksums_are_equal(c1, c2))
 
-  def test_032(self):
-    '''are_checksums_equal(): Different checksum, same algorithm'''
+  def test_052(self):
+    '''checksums_are_equal(): Different checksum, same algorithm'''
     c1 = dataoneTypes.Checksum('BAADF00DX')
     c1.algorithm = 'MD5'
     c2 = dataoneTypes.Checksum('BAADF00D')
     c2.algorithm = 'MD5'
-    self.assertFalse(d1_common.util.are_checksums_equal(c1, c2))
+    self.assertFalse(d1_common.util.checksums_are_equal(c1, c2))
 
-  def test_033(self):
-    '''are_checksums_equal(): Case insensitive checksum comparison'''
+  def test_053(self):
+    '''checksums_are_equal(): Case insensitive checksum comparison'''
     c1 = dataoneTypes.Checksum('baadf00d')
     c1.algorithm = 'MD5'
     c2 = dataoneTypes.Checksum('BAADF00D')
     c2.algorithm = 'MD5'
-    self.assertTrue(d1_common.util.are_checksums_equal(c1, c2))
+    self.assertTrue(d1_common.util.checksums_are_equal(c1, c2))
 
   # Path elements.
 
-  def testEncodePathElement(self):
+  def test_060(self):
+    '''encodePathElement()'''
     fpath = os.path.abspath(os.path.dirname(__file__))
     ftest = os.path.join(fpath, 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt')
     testfile = codecs.open(ftest, encoding='utf-8', mode='r')
@@ -118,7 +234,8 @@ class TestUtils(unittest.TestCase):
           e = parts[1].strip()
           self.assertEqual(e, d1_common.util.encodePathElement(v))
 
-  def testEncodeQueryElement(self):
+  def test_070(self):
+    '''encodeQueryElement()'''
     fpath = os.path.abspath(os.path.dirname(__file__))
     ftest = os.path.join(fpath, 'd1_testdocs/encodingTestSet/testUnicodeStrings.utf8.txt')
     testfile = codecs.open(ftest, encoding='utf-8', mode='r')
@@ -131,7 +248,8 @@ class TestUtils(unittest.TestCase):
           e = parts[1].strip()
           self.assertEqual(e, d1_common.util.encodeQueryElement(v))
 
-  def testEncodeURL(self):
+  def test_080(self):
+    '''urlencode()'''
     data = [
       ('a', '"#<>[]^`{}|'), ('b', '-&=&='), ('c', 'http://example.com/data/mydata?row=24')
     ]
@@ -139,7 +257,8 @@ class TestUtils(unittest.TestCase):
     test = d1_common.util.urlencode(data)
     self.assertEqual(test, expected)
 
-  def test_stripElementSlashes(self):
+  def test_090(self):
+    '''stripElementSlashes()'''
     self.assertEqual('element', d1_common.util.stripElementSlashes('/element'))
     self.assertEqual('element', d1_common.util.stripElementSlashes('//element/'))
     self.assertEqual('element', d1_common.util.stripElementSlashes('element/'))
@@ -148,11 +267,12 @@ class TestUtils(unittest.TestCase):
     self.assertEqual('', d1_common.util.stripElementSlashes('/'))
     self.assertEqual('', d1_common.util.stripElementSlashes('//'))
 
-  def test_joinPathElements(self):
+  def test_100(self):
+    '''joinPathElements()'''
     self.assertEqual('a/b', d1_common.util.joinPathElements('a', 'b'))
     self.assertEqual('a/b/c', d1_common.util.joinPathElements('a/', '/b', 'c'))
 
-  def test_normalizeTarget(self):
+  def test_110(self):
     '''normalizeTarget()'''
     u0 = "http://some.server/base/mn/"
     u1 = "http://some.server/base/mn"

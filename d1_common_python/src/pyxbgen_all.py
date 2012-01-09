@@ -2,23 +2,22 @@
 
 # Generate PyXB binding classes from schemas.
 
-import os
+import datetime
 import glob
 import optparse
+import os
+from xml.etree.ElementTree import parse
+try:
+  import pysvn
+except ImportError:
+  print 'Try: sudo apt-get install python-svn'
+  raise
 
 
 def generateVersion(schema_path, binding_path):
-  '''Given the DataONE types schema, generates a version module that 
-  contains version information about the file.
+  '''Given a DataONE schema, generates a version module that contains version
+  information about the file.
   '''
-  from xml.etree.ElementTree import parse
-  try:
-    import pysvn
-  except ImportError:
-    print 'Try: sudo apt-get install python-svn'
-    raise
-  import datetime
-
   cli = pysvn.Client()
   svninfo = cli.info(schema_path)
   if svninfo is None:
