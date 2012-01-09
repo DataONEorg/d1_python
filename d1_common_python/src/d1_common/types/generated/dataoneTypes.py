@@ -603,7 +603,7 @@ class Checksum (pyxb.binding.basis.complexTypeDefinition):
     # Base type is pyxb.binding.datatypes.string
     
     # Attribute algorithm uses Python identifier algorithm
-    __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'algorithm'), 'algorithm', '__httpns_dataone_orgservicetypesv1_Checksum_algorithm', ChecksumAlgorithm, required=True)
+    __algorithm = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'algorithm'), 'algorithm', '__httpns_dataone_orgservicetypesv1_ChecksumAlgorithm', ChecksumAlgorithm, required=True)
     
     algorithm = property(__algorithm.value, __algorithm.set, None, None)
 
