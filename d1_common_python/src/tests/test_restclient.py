@@ -41,7 +41,6 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 
 # App
-import util
 import d1_common.restclient
 
 

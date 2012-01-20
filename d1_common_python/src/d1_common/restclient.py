@@ -29,12 +29,16 @@ Module d1_common.restclient
 :Author: DataONE (Vieglais, Dahl)
 '''
 
+# Stdlib.
 import logging
 import httplib
 import urlparse
 import util
-from d1_common import const
-from d1_common.mime_multipart import multipart
+
+# D1.
+import d1_common.url
+import d1_common.const
+import d1_common.mime_multipart
 
 
 class RESTClient(object):
@@ -45,7 +49,7 @@ class RESTClient(object):
                host,
                scheme="https",
                port=None,
-               timeout=const.RESPONSE_TIMEOUT,
+               timeout=d1_common.const.RESPONSE_TIMEOUT,
                defaultHeaders=None,
                cert_path=None,
                key_path=None,
@@ -76,7 +80,7 @@ class RESTClient(object):
     '''
     if defaultHeaders is None:
       defaultHeaders = {
-        'User-Agent': const.USER_AGENT,
+        'User-Agent': d1_common.const.USER_AGENT,
       }
     self.connection = self._connect(scheme, host, port, timeout, cert_path,
                                     key_path, strict)
@@ -108,7 +112,7 @@ class RESTClient(object):
     if query is None:
       return selector
     else:
-      return u'{0}?{1}'.format(selector, util.urlencode(query))
+      return u'{0}?{1}'.format(selector, d1_common.url.urlencode(query))
 
 
   def _get_curl_request(self, method, selector, query=None, headers=None):
@@ -122,10 +126,10 @@ class RESTClient(object):
     return ' '.join(curl)
 
 
-  def _get_response(self):
-    '''Override this to provide automatic processing of response.
-    '''
-    return self.connection.getresponse()
+#  def _get_response(self):
+#    '''Override this to provide automatic processing of response.
+#    '''
+#    return self.connection.getresponse()
 
 
   def _send_request(self, method, selector, query=None, headers=None,
@@ -148,7 +152,8 @@ class RESTClient(object):
     self.logger.debug('operation: {0} {1}'.format(method, url))
     self.logger.debug('headers: {0}'.format(str(headers)))
     self.connection.request(method, url, body, headers)
-    return self._get_response()
+    return self.connection.getresponse()
+    #return self._get_response()
 
 
   def _send_mime_multipart_request(self, method, selector, query=None,
@@ -174,7 +179,7 @@ class RESTClient(object):
       fields = {}
     if files is None:
       files = []
-    mmp_body = multipart(fields, files)
+    mmp_body = d1_common.mime_multipart.multipart(fields, files)
     headers['Content-Type'] = mmp_body.get_content_type_header()
     headers['Content-Length'] = mmp_body.get_content_length()
     return self._send_request(method, selector, query=query, headers=headers,

@@ -32,6 +32,7 @@ import inspect
 import sys
 import traceback
 import xml.sax
+import StringIO
 
 # 3rd party.
 import pyxb
@@ -53,9 +54,21 @@ auth.py(315)
 '''
 
 
+class DataONEExceptionException(Exception):
+  '''Pass exceptions related to processing DataONEExceptions.'''
+
+  def __init__(self, value):
+    self.value = value
+
+  def __str__(self):
+    return str(self.value)
+
+# ==============================================================================
+
+
 def deserialize(dataone_exception_xml):
   '''Deserialize a DataONE Exception.
-  :param dataone_exception_xml: XML Serialized DataONE Exception.
+  :param dataone_exception_xml: XML Serialized DataONE Exception in UTF-8.
   :type dataone_exception_xml: str
   :returns: Native DataONE Exception Object.
   :return type: DataONEException subclass 
@@ -63,20 +76,14 @@ def deserialize(dataone_exception_xml):
   try:
     dataone_exception_pyxb = dataoneErrors.CreateFromDocument(dataone_exception_xml)
   except (pyxb.PyXBException, xml.sax.SAXParseException):
-    # A PyXB exception at this point means that the dataone_exception_xml did
-    # not correspond to the PyXB binding class, which again means that it did
-    # not comply to the schema. Handle this by returning a ServiceFailure
-    # exception object that contains the information from the exception and the
-    # dataone_exception_xml.
-    description_list = []
-    description_list.append('Deserialization failed with exception')
-    description_list.append(traceback.format_exc())
-    description_list.append('On input:')
-    if dataone_exception_xml == '':
-      description_list.append('<empty response>')
-    else:
-      description_list.append(dataone_exception_xml)
-    return ServiceFailure(0, '\n'.join(description_list))
+    msg = StringIO.StringIO()
+    msg.write('Deserialization failed with exception:\n')
+    msg.write(traceback.format_exc() + '\n')
+    msg.write('On input:\n')
+    msg.write(
+      '<empty response>' if dataone_exception_xml == '' else dataone_exception_xml
+    )
+    raise DataONEExceptionException(msg.getvalue())
 
   name_exception_map = {
     u'AuthenticationTimeout': AuthenticationTimeout,
@@ -101,12 +108,10 @@ def deserialize(dataone_exception_xml):
   except LookupError:
     # The dataone_exception_xml complied to the schema but the name did not
     # match any known DataONE exception types. This can happen because the
-    # defined types are not enumerated in the schema. Map this to a
-    # ServiceFailure exception.
-    description_list = []
-    description_list.append('Attempted to deserialize unknown DataONE Exception:')
-    description_list.append(dataone_exception_pyxb.name)
-    return ServiceFailure(0, '\n'.join(description_list))
+    # defined types are not enumerated in the schema.
+    raise DataONEExceptionException(
+      'Attempted to deserialize unknown DataONE Exception: {0}'\
+      .format(dataone_exception_pyxb.name))
 
   if dataone_exception_pyxb.pid is None:
     return dataone_exception(
@@ -131,18 +136,18 @@ class DataONEException(Exception):
     self.traceInformation = traceInformation
 
   def __str__(self):
-    res = []
-    res.append(u'name: {0}'.format(self.name))
-    res.append(u'errorCode: {0}'.format(self.errorCode))
-    res.append(u'detailCode: {0}'.format(str(self.detailCode)))
-    res.append(u'description: {0}'.format(self.description))
+    msg = StringIO.StringIO()
+    msg.write(u'name: {0}\n'.format(self.name))
+    msg.write(u'errorCode: {0}\n'.format(self.errorCode))
+    msg.write(u'detailCode: {0}\n'.format(str(self.detailCode)))
+    msg.write(u'description: {0}\n'.format(self.description))
     try:
-      res.append(u'PID: {0}'.format(self.pid))
+      msg.write(u'PID: {0}\n'.format(self.pid))
     except AttributeError:
       pass
     if self.traceInformation is not None:
-      res.append(u'traceInformation: {0}'.format(self.traceInformation))
-    return u'\n'.join(res)
+      msg.write(u'traceInformation: {0}\n'.format(self.traceInformation))
+    return msg.getvalue()
 
   def serialize(self):
     dataone_exception_pyxb = dataoneErrors.error()
