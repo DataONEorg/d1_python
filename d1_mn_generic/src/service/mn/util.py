@@ -58,28 +58,13 @@ from django.template import loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
-# 3rd party.
-try:
-  import iso8601
-  import lxml
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write(
-    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
-  )
-  raise
-#try:
-#  import pytz
-#except ImportError, e:
-#  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-#  sys.stderr.write('Try: sudo easy_install pytz\n')
-#  raise
-
 # D1.
+import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.const
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 
 # App.
 import event_log
@@ -88,25 +73,10 @@ import models
 import settings
 import util
 
-#def normalize_datetime(datetime_, tz_):
-#  '''Change datetime to UTC.
-#  '''
-#  d = datetime(2009, 8, 31, 22, 30, 30)
-#  tz = timezone('US/Pacific')
-#
-#  d_tz = tz.normalize(tz.localize(d))
-#  utc = pytz.timezone('UTC')
-#  d_utc = d_tz.astimezone(utc)
-
 
 def store_path(root, pid):
   '''Determine the location in the object or System Metadata store of the file
   holding an object's bytes.
-  
-  :param pid: The object's persistent identifier.
-  :type pid: Identifier
-  :return: Object store relative path to the file.
-  :type: string
 
   Because it may be inefficient to store millions of files in a single folder
   and because such a folder is hard to deal with when performing backups and
@@ -118,26 +88,13 @@ def store_path(root, pid):
   a = z & 0xff ^ (z >> 8 & 0xff)
   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
   return os.path.join(
-    root, '{0:03}'.format(a), '{0:03}'.format(b), d1_common.util.encodePathElement(pid)
-  )
-
-
-def pretty_xml(xml_str, encoding="UTF-8"):
-  '''Pretty print XML.
-  '''
-
-  xml_obj = lxml.etree.fromstring(xml_str)
-  return lxml.etree.tostring(
-    xml_obj, encoding=encoding,
-    pretty_print=True, xml_declaration=True
+    root, '{0:03}'.format(a), '{0:03}'.format(b), d1_common.url.encodePathElement(pid)
   )
 
 
 def request_to_string(request):
   '''Pull some information about the client out from a request object.
-  :return:
   '''
-
   return 'ip_address({0}) user_agent({1})'.format(
     #request.META['REMOTE_ADDR'], request.META['HTTP_USER_AGENT'])
     request.META['REMOTE_ADDR'],
@@ -146,9 +103,6 @@ def request_to_string(request):
 
 
 def log_exception(max_traceback_levels=5, msg=None):
-  ''':param:
-  :return:
-  '''
   logging.error('Exception:')
   # Message.
   if msg is not None:
@@ -186,9 +140,6 @@ def exception_to_dot_str():
 
 
 def traceback_to_detail_code():
-  ''':param:
-  :return:
-  '''
   exception_type, exception_value, exception_traceback = sys.exc_info()
   tb = []
   while exception_traceback:
@@ -234,33 +185,23 @@ def traceback_to_text():
 
 
 def clear_db():
+  '''Clear the database. Used for testing and debugging.
   '''
-  Clear the database. Used for testing and debugging.
-  :return:
-  '''
-
   models.DB_update_status.objects.all().delete()
-
-  models.Event_log.objects.all().delete()
-  models.Event_log_event.objects.all().delete()
-  models.Event_log_ip_address.objects.all().delete()
-
-  models.Object.objects.all().delete()
-  models.Checksum_algorithm.objects.all().delete()
-  models.Object_format.objects.all().delete()
+  models.EventLog.objects.all().delete()
+  models.EventLogEvent.objects.all().delete()
+  models.EventLogIPAddress.objects.all().delete()
+  models.ScienceObject.objects.all().delete()
+  models.ScienceObjectChecksumAlgorithm.objects.all().delete()
+  models.ScienceObjectFormat.objects.all().delete()
 
 
 class fixed_chunk_size_iterator(object):
-  '''
-  Create a file iterator that iterates through file-like object using fixed
+  '''Create a file iterator that iterates through file-like object using fixed
   size chunks.
-  :return:
   '''
 
   def __init__(self, flo, chunk_size=1024**2, len=None):
-    ''':param:
-    :return:
-    '''
     self.flo = flo
     self.chunk_size = chunk_size
     self.len = len
@@ -271,9 +212,6 @@ class fixed_chunk_size_iterator(object):
     return self.len
 
   def next(self):
-    ''':param:
-    :return:
-    '''
     data = self.flo.read(self.chunk_size)
     if data:
       return data
@@ -281,15 +219,12 @@ class fixed_chunk_size_iterator(object):
       raise StopIteration
 
   def __iter__(self):
-    ''':param:
-    :return:
-    '''
     return self
 
 
 def file_to_dict(path):
-  '''Convert a sample MN object to dictionary.'''
-
+  '''Convert a sample MN object to dictionary.
+  '''
   try:
     f = open(path, 'r')
   except EnvironmentError as (errno, strerror):
@@ -307,3 +242,41 @@ def file_to_dict(path):
   f.close()
 
   return d
+
+
+# This is from django-piston/piston/utils.py
+def coerce_put_post(request):
+  '''
+  Django doesn't particularly understand REST.
+  In case we send data over PUT, Django won't
+  actually look at the data and load it. We need
+  to twist its arm here.
+  
+  The try/except abominiation here is due to a bug
+  in mod_python. This should fix it.
+  '''
+  if request.method == "PUT":
+    # Bug fix: if _load_post_and_files has already been called, for
+    # example by middleware accessing request.POST, the below code to
+    # pretend the request is a POST instead of a PUT will be too late
+    # to make a difference. Also calling _load_post_and_files will result 
+    # in the following exception:
+    #   AttributeError: You cannot set the upload handlers after the upload has been processed.
+    # The fix is to check for the presence of the _post field which is set 
+    # the first time _load_post_and_files is called (both by wsgi.py and 
+    # modpython.py). If it's set, the request has to be 'reset' to redo
+    # the query value parsing in POST mode.
+    if hasattr(request, '_post'):
+      del request._post
+      del request._files
+
+    try:
+      request.method = "POST"
+      request._load_post_and_files()
+      request.method = "PUT"
+    except AttributeError:
+      request.META['REQUEST_METHOD'] = 'POST'
+      request._load_post_and_files()
+      request.META['REQUEST_METHOD'] = 'PUT'
+
+    request.PUT = request.POST

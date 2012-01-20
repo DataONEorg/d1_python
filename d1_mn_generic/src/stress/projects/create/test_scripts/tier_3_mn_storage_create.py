@@ -38,9 +38,6 @@ import time
 import uuid
 import xml.sax.saxutils
 
-# 3rd party.
-import iso8601
-
 # D1.
 import d1_common.const
 import d1_common.types.exceptions

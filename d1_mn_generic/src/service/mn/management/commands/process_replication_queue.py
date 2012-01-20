@@ -45,13 +45,15 @@ from django.utils.html import escape
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 import d1_client.d1client
 
 # App.
 import gmn_types
 import mn.models
 import mn.auth
-import mn.util 
+import mn.util
 import settings
 
 
@@ -60,43 +62,43 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
   GMN REST calls that support the replication process.
   '''
   def __init__(self,
-               baseurl=settings.LOCAL_BASE_URL, 
+               baseurl=settings.LOCAL_BASE_URL,
                defaultHeaders=None,
                timeout=1000,
-               keyfile=settings.CLIENT_SIDE_KEY, 
+               keyfile=settings.CLIENT_SIDE_KEY,
                certfile=settings.CLIENT_SIDE_CERT,
                strictHttps=True):
 
-    d1_client.mnclient.MemberNodeClient.__init__(self, baseurl, 
+    d1_client.mnclient.MemberNodeClient.__init__(self, baseurl,
                                            defaultHeaders=defaultHeaders,
                                            timeout=timeout,
-                                           keyfile=keyfile, 
+                                           keyfile=keyfile,
                                            certfile=certfile,
                                            strictHttps=strictHttps)
 
     self.logger = logging.getLogger(__name__)
-    
+
     self.methodmap.update({
-      'replicate_task_get': u'internal_replicate_task_get',  
+      'replicate_task_get': u'internal_replicate_task_get',
       'replicate_task_update': \
-        u'internal_replicate_task_update/%(task_id)s/%(status)s',  
-      'replicate_create': u'internal_replicate_create/%(pid)s',  
+        u'internal_replicate_task_update/%(task_id)s/%(status)s',
+      'replicate_create': u'internal_replicate_create/%(pid)s',
     })
 
 
   def internal_replicate_task_get(self):
     url = self._rest_url('replicate_task_get')
-      
+
     response = self.GET(url)
 
     return gmn_types.CreateFromDocument(response.read())
 
 
   def internal_replicate_task_update(self, task_id, status):
-    url = self._rest_url('replicate_task_update', task_id=str(task_id), 
-                               status=status)      
+    url = self._rest_url('replicate_task_update', task_id=str(task_id),
+                               status=status)
     response = self.GET(url)
-    return self._is_response_status_ok(response)
+    return self._read_boolean_response(response)
 
 
   #@util.str_to_unicode
@@ -109,7 +111,7 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
       headers.update(vendorSpecific)
     mime_multipart_files = [
       ('object', 'content.bin', scidata),
-      ('sysmeta','sysmeta.xml', sysmeta),
+      ('sysmeta', 'sysmeta.xml', sysmeta),
     ]
     return self.POST(url, files=mime_multipart_files, headers=headers)
 
@@ -119,7 +121,7 @@ class Command(NoArgsCommand):
   help = 'Process the replication queue.'
 
 
-  def handle_noargs(self, **options):    
+  def handle_noargs(self, **options):
     self.log_setup()
 
     logging.info('Running management command: process_replication_queue')
@@ -148,11 +150,11 @@ class Command(NoArgsCommand):
     sysmeta = client.getSystemMetadata(task.pid)
     return sysmeta.serialVersion
 
-  
+
   def cn_replicate_task_update(self, task, status):
     serial_version = self.cn_get_system_metadata_serial_version(task)
     client = d1_client.cnclient.CoordinatingNodeClient(
-      baseurl='https://cn-dev-2.dataone.org/cn/v1')  
+      baseurl='https://cn-dev-2.dataone.org/cn/v1')
     return client.setReplicationStatusResponse(task.pid,
       task.sourceNode, status, serial_version)
 
@@ -180,12 +182,12 @@ class Command(NoArgsCommand):
       # Abort handling of this replication item.
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
-  
+
   def gmn_replicate_create(self, task, scidata, sysmeta):
     client = GMNReplicationClient()
     return client.internal_replicate_create(task.pid, scidata, sysmeta)
 
-  
+
   def process_replication_queue(self):
     while self.process_replication_task():
       continue
@@ -198,7 +200,7 @@ class Command(NoArgsCommand):
       logging.error(e)
       return False
     self.replicate(task)
-    
+
     return True
 
 
@@ -217,10 +219,10 @@ class Command(NoArgsCommand):
       raise Exception(
         'Unable to get System Metadata from Coordinating Node.\n{0}'.format(e))
 
-  
+
   def get_science_data(self, task):
     client = d1_client.mnclient.MemberNodeClient(
-      baseurl='https://cn-dev-2.dataone.org/cn/v1')  
+      baseurl='https://cn-dev-2.dataone.org/cn/v1')
     scidata = self.get_science_data_from_member_node(client, task.pid)
     tmp_file = tempfile.TemporaryFile()
     shutil.copyfileobj(scidata, tmp_file)
@@ -229,24 +231,24 @@ class Command(NoArgsCommand):
 
   def get_system_metadata(self, task):
     client = d1_client.cnclient.CoordinatingNodeClient(
-      baseurl='https://cn-dev-2.dataone.org/cn/v1')  
+      baseurl='https://cn-dev-2.dataone.org/cn/v1')
     sysmeta = self.get_system_metadata_from_coordinating_node(client, task.pid)
     tmp_file = tempfile.TemporaryFile()
     shutil.copyfileobj(sysmeta, tmp_file)
     return tmp_file
-      
+
 
   def replicate(self, task):
     self.internal_replicate_task_update(task, 'in progress')
-    
+
     sysmeta_tmp_file = self.get_system_metadata(task)
     science_data_tmp_file = self.get_science_data(task)
 
     sysmeta_tmp_file.seek(0)
     science_data_tmp_file.seek(0)
-    
+
     self.gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
-    
+
     #self.cn_replicate_task_update(task, 'test')
 
     self.internal_replicate_task_update(task, 'completed')
@@ -271,7 +273,7 @@ class Command(NoArgsCommand):
     # Set up logging.
     # We output everything to both file and stdout.
     logging.getLogger('').setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(name)s %(message)s', 
+    formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(name)s %(message)s',
                                   '%y/%m/%d %H:%M:%S')
     file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log',
                                       'a')

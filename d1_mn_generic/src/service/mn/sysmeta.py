@@ -39,22 +39,11 @@ import sys
 import StringIO
 import urllib
 
-# 3rd party.
-try:
-  import iso8601
-  import lxml
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write(
-    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
-  )
-  raise
-
 import xml.sax._exceptions
 import pyxb.exceptions_
 
 # D1.
+import d1_common.date_time
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 
@@ -129,7 +118,7 @@ class sysmeta():
     '''Update the dateSysMetadataModified field.
     '''
     if timestamp is None:
-      timestamp = datetime.datetime.now()
+      timestamp = datetime.datetime.utcnow()
     self.sysmeta_pyxb.dateSysMetadataModified = \
       datetime.datetime.isoformat(timestamp)
 
@@ -241,7 +230,7 @@ class sysmeta():
 #
 #def sysmeta_set_modified(sysmeta_obj, timestamp=None):
 #  if timestamp is None:
-#    timestamp = datetime.datetime.now()
+#    timestamp = datetime.datetime.utcnow()
 #  sysmeta_obj.dateSysMetadataModified = datetime.datetime.isoformat(timestamp)
 #
 #def set_replication_status(status, node_ref, pid):
@@ -264,7 +253,7 @@ class sysmeta():
 #    replica = dataoneTypes.Replica()
 #    replica.replicationStatus = status
 #    replica.replicaMemberNode = node_ref
-#    replica.replicaVerified = datetime.datetime.isoformat(datetime.datetime.now())
+#    replica.replicaVerified = datetime.datetime.isoformat(datetime.datetime.utcnow())
 #    sysmeta_obj.replica.append(replica)
 #
 #  sysmeta_set_modified(sysmeta_obj)

@@ -27,12 +27,12 @@
 '''
 
 # Stdlib.
-import iso8601
 import logging
 import re
 
 # D1.
 import d1_common.const
+import d1_common.date_time
 import d1_common.types.exceptions
 
 
@@ -87,12 +87,12 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     if not re.search('T', date_str):
       date_str += 'T00:00:00Z'
     try:
-      date = iso8601.parse_date(date_str)
-      if not d1_common.util.is_utc(date):
+      date = d1_common.date_time.from_iso8601(date_str)
+      if not d1_common.date_time.is_utc(date):
         raise d1_common.types.exceptions.InvalidRequest(
           0, 'Date-time must be UTC: {0}'.format(request.GET[key])
         )
-    except iso8601.ParseError, e:
+    except d1_common.date_time.iso8601.ParseError, e:
       raise d1_common.types.exceptions.InvalidRequest(
         0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))
       )

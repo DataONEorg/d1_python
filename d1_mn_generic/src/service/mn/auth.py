@@ -132,7 +132,7 @@ def set_access_policy(pid, access_policy=None):
   # Verify that the object for which access policy is being set exists, and
   # retrieve it.
   try:
-    sci_obj = models.Object.objects.get(pid=pid)
+    sci_obj = models.ScienceObject.objects.get(pid=pid)
   except DoesNotExist:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Attempted to set access for non-existing object', pid
@@ -175,7 +175,9 @@ def set_access_policy(pid, access_policy=None):
       # contains the highest action level.
       #
       # If the subject exists, get it. Otherwise, create it.
-      subject_row = models.Subject.objects.get_or_create(subject=subject.value())[0]
+      subject_row = models.PermissionSubject.objects.get_or_create(
+        subject=subject.value()
+      )[0]
       try:
         # TODO: Because Django does not (as of 1.3) support indexes that cover
         # multiple fields, this get() may be slow. When Django gets support for
@@ -230,28 +232,23 @@ def set_access_policy(pid, access_policy=None):
 # ------------------------------------------------------------------------------
 
 
-def is_allowed(subject, level, pid):
-  '''Check if subject is allowed to perform action on object.
-  
-  :param subject: Subject for which permissions are being checked.
-  :type subject: str
-  :param level: Action level for which permissions are being checked. 
-  :type level: str
-  :param pid: Object for which permissions are being checked.
-  :type pid: Identifier
-  :return:
-    True if subject is allowed to perform action on object.
-    False if subject is not allowed to perform action on object.
-    False if subject does not exist.
+def is_trusted(subjects):
+  return not subjects.isdisjoint(settings.DATAONE_TRUSTED_SUBJECTS)
+
+
+def is_allowed(subjects, level, pid):
+  '''Check if one or more subjects are allowed to perform action on object.
+  If a subject holds permissions for one action level on object, all lower
+  action levels are also allowed. Any included subject that is unknown to this
+  MN is treated as a subject without permissions.
+  Return:
+    True if one or more subjects are allowed to perform action on object.
     False if PID does not exist.
-    False if level is invalid.
-  :return type: Boolean
-  
-  If subject holds permissions for one action level on object, all lower
-  action levels are also allowed.
+    False if level is invalid.  
   '''
-  # DataONE trusted infrastructure has all rights.
-  if subject in settings.DATAONE_TRUSTED_SUBJECTS:
+  # If subjects contains one or more DataONE trusted infrastructure subjects,
+  # all rights are given.
+  if is_trusted(subjects):
     return True
   # - If subject is not trusted infrastructure, a specific permission for
   # subject must exist on object.
@@ -261,40 +258,26 @@ def is_allowed(subject, level, pid):
   # the requested action level.
   return models.Permission.objects.filter(
     object__pid=pid,
-    subject__subject__in=[
-      subject, d1_common.const.SUBJECT_PUBLIC
-    ],
+    subject__subject__in=subjects | set([d1_common.const.SUBJECT_PUBLIC]),
     level__gte=level
   ).exists()
 
 
-def assert_allowed(subject, level, pid):
-  '''Assert that subject is allowed to perform action on object.
-
-  :param subject: Subject for which permissions are being asserted.
-  :type subject: str
-  :param level: Action level for which permissions are being asserted. 
-  :type level: str
-  :param pid: Object for which permissions are being asserted.
-  :type pid: Identifier
-  :return:
-    - NoneType if subject is allowed.
-    - NotAuthorized if object exists and subject is not allowed.
-    - NotFound if object does not exist.
+def assert_allowed(subjects, level, pid):
+  '''Assert that one or more subjects are allowed to perform action on object.
+  Raise NotAuthorized if object exists and subject is not allowed.
+  Raise NotFound if object does not exist.
+  Return NoneType if subject is allowed.
   '''
-  # Return NotFound if the object that assertion is being performed does not
-  # exist. The only operation that can be performed against a non-existing
-  # object is create(), which requires only assert_authenticated and does
-  # not use this call.
-  if not models.Object.objects.filter(pid=pid).exists():
+  if not models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing object', pid
     )
-  # Return NotAuthorized if subject is not allowed to perform action on object.
-  if not is_allowed(subject, level, pid):
+  if not is_allowed(subjects, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
       0, '{0} on "{1}" denied for {2}'.format(
-        level_to_action(level), pid, subject), pid
+        level_to_action(level), pid, ', '.join(subjects)
+      ), pid
     )
 
 # ------------------------------------------------------------------------------
@@ -313,7 +296,7 @@ def assert_allowed(subject, level, pid):
 # Only D1 infrastructure.
 def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
-    if request.session.subject.value() not in settings.DATAONE_TRUSTED_SUBJECTS:
+    if not is_trusted(request.subjects):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Action denied for subject: {0}. Trusted subjects: {1}'.format(
           request.session.subject.value(), ', '.join(settings.DATAONE_TRUSTED_SUBJECTS)
@@ -329,7 +312,7 @@ def assert_trusted_permission(f):
 # Only GMN worker process.
 def assert_internal_permission(f):
   def wrap(request, *args, **kwargs):
-    if request.session.subject.value() != 'gmn_internal' and \
+    if 'gmn_internal' not in request.subjects and \
       request.META['REMOTE_ADDR'] != '127.0.0.1':
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Action denied for subject: {0}.'.format(request.session.subject.value())
@@ -344,7 +327,7 @@ def assert_internal_permission(f):
 # Anyone with a valid session.
 def assert_authenticated(f):
   def wrap(request, *args, **kwargs):
-    if request.session.subject.value() == d1_common.const.SUBJECT_PUBLIC:
+    if d1_common.const.SUBJECT_PUBLIC not in request.subjects:
       raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
     return f(request, *args, **kwargs)
 
@@ -353,31 +336,23 @@ def assert_authenticated(f):
   return wrap
 
 
-def assert_changepermission_permission(f):
+def assert_required_permission(f, level):
   def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.session.subject.value(), CHANGEPERMISSION_LEVEL, pid)
+    assert_allowed(request.subjects, level, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
   return wrap
+
+
+def assert_changepermission_permission(f):
+  return assert_required_permission(f, CHANGEPERMISSION_LEVEL)
 
 
 def assert_write_permission(f):
-  def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.session.subject.value(), WRITE_LEVEL, pid)
-    return f(request, pid, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
+  return assert_required_permission(f, WRITE_LEVEL)
 
 
 def assert_read_permission(f):
-  def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.session.subject.value(), READ_LEVEL, pid)
-    return f(request, pid, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
+  return assert_required_permission(f, READ_LEVEL)

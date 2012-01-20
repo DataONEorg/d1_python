@@ -53,7 +53,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     key_path=None,
     strict=True,
     capture_response_body=False,
-    version='v1'
+    version='test'
   ):
 
     d1_client.mnclient.MemberNodeClient.__init__(
@@ -72,12 +72,23 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
 
     self.methodmap.update(
       {
+        # Replication.
+        'get_replication_queue': u'get_replication_queue',
+        'clear_replication_queue': u'clear_replication_queue',
+        # Access Policy.
+        'set_access_policy': u'set_access_policy/%(pid)s',
+        'delete_all_access_policies': u'delete_all_access_policies',
+        # Misc.
+        'slash': u'slash/%(arg1)s/%(arg2)s/%(arg3)s',
+        'exception': u'exception/%(exception_type)s',
+        'echo_request_object': u'echo_request_object',
+        'clear_database': u'clear_database',
         'delete_all_objects': u'delete_all_objects',
-        'delete_event_log': u'delete_event_log',
-        'inject_event_log': u'inject_event_log',
         'delete_single_object': u'delete_single_object/%(pid)s',
-        'delete_all_access_rules': u'delete_all_access_rules',
-        # Concurrency tests.
+        # Event Log.
+        'delete_event_log': u'delete_event_log',
+        'inject_fictional_event_log': u'inject_fictional_event_log',
+        # Concurrency.
         'test_concurrency_clear': u'concurrency_clear',
         'test_concurrency_read_lock':
           u'concurrency_read_lock/%(key)s/%(sleep_before)s/%(sleep_after)s',
@@ -89,55 +100,86 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
       }
     )
 
-  def delete_all_objects(self, headers=None):
-    '''Delete all the objects on an instance of GMN that is running in Debug
-    mode.
-    '''
-    url = self._rest_url('delete_all_objects')
-    print url
+  # ----------------------------------------------------------------------------
+  # Replication.
+  # ----------------------------------------------------------------------------
+
+  def get_replication_queue(self, headers=None):
+    url = self._rest_url('get_replication_queue')
     response = self.GET(url, headers=headers)
-    # TODO: Handle D1 exception.
-    return self._is_response_status_ok(response)
+    return response.read()
+
+  def clear_replication_queue(self, headers=None):
+    url = self._rest_url('clear_replication_queue')
+    response = self.GET(url, headers=headers)
+    return self._read_boolean_response(response)
+
+  # ----------------------------------------------------------------------------
+  # Access Policy.
+  # ----------------------------------------------------------------------------
+
+  def set_access_policy(self, pid, access_policy, headers=None):
+    url = self._rest_url('set_access_policy', pid=pid)
+    files = [('access_policy', 'access_policy', access_policy.toxml().encode('utf-8')), ]
+    return self.POST(url, files=files, headers=headers)
+
+  def delete_all_access_policies(self, headers=None):
+    url = self._rest_url('delete_all_access_policies')
+    response = self.GET(url, headers=headers)
+    return self._read_boolean_response(response)
+
+  # ----------------------------------------------------------------------------
+  # Misc.
+  # ----------------------------------------------------------------------------
+
+  def slash(self, arg1, arg2, arg3, headers=None):
+    url = self._rest_url('slash', arg1=arg1, arg2=arg2, arg3=arg3)
+    response = self.GET(url, headers=headers)
+    return response.read()
+
+  def exception(self, exception_type):
+    url = self._rest_url('exception', exception_type=exception_type)
+    response = self.GET(url, headers=headers)
+    return response.read()
+
+  def echo_request_object(self, headers=None):
+    url = self._rest_url('echo_request_object')
+    response = self.GET(url, headers=headers)
+    return response.read()
+
+  def clear_database(self, headers=None):
+    url = self._rest_url('clear_database')
+    response = self.GET(url, headers=headers)
+    return self._read_boolean_response(response)
+
+  def delete_all_objects(self, headers=None):
+    url = self._rest_url('delete_all_objects')
+    response = self.GET(url, headers=headers)
+    return self._read_boolean_response(response)
 
   def test_delete_single_object(self, pid, headers=None):
     url = self._rest_url('delete_single_object', pid=pid)
-    try:
-      response = self.GET(url, headers=headers)
-    except d1_common.types.exceptions.DataONEException:
-      return False
-    return self._is_response_status_ok(response)
+    response = self.GET(url, headers=headers)
+    return self._read_boolean_response(response)
+
+  # ----------------------------------------------------------------------------
+  # Event Log.
+  # ----------------------------------------------------------------------------
 
   def delete_event_log(self, headers=None):
     '''Delete event log for all objects.
     '''
     url = self._rest_url('delete_event_log')
     response = self.GET(url, headers=headers)
-    return self._is_response_status_ok(response)
+    return self._read_boolean_response(response)
 
-  def inject_event_log(self, event_log_csv, headers=None):
+  def inject_fictional_event_log(self, event_log_csv, headers=None):
     '''Inject a fake event log.
     '''
     files = [('csv', 'csv', event_log_csv)]
-    url = self._rest_url('inject_event_log')
+    url = self._rest_url('inject_fictional_event_log')
     response = self.POST(url, files=files, headers=headers)
-    return self._is_response_status_ok(response)
-
-  def delete_all_access_rules(self, headers=None):
-    '''Delete all access rules.
-    '''
-    url = self._rest_url('delete_all_access_rules')
-    response = self.GET(url, headers=headers)
-    return self._is_response_status_ok(response)
-
-  def system_metadata_changed(self, fields, headers=None):
-    url = self._rest_url('system_metadata_changed')
-    response = self.POST(url, fields=fields, headers=headers)
-    return self._is_response_status_ok(response)
-
-  def synchronization_failed(self, files, headers=None):
-    url = self._rest_url('error')
-    response = self.POST(url, files=files, headers=headers)
-    return self._is_response_status_ok(response)
+    return self._read_boolean_response(response)
 
   # ----------------------------------------------------------------------------
   # Concurrency.

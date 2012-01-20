@@ -39,9 +39,6 @@ import time
 import uuid
 import xml.sax.saxutils
 
-# 3rd party.
-import iso8601
-
 # D1.
 import d1_common.const
 import d1_common.types.exceptions
@@ -74,22 +71,22 @@ class Transaction(object):
       self.n_pages += 1
     self.profile = profile
 
-  #  def set_random_access_policy(self, pid):
-  #    access_policy = generate_random_sysmeta.generate_random_access_policy()
-  #    #print access_policy.toxml()
-  #    if self.profile:
-  #      vendor_specific = test_utilities.gmn_vse_enable_sql_profiling()
-  #    else:
-  #      vendor_specific = {}
-  #    vendor_specific.update(
-  #      #d1_common.const.SUBJECT_TRUSTED
-  #      test_utilities.gmn_vse_provide_subject('trusted'))
-  #    response = self.client.setAccessPolicyResponse(pid, access_policy,
-  #                           vendorSpecific=vendor_specific)
-  #    assert (response.status == 200), \
-  #      'Exception returned by setAccessPolicyResponse'
-  #    if self.profile:
-  #      print response.read()
+#  def set_random_access_policy(self, pid):
+#    access_policy = generate_random_sysmeta.generate_random_access_policy()
+#    #print access_policy.toxml()
+#    if self.profile:
+#      vendor_specific = test_utilities.gmn_vse_enable_sql_profiling()
+#    else:
+#      vendor_specific = {}
+#    vendor_specific.update(
+#      #d1_common.const.SUBJECT_TRUSTED
+#      test_utilities.gmn_vse_provide_subject('trusted'))
+#    response = self.client.setAccessPolicyResponse(pid, access_policy,
+#                           vendorSpecific=vendor_specific)
+#    assert (response.status == 200), \
+#      'Exception returned by setAccessPolicyResponse'
+#    if self.profile:
+#      print response.read()
 
   def set_random_access_policies(self):
     global page_idx
@@ -113,7 +110,6 @@ class Transaction(object):
     self.set_random_access_policies()
     #latency = time.time() - start_timer
     #self.custom_timers['set_access_policy'] = latency
-
 
 if __name__ == '__main__':
   trans = Transaction(profile=False)

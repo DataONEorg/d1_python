@@ -55,6 +55,8 @@ from django.http import HttpResponse
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 import d1_common.const
 
 # App.
@@ -64,6 +66,23 @@ import mn.x509_extract_session
 
 
 class view_handler():
+  def subject_info_to_subject_list(self, subject_info):
+    '''The DataONE SubjectInfo type contains a structure of person objects,
+    each potentially containing equivalent identities and group memberships.
+    "Flatten" this to a unique list of subjects.
+    '''
+    if subject_info is None:
+      return set()
+    subjects = set()
+    for person in subject_info.person:
+      subjects.add(person.subject.value())
+      for equivalent_identity in person.equivalentIdentity:
+        subjects.add(equivalent_identity.value())
+      for is_member_of in person.isMemberOf:
+        subjects.add(is_member_of.value())
+    #print subjects
+    return subjects
+
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
     logging.info(
@@ -110,18 +129,20 @@ class view_handler():
             0, 'Invalid session: {0}'.format(request.META['HTTP_VENDOR_OVERRIDE_SESSION'])
           )
 
-          # For debugging, simulate an accept header with a regular parameter.
+      # For debugging, simulate an accept header with a regular parameter.
       if 'accept' in request.REQUEST:
         request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
+
+    request.subjects = self.subject_info_to_subject_list(request.session.subjectInfo)
 
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.
     view_args_list = []
     for arg in view_args:
-      view_args_list.append(d1_common.util.decodeQueryElement(arg))
+      view_args_list.append(d1_common.url.decodeQueryElement(arg))
     view_args = tuple(view_args_list)
     for key, arg in view_kwargs:
-      view_kwargs[key] = d1_common.util.decodePathElement(arg)
+      view_kwargs[key] = d1_common.url.decodePathElement(arg)
 
     # Since copies of the view_args and view_kwargs were modified, the view must
     # be called directly with the modified arguments. This short circuits

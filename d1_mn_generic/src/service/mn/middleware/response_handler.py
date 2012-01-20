@@ -72,7 +72,7 @@ import settings
 def db_to_object_list(view_result):
   '''
   :param view_result: Django DB query.
-  :type view_result: models.Object.objects
+  :type view_result: models.ScienceObject.objects
   :returns: Populated DataONE ObjectList
   :return type: dataoneTypes.ObjectList
   '''
@@ -103,7 +103,7 @@ def db_to_object_list(view_result):
 def db_to_log_records(view_result):
   '''
   :param view_result: Django DB query.
-  :type view_result: models.Event_log.objects
+  :type view_result: models.EventLog.objects
   :returns: Populated DataONE Log
   :return type: dataoneTypes.Log
   '''
@@ -133,7 +133,7 @@ def db_to_log_records(view_result):
 def db_to_replication_task(view_result):
   '''
   :param view_result: Django DB query.
-  :type view_result: models.Replication_work_queue.objects
+  :type view_result: models.ReplicationQueue.objects
   :returns: Populated Replication Request
   :return type: gmn_types.replicationRequest
   '''
@@ -188,7 +188,7 @@ def set_header(response, last_modified, content_length, content_type):
     try:
       status_row = models.DB_update_status.objects.all()[0]
     except IndexError:
-      last_modified = datetime.datetime.now()
+      last_modified = datetime.datetime.utcnow()
     else:
       last_modified = status_row.mtime
 

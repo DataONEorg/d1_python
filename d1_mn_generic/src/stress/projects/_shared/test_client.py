@@ -36,6 +36,8 @@ import urllib
 # D1.
 import d1_client.mnclient
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 
 # App.
 import settings
@@ -71,12 +73,12 @@ class TestClient(d1_client.mnclient.MemberNodeClient):
       {
         'delete_all_objects': u'test_delete_all_objects',
         'delete_event_log': u'test_delete_event_log',
-        'inject_event_log': u'test_inject_event_log',
+        'inject_fictional_event_log': u'test_inject_fictional_event_log',
       }
     )
 
   def _get_cert_path(self, subject, ext):
-    subject_quoted = d1_common.util.encodePathElement(subject)
+    subject_quoted = d1_common.url.encodePathElement(subject)
     return os.path.abspath(
       os.path.join(
         os.path.dirname(__file__), test_subject_certs, '{0}.{1}'.format(subject_quoted,
@@ -105,7 +107,7 @@ class TestClient(d1_client.mnclient.MemberNodeClient):
     '''
     url = self._rest_url('delete_all_objects')
     response = self.GET(url)
-    return self._is_response_status_ok(response)
+    return self._read_boolean_response(response)
 
   def delete_event_log(self):
     '''Delete event log for all objects on an instance of GMN that is running
@@ -113,12 +115,12 @@ class TestClient(d1_client.mnclient.MemberNodeClient):
     '''
     url = self._rest_url('delete_event_log')
     response = self.GET(url)
-    return self._is_response_status_ok(response)
+    return self._read_boolean_response(response)
 
-  def inject_event_log(self, event_log_csv):
+  def inject_fictional_event_log(self, event_log_csv):
     '''Inject a fake event log for testing.
     '''
     files = [('csv', 'csv', event_log_csv)]
-    url = self._rest_url('inject_event_log')
+    url = self._rest_url('inject_fictional_event_log')
     response = self.POST(url, files=files, headers=self._getAuthHeader(context.TOKEN))
-    return self._is_response_status_ok(response)
+    return self._read_boolean_response(response)

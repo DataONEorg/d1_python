@@ -36,6 +36,8 @@ import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 import d1_client.d1client
 
 # App.
@@ -59,7 +61,7 @@ class Command(NoArgsCommand):
     self.process_queue()
 
   def process_queue(self):
-    for queue_item in mn.models.System_metadata_dirty_queue.objects.filter(
+    for queue_item in mn.models.SystemMetadataDirtyQueue.objects.filter(
       ~django.db.models.Q(status__status='completed')
     ):
       logging.info('Refreshing System Metadata: {0}'.format(queue_item.object.pid))
@@ -107,7 +109,7 @@ class Command(NoArgsCommand):
   def get_internal_update_sysmeta_url(self, pid):
     return urlparse.urljoin(
       settings.LOCAL_BASE_URL,
-      'internal_update_sysmeta/{0}'.format(d1_common.util.encodePathElement(pid))
+      'internal_update_sysmeta/{0}'.format(d1_common.url.encodePathElement(pid))
     )
 
   def update_queue_item_status(self, queue_item, status):
@@ -115,8 +117,7 @@ class Command(NoArgsCommand):
     queue_item.save()
 
   def delete_completed_queue_items_from_db(self):
-    mn.models.System_metadata_dirty_queue.objects.filter(
-      status__status='completed').delete()
+    mn.models.SystemMetadataDirtyQueue.objects.filter(status__status='completed').delete()
 
   def log_setup(self):
     # Set up logging.

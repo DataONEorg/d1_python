@@ -49,7 +49,6 @@ import uuid
 
 # Django.
 from django.http import HttpResponse
-from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseBadRequest
 from django.http import Http404
 from django.template import Context, loader
@@ -57,133 +56,110 @@ from django.shortcuts import render_to_response
 from django.db.models import Avg, Max, Min, Count
 from django.core.exceptions import ObjectDoesNotExist
 
-# 3rd party.
-try:
-  import iso8601
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/' \
-                   '2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
-  raise
-
-# DataONE APIs.
+# D1.
 import d1_common.const
+import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
 import d1_assert
+import mn.auth
 import mn.db_filter
 import mn.event_log
 import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
+import mn.restrict_to_verb
 import mn.sysmeta
 import mn.urls
 import mn.util
 import service.settings
 
-
-def replicate_post(request):
-  return replicate_post(request)
-
-
-def replicate_get(request):
-  return render_to_response(
-    'replicate_get.html',
-    {'replication_queue': mn.models.Replication_work_queue.objects.all()}
-  )
+# ------------------------------------------------------------------------------
+# Portal.
+# ------------------------------------------------------------------------------
 
 
-def replicate_get_xml(request):
-  return render_to_response('replicate_get.xml',
-    {'replication_queue': mn.models.Replication_work_queue.objects.all() },
+@mn.restrict_to_verb.get
+def diagnostics(request):
+  return render_to_response('test.html', {})
+
+# ------------------------------------------------------------------------------
+# Replication.
+# ------------------------------------------------------------------------------
+
+
+def get_replication_queue(request):
+  return render_to_response('replicate_get_queue.xml',
+    {'replication_queue': mn.models.ReplicationQueue.objects.all() },
     mimetype=d1_common.const.MIMETYPE_XML)
 
 
-def replicate_clear(request):
-  mn.models.Replication_work_queue.objects.all().delete()
+def clear_replication_queue(request):
+  mn.models.ReplicationQueue.objects.all().delete()
+  return HttpResponse('OK')
+
+# ------------------------------------------------------------------------------
+# Access Policy.
+# ------------------------------------------------------------------------------
+
+
+def set_access_policy(request, pid):
+  d1_assert.object_exists(pid)
+  d1_assert.post_has_mime_parts(request, (('file', 'access_policy'), ))
+  access_policy_xml = request.FILES['access_policy'].read()
+  access_policy = dataoneTypes.CreateFromDocument(access_policy_xml)
+  mn.auth.set_access_policy(pid, access_policy)
   return HttpResponse('OK')
 
 
-def test(request):
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
+def delete_all_access_policies(request):
+  # The deletes are cascaded so all subjects are also deleted.
+  mn.models.Permission.objects.all().delete()
+  return HttpResponse('OK')
 
-  return render_to_response('test.html', {})
-
-
-def cert(request):
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
-  return HttpResponse(pprint.pformat(request, 2))
+# ------------------------------------------------------------------------------
+# Misc.
+# ------------------------------------------------------------------------------
 
 
+@mn.restrict_to_verb.get
 def slash(request, p1, p2, p3):
-  '''
-  '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
+  '''Test that GMN correctly handles three arguments separated by slashes'''
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
-def exception(request, exc):
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
+@mn.restrict_to_verb.get
+def exception(request, exception_type):
+  '''Test that GMN correctly catches and serializes exceptions raised by views'''
+  if exception_type == 'python':
+    raise Exception("Test Python Exception")
+  elif exception_type == 'dataone':
+    raise d1_common.types.exceptions.InvalidRequest(0, 'Test DataONE Exception')
 
-  raise Exception("not a dataone exception")
-  #raise d1_common.types.exceptions.InvalidRequest(0, 'Test exception')
-  #raise d1_common.types.exceptions.NotFound(0, 'Test exception', '123')
-
-  # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier('testpid')
-  doc, content_type = pid_ser.serialize('text/xml')
-  return HttpResponse(doc, content_type)
+  return HttpResponse('OK')
 
 
-def invalid_return(request, type):
-  if type == "200_html":
-    return HttpResponse("invalid") #200, html
-  elif type == "200_xml":
-    return HttpResponse("invalid", "text/xml") #200, xml
-  elif type == "400_html":
-    return HttpResponseBadRequest("invalid") #400, html
-  elif type == "400_xml":
-    return HttpResponseBadRequest("invalid", "text/xml") #400, xml
-
-  return HttpResponse("OK")
-
-
-def get_request(request):
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
+@mn.restrict_to_verb.get
+def echo_request_object(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
 def clear_database(request):
-  mn.models.Object.objects.all().delete()
-  mn.models.Object_format.objects.all().delete()
-  mn.models.Checksum_algorithm.objects.all().delete()
-
+  mn.models.ScienceObject.objects.all().delete()
+  mn.models.ScienceObjectFormat.objects.all().delete()
+  mn.models.ScienceObjectChecksumAlgorithm.objects.all().delete()
   mn.models.DB_update_status.objects.all().delete()
 
 
+@mn.restrict_to_verb.get
 def delete_all_objects(request):
-  '''Remove all objects from db.
-  '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
-  for object_ in mn.models.Object.objects.all():
+  for object_ in mn.models.ScienceObject.objects.all():
     _delete_object(object_.pid)
 
-  # Log this operation.
   logging.info(
     'client({0}): Deleted all repository object records'.format(
       mn.util.request_to_string(request)
@@ -193,36 +169,26 @@ def delete_all_objects(request):
   return HttpResponse('OK')
 
 
+@mn.restrict_to_verb.get
 def delete_single_object(request, pid):
-  '''Delete an object from the Member Node, where the object is either a data
-  object or a science metadata object.
-  
-  Note: The semantics for this method are different than for the production
+  '''Note: The semantics for this method are different than for the production
   method that deletes an object. This method removes all traces that the object
   ever existed.
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
   _delete_object(pid)
 
-  # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log. Instead, we log it.
   logging.info(
     'client({0}) pid({1}) Deleted object'.format(
       mn.util.request_to_string(request), pid
     )
   )
 
-  # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
+  return HttpResponse('OK')
 
 
 def _delete_object(pid):
   d1_assert.object_exists(pid)
-  sciobj = mn.models.Object.objects.get(pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
 
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.
@@ -257,31 +223,25 @@ def _delete_object(pid):
   # not cause any issues and will be reused if they are needed again.
   sciobj.delete()
 
+# ------------------------------------------------------------------------------
+# Event Log.
+# ------------------------------------------------------------------------------
+
 
 def delete_event_log(request):
-  '''Remove all log records.
-  '''
-  # Clear the access log.
-  mn.models.Event_log.objects.all().delete()
-  mn.models.Event_log_ip_address.objects.all().delete()
-  mn.models.Event_log_event.objects.all().delete()
+  mn.models.EventLog.objects.all().delete()
+  mn.models.EventLogIPAddress.objects.all().delete()
+  mn.models.EventLogEvent.objects.all().delete()
 
-  # Log this operation.
   logging.info(
-    None, 'client({0}): delete_mn.event_log', mn.util.request_to_string(
-      request
-    )
+    None, 'client({0}): delete_mn.event_log', mn.util.request_to_string(request)
   )
 
   return HttpResponse('OK')
 
 
-def inject_event_log(request):
-  '''Inject a fictional log.
-  '''
-  if request.method != 'POST':
-    return HttpResponseNotAllowed(['POST'])
-
+@mn.restrict_to_verb.post
+def inject_fictional_event_log(request):
   d1_assert.post_has_mime_parts(request, (('file', 'csv'), ))
 
   # Create event log entries.
@@ -293,7 +253,7 @@ def inject_event_log(request):
     ip_address = row[2]
     user_agent = row[3]
     subject = row[4]
-    timestamp = iso8601.parse_date(row[5])
+    timestamp = d1_common.date_time.from_iso8601((row[5]))
     member_node = row[6]
 
     # Create fake request object.
@@ -307,14 +267,8 @@ def inject_event_log(request):
 
   return HttpResponse('OK')
 
-
-def delete_all_access_rules(request):
-  # The deletes are cascaded so all subjects are also deleted.
-  mn.models.Permission.objects.all().delete()
-  return HttpResponse('OK')
-
 # ------------------------------------------------------------------------------
-# Test Concurrency.
+# Concurrency.
 # ------------------------------------------------------------------------------
 
 #test_shared_dict = collections.defaultdict(lambda: '<undef>')

@@ -19,7 +19,7 @@ from django.test import TestCase
 
 # DataONE
 import d1_common.const
-# MN API.
+# D1
 #import d1common.exceptions
 
 # App.

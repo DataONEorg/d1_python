@@ -35,7 +35,7 @@ import util
 from django.db import models
 from django.db.models import Q
 
-# MN API.
+# D1
 import d1_common.types.exceptions
 
 # Django creates automatically:
@@ -53,38 +53,38 @@ class DB_update_status(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class Checksum_algorithm(models.Model):
+class ScienceObjectChecksumAlgorithm(models.Model):
   checksum_algorithm = models.CharField(max_length=20, unique=True, db_index=True)
 
 
 # Format = The format of the object.
-class Object_format(models.Model):
+class ScienceObjectFormat(models.Model):
   format_id = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Object(models.Model):
+class ScienceObject(models.Model):
   pid = models.CharField(max_length=200, unique=True, db_index=True)
   url = models.CharField(max_length=1000, unique=True, db_index=True)
-  format = models.ForeignKey(Object_format, db_index=True)
+  format = models.ForeignKey(ScienceObjectFormat, db_index=True)
   checksum = models.CharField(max_length=100, db_index=True)
-  checksum_algorithm = models.ForeignKey(Checksum_algorithm, db_index=True)
+  checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm, db_index=True)
   mtime = models.DateTimeField(db_index=True)
-  db_mtime = models.DateTimeField(auto_now=True, db_index=True)
   size = models.PositiveIntegerField(db_index=True)
   replica = models.BooleanField(db_index=True)
   system_metadata_refreshed = models.DateTimeField(null=True)
+  serial_version = models.BigIntegerField()
 
   def set_format(self, format_id):
     ''':param:
     :return:
     '''
-    self.format = Object_format.objects.get_or_create(format_id=format_id)[0]
+    self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
     ''':param:
     :return:
     '''
-    self.checksum_algorithm = Checksum_algorithm.objects.get_or_create(
+    self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
       checksum_algorithm=str(checksum_algorithm_string)
     )[0]
 
@@ -95,7 +95,7 @@ class Object(models.Model):
     update and delete are finalized.
     '''
     try:
-      me = Object.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
+      me = ScienceObject.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
     except IndexError:
       self.save()
     else:
@@ -110,33 +110,33 @@ class Object(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class Event_log_event(models.Model):
+class EventLogEvent(models.Model):
   event = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Event_log_ip_address(models.Model):
+class EventLogIPAddress(models.Model):
   ip_address = models.CharField(max_length=20, unique=True, db_index=True)
 
 
-class Event_log_user_agent(models.Model):
+class EventLogUserAgent(models.Model):
   user_agent = models.CharField(max_length=200, unique=True, db_index=True)
 
 
-class Event_log_subject(models.Model):
+class EventLogSubject(models.Model):
   # TODO: Reference Subject table instead.
   subject = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Event_log_member_node(models.Model):
+class EventLogMemberNode(models.Model):
   member_node = models.CharField(max_length=100, unique=True, db_index=True)
 
 
-class Event_log(models.Model):
-  object = models.ForeignKey(Object)
-  event = models.ForeignKey(Event_log_event, db_index=True)
-  ip_address = models.ForeignKey(Event_log_ip_address, db_index=True)
-  user_agent = models.ForeignKey(Event_log_user_agent, db_index=True)
-  subject = models.ForeignKey(Event_log_subject, db_index=True)
+class EventLog(models.Model):
+  object = models.ForeignKey(ScienceObject)
+  event = models.ForeignKey(EventLogEvent, db_index=True)
+  ip_address = models.ForeignKey(EventLogIPAddress, db_index=True)
+  user_agent = models.ForeignKey(EventLogUserAgent, db_index=True)
+  subject = models.ForeignKey(EventLogSubject, db_index=True)
   date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
 
   def set_event(self, event_string):
@@ -147,13 +147,13 @@ class Event_log(models.Model):
       raise d1_common.types.exceptions.ServiceFailure(
         0, 'Attempted to create invalid type of event: {0}'.format(event_string)
       )
-    self.event = Event_log_event.objects.get_or_create(event=event_string)[0]
+    self.event = EventLogEvent.objects.get_or_create(event=event_string)[0]
 
   def set_ip_address(self, ip_address_string):
     ''':param:
     :return:
     '''
-    self.ip_address = Event_log_ip_address.objects.get_or_create(
+    self.ip_address = EventLogIPAddress.objects.get_or_create(
       ip_address=ip_address_string
     )[0]
 
@@ -161,7 +161,7 @@ class Event_log(models.Model):
     ''':param:
     :return:
     '''
-    self.user_agent = Event_log_user_agent.objects.get_or_create(
+    self.user_agent = EventLogUserAgent.objects.get_or_create(
       user_agent=user_agent_string
     )[0]
 
@@ -169,41 +169,41 @@ class Event_log(models.Model):
     ''':param:
     :return:
     '''
-    self.subject = Event_log_subject.objects.get_or_create(subject=subject_string)[0]
+    self.subject = EventLogSubject.objects.get_or_create(subject=subject_string)[0]
 
 # ------------------------------------------------------------------------------
 # Science Object replication work queue.
 # ------------------------------------------------------------------------------
 
 
-class Replication_queue_status(models.Model):
+class ReplicationQueueStatus(models.Model):
   status = models.CharField(max_length=1000, unique=True)
 
 
-class Replication_queue_source_node(models.Model):
+class ReplicationQueueSourceNode(models.Model):
   source_node = models.CharField(max_length=30, unique=True)
 
 
-class Replication_work_queue(models.Model):
+class ReplicationQueue(models.Model):
   #error = models.BooleanField()
   #new = models.BooleanField()
-  status = models.ForeignKey(Replication_queue_status)
+  status = models.ForeignKey(ReplicationQueueStatus)
   pid = models.CharField(max_length=200)
-  source_node = models.ForeignKey(Replication_queue_source_node)
+  source_node = models.ForeignKey(ReplicationQueueSourceNode)
   checksum = models.CharField(max_length=100)
-  checksum_algorithm = models.ForeignKey(Checksum_algorithm)
+  checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm)
   timestamp = models.DateTimeField(auto_now=True)
 
   def set_status(self, status_string):
-    self.status = Replication_queue_status.objects.get_or_create(status=status_string)[0]
+    self.status = ReplicationQueueStatus.objects.get_or_create(status=status_string)[0]
 
   def set_source_node(self, source_node_string):
-    self.source_node = Replication_queue_source_node.objects.get_or_create(
+    self.source_node = ReplicationQueueSourceNode.objects.get_or_create(
       source_node=source_node_string
     )[0]
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
-    self.checksum_algorithm = Checksum_algorithm.objects.get_or_create(
+    self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
       checksum_algorithm=checksum_algorithm_string
     )[0]
 
@@ -212,25 +212,25 @@ class Replication_work_queue(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class System_metadata_dirty_queue_status(models.Model):
+class SystemMetadataDirtyQueueStatus(models.Model):
   status = models.CharField(max_length=1000, unique=True)
 
 
-class System_metadata_dirty_queue(models.Model):
-  object = models.ForeignKey(Object)
+class SystemMetadataDirtyQueue(models.Model):
+  object = models.ForeignKey(ScienceObject)
   timestamp = models.DateTimeField(auto_now=True)
   serial_version = models.BigIntegerField()
   last_modified = models.DateTimeField()
-  status = models.ForeignKey(System_metadata_dirty_queue_status)
+  status = models.ForeignKey(SystemMetadataDirtyQueueStatus)
 
   def set_status(self, status):
-    self.status = System_metadata_dirty_queue_status.objects.\
+    self.status = SystemMetadataDirtyQueueStatus.objects.\
       get_or_create(status=status)[0]
 
   def save_unique(self):
     try:
-      me = System_metadata_dirty_queue.objects.get(object=self.object)
-    except System_metadata_dirty_queue.DoesNotExist:
+      me = SystemMetadataDirtyQueue.objects.get(object=self.object)
+    except SystemMetadataDirtyQueue.DoesNotExist:
       self.save()
     else:
       me.delete()
@@ -241,11 +241,11 @@ class System_metadata_dirty_queue(models.Model):
 # ------------------------------------------------------------------------------
 
 
-class Subject(models.Model):
+class PermissionSubject(models.Model):
   subject = models.CharField(max_length=100, unique=True, db_index=True)
 
 
 class Permission(models.Model):
-  object = models.ForeignKey(Object)
-  subject = models.ForeignKey(Subject)
+  object = models.ForeignKey(ScienceObject)
+  subject = models.ForeignKey(PermissionSubject)
   level = models.PositiveSmallIntegerField()

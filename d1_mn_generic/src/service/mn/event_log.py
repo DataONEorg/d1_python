@@ -36,7 +36,7 @@ from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.utils.html import escape
 
-# MN API.
+# D1
 import d1_common.types.exceptions
 
 # App.
@@ -60,13 +60,13 @@ def _log(pid, request, event, timestamp=None):
   object_row = None
   if pid is not None:
     try:
-      object_row = models.Object.objects.filter(pid=pid)[0]
+      object_row = models.ScienceObject.objects.filter(pid=pid)[0]
     except IndexError:
       err_msg = 'Attempted to create event log for non-existing object: {0}'.format((pid))
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Create log entry.
-  event_log_row = models.Event_log()
+  event_log_row = models.EventLog()
 
   event_log_row.object = object_row
   event_log_row.set_event(event)

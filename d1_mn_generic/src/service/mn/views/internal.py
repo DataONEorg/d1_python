@@ -46,7 +46,6 @@ import uuid
 
 # Django.
 from django.http import HttpResponse
-from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseBadRequest
 from django.http import Http404
 from django.template import Context, loader
@@ -54,18 +53,9 @@ from django.shortcuts import render_to_response
 from django.db.models import Avg, Max, Min, Count
 from django.core.exceptions import ObjectDoesNotExist
 
-# 3rd party.
-try:
-  import iso8601
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/' \
-                   '2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
-  raise
-
 # DataONE APIs.
 import d1_common.const
+import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -95,11 +85,11 @@ import service.settings
 def replicate_task_get(request):
   '''Get next replication task.'''
 
-  if not models.Replication_work_queue.objects.filter(status__status='new')\
+  if not models.ReplicationQueue.objects.filter(status__status='new')\
     .exists():
     raise d1_common.types.exceptions.NotFound(0, 'No pending replication requests', 'n/a')
 
-  query = models.Replication_work_queue.objects.filter(status__status='new')[0]
+  query = models.ReplicationQueue.objects.filter(status__status='new')[0]
 
   # Return query data for further processing in middleware layer.
   return {'query': query, 'type': 'replication_task'}
@@ -109,8 +99,8 @@ def replicate_task_get(request):
 def replicate_task_update(request, task_id, status):
   '''Update the status of a replication task.'''
   try:
-    task = models.Replication_work_queue.objects.get(id=task_id)
-  except models.Replication_work_queue.DoesNotExist:
+    task = models.ReplicationQueue.objects.get(id=task_id)
+  except models.ReplicationQueue.DoesNotExist:
     raise d1_common.types.exceptions.NotFound(
       0, 'Replication task not found', str(task_id)
     )
@@ -162,13 +152,14 @@ def update_sysmeta(request, pid):
 
   # Update database to match new System Metadata.
   try:
-    sciobj = models.Object.objects.get(pid=pid)
+    sciobj = models.ScienceObject.objects.get(pid=pid)
     sciobj.set_format(sysmeta_obj.formatId)
     sciobj.checksum = sysmeta_obj.checksum.value()
     sciobj.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
-    sciobj.mtime = d1_common.util.is_utc(sysmeta_obj.dateSysMetadataModified)
+    sciobj.mtime = d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
     sciobj.size = sysmeta_obj.size
     #sciobj.replica = False
+    sciobj.serial_version = sysmeta_obj.serialVersion
     sciobj.save()
   except:
     raise d1_common.types.exceptions.InvalidSystemMetadata(0, 'Invalid System Metadata')
@@ -193,7 +184,4 @@ def update_sysmeta(request, pid):
   # Log this System Metadata update.
   event_log.update(pid, request)
 
-  # Return the pid.
-  pid_pyxb = dataoneTypes.Identifier(pid)
-  pid_xml = pid_pyxb.toxml()
-  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
+  return HttpResponse('OK')

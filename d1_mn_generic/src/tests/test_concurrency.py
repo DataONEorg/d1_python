@@ -35,7 +35,7 @@ import logging
 import threading
 import time
 
-# MN API.
+# D1
 try:
   import d1_common.types.generated.dataoneTypes as dataoneTypes
   import d1_common.types.exceptions

@@ -47,7 +47,7 @@
   to work, the test objects must be available on a web server. The location can
   be specified as a program argument.
   
-:Created:
+:Created: 2010-06-14
 :Author: DataONE (Dahl)
 '''
 
@@ -76,27 +76,19 @@ import uuid
 import xml.parsers.expat
 from xml.sax.saxutils import escape
 
-# MN API.
-try:
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
-  #import d1_common.mime_multipart
-  import d1_common.types.exceptions
-  import d1_common.util
-  import d1_common.const
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
-  raise
-try:
-  import d1_client
-  import d1_client.systemmetadata
-  import d1_common.xml_compare
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n')
-  raise
+# D1.
+import d1_client
+import d1_client.mnclient
+import d1_client.systemmetadata
+import d1_common.const
+import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.util
+import d1_common.date_time
+import d1_common.url
+import d1_common.xml_compare
 
-
+# App.
 import gmn_test_client
 
 # Constants.
@@ -211,20 +203,6 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Get the first PID listed. The list is in random order.
     return object_list.objectInfo[0].identifier.value()
 
-  def get_object_info_by_identifer(self, pid):
-    client = d1_client.client.DataOneClient(self.opts.gmn_url)
-
-    # Get object collection.
-    object_list = client.listObjects(
-      vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
-
-    for o in object_list['objectInfo']:
-      if o["identifier"].value() == pid:
-        return o
-
-    # Object not found
-    assertTrue(False)
-
 #  def generate_sysmeta(self, pid, size, md5, now, owner):
 #    return u'''<?xml version="1.0" encoding="UTF-8"?>
 #<D1:systemMetadata xmlns:D1="http://ns.dataone.org/service/types/v1">
@@ -293,25 +271,23 @@ class TestSequenceFunctions(unittest2.TestCase):
     session.subject = subject
     return {'VENDOR_OVERRIDE_SESSION': session.toxml()}
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # Tests that are run for both local and remote objects.
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # Setup.
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def A_delete_all_objects(self):
-    '''Delete all objects.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
+    '''Delete all objects.'''
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.delete_all_objects(
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
   def B_object_collection_is_empty(self):
-    '''Object collection is empty.
-    '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    '''Object collection is empty.'''
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Get object collection.
     object_list = client.listObjects(
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -321,8 +297,8 @@ class TestSequenceFunctions(unittest2.TestCase):
   def C_create_objects(self, wrapped=False):
     '''Populate MN with set of test objects.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path,
                                                       '*.sysmeta'))):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -344,9 +320,9 @@ class TestSequenceFunctions(unittest2.TestCase):
 
       if wrapped:
         vendor_specific = {
-          'VENDOR_GMN_REMOTE_URL': self.opts.obj_url + '/' + \
-          d1_common.util.encodePathElement(
-            d1_common.util.encodePathElement(sysmeta_obj.identifier.value()))
+          'VENDOR_GMN_REMOTE_URL': self.options.obj_url + '/' + \
+          d1_common.url.encodePathElement(
+            d1_common.url.encodePathElement(sysmeta_obj.identifier.value()))
         }
         headers.update(vendor_specific)
 
@@ -357,17 +333,17 @@ class TestSequenceFunctions(unittest2.TestCase):
   def D_object_collection_is_populated(self):
     '''Object collection is populated.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Get object collection.
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     # Check header.
     self.assert_object_list_slice(object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA)
 
-  def A_clear_event_log(self):
+  def A_delete_event_log(self):
     '''Clear event log.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.delete_event_log(
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
@@ -376,22 +352,22 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     '''Object collection is empty.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1))
     self.assertEqual(len(logRecords.logEntry), 0)
 
-  def C_inject_event_log(self):
+  def C_inject_fictional_event_log(self):
     '''Inject a set of fictitious events for each object.
     '''
     csv_file = open('test_log.csv', 'rb')
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
-    client.inject_event_log(csv_file,
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    client.inject_fictional_event_log(csv_file,
       headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
   def D_event_log_is_populated(self):
     '''Event log is populated.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1),
       count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -407,12 +383,12 @@ class TestSequenceFunctions(unittest2.TestCase):
   def compare_byte_by_byte(self):
     '''Read from MN and do byte-by-byte comparison with local copies.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url, timeout=60)
 
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path,
                                                       '*.sysmeta'))):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      pid = d1_common.util.decodePathElement(os.path.basename(object_path))
+      pid = d1_common.url.decodePathElement(os.path.basename(object_path))
       #sysmeta_xml_disk = open(sysmeta_path, 'r').read()
       object_str_disk = open(object_path, 'rb').read()
       #sysmeta_xml_d1 = client.getSystemMetadata(pid).read()
@@ -428,18 +404,18 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Read complete object collection and compare with values stored in local SysMeta files.
     '''
     # Get object collection.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url, timeout=60)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url, timeout=60)
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
     # Loop through our local test objects.
-    for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path,
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path,
                                                       '*.sysmeta'))):
       # Get name of corresponding object and check that it exists on disk.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       self.assertTrue(os.path.exists(object_path))
       # Get pid for object.
-      pid = d1_common.util.decodePathElement(os.path.basename(object_path))
+      pid = d1_common.url.decodePathElement(os.path.basename(object_path))
       # Get sysmeta xml for corresponding object from disk.
       sysmeta_file = open(sysmeta_path, 'rb')
       sysmeta_xml = sysmeta_file.read()
@@ -495,9 +471,9 @@ class TestSequenceFunctions(unittest2.TestCase):
 #
 #    # POST to /meta/pid.
 #    test_update_sysmeta_url = urlparse.urljoin('/v1/meta/',
-#      d1_common.util.encodePathElement(pid))
+#      d1_common.url.encodePathElement(pid))
 #    
-#    root = gmn_test_client.GMNTestClient(self.opts.gmn_url, version='test')
+#    root = gmn_test_client.GMNTestClient(self.options.gmn_url)
 #    response = root.POST(
 #      test_update_sysmeta_url, files=mime_multipart_files,
 #      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -509,7 +485,7 @@ class TestSequenceFunctions(unittest2.TestCase):
 #    # New object.
 #    # SysMeta
 #    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
-#    sysmeta_path = os.path.join(self.opts.obj_path, sysmeta_file)
+#    sysmeta_path = os.path.join(self.options.obj_path, sysmeta_file)
 #    sysmeta_xml = open(sysmeta_path, 'rb').read()
 #    # SciData
 #    object_path = os.path.splitext(sysmeta_path)[0]
@@ -522,20 +498,20 @@ class TestSequenceFunctions(unittest2.TestCase):
 #    obsoleted_pid = 'AnserMatrix.htm'
 #    new_pid = 'update_object_pid'
 #    # Update.
-#    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+#    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 #    response = client.updateResponse(obsoleted_pid,
 #                                     object_str, new_pid, sysmeta_xml,
 #                                     vendorSpecific=self.session('test_user_1'))
 #    return response
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # listObjects
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def get_object_count(self):
     '''listObjects: Get object count.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     object_list = client.listObjects(start=0, count=0,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -546,7 +522,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     object_cnt_half = OBJECTS_TOTAL_DATA / 2
     # Starting at 0 and getting half of the available objects.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(start=0, count=object_cnt_half,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, 0, object_cnt_half,
@@ -557,7 +533,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     than there are.
     '''
     object_cnt_half = OBJECTS_TOTAL_DATA / 2
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(start=object_cnt_half,
       count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -567,7 +543,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def slicing_3(self):
     '''listObjects: Slicing: Starting above number of objects that we have.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(start=OBJECTS_TOTAL_DATA * 2, count=1,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, OBJECTS_TOTAL_DATA * 2, 0,
@@ -576,7 +552,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def slicing_4(self):
     '''listObjects: Slicing: Requesting more than MAX_LISTOBJECTS should throw.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_cnt_half = OBJECTS_TOTAL_DATA / 2
     self.assertRaises(Exception, client.listObjects,
       count=d1_common.const.MAX_LISTOBJECTS + 1,
@@ -585,7 +561,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def date_range_1(self):
     '''listObjects: Date range query: Get all objects from the 1990s.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       startTime=datetime.datetime(1990, 1, 1),
@@ -598,7 +574,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def date_range_2(self):
     '''listObjects: Date range query: Get first 10 objects from the 1990s.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     object_list = client.listObjects(start=0, count=10,
       startTime=datetime.datetime(1990, 1, 1),
@@ -609,7 +585,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def date_range_3(self):
     '''listObjects: Date range query: Get 10 first objects from the 1990s, filtered by objectFormat.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     object_list = client.listObjects(start=0, count=10,
       startTime=datetime.datetime(1990, 1, 1),
@@ -621,7 +597,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def date_range_4(self):
     '''listObjects: Date range query: Get 10 first objects from non-existing date range.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     object_list = client.listObjects(start=0, count=10,
       startTime=datetime.datetime(2500, 1, 1),
@@ -630,14 +606,14 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, 0, 0, 0)
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # getLogRecords()
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def event_log_get_object_count(self):
     '''getLogRecords: Get event count
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     log = client.getLogRecords(start=0, count=0,
       fromDate=datetime.datetime(1800, 1, 1),
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -648,7 +624,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''
     object_cnt_half = EVENTS_TOTAL_DATA / 2
     # Starting at 0 and getting half of the available objects.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     log = client.getLogRecords(start=0, count=object_cnt_half,
       fromDate=datetime.datetime(1800, 1, 1),
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -659,7 +635,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     than there are.
     '''
     object_cnt_half = EVENTS_TOTAL_DATA / 2
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     log = client.getLogRecords(start=object_cnt_half,
       fromDate=datetime.datetime(1800, 1, 1),
       count=d1_common.const.MAX_LISTOBJECTS,
@@ -670,7 +646,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def event_log_slicing_3(self):
     '''getLogRecords: Slicing: Starting above number of objects that we have.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     log = client.getLogRecords(start=EVENTS_TOTAL_DATA * 2, count=1,
       fromDate=datetime.datetime(1800, 1, 1),
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
@@ -680,7 +656,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def event_log_slicing_4(self):
     '''getLogRecords: Slicing: Requesting more than MAX_LISTOBJECTS should throw.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_cnt_half = EVENTS_TOTAL_DATA / 2
     self.assertRaises(Exception, client.getLogRecords,
       count=d1_common.const.MAX_LISTOBJECTS + 1,
@@ -690,7 +666,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def event_log_date_range_1(self):
     '''getLogRecords: Date range query: Get all events from the 1990s.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     log = client.getLogRecords(count=d1_common.const.MAX_LISTOBJECTS,
       fromDate=datetime.datetime(1990, 1, 1),
@@ -703,7 +679,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def event_log_date_range_2(self):
     '''getLogRecords: Date range query: Get first 10 objects from the 1990s.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     log = client.getLogRecords(start=0, count=10,
       fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31),
@@ -713,7 +689,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def event_log_date_range_3(self):
     '''getLogRecords: Date range query: Get all events from the 1990s, filtered by event type.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     log = client.getLogRecords(start=0, count=d1_common.const.MAX_LISTOBJECTS,
       fromDate=datetime.datetime(1990, 1, 1),
       toDate=datetime.datetime(1999, 12, 31),
@@ -725,7 +701,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def event_log_date_range_4(self):
     '''getLogRecords: Date range query: Get 10 first events from non-existing date range.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
 
     log = client.getLogRecords(start=0, count=d1_common.const.MAX_LISTOBJECTS,
       fromDate=datetime.datetime(2500, 1, 1),
@@ -733,12 +709,12 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_log_slice(log, 0, 0, 0)
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # getChecksum()
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def get_checksum_test(self, pid, checksum, algorithm):
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     checksum_obj = client.getChecksum(pid, checksumAlgorithm=algorithm,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assertTrue(isinstance(checksum_obj, dataoneTypes.Checksum))
@@ -778,42 +754,37 @@ class TestSequenceFunctions(unittest2.TestCase):
                       self.get_checksum_test, pid, '', algorithm)
 
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # systemMetadataChanged
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def system_metadata_changed_invalid_pid(self):
     '''systemMetadataChanged fails when called with invalid PID'''
-    iso_now = datetime.datetime.isoformat(datetime.datetime.now())
-    fields = (('pid', '_bogus_pid_'), ('serialVersion', '1'),
-              ('dateSysMetaLastModified', iso_now))
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotFound,
-      client.system_metadata_changed, fields,
-      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+      client.systemMetadataChanged, '_bogus_pid_', 1,
+        d1_common.date_time.utc_now(),
+        vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
 
   def system_metadata_changed_valid_pid(self):
     '''systemMetadataChanged succeeds when called with valid PID'''
-    iso_now = datetime.datetime.isoformat(datetime.datetime.now())
-    fields = (('pid', 'fitch2.mc'), ('serialVersion', '1'),
-              ('dateSysMetaLastModified', iso_now))
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.system_metadata_changed(fields,
-      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    client.systemMetadataChanged('fitch2.mc', 1, d1_common.date_time.utc_now(),
+      vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
 
   def system_metadata_changed_valid_pid_invalid_subject(self):
     '''systemMetadataChanged denies access to subjects other that CNs'''
-    iso_now = datetime.datetime.isoformat(datetime.datetime.now())
-    fields = (('pid', 'fitch2.mc_'), ('serialVersion', '1'),
-              ('dateSysMetaLastModified', iso_now))
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotAuthorized,
-      client.system_metadata_changed, fields,
-      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC))
+      client.systemMetadataChanged, 'fitch2.mc', 1,
+        d1_common.date_time.utc_now(),
+        vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC))
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # synchronizationFailed
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def synchronization_failed(self):
     '''synchronizationFailed returns 200 OK.
@@ -824,23 +795,18 @@ class TestSequenceFunctions(unittest2.TestCase):
     pid = '12Cpaup.txt'
     msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
     exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
-    exception_xml = exception.serialize()
-    mime_multipart_files = [
-      ('message', 'message', exception_xml.encode('utf-8')),
-    ]
-    # Generate MIME multipart document and POST to /error on server.
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-    client.synchronization_failed(mime_multipart_files,
-      headers=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    client.synchronizationFailed(pid, exception,
+      vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # /object/<pid>
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def get_object_by_invalid_pid(self):
     '''404 NotFound when attempting to get non-existing object /object/_invalid_pid_.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotFound, client.get,
                       '_invalid_pid_')
 
@@ -848,7 +814,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     '''Successful retrieval of valid object
     /object/valid_pid.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     response = client.get('10Dappend2.txt',
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     # Todo: Verify that we got the right object.
@@ -863,7 +829,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def get_sysmeta_by_invalid_pid(self):
     '''404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotFound,
       client.getSystemMetadata,
       '_invalid_pid_',
@@ -873,19 +839,19 @@ class TestSequenceFunctions(unittest2.TestCase):
   def get_sysmeta_by_valid_pid(self):
     '''Successful retrieval of valid object /meta/valid_pid.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     response = client.getSystemMetadata('10Dappend2.txt',
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assertTrue(response)
 
-  ##############################################################################
+  # ----------------------------------------------------------------------------
   # Misc.
-  ##############################################################################
+  # ----------------------------------------------------------------------------
 
   def delete(self):
     '''MN_crud.delete() in GMN and libraries.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)
     # Delete the object on GMN.
@@ -900,7 +866,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def describe(self):
     '''MN_crud.describe in GMN and libraries.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)
     # Get header information for object.
@@ -930,7 +896,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     Does NOT check if GMN acts on the request and actually performs the replication.
     '''
     scidata, sysmeta = self.generate_test_object(pid)
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     #source_node = dataoneTypes.nodeReference('test_source_node')
     source_node = 'test_source_node'
     success = client.replicate(sysmeta, source_node,
@@ -941,8 +907,8 @@ class TestSequenceFunctions(unittest2.TestCase):
   def unicode_test_1(self):
     '''GMN and libraries handle Unicode correctly.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
-#    test_doc_path = os.path.join(self.opts.int_path,
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+#    test_doc_path = os.path.join(self.options.int_path,
 #                                 'src', 'test', 'resources', 'd1_testdocs',
 #                                 'encodingTestSet')
 #    test_ascii_strings_path = os.path.join(test_doc_path,
@@ -974,7 +940,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def auth_listobjects_1(self):
     '''listObjects returns all objects when called by trusted user.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assertEqual(object_list.count, OBJECTS_TOTAL_DATA)
@@ -982,7 +948,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def auth_listobjects_2(self):
     '''listObjects returns only public objects when called by public user.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC))
     self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
@@ -990,7 +956,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def auth_listobjects_3(self):
     '''listObjects returns only public objects when called by unknown user.
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session('unknown user'))
     self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
@@ -998,7 +964,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def auth_listobjects_4(self):
     '''listObjects returns only public + specific user's objects
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.session(AUTH_SPECIFIC_USER))
     self.assertEqual(object_list.count, AUTH_SPECIFIC_USER_OWNS)
@@ -1006,7 +972,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def auth_listobjects_5(self):
     '''listObjects: slicing + specific user
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(count=5,
       vendorSpecific=self.session(AUTH_SPECIFIC_USER))
     self.assert_object_list_slice(object_list, 0, 5, AUTH_SPECIFIC_USER_OWNS)
@@ -1014,7 +980,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   def auth_listobjects_6(self):
     '''listObjects: slicing + specific user + objectFormat
     '''
-    client = gmn_test_client.GMNTestClient(self.opts.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(count=5,
       objectFormat='eml://ecoinformatics.org/eml-2.0.0',
       vendorSpecific=self.session(AUTH_SPECIFIC_USER))
@@ -1046,14 +1012,14 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1010_managed_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
 
-  def test_1020_managed_A_clear_event_log(self):
-    self.A_clear_event_log()
+  def test_1020_managed_A_delete_event_log(self):
+    self.A_delete_event_log()
 
   def test_1020_managed_B_event_log_is_empty(self):
     self.B_event_log_is_empty()
 
-  def test_1020_managed_C_inject_event_log(self):
-    self.C_inject_event_log()
+  def test_1020_managed_C_inject_fictional_event_log(self):
+    self.C_inject_fictional_event_log()
 
   def test_1020_managed_D_event_log_is_populated(self):
     self.D_event_log_is_populated()
@@ -1194,14 +1160,14 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2010_wrapped_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
 
-  def test_2020_wrapped_A_clear_event_log(self):
-    self.A_clear_event_log()
+  def test_2020_wrapped_A_delete_event_log(self):
+    self.A_delete_event_log()
 
   def test_2020_wrapped_B_event_log_is_empty(self):
     self.B_event_log_is_empty()
 
-  def test_2020_wrapped_C_inject_event_log(self):
-    self.C_inject_event_log()
+  def test_2020_wrapped_C_inject_fictional_event_log(self):
+    self.C_inject_fictional_event_log()
 
   def test_2020_wrapped_D_event_log_is_populated(self):
     self.D_event_log_is_populated()
@@ -1328,7 +1294,7 @@ class TestSequenceFunctions(unittest2.TestCase):
 def main():
   log_setup()
 
-  # Command line opts.
+  # Command line options.
   parser = optparse.OptionParser()
   parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
   parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000')
@@ -1345,21 +1311,21 @@ def main():
   parser.add_option('--integration-path', dest='int_path', action='store', type='string', default='./d1_integration')
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
 
-  (opts, args) = parser.parse_args()
+  (options, args) = parser.parse_args()
 
-  if not opts.verbose:
+  if not options.verbose:
     logging.getLogger('').setLevel(logging.ERROR)
 
   s = TestSequenceFunctions
-  s.opts = opts
+  s.options = options
 
-  if opts.test != '':
-    suite = unittest2.TestSuite(map(s, [opts.test]))
+  if options.test != '':
+    suite = unittest2.TestSuite(map(s, [options.test]))
     #suite.debug()
   else:
     suite = unittest2.TestLoader().loadTestsFromTestCase(s)
 
-#  if opts.debug == True:    
+#  if options.debug == True:    
 #    unittest2.TextTestRunner(verbosity=2).debug(suite)
 #  else:
   unittest2.TextTestRunner(verbosity=2, failfast=True).run(suite)

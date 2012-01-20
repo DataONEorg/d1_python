@@ -52,7 +52,9 @@ int extract_session(unsigned char** session_buf, char *x509_cert_pem) {
   }
   
   // Get the DataONE Session extension.
-  int session_nid = OBJ_create("1.3.6.1.4.1.37951.10.1", "DataONESession",
+  // DataONE owns the following OID: 1.3.6.1.4.1.37951.10.1
+  // CILogon has requsted that we use their OID: 1.3.6.1.4.1.34998.2.1
+  int session_nid = OBJ_create("1.3.6.1.4.1.34998.2.1", "DataONESession",
                              "DataONE Session XML Object");
   int session_idx = X509_get_ext_by_NID(x509, session_nid, -1);
   X509_EXTENSION* ex = X509_get_ext(x509, session_idx);

@@ -55,18 +55,9 @@ from django.shortcuts import render_to_response
 from django.db.models import Avg, Max, Min, Count
 from django.core.exceptions import ObjectDoesNotExist
 
-# 3rd party.
-try:
-  import iso8601
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/' \
-                   '2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
-  raise
-
 # DataONE APIs.
 import d1_common.const
+import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -79,6 +70,7 @@ import mn.event_log
 import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
+import mn.restrict_to_verb
 import mn.sysmeta
 import mn.util
 import service.settings
@@ -94,15 +86,12 @@ def object_pid(request, pid):
     return object_pid_head(request, pid)
   elif request.method == 'POST':
     return object_pid_post(request, pid)
-  # TODO: PUT currently not supported (issue with Django).
-  # Instead, this call is handled as a POST against a separate URL.
-  # elif request.method == 'PUT':
-  #   return object_pid_put(request, pid)
+  elif request.method == 'PUT':
+    return object_pid_put(request, pid)
   elif request.method == 'DELETE':
     return object_pid_delete(request, pid)
   else:
-    # TODO: Add "PUT" to list.
-    return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'DELETE'])
+    return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
 
 # ==============================================================================
 # Public API
@@ -112,8 +101,8 @@ def object_pid(request, pid):
 # Public API: Tier 1: Core API  
 # ------------------------------------------------------------------------------
 
-def _add_http_date_to_response_header(response, datetime_):
-  response['Date'] = d1_common.util.to_http_datetime(datetime_)
+def _add_http_date_to_response_header(response, date_time):
+  response['Date'] = d1_common.date_time.to_http_datetime(date_time)
 
 
 # Unrestricted.
@@ -121,20 +110,18 @@ def monitor_ping(request):
   '''MNCore.ping() → Boolean
   '''
   response = HttpResponse('OK')
-  _add_http_date_to_response_header(response, datetime.datetime.now())
+  _add_http_date_to_response_header(response, datetime.datetime.utcnow())
   return response
 
 
 # Unrestricted.
+@mn.restrict_to_verb.get
 def event_log_view(request):
   '''MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0]
   [, count=1000]) → Log
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
   # select objects ordered by mtime desc.
-  query = mn.models.Event_log.objects.order_by('-date_logged').select_related()
+  query = mn.models.EventLog.objects.order_by('-date_logged').select_related()
 
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
@@ -177,12 +164,10 @@ def event_log_view(request):
 
 
 # Unrestricted.
+@mn.restrict_to_verb.get
 def node(request):
   '''MNCore.getCapabilities() → Node
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
   node_registry_path = os.path.join(service.settings.STATIC_STORE_PATH,
                                        'nodeRegistry.xml')
   # Django closes the file. (Can't use "with".)
@@ -206,7 +191,8 @@ def _add_object_properties_to_response_header(response, sciobj):
   response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime)
   response['DataONE-Checksum'] = '{0},{1}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum)
-  _add_http_date_to_response_header(response, datetime.datetime.now())
+  response['DataONE-SerialVersion'] = sciobj.serial_version
+  _add_http_date_to_response_header(response, datetime.datetime.utcnow())
 
 
 @mn.lock_pid.for_read
@@ -215,7 +201,7 @@ def object_pid_head(request, pid):
   '''MNRead.describe(session, pid) → DescribeResponse
   '''
   d1_assert.object_exists(pid)
-  sciobj = mn.models.Object.objects.get(pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   response = HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
@@ -229,7 +215,7 @@ def object_pid_get(request, pid):
   '''GET: MNRead.get(session, pid) → OctetStream
   '''
   d1_assert.object_exists(pid)
-  sciobj = mn.models.Object.objects.get(pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
 
 #  # Split URL into individual parts.
 #  try:
@@ -316,13 +302,12 @@ def _object_pid_get_local(pid):
   return mn.util.fixed_chunk_size_iterator(file)
 
 
+@mn.restrict_to_verb.get
 @mn.lock_pid.for_read
 @mn.auth.assert_read_permission
 def meta_pid_get(request, pid):
   '''MNRead.getSystemMetadata(session, pid) → SystemMetadata
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
   d1_assert.object_exists(pid)
   mn.event_log.read(pid, request)
   return HttpResponse(mn.sysmeta.read_sysmeta_from_store(pid),
@@ -344,14 +329,12 @@ def _get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
               ', '.join(dataone_to_python_checksum_algorithm_map.keys())))
 
 
+@mn.restrict_to_verb.get
 @mn.lock_pid.for_read
 @mn.auth.assert_read_permission
 def checksum_pid(request, pid):
   '''MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
   d1_assert.object_exists(pid)
 
   # If the checksumAlgorithm argument was not provided, it defaults to
@@ -362,7 +345,7 @@ def checksum_pid(request, pid):
   h = _get_checksum_calculator_by_dataone_designator(algorithm)
 
   # Calculate the checksum.
-  sciobj = mn.models.Object.objects.get(pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   for bytes in _object_pid_get(sciobj):
     h.update(bytes)
 
@@ -379,17 +362,15 @@ def checksum_pid(request, pid):
 
 
 # Unrestricted.
+@mn.restrict_to_verb.get
 def object(request):
   '''MNRead.listObjects(session[, startTime][, endTime][, objectFormat]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
   # The ObjectList is returned ordered by mtime ascending. The order has 
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
-  query = mn.models.Object.objects.order_by('mtime').select_related()
+  query = mn.models.ScienceObject.objects.order_by('mtime').select_related()
 
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
@@ -407,13 +388,13 @@ def object(request):
 
   # startTime
   query, changed = mn.db_filter.add_datetime_filter(query, request, 'mtime',
-                                            'startTime', 'gte')
+                                                    'startTime', 'gte')
   if changed == True:
     query_unsliced = query
 
   # endTime
   query, changed = mn.db_filter.add_datetime_filter(query, request, 'mtime',
-                                                 'endTime', 'lt')
+                                                    'endTime', 'lt')
   if changed == True:
     query_unsliced = query
 
@@ -440,24 +421,19 @@ def object(request):
 #@mn.auth.assert_trusted_permission
 # TODO: Docs say that this can be called without a cert. But that opens up
 # for spamming.
+@mn.restrict_to_verb.post
 def error(request):
   '''MNRead.synchronizationFailed(session, message)
   '''
-  if request.method != 'POST':
-    return HttpResponseNotAllowed(['POST'])
-
   d1_assert.post_has_mime_parts(request, (('file', 'message'),))
   d1_assert.xml_document_not_too_large(request.FILES['message'])
   # Validate and deserialize accessPolicy.
-  synchronization_failed_str = request.FILES['message'].read()
-  print synchronization_failed_str
+  synchronization_failed_xml = request.FILES['message'].read()
   synchronization_failed = dataoneErrors.CreateFromDocument(
-    synchronization_failed_str)
-
+    synchronization_failed_xml)
   logging.info('CN cannot complete Science Metadata synchronization. '
                'CN returned message: {0}'
                .format(synchronization_failed.description))
-
   return HttpResponse('OK')
 
 
@@ -466,12 +442,10 @@ def error(request):
 # ------------------------------------------------------------------------------  
 
 # Unrestricted.
+@mn.restrict_to_verb.get
 def is_authorized(request, pid):
   '''MNAuthorization.isAuthorized(pid, action) -> Boolean
   '''
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['GET'])
-
   if 'action' not in request.GET:
     raise d1_common.types.exceptions.InvalidRequest(0,
       'Missing required argument: "action"')
@@ -538,7 +512,7 @@ def _update_sysmeta_with_mn_values(request, sysmeta):
   # If authoritativeMemberNode is not specified, set it to this MN.
   if sysmeta.authoritativeMemberNode is None:
     sysmeta.authoritativeMemberNode = service.settings.NODE_IDENTIFIER
-  now = datetime.datetime.now()
+  now = datetime.datetime.utcnow()
   sysmeta.dateUploaded = now
   sysmeta.dateSysMetadataModified = now
 
@@ -550,10 +524,21 @@ def object_pid_post(request, pid):
   '''
   return _create(request, pid)
 
+
+@mn.lock_pid.for_write
+#@mn.auth.assert_write_permission
+def object_pid_put(request, pid):
+  '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
+  '''
+  mn.util.coerce_put_post(request)
+  return _create(request, pid)
+
+
 def _assert_pid_is_available(pid):
-  if mn.models.Object.objects.filter(pid=pid).exists():
+  if mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(0, 'Please try '
       'again with another identifier', pid)
+
 
 # Internal.
 def _create(request, pid):
@@ -576,7 +561,7 @@ def _create(request, pid):
                                  'HTTP_VENDOR_TEST_OBJECT' not in request.META):
     _validate_sysmeta_against_uploaded(request, pid, sysmeta_obj)
     _update_sysmeta_with_mn_values(request, sysmeta_obj)
-    #d1_common.util.is_utc(sysmeta_obj.dateSysMetadataModified)
+    #d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
 
   mn.sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
 
@@ -608,7 +593,7 @@ def _create(request, pid):
         'url({0}): Invalid URL specified for remote storage'.format(url))
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
-    url = 'file:///{0}'.format(d1_common.util.encodePathElement(pid))
+    url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
     try:
       _object_pid_post_store_local(request, pid)
     except EnvironmentError:
@@ -621,7 +606,7 @@ def _create(request, pid):
   # objects can be cleaned up.
   try:
     # Create database entry for object.
-    object = mn.models.Object()
+    object = mn.models.ScienceObject()
     object.pid = pid
     object.url = url
     object.set_format(sysmeta_obj.formatId)
@@ -630,6 +615,7 @@ def _create(request, pid):
     object.mtime = sysmeta_obj.dateSysMetadataModified
     object.size = sysmeta_obj.size
     object.replica = False
+    object.serial_version = sysmeta_obj.serialVersion
     object.save_unique()
 
     # Successfully updated the db, so put current datetime in status.mtime. This
@@ -679,21 +665,13 @@ def _object_pid_post_store_local(request, pid):
     raise
 
 
-@mn.lock_pid.for_write
-@mn.auth.assert_write_permission
-def object_pid_put(request, pid):
-  '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
-  '''
-  raise Exception('Not implemented')
-
-
 # Unrestricted.
 def object_pid_delete(request, pid):
   '''MNStorage.delete(session, pid) → Identifier
   '''
   d1_assert.object_exists(pid)
 
-  sciobj = mn.models.Object.objects.get(pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
 
   # If the object is wrapped, we only delete the reference. If it's managed, we
   # delete both the object and the reference.
@@ -741,10 +719,10 @@ def dirty_system_metadata_post(request):
 
   d1_assert.object_exists(request.POST['pid'])
 
-  dirty_queue = mn.models.System_metadata_dirty_queue()
-  dirty_queue.object = mn.models.Object.objects.get(pid=request.POST['pid'])
+  dirty_queue = mn.models.SystemMetadataDirtyQueue()
+  dirty_queue.object = mn.models.ScienceObject.objects.get(pid=request.POST['pid'])
   dirty_queue.serial_version = request.POST['serialVersion']
-  dirty_queue.last_modified = iso8601.parse_date(
+  dirty_queue.last_modified = d1_common.date_time.from_iso8601(
     request.POST['dateSysMetaLastModified'])
   dirty_queue.set_status('new')
   dirty_queue.save_unique()
@@ -755,13 +733,11 @@ def dirty_system_metadata_post(request):
 # Public API: Tier 4: Replication API.
 # ------------------------------------------------------------------------------  
 
+@mn.restrict_to_verb.post
 @mn.auth.assert_trusted_permission
 def replicate(request):
   '''MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   '''
-  if request.method != 'POST':
-    return HttpResponseNotAllowed(['POST'])
-
   d1_assert.post_has_mime_parts(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
   #d1_assert.xml_document_not_too_large(request.POST['sourceNode'])
   d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
@@ -776,7 +752,7 @@ def replicate(request):
       'System Metadata validation failed: {0}'.format(str(err)))
 
   # Make sure PID does not already exist.
-  if mn.models.Object.objects.filter(pid=sysmeta_obj.identifier.value()).exists():
+  if mn.models.ScienceObject.objects.filter(pid=sysmeta_obj.identifier.value()).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(0,
       'Requested replication of object that already exists',
       sysmeta_obj.identifier.value())
@@ -784,7 +760,7 @@ def replicate(request):
   #sysmeta.write_sysmeta_to_store(sysmeta_obj.identifier, sysmeta_xml)
 
   # Create replication work item for this replication.  
-  replication_item = mn.models.Replication_work_queue()
+  replication_item = mn.models.ReplicationQueue()
   replication_item.set_status('new')
   replication_item.set_source_node(request.POST['sourceNode'])
   replication_item.pid = sysmeta_obj.identifier.value()

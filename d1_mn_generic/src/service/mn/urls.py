@@ -80,13 +80,10 @@ urlpatterns = patterns(
   (r'^v1/isAuthorized/(.+)/?$', 'is_authorized'),
 
   # Tier 3: Storage API (MNStorage)
+  # Handled by the object_pid dispatcher:
   # MNStorage.create() - POST /object/{pid}
-  # Handled by the object_pid dispatcher.
   # MNStorage.update() - PUT /object/{pid}
-  # TODO: This is a workaround for issue with PUT in Django.
-  (r'^v1/object_put/(.+)$', 'object_pid_put'),
   # MNStorage.delete() - DELETE /object/{pid}
-  # Handled by the object_pid dispatcher.
   # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
   (r'^v1/dirtySystemMetadata/?$', 'dirty_system_metadata_post'),
 
@@ -107,23 +104,24 @@ urlpatterns += patterns(
 if settings.DEBUG:
   urlpatterns += patterns(
     'service.mn.views.diagnostics',
-    # Test portal.
-    (r'^test/?$', 'test'),
+    # Diagnostics portal.
+    (r'^test/?$', 'diagnostics'),
     # Replication.
-    (r'^test/replicate_post/?$', 'replicate_post'),
-    (r'^test/replicate_get/?$', 'replicate_get'),
-    (r'^test/replicate_get_xml/?$', 'replicate_get_xml'),
-    (r'^test/replicate_clear/?$', 'replicate_clear'),
+    (r'^test/get_replication_queue/?$', 'get_replication_queue'),
+    (r'^test/clear_replication_queue/?$', 'clear_replication_queue'),
+    # Access Policy
+    (r'^test/set_access_policy/(.+?)/?$', 'set_access_policy'),
+    (r'^test/delete_all_access_policies/?$', 'delete_all_access_policies'),
     # Misc.
     (r'^test/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
     (r'^test/exception/(.+?)/?$', 'exception'),
-    (r'^test/clear_database/(.+?)/?$', 'clear_database'),
+    (r'^test/echo_request_object/?$', 'echo_request_object'),
+    (r'^test/clear_database/?$', 'clear_database'),
     (r'^test/delete_all_objects/?$', 'delete_all_objects'),
     (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),
+    # Event Log.
     (r'^test/delete_event_log/?$', 'delete_event_log'),
-    (r'^test/inject_event_log/?$', 'inject_event_log'),
-    (r'^test/delete_all_access_rules/?$', 'delete_all_access_rules'),
-    (r'^test/cert/?$', 'cert'),
+    (r'^test/inject_fictional_event_log/?$', 'inject_fictional_event_log'),
     # Concurrency.
     (r'^test/concurrency_clear/?$', 'concurrency_clear'),
     (r'^test/concurrency_read_lock/(.+?)/(.+?)/(.+?)/?$', 'concurrency_read_lock'),

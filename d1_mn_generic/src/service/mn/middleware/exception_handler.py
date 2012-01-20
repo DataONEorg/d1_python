@@ -62,7 +62,7 @@ import d1_common.ext.mimeparser
 # Django.
 from django.http import HttpResponse
 
-# MN API.
+# D1
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneErrors as dataoneErrors
 

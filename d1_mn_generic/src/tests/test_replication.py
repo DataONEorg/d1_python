@@ -20,13 +20,15 @@ import urllib
 import StringIO
 import time
 
-# MN API.
+# D1
 try:
   #import d1_common.mime_multipart
   import d1_common.types.exceptions
   import d1_common.types.checksum_serialization
   import d1_common.types.objectlist_serialization
   import d1_common.util
+  import d1_common.date_time
+  import d1_common.url
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
@@ -60,7 +62,7 @@ def baseurl_by_noderef(opts, node_ref):
   # Call to /cn/test_baseurl_by_noderef/<dst_node_ref>
   baseurl_by_noderef_url = urlparse.urljoin(
     opts.d1_root,
-    'test_baseurl_by_noderef/{0}'.format(d1_common.util.encodePathElement(node_ref))
+    'test_baseurl_by_noderef/{0}'.format(d1_common.url.encodePathElement(node_ref))
   )
 
   client_root = d1_client.client.DataOneClient(opts.d1_root)

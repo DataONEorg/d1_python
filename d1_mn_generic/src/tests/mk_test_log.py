@@ -155,7 +155,7 @@ def main():
     sysmeta_tree = etree.parse(sysmeta_file)
     sysmeta_file.close()
 
-    pid = d1_common.util.decodePathElement(os.path.basename(sysmeta_path))
+    pid = d1_common.url.decodePathElement(os.path.basename(sysmeta_path))
 
     logging.info(pid)
 

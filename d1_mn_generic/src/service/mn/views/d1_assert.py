@@ -57,16 +57,6 @@ from django.shortcuts import render_to_response
 from django.db.models import Avg, Max, Min, Count
 from django.core.exceptions import ObjectDoesNotExist
 
-# 3rd party.
-try:
-  import iso8601
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write('     sudo easy_install http://pypi.python.org/packages/' \
-                   '2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n')
-  raise
-
 # DataONE APIs.
 import d1_common.const
 import d1_common.types.exceptions
@@ -119,9 +109,9 @@ def post_has_mime_parts(request, parts):
 
 
 def object_exists(pid):
-  if not mn.models.Object.objects.filter(pid=pid).exists():
+  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.NotFound(
-      0, 'Specified non-existing Science Object', pid
+      0, 'Attempted to perform operation on non-existing Science Object', pid
     )
 
 
@@ -133,8 +123,8 @@ def xml_document_not_too_large(flo):
     raise d1_common.types.exceptions.InvalidSystemMetadata(0, 'Size restriction exceeded')
 
 
-def date_is_utc(datetime_):
-  if not d1_common.util.is_utc(datetime_):
+def date_is_utc(date_time):
+  if not d1_common.date_time.is_utc(date_time):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Date-time must be specified in UTC: {0}'.format(datetime_)
+      0, 'Date-time must be specified in UTC: {0}'.format(date_time)
     )
