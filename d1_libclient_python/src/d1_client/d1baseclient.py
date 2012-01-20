@@ -42,6 +42,7 @@
 import logging
 import re
 import urlparse
+import StringIO
 
 # 3rd party.
 import pyxb
@@ -52,6 +53,8 @@ import d1_common.restclient
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 
 #=============================================================================
 
@@ -67,12 +70,12 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   Unless otherwise indicated, methods with names that end in "Response" return 
   the HTTPResponse object, otherwise the deserialized object is returned.
   '''
-  def __init__(self, 
+  def __init__(self,
                base_url,
-               timeout=d1_common.const.RESPONSE_TIMEOUT, 
-               defaultHeaders=None, 
-               cert_path=None, 
-               key_path=None, 
+               timeout=d1_common.const.RESPONSE_TIMEOUT,
+               defaultHeaders=None,
+               cert_path=None,
+               key_path=None,
                strict=True,
                capture_response_body=False,
                version='v1'):
@@ -96,20 +99,22 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     :param capture_response_body: Capture the response body from the last
       operation and make it available in last_response_body.
     :type capture_response_body: boolean
+    :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
+    :type response_contains_303_redirect: boolean
     :returns: None
-    '''        
+    '''
     self.logger = logging.getLogger('DataONEBaseClient')
     # Set default headers.
     if defaultHeaders is None:
       defaultHeaders = {}
     if 'Accept' not in defaultHeaders:
-      defaultHeaders['Accept'] = d1_common.const.DEFAULT_MIMETYPE
+      defaultHeaders['Accept'] = d1_common.const.MIMETYPE_XML
     if 'User-Agent' not in defaultHeaders:
       defaultHeaders['User-Agent'] = d1_common.const.USER_AGENT
     if 'Charset' not in defaultHeaders:
       defaultHeaders['Charset'] = d1_common.const.DEFAULT_CHARSET
     # Init the RESTClient base class.
-    scheme, host, port, selector, query, fragment = self._parse_url(base_url)    
+    scheme, host, port, selector, query, fragment = self._parse_url(base_url)
     d1_common.restclient.RESTClient.__init__(self, host=host, scheme=scheme,
       port=port, timeout=timeout, defaultHeaders=defaultHeaders,
       cert_path=cert_path, key_path=key_path, strict=strict)
@@ -133,6 +138,9 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
     self.capture_response_body = capture_response_body
+    # response_contains_303_redirect can be switched on to handle methods that may return 303 See
+    # Other.
+    self.response_contains_303_redirect = False
 
 
   def _parse_url(self, url):
@@ -140,33 +148,159 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     if parts.port is None:
       port = 443 if parts.scheme == 'https' else 80
     else:
-      port = parts.port 
+      port = parts.port
     host = parts.netloc.split(':')[0]
     return parts.scheme, host, port, parts.path, parts.query, parts.fragment
 
+  # ----------------------------------------------------------------------------  
+  # Response handling.
+  # ----------------------------------------------------------------------------
 
-  def _get_response(self):
-    '''Override the response handler in RESTClient.
-    - If the response status is OK, return the HTTP response object and sets
-    self.lastresponse.   
-    - If the response status is not OK, raise a DataONEException.
-    '''
-    response = self.connection.getresponse()
-    # Preserve the response object so that it can be inspected by the user
-    # if desired.
-    self.last_response = response
-    # If server returned a non-error status code, return the response body,
-    # which should contain a serialized DataONE type.
-    if self._is_response_status_ok(response):
-      return response
-    # Server returned error. Together with an error, the server is required to
-    # return a serialized DataONEException in the response. Attempt to
-    # deserialize the response and raise the corresponding DataONEException.
+  # When expecting boolean response:
+  #   If status is 200:
+  #     -> Ignore mimetype and return True
+  # 
+  #   If status is NOT 200:
+  #     -> ERROR
+  # 
+  # When expecting DataONE type with regular non-redirect method:
+  #   If status is 200 and mimetype is "text/xml":
+  #     -> Attempt to deserialize to DataONE type.
+  #     If deserialize fails:
+  #       -> SERVICEFAILURE
+  # 
+  #   if status is 200 and mimetype is NOT "text/xml":
+  #     -> SERVICEFAILURE
+  # 
+  #   If status is NOT 200:
+  #     -> ERROR
+  # 
+  # When expecting DataONE type together with 303 redirect:
+  #   -> Substitute 303 for 200 above.
+  # 
+  # ERROR:
+  #   If mimetype is "text/xml":
+  #     -> Attempt to deserialize to DataONEError.
+  #     If deserialize fails:
+  #       -> SERVICEFAILURE 
+  # 
+  #   If mimetype is NOT "text/xml":
+  #     -> SERVICEFAILURE
+  # 
+  # SERVICEFAILURE:
+  #   -> raise ServiceFailure that wraps up information returned from Node.
+
+  def _read_and_capture(self, response):
     response_body = response.read()
-    # If the deserialization of the exception is unsuccessful, a ServiceFailure
-    # exception containing the relevant information is raised.
-    raise d1_common.types.exceptions.deserialize(response_body)
+    if self.capture_response_body:
+      self.last_response_body = response_body
+    # The unit test framework that comes with Python 2.6 has a bug that has been
+    # fixed in later versions. http://bugs.python.org/issue8313. The bug causes
+    # stack traces containing Unicode to be shown as "unprintable". To display
+    # such a stack trace, uncomment the following line. It's not good to leave
+    # this in as it breaks other things.
+    #response_body = repr(response_body)
+    return response_body
 
+
+  def _raise_service_failure(self, description, trace):
+    raise d1_common.types.exceptions.ServiceFailure(0, description, trace)
+
+
+  def _raise_service_failure_invalid_mimetype(self, response):
+    msg = StringIO.StringIO()
+    msg.write('Node responded with a valid status code but failed to '
+      'include the expected Content-Type\n')
+    msg.write('Status code: {0}\n'.format(response.status))
+    msg.write('Content-Type: {0}\n'.format(response.getheader('Content-Type')))
+    self._raise_service_failure(msg.getvalue(),
+                                self._read_and_capture(response))
+
+
+  def _raise_service_failure_invalid_dataone_type(self, response,
+                                                  response_body,
+                                                  deserialize_exception):
+    msg = StringIO.StringIO()
+    msg.write('Node responded with a valid status code but failed to '
+      'include a valid DataONE type in the response body.\n')
+    msg.write('Status code: {0}\n'.format(response.status))
+    msg.write('Response:\n{0}\n'.format(response_body))
+    trace = StringIO.StringIO()
+    trace.write('Deserialize exception:\n{0}\n'.format(deserialize_exception))
+    self._raise_service_failure(msg.getvalue(), trace.getvalue())
+
+
+  def _raise_dataone_exception(self, response):
+    response_body = self._read_and_capture(response)
+    try:
+      raise d1_common.types.exceptions.deserialize(response_body)
+    except d1_common.types.exceptions.DataONEExceptionException as e:
+      self._raise_service_failure('Node returned an invalid response', str(e))
+
+
+  def _mimetype_is_xml(self, response):
+    return response.getheader('Content-Type') == d1_common.const.MIMETYPE_XML
+
+
+  def _status_is_200_ok(self, response):
+    return response.status == 200
+
+
+  def _status_is_303_redirect(self, response):
+    return response.status == 303
+
+
+  def _status_is_ok(self, response, response_contains_303_redirect):
+    return self._status_is_200_ok(response) if not \
+      response_contains_303_redirect else self._status_is_303_redirect(response)
+
+
+  def _error(self, response):
+    if self._mimetype_is_xml(response):
+      self._raise_dataone_exception(response)
+    self._raise_service_failure_invalid_mimetype(response)
+
+
+  def _read_and_deserialize_dataone_type(self, response):
+    response_body = self._read_and_capture(response)
+    try:
+      return dataoneTypes.CreateFromDocument(response_body)
+    except pyxb.PyXBException as e:
+      self._raise_service_failure_invalid_dataone_type(response, response_body,
+                                                       str(e))
+
+
+  def _read_boolean_response(self, response):
+    if self._status_is_200_ok(response):
+      self._read_and_capture(response)
+      return True
+    self._error(response)
+
+
+  def _read_dataone_type_response(self, response,
+                                  response_contains_303_redirect=False):
+    if self._status_is_ok(response, response_contains_303_redirect):
+      if not self._mimetype_is_xml(response):
+        self._raise_service_failure_invalid_mimetype(response)
+      return self._read_and_deserialize_dataone_type(response)
+    self._error(response)
+
+
+  def _read_header_response(self, response):
+    if self._status_is_200_ok(response):
+      self._read_and_capture(response)
+      return response.getheaders()
+    self._error(response)
+
+
+  def _read_stream_response(self, response):
+    if self._status_is_200_ok(response):
+      return response
+    self._error(response)
+
+  # ----------------------------------------------------------------------------  
+  # Misc.
+  # ----------------------------------------------------------------------------
 
   def _slice_sanity_check(self, start, count):
     if start < 0:
@@ -178,7 +312,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       if count > d1_common.const.MAX_LISTOBJECTS:
         raise ValueError
     except ValueError:
-      raise d1_common.types.exceptions.InvalidRequest(10002, 
+      raise d1_common.types.exceptions.InvalidRequest(10002,
         "'count' must be an integer between 0 and {0} (including)".
         format(d1_common.const.MAX_LISTOBJECTS))
 
@@ -191,48 +325,12 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   def _rest_url(self, method, **args):
     for k in args.keys():
-      args[k] = d1_common.util.encodePathElement(args[k])
+      args[k] = d1_common.url.encodePathElement(args[k])
     path = self.methodmap[method] % args
-    url = '/' + d1_common.util.joinPathElements(self.selector, self.version,
+    url = '/' + d1_common.url.joinPathElements(self.selector, self.version,
                                                 path)
     return url
 
-
-  def _is_response_status_ok(self, response):
-    return response.status == 200
-
-
-  def _read_and_capture(self, response):
-    response_body = response.read()
-    if self.capture_response_body:
-      self.last_response_body = response_body
-    return response_body
-  
-
-  def _capture_and_deserialize(self, response):
-    response_body = self._read_and_capture(response)
-    try:
-      return dataoneTypes.CreateFromDocument(response_body)
-    except pyxb.PyXBException as e:
-      # The server has returned a response with status 200 OK, but the
-      # response does not contain the required DataONE type. Handle this by
-      # raising a ServiceFailure exception.
-      raise d1_common.types.exceptions.deserialize(response_body)
-      
-
-  def _capture_and_get_ok_status(self, response):
-    self._read_and_capture(response)
-    return self._is_response_status_ok(response)
-
-
-  def _capture_and_get_headers(self, response):
-    self._read_and_capture(response)
-    return response.getheaders()
-
-
-  # ----------------------------------------------------------------------------  
-  # Misc.
-  # ----------------------------------------------------------------------------
 
   def get_schema_version(self, method_signature):
     '''Find which schema version Node returns for a given method.
@@ -251,12 +349,12 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # ----------------------------------------------------------------------------  
   # CNCore / MNCore
   # ----------------------------------------------------------------------------
-  
+
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
   # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0][, count=1000]) → Log
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getLogRecords
-  
+
   @d1_common.util.str_to_unicode
   def getLogRecordsResponse(self, fromDate=None, toDate=None, event=None,
                             start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
@@ -265,7 +363,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
-    url = self._rest_url('getLogRecords')        
+    url = self._rest_url('getLogRecords')
     query = {
       'fromDate': fromDate,
       'toDate': toDate,
@@ -277,15 +375,15 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
 
   @d1_common.util.str_to_unicode
-  def getLogRecords(self, fromDate=None, toDate=None, event=None, 
+  def getLogRecords(self, fromDate=None, toDate=None, event=None,
                     start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
                     vendorSpecific=None):
     response = self.getLogRecordsResponse(fromDate=fromDate, toDate=toDate,
                                      event=event, start=start, count=count,
                                      vendorSpecific=vendorSpecific)
-    return self._capture_and_deserialize(response)
+    return self._read_dataone_type_response(response)
 
-  
+
   # ----------------------------------------------------------------------------  
   # CNRead / MNRead
   # ----------------------------------------------------------------------------
@@ -296,11 +394,15 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.get
 
   @d1_common.util.str_to_unicode
-  def get(self, pid, vendorSpecific=None):
+  def getResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
     url = self._rest_url('get', pid=pid)
     return self.GET(url, headers=vendorSpecific)
+
+  def get(self, pid, vendorSpecific=None):
+    response = self.getResponse(pid, vendorSpecific)
+    return self._read_stream_response(response)
 
   # CNRead.getSystemMetadata(session, pid) → SystemMetadata
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getSystemMetadata
@@ -311,21 +413,21 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def getSystemMetadataResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('getSystemMetadata', pid=pid)    
+    url = self._rest_url('getSystemMetadata', pid=pid)
     return self.GET(url, headers=vendorSpecific)
-    
+
 
   @d1_common.util.str_to_unicode
   def getSystemMetadata(self, pid, vendorSpecific=None):
     response = self.getSystemMetadataResponse(pid,
                                               vendorSpecific=vendorSpecific)
-    return self._capture_and_deserialize(response)
+    return self._read_dataone_type_response(response)
 
   # CNRead.describe(session, pid) → DescribeResponse
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.describe
   # MNRead.describe(session, pid) → DescribeResponse
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.describe
-  
+
   @d1_common.util.str_to_unicode
   def describeResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
@@ -342,7 +444,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     which cannot carry exception information.
     '''
     response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
-    return self._capture_and_get_headers(response)
+    return self._read_header_response(response)
 
   # CNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
@@ -350,15 +452,15 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
 
   @d1_common.util.str_to_unicode
-  def listObjectsResponse(self, startTime=None, endTime=None, 
-                          objectFormat=None, replicaStatus=None, 
+  def listObjectsResponse(self, startTime=None, endTime=None,
+                          objectFormat=None, replicaStatus=None,
                           start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
                           vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(startTime, endTime)
-    url = self._rest_url('listObjects')    
+    url = self._rest_url('listObjects')
     query = {
       'startTime': startTime,
       'endTime': endTime,
@@ -375,12 +477,12 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                   replicaStatus=None, start=0,
                   count=d1_common.const.DEFAULT_LISTOBJECTS,
                   vendorSpecific=None):
-    response = self.listObjectsResponse(startTime=startTime, endTime=endTime, 
-                                        objectFormat=objectFormat, 
-                                        replicaStatus=replicaStatus, 
+    response = self.listObjectsResponse(startTime=startTime, endTime=endTime,
+                                        objectFormat=objectFormat,
+                                        replicaStatus=replicaStatus,
                                         start=start, count=count,
                                         vendorSpecific=vendorSpecific)
-    return self._capture_and_deserialize(response)
+    return self._read_dataone_type_response(response)
 
   # ----------------------------------------------------------------------------  
   # CNAuthorization / MNAuthorization
@@ -396,9 +498,9 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     }
     return self.GET(url, query=query, headers=vendorSpecific)
 
-    
+
   @d1_common.util.str_to_unicode
   def isAuthorized(self, pid, access, vendorSpecific=None):
     response = self.isAuthorizedResponse(pid, access,
                                          vendorSpecific=vendorSpecific)
-    return self._capture_and_get_ok_status(response)
+    return self._read_boolean_response(response)

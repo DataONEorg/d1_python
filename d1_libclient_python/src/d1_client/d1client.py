@@ -40,6 +40,8 @@ import urlparse
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.date_time
+import d1_common.url
 
 # App
 import cnclient
@@ -353,7 +355,7 @@ if __name__ == '__main__':
   )
   parser.add_option('-l', '--loglevel', dest='llevel', default=20,
                 type='int',
-                help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
+                help='Reporting level: 10=debug, 20=Info, 30=Warning, ' + \
                      '40=Error, 50=Fatal')
   (options, args) = parser.parse_args(sys.argv[2:])
   if options.llevel not in [10, 20, 30, 40, 50]:

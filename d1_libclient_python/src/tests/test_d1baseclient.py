@@ -40,6 +40,9 @@ from d1_common import xmlrunner
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.const
 import d1_common.types.exceptions
+import d1_common.util
+import d1_common.date_time
+import d1_common.url
 
 # App.
 import d1_client.d1baseclient
@@ -69,8 +72,8 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
   def test_020(self):
     '''_date_span_sanity_check()'''
     client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
-    old_date = datetime.datetime(1970, 4, 3)
-    new_date = datetime.datetime(2010, 10, 11)
+    old_date = d1_common.date_time.create_utc_datetime(1970, 4, 3)
+    new_date = d1_common.date_time.create_utc_datetime(2010, 10, 11)
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest, client._date_span_sanity_check, new_date,
       old_date
@@ -100,8 +103,8 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     version = client.get_schema_version('listObjects')
     self.assertTrue(version in ('v1', 'v2', 'v3'))
 
-    # CNCore.getLogRecords()
-    # MNCore.getLogRecords()
+  # CNCore.getLogRecords()
+  # MNCore.getLogRecords()
 
   def _getLogRecords(self, base_url):
     '''getLogRecords() returns a valid Log that contains at least 2 entries'''
@@ -261,8 +264,8 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''MNCore.listObjects()'''
     self._listObjects(self.baseurl_mn)
 
-    # CNAuthorization.isAuthorized()
-    # MNAuthorization.isAuthorized()
+  # CNAuthorization.isAuthorized()
+  # MNAuthorization.isAuthorized()
 
   def _is_authorized(self, base_url, invalid_pid=False):
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
