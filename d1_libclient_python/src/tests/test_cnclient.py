@@ -69,9 +69,9 @@ class TestCNClient(TestCaseWithURLCompare):
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255/dryad.105/mets.xml
-    self.client = cnclient.CoordinatingNodeClient(
-      self.baseurl, cert_path='./x509up_u1000'
-    )
+    cert_path = None
+    #cert_path = './x509up_u1000'
+    self.client = cnclient.CoordinatingNodeClient(self.baseurl, cert_path=cert_path)
 
   def tearDown(self):
     pass
@@ -141,9 +141,9 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNCore.hasReservation() returns False for PID that has not been reserved'''
     has_reservation = self.client.hasReservation(self.test_fragment)
 
-    #=============================================================================
-    # Read API
-    #=============================================================================
+  #=============================================================================
+  # Read API
+  #=============================================================================
 
   def WAITING_FOR_STABLE_CN_test_2010_A(self):
     '''CNRead.resolve() returns a valid ObjectLocationList when called with an existing PID'''
@@ -190,9 +190,9 @@ class TestCNClient(TestCaseWithURLCompare):
     random_access_policy = generator.accesspolicy.generate()
     self.client.setAccessPolicy(random_existing_pid, random_access_policy, serial_version)
 
-    #=============================================================================
-    # Identity API
-    #=============================================================================
+  #=============================================================================
+  # Identity API
+  #=============================================================================
 
   def WAITING_FOR_STABLE_CN_test_4010(self):
     '''CNIdentity.registerAccount()'''
@@ -212,11 +212,13 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4040(self):
     '''CNIdentity.getSubjectInfo()'''
     random_subject = generator.subject.generate()
-    self.client.getSubjectInfo(random_subject)
+    subject = self.client.getSubjectInfo(random_subject)
+    print subject.toxml()
 
   def WAITING_FOR_STABLE_CN_test_4050(self):
     '''CNIdentity.listSubjects()'''
-    self.client.listSubjects(query='test')
+    subjects = self.client.listSubjects(query='test')
+    print subjects.toxml()
 
   def WAITING_FOR_STABLE_CN_test_4060(self):
     '''CNIdentity.mapIdentity()'''
@@ -316,7 +318,7 @@ class TestCNClient(TestCaseWithURLCompare):
     node.contactSubject.append('test_subject_2')
     self.client.register(node)
 
-    #===============================================================================
+#===============================================================================
 
 
 def log_setup():

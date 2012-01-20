@@ -47,7 +47,7 @@ import socket
 from xml.dom.minidom import parseString
 import codecs
 import urllib
-from datetime import datetime
+import datetime
 import random
 
 #===============================================================================
@@ -751,7 +751,7 @@ class SolrConnection:
         qbin.append(binq)
         bins.append(bin)
 
-        #now execute the facet query request
+      #now execute the facet query request
       params = {
         'q': q,
         'rows': '0',
@@ -895,7 +895,7 @@ class SolrConnection:
         self.conn.close()
     return result
 
-  #===============================================================================
+#===============================================================================
 
 
 class SOLRRecordTransformer(object):
@@ -936,7 +936,7 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
         res.append(None)
     return res
 
-    #===============================================================================
+#===============================================================================
 
 
 class SOLRSearchResponseIterator(object):
@@ -1021,7 +1021,7 @@ class SOLRSearchResponseIterator(object):
     self.crecord = self.crecord + 1
     return self.transformer.transform(row)
 
-  #===============================================================================
+#===============================================================================
 
 
 class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
@@ -1096,7 +1096,7 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
     self.crecord = self.crecord + 1
     return self.processRow(row)
 
-  #===============================================================================
+#===============================================================================
 
 
 class SOLRValuesResponseIterator(object):
@@ -1180,8 +1180,7 @@ class SOLRValuesResponseIterator(object):
     self.crecord = self.crecord + 1
     return row
 
-  #===============================================================================
-
+#===============================================================================
 
 if __name__ == '__main__':
   #some simple tests
