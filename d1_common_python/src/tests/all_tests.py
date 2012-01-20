@@ -41,6 +41,7 @@ from d1_common import xmlrunner
 # App.
 from test_accesspolicy import TestAccessPolicy
 from test_checksum import TestChecksum
+from test_date_time import TestDateTime
 from test_exceptions import TestExceptions
 from test_logrecords import TestObjectList
 from test_mime_multipart import TestMimeMultipart
@@ -51,6 +52,7 @@ from test_pid import TestPID
 from test_restclient import TestRESTClient
 from test_systemmetadata import TestSystemMetadata
 from test_testcasewithurlcompare import Test_URLCompare
+from test_url import TestUrl
 from test_utils import TestUtils
 from test_xml_compare import TestXMLCompare
 
