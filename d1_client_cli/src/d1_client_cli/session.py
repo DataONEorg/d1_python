@@ -178,6 +178,9 @@ class session(object):
   def access_control_remove_all_allowed_subjects(self, line):
     self.access_control.remove_all_allowed_subjects(line)
 
+  def access_control_get_pyxb(self):
+    return self.access_control.to_pyxb()
+
   # ============================================================================
   # Replication policy.
   # ============================================================================
@@ -202,6 +205,9 @@ class session(object):
 
   def replication_policy_print(self):
     return self.replication_policy.print_replication_policy()
+
+  def replication_control_get_pyxb(self):
+    return self.replication_policy.to_pyxb()
 
   # ============================================================================
   # Session.

@@ -82,8 +82,8 @@ class system_metadata():
     sysmeta.rightsHolder = session.get('sysmeta', 'rightsholder')
     sysmeta.checksum = dataoneTypes.checksum(checksum)
     sysmeta.checksum.algorithm = session.get('sysmeta', 'algorithm')
-    sysmeta.dateUploaded = datetime.datetime.now()
-    sysmeta.dateSysMetadataModified = datetime.datetime.now()
+    sysmeta.dateUploaded = datetime.datetime.utcnow()
+    sysmeta.dateSysMetadataModified = datetime.datetime.utcnow()
     sysmeta.originmn = session.get('sysmeta', 'originmn')
     sysmeta.authoritativemn = session.get('sysmeta', 'authoritativemn')
     sysmeta.accessPolicy = access_policy

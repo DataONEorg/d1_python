@@ -64,18 +64,7 @@ from print_level import *
 import cli_exceptions
 import session
 
-# If this was checked out as part of the MN service, the libraries can be found here.
-sys.path.append(
-  os.path.abspath(
-    os.path.join(
-      os.path.dirname(
-        __file__
-      ), '../../../mn_service/mn_prototype/'
-    )
-  )
-)
-
-# MN API.
+# D1
 try:
   import d1_common.mime_multipart
   import d1_common.types.exceptions
@@ -99,16 +88,6 @@ except ImportError as e:
   )
   raise
 
-try:
-  import iso8601
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write(
-    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
-  )
-  raise
-
 
 def log_setup():
   logging.getLogger('').setLevel(logging.INFO)
@@ -127,8 +106,8 @@ class CLIClient(object):
       self.base_url = base_url
       return super(CLIClient, self).__init__(
         self.base_url,
-        certfile=self._get_certificate(),
-        keyfile=self._get_certificate_private_key()
+        cert_path=self._get_certificate(),
+        key_path=self._get_certificate_private_key()
       )
     except d1_common.types.exceptions.DataONEException as e:
       err_msg = []
@@ -346,10 +325,24 @@ class DataONECLI():
     self.output(StringIO.StringIO(self._pretty(object_log_xml)), path)
 
   def set_access_policy(self, pid):
-    raise cli_exceptions.CLIError('not implemented')
+    access_policy = self.session.access_control_get_pyxb()
+    client = CLICNClient(self.session)
+    try:
+      success = client.setAccessPolicy(pid, access_policy, 1)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise cli_exceptions.CLIError(
+        'Unable to set access policy on: {0}\nError:\n{1}'.format(pid, e)
+      )
 
   def set_replication_policy(self, pid):
-    raise cli_exceptions.CLIError('not implemented')
+    replication_policy = self.session.replication_control_get_pyxb()
+    client = CLICNClient(self.session)
+    try:
+      success = client.setReplicationPolicy(pid, replication_policy, 1)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise cli_exceptions.CLIError(
+        'Unable to set replication policy on: {0}\nError:\n{1}'.format(pid, e)
+      )
 
   #def getObjectFormats(self):
   #  '''List the format IDs from the CN
@@ -377,8 +370,8 @@ class DataONECLI():
   #      keypath = None
   #
   #  client = d1_client.mnclient.MemberNodeClient(self.config['auth']['mn_url'],
-  #                                               certfile=certpath,
-  #                                               keyfile=keypath)
+  #                                               cert_path=certpath,
+  #                                               key_path=keypath)
   #
   #  object_list = d1_client.objectlistiterator.ObjectListIterator(client)
   #
@@ -963,8 +956,8 @@ def main():
   #for date_opt in date_opts:
   #  if opts_dict[date_opt] != None:
   #    try:
-  #      opts.__dict__[date_opt] = iso8601.parse_date(opts_dict[date_opt])
-  #    except (TypeError, iso8601.iso8601.ParseError):
+  #      opts.__dict__[date_opt] = d1_common.date_time.from_iso8601(opts_dict[date_opt])
+  #    except (TypeError, d1_common.date_time.iso8601.ParseError):
   #      print_error('Invalid date option {0}: {1}'.format(date_opt, opts_dict[date_opt]))
   #      error = True
   #
