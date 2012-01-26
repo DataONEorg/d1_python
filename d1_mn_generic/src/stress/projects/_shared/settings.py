@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# The GMN to stress test.
+# The MN to stress test.
 #BASEURL = 'https://localhost:8000'
 BASEURL = 'https://192.168.1.51/mn'
 #BASEURL = 'https://stress-1-unm.test.dataone.org/mn'

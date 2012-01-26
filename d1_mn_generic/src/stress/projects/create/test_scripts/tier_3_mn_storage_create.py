@@ -33,14 +33,15 @@ import datetime
 import os
 import random
 import sys
-import StringIO
 import time
 import uuid
 import xml.sax.saxutils
+import StringIO
 
 # D1.
 import d1_common.const
 import d1_common.types.exceptions
+import d1_instance_generator
 
 # App.
 
@@ -59,9 +60,6 @@ import generate_random_sysmeta
 class Transaction(object):
   def __init__(self):
     self.custom_timers = {}
-
-  def session(self, subject):
-    return {'VENDOR_OVERRIDE_SESSION': subject}
 
   def generate_random_file(self, num_bytes):
     return StringIO.StringIO(
