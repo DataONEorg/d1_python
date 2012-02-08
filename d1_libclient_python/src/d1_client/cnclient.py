@@ -122,12 +122,12 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
       # Identity API
       'registerAccount': u'accounts',
       'updateAccount': u'accounts',
-      'verifyAccount': u'accounts/%(subject)s',
+      'verifyAccount': u'accounts',
       'getSubjectInfo': u'accounts/%(subject)s',
       'listSubjects': u'accounts?query=%(query)s', #[&status=(status)&start=(start)&count=(count)]
       'mapIdentity': u'accounts/map',
       'denyMapIdentity': u'accounts/map/%(subject)s',
-      'requestMapIdentity': u'accounts/pendingmap/%(subject)s',
+      'requestMapIdentity': u'accounts',
       'confirmMapIdentity': u'accounts/pendingmap/%(subject)s',
       'denyMapIdentity': u'accounts/pendingmap/%(subject)s',
       'createGroup': u'groups/%(groupName)s',
@@ -212,8 +212,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def generateIdentifierResponse(self, scheme, fragment=None):
     url = self._rest_url('generateIdentifier')
     mime_multipart_files = [
-      ('scheme', 'scheme', scheme.encode('utf-8')),
-      ('fragment', 'fragment', fragment.encode('utf-8')),
+      ('scheme', 'scheme', scheme.toxml().encode('utf-8')),
+      ('fragment', 'fragment', fragment.toxml().encode('utf-8')),
     ]
     return self.POST(url, files=mime_multipart_files)
 
@@ -404,7 +404,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def setAccessPolicyResponse(self, pid, accessPolicy, serialVersion):
     url = self._rest_url('setAccessPolicy', pid=pid)
     mime_multipart_fields = [
-      ('accessPolicy', accessPolicy.toxml().encode('utf-8')),
+      ('accessPolicy', accessPolicy.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
@@ -426,7 +426,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def registerAccountResponse(self, person):
     url = self._rest_url('registerAccount')
     mime_multipart_fields = [
-      ('person', person.toxml().encode('utf-8')),
+      ('person', person.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
@@ -443,7 +443,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def updateAccountResponse(self, person):
     url = self._rest_url('updateAccount')
     mime_multipart_fields = [
-      ('person', person.toxml().encode('utf-8')),
+      ('person', person.encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
@@ -460,7 +460,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def verifyAccountResponse(self, subject):
     url = self._rest_url('verifyAccount')
     mime_multipart_fields = [
-      ('subject', subject.toxml().encode('utf-8')),
+      ('subject', subject.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
@@ -510,7 +510,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def mapIdentityResponse(self, subject):
     url = self._rest_url('mapIdentity')
     mime_multipart_fields = [
-      ('subject', subject.toxml().encode('utf-8')),
+      ('subject', subject.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
@@ -539,9 +539,9 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.str_to_unicode
   def requestMapIdentityResponse(self, subject):
-    url = self._rest_url('requestMapIdentity', subject=subject.value())
+    url = self._rest_url('requestMapIdentity')
     mime_multipart_fields = [
-      ('subject', subject.toxml().encode('utf-8')),
+      ('subject', subject.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
@@ -558,7 +558,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def confirmMapIdentityResponse(self, subject):
     url = self._rest_url('confirmMapIdentity', subject=subject.value())
     mime_multipart_fields = [
-      ('subject', subject.toxml().encode('utf-8')),
+      ('subject', subject.encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
@@ -589,7 +589,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def createGroupResponse(self, groupName):
     url = self._rest_url('createGroup', groupName=groupName.value())
     mime_multipart_fields = [
-      ('groupName', groupName.toxml().encode('utf-8')),
+      ('groupName', groupName.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
@@ -606,7 +606,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def addGroupMembersResponse(self, groupName, members):
     url = self._rest_url('addGroupMembers', groupName=groupName.value())
     mime_multipart_fields = [
-      ('members', members.toxml().encode('utf-8')),
+      ('members', members.encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
@@ -623,7 +623,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def removeGroupMembersResponse(self, groupName, members):
     url = self._rest_url('removeGroupMembers', groupName=groupName.value())
     mime_multipart_fields = [
-      ('members', members.toxml().encode('utf-8')),
+      ('members', members.encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
@@ -645,10 +645,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     url = self._rest_url('setReplicationStatus', pid=pid)
     mime_multipart_fields = [
       ('nodeRef', nodeRef.encode('utf-8')),
-      ('status', status.toxml().encode('utf-8')),
+      ('status', status.encode('utf-8')),
     ]
     if failure is not None:
-      mime_multipart_fields.append(('failure', failure.toxml().encode('utf-8')))
+      mime_multipart_fields.append(('failure', failure.encode('utf-8')))
     return self.PUT(url, fields=mime_multipart_fields)
 
 
@@ -668,7 +668,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def setReplicationPolicyResponse(self, pid, policy, serialVersion):
     url = self._rest_url('setReplicationPolicy', pid=pid)
     mime_multipart_fields = [
-      ('policy', policy.toxml().encode('utf-8')),
+      ('policy', policy.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
@@ -709,7 +709,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def updateNodeCapabilitiesResponse(self, nodeId, node):
     url = self._rest_url('updateNodeCapabilities', nodeId=nodeId)
     mime_multipart_fields = [
-      ('node', node.toxml().encode('utf-8')),
+      ('node', node.encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
@@ -726,7 +726,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def registerResponse(self, node):
     url = self._rest_url('register')
     mime_multipart_fields = [
-      ('node', node.toxml().encode('utf-8')),
+      ('node', node.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
