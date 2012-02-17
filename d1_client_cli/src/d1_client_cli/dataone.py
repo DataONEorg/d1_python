@@ -179,7 +179,7 @@ class DataONECLI():
       size = f.tell()
     return size
 
-  def _get_file_checksum(self, path, algorithm='SHA1', block_size=1024 * 1024):
+  def _get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
     h = hashlib.new(algorithm)
     with open(path, 'r') as f:
       while True:
@@ -197,8 +197,8 @@ class DataONECLI():
   def _set_invalid_checksum_to_default(self):
     algorithm = self.session.get('sysmeta', 'algorithm')
     try:
-      hashlib.new(algorithm)
-    except ValueError:
+      d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+    except ValueError, LookupError:
       self.session.set('sysmeta', 'algorithm', d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
       print_error(
         'Invalid checksum algorithm, "{0}", set to default, "{1}"'
