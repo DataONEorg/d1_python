@@ -34,7 +34,6 @@ import csv
 import datetime
 import dateutil
 import glob
-import hashlib
 import httplib
 import json
 import logging
@@ -180,7 +179,7 @@ class DataONECLI():
     return size
 
   def _get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
-    h = hashlib.new(algorithm)
+    h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
     with open(path, 'r') as f:
       while True:
         data = f.read(block_size)
