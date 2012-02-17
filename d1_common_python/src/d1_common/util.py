@@ -29,14 +29,27 @@ Module d1_common.util
 # Stdlib.
 import email.message
 import email.utils
+import hashlib
 import xml.dom.minidom
 
 # D1.
+
+# Checksums.
+
+dataone_to_python_checksum_algorithm_map = {'MD5': 'md5', 'SHA-1': 'sha1', }
+
+
+def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
+  python_algorithm_name = \
+    dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]
+  return hashlib.new(python_algorithm_name)
 
 
 def checksums_are_equal(c1, c2):
   return c1.value().lower() == c2.value().lower() \
     and c1.algorithm == c2.algorithm
+
+# XML.
 
 
 def pretty_xml(xml_doc):
@@ -58,7 +71,7 @@ def get_content_type(content_type):
   return m.get_content_type()
 
 
-def str_to_unicode(f):
+def utf8_to_unicode(f):
   '''Decorator that converts string arguments to Unicode. Assumes that strings
   contains ASCII or UTF-8. All other argument types are passed through
   untouched.
