@@ -70,8 +70,8 @@ urlpatterns = patterns(
   (r'^v1/meta/(.+)$', 'meta_pid_get'),
   # GET /checksum/{pid}[?checksumAlgorithm={checksumAlgorithm}]
   (r'^v1/checksum/(.+)$', 'checksum_pid'),
-  # GET /object <filters>
-  (r'^v1/object/?$', 'object'),
+  # GET /object (listObjects)
+  (r'^v1/object/?$', 'object_no_pid'),
   # POST /error
   (r'^v1/error/?$', 'error'),
 
@@ -80,8 +80,9 @@ urlpatterns = patterns(
   (r'^v1/isAuthorized/(.+)/?$', 'is_authorized'),
 
   # Tier 3: Storage API (MNStorage)
+  # Handled by the object dispatcher:
+  # MNStorage.create() - POST /object
   # Handled by the object_pid dispatcher:
-  # MNStorage.create() - POST /object/{pid}
   # MNStorage.update() - PUT /object/{pid}
   # MNStorage.delete() - DELETE /object/{pid}
   # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
@@ -112,10 +113,13 @@ if settings.DEBUG:
     # Access Policy
     (r'^test/set_access_policy/(.+?)/?$', 'set_access_policy'),
     (r'^test/delete_all_access_policies/?$', 'delete_all_access_policies'),
+    # Authentication.
+    (r'^test/echo_session/?$', 'echo_session'),
     # Misc.
     (r'^test/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
     (r'^test/exception/(.+?)/?$', 'exception'),
     (r'^test/echo_request_object/?$', 'echo_request_object'),
+    (r'^test/echo_raw_post_data/?$', 'echo_raw_post_data'),
     (r'^test/clear_database/?$', 'clear_database'),
     (r'^test/delete_all_objects/?$', 'delete_all_objects'),
     (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),

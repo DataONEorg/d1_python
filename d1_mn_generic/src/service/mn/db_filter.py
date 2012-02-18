@@ -48,9 +48,8 @@ def add_access_policy_filter(query, request, column_name):
   :return type: QuerySet
   '''
   filter_arg = '{0}__subject__subject__in'.format(column_name)
-  allowed_subjects = [d1_common.const.SUBJECT_PUBLIC, request.session.subject.value()]
   logging.info('Applied access control filter')
-  return query.filter(**{filter_arg: allowed_subjects})
+  return query.filter(**{filter_arg: request.subjects})
 
 
 def add_bool_filter(query, column_name, bool_val):

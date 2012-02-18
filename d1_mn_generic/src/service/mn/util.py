@@ -84,7 +84,7 @@ def store_path(root, pid):
   holding 256 folders (for a total of 65536 folders). The location in the
   hierarchy for a given object is based on its PID.
   '''
-  z = zlib.adler32(pid)
+  z = zlib.adler32(pid.encode('utf-8'))
   a = z & 0xff ^ (z >> 8 & 0xff)
   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
   return os.path.join(

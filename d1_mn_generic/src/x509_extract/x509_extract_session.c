@@ -16,11 +16,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// :platform:
-//   Linux
 // :Synopsis:
-//   Extract the DataONE Session object from a PEM formatted X.509 v3
-//   certificate.
+//   Python extension that extracts the DataONE Session from a PEM formatted
+//   X.509 v3 certificate.
+//
+//   The Session includes information such as the signature and the valid
+//   not before and valid not after date-times. But those items are validated
+//   by Apache and so are not of interest at this point. So, in the context
+//   of this function, the Session is the Subject DN and the SubjectInfo XML
+//   document.
+//
 // :Author:
 //   DataONE (dahl)
 
@@ -35,67 +40,130 @@
 #include <stdio.h>
 #include <string.h>
 
-int extract_session(unsigned char** session_buf, char *x509_cert_pem) {
-  // Parse the PEM formatted X.509 cert.
-  BIO* bio_in = NULL;
+
+// DataONE OID: 1.3.6.1.4.1.37951.10.1
+// CILogon OID for DataONE SubjectInfo: 1.3.6.1.4.1.34998.2.1:
+#define SUBJECT_INFO_OID "1.3.6.1.4.1.34998.2.1"
+#define SUBJECT_FORMAT_FLAGS \
+  ASN1_STRFLGS_RFC2253 | \
+  ASN1_STRFLGS_ESC_QUOTE | \
+  XN_FLAG_SEP_COMMA_PLUS | \
+  XN_FLAG_FN_SN
+
+enum status_enum {
+  ERROR,
+  SUCCESS
+};
+
+
+enum status_enum extract_session(
+  unsigned char** subject_buf,
+  unsigned char** subject_info_buf,
+  char *x509_cert_pem)
+{
+  enum status_enum status = ERROR;
+  BIO* bio_cert = NULL;
+  BIO* bio_subject = NULL;
   X509* x509 = NULL;
-  bio_in = BIO_new_mem_buf(x509_cert_pem, -1);
-  if (!bio_in) {
-    PyErr_SetString(PyExc_Exception, "Unable to create OpenSSL BIO");
-    goto err;    
+  X509_NAME* subject = NULL;
+  int result;
+  long len;
+
+  // Parse the PEM formatted X.509 cert.
+  bio_cert = BIO_new_mem_buf(x509_cert_pem, -1);
+  if (!bio_cert) {
+    PyErr_SetString(PyExc_Exception, "Error creating OpenSSL BIO");
+    goto end;
   }
-  x509 = PEM_read_bio_X509_AUX(bio_in, NULL, NULL, NULL);
+  x509 = PEM_read_bio_X509_AUX(bio_cert, NULL, NULL, NULL);
   if (!x509) {
     PyErr_SetString(PyExc_Exception,
-                    "Unable to parse PEM formatted X.509 v3 certificate");
-    goto err;
-  }
-  
-  // Get the DataONE Session extension.
-  // DataONE owns the following OID: 1.3.6.1.4.1.37951.10.1
-  // CILogon has requsted that we use their OID: 1.3.6.1.4.1.34998.2.1
-  int session_nid = OBJ_create("1.3.6.1.4.1.34998.2.1", "DataONESession",
-                             "DataONE Session XML Object");
-  int session_idx = X509_get_ext_by_NID(x509, session_nid, -1);
-  X509_EXTENSION* ex = X509_get_ext(x509, session_idx);
-  if (!ex) {
-    PyErr_SetString(PyExc_Exception, "Unable to find DataONE Session");
-    goto err;
+                    "Error parsing PEM formatted X.509 v3 certificate");
+    goto end;
   }
 
-  // DER decode the extension value to get the UTF-8 XML.
-  ASN1_OCTET_STRING* session = X509_EXTENSION_get_data(ex);
-  const unsigned char* session_data = session->data;
-  long len;
-  int tag, xclass;
-  int ret = ASN1_get_object(&session_data, &len, &tag, &xclass, session->length);
-  if (ret) {
-    PyErr_SetString(PyExc_Exception, "Unable to DER decode DataONE Session");
-    goto err;
+  // Get the Subject DN.
+  subject = X509_get_subject_name(x509);
+  if (!subject) {
+    PyErr_SetString(PyExc_Exception, "Error reading certificate subject");
+    goto end;
   }
-  
-  // Create buffer for Session string.
-  *session_buf = (unsigned char*)malloc(len + 1 /* zero terminator */);
-  if (!*session_buf) {
+  // Create BIO for Subject.
+  bio_subject = BIO_new(BIO_s_mem());
+  if (!bio_subject) {
+    PyErr_SetString(PyExc_Exception, "Error creating Subject BIO");
+    goto end;
+  }
+  // Write formatted DN to BIO.
+  result = X509_NAME_print_ex(bio_subject, subject, 0, SUBJECT_FORMAT_FLAGS);
+  if (!result) {
+    PyErr_SetString(PyExc_Exception, "Error formatting Subject");
+    goto end;
+  }
+  // Copy BIO to C buffer.
+  char *start = NULL;
+  len = BIO_get_mem_data(bio_subject, &start);
+  *subject_buf = (unsigned char*)malloc(len + 1 /* zero terminator */);
+  if (!*subject_buf) {
     PyErr_SetString(PyExc_Exception,
-                    "Unable to allocate memory for DataONE Session");
-    goto err;
+                    "Unable to allocate memory for Subject buffer");
+    goto end;
+  }
+  strncpy((char*)*subject_buf, (const char*)start, len);
+  (*subject_buf)[len] = 0; // zero terminator
+
+  // Get the DataONE SubjectInfo extension.
+  int session_nid = OBJ_create(SUBJECT_INFO_OID, "SubjectInfo",
+                               "DataONE SubjectInfo XML Object");
+  int session_idx = X509_get_ext_by_NID(x509, session_nid, -1);
+  X509_EXTENSION* extension = X509_get_ext(x509, session_idx);
+  if (extension) {
+    // DER decode the extension value to get the UTF-8 XML.
+    // Not sure if this has been properly tested with UTF-8 strings. May
+    // need ASN1_STRING_to_UTF8().
+    ASN1_OCTET_STRING* subject_info = X509_EXTENSION_get_data(extension);
+    const unsigned char* subject_info_data = subject_info->data;
+    int tag, xclass;
+    result = ASN1_get_object(&subject_info_data, &len, &tag, &xclass,
+                             subject_info->length);
+    if (result) {
+      PyErr_SetString(PyExc_Exception, "Unable to DER decode SubjectInfo");
+      goto end;
+    }
+    // Create buffer for SubjectInfo.
+    *subject_info_buf = (unsigned char*)malloc(len + 1 /* zero terminator */);
+    if (!*subject_info_buf) {
+      PyErr_SetString(PyExc_Exception,
+                      "Unable to allocate memory for SubjectInfo buffer");
+      goto end;
+    }
+    // Copy string to buffer.
+    strncpy((char*)*subject_info_buf, (const char*)subject_info_data, len);
+    (*subject_info_buf)[len] = 0; // zero terminator
+  }
+  else {
+    // The SubjectInfo extension was not present in the certificate. Return
+    // an empty string for it.
+    *subject_info_buf = (unsigned char*)malloc(1);
+    (*subject_info_buf)[0] = 0; // zero terminator
   }
 
-  // Copy string to buffer.
-  strncpy((char*)*session_buf, (const char*)session_data, len + 1);
+  status = SUCCESS;
 
-  return 1;
-
-err:
+end:
   if (x509) {
-    X509_free(x509);    
+    X509_free(x509);
   }
-  if (bio_in) {
-    BIO_free_all(bio_in);
+  if (bio_cert) {
+    BIO_free_all(bio_cert);
   }
-  return 0;
+  if (bio_subject) {
+    BIO_free_all(bio_subject);
+  }
+  OBJ_cleanup();
+  return status;
 }
+
 
 static PyObject* x509_extract_session_extract(PyObject *self, PyObject *args) {
   // Convert the Python string containing the x509 certificate in PEM format to
@@ -109,27 +177,29 @@ static PyObject* x509_extract_session_extract(PyObject *self, PyObject *args) {
   }
 
   // Extract the session.
-  unsigned char* session_buf;
-  int ret = extract_session(&session_buf, x509_cert_pem);
-  if (!ret) {
+  unsigned char* subject_info_buf = NULL;
+  unsigned char* subject_buf = NULL;
+  enum status_enum status = extract_session(&subject_buf, &subject_info_buf,
+                                            x509_cert_pem);
+  if (status == ERROR) {
     // extract_session() sets an error string if unsuccessful. Returning NULL
     // raises a Python exception with that string.
     return NULL;
   }
 
-  // Build Python string containing the session.
-  PyObject* session_str = Py_BuildValue("s", session_buf);
-  
-  free(session_buf);
-  
-  return session_str;
+  PyObject* py_session = Py_BuildValue("(ss)", subject_buf, subject_info_buf);
+  free(subject_buf);
+  free(subject_info_buf);
+  return py_session;
 }
+
 
 static PyMethodDef x509_extract_session_methods[] = {
   {"extract",  x509_extract_session_extract, METH_VARARGS,
-  "Extract DataONE Session from X.509 certificate"},
-  {NULL, NULL, 0, NULL}    /* Sentinel */
+  "Extract DataONE Session from X.509 v3 certificate"},
+  {NULL, NULL, 0, NULL}
 };
+
 
 PyMODINIT_FUNC initx509_extract_session(void) {
   // Initialize OpenSSL.
@@ -140,6 +210,7 @@ PyMODINIT_FUNC initx509_extract_session(void) {
   (void) Py_InitModule("x509_extract_session", x509_extract_session_methods);
 }
 
+
 //int main(int argc, char *argv[]) {
 //  /* Pass argv[0] to the Python interpreter */
 //  Py_SetProgramName(argv[0]);
@@ -149,6 +220,6 @@ PyMODINIT_FUNC initx509_extract_session(void) {
 //
 //  /* Add a static module */
 //  initx509_extract_session();
-//  
+//
 //  return 0;
 //}

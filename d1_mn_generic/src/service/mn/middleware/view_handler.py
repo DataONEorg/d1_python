@@ -37,17 +37,6 @@ import urllib
 import inspect
 import json
 
-# 3rd party.
-# Lxml
-try:
-  from lxml import etree
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
-  raise
-
-import d1_common.ext.mimeparser
-
 # Django.
 from django.http import HttpResponse
 
@@ -62,27 +51,10 @@ import d1_common.const
 # App.
 import mn.models as models
 import settings
-import mn.x509_extract_session
+import session
 
 
 class view_handler():
-  def subject_info_to_subject_list(self, subject_info):
-    '''The DataONE SubjectInfo type contains a structure of person objects,
-    each potentially containing equivalent identities and group memberships.
-    "Flatten" this to a unique list of subjects.
-    '''
-    if subject_info is None:
-      return set()
-    subjects = set()
-    for person in subject_info.person:
-      subjects.add(person.subject.value())
-      for equivalent_identity in person.equivalentIdentity:
-        subjects.add(equivalent_identity.value())
-      for is_member_of in person.isMemberOf:
-        subjects.add(is_member_of.value())
-    #print subjects
-    return subjects
-
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
     logging.info(
@@ -90,50 +62,16 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
-    # If a session string was not passed in by either a certificate or by a
-    # vendor specific extension, fall back to the Public principal.
-    request.session = dataoneTypes.session()
-    request.session.subject = dataoneTypes.subject(d1_common.const.SUBJECT_PUBLIC)
-
-    # TODO: THE CODE BELOW IS WHAT WILL BE USED ONCE THE SESSION OBJECT
-    # OFFICIALLY MOVES INTO A CERTIFICATE EXTENSION.
-    # Extract the session object from the client side certificate and
-    # store it in the request (for easy access).
-    #    if 'SSL_CLIENT_CERT' in request.META:
-    #      session_xml_str = x509_extract_session.extract(
-    #        request.META['SSL_CLIENT_CERT'])
-    #      try:
-    #        request.session = dataoneTypes.CreateFromDocument(session_xml_str)
-    #      except:
-    #          raise d1_common.types.exceptions.NotAuthorized(0,
-    #            'Invalid session: {0}'.format(
-    #              request.META['HTTP_VENDOR_OVERRIDE_SESSION']))
-
-    # For now, the principal is stored in the certificate subject. So just
-    # create a session object from that.
-    if 'SSL_CLIENT_S_DN' in request.META:
-      request.session = dataoneTypes.session()
-      request.session.subject = dataoneTypes.subject(request.META['SSL_CLIENT_S_DN'])
+    session.process_session(request)
 
     if settings.DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
-      # debugging via regular HTTP, a serialized Session object can be passed in
-      # by using a vendor specific extension.
-      if 'HTTP_VENDOR_OVERRIDE_SESSION' in request.META:
-        try:
-          request.session = dataoneTypes.CreateFromDocument(
-            request.META['HTTP_VENDOR_OVERRIDE_SESSION']
-          )
-        except:
-          raise d1_common.types.exceptions.NotAuthorized(
-            0, 'Invalid session: {0}'.format(request.META['HTTP_VENDOR_OVERRIDE_SESSION'])
-          )
-
-      # For debugging, simulate an accept header with a regular parameter.
-      if 'accept' in request.REQUEST:
-        request.META['HTTP_ACCEPT'] = request.REQUEST['accept']
-
-    request.subjects = self.subject_info_to_subject_list(request.session.subjectInfo)
+      # debugging via regular HTTP, a list of subjects can be passed in by using
+      # a vendor specific extension. If this is used together with TLS, the list
+      # is added to the one derived from any included client side certificate.
+      # The public symbolic principal is always included in the subject list.
+      if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
+        request.subjects.update(request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t'))
 
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.

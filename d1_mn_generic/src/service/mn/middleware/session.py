@@ -118,15 +118,20 @@ class process_session(object):
   def _process_authenticated_session(self):
     self.primary_subject, self.subject_info = self._get_session_from_certificate()
     self._add_symbolic_subject_authenticated()
-    self._add_symbolic_subject_verified()
-    self._add_subject()
-    self._add_subject_info()
+    self._add_primary_subject()
+    self._process_subject_info()
 
   def _add_symbolic_subject_authenticated(self):
     self.subjects.add(d1_common.const.SUBJECT_AUTHENTICATED)
 
+  def _process_subject_info(self):
+    if self.subject_info is None:
+      return
+    self._add_symbolic_subject_verified()
+    self._add_subject_info()
+
   def _add_symbolic_subject_verified(self):
-    person = self._find_person_by_subject(self.subject)
+    person = self._find_person_by_subject(self.primary_subject)
     if person.verified:
       self.subjects.add(d1_common.const.SUBJECT_VERIFIED)
 
@@ -134,15 +139,11 @@ class process_session(object):
     self.subjects.add(self.primary_subject)
 
   def _add_subject_info(self):
-    if self.subject_info is None:
-      return
     person = self._find_person_by_subject(self.primary_subject)
     self._add_person_is_member_of(person)
     self._add_equivalent_identities(person)
-
-    subjects = self.subjects
     for person in self.subject_info.person:
-      subjects.add(person.subject.value())
+      self.subjects.add(person.subject.value())
 
   def _find_person_by_subject(self, subject):
     for person in self.subject_info.person:

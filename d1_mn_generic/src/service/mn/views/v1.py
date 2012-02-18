@@ -93,6 +93,14 @@ def object_pid(request, pid):
   else:
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
 
+def object_no_pid(request):
+  if request.method == 'GET':
+    return object(request)
+  elif request.method == 'POST':
+    return object_post(request)
+  else:
+    return HttpResponseNotAllowed(['GET', 'POST'])
+
 # ==============================================================================
 # Public API
 # ==============================================================================
@@ -126,7 +134,7 @@ def event_log_view(request):
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
-  if request.session.subject.value() not in service.settings.DATAONE_TRUSTED_SUBJECTS:
+  if not mn.auth.is_trusted(request):
     query = mn.db_filter.add_access_policy_filter(query, request,
                                                   'object__permission')
 
@@ -138,20 +146,22 @@ def event_log_view(request):
   obj['logRecord'] = []
 
   # Filter by fromDate.
-  query, changed = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
-                                                    'fromDate', 'gte')
+  query, changed = mn.db_filter.add_datetime_filter(query, request,
+                                                    'date_logged', 'fromDate',
+                                                    'gte')
   if changed:
     query_unsliced = query
 
   # Filter by toDate.
-  query, changed = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
-                                                    'toDate', 'lt')
+  query, changed = mn.db_filter.add_datetime_filter(query, request,
+                                                    'date_logged', 'toDate',
+                                                    'lt')
   if changed:
     query_unsliced = query
 
   # Filter by event type.
-  query, changed = mn.db_filter.add_string_filter(query, request, 'event__event',
-                                                  'event')
+  query, changed = mn.db_filter.add_string_filter(query, request,
+                                                  'event__event', 'event')
   if changed:
     query_unsliced = query
 
@@ -185,7 +195,6 @@ def node(request):
 # ------------------------------------------------------------------------------
 
 def _add_object_properties_to_response_header(response, sciobj):
-  # TODO: Keep track of Content-Type instead of guessing.
   response['DataONE-formatId'] = sciobj.format.format_id
   response['Content-Length'] = sciobj.size
   response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime)
@@ -226,7 +235,7 @@ def object_pid_get(request, pid):
 
   response = HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
-  # TODO: The HttpResponse object supports streaming with an iterator, but only
+  # The HttpResponse object supports streaming with an iterator, but only
   # when instantiated with the iterator. That behavior is not convenient here,
   # so we set up the iterator by writing directly to the internal methods of an
   # instantiated HttpResponse object.
@@ -375,7 +384,7 @@ def object(request):
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
-  if request.session.subject.value() not in service.settings.DATAONE_TRUSTED_SUBJECTS:
+  if not mn.auth.is_trusted(request):
     query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
 
   # Create a copy of the query that we will not slice, for getting the total
@@ -418,22 +427,23 @@ def object(request):
           'total': query_unsliced.count(), 'type': 'object' }
 
 
-#@mn.auth.assert_trusted_permission
-# TODO: Docs say that this can be called without a cert. But that opens up
-# for spamming.
+@mn.auth.assert_trusted_permission
 @mn.restrict_to_verb.post
 def error(request):
   '''MNRead.synchronizationFailed(session, message)
   '''
   d1_assert.post_has_mime_parts(request, (('file', 'message'),))
   d1_assert.xml_document_not_too_large(request.FILES['message'])
-  # Validate and deserialize accessPolicy.
   synchronization_failed_xml = request.FILES['message'].read()
-  synchronization_failed = dataoneErrors.CreateFromDocument(
-    synchronization_failed_xml)
+  try:
+    synchronization_failed = d1_common.types.exceptions.deserialize(
+      synchronization_failed_xml)
+  except d1_common.types.exceptions.DataONEExceptionException as e:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'Unable to deserialize the DataONE Exception')
   logging.info('CN cannot complete Science Metadata synchronization. '
-               'CN returned message: {0}'
-               .format(synchronization_failed.description))
+               'CN returned message:\n{0}'
+               .format(str(synchronization_failed)))
   return HttpResponse('OK')
 
 
@@ -456,7 +466,6 @@ def is_authorized(request, pid):
 
   mn.auth.assert_allowed(request.session.subject.value(), level, pid)
 
-  # Return Boolean (200 OK)
   return HttpResponse('OK')
 
 
@@ -507,7 +516,7 @@ def _validate_sysmeta_against_uploaded(request, pid, sysmeta):
 
 
 def _update_sysmeta_with_mn_values(request, sysmeta):
-  sysmeta.submitter = request.session.subject
+  sysmeta.submitter = request.primary_subject
   sysmeta.originMemberNode = service.settings.NODE_IDENTIFIER
   # If authoritativeMemberNode is not specified, set it to this MN.
   if sysmeta.authoritativeMemberNode is None:
@@ -517,20 +526,29 @@ def _update_sysmeta_with_mn_values(request, sysmeta):
   sysmeta.dateSysMetadataModified = now
 
 
-@mn.lock_pid.for_write
-@mn.auth.assert_authenticated
-def object_pid_post(request, pid):
+#@mn.lock_pid.for_write
+#@mn.auth.assert_authenticated
+def object_post(request):
   '''MNStorage.create(session, pid, object, sysmeta) → Identifier
   '''
+  d1_assert.post_has_mime_parts(request, (('field', 'pid'),
+                                          ('file', 'object'),
+                                          ('file', 'sysmeta')))
+  pid = request.POST['pid']
   return _create(request, pid)
 
 
 @mn.lock_pid.for_write
-#@mn.auth.assert_write_permission
+@mn.auth.assert_authenticated
 def object_pid_put(request, pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   '''
   mn.util.coerce_put_post(request)
+
+  d1_assert.post_has_mime_parts(request, (('field', 'newPid'),
+                                          ('file', 'object'),
+                                          ('file', 'sysmeta')))
+  pid = request.POST['newPid']
   return _create(request, pid)
 
 
@@ -543,7 +561,6 @@ def _assert_pid_is_available(pid):
 # Internal.
 def _create(request, pid):
   _assert_pid_is_available(pid)
-  d1_assert.post_has_mime_parts(request, (('file', 'object'), ('file', 'sysmeta')))
   d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
@@ -649,7 +666,8 @@ def _create(request, pid):
 
 # Internal.
 def _object_pid_post_store_local(request, pid):
-  logging.info('pid({0}): Writing object to disk'.format(pid))
+  #print pid, type(pid)
+  #logging.info(u'pid({0}): Writing object to disk'.format(pid))
   object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
   try:
     os.makedirs(os.path.dirname(object_path))
@@ -714,11 +732,11 @@ def dirty_system_metadata_post(request):
   '''MNStorage.systemMetadataChanged(session, pid, serialVersion,
                                      dateSysMetaLastModified) → boolean
   '''
-  d1_assert.post_has_mime_parts(request, (('field', 'pid'), ('field', 'serialVersion'),
-                                  ('field', 'dateSysMetaLastModified'),))
-
+  d1_assert.post_has_mime_parts(request, (('field', 'pid'),
+                                          ('field', 'serialVersion'),
+                                          ('field', 'dateSysMetaLastModified'),
+                                          ))
   d1_assert.object_exists(request.POST['pid'])
-
   dirty_queue = mn.models.SystemMetadataDirtyQueue()
   dirty_queue.object = mn.models.ScienceObject.objects.get(pid=request.POST['pid'])
   dirty_queue.serial_version = request.POST['serialVersion']
@@ -726,7 +744,6 @@ def dirty_system_metadata_post(request):
     request.POST['dateSysMetaLastModified'])
   dirty_queue.set_status('new')
   dirty_queue.save_unique()
-
   return HttpResponse('OK')
 
 # ------------------------------------------------------------------------------  
@@ -738,7 +755,8 @@ def dirty_system_metadata_post(request):
 def replicate(request):
   '''MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   '''
-  d1_assert.post_has_mime_parts(request, (('field', 'sourceNode'), ('file', 'sysmeta')))
+  d1_assert.post_has_mime_parts(request, (('field', 'sourceNode'),
+                                          ('file', 'sysmeta')))
   #d1_assert.xml_document_not_too_large(request.POST['sourceNode'])
   d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
 

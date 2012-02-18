@@ -63,7 +63,7 @@ import gmn_test_client
 
 
 def session(subject):
-  return {'VENDOR_OVERRIDE_SESSION': subject}
+  return {'VENDOR_INCLUDE_SUBJECTS': subject}
 
 # ==============================================================================
 
@@ -82,7 +82,7 @@ class concurrent_read(threading.Thread):
     #                                            self.sleep_before,
     #                                            self.sleep_after)
 
-    self.response = client.test_concurrency_read_lock(
+    self.response = client.concurrency_read_lock(
       self.key,
       str(self.sleep_before),
       str(self.sleep_after),
@@ -113,7 +113,7 @@ class concurrent_write(threading.Thread):
     #                                             self.sleep_before,
     #                                             self.sleep_after)
 
-    self.response = client.test_concurrency_write_lock(
+    self.response = client.concurrency_write_lock(
       self.key,
       self.val,
       str(self.sleep_before),
@@ -139,7 +139,7 @@ class concurrent_dictionary_id(threading.Thread):
 
     #print 'starting id'
 
-    self.response = client.test_concurrency_get_dictionary_id(
+    self.response = client.concurrency_get_dictionary_id(
       headers=session(d1_common.const.SUBJECT_TRUSTED)
     )
 
@@ -159,7 +159,7 @@ class TestConcurrency(unittest.TestCase):
     context.gmn_url = 'http://0.0.0.0:80/mn/'
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     # Clear out the server side test locks.
-    client.test_concurrency_clear()
+    client.concurrency_clear()
 
   def tearDown(self):
     pass

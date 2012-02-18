@@ -121,6 +121,17 @@ def delete_all_access_policies(request):
   return HttpResponse('OK')
 
 # ------------------------------------------------------------------------------
+# Authentication.
+# ------------------------------------------------------------------------------
+
+
+def echo_session(request):
+  response = HttpResponse()
+  for subject in request.subjects:
+    response.write('<p>{0}</p>'.format(subject))
+  return response
+
+# ------------------------------------------------------------------------------
 # Misc.
 # ------------------------------------------------------------------------------
 
@@ -146,6 +157,12 @@ def exception(request, exception_type):
 def echo_request_object(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
+
+
+#@mn.restrict_to_verb.post
+def echo_raw_post_data(request):
+  pp = pprint.PrettyPrinter(indent=2)
+  return HttpResponse(request.raw_post_data)
 
 
 def clear_database(request):
@@ -210,7 +227,10 @@ def _delete_object(pid):
   # At this point, the object was either managed and successfully deleted or
   # wrapped and ignored.
 
-  mn.sysmeta.delete_sysmeta_from_store(pid)
+  try:
+    mn.sysmeta.delete_sysmeta_from_store(pid)
+  except OSError:
+    logging.warning('pid({0}): Science object not present on filesystem', pid)
 
   # Delete the DB entry.
   #
@@ -233,9 +253,7 @@ def delete_event_log(request):
   mn.models.EventLogIPAddress.objects.all().delete()
   mn.models.EventLogEvent.objects.all().delete()
 
-  logging.info(
-    None, 'client({0}): delete_mn.event_log', mn.util.request_to_string(request)
-  )
+  logging.info('client({0}): delete_mn.event_log', mn.util.request_to_string(request))
 
   return HttpResponse('OK')
 

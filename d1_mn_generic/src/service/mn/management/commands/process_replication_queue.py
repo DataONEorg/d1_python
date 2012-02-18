@@ -101,7 +101,7 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
     return self._read_boolean_response(response)
 
 
-  #@util.str_to_unicode
+  #@util.utf8_to_unicode
   def internal_replicate_create(self, pid, scidata, sysmeta,
                                 vendorSpecific=None):
     '''Create replicate of object on GMN'''

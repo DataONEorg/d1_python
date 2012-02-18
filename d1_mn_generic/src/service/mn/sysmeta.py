@@ -112,7 +112,7 @@ class sysmeta():
       self.set_modified_datetime()
     # Write new SysMeta object to disk.
     with open(self.sysmeta_path, 'wb') as file:
-      file.write(self.sysmeta_pyxb.toxml())
+      file.write(self.sysmeta_pyxb.toxml().encode('utf-8'))
 
   def set_modified_datetime(self, timestamp=None):
     '''Update the dateSysMetadataModified field.

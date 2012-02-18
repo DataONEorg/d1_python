@@ -202,41 +202,16 @@ def set_access_policy(pid, access_policy=None):
   with sysmeta.sysmeta(pid) as s:
     s.accessPolicy = access_policy
 
-#def set_access_policy_by_xml(pid, access_policy_xml):
-#  '''Apply an AccessPolicy to an object.
-#
-#  :param access_policy_xml: AccessPolicy XML to apply to object. 
-#  :type access_policy: AccessPolicy XML
-#  :param pid: Object to which AccessPolicy is applied.
-#  :type pid: Identifier
-#  :return type: NoneType
-#
-#  Preconditions:
-#
-#  - Subject has changePermission for object.
-#  - The Django transaction middleware layer must be enabled.
-#    'django.middleware.transaction.TransactionMiddleware'
-#  '''
-#
-#  try:
-#    access_policy = dataoneTypes.CreateFromDocument(access_policy_str)
-#  except:
-#    err = sys.exc_info()[1]
-#    raise d1_common.types.exceptions.InvalidRequest(
-#      0, 'Could not deserialize AccessPolicy: {0}'.format(str(err)))
-#
-#  set_access_policy(pid, access_policy)
-
 # ------------------------------------------------------------------------------
 # Check permissions.
 # ------------------------------------------------------------------------------
 
 
-def is_trusted(subjects):
-  return not subjects.isdisjoint(settings.DATAONE_TRUSTED_SUBJECTS)
+def is_trusted(request):
+  return not request.subjects.isdisjoint(settings.DATAONE_TRUSTED_SUBJECTS)
 
 
-def is_allowed(subjects, level, pid):
+def is_allowed(request, level, pid):
   '''Check if one or more subjects are allowed to perform action on object.
   If a subject holds permissions for one action level on object, all lower
   action levels are also allowed. Any included subject that is unknown to this
@@ -248,7 +223,7 @@ def is_allowed(subjects, level, pid):
   '''
   # If subjects contains one or more DataONE trusted infrastructure subjects,
   # all rights are given.
-  if is_trusted(subjects):
+  if is_trusted(request):
     return True
   # - If subject is not trusted infrastructure, a specific permission for
   # subject must exist on object.
@@ -258,12 +233,12 @@ def is_allowed(subjects, level, pid):
   # the requested action level.
   return models.Permission.objects.filter(
     object__pid=pid,
-    subject__subject__in=subjects | set([d1_common.const.SUBJECT_PUBLIC]),
+    subject__subject__in=request.subjects,
     level__gte=level
   ).exists()
 
 
-def assert_allowed(subjects, level, pid):
+def assert_allowed(request, level, pid):
   '''Assert that one or more subjects are allowed to perform action on object.
   Raise NotAuthorized if object exists and subject is not allowed.
   Raise NotFound if object does not exist.
@@ -273,11 +248,10 @@ def assert_allowed(subjects, level, pid):
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing object', pid
     )
-  if not is_allowed(subjects, level, pid):
+  if not is_allowed(request, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, '{0} on "{1}" denied for {2}'.format(
-        level_to_action(level), pid, ', '.join(subjects)
-      ), pid
+      0, '{0} on "{1}" denied'.format(
+        level_to_action(level), pid), pid
     )
 
 # ------------------------------------------------------------------------------
@@ -293,14 +267,14 @@ def assert_allowed(subjects, level, pid):
 # be PID.
 
 
-# Only D1 infrastructure.
 def assert_trusted_permission(f):
+  '''Access only by D1 infrastructure.
+  '''
+
   def wrap(request, *args, **kwargs):
-    if not is_trusted(request.subjects):
+    if not is_trusted(request):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Action denied for subject: {0}. Trusted subjects: {1}'.format(
-          request.session.subject.value(), ', '.join(settings.DATAONE_TRUSTED_SUBJECTS)
-        )
+        0, 'Access allowed only for DataONE infrastructure'
       )
     return f(request, *args, **kwargs)
 
@@ -309,13 +283,15 @@ def assert_trusted_permission(f):
   return wrap
 
 
-# Only GMN worker process.
 def assert_internal_permission(f):
+  '''Access only by GMN worker process.
+  '''
+
   def wrap(request, *args, **kwargs):
     if 'gmn_internal' not in request.subjects and \
       request.META['REMOTE_ADDR'] != '127.0.0.1':
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Action denied for subject: {0}.'.format(request.session.subject.value())
+        0, 'Access allowed only for GMN worker processes'
       )
     return f(request, *args, **kwargs)
 
@@ -324,11 +300,53 @@ def assert_internal_permission(f):
   return wrap
 
 
-# Anyone with a valid session.
-def assert_authenticated(f):
+def assert_create_update_permission(f):
+  '''Access only by subject with Create/Update permission.
+  Allow access to all subjects in debug mode.
+  '''
+
   def wrap(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_PUBLIC not in request.subjects:
-      raise d1_common.types.exceptions.NotAuthorized(0, 'Action denied')
+    if not settings.DEBUG and not models.CreateUpdatePermission.objects.filter(
+      subject__subject__in=subjects
+    ).exists():
+      raise d1_common.types.exceptions.NotAuthorized(
+        0, 'Access allowed only for subjects with Create/Update permission'
+      )
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+def assert_authenticated(f):
+  '''Access only with a valid session.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    if d1_common.const.SUBJECT_AUTHENTICATED not in request.subjects:
+      raise d1_common.types.exceptions.NotAuthorized(
+        0, 'Access allowed only for authenticated subjects. Please reconnect with '
+        'a valid DataONE session certificate'
+      )
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+def assert_verified(f):
+  '''Access only with a valid session where the primary subject is verified.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    if d1_common.const.SUBJECT_VERIFIED not in request.subjects:
+      raise d1_common.types.exceptions.NotAuthorized(
+        0, 'Access allowed only for verified accounts. Please reconnect with a '
+        'valid DataONE session certificate in which the identity of the '
+        'primary subject has been verified'
+      )
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -337,8 +355,11 @@ def assert_authenticated(f):
 
 
 def assert_required_permission(f, level):
+  '''Assert that subject has access at given level or higher for object.
+  '''
+
   def wrap(request, pid, *args, **kwargs):
-    assert_allowed(request.subjects, level, pid)
+    assert_allowed(request, level, pid)
     return f(request, pid, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -347,12 +368,18 @@ def assert_required_permission(f, level):
 
 
 def assert_changepermission_permission(f):
+  '''Assert that subject has changePermission or high for object.
+  '''
   return assert_required_permission(f, CHANGEPERMISSION_LEVEL)
 
 
 def assert_write_permission(f):
+  '''Assert that subject has write permission or higher for object.
+  '''
   return assert_required_permission(f, WRITE_LEVEL)
 
 
 def assert_read_permission(f):
+  '''Assert that subject has read permission or higher for object.
+  '''
   return assert_required_permission(f, READ_LEVEL)

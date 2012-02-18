@@ -31,24 +31,26 @@
   DataONE (Dahl)
 '''
 
+# Stdlib.
 import os
 import re
 import sys
 
-sys.path.append('../build/lib.linux-x86_64-2.6/')
+# D1.
 import x509_extract_session
-
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
-cert_file = open('./test_cert_dataone_session.pem', 'rb')
+cert_file = open('./certificate.pem', 'rb')
 cert_str = cert_file.read()
-session_str = x509_extract_session.extract(cert_str)
+subject, subject_info = x509_extract_session.extract(cert_str)
+print subject
+print subject_info
 
-print 'Extracted: {0}'.format(session_str)
-
-try:
-  session = dataoneTypes.CreateFromDocument(session_str)
-except:
-  raise Exception("Extracted Session object is invalid")
-else:
-  print "Session OK"
+#print 'Extracted: {0}'.format(session_str)
+#
+#try:
+#  session = dataoneTypes.CreateFromDocument(session_str)
+#except:
+#  raise Exception("Extracted Session object is invalid")
+#else:
+#  print "Session OK"

@@ -74,7 +74,7 @@ class TestAccessControl(unittest2.TestCase):
     pass
 
   def session(self, subject):
-    return {'VENDOR_OVERRIDE_SESSION': subject}
+    return {'VENDOR_INCLUDE_SUBJECTS': subject}
 
   def gen_sysmeta(self, pid, size, md5, now, owner):
     sysmeta = dataoneTypes.systemMetadata()

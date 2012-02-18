@@ -70,35 +70,28 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
 
     self.logger = logging.getLogger('GMNTestClient')
 
-    self.methodmap.update(
-      {
-        # Replication.
-        'get_replication_queue': u'get_replication_queue',
-        'clear_replication_queue': u'clear_replication_queue',
-        # Access Policy.
-        'set_access_policy': u'set_access_policy/%(pid)s',
-        'delete_all_access_policies': u'delete_all_access_policies',
-        # Misc.
-        'slash': u'slash/%(arg1)s/%(arg2)s/%(arg3)s',
-        'exception': u'exception/%(exception_type)s',
-        'echo_request_object': u'echo_request_object',
-        'clear_database': u'clear_database',
-        'delete_all_objects': u'delete_all_objects',
-        'delete_single_object': u'delete_single_object/%(pid)s',
-        # Event Log.
-        'delete_event_log': u'delete_event_log',
-        'inject_fictional_event_log': u'inject_fictional_event_log',
-        # Concurrency.
-        'test_concurrency_clear': u'concurrency_clear',
-        'test_concurrency_read_lock':
-          u'concurrency_read_lock/%(key)s/%(sleep_before)s/%(sleep_after)s',
-        'test_concurrency_write_lock':
-          u'concurrency_write_lock/%(key)s/%(val)s/%(sleep_before)s/%(sleep_after)s',
-        'test_concurrency_get_dictionary_id': u'concurrency_get_dictionary_id',
-        'error': u'error',
-        'system_metadata_changed': u'dirtySystemMetadata',
-      }
+  def gmn_vse_provide_subject(self, subject):
+    '''GMN Vendor Specific Extension: Simulate subject.'''
+    return {'VENDOR_INCLUDE_SUBJECTS': subject}
+
+  def gmn_vse_enable_sql_profiling(self):
+    '''GMN Vendor Specific Extension: Enable SQL profiling.'''
+    return {'VENDOR_PROFILE_SQL': 1}
+
+  def gmn_vse_enable_python_profiling(self):
+    '''GMN Vendor Specific Extension: Enable Python profiling.'''
+    return {'VENDOR_PROFILE_PYTHON': 1}
+
+  def get_resource_path(self, path):
+    '''Get path to test resources.'''
+    resource_path = os.path.abspath(
+      os.path.join(
+        os.path.dirname(
+          __file__
+        ), '../../../../resources/'
+      )
     )
+    return os.path.join(resource_path, path)
 
   # ----------------------------------------------------------------------------
   # Replication.
@@ -119,7 +112,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
 
   def set_access_policy(self, pid, access_policy, headers=None):
-    url = self._rest_url('set_access_policy', pid=pid)
+    url = self._rest_url('set_access_policy/%(pid)s', pid=pid)
     files = [('access_policy', 'access_policy', access_policy.toxml().encode('utf-8')), ]
     return self.POST(url, files=files, headers=headers)
 
@@ -129,21 +122,39 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self._read_boolean_response(response)
 
   # ----------------------------------------------------------------------------
+  # Authentication.
+  # ----------------------------------------------------------------------------
+
+  def echo_session(self, headers=None):
+    url = self._rest_url('echo_session')
+    response = self.GET(url, headers=headers)
+    return response.read()
+
+  # ----------------------------------------------------------------------------
   # Misc.
   # ----------------------------------------------------------------------------
 
   def slash(self, arg1, arg2, arg3, headers=None):
-    url = self._rest_url('slash', arg1=arg1, arg2=arg2, arg3=arg3)
+    url = self._rest_url(
+      'slash/%(arg1)s/%(arg2)s/%(arg3)s',
+      arg1=arg1, arg2=arg2,
+      arg3=arg3
+    )
     response = self.GET(url, headers=headers)
     return response.read()
 
   def exception(self, exception_type):
-    url = self._rest_url('exception', exception_type=exception_type)
+    url = self._rest_url('exception/%(exception_type)s', exception_type=exception_type)
     response = self.GET(url, headers=headers)
     return response.read()
 
   def echo_request_object(self, headers=None):
     url = self._rest_url('echo_request_object')
+    response = self.GET(url, headers=headers)
+    return response.read()
+
+  def echo_raw_post_data(self, headers=None):
+    url = self._rest_url('echo_raw_post_data')
     response = self.GET(url, headers=headers)
     return response.read()
 
@@ -158,7 +169,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self._read_boolean_response(response)
 
   def test_delete_single_object(self, pid, headers=None):
-    url = self._rest_url('delete_single_object', pid=pid)
+    url = self._rest_url('delete_single_object/%(pid)s', pid=pid)
     response = self.GET(url, headers=headers)
     return self._read_boolean_response(response)
 
@@ -185,31 +196,28 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # Concurrency.
   # ----------------------------------------------------------------------------
 
-  def test_concurrency_clear(self, headers=None):
+  def concurrency_clear(self, headers=None):
     '''Clear test key/vals.
     '''
-    url = self._rest_url('test_concurrency_clear')
+    url = self._rest_url('concurrency_clear')
     return self.GET(url, headers=headers)
 
-  def test_concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
+  def concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
     '''Test PID read locking.
     '''
     url = self._rest_url(
-      'test_concurrency_read_lock',
+      'concurrency_read_lock/%(key)s/%(sleep_before)s/%(sleep_after)s',
       key=key,
       sleep_before=sleep_before,
       sleep_after=sleep_after
     )
     return self.GET(url, headers=headers)
 
-  def test_concurrency_write_lock(
-    self, key, val, sleep_before, sleep_after,
-    headers=None
-  ):
+  def concurrency_write_lock(self, key, val, sleep_before, sleep_after, headers=None):
     '''Test PID write locking.
     '''
     url = self._rest_url(
-      'test_concurrency_write_lock',
+      'concurrency_write_lock/%(key)s/%(val)s/%(sleep_before)s/%(sleep_after)s',
       key=key,
       val=val,
       sleep_before=sleep_before,
@@ -217,8 +225,26 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     )
     return self.GET(url, headers=headers)
 
-  def test_concurrency_get_dictionary_id(self, headers=None):
+  def concurrency_get_dictionary_id(self, headers=None):
     '''Get dictionary ID.
     '''
-    url = self._rest_url('test_concurrency_get_dictionary_id')
+    url = self._rest_url('concurrency_get_dictionary_id')
     return self.GET(url, headers=headers)
+
+# ==============================================================================
+
+
+def rest_call(self, func, python_profile=False, sql_profile=False, *args, **kwargs):
+  '''Wrap a rest call up with automatic handling of vendor specific extensions
+  for profiling and selecting subject.'''
+  vendor_specific = {}
+  # When not using certificates, the subject is passed in via a vendor
+  # specific extension that is supported by all the REST calls in GMN.
+  if not settings.USE_CERTS:
+    vendor_specific.update(test_utilities.gmn_vse_provide_subject(self.subject))
+  # Enable python profiling if requested.
+  if python_profile:
+    vendor_specific.update(test_utilities.gmn_vse_enable_python_profiling())
+  if sql_profile:
+    vendor_specific.update(test_utilities.gmn_vse_enable_sql_profiling())
+  return func(vendorSpecific=vendor_specific, *args, **kwargs)

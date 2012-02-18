@@ -75,15 +75,9 @@ class ScienceObject(models.Model):
   serial_version = models.BigIntegerField()
 
   def set_format(self, format_id):
-    ''':param:
-    :return:
-    '''
     self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
 
   def set_checksum_algorithm(self, checksum_algorithm_string):
-    ''':param:
-    :return:
-    '''
     self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
       checksum_algorithm=str(checksum_algorithm_string)
     )[0]
@@ -140,9 +134,6 @@ class EventLog(models.Model):
   date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
 
   def set_event(self, event_string):
-    ''':param:
-    :return:
-    '''
     if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
       raise d1_common.types.exceptions.ServiceFailure(
         0, 'Attempted to create invalid type of event: {0}'.format(event_string)
@@ -150,25 +141,16 @@ class EventLog(models.Model):
     self.event = EventLogEvent.objects.get_or_create(event=event_string)[0]
 
   def set_ip_address(self, ip_address_string):
-    ''':param:
-    :return:
-    '''
     self.ip_address = EventLogIPAddress.objects.get_or_create(
       ip_address=ip_address_string
     )[0]
 
   def set_user_agent(self, user_agent_string):
-    ''':param:
-    :return:
-    '''
     self.user_agent = EventLogUserAgent.objects.get_or_create(
       user_agent=user_agent_string
     )[0]
 
   def set_subject(self, subject_string):
-    ''':param:
-    :return:
-    '''
     self.subject = EventLogSubject.objects.get_or_create(subject=subject_string)[0]
 
 # ------------------------------------------------------------------------------
@@ -249,3 +231,10 @@ class Permission(models.Model):
   object = models.ForeignKey(ScienceObject)
   subject = models.ForeignKey(PermissionSubject)
   level = models.PositiveSmallIntegerField()
+
+
+class CreateUpdatePermission(models.Model):
+  subject = models.ForeignKey(PermissionSubject)
+
+  def add(self, subject):
+    self.subject = PermissionSubject.objects.get_or_create(subject=subject)[0]

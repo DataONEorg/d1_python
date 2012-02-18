@@ -26,15 +26,19 @@
 :Author: DataONE (Dahl)
 '''
 
-from django.http import HttpResponse
-import settings
-
+# Stdlib.
 import cgi
 import logging
+import pprint
 import re
 import urllib
 
+# Django.
+from django.http import HttpResponse
+
+# App.
 import d1_common
+import settings
 
 
 class request_handler():
@@ -72,22 +76,8 @@ class request_handler():
     # Strip any arguments from path_info.
     request.path_info = re.sub(r'\?.*', '', request.path_info)
 
-    # Django ticket: http://code.djangoproject.com/ticket/12083. This is a hack
-    # that is applied when the root of the app is requested without a trailing
-    # backslash through Apache. Without this, Django 1.1.1 raises a KeyError
-    # exception. The workaround was found by comparing working and non-working
-    # requests. It should be removed for Django 1.2.
-    if request.path_info == '':
-      request.environ['REQUEST_URI'] = request.META['SCRIPT_NAME'] + '/'
-      request.META['REQUEST_URI'] = request.META['SCRIPT_NAME'] + '/'
-      request.path_info = '/'
-
-    if settings.DEBUG == False:
-      return None
-
-    # Print request.
-    #    import pprint
-    #    pp = pprint.PrettyPrinter(indent=2)
-    #    return HttpResponse(cgi.escape('<pre>{0}</pre>'.format(pp.pformat(request))))
+    if settings.DEBUG == True and settings.ECHO_REQUEST_OBJECT:
+      pp = pprint.PrettyPrinter(indent=2)
+      return HttpResponse(cgi.escape('<pre>{0}</pre>'.format(pp.pformat(request))))
 
     return None
