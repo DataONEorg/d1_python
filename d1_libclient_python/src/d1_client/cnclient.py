@@ -91,59 +91,6 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
       defaultHeaders=defaultHeaders, cert_path=cert_path, key_path=key_path,
       strict=strict, capture_response_body=capture_response_body,
       version=version)
-    # A dictionary that provides a mapping from method name (from the DataONE
-    # APIs) to a string format pattern that will be appended to the URL.
-    self.methodmap.update({
-      # Core API
-      # create(): CN internal
-      'listFormats': u'formats',
-      'getFormat': u'formats/%(formatId)s',
-      # getLogRecords(): Implemented in d1baseclient
-      'reserveIdentifier': u'reserve',
-      'generateIdentifier': u'generate',
-      'listChecksumAlgorithms': u'checksum',
-      'listNodes': u'node',
-      # registerSystemMetadata(): CN internal
-      'hasReservation': u'reserve/%(pid)s',
-
-      # Read API
-      # get(): Implemented in d1baseclient
-      # getSystemMetadata(): Implemented in d1baseclient
-      'resolve': u'resolve/%(pid)s',
-      'getChecksum': u'checksum/%(pid)s',
-      # listObjects(): implemented in d1baseclient
-      'search': u'search',
-
-      # Authorization API
-      'setRightsHolder': u'owner/%(pid)s',
-      'isAuthorized()': u'isAuthorized/%(pid)s?action=%(action)s',
-      'setAccessPolicy': u'accessRules/%(pid)s',
-
-      # Identity API
-      'registerAccount': u'accounts',
-      'updateAccount': u'accounts',
-      'verifyAccount': u'accounts',
-      'getSubjectInfo': u'accounts/%(subject)s',
-      'listSubjects': u'accounts?query=%(query)s', #[&status=(status)&start=(start)&count=(count)]
-      'mapIdentity': u'accounts/map',
-      'denyMapIdentity': u'accounts/map/%(subject)s',
-      'requestMapIdentity': u'accounts',
-      'confirmMapIdentity': u'accounts/pendingmap/%(subject)s',
-      'denyMapIdentity': u'accounts/pendingmap/%(subject)s',
-      'createGroup': u'groups/%(groupName)s',
-      'addGroupMembers': u'groups/%(groupName)s',
-      'removeGroupMembers': u'groups/%(groupName)s',
-
-      # Replication API
-      'setReplicationStatus': u'replicaNotifications/%(pid)s',
-      'updateReplicationMetadata': u'replicaMetadata/%(pid)s',
-      'setReplicationPolicy': u'replicaPolicies/%(pid)s',
-      'isNodeAuthorized': u'replicaAuthorizations/%(pid)s',
-
-      # Register API
-      'updateNodeCapabilities': u'node/%(nodeId)s',
-      'register': 'node',
-    })
     self.last_response_body = None
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
@@ -162,7 +109,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listFormats
 
   def listFormatsResponse(self):
-    url = self._rest_url('listFormats')
+    url = self._rest_url('formats')
     return self.GET(url)
 
 
@@ -173,13 +120,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNCore.getFormat(formatId) → ObjectFormat
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getFormat
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getFormatResponse(self, formatId):
-    url = self._rest_url('getFormat', formatId=formatId)
+    url = self._rest_url('formats/%(formatId)s', formatId=formatId)
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getFormat(self, formatId):
     response = self.getFormatResponse(formatId)
     return self._read_dataone_type_response(response)
@@ -190,16 +137,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNCore.reserveIdentifier(session, pid) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.reserveIdentifier
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def reserveIdentifierResponse(self, pid):
-    url = self._rest_url('reserveIdentifier')
-    mime_multipart_files = [
-      ('pid', 'pid', pid.toxml().encode('utf-8')),
+    url = self._rest_url('reserve')
+    mime_multipart_fields = [
+      ('pid', pid.encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files)
+    return self.POST(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def reserveIdentifier(self, pid):
     response = self.reserveIdentifierResponse(pid)
     return self._read_dataone_type_response(response)
@@ -208,17 +155,17 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNCore.generateIdentifier(session, scheme[, fragment]) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.generateIdentifier
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def generateIdentifierResponse(self, scheme, fragment=None):
-    url = self._rest_url('generateIdentifier')
-    mime_multipart_files = [
-      ('scheme', 'scheme', scheme.toxml().encode('utf-8')),
-      ('fragment', 'fragment', fragment.toxml().encode('utf-8')),
+    url = self._rest_url('generate')
+    mime_multipart_fields = [
+      ('scheme', scheme.encode('utf-8')),
+      ('fragment', fragment.encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files)
+    return self.POST(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def generateIdentifier(self, scheme, fragment=None):
     response = self.generateIdentifierResponse(scheme, fragment)
     return self._read_dataone_type_response(response)
@@ -227,13 +174,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNCore.listChecksumAlgorithms() → ChecksumAlgorithmList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listChecksumAlgorithms
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listChecksumAlgorithmsResponse(self):
-    url = self._rest_url('listChecksumAlgorithms')
+    url = self._rest_url('checksum')
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listChecksumAlgorithms(self):
     response = self.listChecksumAlgorithmsResponse()
     return self._read_dataone_type_response(response)
@@ -242,7 +189,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listNodes
 
   def listNodesResponse(self):
-    url = self._rest_url('listNodes')
+    url = self._rest_url('node')
     response = self.GET(url)
     return response
 
@@ -259,13 +206,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNCore.hasReservation(session, pid) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.hasReservation
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def hasReservationResponse(self, pid):
-    url = self._rest_url('hasReservation', pid=pid)
+    url = self._rest_url('reserve/%(pid)s', pid=pid)
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def hasReservation(self, pid):
     response = self.hasReservationResponse(pid)
     return self._read_dataone_type_response(response)
@@ -284,13 +231,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNRead.resolve(session, pid) → ObjectLocationList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.resolve
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def resolveResponse(self, pid):
-    url = self._rest_url('resolve', pid=pid)
+    url = self._rest_url('resolve/%(pid)s', pid=pid)
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
     response = self.resolveResponse(pid)
     return self._read_dataone_type_response(response,
@@ -300,13 +247,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNRead.getChecksum(session, pid) → Checksum
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getChecksum
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getChecksumResponse(self, pid):
-    url = self._rest_url('getChecksum', pid=pid)
+    url = self._rest_url('checksum/%(pid)s', pid=pid)
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getChecksum(self, pid):
     response = self.getChecksumResponse(pid)
     return self._read_dataone_type_response(response)
@@ -315,7 +262,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNRead.search(session, queryType, query) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.search
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def searchResponse(self, queryType, query):
     url = self._rest_url('search')
     url_query = {
@@ -324,12 +271,12 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self.GET(url, query=url_query)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def search(self, queryType, query):
     response = self.searchResponse(queryType, query)
     return self._read_dataone_type_response(response)
 
-#  @d1_common.util.str_to_unicode
+#  @d1_common.util.utf8_to_unicode
 #  def search(self, query, fields="pid,origin_mn,datemodified,size,objectformat,title",
 #             start=0, count=100):
 #    '''This is a place holder for search against the SOLR search engine.     
@@ -368,9 +315,9 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNAuthorization.setRightsHolder(session, pid, userId, serialVersion) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.setRightsHolder
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setRightsHolderResponse(self, pid, userId, serialVersion):
-    url = self._rest_url('setRightsHolder', pid=pid)
+    url = self._rest_url('owner/%(pid)s', pid=pid)
     mime_multipart_fields = [
       ('userId', userId.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
@@ -378,7 +325,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self.PUT(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setRightsHolder(self, pid, userId, serialVersion):
     response = self.setRightsHolderResponse(pid, userId, serialVersion)
     return self._read_boolean_response(response)
@@ -386,13 +333,14 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNAuthorization.isAuthorized(session, pid, action) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.isAuthorized
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action):
-    url = self._rest_url('isAuthorized', pid=pid, action=action)
+    url = self._rest_url('isAuthorized/%(pid)s?action=%(action)s', pid=pid,
+                         action=action)
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, action):
     response = self.isAuthorizedResponse(pid, action)
     return self._read_boolean_response(response)
@@ -400,17 +348,20 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNAuthorization.setAccessPolicy(session, pid, accessPolicy, serialVersion) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.setAccessPolicy
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setAccessPolicyResponse(self, pid, accessPolicy, serialVersion):
-    url = self._rest_url('setAccessPolicy', pid=pid)
+    url = self._rest_url('accessRules/%(pid)s', pid=pid)
     mime_multipart_fields = [
-      ('accessPolicy', accessPolicy.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
     ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    mime_multipart_files = [
+      ('accessPolicy', 'accessPolicy', accessPolicy.toxml().encode('utf-8')),
+    ]
+    return self.PUT(url, fields=mime_multipart_fields,
+                    files=mime_multipart_files)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setAccessPolicy(self, pid, accessPolicy, serialVersion):
     response = self.setAccessPolicyResponse(pid, accessPolicy, serialVersion)
     return self._read_boolean_response(response)
@@ -422,16 +373,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.registerAccount(session, person) → Subject
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.registerAccount
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def registerAccountResponse(self, person):
-    url = self._rest_url('registerAccount')
-    mime_multipart_fields = [
-      ('person', person.encode('utf-8')),
+    url = self._rest_url('accounts')
+    mime_multipart_files = [
+      ('person', 'person', person.toxml().encode('utf-8')),
     ]
-    return self.POST(url, fields=mime_multipart_fields)
+    return self.POST(url, files=mime_multipart_files)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def registerAccount(self, person):
     response = self.registerAccountResponse(person)
     return self._read_boolean_response(response)
@@ -439,16 +390,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.updateAccount(session, person) → Subject
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.updateAccount
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def updateAccountResponse(self, person):
-    url = self._rest_url('updateAccount')
-    mime_multipart_fields = [
-      ('person', person.encode('utf-8')),
+    url = self._rest_url('accounts/%(subject)s', subject=subject.value())
+    mime_multipart_files = [
+      ('person', 'person', person.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    return self.PUT(url, files=mime_multipart_files)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def updateAccount(self, person):
     response = self.updateAccountResponse(person)
     return self._read_boolean_response(response)
@@ -456,16 +407,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.verifyAccount(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.verifyAccount
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def verifyAccountResponse(self, subject):
-    url = self._rest_url('verifyAccount')
-    mime_multipart_fields = [
-      ('subject', subject.encode('utf-8')),
-    ]
-    return self.POST(url, fields=mime_multipart_fields)
+    url = self._rest_url('accounts/verification/%(subject)s', subject=subject.value())
+    return self.PUT(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def verifyAccount(self, subject):
     response = self.verifyAccountResponse(subject)
     return self._read_boolean_response(response)
@@ -473,13 +421,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.getSubjectInfo(session, subject) → SubjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.getSubjectInfo
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getSubjectInfoResponse(self, subject):
-    url = self._rest_url('getSubjectInfo', subject=subject.value())
+    url = self._rest_url('accounts/%(subject)s', subject=subject.value())
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getSubjectInfo(self, subject):
     response = self.getSubjectInfoResponse(subject)
     return self._read_dataone_type_response(response)
@@ -487,9 +435,9 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.listSubjects(session, query, status, start, count) → SubjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.listSubjects
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listSubjectsResponse(self, query, status=None, start=None, count=None):
-    url = self._rest_url('listSubjects', query=query)
+    url = self._rest_url('accounts?query=%(query)s', query=query)
     url_query = {
       'status': status,
       'start': start,
@@ -498,7 +446,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self.GET(url, query=url_query)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listSubjects(self, query, status=None, start=None, count=None):
     response = self.listSubjectsResponse(query, status, start, count)
     return self._read_dataone_type_response(response)
@@ -506,30 +454,31 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.mapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.mapIdentity
 
-  @d1_common.util.str_to_unicode
-  def mapIdentityResponse(self, subject):
-    url = self._rest_url('mapIdentity')
+  @d1_common.util.utf8_to_unicode
+  def mapIdentityResponse(self, primary_subject, secondary_subject):
+    url = self._rest_url('accounts/map')
     mime_multipart_fields = [
-      ('subject', subject.encode('utf-8')),
+      ('primarySubject', primary_subject.value().encode('utf-8')),
+      ('secondarySubject', secondary_subject.value().encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
-  def mapIdentity(self, subject):
-    response = self.mapIdentityResponse(subject)
+  @d1_common.util.utf8_to_unicode
+  def mapIdentity(self, primary_subject, secondary_subject):
+    response = self.mapIdentityResponse(primary_subject, secondary_subject)
     return self._read_boolean_response(response)
 
   # CNIdentity.denyMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.denyMapIdentity
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def denyMapIdentityResponse(self, subject):
-    url = self._rest_url('denyMapIdentity', subject=subject.value())
+    url = self._rest_url('accounts/map/%(subject)s', subject=subject.value())
     return self.DELETE(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def denyMapIdentity(self, subject):
     response = self.denyMapIdentityResponse(subject)
     return self._read_dataone_type_response(response)
@@ -537,16 +486,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.requestMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.requestMapIdentity
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def requestMapIdentityResponse(self, subject):
-    url = self._rest_url('requestMapIdentity')
+    url = self._rest_url('accounts')
     mime_multipart_fields = [
-      ('subject', subject.encode('utf-8')),
+      ('subject', subject.value().encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def requestMapIdentity(self, subject):
     response = self.requestMapIdentityResponse(subject)
     return self._read_boolean_response(response)
@@ -554,16 +503,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.confirmMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.confirmMapIdentity
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def confirmMapIdentityResponse(self, subject):
-    url = self._rest_url('confirmMapIdentity', subject=subject.value())
+    url = self._rest_url('accounts/pendingmap/%(subject)s', subject=subject.value())
     mime_multipart_fields = [
-      ('subject', subject.encode('utf-8')),
+      ('subject', subject.value().encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def confirmMapIdentity(self, subject):
     response = self.confirmMapIdentityResponse(subject)
     return self._read_boolean_response(response)
@@ -571,13 +520,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.denyMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.denyMapIdentity
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def denyMapIdentityResponse(self, subject):
-    url = self._rest_url('denyMapIdentity', subject=subject.value())
+    url = self._rest_url('accounts/pendingmap/%(subject)s', subject=subject.value())
     return self.DELETE(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def denyMapIdentity(self, subject):
     response = self.denyMapIdentityResponse(subject)
     return self._read_dataone_type_response(response)
@@ -585,16 +534,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.createGroup(session, groupName) → Subject
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.createGroup
 
-  @d1_common.util.str_to_unicode
-  def createGroupResponse(self, groupName):
-    url = self._rest_url('createGroup', groupName=groupName.value())
-    mime_multipart_fields = [
-      ('groupName', groupName.encode('utf-8')),
+  @d1_common.util.utf8_to_unicode
+  def createGroupResponse(self, group):
+    url = self._rest_url('groups')
+    mime_multipart_files = [
+      ('group', groupName.toxml().encode('utf-8')),
     ]
-    return self.POST(url, fields=mime_multipart_fields)
+    return self.POST(url, files=mime_multipart_files)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def createGroup(self, groupName):
     response = self.createGroupResponse(groupName)
     return self._read_boolean_response(response)
@@ -602,35 +551,18 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNIdentity.addGroupMembers(session, groupName, members) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.addGroupMembers
 
-  @d1_common.util.str_to_unicode
-  def addGroupMembersResponse(self, groupName, members):
-    url = self._rest_url('addGroupMembers', groupName=groupName.value())
-    mime_multipart_fields = [
-      ('members', members.encode('utf-8')),
+  @d1_common.util.utf8_to_unicode
+  def updateGroupResponse(self, group):
+    url = self._rest_url('groups')
+    mime_multipart_files = [
+      ('group', 'group', group.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    return self.PUT(url, files=mime_multipart_files)
 
 
-  @d1_common.util.str_to_unicode
-  def addGroupMembers(self, groupName, members):
-    response = self.addGroupMembersResponse(groupName, members)
-    return self._read_boolean_response(response)
-
-  # CNIdentity.removeGroupMembers(session, groupName, members) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.removeGroupMembers 
-
-  @d1_common.util.str_to_unicode
-  def removeGroupMembersResponse(self, groupName, members):
-    url = self._rest_url('removeGroupMembers', groupName=groupName.value())
-    mime_multipart_fields = [
-      ('members', members.encode('utf-8')),
-    ]
-    return self.PUT(url, fields=mime_multipart_fields)
-
-
-  @d1_common.util.str_to_unicode
-  def removeGroupMembers(self, groupName, members):
-    response = self.removeGroupMembersResponse(groupName, members)
+  @d1_common.util.utf8_to_unicode
+  def updateGroup(self, group):
+    response = self.updateGroupResponse(group)
     return self._read_boolean_response(response)
 
   #=============================================================================
@@ -640,19 +572,21 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNReplication.setReplicationStatus(session, pid, nodeRef, status, serialVersion) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationStatus
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setReplicationStatusResponse(self, pid, nodeRef, status, failure=None):
-    url = self._rest_url('setReplicationStatus', pid=pid)
+    url = self._rest_url('replicaNotifications/%(pid)s', pid=pid)
     mime_multipart_fields = [
       ('nodeRef', nodeRef.encode('utf-8')),
       ('status', status.encode('utf-8')),
     ]
+    mime_multipart_files = []
     if failure is not None:
-      mime_multipart_fields.append(('failure', failure.encode('utf-8')))
+      mime_multipart_files.append(('failure', 'failure',
+                                   failure.toxml().encode('utf-8')))
     return self.PUT(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setReplicationStatus(self, pid, nodeRef, status, failure=None):
     response = self.setReplicationStatusResponse(pid, nodeRef, status, failure)
     return self._read_boolean_response(response)
@@ -661,12 +595,33 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.updateReplicationMetadata
   # Not implemented.
 
+  @d1_common.util.utf8_to_unicode
+  def updateReplicationMetadataResponse(self, pid, replicaMetadata,
+                                        serialVersion):
+    url = self._rest_url('replicaMetadata/%(pid)s', pid=pid)
+    mime_multipart_fields = [
+      ('serialVersion', str(serialVersion)),
+    ]
+    mime_multipart_files = [
+      ('replicaMetadata', replicaMetadata.toxml().encode('utf-8')),
+    ]
+    return self.PUT(url, fields=mime_multipart_fields,
+                    files=mime_multipart_files)
+
+
+  @d1_common.util.utf8_to_unicode
+  def updateReplicationMetadata(self, pid, replicaMetadata, serialVersion):
+    response = self.updateReplicationMetadataResponse(pid, replicaMetadata,
+                                                      serialVersion)
+    return self._read_boolean_response(response)
+
+
   # CNReplication.setReplicationPolicy(session, pid, policy, serialVersion) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationPolicy
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setReplicationPolicyResponse(self, pid, policy, serialVersion):
-    url = self._rest_url('setReplicationPolicy', pid=pid)
+    url = self._rest_url('replicaPolicies/%(pid)s', pid=pid)
     mime_multipart_fields = [
       ('policy', policy.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
@@ -674,7 +629,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self.PUT(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def setReplicationPolicy(self, pid, policy, serialVersion):
     response = self.setReplicationPolicyResponse(pid, policy, serialVersion)
     return self._read_boolean_response(response)
@@ -683,19 +638,38 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.isNodeAuthorized
   # TODO. Spec unclear.
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isNodeAuthorizedResponse(self, targetNodeSubject, pid,
                                replicatePermission):
-    url = self._rest_url('isNodeAuthorized', pid=pid,
-                               targetNodeSubject=targetNodeSubject.value())
+    url = self._rest_url('replicaAuthorizations/%(pid)s', pid=pid,
+                         targetNodeSubject=targetNodeSubject.value())
     return self.GET(url)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isNodeAuthorized(self, targetNodeSubject, pid, replicatePermission):
     response = self.isNodeAuthorizedResponse(targetNodeSubject, pid, replicatePermission)
     return self._read_boolean_response(response)
 
+
+  # CNReplication.deleteReplicationMetadata(session, pid, policy, serialVersion) → boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.deleteReplicationMetadata
+
+  @d1_common.util.utf8_to_unicode
+  def deleteReplicationMetadataResponse(self, pid, nodeId, serialVersion):
+    url = self._rest_url('removeReplicaMetadata/%(pid)s', pid=pid)
+    mime_multipart_fields = [
+      ('nodeId', nodeId.encode('utf-8')),
+      ('serialVersion', str(serialVersion)),
+    ]
+    return self.PUT(url, fields=mime_multipart_fields)
+
+
+  @d1_common.util.utf8_to_unicode
+  def deleteReplicationMetadata(self, pid, nodeId, serialVersion):
+    response = self.deleteReplicationMetadataResponse(pid, nodeId,
+                                                      serialVersion)
+    return self._read_boolean_response(response)
 
   #=============================================================================
   # Register API 
@@ -705,16 +679,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNRegister.updateNodeCapabilities(session, nodeId, node) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRegister.updateNodeCapabilities
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node):
-    url = self._rest_url('updateNodeCapabilities', nodeId=nodeId)
+    url = self._rest_url('node/%(nodeId)s', nodeId=nodeId)
     mime_multipart_fields = [
       ('node', node.encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def updateNodeCapabilities(self, nodeId, node):
     response = self.updateNodeCapabilitiesResponse(nodeId, node)
     return self._read_boolean_response(response)
@@ -722,16 +696,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNRegister.register(session, node) → NodeReference
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRegister.register
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def registerResponse(self, node):
-    url = self._rest_url('register')
+    url = self._rest_url('node')
     mime_multipart_fields = [
       ('node', node.encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def register(self, node):
     response = self.registerResponse(node)
     return self._read_boolean_response(response)

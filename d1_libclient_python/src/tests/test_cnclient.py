@@ -44,13 +44,13 @@ import pyxb
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import generator.accesspolicy
-import generator.identifier
-import generator.person
-import generator.random_data
-import generator.replicationpolicy
-import generator.subject
-import generator.systemmetadata
+import d1_instance_generator.accesspolicy
+import d1_instance_generator.identifier
+import d1_instance_generator.person
+import d1_instance_generator.random_data
+import d1_instance_generator.replicationpolicy
+import d1_instance_generator.subject
+import d1_instance_generator.systemmetadata
 
 # App.
 from d1_client import cnclient
@@ -62,15 +62,25 @@ class TestCNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
     #self.baseurl = 'http://cn.dataone.org/cn'
-    #self.baseurl = 'http://cn-dev-2.dataone.org/cn/'
+    #self.baseurl = 'http://cn-dev.dataone.org/cn/'
     self.baseurl = 'https://cn-dev.dataone.org/cn/'
+    #self.baseurl = 'http://localhost:8000/'
+    #self.baseurl = 'http://cn-dev-2.dataone.org/cn/'
     #self.testpid = 'hdl:10255/dryad.105/mets.xml'
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255/dryad.105/mets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl:10255%2Fdryad.105%2Fmets.xml
     #http://dev-dryad-mn.dataone.org/mn/meta/hdl%3A10255/dryad.105/mets.xml
-    cert_path = None
-    #cert_path = './x509up_u1000'
+    #self.baseurl = 'https://dev-testing.dataone.org/testsvc/echomm'
+    #cert_path = None
+
+    # echo
+    #self.baseurl = 'http://foobar3000.com'
+    #self.baseurl = 'http://helloworld3000.com/'
+    #self.baseurl = 'http://xformstest.org/cgi-bin/echoinstance.sh'
+    #self.baseurl = 'http://tools.ietf.org'
+
+    cert_path = '/tmp/x509up_u1000' # REMEMBER TO CHANGE URL TO HTTPS
     self.client = cnclient.CoordinatingNodeClient(self.baseurl, cert_path=cert_path)
 
   def tearDown(self):
@@ -94,16 +104,14 @@ class TestCNClient(TestCaseWithURLCompare):
     self.assertTrue(isinstance(f.formatId, dataoneTypes.ObjectFormatIdentifier))
     self.assertEqual(formats.objectFormat[0].formatId, f.formatId)
 
-  def WAITING_FOR_STABLE_CN_test_1030(self):
-    '''CNCore.getLogRecords() returns a valid Log with at least 3 entries'''
-    log = self.client.getLogRecords()
-    self.assertTrue(isinstance(log, dataoneTypes.Log))
-    self.assertTrue(len(log.logEntry) >= 3)
-
   def WAITING_FOR_STABLE_CN_test_1040_A(self):
     '''CNCore.reserveIdentifier() returns a valid identifier on first call with new identifier'''
-    testing_context.test_pid = generator.identifier.generate()
-    identifier = self.client.reserveIdentifier(testing_context.test_pid)
+    #testing_context.test_pid = d1_instance_generator.identifier.generate_bare()
+    #testing_context.test_pid = d1_instance_generator.identifier.generate()
+    #testing_context.test_pid = dataoneTypes.Identifier('testpid')
+    testing_context.test_pid = 'testpid'
+    identifier = self.client.reserveIdentifierResponse(testing_context.test_pid)
+    print identifier.read()
 
   def WAITING_FOR_STABLE_CN_test_1040_B(self):
     '''CNCore.reserveIdentifier() fails when called second time with same identifier'''
@@ -112,7 +120,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_1050_A(self):
     '''CNCore.generateIdentifier() returns a valid identifier that matches scheme and fragment'''
     testing_context.test_fragment = 'test_reserve_identifier_' + \
-      generator.random_data.random_3_words()
+      d1_instance_generator.random_data.random_3_words()
     identifier = self.client.generateIdentifier('ARK', testing_context.test_fragment)
 
   def WAITING_FOR_STABLE_CN_test_1050_B(self):
@@ -124,7 +132,7 @@ class TestCNClient(TestCaseWithURLCompare):
     algorithms = self.client.listChecksumAlgorithms()
     self.assertTrue(isinstance(algorithms, dataoneTypes.ChecksumAlgorithmList))
 
-  def WAITING_FOR_STABLE_CN_1065(self):
+  def WAITING_FOR_STABLE_CN_test_1065(self):
     '''CNCore.listNodes() returns a valid NodeList that contains at least 3 entries'''
     nodes = self.client.listNodes()
     self.assertTrue(isinstance(nodes, dataoneTypes.NodeList))
@@ -133,7 +141,7 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_STABLE_CN_test_1070_A(self):
     '''CNCore.hasReservation() returns True for PID that has been reserved'''
-    self.test_fragment = 'test_reserve_identifier_' + generator.random_data.random_3_words(
+    self.test_fragment = 'test_reserve_identifier_' + d1_instance_generator.random_data.random_3_words(
     )
     has_reservation = self.client.hasReservation(self.test_fragment)
 
@@ -174,7 +182,7 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNAuthorization.setRightsHolder() successfully changes the rights holder of an existing object'''
     random_existing_pid = testing_utilities.get_random_pid(self.client)
     serial_version = testing_utilities.serial_version(self.client, random_existing_pid)
-    random_owner = generator.random_data.random_3_words()
+    random_owner = d1_instance_generator.random_data.random_3_words()
     self.client.setRightsHolder(random_existing_pid, random_owner, serial_version)
 
   def WAITING_FOR_STABLE_CN_test_3020(self):
@@ -187,7 +195,7 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNAuthorization.setAccessPolicy() correctly changes the access policy on an existing object'''
     random_existing_pid = testing_utilities.get_random_pid(self.client)
     serial_version = testing_utilities.serial_version(self.client, random_existing_pid)
-    random_access_policy = generator.accesspolicy.generate()
+    random_access_policy = d1_instance_generator.accesspolicy.generate()
     self.client.setAccessPolicy(random_existing_pid, random_access_policy, serial_version)
 
   #=============================================================================
@@ -196,22 +204,22 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_STABLE_CN_test_4010(self):
     '''CNIdentity.registerAccount()'''
-    random_person = generator.person.generate()
+    random_person = d1_instance_generator.person.generate()
     self.client.registerAccount(random_person)
 
   def WAITING_FOR_STABLE_CN_test_4020(self):
     '''CNIdentity.updateAccount()'''
-    random_person = generator.person.generate()
+    random_person = d1_instance_generator.person.generate()
     self.client.updateAccount(random_person)
 
   def WAITING_FOR_STABLE_CN_test_4030(self):
     '''CNIdentity.verifyAccount()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.verifyAccount(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4040(self):
     '''CNIdentity.getSubjectInfo()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     subject = self.client.getSubjectInfo(random_subject)
     print subject.toxml()
 
@@ -222,52 +230,52 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_STABLE_CN_test_4060(self):
     '''CNIdentity.mapIdentity()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.mapIdentity(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4070(self):
     '''CNIdentity.removeMapIdentity()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.removeMapIdentity(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4080(self):
     '''CNIdentity.requestMapIdentity()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.requestMapIdentity(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4090(self):
     '''CNIdentity.confirmMapIdentity()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.confirmMapIdentity(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4100(self):
     '''CNIdentity.denyMapIdentity()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.denyMapIdentity(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4110(self):
     '''CNIdentity.createGroup()'''
-    random_subject = generator.subject.generate()
+    random_subject = d1_instance_generator.subject.generate()
     self.client.createGroup(random_subject)
 
   def WAITING_FOR_STABLE_CN_test_4120(self):
     '''CNIdentity.addGroupMembers()'''
-    random_group_name = generator.subject.generate()
+    random_group_name = d1_instance_generator.subject.generate()
     subject_list = dataoneTypes.SubjectList()
     for i in range(10):
-      subject_list.append(generator.subject.generate())
+      subject_list.append(d1_instance_generator.subject.generate())
     self.client.addGroupMembers(random_group_name, subject_list)
 
   def WAITING_FOR_STABLE_CN_test_4130(self):
     '''CNIdentity.removeGroupMembers()'''
-    random_group_name = generator.subject.generate()
+    random_group_name = d1_instance_generator.subject.generate()
     subject_list = dataoneTypes.SubjectList()
     for i in range(10):
-      subject_list.append(generator.subject.generate())
+      subject_list.append(d1_instance_generator.subject.generate())
     self.client.removeGroupMembers(random_group_name, subject_list)
 
   #=============================================================================
-  # Replication API 
+  # Replication API
   #=============================================================================
 
   def WAITING_FOR_STABLE_CN_test_5010(self):
@@ -282,7 +290,7 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNReplication.setReplicationPolicy()'''
     random_existing_pid = testing_utilities.get_random_pid(self.client)
     serial_version = testing_utilities.serial_version(self.client, random_existing_pid)
-    replication_policy = generator.replicationpolicy.generate()
+    replication_policy = d1_instance_generator.replicationpolicy.generate()
     self.client.setReplicationPolicy(
       random_existing_pid, replication_policy, serial_version
     )
@@ -292,12 +300,12 @@ class TestCNClient(TestCaseWithURLCompare):
     # TODO. Spec unclear.
 
     #=============================================================================
-    # Register API 
+    # Register API
     #=============================================================================
 
   def WAITING_FOR_STABLE_CN_test_6010(self):
     '''CNRegister.updateNodeCapabilities()'''
-    test_node = 'test_node_' + generator.random_data.random_3_words()
+    test_node = 'test_node_' + d1_instance_generator.random_data.random_3_words()
     node = dataoneTypes.Node()
     node.identifier = test_node
     node.name = 'test_name'
@@ -310,7 +318,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_6020(self):
     '''CNRegister.register()'''
     node = dataoneTypes.Node()
-    node.identifier = 'test_node_' + generator.random_data.random_3_words()
+    node.identifier = 'test_node_' + d1_instance_generator.random_data.random_3_words()
     node.name = 'test_name'
     node.description = 'test_description'
     node.baseURL = 'https://baseURL.dataone.org'
