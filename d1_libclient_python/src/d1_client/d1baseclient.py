@@ -121,19 +121,6 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     self.base_url = base_url
     self.selector = selector
     self.version = version
-    # A dictionary that provides a mapping from method name (from the DataONE
-    # APIs) to a string format pattern that will be appended to the URL.
-    self.methodmap = {
-      # CNCore / MNCore
-      'getLogRecords': u'log',
-      # CNRead / MNRead
-      'get': u'object/%(pid)s',
-      'getSystemMetadata': u'meta/%(pid)s',
-      'describe': u'/object/%(pid)s',
-      'listObjects': u'object',
-      # CNAuthorization / MNAuthorization
-      'isAuthorized': u'isAuthorized/%(pid)s',
-    }
     self.last_response_body = None
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
@@ -239,7 +226,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
 
   def _mimetype_is_xml(self, response):
-    return response.getheader('Content-Type') == d1_common.const.MIMETYPE_XML
+    return d1_common.util.get_content_type(
+      response.getheader('Content-Type')) == d1_common.const.MIMETYPE_XML
 
 
   def _status_is_200_ok(self, response):
@@ -323,10 +311,10 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
         'Ending date is before starting date')
 
 
-  def _rest_url(self, method, **args):
+  def _rest_url(self, path_format, **args):
     for k in args.keys():
       args[k] = d1_common.url.encodePathElement(args[k])
-    path = self.methodmap[method] % args
+    path = path_format % args
     url = '/' + d1_common.url.joinPathElements(self.selector, self.version,
                                                 path)
     return url
@@ -355,7 +343,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0][, count=1000]) → Log
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getLogRecords
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getLogRecordsResponse(self, fromDate=None, toDate=None, event=None,
                             start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
                             vendorSpecific=None):
@@ -363,7 +351,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
-    url = self._rest_url('getLogRecords')
+    url = self._rest_url('log')
     query = {
       'fromDate': fromDate,
       'toDate': toDate,
@@ -374,7 +362,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return self.GET(url, query=query, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getLogRecords(self, fromDate=None, toDate=None, event=None,
                     start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
                     vendorSpecific=None):
@@ -393,11 +381,11 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # MNRead.get(session, pid) → OctetStream
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.get
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('get', pid=pid)
+    url = self._rest_url('object/%(pid)s', pid=pid)
     return self.GET(url, headers=vendorSpecific)
 
   def get(self, pid, vendorSpecific=None):
@@ -409,15 +397,15 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # MNRead.getSystemMetadata(session, pid) → SystemMetadata
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getSystemMetadata
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getSystemMetadataResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('getSystemMetadata', pid=pid)
+    url = self._rest_url('meta/%(pid)s', pid=pid)
     return self.GET(url, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getSystemMetadata(self, pid, vendorSpecific=None):
     response = self.getSystemMetadataResponse(pid,
                                               vendorSpecific=vendorSpecific)
@@ -428,16 +416,16 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # MNRead.describe(session, pid) → DescribeResponse
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.describe
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def describeResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('describe', pid=pid)
+    url = self._rest_url('/object/%(pid)s', pid=pid)
     response = self.HEAD(url, headers=vendorSpecific)
     return response
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def describe(self, pid, vendorSpecific=None):
     '''Note: If the server returns a status code other than 200 OK, a
     ServiceFailure will be raised, as this method is based on a HEAD request,
@@ -451,7 +439,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # MNRead.listObjects(session[, startTime][, endTime][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listObjectsResponse(self, startTime=None, endTime=None,
                           objectFormat=None, replicaStatus=None,
                           start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
@@ -460,7 +448,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(startTime, endTime)
-    url = self._rest_url('listObjects')
+    url = self._rest_url('object')
     query = {
       'startTime': startTime,
       'endTime': endTime,
@@ -472,7 +460,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return self.GET(url, query=query, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listObjects(self, startTime=None, endTime=None, objectFormat=None,
                   replicaStatus=None, start=0,
                   count=d1_common.const.DEFAULT_LISTOBJECTS,
@@ -488,18 +476,18 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # CNAuthorization / MNAuthorization
   # ----------------------------------------------------------------------------
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('isAuthorized', pid=pid, action=action)
+    url = self._rest_url('isAuthorized/%(pid)s', pid=pid, action=action)
     query = {
       'action': action,
     }
     return self.GET(url, query=query, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, access, vendorSpecific=None):
     response = self.isAuthorizedResponse(pid, access,
                                          vendorSpecific=vendorSpecific)

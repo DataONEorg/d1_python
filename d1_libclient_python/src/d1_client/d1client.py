@@ -181,7 +181,7 @@ class DataONEClient(object):
       self.authToken = None
     return self.authToken
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
     '''
     :return type: list of baseurl
@@ -194,7 +194,7 @@ class DataONEClient(object):
       res.append(location.baseURL)
     return res
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def get(self, pid):
     '''Returns a stream open for reading that returns the bytes of the object
     identified by PID. 
@@ -210,13 +210,13 @@ class DataONEClient(object):
     raise Exception('Object could not be retrieved from any resolved targets')
     return None
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def create(self, targetNodeId=None, ):
     '''
     '''
     pass
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getSystemMetadata(self, pid):
     '''
     '''
@@ -226,7 +226,7 @@ class DataONEClient(object):
     self._sysmetacache[pid] = cn.getSystemMetadata(pid)
     return self._sysmetacache[pid]
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getRelatedObjects(self, pid):
     '''
     :return type: list of DataONEObject
@@ -258,7 +258,7 @@ class DataONEClient(object):
     #      relations['describes'].append(pid.value())
     return relations
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isData(self, pid):
     '''Returns True is pid refers to a data object.
     
@@ -267,14 +267,14 @@ class DataONEClient(object):
     sysmeta = self.getSystemMetadata(pid)
     return len(sysmeta.describes) == 0
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def isScienceMetadata(self, pid):
     '''return True if pid refers to a science metadata object
     '''
     sysmeta = self.getSystemMetadata(pid)
     return len(sysmeta.describes) > 0
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getScienceMetadata(self, pid):
     '''Retrieve the pid for science metadata object for the specified PID. If 
     PID refers to a science metadata object, then that object is returned. 
@@ -287,7 +287,7 @@ class DataONEClient(object):
       res.append(id.value())
     return res
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getData(self, pid):
     if self.isData(pid):
       return [pid, ]
@@ -297,13 +297,13 @@ class DataONEClient(object):
       res.append(id.value())
     return res
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getObjects(self, pids):
     '''
     '''
     pass
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def listObjects(self, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS):
     '''
     '''

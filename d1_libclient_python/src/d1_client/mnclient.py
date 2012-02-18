@@ -83,24 +83,6 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       key_path=key_path, strict=strict,
       capture_response_body=capture_response_body, version=version)
     self.logger = logging.getLogger('MemberNodeClient')
-    # A dictionary that provides a mapping from method name (from the DataONE
-    # APIs) to a string format pattern that will be appended to the URL.
-    self.methodmap.update({
-      # MNCore
-      'ping': u'monitor/ping',
-      'getCapabilities': u'node',
-      # MNRead
-      'getChecksum': u'checksum/%(pid)s',
-      'synchronizationFailed': u'error',
-      # MNStorage
-      'create': u'object',
-      'update': u'object/%(pid)s',
-      'delete': u'object/%(pid)s',
-      'systemMetadataChanged': 'dirtySystemMetadata',
-      # MNReplication
-      'replicate': 'replicate',
-      'getReplica': 'replica/%(pid)s',
-    })
 
 
   # ============================================================================
@@ -113,7 +95,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def ping(self, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('ping')
+    url = self._rest_url('monitor/ping')
     response = self.GET(url, headers=vendorSpecific)
     return self._read_boolean_response(response)
 
@@ -123,7 +105,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def getCapabilitiesResponse(self, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('getCapabilities')
+    url = self._rest_url('node')
     return self.GET(url, headers=vendorSpecific)
 
 
@@ -138,19 +120,19 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getChecksum
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getChecksumResponse(self, pid, checksumAlgorithm=None,
                           vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('getChecksum', pid=pid)
+    url = self._rest_url('checksum/%(pid)s', pid=pid)
     query = {
       'checksumAlgorithm': checksumAlgorithm,
     }
     return self.GET(url, query=query, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
     response = self.getChecksumResponse(pid, checksumAlgorithm, vendorSpecific)
     return self._read_dataone_type_response(response)
@@ -158,18 +140,18 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNRead.synchronizationFailed(session, message) → Boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.synchronizationFailed
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def synchronizationFailedResponse(self, message, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('synchronizationFailed')
+    url = self._rest_url('error')
     mime_multipart_files = [
       ('message', 'message', message.serialize().encode('utf-8')),
     ]
     return self.POST(url, files=mime_multipart_files, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def synchronizationFailed(self, message, vendorSpecific=None):
     response = self.synchronizationFailedResponse(message, vendorSpecific)
     return self._read_boolean_response(response)
@@ -181,11 +163,11 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNStorage.create(session, pid, object, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.create
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def createResponse(self, pid, obj, sysmeta, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('create')
+    url = self._rest_url('object')
     mime_multipart_fields = [
       ('pid', pid.encode('utf-8')),
     ]
@@ -197,7 +179,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
                      files=mime_multipart_files, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
     response = self.createResponse(pid, obj, sysmeta,
                                    vendorSpecific=vendorSpecific)
@@ -206,11 +188,11 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.update
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def updateResponse(self, pid, obj, newPid, sysmeta, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('update', pid=pid)
+    url = self._rest_url('object/%(pid)s', pid=pid)
     headers = {
       'newPid': newPid,
     }
@@ -222,7 +204,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     return self.POST(url, files=mime_multipart_files, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def update(self, pid, obj, newPid, sysmeta, vendorSpecific=None):
     response = self.updateResponse(pid, obj, new_pid, sysmeta,
                                    vendorSpecific=vendorSpecific)
@@ -231,16 +213,16 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNStorage.delete(session, pid) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.delete
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def deleteResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('get', pid=pid)
+    url = self._rest_url('object/%(pid)s', pid=pid)
     response = self.DELETE(url, headers=vendorSpecific)
     return response
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def delete(self, pid, vendorSpecific=None):
     response = self.deleteResponse(pid, vendorSpecific=vendorSpecific)
     return self._read_dataone_type_response(response)
@@ -248,13 +230,13 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNStorage.systemMetadataChanged(session, pid, serialVersion, dateSysMetaLastModified) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.systemMetadataChanged
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def systemMetadataChangedResponse(self, pid, serialVersion,
                                     dateSysMetaLastModified,
                                     vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('systemMetadataChanged')
+    url = self._rest_url('dirtySystemMetadata')
     mime_multipart_fields = [
       ('pid', pid.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
@@ -264,7 +246,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     return self.POST(url, fields=mime_multipart_fields, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def systemMetadataChanged(self, pid, serialVersion, dateSysMetaLastModified,
                             vendorSpecific=None):
     response = self.systemMetadataChangedResponse(pid, serialVersion,
@@ -280,7 +262,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.replicate
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def replicateResponse(self, sysmeta, sourceNode, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
@@ -295,7 +277,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
                      fields=mime_multipart_fields, headers=vendorSpecific)
 
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def replicate(self, sysmeta, sourceNode, vendorSpecific=None):
     response = self.replicateResponse(sysmeta, sourceNode, vendorSpecific)
     return self._read_boolean_response(response)
@@ -303,10 +285,10 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNReplication.getReplica(session) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.getReplica
 
-  @d1_common.util.str_to_unicode
+  @d1_common.util.utf8_to_unicode
   def getReplica(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('getReplica', pid=pid)
+    url = self._rest_url('replica/%(pid)s', pid=pid)
     return self.GET(url, headers=vendorSpecific)
 

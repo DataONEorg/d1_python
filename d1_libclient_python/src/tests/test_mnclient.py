@@ -41,13 +41,13 @@ import pyxb
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import generator.accesspolicy
-import generator.identifier
-import generator.person
-import generator.random_data
-import generator.replicationpolicy
-import generator.subject
-import generator.systemmetadata
+import d1_instance_generator.accesspolicy
+import d1_instance_generator.identifier
+import d1_instance_generator.person
+import d1_instance_generator.random_data
+import d1_instance_generator.replicationpolicy
+import d1_instance_generator.subject
+import d1_instance_generator.systemmetadata
 
 # App.
 from d1_client import mnclient

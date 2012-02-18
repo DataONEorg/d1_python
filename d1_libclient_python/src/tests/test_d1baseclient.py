@@ -52,7 +52,7 @@ import testing_context
 
 class TestDataONEBaseClient(TestCaseWithURLCompare):
   def setUp(self):
-    self.baseurl_cn = 'https://cn-dev.dataone.org/cn/'
+    self.baseurl_cn = 'https://cn-dev-2.dataone.org/cn/'
     self.baseurl_mn = 'https://gmn-dev.dataone.org/mn/'
 
   def test_010(self):
