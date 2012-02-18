@@ -249,7 +249,7 @@ class multipart(object):
       L.append('Content-Disposition: form-data; name="%s"' % key)
       L.append('')
       L.append(val)
-    return self.CRLF.join(L)
+    return self.CRLF.join(L) + self.CRLF
 
   def _file_head(self):
     '''Generate the MIME Multipart header for a file.
