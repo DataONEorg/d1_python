@@ -30,6 +30,7 @@ Module d1_common.restclient
 '''
 
 # Stdlib.
+import copy
 import logging
 import httplib
 import urlparse
@@ -132,8 +133,20 @@ class RESTClient(object):
 #    return self.connection.getresponse()
 
 
+  def _dump_request_to_file(self, dump_path, method, url, body, headers):
+    with open(dump_path, 'w') as f:
+      f.write('{0} {1}\n'.format(method, url))
+      for header in headers.items():
+        f.write('{0}: {1}\n'.format(header[0], header[1]))
+      try:
+        body_string = copy.deepcopy(body).read()
+      except:
+        body_string = body
+      f.write('\n{0}\n'.format(body_string))
+
+
   def _send_request(self, method, selector, query=None, headers=None,
-                    body=None):
+                    body=None, dump_path=None):
     '''Send request and retrieve response.
 
     :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
@@ -151,13 +164,16 @@ class RESTClient(object):
     url = self._join_url_with_query_params(selector, query)
     self.logger.debug('operation: {0} {1}'.format(method, url))
     self.logger.debug('headers: {0}'.format(str(headers)))
+    if dump_path is not None:
+      self._dump_request_to_file(dump_path, method, url, body, headers)
     self.connection.request(method, url, body, headers)
     return self.connection.getresponse()
     #return self._get_response()
 
 
   def _send_mime_multipart_request(self, method, selector, query=None,
-                                   headers=None, fields=None, files=None):
+                                   headers=None, fields=None, files=None,
+                                   dump_path=None):
     '''Generate MIME multipart document, send it and retrieve response.
 
     :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
@@ -182,104 +198,68 @@ class RESTClient(object):
     mmp_body = d1_common.mime_multipart.multipart(fields, files)
     headers['Content-Type'] = mmp_body.get_content_type_header()
     headers['Content-Length'] = mmp_body.get_content_length()
+
+    f = open('test.out', 'w')
+    f.write(mmp_body.read())
+
     return self._send_request(method, selector, query=query, headers=headers,
-                              body=mmp_body)
+                              body=mmp_body, dump_path=dump_path)
 
 
-  def GET(self, url, query=None, headers=None):
-    '''Perform a HTTP GET and return the response. All values are to be UTF-8
-    encoded - no Unicode encoding is done by this method.
+  def GET(self, url, query=None, headers=None, dump_path=None):
+    '''GET, HEAD, DELETE:
+    
+    Perform an HTTP request and return the response. Any Unicode values must be
+    UTF-8 encoded.
 
     :param url: The Selector URL to the target
     :type url: string
+
     :param query: Parameters that will be encoded in the query portion of
     the final URL.
     :type query: dictionary of key-value pairs, or list of (key, value)
+
     :param headers: Additional headers in addition to default to send
     :type headers: Dictionary
-    :returns: The result of the HTTP request
+
+    :returns: The server's response to the HTTP request
     :return type: httplib.HTTPResponse 
     '''
-    return self._send_request('GET', url, query, headers)
+    return self._send_request('GET', url, query, headers, dump_path)
 
 
-  def HEAD(self, url, query=None, headers=None):
-    '''Perform a HTTP HEAD and return the response. All values are to be UTF-8
-    encoded - no Unicode encoding is done by this method. Note that HEAD 
-    requests return no body.
+  def HEAD(self, url, query=None, headers=None, dump_path=None):
+    return self._send_request('HEAD', url, query, headers, dump_path)
+
+
+  def DELETE(self, url, query=None, headers=None, dump_path=None):
+    return self._send_request('DELETE', url, query, headers, dump_path)
+
+
+  def POST(self, url, query=None, headers=None, fields=None, files=None,
+           dump_path=None):
+    '''POST and PUT accepts the same parameters as GET, HEAD and DELETE.
+    In addition, they accept paramters that are encoded into a MIME
+    multipart-mixed document and submitted in the request.
     
-    :param url: The Selector URL to the target
-    :type url: string
-    :param query: Parameters that will be encoded in the query portion of
-    the final URL.
-    :type query: dictionary of key-value pairs, or list of (key, value)
-    :param headers: Additional headers in addition to default to send
-    :type headers: Dictionary
-    :returns: The result of the HTTP request
-    :return type: httplib.HTTPResponse 
-    '''
-    return self._send_request('HEAD', url, query, headers)
-
-
-  def DELETE(self, url, query=None, headers=None):
-    '''Perform a HTTP DELETE and return the response. All values are to be UTF-8
-    encoded - no Unicode encoding is done by this method.
+    :param fields: List of fields that will be included in the MIME document.
+    Each field in the list is a name / value pair. 
     
-    :param url: The Selector URL to the target
-    :type url: string
-    :param query: Parameters that will be encoded in the query portion of
-    the final URL.
-    :type query: dictionary of key-value pairs, or list of (key, value)
-    :param headers: Additional headers in addition to default to send
-    :type headers: Dictionary
-    :return: The result of the HTTP request
-    :type return: httplib.HTTPResponse 
-    '''
-    return self._send_request('DELETE', url, query, headers)
-
-
-  def POST(self, url, query=None, headers=None, fields=None, files=None):
-    '''Perform a HTTP POST and return the response. All values are to be UTF-8
-    encoded - no Unicode encoding is done by this method. The body of the POST 
-    message is encoded using MIME multipart-mixed.
-    
-    :param url: The Selector URL to the target
-    :type url: string
-    :param query: Parameters that will be send in the message body.
-    :type query: dictionary of key-value pairs, or list of (key, value)
-    :param files: List of files that will be sent with the POST request. The
-      "name" is the name of the parameter in the MM body, "filename" is the 
-      value of the "filename" parameter in the MM body, and "value" is a 
-      file-like object open for reading that will be transmitted. 
+    :param files: List of files that will be included in the MIME document. The
+    "name" is the name of the parameter in the MMP, "filename" is the value of
+    the "filename" parameter in the MMP, and "value" is a file-like object open 
+    for reading that will be transmitted. 
     :type files: list of (name, filename, value)
-    :param headers: Additional headers in addition to default to send
-    :type headers: Dictionary
-    :returns: The result of the HTTP request
-    :return type: httplib.HTTPResponse 
+    
+    :dump_path: For debugging, the generated HTTP request can be written to
+    a file.
+    :type path: String containing the path to the file to write.
     '''
     return self._send_mime_multipart_request('POST', url, query, headers,
-                                             fields, files)
+                                             fields, files, dump_path)
 
 
-  def PUT(self, url, query=None, headers=None, fields=None, files=None):
-    '''Perform a HTTP PUT and return the response. All values are to be UTF-8
-    encoded - no Unicode encoding is done by this method. The body of the POST 
-    message is encoded using MIME multipart-mixed.
-    
-    :param url: The Selector URL to the target
-    :type url: string
-    :param query: Parameters that will be send in the message body.
-    :type query: dictionary of key-value pairs, or list of (key, value)
-    :param files: List of files that will be sent with the POST request. The
-      "name" is the name of the parameter in the MM body, "filename" is the 
-      value of the "filename" parameter in the MM body, and "value" is a 
-      file-like object open for reading that will be transmitted. 
-    :type files: list of (name, filename, value)
-    :param headers: Additional headers in addition to default to send
-    :type headers: Dictionary
-    :returns: The result of the HTTP request
-    :return type: httplib.HTTPResponse 
-    '''
+  def PUT(self, url, query=None, headers=None, fields=None, files=None,
+          dump_path=None):
     return self._send_mime_multipart_request('PUT', url, query, headers,
-                                             fields, files)
-
+                                             fields, files, dump_path)
