@@ -36,7 +36,11 @@ import xml.dom.minidom
 
 # Checksums.
 
-dataone_to_python_checksum_algorithm_map = {'MD5': 'md5', 'SHA-1': 'sha1', }
+dataone_to_python_checksum_algorithm_map = {
+  'MD5': 'md5',
+  'SHA-1': 'sha1',
+  'SHA1': 'sha1',
+}
 
 
 def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
