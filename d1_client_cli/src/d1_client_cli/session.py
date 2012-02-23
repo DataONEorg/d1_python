@@ -175,8 +175,8 @@ class session(object):
   def access_control_allow_public(self, allow):
     self.access_control.allow_public(allow)
 
-  def access_control_remove_all_allowed_subjects(self, line):
-    self.access_control.remove_all_allowed_subjects(line)
+  def access_control_remove_all_allowed_subjects(self):
+    self.access_control.remove_all_allowed_subjects()
 
   def access_control_get_pyxb(self):
     return self.access_control.to_pyxb()

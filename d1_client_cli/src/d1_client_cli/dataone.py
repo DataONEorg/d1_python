@@ -407,6 +407,8 @@ class DataONECLI():
       'start': self.session.get('slice', 'start'),
       'count': self.session.get('slice', 'count')
     }
+    print_info('**aBp_ DEBUG**')
+    print_info(kwargs)
     if self.session.get('search', 'fields') is not None:
       kwargs['fields'] = self.session.get('search', 'fields')
     res = client.search(self.session.get('search', 'query'), **kwargs)
@@ -477,8 +479,8 @@ class DataONECLI():
   def access_control_allow_public(self, allow):
     self.session.access_control_allow_public(allow)
 
-  def access_control_remove_all_allowed_subjects(self, line):
-    self.session.access_control_remove_all_allowed_subjects(line)
+  def access_control_remove_all_allowed_subjects(self):
+    self.session.access_control_remove_all_allowed_subjects()
 
   # ----------------------------------------------------------------------------
   # Replication policy

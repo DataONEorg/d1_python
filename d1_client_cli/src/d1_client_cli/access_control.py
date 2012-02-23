@@ -131,6 +131,6 @@ class access_control():
   def allow_public(self, allow):
     self.public = allow
 
-  def remove_all_allowed_subjects(self, line):
+  def remove_all_allowed_subjects(self):
     self.clear()
     self.allow_public(False)
