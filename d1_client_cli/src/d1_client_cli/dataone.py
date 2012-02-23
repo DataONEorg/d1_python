@@ -95,6 +95,12 @@ def log_setup():
   console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
+
+def expand_path(filename):
+  if filename:
+    return os.path.expanduser(filename)
+  return None
+
 #===============================================================================
 
 
@@ -173,14 +179,14 @@ class DataONECLI():
     self.session.load(suppress_error=True)
 
   def _get_file_size(self, path):
-    with open(path, 'r') as f:
+    with open(expand_path(path), 'r') as f:
       f.seek(0, os.SEEK_END)
       size = f.tell()
     return size
 
   def _get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
     h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
-    with open(path, 'r') as f:
+    with open(expand_path(path), 'r') as f:
       while True:
         data = f.read(block_size)
         if not data:
@@ -189,7 +195,7 @@ class DataONECLI():
     return h.hexdigest()
 
   def _assert_file_exists(self, path):
-    if not os.path.isfile(path):
+    if not os.path.isfile(expand_path(path)):
       msg = 'Invalid file: {0}'.format(path)
       raise cli_exceptions.InvalidArguments(msg)
 
@@ -205,17 +211,21 @@ class DataONECLI():
       )
 
   def _create_system_metadata(self, pid, path):
-    checksum = self._get_file_checksum(path, self.session.get('sysmeta', 'algorithm'))
-    size = self._get_file_size(path)
+    checksum = self._get_file_checksum(
+      expand_path(path), self.session.get(
+        'sysmeta', 'algorithm'
+      )
+    )
+    size = self._get_file_size(expand_path(path))
     sysmeta = self.session.create_system_metadata(pid, checksum, size)
     return sysmeta
 
   def _create_system_metadata_xml(self, pid, path):
-    sysmeta = self._create_system_metadata(pid, path)
+    sysmeta = self._create_system_metadata(pid, expand_path(path))
     return sysmeta.toxml()
 
   def _post_file_and_system_metadat_to_member_node(self, client, pid, path, sysmeta):
-    with open(path, 'r') as f:
+    with open(expand_path(path), 'r') as f:
       try:
         response = client.createResponse(pid, f, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
@@ -224,6 +234,7 @@ class DataONECLI():
   def science_object_create(self, pid, path):
     '''Create a new Science Object on a Member Node
     '''
+    path = expand_path(path)
     self._assert_file_exists(path)
     sysmeta = self._create_system_metadata(pid, path)
     client = CLIMNClient(self.session)
@@ -231,7 +242,7 @@ class DataONECLI():
 
   def _copy_file_like_object_to_file(self, file_like_object, path):
     try:
-      file = open(path, 'wb')
+      file = open(expand_path(path), 'wb')
       shutil.copyfileobj(file_like_object, file)
       file.close()
     except EnvironmentError as (errno, strerror):
@@ -247,7 +258,7 @@ class DataONECLI():
       for line in file_like_object:
         print_info(line.rstrip())
     else:
-      self._copy_file_like_object_to_file(file_like_object, path)
+      self._copy_file_like_object_to_file(file_like_object, expand_path(path))
 
   def _get_science_object_from_member_node(self, client, pid):
     try:
@@ -260,7 +271,7 @@ class DataONECLI():
   def science_object_get(self, pid, path):
     client = CLIMNClient(self.session)
     response = self._get_science_object_from_member_node(client, pid)
-    self.output(response, path)
+    self.output(response, expand_path(path))
 
   def _get_system_metadata(self, client, pid):
     try:
@@ -280,7 +291,7 @@ class DataONECLI():
     client = CLICNClient(self.session)
     metadata = self._get_system_metadata(client, pid)
     sci_meta_xml = metadata.toxml()
-    self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), path)
+    self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
 
   def related(self, pid):
     raise cli_exceptions.CLIError('not implemented')
@@ -308,7 +319,7 @@ class DataONECLI():
       count=self.session.get('slice', 'count')
     )
     object_list_xml = object_list.toxml()
-    self.output(StringIO.StringIO(self._pretty(object_list_xml)), path)
+    self.output(StringIO.StringIO(self._pretty(object_list_xml)), expand_path(path))
 
   def log(self, path):
     '''MN log.
@@ -321,7 +332,7 @@ class DataONECLI():
       count=self.session.get('slice', 'count')
     )
     object_log_xml = object_log.toxml()
-    self.output(StringIO.StringIO(self._pretty(object_log_xml)), path)
+    self.output(StringIO.StringIO(self._pretty(object_log_xml)), expand_path(path))
 
   def set_access_policy(self, pid):
     access_policy = self.session.access_control_get_pyxb()
@@ -439,10 +450,10 @@ class DataONECLI():
     return self.session.reset()
 
   def session_load(self, suppress_error=False, pickle_file_path=None):
-    return self.session.load(suppress_error, pickle_file_path)
+    return self.session.load(suppress_error, expand_path(pickle_file_path))
 
   def session_save(self, pickle_file_path=None):
-    return self.session.save(pickle_file_path)
+    return self.session.save(expand_path(pickle_file_path))
 
   def session_print_parameter(self, name):
     return self.session.print_parameter(name)
@@ -544,7 +555,7 @@ class CLI(cmd.Cmd):
     '''
     try:
       file = self._split_args(line, 0, 1)
-      self.d1.session_load(pickle_file_path=file)
+      self.d1.session_load(pickle_file_path=expand_path(file))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
 
@@ -554,7 +565,7 @@ class CLI(cmd.Cmd):
     '''
     try:
       file = self._split_args(line, 0, 1)
-      self.d1.session_save(pickle_file_path=file)
+      self.d1.session_save(pickle_file_path=expand_path(file))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
 
