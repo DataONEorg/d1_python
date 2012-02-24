@@ -410,8 +410,6 @@ class DataONECLI():
       'start': self.session.get('slice', 'start'),
       'count': self.session.get('slice', 'count')
     }
-    print_info('**aBp_ DEBUG**')
-    print_info(kwargs)
     if self.session.get('search', 'fields') is not None:
       kwargs['fields'] = self.session.get('search', 'fields')
     res = client.search(self.session.get('search', 'query'), **kwargs)
