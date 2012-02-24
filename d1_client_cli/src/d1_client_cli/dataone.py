@@ -571,8 +571,8 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
 
-  def do_get(self, line):
-    '''get [session parameter]
+  def do_show(self, line):
+    '''show [session parameter]
     Display the value of a session parameter. Display all parameters if [session parameter] is omitted.
     '''
     try:
@@ -586,13 +586,15 @@ class CLI(cmd.Cmd):
     Set the value of a session parameter
     '''
     if len(shlex.split(line)) == 0:
-      self.do_get(line)
+      self.do_show(line)
     else:
       try:
         session_parameter, value = self._split_args(line, 2, 0)
         self.d1.session_set_parameter(session_parameter, value)
       except cli_exceptions.InvalidArguments as e:
         print_error(e)
+
+  # TODO: add complete_show and complete_set method to display possibilities. - aBp_
 
   def do_clear(self, line):
     '''clear <session parameter>
