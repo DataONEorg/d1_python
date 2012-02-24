@@ -228,6 +228,9 @@ class DataONECLI():
     with open(expand_path(path), 'r') as f:
       try:
         response = client.createResponse(pid, f, sysmeta)
+        if response.status != 200:
+          err = (response.status, response.reason)
+          print_error("Couldn't create object.  Reason: (%d) %s" % err)
       except d1_common.types.exceptions.DataONEException as e:
         print_error('Unable to create Science Object on Member Node\n{0}'.format(e))
 
