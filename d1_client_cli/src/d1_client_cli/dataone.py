@@ -585,11 +585,14 @@ class CLI(cmd.Cmd):
     '''set <session parameter> <value>
     Set the value of a session parameter
     '''
-    try:
-      session_parameter, value = self._split_args(line, 2, 0)
-      self.d1.session_set_parameter(session_parameter, value)
-    except cli_exceptions.InvalidArguments as e:
-      print_error(e)
+    if len(shlex.split(line)) == 0:
+      self.do_get(line)
+    else:
+      try:
+        session_parameter, value = self._split_args(line, 2, 0)
+        self.d1.session_set_parameter(session_parameter, value)
+      except cli_exceptions.InvalidArguments as e:
+        print_error(e)
 
   def do_clear(self, line):
     '''clear <session parameter>
