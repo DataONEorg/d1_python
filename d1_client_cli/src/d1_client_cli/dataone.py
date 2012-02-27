@@ -224,6 +224,8 @@ class DataONECLI():
     sysmeta = self._create_system_metadata(pid, expand_path(path))
     return sysmeta.toxml()
 
+  ##-- Create --------------------------------------------------------------
+
   def _post_file_and_system_metadat_to_member_node(self, client, pid, path, sysmeta):
     with open(expand_path(path), 'r') as f:
       try:
@@ -242,6 +244,48 @@ class DataONECLI():
     sysmeta = self._create_system_metadata(pid, path)
     client = CLIMNClient(self.session)
     self._post_file_and_system_metadat_to_member_node(client, pid, path, sysmeta)
+
+  ##-- Update --------------------------------------------------------------
+
+  def _put_file_and_system_metadat_to_member_node(
+    self, client, curr_pid, path, new_pid, sysmeta
+  ):
+    with open(expand_path(path), 'r') as f:
+      try:
+        response = client.updateResponse(curr_pid, f, new_pid, sysmeta)
+        if response.status != 200:
+          err = (response.status, response.reason)
+          print_error("Couldn't update object.  Reason: (%d) %s" % err)
+      except d1_common.types.exceptions.DataONEException as e:
+        print_error('Unable to update Science Object on Member Node\n{0}'.format(e))
+
+  def science_object_update(self, curr_pid, path, new_pid):
+    '''Obsolete a Science Object on a Member Node with a different one.
+    '''
+    path = expand_path(path)
+    self._assert_file_exists(path)
+    sysmeta = self._create_system_metadata(new_pid, path)
+    client = CLIMNClient(self.session)
+    self._put_file_and_system_metadat_to_member_node(
+      client, curr_pid, path, new_pid, sysmeta
+    )
+
+  ##-- Delete --------------------------------------------------------------
+
+  def science_object_delete(self, pid):
+    '''Obsolete a Science Object on a Member Node with a different one.
+    '''
+    client = CLIMNClient(self.session)
+    self._delete_from_member_node(client, pid)
+
+  def _delete_from_member_node(self, client, pid):
+    try:
+      response = client.deleteResponse(pid)
+      if response.status != 200:
+        err = (response.status, response.reason)
+        print_error("Couldn't delete object.  Reason: (%d) %s" % err)
+    except d1_common.types.exceptions.DataONEException as e:
+      print_error('Unable to delete Science Object from Member Node\n{0}'.format(e))
 
   def _copy_file_like_object_to_file(self, file_like_object, path):
     try:
@@ -796,6 +840,26 @@ class CLI(cmd.Cmd):
     try:
       pid, file = self._split_args(line, 2, 0)
       self.d1.science_object_create(pid, file)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      print_error(e)
+
+  def do_update(self, line):
+    '''update <current-pid> <new-pid> <file>
+    Update an existing Science Object on a Member Node
+    '''
+    try:
+      curr_pid, new_pid, file = self._split_args(line, 3, 0)
+      self.d1.science_object_update(curr_pid, file, new_pid)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      print_error(e)
+
+  def do_delete(self, line):
+    '''delete <pid>
+    Mark an existing Science Object as archived.
+    '''
+    try:
+      pid = self._split_args(line, 1, 0)
+      self.d1.science_object_delete(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
 
