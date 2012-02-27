@@ -201,7 +201,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       ('object', 'content.bin', obj),
       ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
     ]
-    return self.POST(url, files=mime_multipart_files, headers=vendorSpecific)
+    return self.PUT(url, files=mime_multipart_files, headers=vendorSpecific)
 
 
   @d1_common.util.utf8_to_unicode
