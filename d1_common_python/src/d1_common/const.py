@@ -53,7 +53,8 @@ USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
 DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
 
 # Mimetypes.
-MIMETYPE_XML = 'text/xml'
+MIMETYPE_XML = 'application/xml'
+MIMETYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
 MIMETYPE_HTML = 'text/html'
 MIMETYPE_TEXT = 'text/plain'
 MIMETYPE_OCTETSTREAM = 'application/octet-stream'
