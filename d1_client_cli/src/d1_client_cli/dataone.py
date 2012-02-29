@@ -285,48 +285,48 @@ option_list = [
 
 
 def handle_options(cli, options):
-  if options.algorithm:
+  if options.algorithm is not None:
     cli.d1.session_set_parameter("algorithm", options.algorithm)
-  if options.anonymous:
+  if options.anonymous is not None:
     cli.d1.session_set_parameter("anonymous", options.anonymous)
-  if options.authoritative_mn:
+  if options.authoritative_mn is not None:
     cli.d1.session_set_parameter("authoritative-mn", options.authoritative_mn)
-  if options.cert_file:
+  if options.cert_file is not None:
     cli.d1.session_set_parameter("cert-file", options.cert_file)
-  if options.count:
+  if options.count is not None:
     cli.d1.session_set_parameter("count", options.count)
-  if options.dataone_url:
+  if options.dataone_url is not None:
     cli.d1.session_set_parameter("dataone-url", options.dataone_url)
-  if options.fields:
+  if options.fields is not None:
     cli.d1.session_set_parameter("fields", options.fields)
-  if options.from_date:
+  if options.from_date is not None:
     cli.d1.session_set_parameter("from-date", options.from_date)
 # interactive is not in the session.
-#  if options.interactive:
+#  if options.interactive is not None:
 #    cli.d1.session_set_parameter("interactive", options.interactive)
-  if options.key_file:
+  if options.key_file is not None:
     cli.d1.session_set_parameter("key-file", options.key_file)
-  if options.mn_url:
+  if options.mn_url is not None:
     cli.d1.session_set_parameter("mn-url", options.mn_url)
-  if options.object_format:
+  if options.object_format is not None:
     cli.d1.session_set_parameter("object-format", options.object_format)
-  if options.origin_mn:
+  if options.origin_mn is not None:
     cli.d1.session_set_parameter("origin-mn", options.origin_mn)
-  if options.pretty:
+  if options.pretty is not None:
     cli.d1.session_set_parameter("pretty", options.pretty)
-  if options.query_string:
+  if options.query_string is not None:
     cli.d1.session_set_parameter("query-string", options.query_string)
-  if options.rights_holder:
+  if options.rights_holder is not None:
     cli.d1.session_set_parameter("rights-holder", options.rights_holder)
-  if options.search_format:
+  if options.search_format is not None:
     cli.d1.session_set_parameter("search-object-format", options.search_object_format)
-  if options.start:
+  if options.start is not None:
     cli.d1.session_set_parameter("start", options.start)
-  if options.submitter:
+  if options.submitter is not None:
     cli.d1.session_set_parameter("submitter", options.submitter)
-  if options.to_date:
+  if options.to_date is not None:
     cli.d1.session_set_parameter("to-date", options.to_date)
-  if options.verbose:
+  if options.verbose is not None:
     cli.d1.session_set_parameter("verbose", options.verbose)
 
 #===============================================================================
