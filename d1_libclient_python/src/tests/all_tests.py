@@ -35,6 +35,7 @@ import logging
 import unittest
 from d1_common import xmlrunner
 from test_d1baseclient import TestDataONEBaseClient
+from test_cnclient import TestCNClient
 
 #===============================================================================
 
