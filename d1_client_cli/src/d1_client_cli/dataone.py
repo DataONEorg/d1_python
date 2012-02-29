@@ -38,6 +38,7 @@ import httplib
 import json
 import logging
 import optparse
+from optparse import make_option
 import os
 import pprint
 import random
@@ -47,6 +48,7 @@ import shlex
 import shutil
 import stat
 import StringIO
+from string import join
 import sys
 import time
 import unittest
@@ -102,6 +104,232 @@ def expand_path(filename):
   return None
 
 #===============================================================================
+#   Command-line options.
+#
+option_list = [
+  make_option(
+    "--algorithm",
+    action="store",
+    dest="algorithm",
+    help="Checksum algorithm used for a Science Data Object."
+  ),
+  make_option(
+    "--anonymous",
+    action="store_true",
+    dest="anonymous",
+    help="Ignore any installed certificates and connect anonymously"
+  ),
+  make_option(
+    "--no-anonymous",
+    action="store_false",
+    dest="anonymous",
+    help="Ignore any installed certificates and connect anonymously"
+  ),
+  make_option(
+    "--authoritative-mn",
+    action="store",
+    dest="authoritative_mn",
+    metavar="MN-URI",
+    help="Authoritative Member Node for generating System Metadata."
+  ),
+  make_option(
+    "--cert-file",
+    action="store",
+    dest="cert_file",
+    metavar="FILE",
+    help="Path to client certificate"
+  ),
+  make_option(
+    "--count",
+    action="store",
+    dest="count",
+    type="int",
+    help="Maximum number of items to display"
+  ),
+  make_option(
+    "--dataone-url",
+    action="store",
+    dest="dataone_url",
+    metavar="CN-URI",
+    help="Node to use for the root Coordinating Node"
+  ),
+  make_option(
+    "--fields",
+    action="store",
+    dest="fields",
+    help="Comma delimited list of index fields to return in search responses"
+  ),
+  make_option(
+    "--from-date",
+    action="store",
+    dest="from_date",
+    metavar="DATE",
+    help="Start time used by operations that accept a date range"
+  ),
+  make_option(
+    "-i",
+    "--interactive",
+    action="store_true",
+    dest="interactive",
+    help="Allow interactive commands"
+  ),
+  make_option(
+    "--no-interactive",
+    action="store_false",
+    dest="interactive",
+    help="Don't allow interactive commands"
+  ),
+  make_option(
+    "--key-file",
+    action="store",
+    dest="key_file",
+    metavar="FILE",
+    help="File of client private key (not required if key is in cert-file"
+  ),
+  make_option(
+    "--mn-url",
+    action="store",
+    dest="mn_url",
+    metavar="MN-URI",
+    help="Member Node URL"
+  ),
+  make_option(
+    "--object-format",
+    action="store",
+    dest="object_format",
+    metavar="OBJECT-FORMAT",
+    help="ID for the Object Format to use when generating System Metadata"
+  ),
+  make_option(
+    "--origin-mn",
+    action="store",
+    dest="origin_mn",
+    metavar="MN-URI",
+    help="Originating Member Node to use when generating System Metadata"
+  ),
+  make_option(
+    "--pretty",
+    action="store_true",
+    dest="pretty",
+    help="Display XML with human friendly formatting"
+  ),
+  make_option(
+    "--no-pretty",
+    action="store_false",
+    dest="pretty",
+    help="Display XML with human friendly formatting"
+  ),
+  make_option(
+    "--query",
+    action="store",
+    dest="query_string",
+    metavar="QUERY",
+    help="Query string (SOLR or Lucene query syntax) for searches"
+  ),
+  make_option(
+    "-q",
+    "--quiet",
+    action="store_false",
+    dest="verbose",
+    help="Display less information"
+  ),
+  make_option(
+    "--rights-holder",
+    action="store",
+    dest="rights_holder",
+    metavar="SUBJECT",
+    help="Subject of the rights holder to use when generating System Metadata"
+  ),
+  make_option(
+    "--search-object-format",
+    action="store",
+    dest="search_format",
+    metavar="OBJECT-FORMAT",
+    help="Include only objects of this format when searching"
+  ),
+  make_option(
+    "--start",
+    action="store",
+    dest="start",
+    type="int",
+    help="First item to display for operations that display a list of items"
+  ),
+  make_option(
+    "--submitter",
+    action="store",
+    dest="submitter",
+    metavar="SUBJECT",
+    help="Subject of the submitter to use when generating System Metadata"
+  ),
+  make_option(
+    "--to-date",
+    action="store",
+    dest="to_date",
+    metavar="DATE",
+    help="End time used by operations that accept a date range"
+  ),
+  make_option(
+    "-v",
+    "--verbose",
+    action="store_true",
+    dest="verbose",
+    help="Display more information"
+  ),
+  make_option(
+    "--no-verbose",
+    action="store_false",
+    dest="verbose",
+    help="Display less information"
+  ),
+]
+
+
+def handle_options(cli, options):
+  if options.algorithm:
+    cli.d1.session_set_parameter("algorithm", options.algorithm)
+  if options.anonymous:
+    cli.d1.session_set_parameter("anonymous", options.anonymous)
+  if options.auth_mn:
+    cli.d1.session_set_parameter("authoritative-mn", options.authoritative_mn)
+  if options.cert_file:
+    cli.d1.session_set_parameter("cert-file", options.cert_file)
+  if options.count:
+    cli.d1.session_set_parameter("count", options.count)
+  if options.dataone_url:
+    cli.d1.session_set_parameter("dataone-url", options.dataone_url)
+  if options.fields:
+    cli.d1.session_set_parameter("fields", options.fields)
+  if options.from_date:
+    cli.d1.session_set_parameter("from-date", options.from_date)
+# interactive is not in the session.
+#  if options.interactive:
+#    cli.d1.session_set_parameter("interactive", options.interactive)
+  if options.key_file:
+    cli.d1.session_set_parameter("key-file", options.key_file)
+  if options.mn_url:
+    cli.d1.session_set_parameter("mn-url", options.mn_url)
+  if options.object_format:
+    cli.d1.session_set_parameter("object-format", options.object_format)
+  if options.origin_mn:
+    cli.d1.session_set_parameter("origin-mn", options.origin_mn)
+  if options.pretty:
+    cli.d1.session_set_parameter("pretty", options.pretty)
+  if options.query_string:
+    cli.d1.session_set_parameter("query-string", options.query_string)
+  if options.rights_holder:
+    cli.d1.session_set_parameter("rights-holder", options.rights_holder)
+  if options.search_format:
+    cli.d1.session_set_parameter("search-object-format", options.search_object_format)
+  if options.start:
+    cli.d1.session_set_parameter("start", options.start)
+  if options.submitter:
+    cli.d1.session_set_parameter("submitter", options.submitter)
+  if options.to_date:
+    cli.d1.session_set_parameter("to-date", options.to_date)
+  if options.verbose:
+    cli.d1.session_set_parameter("verbose", options.verbose)
+
+#===============================================================================
 
 
 class CLIClient(object):
@@ -130,7 +358,7 @@ class CLIClient(object):
   def _get_certificate(self):
     if self.session.get('auth', 'anonymous'):
       return None
-    cert_path = self.session.get('auth', 'certpath')
+    cert_path = self.session.get('auth', 'cert-file')
     if not cert_path:
       cert_path = self._get_cilogon_certificate_path()
     self._assert_certificate_present(cert_path)
@@ -139,7 +367,7 @@ class CLIClient(object):
   def _get_certificate_private_key(self):
     if self.session.get('auth', 'anonymous'):
       return None
-    key_path = self.session.get('auth', 'keypath')
+    key_path = self.session.get('auth', 'key-file')
     if key_path is not None:
       self._assert_certificate_present(key_path)
     return key_path
@@ -149,7 +377,7 @@ class CLIClient(object):
 
 class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, session):
-    base_url = session.get('node', 'mnurl')
+    base_url = session.get('node', 'mn-url')
     self._assert_base_url_set(base_url)
     return super(CLIMNClient, self).__init__(session, base_url)
 
@@ -162,7 +390,7 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
 
 class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def __init__(self, session):
-    base_url = session.get('node', 'dataoneurl')
+    base_url = session.get('node', 'dataone-url')
     self._assert_base_url_set(base_url)
     return super(CLICNClient, self).__init__(session, base_url)
 
@@ -203,7 +431,7 @@ class DataONECLI():
     algorithm = self.session.get('sysmeta', 'algorithm')
     try:
       d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
-    except ValueError, LookupError:
+    except (ValueError, LookupError, KeyError) as e:
       self.session.set('sysmeta', 'algorithm', d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
       print_error(
         'Invalid checksum algorithm, "{0}", set to default, "{1}"'
@@ -359,9 +587,9 @@ class DataONECLI():
     '''
     client = CLIMNClient(self.session)
     object_list = client.listObjects(
-      startTime=self.session.get('search', 'fromdate'),
-      endTime=self.session.get('search', 'todate'),
-      objectFormat=self.session.get('search', 'searchobjectformat'),
+      startTime=self.session.get('search', 'from-date'),
+      endTime=self.session.get('search', 'to-date'),
+      objectFormat=self.session.get('search', 'search-object-format'),
       start=self.session.get('slice', 'start'),
       count=self.session.get('slice', 'count')
     )
@@ -373,8 +601,8 @@ class DataONECLI():
     '''
     client = CLIMNClient(self.session)
     object_log = client.getLogRecords(
-      fromDate=self.session.get('search', 'fromdate'),
-      toDate=self.session.get('search', 'todate'),
+      fromDate=self.session.get('search', 'from-date'),
+      toDate=self.session.get('search', 'to-date'),
       start=self.session.get('slice', 'start'),
       count=self.session.get('slice', 'count')
     )
@@ -867,6 +1095,8 @@ class CLI(cmd.Cmd):
       self.d1.list(path)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except (KeyboardInterrupt, IOError) as e:
+      return
 
   def do_log(self, line):
     '''log
@@ -924,6 +1154,9 @@ class CLI(cmd.Cmd):
       print_error(e)
 
   def do_quit(self, line):
+    '''quit
+    Exit from the CLI
+    '''
     self.do_exit(line)
 
   def do_EOF(self, line):
@@ -994,8 +1227,11 @@ class CLI(cmd.Cmd):
 def main():
   log_setup()
 
-  parser = optparse.OptionParser('usage: %prog [command] ...')
-  options, arguments = parser.parse_args()
+  parser = optparse.OptionParser(
+    usage='usage: %prog [command] ...',
+    option_list=option_list
+  )
+  options, remainder = parser.parse_args()
 
   ## args[1] is not guaranteed to exist but the slice args[1:] would still be
   ## valid and evaluate to an empty list.
@@ -1026,10 +1262,13 @@ def main():
   #  return
 
   cli = CLI()
-  # Run any arguments passed on the command line.
-  cli.run_command_line_arguments(arguments)
-  # Start the command line interpreter loop.
-  cli.cmdloop()
+  handle_options(cli, options)
+
+  # Start the command line interpreter loop, or just do one command?
+  if options.interactive or len(remainder) == 0:
+    cli.cmdloop()
+  else:
+    cli.onecmd(join(remainder))
 
 
 if __name__ == '__main__':

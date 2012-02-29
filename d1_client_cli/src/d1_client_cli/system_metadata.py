@@ -76,16 +76,16 @@ class system_metadata():
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.serialVersion = 1
     sysmeta.identifier = pid
-    sysmeta.formatId = session.get('sysmeta', 'objectformat')
+    sysmeta.formatId = session.get('sysmeta', 'object-format')
     sysmeta.size = size
     sysmeta.submitter = session.get('sysmeta', 'submitter')
-    sysmeta.rightsHolder = session.get('sysmeta', 'rightsholder')
+    sysmeta.rightsHolder = session.get('sysmeta', 'rights-holder')
     sysmeta.checksum = dataoneTypes.checksum(checksum)
     sysmeta.checksum.algorithm = session.get('sysmeta', 'algorithm')
     sysmeta.dateUploaded = datetime.datetime.utcnow()
     sysmeta.dateSysMetadataModified = datetime.datetime.utcnow()
-    sysmeta.originmn = session.get('sysmeta', 'originmn')
-    sysmeta.authoritativemn = session.get('sysmeta', 'authoritativemn')
+    sysmeta.originmn = session.get('sysmeta', 'origin-mn')
+    sysmeta.authoritativemn = session.get('sysmeta', 'authoritative-mn')
     sysmeta.accessPolicy = access_policy
     sysmeta.replicationPolicy = replication_policy
     #pyxb.RequireValidWhenGenerating(False)

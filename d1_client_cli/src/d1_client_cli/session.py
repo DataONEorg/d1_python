@@ -62,8 +62,8 @@ class session(object):
         'verbose': (False, bool),
       },
       'node': {
-        'dataoneurl': (d1_common.const.URL_DATAONE_ROOT, str),
-        'mnurl': ('https://localhost/mn/', str),
+        'dataone-url': (d1_common.const.URL_DATAONE_ROOT, str),
+        'mn-url': ('https://localhost/mn/', str),
       },
       'slice': {
         'start': (0, int),
@@ -71,22 +71,22 @@ class session(object):
       },
       'auth': {
         'anonymous': (True, bool),
-        'certpath': (None, str),
-        'keypath': (None, str),
+        'cert-file': (None, str),
+        'key-file': (None, str),
       },
       'sysmeta': {
-        'objectformat': (None, str),
+        'object-format': (None, str),
         'submitter': (None, str),
-        'rightsholder': (None, str),
-        'originmn': (None, str),
-        'authoritativemn': (None, str),
+        'rights-holder': (None, str),
+        'origin-mn': (None, str),
+        'authoritative-mn': (None, str),
         'algorithm': (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str),
       },
       'search': {
-        'fromdate': (None, str),
-        'todate': (None, str),
-        'searchobjectformat': (None, str),
-        'querytype': ('solr', str),
+        'from-date': (None, str),
+        'to-date': (None, str),
+        'search-object-format': (None, str),
+        'query-type': ('solr', str),
         'query': ('*:*', str),
       },
     }
