@@ -80,8 +80,9 @@ class TestCNClient(TestCaseWithURLCompare):
     #self.baseurl = 'http://xformstest.org/cgi-bin/echoinstance.sh'
     #self.baseurl = 'http://tools.ietf.org'
 
-    cert_path = '/tmp/x509up_u1000' # REMEMBER TO CHANGE URL TO HTTPS
-    self.client = cnclient.CoordinatingNodeClient(self.baseurl, cert_path=cert_path)
+    # When setting the certificate, remember to use a https baseurl.
+    self.cert_path = '/tmp/x509up_u1000'
+    self.client = cnclient.CoordinatingNodeClient(self.baseurl, cert_path=self.cert_path)
 
   def tearDown(self):
     pass
@@ -90,64 +91,78 @@ class TestCNClient(TestCaseWithURLCompare):
   # Core API
   #=============================================================================
 
-  def WAITING_FOR_STABLE_CN_test_1010(self):
+  def test_1010(self):
     '''CNCore.listFormats() returns a valid ObjectFormatList with at least 3 entries'''
     formats = self.client.listFormats()
     self.assertTrue(len(formats.objectFormat) >= 3)
     format = formats.objectFormat[0]
     self.assertTrue(isinstance(format.formatId, dataoneTypes.ObjectFormatIdentifier))
 
-  def WAITING_FOR_STABLE_CN_test_1020(self):
-    '''CNCore.getFormat() returns a valid ObjectFormat for a known formatId'''
+  def test_1020(self):
+    '''CNCore.getFormat() returns a valid ObjectFormat for known formatIds'''
     formats = self.client.listFormats()
-    f = self.client.getFormat(formats.objectFormat[0].formatId)
-    self.assertTrue(isinstance(f.formatId, dataoneTypes.ObjectFormatIdentifier))
-    self.assertEqual(formats.objectFormat[0].formatId, f.formatId)
+    for format_ in formats.objectFormat:
+      f = self.client.getFormat(format_.formatId)
+      self.assertTrue(isinstance(f.formatId, dataoneTypes.ObjectFormatIdentifier))
+      self.assertEqual(format_.formatId, f.formatId)
 
-  def WAITING_FOR_STABLE_CN_test_1040_A(self):
+  def test_1040_A(self):
     '''CNCore.reserveIdentifier() returns a valid identifier on first call with new identifier'''
-    #testing_context.test_pid = d1_instance_generator.identifier.generate_bare()
-    #testing_context.test_pid = d1_instance_generator.identifier.generate()
-    #testing_context.test_pid = dataoneTypes.Identifier('testpid')
-    testing_context.test_pid = 'testpid'
-    identifier = self.client.reserveIdentifierResponse(testing_context.test_pid)
-    print identifier.read()
+    testing_context.test_pid = d1_instance_generator.identifier.generate_bare()
+    identifier = self.client.reserveIdentifier(testing_context.test_pid)
 
-  def WAITING_FOR_STABLE_CN_test_1040_B(self):
+  def TICKET_2360_test_1040_B(self):
     '''CNCore.reserveIdentifier() fails when called second time with same identifier'''
     self.assertRaises(Exception, self.client.reserveIdentifier, testing_context.test_pid)
 
-  def WAITING_FOR_STABLE_CN_test_1050_A(self):
+  def test_1050_A(self):
     '''CNCore.generateIdentifier() returns a valid identifier that matches scheme and fragment'''
     testing_context.test_fragment = 'test_reserve_identifier_' + \
       d1_instance_generator.random_data.random_3_words()
-    identifier = self.client.generateIdentifier('ARK', testing_context.test_fragment)
+    identifier = self.client.generateIdentifier('UUID', testing_context.test_fragment)
+    testing_context.generated_identifier = identifier.value()
 
-  def WAITING_FOR_STABLE_CN_test_1050_B(self):
+  def test_1050_B(self):
     '''CNCore.generateIdentifier() returns a different, valid identifier when called second time'''
-    # TODO. CNCore.generateIdentifier() currently broken.
+    testing_context.test_fragment = 'test_reserve_identifier_' + \
+      d1_instance_generator.random_data.random_3_words()
+    identifier = self.client.generateIdentifier('UUID', testing_context.test_fragment)
+    self.assertNotEqual(testing_context.generated_identifier, identifier.value())
 
-  def WAITING_FOR_STABLE_CN_test_1060(self):
+  def CURRENTLY_FAILING_SEE_TICKET_2361_test_1060(self):
     '''CNCore.listChecksumAlgorithms() returns a valid ChecksumAlgorithmList'''
     algorithms = self.client.listChecksumAlgorithms()
     self.assertTrue(isinstance(algorithms, dataoneTypes.ChecksumAlgorithmList))
 
-  def WAITING_FOR_STABLE_CN_test_1065(self):
+  def CURRENTLY_FAILING_SEE_TICKET_2363_test_1061(self):
+    '''CNCore.setObsoletedBy()'''
+    pid = testing_utilities.get_random_pid(self.client)
+    obsoleted_pid = testing_utilities.get_random_pid(self.client)
+    serial_version = testing_utilities.serial_version(self.client, pid)
+    self.client.setObsoletedBy(pid, obsoleted_pid, 1)
+
+  def CURRENTLY_FAILING_SEE_TICKET_2090_test_1065(self):
     '''CNCore.listNodes() returns a valid NodeList that contains at least 3 entries'''
     nodes = self.client.listNodes()
     self.assertTrue(isinstance(nodes, dataoneTypes.NodeList))
     self.assertTrue(len(nodes.node) >= 1)
     entry = nodes.node[0]
 
-  def WAITING_FOR_STABLE_CN_test_1070_A(self):
+  def ___test_1070_A(self): # TICKET_2364
     '''CNCore.hasReservation() returns True for PID that has been reserved'''
-    self.test_fragment = 'test_reserve_identifier_' + d1_instance_generator.random_data.random_3_words(
-    )
-    has_reservation = self.client.hasReservation(self.test_fragment)
+    test_pid = d1_instance_generator.identifier.generate_bare()
+    test_subject = testing_utilities.get_x509_subject(self.cert_path)
+    self.client.reserveIdentifier(test_pid)
+    has_reservation = self.client.hasReservation(test_pid, test_subject)
+    self.assertTrue(has_reservation)
 
-  def WAITING_FOR_STABLE_CN_test_1070_B(self):
+  def CURRENTLY_FAILING_SEE_TICKET_2364_test_1070_B(self):
     '''CNCore.hasReservation() returns False for PID that has not been reserved'''
-    has_reservation = self.client.hasReservation(self.test_fragment)
+    test_pid = d1_instance_generator.identifier.generate_bare()
+    test_subject = testing_utilities.get_x509_subject(self.cert_path)
+    self.client.reserveIdentifier(test_pid)
+    has_reservation = self.client.hasReservation(test_pid, test_subject)
+    self.assertTrue(has_reservation)
 
   #=============================================================================
   # Read API

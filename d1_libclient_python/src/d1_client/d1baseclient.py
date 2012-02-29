@@ -227,7 +227,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   def _mimetype_is_xml(self, response):
     return d1_common.util.get_content_type(
-      response.getheader('Content-Type')) == d1_common.const.MIMETYPE_XML
+      response.getheader('Content-Type')) \
+        in d1_common.const.MIMETYPE_XML_MEDIA_TYPES
 
 
   def _status_is_200_ok(self, response):

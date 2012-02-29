@@ -44,11 +44,6 @@ import d1_common.util
 # App.
 import d1baseclient
 
-# SOLRclient is used to support search against the SOLR instance running on the
-# coordinating node. 
-import solrclient
-
-
 class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   '''Connect to a Coordinating Node and perform REST calls against the CN API
   '''
@@ -101,6 +96,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # Core API
   #=============================================================================
 
+  # CNCore.ping() → null
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
+  # Implemented in d1baseclient.py
+
   # CNCore.create(session, pid, object, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.create
   # CN INTERNAL
@@ -132,6 +131,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self._read_dataone_type_response(response)
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
   # Implemented in d1baseclient.py
 
   # CNCore.reserveIdentifier(session, pid) → Identifier
@@ -185,6 +185,24 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.listChecksumAlgorithmsResponse()
     return self._read_dataone_type_response(response)
 
+  # CNCore.setObsoletedBy(session, pid, obsoletedByPid, serialVersion) → boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.setObsoletedBy
+
+  @d1_common.util.utf8_to_unicode
+  def setObsoletedByResponse(self, pid, obsoletedByPid, serialVersion):
+    url = self._rest_url('/obsoletedBy/%(pid)s', pid=pid)
+    mime_multipart_fields = [
+      ('obsoletedByPid', obsoletedByPid.encode('utf-8')),
+      ('serialVersion', str(serialVersion)),
+    ]
+    return self.PUT(url, fields=mime_multipart_fields)
+
+
+  @d1_common.util.utf8_to_unicode
+  def setObsoletedBy(self, pid, obsoletedByPid, serialVersion):
+    response = self.setObsoletedByResponse(pid, obsoletedByPid, serialVersion)
+    return self._read_boolean_response(response)
+
   # CNCore.listNodes() → NodeList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listNodes
 
@@ -207,14 +225,15 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.hasReservation
 
   @d1_common.util.utf8_to_unicode
-  def hasReservationResponse(self, pid):
-    url = self._rest_url('reserve/%(pid)s', pid=pid)
+  def hasReservationResponse(self, pid, subject):
+    url = self._rest_url('reserve/%(pid)s?subject=%(subject)s', pid=pid,
+                         subject=subject)
     return self.GET(url)
 
 
   @d1_common.util.utf8_to_unicode
-  def hasReservation(self, pid):
-    response = self.hasReservationResponse(pid)
+  def hasReservation(self, pid, subject):
+    response = self.hasReservationResponse(pid, subject)
     return self._read_dataone_type_response(response)
 
   #=============================================================================
@@ -262,51 +281,19 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # CNRead.search(session, queryType, query) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.search
 
-  @d1_common.util.utf8_to_unicode
-  def searchResponse(self, queryType, query):
-    url = self._rest_url('search')
-    url_query = {
-      'query': query,
-    }
-    return self.GET(url, query=url_query)
+  #@d1_common.util.utf8_to_unicode
+  def searchResponse(self, queryType, query=None, **kwargs):
+
+    #url = self._rest_url('/solr/d1-cn-index/select/', queryType=queryType,
+    url = self._rest_url('search/%(queryType)s/%(query)s', queryType=queryType,
+                         query=query if query is not None else '')
+    return self.GET(url, query=kwargs)
 
 
-  @d1_common.util.utf8_to_unicode
-  def search(self, queryType, query):
-    response = self.searchResponse(queryType, query)
+  #@d1_common.util.utf8_to_unicode
+  def search(self, queryType, query=None, **kwargs):
+    response = self.searchResponse(queryType, query, **kwargs)
     return self._read_dataone_type_response(response)
-
-#  @d1_common.util.utf8_to_unicode
-#  def search(self, query, fields="pid,origin_mn,datemodified,size,objectformat,title",
-#             start=0, count=100):
-#    '''This is a place holder for search against the SOLR search engine.     
-#    '''
-#    hostinfo = self._parseURL(self.baseurl)
-#    solr = solrclient.SolrConnection(host=hostinfo['host'], solrBase="/solr",
-#                                     persistent=True)
-#    params = {'q':query,
-#              'fl': fields,
-#              'start':str(start),
-#              'rows':str(count)}
-#    sres = solr.search(params)
-#    return sres['response']    
-#    #response = self.searchResponse(query)
-#    #return dataoneTypes.CreateFromDocument(response.read())
-
-#  def getSearchFields(self):
-#    #getFields
-#    hostinfo = self._parseURL(self.baseurl)
-#    solr = solrclient.SolrConnection(host=hostinfo['host'], solrBase="/solr",
-#                                     persistent=True)
-#    sres = solr.getFields()
-#    return sres['fields']
-
-#  def searchSolr(self, query):
-#    '''Executes a search against SOLR. The literal query string is passed as
-#    the q parameter to SOLR, so it must be properly escaped
-#    '''
-#    pass
-
 
   #=============================================================================
   # Authorization API

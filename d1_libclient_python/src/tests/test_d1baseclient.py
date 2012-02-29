@@ -85,22 +85,30 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     client = d1_client.d1baseclient.DataONEBaseClient(
       "http://bogus.target/mn", version='v1'
     )
-    self.assertRaises(KeyError, client._rest_url, 'no_such_method')
-    self.assertEqual('/mn/v1/object', client._rest_url('listObjects'))
-    self.assertEqual('/mn/v1/object/1234xyz', client._rest_url('get', pid='1234xyz'))
-    self.assertEqual('/mn/v1/object/1234%2Fxyz', client._rest_url('get', pid='1234/xyz'))
+    self.assertEqual(
+      '/mn/v1/object/1234xyz',
+      client._rest_url(
+        'object/%(pid)s', pid='1234xyz'
+      )
+    )
+    self.assertEqual(
+      '/mn/v1/object/1234%2Fxyz',
+      client._rest_url(
+        'object/%(pid)s', pid='1234/xyz'
+      )
+    )
     self.assertEqual(
       '/mn/v1/meta/1234xyz',
       client._rest_url(
-        'getSystemMetadata', pid='1234xyz'
+        'meta/%(pid)s', pid='1234xyz'
       )
     )
-    self.assertEqual('/mn/v1/log', client._rest_url('getLogRecords'))
+    self.assertEqual('/mn/v1/log', client._rest_url('log'))
 
   def test_040(self):
     '''get_schema_version()'''
     client = d1_client.d1baseclient.DataONEBaseClient(self.baseurl_cn)
-    version = client.get_schema_version('listObjects')
+    version = client.get_schema_version('object')
     self.assertTrue(version in ('v1', 'v2', 'v3'))
 
   # CNCore.getLogRecords()
@@ -187,7 +195,6 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     else:
       pid = testing_utilities.get_random_pid(client)
     headers = client.describe(pid)
-    print headers
 
   def WAITING_FOR_TEST_ENV_test_610(self):
     '''CNRead.describe()'''
