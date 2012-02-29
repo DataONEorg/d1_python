@@ -206,7 +206,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
 
   @d1_common.util.utf8_to_unicode
   def update(self, pid, obj, newPid, sysmeta, vendorSpecific=None):
-    response = self.updateResponse(pid, obj, new_pid, sysmeta,
+    response = self.updateResponse(pid, obj, newPid, sysmeta,
                                    vendorSpecific=vendorSpecific)
     return self._read_boolean_response(response)
 
