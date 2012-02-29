@@ -446,48 +446,38 @@ class DataONECLI():
   # Search
   # ----------------------------------------------------------------------------
 
-  def search(self):
+  def search(self, line):
     '''CN search.
     '''
-    client = CLICNClient(self.session)
-    kwargs = {
-      'start': self.session.get('slice', 'start'),
-      'count': self.session.get('slice', 'count')
-    }
-    if self.session.get('search', 'fields') is not None:
-      kwargs['fields'] = self.session.get('search', 'fields')
-    res = client.search(self.session.get('search', 'query'), **kwargs)
-    print_info('Num found = %d' % res['numFound'])
-    for doc in res['docs']:
-      for k in doc.keys():
-        print_info('%s: %s' % (k, doc[k]))
-      print_info('========')
+    if self.session.get('search', 'querytype') == 'solr':
+      return self.search_solr(line)
+    return self.search_generic(line)
 
-  def fields(self):
-    '''List the CN search fields - enumerates the SOLR index fields.
+  def search_solr(self, line):
+    '''Perform a SOLR search.
     '''
-    client = d1_client.cnclient.CoordinatingNodeClient(
-      self.session.get(
-        'node', 'dataoneurl'
-      )
+    client = CLICNClient(self.session)
+    object_list = client.search(
+      queryType='solr',
+      q=line if line else
+      self.session.get('search', 'query') + ' ' + self.time_span_to_solr_filter(),
+      start=self.session.get('slice', 'start'),
+      rows=self.session.get('slice', 'count')
     )
-    res = client.getSearchFields()
-    print_info('%-25s %-12s %-12s %-12s' % ('Name', 'Type', 'Unique', 'Records'))
-    keys = res.keys()
-    keys.sort()
-    for f in keys:
-      try:
-        print_info(
-          '%-25s %-12s %-12s %-12s' % (
-            f, res[f]['type'], str(res[f]['distinct']), str(res[f]['docs'])
-          )
-        )
-      except:
-        print_info(
-          '%-25s %-12s %-12s %-12s' % (
-            f, res[f]['type'], '?', str(res[f]['docs'])
-          )
-        )
+    print object_list.toxml()
+
+  def search_generic(self, line):
+    '''Perform a generic search.
+    '''
+    pass
+
+  def time_span_to_solr_filter(self):
+    fromdate = self.session.get('search', 'fromdate')
+    todate = self.session.get('search', 'todate')
+    return 'datemodified:[{0} TO {1}]'.format(
+      d1_common.date_time.to_http_datetime(fromdate) if fromdate else '*',
+      d1_common.date_time.to_http_datetime(todate) if todate else '*'
+    )
 
   # ----------------------------------------------------------------------------
   # Session parameters
@@ -559,6 +549,7 @@ class CLI(cmd.Cmd):
   def __init__(self):
     self.d1 = DataONECLI()
     cmd.Cmd.__init__(self)
+    self._update_verbose()
     self.prompt = '> '
     self.intro = 'DataONE Command Line Interface'
 
@@ -784,29 +775,13 @@ class CLI(cmd.Cmd):
   #-----------------------------------------------------------------------------
 
   def do_search(self, line):
-    '''search
+    '''search [query]
     Comprehensive search for Science Data Objects across all available MNs
     '''
     try:
-      self._split_args(line, 0, 0)
-      self.d1.search()
-    except (
-      cli_exceptions.InvalidArguments, cli_exceptions.CLIError,
-      d1_client.solrclient.SolrException
-    ) as e:
-      print_error(e)
-
-  def do_fields(self, line):
-    '''fields
-    List the SOLR index fields that are available for use in the search command
-    '''
-    try:
-      self._split_args(line, 0, 0)
-      self.d1.fields()
-    except (
-      cli_exceptions.InvalidArguments, cli_exceptions.CLIError,
-      d1_client.solrclient.SolrException
-    ) as e:
+      query = self._split_args(line, 0, 1)
+      self.d1.search(query)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
 
   #-----------------------------------------------------------------------------
@@ -933,7 +908,8 @@ class CLI(cmd.Cmd):
     '''
     try:
       self._split_args(line, 0, 0)
-      print_info(self._history)
+      for idx, item in enumerate(self._history):
+        print_info('{0: 3d} {1}'.format(idx, item))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
 
@@ -946,6 +922,9 @@ class CLI(cmd.Cmd):
       sys.exit()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+
+  def do_quit(self, line):
+    self.do_exit(line)
 
   def do_EOF(self, line):
     '''Exit on system EOF character'''

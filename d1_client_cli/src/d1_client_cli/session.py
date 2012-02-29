@@ -86,8 +86,8 @@ class session(object):
         'fromdate': (None, str),
         'todate': (None, str),
         'searchobjectformat': (None, str),
+        'querytype': ('solr', str),
         'query': ('*:*', str),
-        'fields': (None, str),
       },
     }
 
