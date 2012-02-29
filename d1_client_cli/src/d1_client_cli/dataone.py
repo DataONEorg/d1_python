@@ -289,7 +289,7 @@ def handle_options(cli, options):
     cli.d1.session_set_parameter("algorithm", options.algorithm)
   if options.anonymous:
     cli.d1.session_set_parameter("anonymous", options.anonymous)
-  if options.auth_mn:
+  if options.authoritative_mn:
     cli.d1.session_set_parameter("authoritative-mn", options.authoritative_mn)
   if options.cert_file:
     cli.d1.session_set_parameter("cert-file", options.cert_file)
