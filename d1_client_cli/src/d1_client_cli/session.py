@@ -34,9 +34,11 @@ import os
 import pickle
 import pprint
 import ConfigParser
+from types import *
 
 # D1.
 import d1_common.const
+from d1_common.util import get_checksum_calculator_by_dataone_designator
 
 # App.
 from print_level import *
@@ -152,11 +154,22 @@ class session(object):
     else:
       try:
         type_converter = self.session[section][name][1]
+        value_string = self.validate_value_type(value_string, type_converter)
         self.set(section, name, type_converter(v))
       except ValueError as e:
         raise cli_exceptions.InvalidArguments(
           'Invalid value for {0} / {1}: {2}'.format(section, name, value_string)
         )
+
+  def validate_value_type(self, value_string, type_converter):
+    # Make sure booleans are "sane"
+    if type_converter is BooleanType:
+      if value_string in ('true', 'True', 't', 'T', 1, 'yes', 'Yes'):
+        return 'True'
+      elif value_string in ('false', 'False', 'f', 'F', 0, 'no', 'No'):
+        return 'False'
+      else:
+        raise ValueError('"%s": Invalid boolean value' % value_string)
 
   def set_with_conversion_implicit_section(self, name, value_string):
     section = self._find_section_containing_session_parameter(name)
