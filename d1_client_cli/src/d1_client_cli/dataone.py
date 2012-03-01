@@ -103,6 +103,9 @@ def expand_path(filename):
     return os.path.expanduser(filename)
   return None
 
+
+known_object_formats = None
+
 #===============================================================================
 #   Command-line options.
 #
@@ -328,6 +331,7 @@ def handle_options(cli, options):
     cli.d1.session_set_parameter("to-date", options.to_date)
   if options.verbose is not None:
     cli.d1.session_set_parameter("verbose", options.verbose)
+  cli._update_verbose()
 
 #===============================================================================
 
@@ -405,6 +409,29 @@ class DataONECLI():
   def __init__(self):
     self.session = session.session()
     self.session.load(suppress_error=True)
+    self.known_object_formats = None
+
+  def get_known_object_formats(self):
+    if self.known_object_formats is None:
+      formats = None
+      try:
+        client = CLICNClient(self.session)
+        formats = client.listFormats()
+        num_formats = len(formats.objectFormat)
+        #
+        # Only process if there are enough (>10) items.
+        if 10 < num_formats:
+          self.known_object_formats = []
+          for f in list(formats.objectFormat):
+            self.known_object_formats.append(f.formatId)
+      except (d1_common.types.exceptions.ServiceFailure) as e:
+        print_error("Unable to get allowed types.")
+    #
+    # Return it if you found something.
+    if self.known_object_formats is not None:
+      return list(self.known_object_formats)
+    else:
+      return ()
 
   def _get_file_size(self, path):
     with open(expand_path(path), 'r') as f:
@@ -563,7 +590,7 @@ class DataONECLI():
     return xml_doc
 
   def system_metadata_get(self, pid, path):
-    client = CLICNClient(self.session)
+    client = CLIMNClient(self.session)
     metadata = self._get_system_metadata(client, pid)
     sci_meta_xml = metadata.toxml()
     self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
@@ -677,7 +704,7 @@ class DataONECLI():
   def search(self, line):
     '''CN search.
     '''
-    if self.session.get('search', 'querytype') == 'solr':
+    if self.session.get('search', 'query-type') == 'solr':
       return self.search_solr(line)
     return self.search_generic(line)
 
@@ -700,8 +727,8 @@ class DataONECLI():
     pass
 
   def time_span_to_solr_filter(self):
-    fromdate = self.session.get('search', 'fromdate')
-    todate = self.session.get('search', 'todate')
+    fromdate = self.session.get('search', 'from-date')
+    todate = self.session.get('search', 'to-date')
     return 'datemodified:[{0} TO {1}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else '*',
       d1_common.date_time.to_http_datetime(todate) if todate else '*'
@@ -724,10 +751,26 @@ class DataONECLI():
     return self.session.print_parameter(name)
 
   def session_set_parameter(self, name, value):
+    self.session_validate_parameter(name, value)
     return self.session.set_with_conversion_implicit_section(name, value)
 
   def session_clear_parameter(self, name):
     return self.session.set_with_implicit_section(name, None)
+
+  def session_validate_parameter(self, name, value):
+    #
+    # Validate the hash algorithm
+    if name == 'algorithm':
+      try:
+        get_checksum_calculator_by_dataone_designator(value_string)
+      except KeyError as e:
+        raise ValueError('"%s": Invalid algorithm value' % value_string)
+    #
+    # Validate the object format.
+    if name == 'object-format' or name == 'search-object-format':
+      formats = self.get_known_object_formats()
+      if len(formats) > 0 and value not in formats:
+        raise ValueError('"%s": Invalid format' % value)
 
   # ----------------------------------------------------------------------------
   # Access control
@@ -796,10 +839,12 @@ class CLI(cmd.Cmd):
     return args
 
   def _update_verbose(self):
-    if self.d1.session.get('cli', 'verbose'):
-      logging.getLogger('').setLevel(logging.DEBUG)
-    else:
-      logging.getLogger('').setLevel(logging.INFO)
+    verbosity = self.d1.session.get('cli', 'verbose')
+    if verbosity is not None:
+      if verbosity:
+        logging.getLogger('').setLevel(logging.DEBUG)
+      else:
+        logging.getLogger('').setLevel(logging.INFO)
 
   #-----------------------------------------------------------------------------
   # Session.
@@ -854,6 +899,7 @@ class CLI(cmd.Cmd):
     else:
       try:
         session_parameter, value = self._split_args(line, 2, 0)
+        self.d1.session_validate_parameter(session_parameter, value)
         self.d1.session_set_parameter(session_parameter, value)
       except cli_exceptions.InvalidArguments as e:
         print_error(e)
@@ -1262,11 +1308,16 @@ def main():
   #  return
 
   cli = CLI()
+  cli._update_verbose()
   handle_options(cli, options)
 
   # Start the command line interpreter loop, or just do one command?
-  if options.interactive or len(remainder) == 0:
-    cli.cmdloop()
+  if ((options.interactive is not None) and options.interactive) or len(remainder) == 0:
+    try:
+      cli.cmdloop()
+    except KeyboardInterrupt as e:
+      print ''
+      cli.do_exit('')
   else:
     cli.onecmd(join(remainder))
 
