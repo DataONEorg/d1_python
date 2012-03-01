@@ -758,6 +758,9 @@ class DataONECLI():
     return self.session.set_with_implicit_section(name, None)
 
   def session_validate_parameter(self, name, value):
+    # Skip None.
+    if value is None:
+      return
     #
     # Validate the hash algorithm
     if name == 'algorithm':
