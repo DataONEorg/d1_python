@@ -80,7 +80,6 @@ class session(object):
       'cli': {
         'pretty': (True, bool),
         'verbose': (False, bool),
-        'metadata-file': (None, str),
       },
       'node': {
         'dataone-url': (d1_common.const.URL_DATAONE_ROOT, str),
@@ -301,7 +300,7 @@ class session(object):
           add_value = dflt_section[v][0]
           print_info('Adding missing value: "{0}" = "{1}"'.format(v, str(add_value)))
           curr_section[v] = (dflt_section[v][0], dflt_section[v][1])
-        changed = True
+          changed = True
     #
     # Replace old names with new names.
     for old_name in curr_section.keys():
@@ -316,7 +315,7 @@ class session(object):
         del (curr_section[old_name])
         changed = True
     #
-    if changed:
+    if (changed is not None) and changed:
       print_info(
         '\nThis session has been updated.  Please save the new values.\n\
     (see "save" command)\n'
