@@ -7,13 +7,13 @@ Commands for creating and retrieving :term:`Science Data Objects <Science Data
 Object>` and :term:`System Metadata`.
 
 
-.. _data:
+.. _get:
 
-data <:term:`pid`> <file>
+get <:term:`pid`> <file>
 ````````````````````````````
-Get a Science Data Object from a :term:`MN`.
+Get an object from a :term:`MN`.
 
-The Science Object is saved to ``file``.
+The object is saved to ``file``.
 
 Active session parameters: :ref:`mnurl <mnurl>`, :ref:`authentication`
 
@@ -52,6 +52,37 @@ Active session parameters: :ref:`mnurl <mnurl>`, :ref:`objectformat
 <rightsholder>`, :ref:`originmn <originmn>`, :ref:`authoritativemn
 <authoritativemn>`, :ref:`algorithm <algorithm>`, :ref:`access_policy`,
 :ref:`replication_policy`, :ref:`authentication`
+
+
+.. _update:
+
+update <:term:`pid`> <file> <:term:`pid`>
+`````````````````````````````````````````
+Replace an existing Science Object in a :term:`MN` with another.
+
+The existing Science Object becomes obsoleted by the new Science Object.
+obsoleted by the new values in the :ref:`System Metadata <session_parameters>`,
+:ref:`access_policy` and :ref:`replication_policy` session parameters.
+
+The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the checksum
+for the new object. If the value is unset, it defaults to the DataONE system
+wide default, which is currently SHA1.
+
+Active session parameters: :ref:`mnurl <mnurl>`, :ref:`objectformat
+<objectformat>`, :ref:`submitter <submitter>`, :ref:`rightsholder
+<rightsholder>`, :ref:`originmn <originmn>`, :ref:`authoritativemn
+<authoritativemn>`, :ref:`algorithm <algorithm>`, :ref:`access_policy`,
+:ref:`replication_policy`, :ref:`authentication`
+
+
+.. _delete:
+
+delete <:term:`pid`>
+````````````````````
+Mark an existing Science Object as archived.
+
+Active session parameters: :ref:`mnurl <mnurl>`, :ref:`submitter <submitter>`,
+:ref:`access_policy`, :ref:`replication_policy`, :ref:`authentication`
 
 
 .. _related:
