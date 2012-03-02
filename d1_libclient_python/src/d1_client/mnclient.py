@@ -193,15 +193,14 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     if vendorSpecific is None:
       vendorSpecific = {}
     url = self._rest_url('object/%(pid)s', pid=pid)
-    headers = {
-      'newPid': newPid,
-    }
-    headers.update(vendorSpecific)
+    mime_multipart_fields = [
+      ('pid', pid.encode('utf-8')),
+    ]
     mime_multipart_files = [
       ('object', 'content.bin', obj),
       ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, files=mime_multipart_files, headers=vendorSpecific)
+    return self.PUT(url, files=mime_multipart_files, fields=mime_multipart_fields, headers=vendorSpecific)
 
 
   @d1_common.util.utf8_to_unicode
