@@ -1043,7 +1043,7 @@ class CLI(cmd.Cmd):
     '''
     try:
       n_replicas = self._split_args(line, 1, 0)
-      return self.d1.replication_policy_get_number_of_replicas(n_replicas)
+      return self.d1.replication_policy_set_number_of_replicas(n_replicas)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
 
