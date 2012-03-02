@@ -595,9 +595,6 @@ class DataONECLI():
     sci_meta_xml = metadata.toxml()
     self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
 
-  def related(self, pid):
-    raise cli_exceptions.CLIError('not implemented')
-
   def resolve(self, pid):
     '''Get Object Locations for Object.
     '''
@@ -1065,9 +1062,9 @@ class CLI(cmd.Cmd):
   # Science Object Operations
   #-----------------------------------------------------------------------------
 
-  def do_data(self, line):
-    '''data <pid> <file>
-    Get a Science Data Object from a Member Node
+  def do_get(self, line):
+    '''get <pid> <file>
+    Get an object from a Member Node
     '''
     try:
       pid, file = self._split_args(line, 2, 0)
@@ -1112,16 +1109,6 @@ class CLI(cmd.Cmd):
     try:
       pid = self._split_args(line, 1, 0)
       self.d1.science_object_delete(pid)
-    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
-      print_error(e)
-
-  def do_related(self, line):
-    '''related <pid>
-    Given the PID for a Science Data Object, find it's Science Metadata and vice versa
-    '''
-    try:
-      pid = self._split_args(line, 1, 0)
-      self.d1.related(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
 
