@@ -29,6 +29,7 @@
 
 # Stdlib.
 import ast
+import copy
 import logging
 import os
 import pickle
@@ -47,6 +48,23 @@ import system_metadata
 import access_control
 import replication_policy
 
+# Session variable mapping.
+#
+session_variable_dict = {
+  'dataoneurl': ('dataone-url', str),
+  'mnurl': ('mn-url', str),
+  'certpath': ('cert-file', str),
+  'keypath': ('key-file', str),
+  'objectformat': ('object-format', str),
+  'rightsholder': ('rights-holder', str),
+  'originmn': ('origin-mn', str),
+  'authoritativemn': ('authoritative-mn', str),
+  'fromdate': ('from-date', str),
+  'todate': ('to-date', str),
+  'searchobjectformat': ('search-object-format', str),
+  'querytype': ('query-type', str),
+}
+
 
 class session(object):
   def __init__(self):
@@ -58,10 +76,11 @@ class session(object):
     self.__init__()
 
   def get_default_session(self):
-    return {
+    return copy.deepcopy({
       'cli': {
         'pretty': (True, bool),
         'verbose': (False, bool),
+        'metadata-file': (None, str),
       },
       'node': {
         'dataone-url': (d1_common.const.URL_DATAONE_ROOT, str),
@@ -91,7 +110,7 @@ class session(object):
         'query-type': ('solr', str),
         'query': ('*:*', str),
       },
-    }
+    })
 
   def get_session_section_ordering(self):
     return 'cli', 'node', 'slice', 'auth', 'sysmeta', 'search'
@@ -255,6 +274,7 @@ class session(object):
     try:
       with open(pickle_file_path, 'rb') as f:
         self.__dict__.update(pickle.load(f))
+      self.verify_session_variables()
     except (NameError, IOError) as e:
       if not suppress_error:
         print_error(
@@ -262,6 +282,45 @@ class session(object):
             pickle_file_path, str(e)
           )
         )
+
+  #   Go through the session variables and make sure that all the new names
+  # are there and any missing variable is there added.
+  #
+  def verify_session_variables(self):
+    dflt = self.get_default_session()
+    curr = self.session
+    changed = False
+    #
+    # Add new values.
+    for section in dflt.keys():
+      curr_section = curr.get(section)
+      dflt_section = dflt.get(section)
+      #
+      for v in dflt_section.keys():
+        if curr_section.get(v) is None:
+          add_value = dflt_section[v][0]
+          print_info('Adding missing value: "{0}" = "{1}"'.format(v, str(add_value)))
+          curr_section[v] = (dflt_section[v][0], dflt_section[v][1])
+        changed = True
+    #
+    # Replace old names with new names.
+    for old_name in curr_section.keys():
+      new_value = session_variable_dict.get(old_name)
+      if new_value is not None:
+        curr_value = curr_section[old_name]
+        print_info(
+          'Replacing session variable "{0}" with "{1}" (value "{2}")'
+          .format(old_name, new_value[0], str(curr_value[0]))
+        )
+        curr_section[new_value[0]] = (curr_value[0], new_value[0])
+        del (curr_section[old_name])
+        changed = True
+    #
+    if changed:
+      print_info(
+        '\nThis session has been updated.  Please save the new values.\n\
+    (see "save" command)\n'
+      )
 
   def save(self, pickle_file_path=None):
     if pickle_file_path is None:
