@@ -61,15 +61,15 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''After instatiation, the default session parameters are available via get()'''
     s = session.session()
     self.assertEqual(s.get('cli', 'pretty'), True)
-    self.assertEqual(s.get('node', 'dataoneurl'), d1_common.const.URL_DATAONE_ROOT)
+    self.assertEqual(s.get('node', 'dataone-url'), d1_common.const.URL_DATAONE_ROOT)
 
   def test_030(self):
     '''Session parameters can be updated with set()'''
     s = session.session()
     s.set('cli', 'pretty', False),
-    s.set('node', 'dataoneurl', 'test')
+    s.set('node', 'dataone-url', 'test')
     self.assertEqual(s.get('cli', 'pretty'), False)
-    self.assertEqual(s.get('node', 'dataoneurl'), 'test')
+    self.assertEqual(s.get('node', 'dataone-url'), 'test')
 
   def test_040(self):
     '''Session parameters can be brought back to their defaults with reset()'''
@@ -136,24 +136,24 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       pass
     s1 = session.session()
     u = str(uuid.uuid1())
-    s1.set('sysmeta', 'rightsholder', u)
+    s1.set('sysmeta', 'rights-holder', u)
     s1.save(tmp_pickle)
     s2 = session.session()
     s2.load(False, tmp_pickle)
-    self.assertEqual(s2.get('sysmeta', 'rightsholder'), u)
+    self.assertEqual(s2.get('sysmeta', 'rights-holder'), u)
 
   def test_300(self):
     '''assert_required_parameters_present() returns successfully on no missing parameters'''
     s = session.session()
-    s.assert_required_parameters_present(('dataoneurl', 'count', 'algorithm'))
+    s.assert_required_parameters_present(('dataone-url', 'count', 'algorithm'))
 
   def test_310(self):
     '''assert_required_parameters_present() raises exception on missing parameters'''
     s = session.session()
-    s.set('node', 'dataoneurl', None)
+    s.set('node', 'dataone-url', None)
     self.assertRaises(
       cli_exceptions.InvalidArguments, s.assert_required_parameters_present,
-      ('dataoneurl', 'count', 'algorithm')
+      ('dataone-url', 'count', 'algorithm')
     )
 
 
