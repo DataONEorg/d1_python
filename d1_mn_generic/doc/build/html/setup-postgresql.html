@@ -1,0 +1,197 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PostgreSQL &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup steps" href="setup-steps.html" />
+    <link rel="next" title="python-psycopg2" href="setup-psycopg2.html" />
+    <link rel="prev" title="DataONE libraries" href="setup-d1-libs.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-psycopg2.html" title="python-psycopg2"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-d1-libs.html" title="DataONE libraries"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-d1-libs.html"
+                        title="previous chapter">DataONE libraries</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-psycopg2.html"
+                        title="next chapter">python-psycopg2</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-postgresql.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="postgresql">
+<h1>PostgreSQL<a class="headerlink" href="#postgresql" title="Permalink to this headline">¶</a></h1>
+<p></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Component</th>
+<th class="head">Tested version(s)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PostgreSQL</td>
+<td>8.4.10</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="glossary.html#term-django"><em class="xref std std-term">Django</em></a>, on which GMN is built, is database agnostic. However, GMN
+currently only supports <em class="xref std std-term">PostgreSQL</em>. This section describes how to set up
+PostgreSQL for GMN.</p>
+<blockquote>
+<div><p>Install PostgreSQL:</p>
+<div class="highlight-python"><pre>$ sudo apt-get install postgresql-8.3</pre>
+</div>
+</div></blockquote>
+<p>In PostgreSQL, the user with unlimited access is called the superuser. The
+superuser does not have a password by default.</p>
+<blockquote>
+<div><p>Set the password for the superuser:</p>
+<div class="highlight-python"><pre>$ sudo su postgres -c psql template1
+template1=# alter user postgres with encrypted password '&lt;your superuser password&gt;';
+template1=# &lt;ctrl-d&gt;</pre>
+</div>
+</div></blockquote>
+<p>PostgreSQL runs under a separate user account called postgres.</p>
+<blockquote>
+<div><p>Set the password of the postgres user account to match the one of the
+superuser:</p>
+<div class="highlight-python"><pre>$ sudo passwd -d postgres
+$ sudo su postgres -c passwd</pre>
+</div>
+<p>When prompted for the password, enter &lt;your superuser password&gt;.</p>
+</div></blockquote>
+<p>Under Ubuntu, PostgreSQL uses Ident-based authentication by default. This means
+that PostgreSQL requires that database users each have separate OS user
+accounts. It&#8217;s more convenient to separate the two, so that GMN can have a user
+in PostgreSQL without also having to have an OS user account.</p>
+<blockquote>
+<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/postgresql/8.4/main/pg_hba.conf</span></tt>.</p>
+<p>Remove or comment out line:</p>
+<div class="highlight-python"><pre>local   all         postgres                          ident</pre>
+</div>
+<p>Change:</p>
+<div class="highlight-python"><pre>local   all         all                               ident</pre>
+</div>
+<p>To:</p>
+<div class="highlight-python"><pre>local   all         all                               md5</pre>
+</div>
+<p>Restart PostgreSQL:</p>
+<div class="highlight-python"><pre>sudo /etc/init.d/postgresql-8.4 restart</pre>
+</div>
+<p>Create GMN user:</p>
+<div class="highlight-python"><pre>$ sudo -u postgres createuser gmn
+postgres@ubuntu:~$
+Shall the new role be a superuser? (y/n) n
+Shall the new role be allowed to create databases? (y/n) n
+Shall the new role be allowed to create more new roles? (y/n) n
+Password: &lt;your superuser password&gt;</pre>
+</div>
+<p>Create a database for GMN:</p>
+<div class="highlight-python"><pre>$ sudo -u postgres createdb -E UTF8 gmn
+Password: &lt;your superuser password&gt;</pre>
+</div>
+<p>Set the password for the GMN user:</p>
+<div class="highlight-python"><pre>$ sudo -u postgres psql template1
+ALTER USER gmn WITH ENCRYPTED password '&lt;your gmn user password&gt;';</pre>
+</div>
+<p>In a later step, you will configure GMN with &lt;your gmn user password&gt;.</p>
+</div></blockquote>
+<p><a class="reference internal" href="setup-psycopg2.html"><em>python-psycopg2</em></a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup-psycopg2.html" title="python-psycopg2"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-d1-libs.html" title="DataONE libraries"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

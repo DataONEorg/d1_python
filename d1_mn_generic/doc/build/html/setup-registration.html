@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Register the MN &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup steps" href="setup-steps.html" />
+    <link rel="next" title="GMN Asynchronous Processes" href="setup-workers.html" />
+    <link rel="prev" title="DataONE Generic Member Node" href="setup-d1-gmn.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-workers.html" title="GMN Asynchronous Processes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-d1-gmn.html" title="DataONE Generic Member Node"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Register the MN</a><ul>
+<li><a class="reference internal" href="#revisit-the-gmn-configuration">Revisit the GMN configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-d1-gmn.html"
+                        title="previous chapter">DataONE Generic Member Node</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-workers.html"
+                        title="next chapter">GMN Asynchronous Processes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-registration.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="register-the-mn">
+<h1>Register the MN<a class="headerlink" href="#register-the-mn" title="Permalink to this headline">¶</a></h1>
+<p>Each DataONE Node has an XML document associated with it that describes the
+various aspects of the Node, such as its URL, the services it supports and who
+maintains and runs the Node. For now, it is necessary to manually edit this
+file. A template is provided to simplify this process.</p>
+<blockquote>
+<div><p>Customize the Node XML document.</p>
+<p>Copy the Node XML template:</p>
+<div class="highlight-python"><pre>$ cd /var/local/dataone/mn_generic/service/stores/static/
+$ cp nodeRegistry_template.xml nodeRegistry.xml</pre>
+</div>
+<p>Edit the XML document:</p>
+<blockquote>
+<div><p>Refer to
+<a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node">http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node</a>
+for descriptions of the fields in the XML document. Then replace the upper
+case texts with information specific to your MN. The parts of the document
+that do not contain upper case text should remain unchanged.</p>
+<p>Edit <tt class="docutils literal"><span class="pre">/var/local/dataone/mn_generic/service/stores/static/nodeRegistry.xml</span></tt>.</p>
+</div></blockquote>
+</div></blockquote>
+<p>To register the new MN with DataONE, the Node XML document is submitted,
+together with an associated client side certificate, to a specific CN REST API.
+A command line tool is provided for submitting the registration.</p>
+<blockquote>
+<div><p>Use the DataONE identity manager to create a DataONE identity for the
+administrator of the new MN:</p>
+<div class="highlight-python"><pre>In a test install of GMN, this step is not neccessary.
+
+&lt;TODO: Document this step&gt;</pre>
+</div>
+<p>Visit CILogon to obtain a client side certificate for your DataONE identity:</p>
+<p>Open a browser and go to URL: <a class="reference external" href="https://cilogon.org/?skin=DataONE">https://cilogon.org/?skin=DataONE</a></p>
+<p>Follow the prompts. Note the file path of your new certificate.</p>
+<p>Register the MN with DataONE:</p>
+<div class="highlight-python"><pre>$ cd /var/local/dataone/mn_generic/tools
+$ python register.py --cert-path &lt;path to your certificate&gt; ../service/stores/static/nodeRegistry.xml</pre>
+</div>
+</div></blockquote>
+<p>A new MN must be approved by DataONE. The person that submitted the registration
+will be contacted by email with the outcome of the approval process.</p>
+<div class="section" id="revisit-the-gmn-configuration">
+<h2>Revisit the GMN configuration<a class="headerlink" href="#revisit-the-gmn-configuration" title="Permalink to this headline">¶</a></h2>
+<p>In the <a class="reference internal" href="setup-d1-gmn.html"><em>DataONE Generic Member Node</em></a> step, setting the NODE_IDENTIFIER value was deferred
+because it must be set up to match the value configured in this step.</p>
+<blockquote>
+<div><p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/mn_generic/service/settings_site.py</span></tt></p>
+<ul class="simple">
+<li>Set NODE_IDENTIFIER to match the value specified in the identifier field
+in the Node XML document.</li>
+</ul>
+</div></blockquote>
+<p><a class="reference internal" href="setup-workers.html"><em>GMN Asynchronous Processes</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup-workers.html" title="GMN Asynchronous Processes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-d1-gmn.html" title="DataONE Generic Member Node"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

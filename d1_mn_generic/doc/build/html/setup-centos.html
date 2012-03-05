@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation on CentOS 5.5 &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup" href="setup.html" />
+    <link rel="next" title="Complete default-ssl Apache configuration file" href="setup-example-default-ssl.html" />
+    <link rel="prev" title="Starting GMN" href="setup-startup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-example-default-ssl.html" title="Complete default-ssl Apache configuration file"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-startup.html" title="Starting GMN"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation on CentOS 5.5</a><ul>
+<li><a class="reference internal" href="#platform">Platform</a></li>
+<li><a class="reference internal" href="#python">Python</a></li>
+<li><a class="reference internal" href="#gmn">GMN</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-startup.html"
+                        title="previous chapter">Starting GMN</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-example-default-ssl.html"
+                        title="next chapter">Complete <tt class="docutils literal"><span class="pre">default-ssl</span></tt> Apache configuration file</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-centos.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation-on-centos-5-5">
+<h1>Installation on CentOS 5.5<a class="headerlink" href="#installation-on-centos-5-5" title="Permalink to this headline">¶</a></h1>
+<p>The following instructions for setting GMN up on CentOS should be considered in
+the context of the setup documentation that is provided for Ubuntu. Study the
+setup instructions for Ubuntu first and use the information below to adapt that
+information for a CentOS install.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Component</th>
+<th class="head">Tested version(s)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>CentOS</td>
+<td>5.5</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="platform">
+<h2>Platform<a class="headerlink" href="#platform" title="Permalink to this headline">¶</a></h2>
+<p>Install required packages (some of these may already be installed):</p>
+<div class="highlight-python"><pre>$ sudo yum install python26
+$ sudo yum install sqlite
+$ sudo yum install mod_wsgi
+$ sudo yum install openssh-server
+$ sudo yum install libxml2-devel
+$ sudo yum install libxslt-devel
+$ sudo yum install python26-devel
+$ sudo yum install Django
+$ sudo yum install python-iso8601</pre>
+</div>
+<p>(Verify if these are needed):</p>
+<div class="highlight-python"><pre>$ sudo yum install python26-tools (may not be necessary, but gives you tk/tcl)
+$ sudo yum install python-sqlite2 (may be incorrect....)</pre>
+</div>
+</div>
+<div class="section" id="python">
+<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>CentOS requires Python 2.4 while Django and GMN requires Python 2.6. These
+requirements are met by installing the two versions of Python side by side and
+making sure that Python 2.6 is used by Django and the GMN scripts.</p>
+<p>Install <a class="reference internal" href="glossary.html#term-python-setuptools"><em class="xref std std-term">python-setuptools</em></a>:</p>
+<div class="highlight-python"><pre>$ sudo yum install python26-setuptools python26-setuptools-devel</pre>
+</div>
+<p>Verify easy_install installed correctly:</p>
+<blockquote>
+<div>$ easy_install</div></blockquote>
+<p>Create staging area:</p>
+<div class="highlight-python"><pre>$ mkdir ~/building</pre>
+</div>
+<p>Install <a class="reference internal" href="glossary.html#term-lxml"><em class="xref std std-term">lxml</em></a>:</p>
+<div class="highlight-python"><pre>$ cd ~/building
+$ wget http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/i386/python26-lxml-2.0.11-1.ius.el5.i386.rpm
+$ rpm -i python26-lxml-2.0.11-1.ius.el5.i386.rpm</pre>
+</div>
+<p>Install <a class="reference internal" href="glossary.html#term-pyxb"><em class="xref std std-term">PyXB</em></a>:</p>
+<div class="highlight-python"><pre>$ cd ~/building
+$ wget http://surfnet.dl.sourceforge.net/project/pyxb/pyxb/1.1.2%20%28Beta%29/PyXB-base-1.1.2.tar.gz
+$ tar xzf PyXB-base-1.1.2.tar.gz
+$ cd PyXB-1.1.2/
+$ sudo python setup.py install</pre>
+</div>
+<p>Install <a class="reference internal" href="glossary.html#term-minixsv"><em class="xref std std-term">minixsv</em></a>:</p>
+<div class="highlight-python"><pre>$ cd ~/building/
+$ wget http://www.familieleuthe.de/minixsv/minixsv-0.9.0.tar.gz
+$ tar xzf minixsv-0.9.0.tar.gz
+$ cd minixsv-0.9.0
+$ sudo python26 setup.py install</pre>
+</div>
+</div>
+<div class="section" id="gmn">
+<h2>GMN<a class="headerlink" href="#gmn" title="Permalink to this headline">¶</a></h2>
+<p>Install GMN as described in the instructions for Ubuntu. Then modify GMN to
+explicitly use Python 2.6. This is needed because CentOS includes Python 2.4
+and used that version by default.</p>
+<p>Files that must be modified:</p>
+<div class="highlight-python"><pre>./install/config.py:       63 res = os.system('/usr/bin/python26 ./manage.py syncdb')
+./service/mk_fixtures.py:  23 print os.system('/usr/bin/python26 ./manage.py syncdb')
+./service/mk_fixtures.py:  24 print os.system('/usr/bin/python26 ./manage.py update_db')
+./service/mk_fixtures.py:  25 print os.system('/usr/bin/python26 ./manage.py insert_test_log')
+./service/mk_fixtures.py:  39   cmd = '/usr/bin/python26 ./manage.py dumpdata {0} &gt; \'{1}\''.format(app, os.path.join(fixture_dir, 'base.fixture.json'))
+./install/config_util.py:  60 run(['/usr/bin/python26','./manage.py', 'set_node_val', key, val])</pre>
+</div>
+<p>CentOS stores mod_wsgi.so in a different location than Ubuntu. Modify configuration script accordingly:</p>
+<div class="highlight-python"><pre>./install/config.py:       88 parser.add_option('-w', '--mod-wsgi-path', dest='mod_wsgi_path', action='store', type='string', default='/etc/httpd/modules/mod_wsgi.so')</pre>
+</div>
+<p>Modified other <a href="#id1"><span class="problematic" id="id2">*</span></a>.py files that execute other scripts to call python26.</p>
+<p>Run the GMN install script under Python 2.6:</p>
+<div class="highlight-python"><pre>$ sudo python26 ../install/config.py</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup-example-default-ssl.html" title="Complete default-ssl Apache configuration file"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-startup.html" title="Starting GMN"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

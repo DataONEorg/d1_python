@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Server Side Authentication &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup steps" href="setup-steps.html" />
+    <link rel="next" title="Client side authentication" href="setup-authn-client.html" />
+    <link rel="prev" title="mod_ssl" href="setup-mod-ssl.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-authn-client.html" title="Client side authentication"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-mod-ssl.html" title="mod_ssl"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Server Side Authentication</a><ul>
+<li><a class="reference internal" href="#setup-the-server-side-certificate-and-private-key">Setup the server side certificate and private key</a></li>
+<li><a class="reference internal" href="#apache-ssl-setup">Apache SSL setup</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-mod-ssl.html"
+                        title="previous chapter">mod_ssl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-authn-client.html"
+                        title="next chapter">Client side authentication</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-authn-server.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="server-side-authentication">
+<h1>Server Side Authentication<a class="headerlink" href="#server-side-authentication" title="Permalink to this headline">¶</a></h1>
+<p>GMN proves its identity to <a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a> <a class="reference internal" href="glossary.html#term-client"><em class="xref std std-term">client</em></a>s and other parts of
+the DataONE infrastructure, such as <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>s by providing a server side
+certificate during the TLS handshake.</p>
+<p>The certificate must be signed by a <a class="reference internal" href="glossary.html#term-ca"><em class="xref std std-term">CA</em></a> that is recognized by DataONE. It
+is obtained through the same procedure that one would use for obtaining a
+certificate for any secure web site. The procedure below assumes that a valid
+certificate has already been obtained.</p>
+<div class="section" id="setup-the-server-side-certificate-and-private-key">
+<h2>Setup the server side certificate and private key<a class="headerlink" href="#setup-the-server-side-certificate-and-private-key" title="Permalink to this headline">¶</a></h2>
+<p>The following section assumes that the server side certificate and key is
+named server.crt and server.key, respectively.</p>
+<blockquote>
+<div><p>Create a folder to hold the certificate and key:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># mkdir /var/local/dataone/gmn_certs/</span>
+</pre></div>
+</div>
+<p>Move the certificate and key to the folder.</p>
+</div></blockquote>
+<p>Note that, unlike the certificate, the contents of the private key are
+sensitive. Set it to be readable only by root and follow best practices for
+security to keep root from being compromised.</p>
+<blockquote>
+<div><p>Set the private key to be readable only by root:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># chown root:root server.key</span>
+<span class="c"># chmod 400 server.key</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>If the key is password protected, Apache will prompt for the password each time
+it&#8217;s started. As an optional step, the password can be removed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl rsa -in server.key -out server.nopassword.key</span>
+</pre></div>
+</div>
+<p>If this step is performed, substitute server.key with server.nopassword.key
+below.</p>
+</div>
+<div class="section" id="apache-ssl-setup">
+<h2>Apache SSL setup<a class="headerlink" href="#apache-ssl-setup" title="Permalink to this headline">¶</a></h2>
+<p>Set Apache up to provide <a class="reference internal" href="glossary.html#term-tls"><em class="xref std std-term">TLS</em></a> <a class="reference internal" href="glossary.html#term-server-side-authentication"><em class="xref std std-term">Server Side Authentication</em></a> for GMN.</p>
+<p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
+<blockquote>
+<div><p>Enable the default TLS protected site in Apache:</p>
+<div class="highlight-python"><pre>$ sudo a2ensite default-ssl
+$ sudo a2enmod ssl</pre>
+</div>
+<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
+<p>Change:</p>
+<div class="highlight-python"><pre>&lt;VirtualHost _default_:443&gt;</pre>
+</div>
+<p>to:</p>
+<div class="highlight-python"><pre>&lt;VirtualHost *:443&gt;</pre>
+</div>
+<p>Add directives:</p>
+<div class="highlight-python"><pre>SSLEngine on
+SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
+SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.key</pre>
+</div>
+<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/ports.conf</span></tt>.</p>
+<p>In the <tt class="docutils literal"><span class="pre">&lt;IfModule</span> <span class="pre">mod_ssl.c&gt;</span></tt> section, add:</p>
+<div class="highlight-python"><pre>NameVirtualHost *:443</pre>
+</div>
+</div></blockquote>
+<p><a class="reference internal" href="setup-authn-client.html"><em>Client side authentication</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup-authn-client.html" title="Client side authentication"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-mod-ssl.html" title="mod_ssl"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

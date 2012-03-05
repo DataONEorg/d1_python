@@ -1,0 +1,140 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Troubleshooting &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="next" title="Implementation" href="impl.html" />
+    <link rel="prev" title="Using GMN" href="use.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="impl.html" title="Implementation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="use.html" title="Using GMN"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Troubleshooting</a><ul>
+<li><a class="reference internal" href="#psycopg2-gives-can-t-adapt-errors">Psycopg2 gives &#8220;can&#8217;t adapt&#8221; errors</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="use.html"
+                        title="previous chapter">Using GMN</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="impl.html"
+                        title="next chapter">Implementation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/troubleshooting.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="troubleshooting">
+<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="psycopg2-gives-can-t-adapt-errors">
+<h2>Psycopg2 gives &#8220;can&#8217;t adapt&#8221; errors<a class="headerlink" href="#psycopg2-gives-can-t-adapt-errors" title="Permalink to this headline">¶</a></h2>
+<p>The version of Psycopg2 that was installed by default was not compatible.</p>
+<p>Try uninstalling the default version and installing a specific version. The
+version referenced below had been found to work well with PostgreSQL 8.4.10.</p>
+<div class="highlight-python"><pre>$ sudo apt-get remove python-psycopg2
+$ mkdir ~/install
+$ cd ~/install
+$ wget http://initd.org/psycopg/tarballs/PSYCOPG-2-4/psycopg2-2.4.2.tar.gz
+$ tar xzf psycopg2-2.4.2.tar.gz
+$ cd psycopg2-2.4.2
+$ sudo python setup.py install</pre>
+</div>
+<p>Another option is to try to install Psycopg2 via easy_install:</p>
+<div class="highlight-python"><pre>$ sudo easy_install -m psycopg2</pre>
+</div>
+<p>To remove a version of Psycopg2 that was installed with easy_install:</p>
+<div class="highlight-python"><pre>$ sudo rm -rf /usr/lib/python2.6/dist-packages/psycopg2</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="impl.html" title="Implementation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="use.html" title="Using GMN"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

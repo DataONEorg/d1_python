@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mod_wsgi &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="up" title="Setup steps" href="setup-steps.html" />
+    <link rel="next" title="mod_ssl" href="setup-mod-ssl.html" />
+    <link rel="prev" title="Apache" href="setup-apache.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-mod-ssl.html" title="mod_ssl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-apache.html" title="Apache"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-apache.html"
+                        title="previous chapter">Apache</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-mod-ssl.html"
+                        title="next chapter">mod_ssl</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-mod-wsgi.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mod-wsgi">
+<h1>mod_wsgi<a class="headerlink" href="#mod-wsgi" title="Permalink to this headline">¶</a></h1>
+<p>Setting up <a class="reference internal" href="glossary.html#term-mod-wsgi"><em class="xref std std-term">mod_wsgi</em></a>.</p>
+<p></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Component</th>
+<th class="head">Tested version(s)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>libapache2-mod-wsgi</td>
+<td>2.8-2ubuntu1</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p>Install the mod_wsgi package:</p>
+<div class="highlight-python"><pre>$ sudo apt-get install libapache2-mod-wsgi</pre>
+</div>
+<p>Enable the module:</p>
+<div class="highlight-python"><pre>$ sudo a2enmod wsgi</pre>
+</div>
+</div></blockquote>
+<p>Set up <a class="reference internal" href="glossary.html#term-wsgi"><em class="xref std std-term">WSGI</em></a> for <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">GMN</em></a>:</p>
+<p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A later section will have instructions on how to install GMN to
+/var/local/dataone/gmn. If another location is going to be used, update the
+paths below accordingly.</p>
+</div>
+<p></p>
+<blockquote>
+<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>:</p>
+<div class="highlight-python"><pre>WSGIScriptAlias /mn /var/local/dataone/gmn/src/service/gmn.wsgi
+
+&lt;Directory /var/local/dataone/gmn/src/service&gt;
+  WSGIApplicationGroup %{GLOBAL}
+  Order deny,allow
+  Allow from all
+&lt;/Directory&gt;</pre>
+</div>
+</div></blockquote>
+<p><a class="reference internal" href="setup-mod-ssl.html"><em>mod_ssl</em></a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup-mod-ssl.html" title="mod_ssl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-apache.html" title="Apache"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
