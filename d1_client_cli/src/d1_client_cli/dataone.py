@@ -708,15 +708,36 @@ class DataONECLI():
   def search_solr(self, line):
     '''Perform a SOLR search.
     '''
-    client = CLICNClient(self.session)
-    object_list = client.search(
-      queryType='solr',
-      q=line if line else
-      self.session.get('search', 'query') + ' ' + self.time_span_to_solr_filter(),
-      start=self.session.get('slice', 'start'),
-      rows=self.session.get('slice', 'count')
-    )
-    print object_list.toxml()
+    try:
+      client = CLICNClient(self.session)
+      object_list = client.search(
+        queryType='solr',
+        q=line if line else
+        self.session.get('search', 'query') + ' ' + self.time_span_to_solr_filter(),
+        start=self.session.get('slice', 'start'),
+        rows=self.session.get('slice', 'count')
+      )
+      print self._pretty(object_list.toxml())
+    #
+    # SOLR returns HTML instead of XML when there's a problem.  See:
+    #   https://issues.apache.org/jira/browse/SOLR-141
+    except d1_common.types.exceptions.ServiceFailure as e:
+      e = "%".join(str(e).splitlines()) # Flatten line
+      regexp = re.compile(
+        r"errorCode: (?P<error_code>\d+)%detailCode: (?P<detail_code>\d+)%description: (?P<description>[^\t\n\r\f\v%]+)%Status code: (?P<status_code>\d+)",
+        re.MULTILINE
+      )
+      result = regexp.search(e)
+      if ((result is not None) and
+          (result.group('error_code') == '500') and
+   (result.group('status_code') == '400')):
+        print_info('Warning: %s' % result.group('description'))
+      else:
+        v = self.session.get('cli', 'verbose')
+        if (v is not None) and v:
+          print_error('Unexpected error:\n%s' % str(e))
+        else:
+          print_error('Unexpected error')
 
   def search_generic(self, line):
     '''Perform a generic search.
@@ -1053,7 +1074,16 @@ class CLI(cmd.Cmd):
     Comprehensive search for Science Data Objects across all available MNs
     '''
     try:
-      query = self._split_args(line, 0, 1)
+      queryArgs = self._split_args(line, 0, 30)
+      # Concatenate the arguments.
+      query = ''
+      sep = ''
+      for q in queryArgs:
+        if q is not None:
+          query += sep + q
+          sep = ' '
+        else:
+          break
       self.d1.search(query)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
