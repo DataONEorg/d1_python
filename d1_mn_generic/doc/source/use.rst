@@ -1,9 +1,6 @@
 Using GMN
 =========
 
-
-
-
 GMN is an implementation of a :term:`MN`. It provides an implementation
 of all MN APIs. GMN can be used as a as a workbone or as a reference for a
 3rd party MN implementation. GMN can also be used as an "adapter", making it
@@ -15,8 +12,6 @@ When used as an adapter, GMN provides a minimal REST API that the adaptee
 can call into to expose its objects, in a process we refer to as object
 registration. After registration, GMN exposes objects on behalf of the
 :term:`adaptee`.
-
-
 
 #.
   The adaptee calls into GMN with a REST call for each object that it wants to

@@ -1,5 +1,5 @@
-Step 1: Hardware
-================
+Hardware
+========
 
 Setting up the hardware.
 

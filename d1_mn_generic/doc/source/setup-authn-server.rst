@@ -1,124 +1,79 @@
-Step 5: Server Side Authentication
-==================================
+Server Side Authentication
+==========================
 
-Create the certificate needed for GMN to prove its identity to :term:`DataONE`
-:term:`client`\ s and other parts of the DataONE infrastructure, such as
-:term:`CN`\ s.
+GMN proves its identity to :term:`DataONE` :term:`client`\ s and other parts of
+the DataONE infrastructure, such as :term:`CN`\ s by providing a server side
+certificate during the TLS handshake.
 
-We will set up our own :term:`CA` and run :term:`Apache` with a certificate
-signed by that CA. This procedure is similar to running Apache with a
-:term:`self signed certificate` and is only a temporary solution.
+The certificate must be signed by a :term:`CA` that is recognized by DataONE. It
+is obtained through the same procedure that one would use for obtaining a
+certificate for any secure web site. The procedure below assumes that a valid
+certificate has already been obtained.
 
+Setup the server side certificate and private key
+-------------------------------------------------
 
-Create CA and certificate for GMN
----------------------------------
+The following section assumes that the server side certificate and key is
+named server.crt and server.key, respectively.
 
-Become root and set up a work area:
+  Create a folder to hold the certificate and key::
 
-::
+    # mkdir /var/local/dataone/gmn_certs/
 
-  $ sudo -s
-  # mkdir -p /var/local/dataone/gmn_certs
-  # chmod 700 /var/local/dataone/gmn_certs
-  # cd /var/local/dataone/gmn_certs
+  Move the certificate and key to the folder.
 
-Create a :term:`CA signing key`:
+Note that, unlike the certificate, the contents of the private key are
+sensitive. Set it to be readable only by root and follow best practices for
+security to keep root from being compromised.
 
-* OpenSSL will prompt for a pass phrase. It should be strong and should not be
-  stored on disk.
+  Set the private key to be readable only by root::
 
-::
+    # chown root:root server.key
+    # chmod 400 server.key
 
-  # openssl genrsa -des3 -out ca.key 4096
-
-
-Create a :term:`CA certificate`:
-
-* When prompted for Common Name (CN), type the name of the GMN server followed
-  by a space and "CA" (without the quotes).
-
-::
-
-  # openssl req -new -x509 -days 36500 -key ca.key -out ca.crt
-
-Create a :term:`server key`:
-
-::
-
-  # openssl genrsa -des3 -out server.key 4096
-  
-Create a :term:`CSR` for the server, signed with the :term:`server key`:
-
-* When prompted for Common Name (CN), type the IP address or DNS name of your
-  server exactly as it appears for clients connecting to the server.
-
-::
-
-  # openssl req -new -key server.key -out server.csr
-
-Sign the :term:`CSR` with the :term:`CA signing key`:
-
-::
-
-  # openssl x509 -req -days 36500 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
-
-Remove pass phrase from :term:`server key` (optional):
-
-* By default, the generated server key is password protected, causing
-  Apache to prompt for the password each time it starts. Removing the password
-  from the key enables Apache to start without prompting for the password.
-
-::
+If the key is password protected, Apache will prompt for the password each time
+it's started. As an optional step, the password can be removed::
 
   # openssl rsa -in server.key -out server.nopassword.key
+
+If this step is performed, substitute server.key with server.nopassword.key
+below.
 
 
 Apache SSL setup
 ----------------
 
-Set Apache up to provide :term:`SSL` :term:`Server Side Authentication` for GMN. 
+Set Apache up to provide :term:`TLS` :term:`Server Side Authentication` for GMN.
 
 Also see: :doc:`setup-example-default-ssl`.
 
+  Enable the default TLS protected site in Apache::
 
-Enable SSL in Apache::
+    $ sudo a2ensite default-ssl
+    $ sudo a2enmod ssl
 
-  $ sudo a2ensite default-ssl
-  $ sudo a2enmod ssl 
+  Edit ``/etc/apache2/sites-available/default-ssl``.
 
+  Change::
 
-Edit ``/etc/apache2/sites-available/default-ssl``.
+    <VirtualHost _default_:443>
 
-Change::
+  to::
 
-  <VirtualHost _default_:443>
+    <VirtualHost *:443>
 
-to::
+  Add directives::
 
-  <VirtualHost *:443>
-
-
-Add directives:
-
-* Before adding the directives, check if they are already present in the file.
-  If there is a commented version, uncomment it and edit it instead of creating
-  a new line.
-  
-* If you did not create a server key without password above, replace
-  ``server.nopassword.key`` with ``server.key``.
-
-::
-
-  SSLEngine on
-  SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
-  SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.nopassword.key
+    SSLEngine on
+    SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
+    SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.key
 
 
-Edit ``/etc/apache2/ports.conf``.
+  Edit ``/etc/apache2/ports.conf``.
 
-In the ``<IfModule mod_ssl.c>`` section, add::
+  In the ``<IfModule mod_ssl.c>`` section, add::
 
-  NameVirtualHost *:443
+    NameVirtualHost *:443
 
 
 :doc:`setup-authn-client`

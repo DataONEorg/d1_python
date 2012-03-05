@@ -10,6 +10,7 @@ Installation and usage of the :term:`GMN`.
   setup
   testing
   use
+  troubleshooting
   impl
   generated
   glossary
@@ -21,4 +22,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

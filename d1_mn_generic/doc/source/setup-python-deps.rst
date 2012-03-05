@@ -1,5 +1,5 @@
-Step 7: Python dependencies
-===========================
+Python dependencies
+===================
 
 GMN currently does not have any Python dependencies that are not also
 dependencies of the DataONE libraries for Python. Those dependencies are

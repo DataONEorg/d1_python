@@ -1,5 +1,5 @@
-Step 2: Apache
-==============
+Apache
+======
 
 Setting up Apache.
 
@@ -13,29 +13,31 @@ apache2-threaded-dev 2.2.14-5ubuntu8.4
 ==================== ==============================================
 
 
-Install Apache2 packages::
+  Install Apache2 packages::
 
-  $ sudo apt-get install apache2 apache2-threaded-dev 
+    $ sudo apt-get install apache2 apache2-threaded-dev
 
 
 :term:`MPM` setup
 -----------------
 
-* :term:`GMN` must currently run within a single process as it uses thread based
-  locking.
+Setting up Apache to run GMN in a single process.
 
-* The default Apache2 package for Ubuntu is built with the "worker" MPM.
+.. warning:: GMN **must** run within a single process as it uses thread
+  based locking. Failure to correctly set up Apache can cause spurious errors
+  when multiple clients access the same resource simultaneously.
 
-Configure the "worker" MPM to use a single process and multiple threads:
+The default Apache2 package for Ubuntu is built with the "worker" MPM. The
+"worker" MPM must be configured to use a single process and multiple threads.
 
-Edit ``/etc/apache2/apache2.conf``.
+  Edit ``/etc/apache2/apache2.conf``.
 
-In the ``IfModule mpm_worker_module`` section, add or edit::
+  In the ``IfModule mpm_worker_module`` section, add or edit::
 
-  StartServers          1
-  ServerLimit           1
-  ThreadsPerChild      64
-  MaxClients           64
+    StartServers          1
+    ServerLimit           1
+    ThreadsPerChild      64
+    MaxClients           64
 
 
 Initial VirtualHost setup
@@ -43,23 +45,17 @@ Initial VirtualHost setup
 
 Also see: :doc:`setup-example-default-ssl`.
 
-* These instructions use the existing VirtualHost section.
+These instructions use the existing VirtualHost section.
 
-* These settings are required for GMN to correctly handle the DataONE
-  :term:`REST` calls. See `Apache Configuration for DataONE Services`_ for more
-  information.
+These settings are required for GMN to correctly handle the DataONE :term:`REST`
+calls. See `Apache Configuration for DataONE Services`_ for more information.
 
-Edit ``/etc/apache2/sites-available/default-ssl``.
+  Edit the ``/etc/apache2/sites-available/default-ssl`` ``VirtualHost`` section::
 
-In the ``VirtualHost`` section, add or edit::
-
-  AllowEncodedSlashes On
-  AcceptPathInfo On
-
+    AllowEncodedSlashes On
+    AcceptPathInfo On
 
 .. _`Apache Configuration for DataONE Services`:
   http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration
 
-
 :doc:`setup-mod-wsgi`
-

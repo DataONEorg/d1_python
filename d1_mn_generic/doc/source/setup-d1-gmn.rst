@@ -1,5 +1,5 @@
-Step 10: DataONE Generic Member Node
-===================================
+DataONE Generic Member Node
+===========================
 
 \
 
@@ -7,62 +7,70 @@ Step 10: DataONE Generic Member Node
 Component            Tested version(s)
 ==================== ==============================================
 Python               2.6
-sqlite               3
 subversion           \
 ==================== ==============================================
 
 
-Install packaged dependencies for GMN
--------------------------------------
-
-GMN uses the SQLite database.
-
-Install SQLite::
-
-  sudo apt-get install sqlite3
-
-
-Install Subversion:
-
 The distribution of GMN is currently Subversion based. This makes it easy to
-keep up to date with changes. A package will be released at some point in the
-future once things stabilize a bit.
+keep up to date with changes.
 
-::
+  Install Subversion::
 
-  $ sudo apt-get install subversion
+    $ sudo apt-get install subversion
+
+  Create and/or enter the folder where you wish to install GMN::
+
+    $ sudo -s
+    # mkdir -p /var/local/dataone
+    # cd /var/local/dataone
+
+  Download GMN::
+
+    $ sudo svn co https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/ gmn
 
 
-Create and/or enter the folder where you wish to install GMN::
+Configure GMN
+~~~~~~~~~~~~~
 
-  $ sudo -s
-  # mkdir -p /var/local/dataone
-  # cd /var/local/dataone
+  Edit: ``/var/local/dataone/mn_generic/service/settings_site.py``
 
-Download GMN::
+  * The NODE_IDENTIFIER is configured later, in the :doc:`setup-registration`
+    step.
 
-  $ sudo svn co https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/ gmn
+  * Set DEBUG = False
 
-Configure GMN:
+  * Replace the name and email address in ADMINS with the name and email address
+    for a person that should be notified if there are any issues. Additional
+    administrators can be added.
 
-Create the gmn.cfg file and change *name* and *identifier* to values that are
-unique for this instance of GMN::
+  * In the DATABASES section, set the password to what was specified during the
+    PostgreSQL installation step: :doc:`setup-postgresql`.
 
-  $ sudo -s
-  # cd /var/local/dataone/gmn/src/service
-  # cp gmn.cfg.template gmn.cfg
-  # vi gmn.cfg
 
-Setup GMN:
+Initialize the database
+~~~~~~~~~~~~~~~~~~~~~~~
 
-  $ sudo -s
-  # cd /var/local/dataone/gmn/src/service
-  # sudo ../install/config.py
+  ::
 
-config.py performs the following tasks:
+    $ cd /var/local/dataone/mn_generic/service
+    $ python manage.py syncdb
 
-* Create sqlite database file for GMN.
-* Make sure logfile can be written by group www-data.
-* Make sure db file and parent folder of db file is writeable by www-data.
-* Copy fixed config values from .cfg file to database.
-* Update GMN version from SVN revision number.
+
+Set filesystem permissions
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  * Make sure that all files under ``/var/local/dataone`` can be read by the
+    user account under which Apache runs (www-data by default)
+  * Make sure that the log files can be written by the Apache user account.
+  * When using SQLite (currently unsupported), make sure that the SQLite
+    database file can be written by the Apache user account.
+
+
+Set GMN version from SVN revision number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  In a test install of GMN, this step is not neccessary.
+
+  <TODO: Document this step>
+
+:doc:`setup-registration`
