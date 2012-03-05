@@ -182,9 +182,9 @@ class session(object):
   def validate_value_type(self, value_string, type_converter):
     # Make sure booleans are "sane"
     if type_converter is BooleanType:
-      if value_string in ('true', 'True', 't', 'T', 1, 'yes', 'Yes'):
+      if value_string in ('true', 'True', 't', 'T', 1, '1', 'yes', 'Yes'):
         return 'True'
-      elif value_string in ('false', 'False', 'f', 'F', 0, 'no', 'No'):
+      elif value_string in ('false', 'False', 'f', 'F', 0, '0', 'no', 'No'):
         return 'False'
       else:
         raise ValueError('"%s": Invalid boolean value' % value_string)
