@@ -194,7 +194,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       vendorSpecific = {}
     url = self._rest_url('object/%(pid)s', pid=pid)
     mime_multipart_fields = [
-      ('pid', pid.encode('utf-8')),
+      ('newPid', newPid.encode('utf-8')),
     ]
     mime_multipart_files = [
       ('object', 'content.bin', obj),
