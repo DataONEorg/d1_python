@@ -34,6 +34,7 @@ import csv
 import datetime
 import dateutil
 import glob
+import htmlentitydefs
 import httplib
 import json
 import logging
@@ -724,14 +725,18 @@ class DataONECLI():
     except d1_common.types.exceptions.ServiceFailure as e:
       e = "%".join(str(e).splitlines()) # Flatten line
       regexp = re.compile(
-        r"errorCode: (?P<error_code>\d+)%detailCode: (?P<detail_code>\d+)%description: (?P<description>[^\t\n\r\f\v%]+)%Status code: (?P<status_code>\d+)",
-        re.MULTILINE
+        r"errorCode: (?P<error_code>\d+)%.*%Status code: (?P<status_code>\d+)"
       )
       result = regexp.search(e)
       if ((result is not None) and
           (result.group('error_code') == '500') and
    (result.group('status_code') == '400')):
-        print_info('Warning: %s' % result.group('description'))
+        result = re.search(r"<b>description</b> <u>(?P<description>[^<]+)</u>", e)
+        msg = re.sub(
+          '&([^;]+);', lambda m: unichr(htmlentitydefs.name2codepoint[m.group(1)]),
+          result.group('description')
+        )
+        print_info('Warning: %s' % msg)
       else:
         v = self.session.get('cli', 'verbose')
         if (v is not None) and v:
