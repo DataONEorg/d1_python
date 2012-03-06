@@ -788,9 +788,9 @@ class DataONECLI():
     # Validate the hash algorithm
     if name == 'algorithm':
       try:
-        get_checksum_calculator_by_dataone_designator(value_string)
-      except KeyError as e:
-        raise ValueError('"%s": Invalid algorithm value' % value_string)
+        d1_common.util.get_checksum_calculator_by_dataone_designator(value)
+      except (KeyError, NameError) as e:
+        raise ValueError('"%s": Invalid algorithm value' % value)
     #
     # Validate the object format.
     if name == 'object-format' or name == 'search-object-format':
@@ -872,9 +872,16 @@ class CLI(cmd.Cmd):
       else:
         logging.getLogger('').setLevel(logging.INFO)
 
-  #-----------------------------------------------------------------------------
-  # Session.
-  #-----------------------------------------------------------------------------
+  def is_verbose(self):
+    verbosity = self.d1.session.get('cli', 'verbose')
+    if verbosity is not None:
+      return verbosity
+    else:
+      return false
+
+    #-----------------------------------------------------------------------------
+    # Session.
+    #-----------------------------------------------------------------------------
 
   def do_reset(self, line):
     '''reset
@@ -885,6 +892,9 @@ class CLI(cmd.Cmd):
       self.d1.reset()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_load(self, line):
     '''load [file]
@@ -895,6 +905,9 @@ class CLI(cmd.Cmd):
       self.d1.session_load(pickle_file_path=expand_path(file))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_save(self, line):
     '''save [file]
@@ -905,6 +918,9 @@ class CLI(cmd.Cmd):
       self.d1.session_save(pickle_file_path=expand_path(file))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_show(self, line):
     '''show [session parameter]
@@ -915,6 +931,9 @@ class CLI(cmd.Cmd):
       self.d1.session_print_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_set(self, line):
     '''set <session parameter> <value>
@@ -929,6 +948,12 @@ class CLI(cmd.Cmd):
         self.d1.session_set_parameter(session_parameter, value)
       except cli_exceptions.InvalidArguments as e:
         print_error(e)
+      except ValueError as e:
+        print_error(e)
+      except:
+        print 'there'
+        if self.is_verbose():
+          print_error('Unexpected error')
 
   # TODO: add complete_show and complete_set method to display possibilities. - aBp_
 
@@ -941,6 +966,9 @@ class CLI(cmd.Cmd):
       self.d1.session_clear_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   #-----------------------------------------------------------------------------
   # Access control.
@@ -955,6 +983,9 @@ class CLI(cmd.Cmd):
       self.d1.access_control_add_allowed_subject(subject, permission)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_deny(self, line):
     '''deny <subject>
@@ -965,6 +996,9 @@ class CLI(cmd.Cmd):
       self.d1.access_control_remove_allowed_subject(subject)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_allowpublic(self, line):
     '''allowpublic
@@ -975,6 +1009,9 @@ class CLI(cmd.Cmd):
       self.d1.access_control_allow_public(True)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_denypublic(self, line):
     '''denypublic
@@ -985,6 +1022,9 @@ class CLI(cmd.Cmd):
       self.d1.access_control_allow_public(False)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_denyall(self, line):
     '''denyall
@@ -995,6 +1035,9 @@ class CLI(cmd.Cmd):
       self.d1.access_control_remove_all_allowed_subjects()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   #-----------------------------------------------------------------------------
   # Replication policy.
@@ -1009,6 +1052,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_clear()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_addpreferred(self, line):
     '''addpreferred <member node>
@@ -1019,6 +1065,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_add_preferred(mn)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_addblocked(self, line):
     '''addblocked <member node>
@@ -1029,6 +1078,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_add_blocked(mn)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_remove(self, line):
     '''remove <member node>
@@ -1039,6 +1091,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_remove(mn)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_allowreplication(self, line):
     '''allowreplication
@@ -1049,6 +1104,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_set_replication_allowed(True)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_disallowreplication(self, line):
     '''disallowreplication
@@ -1059,6 +1117,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_set_replication_allowed(False)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_setreplicas(self, line):
     '''setreplicas <number of replicas>
@@ -1069,6 +1130,9 @@ class CLI(cmd.Cmd):
       return self.d1.replication_policy_set_number_of_replicas(n_replicas)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   #-----------------------------------------------------------------------------
   # Search
@@ -1092,6 +1156,9 @@ class CLI(cmd.Cmd):
       self.d1.search(query)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   #-----------------------------------------------------------------------------
   # Science Object Operations
@@ -1106,6 +1173,9 @@ class CLI(cmd.Cmd):
       self.d1.science_object_get(pid, file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_meta(self, line):
     '''meta <pid> [file]
@@ -1116,6 +1186,9 @@ class CLI(cmd.Cmd):
       self.d1.system_metadata_get(pid, file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(str(e))
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_create(self, line):
     '''create <pid> <file>
@@ -1126,6 +1199,9 @@ class CLI(cmd.Cmd):
       self.d1.science_object_create(pid, file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_update(self, line):
     '''update <current-pid> <new-pid> <file>
@@ -1136,6 +1212,9 @@ class CLI(cmd.Cmd):
       self.d1.science_object_update(curr_pid, file, new_pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_delete(self, line):
     '''delete <pid>
@@ -1146,6 +1225,9 @@ class CLI(cmd.Cmd):
       self.d1.science_object_delete(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_resolve(self, line):
     '''resolve <pid>
@@ -1156,6 +1238,9 @@ class CLI(cmd.Cmd):
       self.d1.resolve(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_list(self, line):
     '''list
@@ -1168,6 +1253,9 @@ class CLI(cmd.Cmd):
       print_error(e)
     except (KeyboardInterrupt, IOError) as e:
       return
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_log(self, line):
     '''log
@@ -1178,6 +1266,9 @@ class CLI(cmd.Cmd):
       self.d1.log(path)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_setaccess(self, line):
     '''setaccess <pid>
@@ -1188,6 +1279,9 @@ class CLI(cmd.Cmd):
       self.d1.set_access_policy(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_setreplication(self, line):
     '''setreplication <pid>
@@ -1198,6 +1292,9 @@ class CLI(cmd.Cmd):
       self.d1.set_replication_policy(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   #-----------------------------------------------------------------------------
   # CLI
@@ -1213,6 +1310,9 @@ class CLI(cmd.Cmd):
         print_info('{0: 3d} {1}'.format(idx, item))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      if self.is_verbose():
+        print_error('Unexpected error')
 
   def do_exit(self, line):
     '''exit
@@ -1232,6 +1332,7 @@ class CLI(cmd.Cmd):
 
   def do_EOF(self, line):
     '''Exit on system EOF character'''
+    print
     return self.do_exit(line)
 
   def do_help(self, line):
