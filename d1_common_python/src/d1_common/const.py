@@ -52,6 +52,9 @@ USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION
 # The system wide default checksum algorithm.
 DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
 
+# Default number of replicas
+DEFAULT_NUMBER_OF_REPLICAS = 3
+
 # Mimetypes.
 MIMETYPE_XML = 'application/xml'
 MIMETYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
