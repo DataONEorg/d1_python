@@ -128,6 +128,9 @@ class replication_policy():
     self.replication_allowed = replication_allowed
     if not replication_allowed:
       self.number_of_replicas = 0
+    elif self.number_of_replicas == 0:
+      self.number_of_replicas = d1_common.const.DEFAULT_NUMBER_OF_REPLICAS
+      print_info('Changed number of replicas to %d.' % self.number_of_replicas)
 
   def get_replication_allowed(self):
     return self.replication_allowed
