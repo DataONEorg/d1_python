@@ -275,9 +275,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   # Tests that are run for both local and remote objects.
   # ----------------------------------------------------------------------------
 
-  # ----------------------------------------------------------------------------
-  # Setup.
-  # ----------------------------------------------------------------------------
+  # ============================================================================
+  # Setup. Also checks create()
+  # ============================================================================
 
   def A_delete_all_objects(self):
     '''Delete all objects.'''
@@ -375,8 +375,16 @@ class TestSequenceFunctions(unittest2.TestCase):
         break
     self.assertTrue(found)
 
+  # ============================================================================
+  # Read API
+  # ============================================================================
+
+  # ----------------------------------------------------------------------------
+  # get()
+  # ----------------------------------------------------------------------------
+
   def compare_byte_by_byte(self):
-    '''Read from MN and do byte-by-byte comparison with local copies.
+    '''get(): Read from MN and do byte-by-byte comparison with local copies.
     '''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url, timeout=60)
 
@@ -392,11 +400,12 @@ class TestSequenceFunctions(unittest2.TestCase):
         .read(1024 ** 2)
       self.assertEqual(object_str_disk, object_str_d1)
 
- #Read objectList from MN and compare the values for each object with values
- #from sysmeta on disk.
+  # ----------------------------------------------------------------------------
+  # listObjects()
+  # ----------------------------------------------------------------------------
 
   def object_properties(self):
-    '''Read complete object collection and compare with values stored in local SysMeta files.
+    '''listObjects(): Read complete object collection and compare with values stored in local SysMeta files.
     '''
     # Get object collection.
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url, timeout=60)
@@ -438,70 +447,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       self.assertEqual(object_info.checksum.algorithm,
                        sysmeta_obj.checksum.algorithm, sysmeta_path)
 
-
-#  def update_sysmeta(self):
-#    '''Update System Metadata.
-#    '''
-#    pid = '12Cpaup.txt'
-#    
-#    # Generate a new System Metadata object with Access Policy.
-#    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
-#                                    datetime.datetime(1976, 7, 8),
-#                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-#
-#    access_policy_spec = (
-#      (('test_user_1',), ('read',)),
-#      (('test_user_2',), ('read',))
-#    )
-#
-#    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
-#
-#    sysmeta.rightsHolder = 'test_user_1'
-#
-#    # Serialize System Metadata to XML.
-#    sysmeta_xml = sysmeta.toxml()
-#    mime_multipart_files = [
-#      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
-#    ]
-#
-#    # POST to /meta/pid.
-#    test_update_sysmeta_url = urlparse.urljoin('/v1/meta/',
-#      d1_common.url.encodePathElement(pid))
-#    
-#    root = gmn_test_client.GMNTestClient(self.options.gmn_url)
-#    response = root.POST(
-#      test_update_sysmeta_url, files=mime_multipart_files,
-#      headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
-#    self.assertEqual(response.status, 200)
-
-#  def object_update(self):
-#    '''Update an object.
-#    '''
-#    # New object.
-#    # SysMeta
-#    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
-#    sysmeta_path = os.path.join(self.options.obj_path, sysmeta_file)
-#    sysmeta_xml = open(sysmeta_path, 'rb').read()
-#    # SciData
-#    object_path = os.path.splitext(sysmeta_path)[0]
-#    object_str = open(object_path, 'rb')
-#    object_str = ''
-#    for i in range(10 * 1024 * 1024):
-#      object_str += 'a'
-#    object_str += 'z'
-#    # 
-#    obsoleted_pid = 'AnserMatrix.htm'
-#    new_pid = 'update_object_pid'
-#    # Update.
-#    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
-#    response = client.updateResponse(obsoleted_pid,
-#                                     object_str, new_pid, sysmeta_xml,
-#                                     vendorSpecific=self.include_subjects('test_user_1'))
-#    return response
-
-  # ----------------------------------------------------------------------------
-  # listObjects
-  # ----------------------------------------------------------------------------
 
   def get_object_count(self):
     '''listObjects: Get object count.
@@ -748,13 +693,12 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertRaises(d1_common.types.exceptions.NotFound,
                       self.get_checksum_test, pid, '', algorithm)
 
-
   # ----------------------------------------------------------------------------
-  # systemMetadataChanged
+  # systemMetadataChanged()
   # ----------------------------------------------------------------------------
 
   def system_metadata_changed_invalid_pid(self):
-    '''systemMetadataChanged fails when called with invalid PID'''
+    '''systemMetadataChanged(): fails when called with invalid PID'''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotFound,
       client.systemMetadataChanged, '_bogus_pid_', 1,
@@ -763,14 +707,14 @@ class TestSequenceFunctions(unittest2.TestCase):
 
 
   def system_metadata_changed_valid_pid(self):
-    '''systemMetadataChanged succeeds when called with valid PID'''
+    '''systemMetadataChanged(): succeeds when called with valid PID'''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     client.systemMetadataChanged('fitch2.mc', 1, d1_common.date_time.utc_now(),
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
 
   def system_metadata_changed_valid_pid_invalid_subject(self):
-    '''systemMetadataChanged denies access to subjects other that CNs'''
+    '''systemMetadataChanged(): denies access to subjects other that CNs'''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     self.assertRaises(d1_common.types.exceptions.NotAuthorized,
       client.systemMetadataChanged, 'fitch2.mc', 1,
@@ -778,15 +722,15 @@ class TestSequenceFunctions(unittest2.TestCase):
         vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC))
 
   # ----------------------------------------------------------------------------
-  # synchronizationFailed
+  # synchronizationFailed()
   # ----------------------------------------------------------------------------
 
   def synchronization_failed(self):
     '''synchronizationFailed returns 200 OK.
     '''
     # This test does not test if GMN actually does anything with the message
-    # passed to the synchronizationFailed() method. There is no way for the
-    # test to reach that information.
+    # passed to the synchronizationFailed() method. There is currently no way
+    # for the test to reach that information.
     pid = '12Cpaup.txt'
     msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
     exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
@@ -843,8 +787,74 @@ class TestSequenceFunctions(unittest2.TestCase):
   # Misc.
   # ----------------------------------------------------------------------------
 
+
+#  def update_sysmeta(self):
+#    '''Update System Metadata.
+#    '''
+#    pid = '12Cpaup.txt'
+#    
+#    # Generate a new System Metadata object with Access Policy.
+#    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
+#                                    datetime.datetime(1976, 7, 8),
+#                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+#
+#    access_policy_spec = (
+#      (('test_user_1',), ('read',)),
+#      (('test_user_2',), ('read',))
+#    )
+#
+#    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
+#
+#    sysmeta.rightsHolder = 'test_user_1'
+#
+#    # Serialize System Metadata to XML.
+#    sysmeta_xml = sysmeta.toxml()
+#    mime_multipart_files = [
+#      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
+#    ]
+#
+#    # POST to /meta/pid.
+#    test_update_sysmeta_url = urlparse.urljoin('/v1/meta/',
+#      d1_common.url.encodePathElement(pid))
+#    
+#    root = gmn_test_client.GMNTestClient(self.options.gmn_url)
+#    response = root.POST(
+#      test_update_sysmeta_url, files=mime_multipart_files,
+#      headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+#    self.assertEqual(response.status, 200)
+
+#  def object_update(self):
+#    '''Update an object.
+#    '''
+#    # New object.
+#    # SysMeta
+#    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
+#    sysmeta_path = os.path.join(self.options.obj_path, sysmeta_file)
+#    sysmeta_xml = open(sysmeta_path, 'rb').read()
+#    # SciData
+#    object_path = os.path.splitext(sysmeta_path)[0]
+#    object_str = open(object_path, 'rb')
+#    object_str = ''
+#    for i in range(10 * 1024 * 1024):
+#      object_str += 'a'
+#    object_str += 'z'
+#    # 
+#    obsoleted_pid = 'AnserMatrix.htm'
+#    new_pid = 'update_object_pid'
+#    # Update.
+#    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+#    response = client.updateResponse(obsoleted_pid,
+#                                     object_str, new_pid, sysmeta_xml,
+#                                     vendorSpecific=self.include_subjects('test_user_1'))
+#    return response
+
+
+
+
+
+
   def delete(self):
-    '''MN_crud.delete() in GMN and libraries.
+    '''MNStorage.delete() in GMN and libraries.
     '''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Find the PID for a random object that exists on the server.
@@ -859,7 +869,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertRaises(SyntaxError, client.describe, pid)
 
   def describe(self):
-    '''MN_crud.describe in GMN and libraries.
+    '''MNStorage.describe in GMN and libraries.
     '''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Find the PID for a random object that exists on the server.
@@ -980,6 +990,44 @@ class TestSequenceFunctions(unittest2.TestCase):
       objectFormat='eml://ecoinformatics.org/eml-2.0.0',
       vendorSpecific=self.include_subjects(AUTH_SPECIFIC_USER))
     self.assert_object_list_slice(object_list, 0, 5, AUTH_SPECIFIC_AND_OBJ_FORMAT)
+
+  # ----------------------------------------------------------------------------
+  # MNStorage.update()
+  # ----------------------------------------------------------------------------
+
+  def update(self, wrapped=False):
+    '''update(): Creating a new object that obsoletes another object
+    '''
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+
+
+
+    for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path,
+                                                      '*.sysmeta'))):
+      # Get name of corresponding object and open it.
+      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+      object_file = open(object_path, 'r')
+
+      # The pid is stored in the sysmeta.
+      sysmeta_file = open(sysmeta_path, 'r')
+      sysmeta_xml = sysmeta_file.read()
+      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+      sysmeta_obj.rightsHolder = 'test_user_1'
+
+      headers = self.include_subjects('test_user_1')
+      headers.update({'VENDOR_TEST_OBJECT': 1})
+
+      if wrapped:
+        vendor_specific = {
+          'VENDOR_GMN_REMOTE_URL': self.options.obj_url + '/' + \
+          d1_common.url.encodePathElement(
+            d1_common.url.encodePathElement(sysmeta_obj.identifier.value()))
+        }
+        headers.update(vendor_specific)
+
+      client.create(sysmeta_obj.identifier.value(),
+                    object_file, sysmeta_obj,
+                    vendorSpecific=headers)
 
 
   #

@@ -71,8 +71,8 @@ def register(options, arguments):
 
   client = d1_client.cnclient.CoordinatingNodeClient(
     options.dataone_url,
-    certfile=options.cert_path,
-    keyfile=options.key_path
+    cert_path=options.cert_path,
+    key_path=options.key_path
   )
 
   response = client.registerResponse(node)
@@ -88,7 +88,7 @@ def main():
     'usage: %prog [options] <node registration xml document>'
   )
   parser.add_option('--verbose', dest='verbose', action='store_true', default=False)
-  parser.add_option('--node', dest='node', action='store', type='string')
+  #parser.add_option('--node', dest='node', action='store', type='string')
   parser.add_option(
     '--cert-path',
     dest='cert_path',
@@ -103,14 +103,15 @@ def main():
     type='string',
     default=None
   )
+  #parser.add_option('--dataone-url', dest='dataone_url', action='store', type='string', default='https://cn-dev-2.dataone.org/cn/')
+  #parser.add_option('--dataone-url', dest='dataone_url', action='store', type='string', default=d1_common.const.URL_DATAONE_ROOT)
   parser.add_option(
     '--dataone-url',
     dest='dataone_url',
     action='store',
     type='string',
-    default='https://cn-dev-2.dataone.org/cn/v1/'
+    default='https://cn-sandbox.dataone.org/cn'
   )
-  #parser.add_option('--dataone-url', dest='dataone_url', action='store', type='string', default=d1_common.const.URL_DATAONE_ROOT)
   (options, arguments) = parser.parse_args()
 
   update_verbose(options.verbose)
