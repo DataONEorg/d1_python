@@ -29,4 +29,4 @@ Brief overview of the tasks that must be performed:
     authentication from a local LAN or specific IP address
 
 
-:doc:`setup-startup`
+:doc:`setup-whitelist`
