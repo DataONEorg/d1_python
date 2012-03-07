@@ -81,7 +81,7 @@ import service.settings
 # ------------------------------------------------------------------------------
 
 
-@auth.assert_internal_permission
+@mn.auth.assert_internal_permission
 def replicate_task_get(request):
   '''Get next replication task.'''
 
@@ -95,7 +95,7 @@ def replicate_task_get(request):
   return {'query': query, 'type': 'replication_task'}
 
 
-@auth.assert_internal_permission
+@mn.auth.assert_internal_permission
 def replicate_task_update(request, task_id, status):
   '''Update the status of a replication task.'''
   try:
@@ -110,8 +110,8 @@ def replicate_task_update(request, task_id, status):
   return HttpResponse('OK')
 
 
-@lock_pid.for_write
-@auth.assert_internal_permission
+@mn.lock_pid.for_write
+@mn.auth.assert_internal_permission
 def replicate_create(request, pid):
   '''Add a replica to the Member Node.
   '''
@@ -124,8 +124,8 @@ def replicate_create(request, pid):
 # ------------------------------------------------------------------------------
 
 
-@lock_pid.for_write
-@auth.assert_internal_permission
+@mn.lock_pid.for_write
+@mn.auth.assert_internal_permission
 def update_sysmeta(request, pid):
   '''Updates the System Metadata for an existing Science Object.
   '''
@@ -149,27 +149,17 @@ def update_sysmeta(request, pid):
   # Note: No sanity checking is done on the provided System Metadata. It is
   # assumed that what the worker process pulls from the Coordinating Node makes
   # sense.
+  sciobj = models.ScienceObject.objects.get(pid=pid)
+  sciobj.set_format(sysmeta_obj.formatId)
+  sciobj.checksum = sysmeta_obj.checksum.value()
+  sciobj.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
+  sciobj.mtime = d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
+  sciobj.size = sysmeta_obj.size
+  #sciobj.replica = False
+  sciobj.serial_version = sysmeta_obj.serialVersion
+  sciobj.save()
 
-  # Update database to match new System Metadata.
-  try:
-    sciobj = models.ScienceObject.objects.get(pid=pid)
-    sciobj.set_format(sysmeta_obj.formatId)
-    sciobj.checksum = sysmeta_obj.checksum.value()
-    sciobj.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
-    sciobj.mtime = d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
-    sciobj.size = sysmeta_obj.size
-    #sciobj.replica = False
-    sciobj.serial_version = sysmeta_obj.serialVersion
-    sciobj.save()
-  except:
-    raise d1_common.types.exceptions.InvalidSystemMetadata(0, 'Invalid System Metadata')
-
-  # Successfully updated the db, so put current datetime in status.mtime. This
-  # should store the status.mtime in UTC and for that to work, Django must be
-  # running with settings.TIME_ZONE = 'UTC'.
-  db_update_status = models.DB_update_status()
-  db_update_status.status = 'update successful'
-  db_update_status.save()
+  mn.util.update_db_status('update successful')
 
   # If an access policy was provided in the System Metadata, set it.
   if sysmeta_obj.accessPolicy:
@@ -177,11 +167,23 @@ def update_sysmeta(request, pid):
   else:
     auth.set_access_policy(pid)
 
-  # Write SysMeta bytes to store. The existing file can be safely overwritten
-  # because a lock has been obtained on the PID.
   sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
 
   # Log this System Metadata update.
   event_log.update(pid, request)
 
   return HttpResponse('OK')
+
+# ------------------------------------------------------------------------------  
+# Internal: Misc. 
+# ------------------------------------------------------------------------------
+
+
+def home(request):
+  '''Home page. Root of web server redirects here.'''
+
+  n_science_objects = mn.models.ScienceObject.objects.count()
+  avg_sci_data_size = mn.models.ScienceObject.objects.all().\
+    aggregate(Avg('size'))['size__avg']
+
+  return render_to_response('home.html', locals(), mimetype="application/xhtml+xml")

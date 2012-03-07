@@ -28,19 +28,7 @@
 
 from django.conf.urls.defaults import *
 
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
-
 # Whenever Django encounters include(), it chops off whatever part of the URL
 # matched up to that point and sends the remaining string to the included
 # URLconf for further processing.
-urlpatterns = patterns(
-  '',
-  # GMN.
-  (r'^', include('service.mn.urls')),
-  # Admin.
-  (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-  (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-  (r'^admin/', include(admin.site.urls)),
-)
+urlpatterns = patterns('', (r'^', include('service.mn.urls')), )

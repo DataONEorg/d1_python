@@ -233,8 +233,8 @@ class Permission(models.Model):
   level = models.PositiveSmallIntegerField()
 
 
-class CreateUpdatePermission(models.Model):
+class WhitelistForCreateUpdateDelete(models.Model):
   subject = models.ForeignKey(PermissionSubject)
 
-  def add(self, subject):
+  def set(self, subject):
     self.subject = PermissionSubject.objects.get_or_create(subject=subject)[0]

@@ -74,7 +74,23 @@ import settings
 import util
 
 
-def store_path(root, pid):
+def update_db_status(status):
+  # Put the current datetime in status.mtime together with the current status.
+  # This should store the status.mtime in UTC and for that to work, Django must
+  # be running with service.settings.TIME_ZONE = 'UTC'.
+  db_update_status = models.DB_update_status()
+  db_update_status.status = status
+  db_update_status.save()
+
+
+def ensure_directories_exists(file_path):
+  try:
+    os.makedirs(os.path.dirname(file_path))
+  except OSError:
+    pass
+
+
+def store_path(root, pid, serial_version=None):
   '''Determine the location in the object or System Metadata store of the file
   holding an object's bytes.
 
@@ -87,8 +103,13 @@ def store_path(root, pid):
   z = zlib.adler32(pid.encode('utf-8'))
   a = z & 0xff ^ (z >> 8 & 0xff)
   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
+  serial_version_append = '.' + str(serial_version) if serial_version else ''
   return os.path.join(
-    root, '{0:03}'.format(a), '{0:03}'.format(b), d1_common.url.encodePathElement(pid)
+    root, '{0:03}'.format(a), '{0:03}'.format(b), '{0}{1}'.format(
+      d1_common.url.encodePathElement(
+        pid
+      ), serial_version_append
+    )
   )
 
 

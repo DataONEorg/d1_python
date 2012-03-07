@@ -112,6 +112,11 @@ def object_no_pid(request):
 def _add_http_date_to_response_header(response, date_time):
   response['Date'] = d1_common.date_time.to_http_datetime(date_time)
 
+def _get_http_response_with_identifier_type(pid):
+  pid_pyxb = dataoneTypes.Identifier(pid)
+  pid_xml = pid_pyxb.toxml()
+  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
+
 
 # Unrestricted.
 def monitor_ping(request):
@@ -178,11 +183,9 @@ def event_log_view(request):
 def node(request):
   '''MNCore.getCapabilities() → Node
   '''
-  node_registry_path = os.path.join(service.settings.STATIC_STORE_PATH,
-                                       'nodeRegistry.xml')
   # Django closes the file. (Can't use "with".)
   try:
-    file = open(node_registry_path, 'rb')
+    file = open(NODE_REGISTRY_XML_PATH, 'rb')
   except EnvironmentError:
     raise d1_common.types.exceptions.ServiceFailure(0,
       'The administrator of this node has not yet provided Member Node '
@@ -226,13 +229,6 @@ def object_pid_get(request, pid):
   d1_assert.object_exists(pid)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
 
-#  # Split URL into individual parts.
-#  try:
-#    url_split = urlparse.urlparse(sciobj.url)
-#  except ValueError:
-#    raise d1_common.types.exceptions.ServiceFailure(0,
-#      'pid({0}) url({1}): Invalid URL'.format(sciobj.pid, sciobj.url))
-
   response = HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   # The HttpResponse object supports streaming with an iterator, but only
@@ -248,29 +244,19 @@ def object_pid_get(request, pid):
   return response
 
 
-# Internal.
 def _object_pid_get(sciobj):
   # Split URL into individual parts.
-  try:
-    url_split = urlparse.urlparse(sciobj.url)
-  except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0,
-      'pid({0}) url({1}): Invalid URL'.format(sciobj.pid, sciobj.url))
-
+  url_split = urlparse.urlparse(sciobj.url)
   if url_split.scheme == 'http':
     logging.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
                  ' location'.format(sciobj.pid, sciobj.url))
     return _object_pid_get_remote(sciobj.url, url_split)
-  elif url_split.scheme == 'file':
-    logging.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
-                 .format(sciobj.pid, sciobj.url))
-    return _object_pid_get_local(sciobj.pid)
-  else:
-    raise d1_common.types.exceptions.ServiceFailure(0,
-      'pid({0}) url({1}): Invalid URL. Must be http:// or file://')
+  # If the scheme is not http, it must be file.
+  logging.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
+               .format(sciobj.pid, sciobj.url))
+  return _object_pid_get_local(sciobj.pid)
 
 
-# Internal.
 def _object_pid_get_remote(url, url_split):
   # Handle 302 Found.  
   try:
@@ -302,10 +288,9 @@ def _object_pid_get_remote(url, url_split):
   return mn.util.fixed_chunk_size_iterator(remote_response)
 
 
-# Internal.
 def _object_pid_get_local(pid):
   file_in_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
-  # Django closes the file. (Can't use "with".)
+  # Can't use "with".
   file = open(file_in_path, 'rb')
   # Return an iterator that iterates over the raw bytes of the object in chunks.
   return mn.util.fixed_chunk_size_iterator(file)
@@ -323,21 +308,6 @@ def meta_pid_get(request, pid):
                       mimetype=d1_common.const.MIMETYPE_XML)
 
 
-# Internal.
-def _get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
-  dataone_to_python_checksum_algorithm_map = {
-    'MD5': hashlib.md5,
-    'SHA-1': hashlib.sha1,
-  }
-  try:
-    return dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]()
-  except KeyError:
-    raise d1_common.types.exceptions.InvalidRequest(0,
-      'Invalid checksum algorithm, "{0}". Supported algorithms are: {1}'\
-      .format(dataone_algorithm_name,
-              ', '.join(dataone_to_python_checksum_algorithm_map.keys())))
-
-
 @mn.restrict_to_verb.get
 @mn.lock_pid.for_read
 @mn.auth.assert_read_permission
@@ -351,7 +321,13 @@ def checksum_pid(request, pid):
   algorithm = request.GET.get('checksumAlgorithm',
     d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
 
-  h = _get_checksum_calculator_by_dataone_designator(algorithm)
+  try:
+    h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+  except KeyError:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Invalid checksum algorithm, "{0}". Supported algorithms are: {1}'\
+      .format(dataone_algorithm_name,
+              ', '.join(dataone_to_python_checksum_algorithm_map.keys())))
 
   # Calculate the checksum.
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
@@ -488,7 +464,8 @@ def _validate_sysmeta_filesize(request, sysmeta):
 
 def _get_checksum_calculator(sysmeta):
   try:
-    return hashlib.new(sysmeta.checksum.algorithm)
+    return d1_common.util.get_checksum_calculator_by_dataone_designator(
+      sysmeta.checksum.algorithm)
   except TypeError:
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'Checksum algorithm is unsupported: {0}'.format(
@@ -524,63 +501,93 @@ def _update_sysmeta_with_mn_values(request, sysmeta):
   now = datetime.datetime.utcnow()
   sysmeta.dateUploaded = now
   sysmeta.dateSysMetadataModified = now
+  sysmeta.serialVersion = 1;
 
 
-#@mn.lock_pid.for_write
-#@mn.auth.assert_authenticated
+# Both create() and update() creates a new object. In both methods, the pid of
+# the NEW object is passed in an MMP field (pid in create() and newPid in
+# update()). Additionally, update() passes the pid of the OLD object (the one to
+# be updated) in the URL.
+#
+# Requirements:
+#
+# create()
+# - Obtain a write lock on the pid of the NEW object
+# - Check that the NEW pid does not already exist
+# - Check that the caller has the right to create NEW objects on the MN
+# - Check that the submitted SysMeta does NOT include obsoletes or obsoletedBy
+# 
+# update()
+# - All the requirements of create() (for the NEW pid), plus a similar set of
+#   requirements for the OLD pid:
+# - Obtain a write lock on the OLD pid
+# - Check that the OLD pid exists
+# - Check that the caller has write permissions on the OLD object
+# - Check that the submitted SysMeta DOES include obsoletes and that the
+#   PID matches the OLD pid.
+#
+# For convenience, the functions below do not perform the locking and checks
+# in the same order as described above.
+#
+# At any point where an exception is raised, the changes made to the database
+# are implicitly rolled back. Any files stored in the filesystem before the
+# exception are orphaned and cleaned up later. Whenever a filesystem object
+# (SysMeta) is updated, a new file is created, so that any subsequent exception
+# and rollback does not cause the database and filesystem to fall out of sync.
+#
+# Exceptions when dealing with the filesystem are not handled. They will
+# typically be caused by issues such as invalid filesystem permissions or the
+# server having run out of disk space. Hence, they are considered to be internal
+# server errors. In debug mode, GMN will forward the actual exceptions to the
+# client, wrapped in DataONE ServiceFailure exceptions. In production, the
+# actual exception is not included.
+
 def object_post(request):
   '''MNStorage.create(session, pid, object, sysmeta) → Identifier
   '''
   d1_assert.post_has_mime_parts(request, (('field', 'pid'),
                                           ('file', 'object'),
                                           ('file', 'sysmeta')))
-  pid = request.POST['pid']
-  return _create(request, pid)
+  sysmeta_xml = request.FILES['sysmeta'].read()
+  sysmeta = _deserialize_system_metadata(sysmeta_xml)
+  _assert_obsoleted_by_not_specified(sysmeta)
+  _assert_obsoletes_not_specified(sysmeta)
+  new_pid = request.POST['pid']
+  _create(request, new_pid, sysmeta)
+  return _get_http_response_with_identifier_type(new_pid)
 
 
-@mn.lock_pid.for_write
-@mn.auth.assert_authenticated
-def object_pid_put(request, pid):
+@mn.lock_pid.for_write # OLD object
+@mn.auth.assert_write_permission # OLD object
+def object_pid_put(request, old_pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   '''
   mn.util.coerce_put_post(request)
-
   d1_assert.post_has_mime_parts(request, (('field', 'newPid'),
                                           ('file', 'object'),
                                           ('file', 'sysmeta')))
-  pid = request.POST['newPid']
-  return _create(request, pid)
-
-
-def _assert_pid_is_available(pid):
-  if mn.models.ScienceObject.objects.filter(pid=pid).exists():
-    raise d1_common.types.exceptions.IdentifierNotUnique(0, 'Please try '
-      'again with another identifier', pid)
-
-
-# Internal.
-def _create(request, pid):
-  _assert_pid_is_available(pid)
-  d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
-
-  # Deserialize metadata (implicit validation).
+  _assert_pid_exists(old_pid)
   sysmeta_xml = request.FILES['sysmeta'].read()
-  try:
-    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
-  except:
-    err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
-      'System Metadata validation failed: {0}'.format(str(err)))
+  sysmeta = _deserialize_system_metadata(sysmeta_xml)
+  _assert_obsoletes_specified(sysmeta)
+  _assert_obsoletes_matches_pid(sysmeta, old_pid)
+  new_pid = request.POST['newPid']
+  _create(request, new_pid, sysmeta)
+  _set_obsoleted_by(old_pid, new_pid)
+  return _get_http_response_with_identifier_type(new_pid)
 
-  # Validating and updating System Metadata can be turned off by a vendor
-  # specific extension when GMN is running in debug mode.
-  if service.settings.DEBUG == False or (service.settings.DEBUG == True and \
-                                 'HTTP_VENDOR_TEST_OBJECT' not in request.META):
-    _validate_sysmeta_against_uploaded(request, pid, sysmeta_obj)
-    _update_sysmeta_with_mn_values(request, sysmeta_obj)
-    #d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
 
-  mn.sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
+@mn.lock_pid.for_write # NEW object
+@mn.auth.assert_create_update_delete_permission # NEW object
+def _create(request, pid, sysmeta):
+  _assert_pid_does_not_exist(pid)
+  d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
+  _assert_obsoleted_by_not_specified(sysmeta)
+  _validate_sysmeta_against_uploaded(request, pid, sysmeta)
+  _update_sysmeta_with_mn_values(request, sysmeta)
+    #d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
+
+  mn.sysmeta.write_sysmeta_to_store(pid, sysmeta)
 
   # create() has a GMN specific extension. Instead of providing an object for
   # GMN to manage, the object can be left empty and a URL to a remote location
@@ -588,143 +595,140 @@ def _create(request, pid):
   # remote server while handling all other object related operations like usual.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-    try:
-      # Validate URL syntax.
-      url_split = urlparse.urlparse(url)
-      if url_split.scheme not in ('http', 'https'):
-        raise ValueError
-      # Validate URL.
-      if url_split.scheme == 'http':
-        conn = httplib.HTTPConnection(url_split.netloc)
-      else:
-        conn = httplib.HTTPSConnection(url_split.netloc)
-      conn.request('HEAD', url_split.path)
-      res = conn.getresponse()
-      if res.status != 200:
-        raise ValueError
-    except ValueError:
-      # Storing the SciObj on the filesystem failed so remove the SysMeta object
-      # as well.
-      mn.sysmeta.delete_sysmeta_from_store(pid)
-      raise d1_common.types.exceptions.InvalidRequest(0,
-        'url({0}): Invalid URL specified for remote storage'.format(url))
+    _assert_url_is_http_or_https(url)
+    _assert_url_references_retrievable(url)
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
-    try:
-      _object_pid_post_store_local(request, pid)
-    except EnvironmentError:
-      # Storing the SciObj on the filesystem failed so remove the SysMeta object
-      # as well.
-      mn.sysmeta.delete_sysmeta_from_store(pid)
-      raise
+    _object_pid_post_store_local(request, pid)
 
-  # Catch any exceptions when creating the db entries, so that the filesystem
-  # objects can be cleaned up.
-  try:
-    # Create database entry for object.
-    object = mn.models.ScienceObject()
-    object.pid = pid
-    object.url = url
-    object.set_format(sysmeta_obj.formatId)
-    object.checksum = sysmeta_obj.checksum.value()
-    object.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
-    object.mtime = sysmeta_obj.dateSysMetadataModified
-    object.size = sysmeta_obj.size
-    object.replica = False
-    object.serial_version = sysmeta_obj.serialVersion
-    object.save_unique()
+  # Create database entry for object.
+  object = mn.models.ScienceObject()
+  object.pid = pid
+  object.url = url
+  object.set_format(sysmeta.formatId)
+  object.checksum = sysmeta.checksum.value()
+  object.set_checksum_algorithm(sysmeta.checksum.algorithm)
+  object.mtime = sysmeta.dateSysMetadataModified
+  object.size = sysmeta.size
+  object.replica = False
+  object.serial_version = sysmeta.serialVersion
+  object.save_unique()
 
-    # Successfully updated the db, so put current datetime in status.mtime. This
-    # should store the status.mtime in UTC and for that to work, Django must be
-    # running with service.settings.TIME_ZONE = 'UTC'.
-    db_update_status = mn.models.DB_update_status()
-    db_update_status.status = 'update successful'
-    db_update_status.save()
+  mn.util.update_db_status('update successful')
 
-    # If an access policy was provided for this object, set it. Until the access
-    # policy is set, the object is unavailable to everyone, even the owner.
-    if sysmeta_obj.accessPolicy:
-      mn.auth.set_access_policy(pid, sysmeta_obj.accessPolicy)
-    else:
-      mn.auth.set_access_policy(pid)
-
-  except:
-    mn.sysmeta.delete_sysmeta_from_store(pid)
-    object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
-    os.unlink(object_path)
-    raise
+  # If an access policy was provided for this object, set it. Until the access
+  # policy is set, the object is unavailable to everyone, even the owner.
+  if sysmeta.accessPolicy:
+    mn.auth.set_access_policy(pid, sysmeta.accessPolicy)
+  else:
+    mn.auth.set_access_policy(pid)
 
   # Log this object creation.
   mn.event_log.create(pid, request)
 
-  # Return the pid.
-  pid_pyxb = dataoneTypes.Identifier(pid)
-  pid_xml = pid_pyxb.toxml()
-  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
 
-
-# Internal.
 def _object_pid_post_store_local(request, pid):
-  #print pid, type(pid)
-  #logging.info(u'pid({0}): Writing object to disk'.format(pid))
   object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
-  try:
-    os.makedirs(os.path.dirname(object_path))
-  except OSError:
-    pass
-  try:
-    with open(object_path, 'wb') as file:
-      for chunk in request.FILES['object'].chunks():
-        file.write(chunk)
-  except EnvironmentError:
-    # The object may have been partially created. If so, delete the file.
-    os.unlink(object_path)
-    raise
+  mn.util.ensure_directories_exists(object_path)
+  with open(object_path, 'wb') as file:
+    for chunk in request.FILES['object'].chunks():
+      file.write(chunk)
 
 
-# Unrestricted.
+def _deserialize_system_metadata(sysmeta_xml):
+  try:
+    return dataoneTypes.CreateFromDocument(sysmeta_xml)
+  except:
+    err = sys.exc_info()[1]
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'System Metadata validation failed: {0}'.format(str(err)))
+
+
+def _set_obsoleted_by(obsoleted_pid, obsoleted_by_pid):
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
+  with sysmeta(obsoleted_pid, sciobj.serial_version) as m:
+    m.obsoletedBy = obsoleted_by_pid
+    sciobj.serial_version = m.serialVersion
+  sciobj.save()
+
+
+def _assert_obsoleted_by_not_specified(sysmeta):
+  if sysmeta.obsoletedBy is not None:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'obsoletedBy cannot be specified in the System Metadata for a new object')
+
+
+def _assert_obsoletes_not_specified(sysmeta):
+  if sysmeta.obsoletes is not None:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'obsoletes cannot be specified in the System Metadata for create(). '
+      'Must use update()')
+
+
+def _assert_obsoletes_specified(sysmeta):
+  if sysmeta.obsoletes is None:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'obsoletes must be specified in the System Metadata for update()')
+
+
+def _assert_obsoletes_matches_pid(sysmeta, old_pid):
+  if sysmeta.obsoletes != old_pid:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+      'The identifier specified in the System Metadata obsoletes field does not '
+      'match the identifier specified in the URL')
+
+
+def _assert_pid_does_not_exist(pid):
+  if mn.models.ScienceObject.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.IdentifierNotUnique(0, 'Please try '
+      'again with another identifier', pid)
+
+
+def _assert_pid_exists(pid):
+  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.InvalidRequest(0, 'Identifier '
+      'does not exist', pid)
+
+
+def _assert_url_is_http_or_https(url):
+  url_split = urlparse.urlparse(url)
+  if url_split.scheme not in ('http', 'https'):
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Invalid URL specified for remote storage: {0}. '
+      'Must be HTTP or HTTPS'.format(url))
+
+
+def _assert_url_references_retrievable(url):
+  url_split = urlparse.urlparse(url)
+  if url_split.scheme == 'http':
+    conn = httplib.HTTPConnection(url_split.netloc)
+  else:
+    conn = httplib.HTTPSConnection(url_split.netloc)
+  conn.request('HEAD', url_split.path)
+  res = conn.getresponse()
+  if res.status != 200:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'Invalid URL specified for remote storage: {0}. '
+      'The referenced object is not retrievable'.format(url))
+
+
+@mn.lock_pid.for_write
+@mn.auth.assert_create_update_delete_permission
 def object_pid_delete(request, pid):
   '''MNStorage.delete(session, pid) → Identifier
   '''
   d1_assert.object_exists(pid)
+  _set_archived_flag(pid)
+  return _get_http_response_with_identifier_type(pid)
 
+
+def _set_archived_flag(pid):
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-
-  # If the object is wrapped, we only delete the reference. If it's managed, we
-  # delete both the object and the reference.
-
-  try:
-    url_split = urlparse.urlparse(sciobj.url)
-  except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(0,
-      'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url))
-
-  if url_split.scheme == 'file':
-    sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
-    os.unlink(sciobj_path)
-
-  # At this point, the object was either managed and successfully deleted or
-  # wrapped and ignored.
-
-  mn.sysmeta.delete_sysmeta_from_store(pid)
-
-  # Delete the DB entry.
-
-  # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
-  # CASCADE -- in other words, any objects with foreign keys pointing at the
-  # objects to be deleted will be deleted along with them.
-  sciobj.delete()
-
-  # Log this operation. Event logs are tied to particular objects, so we can't
-  # log this event in the event log.
-  logging.info('client({0}) pid({1}) Deleted object'.format(
-    mn.util.request_to_string(request), pid))
-
-  # Return the pid.
-  pid_ser = d1_common.types.pid_serialization.Identifier(pid)
-  doc, content_type = pid_ser.serialize(request.META.get('HTTP_ACCEPT', None))
-  return HttpResponse(doc, content_type)
+  with sysmeta(obsoleted_pid, sciobj.serial_version) as m:
+    m.archived = True
+    sciobj.serial_version = m.serialVersion
+  sciobj.save()
 
 
 @mn.auth.assert_trusted_permission

@@ -69,11 +69,6 @@ USE_I18N = True
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
   'django.template.loaders.filesystem.load_template_source',
@@ -82,17 +77,13 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-  'django.middleware.common.CommonMiddleware',
-  'django.contrib.sessions.middleware.SessionMiddleware',
-  'django.contrib.auth.middleware.AuthenticationMiddleware',
-  #'django.middleware.profile.ProfileMiddleware',
-
   # GMN requires that TransactionMiddleware is enabled. TransactionMiddleware
   # causes each view to be wrapped in an implicit transaction. The transaction
   # is rolled back if the view does not successfully return. Upon a successful
   # return, the transaction is committed, thus making all modifications that
   # the view made to the database visible simultaneously.
   'django.middleware.transaction.TransactionMiddleware',
+  # Custom GMN middleware.
   'service.mn.middleware.request_handler.request_handler',
   'service.mn.middleware.exception_handler.exception_handler',
   'service.mn.middleware.response_handler.response_handler',
@@ -104,21 +95,8 @@ ROOT_URLCONF = 'service.urls'
 
 TEMPLATE_DIRS = (_here('mn/templates'), )
 
-INSTALLED_APPS = (
-  'service.mn',
+INSTALLED_APPS = ('service.mn', )
 
-  #    'django.contrib.auth',
-  'django.contrib.contenttypes',
-  #    'django.contrib.sessions',
-  #    'django.contrib.sites',
-  'django.contrib.admin',
-  'django.contrib.admindocs',
-)
-
-# TODO: May be able to simplify url regexes by turning this on.
-APPEND_SLASH = False
-
-# Because the entire XML document must be in memory while being deserialized
-# (and probably in several copies at that), limit the size that can be
-# handled.
+# Because the entire XML document must be in memory while being deserialized,
+# limit the size that can be handled.
 MAX_XML_DOCUMENT_SIZE = 1024**2

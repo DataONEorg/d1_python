@@ -28,10 +28,6 @@
 
 from django.conf.urls.defaults import *
 
-# Enable admin.
-from django.contrib import admin
-admin.autodiscover()
-
 # Django does not have a location that is designated for setting up global
 # objects. For testing, we need a global dictionary and the top level urls.py
 # file is suggested as a good location for this.
@@ -99,6 +95,7 @@ urlpatterns += patterns(
   (r'^internal/replicate_task_update/(.+?)/(.+?)/?$', 'replicate_task_update'),
   (r'^internal/replicate_create/(.+)$', 'replicate_create'),
   (r'^internal/update_sysmeta/(.+)$', 'update_sysmeta'),
+  (r'^internal/home/?$', 'home'),
 )
 
 # Block access to the GMN diagnostic functions if not in debug mode.
@@ -133,9 +130,3 @@ if settings.DEBUG:
      'concurrency_write_lock'),
     (r'^test/concurrency_get_dictionary_id/?$', 'concurrency_get_dictionary_id'),
   )
-
-urlpatterns += patterns(
-  'service.mn.views.admin',
-  (r'^admin/doc/?$', include('django.contrib.admindocs.urls')),
-  (r'^admin/?$', include(admin.site.urls)),
-)

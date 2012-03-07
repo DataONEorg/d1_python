@@ -118,7 +118,7 @@ def set_access_policy(pid, access_policy=None):
   '''Apply an AccessPolicy to an object.
 
   If called without an access policy, any existing permissions on the object
-  are removed and the access policy for the owner is recreated.
+  are removed and the access policy for the rights holder is recreated.
 
   Preconditions:
     - Each subject has been verified to a valid DataONE account.
@@ -149,14 +149,14 @@ def set_access_policy(pid, access_policy=None):
   # The deletes are cascaded so any subjects that are no longer referenced in
   # any permissions are deleted as well.
   models.Permission.objects.filter(object__pid=pid).delete()
-  # Add an implicit allow rule with all permissions for the owner.
-  allow_owner = dataoneTypes.AccessRule()
-  with sysmeta.sysmeta(pid, read_only=True) as s:
-    allow_owner.subject.append(s.rightsHolder.value())
+  # Add an implicit allow rule with all permissions for the rights holder.
+  allow_rights_holder = dataoneTypes.AccessRule()
+  with sysmeta.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
+    allow_rights_holder.subject.append(s.rightsHolder.value())
   permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
-  allow_owner.permission.append(permission)
+  allow_rights_holder.permission.append(permission)
   # Iterate over AccessPolicy and create db entries.
-  for allow_rule in allow: # + [allow_owner]:
+  for allow_rule in allow: # + [allow_rights_holder]:
     # Find the highest level action that this rule sets.
     top_level = 0
     for permission in allow_rule.permission:
@@ -199,7 +199,7 @@ def set_access_policy(pid, access_policy=None):
   # Update the SysMeta object with the new access policy. Because
   # TransactionMiddleware is enabled, the database modifications made above will
   # be rolled back if the SysMeta update fails.
-  with sysmeta.sysmeta(pid) as s:
+  with sysmeta.sysmeta(pid, sci_obj.serial_version) as s:
     s.accessPolicy = access_policy
 
 # ------------------------------------------------------------------------------
@@ -300,13 +300,13 @@ def assert_internal_permission(f):
   return wrap
 
 
-def assert_create_update_permission(f):
+def assert_create_update_delete_permission(f):
   '''Access only by subject with Create/Update permission.
   Allow access to all subjects in debug mode.
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.DEBUG and not models.CreateUpdatePermission.objects.filter(
+    if not settings.DEBUG and not models.WhitelistForCreateUpdateDelete.objects.filter(
       subject__subject__in=subjects
     ).exists():
       raise d1_common.types.exceptions.NotAuthorized(

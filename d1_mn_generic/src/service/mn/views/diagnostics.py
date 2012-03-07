@@ -206,32 +206,21 @@ def delete_single_object(request, pid):
 def _delete_object(pid):
   d1_assert.object_exists(pid)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.
-
-  try:
-    url_split = urlparse.urlparse(sciobj.url)
-  except ValueError:
-    raise d1_common.types.exceptions.ServiceFailure(
-      0, 'pid({0}) url({1}): Invalid URL'.format(pid, sciobj.url)
-    )
-
+  url_split = urlparse.urlparse(sciobj.url)
   if url_split.scheme == 'file':
     sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:
       pass
-
   # At this point, the object was either managed and successfully deleted or
-  # wrapped and ignored.
-
-  try:
-    mn.sysmeta.delete_sysmeta_from_store(pid)
-  except OSError:
-    logging.warning('pid({0}): Science object not present on filesystem', pid)
-
+  # wrapped and ignored. The SysMeta object is left orphaned in the filesystem
+  # to be cleaned by an asynchronous process later. If the same object that
+  # was just deleted is recreated, the old SysMeta object will be overwritten
+  # instead of being cleaned up by the async process.
+  #
   # Delete the DB entry.
   #
   # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
