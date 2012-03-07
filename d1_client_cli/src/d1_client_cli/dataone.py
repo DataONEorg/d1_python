@@ -64,6 +64,7 @@ import pyxb
 # App.
 from print_level import *
 import cli_exceptions
+import cli_util
 import session
 
 # D1
@@ -877,7 +878,7 @@ class CLI(cmd.Cmd):
     if verbosity is not None:
       return verbosity
     else:
-      return false
+      return False
 
   #-----------------------------------------------------------------------------
   # Session.
@@ -893,8 +894,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_load(self, line):
     '''load [file]
@@ -906,8 +906,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_save(self, line):
     '''save [file]
@@ -919,8 +918,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_show(self, line):
     '''show [session parameter]
@@ -932,8 +930,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_set(self, line):
     '''set <session parameter> <value>
@@ -951,9 +948,7 @@ class CLI(cmd.Cmd):
       except ValueError as e:
         print_error(e)
       except:
-        print 'there'
-        if self.is_verbose():
-          print_error('Unexpected error')
+        cli_util._print_unexpected_exception()
 
   # TODO: add complete_show and complete_set method to display possibilities. - aBp_
 
@@ -967,8 +962,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   #-----------------------------------------------------------------------------
   # Access control.
@@ -987,8 +981,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_deny(self, line):
     '''deny <subject>
@@ -1000,8 +993,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_allowpublic(self, line):
     '''allowpublic
@@ -1013,8 +1005,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_denypublic(self, line):
     '''denypublic
@@ -1026,8 +1017,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_denyall(self, line):
     '''denyall
@@ -1039,8 +1029,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   #-----------------------------------------------------------------------------
   # Replication policy.
@@ -1056,8 +1045,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_addpreferred(self, line):
     '''addpreferred <member node>
@@ -1069,8 +1057,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_addblocked(self, line):
     '''addblocked <member node>
@@ -1082,8 +1069,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_remove(self, line):
     '''remove <member node>
@@ -1095,8 +1081,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_allowreplication(self, line):
     '''allowreplication
@@ -1108,8 +1093,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_disallowreplication(self, line):
     '''disallowreplication
@@ -1121,8 +1105,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_setreplicas(self, line):
     '''setreplicas <number of replicas>
@@ -1134,8 +1117,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   #-----------------------------------------------------------------------------
   # Search
@@ -1160,8 +1142,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   #-----------------------------------------------------------------------------
   # Science Object Operations
@@ -1177,8 +1158,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_meta(self, line):
     '''meta <pid> [file]
@@ -1190,8 +1170,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(str(e))
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_create(self, line):
     '''create <pid> <file>
@@ -1203,8 +1182,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_update(self, line):
     '''update <current-pid> <new-pid> <file>
@@ -1216,8 +1194,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_delete(self, line):
     '''delete <pid>
@@ -1229,8 +1206,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_resolve(self, line):
     '''resolve <pid>
@@ -1242,8 +1218,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_list(self, line):
     '''list
@@ -1257,8 +1232,7 @@ class CLI(cmd.Cmd):
     except (KeyboardInterrupt, IOError) as e:
       return
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_log(self, line):
     '''log [path]
@@ -1270,8 +1244,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_setaccess(self, line):
     '''setaccess <pid>
@@ -1283,8 +1256,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_setreplication(self, line):
     '''setreplication <pid>
@@ -1296,8 +1268,7 @@ class CLI(cmd.Cmd):
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   #-----------------------------------------------------------------------------
   # CLI
@@ -1314,8 +1285,7 @@ class CLI(cmd.Cmd):
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
-      if self.is_verbose():
-        print_error('Unexpected error')
+      cli_util._print_unexpected_exception()
 
   def do_exit(self, line):
     '''exit
@@ -1326,6 +1296,8 @@ class CLI(cmd.Cmd):
       sys.exit()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
+    except:
+      cli_util._print_unexpected_exception()
 
   def do_quit(self, line):
     '''quit
@@ -1335,7 +1307,6 @@ class CLI(cmd.Cmd):
 
   def do_EOF(self, line):
     '''Exit on system EOF character'''
-    print
     return self.do_exit(line)
 
   def do_help(self, line):
