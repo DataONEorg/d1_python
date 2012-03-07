@@ -730,7 +730,7 @@ class DataONECLI():
       result = regexp.search(e)
       if ((result is not None) and
           (result.group('error_code') == '500') and
-   (result.group('status_code') == '400')):
+          (result.group('status_code') == '400')):
         result = re.search(r"<b>description</b> <u>(?P<description>[^<]+)</u>", e)
         msg = re.sub(
           '&([^;]+);', lambda m: unichr(htmlentitydefs.name2codepoint[m.group(1)]),
