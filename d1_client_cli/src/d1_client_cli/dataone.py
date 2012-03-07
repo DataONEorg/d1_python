@@ -976,7 +976,10 @@ class CLI(cmd.Cmd):
 
   def do_allow(self, line):
     '''allow <subject> [access level]
-    Allow access to subject
+    Allow access to subject.
+
+    Access level is one of:
+        'read', 'write', 'changePermission', 'execute', 'replicate'
     '''
     try:
       subject, permission = self._split_args(line, 1, 1)
@@ -1258,7 +1261,7 @@ class CLI(cmd.Cmd):
         print_error('Unexpected error')
 
   def do_log(self, line):
-    '''log
+    '''log [path]
     Retrieve event log
     '''
     try:
