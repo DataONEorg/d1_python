@@ -77,6 +77,19 @@ class TestUtils(unittest.TestCase):
     c2.algorithm = 'MD5'
     self.assertTrue(d1_common.util.checksums_are_equal(c1, c2))
 
+  def test_055(self):
+    '''get_checksum_calculator_by_dataone_designator() returns a checksum calculator'''
+    calculator = d1_common.util.get_checksum_calculator_by_dataone_designator('SHA-1')
+    calculator.update('test')
+    self.assertTrue(calculator.hexdigest())
+
+  def test_056(self):
+    '''get_checksum_calculator_by_dataone_designator() raises on invalid algorithm'''
+    self.assertRaises(
+      Exception, d1_common.util.get_checksum_calculator_by_dataone_designator,
+      'SHA-224-bogus'
+    )
+
 #===============================================================================
 
 
