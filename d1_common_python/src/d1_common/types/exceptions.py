@@ -149,6 +149,11 @@ class DataONEException(Exception):
       msg.write(u'traceInformation: {0}\n'.format(self.traceInformation))
     return msg.getvalue()
 
+  def friendly_format(self):
+    '''Serialize to a format more suitable for displaying to end users.
+    '''
+    return '{0}: {1}'.format(self.name, self.description)
+
   def serialize(self):
     dataone_exception_pyxb = dataoneErrors.error()
     dataone_exception_pyxb.name = self.__class__.__name__
