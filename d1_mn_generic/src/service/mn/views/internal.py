@@ -157,6 +157,7 @@ def update_sysmeta(request, pid):
   sciobj.size = sysmeta_obj.size
   #sciobj.replica = False
   sciobj.serial_version = sysmeta_obj.serialVersion
+  sciobj.archived = False
   sciobj.save()
 
   mn.util.update_db_status('update successful')

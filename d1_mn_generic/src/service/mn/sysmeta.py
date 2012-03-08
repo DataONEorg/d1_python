@@ -93,14 +93,14 @@ class sysmeta():
   '''
 
   def __init__(self, pid, serial_version, read_only=False):
-    self.sysmeta_path = mn.util.store_path(
-      settings.SYSMETA_STORE_PATH, pid, serial_version
-    )
+    sysmeta_path = mn.util.store_path(settings.SYSMETA_STORE_PATH, pid, serial_version)
     self.read_only = read_only
-    with open(self.sysmeta_path, 'rb') as f:
+    self.pid = pid
+    with open(sysmeta_path, 'rb') as f:
       sysmeta_xml = f.read()
     self.sysmeta_pyxb = dataoneTypes.CreateFromDocument(sysmeta_xml)
-    self._increment_serial_version()
+    if not read_only:
+      self._increment_serial_version()
 
   def __enter__(self):
     return self.sysmeta_pyxb
@@ -112,8 +112,11 @@ class sysmeta():
 
   def _save_file_to_store(self):
     self._set_modified_datetime()
-    with open(self.sysmeta_path, 'wb') as file:
-      file.write(self.sysmeta_pyxb.toxml().encode('utf-8'))
+    sysmeta_path = mn.util.store_path(
+      settings.SYSMETA_STORE_PATH, self.pid, self.sysmeta_pyxb.serialVersion
+    )
+    with open(sysmeta_path, 'wb') as f:
+      f.write(self.sysmeta_pyxb.toxml().encode('utf-8'))
 
   def _set_modified_datetime(self):
     timestamp = d1_common.date_time.utc_now()
@@ -121,7 +124,4 @@ class sysmeta():
       datetime.datetime.isoformat(timestamp)
 
   def _increment_serial_version(self):
-    try:
-      self.sysmeta_pyxb.serialVersion += 1
-    except TypeError:
-      self.sysmeta_pyxb.serialVersion = 2
+    self.sysmeta_pyxb.serialVersion += 1

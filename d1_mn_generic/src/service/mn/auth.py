@@ -152,11 +152,11 @@ def set_access_policy(pid, access_policy=None):
   # Add an implicit allow rule with all permissions for the rights holder.
   allow_rights_holder = dataoneTypes.AccessRule()
   with sysmeta.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
-    allow_rights_holder.subject.append(s.rightsHolder.value())
+    allow_rights_holder.subject.append(s.rightsHolder)
   permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
   allow_rights_holder.permission.append(permission)
   # Iterate over AccessPolicy and create db entries.
-  for allow_rule in allow: # + [allow_rights_holder]:
+  for allow_rule in allow + [allow_rights_holder]:
     # Find the highest level action that this rule sets.
     top_level = 0
     for permission in allow_rule.permission:
@@ -201,6 +201,8 @@ def set_access_policy(pid, access_policy=None):
   # be rolled back if the SysMeta update fails.
   with sysmeta.sysmeta(pid, sci_obj.serial_version) as s:
     s.accessPolicy = access_policy
+    sci_obj.serial_version = s.serialVersion
+  sci_obj.save()
 
 # ------------------------------------------------------------------------------
 # Check permissions.
@@ -306,9 +308,9 @@ def assert_create_update_delete_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.DEBUG and not models.WhitelistForCreateUpdateDelete.objects.filter(
-      subject__subject__in=subjects
-    ).exists():
+    if not settings.DEBUG and \
+      not models.WhitelistForCreateUpdateDelete.objects.filter(
+        subject__subject__in=subjects).exists():
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for subjects with Create/Update permission'
       )

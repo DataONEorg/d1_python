@@ -73,6 +73,7 @@ class ScienceObject(models.Model):
   replica = models.BooleanField(db_index=True)
   system_metadata_refreshed = models.DateTimeField(null=True)
   serial_version = models.BigIntegerField()
+  archived = models.BooleanField()
 
   def set_format(self, format_id):
     self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]

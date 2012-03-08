@@ -109,7 +109,8 @@ def post_has_mime_parts(request, parts):
 
 
 def object_exists(pid):
-  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
+  if not mn.models.ScienceObject.objects.filter(pid=pid, archived=False)\
+    .exists():
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing Science Object', pid
     )

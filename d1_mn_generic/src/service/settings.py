@@ -77,18 +77,23 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-  # GMN requires that TransactionMiddleware is enabled. TransactionMiddleware
-  # causes each view to be wrapped in an implicit transaction. The transaction
-  # is rolled back if the view does not successfully return. Upon a successful
-  # return, the transaction is committed, thus making all modifications that
-  # the view made to the database visible simultaneously.
-  'django.middleware.transaction.TransactionMiddleware',
   # Custom GMN middleware.
   'service.mn.middleware.request_handler.request_handler',
   'service.mn.middleware.exception_handler.exception_handler',
   'service.mn.middleware.response_handler.response_handler',
   #'service.mn.middleware.profiling_handler.profiling_handler',
   'service.mn.middleware.view_handler.view_handler',
+  # GMN requires that TransactionMiddleware is enabled. TransactionMiddleware
+  # causes each view to be wrapped in an implicit transaction. The transaction
+  # is rolled back if the view does not successfully return. Upon a successful
+  # return, the transaction is committed, thus making all modifications that the
+  # view made to the database visible simultaneously.
+  # 
+  # The Django docs state that the TransactionMiddleware applies to all views
+  # but only to middleware classes that come after it in this list. However, in
+  # GMN, the TransactionMiddleware only works when it is after GMN's custom
+  # view_handler.
+  'django.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'service.urls'

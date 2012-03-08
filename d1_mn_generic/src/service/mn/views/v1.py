@@ -113,7 +113,7 @@ def _add_http_date_to_response_header(response, date_time):
   response['Date'] = d1_common.date_time.to_http_datetime(date_time)
 
 def _get_http_response_with_identifier_type(pid):
-  pid_pyxb = dataoneTypes.Identifier(pid)
+  pid_pyxb = dataoneTypes.identifier(pid)
   pid_xml = pid_pyxb.toxml()
   return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
 
@@ -235,7 +235,7 @@ def object_pid_get(request, pid):
   # when instantiated with the iterator. That behavior is not convenient here,
   # so we set up the iterator by writing directly to the internal methods of an
   # instantiated HttpResponse object.
-  response._container = _object_pid_get(sciobj)
+  response._container = _get_object_byte_stream(sciobj)
   response._is_str = False
 
   # Log the access of this object.
@@ -244,20 +244,20 @@ def object_pid_get(request, pid):
   return response
 
 
-def _object_pid_get(sciobj):
+def _get_object_byte_stream(sciobj):
   # Split URL into individual parts.
   url_split = urlparse.urlparse(sciobj.url)
   if url_split.scheme == 'http':
     logging.info('pid({0}) url({1}): Object is wrapped. Proxying from original'
                  ' location'.format(sciobj.pid, sciobj.url))
-    return _object_pid_get_remote(sciobj.url, url_split)
+    return _get_object_byte_stream_remote(sciobj.url, url_split)
   # If the scheme is not http, it must be file.
   logging.info('pid({0}) url({1}): Object is managed. Streaming from disk'\
                .format(sciobj.pid, sciobj.url))
-  return _object_pid_get_local(sciobj.pid)
+  return _get_object_byte_stream_local(sciobj.pid)
 
 
-def _object_pid_get_remote(url, url_split):
+def _get_object_byte_stream_remote(url, url_split):
   # Handle 302 Found.  
   try:
     conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
@@ -288,7 +288,7 @@ def _object_pid_get_remote(url, url_split):
   return mn.util.fixed_chunk_size_iterator(remote_response)
 
 
-def _object_pid_get_local(pid):
+def _get_object_byte_stream_local(pid):
   file_in_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
   # Can't use "with".
   file = open(file_in_path, 'rb')
@@ -331,7 +331,7 @@ def checksum_pid(request, pid):
 
   # Calculate the checksum.
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-  for bytes in _object_pid_get(sciobj):
+  for bytes in _get_object_byte_stream(sciobj):
     h.update(bytes)
 
   # Log the access of this object.
@@ -509,7 +509,7 @@ def _update_sysmeta_with_mn_values(request, sysmeta):
 # update()). Additionally, update() passes the pid of the OLD object (the one to
 # be updated) in the URL.
 #
-# Requirements:
+# Locks and checks:
 #
 # create()
 # - Obtain a write lock on the pid of the NEW object
@@ -518,8 +518,8 @@ def _update_sysmeta_with_mn_values(request, sysmeta):
 # - Check that the submitted SysMeta does NOT include obsoletes or obsoletedBy
 # 
 # update()
-# - All the requirements of create() (for the NEW pid), plus a similar set of
-#   requirements for the OLD pid:
+# - All the locks and checks of create() (for the NEW pid), plus a similar set
+#   of steps for the OLD pid:
 # - Obtain a write lock on the OLD pid
 # - Check that the OLD pid exists
 # - Check that the caller has write permissions on the OLD object
@@ -613,6 +613,7 @@ def _create(request, pid, sysmeta):
   object.size = sysmeta.size
   object.replica = False
   object.serial_version = sysmeta.serialVersion
+  object.archived = False
   object.save_unique()
 
   mn.util.update_db_status('update successful')
@@ -646,8 +647,8 @@ def _deserialize_system_metadata(sysmeta_xml):
 
 
 def _set_obsoleted_by(obsoleted_pid, obsoleted_by_pid):
-  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-  with sysmeta(obsoleted_pid, sciobj.serial_version) as m:
+  sciobj = mn.models.ScienceObject.objects.get(pid=obsoleted_pid)
+  with mn.sysmeta.sysmeta(obsoleted_pid, sciobj.serial_version) as m:
     m.obsoletedBy = obsoleted_by_pid
     sciobj.serial_version = m.serialVersion
   sciobj.save()
@@ -673,7 +674,7 @@ def _assert_obsoletes_specified(sysmeta):
 
 
 def _assert_obsoletes_matches_pid(sysmeta, old_pid):
-  if sysmeta.obsoletes != old_pid:
+  if sysmeta.obsoletes.value() != old_pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'The identifier specified in the System Metadata obsoletes field does not '
       'match the identifier specified in the URL')
@@ -720,15 +721,21 @@ def object_pid_delete(request, pid):
   '''
   d1_assert.object_exists(pid)
   _set_archived_flag(pid)
+  _remove_all_permissions_except_rights_holder(pid)
   return _get_http_response_with_identifier_type(pid)
 
 
 def _set_archived_flag(pid):
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-  with sysmeta(obsoleted_pid, sciobj.serial_version) as m:
+  with mn.sysmeta.sysmeta(pid, sciobj.serial_version) as m:
     m.archived = True
     sciobj.serial_version = m.serialVersion
+    sciobj.archived = True
   sciobj.save()
+
+
+def _remove_all_permissions_except_rights_holder(pid):
+  mn.auth.set_access_policy(pid)
 
 
 @mn.auth.assert_trusted_permission
