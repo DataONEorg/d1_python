@@ -4,7 +4,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2011
+#   Copyright ${year}
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 '''DataONE COmmand-line Utilities
 '''
 
-__version__ = "0.9.1"
+__version__ = "1.0.0c3"
 
 __all__ = [
   'access_control',
