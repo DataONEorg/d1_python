@@ -505,39 +505,42 @@ class DataONECLI():
   ##-- Update --------------------------------------------------------------
 
   def _put_file_and_system_metadat_to_member_node(
-    self, client, curr_pid, path, new_pid, sysmeta
+    self, client, old_pid, path, new_pid, sysmeta
   ):
     with open(expand_path(path), 'r') as f:
       try:
-        response = client.update(curr_pid, f, new_pid, sysmeta)
+        response = client.update(old_pid, f, new_pid, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
         print_error(
           'Unable to update Science Object on Member Node\n{0}'
           .format(e.friendly_format())
         )
 
-  def science_object_update(self, curr_pid, path, new_pid):
+  def science_object_update(self, old_pid, path, new_pid):
     '''Obsolete a Science Object on a Member Node with a different one.
     '''
     path = expand_path(path)
     self._assert_file_exists(path)
     sysmeta = self._create_system_metadata(new_pid, path)
+    self._add_obsoletes_to_sysmeta_if_missing(sysmeta, old_pid)
     client = CLIMNClient(self.session)
     self._put_file_and_system_metadat_to_member_node(
-      client, curr_pid, path, new_pid, sysmeta
+      client, old_pid, path, new_pid, sysmeta
     )
+
+  def _add_obsoletes_to_sysmeta_if_missing(self, sysmeta, old_pid):
+    if sysmeta.obsoletes is None:
+      sysmeta.obsoletes = old_pid
 
   ##-- Delete --------------------------------------------------------------
 
   def science_object_delete(self, pid):
-    '''Obsolete a Science Object on a Member Node with a different one.
-    '''
     client = CLIMNClient(self.session)
     self._delete_from_member_node(client, pid)
 
   def _delete_from_member_node(self, client, pid):
     try:
-      response = client.deleteResponse(pid)
+      response = client.delete(pid)
     except d1_common.types.exceptions.DataONEException as e:
       print_error(
         'Unable to delete Science Object from Member Node\n{0}'
