@@ -183,7 +183,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
     response = self.createResponse(pid, obj, sysmeta,
                                    vendorSpecific=vendorSpecific)
-    return self._read_boolean_response(response)
+    return self._read_dataone_type_response(response)
 
   # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.update
@@ -200,14 +200,15 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       ('object', 'content.bin', obj),
       ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, files=mime_multipart_files, fields=mime_multipart_fields, headers=vendorSpecific)
+    return self.PUT(url, fields=mime_multipart_fields,
+                    files=mime_multipart_files, headers=vendorSpecific)
 
 
   @d1_common.util.utf8_to_unicode
   def update(self, pid, obj, newPid, sysmeta, vendorSpecific=None):
     response = self.updateResponse(pid, obj, newPid, sysmeta,
                                    vendorSpecific=vendorSpecific)
-    return self._read_boolean_response(response)
+    return self._read_dataone_type_response(response)
 
   # MNStorage.delete(session, pid) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.delete

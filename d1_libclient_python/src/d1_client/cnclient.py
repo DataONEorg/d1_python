@@ -686,10 +686,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def registerResponse(self, node):
     url = self._rest_url('node')
-    mime_multipart_fields = [
-      ('node', node.encode('utf-8')),
+    mime_multipart_files = [
+      ('node', 'node.xml', node.toxml().encode('utf-8')),
     ]
-    return self.POST(url, fields=mime_multipart_fields)
+    return self.POST(url, files=mime_multipart_files)
 
 
   @d1_common.util.utf8_to_unicode
