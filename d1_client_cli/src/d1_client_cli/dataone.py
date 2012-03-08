@@ -351,7 +351,7 @@ class CLIClient(object):
     except d1_common.types.exceptions.DataONEException as e:
       err_msg = []
       err_msg.append('Unable to connect to: {0}'.format(node_base_url))
-      err_msg.append('{0}'.format(str(e)))
+      err_msg.append('{0}'.format(e.friendly_format()))
       raise cli_exceptions.CLIError('\n'.join(err_msg))
 
   def _get_cilogon_certificate_path(self):
@@ -486,12 +486,12 @@ class DataONECLI():
   def _post_file_and_system_metadat_to_member_node(self, client, pid, path, sysmeta):
     with open(expand_path(path), 'r') as f:
       try:
-        response = client.createResponse(pid, f, sysmeta)
-        if response.status != 200:
-          err = (response.status, response.reason)
-          print_error("Couldn't create object.  Reason: (%d) %s" % err)
+        response = client.create(pid, f, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
-        print_error('Unable to create Science Object on Member Node\n{0}'.format(e))
+        print_error(
+          'Unable to create Science Object on Member Node\n{0}'
+          .format(e.friendly_format())
+        )
 
   def science_object_create(self, pid, path):
     '''Create a new Science Object on a Member Node
@@ -509,12 +509,12 @@ class DataONECLI():
   ):
     with open(expand_path(path), 'r') as f:
       try:
-        response = client.updateResponse(curr_pid, f, new_pid, sysmeta)
-        if response.status != 200:
-          err = (response.status, response.reason)
-          print_error("Couldn't update object.  Reason: (%d) %s" % err)
+        response = client.update(curr_pid, f, new_pid, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
-        print_error('Unable to update Science Object on Member Node\n{0}'.format(e))
+        print_error(
+          'Unable to update Science Object on Member Node\n{0}'
+          .format(e.friendly_format())
+        )
 
   def science_object_update(self, curr_pid, path, new_pid):
     '''Obsolete a Science Object on a Member Node with a different one.
@@ -538,11 +538,11 @@ class DataONECLI():
   def _delete_from_member_node(self, client, pid):
     try:
       response = client.deleteResponse(pid)
-      if response.status != 200:
-        err = (response.status, response.reason)
-        print_error("Couldn't delete object.  Reason: (%d) %s" % err)
     except d1_common.types.exceptions.DataONEException as e:
-      print_error('Unable to delete Science Object from Member Node\n{0}'.format(e))
+      print_error(
+        'Unable to delete Science Object from Member Node\n{0}'
+        .format(e.friendly_format())
+      )
 
   def _copy_file_like_object_to_file(self, file_like_object, path):
     try:
@@ -569,8 +569,8 @@ class DataONECLI():
       return client.get(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
-        'Unable to get Science Object from Member Node\n{0}'.format(e)
-      )
+        'Unable to get Science Object from Member Node\n{0}'\
+          .format(e.friendly_format()))
 
   def science_object_get(self, pid, path):
     client = CLIMNClient(self.session)
@@ -582,8 +582,8 @@ class DataONECLI():
       return client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
-        'Unable to get System Metadata from Coordinating Node\n{0}'.format(e)
-      )
+        'Unable to get System Metadata from Coordinating Node\n{0}'\
+          .format(e.friendly_format()))
 
   def _pretty(self, xml_doc):
     if self.session.get('cli', 'pretty'):
@@ -604,7 +604,9 @@ class DataONECLI():
     try:
       object_location_list = client.resolve(pid)
     except d1_common.types.exceptions.DataONEException as e:
-      raise cli_exceptions.CLIError('Unable to get resolve: {0}\n{1}'.format(pid, e))
+      raise cli_exceptions.CLIError(
+        'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
+      )
     for location in object_location_list.objectLocation:
       print_info(location.url)
 
@@ -642,8 +644,8 @@ class DataONECLI():
       success = client.setAccessPolicy(pid, access_policy, 1)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
-        'Unable to set access policy on: {0}\nError:\n{1}'.format(pid, e)
-      )
+        'Unable to set access policy on: {0}\nError:\n{1}'\
+          .format(pid, e.friendly_format()))
 
   def set_replication_policy(self, pid):
     replication_policy = self.session.replication_control_get_pyxb()
@@ -652,8 +654,8 @@ class DataONECLI():
       success = client.setReplicationPolicy(pid, replication_policy, 1)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
-        'Unable to set replication policy on: {0}\nError:\n{1}'.format(pid, e)
-      )
+        'Unable to set replication policy on: {0}\nError:\n{1}'\
+          .format(pid, e.friendly_format()))
 
   #def getObjectFormats(self):
   #  '''List the format IDs from the CN
@@ -1296,8 +1298,6 @@ class CLI(cmd.Cmd):
       sys.exit()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
-    except:
-      cli_util._print_unexpected_exception()
 
   def do_quit(self, line):
     '''quit
