@@ -14,8 +14,8 @@ import d1_client_cli
 setup(
   name='Python DataONE CLI',
   version=d1_client_cli.__version__,
-  author='Andy Pippin',
-  author_email='pippin at nceas dot ucsb dot edu',
+  author='Roger Dahl, and the DataONE Development Team',
+  author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
   description='A DataONE Command-line interface',
