@@ -11,5 +11,9 @@ def print_error(msg):
   print_level('ERROR', msg)
 
 
+def print_warn(msg):
+  print_level('WARN', msg)
+
+
 def print_info(msg):
   print_level('', msg)
