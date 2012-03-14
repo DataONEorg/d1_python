@@ -55,7 +55,8 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
                key_path=None,
                strict=True,
                capture_response_body=False,
-               version='v1'):
+               version='v1',
+               types=dataoneTypes):
     '''Connect to a DataONE Member Node.
     
     :param base_url: DataONE Node REST service BaseURL
@@ -76,12 +77,17 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     :param capture_response_body: Capture the response body from the last
       operation and make it available in last_response_body.
     :type capture_response_body: boolean
+    :param version: Value to insert in the URL version section.
+    :type version: string
+    :param types: The PyXB bindings to use for XML serialization and
+      deserialization.
+    :type types: PyXB
     :returns: None    
     '''
     d1baseclient.DataONEBaseClient.__init__(self, base_url=base_url,
       timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
       key_path=key_path, strict=strict,
-      capture_response_body=capture_response_body, version=version)
+      capture_response_body=capture_response_body, version=version, types=types)
     self.logger = logging.getLogger('MemberNodeClient')
 
 
