@@ -78,7 +78,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                key_path=None,
                strict=True,
                capture_response_body=False,
-               version='v1'):
+               version='v1',
+               types=dataoneTypes):
     '''Connect to a DataONE Coordinating Node or Member Node.
 
     :param base_url: DataONE Node REST service BaseURL
@@ -101,6 +102,11 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     :type capture_response_body: boolean
     :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
     :type response_contains_303_redirect: boolean
+    :param version: Value to insert in the URL version section.
+    :type version: string
+    :param types: The PyXB bindings to use for XML serialization and
+      deserialization.
+    :type types: PyXB
     :returns: None
     '''
     self.logger = logging.getLogger('DataONEBaseClient')
@@ -121,6 +127,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     self.base_url = base_url
     self.selector = selector
     self.version = version
+    self.types = types
     self.last_response_body = None
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
@@ -253,7 +260,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def _read_and_deserialize_dataone_type(self, response):
     response_body = self._read_and_capture(response)
     try:
-      return dataoneTypes.CreateFromDocument(response_body)
+      return self.types.CreateFromDocument(response_body)
     except pyxb.PyXBException as e:
       self._raise_service_failure_invalid_dataone_type(response, response_body,
                                                        str(e))

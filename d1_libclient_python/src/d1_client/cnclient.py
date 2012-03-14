@@ -55,7 +55,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
                key_path=None,
                strict=True,
                capture_response_body=False,
-               version='v1'):
+               version='v1',
+               types=dataoneTypes):
     '''Connect to a DataONE Coordinating Node.
     
     :param base_url: DataONE Node REST service BaseURL
@@ -76,6 +77,11 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     :param capture_response_body: Capture the response body from the last
       operation and make it available in last_response_body.
     :type capture_response_body: boolean
+    :param version: Value to insert in the URL version section.
+    :type version: string
+    :param types: The PyXB bindings to use for XML serialization and
+      deserialization.
+    :type types: PyXB
     :returns: None
     '''
     self.logger = logging.getLogger('CoordinatingNodeClient')
@@ -85,7 +91,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     d1baseclient.DataONEBaseClient.__init__(self, base_url, timeout=timeout,
       defaultHeaders=defaultHeaders, cert_path=cert_path, key_path=key_path,
       strict=strict, capture_response_body=capture_response_body,
-      version=version)
+      version=version, types=types)
     self.last_response_body = None
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
@@ -556,7 +562,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # Replication API
   #=============================================================================
 
-  # CNReplication.setReplicationStatus(session, pid, nodeRef, status, serialVersion) → boolean
+  # CNReplication.setReplicationStatus(session, pid, nodeRef, status, failure) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationStatus
 
   @d1_common.util.utf8_to_unicode
@@ -566,11 +572,12 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
       ('nodeRef', nodeRef.encode('utf-8')),
       ('status', status.encode('utf-8')),
     ]
-    mime_multipart_files = []
-    if failure is not None:
-      mime_multipart_files.append(('failure', 'failure',
-                                   failure.toxml().encode('utf-8')))
-    return self.PUT(url, fields=mime_multipart_fields)
+#    mime_multipart_files = [
+#      ('failure', 'failure.xml', failure.serialize().encode('utf-8') if failure
+#       else '')
+#    ]
+    return self.PUT(url, fields=mime_multipart_fields, dump_path='out.dump'
+                    )#files=mime_multipart_files
 
 
   @d1_common.util.utf8_to_unicode
