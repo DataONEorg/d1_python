@@ -100,6 +100,7 @@ class process_session(object):
     self.subjects = self.request.subjects
     self._process_session()
     self.request.primary_subject = self.primary_subject
+    self._log_session()
 
   def _process_session(self):
     self._add_symbolic_subject_public()
@@ -191,3 +192,9 @@ class process_session(object):
       raise d1_common.types.exceptions.InvalidToken(
         0, 'Error deserializing SubjectInfo: {0}'.format(str(e))
       )
+
+  def _log_session(self):
+    logging.info('Session:')
+    logging.info('  {0} (primary)'.format(self.request.primary_subject))
+    for subject in self.request.subjects:
+      logging.info('  {0}'.format(subject))

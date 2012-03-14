@@ -123,61 +123,19 @@ def request_to_string(request):
   )
 
 
-def log_exception(max_traceback_levels=5, msg=None):
+def log_exception(max_traceback_levels=10):
   logging.error('Exception:')
-  # Message.
-  if msg is not None:
-    logging.error('  Message: {0}'.format(msg))
-
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
-  # Name.
   logging.error('  Name: {0}'.format(exc_class.__name__))
-  # Value.
   logging.error('  Value: {0}'.format(exc_msgs))
-  # Args.
   try:
     exc_args = exc_msgs.__dict__["args"]
   except KeyError:
     exc_args = "<no args>"
   logging.error('  Args: {0}'.format(exc_args))
-  # Traceback.
-  exc_formatted_traceback = traceback.format_tb(exc_traceback, max_traceback_levels)
-  logging.error('  Traceback: {0}'.format(exc_formatted_traceback))
-
-
-def exception_to_dot_str():
-  # Get stack frame of calling function.
-  frame = inspect.currentframe()
-  frame = frame.f_back.f_back
-  # Get name of calling function.
-  function_name = frame.__name__
-  # Get line number of calling function.
-  line_number = frame.f_lineno
-  # Get filename for source of calling function.
-  code = frame.f_code
-  filename = code.co_filename
-
-  return '.'.join(filename, function_name, line_number)
-
-
-def traceback_to_detail_code():
-  exception_type, exception_value, exception_traceback = sys.exc_info()
-  tb = []
-  while exception_traceback:
-    co = exception_traceback.tb_frame.f_code
-    tb.append(
-      '{0}({1})'.format(
-        str(os.path.basename(co.co_filename)), str(
-          traceback.tb_lineno(
-            exception_traceback
-          )
-        )
-      )
-    )
-    exception_traceback = exception_traceback.tb_next
-  tb.append('Type: {0}'.format(exception_type))
-  tb.append('Value: {0}'.format(exception_value))
-  return '/'.join(tb)
+  logging.error('  Traceback:')
+  for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
+    logging.error('    {0}'.format(tb))
 
 
 def traceback_to_trace_info():

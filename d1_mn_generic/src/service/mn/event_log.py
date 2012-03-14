@@ -27,7 +27,6 @@
 '''
 
 # Stdlib.
-import logging
 
 # Django.
 from django.http import HttpResponse
@@ -83,12 +82,6 @@ def _log(pid, request, event, timestamp=None):
   if timestamp is not None:
     event_log_row.date_logged = timestamp
     event_log_row.save()
-
-  # Log in syslog as well.
-  logging.info(
-    'client({0}): Created log entry: pid({1}) event({2})'.format(
-      util.request_to_string(request), pid, event)
-  )
 
 
 def create(pid, request, timestamp=None):

@@ -28,7 +28,7 @@
 
 from django.conf.urls.defaults import *
 
-# Whenever Django encounters include(), it chops off whatever part of the URL
-# matched up to that point and sends the remaining string to the included
-# URLconf for further processing.
+# When Django encounters include(), it strips off the part of the URL that
+# matched and sends the remaining string to the included module for further
+# processing.
 urlpatterns = patterns('', (r'^', include('service.mn.urls')), )

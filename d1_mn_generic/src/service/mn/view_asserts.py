@@ -18,8 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`views.d1_assert`
-=========================
+''':mod:`view_asserts`
+======================
 
 :Synopsis:
   Asserts used in the views.
@@ -35,7 +35,6 @@ import datetime
 import glob
 import hashlib
 import httplib
-import logging
 import mimetypes
 import os
 import pprint
@@ -69,7 +68,7 @@ import mn.event_log
 import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
-import mn.sysmeta
+import mn.sysmeta_store
 import mn.urls
 import mn.util
 import service.settings
@@ -128,4 +127,74 @@ def date_is_utc(date_time):
   if not d1_common.date_time.is_utc(date_time):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Date-time must be specified in UTC: {0}'.format(date_time)
+    )
+
+
+def assert_obsoleted_by_not_specified(sysmeta):
+  if sysmeta.obsoletedBy is not None:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0, 'obsoletedBy cannot be specified in the System Metadata for a new object'
+    )
+
+
+def assert_obsoletes_not_specified(sysmeta):
+  if sysmeta.obsoletes is not None:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0, 'obsoletes cannot be specified in the System Metadata for create(). '
+      'Must use update()'
+    )
+
+
+def assert_obsoletes_specified(sysmeta):
+  if sysmeta.obsoletes is None:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0, 'obsoletes must be specified in the System Metadata for update()'
+    )
+
+
+def assert_obsoletes_matches_pid(sysmeta, old_pid):
+  if sysmeta.obsoletes.value() != old_pid:
+    raise d1_common.types.exceptions.InvalidSystemMetadata(
+      0, 'The identifier specified in the System Metadata obsoletes field does not '
+      'match the identifier specified in the URL'
+    )
+
+
+def assert_pid_does_not_exist(pid):
+  if mn.models.ScienceObject.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.IdentifierNotUnique(
+      0, 'Please try '
+      'again with another identifier', pid
+    )
+
+
+def assert_pid_exists(pid):
+  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Identifier '
+      'does not exist', pid
+    )
+
+
+def assert_url_is_http_or_https(url):
+  url_split = urlparse.urlparse(url)
+  if url_split.scheme not in ('http', 'https'):
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid URL specified for remote storage: {0}. '
+      'Must be HTTP or HTTPS'.format(url)
+    )
+
+
+def assert_url_references_retrievable(url):
+  url_split = urlparse.urlparse(url)
+  if url_split.scheme == 'http':
+    conn = httplib.HTTPConnection(url_split.netloc)
+  else:
+    conn = httplib.HTTPSConnection(url_split.netloc)
+  conn.request('HEAD', url_split.path)
+  res = conn.getresponse()
+  if res.status != 200:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid URL specified for remote storage: {0}. '
+      'The referenced object is not retrievable'.format(url)
     )

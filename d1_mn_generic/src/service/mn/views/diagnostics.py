@@ -35,7 +35,6 @@ import datetime
 import glob
 import hashlib
 import httplib
-import logging
 import mimetypes
 import os
 import pprint
@@ -64,7 +63,7 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import d1_assert
+import mn.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -72,9 +71,10 @@ import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
 import mn.restrict_to_verb
-import mn.sysmeta
+import mn.sysmeta_store
 import mn.urls
 import mn.util
+import mn.view_shared
 import service.settings
 
 # ------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ def get_replication_queue(request):
 
 def clear_replication_queue(request):
   mn.models.ReplicationQueue.objects.all().delete()
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
 # Access Policy.
@@ -107,18 +107,18 @@ def clear_replication_queue(request):
 
 
 def set_access_policy(request, pid):
-  d1_assert.object_exists(pid)
-  d1_assert.post_has_mime_parts(request, (('file', 'access_policy'), ))
+  mn.view_asserts.object_exists(pid)
+  mn.view_asserts.post_has_mime_parts(request, (('file', 'access_policy'), ))
   access_policy_xml = request.FILES['access_policy'].read()
   access_policy = dataoneTypes.CreateFromDocument(access_policy_xml)
   mn.auth.set_access_policy(pid, access_policy)
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 def delete_all_access_policies(request):
   # The deletes are cascaded so all subjects are also deleted.
   mn.models.Permission.objects.all().delete()
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
 # Authentication.
@@ -136,6 +136,15 @@ def echo_session(request):
 # ------------------------------------------------------------------------------
 
 
+def create(request, pid):
+  '''Version of create() that performs no locking, testing or validation.
+  Used for inserting test objects.'''
+  sysmeta_xml = request.FILES['sysmeta'].read()
+  sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
+  mn.view_shared.create(request, pid, sysmeta)
+  return mn.view_shared.http_response_with_boolean_true_type()
+
+
 @mn.restrict_to_verb.get
 def slash(request, p1, p2, p3):
   '''Test that GMN correctly handles three arguments separated by slashes'''
@@ -150,7 +159,7 @@ def exception(request, exception_type):
   elif exception_type == 'dataone':
     raise d1_common.types.exceptions.InvalidRequest(0, 'Test DataONE Exception')
 
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.get
@@ -176,14 +185,7 @@ def clear_database(request):
 def delete_all_objects(request):
   for object_ in mn.models.ScienceObject.objects.all():
     _delete_object(object_.pid)
-
-  logging.info(
-    'client({0}): Deleted all repository object records'.format(
-      mn.util.request_to_string(request)
-    )
-  )
-
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.get
@@ -193,18 +195,11 @@ def delete_single_object(request, pid):
   ever existed.
   '''
   _delete_object(pid)
-
-  logging.info(
-    'client({0}) pid({1}) Deleted object'.format(
-      mn.util.request_to_string(request), pid
-    )
-  )
-
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 def _delete_object(pid):
-  d1_assert.object_exists(pid)
+  #mn.view_asserts.object_exists(pid)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.
@@ -241,15 +236,12 @@ def delete_event_log(request):
   mn.models.EventLog.objects.all().delete()
   mn.models.EventLogIPAddress.objects.all().delete()
   mn.models.EventLogEvent.objects.all().delete()
-
-  logging.info('client({0}): delete_mn.event_log', mn.util.request_to_string(request))
-
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.post
 def inject_fictional_event_log(request):
-  d1_assert.post_has_mime_parts(request, (('file', 'csv'), ))
+  mn.view_asserts.post_has_mime_parts(request, (('file', 'csv'), ))
 
   # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
@@ -272,7 +264,7 @@ def inject_fictional_event_log(request):
 
     mn.event_log._log(pid, request, event, timestamp)
 
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
 # Concurrency.
@@ -285,7 +277,7 @@ test_shared_dict = mn.urls.test_shared_dict
 
 def concurrency_clear(request):
   test_shared_dict.clear()
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 @mn.lock_pid.for_read
@@ -302,7 +294,7 @@ def concurrency_write_lock(request, key, val, sleep_before, sleep_after):
   time.sleep(float(sleep_before))
   test_shared_dict[key] = val
   time.sleep(float(sleep_after))
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 # No locking.

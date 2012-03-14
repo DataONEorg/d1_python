@@ -33,7 +33,6 @@
 
 # Stdlib.
 import datetime
-import logging
 import os
 import sys
 import StringIO
@@ -59,7 +58,7 @@ def write_sysmeta_to_store(pid, sysmeta_pyxb):
     settings.SYSMETA_STORE_PATH, pid, sysmeta_pyxb.serialVersion
   )
   mn.util.ensure_directories_exists(sysmeta_path)
-  sysmeta_xml = sysmeta_pyxb.toxml()
+  sysmeta_xml = sysmeta_pyxb.toxml().encode('utf-8')
   with open(sysmeta_path, 'wb') as f:
     f.write(sysmeta_xml)
 

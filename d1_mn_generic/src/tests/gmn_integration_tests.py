@@ -285,6 +285,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     client.delete_all_objects(
       headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
 
+
   def B_object_collection_is_empty(self):
     '''Object collection is empty.'''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
@@ -294,10 +295,11 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Check header.
     self.assert_object_list_slice(object_list, 0, 0, 0)
 
+
   def C_create_objects(self, wrapped=False):
     '''Populate MN with set of test objects.
     '''
-    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for sysmeta_path in sorted(glob.glob(os.path.join(self.options.obj_path,
                                                       '*.sysmeta'))):
       # Get name of corresponding object and open it.
@@ -325,6 +327,7 @@ class TestSequenceFunctions(unittest2.TestCase):
                     object_file, sysmeta_obj,
                     vendorSpecific=headers)
 
+
   def D_object_collection_is_populated(self):
     '''Object collection is populated.
     '''
@@ -335,12 +338,14 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Check header.
     self.assert_object_list_slice(object_list, 0, OBJECTS_TOTAL_DATA, OBJECTS_TOTAL_DATA)
 
+
   def A_delete_event_log(self):
     '''Clear event log.
     '''
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.delete_event_log(
       headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
 
   def B_event_log_is_empty(self):
     '''Event log is empty.
@@ -351,6 +356,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     logRecords = client.getLogRecords(datetime.datetime(1800, 1, 1))
     self.assertEqual(len(logRecords.logEntry), 0)
 
+
   def C_inject_fictional_event_log(self):
     '''Inject a set of fictitious events for each object.
     '''
@@ -358,6 +364,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.inject_fictional_event_log(csv_file,
       headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
 
   def D_event_log_is_populated(self):
     '''Event log is populated.
@@ -457,6 +464,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, 0, 0, OBJECTS_TOTAL_DATA)
 
+
   def slicing_1(self):
     '''listObjects: Slicing: Starting at 0 and getting half of the available objects.
     '''
@@ -467,6 +475,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, 0, object_cnt_half,
                        OBJECTS_TOTAL_DATA)
+
 
   def slicing_2(self):
     '''listObjects: Slicing: Starting at object_cnt_half and requesting more objects
@@ -480,6 +489,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assert_object_list_slice(object_list, object_cnt_half, object_cnt_half,
                        OBJECTS_TOTAL_DATA)
 
+
   def slicing_3(self):
     '''listObjects: Slicing: Starting above number of objects that we have.
     '''
@@ -489,6 +499,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assert_object_list_slice(object_list, OBJECTS_TOTAL_DATA * 2, 0,
                        OBJECTS_TOTAL_DATA)
 
+
   def slicing_4(self):
     '''listObjects: Slicing: Requesting more than MAX_LISTOBJECTS should throw.
     '''
@@ -497,6 +508,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertRaises(Exception, client.listObjects,
       count=d1_common.const.MAX_LISTOBJECTS + 1,
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
 
   def date_range_1(self):
     '''listObjects: Date range query: Get all objects from the 1990s.
@@ -522,6 +534,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
 
+
   def date_range_3(self):
     '''listObjects: Date range query: Get 10 first objects from the 1990s, filtered by objectFormat.
     '''
@@ -533,6 +546,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       objectFormat='eml://ecoinformatics.org/eml-2.0.0',
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_object_list_slice(object_list, 0, 10, OBJECTS_CREATED_IN_90S)
+
 
   def date_range_4(self):
     '''listObjects: Date range query: Get 10 first objects from non-existing date range.
@@ -559,6 +573,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_log_slice(log, 0, 0, EVENTS_TOTAL_DATA)
 
+
   def event_log_slicing_1(self):
     '''getLogRecords: Slicing: Starting at 0 and getting half of the available objects.
     '''
@@ -569,6 +584,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       fromDate=datetime.datetime(1800, 1, 1),
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_log_slice(log, 0, object_cnt_half, EVENTS_TOTAL_DATA)
+
 
   def event_log_slicing_2(self):
     '''getLogRecords: Slicing: Starting at object_cnt_half and requesting more objects
@@ -583,6 +599,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assert_log_slice(log, object_cnt_half, object_cnt_half,
                        EVENTS_TOTAL_DATA)
 
+
   def event_log_slicing_3(self):
     '''getLogRecords: Slicing: Starting above number of objects that we have.
     '''
@@ -593,6 +610,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assert_log_slice(log, EVENTS_TOTAL_DATA * 2, 0,
                        EVENTS_TOTAL_DATA)
 
+
   def event_log_slicing_4(self):
     '''getLogRecords: Slicing: Requesting more than MAX_LISTOBJECTS should throw.
     '''
@@ -602,6 +620,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       count=d1_common.const.MAX_LISTOBJECTS + 1,
       fromDate=datetime.datetime(1800, 1, 1),
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
 
   def event_log_date_range_1(self):
     '''getLogRecords: Date range query: Get all events from the 1990s.
@@ -626,6 +645,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_log_slice(log, 0, 10, EVENTS_TOTAL_EVENT_UNI_TIME_IN_1990S)
 
+
   def event_log_date_range_3(self):
     '''getLogRecords: Date range query: Get all events from the 1990s, filtered by event type.
     '''
@@ -637,6 +657,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assert_log_slice(log, 0, EVENTS_DELETES_UNI_TIME_IN_1990S,
                           EVENTS_DELETES_UNI_TIME_IN_1990S)
+
 
   def event_log_date_range_4(self):
     '''getLogRecords: Date range query: Get 10 first events from non-existing date range.
@@ -749,6 +770,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     self.assertRaises(d1_common.types.exceptions.NotFound, client.get,
                       '_invalid_pid_')
 
+
   def get_object_by_valid_pid(self):
     '''Successful retrieval of valid object
     /object/valid_pid.
@@ -851,8 +873,6 @@ class TestSequenceFunctions(unittest2.TestCase):
 
 
 
-
-
   def delete(self):
     '''MNStorage.delete() in GMN and libraries.
     '''
@@ -867,6 +887,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # to deserialize a DataONEException. The exception is caused by the body
     # being empty since describe() uses a HEAD request.
     self.assertRaises(SyntaxError, client.describe, pid)
+
 
   def describe(self):
     '''MNStorage.describe in GMN and libraries.
@@ -950,6 +971,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
     self.assertEqual(object_list.count, OBJECTS_TOTAL_DATA)
 
+
   def auth_listobjects_2(self):
     '''listObjects returns only public objects when called by public user.
     '''
@@ -957,6 +979,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     object_list = client.listObjects(count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC))
     self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
+
 
   def auth_listobjects_3(self):
     '''listObjects returns only public objects when called by unknown user.
@@ -966,6 +989,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects('unknown user'))
     self.assertEqual(object_list.count, AUTH_PUBLIC_OBJECTS)
 
+
   def auth_listobjects_4(self):
     '''listObjects returns only public + specific user's objects
     '''
@@ -974,6 +998,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(AUTH_SPECIFIC_USER))
     self.assertEqual(object_list.count, AUTH_SPECIFIC_USER_OWNS)
 
+
   def auth_listobjects_5(self):
     '''listObjects: slicing + specific user
     '''
@@ -981,6 +1006,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     object_list = client.listObjects(count=5,
       vendorSpecific=self.include_subjects(AUTH_SPECIFIC_USER))
     self.assert_object_list_slice(object_list, 0, 5, AUTH_SPECIFIC_USER_OWNS)
+
 
   def auth_listobjects_6(self):
     '''listObjects: slicing + specific user + objectFormat
@@ -1046,47 +1072,62 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1010_managed_A_delete_all_objects(self):
     self.A_delete_all_objects()
 
+
   def test_1010_managed_B_object_collection_is_empty(self):
     self.B_object_collection_is_empty()
+
 
   def test_1010_managed_C_create_objects(self):
     self.C_create_objects()
 
+
   def test_1010_managed_D_object_collection_is_populated(self):
     self.D_object_collection_is_populated()
+
 
   def test_1020_managed_A_delete_event_log(self):
     self.A_delete_event_log()
 
+
   def test_1020_managed_B_event_log_is_empty(self):
     self.B_event_log_is_empty()
+
 
   def test_1020_managed_C_inject_fictional_event_log(self):
     self.C_inject_fictional_event_log()
 
+
   def test_1020_managed_D_event_log_is_populated(self):
     self.D_event_log_is_populated()
+
 
   def test_1030_managed_compare_byte_by_byte(self):
     self.compare_byte_by_byte()
 
+
   def test_1040_managed_object_properties(self):
     self.object_properties()
+
 
 #  def test_1050_managed_object_update(self):
 #    self.object_update()
 
+
 #  def test_1060_managed_update_sysmeta(self):
 #    self.update_sysmeta()
+
 
   def test_1100_managed_get_object_count(self):
     self.get_object_count()
 
+
   def test_1105_managed_slicing_1(self):
     self.slicing_1()
 
+
   def test_1110_managed_slicing_2(self):
     self.slicing_2()
+
 
   def test_1120_managed_slicing_3(self):
     self.slicing_3()

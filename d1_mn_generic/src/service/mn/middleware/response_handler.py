@@ -31,7 +31,6 @@
 # Stdlib.
 import csv
 import datetime
-import logging
 import os
 import StringIO
 import sys
@@ -143,9 +142,6 @@ def db_to_replication_task(view_result):
   replication_request.status = row.status.status
   replication_request.pid = row.pid
   replication_request.sourceNode = row.source_node.source_node
-  replication_request.checksum = row.checksum
-  replication_request.checksumAlgorithm = \
-    row.checksum_algorithm.checksum_algorithm
   replication_request.timestamp = row.timestamp
   return replication_request
 

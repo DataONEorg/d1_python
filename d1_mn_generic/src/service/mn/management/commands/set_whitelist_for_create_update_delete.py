@@ -69,5 +69,5 @@ class Command(NoArgsCommand):
       mn.models.WhitelistForCreateUpdateDelete.objects.all().delete()
       for subject in f:
         w = mn.models.WhitelistForCreateUpdateDelete()
-        w.set(subject)
+        w.set(subject.strip())
         w.save()

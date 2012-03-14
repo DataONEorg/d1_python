@@ -51,7 +51,6 @@
 
 # Stdlib.
 import inspect
-import logging
 import os
 import sys
 import traceback
@@ -77,7 +76,7 @@ class exception_handler():
     # An exception within this function causes a Django exception page to be
     # returned if debugging is on and a generic 500 otherwise.
     # Log the exception.
-    util.log_exception(10)
+    util.log_exception()
     # When debugging from a web browser, returning None returns Django's
     # extremely useful exception page.
     if settings.DEBUG == True \

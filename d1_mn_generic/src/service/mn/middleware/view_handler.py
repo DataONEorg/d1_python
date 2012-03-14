@@ -99,4 +99,8 @@ class view_handler():
           return response
       raise
 
+    logging.info('Request successfully processed')
+
+    # The request was successfully processed and the response is returned to
+    # the client.
     return response

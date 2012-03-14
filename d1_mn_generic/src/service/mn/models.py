@@ -63,7 +63,7 @@ class ScienceObjectFormat(models.Model):
 
 
 class ScienceObject(models.Model):
-  pid = models.CharField(max_length=200, unique=True, db_index=True)
+  pid = models.CharField(max_length=800, unique=True, db_index=True)
   url = models.CharField(max_length=1000, unique=True, db_index=True)
   format = models.ForeignKey(ScienceObjectFormat, db_index=True)
   checksum = models.CharField(max_length=100, db_index=True)
@@ -83,22 +83,22 @@ class ScienceObject(models.Model):
       checksum_algorithm=str(checksum_algorithm_string)
     )[0]
 
-  def save_unique(self):
-    '''If attempting to save an object that has the same pid and/or url as an
-    old object, we delete the old object before saving the new.
-    TODO: This makes debugging easier but will need change when semantics of
-    update and delete are finalized.
-    '''
-    try:
-      me = ScienceObject.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
-    except IndexError:
-      self.save()
-    else:
-      logging.warning('Overwriting object with duplicate PID or URL:')
-      logging.warning('URL: {0}'.format(self.url))
-      logging.warning('PID: {0}'.format(self.pid))
-      me.delete()
-      self.save()
+#  def save_unique(self):
+#    '''If attempting to save an object that has the same pid and/or url as an
+#    old object, we delete the old object before saving the new.
+#    TODO: This makes debugging easier but will need change when semantics of
+#    update and delete are finalized.
+#    '''
+#    try:
+#      me = ScienceObject.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
+#    except IndexError:
+#      self.save()
+#    else:
+#      logging.warning('Overwriting object with duplicate PID or URL:')
+#      logging.warning('URL: {0}'.format(self.url))
+#      logging.warning('PID: {0}'.format(self.pid))
+#      me.delete()
+#      self.save()
 
 # ------------------------------------------------------------------------------
 # Access Log
@@ -168,13 +168,9 @@ class ReplicationQueueSourceNode(models.Model):
 
 
 class ReplicationQueue(models.Model):
-  #error = models.BooleanField()
-  #new = models.BooleanField()
   status = models.ForeignKey(ReplicationQueueStatus)
-  pid = models.CharField(max_length=200)
+  pid = models.CharField(max_length=800)
   source_node = models.ForeignKey(ReplicationQueueSourceNode)
-  checksum = models.CharField(max_length=100)
-  checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm)
   timestamp = models.DateTimeField(auto_now=True)
 
   def set_status(self, status_string):

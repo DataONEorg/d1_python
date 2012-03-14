@@ -27,7 +27,6 @@
 '''
 
 # Stdlib.
-import logging
 import re
 
 # D1.
@@ -48,7 +47,6 @@ def add_access_policy_filter(query, request, column_name):
   :return type: QuerySet
   '''
   filter_arg = '{0}__subject__subject__in'.format(column_name)
-  logging.info('Applied access control filter')
   return query.filter(**{filter_arg: request.subjects})
 
 
@@ -57,7 +55,6 @@ def add_bool_filter(query, column_name, bool_val):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid boolean format: {0}'.format(bool_val)
     )
-  logging.info('Applied bool filter')
   filter_arg = '{0}'.format(column_name)
   return query.filter(**{filter_arg: bool_val})
 
@@ -96,7 +93,6 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
         0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))
       )
     filter_arg = '{0}__{1}'.format(column_name, operator)
-    logging.info('Applied range operator filter: {0} = {1}'.format(filter_arg, date))
     return query.filter(**{filter_arg: date}), True
 
   return query, False
@@ -121,7 +117,6 @@ def add_string_filter(query, request, column_name, param_name):
     if not m:
       continue
     value = request.GET[key]
-    logging.info('Applied filter: {0} = {1}'.format(column_name, value))
     return query.filter(**{column_name: value}), True
 
   return query, False
@@ -147,13 +142,11 @@ def add_wildcard_filter(query, col_name, value):
   if re.match(r'\*(.*)$', value):
     filter_arg = '{0}__endswith'.format(col_name)
     filter_kwargs[filter_arg] = value_trimmed
-    logging.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
     wild_beginning = True
 
   if re.match(r'(.*)\*$', value):
     filter_arg = '{0}__startswith'.format(col_name)
     filter_kwargs[filter_arg] = value_trimmed
-    logging.info('Applied wildcard filter: {0} = {1}'.format(filter_arg, value_trimmed))
     wild_end = True
 
   if wild_beginning == True and wild_end == True:
@@ -164,7 +157,6 @@ def add_wildcard_filter(query, col_name, value):
   # If no wildcards are used, we add a regular "equals" filter.
   elif wild_beginning == False and wild_end == False:
     filter_kwargs[col_name] = value
-    logging.info('Applied wildcard filter: {0} = {1}'.format(col_name, value))
 
   return query.filter(**filter_kwargs)
 
@@ -210,12 +202,9 @@ def add_slice_filter(query, request):
   # as [value : None] is valid and equivalent to [value:]
   elif start and count:
     query = query[start:start + count]
-    logging.info('Applied slice filter: start({0}) count({1})'.format(start, count))
   elif start:
     query = query[start:]
-    logging.info('Applied slice filter: start({0})'.format(start))
   elif count:
     query = query[:count]
-    logging.info('Applied slice filter: count({0})'.format(count))
 
   return query, start, count

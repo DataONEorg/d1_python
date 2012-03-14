@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     version="0.0.1"
     elementFormDefault="unqualified" attributeFormDefault="unqualified">
-    
+
     <xs:element name="replicationRequest">
         <xs:complexType>
             <xs:sequence>
@@ -11,8 +11,6 @@
                 <xs:element name="status" type="xs:string" minOccurs="1" maxOccurs="1" />
                 <xs:element name="pid" type="xs:string" minOccurs="1" maxOccurs="1" />
                 <xs:element name="sourceNode" type="xs:string" minOccurs="1" maxOccurs="1" />
-                <xs:element name="checksum" type="xs:string" minOccurs="1" maxOccurs="1" />
-                <xs:element name="checksumAlgorithm" type="xs:string" minOccurs="1" maxOccurs="1" />
                 <xs:element name="timestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>

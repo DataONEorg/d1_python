@@ -68,7 +68,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
       version=version
     )
 
-    self.logger = logging.getLogger('GMNTestClient')
+    self.logger = logging.getLogger(__name__)
 
   def gmn_vse_provide_subject(self, subject):
     '''GMN Vendor Specific Extension: Simulate subject.'''
@@ -133,6 +133,23 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
   # Misc.
   # ----------------------------------------------------------------------------
+
+  def create(self, pid, obj, sysmeta, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('create/%(pid)s', pid=pid)
+    mime_multipart_fields = [('pid', pid.encode('utf-8')), ]
+    mime_multipart_files = [
+      ('object', 'content.bin', obj),
+      ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
+    ]
+    response = self.POST(
+      url,
+      fields=mime_multipart_fields,
+      files=mime_multipart_files,
+      headers=vendorSpecific
+    )
+    return self._read_boolean_response(response)
 
   def slash(self, arg1, arg2, arg3, headers=None):
     url = self._rest_url(

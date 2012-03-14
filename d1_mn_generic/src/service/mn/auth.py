@@ -26,7 +26,6 @@
 '''
 
 # Stdlib.
-import logging
 import os
 import urllib
 
@@ -49,7 +48,7 @@ import d1_common.const
 import settings
 import util
 import models
-import sysmeta
+import sysmeta_store
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -151,7 +150,7 @@ def set_access_policy(pid, access_policy=None):
   models.Permission.objects.filter(object__pid=pid).delete()
   # Add an implicit allow rule with all permissions for the rights holder.
   allow_rights_holder = dataoneTypes.AccessRule()
-  with sysmeta.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
+  with sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
     allow_rights_holder.subject.append(s.rightsHolder)
   permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
   allow_rights_holder.permission.append(permission)
@@ -199,7 +198,7 @@ def set_access_policy(pid, access_policy=None):
   # Update the SysMeta object with the new access policy. Because
   # TransactionMiddleware is enabled, the database modifications made above will
   # be rolled back if the SysMeta update fails.
-  with sysmeta.sysmeta(pid, sci_obj.serial_version) as s:
+  with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
     s.accessPolicy = access_policy
     sci_obj.serial_version = s.serialVersion
   sci_obj.save()
@@ -286,14 +285,14 @@ def assert_trusted_permission(f):
 
 
 def assert_internal_permission(f):
-  '''Access only by GMN worker process.
+  '''Access only by GMN async process.
   '''
 
   def wrap(request, *args, **kwargs):
     if 'gmn_internal' not in request.subjects and \
-      request.META['REMOTE_ADDR'] != '127.0.0.1':
+      request.META['REMOTE_ADDR'] not in ('127.0.0.1', '174.50.65.170'):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for GMN worker processes'
+        0, 'Access allowed only for GMN async processes'
       )
     return f(request, *args, **kwargs)
 
@@ -310,7 +309,7 @@ def assert_create_update_delete_permission(f):
   def wrap(request, *args, **kwargs):
     if not settings.DEBUG and \
       not models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject__subject__in=subjects).exists():
+        subject__subject__in=request.subjects).exists():
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for subjects with Create/Update permission'
       )

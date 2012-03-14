@@ -21,7 +21,7 @@
 ''':mod:`views.internal`
 ========================
 
-:Synopsis: REST call handlers for GMN internal APIs used by worker processes.
+:Synopsis: REST call handlers for GMN internal APIs used by async processes.
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
@@ -32,7 +32,6 @@ import datetime
 import glob
 import hashlib
 import httplib
-import logging
 import mimetypes
 import os
 import pprint
@@ -61,15 +60,17 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import d1_assert
+import mn.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
 import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
-import mn.sysmeta
+import mn.sysmeta_store
+import mn.sysmeta_validate
 import mn.util
+import mn.view_shared
 import service.settings
 
 # ==============================================================================
@@ -85,11 +86,11 @@ import service.settings
 def replicate_task_get(request):
   '''Get next replication task.'''
 
-  if not models.ReplicationQueue.objects.filter(status__status='new')\
+  if not mn.models.ReplicationQueue.objects.filter(status__status='new')\
     .exists():
     raise d1_common.types.exceptions.NotFound(0, 'No pending replication requests', 'n/a')
 
-  query = models.ReplicationQueue.objects.filter(status__status='new')[0]
+  query = mn.models.ReplicationQueue.objects.filter(status__status='new')[0]
 
   # Return query data for further processing in middleware layer.
   return {'query': query, 'type': 'replication_task'}
@@ -99,25 +100,25 @@ def replicate_task_get(request):
 def replicate_task_update(request, task_id, status):
   '''Update the status of a replication task.'''
   try:
-    task = models.ReplicationQueue.objects.get(id=task_id)
-  except models.ReplicationQueue.DoesNotExist:
+    task = mn.models.ReplicationQueue.objects.get(id=task_id)
+  except mn.models.ReplicationQueue.DoesNotExist:
     raise d1_common.types.exceptions.NotFound(
       0, 'Replication task not found', str(task_id)
     )
   else:
     task.set_status(status)
     task.save()
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 @mn.lock_pid.for_write
 @mn.auth.assert_internal_permission
 def replicate_create(request, pid):
-  '''Add a replica to the Member Node.
-  '''
-  return _create(request, pid)
-
-  return HttpResponse('OK')
+  sysmeta_xml = request.FILES['sysmeta'].read()
+  sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
+  mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, pid, sysmeta)
+  mn.view_shared.create(request, pid, sysmeta)
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------  
 # Internal API: Refresh System Metadata (MNStorage.systemMetadataChanged()).
@@ -127,14 +128,15 @@ def replicate_create(request, pid):
 @mn.lock_pid.for_write
 @mn.auth.assert_internal_permission
 def update_sysmeta(request, pid):
-  '''Updates the System Metadata for an existing Science Object.
+  '''Updates the System Metadata for an existing Science Object. Does not
+  update the replica status on the object.
   '''
-  d1_assert.object_exists(pid)
+  mn.view_asserts.object_exists(pid)
 
   # Check that a valid MIME multipart document has been provided and that it
   # contains the required System Metadata section.
-  d1_assert.post_has_mime_parts(request, (('file', 'sysmeta'), ))
-  d1_assert.xml_document_not_too_large(request.FILES['sysmeta'])
+  mn.view_asserts.post_has_mime_parts(request, (('file', 'sysmeta'), ))
+  mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
   sysmeta_xml = request.FILES['sysmeta'].read()
@@ -147,15 +149,14 @@ def update_sysmeta(request, pid):
     )
 
   # Note: No sanity checking is done on the provided System Metadata. It is
-  # assumed that what the worker process pulls from the Coordinating Node makes
+  # assumed that what the async process pulls from the Coordinating Node makes
   # sense.
-  sciobj = models.ScienceObject.objects.get(pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   sciobj.set_format(sysmeta_obj.formatId)
   sciobj.checksum = sysmeta_obj.checksum.value()
   sciobj.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
   sciobj.mtime = d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
   sciobj.size = sysmeta_obj.size
-  #sciobj.replica = False
   sciobj.serial_version = sysmeta_obj.serialVersion
   sciobj.archived = False
   sciobj.save()
@@ -173,7 +174,7 @@ def update_sysmeta(request, pid):
   # Log this System Metadata update.
   event_log.update(pid, request)
 
-  return HttpResponse('OK')
+  return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------  
 # Internal: Misc. 
@@ -182,9 +183,7 @@ def update_sysmeta(request, pid):
 
 def home(request):
   '''Home page. Root of web server redirects here.'''
-
   n_science_objects = mn.models.ScienceObject.objects.count()
   avg_sci_data_size = mn.models.ScienceObject.objects.all().\
     aggregate(Avg('size'))['size__avg']
-
   return render_to_response('home.html', locals(), mimetype="application/xhtml+xml")
