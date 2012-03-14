@@ -32,7 +32,7 @@ import d1_common
 
 # The root of all DataONE.  Used to perform introspection on the system when
 # no other node information is provided.
-URL_DATAONE_ROOT = 'http://cn.dataone.org/cn/'
+URL_DATAONE_ROOT = 'https://cn-dev.dataone.org/cn/'
 
 # Version of this software.
 VERSION = d1_common.__version__
