@@ -32,7 +32,14 @@ import d1_common
 
 # The root of all DataONE.  Used to perform introspection on the system when
 # no other node information is provided.
-URL_DATAONE_ROOT = 'https://cn-dev.dataone.org/cn/'
+DEFAULT_CN_PROTOCOL = 'https'
+DEFAULT_CN_HOST = 'cn.dataone.org'
+DEFAULT_CN_PATH = '/cn'
+DEFAULT_MN_PROTOCOL = 'https'
+DEFAULT_MN_HOST = 'mn.dataone.org'
+DEFAULT_MN_PATH = '/knb/d1/mn'
+#
+URL_DATAONE_ROOT = ''.join((DEFAULT_CN_PROTOCOL, '://', DEFAULT_CN_HOST, DEFAULT_CN_PATH))
 
 # Version of this software.
 VERSION = d1_common.__version__
