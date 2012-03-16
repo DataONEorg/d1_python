@@ -140,7 +140,7 @@ class DataONEException(Exception):
     msg.write(u'name: {0}\n'.format(self.name))
     msg.write(u'errorCode: {0}\n'.format(self.errorCode))
     msg.write(u'detailCode: {0}\n'.format(str(self.detailCode)))
-    msg.write(u'description: {0}\n'.format(self.description))
+    msg.write(u'description: {0}\n'.format(self.description.decode('utf-8')))
     try:
       msg.write(u'PID: {0}\n'.format(self.pid))
     except AttributeError:
