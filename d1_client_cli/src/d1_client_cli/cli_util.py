@@ -34,20 +34,25 @@ import sys
 import traceback
 
 
-def _print_unexpected_exception(max_traceback_levels=5):
+def _handle_unexpected_exception(max_traceback_levels=5):
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
   #
   if exc_class.__name__ == 'SSLError':
     print_error('There was a problem with SSL, did you update your key?')
   else:
-    print_error('Unexpected error:')
-    print_error('  Name: {0}'.format(exc_class.__name__))
-    print_error('  Value: {0}'.format(exc_msgs))
-    try:
-      exc_args = exc_msgs.__dict__["args"]
-    except KeyError:
-      exc_args = "<no args>"
-    print_error('  Args: {0}'.format(exc_args))
-    print_error('  Traceback:')
-    for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
-      print_error('    {0}'.format(tb))
+    _print_unexpected_exception(max_traceback_levels)
+
+
+def _print_unexpected_exception(max_traceback_levels=5):
+  exc_class, exc_msgs, exc_traceback = sys.exc_info()
+  print_error(u'Unexpected error:')
+  print_error(u'  Name: {0}'.format(exc_class.__name__))
+  print_error(u'  Value: {0}'.format(exc_msgs))
+  try:
+    exc_args = exc_msgs.__dict__["args"]
+  except KeyError:
+    exc_args = "<no args>"
+  print_error('  Args: {0}'.format(exc_args))
+  print_error('  Traceback:')
+  for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
+    print_error('    {0}'.format(tb))

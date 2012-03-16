@@ -88,10 +88,6 @@ def create(session, name, pids):
     if obj_url is None:
       print_error('Couldn\'t find any object with pid "%s"' % pid)
       break
-    else:
-      host = get_host(obj_url)
-      if host is not None:
-        print_info(' found object at: %s' % host)
 
     scimeta_url = obj_url.replace('/' + GET_ENDPOINT + '/', '/' + META_ENDPOINT + '/')
     scimeta_obj = _get_scimeta_obj(session, obj_url)
@@ -146,7 +142,10 @@ def save(session, pkg):
   client = PkgMNClient(session)
   flo = StringIO.StringIO(pkg_xml)
   response = client.create(pid=pkg.pid, obj=flo, sysmeta=sysmeta)
-  print 'response:', response
+  if response is not None:
+    return response.getvalue()
+  else:
+    return None
 
 
 def get_host(url):
@@ -290,7 +289,6 @@ def _resolve_scimeta_url(session, pid):
   '''
   cnclient = PkgCNClient(session)
   try:
-    print_info(' looking for: %s' % pid)
     locations = cnclient.resolve(pid)
     if locations is not None:
       for location in locations.objectLocation:
@@ -316,7 +314,7 @@ def _get_scimeta_obj(session, obj_url):
     client = PkgMNClient(session, base)
     return client.getSystemMetadata(pid)
   except:
-    cli_util._print_unexpected_exception()
+    cli_util._handle_unexpected_exception()
     return None
 
   #-- Utility classes ------------------------------------------------------------
