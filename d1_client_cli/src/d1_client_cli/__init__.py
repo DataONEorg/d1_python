@@ -27,6 +27,7 @@ __all__ = [
   'cli_exceptions',
   'cli_util',
   'dataone',
+  'package',
   'print_level',
   'replication_policy',
   'session',

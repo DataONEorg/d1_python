@@ -29,17 +29,14 @@
 
 # Stdlib.
 import datetime
-import logging
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # 3rd party.
-import pyxb
 
 # App.
 from print_level import *
-import cli_exceptions
 
 
 class MissingSysmetaParameters(Exception):
@@ -71,17 +68,26 @@ class system_metadata():
       raise MissingSysmetaParameters(msg)
 
   def _create_pyxb_object(
-    self, session, pid, size, checksum, access_policy, replication_policy
+    self, session, pid, size, checksum, access_policy, replication_policy, formatId,
+    algorithm
   ):
+    # Fix arguments.
+    _formatId = formatId
+    if _formatId is None:
+      _formatId = session.get('sysmeta', 'object-format')
+    _algorithm = algorithm
+    if _algorithm is None:
+      _algorithm = session.get('sysmeta', 'algorithm')
+
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.serialVersion = 1
     sysmeta.identifier = pid
-    sysmeta.formatId = session.get('sysmeta', 'object-format')
+    sysmeta.formatId = _formatId
     sysmeta.size = size
     sysmeta.submitter = session.get('sysmeta', 'submitter')
     sysmeta.rightsHolder = session.get('sysmeta', 'rights-holder')
     sysmeta.checksum = dataoneTypes.checksum(checksum)
-    sysmeta.checksum.algorithm = session.get('sysmeta', 'algorithm')
+    sysmeta.checksum.algorithm = _algorithm
     sysmeta.dateUploaded = datetime.datetime.utcnow()
     sysmeta.dateSysMetadataModified = datetime.datetime.utcnow()
     sysmeta.originmn = session.get('sysmeta', 'origin-mn')
@@ -93,11 +99,19 @@ class system_metadata():
     return sysmeta
 
   def create_pyxb_object(
-    self, session, pid, size, checksum, access_policy, replication_policy
+    self,
+    session,
+    pid,
+    size,
+    checksum,
+    access_policy,
+    replication_policy,
+    formatId=None,
+    algorithm=None
   ):
     self._assert_no_missing_sysmeta_session_parameters(session.session['sysmeta'])
     return self._create_pyxb_object(
-      session, pid, size, checksum, access_policy, replication_policy
+      session, pid, size, checksum, access_policy, replication_policy, formatId, algorithm
     )
 
   def to_xml(self):

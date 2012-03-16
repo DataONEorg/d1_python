@@ -65,6 +65,7 @@ import pyxb
 from print_level import *
 import cli_exceptions
 import cli_util
+import package
 import session
 
 # D1
@@ -155,8 +156,15 @@ option_list = [
     "--dataone-url",
     action="store",
     dest="dataone_url",
-    metavar="CN-URI",
-    help="Node to use for the root Coordinating Node"
+    metavar="URI",
+    help="URI to use for the Coordinating Node"
+  ),
+  make_option(
+    "--cn",
+    action="store",
+    dest="cn_host",
+    metavar="HOST",
+    help="Name of the host to use for the Coordinating Node"
   ),
   make_option(
     "--fields",
@@ -195,8 +203,15 @@ option_list = [
     "--mn-url",
     action="store",
     dest="mn_url",
-    metavar="MN-URI",
+    metavar="URI",
     help="Member Node URL"
+  ),
+  make_option(
+    "--mn",
+    action="store",
+    dest="mn_host",
+    metavar="HOST",
+    help="Name of the host to use for the Member Node"
   ),
   make_option(
     "--object-format",
@@ -302,6 +317,14 @@ def handle_options(cli, options):
     cli.d1.session_set_parameter("count", options.count)
   if options.dataone_url is not None:
     cli.d1.session_set_parameter("dataone-url", options.dataone_url)
+  if options.cn_host is not None:
+    url = ''.join(
+      (
+        d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
+        d1_common.const.DEFAULT_CN_PATH
+      )
+    )
+    cli.d1.session_set_parameter("dataone-url", url)
   if options.fields is not None:
     cli.d1.session_set_parameter("fields", options.fields)
   if options.from_date is not None:
@@ -313,6 +336,14 @@ def handle_options(cli, options):
     cli.d1.session_set_parameter("key-file", options.key_file)
   if options.mn_url is not None:
     cli.d1.session_set_parameter("mn-url", options.mn_url)
+  if options.mn_host is not None:
+    url = ''.join(
+      (
+        d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
+        d1_common.const.DEFAULT_MN_PATH
+      )
+    )
+    cli.d1.session_set_parameter("mn-url", url)
   if options.object_format is not None:
     cli.d1.session_set_parameter("object-format", options.object_format)
   if options.origin_mn is not None:
@@ -481,11 +512,19 @@ class DataONECLI():
     sysmeta = self._create_system_metadata(pid, expand_path(path))
     return sysmeta.toxml()
 
+  def _verbose(self):
+    verbosity = self.session.get('cli', 'verbose')
+    if verbosity is not None:
+      return verbosity
+    else:
+      return False
+
   ##-- Create --------------------------------------------------------------
 
   def _post_file_and_system_metadat_to_member_node(self, client, pid, path, sysmeta):
     with open(expand_path(path), 'r') as f:
       try:
+        print 'f:', f
         response = client.create(pid, f, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
         print_error(
@@ -563,7 +602,10 @@ class DataONECLI():
     '''Display or save file like object'''
     if not path:
       for line in file_like_object:
-        print_info(line.rstrip())
+        if self._verbose():
+          print_info(line.rstrip())
+        else:
+          print line.rstrip()
     else:
       self._copy_file_like_object_to_file(file_like_object, expand_path(path))
 
@@ -611,7 +653,17 @@ class DataONECLI():
         'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
       )
     for location in object_location_list.objectLocation:
-      print_info(location.url)
+      if self._verbose():
+        print_info(location.url)
+      else:
+        print location.url
+
+  def package(self, objlist):
+    '''Package the given object(s).
+    '''
+    pkg = package.create(session=self.session, name=objlist[0], pids=objlist[1:])
+    if pkg is not None:
+      package.save(self.session, pkg)
 
   def list(self, path):
     '''MN listObjects.
@@ -1134,15 +1186,7 @@ class CLI(cmd.Cmd):
     '''
     try:
       queryArgs = self._split_args(line, 0, 30)
-      # Concatenate the arguments.
-      query = ''
-      sep = ''
-      for q in queryArgs:
-        if q is not None:
-          query += sep + q
-          sep = ' '
-        else:
-          break
+      query = ' '.join(filter(None, queryArgs))
       self.d1.search(query)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
@@ -1270,6 +1314,26 @@ class CLI(cmd.Cmd):
     try:
       pid = self._split_args(line, 1, 0)
       self.d1.set_replication_policy(pid)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      print_error(e)
+    except:
+      cli_util._print_unexpected_exception()
+
+  def do_package(self, line):
+    ''' package name pid [pid ...]
+    Create and store a data package with the given name for the given objects.
+    '''
+    try:
+      queryArgs = self._split_args(line, 2, 99)
+      # Clear out blank items
+      objlist = []
+      for q in queryArgs:
+        if q is not None:
+          objlist.append(q)
+        else:
+          break
+      self.d1.package(objlist)
+
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
