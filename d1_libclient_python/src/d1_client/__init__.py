@@ -21,7 +21,7 @@
 '''
 '''
 
-__version__ = "1.0.0c3"
+__version__ = "1.0.0c4"
 
 __all__ = [
   'cnclient',
