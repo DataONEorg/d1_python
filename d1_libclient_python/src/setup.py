@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 import d1_client
 
 setup(
-  name='Python DataONE Client Library',
+  name='DataONE_ClientLib',
   version=d1_client.__version__,
   description='A DataONE client library for Python',
   author='Dave Vieglais',
