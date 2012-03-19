@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 import d1_client_cli
 
 setup(
-  name='Python DataONE CLI',
+  name='DataONE_CLI',
   version=d1_client_cli.__version__,
   author='Roger Dahl, and the DataONE Development Team',
   author_email='developers@dataone.org',
@@ -23,13 +23,11 @@ setup(
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
+    'DataONE_Common >= 1.0.0c4',
+    'DataONE_ClientLib >= 1.0.0c4',
     'foresite >= 1.2',
     'pyxb >= 1.1.3',
     'rdflib >= 2.4.2',
-  ],
-  dependency_links=[
-    'https://repository.dataone.org/software/python_products/d1_cli#egg=Python_DataONE_Common-1.0.0c4-py2.6.egg',
-    'https://repository.dataone.org/software/python_products/d1_cli#egg=Python_DataONE_Client_Library-1.0.0c4-py2.6.egg'
   ],
   package_data={
     # If any package contains *.txt or *.rst files, include them:

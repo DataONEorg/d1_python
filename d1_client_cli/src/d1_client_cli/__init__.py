@@ -17,10 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''DataONE COmmand-line Utilities
+'''DataONE Command-line Utilities
 '''
 
-__version__ = "1.0.0c5"
+__version__ = "1.0.0c4"
 
 __all__ = [
   'access_control',
