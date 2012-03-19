@@ -78,39 +78,35 @@ RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
 def create(session, name, pids):
   ''' Do the heavy lifting of creating a package.
   '''
-  print_info('Creating package %s:' % name)
-
-  # Find all of the scimeta objects
-  package_objects = []
-  for pid in pids:
-    obj_url = _resolve_scimeta_url(session, pid)
-    scidata_list = []
-    if obj_url is None:
-      print_error('Couldn\'t find any object with pid "%s"' % pid)
-      break
-
-    scimeta_url = obj_url.replace('/' + GET_ENDPOINT + '/', '/' + META_ENDPOINT + '/')
-    scimeta_obj = _get_scimeta_obj(session, obj_url)
-    scidata_dict = {'pid': pid, 'uri': obj_url}
-    scidata_list.append(scidata_dict)
-    package_objects.append(
-      {
-        'aggr_id': name,
-        'scimeta_pid': pid,
-        'scimeta_url': scimeta_url,
-        'scimeta_obj': scimeta_obj,
-        'scidata_list': scidata_list
-      }
-    )
-  #
-  # Add all of the objects
+  # Create the resource map.
   submit = session.get('sysmeta', 'submitter')
   rights = session.get('sysmeta', 'rights-holder')
   orig_mn = session.get('sysmeta', 'origin-mn')
   auth_mn = session.get('sysmeta', 'authoritative-mn')
   pkg = Package(name, submit, rights, orig_mn, auth_mn)
-  for package_object in package_objects:
-    pkg.add(package_object)
+
+  # Find all of the scimeta objects
+  package_objects = []
+  for pid in pids:
+    get_scimeta_url = _resolve_scimeta_url(session, pid)
+    if get_scimeta_url is None:
+      print_error('Couldn\'t find any object with pid "%s"' % pid)
+      return None
+    else:
+      scimeta_url = get_scimeta_url.replace(
+        '/' + GET_ENDPOINT + '/', '/' + META_ENDPOINT + '/'
+      )
+      scimeta_obj = _get_scimeta_obj(session, get_scimeta_url)
+      package_objects.append(
+        {
+          'scimeta_obj': scimeta_obj,
+          'scimeta_url': scimeta_url,
+          'scidata_pid': pid,
+          'scidata_url': get_scimeta_url
+        }
+      )
+
+  pkg.finalize(package_objects)
   return pkg
 
 
@@ -143,7 +139,7 @@ def save(session, pkg):
   flo = StringIO.StringIO(pkg_xml)
   response = client.create(pid=pkg.pid, obj=flo, sysmeta=sysmeta)
   if response is not None:
-    return response.getvalue()
+    return response.value()
   else:
     return None
 
@@ -197,71 +193,69 @@ class Package(object):
     doc = self.resmap.get_serialization()
     return doc.data
 
-  def add(self, package_object):
-    ''' Add a scimeta object referenced by it's pid.  Throw an exception if
-        the specified pid is not a scimeta object, or cannot be found.
+  def finalize(self, package_objects):
+    ''' Create the resource map.
     '''
-    if self._is_metadata_format(package_object['scimeta_obj'].formatId):
-      self._add_package(package_object)
-    else:
-      self._generate_package(package_object)
+    for package_object in package_objects:
+      sysmeta_obj = package_object['scimeta_obj']
+      if self._is_metadata_format(sysmeta_obj.formatId):
+        self._add_inner_package_objects(package_objects, sysmeta_obj)
 
-  def _add_package(self, scimeta):
-    ''' The scimeta defines a package.  Use it to define the package.
+    return self._generate_resmap(package_objects)
+
+  def _add_inner_package_objects(self, package_objects, sysmeta_obj):
+    ''' The given sysmeta object actually defines a data package.  Process the
+        package and add all of the thingsd specified to the package_object_list.
     '''
-    print_info('+ Using metadata to add an existing package')
-    print_error('package._add_package() is not implemented!!!')
+    print_info('+ Using metadata to add to an existing package')
+    print_error('package._add_inner_package_objects() is not implemented!!!')
 
-  def _generate_package(self, pkgobj):
+  def _generate_resmap(self, package_object_list):
     ''' The scimeta is part of a package.  Create a package.
     
-        An example pkgobj looks like:
+        An example package_object item looks like:
                 {
-                  'aggr_id': name,
-                  'scimeta_pid': 'test-object'
-                  'scimeta_url': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/meta/test-object'
                   'scimeta_obj': <d1_common.types.generated.dataoneTypes.SystemMetadata>,
-                  'scidata_list':(
-                                   {
-                                     'pid': 'test-object',
-                                     'uri': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/object/test-object'
-                                   },
-                                 )
+                  'scimeta_url': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/meta/test-object'
+                  'scidata_pid':pid,
+                  'scidata_url':get_scimeta_url
                 }
     '''
-    print_info(' generating a new package...')
-
     # Create the aggregation
     foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
-    aggr = foresite.Aggregation(pkgobj['aggr_id'])
+    aggr = foresite.Aggregation(self.pid)
     aggr._dcterms.title = 'Simple aggregation of science metadata and data.'
 
-    # Create a reference to the science metadata
-    uri_scimeta = URIRef(pkgobj['scimeta_url'])
-    res_scimeta = foresite.AggregatedResource(uri_scimeta)
-    res_scimeta._dcterms.identifier = pkgobj['scimeta_pid']
-    res_scimeta._dcterms.description = 'A reference to a science metadata object using a DataONE identifier'
-
     # Create references to the science data
-    for scidata_item in pkgobj['scidata_list']:
-      uri_scidata = URIRef(scidata_item['uri'])
+    for item in package_object_list:
+      # Create a reference to the science metadata
+      scimeta_obj = item['scimeta_obj']
+      scimeta_pid = scimeta_obj.identifier.value()
+      uri_scimeta = URIRef(item['scimeta_url'])
+      res_scimeta = foresite.AggregatedResource(uri_scimeta)
+      res_scimeta._dcterms.identifier = scimeta_pid
+      res_scimeta._dcterms.description = 'A reference to a science metadata object using a DataONE identifier'
+
+      uri_scidata = URIRef(item['scidata_url'])
       res_scidata = foresite.AggregatedResource(uri_scidata)
-      res_scidata._dcterms.identifier = scidata_item['pid']
+      res_scidata._dcterms.identifier = item['scidata_pid']
       res_scidata._dcterms.description = 'A reference to a science data object using a DataONE identifier'
       res_scidata._cito.isDocumentedBy = uri_scimeta
       res_scimeta._cito.documents = uri_scidata
+
+      aggr.add_resource(res_scimeta)
       aggr.add_resource(res_scidata)
 
-    # Add this scimeta to the aggregate.
-    aggr.add_resource(res_scimeta)
-
     # Create the resource map
-    resmap_id = "resmap_%s" % pkgobj['aggr_id']
+    resmap_id = "resmap_%s" % self.pid
     self.resmap = foresite.ResourceMap("https://cn.dataone.org/object/%s" % resmap_id)
     self.resmap._dcterms.identifier = resmap_id
     self.resmap.set_aggregation(aggr)
+    return self.resmap
 
   def _is_metadata_format(self, formatId):
+    ''' Check to see if this formatId specifies a resource map.
+    '''
     if formatId is None:
       return False
     elif ((len(formatId) >= 4) and (formatId[:4] == "eml:")):
@@ -297,6 +291,7 @@ def _resolve_scimeta_url(session, pid):
     exc_class, exc_msgs, exc_traceback = sys.exc_info()
     if exc_class.__name__ == 'NotFound':
       print_warn(' no such pid: %s' % pid)
+    cli_util._handle_unexpected_exception()
     return None
 
 
