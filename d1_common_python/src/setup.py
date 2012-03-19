@@ -9,20 +9,21 @@
 """
 
 from setuptools import setup, find_packages
+import d1_common
 
 setup(
-  name='Python DataONE Common',
-  #version=d1_client.__version__,
-  description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
+  name='DataONE_Common',
+  version=d1_common.__version__,
   author='DataONE Project',
+  author_email='developers@dataone.org',
   url='http://dataone.org',
+  description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
+  license='Apache License, Version 2.0',
   packages=find_packages(),
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    # iso860
     'iso8601 >= 0.1',
-    # PyXB
     'pyxb >= 1.1.2',
   ],
   package_data={
