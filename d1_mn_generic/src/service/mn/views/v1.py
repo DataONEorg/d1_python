@@ -487,8 +487,8 @@ def object_post(request):
                                           ('file', 'sysmeta')))
   sysmeta_xml = request.FILES['sysmeta'].read()
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
-  mn.view_asserts.assert_obsoleted_by_not_specified(sysmeta)
-  mn.view_asserts.assert_obsoletes_not_specified(sysmeta)
+  mn.view_asserts.obsoleted_by_not_specified(sysmeta)
+  mn.view_asserts.obsoletes_not_specified(sysmeta)
   new_pid = request.POST['pid']
   _create(request, new_pid, sysmeta)
   return mn.view_shared.http_response_with_identifier_type(new_pid)
@@ -503,11 +503,12 @@ def object_pid_put(request, old_pid):
   mn.view_asserts.post_has_mime_parts(request, (('field', 'newPid'),
                                           ('file', 'object'),
                                           ('file', 'sysmeta')))
-  mn.view_asserts.assert_pid_exists(old_pid)
+  mn.view_asserts.pid_exists(old_pid)
+  mn.view_asserts.sci_obj_is_not_replica(old_pid)
   sysmeta_xml = request.FILES['sysmeta'].read()
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
-  mn.view_asserts.assert_obsoletes_specified(sysmeta)
-  mn.view_asserts.assert_obsoletes_matches_pid(sysmeta, old_pid)
+  mn.view_asserts.obsoletes_specified(sysmeta)
+  mn.view_asserts.obsoletes_matches_pid(sysmeta, old_pid)
   new_pid = request.POST['newPid']
   _create(request, new_pid, sysmeta)
   _set_obsoleted_by(old_pid, new_pid)
@@ -518,7 +519,7 @@ def object_pid_put(request, old_pid):
 @mn.auth.assert_create_update_delete_permission # NEW object
 def _create(request, pid, sysmeta):
   mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-  mn.view_asserts.assert_obsoleted_by_not_specified(sysmeta)
+  mn.view_asserts.obsoleted_by_not_specified(sysmeta)
   mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, pid, sysmeta)
   mn.sysmeta_validate.update_sysmeta_with_mn_values(request, sysmeta)
   #d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
@@ -539,6 +540,7 @@ def object_pid_delete(request, pid):
   '''MNStorage.delete(session, pid) → Identifier
   '''
   mn.view_asserts.object_exists(pid)
+  mn.view_asserts.sci_obj_is_not_replica(pid)
   _set_archived_flag(pid)
   _remove_all_permissions_except_rights_holder(pid)
   return mn.view_shared.http_response_with_identifier_type(pid)
@@ -597,7 +599,7 @@ def replicate(request):
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
       'System Metadata validation failed: {0}'.format(str(err)))
 
-  assert_pid_does_not_exist(sysmeta_obj.identifier.value())
+  mn.view_asserts.pid_does_not_exist(sysmeta_obj.identifier.value())
 
   # Create replication work item for this replication.  
   replication_item = mn.models.ReplicationQueue()

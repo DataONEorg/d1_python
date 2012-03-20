@@ -130,14 +130,14 @@ def date_is_utc(date_time):
     )
 
 
-def assert_obsoleted_by_not_specified(sysmeta):
+def obsoleted_by_not_specified(sysmeta):
   if sysmeta.obsoletedBy is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'obsoletedBy cannot be specified in the System Metadata for a new object'
     )
 
 
-def assert_obsoletes_not_specified(sysmeta):
+def obsoletes_not_specified(sysmeta):
   if sysmeta.obsoletes is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'obsoletes cannot be specified in the System Metadata for create(). '
@@ -145,14 +145,14 @@ def assert_obsoletes_not_specified(sysmeta):
     )
 
 
-def assert_obsoletes_specified(sysmeta):
+def obsoletes_specified(sysmeta):
   if sysmeta.obsoletes is None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'obsoletes must be specified in the System Metadata for update()'
     )
 
 
-def assert_obsoletes_matches_pid(sysmeta, old_pid):
+def obsoletes_matches_pid(sysmeta, old_pid):
   if sysmeta.obsoletes.value() != old_pid:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'The identifier specified in the System Metadata obsoletes field does not '
@@ -160,7 +160,7 @@ def assert_obsoletes_matches_pid(sysmeta, old_pid):
     )
 
 
-def assert_pid_does_not_exist(pid):
+def pid_does_not_exist(pid):
   if mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, 'Please try '
@@ -168,7 +168,7 @@ def assert_pid_does_not_exist(pid):
     )
 
 
-def assert_pid_exists(pid):
+def pid_exists(pid):
   if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Identifier '
@@ -176,7 +176,7 @@ def assert_pid_exists(pid):
     )
 
 
-def assert_url_is_http_or_https(url):
+def url_is_http_or_https(url):
   url_split = urlparse.urlparse(url)
   if url_split.scheme not in ('http', 'https'):
     raise d1_common.types.exceptions.InvalidRequest(
@@ -185,7 +185,7 @@ def assert_url_is_http_or_https(url):
     )
 
 
-def assert_url_references_retrievable(url):
+def url_references_retrievable(url):
   url_split = urlparse.urlparse(url)
   if url_split.scheme == 'http':
     conn = httplib.HTTPConnection(url_split.netloc)
@@ -197,4 +197,14 @@ def assert_url_references_retrievable(url):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid URL specified for remote storage: {0}. '
       'The referenced object is not retrievable'.format(url)
+    )
+
+
+def sci_obj_is_not_replica(pid):
+  sci_obj = mn.models.ScienceObject.objects.filter(pid=pid).get()
+  if sci_obj.replica:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Attempted to perform '
+      'create, update or delete on object that is a replica. The operation '
+      'must be performed on the authoritative Member Node ', pid
     )

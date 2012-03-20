@@ -83,7 +83,7 @@ def deserialize_system_metadata(sysmeta_xml):
 
 
 def create(request, pid, sysmeta, replica=False):
-  mn.view_asserts.assert_pid_does_not_exist(pid)
+  mn.view_asserts.pid_does_not_exist(pid)
   mn.sysmeta_store.write_sysmeta_to_store(pid, sysmeta)
 
   # create() has a GMN specific extension. Instead of providing an object for
@@ -92,8 +92,8 @@ def create(request, pid, sysmeta, replica=False):
   # remote server while handling all other object related operations like usual.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-    mn.view_asserts.assert_url_is_http_or_https(url)
-    mn.view_asserts.assert_url_references_retrievable(url)
+    mn.view_asserts.url_is_http_or_https(url)
+    mn.view_asserts.url_references_retrievable(url)
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))

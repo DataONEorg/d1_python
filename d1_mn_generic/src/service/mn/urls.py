@@ -98,6 +98,18 @@ urlpatterns += patterns(
   (r'^internal/home/?$', 'home'),
 )
 
+if settings.DEBUG or settings.MONITOR:
+  urlpatterns += patterns(
+    'service.mn.views.diagnostics',
+    # Replication.
+    (r'^test/get_replication_queue/?$', 'get_replication_queue'),
+    # Authentication.
+    (r'^test/echo_session/?$', 'echo_session'),
+    # Misc.
+    (r'^test/echo_request_object/?$', 'echo_request_object'),
+    (r'^test/echo_raw_post_data/?$', 'echo_raw_post_data'),
+  )
+
 # Block access to the GMN diagnostic functions if not in debug mode.
 if settings.DEBUG:
   urlpatterns += patterns(
@@ -110,14 +122,10 @@ if settings.DEBUG:
     # Access Policy
     (r'^test/set_access_policy/(.+?)/?$', 'set_access_policy'),
     (r'^test/delete_all_access_policies/?$', 'delete_all_access_policies'),
-    # Authentication.
-    (r'^test/echo_session/?$', 'echo_session'),
     # Misc.
     (r'^test/create/(.+)$', 'create'),
     (r'^test/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
     (r'^test/exception/(.+?)/?$', 'exception'),
-    (r'^test/echo_request_object/?$', 'echo_request_object'),
-    (r'^test/echo_raw_post_data/?$', 'echo_raw_post_data'),
     (r'^test/clear_database/?$', 'clear_database'),
     (r'^test/delete_all_objects/?$', 'delete_all_objects'),
     (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),

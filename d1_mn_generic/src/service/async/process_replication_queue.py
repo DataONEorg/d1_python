@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+'''
 :mod:`process_replication_queue`
 ================================
 
@@ -9,7 +9,10 @@
   replicate them.
 :Created: 2011-01-01
 :Author: DataONE (Dahl)
-"""
+'''
+
+# TODO: Currently copies the objects to temporary files. Everything is in place
+# for streaming the objects instead.
 
 # Stdlib.
 import datetime
@@ -38,8 +41,13 @@ import d1_common.url
 import d1_client.mnclient
 import d1_client.cnclient
 
+# Add some GMN paths to include path.
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+sys.path.append(_here('../'))
+sys.path.append(_here('../types/generated'))
+
 # App.
-sys.path.append('../types/generated')
+import settings
 import gmn_types
 
 
@@ -154,28 +162,35 @@ class ProcessReplicationQueue(object):
       return None
 
   def _replicate(self, task):
+    self.logger.info('-' * 40)
+    self.logger.info('Processing PID: {0}'.format(task.pid))
     s = d1_common.types.exceptions.InvalidSystemMetadata(0, 'test')
-    self._cn_replicate_task_update(task, 'requested', s)
-    #self._update_replicate_task_status(task, 'in progress')
+    self._gmn_replicate_task_update(task, 'in progress')
     try:
       sysmeta_tmp_file = self._get_system_metadata(task)
       science_data_tmp_file = self._get_science_data(task)
       self._gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
     except (d1_common.types.exceptions.DataONEException, ReplicateError) as e:
-      self.logger.error(e)
-      try:
-        self._cn_replicate_task_update(task, 'failed')
-      except Exception as e:
-        self.logger.error(e)
-      #self._update_replicate_task_status(task, 'completed')
+      self.logger.exception('Replication failed')
+      replication_status = 'failed'
     else:
-      try:
-        self._cn_replicate_task_update(task, 'completed')
-      except Exception as e:
-        self.logger.error(e)
-      #self._update_replicate_task_status(task, 'completed')
+      replication_status = 'completed'
 
-  def _update_replicate_task_status(self, task, status):
+    self._update_replication_status(task, replication_status)
+
+  def _update_replication_status(self, task, replication_status):
+    try:
+      self._cn_replicate_task_update(task, replication_status)
+    except (d1_common.types.exceptions.DataONEException, ReplicateError) as e:
+      replication_status = 'Updating replication status on CN failed: {0}'\
+        .format(e)
+      self.logger.error(replication_status)
+    # Allow any exception in _gmn_replicate_task_update() to halt process.
+    # If the process was to continue without being able to update the status
+    # on the task, it would retry it indefinitely.
+    self._gmn_replicate_task_update(task, replication_status)
+
+  def _gmn_replicate_task_update(self, task, status):
     return self.gmn_client.update_replicate_task_status(task.taskId, status)
 
   def _get_system_metadata(self, task):
@@ -192,7 +207,8 @@ class ProcessReplicationQueue(object):
     return self._copy_stream_to_tmp_file(sci_data_stream)
 
   def _copy_stream_to_tmp_file(self, stream):
-    f = tempfile.TemporaryFile()
+    f = tempfile.NamedTemporaryFile() # use instead: TemporaryFile()
+    self.logger.debug(f.name)
     shutil.copyfileobj(stream, f)
     f.seek(0)
     return f
@@ -210,31 +226,15 @@ class ProcessReplicationQueue(object):
   def _open_sci_obj_stream_on_member_node(self, gmn_client, pid):
     return gmn_client.get(pid)
 
-#  def _cn_get_system_metadata_serial_version(self, pid):
-#    sysmeta = self.cn_client.getSystemMetadata(pid)
-#    return sysmeta.serialVersion
-
   def _cn_replicate_task_update(self, task, status, dataone_error=None):
-    #    serial_version = self._cn_get_system_metadata_serial_version(task.pid)
-    self.cn_client.setReplicationStatus(task.pid, task.sourceNode, status, dataone_error)
+    self.cn_client.setReplicationStatus(
+      task.pid, settings.NODE_IDENTIFIER, status, dataone_error
+    )
 
   def _gmn_replicate_create(self, task, sci_obj, sysmeta):
     return self.gmn_client.internal_replicate_create(task.pid, sci_obj, sysmeta)
 
-  # old streaming code 
-  #  # Find size of sci_obj.
-  #  src = GMNReplicationClient(base_url)
-  #  sysmeta_obj = src.getSystemMetadata(replication_request.pid)
-  #  obj_size = sysmeta_obj.size
-  #  # Stream.
-  #  object_file = src.get(replication_request.pid)
-  #  sysmeta_xml = src.getSystemMetadataResponse(replication_request.pid).read()
-  #  dst = GMNReplicationClient('http://0.0.0.0:8000/')
-  #  # Add the ability to do len() on object_file. Needed by mime_multipart.
-  #  object_file.__len__ = lambda x=None: int(obj_size)
-  #  dst.create(replication_request.pid, object_file, sysmeta_xml)
-
-  #===============================================================================
+#===============================================================================
 
 
 def log_setup():
