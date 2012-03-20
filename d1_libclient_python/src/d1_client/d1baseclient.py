@@ -110,6 +110,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     :returns: None
     '''
     self.logger = logging.getLogger('DataONEBaseClient')
+    self.logger.debug('baseURL: {0}'.format(base_url))
     # Set default headers.
     if defaultHeaders is None:
       defaultHeaders = {}
