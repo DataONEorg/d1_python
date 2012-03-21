@@ -52,18 +52,11 @@ except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Please install d1_common.\n')
   raise
-# libclient
-try:
-  import d1_client.mnclient as mnclient
-  import d1_client.cnclient as cnclient
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Please install d1_libclient.\n')
-  raise
+
 # cli
-from print_level import *
-import dataone
+from print_level import * #@UnusedWildImport
 import cli_util
+import cli_client
 import system_metadata
 
 ## -- Constants.
@@ -135,7 +128,7 @@ def save(session, pkg):
     formatId=RDFXML_FORMATID
   )
 
-  client = PkgMNClient(session)
+  client = cli_client.CLIMNClient(session)
   flo = StringIO.StringIO(pkg_xml)
   response = client.create(pid=pkg.pid, obj=flo, sysmeta=sysmeta)
   if response is not None:
@@ -281,7 +274,7 @@ def _verbose(session):
 def _resolve_scimeta_url(session, pid):
   ''' Get a URL on a member node of the pid.
   '''
-  cnclient = PkgCNClient(session)
+  cnclient = cli_client.CLICNClient(session)
   try:
     locations = cnclient.resolve(pid)
     if locations is not None:
@@ -306,24 +299,8 @@ def _get_scimeta_obj(session, obj_url):
     base = mn_dict.scheme + '://' + obj_dict.netloc + mn_dict.path
     ndx = obj_dict.path.find(GET_ENDPOINT)
     pid = obj_dict.path[(ndx + len(GET_ENDPOINT) + 1):]
-    client = PkgMNClient(session, base)
+    client = cli_client.CLIMNClient(session, base)
     return client.getSystemMetadata(pid)
   except:
     cli_util._handle_unexpected_exception()
     return None
-
-  #-- Utility classes ------------------------------------------------------------
-
-
-class PkgMNClient(dataone.CLIClient, mnclient.MemberNodeClient):
-  def __init__(self, session, mn_url=None):
-    if mn_url is None:
-      mn_url = session.get('node', 'mn-url')
-    return super(PkgMNClient, self).__init__(session, base_url=mn_url)
-
-
-class PkgCNClient(dataone.CLIClient, cnclient.CoordinatingNodeClient):
-  def __init__(self, session, cn_url=None):
-    if cn_url is None:
-      cn_url = session.get('node', 'dataone-url')
-    return super(PkgCNClient, self).__init__(session, base_url=cn_url)

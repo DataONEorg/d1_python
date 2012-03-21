@@ -70,6 +70,8 @@ import session
 
 # D1
 try:
+  import d1_common.util
+  import d1_common.const
   import d1_common.mime_multipart
   import d1_common.types.exceptions
   import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -81,8 +83,6 @@ except ImportError as e:
   raise
 try:
   import d1_client
-  import d1_client.mnclient
-  import d1_client.cnclient
   import d1_client.systemmetadata
   import d1_client.objectlistiterator
 except ImportError as e:
@@ -91,6 +91,8 @@ except ImportError as e:
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
   raise
+# d1_client_cli
+import cli_client
 
 
 def log_setup():
@@ -369,75 +371,6 @@ def handle_options(cli, options):
 #===============================================================================
 
 
-class CLIClient(object):
-  def __init__(self, session, base_url):
-    try:
-      self.session = session
-      self.base_url = base_url
-      return super(CLIClient, self).__init__(
-        self.base_url,
-        cert_path=self._get_certificate(),
-        key_path=self._get_certificate_private_key()
-      )
-    except d1_common.types.exceptions.DataONEException as e:
-      err_msg = []
-      err_msg.append('Unable to connect to: {0}'.format(node_base_url))
-      err_msg.append('{0}'.format(e.friendly_format()))
-      raise cli_exceptions.CLIError('\n'.join(err_msg))
-
-  def _get_cilogon_certificate_path(self):
-    return '/tmp/x509up_u{0}'.format(os.getuid())
-
-  def _assert_certificate_present(self, path):
-    if not os.path.exists(path):
-      raise cli_exceptions.CLIError('Certificate not found')
-
-  def _get_certificate(self):
-    if self.session.get('auth', 'anonymous'):
-      return None
-    cert_path = self.session.get('auth', 'cert-file')
-    if not cert_path:
-      cert_path = self._get_cilogon_certificate_path()
-    self._assert_certificate_present(cert_path)
-    return cert_path
-
-  def _get_certificate_private_key(self):
-    if self.session.get('auth', 'anonymous'):
-      return None
-    key_path = self.session.get('auth', 'key-file')
-    if key_path is not None:
-      self._assert_certificate_present(key_path)
-    return key_path
-
-#===============================================================================
-
-
-class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
-  def __init__(self, session):
-    base_url = session.get('node', 'mn-url')
-    self._assert_base_url_set(base_url)
-    return super(CLIMNClient, self).__init__(session, base_url)
-
-  def _assert_base_url_set(self, base_url):
-    if not base_url:
-      raise cli_exceptions.CLIError('"mn_url" session parameter required')
-
-#===============================================================================
-
-
-class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
-  def __init__(self, session):
-    base_url = session.get('node', 'dataone-url')
-    self._assert_base_url_set(base_url)
-    return super(CLICNClient, self).__init__(session, base_url)
-
-  def _assert_base_url_set(self, base_url):
-    if not base_url:
-      raise cli_exceptions.CLIError('"dataone_url" session parameter required')
-
-#===============================================================================
-
-
 class DataONECLI():
   def __init__(self):
     self.session = session.session()
@@ -448,7 +381,7 @@ class DataONECLI():
     if self.known_object_formats is None:
       formats = None
       try:
-        client = CLICNClient(self.session)
+        client = cli_client.CLICNClient(self.session)
         formats = client.listFormats()
         num_formats = len(formats.objectFormat)
         #
@@ -538,7 +471,7 @@ class DataONECLI():
     path = expand_path(path)
     self._assert_file_exists(path)
     sysmeta = self._create_system_metadata(pid, path)
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     self._post_file_and_system_metadat_to_member_node(client, pid, path, sysmeta)
 
   ##-- Update --------------------------------------------------------------
@@ -562,7 +495,7 @@ class DataONECLI():
     self._assert_file_exists(path)
     sysmeta = self._create_system_metadata(new_pid, path)
     self._add_obsoletes_to_sysmeta_if_missing(sysmeta, old_pid)
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     self._put_file_and_system_metadat_to_member_node(
       client, old_pid, path, new_pid, sysmeta
     )
@@ -574,7 +507,7 @@ class DataONECLI():
   ##-- Delete --------------------------------------------------------------
 
   def science_object_delete(self, pid):
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     self._delete_from_member_node(client, pid)
 
   def _delete_from_member_node(self, client, pid):
@@ -618,7 +551,7 @@ class DataONECLI():
           .format(e.friendly_format()))
 
   def science_object_get(self, pid, path):
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     response = self._get_science_object_from_member_node(client, pid)
     self.output(response, expand_path(path))
 
@@ -637,7 +570,7 @@ class DataONECLI():
     return xml_doc
 
   def system_metadata_get(self, pid, path):
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     metadata = self._get_system_metadata(client, pid)
     sci_meta_xml = metadata.toxml()
     self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
@@ -645,7 +578,7 @@ class DataONECLI():
   def resolve(self, pid):
     '''Get Object Locations for Object.
     '''
-    client = CLICNClient(self.session)
+    client = cli_client.CLICNClient(self.session)
     try:
       object_location_list = client.resolve(pid)
     except d1_common.types.exceptions.DataONEException as e:
@@ -668,7 +601,7 @@ class DataONECLI():
   def list(self, path):
     '''MN listObjects.
     '''
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     object_list = client.listObjects(
       startTime=self.session.get('search', 'from-date'),
       endTime=self.session.get('search', 'to-date'),
@@ -682,7 +615,7 @@ class DataONECLI():
   def log(self, path):
     '''MN log.
     '''
-    client = CLIMNClient(self.session)
+    client = cli_client.CLIMNClient(self.session)
     object_log = client.getLogRecords(
       fromDate=self.session.get('search', 'from-date'),
       toDate=self.session.get('search', 'to-date'),
@@ -694,7 +627,7 @@ class DataONECLI():
 
   def set_access_policy(self, pid):
     access_policy = self.session.access_control_get_pyxb()
-    client = CLICNClient(self.session)
+    client = cli_client.CLICNClient(self.session)
     try:
       success = client.setAccessPolicy(pid, access_policy, 1)
     except d1_common.types.exceptions.DataONEException as e:
@@ -704,54 +637,13 @@ class DataONECLI():
 
   def set_replication_policy(self, pid):
     replication_policy = self.session.replication_control_get_pyxb()
-    client = CLICNClient(self.session)
+    client = cli_client.CLICNClient(self.session)
     try:
       success = client.setReplicationPolicy(pid, replication_policy, 1)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
         'Unable to set replication policy on: {0}\nError:\n{1}'\
           .format(pid, e.friendly_format()))
-
-  #def getObjectFormats(self):
-  #  '''List the format IDs from the CN
-  #  '''
-  #  pass
-  #
-  #
-  #def objectformats(self):
-  #  '''Get a list of object formats available on the target.
-  #  :return: (object format, count) object formats.
-  #
-  #  TODO: May need to be completely
-  #  removed (since clients should use CNs for object discovery).
-  #  '''
-  #
-  #  if len(self.args) != 0:
-  #    print_error('Invalid arguments')
-  #    print_error('Usage: objectformats')
-  #    return
-  #  certpath = self.config['auth']['cert_path']
-  #  keypath = self.config['auth']['key_path']
-  #  if certpath is not None:
-  #    if not os.path.exists(certpath):
-  #      certpath = None
-  #      keypath = None
-  #
-  #  client = d1_client.mnclient.MemberNodeClient(self.config['auth']['mn_url'],
-  #                                               cert_path=certpath,
-  #                                               key_path=keypath)
-  #
-  #  object_list = d1_client.objectlistiterator.ObjectListIterator(client)
-  #
-  #  unique_objects = {}
-  #  for info in object_list:
-  #    print_debug("ID:%s | FMT: %s" % (info.identifier, info.objectFormat) )
-  #    try:
-  #      unique_objects[info.objectFormat] += 1
-  #    except KeyError:
-  #      unique_objects[info.objectFormat] = 1
-  #
-  #  self.output(StringIO.StringIO('\n'.join(unique_objects) + '\n'))
 
   # ----------------------------------------------------------------------------
   # Search
@@ -768,7 +660,7 @@ class DataONECLI():
     '''Perform a SOLR search.
     '''
     try:
-      client = CLICNClient(self.session)
+      client = cli_client.CLICNClient(self.session)
       object_list = client.search(
         queryType='solr',
         q=line if line else
