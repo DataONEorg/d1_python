@@ -23,7 +23,7 @@
 ==============
 
 :Synopsis: Create a data package
-:Created: 2011-03-13
+:Created: 2012-03-13
 :Author: DataONE (Pippin)
 '''
 

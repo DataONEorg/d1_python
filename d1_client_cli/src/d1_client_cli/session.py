@@ -30,23 +30,24 @@
 # Stdlib.
 import ast
 import copy
-import logging
 import os
 import pickle
-import pprint
-import ConfigParser
-from types import *
+from types import * #@UnusedWildImport
 
 # D1.
-import d1_common.const
-from d1_common.util import get_checksum_calculator_by_dataone_designator
+try:
+  import d1_common.const
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # App.
-from print_level import *
-import cli_exceptions
-import system_metadata
 import access_control
+import cli_exceptions
+from print_level import * #@UnusedWildImport
 import replication_policy
+import system_metadata
 
 # Session variable mapping.
 #
@@ -328,7 +329,7 @@ class session(object):
       with open(pickle_file_path, 'wb') as f:
         pickle.dump(self.__dict__, f, 2)
     except (NameError, IOError) as e:
-      if not suppress_error:
+      if not self.suppress_error:
         print_error(
           'Unable to save session to file: {0}\n{1}'.format(
             pickle_file_path, str(e)

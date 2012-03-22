@@ -31,11 +31,16 @@
 import sys
 
 # D1.
-import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+try:
+  import d1_common.const
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # App.
-from print_level import *
+from print_level import * #@UnusedWildImport
 import cli_exceptions
 
 
@@ -62,17 +67,17 @@ class replication_policy():
 
   def _pretty_format(self):
     lines = []
-    format = '    {0: <30s}'
+    format_str = '    {0: <30s}'
     if self.get_preferred():
       lines.append('  preferred member nodes:')
       for preferred in self.get_preferred():
-        lines.append(format.format(preferred))
+        lines.append(format_str.format(preferred))
     else:
       lines.append('  no preferred member nodes')
     if self.get_blocked():
       lines.append('  blocked member nodes:')
       for blocked in self.get_blocked():
-        lines.append(format.format(blocked))
+        lines.append(format_str.format(blocked))
     else:
       lines.append('  no blocked member nodes')
     lines.append('  number of replicas: {0}'.format(self.number_of_replicas))

@@ -24,6 +24,7 @@ __version__ = "1.0.0c4"
 
 __all__ = [
   'access_control',
+  'cli_client',
   'cli_exceptions',
   'cli_util',
   'dataone',

@@ -28,41 +28,22 @@
 '''
 
 # Stdlib.
-import ast
 import cmd
-import csv
-import datetime
-import dateutil
-import glob
 import htmlentitydefs
-import httplib
-import json
 import logging
 import optparse
 from optparse import make_option
 import os
-import pprint
-import random
 import re
-import readline
 import shlex
 import shutil
-import stat
 import StringIO
 from string import join
 import sys
-import time
-import unittest
-import urllib
-import urlparse
-import uuid
 import xml.dom.minidom
 
-# 3rd party.
-import pyxb
-
 # App.
-from print_level import *
+from print_level import * #@UnusedWildImport
 import cli_exceptions
 import cli_util
 import package
@@ -72,25 +53,12 @@ import session
 try:
   import d1_common.util
   import d1_common.const
-  import d1_common.mime_multipart
   import d1_common.types.exceptions
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
-  )
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
   raise
-try:
-  import d1_client
-  import d1_client.systemmetadata
-  import d1_client.objectlistiterator
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write(
-    'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
-  )
-  raise
+
 # d1_client_cli
 import cli_client
 
@@ -457,8 +425,7 @@ class DataONECLI():
   def _post_file_and_system_metadat_to_member_node(self, client, pid, path, sysmeta):
     with open(expand_path(path), 'r') as f:
       try:
-        print 'f:', f
-        response = client.create(pid, f, sysmeta)
+        return client.create(pid, f, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
         print_error(
           'Unable to create Science Object on Member Node\n{0}'
@@ -481,7 +448,7 @@ class DataONECLI():
   ):
     with open(expand_path(path), 'r') as f:
       try:
-        response = client.update(old_pid, f, new_pid, sysmeta)
+        return client.update(old_pid, f, new_pid, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
         print_error(
           'Unable to update Science Object on Member Node\n{0}'
@@ -512,7 +479,7 @@ class DataONECLI():
 
   def _delete_from_member_node(self, client, pid):
     try:
-      response = client.delete(pid)
+      return client.delete(pid)
     except d1_common.types.exceptions.DataONEException as e:
       print_error(
         'Unable to delete Science Object from Member Node\n{0}'
@@ -521,12 +488,12 @@ class DataONECLI():
 
   def _copy_file_like_object_to_file(self, file_like_object, path):
     try:
-      file = open(expand_path(path), 'wb')
-      shutil.copyfileobj(file_like_object, file)
-      file.close()
+      object_file = open(expand_path(path), 'wb')
+      shutil.copyfileobj(file_like_object, object_file)
+      object_file.close()
     except EnvironmentError as (errno, strerror):
       error_message_lines = []
-      error_message_lines.append('Could not write to file: {0}'.format(path))
+      error_message_lines.append('Could not write to object_file: {0}'.format(path))
       error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
       error_message = '\n'.join(error_message_lines)
       raise cli_exceptions.CLIError(error_message)
@@ -629,7 +596,7 @@ class DataONECLI():
     access_policy = self.session.access_control_get_pyxb()
     client = cli_client.CLICNClient(self.session)
     try:
-      success = client.setAccessPolicy(pid, access_policy, 1)
+      return client.setAccessPolicy(pid, access_policy, 1)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
         'Unable to set access policy on: {0}\nError:\n{1}'\
@@ -639,7 +606,7 @@ class DataONECLI():
     replication_policy = self.session.replication_control_get_pyxb()
     client = cli_client.CLICNClient(self.session)
     try:
-      success = client.setReplicationPolicy(pid, replication_policy, 1)
+      return client.setReplicationPolicy(pid, replication_policy, 1)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
         'Unable to set replication policy on: {0}\nError:\n{1}'\
@@ -850,20 +817,20 @@ class CLI(cmd.Cmd):
     Load session parameters from file
     '''
     try:
-      file = self._split_args(line, 0, 1)
-      self.d1.session_load(pickle_file_path=expand_path(file))
+      load_file = self._split_args(line, 0, 1)
+      self.d1.session_load(pickle_file_path=expand_path(load_file))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
       cli_util._handle_unexpected_exception()
 
   def do_save(self, line):
-    '''save [file]
-    Save session parameters to file
+    '''save [config_file]
+    Save session parameters to a file
     '''
     try:
-      file = self._split_args(line, 0, 1)
-      self.d1.session_save(pickle_file_path=expand_path(file))
+      config_file = self._split_args(line, 0, 1)
+      self.d1.session_save(pickle_file_path=expand_path(config_file))
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
@@ -898,8 +865,6 @@ class CLI(cmd.Cmd):
         print_error(e)
       except:
         cli_util._handle_unexpected_exception()
-
-  # TODO: add complete_show and complete_set method to display possibilities. - aBp_
 
   def do_clear(self, line):
     '''clear <session parameter>
@@ -1094,8 +1059,8 @@ class CLI(cmd.Cmd):
     Get an object from a Member Node
     '''
     try:
-      pid, file = self._split_args(line, 2, 0)
-      self.d1.science_object_get(pid, file)
+      pid, output_file = self._split_args(line, 2, 0)
+      self.d1.science_object_get(pid, output_file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
@@ -1106,8 +1071,8 @@ class CLI(cmd.Cmd):
     Get System Metdata from a Coordinating Node
     '''
     try:
-      pid, file = self._split_args(line, 1, 1)
-      self.d1.system_metadata_get(pid, file)
+      pid, output_file = self._split_args(line, 1, 1)
+      self.d1.system_metadata_get(pid, output_file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(str(e))
     except:
@@ -1118,8 +1083,8 @@ class CLI(cmd.Cmd):
     Create a new Science Object on a Member Node
     '''
     try:
-      pid, file = self._split_args(line, 2, 0)
-      self.d1.science_object_create(pid, file)
+      pid, input_file = self._split_args(line, 2, 0)
+      self.d1.science_object_create(pid, input_file)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
@@ -1130,8 +1095,8 @@ class CLI(cmd.Cmd):
     Update an existing Science Object on a Member Node
     '''
     try:
-      curr_pid, new_pid, file = self._split_args(line, 3, 0)
-      self.d1.science_object_update(curr_pid, file, new_pid)
+      curr_pid, new_pid, input_file = self._split_args(line, 3, 0)
+      self.d1.science_object_update(curr_pid, input_file, new_pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:

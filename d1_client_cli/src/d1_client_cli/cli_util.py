@@ -24,12 +24,12 @@
 
 :Synopsis: Utilities shared between components of the DataONE Command Line
   Interface
-:Created: 2011-03-07
+:Created: 2012-03-07
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-from print_level import *
+from print_level import * #@UnusedWildImport
 import sys
 import traceback
 
