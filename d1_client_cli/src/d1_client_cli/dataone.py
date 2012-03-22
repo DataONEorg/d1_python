@@ -594,6 +594,7 @@ class DataONECLI():
 
   def set_access_policy(self, pid):
     access_policy = self.session.access_control_get_pyxb()
+    print 'access_policy:', access_policy
     client = cli_client.CLICNClient(self.session)
     try:
       return client.setAccessPolicy(pid, access_policy, 1)
@@ -1302,34 +1303,6 @@ def main():
     option_list=option_list
   )
   options, remainder = parser.parse_args()
-
-  ## args[1] is not guaranteed to exist but the slice args[1:] would still be
-  ## valid and evaluate to an empty list.
-  #dataONECLI = DataONECLI(opts_dict,  args[1:])
-  #
-  ## Sanity.
-  #if len(args) == 0 or args[0] not in dataONECLI.command_map.keys():
-  #  parser.error('<command> is required and must be one of: {0}'
-  #               .format(', '.join(dataONECLI.command_map.keys())))
-  #
-  #if opts.slice_count > d1_common.const.MAX_LISTOBJECTS:
-  #  parser.error('--slice-count must be {0} or less'
-  #               .format(parser.error('<command> is required and must be one of: {0}'
-  #                                    .format(', '.join(dataONECLI.command_map.keys())))))
-  #
-  ## Check dates and convert them from ISO 8601 to datetime.
-  #date_opts = ['start_time', 'end_time']
-  #error = False
-  #for date_opt in date_opts:
-  #  if opts_dict[date_opt] != None:
-  #    try:
-  #      opts.__dict__[date_opt] = d1_common.date_time.from_iso8601(opts_dict[date_opt])
-  #    except (TypeError, d1_common.date_time.iso8601.ParseError):
-  #      print_error('Invalid date option {0}: {1}'.format(date_opt, opts_dict[date_opt]))
-  #      error = True
-  #
-  #if error == True:
-  #  return
 
   cli = CLI()
   cli._update_verbose()
