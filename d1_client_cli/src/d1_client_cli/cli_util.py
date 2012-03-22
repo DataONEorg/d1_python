@@ -35,14 +35,16 @@ import traceback
 
 
 def _handle_unexpected_exception(max_traceback_levels=5):
-  exc_type, exc_value = sys.exc_info()[:2]
+  exc_type, exc_msgs = sys.exc_info()[:2] # ignore the traceback.
   #
   if exc_type.__name__ == 'SSLError':
     print_error('There was a problem with SSL, did you update your key?')
+  elif exc_type.__name__ == 'MissingSysmetaParameters':
+    print_error(exc_msgs.__dict__['value'])
   elif exc_type.__name__ == 'ServiceFailure':
     print_error(
       'There was a problem with the response from the DataONE node. (error %d:%d)' %
-      (exc_value.__dict__['errorCode'], exc_value.__dict__['detailCode'])
+      (exc_msgs.__dict__['errorCode'], exc_msgs.__dict__['detailCode'])
     )
   else:
     _print_unexpected_exception(max_traceback_levels)

@@ -33,6 +33,7 @@ import copy
 import os
 import pickle
 from types import * #@UnusedWildImport
+import urlparse
 
 # D1.
 try:
@@ -340,10 +341,55 @@ class session(object):
     access_policy = self.access_control.to_pyxb()
     replication_policy = self.replication_policy.to_pyxb()
     sysmeta_creator = system_metadata.system_metadata()
+    self._create_missing_sysmeta_session_parameters()
     sysmeta = sysmeta_creator.create_pyxb_object(
       self, pid, size, checksum, access_policy, replication_policy
     )
     return sysmeta
+
+  def _create_missing_sysmeta_session_parameters(self):
+    ''' Make sure all the session values that are:
+          necessary to create the sysmeta data
+          can be determined from other values
+        are there.
+        * authoritative-mn, origin-mn, rights-holder
+    '''
+    save_data = False
+    if self.get('sysmeta', 'authoritative-mn') is None:
+      mn = self.get('node', 'mn-url')
+      mn_host = self._get_host_from_url(mn)
+      if mn_host is not None:
+        self.set('sysmeta', 'authoritative-mn', mn_host)
+        print_info('Setting authoritative-mn to "%s"' % mn_host)
+        save_data = True
+    #
+    if self.get('sysmeta', 'origin-mn') is None:
+      mn = self.get('node', 'mn-url')
+      mn_host = self._get_host_from_url(mn)
+      if mn_host is not None:
+        self.set('sysmeta', 'origin-mn', mn_host)
+        print_info('Setting origin-mn to "%s"' % mn_host)
+        save_data = True
+    #
+    if self.get('sysmeta', 'rights-holder') is None:
+      submitter = self.get('sysmeta', 'submitter')
+      if submitter is not None:
+        self.set('sysmeta', 'rights-holder', submitter)
+        print_info('Setting rights-holder to "%s"' % submitter)
+        save_data = True
+    if save_data:
+      print_info('  *  Session values were changed, please "save" them!\n')
+
+  def _get_host_from_url(self, url):
+    if url is not None:
+      url_dict = urlparse.urlparse(url)
+      if url_dict.netloc is not None:
+        host = url_dict.netloc
+        ndx = host.find(":")
+        if ndx > 0:
+          host = host[:ndx]
+        return host
+    return None
 
   def assert_required_parameters_present(self, names):
     missing_parameters = []
