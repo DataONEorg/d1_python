@@ -1,6 +1,19 @@
 = HOWTO for itk/d1_client_cli =
 
-This describes how to use the DataONE CLI tool.
+This describes how to install and use the DataONE CLI tool.
+
+-- Installation ----------------------------------------------------------------
+
+  There are some modules not available on PyPI (Python Package Indexer).
+
+= Google's foresite library
+
+  Make sure that libxml2-dev and libxslt-dev are installed.
+
+    wget http://foresite-toolkit.googlecode.com/files/foresite-1.2.tgz
+    tar xfz foresite-1.2.tgz
+    cd foresite-1.2
+    sudo python setup.py install
 
 
 -- Configuration ---------------------------------------------------------------
@@ -31,15 +44,15 @@ http://mule1.dataone.org/ArchitectureDocs-current/design/Authentication.html.
           start                         0
         auth:
           anonymous                     True
-          cert-file                     
-          key-file                      
+          cert-file                     None
+          key-file                      None
         sysmeta:
           algorithm                     SHA-1
-          authoritative-mn              
-          object-format                 
-          origin-mn                     
-          rights-holder                 
-          submitter                     
+          authoritative-mn              None
+          object-format                 None
+          origin-mn                     None
+          rights-holder                 None
+          submitter                     None
         search:
           from-date                     None
           query                         *:*
