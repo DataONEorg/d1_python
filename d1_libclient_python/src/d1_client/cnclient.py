@@ -31,15 +31,17 @@
 
 # Stdlib.
 import logging
-import urllib
-import urlparse
+import sys
 
 # D1.
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.url
-import d1_common.util
+try:
+  import d1_common.const
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.util
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # App.
 import d1baseclient
@@ -380,12 +382,13 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.registerAccountResponse(person)
     return self._read_boolean_response(response)
 
+
   # CNIdentity.updateAccount(session, person) → Subject
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.updateAccount
 
   @d1_common.util.utf8_to_unicode
   def updateAccountResponse(self, person):
-    url = self._rest_url('accounts/%(subject)s', subject=subject.value())
+    url = self._rest_url('accounts/%(subject)s', subject=person.value())
     mime_multipart_files = [
       ('person', 'person', person.toxml().encode('utf-8')),
     ]
@@ -396,6 +399,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def updateAccount(self, person):
     response = self.updateAccountResponse(person)
     return self._read_boolean_response(response)
+
 
   # CNIdentity.verifyAccount(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.verifyAccount
@@ -411,6 +415,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.verifyAccountResponse(subject)
     return self._read_boolean_response(response)
 
+
   # CNIdentity.getSubjectInfo(session, subject) → SubjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.getSubjectInfo
 
@@ -424,6 +429,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def getSubjectInfo(self, subject):
     response = self.getSubjectInfoResponse(subject)
     return self._read_dataone_type_response(response)
+
 
   # CNIdentity.listSubjects(session, query, status, start, count) → SubjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.listSubjects
@@ -444,6 +450,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.listSubjectsResponse(query, status, start, count)
     return self._read_dataone_type_response(response)
 
+
   # CNIdentity.mapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.mapIdentity
 
@@ -462,12 +469,28 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.mapIdentityResponse(primary_subject, secondary_subject)
     return self._read_boolean_response(response)
 
+
+  # CNIdentity.removeMapIdentity(session, subject) → boolean
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.removeMapIdentity
+
+  @d1_common.util.utf8_to_unicode
+  def removeMapIdentityResponse(self, subject):
+    url = self._rest_url('accounts/map/%(subject)s', subject=subject.value())
+    return self.DELETE(url)
+
+
+  @d1_common.util.utf8_to_unicode
+  def removeMapIdentity(self, subject):
+    response = self.denyMapIdentityResponse(subject)
+    return self._read_dataone_type_response(response)
+
+
   # CNIdentity.denyMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.denyMapIdentity
 
   @d1_common.util.utf8_to_unicode
   def denyMapIdentityResponse(self, subject):
-    url = self._rest_url('accounts/map/%(subject)s', subject=subject.value())
+    url = self._rest_url('accounts/pendingmap/%(subject)s', subject=subject.value())
     return self.DELETE(url)
 
 
@@ -475,6 +498,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def denyMapIdentity(self, subject):
     response = self.denyMapIdentityResponse(subject)
     return self._read_dataone_type_response(response)
+
 
   # CNIdentity.requestMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.requestMapIdentity
@@ -493,6 +517,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.requestMapIdentityResponse(subject)
     return self._read_boolean_response(response)
 
+
   # CNIdentity.confirmMapIdentity(session, subject) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.confirmMapIdentity
 
@@ -510,19 +535,6 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.confirmMapIdentityResponse(subject)
     return self._read_boolean_response(response)
 
-  # CNIdentity.denyMapIdentity(session, subject) → boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.denyMapIdentity
-
-  @d1_common.util.utf8_to_unicode
-  def denyMapIdentityResponse(self, subject):
-    url = self._rest_url('accounts/pendingmap/%(subject)s', subject=subject.value())
-    return self.DELETE(url)
-
-
-  @d1_common.util.utf8_to_unicode
-  def denyMapIdentity(self, subject):
-    response = self.denyMapIdentityResponse(subject)
-    return self._read_dataone_type_response(response)
 
   # CNIdentity.createGroup(session, groupName) → Subject
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.createGroup
@@ -531,7 +543,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def createGroupResponse(self, group):
     url = self._rest_url('groups')
     mime_multipart_files = [
-      ('group', groupName.toxml().encode('utf-8')),
+      ('group', group.toxml().encode('utf-8')),
     ]
     return self.POST(url, files=mime_multipart_files)
 
@@ -540,6 +552,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def createGroup(self, groupName):
     response = self.createGroupResponse(groupName)
     return self._read_boolean_response(response)
+
 
   # CNIdentity.addGroupMembers(session, groupName, members) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNIdentity.addGroupMembers
@@ -616,16 +629,20 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicyResponse(self, pid, policy, serialVersion):
     url = self._rest_url('replicaPolicies/%(pid)s', pid=pid)
+    print '\n\n** cnclient.py\'setReplicationPolicyResponse()\n  self:',self,'\n  pid:',pid,'\n  policy:',policy.toxml().encode('utf-8'),'\n  serialVersion:',serialVersion,'\n\n'
+    mime_multipart_files = [
+      ('policy', policy.toxml().encode('utf-8')),
+    ]
     mime_multipart_fields = [
-      ('policy', policy.encode('utf-8')),
       ('serialVersion', str(serialVersion)),
     ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    return self.PUT(url, fields=mime_multipart_fields, files=mime_multipart_files)
 
 
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicy(self, pid, policy, serialVersion):
-    response = self.setReplicationPolicyResponse(pid, policy, serialVersion)
+    response = self.setReplicationPolicyResponse(pid=pid, policy=policy,
+                                                 serialVersion=serialVersion)
     return self._read_boolean_response(response)
 
   # CNReplication.isNodeAuthorized(session, targetNodeSubject, pid, replicatePermission) → boolean()
