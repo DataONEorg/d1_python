@@ -34,6 +34,16 @@ and returns that value or the statically set value on failure.
 
 import os
 import logging
+import sys
+import codecs
+
+try:
+  import pysvn
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: apt-get install python-svn\n')
+  sys.stderr.write('See:  http://pysvn.tigris.org/project_downloads.html\n')
+  raise
 
 _default_revision = "3356" ##TAG
 
@@ -44,14 +54,12 @@ def getSvnRevision(update_static=False):
   '''
   rev = _default_revision
   try:
-    import pysvn
     here = os.path.abspath(os.path.dirname(__file__))
     cli = pysvn.Client()
     rev = str(cli.info(here).revision.number)
     if update_static and rev != _default_revision:
       #Try to update the static revision number - requires file write permission
       try:
-        import codecs
         tf = codecs.open(os.path.abspath(__file__), 'r', 'utf-8')
         content = tf.read()
         tf.close()

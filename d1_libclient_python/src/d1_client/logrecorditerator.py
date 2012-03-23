@@ -70,7 +70,7 @@ class LogRecordIterator(object):
     self._czero = 0
     self._client = client
     self._pagesize = 500
-    self._loadMore(start=start)
+    self._loadMore(start=startTime)
 
   def __iter__(self):
     return self

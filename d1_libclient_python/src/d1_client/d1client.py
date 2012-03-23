@@ -34,14 +34,16 @@
 # Stdlib.
 import logging
 import time
-import urlparse
+import sys
 
 # D1.
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
+try:
+  import d1_common.const
+  import d1_common.util
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # App
 import cnclient
@@ -311,7 +313,6 @@ class DataONEClient(object):
     return objectlistiterator.ObjectListIterator(cli, start=start, max=count)
 
 #===============================================================================
-import sys
 
 COMMANDS = ['resolve', 'total', 'list', 'meta', 'get']
 
