@@ -32,18 +32,20 @@
 # Stdlib.
 import logging
 import sys
-import urlparse
 
 # D1.
-import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
+try:
+  import d1_common.const
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.util
+  import d1_common.date_time
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # App.
 import d1baseclient
-import objectlistiterator
 
 
 class MemberNodeClient(d1baseclient.DataONEBaseClient):
@@ -274,7 +276,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       vendorSpecific = {}
     url = self._rest_url('replicate')
     mime_multipart_files = [
-      ('sysmeta', 'sysmeta', sysmeta.toxml().encode('utf-8')),
+      ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
     ]
     mime_multipart_fields = [
       ('sourceNode', sourceNode.encode('utf-8')),

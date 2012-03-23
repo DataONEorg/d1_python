@@ -51,7 +51,6 @@ Example:
 # functionality that uses this class to use the PyXB classes.
 
 # StdLib.
-import logging
 import sys
 import xml.etree.ElementTree
 
@@ -66,10 +65,12 @@ except ImportError, e:
   raise
 
 # Local.
-import d1_common.const
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
+try:
+  import d1_common.util
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 
 class SystemMetadata(object):
@@ -83,12 +84,6 @@ class SystemMetadata(object):
     self.etree = None
     self.xmldoc = xmldoc
     self._parse(xmldoc)
-
-  def isValid(self):
-    '''Validate the document.
-    :rtype: None if all good, otherwise an exception is raised.
-    '''
-    d1_common.util.validate_xml(self.xmldoc)
 
   def _parse(self, xmldoc):
     '''Parse the content and generate the internal "etree" which is the 
@@ -186,7 +181,7 @@ class SystemMetadata(object):
     try:
       checksumNode = self.etree.findall(u'checksum')[0]
       return checksumNode.attrib['algorithm']
-    except IndexError, KeyError:
+    except (IndexError, KeyError):
       raise AttributeError("Property 'checksumAlgorithm' not found")
 
   @property

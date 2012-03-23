@@ -80,6 +80,17 @@ Example::
     algorithm: MD5
 '''
 import logging
+import sys
+
+# D1
+try:
+  import d1_common.restclient as restclient
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
+
+from optparse import OptionParser
 
 
 class ObjectListIterator(object):
@@ -158,10 +169,6 @@ if __name__ == "__main__":
   '''A simple demonstration of the iterator.  Walks over the list of objects
   available from a given node. Output is in YAML.
   '''
-  from optparse import OptionParser
-  from d1_client import restclient
-  import sys
-
   parser = OptionParser()
   default_baseurl = 'http://dev-dryad-mn.dataone.org/mn'
   parser.add_option(

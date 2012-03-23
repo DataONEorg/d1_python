@@ -43,18 +43,24 @@ import logging
 import re
 import urlparse
 import StringIO
+import sys
 
 # 3rd party.
 import pyxb
 
 # D1.
-import d1_common.const
-import d1_common.restclient
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
+try:
+  import d1_common.const
+  import d1_common.restclient
+  import d1_common.types.exceptions
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.util
+  import d1_common.url
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
+
 
 #=============================================================================
 
@@ -121,7 +127,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     if 'Charset' not in defaultHeaders:
       defaultHeaders['Charset'] = d1_common.const.DEFAULT_CHARSET
     # Init the RESTClient base class.
-    scheme, host, port, selector, query, fragment = self._parse_url(base_url)
+    scheme, host, port, selector = self._parse_url(base_url)[:4]
     d1_common.restclient.RESTClient.__init__(self, host=host, scheme=scheme,
       port=port, timeout=timeout, defaultHeaders=defaultHeaders,
       cert_path=cert_path, key_path=key_path, strict=strict)

@@ -350,7 +350,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
       ('serialVersion', str(serialVersion)),
     ]
     mime_multipart_files = [
-      ('accessPolicy', 'accessPolicy', accessPolicy.toxml().encode('utf-8')),
+      ('accessPolicy', 'accessPolicy.xml', accessPolicy.toxml().encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields,
                     files=mime_multipart_files)
@@ -372,7 +372,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def registerAccountResponse(self, person):
     url = self._rest_url('accounts')
     mime_multipart_files = [
-      ('person', 'person', person.toxml().encode('utf-8')),
+      ('person', 'person.xml', person.toxml().encode('utf-8')),
     ]
     return self.POST(url, files=mime_multipart_files)
 
@@ -390,7 +390,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def updateAccountResponse(self, person):
     url = self._rest_url('accounts/%(subject)s', subject=person.value())
     mime_multipart_files = [
-      ('person', 'person', person.toxml().encode('utf-8')),
+      ('person', 'person.xml', person.toxml().encode('utf-8')),
     ]
     return self.PUT(url, files=mime_multipart_files)
 
@@ -543,7 +543,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def createGroupResponse(self, group):
     url = self._rest_url('groups')
     mime_multipart_files = [
-      ('group', group.toxml().encode('utf-8')),
+      ('group', 'group.xml', group.toxml().encode('utf-8')),
     ]
     return self.POST(url, files=mime_multipart_files)
 
@@ -561,7 +561,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def updateGroupResponse(self, group):
     url = self._rest_url('groups')
     mime_multipart_files = [
-      ('group', 'group', group.toxml().encode('utf-8')),
+      ('group', 'group.xml', group.toxml().encode('utf-8')),
     ]
     return self.PUT(url, files=mime_multipart_files)
 
@@ -610,7 +610,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
       ('serialVersion', str(serialVersion)),
     ]
     mime_multipart_files = [
-      ('replicaMetadata', replicaMetadata.toxml().encode('utf-8')),
+      ('replicaMetadata', 'replicaMetadata.xml', replicaMetadata.toxml().encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields,
                     files=mime_multipart_files)
@@ -629,9 +629,8 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def setReplicationPolicyResponse(self, pid, policy, serialVersion):
     url = self._rest_url('replicaPolicies/%(pid)s', pid=pid)
-    print '\n\n** cnclient.py\'setReplicationPolicyResponse()\n  self:',self,'\n  pid:',pid,'\n  policy:',policy.toxml().encode('utf-8'),'\n  serialVersion:',serialVersion,'\n\n'
     mime_multipart_files = [
-      ('policy', policy.toxml().encode('utf-8')),
+      ('policy', 'policy.xml', policy.toxml().encode('utf-8')),
     ]
     mime_multipart_fields = [
       ('serialVersion', str(serialVersion)),
