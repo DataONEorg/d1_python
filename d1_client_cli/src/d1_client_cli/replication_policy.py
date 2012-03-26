@@ -144,9 +144,16 @@ class replication_policy():
     return self.number_of_replicas
 
   def set_number_of_replicas(self, number_of_replicas):
-    self.number_of_replicas = number_of_replicas
     if not number_of_replicas:
       self.replication_allowed = False
+    else:
+      try:
+        float(number_of_replicas)
+      except ValueError:
+        print_error('"%s" is not a valid number.' % number_of_replicas)
+        return
+
+    self.number_of_replicas = int(number_of_replicas)
 
   def print_replication_policy(self):
     print_info(self._pretty_format())
