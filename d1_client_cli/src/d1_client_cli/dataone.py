@@ -537,10 +537,27 @@ class DataONECLI():
     return xml_doc
 
   def system_metadata_get(self, pid, path):
-    client = cli_client.CLIMNClient(self.session)
-    metadata = self._get_system_metadata(client, pid)
-    sci_meta_xml = metadata.toxml()
-    self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
+    metadata = None
+    try:
+      client = cli_client.CLICNClient(self.session)
+      metadata = client.getSystemMetadata(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      pass
+    if metadata is None:
+      print(
+        "<!-- Didn't find metadata on the Coordingating Node, checking the Member Node...-->"
+      )
+      try:
+        client = cli_client.CLIMNClient(self.session)
+        metadata = client.getSystemMetadata(pid)
+      except d1_common.types.exceptions.DataONEException as e:
+        pass
+    if metadata is None:
+      print_error('Unable to get System Metadata from Coordinating Node\n{0}'\
+          .format(e.friendly_format()))
+    else:
+      sci_meta_xml = metadata.toxml()
+      self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
 
   def resolve(self, pid):
     '''Get Object Locations for Object.
@@ -594,10 +611,17 @@ class DataONECLI():
 
   def set_access_policy(self, pid):
     access_policy = self.session.access_control_get_pyxb()
-    print 'access_policy:', access_policy
+    if access_policy is None:
+      print_error('There is no access policy defined.')
+      return None
     client = cli_client.CLICNClient(self.session)
     try:
-      return client.setAccessPolicy(pid, access_policy, 1)
+      metadata = client.getSystemMetadata(pid)
+      if ((metadata is None) or (metadata.serialVersion is None)):
+        raise cli_exceptions.CLIError(
+          'Unable to get current serial version of: {0}'.format(pid)
+        )
+      return client.setAccessPolicy(pid, access_policy, metadata.serialVersion)
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
         'Unable to set access policy on: {0}\nError:\n{1}'\
@@ -607,7 +631,16 @@ class DataONECLI():
     replication_policy = self.session.replication_control_get_pyxb()
     client = cli_client.CLICNClient(self.session)
     try:
-      return client.setReplicationPolicy(pid, replication_policy, 1)
+      metadata = client.getSystemMetadata(pid)
+      if ((metadata is None) or (metadata.serialVersion is None)):
+        raise cli_exceptions.CLIError(
+          'Unable to get current serial version of: {0}'.format(pid)
+        )
+
+      return client.setReplicationPolicy(
+        pid, policy=replication_policy,
+        serialVersion=metadata.serialVersion
+      )
     except d1_common.types.exceptions.DataONEException as e:
       raise cli_exceptions.CLIError(
         'Unable to set replication policy on: {0}\nError:\n{1}'\
