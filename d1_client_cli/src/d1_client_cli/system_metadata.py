@@ -29,14 +29,20 @@
 
 # Stdlib.
 import datetime
+import sys
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+try:
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # 3rd party.
 
 # App.
-from print_level import *
+from print_level import * #@UnusedWildImport
 
 
 class MissingSysmetaParameters(Exception):

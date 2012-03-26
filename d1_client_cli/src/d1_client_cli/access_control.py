@@ -28,15 +28,19 @@
 '''
 
 # Stdlib.
-import logging
-import shlex
+import sys
 
 # D1.
-import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+try:
+  import d1_common.const
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 # App.
-from print_level import *
+from print_level import * #@UnusedWildImport
 import cli_exceptions
 
 
@@ -82,13 +86,13 @@ class access_control():
 
   def _pretty_format(self):
     lines = []
-    format = '  {0: <30s}{1}'
-    if not len(lines):
-      lines.append(format.format('submitter', 'full access'))
+    format_str = '  {0: <30s}{1}'
+    #    if not len(lines):
+    #      lines.append(format_str.format('submitter', 'full access'))
     if self.public:
-      lines.append(format.format('public', 'read'))
+      lines.append(format_str.format('public', 'read'))
     for subject in sorted(self.allow.keys()):
-      lines.append(format.format(subject, self.allow[subject]))
+      lines.append(format_str.format(subject, self.allow[subject]))
     return 'access:\n' + '\n'.join(lines)
 
   # ============================================================================

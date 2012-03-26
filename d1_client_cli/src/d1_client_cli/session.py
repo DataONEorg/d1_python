@@ -46,6 +46,7 @@ except ImportError as e:
 # App.
 import access_control
 import cli_exceptions
+import cli_util
 from print_level import * #@UnusedWildImport
 import replication_policy
 import system_metadata
@@ -276,13 +277,15 @@ class session(object):
       with open(pickle_file_path, 'rb') as f:
         self.__dict__.update(pickle.load(f))
       self.verify_session_variables()
-    except (NameError, IOError) as e:
+    except (NameError, IOError, ImportError) as e:
       if not suppress_error:
         print_error(
           'Unable to load session from file: {0}\n{1}'.format(
             pickle_file_path, str(e)
           )
         )
+    except:
+      cli_util._handle_unexpected_exception()
 
   #   Go through the session variables and make sure that all the new names
   # are there and any missing variable is there added.
