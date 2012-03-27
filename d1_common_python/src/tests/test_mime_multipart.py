@@ -209,7 +209,7 @@ class TestMimeMultipart(unittest.TestCase):
   def _convert_bin_to_string_literal(self, flo):
     '''Convert a binary file to a Python string literal.
     '''
-    o = open('mmp_string_literal.py', 'wb')
+    o = open('d1_testdocs/mmp_string_literal.txt', 'wb')
     while True:
       q = flo.read(1)
       if q == '':

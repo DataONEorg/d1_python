@@ -1,6 +1,26 @@
 util
 ====
 
-.. currentmodule:: 
+.. automodule:: util
 
-.. autodata:: util
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    checksums_are_equal
+    get_content_type
+    pretty_xml
+    str_to_unicode
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

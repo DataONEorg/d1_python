@@ -9,7 +9,7 @@ Component            Minimum Version
 ==================== =================
 python-setuptools    \
 minixsv              \
-python-dateutil      \
+python-dateutil      1.5
 python-iso8601       \
 python-dev           2.6
 libxml2-dev          \
@@ -21,7 +21,7 @@ PyXB                 \
 
 Install :term:`setuptools`::
 
-  $ sudo easy_install python-setuptools
+  $ sudo apt-get install python-setuptools
 
 
 Install :term:`minixsv`::
@@ -31,7 +31,11 @@ Install :term:`minixsv`::
 
 Install :term:`python-dateutil`::
 
-  $ sudo easy_install python-dateutil
+* Explicitly install version 1.5; the latest version to support Python 2.
+  Without this selection, a later version will be installed for Python 2 even
+  though it is incompatible.
+
+  $ sudo easy_install python-dateutil==1.5
     
 
 Install :term:`python-iso8601`::

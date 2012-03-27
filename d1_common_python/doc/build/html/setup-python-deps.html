@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1.1. Python dependencies &mdash; DataONE Common Library for Python v0.beta documentation</title>
+    <title>1.1. Python dependencies &mdash; DataONE Common Library for Python 0.beta documentation</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE Common Library for Python v0.beta documentation" href="index.html" />
+    <link rel="top" title="DataONE Common Library for Python 0.beta documentation" href="index.html" />
     <link rel="up" title="1. Setup" href="setup.html" />
     <link rel="next" title="1.2. DataONE Common Library for Python" href="setup-d1-common.html" />
     <link rel="prev" title="1. Setup" href="setup.html" /> 
@@ -35,12 +38,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="setup-d1-common.html" title="1.2. DataONE Common Library for Python"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="setup.html" title="1. Setup"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DataONE Common Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
           <li><a href="setup.html" accesskey="U">1. Setup</a> &raquo;</li> 
       </ul>
     </div>
@@ -68,7 +74,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -96,49 +102,54 @@
 <col width="46%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head">Component</th>
+<tr class="row-odd"><th class="head">Component</th>
 <th class="head">Minimum Version</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td>python-setuptools</td>
+<tr class="row-even"><td>python-setuptools</td>
 <td></td>
 </tr>
-<tr><td>minixsv</td>
+<tr class="row-odd"><td>minixsv</td>
 <td></td>
 </tr>
-<tr><td>python-dateutil</td>
+<tr class="row-even"><td>python-dateutil</td>
+<td>1.5</td>
+</tr>
+<tr class="row-odd"><td>python-iso8601</td>
 <td></td>
 </tr>
-<tr><td>python-iso8601</td>
-<td></td>
-</tr>
-<tr><td>python-dev</td>
+<tr class="row-even"><td>python-dev</td>
 <td>2.6</td>
 </tr>
-<tr><td>libxml2-dev</td>
+<tr class="row-odd"><td>libxml2-dev</td>
 <td></td>
 </tr>
-<tr><td>libxslt-dev</td>
+<tr class="row-even"><td>libxslt-dev</td>
 <td></td>
 </tr>
-<tr><td>Lxml</td>
+<tr class="row-odd"><td>Lxml</td>
 <td>2.2.6</td>
 </tr>
-<tr><td>PyXB</td>
+<tr class="row-even"><td>PyXB</td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p>Install <a class="reference internal" href="glossary.html#term-setuptools"><em class="xref std std-term">setuptools</em></a>:</p>
-<div class="highlight-python"><pre>$ sudo easy_install python-setuptools</pre>
+<p>Install <em class="xref std std-term">setuptools</em>:</p>
+<div class="highlight-python"><pre>$ sudo apt-get install python-setuptools</pre>
 </div>
 <p>Install <a class="reference internal" href="glossary.html#term-minixsv"><em class="xref std std-term">minixsv</em></a>:</p>
 <div class="highlight-python"><pre>$ sudo easy_install minixsv</pre>
 </div>
 <p>Install <a class="reference internal" href="glossary.html#term-python-dateutil"><em class="xref std std-term">python-dateutil</em></a>:</p>
-<div class="highlight-python"><pre>$ sudo easy_install python-dateutil</pre>
+<div class="highlight-python"><pre>* Explicitly install version 1.5; the latest version to support Python 2.</pre>
 </div>
+<blockquote>
+<div><p>Without this selection, a later version will be installed for Python 2 even
+though it is incompatible.</p>
+<p>$ sudo easy_install python-dateutil==1.5</p>
+</div></blockquote>
 <p>Install <a class="reference internal" href="glossary.html#term-python-iso8601"><em class="xref std std-term">python-iso8601</em></a>:</p>
 <div class="highlight-python"><pre>$ sudo easy_install iso8601</pre>
 </div>
@@ -170,18 +181,21 @@ $ sudo python setup.py install</pre>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="setup-d1-common.html" title="1.2. DataONE Common Library for Python"
              >next</a> |</li>
         <li class="right" >
           <a href="setup.html" title="1. Setup"
              >previous</a> |</li>
-        <li><a href="index.html">DataONE Common Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
           <li><a href="setup.html" >1. Setup</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

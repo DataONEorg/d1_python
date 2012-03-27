@@ -29,14 +29,13 @@ Module d1_common.date_time
 # Stdlib.
 import calendar
 import datetime
-import email.message
 import email.utils
+import sys
 
 # 3rd party.
 try:
   import iso8601
 except ImportError as e:
-  import sys
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
   sys.stderr.write(

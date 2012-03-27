@@ -1,6 +1,31 @@
 xmlrunner
 =========
 
-.. currentmodule:: 
+.. automodule:: xmlrunner
 
-.. autodata:: xmlrunner
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    escape
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    XmlTestRunner
+    XmlTestRunnerTest
+  
+  
+  
+  
+  
+  

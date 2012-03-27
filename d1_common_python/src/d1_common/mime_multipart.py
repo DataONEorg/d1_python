@@ -30,11 +30,8 @@ Module d1_common.mime_multipart
 '''
 
 # Stdlib.
-import httplib
-import logging
 import mimetypes
 import os
-import urlparse
 import StringIO
 
 # D1.
