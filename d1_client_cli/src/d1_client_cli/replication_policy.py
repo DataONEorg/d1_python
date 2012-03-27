@@ -71,13 +71,13 @@ class replication_policy():
 
     preferred_nodes = None
     if self.get_preferred():
-      preferred_nodes = ','.join(self.get_preferred())
+      preferred_nodes = '"' + '", "'.join(self.get_preferred()) + '"'
     else:
       preferred_nodes = 'none'
     lines.append(format_str.format('preferred member nodes', preferred_nodes))
     blocked_nodes = None
     if self.get_blocked():
-      blocked_nodes = ','.join(self.get_blocked())
+      blocked_nodes = '"' + '", "'.join(self.get_blocked()) + '"'
     else:
       blocked_nodes = 'none'
     lines.append(format_str.format('blocked member nodes', blocked_nodes))

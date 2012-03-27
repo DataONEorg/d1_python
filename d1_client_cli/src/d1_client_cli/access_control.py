@@ -101,7 +101,7 @@ class access_control():
 
     for perm, perm_list in permissions.items():
       if len(perm_list) > 0:
-        lines.append(format_str.format(perm, '"' + '","'.join(perm_list)) + '"')
+        lines.append(format_str.format(perm, '"' + '", "'.join(perm_list)) + '"')
 
     return 'access:\n' + '\n'.join(lines)
 
