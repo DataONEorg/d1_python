@@ -33,8 +33,6 @@ Module d1_common.restclient
 import copy
 import logging
 import httplib
-import urlparse
-import util
 
 # D1.
 import d1_common.url

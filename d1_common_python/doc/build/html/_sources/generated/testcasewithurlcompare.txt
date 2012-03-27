@@ -1,6 +1,23 @@
 testcasewithurlcompare
 ======================
 
-.. currentmodule:: 
+.. automodule:: testcasewithurlcompare
 
-.. autodata:: testcasewithurlcompare
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCaseWithURLCompare
+  
+  
+  
+  
+  
+  

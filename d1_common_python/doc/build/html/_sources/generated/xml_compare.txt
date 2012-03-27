@@ -1,6 +1,38 @@
 xml_compare
 ===========
 
-.. currentmodule:: 
+.. automodule:: xml_compare
 
-.. autodata:: xml_compare
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    assert_xml_equal
+    compare
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    XmlCompare
+  
+  
+  
+  
+  
+  .. rubric:: Exceptions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    CompareError
+  
+  
