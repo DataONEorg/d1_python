@@ -1,6 +1,0 @@
-nodelist_serialization
-======================
-
-.. currentmodule:: 
-
-.. autodata:: nodelist_serialization

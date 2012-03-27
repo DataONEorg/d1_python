@@ -1,6 +1,0 @@
-test_utils
-==========
-
-.. currentmodule:: 
-
-.. autodata:: test_utils

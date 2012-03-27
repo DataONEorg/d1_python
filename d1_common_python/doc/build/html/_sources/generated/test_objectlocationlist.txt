@@ -1,6 +1,0 @@
-test_objectlocationlist
-=======================
-
-.. currentmodule:: 
-
-.. autodata:: test_objectlocationlist

@@ -1,6 +1,0 @@
-test_restclient
-===============
-
-.. currentmodule:: 
-
-.. autodata:: test_restclient
