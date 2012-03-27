@@ -54,7 +54,7 @@ class replication_policy():
     return self._pretty_format()
 
   def _list_to_pyxb(self):
-    access_policy = dataoneTypes.ReplicationPolicy()
+    access_policy = dataoneTypes.replicationPolicy()
     for preferred in self.get_preferred():
       node_reference = dataoneTypes.NodeReference(preferred)
       access_policy.preferredMemberNode.append(node_reference)
