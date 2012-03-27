@@ -1,6 +1,0 @@
-test_testcasewithurlcompare
-===========================
-
-.. currentmodule:: 
-
-.. autodata:: test_testcasewithurlcompare

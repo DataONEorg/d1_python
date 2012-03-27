@@ -1,6 +1,0 @@
-test_objectlist
-===============
-
-.. currentmodule:: 
-
-.. autodata:: test_objectlist

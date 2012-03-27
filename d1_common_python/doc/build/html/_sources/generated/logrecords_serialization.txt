@@ -1,6 +1,0 @@
-logrecords_serialization
-========================
-
-.. currentmodule:: 
-
-.. autodata:: logrecords_serialization

@@ -1,6 +1,0 @@
-test_xml_compare
-================
-
-.. currentmodule:: 
-
-.. autodata:: test_xml_compare

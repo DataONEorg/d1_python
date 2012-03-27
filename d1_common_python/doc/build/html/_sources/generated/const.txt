@@ -1,6 +1,0 @@
-const
-=====
-
-.. currentmodule:: 
-
-.. autodata:: const

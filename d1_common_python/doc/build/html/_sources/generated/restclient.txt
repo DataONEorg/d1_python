@@ -1,6 +1,0 @@
-restclient
-==========
-
-.. currentmodule:: 
-
-.. autodata:: restclient
