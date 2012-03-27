@@ -87,12 +87,22 @@ class access_control():
   def _pretty_format(self):
     lines = []
     format_str = '  {0: <30s}{1}'
-    #    if not len(lines):
-    #      lines.append(format_str.format('submitter', 'full access'))
+    permissions = {'read': [], 'write': [], 'changePermission': [], 'execute': [], 'replicate': []}
+
     if self.public:
-      lines.append(format_str.format('public', 'read'))
+      permissions.get('read').append('public')
     for subject in sorted(self.allow.keys()):
-      lines.append(format_str.format(subject, self.allow[subject]))
+      perm_list = permissions.get(self.allow[subject])
+      try:
+        if perm_list is not None:
+          perm_list.append(subject)
+      except KeyError:
+        print_error('Unable to find permission: %s' % self.allow[subject])
+
+    for perm, perm_list in permissions.items():
+      if len(perm_list) > 0:
+        lines.append(format_str.format(perm, '"' + '","'.join(perm_list)) + '"')
+
     return 'access:\n' + '\n'.join(lines)
 
   # ============================================================================

@@ -67,21 +67,23 @@ class replication_policy():
 
   def _pretty_format(self):
     lines = []
-    format_str = '    {0: <30s}'
+    format_str = '  {0: <30s}{1}'
+
+    preferred_nodes = None
     if self.get_preferred():
-      lines.append('  preferred member nodes:')
-      for preferred in self.get_preferred():
-        lines.append(format_str.format(preferred))
+      preferred_nodes = ','.join(self.get_preferred())
     else:
-      lines.append('  no preferred member nodes')
+      preferred_nodes = 'none'
+    lines.append(format_str.format('preferred member nodes', preferred_nodes))
+    blocked_nodes = None
     if self.get_blocked():
-      lines.append('  blocked member nodes:')
-      for blocked in self.get_blocked():
-        lines.append(format_str.format(blocked))
+      blocked_nodes = ','.join(self.get_blocked())
     else:
-      lines.append('  no blocked member nodes')
-    lines.append('  number of replicas: {0}'.format(self.number_of_replicas))
-    lines.append('  replication allowed: {0}'.format(self.replication_allowed))
+      blocked_nodes = 'none'
+    lines.append(format_str.format('blocked member nodes', blocked_nodes))
+
+    lines.append(format_str.format('number of replicas', self.number_of_replicas))
+    lines.append(format_str.format('replication allowed', self.replication_allowed))
     return 'replication:\n' + '\n'.join(lines)
 
   def _set_policy(self, mn, preferred):
