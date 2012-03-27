@@ -233,7 +233,7 @@ option_list = [
   make_option(
     "--search-object-format",
     action="store",
-    dest="search_format",
+    dest="search_object_format",
     metavar="OBJECT-FORMAT",
     help="Include only objects of this format when searching"
   ),
@@ -275,66 +275,72 @@ option_list = [
 
 
 def handle_options(cli, options):
-  if options.algorithm is not None:
-    cli.d1.session_set_parameter("algorithm", options.algorithm)
-  if options.anonymous is not None:
-    cli.d1.session_set_parameter("anonymous", options.anonymous)
-  if options.authoritative_mn is not None:
-    cli.d1.session_set_parameter("authoritative-mn", options.authoritative_mn)
-  if options.cert_file is not None:
-    cli.d1.session_set_parameter("cert-file", options.cert_file)
-  if options.count is not None:
-    cli.d1.session_set_parameter("count", options.count)
-  if options.dataone_url is not None:
-    cli.d1.session_set_parameter("dataone-url", options.dataone_url)
-  if options.cn_host is not None:
-    url = ''.join(
-      (
-        d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
-        d1_common.const.DEFAULT_CN_PATH
+  try:
+    if options.algorithm is not None:
+      cli.d1.session_set_parameter("algorithm", options.algorithm)
+    if options.anonymous is not None:
+      cli.d1.session_set_parameter("anonymous", options.anonymous)
+    if options.authoritative_mn is not None:
+      cli.d1.session_set_parameter("authoritative-mn", options.authoritative_mn)
+    if options.cert_file is not None:
+      cli.d1.session_set_parameter("cert-file", options.cert_file)
+    if options.count is not None:
+      cli.d1.session_set_parameter("count", options.count)
+    if options.dataone_url is not None:
+      cli.d1.session_set_parameter("dataone-url", options.dataone_url)
+    if options.cn_host is not None:
+      url = ''.join(
+        (
+          d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
+          d1_common.const.DEFAULT_CN_PATH
+        )
       )
-    )
-    cli.d1.session_set_parameter("dataone-url", url)
-  if options.fields is not None:
-    cli.d1.session_set_parameter("fields", options.fields)
-  if options.from_date is not None:
-    cli.d1.session_set_parameter("from-date", options.from_date)
+      cli.d1.session_set_parameter("dataone-url", url)
+    if options.fields is not None:
+      cli.d1.session_set_parameter("fields", options.fields)
+    if options.from_date is not None:
+      cli.d1.session_set_parameter("from-date", options.from_date)
 # interactive is not in the session.
-#  if options.interactive is not None:
-#    cli.d1.session_set_parameter("interactive", options.interactive)
-  if options.key_file is not None:
-    cli.d1.session_set_parameter("key-file", options.key_file)
-  if options.mn_url is not None:
-    cli.d1.session_set_parameter("mn-url", options.mn_url)
-  if options.mn_host is not None:
-    url = ''.join(
-      (
-        d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
-        d1_common.const.DEFAULT_MN_PATH
+    if options.key_file is not None:
+      cli.d1.session_set_parameter("key-file", options.key_file)
+    if options.mn_url is not None:
+      cli.d1.session_set_parameter("mn-url", options.mn_url)
+    if options.mn_host is not None:
+      url = ''.join(
+        (
+          d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
+          d1_common.const.DEFAULT_MN_PATH
+        )
       )
-    )
-    cli.d1.session_set_parameter("mn-url", url)
-  if options.object_format is not None:
-    cli.d1.session_set_parameter("object-format", options.object_format)
-  if options.origin_mn is not None:
-    cli.d1.session_set_parameter("origin-mn", options.origin_mn)
-  if options.pretty is not None:
-    cli.d1.session_set_parameter("pretty", options.pretty)
-  if options.query_string is not None:
-    cli.d1.session_set_parameter("query-string", options.query_string)
-  if options.rights_holder is not None:
-    cli.d1.session_set_parameter("rights-holder", options.rights_holder)
-  if options.search_format is not None:
-    cli.d1.session_set_parameter("search-object-format", options.search_object_format)
-  if options.start is not None:
-    cli.d1.session_set_parameter("start", options.start)
-  if options.submitter is not None:
-    cli.d1.session_set_parameter("submitter", options.submitter)
-  if options.to_date is not None:
-    cli.d1.session_set_parameter("to-date", options.to_date)
-  if options.verbose is not None:
-    cli.d1.session_set_parameter("verbose", options.verbose)
-  cli._update_verbose()
+      cli.d1.session_set_parameter("mn-url", url)
+    if options.object_format is not None:
+      cli.d1.session_set_parameter("object-format", options.object_format)
+    if options.origin_mn is not None:
+      cli.d1.session_set_parameter("origin-mn", options.origin_mn)
+    if options.pretty is not None:
+      cli.d1.session_set_parameter("pretty", options.pretty)
+    if options.query_string is not None:
+      cli.d1.session_set_parameter("query-string", options.query_string)
+    if options.rights_holder is not None:
+      cli.d1.session_set_parameter("rights-holder", options.rights_holder)
+    if options.search_object_format is not None:
+      try:
+        cli.d1.session_set_parameter("search-object-format", options.search_object_format)
+      except ValueError as e:
+        print_error(e.args[0])
+    if options.start is not None:
+      cli.d1.session_set_parameter("start", options.start)
+    if options.submitter is not None:
+      cli.d1.session_set_parameter("submitter", options.submitter)
+    if options.to_date is not None:
+      cli.d1.session_set_parameter("to-date", options.to_date)
+    if options.verbose is not None:
+      cli.d1.session_set_parameter("verbose", options.verbose)
+    cli._update_verbose()
+  except cli_exceptions.InvalidArguments as e:
+    print_error(e)
+  except:
+    cli_util._handle_unexpected_exception()
 
 #===============================================================================
 
@@ -872,15 +878,32 @@ class CLI(cmd.Cmd):
 
   def do_show(self, line):
     '''show [session parameter]
-    Display the value of a session parameter. Display all parameters if [session parameter] is omitted.
+    Display the value of a session parameter. Display all parameters if
+  [session parameter] is omitted.
+  
+    "show formats" will display all known object formats.
     '''
     try:
       session_parameter = self._split_args(line, 0, 1)
-      self.d1.session_print_parameter(session_parameter)
+      if not self.show_special_parameter(session_parameter):
+        self.d1.session_print_parameter(session_parameter)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
       cli_util._handle_unexpected_exception()
+
+  def show_special_parameter(self, parameter):
+    ''' Check to see if this a "special" parameter.
+    '''
+    if parameter is None:
+      return False
+    elif parameter == 'formats':
+      print_info(
+        'Known formats:\n  ' + '\n  '.join(sorted(self.d1.get_known_object_formats()))
+      )
+      return True
+    #
+    return False
 
   def do_set(self, line):
     '''set <session parameter> <value>
