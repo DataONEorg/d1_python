@@ -20,7 +20,7 @@
 '''DataONE Command-line Utilities
 '''
 
-__version__ = "1.0.0c4"
+__version__ = "1.0.0c5"
 
 __all__ = [
   'access_control',
