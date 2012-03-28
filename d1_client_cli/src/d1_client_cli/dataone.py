@@ -140,7 +140,7 @@ option_list = [
     "--fields",
     action="store",
     dest="fields",
-    help="Comma delimited list of index fields to return in search responses"
+    help="Comma delimited list_objects of index fields to return in search responses"
   ),
   make_option(
     "--from-date",
@@ -242,7 +242,7 @@ option_list = [
     action="store",
     dest="start",
     type="int",
-    help="First item to display for operations that display a list of items"
+    help="First item to display for operations that display a list_objects of items"
   ),
   make_option(
     "--submitter",
@@ -590,7 +590,7 @@ class DataONECLI():
     if pkg is not None:
       package.save(self.session, pkg)
 
-  def list(self, path):
+  def list_objects(self, path):
     '''MN listObjects.
     '''
     client = cli_client.CLIMNClient(self.session)
@@ -816,7 +816,7 @@ class CLI(cmd.Cmd):
         n_required if n_required else 'no', n_optional if n_optional else 'no'
       )
       raise cli_exceptions.InvalidArguments(msg)
-    # Pad the list out with None for any optional parameters that were not
+    # Pad the list_objects out with None for any optional parameters that were not
     # provided.
     args += [None] * (n_required + n_optional - len(args))
     if len(args) == 1:
@@ -1022,7 +1022,7 @@ class CLI(cmd.Cmd):
 
   def do_addpreferred(self, line):
     '''addpreferred <member node>
-    Add Member Node to list of preferred replication targets
+    Add Member Node to list_objects of preferred replication targets
     '''
     try:
       mn = self._split_args(line, 1, 0)
@@ -1186,12 +1186,12 @@ class CLI(cmd.Cmd):
       cli_util._handle_unexpected_exception()
 
   def do_list(self, line):
-    '''list
-    Retrieve a list of available Science Data Objects from a single MN with basic filtering
+    '''list_objects
+    Retrieve a list_objects of available Science Data Objects from a single MN with basic filtering
     '''
     try:
       path = self._split_args(line, 0, 1)
-      self.d1.list(path)
+      self.d1.list_objects(path)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except (KeyboardInterrupt, IOError) as e:
@@ -1261,7 +1261,7 @@ class CLI(cmd.Cmd):
 
   def do_history(self, line):
     '''history
-    Display a list of commands that have been entered
+    Display a list_objects of commands that have been entered
     '''
     try:
       self._split_args(line, 0, 0)
@@ -1294,7 +1294,7 @@ class CLI(cmd.Cmd):
 
   def do_help(self, line):
     '''Get help on commands
-    'help' or '?' with no arguments displays a list of commands for which help is available
+    'help' or '?' with no arguments displays a list_objects of commands for which help is available
     'help <command>' or '? <command>' gives help on <command>
     '''
     # The only reason to define this method is for the help text in the doc
