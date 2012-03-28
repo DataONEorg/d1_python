@@ -253,7 +253,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
   def _listObjects(self, baseURL):
     '''listObjects() returns a valid ObjectList that contains at least 3 entries'''
     client = d1_client.d1baseclient.DataONEBaseClient(baseURL)
-    list = client.listObjects(start=0, count=10, startTime=None, endTime=None)
+    list = client.listObjects(start=0, count=10, fromDate=None, toDate=None)
     self.assertTrue(isinstance(list, d1_common.types.generated.dataoneTypes.ObjectList))
     self.assertEqual(list.count, len(list.objectInfo))
     entry = list.objectInfo[0]
