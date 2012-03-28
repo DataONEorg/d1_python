@@ -26,9 +26,8 @@ if they were modified by an existing ``.d1client.conf`` file at startup)::
 Set some of the session parameters used by many of the operations when they
 establish connections to :term:`MNs <MN>` and :term:`CNs <CN>`::
 
-  > set certpath /etc/dataone/client/certs/myclientcert.pem
-  > set keypath /etc/dataone/client/certs/myclientcert.pem
-  > set fields pid,origin_mn,datemodified,size,objectformat,title
+  > set cert-path /etc/dataone/client/certs/myclientcert.pem
+  > set key-path /etc/dataone/client/certs/myclientcert.pem
   > set query *:*
 
 
@@ -72,16 +71,7 @@ Load the session parameters from the file created in the previous step::
 
 View the session parameters::
 
-  > get
-
-Perform a search based on the current session parameters::
-
-  > search
-
-Get list of fields available to search against::
-
-
-  > fields
+  > show
 
 Modify the search parameters to find only Science Data that originated from
 the "DEMO3" :term:`MN` and search again::
@@ -89,17 +79,15 @@ the "DEMO3" :term:`MN` and search again::
   > set query origin_mn:DEMO3
   > search
 
-Modify the search parameters to find only Science Data that contains the
-keyword, "barnacle" in System or Science Metadata and search again::
+The search terms can also be specified after the "search" command::
 
-  > set query barnacle
-  > search
+  > search barnacle
 
-Modify the search parameters to find only Science Data that originated from
-the "DEMO3" :term:`MN` and that are of type text/csv and search again::
+Modify the search parameters to find only Science Data that are of type
+text/csv and search again::
 
-  > set query origin_mn:DEMO3 AND objectformat:text/csv
-  > search
+  > set objectformat text/csv
+  > search barnacle
 
 
 
@@ -112,15 +100,15 @@ Start the CLI::
 
 View the session parameters::
 
-  > get
+  > show
 
 Set :term:`MN` from which to download the Science Data Object::
 
-  > set mnurl https://dataone.member.node.com/mn/
+  > set mn-url https://dataone.member.node.com/mn/
 
 Download Science Data Object and save to local file::
 
-  > data hdl:10255/dryad.669/mets.xml ~/my_dataone_files/dryad669.xml
+  > get hdl:10255/dryad.669/mets.xml ~/my_dataone_files/dryad669.xml
 
 
 
@@ -161,14 +149,14 @@ Start the CLI::
 
 Select :term:`MN` to which to upload the Science Data Object::
 
-  > set mnurl https://dataone.member.node.com/mn/
+  > set mn-url https://dataone.member.node.com/mn/
 
 Configure the session parameters used when generating :term:`System Metadata`::
 
   > set submitter CN=MATTJTEMP,DC=dataone,DC=org
   > set rightsholder CN=MATTJTEMP,DC=dataone,DC=org
-  > set origin-member-node DEMO1
-  > set authoritative-member-node DEMO1
+  > set origin-mn DEMO1
+  > set authoritative-mn DEMO1
 
 Create an Access Policy that has only public read permisisons::
 
@@ -193,18 +181,13 @@ Exit the CLI::
 Misc operations
 ---------------
 
-Discover relationships between Science Metadata and Science Data::
-
-  > related hdl:10255/dryad.669/mets.xml
-
 Find replicas of Science Data Objects::
 
   > resolve hdl:10255/dryad.669/mets.xml
 
 Display list of Science Data Objects on a :term:`MN` or :term:`CN`::
 
-  > set public true
-  > set mnurl https://dataone.org/mn
+  > set mn-url https://dataone.org/mn
   > set start 100
   > set count 10
   > list
@@ -212,9 +195,9 @@ Display list of Science Data Objects on a :term:`MN` or :term:`CN`::
 Display event log on a :term:`MN`::
 
   > reset
-  > set certpath /etc/dataone/client/certs/myclientcert.pem
-  > set keypath None
-  > set mnurl https://dataone.org/mn
+  > set cert-path /etc/dataone/client/certs/myclientcert.pem
+  > set key-path None
+  > set mn-url https://dataone.org/mn
   > log
 
 Download the event log and save it to a file::

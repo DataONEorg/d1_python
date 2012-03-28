@@ -51,9 +51,9 @@ Save session parameters to file. If ``file`` is not provided, defaults to
 ``.d1client.conf``, located in the user's home directory.
 
 
-.. _get:
+.. show:
 
-get [session parameter]
+show [session parameter]
 ```````````````````````
 Display the value of a session parameter. If ``session parameter`` is not
 provided, display all session parameters.
@@ -88,8 +88,8 @@ _`verbose`                False                 Boolean  Display more informatio
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **Node selection**
 -----------------------------------------------------------------------------------------------------------------------------------------------
-_`dataoneurl`             SYSTEM DEFAULT        String   Node to which to connect for operations that access the DataONE Root :term:`CN`
-_`mnurl`                  https://localhost/mn/ String   Node to connect to for operations that access a DataONE :term:`MN`
+_`dataone-url`            SYSTEM DEFAULT        String   Node to which to connect for operations that access the DataONE Root :term:`CN`
+_`mn-url`                 https://localhost/mn/ String   Node to connect to for operations that access a DataONE :term:`MN`
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **Slicing**
 -----------------------------------------------------------------------------------------------------------------------------------------------
@@ -99,26 +99,26 @@ _`count`                  SYSTEM DEFAULT        Integer  Maximum number of items
 **Authentication**
 -----------------------------------------------------------------------------------------------------------------------------------------------
 _`anonymous`              True                  Boolean  Ignore any installed certificates and connect anonymously
-_`certpath`               None                  String   Filesystem path to client certificate
-_`keypath`                None                  String   Filesystem path to the client certificate private key. Not required if the certificate
+_`cert-path`              None                  String   Filesystem path to client certificate
+_`key-path`               None                  String   Filesystem path to the client certificate private key. Not required if the certificate
                                                          provided with ``certpath`` contains both the public and private keys
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **System Metadata**
 -----------------------------------------------------------------------------------------------------------------------------------------------
-_`objectformat`           None                  String   ID for the Object Format to use when generating System Metadata
+_`object-format`          None                  String   ID for the Object Format to use when generating System Metadata
 _`submitter`              None                  String   Subject of the submitter to use when generating System Metadata
-_`rightsholder`           None                  String   Subject of the rights holder to use when generating System Metadata
-_`originmn`               None                  String   Originating Member Node to use when generating System Metadata
-_`authoritativemn`        None                  String   Authoritative Member Node to use when generating System Metadata
+_`rights-holder`          None                  String   Subject of the rights holder to use when generating System Metadata
+_`origin-mn`              None                  String   Originating Member Node to use when generating System Metadata
+_`authoritative-mn        None                  String   Authoritative Member Node to use when generating System Metadata
 _`algorithm`              SYSTEM DEFAULT        String   Checksum algorithm to use when calculating the checksum for a Science Data Object
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **Search**
 -----------------------------------------------------------------------------------------------------------------------------------------------
-_`fromdate`               None                  String   Start time used by operations that accept a time range
-_`todate`                 None                  String   End time used by operations that accept a time range
-_`searchobjectformat`     None                  String   Include only objects of this format
+_`from-date`              None                  String   Start time used by operations that accept a time range
+_`to-date`                None                  String   End time used by operations that accept a time range
+_`search-object-format`   None                  String   Include only objects of this format
 _`query`                  `*:*`                 String   Query string (SOLR or Lucene query syntax) for searches
-_`fields`                 None                  String   Comma delimited list of index fields to return in search responses
+_`query-type`             solr                  String   Select search engine (currently, only SOLR is available)
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **Access Policy**
 -----------------------------------------------------------------------------------------------------------------------------------------------

@@ -81,6 +81,7 @@ Glossary
     :term:`Certificate` that is provided by the client during :term:`client side
     authentication`.
 
+
   SSL
     Secure Sockets Layer
 

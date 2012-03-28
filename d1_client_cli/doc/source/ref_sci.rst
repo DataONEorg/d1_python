@@ -85,21 +85,6 @@ Active session parameters: :ref:`mnurl <mnurl>`, :ref:`submitter <submitter>`,
 :ref:`access_policy`, :ref:`replication_policy`, :ref:`authentication`
 
 
-.. _related:
-
-related <:term:`pid`>
-`````````````````````
-Given the :term:`pid` for a Science Data Object, find it's Science Metadata and
-vice versa.
-
-Provide ``file`` if saving the information is desired.
-
-Connects to the :term:`CN` set with the **dataone_url** session
-parameter.
-
-Active session parameters: :ref:`dataoneurl <dataoneurl>`, :ref:`authentication`
-
-
 .. _resolve:
 
 resolve <:term:`pid`>

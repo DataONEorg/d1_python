@@ -44,7 +44,13 @@ print sys.path
 #import plantuml
 #directives.register_directive('uml', plantuml.UmlDirective)
 
-from sqltable import SQLTable
+try:
+  from sqltable import SQLTable
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install sphinxcontrib-sqltable\n')
+  raise
+
 from docutils.parsers.rst import directives
 directives.register_directive('sqltable', SQLTable)
 
@@ -107,7 +113,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'' #u'DataONE Architecture'
-copyright = u'2009-2011, DataONE'
+copyright = u'2009-2012, DataONE' #@ReservedAssignment
 #copyright = u'''- INTEROP: Creation of an International Virtual Data Center for the Biodiversity,
 #Ecological and Environmental Sciences (NSF Award 0753138);
 #
