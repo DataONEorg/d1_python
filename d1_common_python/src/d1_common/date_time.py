@@ -188,6 +188,14 @@ def cast_datetime_to_utc(date_time):
   return date_time.replace(tzinfo=UTC())
 
 
+def strip_timezone(date_time):
+  '''Create a naive datetime by stripping away any timezone information. This
+  is necessary for passing the datetime to some functions that cannot handle
+  timezone information. Warning: If the date-time is not in UTC, this will
+  change the actual moment in time that is represented.'''
+  return date_time.replace(tzinfo=None)
+
+
 def utc_now():
   '''Now in the UTC timezone.'''
   return cast_datetime_to_utc(datetime.datetime.utcnow())
