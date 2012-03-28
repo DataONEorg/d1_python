@@ -451,22 +451,22 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   # CNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
-  # MNRead.listObjects(session[, startTime][, endTime][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
+  # MNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
 
   @d1_common.util.utf8_to_unicode
-  def listObjectsResponse(self, startTime=None, endTime=None,
+  def listObjectsResponse(self, fromDate=None, toDate=None,
                           objectFormat=None, replicaStatus=None,
                           start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
                           vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
-    self._date_span_sanity_check(startTime, endTime)
+    self._date_span_sanity_check(fromDate, toDate)
     url = self._rest_url('object')
     query = {
-      'startTime': startTime,
-      'endTime': endTime,
+      'fromDate': fromDate,
+      'toDate': toDate,
       'objectFormat': objectFormat,
       'replicaStatus': replicaStatus,
       'start': int(start),
@@ -476,11 +476,11 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
 
   @d1_common.util.utf8_to_unicode
-  def listObjects(self, startTime=None, endTime=None, objectFormat=None,
+  def listObjects(self, fromDate=None, toDate=None, objectFormat=None,
                   replicaStatus=None, start=0,
                   count=d1_common.const.DEFAULT_LISTOBJECTS,
                   vendorSpecific=None):
-    response = self.listObjectsResponse(startTime=startTime, endTime=endTime,
+    response = self.listObjectsResponse(fromDate=fromDate, toDate=toDate,
                                         objectFormat=objectFormat,
                                         replicaStatus=replicaStatus,
                                         start=start, count=count,

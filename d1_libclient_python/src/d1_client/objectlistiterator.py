@@ -98,7 +98,7 @@ class ObjectListIterator(object):
   DataONE node.  Data is retrieved from the target only when required.
   '''
 
-  def __init__(self, client, start=0, startTime=None, pagesize=500, max=-1):
+  def __init__(self, client, start=0, fromDate=None, pagesize=500, max=-1):
     '''Initializes the iterator.
     
      TODO: Extend this with date range and other restrictions
@@ -107,8 +107,8 @@ class ObjectListIterator(object):
     :type client: DataONEBaseClient or derivative
     :param start: The zero based starting index value (0)
     :type start: integer
-    :param startTime:
-    :type startTime: DateTime
+    :param fromDate:
+    :type fromDate: DateTime
     :param pagesize: Number of items to retrieve in a single request (page, 500)
     :type pagesize: integer
     :param max: Maximum number of items to retrieve (all)
@@ -120,7 +120,7 @@ class ObjectListIterator(object):
     if max >= 0 and max < pagesize:
       pagesize = max
     self._pagesize = pagesize
-    self.startTime = startTime
+    self.fromDate = fromDate
     self._loadMore(start=start)
     if max > 0:
       self._maxitem = max
@@ -156,7 +156,7 @@ class ObjectListIterator(object):
     self._citem = 0
     self._objectList = self._client.listObjects(
       start=start, count=self._pagesize,
-      startTime=self.startTime
+      fromDate=self.fromDate
     )
 
   def __len__(self):

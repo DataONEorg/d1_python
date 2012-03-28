@@ -58,7 +58,7 @@ class LogRecordIterator(object):
   for a DataONE node.  Data is retrieved from the target only when required.
   '''
 
-  def __init__(self, client, startTime=None):
+  def __init__(self, client, fromDate=None):
     '''Initializes the iterator.
     
      TODO: Extend this with date range and other restrictions
@@ -98,5 +98,5 @@ class LogRecordIterator(object):
     self._citem = 0
     self._logRecords = self._client.getLogRecords(
       start=start, count=self._pagesize,
-      startTime=self.startTime
+      fromDate=self.fromDate
     )
