@@ -544,24 +544,26 @@ class DataONECLI():
 
   def system_metadata_get(self, pid, path):
     metadata = None
+    foundOnCN = False
     try:
       client = cli_client.CLICNClient(self.session)
       metadata = client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
       pass
-    if metadata is None:
-      print(
-        "<!-- Didn't find metadata on the Coordingating Node, checking the Member Node...-->"
-      )
+    if metadata is not None:
+      foundOnCN = True
+    else:
       try:
         client = cli_client.CLIMNClient(self.session)
         metadata = client.getSystemMetadata(pid)
       except d1_common.types.exceptions.DataONEException as e:
         pass
     if metadata is None:
-      print_error('Unable to get System Metadata from Coordinating Node\n{0}'\
-          .format(e.friendly_format()))
+      print_msg(e.friendly_format())
     else:
+      if ((self.session.get('cli', 'pretty') is not None) and
+          self.session.get('cli', 'pretty') and not foundOnCN):
+        print("<!-- Found the metadata on the Member Node... -->")
       sci_meta_xml = metadata.toxml()
       self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
 
@@ -1342,7 +1344,9 @@ class CLI(cmd.Cmd):
   def default(self, line):
     '''Called on an input line when the command prefix is not recognized.
     '''
-    print_error('Unknown command')
+    queryArgs = self._split_args(line, 0, 99)
+    if len(queryArgs) > 0:
+      print_error('Unknown command: "%s"' % queryArgs[0])
 
   def run_command_line_arguments(self, commands):
     for command in commands:

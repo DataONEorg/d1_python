@@ -49,4 +49,8 @@ def print_warn(msg):
 
 
 def print_info(msg):
+  print_level(u'INFO', unicode(msg))
+
+
+def print_msg(msg):
   print_level(u'', unicode(msg))

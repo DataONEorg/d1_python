@@ -43,6 +43,8 @@ def _handle_unexpected_exception(max_traceback_levels=5):
     print_error(exc_msgs.__dict__['value'])
   elif exc_type.__name__ == 'InvalidArguments':
     print_error(exc_msgs.__dict__['value'])
+  elif exc_type.__name__ == 'NotFound':
+    print_error(exc_msgs.__dict__['value'])
   elif exc_type.__name__ == 'ServiceFailure':
     print_error(
       'There was a problem with the response from the DataONE node. (error %d:%d)' %
