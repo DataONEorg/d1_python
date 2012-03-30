@@ -487,6 +487,32 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                                         vendorSpecific=vendorSpecific)
     return self._read_dataone_type_response(response)
 
+
+  # ----------------------------------------------------------------------------  
+  # CNCore / MNStorage
+  # ----------------------------------------------------------------------------
+
+  # CNCore.generateIdentifier(session, scheme[, fragment]) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.generateIdentifier
+  # MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.generateIdentifier
+
+  @d1_common.util.utf8_to_unicode
+  def generateIdentifierResponse(self, scheme, fragment=None):
+    url = self._rest_url('generate')
+    mime_multipart_fields = [
+      ('scheme', scheme.encode('utf-8')),
+      ('fragment', fragment.encode('utf-8')),
+    ]
+    return self.POST(url, fields=mime_multipart_fields)
+
+
+  @d1_common.util.utf8_to_unicode
+  def generateIdentifier(self, scheme, fragment=None):
+    response = self.generateIdentifierResponse(scheme, fragment)
+    return self._read_dataone_type_response(response)
+
+
   # ----------------------------------------------------------------------------  
   # CNAuthorization / MNAuthorization
   # ----------------------------------------------------------------------------
