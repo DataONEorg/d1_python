@@ -72,6 +72,23 @@ RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
 
 def action(data1CLI, queryArgs):
   ''' Parse the args and take the appropriate action.
+  
+        Subcommands are:
+          create [pid]
+          rename <pid>
+          show [pid]
+          load [pid]
+          save [pid]
+          scimeta [add] <pid or file>
+          scimeta del
+          scimeta show
+          scimeta meta
+          scidata [add] <pid or file> [...]
+          scidata del <pid>
+          scidata show <pid>
+          scidata meta <pid>
+          
+    Note: be sure to update dataone.py.do_package if these change.
   '''
   # Can't continue.
   if data1CLI is None:
