@@ -35,15 +35,18 @@ import sys
 import unittest
 
 # D1.
-try:
-  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
-  import d1_common.const
-  import d1_common.types.exceptions
-  import d1_common.date_time
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_instance_generator.accesspolicy
+import d1_instance_generator.identifier
+import d1_instance_generator.person
+import d1_instance_generator.random_data
+import d1_instance_generator.replicationpolicy
+import d1_instance_generator.subject
+import d1_instance_generator.systemmetadata
 
 # App.
 try:
@@ -51,15 +54,12 @@ try:
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
-#import testing_utilities
-#import testing_context
+
+import testing_utilities
+import testing_context
 
 
 class TestDataONEBaseClient(TestCaseWithURLCompare):
-  def setUp(self):
-    self.baseurl_cn = 'https://cn-dev-2.dataone.org/cn/'
-    self.baseurl_mn = 'https://gmn-dev.dataone.org/mn/'
-
   def test_010(self):
     '''_slice_sanity_check()'''
     client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
@@ -112,7 +112,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def test_040(self):
     '''get_schema_version()'''
-    client = d1_client.d1baseclient.DataONEBaseClient(self.baseurl_cn)
+    client = d1_client.d1baseclient.DataONEBaseClient(self.options.cn_url)
     version = client.get_schema_version('object')
     self.assertTrue(version in ('v1', 'v2', 'v3'))
 
@@ -128,11 +128,11 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_110(self):
     '''CNRead.getLogRecords()'''
-    self._getLogRecords(self.baseurl_cn)
+    self._getLogRecords(self.options.cn_url)
 
   def WAITING_FOR_TEST_ENV_test_120(self):
     '''MNRead.getLogRecords()'''
-    self._getLogRecords(self.baseurl_mn)
+    self._getLogRecords(self.options.mn_url)
 
   # CNRead.get()
   # MNRead.get()
@@ -148,16 +148,16 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_410(self):
     '''CNRead.get()'''
-    self._get(self.baseurl_cn)
+    self._get(self.options.cn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, self.baseurl_cn, True
+      d1_common.types.exceptions.NotFound, self._get, self.options.cn_url, True
     )
 
   def WAITING_FOR_TEST_ENV_test_420(self):
     '''MNRead.get()'''
-    self._get(self.baseurl_mn)
+    self._get(self.options.mn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get, self.baseurl_mn, True
+      d1_common.types.exceptions.NotFound, self._get, self.options.mn_url, True
     )
 
   # CNRead.getSystemMetadata()
@@ -178,16 +178,16 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_510(self):
     '''CNRead.getSystemMetadata()'''
-    self._get_sysmeta(self.baseurl_cn)
+    self._get_sysmeta(self.options.cn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_sysmeta, self.baseurl_cn, True
+      d1_common.types.exceptions.NotFound, self._get_sysmeta, self.options.cn_url, True
     )
 
   def WAITING_FOR_TEST_ENV_test_520(self):
     '''MNRead.getSystemMetadata()'''
-    self._get_sysmeta(self.baseurl_mn)
+    self._get_sysmeta(self.options.mn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_sysmeta, self.baseurl_mn, True
+      d1_common.types.exceptions.NotFound, self._get_sysmeta, self.options.mn_url, True
     )
 
   # CNRead.describe()
@@ -203,21 +203,21 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_610(self):
     '''CNRead.describe()'''
-    self._describe(self.baseurl_cn)
+    self._describe(self.options.cn_url)
     self.assertRaises(
       d1_common.types.exceptions.ServiceFailure,
       self._describe,
-      self.baseurl_cn,
+      self.options.cn_url,
       invalid_pid=True
     )
 
   def WAITING_FOR_TEST_ENV_test_620(self):
     '''MNRead.describe()'''
-    self._describe(self.baseurl_mn)
+    self._describe(self.options.mn_url)
     self.assertRaises(
       d1_common.types.exceptions.ServiceFailure,
       self._describe,
-      self.baseurl_mn,
+      self.options.mn_url,
       invalid_pid=True
     )
 
@@ -235,16 +235,16 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_710(self):
     '''CNRead.getChecksum()'''
-    self._get_checksum(self.baseurl_cn)
+    self._get_checksum(self.options.cn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_checksum, self.baseurl_cn, True
+      d1_common.types.exceptions.NotFound, self._get_checksum, self.options.cn_url, True
     )
 
   def WAITING_FOR_TEST_ENV_test_720(self):
     '''MNRead.getChecksum()'''
-    self._get_checksum(self.baseurl_mn)
+    self._get_checksum(self.options.mn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_checksum, self.baseurl_mn, True
+      d1_common.types.exceptions.NotFound, self._get_checksum, self.options.mn_url, True
     )
 
   # CNCore.listObjects()
@@ -270,11 +270,29 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_810(self):
     '''CNCore.listObjects()'''
-    self._listObjects(self.baseurl_cn)
+    self._listObjects(self.options.cn_url)
 
   def WAITING_FOR_TEST_ENV_test_820(self):
     '''MNCore.listObjects()'''
-    self._listObjects(self.baseurl_mn)
+    self._listObjects(self.options.mn_url)
+
+  # CNCore.generateIdentifier()
+  # MNStorage.generateIdentifier()
+
+  def _test_1050_A(self):
+    '''generateIdentifier(): Returns a valid identifier that matches scheme and fragment'''
+    testing_context.test_fragment = 'test_reserve_identifier_' + \
+      d1_instance_generator.random_data.random_3_words()
+    client = d1_client.d1baseclient.DataONEBaseClient(self.options.gmn_url)
+    identifier = client.generateIdentifier('UUID', testing_context.test_fragment)
+    testing_context.generated_identifier = identifier.value()
+
+  def _test_1050_B(self):
+    '''generateIdentifier(): Returns a different, valid identifier when called second time'''
+    testing_context.test_fragment = 'test_reserve_identifier_' + \
+      d1_instance_generator.random_data.random_3_words()
+    identifier = self.client.generateIdentifier('UUID', testing_context.test_fragment)
+    self.assertNotEqual(testing_context.generated_identifier, identifier.value())
 
   # CNAuthorization.isAuthorized()
   # MNAuthorization.isAuthorized()
@@ -290,16 +308,16 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_910(self):
     '''CNAuthorization.isAuthorized()'''
-    self._is_authorized(self.baseurl_cn)
+    self._is_authorized(self.options.cn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._is_authorized, self.baseurl_cn, True
+      d1_common.types.exceptions.NotFound, self._is_authorized, self.options.cn_url, True
     )
 
   def WAITING_FOR_TEST_ENV_test_920(self):
     '''MNAuthorization.isAuthorized()'''
-    self._is_authorized(self.baseurl_mn)
+    self._is_authorized(self.options.mn_url)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._is_authorized, self.baseurl_mn, True
+      d1_common.types.exceptions.NotFound, self._is_authorized, self.options.mn_url, True
     )
 
 #===============================================================================
@@ -321,15 +339,27 @@ def main():
 
   # Command line opts.
   parser = optparse.OptionParser()
-  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
+  parser.add_option(
+    '--d1-root',
+    dest='d1_root',
+    action='store',
+    type='string',
+    default=d1_common.const.URL_DATAONE_ROOT
+  )
   parser.add_option(
     '--cn-url',
     dest='cn_url',
     action='store',
     type='string',
-    default='http://cn-dev.dataone.org/cn/'
+    default='https://cn-dev-2.dataone.org/cn/'
   )
-  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option(
+    '--mn-url',
+    dest='mn_url',
+    action='store',
+    type='string',
+    default='https://gmn-dev.dataone.org/mn/'
+  )
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
     '--test', action='store',

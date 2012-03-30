@@ -115,20 +115,6 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNCore.reserveIdentifier() fails when called second time with same identifier'''
     self.assertRaises(Exception, self.client.reserveIdentifier, testing_context.test_pid)
 
-  def test_1050_A(self):
-    '''CNCore.generateIdentifier() returns a valid identifier that matches scheme and fragment'''
-    testing_context.test_fragment = 'test_reserve_identifier_' + \
-      d1_instance_generator.random_data.random_3_words()
-    identifier = self.client.generateIdentifier('UUID', testing_context.test_fragment)
-    testing_context.generated_identifier = identifier.value()
-
-  def test_1050_B(self):
-    '''CNCore.generateIdentifier() returns a different, valid identifier when called second time'''
-    testing_context.test_fragment = 'test_reserve_identifier_' + \
-      d1_instance_generator.random_data.random_3_words()
-    identifier = self.client.generateIdentifier('UUID', testing_context.test_fragment)
-    self.assertNotEqual(testing_context.generated_identifier, identifier.value())
-
   def CURRENTLY_FAILING_SEE_TICKET_2361_test_1060(self):
     '''CNCore.listChecksumAlgorithms() returns a valid ChecksumAlgorithmList'''
     algorithms = self.client.listChecksumAlgorithms()
