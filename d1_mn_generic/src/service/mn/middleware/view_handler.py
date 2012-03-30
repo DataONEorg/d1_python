@@ -64,7 +64,7 @@ class view_handler():
 
     session.process_session(request)
 
-    if settings.DEBUG == True:
+    if settings.GMN_DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
       # debugging via regular HTTP, a list of subjects can be passed in by using
       # a vendor specific extension. If this is used together with TLS, the list

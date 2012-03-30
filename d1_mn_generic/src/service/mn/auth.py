@@ -307,7 +307,7 @@ def assert_create_update_delete_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.DEBUG and \
+    if not settings.GMN_DEBUG and \
       not models.WhitelistForCreateUpdateDelete.objects.filter(
         subject__subject__in=request.subjects).exists():
       raise d1_common.types.exceptions.NotAuthorized(

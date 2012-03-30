@@ -82,6 +82,7 @@ urlpatterns = patterns(
   # MNStorage.update() - PUT /object/{pid}
   # MNStorage.delete() - DELETE /object/{pid}
   # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
+  (r'^v1/generate/?$', 'generate_identifier_post'),
   (r'^v1/dirtySystemMetadata/?$', 'dirty_system_metadata_post'),
 
   # Tier 4: Replication API (MNReplication)
@@ -98,7 +99,7 @@ urlpatterns += patterns(
   (r'^internal/home/?$', 'home'),
 )
 
-if settings.DEBUG or settings.MONITOR:
+if settings.GMN_DEBUG or settings.MONITOR:
   urlpatterns += patterns(
     'service.mn.views.diagnostics',
     # Replication.
@@ -111,7 +112,7 @@ if settings.DEBUG or settings.MONITOR:
   )
 
 # Block access to the GMN diagnostic functions if not in debug mode.
-if settings.DEBUG:
+if settings.GMN_DEBUG:
   urlpatterns += patterns(
     'service.mn.views.diagnostics',
     # Diagnostics portal.
@@ -126,7 +127,6 @@ if settings.DEBUG:
     (r'^test/create/(.+)$', 'create'),
     (r'^test/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
     (r'^test/exception/(.+?)/?$', 'exception'),
-    (r'^test/clear_database/?$', 'clear_database'),
     (r'^test/delete_all_objects/?$', 'delete_all_objects'),
     (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),
     # Event Log.

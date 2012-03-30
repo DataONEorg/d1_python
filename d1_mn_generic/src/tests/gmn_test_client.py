@@ -175,11 +175,6 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     response = self.GET(url, headers=headers)
     return response.read()
 
-  def clear_database(self, headers=None):
-    url = self._rest_url('clear_database')
-    response = self.GET(url, headers=headers)
-    return self._read_boolean_response(response)
-
   def delete_all_objects(self, headers=None):
     url = self._rest_url('delete_all_objects')
     response = self.GET(url, headers=headers)

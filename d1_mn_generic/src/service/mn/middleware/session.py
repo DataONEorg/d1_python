@@ -25,10 +25,10 @@
 :Synopsis: Session handling
 :Author: DataONE (Dahl)
 
-The DataONE infrastructure uses X.509 v3 certificates to represent sessions.
-A session contains assertions about the identity of the caller. In particular,
-the session contains a list of equivalent identities and group memberships
-of the caller.
+The DataONE infrastructure uses X.509 v3 certificates to represent sessions. A
+session contains assertions about the identity of the caller. In particular, the
+session contains the primary identity, a list of equivalent identities and group
+memberships of the caller.
 
 A user can connect without providing a certificate (and so, without providing a
 session). This limits the user's access to data that is publicly available.
@@ -43,9 +43,10 @@ algorithm:
 
 1. Start with empty list of subjects
 2. Add the symbolic subject, "public"
-3. Get the DN from the Subject and serialize it to a standardized string. This string is called Subject below.
-4. Add Subject
-5. If the connection was not made with a certificate, stop here.
+3. If the connection was not made with a certificate, stop here.
+4. Get the DN from the Subject and serialize it to a standardized string. This
+   string is called Subject below.
+5. Add Subject
 6. Add the symbolic subject, "authenticatedUser"
 7. If the certificate does not have a SubjectInfo extension, stop here.
 8. Find the Person that has a subject that matches the Subject.
@@ -91,9 +92,10 @@ class process_session(object):
     '''Process the session in the certificate and store the result in the
     request object.
     - The SubjectInfo is stored unprocessed in request.subject_info.
-    - The processed SubjectInfo is stored in request.subjects (as a list of
-      subjects).
-    - The certificate subject DN is stored in request.primary_subject.
+    - The entire list of subjects (primary subject, equivalent identities and
+      group memberships) is stored in request.subjects.
+    - In addition, the certificate subject DN is stored separately in
+      request.primary_subject.
     '''
     self.request = request
     self.request.subjects = set()
@@ -148,8 +150,7 @@ class process_session(object):
 
   def _find_person_by_subject(self, subject):
     for person in self.subject_info.person:
-      # TODO: lower() ?
-      if person.subject.value().lower() == subject.lower():
+      if person.subject.value() == subject:
         return person
     raise d1_common.types.exceptions.InvalidToken(0,
       'SubjectInfo does not have any Person records matching Subject: {0}'\

@@ -63,7 +63,6 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import mn.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -74,6 +73,7 @@ import mn.restrict_to_verb
 import mn.sysmeta_store
 import mn.sysmeta_validate
 import mn.util
+import mn.view_asserts
 import mn.view_shared
 import service.settings
 
@@ -130,47 +130,21 @@ def event_log_view(request):
   '''MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0]
   [, count=1000]) → Log
   '''
-  # select objects ordered by mtime desc.
   query = mn.models.EventLog.objects.order_by('-date_logged').select_related()
-
   # Anyone can call listObjects but only objects to which they have read access
   # or higher are returned. No access control is applied if called by trusted D1
   # infrastructure.
   if not mn.auth.is_trusted(request):
     query = mn.db_filter.add_access_policy_filter(query, request,
                                                   'object__permission')
-
-  # Create a copy of the query that we will not slice, for getting the total
-  # count for this type of objects.
+  query = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
+                                           'fromDate', 'gte')
+  query = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
+                                           'toDate', 'lt')
+  query = mn.db_filter.add_string_filter(query, request, 'event__event',
+                                         'event')
   query_unsliced = query
-
-  obj = {}
-  obj['logRecord'] = []
-
-  # Filter by fromDate.
-  query, changed = mn.db_filter.add_datetime_filter(query, request,
-                                                    'date_logged', 'fromDate',
-                                                    'gte')
-  if changed:
-    query_unsliced = query
-
-  # Filter by toDate.
-  query, changed = mn.db_filter.add_datetime_filter(query, request,
-                                                    'date_logged', 'toDate',
-                                                    'lt')
-  if changed:
-    query_unsliced = query
-
-  # Filter by event type.
-  query, changed = mn.db_filter.add_string_filter(query, request,
-                                                  'event__event', 'event')
-  if changed:
-    query_unsliced = query
-
-  # Create a slice of a query based on request start and count parameters.
   query, start, count = mn.db_filter.add_slice_filter(query, request)
-
-  # Return query data for further processing in middleware layer.  
   return {'query': query, 'start': start, 'count': count,
           'total': query_unsliced.count(), 'type': 'log' }
 
@@ -182,7 +156,7 @@ def node(request):
   '''
   # Django closes the file. (Can't use "with".)
   try:
-    file = open(NODE_REGISTRY_XML_PATH, 'rb')
+    file = open(service.settings.NODE_REGISTRY_XML_PATH, 'rb')
   except EnvironmentError:
     raise d1_common.types.exceptions.ServiceFailure(0,
       'The administrator of this node has not yet provided Member Node '
@@ -341,56 +315,28 @@ def checksum_pid(request, pid):
 # Unrestricted.
 @mn.restrict_to_verb.get
 def object(request):
-  '''MNRead.listObjects(session[, startTime][, endTime][, objectFormat]
+  '''MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   '''
   # The ObjectList is returned ordered by mtime ascending. The order has 
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
   query = mn.models.ScienceObject.objects.order_by('mtime').select_related()
-
-  # Anyone can call listObjects but only objects to which they have read access
-  # or higher are returned. No access control is applied if called by trusted D1
-  # infrastructure.
+  # Arch docs say: Access control for this method MUST be configured to allow
+  # calling by Coordinating Nodes and MAY be configured to allow more general
+  # access. Currently, GMN allows general access to this method, with the
+  # results filtered to only objects the caller has permissions for.
   if not mn.auth.is_trusted(request):
     query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
-
-  # Create a copy of the query that we will not slice, for getting the total
-  # count for this type of objects.
-  # TODO: Is this really creating a copy? Can the assignment to query_unsliced
-  # be moved to a single location just before add_slice_filter()?
+  query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'fromDate',
+                                           'gte')
+  query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'toDate',
+                                           'lt')
+  query = mn.db_filter.add_string_filter(query, request, 'format__format_id',
+                                           'formatId')
+  mn.db_filter.add_bool_filter(query, request, 'replica', 'replicaStatus')
   query_unsliced = query
-
-  # Filters.
-
-  # startTime
-  query, changed = mn.db_filter.add_datetime_filter(query, request, 'mtime',
-                                                    'startTime', 'gte')
-  if changed == True:
-    query_unsliced = query
-
-  # endTime
-  query, changed = mn.db_filter.add_datetime_filter(query, request, 'mtime',
-                                                    'endTime', 'lt')
-  if changed == True:
-    query_unsliced = query
-
-  # objectFormat
-  if 'objectFormat' in request.GET:
-    query = mn.db_filter.add_wildcard_filter(query, 'format__format_id',
-                                     request.GET['objectFormat'])
-    query_unsliced = query
-
-  # replicaStatus
-  if 'replicaStatus' in request.GET:
-    mn.db_filter.add_bool_filter(query, 'replica', request.GET['replicaStatus'])
-  else:
-    mn.db_filter.add_bool_filter(query, 'replica', True)
-
-  # Create a slice of a query based on request start and count parameters.
   query, start, count = mn.db_filter.add_slice_filter(query, request)
-
-  # Return query data for further processing in middleware layer.
   return {'query': query, 'start': start, 'count': count,
           'total': query_unsliced.count(), 'type': 'object' }
 
@@ -559,6 +505,23 @@ def _remove_all_permissions_except_rights_holder(pid):
   mn.auth.set_access_policy(pid)
 
 
+# No locking. Public access.
+@mn.restrict_to_verb.post
+def generate_identifier_post(request):
+  '''MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
+  '''
+  mn.view_asserts.post_has_mime_parts(request, (('field', 'scheme'),))
+  if request.POST['scheme'] != 'UUID':
+    raise d1_common.types.exceptions.InvalidRequest(0, 'Only the UUID scheme '
+    'is currently supported')
+  fragment = request.POST.get('fragment', None)
+  while True:
+    pid = (fragment if fragment else '') + uuid.uuid4().hex
+    if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
+      return mn.view_shared.http_response_with_identifier_type(pid)
+
+
+@mn.restrict_to_verb.post
 @mn.auth.assert_trusted_permission
 def dirty_system_metadata_post(request):
   '''MNStorage.systemMetadataChanged(session, pid, serialVersion,
@@ -597,7 +560,7 @@ def replicate(request):
   except:
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
-      'System Metadata validation failed: {0}'.format(str(err)))
+      'System Metadata validation failed: {0}\nSysmeta: {1}'.format(str(err), sysmeta_xml))
 
   mn.view_asserts.pid_does_not_exist(sysmeta_obj.identifier.value())
 

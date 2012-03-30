@@ -502,8 +502,8 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(
-      startTime=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
-      endTime=d1_common.date_time.from_iso8601('2010-06-22T07:13:51')
+      fromDate=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
+      toDate=d1_common.date_time.from_iso8601('2010-06-22T07:13:51')
       )
     self.assert_counts(sci_objects, 0, 4, 4)
 
@@ -516,8 +516,8 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(
-      startTime=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
-      endTime=d1_common.date_time.from_iso8601('2010-06-22T07:13:51'),
+      fromDate=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
+      toDate=d1_common.date_time.from_iso8601('2010-06-22T07:13:51'),
       start=2,
       count=10
       )
@@ -531,8 +531,8 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(
-      startTime=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
-      endTime=d1_common.date_time.from_iso8601('2010-06-22T07:13:51'),
+      fromDate=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
+      toDate=d1_common.date_time.from_iso8601('2010-06-22T07:13:51'),
       start=0,
       count=10,
       objectFormat='eml://ecoinformatics.org/eml-2.0.1'
@@ -547,8 +547,8 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(
-      startTime=datetime.datetime(2500, 1, 1),
-      endTime=datetime.datetime(2500, 12, 31),
+      fromDate=datetime.datetime(2500, 1, 1),
+      toDate=datetime.datetime(2500, 12, 31),
       start=0,
       count=10,
       objectFormat='eml://ecoinformatics.org/eml-2.0.0'
@@ -842,14 +842,14 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
-      rest_client.GET(self.opts.mn_url + 'object?startTime=\'')
+      rest_client.GET(self.opts.mn_url + 'object?fromDate=\'')
     except d1_common.types.exceptions.InvalidRequest:
       pass
     else:
       self.assertTrue(False, 'Expected 400 Invalid Request')
 
     try:
-      rest_client.GET(self.opts.mn_url + 'object?endTime=\'')
+      rest_client.GET(self.opts.mn_url + 'object?toDate=\'')
     except d1_common.types.exceptions.InvalidRequest:
       pass
     else:

@@ -34,6 +34,7 @@
 
 # Stdlib.
 import datetime
+import fcntl
 import glob
 import hashlib
 import httplib
@@ -51,6 +52,7 @@ import urlparse
 import uuid
 
 # D1.
+import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
@@ -158,8 +160,9 @@ class ProcessReplicationQueue(object):
 
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
-      cert_path='./urnnodemnDevGMN.crt',
-      key_path='./privkey.pem'
+      base_url=self.options.cn_url,
+      cert_path=self.options.cert_path,
+      key_path=self.options.key_path
     )
 
   def _process_replication_queue(self):
@@ -170,7 +173,18 @@ class ProcessReplicationQueue(object):
     task = self._get_next_replication_task()
     if not task:
       return False
-    self._replicate(task)
+    try:
+      self._replicate(task)
+    except (d1_common.types.exceptions.DataONEException, ReplicateError) as e:
+      self.logger.exception('Replication failed')
+      if isinstance(d1_common.types.exceptions.DataONEException, e):
+        self._cn_replicate_task_update(task, 'failed', e)
+      else:
+        self._cn_replicate_task_update(task, 'failed')
+      self._gmn_replicate_task_update(task, str(e))
+    # Allow any exception in _gmn_replicate_task_update() to halt process.
+    # If the process was to continue without being able to update the status
+    # on the task, it would retry it indefinitely.
     return True
 
   def _get_next_replication_task(self):
@@ -182,31 +196,17 @@ class ProcessReplicationQueue(object):
   def _replicate(self, task):
     self.logger.info('-' * 40)
     self.logger.info('Processing PID: {0}'.format(task.pid))
-    s = d1_common.types.exceptions.InvalidSystemMetadata(0, 'test')
     self._gmn_replicate_task_update(task, 'in progress')
-    try:
-      sysmeta_tmp_file = self._get_system_metadata(task)
-      science_data_tmp_file = self._get_science_data(task)
-      self._gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
-    except (d1_common.types.exceptions.DataONEException, ReplicateError) as e:
-      self.logger.exception('Replication failed')
-      replication_status = 'failed'
-    else:
-      replication_status = 'completed'
+    sysmeta_tmp_file = self._get_system_metadata(task)
+    science_data_tmp_file = self._get_science_data(task)
+    self._gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
+    self._gmn_replicate_task_update(task, 'completed')
+    self._cn_replicate_task_update(task, 'completed')
 
-    self._update_replication_status(task, replication_status)
-
-  def _update_replication_status(self, task, replication_status):
-    try:
-      self._cn_replicate_task_update(task, replication_status)
-    except (d1_common.types.exceptions.DataONEException, ReplicateError) as e:
-      replication_status = 'Updating replication status on CN failed: {0}'\
-        .format(e)
-      self.logger.error(replication_status)
-    # Allow any exception in _gmn_replicate_task_update() to halt process.
-    # If the process was to continue without being able to update the status
-    # on the task, it would retry it indefinitely.
-    self._gmn_replicate_task_update(task, replication_status)
+  def _cn_replicate_task_update(self, task, replication_status):
+    self.cn_client.setReplicationStatus(
+      task.pid, settings.NODE_IDENTIFIER, replication_status
+    )
 
   def _gmn_replicate_task_update(self, task, status):
     return self.gmn_client.update_replicate_task_status(task.taskId, status)
@@ -244,15 +244,20 @@ class ProcessReplicationQueue(object):
   def _open_sci_obj_stream_on_member_node(self, gmn_client, pid):
     return gmn_client.get(pid)
 
-  def _cn_replicate_task_update(self, task, status, dataone_error=None):
-    self.cn_client.setReplicationStatus(
-      task.pid, settings.NODE_IDENTIFIER, status, dataone_error
-    )
-
   def _gmn_replicate_create(self, task, sci_obj, sysmeta):
     return self.gmn_client.internal_replicate_create(task.pid, sci_obj, sysmeta)
 
 #===============================================================================
+
+
+def abort_if_other_instance_is_running():
+  single_path = os.path.splitext(__file__)[0] + '.single'
+  f = open(single_path, 'w')
+  try:
+    fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+  except IOError:
+    self.logger.info('Aborted: Another instance is still running')
+    exit(0)
 
 
 def log_setup():
@@ -263,9 +268,10 @@ def log_setup():
     '%(asctime)s %(levelname)-8s %(name)s '
     '%(message)s', '%y/%m/%d %H:%M:%S'
   )
-  file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  file_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(file_logger)
+  #file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log',
+  #                                  'a')
+  #file_logger.setFormatter(formatter)
+  #logging.getLogger('').addHandler(file_logger)
   # Stdout.
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
@@ -274,6 +280,7 @@ def log_setup():
 
 def main():
   log_setup()
+  abort_if_other_instance_is_running()
 
   # Command line options.
   parser = optparse.OptionParser()
@@ -282,7 +289,28 @@ def main():
     dest='gmn_url',
     action='store',
     type='string',
-    default='http://0.0.0.0:8000'
+    default='https://localhost/mn'
+  )
+  parser.add_option(
+    '--cn-url',
+    dest='cn_url',
+    action='store',
+    type='string',
+    default=d1_common.const.URL_DATAONE_ROOT
+  )
+  parser.add_option(
+    '--cert-path',
+    dest='cert_path',
+    action='store',
+    type='string',
+    default='client_side_cert.pem'
+  )
+  parser.add_option(
+    '--key-path',
+    dest='key_path',
+    action='store',
+    type='string',
+    default='client_side_key.pem'
   )
   parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
 

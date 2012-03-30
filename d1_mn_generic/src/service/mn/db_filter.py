@@ -34,6 +34,11 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
 
+# App.
+import mn.view_asserts
+
+# 3/27/12: Wildcard filter removed. Available in SVN.
+
 
 def add_access_policy_filter(query, request, column_name):
   '''Add access control filter to a QuerySet.
@@ -50,7 +55,10 @@ def add_access_policy_filter(query, request, column_name):
   return query.filter(**{filter_arg: request.subjects})
 
 
-def add_bool_filter(query, column_name, bool_val):
+def add_bool_filter(query, request, column_name, param_name):
+  bool_val = request.GET.get(param_name, None)
+  if bool_val is None:
+    return query
   if bool_val not in (True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid boolean format: {0}'.format(bool_val)
@@ -73,29 +81,23 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
   :return: Filtered query.
   :return type: QuerySet
   '''
-  for key in request.GET:
-    m = re.match(param_name, key)
-    if not m:
-      continue
-    date_str = request.GET[key]
-    # parse_date() needs date-time, so if we only have date, add time
-    # (midnight).
-    if not re.search('T', date_str):
-      date_str += 'T00:00:00Z'
-    try:
-      date = d1_common.date_time.from_iso8601(date_str)
-      if not d1_common.date_time.is_utc(date):
-        raise d1_common.types.exceptions.InvalidRequest(
-          0, 'Date-time must be UTC: {0}'.format(request.GET[key])
-        )
-    except d1_common.date_time.iso8601.ParseError, e:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))
-      )
-    filter_arg = '{0}__{1}'.format(column_name, operator)
-    return query.filter(**{filter_arg: date}), True
-
-  return query, False
+  date_str = request.GET.get(param_name, None)
+  if date_str is None:
+    return query
+  # parse_date() needs date-time, so if we only have date, add time
+  # (midnight).
+  if not re.search('T', date_str):
+    date_str += 'T00:00:00Z'
+  try:
+    date = d1_common.date_time.from_iso8601(date_str)
+  except d1_common.date_time.iso8601.ParseError, e:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))
+    )
+  mn.view_asserts.date_is_utc(date)
+  date = d1_common.date_time.strip_timezone(date)
+  filter_arg = '{0}__{1}'.format(column_name, operator)
+  return query.filter(**{filter_arg: date})
 
 
 def add_string_filter(query, request, column_name, param_name):
@@ -112,53 +114,10 @@ def add_string_filter(query, request, column_name, param_name):
   :return: Filtered query.
   :return type: QuerySet
   '''
-  for key in request.GET:
-    m = re.match(param_name, key)
-    if not m:
-      continue
-    value = request.GET[key]
-    return query.filter(**{column_name: value}), True
-
-  return query, False
-
-
-def add_wildcard_filter(query, col_name, value):
-  '''
-  Add wildcard filter to query. Support only a single * at start OR end'''
-
-  # Make sure there are no wildcards except at beginning and/or end of value.
-  if re.match(r'.+\*.+$', value):
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Wildcard is only supported at start OR end of value: {0}'.format(value)
-    )
-
-  value_trimmed = re.match(r'\*?(.*?)\*?$', value).group(1)
-
-  wild_beginning = False
-  wild_end = False
-
-  filter_kwargs = {}
-
-  if re.match(r'\*(.*)$', value):
-    filter_arg = '{0}__endswith'.format(col_name)
-    filter_kwargs[filter_arg] = value_trimmed
-    wild_beginning = True
-
-  if re.match(r'(.*)\*$', value):
-    filter_arg = '{0}__startswith'.format(col_name)
-    filter_kwargs[filter_arg] = value_trimmed
-    wild_end = True
-
-  if wild_beginning == True and wild_end == True:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Wildcard is only supported at start OR end of value: {0}'.format(value)
-    )
-
-  # If no wildcards are used, we add a regular "equals" filter.
-  elif wild_beginning == False and wild_end == False:
-    filter_kwargs[col_name] = value
-
-  return query.filter(**filter_kwargs)
+  value = request.GET.get(param_name, None)
+  if value is None:
+    return query
+  return query.filter(**{column_name: value})
 
 
 def add_slice_filter(query, request):
@@ -190,8 +149,6 @@ def add_slice_filter(query, request):
       0, 'Invalid count value: {0} (count must be 0 <= count <= {1}'.format(
         request.GET['count'], d1_common.const.MAX_LISTOBJECTS)
     )
-  # Apply slice.
-
   # If both start and count are present but set to 0, we just tweak the query
   # so that it won't return any results.
   if start == 0 and count == 0:

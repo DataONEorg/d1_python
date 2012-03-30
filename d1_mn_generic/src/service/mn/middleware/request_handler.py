@@ -77,7 +77,7 @@ class request_handler():
     # Strip any arguments from path_info.
     request.path_info = re.sub(r'\?.*', '', request.path_info)
 
-    if settings.DEBUG == True and settings.ECHO_REQUEST_OBJECT:
+    if settings.GMN_DEBUG == True and settings.ECHO_REQUEST_OBJECT:
       pp = pprint.PrettyPrinter(indent=2)
       return HttpResponse(cgi.escape('<pre>{0}</pre>'.format(pp.pformat(request))))
 

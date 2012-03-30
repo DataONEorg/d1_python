@@ -84,6 +84,9 @@ import service.settings
 
 @mn.restrict_to_verb.get
 def diagnostics(request):
+  if 'clear_db.x' in request.GET:
+    _delete_all_objects()
+    _clear_replication_queue()
   return render_to_response('test.html', {})
 
 # ------------------------------------------------------------------------------
@@ -91,21 +94,28 @@ def diagnostics(request):
 # ------------------------------------------------------------------------------
 
 
+@mn.restrict_to_verb.get
 def get_replication_queue(request):
   return render_to_response('replicate_get_queue.xml',
     {'replication_queue': mn.models.ReplicationQueue.objects.all() },
     mimetype=d1_common.const.MIMETYPE_XML)
 
 
+@mn.restrict_to_verb.get
 def clear_replication_queue(request):
-  mn.models.ReplicationQueue.objects.all().delete()
+  _clear_replication_queue()
   return mn.view_shared.http_response_with_boolean_true_type()
+
+
+def _clear_replication_queue():
+  mn.models.ReplicationQueue.objects.all().delete()
 
 # ------------------------------------------------------------------------------
 # Access Policy.
 # ------------------------------------------------------------------------------
 
 
+@mn.restrict_to_verb.get
 def set_access_policy(request, pid):
   mn.view_asserts.object_exists(pid)
   mn.view_asserts.post_has_mime_parts(request, (('file', 'access_policy'), ))
@@ -115,6 +125,7 @@ def set_access_policy(request, pid):
   return mn.view_shared.http_response_with_boolean_true_type()
 
 
+@mn.restrict_to_verb.get
 def delete_all_access_policies(request):
   # The deletes are cascaded so all subjects are also deleted.
   mn.models.Permission.objects.all().delete()
@@ -174,18 +185,15 @@ def echo_raw_post_data(request):
   return HttpResponse(request.raw_post_data)
 
 
-def clear_database(request):
-  mn.models.ScienceObject.objects.all().delete()
-  mn.models.ScienceObjectFormat.objects.all().delete()
-  mn.models.ScienceObjectChecksumAlgorithm.objects.all().delete()
-  mn.models.DB_update_status.objects.all().delete()
-
-
 @mn.restrict_to_verb.get
 def delete_all_objects(request):
+  _delete_all_objects()
+  return mn.view_shared.http_response_with_boolean_true_type()
+
+
+def _delete_all_objects():
   for object_ in mn.models.ScienceObject.objects.all():
     _delete_object(object_.pid)
-  return mn.view_shared.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.get

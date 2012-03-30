@@ -69,33 +69,56 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import mn.util as util
 import detail_codes
 import settings
+'''Handle exceptions that are raised when processing a request.
+
+An MN is required to always return a DataONE exception on errors. When running
+in production mode (settings.DEBUG = False and settings.GMN_DEBUG = False),
+GMN complies with this by wrapping any non-DataONE exception in a DataONE
+exception.
+
+When running in Django debug mode (settings.DEBUG = True), non-DataONE
+exceptions are returned as Django HTML exception pages.     
+'''
 
 
 class exception_handler():
   def process_exception(self, request, exception):
-    # An exception within this function causes a Django exception page to be
-    # returned if debugging is on and a generic 500 otherwise.
-    # Log the exception.
+    self.request = request
+    self.exception = exception
+
     util.log_exception()
-    # When debugging from a web browser, returning None returns Django's
-    # extremely useful exception page.
-    if settings.DEBUG == True \
-        and settings.GET_DJANGO_EXCEPTION_IN_BROWSER == True \
-        and request.META['HTTP_USER_AGENT'] != d1_common.const.USER_AGENT:
-      return None
-    # An MN is required to always return a DataONE exception on errors. If the
-    # exception is not a DataONE exception, wrap it in a DataONE exception.
-    if not isinstance(exception, d1_common.types.exceptions.DataONEException):
-      exception = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
-    # Add detail code and trace information to the exception.
-    exception.detailCode = str(detail_codes.dataone_exception_to_detail_code()\
-                               .detail_code(request, exception))
-    exception.traceInformation = util.traceback_to_text()
-    # Serialize the exception.
-    exception_serialized = exception.serialize()
-    # Return the exception to the client.
+
+    if isinstance(exception, d1_common.types.exceptions.DataONEException):
+      return self.handle_dataone_exception()
+    else:
+      return self.handle_internal_exception()
+
+  def handle_dataone_exception(self):
+    return self.serialize_dataone_exception()
+
+  def serialize_dataone_exception(self):
+    exception_serialized = self.exception.serialize()
     return HttpResponse(
       exception_serialized,
-      status=exception.errorCode,
+      status=self.exception.errorCode,
       mimetype=d1_common.const.MIMETYPE_XML
     )
+
+  def handle_internal_exception(self):
+    if settings.DEBUG == True:
+      return self.django_html_exception_page()
+    else:
+      return self.wrap_internal_exception_in_dataone_exception()
+
+  def django_html_exception_page(self):
+    # Returning None from the exception handler causes Django to generate
+    # an HTML exception page.
+    return None
+
+  def wrap_internal_exception_in_dataone_exception(self):
+    exception = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
+    exception.detailCode = str(
+      detail_codes.dataone_exception_to_detail_code().detail_code(request, exception)
+    )
+    exception.traceInformation = util.traceback_to_text()
+    return exception

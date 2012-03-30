@@ -32,6 +32,7 @@ import datetime
 import glob
 import hashlib
 import httplib
+import logging
 import mimetypes
 import os
 import pprint
@@ -76,9 +77,10 @@ def deserialize_system_metadata(sysmeta_xml):
   try:
     return dataoneTypes.CreateFromDocument(sysmeta_xml)
   except:
+    logging.error('System Metadata validation failed:\n{0}'.format(sysmeta_xml))
     err = sys.exc_info()[1]
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'System Metadata validation failed: {0}'.format(str(err))
+      0, 'System Metadata validation failed:\n{0}'.format(str(err))
     )
 
 

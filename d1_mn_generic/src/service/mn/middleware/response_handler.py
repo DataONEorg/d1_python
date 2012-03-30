@@ -205,7 +205,7 @@ class response_handler():
       response = view_result
 
     # Extra functionality available in debug mode.
-    if settings.DEBUG == True:
+    if settings.GMN_DEBUG == True:
       # If pretty printed output was requested, force the content type to text.
       # This causes the browser to not try to format the output in any way.
       if 'pretty' in request.REQUEST:
