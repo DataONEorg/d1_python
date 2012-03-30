@@ -42,13 +42,6 @@ from string import join
 import sys
 import xml.dom.minidom
 
-# App.
-from print_level import * #@UnusedWildImport
-import cli_exceptions
-import cli_util
-import package
-import session
-
 # D1
 try:
   import d1_common.util
@@ -59,8 +52,13 @@ except ImportError as e:
   sys.stderr.write('Try: easy_install DataONE_Common\n')
   raise
 
-# d1_client_cli
+# App.
+from print_level import * #@UnusedWildImport
 import cli_client
+import cli_exceptions
+import cli_util
+import package
+import session
 
 
 def log_setup():
@@ -84,50 +82,152 @@ known_object_formats = None
 #
 option_list = [
   make_option(
-    "--algorithm",
+    "--" + session.CHECKSUM[1],
     action="store",
     dest="algorithm",
     help="Checksum algorithm used for a Science Data Object."
   ),
   make_option(
-    "--anonymous",
+    "--" + session.ANONYMOUS[1],
     action="store_true",
     dest="anonymous",
     help="Ignore any installed certificates and connect anonymously"
   ),
   make_option(
-    "--no-anonymous",
+    "--no-" + session.ANONYMOUS[1],
     action="store_false",
     dest="anonymous",
     help="Ignore any installed certificates and connect anonymously"
   ),
   make_option(
-    "--authoritative-mn",
+    "--" + session.AUTH_MN[1],
     action="store",
     dest="authoritative_mn",
     metavar="MN-URI",
     help="Authoritative Member Node for generating System Metadata."
   ),
   make_option(
-    "--cert-file",
+    "--" + session.CERT_FILENAME[1],
     action="store",
     dest="cert_file",
     metavar="FILE",
     help="Path to client certificate"
   ),
   make_option(
-    "--count",
+    "--" + session.COUNT[1],
     action="store",
     dest="count",
     type="int",
     help="Maximum number of items to display"
   ),
   make_option(
-    "--dataone-url",
+    "--" + session.CN_URL[1],
     action="store",
     dest="dataone_url",
     metavar="URI",
     help="URI to use for the Coordinating Node"
+  ),
+  make_option(
+    "--" + session.FROM_DATE[1],
+    action="store",
+    dest="from_date",
+    metavar="DATE",
+    help="Start time used by operations that accept a date range"
+  ),
+  make_option(
+    "--" + session.KEY_FILENAME[1],
+    action="store",
+    dest="key_file",
+    metavar="FILE",
+    help="File of client private key (not required if key is in cert-file"
+  ),
+  make_option(
+    "--" + session.MN_URL[1],
+    action="store",
+    dest="mn_url",
+    metavar="URI",
+    help="Member Node URL"
+  ),
+  make_option(
+    "--" + session.FORMAT[1],
+    action="store",
+    dest="object_format",
+    metavar="OBJECT-FORMAT",
+    help="ID for the Object Format to use when generating System Metadata"
+  ),
+  make_option(
+    "--" + session.ORIG_MN[1],
+    action="store",
+    dest="origin_mn",
+    metavar="MN-URI",
+    help="Originating Member Node to use when generating System Metadata"
+  ),
+  make_option(
+    "--" + session.PRETTY[1],
+    action="store_true",
+    dest="pretty",
+    help="Display XML with human friendly formatting"
+  ),
+  make_option(
+    "--no-" + session.PRETTY[1],
+    action="store_false",
+    dest="pretty",
+    help="Display XML with human friendly formatting"
+  ),
+  make_option(
+    "--" + session.QUERY_STRING[1],
+    action="store",
+    dest="query_string",
+    metavar="QUERY",
+    help="Query string (SOLR or Lucene query syntax) for searches"
+  ),
+  make_option(
+    "--" + session.OWNER[1],
+    action="store",
+    dest="rights_holder",
+    metavar="SUBJECT",
+    help="Subject of the rights holder to use when generating System Metadata"
+  ),
+  make_option(
+    "--" + session.SEARCH_FORMAT[1],
+    action="store",
+    dest="search_object_format",
+    metavar="OBJECT-FORMAT",
+    help="Include only objects of this format when searching"
+  ),
+  make_option(
+    "--" + session.START[1],
+    action="store",
+    dest="start",
+    type="int",
+    help="First item to display for operations that display a list_objects of items"
+  ),
+  make_option(
+    "--" + session.SUBMITTER[1],
+    action="store",
+    dest="submitter",
+    metavar="SUBJECT",
+    help="Subject of the submitter to use when generating System Metadata"
+  ),
+  make_option(
+    "--" + session.TO_DATE[1],
+    action="store",
+    dest="to_date",
+    metavar="DATE",
+    help="End time used by operations that accept a date range"
+  ),
+  make_option(
+    "-v",
+    "--" + session.VERBOSE[1],
+    action="store_true",
+    dest="verbose",
+    help="Display more information"
+  ),
+  make_option(
+    "--no-" + session.VERBOSE[1],
+    action="store_false",
+    dest="verbose",
+    help="Display less information"
   ),
   make_option(
     "--cn",
@@ -137,17 +237,11 @@ option_list = [
     help="Name of the host to use for the Coordinating Node"
   ),
   make_option(
-    "--fields",
+    "--mn",
     action="store",
-    dest="fields",
-    help="Comma delimited list_objects of index fields to return in search responses"
-  ),
-  make_option(
-    "--from-date",
-    action="store",
-    dest="from_date",
-    metavar="DATE",
-    help="Start time used by operations that accept a date range"
+    dest="mn_host",
+    metavar="HOST",
+    help="Name of the host to use for the Member Node"
   ),
   make_option(
     "-i",
@@ -163,110 +257,8 @@ option_list = [
     help="Don't allow interactive commands"
   ),
   make_option(
-    "--key-file",
-    action="store",
-    dest="key_file",
-    metavar="FILE",
-    help="File of client private key (not required if key is in cert-file"
-  ),
-  make_option(
-    "--mn-url",
-    action="store",
-    dest="mn_url",
-    metavar="URI",
-    help="Member Node URL"
-  ),
-  make_option(
-    "--mn",
-    action="store",
-    dest="mn_host",
-    metavar="HOST",
-    help="Name of the host to use for the Member Node"
-  ),
-  make_option(
-    "--object-format",
-    action="store",
-    dest="object_format",
-    metavar="OBJECT-FORMAT",
-    help="ID for the Object Format to use when generating System Metadata"
-  ),
-  make_option(
-    "--origin-mn",
-    action="store",
-    dest="origin_mn",
-    metavar="MN-URI",
-    help="Originating Member Node to use when generating System Metadata"
-  ),
-  make_option(
-    "--pretty",
-    action="store_true",
-    dest="pretty",
-    help="Display XML with human friendly formatting"
-  ),
-  make_option(
-    "--no-pretty",
-    action="store_false",
-    dest="pretty",
-    help="Display XML with human friendly formatting"
-  ),
-  make_option(
-    "--query",
-    action="store",
-    dest="query_string",
-    metavar="QUERY",
-    help="Query string (SOLR or Lucene query syntax) for searches"
-  ),
-  make_option(
     "-q",
     "--quiet",
-    action="store_false",
-    dest="verbose",
-    help="Display less information"
-  ),
-  make_option(
-    "--rights-holder",
-    action="store",
-    dest="rights_holder",
-    metavar="SUBJECT",
-    help="Subject of the rights holder to use when generating System Metadata"
-  ),
-  make_option(
-    "--search-object-format",
-    action="store",
-    dest="search_object_format",
-    metavar="OBJECT-FORMAT",
-    help="Include only objects of this format when searching"
-  ),
-  make_option(
-    "--start",
-    action="store",
-    dest="start",
-    type="int",
-    help="First item to display for operations that display a list_objects of items"
-  ),
-  make_option(
-    "--submitter",
-    action="store",
-    dest="submitter",
-    metavar="SUBJECT",
-    help="Subject of the submitter to use when generating System Metadata"
-  ),
-  make_option(
-    "--to-date",
-    action="store",
-    dest="to_date",
-    metavar="DATE",
-    help="End time used by operations that accept a date range"
-  ),
-  make_option(
-    "-v",
-    "--verbose",
-    action="store_true",
-    dest="verbose",
-    help="Display more information"
-  ),
-  make_option(
-    "--no-verbose",
     action="store_false",
     dest="verbose",
     help="Display less information"
@@ -277,17 +269,17 @@ option_list = [
 def handle_options(cli, options):
   try:
     if options.algorithm is not None:
-      cli.d1.session_set_parameter("algorithm", options.algorithm)
+      cli.d1.session_set_parameter(session.CHECKSUM, options.algorithm)
     if options.anonymous is not None:
-      cli.d1.session_set_parameter("anonymous", options.anonymous)
+      cli.d1.session_set_parameter(session.ANONYMOUS, options.anonymous)
     if options.authoritative_mn is not None:
-      cli.d1.session_set_parameter("authoritative-mn", options.authoritative_mn)
+      cli.d1.session_set_parameter(session.AUTH_MN, options.authoritative_mn)
     if options.cert_file is not None:
-      cli.d1.session_set_parameter("cert-file", options.cert_file)
+      cli.d1.session_set_parameter(session.CERT_FILENAME, options.cert_file)
     if options.count is not None:
-      cli.d1.session_set_parameter("count", options.count)
+      cli.d1.session_set_parameter(session.COUNT, options.count)
     if options.dataone_url is not None:
-      cli.d1.session_set_parameter("dataone-url", options.dataone_url)
+      cli.d1.session_set_parameter(session.CN_URL, options.dataone_url)
     if options.cn_host is not None:
       url = ''.join(
         (
@@ -295,16 +287,14 @@ def handle_options(cli, options):
           d1_common.const.DEFAULT_CN_PATH
         )
       )
-      cli.d1.session_set_parameter("dataone-url", url)
-    if options.fields is not None:
-      cli.d1.session_set_parameter("fields", options.fields)
+      cli.d1.session_set_parameter(session.CN_URL, url)
     if options.from_date is not None:
-      cli.d1.session_set_parameter("from-date", options.from_date)
+      cli.d1.session_set_parameter(session.FROM_DATE, options.from_date)
 # interactive is not in the session.
     if options.key_file is not None:
-      cli.d1.session_set_parameter("key-file", options.key_file)
+      cli.d1.session_set_parameter(session.KEY_FILENAME, options.key_file)
     if options.mn_url is not None:
-      cli.d1.session_set_parameter("mn-url", options.mn_url)
+      cli.d1.session_set_parameter(session.MN_URL, options.mn_url)
     if options.mn_host is not None:
       url = ''.join(
         (
@@ -312,30 +302,30 @@ def handle_options(cli, options):
           d1_common.const.DEFAULT_MN_PATH
         )
       )
-      cli.d1.session_set_parameter("mn-url", url)
+      cli.d1.session_set_parameter(session.MN_URL, url)
     if options.object_format is not None:
-      cli.d1.session_set_parameter("object-format", options.object_format)
+      cli.d1.session_set_parameter(session.FORMAT, options.object_format)
     if options.origin_mn is not None:
-      cli.d1.session_set_parameter("origin-mn", options.origin_mn)
+      cli.d1.session_set_parameter(session.ORIG_MN, options.origin_mn)
     if options.pretty is not None:
-      cli.d1.session_set_parameter("pretty", options.pretty)
+      cli.d1.session_set_parameter(session.PRETTY, options.pretty)
     if options.query_string is not None:
-      cli.d1.session_set_parameter("query-string", options.query_string)
+      cli.d1.session_set_parameter(session.QUERY_STRING, options.query_string)
     if options.rights_holder is not None:
-      cli.d1.session_set_parameter("rights-holder", options.rights_holder)
+      cli.d1.session_set_parameter(session.OWNER, options.rights_holder)
     if options.search_object_format is not None:
       try:
-        cli.d1.session_set_parameter("search-object-format", options.search_object_format)
+        cli.d1.session_set_parameter(session.SEARCH_FORMAT, options.search_object_format)
       except ValueError as e:
         print_error(e.args[0])
     if options.start is not None:
-      cli.d1.session_set_parameter("start", options.start)
+      cli.d1.session_set_parameter(session.START, options.start)
     if options.submitter is not None:
-      cli.d1.session_set_parameter("submitter", options.submitter)
+      cli.d1.session_set_parameter(session.SUBMITTER, options.submitter)
     if options.to_date is not None:
-      cli.d1.session_set_parameter("to-date", options.to_date)
+      cli.d1.session_set_parameter(session.TO_DATE, options.to_date)
     if options.verbose is not None:
-      cli.d1.session_set_parameter("verbose", options.verbose)
+      cli.d1.session_set_parameter(session.VERBOSE, options.verbose)
     cli._update_verbose()
   except cli_exceptions.InvalidArguments as e:
     print_error(e)
@@ -395,11 +385,14 @@ class DataONECLI():
       raise cli_exceptions.InvalidArguments(msg)
 
   def _set_invalid_checksum_to_default(self):
-    algorithm = self.session.get('sysmeta', 'algorithm')
+    algorithm = self.session.get(session.CHECKSUM[0], session.CHECKSUM[1])
     try:
       d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
     except (ValueError, LookupError, KeyError) as e:
-      self.session.set('sysmeta', 'algorithm', d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
+      self.session.set(
+        session.CHECKSUM[0], session.CHECKSUM[1],
+        d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
+      )
       print_error(
         'Invalid checksum algorithm, "{0}", set to default, "{1}"'
         .format(algorithm, d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
@@ -408,7 +401,7 @@ class DataONECLI():
   def _create_system_metadata(self, pid, path):
     checksum = self._get_file_checksum(
       expand_path(path), self.session.get(
-        'sysmeta', 'algorithm'
+        session.CHECKSUM[0], session.CHECKSUM[1]
       )
     )
     size = self._get_file_size(expand_path(path))
@@ -419,10 +412,17 @@ class DataONECLI():
     sysmeta = self._create_system_metadata(pid, expand_path(path))
     return sysmeta.toxml()
 
-  def _verbose(self):
-    verbosity = self.session.get('cli', 'verbose')
+  def _is_verbose(self):
+    verbosity = self.session.get(session.VERBOSE[0], session.VERBOSE[1])
     if verbosity is not None:
       return verbosity
+    else:
+      return False
+
+  def _is_pretty(self):
+    pretty = self.session.get(session.PRETTY[0], session.PRETTY[1])
+    if pretty is not None:
+      return pretty
     else:
       return False
 
@@ -508,7 +508,7 @@ class DataONECLI():
     '''Display or save file like object'''
     if not path:
       for line in file_like_object:
-        if self._verbose():
+        if self._is_verbose():
           print_info(line.rstrip())
         else:
           print line.rstrip()
@@ -537,7 +537,7 @@ class DataONECLI():
           .format(e.friendly_format()))
 
   def _pretty(self, xml_doc):
-    if self.session.get('cli', 'pretty'):
+    if self._is_pretty():
       dom = xml.dom.minidom.parseString(xml_doc)
       return dom.toprettyxml(indent='  ')
     return xml_doc
@@ -559,13 +559,15 @@ class DataONECLI():
       except d1_common.types.exceptions.DataONEException as e:
         pass
     if metadata is None:
-      print_msg(e.friendly_format())
+      print_info(e.friendly_format())
     else:
-      if ((self.session.get('cli', 'pretty') is not None) and
-          self.session.get('cli', 'pretty') and not foundOnCN):
-        print("<!-- Found the metadata on the Member Node... -->")
-      sci_meta_xml = metadata.toxml()
-      self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
+      self.system_metadata_print(metadata, path, foundOnCN)
+
+  def system_metadata_print(self, metadata, path=None, foundOnCN=False):
+    if self.session.is_pretty() and not foundOnCN:
+      print("<!-- Found the metadata on the Member Node... -->")
+    sci_meta_xml = metadata.toxml()
+    self.output(StringIO.StringIO(self._pretty(sci_meta_xml)), expand_path(path))
 
   def resolve(self, pid):
     '''Get Object Locations for Object.
@@ -578,28 +580,21 @@ class DataONECLI():
         'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
       )
     for location in object_location_list.objectLocation:
-      if self._verbose():
+      if self._is_verbose():
         print_info(location.url)
       else:
         print location.url
-
-  def package(self, objlist):
-    '''Package the given object(s).
-    '''
-    pkg = package.create(session=self.session, name=objlist[0], pids=objlist[1:])
-    if pkg is not None:
-      package.save(self.session, pkg)
 
   def list_objects(self, path):
     '''MN listObjects.
     '''
     client = cli_client.CLIMNClient(self.session)
     object_list = client.listObjects(
-      startTime=self.session.get('search', 'from-date'),
-      endTime=self.session.get('search', 'to-date'),
-      objectFormat=self.session.get('search', 'search-object-format'),
-      start=self.session.get('slice', 'start'),
-      count=self.session.get('slice', 'count')
+      startTime=self.session.get(session.FROM_DATE[0], session.FROM_DATE[1]),
+      endTime=self.session.get(session.TO_DATE[0], session.TO_DATE[1]),
+      objectFormat=self.session.get(session.SEARCH_FORMAT[0], session.SEARCH_FORMAT[1]),
+      start=self.session.get(session.START[0], session.START[1]),
+      count=self.session.get(session.COUNT[0], session.COUNT[1])
     )
     object_list_xml = object_list.toxml()
     self.output(StringIO.StringIO(self._pretty(object_list_xml)), expand_path(path))
@@ -609,10 +604,10 @@ class DataONECLI():
     '''
     client = cli_client.CLIMNClient(self.session)
     object_log = client.getLogRecords(
-      fromDate=self.session.get('search', 'from-date'),
-      toDate=self.session.get('search', 'to-date'),
-      start=self.session.get('slice', 'start'),
-      count=self.session.get('slice', 'count')
+      fromDate=self.session.get(session.FROM_DATE[0], session.FROM_DATE[1]),
+      toDate=self.session.get(session.TO_DATE[0], session.TO_DATE[1]),
+      start=self.session.get(session.START[0], session.START[1]),
+      count=self.session.get(session.COUNT[0], session.COUNT[1])
     )
     object_log_xml = object_log.toxml()
     self.output(StringIO.StringIO(self._pretty(object_log_xml)), expand_path(path))
@@ -661,7 +656,7 @@ class DataONECLI():
   def search(self, line):
     '''CN search.
     '''
-    if self.session.get('search', 'query-type') == 'solr':
+    if self.session.get(session.QUERY_ENGINE[0], session.QUERY_ENGINE[1]) == 'solr':
       return self.search_solr(line)
     return self.search_generic(line)
 
@@ -671,11 +666,12 @@ class DataONECLI():
     try:
       client = cli_client.CLICNClient(self.session)
       object_list = client.search(
-        queryType='solr',
-        q=line if line else
-        self.session.get('search', 'query') + ' ' + self.time_span_to_solr_filter(),
-        start=self.session.get('slice', 'start'),
-        rows=self.session.get('slice', 'count')
+        queryType=d1_common.const.DEFAULT_SEARCH_ENGINE,
+        q=line if line else self.session.get(
+          session.QUERY_STRING[0], session.QUERY_STRING[1]
+        ) + ' ' + self.time_span_to_solr_filter(),
+        start=self.session.get(session.START[0], session.START[1]),
+        rows=self.session.get(session.COUNT[0], session.COUNT[1])
       )
       print self._pretty(object_list.toxml())
     #
@@ -697,8 +693,7 @@ class DataONECLI():
         )
         print_info('Warning: %s' % msg)
       else:
-        v = self.session.get('cli', 'verbose')
-        if (v is not None) and v:
+        if self._is_verbose():
           print_error('Unexpected error:\n%s' % str(e))
         else:
           print_error('Unexpected error')
@@ -709,8 +704,8 @@ class DataONECLI():
     pass
 
   def time_span_to_solr_filter(self):
-    fromdate = self.session.get('search', 'from-date')
-    todate = self.session.get('search', 'to-date')
+    fromdate = self.session.get(session.FROM_DATE[0], session.FROM_DATE[1])
+    todate = self.session.get(session.TO_DATE[0], session.TO_DATE[1])
     return 'datemodified:[{0} TO {1}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else '*',
       d1_common.date_time.to_http_datetime(todate) if todate else '*'
@@ -745,14 +740,14 @@ class DataONECLI():
       return
     #
     # Validate the hash algorithm
-    if name == 'algorithm':
+    if name == session.CHECKSUM[1]:
       try:
         d1_common.util.get_checksum_calculator_by_dataone_designator(value)
       except (KeyError, NameError) as e:
         raise ValueError('"%s": Invalid algorithm value' % value)
     #
     # Validate the object format.
-    if name == 'object-format' or name == 'search-object-format':
+    if name == session.FORMAT[1] or name == session.SEARCH_FORMAT[1]:
       formats = self.get_known_object_formats()
       if len(formats) > 0 and value not in formats:
         raise ValueError('"%s": Invalid format' % value)
@@ -806,6 +801,7 @@ class CLI(cmd.Cmd):
     self.d1 = DataONECLI()
     cmd.Cmd.__init__(self)
     self._update_verbose()
+    self.package = None
     self.prompt = '> '
     self.intro = 'DataONE Command Line Interface'
 
@@ -824,19 +820,12 @@ class CLI(cmd.Cmd):
     return args
 
   def _update_verbose(self):
-    verbosity = self.d1.session.get('cli', 'verbose')
+    verbosity = self.d1.session.get(session.VERBOSE[0], session.VERBOSE[1])
     if verbosity is not None:
       if verbosity:
         logging.getLogger('').setLevel(logging.DEBUG)
       else:
         logging.getLogger('').setLevel(logging.INFO)
-
-  def is_verbose(self):
-    verbosity = self.d1.session.get('cli', 'verbose')
-    if verbosity is not None:
-      return verbosity
-    else:
-      return False
 
   #-----------------------------------------------------------------------------
   # Session.
@@ -1236,19 +1225,26 @@ class CLI(cmd.Cmd):
       cli_util._handle_unexpected_exception()
 
   def do_package(self, line):
-    ''' package name pid [pid ...]
-    Create and store a data package with the given name for the given objects.
+    ''' package <subcommand> [args]
+          Subcommands are:
+            create [pid]
+            rename <pid>
+            show [pid]
+            load [pid]
+            save [pid]
+            scimeta [add] <pid or file>
+            scimeta del
+            scimeta show
+            scimeta meta
+            scidata [add] <pid or file> [...]
+            scidata del <pid>
+            scidata show <pid>
+            scidata meta <pid>
     '''
     try:
-      queryArgs = self._split_args(line, 2, 99)
-      # Clear out blank items
-      objlist = []
-      for q in queryArgs:
-        if q is not None:
-          objlist.append(q)
-        else:
-          break
-      self.d1.package(objlist)
+      queryArgs = self._split_args(line, 1, 99)
+      queryArgs = cli_util.clear_None_from_list(queryArgs)
+      package.action(self, queryArgs)
 
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
@@ -1364,19 +1360,19 @@ def main():
   )
   options, remainder = parser.parse_args()
 
-  cli = CLI()
-  cli._update_verbose()
-  handle_options(cli, options)
+  data1CLI = CLI()
+  data1CLI._update_verbose()
+  handle_options(data1CLI, options)
 
   # Start the command line interpreter loop, or just do one command?
   if ((options.interactive is not None) and options.interactive) or len(remainder) == 0:
     try:
-      cli.cmdloop()
+      data1CLI.cmdloop()
     except KeyboardInterrupt as e:
       print ''
-      cli.do_exit('')
+      data1CLI.do_exit('')
   else:
-    cli.onecmd(join(remainder))
+    data1CLI.onecmd(join(remainder))
 
 
 if __name__ == '__main__':

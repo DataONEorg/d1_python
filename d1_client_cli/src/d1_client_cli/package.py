@@ -55,8 +55,10 @@ except ImportError as e:
 
 # cli
 from print_level import * #@UnusedWildImport
-import cli_util
 import cli_client
+import cli_exceptions
+import cli_util
+import data_package
 import system_metadata
 
 ## -- Constants.
@@ -66,6 +68,117 @@ META_ENDPOINT = 'meta'
 RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
 
 #-- Public (static) interface --------------------------------------------------
+
+
+def action(data1CLI, queryArgs):
+  ''' Parse the args and take the appropriate action.
+  '''
+  # Can't continue.
+  if data1CLI is None:
+    raise cli_exceptions.InvalidArguments('data1CLI is missing.')
+
+  #  Create a new package.
+  if queryArgs[0] == 'create':
+    if len(queryArgs) == 1:
+      data1CLI.package = data_package.DataPackage(None)
+    else:
+      data1CLI.package = data_package.DataPackage(queryArgs[1])
+
+  # Can't continue without a package
+  elif data1CLI.package is None:
+    raise cli_exceptions.InvalidArguments('There is no package.')
+
+  # rename the existing package.
+  elif queryArgs[0] == 'rename':
+    if len(queryArgs) == 1:
+      raise cli_exceptions.InvalidArguments('Missing new pid?')
+    else:
+      data1CLI.package.pid = queryArgs[1]
+
+  # Can't continue without a session
+  elif data1CLI.package is None:
+    raise cli_exceptions.InvalidArguments('There is no session.')
+
+  # Show the package, passing in pretty from the session.
+  elif queryArgs[0] == 'show':
+    data1CLI.package.show(data1CLI.session.is_pretty())
+
+  # Load either a new package, or reload the same package.
+  elif queryArgs[0] == 'load':
+    if len(queryArgs) == 1:
+      if data1CLI.package.pid is None:
+        raise cli_exceptions.InvalidArguments('Load which pid?')
+      else:
+        new_pkg = data_package.find(data1CLI.package.pid)
+        if new_pkg is not None:
+          data1CLI.package = new_pkg
+    else:
+      new_pkg = data_package.find(queryArgs[1])
+      if new_pkg is not None:
+        data1CLI.package = new_pkg
+      else:
+        print_warn('%s: no such package' % queryArgs[1])
+
+  # Save the package out to DataONE.
+  elif queryArgs[0] == 'save':
+    if len(queryArgs) == 1:
+      if data1CLI.package.pid is None:
+        raise cli_exceptions.InvalidArguments('Save as what pid?')
+      else:
+        data1CLI.package.save()
+    else:
+      data1CLI.package.pid = queryArgs[1]
+      data1CLI.package.save()
+
+    # Add, remove, or show the science metadata object.
+  elif queryArgs[0] == 'scimeta':
+    if len(queryArgs) == 1:
+      msg = 'What action with the scimeta?  (add, del, show, meta)'
+      raise cli_exceptions.InvalidArguments('What action with the scimeta?')
+    elif queryArgs[1] == 'add':
+      if len(queryArgs) == 2:
+        raise cli_exceptions.InvalidArguments('Add what object as scimeta?')
+      else:
+        data1CLI.package.add_scimeta(data1CLI.session, queryArgs[2])
+    elif queryArgs[1] == 'del':
+      data1CLI.package.del_scimeta()
+    elif queryArgs[1] == 'show':
+      data1CLI.object_print(data1CLI.package.scimeta)
+    elif queryArgs[1] == 'meta':
+      data1CLI.system_metadata_print(data1CLI.package.scimeta_sysmeta)
+    else:
+      data1CLI.package.add_scimeta(queryArgs[1])
+
+    # Add, remove, or show the science data object.
+  elif queryArgs[0] == 'scidata':
+    if len(queryArgs) == 1:
+      msg = 'What action with the scidata?  (add, del, show, meta)'
+      raise cli_exceptions.InvalidArguments(msg)
+    elif queryArgs[1] == 'add':
+      if len(queryArgs) <= 2:
+        raise cli_exceptions.InvalidArguments('Add what object(s) as scidata?')
+      else:
+        data1CLI.package.add_data(queryArgs[2:])
+    elif queryArgs[1] == 'del':
+      data1CLI.package.del_meta(queryArgs[2:])
+    elif queryArgs[1] == 'show':
+      if len(queryArgs) <= 2:
+        raise cli_exceptions.InvalidArguments('Show which scidata object?')
+      elif queryArgs[2] not in data1CLI.package.scidata:
+        raise cli_exceptions.InvalidArguments(': unknown scidata object')
+      else:
+        data1CLI.object_print(data1CLI.package.scidata[queryArgs[2]])
+    elif queryArgs[1] == 'meta':
+      if len(queryArgs) <= 2:
+        raise cli_exceptions.InvalidArguments('Show sysmeta from which scidata object?')
+      elif queryArgs[2] not in data1CLI.package.scidata_sysmeta:
+        raise cli_exceptions.InvalidArguments(': unknown scidata object')
+      else:
+        data1CLI.system_metadata_print(data1CLI.package.scidata_sysmeta[queryArgs[2]])
+
+  else:
+    msg = '%s: unknown sub-command' % queryArgs[0]
+    raise cli_exceptions.InvalidArguments(msg)
 
 
 def create(session, name, pids):
@@ -281,7 +394,7 @@ def _resolve_scimeta_url(session, pid):
       for location in locations.objectLocation:
         return location.url # Just get one.
   except:
-    exc_class, exc_msgs, exc_traceback = sys.exc_info()
+    exc_class = sys.exc_info()[:1]
     if exc_class.__name__ == 'NotFound':
       print_warn(' no such pid: %s' % pid)
     cli_util._handle_unexpected_exception()

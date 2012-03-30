@@ -43,6 +43,7 @@ except ImportError as e:
 
 # App.
 from print_level import * #@UnusedWildImport
+import session
 
 
 class MissingSysmetaParameters(Exception):
@@ -80,24 +81,24 @@ class system_metadata():
     # Fix arguments.
     _formatId = formatId
     if _formatId is None:
-      _formatId = session.get('sysmeta', 'object-format')
+      _formatId = session.get(session.FORMAT[0], session.FORMAT[1])
     _algorithm = algorithm
     if _algorithm is None:
-      _algorithm = session.get('sysmeta', 'algorithm')
+      _algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
 
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.serialVersion = 1
     sysmeta.identifier = pid
     sysmeta.formatId = _formatId
     sysmeta.size = size
-    sysmeta.submitter = session.get('sysmeta', 'submitter')
-    sysmeta.rightsHolder = session.get('sysmeta', 'rights-holder')
+    sysmeta.submitter = session.get(session.SUBMITTER[0], session.SUBMITTER[1])
+    sysmeta.rightsHolder = session.get(session.OWNER[0], session.OWNER[1])
     sysmeta.checksum = dataoneTypes.checksum(checksum)
     sysmeta.checksum.algorithm = _algorithm
     sysmeta.dateUploaded = datetime.datetime.utcnow()
     sysmeta.dateSysMetadataModified = datetime.datetime.utcnow()
-    sysmeta.originmn = session.get('sysmeta', 'origin-mn')
-    sysmeta.authoritativemn = session.get('sysmeta', 'authoritative-mn')
+    sysmeta.originmn = session.get(session.ORIG_MN[0], session.ORIG_MN[1])
+    sysmeta.authoritativemn = session.get(session.AUTH_MN[0], session.AUTH_MN[1])
     sysmeta.accessPolicy = access_policy
     sysmeta.replicationPolicy = replication_policy
     #pyxb.RequireValidWhenGenerating(False)

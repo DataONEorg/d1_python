@@ -32,7 +32,6 @@ import ast
 import copy
 import os
 import pickle
-import sys
 from types import * #@UnusedWildImport
 import urlparse
 
@@ -52,21 +51,52 @@ from print_level import * #@UnusedWildImport
 import replication_policy
 import system_metadata
 
+# Identifiers for names, in case they change again (i.e. object-format to format-id).
+SECTION_cli = 'cli'
+SECTION_node = 'node'
+SECTION_slice = 'slice'
+SECTION_auth = 'auth'
+SECTION_sysmeta = 'sysmeta'
+SECTION_search = 'search'
+
+PRETTY = (SECTION_cli, 'pretty')
+VERBOSE = (SECTION_cli, 'verbose')
+CN_URL = (SECTION_node, 'dataone-url')
+MN_URL = (SECTION_node, 'mn-url')
+START = (SECTION_slice, 'start')
+COUNT = (SECTION_slice, 'count')
+ANONYMOUS = (SECTION_auth, 'anonymous')
+CERT_FILENAME = (SECTION_auth, 'cert-file')
+KEY_FILENAME = (SECTION_auth, 'key-file')
+FORMAT = (SECTION_sysmeta, 'format-id')
+SUBMITTER = (SECTION_sysmeta, 'submitter')
+OWNER = (SECTION_sysmeta, 'rights-holder')
+ORIG_MN = (SECTION_sysmeta, 'origin-mn')
+AUTH_MN = (SECTION_sysmeta, 'authoritative-mn')
+CHECKSUM = (SECTION_sysmeta, 'algorithm')
+FROM_DATE = (SECTION_search, 'from-date')
+TO_DATE = (SECTION_search, 'to-date')
+SEARCH_FORMAT = (SECTION_search, 'search-format-id')
+QUERY_ENGINE = (SECTION_search, 'query-type')
+QUERY_STRING = (SECTION_search, 'query')
+
 # Session variable mapping.
 #
 session_variable_dict = {
-  'dataoneurl': ('dataone-url', str),
-  'mnurl': ('mn-url', str),
-  'certpath': ('cert-file', str),
-  'keypath': ('key-file', str),
-  'objectformat': ('object-format', str),
-  'rightsholder': ('rights-holder', str),
-  'originmn': ('origin-mn', str),
-  'authoritativemn': ('authoritative-mn', str),
-  'fromdate': ('from-date', str),
-  'todate': ('to-date', str),
-  'searchobjectformat': ('search-object-format', str),
-  'querytype': ('query-type', str),
+  'dataoneurl': (CN_URL[1], str),
+  'mnurl': (MN_URL[1], str),
+  'certpath': (CERT_FILENAME[1], str),
+  'keypath': (KEY_FILENAME[1], str),
+  'object-format': (FORMAT[1], str),
+  'objectformat': (FORMAT[1], str),
+  'rightsholder': (OWNER[1], str),
+  'originmn': (ORIG_MN[1], str),
+  'authoritativemn': (AUTH_MN[1], str),
+  'fromdate': (FROM_DATE[1], str),
+  'todate': (TO_DATE[1], str),
+  'search-object-format': (SEARCH_FORMAT[1], str),
+  'searchobjectformat': (SEARCH_FORMAT[1], str),
+  'querytype': (QUERY_ENGINE[1], str),
 }
 
 
@@ -81,42 +111,45 @@ class session(object):
 
   def get_default_session(self):
     return copy.deepcopy({
-      'cli': {
-        'pretty': (True, bool),
-        'verbose': (False, bool),
+      SECTION_cli: {
+        PRETTY[1]: (True, bool),
+        VERBOSE[1]: (False, bool),
       },
-      'node': {
-        'dataone-url': (d1_common.const.URL_DATAONE_ROOT, str),
-        'mn-url': ('https://localhost/mn/', str),
+      SECTION_node: {
+        CN_URL[1]: (d1_common.const.URL_DATAONE_ROOT, str),
+        MN_URL[1]: ('https://localhost/mn/', str),
       },
-      'slice': {
-        'start': (0, int),
-        'count': (d1_common.const.MAX_LISTOBJECTS, int),
+      SECTION_slice: {
+        START[1]: (0, int),
+        COUNT[1]: (d1_common.const.MAX_LISTOBJECTS, int),
       },
-      'auth': {
-        'anonymous': (True, bool),
-        'cert-file': (None, str),
-        'key-file': (None, str),
+      SECTION_auth: {
+        ANONYMOUS[1]: (True, bool),
+        CERT_FILENAME[1]: (None, str),
+        KEY_FILENAME[1]: (None, str),
       },
-      'sysmeta': {
-        'object-format': (None, str),
-        'submitter': (None, str),
-        'rights-holder': (None, str),
-        'origin-mn': (None, str),
-        'authoritative-mn': (None, str),
-        'algorithm': (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str),
+      SECTION_sysmeta: {
+        FORMAT[1]: (None, str),
+        SUBMITTER[1]: (None, str),
+        OWNER[1]: (None, str),
+        ORIG_MN[1]: (None, str),
+        AUTH_MN[1]: (None, str),
+        CHECKSUM[1]: (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str),
       },
-      'search': {
-        'from-date': (None, str),
-        'to-date': (None, str),
-        'search-object-format': (None, str),
-        'query-type': ('solr', str),
-        'query': ('*:*', str),
+      SECTION_search: {
+        FROM_DATE[1]: (None, str),
+        TO_DATE: (None, str),
+        SEARCH_FORMAT[1]: (None, str),
+        QUERY_ENGINE[1]: (d1_common.const.DEFAULT_SEARCH_ENGINE, str),
+        QUERY_STRING[1]: ('*:*', str),
       },
     })
 
   def get_session_section_ordering(self):
-    return 'cli', 'node', 'slice', 'auth', 'sysmeta', 'search'
+    return (
+      SECTION_cli, SECTION_node, SECTION_slice, SECTION_auth, SECTION_sysmeta,
+      SECTION_search
+    )
 
   def get_default_pickle_file_path(self):
     return os.path.join(os.environ['HOME'], '.d1client.conf')
@@ -139,11 +172,19 @@ class session(object):
         'Invalid session parameter: {0} / {1}'.format(section, name)
       )
 
+  def is_pretty(self):
+    pretty = self.session[SECTION_cli][PRETTY][0]
+    return (pretty is not None) and pretty
+
+  def is_verbose(self):
+    verbose = self.session[SECTION_cli][VERBOSE][0]
+    return (verbose is not None) and verbose
+
   #=============================================================================
   # Public.
   #=============================================================================
 
-  def get(self, section, name):
+  def get(self, section, name=None):
     self._assert_valid_session_parameter(section, name)
     return self.session[section][name][0]
 
@@ -151,7 +192,7 @@ class session(object):
     section = self._find_section_containing_session_parameter(name)
     return self.get(section, name)
 
-  def set(self, section, name, value):
+  def set(self, section, name, value): #@ReservedAssignment
     self._assert_valid_session_parameter(section, name)
     name_type = self.session[section][name][1]
     self.session[section][name] = (value, name_type)
@@ -296,30 +337,30 @@ class session(object):
     curr = self.session
     changed = False
     #
-    # Add new values.
     for section in dflt.keys():
       curr_section = curr.get(section)
       dflt_section = dflt.get(section)
       #
+      # Replace old names with new names.
+      for old_name in curr_section.keys():
+        new_value = session_variable_dict.get(old_name)
+        if new_value is not None:
+          curr_value = curr_section[old_name]
+          print_info(
+            'Replacing session variable "{0}" with "{1}" (value "{2}")'
+            .format(old_name, new_value[0], str(curr_value[0]))
+          )
+          curr_section[new_value[0]] = (curr_value[0], new_value[0])
+          del (curr_section[old_name])
+          changed = True
+      #
+      # Add new values.
       for v in dflt_section.keys():
         if curr_section.get(v) is None:
           add_value = dflt_section[v][0]
           print_info('Adding missing value: "{0}" = "{1}"'.format(v, str(add_value)))
           curr_section[v] = (dflt_section[v][0], dflt_section[v][1])
           changed = True
-    #
-    # Replace old names with new names.
-    for old_name in curr_section.keys():
-      new_value = session_variable_dict.get(old_name)
-      if new_value is not None:
-        curr_value = curr_section[old_name]
-        print_info(
-          'Replacing session variable "{0}" with "{1}" (value "{2}")'
-          .format(old_name, new_value[0], str(curr_value[0]))
-        )
-        curr_section[new_value[0]] = (curr_value[0], new_value[0])
-        del (curr_section[old_name])
-        changed = True
     #
     if (changed is not None) and changed:
       print_info(
@@ -359,27 +400,27 @@ class session(object):
         * authoritative-mn, origin-mn, rights-holder
     '''
     save_data = False
-    if self.get('sysmeta', 'authoritative-mn') is None:
-      mn = self.get('node', 'mn-url')
+    if self.get(AUTH_MN[0], AUTH_MN[1]) is None:
+      mn = self.get(MN_URL[0], MN_URL[1])
       mn_host = self._get_host_from_url(mn)
       if mn_host is not None:
-        self.set('sysmeta', 'authoritative-mn', mn_host)
-        print_info('Setting authoritative-mn to "%s"' % mn_host)
+        self.set(AUTH_MN[0], AUTH_MN[1], mn_host)
+        print_info('Setting %s to "%s"' % (AUTH_MN[1], mn_host))
         save_data = True
     #
-    if self.get('sysmeta', 'origin-mn') is None:
-      mn = self.get('node', 'mn-url')
+    if self.get(ORIG_MN[0], ORIG_MN[1]) is None:
+      mn = self.get(MN_URL[0], MN_URL[1])
       mn_host = self._get_host_from_url(mn)
       if mn_host is not None:
-        self.set('sysmeta', 'origin-mn', mn_host)
-        print_info('Setting origin-mn to "%s"' % mn_host)
+        self.set(ORIG_MN[0], ORIG_MN[1], mn_host)
+        print_info('Setting %s to "%s"' % (ORIG_MN[1], mn_host))
         save_data = True
     #
-    if self.get('sysmeta', 'rights-holder') is None:
-      submitter = self.get('sysmeta', 'submitter')
+    if self.get(OWNER[0], OWNER[1]) is None:
+      submitter = self.get(SUBMITTER[0], SUBMITTER[1])
       if submitter is not None:
-        self.set('sysmeta', 'rights-holder', submitter)
-        print_info('Setting rights-holder to "%s"' % submitter)
+        self.set(OWNER[0], OWNER[1], submitter)
+        print_info('Setting %s to "%s"' % (OWNER[1], submitter))
         save_data = True
     if save_data:
       print_info('  *  Session values were changed, please "save" them!\n')

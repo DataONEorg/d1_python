@@ -51,6 +51,7 @@ except ImportError as e:
 # Client_CLI
 import cli_exceptions
 from print_level import * #@UnusedWildImport
+import session
 
 #===============================================================================
 
@@ -79,18 +80,18 @@ class CLIClient(object):
       raise cli_exceptions.CLIError('Certificate not found')
 
   def _get_certificate(self):
-    if self.session.get('auth', 'anonymous'):
+    if self.session.get(session.ANONYMOUS[0], session.ANONYMOUS[1]):
       return None
-    cert_path = self.session.get('auth', 'cert-file')
+    cert_path = self.session.get(session.CERT_FILENAME[0], session.CERT_FILENAME[1])
     if not cert_path:
       cert_path = self._get_cilogon_certificate_path()
     self._assert_certificate_present(cert_path)
     return cert_path
 
   def _get_certificate_private_key(self):
-    if self.session.get('auth', 'anonymous'):
+    if self.session.get(session.ANONYMOUS[0], session.ANONYMOUS[1]):
       return None
-    key_path = self.session.get('auth', 'key-file')
+    key_path = self.session.get(session.KEY_FILENAME[0], session.KEY_FILENAME[1])
     if key_path is not None:
       self._assert_certificate_present(key_path)
     return key_path
@@ -101,13 +102,13 @@ class CLIClient(object):
 class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, session, mn_url=None):
     if mn_url is None:
-      mn_url = session.get('node', 'mn-url')
-    self._assert_mn_url(mn_url)
+      mn_url = session.get(session.MN_URL[0], session.MN_URL[1])
+    self._assert_mn_url(mn_url, session.MN_URL[1])
     return super(CLIMNClient, self).__init__(session, mn_url)
 
-  def _assert_mn_url(self, mn_url):
+  def _assert_mn_url(self, mn_url, var_name):
     if not mn_url:
-      raise cli_exceptions.CLIError('"mn-url" parameter required')
+      raise cli_exceptions.CLIError('"' + var_name + '" parameter required')
 
 #===============================================================================
 
@@ -115,10 +116,10 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
 class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def __init__(self, session, dataone_url=None):
     if dataone_url is None:
-      dataone_url = session.get('node', 'dataone-url')
+      dataone_url = session.get(session.CN_URL[0], session.CN_URL[1])
     self._assert_dataone_url(dataone_url)
     return super(CLICNClient, self).__init__(session, dataone_url)
 
-  def _assert_dataone_url(self, dataone_url):
+  def _assert_dataone_url(self, dataone_url, var_name):
     if not dataone_url:
-      raise cli_exceptions.CLIError('"dataone-url" parameter required')
+      raise cli_exceptions.CLIError('"' + var_name + '" parameter required')

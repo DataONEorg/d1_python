@@ -29,9 +29,12 @@
 '''
 
 # Stdlib.
-from print_level import * #@UnusedWildImport
 import sys
 import traceback
+import urlparse
+
+# D1_Client_CLI
+from print_level import * #@UnusedWildImport
 
 
 def _handle_unexpected_exception(max_traceback_levels=5):
@@ -67,3 +70,25 @@ def _print_unexpected_exception(max_traceback_levels=5):
   print_error('  Traceback:')
   for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
     print_error('    {0}'.format(tb))
+
+
+def get_host(url):
+  '''Get the host component without the port number.
+  '''
+  url_dict = urlparse.urlparse(url)
+  if url_dict.netloc is not None:
+    host = url_dict.netloc
+    ndx = host.find(":")
+    if ndx > 0:
+      host = host[:ndx]
+    return host
+
+
+def clear_None_from_list(obj_list):
+  result_list = []
+  for q in obj_list:
+    if q is not None:
+      result_list.append(q)
+    else:
+      break
+  return result_list
