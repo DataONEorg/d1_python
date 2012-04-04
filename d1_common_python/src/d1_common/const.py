@@ -78,3 +78,6 @@ URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 SUBJECT_VERIFIED = 'verifiedUser'
 SUBJECT_AUTHENTICATED = 'authenticatedUser'
 SUBJECT_PUBLIC = 'public'
+
+# Search
+DEFAULT_SEARCH_ENGINE = 'solr'
