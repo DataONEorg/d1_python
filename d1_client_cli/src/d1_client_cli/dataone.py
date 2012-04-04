@@ -876,25 +876,37 @@ class CLI(cmd.Cmd):
   [session parameter] is omitted.
   
     "show formats" will display all known object formats.
+    "show package" will invoke "package show".
     '''
     try:
-      session_parameter = self._split_args(line, 0, 1)
-      if not self.show_special_parameter(session_parameter):
-        self.d1.session_print_parameter(session_parameter)
+      params = cli_util.clear_None_from_list(self._split_args(line, 0, 9))
+      if len(params) > 0:
+        if not self.show_special_parameter(params):
+          self.d1.session_print_parameter(params[0])
+      else:
+        self.d1.session_print_parameter(None)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
     except:
       cli_util._handle_unexpected_exception()
 
-  def show_special_parameter(self, parameter):
+  def show_special_parameter(self, param_list):
     ''' Check to see if this a "special" parameter.
     '''
-    if parameter is None:
+    if ((param_list is None) or (len(param_list) == 0)):
       return False
-    elif parameter == 'formats':
+    #
+    elif param_list[0] == 'formats':
       print_info(
         'Known formats:\n  ' + '\n  '.join(sorted(self.d1.get_known_object_formats()))
       )
+      return True
+    #
+    elif param_list[0] == 'package':
+      pid = ''
+      if len(param_list) > 1:
+        pid = ' ' + param_list[1]
+      self.do_package('show' + pid)
       return True
     #
     return False

@@ -51,6 +51,7 @@ except ImportError as e:
 # common
 try:
   import d1_common.util as util
+  import d1_common.types.exceptions
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Please install d1_common.\n')
@@ -61,6 +62,7 @@ from print_level import * #@UnusedWildImport
 import cli_client
 import cli_exceptions
 import cli_util
+from const import VERBOSE_sect, VERBOSE_name
 import data_package
 import system_metadata
 
@@ -150,15 +152,65 @@ class PackageCLI(cmd.Cmd):
   ##== Commands =============================================================
 
   def do_create(self, line):
-    ''' create <pid>
+    ''' create <pid> [scimeta [scidata [...]]]
         Create a package.
     '''
-    pid = self._split_args(line, 0, 1)
-
+    # Check to see if we already have a package and it needs saving.
     if self.package is not None:
-      self._inner_delete()
+      if not self.package.is_dirty():
+        self.package = None
+      elif cli_util.confirm('Package needs to be saved.  Continue?'):
+        self.package = None
+      else:
+        return
 
+    # Get the pid from the arguments.
+    values = cli_util.clear_None_from_list(self._split_args(line, 0, 9))
+    pid = None
+    if len(values) > 0:
+      pid = values[0]
+
+      # Quiet.
+    hush = self.session.get(VERBOSE_sect, VERBOSE_name)
+    self.session.set(VERBOSE_sect, VERBOSE_name, False)
+    # See if such an object already exists, if so see if the user wants to continue.
+    mn_client = cli_client.CLICNClient(self.session)
+    object_location_list = None
+    try:
+      r = mn_client.resolve(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      if e.errorCode != 404:
+        raise cli_exceptions.CLIError(
+          'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
+        )
+    except:
+      exc_type = sys.exc_info()[:1] # Just the type
+      if exc_type.__name__ != 'NotFound': # The dang thing throws an exeption on a 404.
+        cli_util._handle_unexpected_exception()
+    # Now see if there was something.
+    if ((object_location_list is not None)
+        and (len(object_location_list.objectLocation) > 0)):
+      if not cli_util.confirm(
+        'An object already exists under "%s".  Are you sure you want to create one?' % pid
+      ):
+        return
+    # Return to previous verbosity
+    self.session.set(VERBOSE_sect, VERBOSE_name, hush)
+
+    # Create the package object.
+    print 'do_create.tick'
     self.package = data_package.DataPackage(pid)
+
+    # Add an existing scimeta item.
+    print 'do_create.tick'
+    if len(values) > 1:
+      self.package.scimeta_add(self.session, values[1], None)
+
+    # Add exiting scidata items.
+    print 'do_create.tick'
+    if len(values) > 2:
+      for scidata_pid in cli_util.clear_None_from_list(values[2:]):
+        self.package.scidata_add(self.session, scidata_pid, None)
 
   def do_delete(self, line):
     ''' Delete the package.
@@ -222,6 +274,29 @@ class PackageCLI(cmd.Cmd):
     elif self.package.pid is None:
       raise cli_exceptions.InvalidArguments('The current package has no pid.')
     self.package.save(self.session)
+
+  def do_add(self, line):
+    ''' transpose the scimeta and scidata command.
+    '''
+    if self.package is None:
+      raise cli_exceptions.InvalidArguments('There is no package.')
+    cmd, pid, file_name = self._split_args(line, 1, 2)
+
+    if pid is not None:
+      pid = ' ' + pid
+    else:
+      pid = ''
+    if file_name is not None:
+      file_name = ' ' + file_name
+    else:
+      file_name = ''
+
+    if ((cmd == 'scimeta') or (cmd == 'meta')):
+      self.do_scimeta('add ' + pid + file_name)
+    elif ((cmd == 'scidata') or (cmd == 'data')):
+      self.do_scidata('add ' + pid + file_name)
+    else:
+      print_error('Use "scimeta add" or "scidata add".')
 
   def do_scimeta(self, line):
     ''' scimeta [add | del | show | meta ] [options]
