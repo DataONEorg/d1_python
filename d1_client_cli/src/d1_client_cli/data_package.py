@@ -29,7 +29,9 @@
 
 # Stdlib.
 import sys
+import string
 import StringIO
+import tempfile
 
 # 3rd party
 from rdflib import Namespace, URIRef
@@ -57,19 +59,313 @@ except ImportError as e:
 from print_level import * #@UnusedWildImport
 import cli_client
 import cli_exceptions
+import cli_util
 import system_metadata
 
 RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
 
+KEY_Pid = 'pid'
+KEY_Dirty = 'dirty'
+KEY_Obj = 'object'
+KEY_Meta = 'meta'
+
+#** DataPackage ***************************************************************
+
 
 class DataPackage(object):
-  def __init__(self, pid):
+  def __init__(self, pid=None):
     ''' Create a package
     '''
     self.pid = pid
     #
-    self.scimeta_pid = None
-    self.scidata_pid_list = ()
+    # Objects in here a dicts with keywords pid, dirty, obj, meta; which are
+    # string, boolean, blob, and pyxb objects respectively.
+    self.original_pid = None
+    self.scimeta = None
+    self.scidata_dict = {}
+
+    #== Manipulation ==========================================================
+
+  def show(self, pretty=False):
+    ''' Display the package, optionally in a "pretty" manner.
+    '''
+    if (pretty is not None) and pretty:
+      msg = self.pid
+      if self.pid is None:
+        msg = '(none)'
+      print_info('Id:              %s' % msg)
+
+      if ((self.scimeta is None) or (self.scimeta.get(KEY_Obj) is None)):
+        print_info('Metadata Object: (none)')
+      else:
+        print_info('Metadata Object:')
+        self._print_dataitem(self.scimeta.get(KEY_Obj), True)
+
+      if ((self.scidata_dict is None)
+           or (len(self.scidata_dict) == 0)
+           or (self.scidata_dict.get(KEY_Obj) is None)):
+        print_info('Data Objects:    (none)')
+      else:
+        print_info('Data Objects:')
+        for item in self.scidata_dict.items():
+          self._print_dataitem(item, True)
+
+  def _print_dataitem(self, item, pretty=False):
+    if (pretty is not None) and pretty:
+      flags = ''
+      pre = ' ('
+      post = ''
+
+      if (item.get(KEY_Dirty) is not None) and item.get(KEY_Dirty):
+        flags = pre + 'needs saving'
+        pre = ', '
+        post = ')'
+      if item.get(KEY_Obj) is not None:
+        flags = pre + 'has an object'
+        pre = ', '
+        post = ')'
+      if item.get(KEY_Meta) is not None:
+        flags = pre + 'has sysmeta'
+        pre = ', '
+        post = ')'
+
+      flags = flags + post
+      print_info('  %s%s' % (item.get(KEY_Pid), flags))
+
+  def name(self, pid):
+    ''' Rename the package
+    '''
+    print pid
+    if pid is None:
+      if cli_util.confirm('Do you really want to clear the name of the package?'):
+        self.pid = None
+      else:
+        raise cli_exceptions.InvalidArguments('Missing the new pid')
+    else:
+      self.pid = pid
+      print_info('Package name is cleared.')
+
+  def load(self):
+    ''' Get the object referred to by this pid and make sure it is a
+        package.
+    '''
+    if self.pid is None:
+      raise cli_exceptions.InvalidArguments('Missing pid')
+
+    print_debug('_get_by_pid.pid: %s' % pid)
+    tmp_flo = tempfile.mkstemp(prefix='d1obj-', suffix='.dat')
+    sciobj_flo = cli_client.get_science_object(session, pid, tmp_flo, True)
+    print_debug('_get_by_pid.sciobj_flo: %s' % str(sciobj_flo))
+    raise cli_exceptions.CLIError('load: not fully implemented')
+
+    if sciobj_flo is not None:
+      return DataObject(pid=pid, dirty=True, obj_flo=sciobj_flo)
+    else:
+      return None
+
+  def save(self):
+    ''' Save this object referred to by this pid.
+    '''
+    if self.pid is None:
+      raise cli_exceptions.InvalidArguments('Missing pid')
+
+    raise cli_exceptions.CLIError('save: not fully implemented')
+
+  def scimeta_add(self, session, pid, file_name=None):
+    ''' Add a scimeta object.
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing the session')
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing the pid (and possibly the object)')
+
+    new_scimeta_obj = self._get_by_pid(session, pid)
+    if new_scimeta_obj is None: # Could we find it?
+      if file_name is None:
+        raise cli_exceptions.InvalidArguments(
+          'Couldn\'t find scimeta by pid %s, and there was no file specified.' % pid
+        )
+      new_scimeta_obj = self._create_object(session, pid, file_name)
+      if new_scimeta_obj is None:
+        raise cli_exceptions.InvalidArguments(
+          'Couldn\'t find scimeta by pid %s, and couldn\'t create it with specified file.'
+          % pid
+        )
+    # Found it.
+    self._validate_scimeta_obj(new_scimeta_obj) # throws exception
+    if new_scimeta_obj.get[KEY_Meta] is None:
+      new_scimeta_obj[KEY_Meta] = self._create_sysmeta(
+        new_scimeta_obj[KEY_Obj]
+      ) # throws exception if it can't
+    self.scimeta_obj = new_scimeta_obj
+
+  def scimeta_del(self):
+    ''' Remove the science metadata object.
+    '''
+    if cli_util.confirm('Are you sure you want to remove the science meta object?'):
+      self.scimeta_obj = None
+      self.scimeta_meta = None
+
+  def scimeta_showobj(self, session):
+    ''' Show the science metadata object.
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing the session')
+    if self.scimeta is None:
+      raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
+    if self.scimeta.get(KEY_Obj) is None:
+      raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
+    else:
+      self._show_obj(self.scimeta.get(KEY_Obj), session._is_pretty())
+
+  def scimeta_showmeta(self, session):
+    ''' Show the system metadata of the science metadata object.
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing the session')
+    if self.scimeta is None:
+      raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
+    if self.scimeta.get(KEY_Meta) is None:
+      raise cli_exceptions.InvalidArguments(
+        'There is science metadata object defined, but no associated system metadata object'
+      )
+    self._show_obj(self.scimeta.get(KEY_Meta), session._is_pretty())
+
+  def scidata_add(self, session, pid, file_name):
+    ''' Add a science data object to the list.
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing the session')
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing the pid')
+    if pid in self.scidata_dict:
+      raise cli_exceptions.InvalidArguments(
+        'That pid (%s) is already in the package.' % pid
+      )
+    self.scidata_dict[pid] = self._create_object(session, pid, file_name)
+
+  def scidata_del(self, pid):
+    ''' Remove a science data object.
+    '''
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing the pid')
+    if pid not in self.scidata_dict:
+      print_warn('There isn\'t a science data object with pid %s' % pid)
+    elif cli_util.confirm(
+      'Are you sure you want to remove the science data object "%s"?' % pid
+    ):
+      del self.scidata_dict[pid]
+
+  def scidata_clear(self):
+    ''' Remove all science data objects
+    '''
+    if self.scidata_dict is None:
+      self.scidata_dict = {}
+    elif ((len(self.scidata_dict) > 0)
+        and cli_util.confirm('Are you sure you want to remove all the science data objects?')):
+      self.scidata_dict.clear()
+
+  def scidata_showobj(self, session, pid):
+    ''' Show the specified science data object.
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing the session')
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing the pid')
+    if self.scidata_dict is None:
+      self.scidata_dict = []
+    if pid not in self.scidata_dict:
+      raise cli_exceptions.InvalidArguments('%s: no such science data object defined')
+    obj = self.scidata_dict.get(pid).get(KEY_Obj)
+    if obj is None:
+      raise cli_exceptions.InvalidArguments('%s: has no science data object')
+    self._show_obj(obj, session._is_pretty())
+
+  def scidata_showmeta(self, session, pid):
+    ''' Show the system metadata for the specified science data object.
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing the session')
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing the pid')
+    if self.scidata_dict is None:
+      self.scidata_dict = []
+    if pid not in self.scidata_dict:
+      raise cli_exceptions.InvalidArguments('%s: no such science data object defined')
+    obj = self.scidata_dict.get(pid).get(KEY_Meta)
+    if obj is None:
+      raise cli_exceptions.InvalidArguments('%s: has no system metadata object')
+    self._show_obj(obj, session._is_pretty())
+
+    #== Helpers ===============================================================
+
+  def _get_by_pid(self, session, pid):
+    ''' Return (object, dirty, object_flo, system metadata)
+    '''
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing pid')
+
+    raise cli_exceptions.CLIError('DataPackage._get_by_pid: not fully implemented')
+
+    print_debug('_get_by_pid.pid: %s' % pid)
+    tmp_flo = tempfile.mkstemp(prefix='d1obj-', suffix='.dat')
+    sciobj_flo = cli_client.get_science_object(session, pid, tmp_flo, True)
+    print_debug('_get_by_pid.sciobj_flo: %s' % str(sciobj_flo))
+    return None
+
+    if sciobj_flo is not None:
+      return DataObject(pid=pid, dirty=True, obj_flo=sciobj_flo)
+    else:
+      return None
+
+  def _create_object(self, session, pid, file_name):
+    ''' Create a data object.
+        Return (object, dirty, object, system metadata)
+    '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing pid')
+    if pid is None:
+      raise cli_exceptions.InvalidArguments('Missing pid')
+
+    actual_object_dict = self._get_by_pid(pid)
+    if actual_object_dict is None:
+      if file_name is None:
+        raise cli_exceptions.InvalidArguments(
+          'Couldn\'t find the pid, and missing the file name'
+        )
+    else:
+      # Do the creation...
+      raise cli_exceptions.CLIError('DataPackage._create_object: not fully implemented')
+
+  def _create_sysmeta(self, obj):
+    ''' Create a system meta data object.
+    '''
+    raise cli_exceptions.CLIError('DataPackage._create_sysmeta: not implemented')
+
+  def _validate_scimeta_obj(self, scimeta_obj):
+    ''' Verify that the object is really a science metadata object.
+    '''
+    if scimeta_obj is None:
+      raise cli_exceptions.InvalidArguments('Missing scimeta_obj')
+    if scimeta_obj.get(KEY_Obj) is None:
+      raise cli_exceptions.InvalidArguments('Missing the actual science metadata object')
+    #
+    objectId = self._is_metadata_format(scimeta_obj.get(KEY_Obj).objectId)
+    if not self._is_metadata_format(objectId):
+      msg = 'The science metadata object is not the right type (%s)'
+      raise cli_exceptions.InvalidArguments(msg % objectId)
+
+  def is_dirty(self):
+    ''' Check to see if anything needs to be saved.
+    '''
+    if self.scimeta is not None:
+      if (KEY_Dirty in self.scimeta) and self.scimeta[KEY_Dirty]:
+        return True
+    if self.scidata_dict is not None:
+      for item in self.scidata_dict.values():
+        if (KEY_Dirty in item) and item[KEY_Dirty]:
+          return True
+    return False
 
   def serialize(self, fmt='xml'):
     assert (
@@ -100,7 +396,7 @@ class DataPackage(object):
 
     pkg_xml = self.serialize('xml')
 
-    algorithm = session.get(CHECKSUM_sect, CHECKSUM_name)
+    algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
     hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
     hash_fcn.update(pkg_xml)
     checksum = hash_fcn.hexdigest()
@@ -196,6 +492,21 @@ class DataPackage(object):
       return True
     else:
       return False
+
+#** DataObject *****************************************************************
+
+
+class DataObject(object):
+  def __init__(self, pid=None, dirty=None, obj_flo=None, meta=None):
+    ''' Create a data object
+    '''
+    self.pid = pid
+    self.dirty = dirty
+    self.obj_flo = obj_flo
+    self.meta = meta
+
+  def is_dirty(self):
+    return (self.dirty is not None) and self.dirty
 
 #-- Static methods -------------------------------------------------------------
 

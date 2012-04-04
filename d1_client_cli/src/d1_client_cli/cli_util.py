@@ -29,6 +29,7 @@
 '''
 
 # Stdlib.
+import string
 import sys
 import traceback
 import urlparse
@@ -84,6 +85,22 @@ def get_host(url):
     return host
 
 
+def get_mn_url_from_host(host):
+  return ''.join(
+    (
+      d1_common.const.DEFAULT_MN_PROTOCOL, '://', host, d1_common.const.DEFAULT_MN_PATH
+    )
+  )
+
+
+def get_cn_url_from_host(host):
+  return ''.join(
+    (
+      d1_common.const.DEFAULT_CN_PROTOCOL, '://', host, d1_common.const.DEFAULT_CN_PATH
+    )
+  )
+
+
 def clear_None_from_list(obj_list):
   result_list = []
   for q in obj_list:
@@ -92,3 +109,32 @@ def clear_None_from_list(obj_list):
     else:
       break
   return result_list
+
+
+def confirm(prompt, default='no', allow_blank=False):
+  if default == 'no':
+    p = ' [yes,NO] '
+    def_response = False
+  elif default == 'yes':
+    p = ' [YES,no] '
+    def_response = True
+  else:
+    default = ''
+    p = ''
+    def_response = None
+
+  while True:
+    response = raw_input(prompt + p)
+    if ((response is None) or (len(response) == 0)):
+      response = default
+    else:
+      response = string.lower(response)
+
+    if response == 'yes':
+      return True
+    elif response == 'no':
+      return False
+    elif allow_blank:
+      return default_response
+    else:
+      print_warn('Answer must be "yes" or "no" (or nothing)')

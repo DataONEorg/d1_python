@@ -163,32 +163,10 @@ class PackageCLI(cmd.Cmd):
   def do_delete(self, line):
     ''' Delete the package.
     '''
-    self._inner_delete()
-
-  def _inner_delete(self):
-    if self.package is None:
-      return
-    if not self.package.is_dirty():
+    if ((self.package is not None)
+        and self.package.is_dirty()
+        and cli_util.confirm('Do you really want to delete the package?')):
       self.package = None
-      return
-
-    while True:
-      prompt = 'Are you sure you want to remove the package? [yes, NO] '
-      yes_no = raw_input(prompt)
-      if ((yes_no is None) or (len(yes_no) == 0)):
-        yes_no = 'no'
-      else:
-        yes_no = string.lower(yes_no)
-
-      if yes_no == 'yes':
-        print_info('Deleting package.')
-        self.package = None
-        return
-      elif yes_no == 'no':
-        print_info('Skipping delete.')
-        return
-      else:
-        print_warn('Answer must be "yes" or "no" (or nothing)')
 
   def do_name(self, line):
     ''' name <pid>
@@ -197,7 +175,7 @@ class PackageCLI(cmd.Cmd):
     if self.package is None:
       raise cli_exceptions.InvalidArguments('There is no package to rename.')
 
-    pid = self._split_args(line, 1, 0)
+    pid = self._split_args(line, 0, 1)
     self.package.name(pid)
 
   def do_show(self, line):
@@ -225,12 +203,13 @@ class PackageCLI(cmd.Cmd):
     elif ((self.package is not None) and (self.package.pid is not None)):
       load_pid = self.package.pid
     else:
-      raise cli_exceptions.InvalidArguments('There is no package to load.')
+      raise cli_exceptions.InvalidArguments('No package specified to load.')
     #
-    # Get the package
+    # Create the package object
     new_package = data_package.DataPackage(load_pid)
     if new_package is not None:
       self.package = new_package
+      self.package.load()
 
   def do_save(self, line):
     ''' save
