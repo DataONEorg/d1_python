@@ -197,17 +197,14 @@ class PackageCLI(cmd.Cmd):
     # Return to previous verbosity
     self.session.set(VERBOSE_sect, VERBOSE_name, hush)
 
-    # Create the package object.
-    print 'do_create.tick'
+    # Create the package object (finally!).
     self.package = data_package.DataPackage(pid)
 
     # Add an existing scimeta item.
-    print 'do_create.tick'
     if len(values) > 1:
       self.package.scimeta_add(self.session, values[1], None)
 
     # Add exiting scidata items.
-    print 'do_create.tick'
     if len(values) > 2:
       for scidata_pid in cli_util.clear_None_from_list(values[2:]):
         self.package.scidata_add(self.session, scidata_pid, None)

@@ -1392,6 +1392,7 @@ def main():
     try:
       if len(remainder) != 0:
         data1CLI.onecmd(join(remainder))
+        print ''
       data1CLI.cmdloop()
 
     except KeyboardInterrupt as e:
