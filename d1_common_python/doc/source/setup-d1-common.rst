@@ -23,5 +23,3 @@ To set the library up in ``/var/local/dataone/d1_common_python`` using
   # svn co https://repository.dataone.org/software/cicore/trunk/d1_common_python d1_common_python
   # cd d1_common_python/src/
   # python setup.py develop
-
-
