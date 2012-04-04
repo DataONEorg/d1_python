@@ -50,6 +50,7 @@ except ImportError as e:
 
 # Client_CLI
 import cli_exceptions
+from const import * #@UnusedWildImport
 from print_level import * #@UnusedWildImport
 import session
 
@@ -80,18 +81,18 @@ class CLIClient(object):
       raise cli_exceptions.CLIError('Certificate not found')
 
   def _get_certificate(self):
-    if self.session.get(session.ANONYMOUS[0], session.ANONYMOUS[1]):
+    if self.session.get(ANONYMOUS_sect, ANONYMOUS_name):
       return None
-    cert_path = self.session.get(session.CERT_FILENAME[0], session.CERT_FILENAME[1])
+    cert_path = self.session.get(CERT_FILENAME_sect, CERT_FILENAME_name)
     if not cert_path:
       cert_path = self._get_cilogon_certificate_path()
     self._assert_certificate_present(cert_path)
     return cert_path
 
   def _get_certificate_private_key(self):
-    if self.session.get(session.ANONYMOUS[0], session.ANONYMOUS[1]):
+    if self.session.get(ANONYMOUS_sect, ANONYMOUS_name):
       return None
-    key_path = self.session.get(session.KEY_FILENAME[0], session.KEY_FILENAME[1])
+    key_path = self.session.get(KEY_FILENAME_sect, KEY_FILENAME_name)
     if key_path is not None:
       self._assert_certificate_present(key_path)
     return key_path
@@ -102,8 +103,8 @@ class CLIClient(object):
 class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, session, mn_url=None):
     if mn_url is None:
-      mn_url = session.get(session.MN_URL[0], session.MN_URL[1])
-    self._assert_mn_url(mn_url, session.MN_URL[1])
+      mn_url = session.get(MN_URL_sect, MN_URL_name)
+    self._assert_mn_url(mn_url, MN_URL_name)
     return super(CLIMNClient, self).__init__(session, mn_url)
 
   def _assert_mn_url(self, mn_url, var_name):
@@ -116,7 +117,7 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
 class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def __init__(self, session, dataone_url=None):
     if dataone_url is None:
-      dataone_url = session.get(session.CN_URL[0], session.CN_URL[1])
+      dataone_url = session.get(CN_URL_sect, CN_URL_name)
     self._assert_dataone_url(dataone_url)
     return super(CLICNClient, self).__init__(session, dataone_url)
 

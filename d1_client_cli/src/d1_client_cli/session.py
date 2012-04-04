@@ -47,56 +47,28 @@ except ImportError as e:
 import access_control
 import cli_exceptions
 import cli_util
+from const import * #@UnusedWildImport
 from print_level import * #@UnusedWildImport
 import replication_policy
 import system_metadata
 
-# Identifiers for names, in case they change again (i.e. object-format to format-id).
-SECTION_cli = 'cli'
-SECTION_node = 'node'
-SECTION_slice = 'slice'
-SECTION_auth = 'auth'
-SECTION_sysmeta = 'sysmeta'
-SECTION_search = 'search'
-
-PRETTY = (SECTION_cli, 'pretty')
-VERBOSE = (SECTION_cli, 'verbose')
-CN_URL = (SECTION_node, 'dataone-url')
-MN_URL = (SECTION_node, 'mn-url')
-START = (SECTION_slice, 'start')
-COUNT = (SECTION_slice, 'count')
-ANONYMOUS = (SECTION_auth, 'anonymous')
-CERT_FILENAME = (SECTION_auth, 'cert-file')
-KEY_FILENAME = (SECTION_auth, 'key-file')
-FORMAT = (SECTION_sysmeta, 'format-id')
-SUBMITTER = (SECTION_sysmeta, 'submitter')
-OWNER = (SECTION_sysmeta, 'rights-holder')
-ORIG_MN = (SECTION_sysmeta, 'origin-mn')
-AUTH_MN = (SECTION_sysmeta, 'authoritative-mn')
-CHECKSUM = (SECTION_sysmeta, 'algorithm')
-FROM_DATE = (SECTION_search, 'from-date')
-TO_DATE = (SECTION_search, 'to-date')
-SEARCH_FORMAT = (SECTION_search, 'search-format-id')
-QUERY_ENGINE = (SECTION_search, 'query-type')
-QUERY_STRING = (SECTION_search, 'query')
-
 # Session variable mapping.
 #
 session_variable_dict = {
-  'dataoneurl': (CN_URL[1], str),
-  'mnurl': (MN_URL[1], str),
-  'certpath': (CERT_FILENAME[1], str),
-  'keypath': (KEY_FILENAME[1], str),
-  'object-format': (FORMAT[1], str),
-  'objectformat': (FORMAT[1], str),
-  'rightsholder': (OWNER[1], str),
-  'originmn': (ORIG_MN[1], str),
-  'authoritativemn': (AUTH_MN[1], str),
-  'fromdate': (FROM_DATE[1], str),
-  'todate': (TO_DATE[1], str),
-  'search-object-format': (SEARCH_FORMAT[1], str),
-  'searchobjectformat': (SEARCH_FORMAT[1], str),
-  'querytype': (QUERY_ENGINE[1], str),
+  'dataoneurl': (CN_URL_name, str),
+  'mnurl': (MN_URL_name, str),
+  'certpath': (CERT_FILENAME_name, str),
+  'keypath': (KEY_FILENAME_name, str),
+  'object-format': (FORMAT_name, str),
+  'objectformat': (FORMAT_name, str),
+  'rightsholder': (OWNER_name, str),
+  'originmn': (ORIG_MN_name, str),
+  'authoritativemn': (AUTH_MN_name, str),
+  'fromdate': (FROM_DATE_name, str),
+  'todate': (TO_DATE_name, str),
+  'search-object-format': (SEARCH_FORMAT_name, str),
+  'searchobjectformat': (SEARCH_FORMAT_name, str),
+  'querytype': (QUERY_ENGINE_name, str),
 }
 
 
@@ -112,36 +84,36 @@ class session(object):
   def get_default_session(self):
     return copy.deepcopy({
       SECTION_cli: {
-        PRETTY[1]: (True, bool),
-        VERBOSE[1]: (False, bool),
+        PRETTY_name: (True, bool),
+        VERBOSE_name: (False, bool),
       },
       SECTION_node: {
-        CN_URL[1]: (d1_common.const.URL_DATAONE_ROOT, str),
-        MN_URL[1]: ('https://localhost/mn/', str),
+        CN_URL_name: (d1_common.const.URL_DATAONE_ROOT, str),
+        MN_URL_name: ('https://localhost/mn/', str),
       },
       SECTION_slice: {
-        START[1]: (0, int),
-        COUNT[1]: (d1_common.const.MAX_LISTOBJECTS, int),
+        START_name: (0, int),
+        COUNT_name: (d1_common.const.MAX_LISTOBJECTS, int),
       },
       SECTION_auth: {
-        ANONYMOUS[1]: (True, bool),
-        CERT_FILENAME[1]: (None, str),
-        KEY_FILENAME[1]: (None, str),
+        ANONYMOUS_name: (True, bool),
+        CERT_FILENAME_name: (None, str),
+        KEY_FILENAME_name: (None, str),
       },
       SECTION_sysmeta: {
-        FORMAT[1]: (None, str),
-        SUBMITTER[1]: (None, str),
-        OWNER[1]: (None, str),
-        ORIG_MN[1]: (None, str),
-        AUTH_MN[1]: (None, str),
-        CHECKSUM[1]: (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str),
+        FORMAT_name: (None, str),
+        SUBMITTER_name: (None, str),
+        OWNER_name: (None, str),
+        ORIG_MN_name: (None, str),
+        AUTH_MN_name: (None, str),
+        CHECKSUM_name: (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, str),
       },
       SECTION_search: {
-        FROM_DATE[1]: (None, str),
-        TO_DATE: (None, str),
-        SEARCH_FORMAT[1]: (None, str),
-        QUERY_ENGINE[1]: (d1_common.const.DEFAULT_SEARCH_ENGINE, str),
-        QUERY_STRING[1]: ('*:*', str),
+        FROM_DATE_name: (None, str),
+        TO_DATE_name: (None, str),
+        SEARCH_FORMAT_name: (None, str),
+        QUERY_ENGINE_name: (d1_common.const.DEFAULT_SEARCH_ENGINE, str),
+        QUERY_STRING_name: ('*:*', str),
       },
     })
 
@@ -173,11 +145,11 @@ class session(object):
       )
 
   def is_pretty(self):
-    pretty = self.session[SECTION_cli][PRETTY][0]
+    pretty = self.session[PRETTY_sect][PRETTY_name][0]
     return (pretty is not None) and pretty
 
   def is_verbose(self):
-    verbose = self.session[SECTION_cli][VERBOSE][0]
+    verbose = self.session[VERBOSE_sect][VERBOSE_name][0]
     return (verbose is not None) and verbose
 
   #=============================================================================
@@ -400,27 +372,27 @@ class session(object):
         * authoritative-mn, origin-mn, rights-holder
     '''
     save_data = False
-    if self.get(AUTH_MN[0], AUTH_MN[1]) is None:
-      mn = self.get(MN_URL[0], MN_URL[1])
+    if self.get(AUTH_MN_sect, AUTH_MN_name) is None:
+      mn = self.get(MN_URL_sect, MN_URL_name)
       mn_host = self._get_host_from_url(mn)
       if mn_host is not None:
-        self.set(AUTH_MN[0], AUTH_MN[1], mn_host)
-        print_info('Setting %s to "%s"' % (AUTH_MN[1], mn_host))
+        self.set(AUTH_MN_sect, AUTH_MN_name, mn_host)
+        print_info('Setting %s to "%s"' % (AUTH_MN_name, mn_host))
         save_data = True
     #
-    if self.get(ORIG_MN[0], ORIG_MN[1]) is None:
-      mn = self.get(MN_URL[0], MN_URL[1])
+    if self.get(ORIG_MN_sect, ORIG_MN_name) is None:
+      mn = self.get(MN_URL_sect, MN_URL_name)
       mn_host = self._get_host_from_url(mn)
       if mn_host is not None:
-        self.set(ORIG_MN[0], ORIG_MN[1], mn_host)
-        print_info('Setting %s to "%s"' % (ORIG_MN[1], mn_host))
+        self.set(ORIG_MN_sect, ORIG_MN_name, mn_host)
+        print_info('Setting %s to "%s"' % (ORIG_MN_name, mn_host))
         save_data = True
     #
-    if self.get(OWNER[0], OWNER[1]) is None:
-      submitter = self.get(SUBMITTER[0], SUBMITTER[1])
+    if self.get(OWNER_sect, OWNER_name) is None:
+      submitter = self.get(SUBMITTER_sect, SUBMITTER_name)
       if submitter is not None:
-        self.set(OWNER[0], OWNER[1], submitter)
-        print_info('Setting %s to "%s"' % (OWNER[1], submitter))
+        self.set(OWNER_sect, OWNER_name, submitter)
+        print_info('Setting %s to "%s"' % (OWNER_name, submitter))
         save_data = True
     if save_data:
       print_info('  *  Session values were changed, please "save" them!\n')
