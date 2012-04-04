@@ -28,7 +28,10 @@
 '''
 
 # Stdlib.
+import cmd
 import sys
+import shlex
+import string
 import urlparse
 import StringIO
 
@@ -67,85 +70,287 @@ GET_ENDPOINT = 'object'
 META_ENDPOINT = 'meta'
 RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
 
+#-- Package CLI ----------------------------------------------------------------
+
+
+class PackageCLI(cmd.Cmd):
+  ''' Inner cli.
+  '''
+
+  def __init__(self, session):
+    cmd.Cmd.__init__(self)
+    self.session = session
+    self.package = None
+    self.doc_header = 'Documented "package" commands (type package help <topic>):'
+    self.nohelp = '*** No "package" help on %s'
+
+  # From dataone.py:CLI
+  def _split_args(self, line, n_required, n_optional):
+    args = shlex.split(line)
+    if len(args) < n_required or len(args) > n_required + n_optional:
+      msg = 'Need {0} required and {1} optional parameters'.format(
+        n_required if n_required else 'no', n_optional if n_optional else 'no'
+      )
+      raise cli_exceptions.InvalidArguments(msg)
+    # Pad the list_objects out with None for any optional parameters that were not
+    # provided.
+    args += [None] * (n_required + n_optional - len(args))
+    if len(args) == 1:
+      return args[0]
+    return args
+
+  ## Override methods in Cmd object ##
+  def preloop(self):
+    '''Initialization before prompting user for commands.
+       Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
+    '''
+    # Set up command completion.
+    cmd.Cmd.preloop(self)
+
+  def postloop(self):
+    '''Take care of any unfinished business.
+       Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
+    '''
+    cmd.Cmd.postloop(self) ## Clean up command completion
+#    print_info('Exiting...')
+
+  def precmd(self, line):
+    ''' This method is called after the line has been input but before
+      it has been interpreted. If you want to modify the input line
+      before execution (for example, variable substitution) do it here.
+    '''
+    return line
+
+  def postcmd(self, stop, line):
+    '''If you want to stop the console, return something that evaluates to true.
+       If you want to do some post command processing, do it here.
+    '''
+    return stop
+
+  def emptyline(self):
+    '''Do nothing on empty input line'''
+    pass
+
+  def default(self, line):
+    '''Called on an input line when the command prefix is not recognized.
+    '''
+    queryArgs = self._split_args(line, 0, 99)
+    if len(queryArgs) > 0:
+      print_error('Unknown "package" command: "%s"' % queryArgs[0])
+
+  def do_help(self, line):
+    '''Get help on commands
+    'help' or '?' with no arguments displays a list_objects of commands for which help is available
+    'help <command>' or '? <command>' gives help on <command>
+    '''
+    # The only reason to define this method is for the help text in the doc
+    # string
+    cmd.Cmd.do_help(self, line)
+
+  ##== Commands =============================================================
+
+  def do_create(self, line):
+    ''' create <pid>
+        Create a package.
+    '''
+    pid = self._split_args(line, 0, 1)
+
+    if self.package is not None:
+      self._inner_delete()
+
+    self.package = data_package.DataPackage(pid)
+
+  def do_delete(self, line):
+    ''' Delete the package.
+    '''
+    self._inner_delete()
+
+  def _inner_delete(self):
+    if self.package is None:
+      return
+    if not self.package.is_dirty():
+      self.package = None
+      return
+
+    while True:
+      prompt = 'Are you sure you want to remove the package? [yes, NO] '
+      yes_no = raw_input(prompt)
+      if ((yes_no is None) or (len(yes_no) == 0)):
+        yes_no = 'no'
+      else:
+        yes_no = string.lower(yes_no)
+
+      if yes_no == 'yes':
+        print_info('Deleting package.')
+        self.package = None
+        return
+      elif yes_no == 'no':
+        print_info('Skipping delete.')
+        return
+      else:
+        print_warn('Answer must be "yes" or "no" (or nothing)')
+
+  def do_name(self, line):
+    ''' name <pid>
+        Name the package (assign a (possibly new) pid).
+    '''
+    if self.package is None:
+      raise cli_exceptions.InvalidArguments('There is no package to rename.')
+
+    pid = self._split_args(line, 1, 0)
+    self.package.name(pid)
+
+  def do_show(self, line):
+    ''' show [pid]
+        Display the contents of the package.  If no pid is given,
+          use the current pid.
+    '''
+    pid = self._split_args(line, 0, 1)
+    if pid is not None:
+      new_package = data_package.DataPackage(pid)
+      if new_package is not None:
+        new_package.show(self.session.is_pretty())
+    elif self.package is None:
+      print_info('There is no package to show.')
+    else:
+      self.package.show(self.session.is_pretty())
+
+  def do_load(self, line):
+    ''' load [pid]
+        Load a package.  If no pid is given, use the current pid.
+    '''
+    pid = self._split_args(line, 0, 1)
+    if pid is not None:
+      load_pid = pid
+    elif ((self.package is not None) and (self.package.pid is not None)):
+      load_pid = self.package.pid
+    else:
+      raise cli_exceptions.InvalidArguments('There is no package to load.')
+    #
+    # Get the package
+    new_package = data_package.DataPackage(load_pid)
+    if new_package is not None:
+      self.package = new_package
+
+  def do_save(self, line):
+    ''' save
+        Save the package.  If a pid is given, rename the current
+          package to the given pid, and save the pacakge as the
+          new pid.
+    '''
+    if self.package is None:
+      raise cli_exceptions.InvalidArguments('There is no package to save.')
+    elif self.package.pid is None:
+      raise cli_exceptions.InvalidArguments('The current package has no pid.')
+    self.package.save(self.session)
+
+  def do_scimeta(self, line):
+    ''' scimeta [add | del | show | meta ] [options]
+          add    pid [file]  Assign the science meta object
+          del    Remove the science meta object from the package.
+          show   Display the current science meta object.
+          meta   Display the system meta data for the science meta object.
+    '''
+    if self.package is None:
+      raise cli_exceptions.InvalidArguments('There is no package.')
+    sub_cmd, pid, file_name = self._split_args(line, 1, 2)
+    if sub_cmd is None:
+      msg = 'What do you wish to do to the science metadata object?.\n  (add, del, show, meta)'
+      raise cli_exceptions.InvalidArguments(msg)
+    #
+    if string.find('add', sub_cmd) == 0:
+      self.package.scimeta_add(self.session, pid, file_name)
+    elif string.find('del', sub_cmd) == 0:
+      self.package.scimeta_del()
+    elif string.find('show', sub_cmd) == 0:
+      self.package.scimeta_showobj(self.session)
+    elif string.find('meta', sub_cmd) == 0:
+      self.package.scimeta_showmeta(self.session)
+    else:
+      raise cli_exceptions.InvalidArguments('Unknown scimeta sub-command: %s' % sub_cmd)
+
+  def do_scidata(self, line):
+    ''' scidata [add | del | show | meta ] <pid>
+          add    <pid>  [file]  Add the science object to the package.
+          del    <pid>  Remove the given science object from the package.
+          clear  Remove all science data objects from the package.
+          show   <pid>  Display the given science object.
+          meta   <pid>  Display the system meta data for the given science object.
+    '''
+    if self.package is None:
+      raise cli_exceptions.InvalidArguments('There is no package.')
+    sub_cmd, pid, opt = self._split_args(line, 2, 1)
+    if sub_cmd is None:
+      msg = 'What do you wish to do to the science data object?.\n  (add, del, clear, show, meta)'
+      raise cli_exceptions.InvalidArguments(msg)
+    #
+    if string.find('add', sub_cmd, ) == 0:
+      self.package.scidata_add(self.session, pid, opt)
+    elif string.find('del', sub_cmd) == 0:
+      self.package.scidata_del(pid)
+    elif string.find('clear', sub_cmd) == 0:
+      self.package.scidata_clear()
+    elif string.find('show', sub_cmd) == 0:
+      self.package.scidata_showobj(self.session, pid)
+    elif string.find('meta', sub_cmd) == 0:
+      self.package.scidata_showmeta(self.session, pid)
+    else:
+      raise cli_exceptions.InvalidArguments('Unknown scidata sub-command: %s' % sub_cmd)
+
+# Shouldn't be called - handled in do_package.
+
+  def do_quit(self, line):
+    ''' Exit package mode.
+    '''
+    return
+
+# Shouldn't be called - handled in do_package.
+
+  def do_exit(self, line):
+    ''' Exit package mode.
+    '''
+    return
+
+#-----------------------------------------------------------------------------
+# Command processing.
+#-----------------------------------------------------------------------------
+
 #-- Public (static) interface --------------------------------------------------
 
 
-def action(data1CLI, queryArgs):
-  ''' Parse the args and take the appropriate action.
-  
-        Subcommands are:
-          create [pid]
-          rename <pid>
-          show [pid]
-          load [pid]
-          save [pid]
-          scimeta [add] <pid or file>
-          scimeta del
-          scimeta show
-          scimeta meta
-          scidata [add] <pid or file> [...]
-          scidata del <pid>
-          scidata show <pid>
-          scidata meta <pid>
-          
-    Note: be sure to update dataone.py.do_package if these change.
+def action(dataONECLI, queryArgs):
   '''
-  # Can't continue.
-  if data1CLI is None:
-    raise cli_exceptions.InvalidArguments('data1CLI is missing.')
-
+  '''
   #  Create a new package.
   if queryArgs[0] == 'create':
-    if len(queryArgs) == 1:
-      data1CLI.package = data_package.DataPackage(None)
-    else:
-      data1CLI.package = data_package.DataPackage(queryArgs[1])
+    print 'burp'
 
-  # Can't continue without a package
-  elif data1CLI.package is None:
-    raise cli_exceptions.InvalidArguments('There is no package.')
-
-  # rename the existing package.
-  elif queryArgs[0] == 'rename':
-    if len(queryArgs) == 1:
-      raise cli_exceptions.InvalidArguments('Missing new pid?')
-    else:
-      data1CLI.package.pid = queryArgs[1]
-
-  # Can't continue without a session
-  elif data1CLI.package is None:
-    raise cli_exceptions.InvalidArguments('There is no session.')
-
-  # Show the package, passing in pretty from the session.
-  elif queryArgs[0] == 'show':
-    data1CLI.package.show(data1CLI.session.is_pretty())
-
-  # Load either a new package, or reload the same package.
+    # Load either a new package, or reload the same package.
   elif queryArgs[0] == 'load':
     if len(queryArgs) == 1:
-      if data1CLI.package.pid is None:
+      if dataONECLI.package.pid is None:
         raise cli_exceptions.InvalidArguments('Load which pid?')
       else:
-        new_pkg = data_package.find(data1CLI.package.pid)
+        new_pkg = data_package.find(dataONECLI.package.pid)
         if new_pkg is not None:
-          data1CLI.package = new_pkg
+          dataONECLI.package = new_pkg
     else:
       new_pkg = data_package.find(queryArgs[1])
       if new_pkg is not None:
-        data1CLI.package = new_pkg
+        dataONECLI.package = new_pkg
       else:
         print_warn('%s: no such package' % queryArgs[1])
 
   # Save the package out to DataONE.
   elif queryArgs[0] == 'save':
     if len(queryArgs) == 1:
-      if data1CLI.package.pid is None:
+      if dataONECLI.package.pid is None:
         raise cli_exceptions.InvalidArguments('Save as what pid?')
       else:
-        data1CLI.package.save()
+        dataONECLI.package.save()
     else:
-      data1CLI.package.pid = queryArgs[1]
-      data1CLI.package.save()
+      dataONECLI.package.pid = queryArgs[1]
+      dataONECLI.package.save()
 
     # Add, remove, or show the science metadata object.
   elif queryArgs[0] == 'scimeta':
@@ -156,15 +361,15 @@ def action(data1CLI, queryArgs):
       if len(queryArgs) == 2:
         raise cli_exceptions.InvalidArguments('Add what object as scimeta?')
       else:
-        data1CLI.package.add_scimeta(data1CLI.session, queryArgs[2])
+        dataONECLI.package.add_scimeta(dataONECLI.session, queryArgs[2])
     elif queryArgs[1] == 'del':
-      data1CLI.package.del_scimeta()
+      dataONECLI.package.del_scimeta()
     elif queryArgs[1] == 'show':
-      data1CLI.object_print(data1CLI.package.scimeta)
+      dataONECLI.object_print(dataONECLI.package.scimeta)
     elif queryArgs[1] == 'meta':
-      data1CLI.system_metadata_print(data1CLI.package.scimeta_sysmeta)
+      dataONECLI.system_metadata_print(dataONECLI.package.scimeta_sysmeta)
     else:
-      data1CLI.package.add_scimeta(queryArgs[1])
+      dataONECLI.package.add_scimeta(queryArgs[1])
 
     # Add, remove, or show the science data object.
   elif queryArgs[0] == 'scidata':
@@ -175,23 +380,23 @@ def action(data1CLI, queryArgs):
       if len(queryArgs) <= 2:
         raise cli_exceptions.InvalidArguments('Add what object(s) as scidata?')
       else:
-        data1CLI.package.add_data(queryArgs[2:])
+        dataONECLI.package.add_data(queryArgs[2:])
     elif queryArgs[1] == 'del':
-      data1CLI.package.del_meta(queryArgs[2:])
+      dataONECLI.package.del_meta(queryArgs[2:])
     elif queryArgs[1] == 'show':
       if len(queryArgs) <= 2:
         raise cli_exceptions.InvalidArguments('Show which scidata object?')
-      elif queryArgs[2] not in data1CLI.package.scidata:
+      elif queryArgs[2] not in dataONECLI.package.scidata:
         raise cli_exceptions.InvalidArguments(': unknown scidata object')
       else:
-        data1CLI.object_print(data1CLI.package.scidata[queryArgs[2]])
+        dataONECLI.object_print(dataONECLI.package.scidata[queryArgs[2]])
     elif queryArgs[1] == 'meta':
       if len(queryArgs) <= 2:
         raise cli_exceptions.InvalidArguments('Show sysmeta from which scidata object?')
-      elif queryArgs[2] not in data1CLI.package.scidata_sysmeta:
+      elif queryArgs[2] not in dataONECLI.package.scidata_sysmeta:
         raise cli_exceptions.InvalidArguments(': unknown scidata object')
       else:
-        data1CLI.system_metadata_print(data1CLI.package.scidata_sysmeta[queryArgs[2]])
+        dataONECLI.system_metadata_print(dataONECLI.package.scidata_sysmeta[queryArgs[2]])
 
   else:
     msg = '%s: unknown sub-command' % queryArgs[0]

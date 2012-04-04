@@ -104,12 +104,12 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, session, mn_url=None):
     if mn_url is None:
       mn_url = session.get(MN_URL_sect, MN_URL_name)
-    self._assert_mn_url(mn_url, MN_URL_name)
+    self._assert_mn_url(mn_url)
     return super(CLIMNClient, self).__init__(session, mn_url)
 
-  def _assert_mn_url(self, mn_url, var_name):
+  def _assert_mn_url(self, mn_url):
     if not mn_url:
-      raise cli_exceptions.CLIError('"' + var_name + '" parameter required')
+      raise cli_exceptions.CLIError('"' + MN_URL_name + '" parameter required')
 
 #===============================================================================
 
@@ -121,6 +121,6 @@ class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
     self._assert_dataone_url(dataone_url)
     return super(CLICNClient, self).__init__(session, dataone_url)
 
-  def _assert_dataone_url(self, dataone_url, var_name):
+  def _assert_dataone_url(self, dataone_url):
     if not dataone_url:
-      raise cli_exceptions.CLIError('"' + var_name + '" parameter required')
+      raise cli_exceptions.CLIError('"' + CN_URL_name + '" parameter required')

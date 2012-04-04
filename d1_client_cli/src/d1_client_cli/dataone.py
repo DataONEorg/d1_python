@@ -61,6 +61,10 @@ from const import * #@UnusedWildImport
 import package
 import session
 
+known_object_formats = None
+DEFAULT_PREFIX = ''
+DEFAULT_PROMPT = '> '
+
 
 def log_setup():
   logging.getLogger('').setLevel(logging.INFO)
@@ -74,9 +78,6 @@ def expand_path(filename):
   if filename:
     return os.path.expanduser(filename)
   return None
-
-
-known_object_formats = None
 
 #===============================================================================
 #   Command-line options.
@@ -800,9 +801,12 @@ class CLI(cmd.Cmd):
     self.d1 = DataONECLI()
     cmd.Cmd.__init__(self)
     self._update_verbose()
-    self.package = None
-    self.prompt = '> '
+    self.prefix = DEFAULT_PREFIX
+    self.prompt = DEFAULT_PROMPT
     self.intro = 'DataONE Command Line Interface'
+    #
+    self.packageCLI = None
+    self.keep_looping = False
 
   def _split_args(self, line, n_required, n_optional):
     args = shlex.split(line)
@@ -1225,25 +1229,31 @@ class CLI(cmd.Cmd):
 
   def do_package(self, line):
     ''' package <subcommand> [args]
-          Subcommands are:
-            create [pid]
-            rename <pid>
-            show [pid]
-            load [pid]
-            save [pid]
-            scimeta [add] <pid or file>
-            scimeta del
-            scimeta show
-            scimeta meta
-            scidata [add] <pid or file> [...]
-            scidata del <pid>
-            scidata show <pid>
-            scidata meta <pid>
+          See "package help" for available subcommands.
     '''
     try:
-      queryArgs = self._split_args(line, 1, 99)
-      queryArgs = cli_util.clear_None_from_list(queryArgs)
-      package.action(self, queryArgs)
+      # Get out of package mode?
+      argv = self._split_args(line, 0, 99)
+      query = ' '.join(filter(None, argv))
+      if query == '':
+        self.prefix = 'package '
+        self.prompt = '[package] > '
+        self.keep_looping = True
+        return
+      elif ((query == 'exit') or (query == 'quit')):
+        self.prefix = DEFAULT_PREFIX
+        self.prompt = DEFAULT_PROMPT
+        return
+      elif query == 'EOF':
+        print ''
+        self.prefix = DEFAULT_PREFIX
+        self.prompt = DEFAULT_PROMPT
+        return
+
+      if self.packageCLI is None:
+        self.packageCLI = package.PackageCLI(self.d1.session)
+
+      self.packageCLI.onecmd(line)
 
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
@@ -1285,6 +1295,7 @@ class CLI(cmd.Cmd):
 
   def do_EOF(self, line):
     '''Exit on system EOF character'''
+    print ''
     return self.do_exit(line)
 
   def do_help(self, line):
@@ -1321,6 +1332,7 @@ class CLI(cmd.Cmd):
       it has been interpreted. If you want to modify the input line
       before execution (for example, variable substitution) do it here.
     '''
+    line = self.prefix + line
     self._history += [line.strip()]
     return line
 
@@ -1368,10 +1380,17 @@ def main():
     try:
       data1CLI.cmdloop()
     except KeyboardInterrupt as e:
-      print ''
       data1CLI.do_exit('')
   else:
     data1CLI.onecmd(join(remainder))
+    #
+    if data1CLI.keep_looping:
+      data1CLI.keep_looping = False
+      try:
+        data1CLI.cmdloop()
+      except KeyboardInterrupt as e:
+        print ''
+        data1CLI.do_exit('')
 
 
 if __name__ == '__main__':
