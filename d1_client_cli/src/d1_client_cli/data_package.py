@@ -84,7 +84,7 @@ class DataPackage(object):
     self.scimeta = None
     self.scidata_dict = {}
 
-    #== Manipulation ==========================================================
+  #== Manipulation ==========================================================
 
   def show(self, pretty=False):
     ''' Display the package, optionally in a "pretty" manner.
@@ -109,28 +109,6 @@ class DataPackage(object):
         print_info('Data Objects:')
         for item in self.scidata_dict.items():
           self._print_dataitem(item, True)
-
-  def _print_dataitem(self, item, pretty=False):
-    if (pretty is not None) and pretty:
-      flags = ''
-      pre = ' ('
-      post = ''
-
-      if (item.get(KEY_Dirty) is not None) and item.get(KEY_Dirty):
-        flags = pre + 'needs saving'
-        pre = ', '
-        post = ')'
-      if item.get(KEY_Obj) is not None:
-        flags = pre + 'has an object'
-        pre = ', '
-        post = ')'
-      if item.get(KEY_Meta) is not None:
-        flags = pre + 'has sysmeta'
-        pre = ', '
-        post = ')'
-
-      flags = flags + post
-      print_info('  %s%s' % (item.get(KEY_Pid), flags))
 
   def name(self, pid):
     ''' Rename the package
@@ -366,6 +344,28 @@ class DataPackage(object):
         if (KEY_Dirty in item) and item[KEY_Dirty]:
           return True
     return False
+
+  def _print_dataitem(self, item, pretty=False):
+    if (pretty is not None) and pretty:
+      flags = ''
+      pre = ' ('
+      post = ''
+
+      if (item.get(KEY_Dirty) is not None) and item.get(KEY_Dirty):
+        flags = pre + 'needs saving'
+        pre = ', '
+        post = ')'
+      if item.get(KEY_Obj) is not None:
+        flags = pre + 'has an object'
+        pre = ', '
+        post = ')'
+      if item.get(KEY_Meta) is not None:
+        flags = pre + 'has sysmeta'
+        pre = ', '
+        post = ')'
+
+      flags = flags + post
+      print_info('  %s%s' % (item.get(KEY_Pid), flags))
 
   def serialize(self, fmt='xml'):
     assert (

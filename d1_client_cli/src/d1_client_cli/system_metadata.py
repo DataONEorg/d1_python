@@ -43,7 +43,7 @@ except ImportError as e:
 
 # App.
 from print_level import * #@UnusedWildImport
-import session
+from const import * #@UnusedWildImport
 
 
 class MissingSysmetaParameters(Exception):
