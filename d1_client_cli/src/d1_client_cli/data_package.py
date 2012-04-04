@@ -100,7 +100,7 @@ class DataPackage(object):
 
     pkg_xml = self.serialize('xml')
 
-    algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
+    algorithm = session.get(CHECKSUM_sect, CHECKSUM_name)
     hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
     hash_fcn.update(pkg_xml)
     checksum = hash_fcn.hexdigest()

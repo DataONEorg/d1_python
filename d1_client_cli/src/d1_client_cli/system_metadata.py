@@ -81,24 +81,24 @@ class system_metadata():
     # Fix arguments.
     _formatId = formatId
     if _formatId is None:
-      _formatId = session.get(session.FORMAT[0], session.FORMAT[1])
+      _formatId = session.get(FORMAT_sect, FORMAT_name)
     _algorithm = algorithm
     if _algorithm is None:
-      _algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
+      _algorithm = session.get(CHECKSUM_sect, CHECKSUM_name)
 
     sysmeta = dataoneTypes.systemMetadata()
     sysmeta.serialVersion = 1
     sysmeta.identifier = pid
     sysmeta.formatId = _formatId
     sysmeta.size = size
-    sysmeta.submitter = session.get(session.SUBMITTER[0], session.SUBMITTER[1])
-    sysmeta.rightsHolder = session.get(session.OWNER[0], session.OWNER[1])
+    sysmeta.submitter = session.get(SUBMITTER_sect, SUBMITTER_name)
+    sysmeta.rightsHolder = session.get(OWNER_sect, OWNER_name)
     sysmeta.checksum = dataoneTypes.checksum(checksum)
     sysmeta.checksum.algorithm = _algorithm
     sysmeta.dateUploaded = datetime.datetime.utcnow()
     sysmeta.dateSysMetadataModified = datetime.datetime.utcnow()
-    sysmeta.originmn = session.get(session.ORIG_MN[0], session.ORIG_MN[1])
-    sysmeta.authoritativemn = session.get(session.AUTH_MN[0], session.AUTH_MN[1])
+    sysmeta.originmn = session.get(ORIG_MN_sect, ORIG_MN_name)
+    sysmeta.authoritativemn = session.get(AUTH_MN_sect, AUTH_MN_name)
     sysmeta.accessPolicy = access_policy
     sysmeta.replicationPolicy = replication_policy
     #pyxb.RequireValidWhenGenerating(False)

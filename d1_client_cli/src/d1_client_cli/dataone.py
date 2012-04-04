@@ -592,8 +592,8 @@ class DataONECLI():
     object_list = client.listObjects(
       startTime=self.session.get(FROM_DATE_sect, FROM_DATE_name),
       endTime=self.session.get(TO_DATE_sect, TO_DATE_name),
-      objectFormat=self.session.get(session.SEARCH_FORMAT[0], SEARCH_FORMAT_name),
-      start=self.session.get(START_sect, session.STARTSTART_name),
+      objectFormat=self.session.get(SEARCH_sect, SEARCH_FORMAT_name),
+      start=self.session.get(START_sect, START_name),
       count=self.session.get(COUNT_sect, COUNT_name)
     )
     object_list_xml = object_list.toxml()
