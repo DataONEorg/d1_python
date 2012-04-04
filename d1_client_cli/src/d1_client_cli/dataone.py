@@ -1376,9 +1376,12 @@ def main():
   handle_options(data1CLI, options)
 
   # Start the command line interpreter loop, or just do one command?
-  if ((options.interactive is not None) and options.interactive) or len(remainder) == 0:
+  if (options.interactive is not None) and options.interactive:
     try:
+      if len(remainder) != 0:
+        data1CLI.onecmd(join(remainder))
       data1CLI.cmdloop()
+
     except KeyboardInterrupt as e:
       data1CLI.do_exit('')
   else:
