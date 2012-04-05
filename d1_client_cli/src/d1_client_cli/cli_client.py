@@ -30,6 +30,7 @@
 # Stdlib.
 import os
 import sys
+import tempfile
 
 # DataONE
 try:
@@ -50,6 +51,7 @@ except ImportError as e:
 
 # Client_CLI
 import cli_exceptions
+import cli_util
 from const import * #@UnusedWildImport
 from print_level import * #@UnusedWildImport
 import session
@@ -124,3 +126,65 @@ class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def _assert_dataone_url(self, dataone_url):
     if not dataone_url:
       raise cli_exceptions.CLIError('"' + CN_URL_name + '" parameter required')
+
+#== Static methods =============================================================
+
+
+def get_object_by_pid(session, pid, filename=None, resolve=True):
+  ''' Create a mnclient and look for the object.  If the object is not found,
+      simply return a None, don't throw an exception.  If found, return the
+      filename.
+  '''
+  if session is None:
+    raise cli_exceptions.InvalidArguments('Missing session')
+  if pid is None:
+    raise cli_exceptions.InvalidArguments('Missing pid')
+
+    # Get, or create, the filename.
+  tmp_file = None
+  fname = filename
+  if filename is None:
+    tmp_flo = tempfile.mkstemp(prefix='d1obj-', suffix='.dat')
+    os.close(tmp_flo[0])
+    fname = tmp_flo[1]
+    tmp_file = fname
+
+  try: # Make sure the temp file gets deleted.
+
+    # Create member node client and try to get the object.
+    mn_client = CLIMNClient(session)
+    try:
+      response = mn_client.get(pid)
+      if response is not None:
+        cli_util.output(response, os.path.expanduser(fname))
+        return fname
+    except d1_common.types.exceptions.DataONEException as e:
+      if e.errorCode != 404:
+        raise cli_exceptions.CLIError(
+          'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
+        )
+
+    if resolve:
+      cn_client = CLICNClient(self.session)
+      object_location_list = None
+      try:
+        object_location_list = cn_client.resolve(pid)
+        if ((object_location_list is not None)
+            and (len(object_location_list.objectLocation) > 0)):
+          baseUrl = object_location_list.objectLocation[0].baseUrl
+
+          mn_client = CLIMNClient(self.session, mn_url=baseUrl)
+          response = mn_client.get(pid)
+          if response is not None:
+            cli_util.output(response, os.path.expanduser(fname))
+            return fname
+
+      except d1_common.types.exceptions.DataONEException as e:
+        if e.errorCode != 404:
+          raise cli_exceptions.CLIError(
+            'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
+          )
+
+  finally:
+    if (fname is None) and (tmp_file is not None):
+      os.remove(tmp_file)

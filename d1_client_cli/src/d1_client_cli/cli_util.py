@@ -29,6 +29,8 @@
 '''
 
 # Stdlib.
+import os
+import shutil
 import string
 import sys
 import traceback
@@ -138,3 +140,24 @@ def confirm(prompt, default='no', allow_blank=False):
       return default_response
     else:
       print_warn('Answer must be "yes" or "no" (or nothing)')
+
+
+def output(file_like_object, path, verbose=False):
+  '''Display or save file like object'''
+  if not path:
+    for line in file_like_object:
+      if verbose():
+        print_info(line.rstrip())
+      else:
+        print line.rstrip()
+  else:
+    try:
+      object_file = open(os.path.expanduser(path), 'wb')
+      shutil.copyfileobj(file_like_object, object_file)
+      object_file.close()
+    except EnvironmentError as (errno, strerror):
+      error_message_lines = []
+      error_message_lines.append('Could not write to object_file: {0}'.format(path))
+      error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
+      error_message = '\n'.join(error_message_lines)
+      raise cli_exceptions.CLIError(error_message)

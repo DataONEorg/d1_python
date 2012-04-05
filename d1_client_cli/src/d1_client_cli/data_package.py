@@ -28,6 +28,7 @@
 '''
 
 # Stdlib.
+import os
 import sys
 import string
 import StringIO
@@ -278,21 +279,17 @@ class DataPackage(object):
     #== Helpers ===============================================================
 
   def _get_by_pid(self, session, pid):
-    ''' Return (object, dirty, object_flo, system metadata)
+    ''' Return (pid, dirty, fname, sysmeta)
     '''
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing session')
     if pid is None:
       raise cli_exceptions.InvalidArguments('Missing pid')
 
-    raise cli_exceptions.CLIError('DataPackage._get_by_pid: not fully implemented')
-
-    print_debug('_get_by_pid.pid: %s' % pid)
-    tmp_flo = tempfile.mkstemp(prefix='d1obj-', suffix='.dat')
-    sciobj_flo = cli_client.get_science_object(session, pid, tmp_flo, True)
-    print_debug('_get_by_pid.sciobj_flo: %s' % str(sciobj_flo))
-    return None
-
-    if sciobj_flo is not None:
-      return DataObject(pid=pid, dirty=True, obj_flo=sciobj_flo)
+    fname = cli_client.get_object_by_pid(session, pid, resolve=True)
+    print_debug('_get_by_pid: pid=%s, fname=%s' % (pid, fname))
+    if fname is not None:
+      return DataObject(pid, False, fname, None)
     else:
       return None
 
@@ -325,13 +322,17 @@ class DataPackage(object):
     '''
     if scimeta_obj is None:
       raise cli_exceptions.InvalidArguments('Missing scimeta_obj')
-    if scimeta_obj.get(KEY_Obj) is None:
+    if scimeta_obj.fname is None:
       raise cli_exceptions.InvalidArguments('Missing the actual science metadata object')
     #
-    objectId = self._is_metadata_format(scimeta_obj.get(KEY_Obj).objectId)
-    if not self._is_metadata_format(objectId):
-      msg = 'The science metadata object is not the right type (%s)'
-      raise cli_exceptions.InvalidArguments(msg % objectId)
+    raise cli_exceptions.CLIError(
+      '\n\nDataPackage._validate_scimeta_obj: VALIDATE OBJECT ***\n\n'
+    )
+
+    #    objectId = self._is_metadata_format(scimeta_obj.get(KEY_Obj).objectId)
+    #    if not self._is_metadata_format(objectId):
+    #      msg = 'The science metadata object is not the right type (%s)'
+    #      raise cli_exceptions.InvalidArguments(msg % objectId)
 
   def is_dirty(self):
     ''' Check to see if anything needs to be saved.
@@ -497,21 +498,13 @@ class DataPackage(object):
 
 
 class DataObject(object):
-  def __init__(self, pid=None, dirty=None, obj_flo=None, meta=None):
+  def __init__(self, pid=None, dirty=None, fname=None, meta=None):
     ''' Create a data object
     '''
     self.pid = pid
     self.dirty = dirty
-    self.obj_flo = obj_flo
+    self.fname = fname
     self.meta = meta
 
   def is_dirty(self):
     return (self.dirty is not None) and self.dirty
-
-#-- Static methods -------------------------------------------------------------
-
-
-def find(pid):
-  '''  Find a package by it's pid.
-  '''
-  raise cli_exceptions.CLIError(' data_package.find(): Method not implemented')
