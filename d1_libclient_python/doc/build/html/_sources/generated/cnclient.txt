@@ -1,6 +1,23 @@
 cnclient
 ========
 
-.. currentmodule:: 
+.. automodule:: cnclient
 
-.. autodata:: cnclient
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    CoordinatingNodeClient
+  
+  
+
+  
+  
+  

@@ -1,6 +1,23 @@
 logrecorditerator
 =================
 
-.. currentmodule:: 
+.. automodule:: logrecorditerator
 
-.. autodata:: logrecorditerator
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    LogRecordIterator
+  
+  
+
+  
+  
+  

@@ -1,6 +1,31 @@
 node_test_common
 ================
 
-.. currentmodule:: 
+.. automodule:: node_test_common
 
-.. autodata:: node_test_common
+  
+  
+  .. rubric:: Functions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    initMain
+    loadTestInfo
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    OptionParser
+  
+  
+
+  
+  
+  

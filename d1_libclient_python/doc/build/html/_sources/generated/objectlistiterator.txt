@@ -1,6 +1,24 @@
 objectlistiterator
 ==================
 
-.. currentmodule:: 
+.. automodule:: objectlistiterator
 
-.. autodata:: objectlistiterator
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    ObjectListIterator
+    OptionParser
+  
+  
+
+  
+  
+  

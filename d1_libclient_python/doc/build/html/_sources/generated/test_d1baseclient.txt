@@ -1,6 +1,32 @@
 test_d1baseclient
 =================
 
-.. currentmodule:: 
+.. automodule:: test_d1baseclient
 
-.. autodata:: test_d1baseclient
+  
+  
+  .. rubric:: Functions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    log_setup
+    main
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCaseWithURLCompare
+    TestDataONEBaseClient
+  
+  
+
+  
+  
+  

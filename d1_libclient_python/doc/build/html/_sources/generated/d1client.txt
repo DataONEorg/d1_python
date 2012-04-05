@@ -1,6 +1,31 @@
 d1client
 ========
 
-.. currentmodule:: 
+.. automodule:: d1client
 
-.. autodata:: d1client
+  
+  
+  .. rubric:: Functions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    showHelp
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    DataONEClient
+    DataONEObject
+  
+  
+
+  
+  
+  

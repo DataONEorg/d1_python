@@ -1,6 +1,32 @@
 test_cnclient
 =============
 
-.. currentmodule:: 
+.. automodule:: test_cnclient
 
-.. autodata:: test_cnclient
+  
+  
+  .. rubric:: Functions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    log_setup
+    main
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCNClient
+    TestCaseWithURLCompare
+  
+  
+
+  
+  
+  

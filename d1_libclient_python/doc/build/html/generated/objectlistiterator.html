@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.1.6. objectlistiterator &mdash; DataONE Client Library for Python v0.beta documentation</title>
+    <title>2.1.6. objectlistiterator &mdash; DataONE Client Library for Python 1.0.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.beta',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,10 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DataONE Client Library for Python v0.beta documentation" href="../index.html" />
+    <link rel="top" title="DataONE Client Library for Python 1.0.0 documentation" href="../index.html" />
     <link rel="up" title="2.1. General" href="../generated-general.html" />
-    <link rel="next" title="2.1.7. solrclient" href="solrclient.html" />
-    <link rel="prev" title="2.1.5. mnclient" href="mnclient.html" /> 
+    <link rel="next" title="2.1.6.1.1. objectlistiterator.ObjectListIterator" href="generated/objectlistiterator.ObjectListIterator.html" />
+    <link rel="prev" title="2.1.5.1.1. mnclient.MemberNodeClient" href="generated/mnclient.MemberNodeClient.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,12 +38,15 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="solrclient.html" title="2.1.7. solrclient"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/objectlistiterator.ObjectListIterator.html" title="2.1.6.1.1. objectlistiterator.ObjectListIterator"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="mnclient.html" title="2.1.5. mnclient"
+          <a href="generated/mnclient.MemberNodeClient.html" title="2.1.5.1.1. mnclient.MemberNodeClient"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
           <li><a href="../api.html" >2. API</a> &raquo;</li>
           <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
           <li><a href="../generated-general.html" accesskey="U">2.1. General</a> &raquo;</li> 
@@ -48,12 +54,22 @@
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.1.6. objectlistiterator</a><ul>
+<li><a class="reference internal" href="#module-d1-client-objectlistiterator">2.1.6.1. Module d1_client.objectlistiterator</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="mnclient.html"
-                        title="previous chapter">2.1.5. mnclient</a></p>
+  <p class="topless"><a href="generated/mnclient.MemberNodeClient.html"
+                        title="previous chapter">2.1.5.1.1. mnclient.MemberNodeClient</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="solrclient.html"
-                        title="next chapter">2.1.7. solrclient</a></p>
+  <p class="topless"><a href="generated/objectlistiterator.ObjectListIterator.html"
+                        title="next chapter">2.1.6.1.1. objectlistiterator.ObjectListIterator</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/generated/objectlistiterator.txt"
@@ -62,7 +78,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -80,8 +96,92 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="objectlistiterator">
-<h1>2.1.6. objectlistiterator<a class="headerlink" href="#objectlistiterator" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-objectlistiterator">
+<span id="objectlistiterator"></span><h1>2.1.6. objectlistiterator<a class="headerlink" href="#module-objectlistiterator" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-d1-client-objectlistiterator">
+<h2>2.1.6.1. Module d1_client.objectlistiterator<a class="headerlink" href="#module-d1-client-objectlistiterator" title="Permalink to this headline">¶</a></h2>
+<p>Implements an iterator that iterates over the entire ObjectList for a 
+DataONE node. Data is retrieved from the target only when required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Created:</th><td class="field-body"><p class="first">2010-04-07</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Author:</th><td class="field-body"><p class="first">DataONE (Vieglais)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first last simple">
+<li>python 2.6</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><pre>$python objectlistiterator.py -b "http://knb-mn.ecoinformatics.org/knb/d1"     -m 5 -s 1000
+
+---
+total: 5
+---
+-
+  item     : 1
+  pid      : knb-lter-lno.9.1
+  modified : 2011-01-13 18:42:32.469000
+  format   : eml://ecoinformatics.org/eml-2.0.1
+  size     : 6751
+  checksum : 9039F0388DC76B1A13B0F139520A8D90
+  algorithm: MD5
+-
+  item     : 2
+  pid      : LB30XX_030MTV2021R00_20080516.50.1
+  modified : 2011-01-12 22:51:00.774000
+  format   : eml://ecoinformatics.org/eml-2.0.1
+  size     : 14435
+  checksum : B2200FB7FAE18A3517AA9E2EA680EE09
+  algorithm: MD5
+-
+  item     : 3
+  pid      : SHLX00_XXXITBDXLSR01_20080220.40.1
+  modified : 2011-01-14 00:07:57.851000
+  format   : application/octet-stream
+  size     : 108927
+  checksum : 023DAF91DCFDC5AD75BA09B25A7E1A9F
+  algorithm: MD5
+-
+  item     : 4
+  pid      : knb-lter-arc.156.1
+  modified : 2011-01-13 18:30:07.686000
+  format   : eml://ecoinformatics.org/eml-2.0.1
+  size     : 6227
+  checksum : EFF4BE6A23EB5273FCE7F4E716519A46
+  algorithm: MD5
+-
+  item     : 5
+  pid      : SH30XX_030MXTI009R00_20070917.40.1
+  modified : 2011-01-13 20:39:44.491000
+  format   : application/octet-stream
+  size     : 1519909
+  checksum : 0D2EA212DB6D60C53E456C145C331D65
+  algorithm: MD5</pre>
+</div>
+<p class="rubric">Classes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/objectlistiterator.ObjectListIterator.html#objectlistiterator.ObjectListIterator" title="objectlistiterator.ObjectListIterator"><tt class="xref py py-obj docutils literal"><span class="pre">ObjectListIterator</span></tt></a>(client[,&nbsp;start,&nbsp;...])</td>
+<td>Implements an iterator that iterates over the entire ObjectList for a</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/objectlistiterator.OptionParser.html#objectlistiterator.OptionParser" title="objectlistiterator.OptionParser"><tt class="xref py py-obj docutils literal"><span class="pre">OptionParser</span></tt></a>([usage,&nbsp;option_list,&nbsp;...])</td>
+<td>Class attributes:</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -97,12 +197,15 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="solrclient.html" title="2.1.7. solrclient"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/objectlistiterator.ObjectListIterator.html" title="2.1.6.1.1. objectlistiterator.ObjectListIterator"
              >next</a> |</li>
         <li class="right" >
-          <a href="mnclient.html" title="2.1.5. mnclient"
+          <a href="generated/mnclient.MemberNodeClient.html" title="2.1.5.1.1. mnclient.MemberNodeClient"
              >previous</a> |</li>
-        <li><a href="../index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
           <li><a href="../api.html" >2. API</a> &raquo;</li>
           <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
           <li><a href="../generated-general.html" >2.1. General</a> &raquo;</li> 
@@ -110,7 +213,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

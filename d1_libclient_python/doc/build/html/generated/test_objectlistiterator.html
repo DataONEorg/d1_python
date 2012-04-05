@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.2.8. test_objectlistiterator &mdash; DataONE Client Library for Python v0.beta documentation</title>
+    <title>2.2.11. test_objectlistiterator &mdash; DataONE Client Library for Python 1.0.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.beta',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,9 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="DataONE Client Library for Python v0.beta documentation" href="../index.html" />
+    <link rel="top" title="DataONE Client Library for Python 1.0.0 documentation" href="../index.html" />
     <link rel="up" title="2.2. Unit Tests" href="../generated-tests.html" />
-    <link rel="prev" title="2.2.7. test_object_access" href="test_object_access.html" /> 
+    <link rel="next" title="2.2.11.1.1. test_objectlistiterator.TestObjectListIterator" href="generated/test_objectlistiterator.TestObjectListIterator.html" />
+    <link rel="prev" title="2.2.10.1.3. test_object_access.walkNode" href="generated/test_object_access.walkNode.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,9 +38,15 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="test_object_access.html" title="2.2.7. test_object_access"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/test_objectlistiterator.TestObjectListIterator.html" title="2.2.11.1.1. test_objectlistiterator.TestObjectListIterator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="generated/test_object_access.walkNode.html" title="2.2.10.1.3. test_object_access.walkNode"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
           <li><a href="../api.html" >2. API</a> &raquo;</li>
           <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
           <li><a href="../generated-tests.html" accesskey="U">2.2. Unit Tests</a> &raquo;</li> 
@@ -44,9 +54,22 @@
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.2.11. test_objectlistiterator</a><ul>
+<li><a class="reference internal" href="#module-d1-client-tests-test-objectlistiterator">2.2.11.1. Module d1_client.tests.test_objectlistiterator</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="test_object_access.html"
-                        title="previous chapter">2.2.7. test_object_access</a></p>
+  <p class="topless"><a href="generated/test_object_access.walkNode.html"
+                        title="previous chapter">2.2.10.1.3. test_object_access.walkNode</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/test_objectlistiterator.TestObjectListIterator.html"
+                        title="next chapter">2.2.11.1.1. test_objectlistiterator.TestObjectListIterator</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/generated/test_objectlistiterator.txt"
@@ -55,7 +78,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -73,8 +96,40 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="test-objectlistiterator">
-<h1>2.2.8. test_objectlistiterator<a class="headerlink" href="#test-objectlistiterator" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-test_objectlistiterator">
+<span id="test-objectlistiterator"></span><h1>2.2.11. test_objectlistiterator<a class="headerlink" href="#module-test_objectlistiterator" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-d1-client-tests-test-objectlistiterator">
+<h2>2.2.11.1. Module d1_client.tests.test_objectlistiterator<a class="headerlink" href="#module-d1-client-tests-test-objectlistiterator" title="Permalink to this headline">¶</a></h2>
+<p>Unit tests for objectlistiterator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Created:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Author:</th><td class="field-body"><p class="first">DataONE (Vieglais, Dahl)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first last simple">
+<li>python 2.6</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/test_objectlistiterator.TestObjectListIterator.html#test_objectlistiterator.TestObjectListIterator" title="test_objectlistiterator.TestObjectListIterator"><tt class="xref py py-obj docutils literal"><span class="pre">TestObjectListIterator</span></tt></a>([methodName])</td>
+<td>Utility class that check whether two URLs are equal.  Not really as simple</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -90,9 +145,15 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="test_object_access.html" title="2.2.7. test_object_access"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/test_objectlistiterator.TestObjectListIterator.html" title="2.2.11.1.1. test_objectlistiterator.TestObjectListIterator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="generated/test_object_access.walkNode.html" title="2.2.10.1.3. test_object_access.walkNode"
              >previous</a> |</li>
-        <li><a href="../index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
           <li><a href="../api.html" >2. API</a> &raquo;</li>
           <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
           <li><a href="../generated-tests.html" >2.2. Unit Tests</a> &raquo;</li> 
@@ -100,7 +161,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

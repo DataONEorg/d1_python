@@ -1,6 +1,23 @@
 test_logrecorditerator
 ======================
 
-.. currentmodule:: 
+.. automodule:: test_logrecorditerator
 
-.. autodata:: test_logrecorditerator
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    testcase_logrecorditerator
+  
+  
+
+  
+  
+  

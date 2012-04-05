@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2. API and tests &mdash; DataONE Client Library for Python v0.beta documentation</title>
+    <title>2. API and tests &mdash; DataONE Client Library for Python 1.0.0 documentation</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.beta',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE Client Library for Python v0.beta documentation" href="index.html" />
+    <link rel="top" title="DataONE Client Library for Python 1.0.0 documentation" href="index.html" />
     <link rel="up" title="2. API" href="api.html" />
     <link rel="next" title="2.1. General" href="generated-general.html" />
     <link rel="prev" title="1. Overview" href="overview.html" /> 
@@ -35,12 +38,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="generated-general.html" title="2.1. General"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Overview"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">2. API</a> &raquo;</li> 
       </ul>
     </div>
@@ -60,7 +66,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -95,14 +101,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="generated-tests.html">2.2. Unit Tests</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="generated/node_test_common.html">2.2.1. node_test_common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_cnclient.html">2.2.2. test_cnclient</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_d1baseclient.html">2.2.3. test_d1baseclient</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_d1client.html">2.2.4. test_d1client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_logrecorditerator.html">2.2.5. test_logrecorditerator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_mnclient.html">2.2.6. test_mnclient</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_object_access.html">2.2.7. test_object_access</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/test_objectlistiterator.html">2.2.8. test_objectlistiterator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/all_tests.html">2.2.1. all_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/node_test_common.html">2.2.2. node_test_common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_cnclient.html">2.2.3. test_cnclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_d1baseclient.html">2.2.4. test_d1baseclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_d1client.html">2.2.5. test_d1client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/testing_context.html">2.2.6. testing_context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/testing_utilities.html">2.2.7. testing_utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_logrecorditerator.html">2.2.8. test_logrecorditerator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_mnclient.html">2.2.9. test_mnclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_object_access.html">2.2.10. test_object_access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/test_objectlistiterator.html">2.2.11. test_objectlistiterator</a></li>
 </ul>
 </li>
 </ul>
@@ -122,18 +131,21 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="generated-general.html" title="2.1. General"
              >next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Overview"
              >previous</a> |</li>
-        <li><a href="index.html">DataONE Client Library for Python v0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
           <li><a href="api.html" >2. API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

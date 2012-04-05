@@ -1,6 +1,32 @@
 test_mnclient
 =============
 
-.. currentmodule:: 
+.. automodule:: test_mnclient
 
-.. autodata:: test_mnclient
+  
+  
+  .. rubric:: Functions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    log_setup
+    main
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    TestCaseWithURLCompare
+    TestMNClient
+  
+  
+
+  
+  
+  

@@ -1,6 +1,23 @@
 d1baseclient
 ============
 
-.. currentmodule:: 
+.. automodule:: d1baseclient
 
-.. autodata:: d1baseclient
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    DataONEBaseClient
+  
+  
+
+  
+  
+  

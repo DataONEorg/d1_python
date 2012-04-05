@@ -1,6 +1,23 @@
 mnclient
 ========
 
-.. currentmodule:: 
+.. automodule:: mnclient
 
-.. autodata:: mnclient
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    MemberNodeClient
+  
+  
+
+  
+  
+  
