@@ -1,6 +1,43 @@
 solrclient
 ==========
 
-.. currentmodule:: 
+.. automodule:: solrclient
 
-.. autodata:: solrclient
+  
+  
+  .. rubric:: Functions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    parseString
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    SOLRArrayResponseIterator
+    SOLRArrayTransformer
+    SOLRRecordTransformer
+    SOLRSearchResponseIterator
+    SOLRSubsampleResponseIterator
+    SOLRValuesResponseIterator
+    SolrConnection
+  
+  
+
+  
+  
+  .. rubric:: Exceptions
+
+  .. autosummary::
+    :toctree: generated/
+  
+    SolrException
+  
+  

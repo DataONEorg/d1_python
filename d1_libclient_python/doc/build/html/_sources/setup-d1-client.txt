@@ -22,10 +22,9 @@ To set the library up in ``/var/local/dataone/d1_client_python`` using
 :term:`Bash` (which is often the default shell)::
 
   $ sudo -s
-  # mkdir -p d1_client_python
   # cd /var/local/dataone
-  # svn co https://repository.dataone.org/software/cicore/trunk/d1_client_python d1_client_python
-  # cd d1_client_python/d1_client/src
+  # svn co https://repository.dataone.org/software/cicore/trunk/d1_libclient_python d1_libclient_python
+  # cd d1_libclient_python/src/
   # python setup.py develop
 
 To update your copy of the library::

@@ -1,6 +1,23 @@
 test_objectlistiterator
 =======================
 
-.. currentmodule:: 
+.. automodule:: test_objectlistiterator
 
-.. autodata:: test_objectlistiterator
+  
+  
+  
+
+  
+  
+  .. rubric:: Classes
+
+  .. autosummary::
+    :toctree: generated/
+  
+    TestObjectListIterator
+  
+  
+
+  
+  
+  
