@@ -62,7 +62,7 @@ from print_level import * #@UnusedWildImport
 import cli_client
 import cli_exceptions
 import cli_util
-from const import VERBOSE_sect, VERBOSE_name
+from const import VERBOSE_sect, VERBOSE_name #@UnusedImport
 import data_package
 import system_metadata
 
@@ -170,34 +170,30 @@ class PackageCLI(cmd.Cmd):
     if len(values) > 0:
       pid = values[0]
 
-      # Quiet.
-    hush = self.session.get(VERBOSE_sect, VERBOSE_name)
-    self.session.set(VERBOSE_sect, VERBOSE_name, False)
-    # See if such an object already exists, if so see if the user wants to continue.
-    mn_client = cli_client.CLICNClient(self.session)
-    object_location_list = None
-    try:
-      r = mn_client.resolve(pid)
-    except d1_common.types.exceptions.DataONEException as e:
-      if e.errorCode != 404:
-        raise cli_exceptions.CLIError(
-          'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
-        )
-    except:
-      exc_type = sys.exc_info()[:1] # Just the type
-      if exc_type.__name__ != 'NotFound': # The dang thing throws an exeption on a 404.
-        cli_util._handle_unexpected_exception()
-    # Now see if there was something.
-    if ((object_location_list is not None)
-        and (len(object_location_list.objectLocation) > 0)):
-      if not cli_util.confirm(
-        'An object already exists under "%s".  Are you sure you want to create one?' % pid
-      ):
-        return
-    # Return to previous verbosity
-    self.session.set(VERBOSE_sect, VERBOSE_name, hush)
+      # See if such an object already exists, if so see if the user wants to continue.
+      mn_client = cli_client.CLICNClient(self.session)
+      object_location_list = None
+      try:
+        object_location_list = mn_client.resolve(pid)
+      except d1_common.types.exceptions.DataONEException as e:
+        if e.errorCode != 404:
+          raise cli_exceptions.CLIError(
+            'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
+          )
+      except:
+        exc_type, exc_msgs = sys.exc_info()[:2] # ignore the traceback. @UnusedVariable
+        if exc_type.__name__ != 'NotFound': # The dang thing throws an exeption on a 404.
+          cli_util._handle_unexpected_exception()
+      # Now see if there was something.
+      if ((object_location_list is not None)
+          and (len(object_location_list.objectLocation) > 0)):
+        if not cli_util.confirm(
+          'An object already exists under "%s".  Are you sure you want to create one?' %
+          pid
+        ):
+          return
 
-    # Create the package object (finally!).
+      # Create the package object (finally!).
     self.package = data_package.DataPackage(pid)
 
     # Add an existing scimeta item.
@@ -376,7 +372,7 @@ def action(dataONECLI, queryArgs):
   if queryArgs[0] == 'create':
     print 'burp'
 
-    # Load either a new package, or reload the same package.
+  # Load either a new package, or reload the same package.
   elif queryArgs[0] == 'load':
     if len(queryArgs) == 1:
       if dataONECLI.package.pid is None:

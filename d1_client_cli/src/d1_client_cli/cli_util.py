@@ -36,8 +36,18 @@ import sys
 import traceback
 import urlparse
 
-# D1_Client_CLI
+# DataONE
+# common
+try:
+  import d1_common.const
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Please install d1_common.\n')
+  raise
+
+# client
 from print_level import * #@UnusedWildImport
+import cli_exceptions
 
 
 def _handle_unexpected_exception(max_traceback_levels=5):
@@ -114,6 +124,7 @@ def clear_None_from_list(obj_list):
 
 
 def confirm(prompt, default='no', allow_blank=False):
+  def_response = None
   if default == 'no':
     p = ' [yes,NO] '
     def_response = False
@@ -128,7 +139,7 @@ def confirm(prompt, default='no', allow_blank=False):
   while True:
     response = raw_input(prompt + p)
     if ((response is None) or (len(response) == 0)):
-      response = default
+      response = string.lower(default)
     else:
       response = string.lower(response)
 
@@ -137,7 +148,7 @@ def confirm(prompt, default='no', allow_blank=False):
     elif response == 'no':
       return False
     elif allow_blank:
-      return default_response
+      return def_response
     else:
       print_warn('Answer must be "yes" or "no" (or nothing)')
 

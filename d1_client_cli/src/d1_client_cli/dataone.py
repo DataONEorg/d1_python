@@ -289,7 +289,7 @@ def handle_options(cli, options):
           d1_common.const.DEFAULT_CN_PATH
         )
       )
-      cli.d1.session_set_parameter(CN_URL, url)
+      cli.d1.session_set_parameter(CN_URL_name, url)
     if options.from_date is not None:
       cli.d1.session_set_parameter(FROM_DATE_name, options.from_date)
 # interactive is not in the session.
@@ -304,7 +304,7 @@ def handle_options(cli, options):
           d1_common.const.DEFAULT_MN_PATH
         )
       )
-      cli.d1.session_set_parameter(MN_URL, url)
+      cli.d1.session_set_parameter(MN_URL_name, url)
     if options.object_format is not None:
       cli.d1.session_set_parameter(FORMAT_name, options.object_format)
     if options.origin_mn is not None:
@@ -1394,9 +1394,9 @@ def main():
         data1CLI.onecmd(join(remainder))
         print ''
       data1CLI.cmdloop()
-
     except KeyboardInterrupt as e:
       data1CLI.do_exit('')
+
   else:
     data1CLI.onecmd(join(remainder))
     #
