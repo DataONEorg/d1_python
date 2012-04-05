@@ -1,0 +1,6 @@
+exception_serialization
+=======================
+
+.. currentmodule:: 
+
+.. autodata:: exception_serialization

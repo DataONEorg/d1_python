@@ -1,0 +1,6 @@
+exceptions.ZeroDivisionError
+============================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: ZeroDivisionError

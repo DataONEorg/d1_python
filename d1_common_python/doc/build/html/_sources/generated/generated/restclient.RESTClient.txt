@@ -1,0 +1,28 @@
+restclient.RESTClient
+=====================
+
+.. currentmodule:: restclient
+
+.. autoclass:: RESTClient
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: restclient.RESTClient.DELETE
+  .. automethod:: restclient.RESTClient.GET
+  .. automethod:: restclient.RESTClient.HEAD
+  .. automethod:: restclient.RESTClient.POST
+  .. automethod:: restclient.RESTClient.PUT
+  .. automethod:: restclient.RESTClient.__init__
+
+
+
+
+
+

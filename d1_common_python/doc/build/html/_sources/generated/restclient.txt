@@ -1,0 +1,23 @@
+restclient
+==========
+
+.. automodule:: restclient
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    RESTClient
+  
+  
+  
+  
+  
+  

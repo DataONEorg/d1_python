@@ -1,0 +1,6 @@
+util.utf8_to_unicode
+====================
+
+.. currentmodule:: util
+
+.. autofunction:: utf8_to_unicode

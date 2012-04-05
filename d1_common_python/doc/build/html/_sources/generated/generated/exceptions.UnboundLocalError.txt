@@ -1,0 +1,6 @@
+exceptions.UnboundLocalError
+============================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: UnboundLocalError

@@ -1,0 +1,53 @@
+all_tests.TestSystemMetadata
+============================
+
+.. currentmodule:: all_tests
+
+.. autoclass:: TestSystemMetadata
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: all_tests.TestSystemMetadata.__init__
+  .. automethod:: all_tests.TestSystemMetadata.assertAlmostEqual
+  .. automethod:: all_tests.TestSystemMetadata.assertAlmostEquals
+  .. automethod:: all_tests.TestSystemMetadata.assertEqual
+  .. automethod:: all_tests.TestSystemMetadata.assertEquals
+  .. automethod:: all_tests.TestSystemMetadata.assertFalse
+  .. automethod:: all_tests.TestSystemMetadata.assertNotAlmostEqual
+  .. automethod:: all_tests.TestSystemMetadata.assertNotAlmostEquals
+  .. automethod:: all_tests.TestSystemMetadata.assertNotEqual
+  .. automethod:: all_tests.TestSystemMetadata.assertNotEquals
+  .. automethod:: all_tests.TestSystemMetadata.assertRaises
+  .. automethod:: all_tests.TestSystemMetadata.assertTrue
+  .. automethod:: all_tests.TestSystemMetadata.assert_
+  .. automethod:: all_tests.TestSystemMetadata.countTestCases
+  .. automethod:: all_tests.TestSystemMetadata.debug
+  .. automethod:: all_tests.TestSystemMetadata.defaultTestResult
+  .. automethod:: all_tests.TestSystemMetadata.fail
+  .. automethod:: all_tests.TestSystemMetadata.failIf
+  .. automethod:: all_tests.TestSystemMetadata.failIfAlmostEqual
+  .. automethod:: all_tests.TestSystemMetadata.failIfEqual
+  .. automethod:: all_tests.TestSystemMetadata.failUnless
+  .. automethod:: all_tests.TestSystemMetadata.failUnlessAlmostEqual
+  .. automethod:: all_tests.TestSystemMetadata.failUnlessEqual
+  .. automethod:: all_tests.TestSystemMetadata.failUnlessRaises
+  .. automethod:: all_tests.TestSystemMetadata.id
+  .. automethod:: all_tests.TestSystemMetadata.run
+  .. automethod:: all_tests.TestSystemMetadata.setUp
+  .. automethod:: all_tests.TestSystemMetadata.shortDescription
+  .. automethod:: all_tests.TestSystemMetadata.tearDown
+  .. automethod:: all_tests.TestSystemMetadata.testLoadSystemMetadata
+  .. automethod:: all_tests.TestSystemMetadata.testValidateSystemMetadata
+
+
+
+
+
+

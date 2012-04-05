@@ -1,0 +1,59 @@
+xmlrunner.XmlTestRunnerTest
+===========================
+
+.. currentmodule:: xmlrunner
+
+.. autoclass:: XmlTestRunnerTest
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: xmlrunner.XmlTestRunnerTest.__init__
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertAlmostEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertAlmostEquals
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertEquals
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertFalse
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertNotAlmostEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertNotAlmostEquals
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertNotEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertNotEquals
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertRaises
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assertTrue
+  .. automethod:: xmlrunner.XmlTestRunnerTest.assert_
+  .. automethod:: xmlrunner.XmlTestRunnerTest.countTestCases
+  .. automethod:: xmlrunner.XmlTestRunnerTest.debug
+  .. automethod:: xmlrunner.XmlTestRunnerTest.defaultTestResult
+  .. automethod:: xmlrunner.XmlTestRunnerTest.fail
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failIf
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failIfAlmostEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failIfEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failUnless
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failUnlessAlmostEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failUnlessEqual
+  .. automethod:: xmlrunner.XmlTestRunnerTest.failUnlessRaises
+  .. automethod:: xmlrunner.XmlTestRunnerTest.id
+  .. automethod:: xmlrunner.XmlTestRunnerTest.run
+  .. automethod:: xmlrunner.XmlTestRunnerTest.setUp
+  .. automethod:: xmlrunner.XmlTestRunnerTest.shortDescription
+  .. automethod:: xmlrunner.XmlTestRunnerTest.tearDown
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_error
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_failure
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_no_tests
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_stderr_capture
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_stdout_capture
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_success
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_unittests_changing_stderr
+  .. automethod:: xmlrunner.XmlTestRunnerTest.test_unittests_changing_stdout
+
+
+
+
+
+

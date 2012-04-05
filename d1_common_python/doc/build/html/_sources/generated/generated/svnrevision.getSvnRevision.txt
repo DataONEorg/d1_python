@@ -1,0 +1,6 @@
+svnrevision.getSvnRevision
+==========================
+
+.. currentmodule:: svnrevision
+
+.. autofunction:: getSvnRevision

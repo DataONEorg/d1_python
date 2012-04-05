@@ -1,0 +1,6 @@
+exceptions.IndentationError
+===========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: IndentationError

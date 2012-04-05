@@ -1,0 +1,52 @@
+all_tests.TestMimeMultipart
+===========================
+
+.. currentmodule:: all_tests
+
+.. autoclass:: TestMimeMultipart
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: all_tests.TestMimeMultipart.__init__
+  .. automethod:: all_tests.TestMimeMultipart.assertAlmostEqual
+  .. automethod:: all_tests.TestMimeMultipart.assertAlmostEquals
+  .. automethod:: all_tests.TestMimeMultipart.assertEqual
+  .. automethod:: all_tests.TestMimeMultipart.assertEquals
+  .. automethod:: all_tests.TestMimeMultipart.assertFalse
+  .. automethod:: all_tests.TestMimeMultipart.assertNotAlmostEqual
+  .. automethod:: all_tests.TestMimeMultipart.assertNotAlmostEquals
+  .. automethod:: all_tests.TestMimeMultipart.assertNotEqual
+  .. automethod:: all_tests.TestMimeMultipart.assertNotEquals
+  .. automethod:: all_tests.TestMimeMultipart.assertRaises
+  .. automethod:: all_tests.TestMimeMultipart.assertTrue
+  .. automethod:: all_tests.TestMimeMultipart.assert_
+  .. automethod:: all_tests.TestMimeMultipart.countTestCases
+  .. automethod:: all_tests.TestMimeMultipart.debug
+  .. automethod:: all_tests.TestMimeMultipart.defaultTestResult
+  .. automethod:: all_tests.TestMimeMultipart.fail
+  .. automethod:: all_tests.TestMimeMultipart.failIf
+  .. automethod:: all_tests.TestMimeMultipart.failIfAlmostEqual
+  .. automethod:: all_tests.TestMimeMultipart.failIfEqual
+  .. automethod:: all_tests.TestMimeMultipart.failUnless
+  .. automethod:: all_tests.TestMimeMultipart.failUnlessAlmostEqual
+  .. automethod:: all_tests.TestMimeMultipart.failUnlessEqual
+  .. automethod:: all_tests.TestMimeMultipart.failUnlessRaises
+  .. automethod:: all_tests.TestMimeMultipart.id
+  .. automethod:: all_tests.TestMimeMultipart.run
+  .. automethod:: all_tests.TestMimeMultipart.setUp
+  .. automethod:: all_tests.TestMimeMultipart.shortDescription
+  .. automethod:: all_tests.TestMimeMultipart.tearDown
+  .. automethod:: all_tests.TestMimeMultipart.test_correct_mmp_generation
+
+
+
+
+
+

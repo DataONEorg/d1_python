@@ -1,0 +1,6 @@
+exceptions.MemoryError
+======================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: MemoryError

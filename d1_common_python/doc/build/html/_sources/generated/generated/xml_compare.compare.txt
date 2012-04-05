@@ -1,0 +1,6 @@
+xml_compare.compare
+===================
+
+.. currentmodule:: xml_compare
+
+.. autofunction:: compare

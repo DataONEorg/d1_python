@@ -1,0 +1,6 @@
+date_time.to_seconds_since_epoch
+================================
+
+.. currentmodule:: date_time
+
+.. autofunction:: to_seconds_since_epoch

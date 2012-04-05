@@ -1,0 +1,6 @@
+date_time.from_http_datetime
+============================
+
+.. currentmodule:: date_time
+
+.. autofunction:: from_http_datetime

@@ -1,0 +1,6 @@
+exceptions.FloatingPointError
+=============================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: FloatingPointError
