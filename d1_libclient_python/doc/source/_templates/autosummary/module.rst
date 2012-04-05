@@ -6,7 +6,7 @@
   {% block functions %}
   {% if functions %}
   .. rubric:: Functions
-  
+
   .. autosummary::
     :toctree: generated/
   {% for item in functions %}
@@ -14,11 +14,11 @@
   {%- endfor %}
   {% endif %}
   {% endblock %}
-  
+
   {% block classes %}
   {% if classes %}
   .. rubric:: Classes
-  
+
   .. autosummary::
     :toctree: generated/
   {% for item in classes %}
@@ -26,11 +26,11 @@
   {%- endfor %}
   {% endif %}
   {% endblock %}
-  
+
   {% block exceptions %}
   {% if exceptions %}
   .. rubric:: Exceptions
-  
+
   .. autosummary::
     :toctree: generated/
   {% for item in exceptions %}
