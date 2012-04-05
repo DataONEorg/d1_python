@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1.7.1.8. solrclient.SolrConnection &mdash; DataONE Client Library for Python 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE Client Library for Python 1.0.0 documentation" href="../../index.html" />
+    <link rel="up" title="2.1.7. solrclient" href="../solrclient.html" />
+    <link rel="next" title="2.1.7.1.9. solrclient.SolrException" href="solrclient.SolrException.html" />
+    <link rel="prev" title="2.1.7.1.7. solrclient.SOLRValuesResponseIterator" href="solrclient.SOLRValuesResponseIterator.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SolrException.html" title="2.1.7.1.9. solrclient.SolrException"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SOLRValuesResponseIterator.html" title="2.1.7.1.7. solrclient.SOLRValuesResponseIterator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../api.html" >2. API</a> &raquo;</li>
+          <li><a href="../../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../../generated-general.html" >2.1. General</a> &raquo;</li>
+          <li><a href="../solrclient.html" accesskey="U">2.1.7. solrclient</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="solrclient.SOLRValuesResponseIterator.html"
+                        title="previous chapter">2.1.7.1.7. solrclient.SOLRValuesResponseIterator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="solrclient.SolrException.html"
+                        title="next chapter">2.1.7.1.9. solrclient.SolrException</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/solrclient.SolrConnection.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="solrclient-solrconnection">
+<h1>2.1.7.1.8. solrclient.SolrConnection<a class="headerlink" href="#solrclient-solrconnection" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="solrclient.SolrConnection">
+<em class="property">class </em><tt class="descclassname">solrclient.</tt><tt class="descname">SolrConnection</tt><big>(</big><em>host='localhost:8080'</em>, <em>solrBase='/solr'</em>, <em>persistent=True</em>, <em>postHeaders={}</em><big>)</big><a class="headerlink" href="#solrclient.SolrConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a connection to the SOLR index.</p>
+<dl class="method">
+<dt id="solrclient.SolrConnection.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>host='localhost:8080'</em>, <em>solrBase='/solr'</em>, <em>persistent=True</em>, <em>postHeaders={}</em><big>)</big><a class="headerlink" href="#solrclient.SolrConnection.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#solrclient.SolrConnection.__init__" title="solrclient.SolrConnection.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([host,&nbsp;solrBase,&nbsp;persistent,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt>(**fields)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">addDocs</span></tt>(docs)</td>
+<td>docs is a list of fields that are a dictionary of name:value for a record</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">addMany</span></tt>(arrOfMap)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">close</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">coerceType</span></tt>(ftype,&nbsp;value)</td>
+<td>Returns unicode(value) after trying to coerce it into the SOLR field type.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">commit</span></tt>([waitFlush,&nbsp;waitSearcher,&nbsp;optimize])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">count</span></tt>([q,&nbsp;fq])</td>
+<td>Return the number of entries that match query</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">delete</span></tt>(id)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">deleteByQuery</span></tt>(query)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">doPost</span></tt>(url,&nbsp;body,&nbsp;headers)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">doUpdateXML</span></tt>(request)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">escapeKey</span></tt>(key)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">escapeQueryTerm</span></tt>(term)</td>
+<td><ul class="simple">
+<li><ul class="first">
+<li>&amp;&amp; || ! ( ) { } [ ] ^ &#8221; ~ * ? :</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">escapeVal</span></tt>(val)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">fieldAlphaHistogram</span></tt>(name[,&nbsp;q,&nbsp;fq,&nbsp;nbins,&nbsp;...])</td>
+<td>Generates a histogram of values from a string field.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fieldHistogram</span></tt>(name[,&nbsp;q,&nbsp;fq,&nbsp;nbins,&nbsp;minmax,&nbsp;...])</td>
+<td>Generates a histogram of values.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">fieldHistogram2d</span></tt>(colname,&nbsp;rowname[,&nbsp;q,&nbsp;fq,&nbsp;...])</td>
+<td>Generates a 2d histogram of values.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fieldMinMax</span></tt>(name[,&nbsp;q,&nbsp;fq])</td>
+<td>Returns the minimum and maximum values of the specified field.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">fieldValues</span></tt>(name[,&nbsp;q,&nbsp;fq,&nbsp;maxvalues,&nbsp;sort])</td>
+<td>Retrieve the unique values for a field, along with their usage counts.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt>(id)</td>
+<td>Retrieves the specified document.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">getFields</span></tt>([numTerms])</td>
+<td>Retrieve a list of fields.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">getIds</span></tt>([query,&nbsp;fq,&nbsp;start,&nbsp;rows])</td>
+<td>Returns a dictionary of:</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">getSolrType</span></tt>(field)</td>
+<td>Returns the SOLR type of the specified field name.  Assumes the convention</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">getftype</span></tt>(name)</td>
+<td>Returns the python type for the specified field name.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">prepareQueryTerm</span></tt>(field,&nbsp;term)</td>
+<td>Prepare a query term for inclusion in a query.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt>(params)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SolrException.html" title="2.1.7.1.9. solrclient.SolrException"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="solrclient.SOLRValuesResponseIterator.html" title="2.1.7.1.7. solrclient.SOLRValuesResponseIterator"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../api.html" >2. API</a> &raquo;</li>
+          <li><a href="../../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../../generated-general.html" >2.1. General</a> &raquo;</li>
+          <li><a href="../solrclient.html" >2.1.7. solrclient</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

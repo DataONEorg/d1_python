@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1.6.1.2. objectlistiterator.OptionParser &mdash; DataONE Client Library for Python 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="DataONE Client Library for Python 1.0.0 documentation" href="../../index.html" />
+    <link rel="up" title="2.1.6. objectlistiterator" href="../objectlistiterator.html" />
+    <link rel="next" title="2.1.7. solrclient" href="../solrclient.html" />
+    <link rel="prev" title="2.1.6.1.1. objectlistiterator.ObjectListIterator" href="objectlistiterator.ObjectListIterator.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../solrclient.html" title="2.1.7. solrclient"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="objectlistiterator.ObjectListIterator.html" title="2.1.6.1.1. objectlistiterator.ObjectListIterator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../api.html" >2. API</a> &raquo;</li>
+          <li><a href="../../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../../generated-general.html" >2.1. General</a> &raquo;</li>
+          <li><a href="../objectlistiterator.html" accesskey="U">2.1.6. objectlistiterator</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="objectlistiterator.ObjectListIterator.html"
+                        title="previous chapter">2.1.6.1.1. objectlistiterator.ObjectListIterator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../solrclient.html"
+                        title="next chapter">2.1.7. solrclient</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/generated/generated/objectlistiterator.OptionParser.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="objectlistiterator-optionparser">
+<h1>2.1.6.1.2. objectlistiterator.OptionParser<a class="headerlink" href="#objectlistiterator-optionparser" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="objectlistiterator.OptionParser">
+<em class="property">class </em><tt class="descclassname">objectlistiterator.</tt><tt class="descname">OptionParser</tt><big>(</big><em>usage=None</em>, <em>option_list=None</em>, <em>option_class=&lt;class optparse.Option at 0x1370b90&gt;</em>, <em>version=None</em>, <em>conflict_handler='error'</em>, <em>description=None</em>, <em>formatter=None</em>, <em>add_help_option=True</em>, <em>prog=None</em>, <em>epilog=None</em><big>)</big><a class="headerlink" href="#objectlistiterator.OptionParser" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Class attributes:</dt>
+<dd><dl class="first last docutils">
+<dt>standard_option_list <span class="classifier-delimiter">:</span> <span class="classifier">[Option]</span></dt>
+<dd>list of standard options that will be accepted by all instances
+of this parser class (intended to be overridden by subclasses).</dd>
+</dl>
+</dd>
+<dt>Instance attributes:</dt>
+<dd><dl class="first last docutils">
+<dt>usage <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>a usage string for your program.  Before it is displayed
+to the user, &#8220;%prog&#8221; will be expanded to the name of
+your program (self.prog or os.path.basename(sys.argv[0])).</dd>
+<dt>prog <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>the name of the current program (to override
+os.path.basename(sys.argv[0])).</dd>
+<dt>epilog <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>paragraph of help text to print after option help</dd>
+<dt>option_groups <span class="classifier-delimiter">:</span> <span class="classifier">[OptionGroup]</span></dt>
+<dd>list of option groups in this parser (option groups are
+irrelevant for parsing the command-line, but very useful
+for generating help)</dd>
+<dt>allow_interspersed_args <span class="classifier-delimiter">:</span> <span class="classifier">bool = true</span></dt>
+<dd><p class="first">if true, positional arguments may be interspersed with options.
+Assuming -a and -b each take a single argument, the command-line</p>
+<blockquote>
+<div>-ablah foo bar -bboo baz</div></blockquote>
+<dl class="docutils">
+<dt>will be interpreted the same as</dt>
+<dd>-ablah -bboo &#8211; foo bar baz</dd>
+<dt>If this flag were false, that command line would be interpreted as</dt>
+<dd>-ablah &#8211; foo bar -bboo baz</dd>
+</dl>
+<p class="last">&#8211; ie. we stop processing options as soon as we see the first
+non-option argument.  (This is the tradition followed by
+Python&#8217;s getopt module, Perl&#8217;s Getopt::Std, and other argument-
+parsing libraries, but it is generally annoying to users.)</p>
+</dd>
+<dt>process_default_values <span class="classifier-delimiter">:</span> <span class="classifier">bool = true</span></dt>
+<dd>if true, option default values are processed similarly to option
+values from the command line: that is, they are passed to the
+type-checking function for the option&#8217;s type (as long as the
+default value is a string).  (This really only matters if you
+have defined custom types; see SF bug #955889.)  Set it to false
+to restore the behaviour of Optik 1.4.1 and earlier.</dd>
+<dt>rargs <span class="classifier-delimiter">:</span> <span class="classifier">[string]</span></dt>
+<dd>the argument list currently being parsed.  Only set when
+parse_args() is active, and continually trimmed down as
+we consume arguments.  Mainly there for the benefit of
+callback options.</dd>
+<dt>largs <span class="classifier-delimiter">:</span> <span class="classifier">[string]</span></dt>
+<dd>the list of leftover arguments that we have skipped while
+parsing options.  If allow_interspersed_args is false, this
+list is always empty.</dd>
+<dt>values <span class="classifier-delimiter">:</span> <span class="classifier">Values</span></dt>
+<dd>the set of option values currently being accumulated.  Only
+set when parse_args() is active.  Also mainly for callbacks.</dd>
+</dl>
+</dd>
+</dl>
+<p>Because of the &#8216;rargs&#8217;, &#8216;largs&#8217;, and &#8216;values&#8217; attributes,
+OptionParser is not thread-safe.  If, for some perverse reason, you
+need to parse command-line arguments simultaneously in different
+threads, use different OptionParser instances.</p>
+<dl class="method">
+<dt id="objectlistiterator.OptionParser.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>usage=None</em>, <em>option_list=None</em>, <em>option_class=&lt;class optparse.Option at 0x1370b90&gt;</em>, <em>version=None</em>, <em>conflict_handler='error'</em>, <em>description=None</em>, <em>formatter=None</em>, <em>add_help_option=True</em>, <em>prog=None</em>, <em>epilog=None</em><big>)</big><a class="headerlink" href="#objectlistiterator.OptionParser.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#objectlistiterator.OptionParser.__init__" title="objectlistiterator.OptionParser.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([usage,&nbsp;option_list,&nbsp;option_class,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_option</span></tt>(Option)</td>
+<td>add_option(opt_str, ..., kwarg=val, ...)</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_option_group</span></tt>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_options</span></tt>(option_list)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">check_values</span></tt>(values&nbsp;:&nbsp;Values,&nbsp;args&nbsp;:&nbsp;[string])</td>
+<td>-&gt; (values : Values, args : [string])</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">destroy</span></tt>()</td>
+<td>Declare that you are done with this OptionParser.  This cleans up</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">disable_interspersed_args</span></tt>()</td>
+<td>Set parsing to stop on the first non-option.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enable_interspersed_args</span></tt>()</td>
+<td>Set parsing to not stop on the first non-option, allowing interspersing switches with command arguments.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">error</span></tt>(msg&nbsp;:&nbsp;string)</td>
+<td>Print a usage message incorporating &#8216;msg&#8217; to stderr and exit.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">exit</span></tt>([status,&nbsp;msg])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">expand_prog_name</span></tt>(s)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">format_description</span></tt>(formatter)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">format_epilog</span></tt>(formatter)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">format_help</span></tt>([formatter])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">format_option_help</span></tt>([formatter])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_default_values</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_description</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_option</span></tt>(opt_str)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_option_group</span></tt>(opt_str)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_prog_name</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_usage</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_version</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">has_option</span></tt>(opt_str)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">parse_args</span></tt>([args,&nbsp;values])</td>
+<td>parse_args(args : [string] = sys.argv[1:],</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">print_help</span></tt>(file&nbsp;:&nbsp;file&nbsp;=&nbsp;stdout)</td>
+<td>Print an extended help message, listing all options and any</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">print_usage</span></tt>(file&nbsp;:&nbsp;file&nbsp;=&nbsp;stdout)</td>
+<td>Print the usage message for the current program (self.usage) to &#8216;file&#8217; (default stdout).</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">print_version</span></tt>(file&nbsp;:&nbsp;file&nbsp;=&nbsp;stdout)</td>
+<td>Print the version message for this program (self.version) to &#8216;file&#8217; (default stdout).</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">remove_option</span></tt>(opt_str)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_conflict_handler</span></tt>(handler)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_default</span></tt>(dest,&nbsp;value)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_defaults</span></tt>(**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_description</span></tt>(description)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_process_default_values</span></tt>(process)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_usage</span></tt>(usage)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">standard_option_list</span></tt></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../solrclient.html" title="2.1.7. solrclient"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="objectlistiterator.ObjectListIterator.html" title="2.1.6.1.1. objectlistiterator.ObjectListIterator"
+             >previous</a> |</li>
+        <li><a href="../../index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../../api.html" >2. API</a> &raquo;</li>
+          <li><a href="../../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../../generated-general.html" >2.1. General</a> &raquo;</li>
+          <li><a href="../objectlistiterator.html" >2.1.6. objectlistiterator</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
