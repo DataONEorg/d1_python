@@ -1,0 +1,6 @@
+date_time.is_utc
+================
+
+.. currentmodule:: date_time
+
+.. autofunction:: is_utc

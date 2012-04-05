@@ -1,0 +1,202 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1.2. date_time &mdash; DataONE Common Library for Python 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="DataONE Common Library for Python 0.beta documentation" href="../index.html" />
+    <link rel="up" title="2.1. General" href="../generated-general.html" />
+    <link rel="next" title="2.1.2.1.1. date_time.cast_datetime_to_utc" href="generated/date_time.cast_datetime_to_utc.html" />
+    <link rel="prev" title="2.1.1. const" href="const.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/date_time.cast_datetime_to_utc.html" title="2.1.2.1.1. date_time.cast_datetime_to_utc"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="const.html" title="2.1.1. const"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
+          <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../generated-general.html" accesskey="U">2.1. General</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.1.2. date_time</a><ul>
+<li><a class="reference internal" href="#module-d1-common-date-time">2.1.2.1. Module d1_common.date_time</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="const.html"
+                        title="previous chapter">2.1.1. const</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/date_time.cast_datetime_to_utc.html"
+                        title="next chapter">2.1.2.1.1. date_time.cast_datetime_to_utc</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/generated/date_time.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-date_time">
+<span id="date-time"></span><h1>2.1.2. date_time<a class="headerlink" href="#module-date_time" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-d1-common-date-time">
+<h2>2.1.2.1. Module d1_common.date_time<a class="headerlink" href="#module-d1-common-date-time" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Utilities for handling date-times in DataONE.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Created:</th><td class="field-body">2010-08-07</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">DataONE (Dahl)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Functions</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.cast_datetime_to_utc.html#date_time.cast_datetime_to_utc" title="date_time.cast_datetime_to_utc"><tt class="xref py py-obj docutils literal"><span class="pre">cast_datetime_to_utc</span></tt></a>(date_time)</td>
+<td>Set timezone to UTC without adjusting the date-time. Warning: If the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/date_time.create_utc_datetime.html#date_time.create_utc_datetime" title="date_time.create_utc_datetime"><tt class="xref py py-obj docutils literal"><span class="pre">create_utc_datetime</span></tt></a>(*datetime_parts)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.from_http_datetime.html#date_time.from_http_datetime" title="date_time.from_http_datetime"><tt class="xref py py-obj docutils literal"><span class="pre">from_http_datetime</span></tt></a>(http_full_datetime)</td>
+<td>Parse HTTP Full Date formats. Each of the allowed formats are supported:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/date_time.from_iso8601.html#date_time.from_iso8601" title="date_time.from_iso8601"><tt class="xref py py-obj docutils literal"><span class="pre">from_iso8601</span></tt></a>(iso8601_string)</td>
+<td>Create Python datetime from ISO8601 formatted string.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.is_utc.html#date_time.is_utc" title="date_time.is_utc"><tt class="xref py py-obj docutils literal"><span class="pre">is_utc</span></tt></a>(date_time)</td>
+<td>Check that datetime contains time zone information and that the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/date_time.normalize_datetime_to_utc.html#date_time.normalize_datetime_to_utc" title="date_time.normalize_datetime_to_utc"><tt class="xref py py-obj docutils literal"><span class="pre">normalize_datetime_to_utc</span></tt></a>(date_time[,&nbsp;timezone])</td>
+<td>Adjust datetime to UTC by applying the timezone offset to the datetime and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.strip_timezone.html#date_time.strip_timezone" title="date_time.strip_timezone"><tt class="xref py py-obj docutils literal"><span class="pre">strip_timezone</span></tt></a>(date_time)</td>
+<td>Create a naive datetime by stripping away any timezone information.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/date_time.to_http_datetime.html#date_time.to_http_datetime" title="date_time.to_http_datetime"><tt class="xref py py-obj docutils literal"><span class="pre">to_http_datetime</span></tt></a>(date_time)</td>
+<td>Format datetime to the preferred HTTP Full Date format, which is a</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.to_seconds_since_epoch.html#date_time.to_seconds_since_epoch" title="date_time.to_seconds_since_epoch"><tt class="xref py py-obj docutils literal"><span class="pre">to_seconds_since_epoch</span></tt></a>(date_time)</td>
+<td>Convert datetime to epoch time / Unix timestamp. This is the number of</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/date_time.to_xsd_datetime.html#date_time.to_xsd_datetime" title="date_time.to_xsd_datetime"><tt class="xref py py-obj docutils literal"><span class="pre">to_xsd_datetime</span></tt></a>(date_time)</td>
+<td>Format datetime to a valid xs:dateTime. (YYYY-MM-DDTHH:MM:SS.mmm+00:00)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.utc_now.html#date_time.utc_now" title="date_time.utc_now"><tt class="xref py py-obj docutils literal"><span class="pre">utc_now</span></tt></a>()</td>
+<td>Now in the UTC timezone.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/date_time.UTC.html#date_time.UTC" title="date_time.UTC"><tt class="xref py py-obj docutils literal"><span class="pre">UTC</span></tt></a></td>
+<td>Date-times in DataONE are required to have timezone information that is</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/date_time.cast_datetime_to_utc.html" title="2.1.2.1.1. date_time.cast_datetime_to_utc"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="const.html" title="2.1.1. const"
+             >previous</a> |</li>
+        <li><a href="../index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
+          <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../generated-general.html" >2.1. General</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

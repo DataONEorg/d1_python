@@ -1,0 +1,23 @@
+test_exceptions
+===============
+
+.. automodule:: test_exceptions
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestExceptions
+  
+  
+  
+  
+  
+  

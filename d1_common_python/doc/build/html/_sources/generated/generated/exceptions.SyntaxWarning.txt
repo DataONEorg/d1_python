@@ -1,0 +1,6 @@
+exceptions.SyntaxWarning
+========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: SyntaxWarning

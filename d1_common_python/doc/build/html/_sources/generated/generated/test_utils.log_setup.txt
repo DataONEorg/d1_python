@@ -1,0 +1,6 @@
+test_utils.log_setup
+====================
+
+.. currentmodule:: test_utils
+
+.. autofunction:: log_setup

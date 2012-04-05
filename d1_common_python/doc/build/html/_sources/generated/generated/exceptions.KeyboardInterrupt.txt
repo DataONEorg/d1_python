@@ -1,0 +1,6 @@
+exceptions.KeyboardInterrupt
+============================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: KeyboardInterrupt

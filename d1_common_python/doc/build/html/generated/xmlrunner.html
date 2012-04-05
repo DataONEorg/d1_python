@@ -1,0 +1,187 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1.10. xmlrunner &mdash; DataONE Common Library for Python 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="DataONE Common Library for Python 0.beta documentation" href="../index.html" />
+    <link rel="up" title="2.1. General" href="../generated-general.html" />
+    <link rel="next" title="2.1.10.1.1. xmlrunner.escape" href="generated/xmlrunner.escape.html" />
+    <link rel="prev" title="2.1.9.1.4. xml_compare.CompareError" href="generated/xml_compare.CompareError.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/xmlrunner.escape.html" title="2.1.10.1.1. xmlrunner.escape"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="generated/xml_compare.CompareError.html" title="2.1.9.1.4. xml_compare.CompareError"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
+          <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../generated-general.html" accesskey="U">2.1. General</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.1.10. xmlrunner</a><ul>
+<li><a class="reference internal" href="#module-d1-common-xmlrunner">2.1.10.1. Module d1_common.xmlrunner</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="generated/xml_compare.CompareError.html"
+                        title="previous chapter">2.1.9.1.4. xml_compare.CompareError</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/xmlrunner.escape.html"
+                        title="next chapter">2.1.10.1.1. xmlrunner.escape</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/generated/xmlrunner.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xmlrunner">
+<span id="xmlrunner"></span><h1>2.1.10. xmlrunner<a class="headerlink" href="#module-xmlrunner" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-d1-common-xmlrunner">
+<h2>2.1.10.1. Module d1_common.xmlrunner<a class="headerlink" href="#module-d1-common-xmlrunner" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">SOURCE:</th><td class="field-body"><p class="first"><a class="reference external" href="http://xbmc.ramfelt.se/browser/TV.com/trunk/src/python-test/xmlrunner.py">http://xbmc.ramfelt.se/browser/TV.com/trunk/src/python-test/xmlrunner.py</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date Retrieved:</th><td class="field-body"><p class="first">2010-06-15</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body"><p class="first">Sebastian Rittau &lt;<a class="reference external" href="mailto:srittau&#37;&#52;&#48;jroger&#46;in-berlin&#46;de">srittau<span>&#64;</span>jroger<span>&#46;</span>in-berlin<span>&#46;</span>de</a>&gt;</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">License:</th><td class="field-body"><p class="first">Placed in the Public Domain.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first last simple">
+<li>python 2.6</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>XML Test Runner for PyUnit.</p>
+<p class="rubric">Functions</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/xmlrunner.escape.html#xmlrunner.escape" title="xmlrunner.escape"><tt class="xref py py-obj docutils literal"><span class="pre">escape</span></tt></a>(data[,&nbsp;entities])</td>
+<td>Escape &amp;, &lt;, and &gt; in a string of data.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/xmlrunner.XmlTestRunner.html#xmlrunner.XmlTestRunner" title="xmlrunner.XmlTestRunner"><tt class="xref py py-obj docutils literal"><span class="pre">XmlTestRunner</span></tt></a>([stream])</td>
+<td>A test runner that stores results in XML format compatible with JUnit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/xmlrunner.XmlTestRunnerTest.html#xmlrunner.XmlTestRunnerTest" title="xmlrunner.XmlTestRunnerTest"><tt class="xref py py-obj docutils literal"><span class="pre">XmlTestRunnerTest</span></tt></a>([methodName])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/xmlrunner.escape.html" title="2.1.10.1.1. xmlrunner.escape"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="generated/xml_compare.CompareError.html" title="2.1.9.1.4. xml_compare.CompareError"
+             >previous</a> |</li>
+        <li><a href="../index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
+          <li><a href="../generated.html" >2. API and tests</a> &raquo;</li>
+          <li><a href="../generated-general.html" >2.1. General</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

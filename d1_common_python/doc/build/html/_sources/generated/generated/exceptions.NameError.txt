@@ -1,0 +1,6 @@
+exceptions.NameError
+====================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: NameError

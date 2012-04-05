@@ -1,0 +1,27 @@
+util
+====
+
+.. automodule:: util
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    checksums_are_equal
+    get_checksum_calculator_by_dataone_designator
+    get_content_type
+    pretty_xml
+    utf8_to_unicode
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

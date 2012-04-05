@@ -1,0 +1,6 @@
+exceptions.SystemExit
+=====================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: SystemExit

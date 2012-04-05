@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Glossary &mdash; DataONE Common Library for Python 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Common Library for Python 0.beta documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/glossary.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="glossary">
+<h1>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h1>
+<dl class="glossary docutils">
+<dt id="term-dataone">DataONE</dt>
+<dd><p class="first">Data Observation Network for Earth</p>
+<p class="last"><a class="reference external" href="https://dataone.org">https://dataone.org</a></p>
+</dd>
+<dt id="term-dataone-common-library-for-python">DataONE Common Library for Python</dt>
+<dd>Part of the DataONE <a class="reference internal" href="#term-investigator-toolkit-itk"><em class="xref std std-term">Investigator Toolkit (ITK)</em></a>. Provides
+functionality commonly needed by projects that interact with the
+<a class="reference internal" href="#term-dataone"><em class="xref std std-term">DataONE</em></a> infrastructure via Python. It is a dependency of
+<a class="reference internal" href="#term-dataone-client-library-for-python"><em class="xref std std-term">DataONE Client Library for Python</em></a>, <a class="reference internal" href="#term-gmn"><em class="xref std std-term">GMN</em></a> and currently all
+other DataONE components written in Python.</dd>
+<dt id="term-dataone-client-library-for-python">DataONE Client Library for Python</dt>
+<dd>Part of the DataONE <a class="reference internal" href="#term-investigator-toolkit-itk"><em class="xref std std-term">Investigator Toolkit (ITK)</em></a>. Provides
+programmatic access to the DataONE infrastructure and may be used to form
+the basis of larger applications or to extend existing applications
+to utilize the services of DataONE.</dd>
+<dt id="term-gmn">GMN</dt>
+<dd><p class="first">DataONE Generic Member Node</p>
+<p class="last">GMN is a complete implementation of a <a class="reference internal" href="#term-mn"><em class="xref std std-term">MN</em></a>. It provides an
+implementation of all MN APIs and can be used by organizations to expose
+their science data to DataONE if they do not wish to create their own,
+native MN. GMN can also be used as a workbone or reference for a 3rd party
+MN implementation. If an organization wishes to donate storage space
+to DataONE, GMN can be set up as a <a class="reference internal" href="#term-replication-target"><em class="xref std std-term">replication target</em></a>.</p>
+</dd>
+<dt id="term-replication-target">Replication target</dt>
+<dd>A <a class="reference internal" href="#term-mn"><em class="xref std std-term">MN</em></a> that accepts replicas (copies) of science data from other MNs
+and thereby helps ensuring that science data remains available.</dd>
+<dt id="term-vendor-specific-extensions">Vendor specific extensions</dt>
+<dd>Functionality that is not part of the DataONE APIs but is supported by
+a DataONE component. DataONE has defined APIs for accessing such extensions.</dd>
+<dt id="term-investigator-toolkit-itk">Investigator Toolkit (ITK)</dt>
+<dd><p class="first">The Investigator Toolkit provides a suite of software tools that are useful
+for the various audiences that DataONE serves. The tools fall in a number of
+categories, which are further developed here, with examples of potential
+applications that would fit into each category.</p>
+<p class="last"><a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html">http://mule1.dataone.org/ArchitectureDocs-current/design/itk-overview.html</a></p>
+</dd>
+<dt id="term-mn">MN</dt>
+<dd>DataONE Member Node.</dd>
+<dt id="term-cn">CN</dt>
+<dd>DataONE Coordinating Node.</dd>
+<dt id="term-client">client</dt>
+<dd>An application that accesses the DataONE infrastructure on behalf of
+a user.</dd>
+<dt id="term-scidata">SciData</dt>
+<dd>An object (file) that contains scienctific observational data.</dd>
+<dt id="term-scimeta">SciMeta</dt>
+<dd>An object (file) that contains information about a SciData object.</dd>
+<dt id="term-sysmeta">SysMeta</dt>
+<dd>An object (file) that contains system level information about a SciData or a
+SciMeta object.</dd>
+<dt id="term-subversion">Subversion</dt>
+<dd><p class="first">Version control system</p>
+<p class="last"><a class="reference external" href="http://subversion.apache.org/">http://subversion.apache.org/</a></p>
+</dd>
+<dt id="term-bash">Bash</dt>
+<dd><p class="first">GNU Bourne-Again Shell</p>
+<p class="last"><a class="reference external" href="http://www.gnu.org/software/bash/">http://www.gnu.org/software/bash/</a></p>
+</dd>
+<dt id="term-apache">Apache</dt>
+<dd><p class="first">HTTP server</p>
+<p class="last"><a class="reference external" href="http://httpd.apache.org/">http://httpd.apache.org/</a></p>
+</dd>
+<dt id="term-mpm">MPM</dt>
+<dd><p class="first">Multi-Processing Module</p>
+<p>The component within Apache that manages the processes and threads used for
+serving requests.</p>
+<p class="last"><a class="reference external" href="http://httpd.apache.org/docs/2.0/mpm.html">http://httpd.apache.org/docs/2.0/mpm.html</a></p>
+</dd>
+<dt id="term-python">Python</dt>
+<dd><p class="first">A dynamic programming language.</p>
+<p class="last"><a class="reference external" href="http://www.python.org">http://www.python.org</a></p>
+</dd>
+<dt id="term-django">Django</dt>
+<dd><p class="first">High-level Python Web framework that encourages rapid development and clean,
+pragmatic design.</p>
+<p class="last"><a class="reference external" href="https://www.djangoproject.com/">https://www.djangoproject.com/</a></p>
+</dd>
+<dt id="term-wsgi">WSGI</dt>
+<dd><p class="first">Web Server Gateway Interface</p>
+<p class="last"><a class="reference external" href="http://www.wsgi.org/wsgi/">http://www.wsgi.org/wsgi/</a></p>
+</dd>
+<dt id="term-mod-wsgi">mod_wsgi</dt>
+<dd>An <a class="reference internal" href="#term-apache"><em class="xref std std-term">Apache</em></a> module that implements <a class="reference internal" href="#term-wsgi"><em class="xref std std-term">WSGI</em></a>.</dd>
+<dt id="term-mod-ssl">mod_ssl</dt>
+<dd>An <a class="reference internal" href="#term-apache"><em class="xref std std-term">Apache</em></a> module that interfaces to <a class="reference internal" href="#term-41"><em class="xref std std-term">OpenSSL</em></a>.</dd>
+<dt id="term-pyxb">PyXB</dt>
+<dd><p class="first">Python XML Schema Bindings</p>
+<p class="last"><a class="reference external" href="http://pyxb.sourceforge.net/">http://pyxb.sourceforge.net/</a></p>
+</dd>
+<dt id="term-lxml">lxml</dt>
+<dd><p class="first">A library for processing XML and HTML with Python</p>
+<p class="last"><a class="reference external" href="http://lxml.de/">http://lxml.de/</a></p>
+</dd>
+<dt id="term-minixsv">minixsv</dt>
+<dd><p class="first">A Lightweight XML schema validator</p>
+<p class="last"><a class="reference external" href="http://www.familieleuthe.de/MiniXsv.html">http://www.familieleuthe.de/MiniXsv.html</a></p>
+</dd>
+<dt id="term-python-dateutil">python-dateutil</dt>
+<dd><p class="first">Extends the standard datetime module</p>
+<p class="last"><a class="reference external" href="http://labix.org/python-dateutil">http://labix.org/python-dateutil</a></p>
+</dd>
+<dt id="term-psycopg2">Psycopg2</dt>
+<dd><p class="first">Psycopg is a PostgreSQL database adapter for <a class="reference internal" href="#term-python"><em class="xref std std-term">Python</em></a>.</p>
+<p class="last"><a class="reference external" href="http://initd.org/psycopg/">http://initd.org/psycopg/</a></p>
+</dd>
+<dt id="term-openssl">OpenSSL</dt>
+<dd><p class="first">An open source implementation of the Secure Sockets Layer (SSL v2/v3) and
+Transport Layer Security (TLS v1) protocols as well as a full-strength
+general purpose cryptography library.</p>
+<p class="last"><a class="reference external" href="http://www.openssl.org/">http://www.openssl.org/</a></p>
+</dd>
+<dt id="term-cron">cron</dt>
+<dd>cron is a time-based job scheduler in Unix-like computer operating systems.
+cron enables users to schedule jobs (commands or shell scripts) to run
+periodically at certain times or dates.</dd>
+<dt id="term-python-setuptools">python-setuptools</dt>
+<dd><p class="first">A package manager for Python</p>
+<p class="last"><a class="reference external" href="http://pypi.python.org/pypi/setuptools">http://pypi.python.org/pypi/setuptools</a></p>
+</dd>
+<dt id="term-iso8601">ISO8601</dt>
+<dd><p class="first">International standard covering the exchange of date and time-related data</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/ISO_8601">http://en.wikipedia.org/wiki/ISO_8601</a></p>
+</dd>
+<dt id="term-python-iso8601">python-iso8601</dt>
+<dd><p class="first">Python library implementing basic support for <a class="reference internal" href="#term-iso8601"><em class="xref std std-term">ISO8601</em></a></p>
+<p class="last"><a class="reference external" href="http://pypi.python.org/pypi/iso8601/">http://pypi.python.org/pypi/iso8601/</a></p>
+</dd>
+<dt id="term-x-509">X.509</dt>
+<dd><p class="first">An ITU-T standard for a public key infrastructure (PKI) for single sign-on
+(SSO) and Privilege Management Infrastructure (PMI). X.509 specifies, amongst
+other things, standard formats for public key certificates, certificate
+revocation lists, attribute certificates, and a certification path validation
+algorithm.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/X509">http://en.wikipedia.org/wiki/X509</a></p>
+</dd>
+<dt id="term-ca">CA</dt>
+<dd><p class="first">Certificate Authority</p>
+<p>A certificate authority is an entity that issues digital <a class="reference internal" href="#term-certificate"><em class="xref std std-term">certificate</em></a>
+s. The digital certificate certifies the ownership of a public key by the
+named subject of the certificate. This allows others (relying parties) to
+rely upon signatures or assertions made by the private key that corresponds
+to the public key that is certified. In this model of trust relationships, a
+CA is a trusted third party that is trusted by both the subject (owner) of
+the certificate and the party relying upon the certificate. CAs are
+characteristic of many public key infrastructure (PKI) schemes.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Certificate_authority">http://en.wikipedia.org/wiki/Certificate_authority</a></p>
+</dd>
+<dt id="term-ca-signing-key">CA signing key</dt>
+<dd>The private key which the <a class="reference internal" href="#term-ca"><em class="xref std std-term">CA</em></a> uses for signing <a class="reference internal" href="#term-csr"><em class="xref std std-term">CSR</em></a>s.</dd>
+<dt id="term-server-key">Server key</dt>
+<dd>The private key that Apache will use for proving that it is the owner
+of the <a class="reference internal" href="#term-certificate"><em class="xref std std-term">certificate</em></a> that it provides to the client during the
+SSL handshake.</dd>
+<dt id="term-csr">CSR</dt>
+<dd><p class="first">Certificate Signing Request</p>
+<p>A message sent from an applicant to a <a class="reference internal" href="#term-ca"><em class="xref std std-term">CA</em></a> in order to apply for a
+<a class="reference internal" href="#term-certificate"><em class="xref std std-term">certificate</em></a>.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Certificate_signing_request">http://en.wikipedia.org/wiki/Certificate_signing_request</a></p>
+</dd>
+<dt id="term-certificate">Certificate</dt>
+<dd><p class="first">A public key certificate (also known as a digital certificate or identity
+certificate) is an electronic document which uses a digital signature to bind
+a public key with an identity &#8211; information such as the name of a person or an
+organization, their address, and so forth. The certificate can be used to
+verify that a public key belongs to an individual.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Public_key_certificate">http://en.wikipedia.org/wiki/Public_key_certificate</a></p>
+</dd>
+<dt id="term-ca-certificate">CA certificate</dt>
+<dd>A certificate that belongs to a <a class="reference internal" href="#term-ca"><em class="xref std std-term">CA</em></a> and serves as the root
+certificate in a term:<cite>chain of trust</cite>.</dd>
+<dt id="term-self-signed-certificate">Self signed certificate</dt>
+<dd><p class="first">A <a class="reference internal" href="#term-certificate"><em class="xref std std-term">certificate</em></a> that is signed by its own creator. A self signed
+certificate is not a part of a <a class="reference internal" href="#term-chain-of-trust"><em class="xref std std-term">chain of trust</em></a> and so, it is not
+possible to validate the information stored in the certificate. Because of
+this, self signed certificates are useful mostly for testing in an
+implicitly trusted environment.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Self-signed_certificate">http://en.wikipedia.org/wiki/Self-signed_certificate</a></p>
+</dd>
+<dt id="term-chain-of-trust">Chain of trust</dt>
+<dd><p class="first">The Chain of Trust of a Certificate Chain is an ordered list of
+certificates, containing an end-user subscriber certificate and intermediate
+certificates (that represents the Intermediate CA), that enables the
+receiver to verify that the sender and all intermediates certificates are
+trustworthy.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Chain_of_trust">http://en.wikipedia.org/wiki/Chain_of_trust</a></p>
+</dd>
+<dt id="term-41">OpenSSL</dt>
+<dd>Toolkit implementing the <a class="reference internal" href="#term-ssl"><em class="xref std std-term">SSL</em></a> v2/v3 and <a class="reference internal" href="#term-tls"><em class="xref std std-term">TLS</em></a> v1 protocols as
+well as a full-strength general purpose cryptography library.</dd>
+<dt id="term-ssl">SSL</dt>
+<dd><p class="first">Secure Sockets Layer</p>
+<p class="last">A protocol for transmitting private information via the Internet. SSL uses a
+cryptographic system that uses two keys to encrypt data − a public key known
+to everyone and a private or secret key known only to the recipient of the
+message.</p>
+</dd>
+<dt id="term-ssl-handshake">SSL handshake</dt>
+<dd><p class="first">The initial negotiation between two machines that communicate over SSL.</p>
+<p><a class="reference external" href="http://developer.connectopensource.org/display/CONNECTWIKI/SSL+Handshake">http://developer.connectopensource.org/display/CONNECTWIKI/SSL+Handshake</a></p>
+<p class="last"><a class="reference external" href="http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png">http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png</a></p>
+</dd>
+<dt id="term-tls">TLS</dt>
+<dd><p class="first">Transport Layer Security</p>
+<p class="last">Successor of <a class="reference internal" href="#term-ssl"><em class="xref std std-term">SSL</em></a>.</p>
+</dd>
+<dt id="term-client-side-authentication">Client side authentication</dt>
+<dd><a class="reference internal" href="#term-ssl"><em class="xref std std-term">SSL</em></a> Client side authentication is part of the <a class="reference internal" href="#term-ssl-handshake"><em class="xref std std-term">SSL handshake</em></a>,
+where the client proves its identity to the web server by providing a
+<a class="reference internal" href="#term-certificate"><em class="xref std std-term">certificate</em></a> to the server. The certificate provided by the client
+must be signed by a <a class="reference internal" href="#term-ca"><em class="xref std std-term">CA</em></a> that is trusted by the server. Client Side
+Authentication is not a required part of the handshake. The server can be
+set up to not allow Client side authentication, to require it or to let it
+be optional.</dd>
+<dt id="term-server-side-authentication">Server Side Authentication</dt>
+<dd><a class="reference internal" href="#term-ssl"><em class="xref std std-term">SSL</em></a> Server Side Authentication is part of the <a class="reference internal" href="#term-ssl-handshake"><em class="xref std std-term">SSL handshake</em></a>,
+where the server proves its identity to the client by providing a
+<a class="reference internal" href="#term-certificate"><em class="xref std std-term">certificate</em></a> to the client. The certificate provided by the server
+must be signed by a <a class="reference internal" href="#term-ca"><em class="xref std std-term">CA</em></a> that is trusted by the client. Server Side
+Authentication is a required part of the handshake.</dd>
+<dt id="term-client-side-certificate">Client side certificate</dt>
+<dd><a class="reference internal" href="#term-certificate"><em class="xref std std-term">Certificate</em></a> that is provided by the client during <a class="reference internal" href="#term-client-side-authentication"><em class="xref std std-term">client side
+authentication</em></a>.</dd>
+<dt id="term-cilogon">CILogon</dt>
+<dd><p class="first">The CILogon project facilitates secure access to CyberInfrastructure (CI).</p>
+<p class="last"><a class="reference external" href="http://www.cilogon.org/">http://www.cilogon.org/</a></p>
+</dd>
+<dt id="term-loa">LOA</dt>
+<dd><p class="first">Levels of Assurance</p>
+<p>CILogon operates three Certification Authorities (CAs) with consistent
+operational and technical security controls. The CAs differ only in their
+procedures for subscriber authentication, identity validation, and naming.
+These differing procedures result in different Levels of Assurance (LOA)
+regarding the strength of the identity contained in the certificate. For
+this reason, relying parties may decide to accept certificates from only a
+subset of the CILogon CAs.</p>
+<p class="last"><a class="reference external" href="http://ca.cilogon.org/loa">http://ca.cilogon.org/loa</a></p>
+</dd>
+<dt id="term-rest">REST</dt>
+<dd><p class="first">Representational State Transfer</p>
+<p>A style of software architecture for distributed hypermedia systems such as
+the World Wide Web.</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Representational_State_Transfer">http://en.wikipedia.org/wiki/Representational_State_Transfer</a></p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

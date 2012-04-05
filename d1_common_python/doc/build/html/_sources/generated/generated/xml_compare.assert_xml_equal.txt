@@ -1,0 +1,6 @@
+xml_compare.assert_xml_equal
+============================
+
+.. currentmodule:: xml_compare
+
+.. autofunction:: assert_xml_equal

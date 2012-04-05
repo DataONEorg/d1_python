@@ -1,0 +1,6 @@
+test_date_time.log_setup
+========================
+
+.. currentmodule:: test_date_time
+
+.. autofunction:: log_setup

@@ -1,0 +1,26 @@
+date_time.UTC
+=============
+
+.. currentmodule:: date_time
+
+.. autoclass:: UTC
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: date_time.UTC.dst
+  .. automethod:: date_time.UTC.fromutc
+  .. automethod:: date_time.UTC.tzname
+  .. automethod:: date_time.UTC.utcoffset
+
+
+
+
+
+

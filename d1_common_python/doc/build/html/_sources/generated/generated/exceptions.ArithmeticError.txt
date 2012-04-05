@@ -1,0 +1,6 @@
+exceptions.ArithmeticError
+==========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: ArithmeticError

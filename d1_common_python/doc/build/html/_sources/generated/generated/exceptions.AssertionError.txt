@@ -1,0 +1,6 @@
+exceptions.AssertionError
+=========================
+
+.. currentmodule:: exceptions
+
+.. autoexception:: AssertionError

@@ -1,0 +1,6 @@
+util.get_checksum_calculator_by_dataone_designator
+==================================================
+
+.. currentmodule:: util
+
+.. autofunction:: get_checksum_calculator_by_dataone_designator

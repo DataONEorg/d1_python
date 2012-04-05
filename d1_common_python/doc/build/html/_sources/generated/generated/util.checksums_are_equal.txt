@@ -1,0 +1,6 @@
+util.checksums_are_equal
+========================
+
+.. currentmodule:: util
+
+.. autofunction:: checksums_are_equal

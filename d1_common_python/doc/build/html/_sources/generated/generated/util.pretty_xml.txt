@@ -1,0 +1,6 @@
+util.pretty_xml
+===============
+
+.. currentmodule:: util
+
+.. autofunction:: pretty_xml

@@ -1,0 +1,30 @@
+xmlrunner.XmlTestRunner
+=======================
+
+.. currentmodule:: xmlrunner
+
+.. autoclass:: XmlTestRunner
+
+
+
+  .. automethod:: __init__
+
+
+
+  .. rubric:: Methods
+  
+
+  .. automethod:: xmlrunner.XmlTestRunner.__init__
+  .. automethod:: xmlrunner.XmlTestRunner.run
+
+
+
+
+
+
+  .. rubric:: Attributes
+
+  .. autosummary::
+
+   ~XmlTestRunner.path
+

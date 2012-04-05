@@ -1,0 +1,23 @@
+test_accesspolicy
+=================
+
+.. automodule:: test_accesspolicy
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestAccessPolicy
+  
+  
+  
+  
+  
+  

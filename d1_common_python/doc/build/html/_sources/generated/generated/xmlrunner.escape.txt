@@ -1,0 +1,6 @@
+xmlrunner.escape
+================
+
+.. currentmodule:: xmlrunner
+
+.. autofunction:: escape

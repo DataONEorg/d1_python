@@ -1,0 +1,6 @@
+url.stripElementSlashes
+=======================
+
+.. currentmodule:: url
+
+.. autofunction:: stripElementSlashes

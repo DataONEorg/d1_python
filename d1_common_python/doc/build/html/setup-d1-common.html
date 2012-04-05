@@ -1,0 +1,142 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.2. DataONE Common Library for Python &mdash; DataONE Common Library for Python 0.beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Common Library for Python 0.beta documentation" href="index.html" />
+    <link rel="up" title="1. Setup" href="setup.html" />
+    <link rel="next" title="2. API and tests" href="generated.html" />
+    <link rel="prev" title="1.1. Python dependencies" href="setup-python-deps.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="generated.html" title="2. API and tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-python-deps.html" title="1.1. Python dependencies"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">1. Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.2. DataONE Common Library for Python</a><ul>
+<li><a class="reference internal" href="#install-dataone-common-library-for-python">1.2.1. Install DataONE Common Library for Python</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-python-deps.html"
+                        title="previous chapter">1.1. Python dependencies</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated.html"
+                        title="next chapter">2. API and tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-d1-common.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dataone-common-library-for-python">
+<h1>1.2. DataONE Common Library for Python<a class="headerlink" href="#dataone-common-library-for-python" title="Permalink to this headline">¶</a></h1>
+<p>The distribution of DataONE Common Library for Python is currently
+<a class="reference internal" href="glossary.html#term-subversion"><em class="xref std std-term">Subversion</em></a> based. This makes it easy to keep up to date with changes. A
+package will be released at some point in the future once things stabilize a
+bit.</p>
+<p>Install Subversion:</p>
+<div class="highlight-python"><pre>$ sudo apt-get install subversion</pre>
+</div>
+<div class="section" id="install-dataone-common-library-for-python">
+<h2>1.2.1. Install DataONE Common Library for Python<a class="headerlink" href="#install-dataone-common-library-for-python" title="Permalink to this headline">¶</a></h2>
+<p>To set the library up in <tt class="docutils literal"><span class="pre">/var/local/dataone/d1_common_python</span></tt> using
+<a class="reference internal" href="glossary.html#term-bash"><em class="xref std std-term">Bash</em></a> (which is often the default shell):</p>
+<div class="highlight-python"><pre>$ sudo -s
+# mkdir -p /var/local/dataone
+# cd /var/local/dataone
+# svn co https://repository.dataone.org/software/cicore/trunk/d1_common_python d1_common_python
+# cd d1_common_python/src/
+# python setup.py develop</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="generated.html" title="2. API and tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-python-deps.html" title="1.1. Python dependencies"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Common Library for Python 0.beta documentation</a> &raquo;</li>
+          <li><a href="setup.html" >1. Setup</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

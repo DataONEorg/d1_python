@@ -1,0 +1,6 @@
+util.get_content_type
+=====================
+
+.. currentmodule:: util
+
+.. autofunction:: get_content_type
