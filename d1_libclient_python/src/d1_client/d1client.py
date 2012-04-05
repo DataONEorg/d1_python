@@ -23,10 +23,10 @@
 
 :Synopsis:
   This module implements:
-  - DataONEClient, which uses CN- and MN clients to perform high level operations
-    against the DataONE infrastructure.
-  - DataONEObject, which wraps a single object and adds functionality such as
-    resolve and get.
+  * DataONEClient, which uses CN- and MN clients to perform high level
+  operations against the DataONE infrastructure.
+  * DataONEObject, which wraps a single object and adds functionality such as
+  resolve and get.
 :Created: 2011-01-26
 :Author: DataONE (Vieglais, Dahl)
 '''
@@ -86,11 +86,11 @@ class DataONEObject(object):
 
   def getLocations(self, forcenew=False):
     '''Retrieve a list of node base urls known to hold a copy of this object.
-    
+
     :param forcenew: The locations are cached. This causes the cache to be
     refreshed.
     :type forcenew: bool
-    :returns: List of object locations. 
+    :returns: List of object locations.
     :return type: PyXB ObjectLocationList.
     '''
     if len(self._locations) < 1 or forcenew:
@@ -103,7 +103,7 @@ class DataONEObject(object):
     :param forcenew: The System Metadata objects are cached. This causes the
     cache to be refreshed.
     :type forcenew: bool
-    :returns: List of object locations. 
+    :returns: List of object locations.
     :return type: PyXB ObjectLocationList.
     '''
     if self._systemmetadata is None or forcenew:
@@ -123,7 +123,7 @@ class DataONEObject(object):
 
   def save(self, outstr):
     '''Persist a copy of the bytes of this object.
-    
+
     :param out_flo: file like object open for writing.
     :type out_flo: File Like Object
     :returns: None
@@ -176,7 +176,7 @@ class DataONEClient(object):
   def getAuthToken(self, forcenew=False):
     '''Returns an authentication token using the credentials provided when
     this client was instantiated.
-    
+
     :return type: AuthToken
     '''
     if self.authToken is None or forcenew:
@@ -199,7 +199,7 @@ class DataONEClient(object):
   @d1_common.util.utf8_to_unicode
   def get(self, pid):
     '''Returns a stream open for reading that returns the bytes of the object
-    identified by PID. 
+    identified by PID.
     :return type: HTTPResponse
     '''
     locations = self.resolve(pid)
@@ -263,7 +263,7 @@ class DataONEClient(object):
   @d1_common.util.utf8_to_unicode
   def isData(self, pid):
     '''Returns True is pid refers to a data object.
-    
+
     Determine this by looking at the describes property of the System Metadata.
     '''
     sysmeta = self.getSystemMetadata(pid)
@@ -278,8 +278,8 @@ class DataONEClient(object):
 
   @d1_common.util.utf8_to_unicode
   def getScienceMetadata(self, pid):
-    '''Retrieve the pid for science metadata object for the specified PID. If 
-    PID refers to a science metadata object, then that object is returned. 
+    '''Retrieve the pid for science metadata object for the specified PID. If
+    PID refers to a science metadata object, then that object is returned.
     '''
     if self.isScienceMetadata(pid):
       return [pid, ]
