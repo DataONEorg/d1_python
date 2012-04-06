@@ -1300,7 +1300,7 @@ class CLI(cmd.Cmd):
       # Save the pacakge
       if save_package:
         if self.interactive:
-          if not cli_util.confirm('The package needs to be saved.  Exit anyway?'):
+          if cli_util.confirm('\nThe package needs to be saved.  Exit anyway?'):
             return
         self.packageCLI.package.save()
 
@@ -1398,7 +1398,8 @@ def main():
   handle_options(cli, options)
 
   # Start the command line interpreter loop, or just do one command?
-  if (options.interactive is not None) and options.interactive:
+  if (((options.interactive is not None) and options.interactive)
+      or (len(remainder) == 0)):
     cli.interactive = True
     try:
       if len(remainder) != 0:

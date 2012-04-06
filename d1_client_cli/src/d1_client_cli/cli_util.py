@@ -137,7 +137,12 @@ def confirm(prompt, default='no', allow_blank=False):
     def_response = None
 
   while True:
-    response = raw_input(prompt + p)
+    response = None
+    try:
+      response = raw_input(prompt + p)
+    except KeyboardInterrupt as e:
+      pass
+
     if ((response is None) or (len(response) == 0)):
       response = string.lower(default)
     else:
@@ -157,7 +162,7 @@ def output(file_like_object, path, verbose=False):
   '''Display or save file like object'''
   if not path:
     for line in file_like_object:
-      if verbose():
+      if verbose:
         print_info(line.rstrip())
       else:
         print line.rstrip()

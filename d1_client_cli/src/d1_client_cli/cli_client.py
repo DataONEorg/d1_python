@@ -54,7 +54,6 @@ import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
 from print_level import * #@UnusedWildImport
-import session
 
 #===============================================================================
 
@@ -146,7 +145,6 @@ def get_object_by_pid(session, pid, filename=None, resolve=True):
     response = mn_client.get(pid)
     if response is not None:
       fname = _get_fname(filename)
-      cli_util.output(response, os.path.expanduser(fname))
       return fname
   except d1_common.types.exceptions.DataONEException as e:
     if e.errorCode != 404:
@@ -188,3 +186,22 @@ def _get_fname(filename):
     os.close(tmp_flo[0])
     fname = tmp_flo[1]
   return fname
+
+
+def get_sysmeta_by_pid(session, pid):
+  '''  Get the system metadata object for this particular pid.
+  '''
+  if session is None:
+    raise cli_exceptions.InvalidArguments('Missing session')
+  if pid is None:
+    raise cli_exceptions.InvalidArguments('Missing pid')
+
+  try:
+    cn_client = CLICNClient(session)
+    return cn_client.getSystemMetadata(pid)
+  except d1_common.types.exceptions.DataONEException as e:
+    if e.errorCode != 404:
+      raise cli_exceptions.CLIError(
+        'Unable to get system metadata for: {0}\n{1}'.format(pid, e.friendly_format())
+      )
+  return None

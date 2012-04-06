@@ -124,7 +124,7 @@ class DataPackage(object):
       if self.is_dirty():
         print_info(" * package needs saving.")
     else:
-      print_warn("  **  data_package.show(): Need to implement non-pretty.")
+      print_warn("TODO: data_package.show(): Need to implement non-pretty.")
 
   def name(self, pid):
     ''' Rename the package
@@ -145,21 +145,23 @@ class DataPackage(object):
     '''
     if self.pid is None:
       raise cli_exceptions.InvalidArguments('Missing pid')
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing session')
 
     print_debug('_get_by_pid.pid: %s' % self.pid)
     data_object = self._get_by_pid(session, self.pid)
     print_debug('_get_by_pid.data_object: %s' % str(data_object))
 
-    print_error("  **  data_package.load(): not implemented.")
+    print_error("TODO: implement data_package.load()")
 
     return data_object
 
-  def save(self):
+  def save(self, session):
     ''' Save this object referred to by this pid.
     '''
     if self.pid is None:
       raise cli_exceptions.InvalidArguments('Missing pid')
-    print_error("  **  data_package.save() is not implemented.")
+    print_error("TODO: implement data_package.save()")
     return
 
   def scimeta_add(self, session, pid, file_name=None):
@@ -168,7 +170,7 @@ class DataPackage(object):
     if session is None:
       raise cli_exceptions.InvalidArguments('Missing the session')
     if pid is None:
-      raise cli_exceptions.InvalidArguments('Missing the pid (and possibly the object)')
+      raise cli_exceptions.InvalidArguments('Missing the pid')
     if ((self.scimeta is not None)
          and not cli_util.confirm('Do you wish to delete the existing science metadata object?')):
       return
@@ -177,7 +179,7 @@ class DataPackage(object):
 
     new_scimeta = self._get_by_pid(session, pid)
     if new_scimeta is not None: # Could we find it?
-      self.scimeta = self._validate_scimeta_obj(new_scimeta) # throws exception
+      self.scimeta = self._validate_scimeta_obj(session, new_scimeta) # throws exception
     else:
       if file_name is None:
         print_error(
@@ -207,7 +209,7 @@ class DataPackage(object):
     if self.scimeta is None:
       raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
     elif self.scimeta.fname is not None:
-      self._print_dataitem(self.scimeta.str(), session._is_pretty())
+      self._print_dataitem(self.scimeta.str(), session.is_pretty(), session.is_verbose())
 
   def scimeta_showmeta(self, session):
     ''' Show the system metadata of the science metadata object.
@@ -217,7 +219,7 @@ class DataPackage(object):
     if self.scimeta is None:
       raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
     elif self.scimeta.meta is not None:
-      self._print_sysmeta(self.scimeta.meta, session._is_pretty(), session._is_verbose())
+      self._print_sysmeta(self.scimeta, session.is_pretty(), session.is_verbose())
 
   def scidata_add(self, session, pid, file_name):
     ''' Add a science data object to the list.
@@ -306,46 +308,34 @@ class DataPackage(object):
     else:
       return None
 
-#
-#  def _create_object(self, session, pid, file_name):
-#    ''' Create a data object.
-#        Return (object, dirty, object, system metadata)
-#    '''
-#    if session is None:
-#      raise cli_exceptions.InvalidArguments('Missing session')
-#    if pid is None:
-#      raise cli_exceptions.InvalidArguments('Missing pid')
-#    if file_name is None:
-#      raise cli_exceptions.InvalidArguments('Missing file_name')
-#    if not os.path.isfile(os.path.expanduser(file_name)):
-#      msg = 'Invalid file: {0}'.format(file_name)
-#      raise cli_exceptions.InvalidArguments(msg)
-#    format_id = session.get(FORMAT_sect, FORMAT_name)
-#    if format_id is None:
-#      raise cli_exceptions.InvalidArguments('Missing object format id')
-#    #
-#    return DataObject(pid, True, file_name, None, format_id)
-
   def _create_sysmeta(self, obj):
     ''' Create a system meta data object.
     '''
-    print_warn('data_package._create_sysmeta(): not implemented')
+    print_warn('TODO: implement data_package._create_sysmeta()')
 
-  def _validate_scimeta_obj(self, scimeta_obj):
+  def _validate_scimeta_obj(self, session, scimeta):
     ''' Verify that the object is really a science metadata object.
     '''
-    if scimeta_obj is None:
+    if session is None:
+      raise cli_exceptions.InvalidArguments('Missing session')
+    if scimeta is None:
       raise cli_exceptions.InvalidArguments('Missing scimeta_obj')
-    if scimeta_obj.fname is None:
-      raise cli_exceptions.InvalidArguments('Missing the actual science metadata object')
-    #
-    print_warn('This object has not been checked for validity!')
+    if scimeta.meta is None and scimeta.fname is None:
+      raise cli_exceptions.InvalidArguments(
+        'The system metadata and pid cannot both be empty.'
+      )
 
-    #    objectId = self._is_metadata_format(scimeta_obj.get(KEY_Obj).objectId)
-    #    if not self._is_metadata_format(objectId):
-    #      msg = 'The science metadata object is not the right type (%s)'
-    #      raise cli_exceptions.InvalidArguments(msg % objectId)
-    return scimeta_obj
+    if scimeta.meta is None:
+      scimeta.meta = cli_client.get_sysmeta_by_pid(session, scimeta.pid)
+      if scimeta.meta is None:
+        raise cli_exceptions.CLIError('Unable to get find: %d' % scimeta.pid)
+
+    if not self._is_metadata_format(scimeta.meta.formatId):
+      raise cli_exceptions.CLIError(
+        'Invalid format id for scimeta object: %s' % scimeta.meta.formatId
+      )
+    scimeta.format_id = scimeta.meta.formatId
+    return scimeta
 
   def _print_dataitem(self, item, pretty=False, verbose=False):
     if (pretty is not None) and pretty:
@@ -375,15 +365,16 @@ class DataPackage(object):
     if (item is not None) and (item.meta is not None):
       sci_meta_xml = item.meta.toxml()
 
-      if pretty():
+      if pretty:
         dom = xml.dom.minidom.parseString(sci_meta_xml)
         sci_meta_xml = dom.toprettyxml(indent='  ')
-      cli_util.output(StringIO.StringIO(self._pretty(sci_meta_xml)), None)
+      cli_util.output(StringIO.StringIO(sci_meta_xml), None)
 
   def _determine_format_id(self, filename):
     ''' Try and get the object format from this document.
     '''
-    print_warn('data_package._determine_format_id() has not been implemented.')
+    # TODO implement data_package._determine_format_id()
+    print_warn('TODO: implement data_package._determine_format_id()')
     return None
 
   def _is_metadata_format(self, formatId):
@@ -398,137 +389,16 @@ class DataPackage(object):
     else:
       return False
 
-    #
-    #  def serialize(self, fmt='xml'):
-    #    assert(fmt in ('xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'))
-    #    if self.resmap.serializer is not None:
-    #      self.resmap.serializer = None
-    #    serializer = foresite.RdfLibSerializer(fmt)
-    #    self.resmap.register_serialization(serializer)
-    #    doc = self.resmap.get_serialization()
-    #    return doc.data
-    #
-    #
-    #  def finalize(self, package_objects):
-    #    ''' Create the resource map.
-    #    '''
-    #    for package_object in package_objects:
-    #      sysmeta_obj = package_object['scimeta_obj']
-    #      if self._is_metadata_format(sysmeta_obj.formatId):
-    #        self._add_inner_package_objects(package_objects, sysmeta_obj)
-    #        
-    #    return self._generate_resmap(package_objects)
-    #
-    #
-    #
-    #  def save(self, session):
-    #    if session is None:
-    #      raise cli_exceptions.InvalidArguments('Must specify a session to save')
-    #  
-    #    pkg_xml = self.serialize('xml')
-    #  
-    #    algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
-    #    hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
-    #    hash_fcn.update(pkg_xml)
-    #    checksum = hash_fcn.hexdigest()
-    #  
-    #    access_policy = session.access_control.to_pyxb()
-    #    replication_policy = session.replication_policy.to_pyxb()
-    #    sysmeta_creator = system_metadata.system_metadata()
-    #    sysmeta = sysmeta_creator.create_pyxb_object(session, self.pid, len(pkg_xml),
-    #                                                 checksum, access_policy,
-    #                                                 replication_policy,
-    #                                                 formatId=RDFXML_FORMATID)
-    #  
-    #    client = cli_client.CLIMNClient(session)
-    #    flo = StringIO.StringIO(pkg_xml)
-    #    response = client.create(pid=self.pid, obj=flo, sysmeta=sysmeta)
-    #    if response is not None:
-    #      return response.value()
-    #    else:
-    #      return None
-    #
-    #
-    #  def add_data(self, session, scimetapid, scidatapid_list):
-    #    ''' Add a scimeta object and a sequence of scidata objects.
-    #    '''
-    #    # Safety dance.
-    #    if session is None:
-    #      raise cli_exceptions.InvalidArguments('session cannot be None')
-    #
-    #
-    #  def _add_inner_package_objects(self, package_objects, sysmeta_obj):
-    #    ''' The given sysmeta object actually defines a data package.  Process the
-    #        package and add all of the thingsd specified to the package_object_list.
-    #    '''
-    #    print_info('+ Using metadata to add to an existing package')
-    #    print_error('package._add_inner_package_objects() is not implemented!!!')
-    #    
-    #
-    #  def _generate_resmap(self, package_object_list):
-    #    ''' The scimeta is part of a package.  Create a package.
-    #    
-    #        An example package_object item looks like:
-    #                {
-    #                  'scimeta_obj': <d1_common.types.generated.dataoneTypes.SystemMetadata>,
-    #                  'scimeta_url': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/meta/test-object'
-    #                  'scidata_pid':pid,
-    #                  'scidata_url':get_scimeta_url
-    #                }
-    #    '''
-    #    # Create the aggregation
-    #    foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
-    #    aggr = foresite.Aggregation(self.pid)
-    #    aggr._dcterms.title = 'Simple aggregation of science metadata and data.'
-    #
-    #
-    #    # Create references to the science data
-    #    for item in package_object_list:
-    #      # Create a reference to the science metadata
-    #      scimeta_obj = item['scimeta_obj']
-    #      scimeta_pid = scimeta_obj.identifier.value()
-    #      uri_scimeta = URIRef(item['scimeta_url'])
-    #      res_scimeta = foresite.AggregatedResource(uri_scimeta)
-    #      res_scimeta._dcterms.identifier = scimeta_pid
-    #      res_scimeta._dcterms.description = 'A reference to a science metadata object using a DataONE identifier'
-    #
-    #      uri_scidata = URIRef(item['scidata_url'])
-    #      res_scidata = foresite.AggregatedResource(uri_scidata)
-    #      res_scidata._dcterms.identifier = item['scidata_pid']
-    #      res_scidata._dcterms.description = 'A reference to a science data object using a DataONE identifier'
-    #      res_scidata._cito.isDocumentedBy = uri_scimeta
-    #      res_scimeta._cito.documents = uri_scidata
-    #
-    #      aggr.add_resource(res_scimeta)
-    #      aggr.add_resource(res_scidata)
-    #
-    #    # Create the resource map
-    #    resmap_id = "resmap_%s" % self.pid
-    #    self.resmap = foresite.ResourceMap("https://cn.dataone.org/object/%s" % resmap_id)
-    #    self.resmap._dcterms.identifier = resmap_id
-    #    self.resmap.set_aggregation(aggr)
-    #    return self.resmap
-
-    #== Static methods ========================================================
-
-
-def find(pid):
-  ''' Find the pid.
-  '''
-  raise cli_exceptions.CLIError('data_pacakge.find(): not implemented')
-
-#** DataObject *****************************************************************
-
 
 class DataObject(object):
-  def __init__(self, pid=None, dirty=None, fname=None, meta=None, object_id=None):
+  def __init__(self, pid=None, dirty=None, fname=None, meta=None, format_id=None):
     ''' Create a data object
     '''
     self.pid = pid
     self.dirty = dirty
     self.fname = fname
     self.meta = meta
-    self.object_id = object_id
+    self.format_id = format_id
 
   def is_dirty(self):
     return (self.dirty is not None) and self.dirty
@@ -542,3 +412,122 @@ class DataObject(object):
         self.dirty
       ), self.fname, m
     )
+
+#
+#  def serialize(self, fmt='xml'):
+#    assert(fmt in ('xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'))
+#    if self.resmap.serializer is not None:
+#      self.resmap.serializer = None
+#    serializer = foresite.RdfLibSerializer(fmt)
+#    self.resmap.register_serialization(serializer)
+#    doc = self.resmap.get_serialization()
+#    return doc.data
+#
+#
+#  def finalize(self, package_objects):
+#    ''' Create the resource map.
+#    '''
+#    for package_object in package_objects:
+#      sysmeta_obj = package_object['scimeta_obj']
+#      if self._is_metadata_format(sysmeta_obj.formatId):
+#        self._add_inner_package_objects(package_objects, sysmeta_obj)
+#        
+#    return self._generate_resmap(package_objects)
+#
+#
+#
+#  def save(self, session):
+#    if session is None:
+#      raise cli_exceptions.InvalidArguments('Must specify a session to save')
+#  
+#    pkg_xml = self.serialize('xml')
+#  
+#    algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
+#    hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
+#    hash_fcn.update(pkg_xml)
+#    checksum = hash_fcn.hexdigest()
+#  
+#    access_policy = session.access_control.to_pyxb()
+#    replication_policy = session.replication_policy.to_pyxb()
+#    sysmeta_creator = system_metadata.system_metadata()
+#    sysmeta = sysmeta_creator.create_pyxb_object(session, self.pid, len(pkg_xml),
+#                                                 checksum, access_policy,
+#                                                 replication_policy,
+#                                                 formatId=RDFXML_FORMATID)
+#  
+#    client = cli_client.CLIMNClient(session)
+#    flo = StringIO.StringIO(pkg_xml)
+#    response = client.create(pid=self.pid, obj=flo, sysmeta=sysmeta)
+#    if response is not None:
+#      return response.value()
+#    else:
+#      return None
+#
+#
+#  def add_data(self, session, scimetapid, scidatapid_list):
+#    ''' Add a scimeta object and a sequence of scidata objects.
+#    '''
+#    # Safety dance.
+#    if session is None:
+#      raise cli_exceptions.InvalidArguments('session cannot be None')
+#
+#
+#  def _add_inner_package_objects(self, package_objects, sysmeta_obj):
+#    ''' The given sysmeta object actually defines a data package.  Process the
+#        package and add all of the thingsd specified to the package_object_list.
+#    '''
+#    print_info('+ Using metadata to add to an existing package')
+#    print_error('package._add_inner_package_objects() is not implemented!!!')
+#    
+#
+#  def _generate_resmap(self, package_object_list):
+#    ''' The scimeta is part of a package.  Create a package.
+#    
+#        An example package_object item looks like:
+#                {
+#                  'scimeta_obj': <d1_common.types.generated.dataoneTypes.SystemMetadata>,
+#                  'scimeta_url': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/meta/test-object'
+#                  'scidata_pid':pid,
+#                  'scidata_url':get_scimeta_url
+#                }
+#    '''
+#    # Create the aggregation
+#    foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
+#    aggr = foresite.Aggregation(self.pid)
+#    aggr._dcterms.title = 'Simple aggregation of science metadata and data.'
+#
+#
+#    # Create references to the science data
+#    for item in package_object_list:
+#      # Create a reference to the science metadata
+#      scimeta_obj = item['scimeta_obj']
+#      scimeta_pid = scimeta_obj.identifier.value()
+#      uri_scimeta = URIRef(item['scimeta_url'])
+#      res_scimeta = foresite.AggregatedResource(uri_scimeta)
+#      res_scimeta._dcterms.identifier = scimeta_pid
+#      res_scimeta._dcterms.description = 'A reference to a science metadata object using a DataONE identifier'
+#
+#      uri_scidata = URIRef(item['scidata_url'])
+#      res_scidata = foresite.AggregatedResource(uri_scidata)
+#      res_scidata._dcterms.identifier = item['scidata_pid']
+#      res_scidata._dcterms.description = 'A reference to a science data object using a DataONE identifier'
+#      res_scidata._cito.isDocumentedBy = uri_scimeta
+#      res_scimeta._cito.documents = uri_scidata
+#
+#      aggr.add_resource(res_scimeta)
+#      aggr.add_resource(res_scidata)
+#
+#    # Create the resource map
+#    resmap_id = "resmap_%s" % self.pid
+#    self.resmap = foresite.ResourceMap("https://cn.dataone.org/object/%s" % resmap_id)
+#    self.resmap._dcterms.identifier = resmap_id
+#    self.resmap.set_aggregation(aggr)
+#    return self.resmap
+
+#== Static methods ========================================================
+
+
+def find(pid):
+  ''' Find the pid.
+  '''
+  raise cli_exceptions.CLIError('data_pacakge.find(): not implemented')
