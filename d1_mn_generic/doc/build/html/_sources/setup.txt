@@ -6,11 +6,6 @@ Setting up :term:`GMN`.
 These instructions have primarily tested on Ubuntu. :doc:`Additional notes
 and instructions <setup-centos>` are available for CentOS.
 
-\
-
-
-Setting up :term:`GMN`.
-
 .. toctree::
   :maxdepth: 1
 

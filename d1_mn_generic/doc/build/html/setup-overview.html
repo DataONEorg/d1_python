@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>GMN setup overview &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    <title>GMN setup overview &mdash; DataONE Generic Member Node 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.beta',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="top" title="DataONE Generic Member Node 1.0.0 documentation" href="index.html" />
     <link rel="up" title="Setup" href="setup.html" />
     <link rel="next" title="Setup steps" href="setup-steps.html" />
     <link rel="prev" title="Setup" href="setup.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="setup.html" title="Setup"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
           <li><a href="setup.html" accesskey="U">Setup</a> &raquo;</li> 
       </ul>
     </div>
@@ -99,7 +99,9 @@ application. It is served by <a class="reference internal" href="glossary.html#t
 infrastructure uses <a class="reference internal" href="glossary.html#term-ssl"><em class="xref std std-term">SSL</em></a> and <a class="reference internal" href="glossary.html#term-x-509"><em class="xref std std-term">X.509</em></a> <a class="reference internal" href="glossary.html#term-certificate"><em class="xref std std-term">certificate</em></a>s for
 security and certificate validation is handled for GMN by <a class="reference internal" href="glossary.html#term-mod-ssl"><em class="xref std std-term">mod_ssl</em></a>.</p>
 <p class="graphviz">
-<img src="_images/graphviz-90761f0dfcd47be6fd089d222f9ea00ea1e2025a.png" alt="digraph G {
+<img src="_images/graphviz-e2afdffb986c587c83a926b617887ffaa6045a6f.png" alt="digraph G {
+  OS -&gt; &quot;DataONE Common&quot; -&gt; &quot;DataONE Client&quot; -&gt; GMN;
+  &quot;DataONE Common&quot; -&gt; GMN;
   OS -&gt; Apache -&gt; mod_wsgi -&gt; Django -&gt; GMN;
   Apache -&gt; mod_ssl -&gt; &quot;GMN access control&quot;;
 }" />
@@ -128,7 +130,7 @@ but if they are attempted and prove to have benefits, please let us know.</p>
         <li class="right" >
           <a href="setup.html" title="Setup"
              >previous</a> |</li>
-        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
           <li><a href="setup.html" >Setup</a> &raquo;</li> 
       </ul>
     </div>

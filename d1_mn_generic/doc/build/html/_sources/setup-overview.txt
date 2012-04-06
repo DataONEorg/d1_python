@@ -13,6 +13,8 @@ security and certificate validation is handled for GMN by :term:`mod_ssl`.
 .. graphviz::
 
   digraph G {
+    OS -> "DataONE Common" -> "DataONE Client" -> GMN;
+    "DataONE Common" -> GMN;
     OS -> Apache -> mod_wsgi -> Django -> GMN;
     Apache -> mod_ssl -> "GMN access control";
   }
@@ -22,4 +24,3 @@ It may be possible to deploy GMN using a different stack, such as one based on
 `nginx <http://nginx.net/>`_ and `uWSGI
 <http://projects.unbit.it/uwsgi/wiki/>`_. Such setups are currently untested,
 but if they are attempted and prove to have benefits, please let us know.
-

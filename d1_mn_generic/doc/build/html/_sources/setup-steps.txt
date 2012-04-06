@@ -31,5 +31,5 @@ that it must be run as root.
   setup-x509extract
   setup-d1-gmn
   setup-registration
-  setup-workers
+  setup-async
   setup-startup

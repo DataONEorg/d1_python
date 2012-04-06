@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DataONE Generic Member Node &mdash; DataONE Generic Member Node 0.beta documentation</title>
+    <title>DataONE Generic Member Node &mdash; DataONE Generic Member Node 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.beta',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE Generic Member Node 0.beta documentation" href="index.html" />
+    <link rel="top" title="DataONE Generic Member Node 1.0.0 documentation" href="index.html" />
     <link rel="up" title="Setup steps" href="setup-steps.html" />
     <link rel="next" title="Register the MN" href="setup-registration.html" />
     <link rel="prev" title="X.509 extract" href="setup-x509extract.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="setup-x509extract.html" title="X.509 extract"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
           <li><a href="setup.html" >Setup</a> &raquo;</li>
           <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
       </ul>
@@ -56,7 +56,7 @@
 <li><a class="reference internal" href="#configure-gmn">Configure GMN</a></li>
 <li><a class="reference internal" href="#initialize-the-database">Initialize the database</a></li>
 <li><a class="reference internal" href="#set-filesystem-permissions">Set filesystem permissions</a></li>
-<li><a class="reference internal" href="#set-gmn-version-from-svn-revision-number">Set GMN version from SVN revision number</a></li>
+<li><a class="reference internal" href="#set-server-to-the-utc-timezone-recommended">Set server to the UTC timezone (recommended)</a></li>
 </ul>
 </li>
 </ul>
@@ -166,11 +166,15 @@ database file can be written by the Apache user account.</li>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="set-gmn-version-from-svn-revision-number">
-<h2>Set GMN version from SVN revision number<a class="headerlink" href="#set-gmn-version-from-svn-revision-number" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="set-server-to-the-utc-timezone-recommended">
+<h2>Set server to the UTC timezone (recommended)<a class="headerlink" href="#set-server-to-the-utc-timezone-recommended" title="Permalink to this headline">¶</a></h2>
+<p>GMN translates incoming date-times to UTC and provides outgoing date-times in
+UTC. Because of this, it may also convenient to run the server in UTC, so that
+server related date-times, such as the ones in logs, match up with date-times
+stored in the database and provided in REST responses.</p>
 <blockquote>
-<div><p>In a test install of GMN, this step is not neccessary.</p>
-<p>&lt;TODO: Document this step&gt;</p>
+<div><div class="highlight-python"><pre>$ dpkg-reconfigure tzdata</pre>
+</div>
 </div></blockquote>
 <p><a class="reference internal" href="setup-registration.html"><em>Register the MN</em></a></p>
 </div>
@@ -194,7 +198,7 @@ database file can be written by the Apache user account.</li>
         <li class="right" >
           <a href="setup-x509extract.html" title="X.509 extract"
              >previous</a> |</li>
-        <li><a href="index.html">DataONE Generic Member Node 0.beta documentation</a> &raquo;</li>
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
           <li><a href="setup.html" >Setup</a> &raquo;</li>
           <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
       </ul>

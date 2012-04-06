@@ -66,11 +66,17 @@ Set filesystem permissions
     database file can be written by the Apache user account.
 
 
-Set GMN version from SVN revision number
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Set server to the UTC timezone (recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  In a test install of GMN, this step is not neccessary.
+GMN translates incoming date-times to UTC and provides outgoing date-times in
+UTC. Because of this, it may also convenient to run the server in UTC, so that
+server related date-times, such as the ones in logs, match up with date-times
+stored in the database and provided in REST responses.
 
-  <TODO: Document this step>
+  ::
+
+    $ dpkg-reconfigure tzdata
+
 
 :doc:`setup-registration`
