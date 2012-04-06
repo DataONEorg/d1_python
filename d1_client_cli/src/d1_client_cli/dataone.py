@@ -804,9 +804,10 @@ class CLI(cmd.Cmd):
     self.prefix = DEFAULT_PREFIX
     self.prompt = DEFAULT_PROMPT
     self.intro = 'DataONE Command Line Interface'
-    #
+
     self.packageCLI = None
     self.keep_looping = False
+    self.interactive = False
 
   def _split_args(self, line, n_required, n_optional):
     args = shlex.split(line)
@@ -829,10 +830,6 @@ class CLI(cmd.Cmd):
         logging.getLogger('').setLevel(logging.DEBUG)
       else:
         logging.getLogger('').setLevel(logging.INFO)
-
-  #-----------------------------------------------------------------------------
-  # Session.
-  #-----------------------------------------------------------------------------
 
   def do_reset(self, line):
     '''reset
@@ -1294,7 +1291,20 @@ class CLI(cmd.Cmd):
     Exit from the CLI
     '''
     try:
-      self._split_args(line, 0, 0)
+      # Check if there is a package, and if so, whether it needs to be saved.
+      save_package = False
+      if self.packageCLI is not None:
+        if self.packageCLI.package is not None:
+          if self.packageCLI.package.is_dirty():
+            save_package = True
+      # Save the pacakge
+      if save_package:
+        if self.interactive:
+          if not cli_util.confirm('The package needs to be saved.  Exit anyway?'):
+            return
+        self.packageCLI.package.save()
+
+      # Say goodnight, Gracie.
       sys.exit()
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
@@ -1383,30 +1393,32 @@ def main():
   )
   options, remainder = parser.parse_args()
 
-  data1CLI = CLI()
-  data1CLI._update_verbose()
-  handle_options(data1CLI, options)
+  cli = CLI()
+  cli._update_verbose()
+  handle_options(cli, options)
 
   # Start the command line interpreter loop, or just do one command?
   if (options.interactive is not None) and options.interactive:
+    cli.interactive = True
     try:
       if len(remainder) != 0:
-        data1CLI.onecmd(join(remainder))
+        cli.onecmd(join(remainder))
         print ''
-      data1CLI.cmdloop()
+      cli.cmdloop()
     except KeyboardInterrupt as e:
-      data1CLI.do_exit('')
+      cli.do_exit('')
 
   else:
-    data1CLI.onecmd(join(remainder))
+    cli.interactive = False
+    cli.onecmd(join(remainder))
     #
-    if data1CLI.keep_looping:
-      data1CLI.keep_looping = False
+    if cli.keep_looping:
+      cli.keep_looping = False
       try:
-        data1CLI.cmdloop()
+        cli.cmdloop()
       except KeyboardInterrupt as e:
         print ''
-        data1CLI.do_exit('')
+        cli.do_exit('')
 
 
 if __name__ == '__main__':

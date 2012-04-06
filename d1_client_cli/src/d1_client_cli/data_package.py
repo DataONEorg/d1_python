@@ -86,6 +86,8 @@ class DataPackage(object):
   def is_dirty(self):
     ''' Check to see if anything needs to be saved.
     '''
+    if self.pid != self.original_pid:
+      return True
     if self.scimeta is not None:
       if (self.scimeta.dirty) and self.scimeta.dirty:
         return True
@@ -113,14 +115,14 @@ class DataPackage(object):
         self._print_dataitem(self.scimeta, pretty, verbose)
 
       if ((self.scidata_dict is None) or (len(self.scidata_dict) == 0)):
-        print_info('Data Objects:    (none)')
+        print_info('SciData Objects: (none)')
       else:
-        print_info('Data Objects:')
+        print_info('SciData Objects:')
         for item in self.scidata_dict.values():
           self._print_dataitem(item, pretty, verbose)
 
       if self.is_dirty():
-        print_info("* package needs saving.")
+        print_info(" * package needs saving.")
     else:
       print_warn("  **  data_package.show(): Need to implement non-pretty.")
 
@@ -225,22 +227,25 @@ class DataPackage(object):
     if pid is None:
       raise cli_exceptions.InvalidArguments('Missing the pid')
     if pid in self.scidata_dict:
-      raise cli_exceptions.InvalidArguments(
-        'That pid (%s) is already in the package.' % pid
-      )
-    self.scidata_dict[pid] = self._create_object(session, pid, file_name)
+      if not cli_util.confirm('That pid (%s) is already in the package.  Replace?' % pid):
+        return
+    format_id = session.get(FORMAT_sect, FORMAT_name)
+    if format_id is None:
+      print_error('The object format could not be determined and was not defined.')
+      return
+    # Good to go.
+    self.scidata_dict[pid] = DataObject(pid, True, file_name, None, format_id)
 
   def scidata_del(self, pid):
     ''' Remove a science data object.
     '''
     if pid is None:
       raise cli_exceptions.InvalidArguments('Missing the pid')
-    if pid not in self.scidata_dict:
-      print_warn('There isn\'t a science data object with pid %s' % pid)
-    elif cli_util.confirm(
-      'Are you sure you want to remove the science data object "%s"?' % pid
-    ):
-      del self.scidata_dict[pid]
+    if pid in self.scidata_dict:
+      if cli_util.confirm(
+        'Are you sure you want to remove the science data object "%s"?' % pid
+      ):
+        del self.scidata_dict[pid]
 
   def scidata_clear(self):
     ''' Remove all science data objects
@@ -261,11 +266,12 @@ class DataPackage(object):
     if self.scidata_dict is None:
       self.scidata_dict = []
     if pid not in self.scidata_dict:
-      raise cli_exceptions.InvalidArguments('%s: no such science data object defined')
-    self._print_dataitem(
-      self.scidata_dict[pid], session.is_pretty(), session.is_verbose(
+      print_warn('%s: no such science data object defined' % pid)
+    else:
+      self._print_dataitem(
+        self.scidata_dict[pid], session.is_pretty(), session.is_verbose(
+        )
       )
-    )
 
   def scidata_showmeta(self, session, pid):
     ''' Show the system metadata for the specified science data object.
@@ -277,8 +283,12 @@ class DataPackage(object):
     if self.scidata_dict is None:
       self.scidata_dict = []
     if pid not in self.scidata_dict:
-      raise cli_exceptions.InvalidArguments('%s: no such science data object defined')
-    self._print_sysmeta(self.scidata_dict[pid], session.is_pretty(), session.is_verbose())
+      print_warn('%s: no such science data object defined' % pid)
+    else:
+      self._print_sysmeta(
+        self.scidata_dict[pid], session.is_pretty(), session.is_verbose(
+        )
+      )
 
     #== Helpers ===============================================================
 
@@ -296,24 +306,25 @@ class DataPackage(object):
     else:
       return None
 
-  def _create_object(self, session, pid, file_name):
-    ''' Create a data object.
-        Return (object, dirty, object, system metadata)
-    '''
-    if session is None:
-      raise cli_exceptions.InvalidArguments('Missing session')
-    if pid is None:
-      raise cli_exceptions.InvalidArguments('Missing pid')
-    if file_name is None:
-      raise cli_exceptions.InvalidArguments('Missing file_name')
-    if not os.path.isfile(os.path.expanduser(file_name)):
-      msg = 'Invalid file: {0}'.format(file_name)
-      raise cli_exceptions.InvalidArguments(msg)
-    format_id = session.get(FORMAT_sect, FORMAT_name)
-    if format_id is None:
-      raise cli_exceptions.InvalidArguments('Missing object format id')
-    #
-    return DataObject(pid, True, file_name, None, format_id)
+#
+#  def _create_object(self, session, pid, file_name):
+#    ''' Create a data object.
+#        Return (object, dirty, object, system metadata)
+#    '''
+#    if session is None:
+#      raise cli_exceptions.InvalidArguments('Missing session')
+#    if pid is None:
+#      raise cli_exceptions.InvalidArguments('Missing pid')
+#    if file_name is None:
+#      raise cli_exceptions.InvalidArguments('Missing file_name')
+#    if not os.path.isfile(os.path.expanduser(file_name)):
+#      msg = 'Invalid file: {0}'.format(file_name)
+#      raise cli_exceptions.InvalidArguments(msg)
+#    format_id = session.get(FORMAT_sect, FORMAT_name)
+#    if format_id is None:
+#      raise cli_exceptions.InvalidArguments('Missing object format id')
+#    #
+#    return DataObject(pid, True, file_name, None, format_id)
 
   def _create_sysmeta(self, obj):
     ''' Create a system meta data object.
