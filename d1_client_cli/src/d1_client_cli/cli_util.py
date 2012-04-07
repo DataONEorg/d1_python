@@ -32,6 +32,7 @@
 import os
 import shutil
 import string
+from string import strip
 import sys
 import traceback
 import urlparse
@@ -46,8 +47,9 @@ except ImportError as e:
   raise
 
 # client
-from print_level import * #@UnusedWildImport
 import cli_exceptions
+from const import CHECKSUM_sect, CHECKSUM_name
+from print_level import * #@UnusedWildImport
 
 
 def _handle_unexpected_exception(max_traceback_levels=5):
@@ -83,6 +85,12 @@ def _print_unexpected_exception(max_traceback_levels=5):
   print_error('  Traceback:')
   for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
     print_error('    {0}'.format(tb))
+
+
+def _expand_path(filename):
+  if filename:
+    return os.path.expanduser(filename)
+  return None
 
 
 def get_host(url):
@@ -168,7 +176,7 @@ def output(file_like_object, path, verbose=False):
         print line.rstrip()
   else:
     try:
-      object_file = open(os.path.expanduser(path), 'wb')
+      object_file = open(_expand_path(path), 'wb')
       shutil.copyfileobj(file_like_object, object_file)
       object_file.close()
     except EnvironmentError as (errno, strerror):
@@ -177,3 +185,70 @@ def output(file_like_object, path, verbose=False):
       error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
       error_message = '\n'.join(error_message_lines)
       raise cli_exceptions.CLIError(error_message)
+
+
+def get_file_size(self, path):
+  with open(_expand_path(path), 'r') as f:
+    f.seek(0, os.SEEK_END)
+    size = f.tell()
+  return size
+
+
+def get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
+  h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+  with open(_expand_path(path), 'r') as f:
+    while True:
+      data = f.read(block_size)
+      if not data:
+        break
+      h.update(data)
+  return h.hexdigest()
+
+
+def assert_file_exists(self, path):
+  if not os.path.isfile(_expand_path(path)):
+    msg = 'Invalid file: {0}'.format(path)
+    raise cli_exceptions.InvalidArguments(msg)
+
+
+def create_sysmeta(session, pid, path, formatId=None):
+  ''' Create a system meta data object.
+  '''
+  if session is None:
+    raise cli_exceptions.InvalidArguments('Missing session')
+  if pid is None:
+    raise cli_exceptions.InvalidArguments('Missing pid')
+  if path is None:
+    raise cli_exceptions.InvalidArguments('Missing filename')
+  algorithm = session.get(CHECKSUM_sect, CHECKSUM_name)
+  if algorithm is None:
+    raise cli_exceptions.InvalidArguments('Checksum algorithm is not defined.')
+
+  path = _expand_path(path)
+  checksum = get_file_checksum(path, algorithm)
+  size = get_file_size(path)
+  return session.create_system_metadata(pid, checksum, size, formatId)
+
+
+def create_complex_path(path):
+  return ComplexPath(path)
+
+
+class ComplexPath(object):
+  def __init__(self, path):
+    self.path = None
+    self.formatId = None
+    #
+    if not path:
+      return
+    parts = string.split(strip(path), ';')
+    for part in parts:
+      keyval = string.split(part, '=', 1)
+      if len(keyval) == 1:
+        path = keyval[0]
+      else:
+        key = strip(keyval[0]).lower()
+        if key == 'formatid' or key == 'format-id':
+          self.formatId = strip(keyval[1])
+        else:
+          print_warn('Unknown keyword: "%s"' % strip(keyval[0]))

@@ -99,32 +99,35 @@ class DataPackage(object):
 
   #== Manipulation ==========================================================
 
+  def describe(self, pretty=False, verbose=False):
+    ''' Describe the package, optionally in "verbose" manner.
+    '''
+    msg = self.pid
+    pretty = False
+    if self.pid is None:
+      msg = '(none)'
+    print_info('Id:              %s' % msg)
+
+    if self.scimeta is None:
+      print_info('SciMeta Object:  (none)')
+    else:
+      print_info('SciMeta Object:')
+      self._describe_dataitem(self.scimeta, pretty, verbose)
+
+    if ((self.scidata_dict is None) or (len(self.scidata_dict) == 0)):
+      print_info('SciData Objects: (none)')
+    else:
+      print_info('SciData Objects:')
+      for item in self.scidata_dict.values():
+        self._describe_dataitem(item, pretty, verbose)
+
+    if self.is_dirty():
+      print_info(" * package needs saving.")
+
   def show(self, pretty=False, verbose=False):
     ''' Display the package, optionally in a "pretty" and/or "verbose" manner.
     '''
-    if (pretty is not None) and pretty:
-      msg = self.pid
-      if self.pid is None:
-        msg = '(none)'
-      print_info('Id:              %s' % msg)
-
-      if self.scimeta is None:
-        print_info('SciMeta Object:  (none)')
-      else:
-        print_info('SciMeta Object:')
-        self._print_dataitem(self.scimeta, pretty, verbose)
-
-      if ((self.scidata_dict is None) or (len(self.scidata_dict) == 0)):
-        print_info('SciData Objects: (none)')
-      else:
-        print_info('SciData Objects:')
-        for item in self.scidata_dict.values():
-          self._print_dataitem(item, pretty, verbose)
-
-      if self.is_dirty():
-        print_info(" * package needs saving.")
-    else:
-      print_warn("TODO: data_package.show(): Need to implement non-pretty.")
+    print_error('TODO: implement data_package.show()')
 
   def name(self, pid):
     ''' Rename the package
@@ -167,9 +170,9 @@ class DataPackage(object):
   def scimeta_add(self, session, pid, file_name=None):
     ''' Add a scimeta object.
     '''
-    if session is None:
+    if not session:
       raise cli_exceptions.InvalidArguments('Missing the session')
-    if pid is None:
+    if not pid:
       raise cli_exceptions.InvalidArguments('Missing the pid')
     if ((self.scimeta is not None)
          and not cli_util.confirm('Do you wish to delete the existing science metadata object?')):
@@ -177,23 +180,38 @@ class DataPackage(object):
     else:
       self.scimeta = None
 
-    new_scimeta = self._get_by_pid(session, pid)
-    if new_scimeta is not None: # Could we find it?
-      self.scimeta = self._validate_scimeta_obj(session, new_scimeta) # throws exception
+    if session.is_pretty():
+      sys.stdout.write('  Adding science metadata object "%s"...' % pid)
+
+    if not file_name:
+      new_scimeta = self._get_by_pid(session, pid)
+      if new_scimeta:
+        self.scimeta = new_scimeta
+        if session.is_pretty():
+          print '. [retrieved]'
+      else:
+        if session.is_pretty():
+          sys.stdout.write('. [error]\n')
+        print_error('Couldn\'t find scimeta in DataONE, and there was no file specified.')
+
     else:
-      if file_name is None:
-        print_error(
-          'Couldn\'t find scimeta by pid %s, and there was no file specified.' % pid
-        )
-        return
-      # Check the file
-      format_id = self._determine_format_id(file_name)
-      if format_id is None:
+      complex_path = cli_util.create_complex_path(file_name)
+      format_id = complex_path.formatId
+      if not format_id:
         format_id = session.get(FORMAT_sect, FORMAT_name)
-        if format_id is None:
-          print_error('The object format could not be determined and was not defined.')
-          return
-      self.scimeta = DataObject(pid, True, file_name, None, format_id)
+      if not format_id:
+        if session.is_pretty():
+          sys.stdout.write('. [error]\n')
+        print_error('The object format could not be determined and was not defined.')
+        return
+      #
+      sysmeta = cli_util.create_sysmeta(
+        session, pid, complex_path.path,
+        formatId=format_id
+      )
+      self.scimeta = DataObject(pid, True, complex_path.path, sysmeta, format_id)
+      if session.is_pretty():
+        print '. [created]\n'
 
   def scimeta_del(self):
     ''' Remove the science metadata object.
@@ -209,34 +227,76 @@ class DataPackage(object):
     if self.scimeta is None:
       raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
     elif self.scimeta.fname is not None:
-      self._print_dataitem(self.scimeta.str(), session.is_pretty(), session.is_verbose())
+      self._describe_dataitem(
+        self.scimeta.str(), session.is_pretty(), session.is_verbose(
+        )
+      )
 
   def scimeta_showmeta(self, session):
     ''' Show the system metadata of the science metadata object.
     '''
-    if session is None:
+    if not session:
       raise cli_exceptions.InvalidArguments('Missing the session')
-    if self.scimeta is None:
+    if not self.scimeta:
       raise cli_exceptions.InvalidArguments('There is no science metadata object defined')
     elif self.scimeta.meta is not None:
       self._print_sysmeta(self.scimeta, session.is_pretty(), session.is_verbose())
 
-  def scidata_add(self, session, pid, file_name):
+  def scimeta_describe(self, pretty=True, verbose=False):
+    if not self.scimeta:
+      print_warn('There is no science metadata object in the package.')
+    else:
+      self._describe_dataitem(self.scimeta, pretty, verbose)
+
+  def scidata_add(self, session, pid, file_name=None):
     ''' Add a science data object to the list.
     '''
-    if session is None:
-      raise cli_exceptions.InvalidArguments('Missing the session')
-    if pid is None:
-      raise cli_exceptions.InvalidArguments('Missing the pid')
-    if pid in self.scidata_dict:
-      if not cli_util.confirm('That pid (%s) is already in the package.  Replace?' % pid):
-        return
-    format_id = session.get(FORMAT_sect, FORMAT_name)
-    if format_id is None:
-      print_error('The object format could not be determined and was not defined.')
+    if not session:
+      print_error('Missing the session')
       return
-    # Good to go.
-    self.scidata_dict[pid] = DataObject(pid, True, file_name, None, format_id)
+    if not pid:
+      print_error('Missing the pid')
+      return
+    if pid in self.scidata_dict:
+      if not cli_util.confirm(
+        'That science data object (%s) is already in the package.  Replace?' % pid
+      ):
+        return
+
+    if file_name:
+      if cli_client.get_sysmeta_by_pid(session, pid):
+        if not cli_util.confirm(
+          'That pid (%s) already exists in DataONE.  Continue?' % pid
+        ):
+          return
+
+      if session.is_pretty():
+        sys.stdout.write('  Adding science data object "%s"...' % pid)
+      complex_path = cli_util.create_complex_path(file_name)
+      format_id = complex_path.formatId
+      if not format_id:
+        format_id = session.get(FORMAT_sect, FORMAT_name)
+      if not format_id:
+        if session.is_pretty():
+          print '. [error]'
+        print_error('The object format could not be determined and was not defined.')
+        return
+      else:
+        meta = cli_util.create_sysmeta(session, pid, complex_path.path)
+        self.scidata_dict[pid] = DataObject(pid, True, complex_path.path, meta, format_id)
+        if session.is_pretty():
+          print '. [created]'
+
+    elif not cli_client.get_sysmeta_by_pid(session, pid):
+      print_error('That pid (%s) was not found in DataONE.' % pid)
+      return
+    # Creeate pid
+    else:
+      if session.is_pretty():
+        sys.stdout.write('  Adding science data object "%s"...' % pid)
+      self.scidata_dict[pid] = self._get_by_pid(session, pid)
+      if session.is_pretty():
+        print '. [retreived]'
 
   def scidata_del(self, pid):
     ''' Remove a science data object.
@@ -270,7 +330,7 @@ class DataPackage(object):
     if pid not in self.scidata_dict:
       print_warn('%s: no such science data object defined' % pid)
     else:
-      self._print_dataitem(
+      self._describe_dataitem(
         self.scidata_dict[pid], session.is_pretty(), session.is_verbose(
         )
       )
@@ -292,7 +352,21 @@ class DataPackage(object):
         )
       )
 
-    #== Helpers ===============================================================
+  def scidata_describe(self, pid=None, pretty=True, verbose=False):
+    if not self.scidata_dict or len(self.scidata_dict) == 0:
+      print_warn('There are no science data objects in the package.')
+    elif not pid:
+      if len(self.scidata_dict) > 1:
+        print_warn('Please specify which science data object to describe.')
+      else:
+        for value in self.scidata_dict.values():
+          self._describe_dataitem(value, pretty, verbose)
+    elif pid not in self.scidata_dict:
+      print_error('No science data object found with pid "%s".' % pid)
+    else:
+      self._describe_dataitem(self.scidata_dict[pid], pretty, verbose)
+
+  #== Helpers ===============================================================
 
   def _get_by_pid(self, session, pid):
     ''' Return (pid, dirty, fname, sysmeta)
@@ -304,14 +378,10 @@ class DataPackage(object):
 
     fname = cli_client.get_object_by_pid(session, pid, resolve=True)
     if fname is not None:
-      return DataObject(pid, False, fname, None)
+      meta = cli_client.get_sysmeta_by_pid(session, pid)
+      return DataObject(pid, False, fname, meta, meta.formatId)
     else:
       return None
-
-  def _create_sysmeta(self, obj):
-    ''' Create a system meta data object.
-    '''
-    print_warn('TODO: implement data_package._create_sysmeta()')
 
   def _validate_scimeta_obj(self, session, scimeta):
     ''' Verify that the object is really a science metadata object.
@@ -337,8 +407,10 @@ class DataPackage(object):
     scimeta.format_id = scimeta.meta.formatId
     return scimeta
 
-  def _print_dataitem(self, item, pretty=False, verbose=False):
-    if (pretty is not None) and pretty:
+  def _describe_dataitem(self, item, pretty=False, verbose=False):
+    if (verbose is not None) and verbose:
+      pass
+    else:
       flags = ''
       pre = ' ('
       post = ''
@@ -361,7 +433,7 @@ class DataPackage(object):
       flags = flags + post
       print_info('  %s%s' % (item.pid, flags))
 
-  def _print_sysmeta(self, item, pretty=False, verbose=False):
+  def _show_sysmeta(self, item, pretty=False, verbose=False):
     if (item is not None) and (item.meta is not None):
       sci_meta_xml = item.meta.toxml()
 
@@ -369,13 +441,6 @@ class DataPackage(object):
         dom = xml.dom.minidom.parseString(sci_meta_xml)
         sci_meta_xml = dom.toprettyxml(indent='  ')
       cli_util.output(StringIO.StringIO(sci_meta_xml), None)
-
-  def _determine_format_id(self, filename):
-    ''' Try and get the object format from this document.
-    '''
-    # TODO implement data_package._determine_format_id()
-    print_warn('TODO: implement data_package._determine_format_id()')
-    return None
 
   def _is_metadata_format(self, formatId):
     ''' Check to see if this formatId specifies a resource map.

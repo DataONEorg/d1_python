@@ -354,7 +354,7 @@ class session(object):
           )
         )
 
-  def create_system_metadata(self, pid, checksum, size):
+  def create_system_metadata(self, pid, checksum, size, formatId=None):
     access_policy = self.access_control.to_pyxb()
     replication_policy = self.replication_policy.to_pyxb()
     sysmeta_creator = system_metadata.system_metadata()

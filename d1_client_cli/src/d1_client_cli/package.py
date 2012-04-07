@@ -138,7 +138,42 @@ class PackageCLI(cmd.Cmd):
     '''
     queryArgs = self._split_args(line, 0, 99)
     if len(queryArgs) > 0:
-      print_error('Unknown "package" command: "%s"' % queryArgs[0])
+      lowerCase = queryArgs[0].lower()
+      if lowerCase.find('desc') == 0:
+        self.do_describe(' '.join(filter(None, queryArgs[1:])))
+      elif lowerCase.find('meta') == 0:
+        self.do_scimeta(' '.join(filter(None, queryArgs[1:])))
+      elif lowerCase.find('data') == 0:
+        self.do_scidata(' '.join(filter(None, queryArgs[1:])))
+      elif lowerCase.find('add') == 0:
+        self._add(queryArgs[1:])
+      else:
+        print_error('Unknown "package" command: "%s"' % queryArgs[0])
+
+  def _add(self, args):
+    ''' Transpose the scimeta and scidata command "add".
+    
+    args: (sub_cmd, pid, file_name)
+    '''
+    if self.package is None:
+      raise cli_exceptions.InvalidArguments('There is no package.')
+
+    args_len = len(args)
+    pid = ''
+    path = ''
+    if args_len > 1:
+      pid = ' ' + args[1]
+    if args_len > 2:
+      path = ' ' + args[2]
+
+    if args_len == 0:
+      print_error("Add to what?")
+    elif ((cmd == 'scimeta') or (cmd == 'meta')):
+      self.do_scimeta('add ' + pid + path)
+    elif ((cmd == 'scidata') or (cmd == 'data')):
+      self.do_scidata('add ' + pid + path)
+    else:
+      print_error('Use "scimeta add" or "scidata add".')
 
   def do_help(self, line):
     '''Get help on commands
@@ -194,6 +229,8 @@ class PackageCLI(cmd.Cmd):
           return
 
       # Create the package object (finally!).
+    if self.session.is_pretty() and len(values) > 0:
+      print('Creating package "%s"' % pid)
     self.package = data_package.DataPackage(pid)
 
     # Add an existing scimeta item.
@@ -224,19 +261,45 @@ class PackageCLI(cmd.Cmd):
     self.package.name(pid)
 
   def do_show(self, line):
-    ''' show [pid]
-        Display the contents of the package.  If no pid is given,
-          use the current pid.
+    ''' show [scimeta] [scidata [pid]]
+        Display the contents of the package, the science metadata object or
+        a science data object in the package
     '''
-    pid = self._split_args(line, 0, 1)
-    if pid is not None:
-      new_package = data_package.DataPackage(pid)
-      if new_package is not None:
-        new_package.show(self.session.is_pretty())
-    elif self.package is None:
-      print_info('There is no package to show.')
+    sub_cmd, pid = self._split_args(line, 0, 2)
+    pretty = self.session.is_pretty()
+    verbose = self.session.is_verbose()
+    if not sub_cmd:
+      if self.package is None:
+        print_info('There is no package to show.')
+      else:
+        self.package.show(pretty, verbose)
+    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
+      self.package.scimeta_showobj(pretty, verbose)
+    elif sub_cmd == 'scidata' or sub_cmd == 'data':
+      self.package.scidata_showobj(pid, pretty, verbose)
     else:
-      self.package.show(self.session.is_pretty())
+      print_error('Don\'t know how to show a "%s".' % sub_cmd)
+
+  def do_describe(self, line):
+    ''' desc [scimeta] [scidata [pid]]
+    
+        Describe the contents of the package, the science metadata object or
+        a science data object in the package
+    '''
+    sub_cmd, pid = self._split_args(line, 0, 2)
+    pretty = self.session.is_pretty()
+    verbose = self.session.is_verbose()
+    if not sub_cmd:
+      if self.package is None:
+        print_info('There is no package to describe.')
+      else:
+        self.package.describe(pretty, verbose)
+    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
+      self.package.scimeta_describe(pretty, verbose)
+    elif sub_cmd == 'scidata' or sub_cmd == 'data':
+      self.package.scidata_describe(pid, pretty, verbose)
+    else:
+      print_error('Don\'t know how to describe a "%s".' % sub_cmd)
 
   def do_load(self, line):
     ''' load [pid]
@@ -268,35 +331,13 @@ class PackageCLI(cmd.Cmd):
       raise cli_exceptions.InvalidArguments('The current package has no pid.')
     self.package.save(self.session)
 
-  def do_add(self, line):
-    ''' transpose the scimeta and scidata command.
-    '''
-    if self.package is None:
-      raise cli_exceptions.InvalidArguments('There is no package.')
-    cmd, pid, file_name = self._split_args(line, 1, 2)
-
-    if pid is not None:
-      pid = ' ' + pid
-    else:
-      pid = ''
-    if file_name is not None:
-      file_name = ' ' + file_name
-    else:
-      file_name = ''
-
-    if ((cmd == 'scimeta') or (cmd == 'meta')):
-      self.do_scimeta('add ' + pid + file_name)
-    elif ((cmd == 'scidata') or (cmd == 'data')):
-      self.do_scidata('add ' + pid + file_name)
-    else:
-      print_error('Use "scimeta add" or "scidata add".')
-
   def do_scimeta(self, line):
     ''' scimeta [add | del | show | meta ] [options]
           add    pid [file]  Assign the science meta object
           del    Remove the science meta object from the package.
           show   Display the current science meta object.
           meta   Display the system meta data for the science meta object.
+          desc   Describe the current science meta object.
     '''
     if self.package is None:
       raise cli_exceptions.InvalidArguments('There is no package.')
@@ -323,6 +364,7 @@ class PackageCLI(cmd.Cmd):
           clear  Remove all science data objects from the package.
           show   <pid>  Display the given science object.
           meta   <pid>  Display the system meta data for the given science object.
+          desc   <pid>  Describe the given science object.
     '''
     if self.package is None:
       raise cli_exceptions.InvalidArguments('There is no package.')
@@ -337,6 +379,8 @@ class PackageCLI(cmd.Cmd):
       self.package.scidata_del(pid)
     elif string.find('clear', sub_cmd) == 0:
       self.package.scidata_clear()
+    elif string.find('desc', sub_cmd) == 0:
+      self.package.scidata_desc(self.session, pid)
     elif string.find('show', sub_cmd) == 0:
       self.package.scidata_showobj(self.session, pid)
     elif string.find('meta', sub_cmd) == 0:

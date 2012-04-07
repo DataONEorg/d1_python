@@ -1301,8 +1301,8 @@ class CLI(cmd.Cmd):
       if save_package:
         if self.interactive:
           if cli_util.confirm('\nThe package needs to be saved.  Exit anyway?'):
-            return
-        self.packageCLI.package.save()
+            sys.exit()
+          self.packageCLI.package.save(self.d1.session)
 
       # Say goodnight, Gracie.
       sys.exit()
@@ -1375,7 +1375,13 @@ class CLI(cmd.Cmd):
     '''
     queryArgs = self._split_args(line, 0, 99)
     if len(queryArgs) > 0:
-      print_error('Unknown command: "%s"' % queryArgs[0])
+      lowerCase = queryArgs[0].lower()
+      if lowerCase.find('sh') == 0:
+        self.do_show(' '.join(filter(None, queryArgs[1:])))
+      elif lowerCase.find('pkg') == 0:
+        self.do_package(' '.join(filter(None, queryArgs[1:])))
+      else:
+        print_error('Unknown command: "%s"' % queryArgs[0])
 
   def run_command_line_arguments(self, commands):
     for command in commands:
