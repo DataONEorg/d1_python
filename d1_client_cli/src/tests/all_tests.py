@@ -51,6 +51,7 @@ from test_replication_policy import TESTCLIReplicationPolicy
 from test_access_control import TESTCLIAccessControl
 from test_system_metadata import TESTCLISystemMetadata
 from test_session import TESTCLISession
+from test_cli_util import TESTCLIUtil
 
 #===============================================================================
 
