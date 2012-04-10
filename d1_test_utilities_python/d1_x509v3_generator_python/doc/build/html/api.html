@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. API &mdash; DataONE x509v3 Certificate Generator for Python 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE x509v3 Certificate Generator for Python 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="3. Unit Tests" href="generated-tests.html" />
+    <link rel="prev" title="DataONE x509v3 Certificate Generator for Python" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="generated-tests.html" title="3. Unit Tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="DataONE x509v3 Certificate Generator for Python"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE x509v3 Certificate Generator for Python 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. API</a></li>
+<li><a class="reference internal" href="#example">2. Example</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">DataONE x509v3 Certificate Generator for Python</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated-tests.html"
+                        title="next chapter">3. Unit Tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api">
+<h1>1. API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<p>A single API method is exposed:</p>
+<div class="highlight-python"><pre>generate_x509v3_certificate(
+  cert_out_path,
+  ca_cert_path,
+  ca_key_path
+  ca_key_pw,
+  public_key_path,
+  subject_info,
+  subject_alt_name,
+  rdns,
+  long_term
+)</pre>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param cert_out_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Output path for the newly generated certificate.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type cert_out_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param ca_cert_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Input path for PEM formatted CA certificate to use for
+signing new certificate.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type ca_cert_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param ca_key_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Input path for PEM formatted private key for CA certificate.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type ca_key_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param ca_key_pw:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Input password for private key for CA certificate.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type ca_key_pw:</th><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param public_key_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Input path to PEM formatted public key for new
+certificate.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type public_key_path:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param subject_info:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Input string for complete SubjectInfo XML document.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type subject_info:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param subject_alt_name:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">Input string for the standard subjectAltName v3 extension.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type subject_alt_name:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param rdns:</th><td class="field-body">List containing the RDNs for the Subject DN.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type rdns:</th><td class="field-body">list</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param long_term:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">0 = Generated certificate expires after 1 day. 1 = Generated certificate expires after 10 years.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type long_term:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example">
+<h1>2. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h1>
+<p>Generation of the private and public keys on which the new certificate will be
+based has been kept as a manual step. This is because, it is convenient to use
+the same keys for a large set of test certificates.</p>
+<p>Use OpenSSL to generate the private and public keys on which the generated
+certificate will be based:</p>
+<div class="highlight-python"><pre>$ openssl genrsa -out privkey.pem 2048
+$ openssl rsa -in privkey.pem -pubout -out pubkey.pem</pre>
+</div>
+<p>Then call the API from Python:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">generate_x509v3_certificate</span>
+
+<span class="n">cert_out_path</span> <span class="o">=</span> <span class="s">&#39;./newcert.pem&#39;</span>
+
+<span class="n">ca_path</span> <span class="o">=</span> <span class="s">&#39;./ca.crt&#39;</span>
+<span class="n">ca_key_path</span> <span class="o">=</span> <span class="s">&#39;./ca.key&#39;</span>
+<span class="n">ca_key_pw</span> <span class="o">=</span> <span class="s">&quot;my_ca_password&quot;</span>
+
+<span class="n">public_key_path</span> <span class="o">=</span> <span class="s">&#39;./pubkey.pem&#39;</span>
+<span class="n">private_key_path</span> <span class="o">=</span> <span class="s">&#39;./privkey.pem&#39;</span>
+
+<span class="n">subject_alt_name</span> <span class="o">=</span> <span class="s">&#39;DNS:dataone.org&#39;</span>
+
+<span class="n">dn</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="p">(</span><span class="s">&#39;CN&#39;</span><span class="p">,</span> <span class="s">&#39;Test User Name&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&#39;O&#39;</span><span class="p">,</span> <span class="s">&#39;Provider&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;US&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&#39;DC&#39;</span><span class="p">,</span> <span class="s">&#39;test-domain&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&#39;DC&#39;</span><span class="p">,</span> <span class="s">&#39;com&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">long_term</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">subject_info</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s">&lt;d1:subjectInfo xmlns:d1=&quot;http://ns.dataone.org/service/types/v1&quot;&gt;</span>
+<span class="s">  &lt;person&gt;</span>
+<span class="s">    &lt;subject&gt;Test User Name,O=Provider,C=US,DC=test-domain,DC=com&lt;/subject&gt;</span>
+<span class="s">    &lt;givenName&gt;Test&lt;/givenName&gt;</span>
+<span class="s">    &lt;familyName&gt;User Name&lt;/familyName&gt;</span>
+<span class="s">    &lt;email&gt;test@test-domain.com&lt;/email&gt;</span>
+<span class="s">    &lt;equivalentIdentity&gt;CN=Second User Name,C=US,DC=another-test-domain,dc=com&lt;/equivalentIdentity&gt;</span>
+<span class="s">    &lt;verified&gt;true&lt;/verified&gt;</span>
+<span class="s">  &lt;/person&gt;</span>
+<span class="s">&lt;/d1:subjectInfo&gt;</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<span class="n">generate_x509v3_certificate</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">cert_out_path</span><span class="p">,</span> <span class="n">ca_path</span><span class="p">,</span> <span class="n">ca_key_path</span><span class="p">,</span>
+                                     <span class="n">ca_key_pw</span><span class="p">,</span> <span class="n">public_key_path</span><span class="p">,</span> <span class="n">subject_info</span><span class="p">,</span>
+                                     <span class="n">subject_alt_name</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">long_term</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="generated-tests.html" title="3. Unit Tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="DataONE x509v3 Certificate Generator for Python"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE x509v3 Certificate Generator for Python 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2012 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
