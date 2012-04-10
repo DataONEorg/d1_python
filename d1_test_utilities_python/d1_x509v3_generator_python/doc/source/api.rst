@@ -3,7 +3,7 @@ API
 
 A single API method is exposed::
 
-  generate_x509v3_certificate(
+  generate_x509v3_certificate.generate(
     cert_out_path,
     ca_cert_path,
     ca_key_path

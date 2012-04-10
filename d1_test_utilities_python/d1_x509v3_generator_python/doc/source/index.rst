@@ -17,6 +17,7 @@ Index
   :maxdepth: 2
 
   api
+  setup
   generated-tests
 
 
