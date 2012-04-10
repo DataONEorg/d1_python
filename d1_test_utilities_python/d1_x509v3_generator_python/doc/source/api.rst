@@ -61,7 +61,7 @@ certificate will be based::
 
 Then call the API from Python::
 
-  import generate_x509v3_certificate
+  import d1_x509v3_certificate_generator
 
   cert_out_path = './newcert.pem'
 
@@ -97,6 +97,6 @@ Then call the API from Python::
   </d1:subjectInfo>
   '''
 
-  generate_x509v3_certificate.generate(cert_out_path, ca_path, ca_key_path,
+  d1_x509v3_certificate_generator.generate(cert_out_path, ca_path, ca_key_path,
                                        ca_key_pw, public_key_path, subject_info,
                                        subject_alt_name, dn, long_term)
