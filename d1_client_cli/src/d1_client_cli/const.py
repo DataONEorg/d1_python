@@ -81,3 +81,13 @@ QUERY_ENGINE_sect = SECTION_search
 QUERY_ENGINE_name = 'query-type'
 QUERY_STRING_sect = SECTION_search
 QUERY_STRING_name = 'query'
+
+ALLOWABLE_SCIMETA_TYPES = (
+  'eml://ecoinformatics.org/eml-2.0.0',
+  'eml://ecoinformatics.org/eml-2.0.1',
+  'eml://ecoinformatics.org/eml-2.1.0',
+  'eml://ecoinformatics.org/eml-2.1.1',
+  'FGDC-STD-001-1998',
+  'FGDC-STD-001.1-1999',
+  'FGDC-STD-001.2-1999',
+)

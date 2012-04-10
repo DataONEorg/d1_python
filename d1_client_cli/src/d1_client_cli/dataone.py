@@ -494,16 +494,7 @@ class DataONECLI():
       )
 
   def _copy_file_like_object_to_file(self, file_like_object, path):
-    try:
-      object_file = open(expand_path(path), 'wb')
-      shutil.copyfileobj(file_like_object, object_file)
-      object_file.close()
-    except EnvironmentError as (errno, strerror):
-      error_message_lines = []
-      error_message_lines.append('Could not write to object_file: {0}'.format(path))
-      error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
-      error_message = '\n'.join(error_message_lines)
-      raise cli_exceptions.CLIError(error_message)
+    cli_util.copy_file_like_object_to_file(file_like_object, path)
 
   def output(self, file_like_object, path):
     '''Display or save file like object'''
@@ -1144,7 +1135,12 @@ class CLI(cmd.Cmd):
     '''
     try:
       pid, input_file = self._split_args(line, 2, 0)
-      self.d1.science_object_create(pid, input_file)
+      complex_path = cli_util.create_complex_path(input_file)
+      prev_format = self.d1.session.get(FORMAT_sect, FORMAT_name)
+      if complex_path.formatId:
+        self.d1.session.set(FORMAT_sect, FORMAT_name, complex_path.formatId)
+      self.d1.science_object_create(pid, complex_path.path)
+      self.d1.session.set(FORMAT_sect, FORMAT_name, prev_format)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
@@ -1249,7 +1245,7 @@ class CLI(cmd.Cmd):
         self.prompt = '[package] > '
         self.keep_looping = True
         return
-      elif ((query == 'exit') or (query == 'quit')):
+      elif ((query == 'exit') or (query == 'quit') or (query == 'leave')):
         self.prefix = DEFAULT_PREFIX
         self.prompt = DEFAULT_PROMPT
         return

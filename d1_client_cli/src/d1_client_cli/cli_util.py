@@ -68,8 +68,12 @@ def _handle_unexpected_exception(max_traceback_levels=5):
       'There was a problem with the response from the DataONE node. (error %d:%d)' %
       (exc_msgs.__dict__['errorCode'], exc_msgs.__dict__['detailCode'])
     )
-  else:
+  elif exc_type.__name__ == 'AttributeError':
     _print_unexpected_exception(max_traceback_levels)
+  else:
+    #    _print_unexpected_exception(max_traceback_levels)
+    exc_class, exc_msgs = sys.exc_info()[:2]
+    print_error(u'Unexpected error - {0}: {1}'.format(exc_class.__name__, exc_msgs))
 
 
 def _print_unexpected_exception(max_traceback_levels=5):
@@ -230,6 +234,27 @@ def create_sysmeta(session, pid, path, formatId=None):
   return session.create_system_metadata(pid, checksum, size, formatId)
 
 
+def copy_file_like_object_to_file(file_like_object, path):
+  try:
+    fsrc = sys.stdin
+    if file_like_object:
+      fsrc = file_like_object
+
+    if path:
+      fdst = open(_expand_path(path), 'wb')
+      shutil.copyfileobj(fsrc, fdst)
+      fdst.close()
+    else:
+      shutil.copyfileobj(fsrc, sys.stdout)
+
+  except EnvironmentError as (errno, strerror):
+    error_message_lines = []
+    error_message_lines.append('Could not write to object_file: {0}'.format(path))
+    error_message_lines.append('I/O error({0}): {1}'.format(errno, strerror))
+    error_message = '\n'.join(error_message_lines)
+    raise cli_exceptions.CLIError(error_message)
+
+
 def create_complex_path(path):
   return ComplexPath(path)
 
@@ -245,10 +270,11 @@ class ComplexPath(object):
     for part in parts:
       keyval = string.split(part, '=', 1)
       if len(keyval) == 1:
-        path = keyval[0]
+        if keyval[0] != '':
+          self.path = keyval[0]
       else:
         key = strip(keyval[0]).lower()
-        if key == 'formatid' or key == 'format-id':
+        if key.find('format') == 0:
           self.formatId = strip(keyval[1])
         else:
           print_warn('Unknown keyword: "%s"' % strip(keyval[0]))
