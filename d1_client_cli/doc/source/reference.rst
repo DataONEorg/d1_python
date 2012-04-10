@@ -82,3 +82,4 @@ Commands are case sensitive.
   ref_auth
   ref_search
   ref_sci
+  ref_package
