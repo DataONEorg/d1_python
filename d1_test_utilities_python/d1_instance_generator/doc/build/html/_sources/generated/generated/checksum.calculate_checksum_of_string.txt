@@ -1,0 +1,6 @@
+checksum.calculate_checksum_of_string
+=====================================
+
+.. currentmodule:: checksum
+
+.. autofunction:: calculate_checksum_of_string

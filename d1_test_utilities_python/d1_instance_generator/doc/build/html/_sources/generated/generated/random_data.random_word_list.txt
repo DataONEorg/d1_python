@@ -1,0 +1,6 @@
+random_data.random_word_list
+============================
+
+.. currentmodule:: random_data
+
+.. autofunction:: random_word_list

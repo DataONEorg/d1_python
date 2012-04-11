@@ -1,0 +1,23 @@
+person
+======
+
+.. automodule:: person
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    generate
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

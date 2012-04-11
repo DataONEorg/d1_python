@@ -1,0 +1,6 @@
+systemmetadata.generate_from_flo
+================================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: generate_from_flo

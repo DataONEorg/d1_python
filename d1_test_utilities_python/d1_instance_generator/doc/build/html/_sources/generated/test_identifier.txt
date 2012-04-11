@@ -1,0 +1,23 @@
+test_identifier
+===============
+
+.. automodule:: test_identifier
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestIdentifier
+  
+  
+  
+  
+  
+  
