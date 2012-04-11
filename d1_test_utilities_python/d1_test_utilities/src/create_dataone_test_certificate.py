@@ -23,7 +23,11 @@
 ======================================
 
 :Synopsis:
-  Create a certificate signed by the DataONE Test CA.
+  Create a DataONE compliant certificate. The certificate can optionally include
+  a SubjectInfo XML document in which equivalent identities and group
+  memberships are described. The certificate will normally be signed with a test
+  CA that is trusted by a test instance of a Member Node. Test instances set up
+  by DataONE will normally trust the DataONE Test CA.
 :Author:
   DataONE (Dahl)
 '''
@@ -31,7 +35,7 @@
 # Example: ./create_dataone_test_certificate.py --ca-path test_files/ca_test.crt
 # --ca-key-path test_files/ca_test.key --ca-key-pw ca_test --public-key-path
 # test_files/new_cert_public_key.pem --subject-info-path
-# test_files/subject_info.xml 'CN=my name,O=urk,DC=com'
+# test_files/subject_info.xml 'CN=my name,O=mydomain,DC=com'
 
 # Stdlib.
 import httplib
