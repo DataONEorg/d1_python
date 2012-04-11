@@ -28,6 +28,11 @@
   DataONE (Dahl)
 '''
 
+# Example: ./create_dataone_test_certificate.py --ca-path test_files/ca_test.crt
+# --ca-key-path test_files/ca_test.key --ca-key-pw ca_test --public-key-path
+# test_files/new_cert_public_key.pem --subject-info-path
+# test_files/subject_info.xml 'CN=my name,O=urk,DC=com'
+
 # Stdlib.
 import httplib
 import logging
