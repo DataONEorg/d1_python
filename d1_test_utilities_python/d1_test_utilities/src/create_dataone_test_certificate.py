@@ -1,0 +1,154 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright ${year}
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+:mod:`create_dataone_test_certificate`
+======================================
+
+:Synopsis:
+  Create a certificate signed by the DataONE Test CA.
+:Author:
+  DataONE (Dahl)
+'''
+
+# Stdlib.
+import httplib
+import logging
+import optparse
+import os
+import re
+import sys
+
+# D1.
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_x509v3_certificate_generator
+
+
+def split_dn(dn):
+  dn_list = []
+  for rdn in dn.split(','):
+    k, v = rdn.split('=')
+    dn_list.append((k, v))
+  dn_list.reverse()
+  return tuple(dn_list)
+
+
+def make_base_name_from_dn(dn):
+  for rdn in dn:
+    if rdn[0] == 'CN':
+      return re.sub('\W', '_', rdn[1])
+
+
+def read_subject_info(subject_info_path):
+  if subject_info_path is None:
+    return ''
+  try:
+    with open(subject_info_path) as f:
+      return f.read()
+  except EnvironmentError as e:
+    print 'Error reading subject info from file: {0}'.format(str(e))
+    exit()
+
+
+def create_cert(options, args):
+  subject_info = read_subject_info(options.subject_info_path)
+  dn = split_dn(args[0])
+  basename = make_base_name_from_dn(dn)
+  crt_name = basename + '.crt'
+  d1_x509v3_certificate_generator.generate(
+    crt_name, options.ca_path, options.ca_key_path, options.ca_key_pw,
+    options.public_key_path, subject_info, options.subject_alt_name, dn, 1
+    if options.long_term else 0
+  )
+
+
+def main():
+  parser = optparse.OptionParser()
+  parser.add_option(
+    '--subject-info-path',
+    dest='subject_info_path',
+    action='store',
+    type='string',
+    default=None
+  )
+  parser.add_option(
+    '--subject-alt-name',
+    dest='subject_alt_name',
+    action='store',
+    type='string',
+    default='DNS:dataone.org'
+  )
+  parser.add_option(
+    '--long-term',
+    action='store_true',
+    default=False,
+    dest='long_term',
+    help='Create a certificate that is valid for 10 years'
+  )
+
+  parser.add_option(
+    '--ca-path',
+    dest='ca_path',
+    action='store',
+    type='string',
+    default='ca.crt'
+  )
+  parser.add_option(
+    '--ca-key-path',
+    dest='ca_key_path',
+    action='store',
+    type='string',
+    default='ca.key'
+  )
+  parser.add_option(
+    '--ca-key-pw',
+    dest='ca_key_pw',
+    action='store',
+    type='string',
+    default='my_ca_pw'
+  )
+
+  parser.add_option(
+    '--public-key-path',
+    dest='public_key_path',
+    action='store',
+    type='string',
+    default='pubkey.pem'
+  )
+
+  parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
+
+  (options, args) = parser.parse_args()
+
+  if len(args) != 1:
+    print 'Need a single argument which must be the Subject DN. Example: CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+    parser.print_help()
+    exit()
+
+  if options.verbose:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  create_cert(options, args)
+
+
+if __name__ == '__main__':
+  main()
