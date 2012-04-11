@@ -61,15 +61,25 @@ class system_metadata():
   def __repr__(self):
     return self.to_xml()
 
-  def _get_missing_sysmeta_session_parameters(self, sysmeta):
+  def _get_missing_sysmeta_session_parameters(
+    self, sysmeta, formatId=None, algorithm=None
+  ):
     missing_values = []
     for k in sorted(sysmeta.keys()):
       if sysmeta[k][0] is None:
+        if k == CHECKSUM_name and algorithm is not None:
+          continue
+        if k == FORMAT_name and formatId is not None:
+          continue
         missing_values.append(k)
     return missing_values
 
-  def _assert_no_missing_sysmeta_session_parameters(self, sysmeta):
-    missing_values = self._get_missing_sysmeta_session_parameters(sysmeta)
+  def _assert_no_missing_sysmeta_session_parameters(
+    self, sysmeta, formatId=None, algorithm=None
+  ):
+    missing_values = self._get_missing_sysmeta_session_parameters(
+      sysmeta, formatId, algorithm
+    )
     if len(missing_values):
       msg = 'Missing system metadata parameters: {0}'.format(', '.join(missing_values))
       raise MissingSysmetaParameters(msg)
@@ -116,7 +126,9 @@ class system_metadata():
     formatId=None,
     algorithm=None
   ):
-    self._assert_no_missing_sysmeta_session_parameters(session.session['sysmeta'])
+    self._assert_no_missing_sysmeta_session_parameters(
+      session.session['sysmeta'], formatId, algorithm
+    )
     return self._create_pyxb_object(
       session, pid, size, checksum, access_policy, replication_policy, formatId, algorithm
     )

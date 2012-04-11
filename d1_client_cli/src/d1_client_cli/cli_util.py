@@ -191,14 +191,14 @@ def output(file_like_object, path, verbose=False):
       raise cli_exceptions.CLIError(error_message)
 
 
-def get_file_size(self, path):
+def get_file_size(path):
   with open(_expand_path(path), 'r') as f:
     f.seek(0, os.SEEK_END)
     size = f.tell()
   return size
 
 
-def get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
+def get_file_checksum(path, algorithm='SHA-1', block_size=1024 * 1024):
   h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
   with open(_expand_path(path), 'r') as f:
     while True:
@@ -209,7 +209,7 @@ def get_file_checksum(self, path, algorithm='SHA-1', block_size=1024 * 1024):
   return h.hexdigest()
 
 
-def assert_file_exists(self, path):
+def assert_file_exists(path):
   if not os.path.isfile(_expand_path(path)):
     msg = 'Invalid file: {0}'.format(path)
     raise cli_exceptions.InvalidArguments(msg)

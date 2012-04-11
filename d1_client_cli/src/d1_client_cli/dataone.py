@@ -232,6 +232,51 @@ option_list = [
     help="Display less information"
   ),
   make_option(
+    "--allow-public",
+    action="store_true",
+    dest="action_allowPublic",
+    help="Allow public read access."
+  ),
+  make_option(
+    "--deny-public",
+    action="store_false",
+    dest="action_allowPublic",
+    help="Deny public read access."
+  ),
+  make_option(
+    "--allow-replication",
+    action="store_true",
+    dest="action_allowReplication",
+    help="Allow objects to be replicated."
+  ),
+  make_option(
+    "--disallow-replication",
+    action="store_false",
+    dest="action_allowReplication",
+    help="Do not allow objects to be replicated."
+  ),
+  make_option(
+    "--replicas",
+    action="store",
+    dest="action_numReplicas",
+    metavar="#replicas",
+    help="Set the preferred number of replicas."
+  ),
+  make_option(
+    "--add_blocked",
+    action="store",
+    dest="action_blockNode",
+    metavar="MN",
+    help="Add blocked Member Node to access policy."
+  ),
+  make_option(
+    "--add_preferred",
+    action="store",
+    dest="action_preferNode",
+    metavar="MN",
+    help="Add Member Node to list_objects of preferred replication targets."
+  ),
+  make_option(
     "--cn",
     action="store",
     dest="cn_host",
@@ -328,6 +373,24 @@ def handle_options(cli, options):
       cli.d1.session_set_parameter(TO_DATE_name, options.to_date)
     if options.verbose is not None:
       cli.d1.session_set_parameter(VERBOSE_name, options.verbose)
+
+    if options.action_allowPublic is not None:
+      if options.action_allowPublic:
+        cli.d1.access_control_allow_public(True)
+      else:
+        cli.d1.access_control_allow_public(False)
+    if options.action_allowReplication is not None:
+      if options.action_allowReplication:
+        cli.d1.replication_policy_set_replication_allowed(True)
+      else:
+        cli.d1.replication_policy_set_replication_allowed(False)
+    if options.action_numReplicas is not None:
+      cli.d1.replication_policy_set_number_of_replicas(options.action_numReplicas)
+    if options.action_blockNode is not None:
+      cli.d1.replication_policy_add_blocked(options.action_blockNode)
+    if options.action_preferNode is not None:
+      cli.d1.replication_policy_add_preferred(options.action_preferNode)
+
     cli._update_verbose()
   except cli_exceptions.InvalidArguments as e:
     print_error(e)
@@ -399,14 +462,14 @@ class DataONECLI():
         .format(algorithm, d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
       )
 
-  def _create_system_metadata(self, pid, path):
+  def _create_system_metadata(self, pid, path, formatId=None):
     checksum = self._get_file_checksum(
       expand_path(path), self.session.get(
         CHECKSUM_sect, CHECKSUM_name
       )
     )
     size = self._get_file_size(expand_path(path))
-    sysmeta = self.session.create_system_metadata(pid, checksum, size)
+    sysmeta = self.session.create_system_metadata(pid, checksum, size, formatId)
     return sysmeta
 
   def _create_system_metadata_xml(self, pid, path):
@@ -439,12 +502,12 @@ class DataONECLI():
           .format(e.friendly_format())
         )
 
-  def science_object_create(self, pid, path):
+  def science_object_create(self, pid, path, formatId=None):
     '''Create a new Science Object on a Member Node
     '''
     path = expand_path(path)
     self._assert_file_exists(path)
-    sysmeta = self._create_system_metadata(pid, path)
+    sysmeta = self._create_system_metadata(pid, path, formatId)
     client = cli_client.CLIMNClient(self.session)
     self._post_file_and_system_metadat_to_member_node(client, pid, path, sysmeta)
 
@@ -1136,11 +1199,7 @@ class CLI(cmd.Cmd):
     try:
       pid, input_file = self._split_args(line, 2, 0)
       complex_path = cli_util.create_complex_path(input_file)
-      prev_format = self.d1.session.get(FORMAT_sect, FORMAT_name)
-      if complex_path.formatId:
-        self.d1.session.set(FORMAT_sect, FORMAT_name, complex_path.formatId)
-      self.d1.science_object_create(pid, complex_path.path)
-      self.d1.session.set(FORMAT_sect, FORMAT_name, prev_format)
+      self.d1.science_object_create(pid, complex_path.path, complex_path.formatId)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:

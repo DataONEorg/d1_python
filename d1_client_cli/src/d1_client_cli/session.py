@@ -359,10 +359,9 @@ class session(object):
     replication_policy = self.replication_policy.to_pyxb()
     sysmeta_creator = system_metadata.system_metadata()
     self._create_missing_sysmeta_session_parameters()
-    sysmeta = sysmeta_creator.create_pyxb_object(
-      self, pid, size, checksum, access_policy, replication_policy
+    return sysmeta_creator.create_pyxb_object(
+      self, pid, size, checksum, access_policy, replication_policy, formatId
     )
-    return sysmeta
 
   def _create_missing_sysmeta_session_parameters(self):
     ''' Make sure all the session values that are:

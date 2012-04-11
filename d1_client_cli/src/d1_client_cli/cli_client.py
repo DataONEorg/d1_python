@@ -112,6 +112,9 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
     if not mn_url:
       raise cli_exceptions.CLIError('"' + MN_URL_name + '" parameter required')
 
+  def get_url_for_pid(self, pid):
+    return self.base_url + 'object/' + pid
+
 #===============================================================================
 
 
@@ -127,6 +130,10 @@ class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
       raise cli_exceptions.CLIError('"' + CN_URL_name + '" parameter required')
 
 #== Static methods =============================================================
+
+
+def get_url_for_pid(pid):
+  return
 
 
 def get_object_by_pid(session, pid, filename=None, resolve=True):
@@ -188,6 +195,20 @@ def _get_fname(filename):
   return fname
 
 
+def get_baseUrl(session, nodeId):
+  '''  Get the base url of the given node id.
+  '''
+  cn_client = CLICNClient(session)
+  try:
+    nodes = cn_client.listNodes()
+    for node in list(nodes.node):
+      if node.identifier.value() == nodeId:
+        return node.baseURL
+  except (d1_common.types.exceptions.ServiceFailure) as e:
+    print_error("Unable to get node list.")
+  return None
+
+
 def get_sysmeta_by_pid(session, pid):
   '''  Get the system metadata object for this particular pid.
   '''
@@ -198,7 +219,16 @@ def get_sysmeta_by_pid(session, pid):
 
   try:
     cn_client = CLICNClient(session)
-    return cn_client.getSystemMetadata(pid)
+    obsolete = True
+    while obsolete:
+      obsolete = False
+      sysmeta = cn_client.getSystemMetadata(pid)
+      if not sysmeta:
+        return None
+      if sysmeta.obsoletedBy:
+        pid = sysmeta.obsoletedBy
+        obsolete = True
+    return sysmeta
   except d1_common.types.exceptions.DataONEException as e:
     if e.errorCode != 404:
       raise cli_exceptions.CLIError(

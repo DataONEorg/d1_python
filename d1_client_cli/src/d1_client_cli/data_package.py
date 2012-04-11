@@ -84,6 +84,7 @@ class DataPackage(object):
     self.sysmeta = None
     self.scimeta = None
     self.scidata_dict = {}
+    self.resmap = None
 
   #== Informational =========================================================
 
@@ -197,13 +198,24 @@ class DataPackage(object):
           sys.stdout.write('. [error]\n')
         print_error('"%s" is not an allowable science metadata type.' % new_meta.formatId)
         return
+      new_pid = new_meta.identifier.value()
+      if new_pid != pid:
+        pid = new_pid
 
       self.scimeta = self._get_by_pid(session, pid, new_meta)
+      authMN = new_meta.authoritativeMemberNode
+      nodeId = authMN.value() #@UnusedVariable
+      if authMN:
+        baseURL = cli_client.get_baseUrl(session, authMN.value())
+        self.scimeta.url = baseURL + '/object/' + pid
       if session.is_pretty():
         print '. [retrieved]'
 
     else:
       complex_path = cli_util.create_complex_path(file_name)
+      if not os.path.exists(complex_path.path):
+        print_error('%s: file not found' % complex_path.path)
+        return
       format_id = complex_path.formatId
       if not format_id:
         format_id = session.get(FORMAT_sect, FORMAT_name)
@@ -268,21 +280,44 @@ class DataPackage(object):
         print_error('The object format could not be determined and was not defined.')
         return
       else:
-        meta = cli_util.create_sysmeta(session, pid, complex_path.path)
+        meta = cli_util.create_sysmeta(
+          session, pid, complex_path.path,
+          formatId=format_id
+        )
         self.scidata_dict[pid] = DataObject(pid, True, complex_path.path, meta, format_id)
         if session.is_pretty():
           print '. [created]'
 
-    elif not cli_client.get_sysmeta_by_pid(session, pid):
-      print_error('That pid (%s) was not found in DataONE.' % pid)
-      return
-    # Creeate pid
     else:
-      if session.is_pretty():
-        sys.stdout.write('  Adding science data object "%s"...' % pid)
-      self.scidata_dict[pid] = self._get_by_pid(session, pid)
-      if session.is_pretty():
-        print '. [retreived]'
+      sysmeta = cli_client.get_sysmeta_by_pid(session, pid)
+      if not sysmeta:
+        print_error('That pid (%s) was not found in DataONE.' % pid)
+        return
+    # Creeate pid
+      else:
+        if session.is_pretty():
+          sys.stdout.write('  Adding science data object "%s"...' % pid)
+        new_pid = sysmeta.identifier.value()
+        if new_pid != pid:
+          pid = new_pid # in case something was obsoleted....
+
+        new_scidata = DataObject(pid=new_pid, meta=sysmeta, format_id=sysmeta.formatId)
+        authMN = sysmeta.authoritativeMemberNode
+        nodeId = authMN.value() #@UnusedVariable
+        if authMN:
+          baseURL = cli_client.get_baseUrl(session, authMN.value())
+          new_scidata.url = baseURL + '/object/' + pid
+        self.scidata_dict[pid] = new_scidata
+        if session.is_pretty():
+          print '. [retreived]'
+
+  def scidata_get(self, pid):
+    ''' Get the specified scidata object.
+    '''
+    if pid and pid in self.scidata_dict:
+      return self.scidata_dict
+    else:
+      return None
 
   def scidata_del(self, pid):
     ''' Remove a science data object.
@@ -335,41 +370,30 @@ class DataPackage(object):
     else:
       return False
 
-  def _generate_resmap(self, package_object_list):
-    ''' The scimeta is part of a package.  Create a package.
-    
-        An example package_object item looks like:
-                {
-                  'scimeta_obj': <d1_common.types.generated.dataoneTypes.SystemMetadata>,
-                  'scimeta_url': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/meta/test-object'
-                  'scidata_pid':pid,
-                  'scidata_url':get_scimeta_url
-                }
+  def _generate_resmap(self):
+    ''' Create a package.
     '''
     # Create the aggregation
     foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
     aggr = foresite.Aggregation(self.pid)
     aggr._dcterms.title = 'Simple aggregation of science metadata and data.'
 
-    # Create references to the science data
-    for item in package_object_list:
-      # Create a reference to the science metadata
-      scimeta_obj = item['scimeta_obj']
-      scimeta_pid = scimeta_obj.identifier.value()
-      uri_scimeta = URIRef(item['scimeta_url'])
-      res_scimeta = foresite.AggregatedResource(uri_scimeta)
-      res_scimeta._dcterms.identifier = scimeta_pid
-      res_scimeta._dcterms.description = 'A reference to a science metadata object using a DataONE identifier'
+    # Create a reference to the science metadata
+    uri_scimeta = URIRef(self.scimeta.url)
+    res_scimeta = foresite.AggregatedResource(uri_scimeta)
+    res_scimeta._dcterms.identifier = self.scimeta.pid
+    res_scimeta._dcterms.description = 'Science metadata object.'
+    aggr.add_resource(res_scimeta)
 
-      uri_scidata = URIRef(item['scidata_url'])
+    # Create references to the science data
+    for scidata in self.scidata_dict.values():
+      uri_scidata = URIRef(scidata.url)
       res_scidata = foresite.AggregatedResource(uri_scidata)
-      res_scidata._dcterms.identifier = item['scidata_pid']
-      res_scidata._dcterms.description = 'A reference to a science data object using a DataONE identifier'
+      res_scidata._dcterms.identifier = scidata.pid
+      res_scidata._dcterms.description = 'Science data object'
+      aggr.add_resource(res_scidata)
       res_scidata._cito.isDocumentedBy = uri_scimeta
       res_scimeta._cito.documents = uri_scidata
-
-      aggr.add_resource(res_scimeta)
-      aggr.add_resource(res_scidata)
 
     # Create the resource map
     resmap_id = "resmap_%s" % self.pid
@@ -380,6 +404,8 @@ class DataPackage(object):
 
   def _serialize(self, fmt='xml'):
     assert (fmt in ALLOWABLE_PACKAGE_SERIALIZATIONS)
+    self._prepare_urls()
+    self._generate_resmap()
     if self.resmap.serializer is not None:
       self.resmap.serializer = None
     serializer = foresite.RdfLibSerializer(fmt)
@@ -387,14 +413,31 @@ class DataPackage(object):
     doc = self.resmap.get_serialization()
     return doc.data
 
+  def _prepare_urls(self):
+    ''' Walk through the objects make sure that everything has a url.
+    '''
+    if self.scimeta and not self.scimeta.url:
+      print_error('TODO: Implement create object')
+    if self.scidata_dict:
+      for scidata in self.scidata_dict.values():
+        if not scidata.url:
+          print_error('TODO: Implement create object')
+
 
 class DataObject(object):
-  def __init__(self, pid=None, dirty=None, fname=None, meta=None, format_id=None):
+  def __init__(
+    self, pid=None,
+    dirty=None,
+    fname=None,
+    url=None, meta=None,
+    format_id=None
+  ):
     ''' Create a data object
     '''
     self.pid = pid
     self.dirty = dirty
     self.fname = fname
+    self.url = url
     self.meta = meta
     self.format_id = format_id
 
