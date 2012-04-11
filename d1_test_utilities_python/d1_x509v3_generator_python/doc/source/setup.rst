@@ -13,9 +13,9 @@ Install the development version of Python::
 
   $ sudo apt-get install python-dev
 
-Install the OpenSSL library::
+Install the OpenSSL development library::
 
-  $ sudo apt-get install openssl
+  $ sudo apt-get install libssl-dev
 
 Build and install the x509v3 Certificate Extractor::
 
