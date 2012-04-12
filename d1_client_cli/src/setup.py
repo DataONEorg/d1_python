@@ -28,7 +28,6 @@ setup(
     'rdflib >= 2.4.2',
     'python-dateutil',
     'iso8601',
-    'PyXB-full',
   ],
   dependency_links=[
     'http://foresite-toolkit.googlecode.com/files/foresite-1.2.tgz',
