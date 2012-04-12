@@ -47,7 +47,7 @@ import cli_exceptions
 class access_control():
   def __init__(self):
     self.allow = {}
-    self.public = False
+    self.public = True
 
   def __str__(self):
     return self._pretty_format()

@@ -47,8 +47,8 @@ import cli_exceptions
 class replication_policy():
   def __init__(self):
     self.member_nodes = {}
-    self.replication_allowed = False
-    self.number_of_replicas = 0
+    self.replication_allowed = True
+    self.number_of_replicas = d1_common.const.DEFAULT_NUMBER_OF_REPLICAS
 
   def __str__(self):
     return self._pretty_format()

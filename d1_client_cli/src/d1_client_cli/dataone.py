@@ -99,7 +99,7 @@ option_list = [
     "--no-" + ANONYMOUS_name,
     action="store_false",
     dest="anonymous",
-    help="Ignore any installed certificates and connect anonymously"
+    help="Use the installed certificates and do not connect anonymously"
   ),
   make_option(
     "--" + AUTH_MN_name,
@@ -1005,6 +1005,9 @@ class CLI(cmd.Cmd):
     '''
     try:
       subject, permission = self._split_args(line, 1, 1)
+      if subject == 'public':
+        print_error('"public" is a reserved identity.  Please use "allowpublic".')
+        return
       self.d1.access_control_add_allowed_subject(subject, permission)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
@@ -1017,6 +1020,9 @@ class CLI(cmd.Cmd):
     '''
     try:
       subject = self._split_args(line, 1, 0)
+      if subject == 'public':
+        print_error('"public" is a reserved identity.  Please use "denypublic".')
+        return
       self.d1.access_control_remove_allowed_subject(subject)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)
@@ -1123,8 +1129,8 @@ class CLI(cmd.Cmd):
     except:
       cli_util._handle_unexpected_exception()
 
-  def do_disallowreplication(self, line):
-    '''disallowreplication
+  def do_denyreplication(self, line):
+    '''denyreplication
     Prevent object from being replicated
     '''
     try:

@@ -34,6 +34,7 @@ import string
 import StringIO
 import tempfile
 import xml.dom.minidom
+from xml.dom.minidom import parse, parseString
 
 # 3rd party
 from rdflib import Namespace, URIRef
@@ -69,6 +70,9 @@ ALLOWABLE_PACKAGE_SERIALIZATIONS = (
   'xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'
 )
 RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
+
+RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+CITO_NS = 'http://purl.org/spar/cito/'
 
 #** DataPackage ***************************************************************
 
@@ -118,7 +122,7 @@ class DataPackage(object):
         print_info('Package name is cleared.')
       self.pid = pid
 
-  def load(self, session, pid):
+  def load(self, session):
     ''' Get the object referred to by pid and make sure it is a
         package.
     '''
@@ -126,41 +130,62 @@ class DataPackage(object):
       raise cli_exceptions.InvalidArguments('Missing pid')
     if session is None:
       raise cli_exceptions.InvalidArguments('Missing session')
-    data_object = self._get_by_pid(session, self.pid)
-    if not data_object:
-      print_error('Couldn\'t find "%s" in DataONE.' % pid)
-
-    pkg_xml = self._serialize('xml')
-
-    algorithm = session.get(CHECKSUM_sect, CHECKSUM_name)
-    hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
-    hash_fcn.update(pkg_xml)
-    checksum = hash_fcn.hexdigest()
-
-    access_policy = session.access_control.to_pyxb()
-    replication_policy = session.replication_policy.to_pyxb()
-    sysmeta_creator = system_metadata.system_metadata()
-    sysmeta = sysmeta_creator.create_pyxb_object(
-      session,
-      self.pid,
-      len(
-        pkg_xml
-      ),
-      checksum,
-      access_policy,
-      replication_policy,
-      formatId=RDFXML_FORMATID
-    )
-    client = cli_client.CLIMNClient(session)
-    flo = StringIO.StringIO(pkg_xml)
-    response = client.create(pid=self.pid, obj=flo, sysmeta=sysmeta)
-    if response is not None:
-      return response.value()
-    else:
+    sysmeta = cli_client.get_sysmeta_by_pid(session, self.pid)
+    if not sysmeta:
+      print_error('Couldn\'t find "%s" in DataONE.' % self.pid)
       return None
+    if sysmeta.formatId != RDFXML_FORMATID:
+      print_error('Package must be in RDF/XML format (not "%s").' % sysmeta.formatId)
+      return None
+
+    rdf_xml = cli_client.get_object_by_pid(session, self.pid)
+    if not self._parse_rdf_xml(rdf_xml):
+      print_error('Unable to load package "%s".' % self.pid)
+      return None
+
+    self.original_pid = self.pid
+    self.sysmeta = sysmeta
     if session.is_pretty():
-      print_error("TODO: implement data_package.load()")
+      print_error("Loaded %s" % self.pid)
     return self
+
+  def _parse_rdf_xml(self, rdf):
+    doc = parseString(rdf)
+    #    print 'doc:\n', doc.toxml()
+    self.scimeta = None
+    self.scidata_dict = {}
+    for desc in doc.getElementsByTagNameNS(RDF_NS, 'Description'):
+      if desc.getElementsByTagNameNS(CITO_NS, 'documents'):
+        if self.scimeta:
+          msg = 'Already have Science Metadata Object: "%s"' % self.scimeta.url
+          print_error(msg)
+          self.scimeta = None
+          self.scidata_dict = {}
+          return False
+        else:
+          self.scimeta = DataObject()
+          self.scimeta.from_url(desc.getAttributeNS(RDF_NS, 'about'))
+          if not self.scimeta.pid:
+            print_warn('Couldn\'t find pid in %s' % self.scimeta.url)
+      else:
+        documentedBy = desc.getElementsByTagNameNS(CITO_NS, 'isDocumentedBy')
+        if documentedBy:
+          scidata = DataObject()
+          about_url = desc.getAttributeNS(RDF_NS, 'about')
+          scidata.from_url(about_url)
+          if not scidata.pid:
+            msg = 'ouldn\'t find pid in "%s"' % about_url
+            print_error(msg)
+            self.scimeta = None
+            self.scidata_dict = {}
+            return False
+          else:
+            if len(documentedBy) > 1:
+              print_warn('There are several science metadata objects - using the first')
+            e = documentedBy[0]
+            scidata.documented_by = e.getAttributeNS(RDF_NS, 'resource')
+            self.scidata_dict[scidata.pid] = scidata
+    return True
 
   def save(self, session):
     ''' Save this object referred to by this pid.
@@ -189,18 +214,15 @@ class DataPackage(object):
       replication_policy,
       formatId=RDFXML_FORMATID
     )
-
     client = cli_client.CLIMNClient(session)
     flo = StringIO.StringIO(pkg_xml)
     response = client.create(pid=self.pid, obj=flo, sysmeta=sysmeta)
-    if response is not None:
-      return response.value()
-    else:
+    if response is None:
       return None
-
-    if session.is_pretty():
-      print_error("TODO: implement data_package.save()")
-    return
+    else:
+      if session.is_pretty():
+        print_info('Saved "%s"' % self.pid)
+      return response.value()
 
   def scimeta_add(self, session, pid, file_name=None):
     ''' Add a scimeta object.
@@ -503,11 +525,14 @@ class DataPackage(object):
 
 class DataObject(object):
   def __init__(
-    self, pid=None,
+    self,
+    pid=None,
     dirty=None,
     fname=None,
-    url=None, meta=None,
-    format_id=None
+    url=None,
+    meta=None,
+    format_id=None,
+    documented_by=None
   ):
     ''' Create a data object
     '''
@@ -517,6 +542,7 @@ class DataObject(object):
     self.url = url
     self.meta = meta
     self.format_id = format_id
+    self.documented_by = documented_by
 
   def is_dirty(self):
     return (self.dirty is not None) and self.dirty
@@ -530,6 +556,12 @@ class DataObject(object):
         self.dirty
       ), self.fname, m
     )
+
+  def from_url(self, url):
+    self.url = url
+    ndx = url.find('/object/') + 8
+    if ndx > 8:
+      self.pid = url[ndx:]
 
   def summary(self, prefix, pretty, verbose):
     p = prefix
