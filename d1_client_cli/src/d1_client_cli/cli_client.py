@@ -226,6 +226,11 @@ def get_sysmeta_by_pid(session, pid):
       if not sysmeta:
         return None
       if sysmeta.obsoletedBy:
+        msg = (
+          'Object "%s" has been obsoleted by "%s".  ' + 'Would you rather use that?') % (
+            pid, sysmeta.obsoletedBy)
+        if not cli_util.confirm(msg):
+          break
         pid = sysmeta.obsoletedBy
         obsolete = True
     return sysmeta

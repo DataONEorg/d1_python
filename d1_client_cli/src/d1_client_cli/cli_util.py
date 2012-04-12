@@ -91,7 +91,7 @@ def _print_unexpected_exception(max_traceback_levels=5):
     print_error('    {0}'.format(tb))
 
 
-def _expand_path(filename):
+def expand_path(filename):
   if filename:
     return os.path.expanduser(filename)
   return None
@@ -180,7 +180,7 @@ def output(file_like_object, path, verbose=False):
         print line.rstrip()
   else:
     try:
-      object_file = open(_expand_path(path), 'wb')
+      object_file = open(expand_path(path), 'wb')
       shutil.copyfileobj(file_like_object, object_file)
       object_file.close()
     except EnvironmentError as (errno, strerror):
@@ -192,7 +192,7 @@ def output(file_like_object, path, verbose=False):
 
 
 def get_file_size(path):
-  with open(_expand_path(path), 'r') as f:
+  with open(expand_path(path), 'r') as f:
     f.seek(0, os.SEEK_END)
     size = f.tell()
   return size
@@ -200,7 +200,7 @@ def get_file_size(path):
 
 def get_file_checksum(path, algorithm='SHA-1', block_size=1024 * 1024):
   h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
-  with open(_expand_path(path), 'r') as f:
+  with open(expand_path(path), 'r') as f:
     while True:
       data = f.read(block_size)
       if not data:
@@ -210,7 +210,7 @@ def get_file_checksum(path, algorithm='SHA-1', block_size=1024 * 1024):
 
 
 def assert_file_exists(path):
-  if not os.path.isfile(_expand_path(path)):
+  if not os.path.isfile(expand_path(path)):
     msg = 'Invalid file: {0}'.format(path)
     raise cli_exceptions.InvalidArguments(msg)
 
@@ -228,7 +228,7 @@ def create_sysmeta(session, pid, path, formatId=None):
   if algorithm is None:
     raise cli_exceptions.InvalidArguments('Checksum algorithm is not defined.')
 
-  path = _expand_path(path)
+  path = expand_path(path)
   checksum = get_file_checksum(path, algorithm)
   size = get_file_size(path)
   return session.create_system_metadata(pid, checksum, size, formatId)
@@ -241,7 +241,7 @@ def copy_file_like_object_to_file(file_like_object, path):
       fsrc = file_like_object
 
     if path:
-      fdst = open(_expand_path(path), 'wb')
+      fdst = open(expand_path(path), 'wb')
       shutil.copyfileobj(fsrc, fdst)
       fdst.close()
     else:
