@@ -15,7 +15,7 @@ Get an object from a :term:`MN`.
 
 The object is saved to ``file``.
 
-Active session parameters: :ref:`mnurl <mnurl>`, :ref:`authentication`
+Active session parameters: :ref:`mn-url <mn-url>`, :ref:`authentication`
 
 
 .. _meta:
@@ -27,10 +27,10 @@ Get the System Metadata that is associated with a Science Object from a
 
 Provide ``file`` if saving the System Metadata is desired.
 
-Connects to the :term:`CN` set in the :ref:`dataoneurl <dataoneurl>` session
+Connects to the :term:`CN` set in the :ref:`dataone-url <dataone-url>` session
 parameter.
 
-Active session parameters: :ref:`dataoneurl <dataoneurl>`, :ref:`authentication`
+Active session parameters: :ref:`dataone-url <dataone-url>`, :ref:`authentication`
 
 
 .. _create:
@@ -47,10 +47,10 @@ The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the ch
 for the new object. If the value is unset, it defaults to the DataONE system
 wide default, which is currently SHA1.
 
-Active session parameters: :ref:`mnurl <mnurl>`, :ref:`objectformat
-<objectformat>`, :ref:`submitter <submitter>`, :ref:`rightsholder
-<rightsholder>`, :ref:`originmn <originmn>`, :ref:`authoritativemn
-<authoritativemn>`, :ref:`algorithm <algorithm>`, :ref:`access_policy`,
+Active session parameters: :ref:`mn-url <mn-url>`, :ref:`format-id
+<format-id>`, :ref:`submitter <submitter>`, :ref:`rights-holder
+<rights-holder>`, :ref:`origin-mn <origin-mn>`, :ref:`authoritative-mn
+<authoritative-mn>`, :ref:`algorithm <algorithm>`, :ref:`access_policy`,
 :ref:`replication_policy`, :ref:`authentication`
 
 
@@ -68,10 +68,10 @@ The algorithm set in :ref:`algorithm <algorithm>` is used for calculating the ch
 for the new object. If the value is unset, it defaults to the DataONE system
 wide default, which is currently SHA1.
 
-Active session parameters: :ref:`mnurl <mnurl>`, :ref:`objectformat
-<objectformat>`, :ref:`submitter <submitter>`, :ref:`rightsholder
-<rightsholder>`, :ref:`originmn <originmn>`, :ref:`authoritativemn
-<authoritativemn>`, :ref:`algorithm <algorithm>`, :ref:`access_policy`,
+Active session parameters: :ref:`mn-url <mn-url>`, :ref:`format-id
+<format-id>`, :ref:`submitter <submitter>`, :ref:`rights-holder
+<rights-holder>`, :ref:`origin-mn <origin-mn>`, :ref:`authoritative-mn
+<authoritative-mn>`, :ref:`algorithm <algorithm>`, :ref:`access_policy`,
 :ref:`replication_policy`, :ref:`authentication`
 
 
@@ -81,7 +81,7 @@ delete <:term:`pid`>
 ````````````````````
 Mark an existing Science Object as archived.
 
-Active session parameters: :ref:`mnurl <mnurl>`, :ref:`submitter <submitter>`,
+Active session parameters: :ref:`mn-url <mn-url>`, :ref:`submitter <submitter>`,
 :ref:`access_policy`, :ref:`replication_policy`, :ref:`authentication`
 
 
@@ -92,7 +92,7 @@ resolve <:term:`pid`>
 Given the :term:`pid` for a Science Object, find all locations from which the
 Science Object can be downloaded.
 
-Active session parameters: :ref:`dataoneurl <dataoneurl>`, :ref:`authentication`
+Active session parameters: :ref:`dataone-url <dataone-url>`, :ref:`authentication`
 
 
 .. _list:
@@ -102,9 +102,9 @@ list
 Retrieve a list of available Science Data Objects from a single :term:`MN` with
 basic filtering.
 
-Active session parameters: :ref:`mnurl <mnurl>`, :ref:`start <start>`,
-:ref:`count <count>`, :ref:`fromdate <fromdate>`, :ref:`todate <todate>`,
-:ref:`searchobjectformat <searchobjectformat>`, :ref:`authentication`
+Active session parameters: :ref:`mn-url <mn-url>`, :ref:`start <start>`,
+:ref:`count <count>`, :ref:`from-date <from-date>`, :ref:`to-date <to-date>`,
+:ref:`search-format-id <search-format-id>`, :ref:`authentication`
 
 See also: :ref:`search`
 
@@ -115,9 +115,9 @@ log
 ```
 Retrieve event log.
 
-Active session parameters: :ref:`mnurl <mnurl>`, :ref:`start <start>`,
-:ref:`count <count>`, :ref:`fromdate <fromdate>`, :ref:`todate <todate>`,
-:ref:`searchobjectformat <searchobjectformat>`, :ref:`authentication`
+Active session parameters: :ref:`mn-url <mn-url>`, :ref:`start <start>`,
+:ref:`count <count>`, :ref:`from-date <from-date>`, :ref:`to-date <to-date>`,
+:ref:`search-format-id <search-format-id>`, :ref:`authentication`
 
 
 .. _setaccess:
@@ -130,7 +130,7 @@ Requires that the calling subject has :ref:`authenticated <Authentication>` and
 has changePermission access level on the object for which Access Policy is to be
 updated.
 
-Active session parameters: :ref:`dataoneurl <dataoneurl>`,
+Active session parameters: :ref:`dataone-url <dataone-url>`,
 :ref:`authentication`, :ref:`access_policy`
 
 
@@ -144,5 +144,5 @@ Requires that the calling subject has :ref:`authenticated <Authentication>` and
 has changePermission access level on the object for which Replication Policy is
 to be updated.
 
-Active session parameters: :ref:`dataoneurl <dataoneurl>`,
+Active session parameters: :ref:`dataone-url <dataone-url>`,
 :ref:`replication_policy`, :ref:`authentication`

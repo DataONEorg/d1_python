@@ -21,13 +21,13 @@ The user obtains a certificate for the subject with which to access a Node from
 download process stores the certificate in a standard location. The CLI can
 automatically find certificates in this location. In some cases, certificates
 may be stored in custom locations. In such cases, the automatic location of
-certificates can be bypassed by setting the :ref:`certpath <certpath>` session
+certificates can be bypassed by setting the :ref:`cert-path <cert-path>` session
 parameter to the filesystem path of the certificate. Because CILogon provides a
 certificate that holds both the public and private keys in the same file, only
-:ref:`certpath <certpath>` is required and :ref:`keypath <keypath>` should be
+:ref:`cert-path <cert-path>` is required and :ref:`key-path <key-path>` should be
 set to None. If the certificate was obtained in some other way, and the
-certificate's private key is stored in a separate file, the :ref:`keypath
-<keypath>` session parameter must be set to the filesystem path of the private
+certificate's private key is stored in a separate file, the :ref:`key-path
+<key-path>` session parameter must be set to the filesystem path of the private
 key.
 
 When a user types a command that requires the CLI to connect to a Node, the CLI

@@ -7,11 +7,12 @@ Examples
   to modify that command and then hit Enter.
 
 
-Viewing and manipulating the :ref:`session parameters <session_parameters>`
----------------------------------------------------------------------------
+Viewing and manipulating the session parameters
+-----------------------------------------------
 
-Viewing and manipulating the values used when performing operations against the
-:term:`DataONE` infrastructure via the DataONE Command Line Interface (CLI).
+Viewing and manipulating the :ref:`session parameters <session_parameters>`
+used when performing operations against the :term:`DataONE` infrastructure
+via the DataONE Command Line Interface (CLI).
 
 
 Start the CLI::
@@ -39,7 +40,7 @@ readable by setting :ref:`pretty <pretty>` to **True**::
 Include a restriction to only search for Science Data created at a specific
 time or later::
 
-  > set fromdate 1998-01-01T05:00:00
+  > set from-date 1998-01-01T05:00:00
 
 View all the session parameters::
 
@@ -86,7 +87,7 @@ The search terms can also be specified after the "search" command::
 Modify the search parameters to find only Science Data that are of type
 text/csv and search again::
 
-  > set objectformat text/csv
+  > set format-id text/csv
   > search barnacle
 
 
@@ -154,7 +155,7 @@ Select :term:`MN` to which to upload the Science Data Object::
 Configure the session parameters used when generating :term:`System Metadata`::
 
   > set submitter CN=MATTJTEMP,DC=dataone,DC=org
-  > set rightsholder CN=MATTJTEMP,DC=dataone,DC=org
+  > set rights-holder CN=MATTJTEMP,DC=dataone,DC=org
   > set origin-mn DEMO1
   > set authoritative-mn DEMO1
 
@@ -203,22 +204,3 @@ Display event log on a :term:`MN`::
 Download the event log and save it to a file::
 
   > log events.xml
-
-
-Using the CLI from scripts
---------------------------
-
-The CLI can be entirely controlled with command line options and can be
-prevented from entering interactive mode.
-
-E.g., to download two Science Data Objects from two different :term:`MNs <MN>`,
-based on previously prepared session parameters (newlines inserted for
-readability)::
-
-  $ ./dataone.py
-    'load myparams'
-    'set mnurl https://first.mn.com/mn'
-    'data pid1 myfile1'
-    'set mnurl https://second.mn.com/mn'
-    'data pid2 myfile2'
-    exit

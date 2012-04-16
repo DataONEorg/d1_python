@@ -54,7 +54,7 @@ Save session parameters to file. If ``file`` is not provided, defaults to
 .. show:
 
 show [session parameter]
-```````````````````````
+````````````````````````
 Display the value of a session parameter. If ``session parameter`` is not
 provided, display all session parameters.
 
@@ -105,18 +105,18 @@ _`key-path`               None                  String   Filesystem path to the 
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **System Metadata**
 -----------------------------------------------------------------------------------------------------------------------------------------------
-_`object-format`          None                  String   ID for the Object Format to use when generating System Metadata
-_`submitter`              None                  String   Subject of the submitter to use when generating System Metadata
-_`rights-holder`          None                  String   Subject of the rights holder to use when generating System Metadata
-_`origin-mn`              None                  String   Originating Member Node to use when generating System Metadata
-_`authoritative-mn        None                  String   Authoritative Member Node to use when generating System Metadata
 _`algorithm`              SYSTEM DEFAULT        String   Checksum algorithm to use when calculating the checksum for a Science Data Object
+_`authoritative-mn`       None                  String   Authoritative Member Node to use when generating System Metadata
+_`origin-mn`              None                  String   Originating Member Node to use when generating System Metadata
+_`format-id`              None                  String   ID for the Object Format to use when generating System Metadata
+_`rights-holder`          None                  String   Subject of the rights holder to use when generating System Metadata
+_`submitter`              None                  String   Subject of the submitter to use when generating System Metadata
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
 **Search**
 -----------------------------------------------------------------------------------------------------------------------------------------------
 _`from-date`              None                  String   Start time used by operations that accept a time range
 _`to-date`                None                  String   End time used by operations that accept a time range
-_`search-object-format`   None                  String   Include only objects of this format
+_`search-format-id`       None                  String   Include only objects of this format
 _`query`                  `*:*`                 String   Query string (SOLR or Lucene query syntax) for searches
 _`query-type`             solr                  String   Select search engine (currently, only SOLR is available)
 ------------------------- --------------------- -------- --------------------------------------------------------------------------------------
