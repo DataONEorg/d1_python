@@ -36,7 +36,6 @@ from optparse import make_option
 import os
 import re
 import shlex
-import shutil
 import StringIO
 from string import join
 import sys
@@ -58,12 +57,14 @@ import cli_client
 import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
+import initialize
 import package
 import session
 
 known_object_formats = None
 DEFAULT_PREFIX = ''
 DEFAULT_PROMPT = '> '
+SOLR_FORMAT_ID_NAME = 'objectformat'
 
 
 def log_setup():
@@ -276,6 +277,8 @@ option_list = [
     metavar="MN",
     help="Add Member Node to list_objects of preferred replication targets."
   ),
+  #  make_option("--configure", action="store_true", dest="action_configure",
+  #              help="Perform initial configuration"),
   make_option(
     "--cn",
     action="store",
@@ -390,6 +393,9 @@ def handle_options(cli, options):
       cli.d1.replication_policy_add_blocked(options.action_blockNode)
     if options.action_preferNode is not None:
       cli.d1.replication_policy_add_preferred(options.action_preferNode)
+
+    if (options.action_configure is not None) and options.action_configure:
+      initialize.configuration(cli.d1.session)
 
     cli._update_verbose()
   except cli_exceptions.InvalidArguments as e:
@@ -719,11 +725,15 @@ class DataONECLI():
     '''Perform a SOLR search.
     '''
     try:
+      query = (
+        line + ' ' + self._object_format_to_solr_filter(line) + ' ' +
+        self._time_span_to_solr_filter()
+      )
+
       client = cli_client.CLICNClient(self.session)
       object_list = client.search(
         queryType=d1_common.const.DEFAULT_SEARCH_ENGINE,
-        q=line if line else self.session.get(QUERY_STRING_sect, QUERY_STRING_name
-                                             ) + ' ' + self.time_span_to_solr_filter(),
+        q=query,
         start=self.session.get(START_sect, START_name),
         rows=self.session.get(COUNT_sect, COUNT_name)
       )
@@ -757,13 +767,22 @@ class DataONECLI():
     '''
     pass
 
-  def time_span_to_solr_filter(self):
+  def _time_span_to_solr_filter(self):
     fromdate = self.session.get(FROM_DATE_sect, FROM_DATE_name)
     todate = self.session.get(TO_DATE_sect, TO_DATE_name)
     return 'datemodified:[{0} TO {1}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else '*',
       d1_common.date_time.to_http_datetime(todate) if todate else '*'
     )
+
+  def _object_format_to_solr_filter(self, line):
+    search_format_id = self.session.get(SEARCH_FORMAT_sect, SEARCH_FORMAT_name)
+    if (search_format_id != None) and (search_format_id != ''):
+      if line.find(SOLR_FORMAT_ID_NAME) >= 0:
+        print_warn('Using query format restriction instead "%s"' % search_format_id)
+      else:
+        return '%s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
+    return ''
 
   # ----------------------------------------------------------------------------
   # Session parameters
@@ -1449,6 +1468,10 @@ class CLI(cmd.Cmd):
       self.onecmd(command)
       self._update_verbose()
       self.d1._set_invalid_checksum_to_default()
+
+
+def initial_configuration(session):
+  ''' Perform initial configuration. '''
 
 
 def main():
