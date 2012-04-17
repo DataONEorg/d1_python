@@ -35,12 +35,18 @@ import unittest
 import uuid
 import sys
 
-# D1.
-import d1_common
+try:
+  # D1.
+  import d1_common
 
-# App.
-sys.path.append('../d1_client_cli/')
-import dataone
+  # App.
+  sys.path.append('../d1_client_cli/')
+  import dataone
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  raise
+
+#===============================================================================
 
 
 class TestDataONECLI(unittest.TestCase):
@@ -48,20 +54,19 @@ class TestDataONECLI(unittest.TestCase):
     # Generate PID.
     pid = '_invalid_test_object_{0}'.format(uuid.uuid4())
 
-    args = []
-    args.append('--sysmeta-object-format \'application/octet-stream\'')
-    args.append('--sysmeta-rightsholder somerightsholder')
-    args.append('--sysmeta-authoritative-member-node gmn-dev')
-
-    #args.append('--sysmeta-access-policy \'<?xml version=\"1.0\" ?><ns1:accessPolicy xmlns:ns1=\"http://ns.dataone.org/service/types/v1\"><allow><subject>test_subject</subject><permission>read</permission></allow></ns1:accessPolicy>\'')
-
-    args.append('--cert-path x509up_u1000')
-    #args.append('--key-path x509up_u1000')
+    options = []
+    options.append('--object-format=\'application/octet-stream\'')
+    options.append('--rights-holder=somerightsholder')
+    options.append('--authoritative-mn=gmn-dev')
+    options.append('--cert-path=/tmp/x509up_u1000')
+    #options.append('--key-path=/tmp/x509up_u1000')
     #
-    cli = dataone.DataONECLI(opts, args)
-    #cmd = './dataone.py {0} create abc test.sciobj'.format(' '.join(args))
+    cli = dataone.CLI()
+    dataone.handle_options(cli, options)
+
+    cmd = './dataone.py {0} create {1} test_sciobj.bin'.format(' '.join(options), pid)
     #print cmd
-    #os.system(cmd)
+    os.system(cmd)
 
 
 def log_setup():

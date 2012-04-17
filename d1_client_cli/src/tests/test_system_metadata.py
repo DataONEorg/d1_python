@@ -32,16 +32,17 @@ import unittest
 import logging
 import sys
 
-# D1.
-import d1_common.const
-import d1_common.testcasewithurlcompare
-import d1_common.types.exceptions
-import d1_common.xmlrunner
+try:
+  # D1.
+  import d1_common.testcasewithurlcompare
 
-# App.
-sys.path.append('../d1_client_cli/')
-import system_metadata
-import cli_exceptions
+  # App.
+  sys.path.append('../d1_client_cli/')
+  import system_metadata
+  import cli_exceptions
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  raise
 
 #===============================================================================
 

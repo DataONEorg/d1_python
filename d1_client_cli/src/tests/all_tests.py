@@ -33,30 +33,34 @@ import logging
 import os
 import unittest
 
-# D1.
-from d1_common import xmlrunner
+try:
+  # D1.
+  from d1_common import xmlrunner, svnrevision #@UnusedImport
 
-# App.
-sys.path.append(
-  os.path.abspath(
-    os.path.join(
-      os.path.dirname(
-        __file__
-      ), '..', 'd1_client_cli'
+  # App.
+  sys.path.append(
+    os.path.abspath(
+      os.path.join(
+        os.path.dirname(
+          __file__
+        ), '..', 'd1_client_cli'
+      )
     )
   )
-)
 
-from test_replication_policy import TESTCLIReplicationPolicy
-from test_access_control import TESTCLIAccessControl
-from test_system_metadata import TESTCLISystemMetadata
-from test_session import TESTCLISession
-from test_cli_util import TESTCLIUtil
+  from test_replication_policy import TESTCLIReplicationPolicy #@UnusedImport
+  from test_access_control import TESTCLIAccessControl #@UnusedImport
+  from test_system_metadata import TESTCLISystemMetadata #@UnusedImport
+  from test_session import TESTCLISession #@UnusedImport
+  from test_cli_util import TESTCLIUtil #@UnusedImport
+  from test_cli_client import TESTCLIClient #@UnusedImport
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  raise
 
 #===============================================================================
 
 if __name__ == "__main__":
-  from d1_common import svnrevision
   argv = sys.argv
   if "--debug" in argv:
     logging.basicConfig(level=logging.DEBUG)
