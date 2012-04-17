@@ -30,11 +30,8 @@
 # Stdlib.
 import os
 import sys
-import string
 import StringIO
-import tempfile
-import xml.dom.minidom
-from xml.dom.minidom import parse, parseString
+from xml.dom.minidom import parse, parseString #@UnusedImport
 
 # 3rd party
 from rdflib import Namespace, URIRef
@@ -138,8 +135,8 @@ class DataPackage(object):
       print_error('Package must be in RDF/XML format (not "%s").' % sysmeta.formatId)
       return None
 
-    rdf_xml = cli_client.get_object_by_pid(session, self.pid)
-    if not self._parse_rdf_xml(rdf_xml):
+    rdf_xml_file = cli_client.get_object_by_pid(session, self.pid)
+    if not self._parse_rdf_xml(rdf_xml_file):
       print_error('Unable to load package "%s".' % self.pid)
       return None
 
@@ -149,8 +146,8 @@ class DataPackage(object):
       print_error("Loaded %s" % self.pid)
     return self
 
-  def _parse_rdf_xml(self, rdf):
-    doc = parseString(rdf)
+  def _parse_rdf_xml(self, xml_file):
+    doc = parse(xml_file)
     #    print 'doc:\n', doc.toxml()
     self.scimeta = None
     self.scidata_dict = {}
@@ -291,8 +288,10 @@ class DataPackage(object):
       self.scimeta = DataObject(pid, True, complex_path.path, sysmeta, format_id)
       if session.is_pretty():
         print '. [created]\n'
-    if session.is_pretty():
-      print_warn('TODO: Implement parsing of scimeta object.')
+    scidata_list = self._find_scidata(self.scimeta)
+    if scidata_list:
+      for scidata in scidata_list:
+        self.scidata_add(session, scidata.pid, scidata.fname)
 
   def scimeta_del(self):
     ''' Remove the science metadata object.
@@ -521,6 +520,13 @@ class DataPackage(object):
           .format(e.friendly_format())
         )
         return None
+
+  def _find_scidata(self, scimeta):
+    '''  Search through an eml://ecoinformatics.org/eml-2.x.x document '''
+    '''  looking for science data objects.                             '''
+    '''                                                                '''
+    '''               THIS IS GOING TO BE DIFFICULT!                   '''
+    return ()
 
 
 class DataObject(object):

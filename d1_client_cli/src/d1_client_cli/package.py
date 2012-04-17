@@ -256,14 +256,14 @@ class PackageCLI(cmd.Cmd):
       for scidata_pid in cli_util.clear_None_from_list(values[2:]):
         self.package.scidata_add(self.session, scidata_pid, None)
 
-  def do_delete(self, line):
-    ''' Delete the package.
+  def do_clear(self, line):
+    ''' Remove the current package from memory.
     '''
     if self.package is None:
       print_error('There is no package.')
       return
     if (self.package.is_dirty()
-        and cli_util.confirm('Do you really want to delete the package?')):
+        and cli_util.confirm('Do you really want to clear the package?')):
       self.package = None
 
   def do_name(self, line):

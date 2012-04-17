@@ -152,7 +152,7 @@ def confirm(prompt, default='no', allow_blank=False):
     response = None
     try:
       response = raw_input(prompt + p)
-    except KeyboardInterrupt as e:
+    except (KeyboardInterrupt, EOFError) as e:
       pass
 
     if ((response is None) or (len(response) == 0)):

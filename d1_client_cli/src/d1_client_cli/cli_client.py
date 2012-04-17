@@ -37,7 +37,7 @@ try:
   import d1_common.types.exceptions
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: asy_install DataONE_Common\n')
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
   raise
 
 try:
@@ -145,20 +145,19 @@ def get_object_by_pid(session, pid, filename=None, resolve=True):
     raise cli_exceptions.InvalidArguments('Missing session')
   if pid is None:
     raise cli_exceptions.InvalidArguments('Missing pid')
-
   # Create member node client and try to get the object.
   mn_client = CLIMNClient(session)
   try:
     response = mn_client.get(pid)
     if response is not None:
       fname = _get_fname(filename)
+      cli_util.output(response, fname, session.is_verbose())
       return fname
   except d1_common.types.exceptions.DataONEException as e:
     if e.errorCode != 404:
       raise cli_exceptions.CLIError(
         'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
       )
-
   if resolve:
     cn_client = CLICNClient(session)
     object_location_list = None
@@ -179,7 +178,6 @@ def get_object_by_pid(session, pid, filename=None, resolve=True):
         raise cli_exceptions.CLIError(
           'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
         )
-  #
   # Nope, didn't find anything
   return None
 
