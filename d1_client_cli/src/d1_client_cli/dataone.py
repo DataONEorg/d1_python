@@ -57,7 +57,7 @@ import cli_client
 import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
-import initialize
+import initialize #@UnusedImport
 import package
 import session
 
@@ -394,8 +394,8 @@ def handle_options(cli, options):
     if options.action_preferNode is not None:
       cli.d1.replication_policy_add_preferred(options.action_preferNode)
 
-    if (options.action_configure is not None) and options.action_configure:
-      initialize.configuration(cli.d1.session)
+#    if (options.action_configure is not None) and options.action_configure:
+#      initialize.configuration(cli.d1.session)
 
     cli._update_verbose()
   except cli_exceptions.InvalidArguments as e:
