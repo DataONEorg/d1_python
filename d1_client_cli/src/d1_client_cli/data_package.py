@@ -217,6 +217,12 @@ class DataPackage(object):
     if response is None:
       return None
     else:
+      self.original_pid = self.pid
+      if self.scimeta:
+        self.scimeta.dirty = False
+      if self.scidata_dict:
+        for scidata in self.scidata_dict.values():
+          scidata.dirty = False
       if session.is_pretty():
         print_info('Saved "%s"' % self.pid)
       return response.value()

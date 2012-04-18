@@ -318,19 +318,19 @@ option_list = [
 
 def handle_options(cli, options):
   try:
-    if options.algorithm is not None:
+    if options.algorithm:
       cli.d1.session_set_parameter(CHECKSUM_name, options.algorithm)
-    if options.anonymous is not None:
+    if options.anonymous:
       cli.d1.session_set_parameter(ANONYMOUS_name, options.anonymous)
-    if options.authoritative_mn is not None:
+    if options.authoritative_mn:
       cli.d1.session_set_parameter(AUTH_MN_name, options.authoritative_mn)
-    if options.cert_file is not None:
+    if options.cert_file:
       cli.d1.session_set_parameter(CERT_FILENAME_name, options.cert_file)
-    if options.count is not None:
+    if options.count:
       cli.d1.session_set_parameter(COUNT_name, options.count)
-    if options.dataone_url is not None:
+    if options.dataone_url:
       cli.d1.session_set_parameter(CN_URL_name, options.dataone_url)
-    if options.cn_host is not None:
+    if options.cn_host:
       url = ''.join(
         (
           d1_common.const.DEFAULT_CN_PROTOCOL, '://', options.cn_host,
@@ -338,14 +338,13 @@ def handle_options(cli, options):
         )
       )
       cli.d1.session_set_parameter(CN_URL_name, url)
-    if options.from_date is not None:
+    if options.from_date:
       cli.d1.session_set_parameter(FROM_DATE_name, options.from_date)
-# interactive is not in the session.
-    if options.key_file is not None:
+    if options.key_file:
       cli.d1.session_set_parameter(KEY_FILENAME_name, options.key_file)
-    if options.mn_url is not None:
+    if options.mn_url:
       cli.d1.session_set_parameter(MN_URL_name, options.mn_url)
-    if options.mn_host is not None:
+    if options.mn_host:
       url = ''.join(
         (
           d1_common.const.DEFAULT_MN_PROTOCOL, '://', options.mn_host,
@@ -353,28 +352,28 @@ def handle_options(cli, options):
         )
       )
       cli.d1.session_set_parameter(MN_URL_name, url)
-    if options.object_format is not None:
+    if options.object_format:
       cli.d1.session_set_parameter(FORMAT_name, options.object_format)
-    if options.origin_mn is not None:
+    if options.origin_mn:
       cli.d1.session_set_parameter(ORIG_MN_name, options.origin_mn)
-    if options.pretty is not None:
+    if options.pretty:
       cli.d1.session_set_parameter(PRETTY_name, options.pretty)
-    if options.query_string is not None:
+    if options.query_string:
       cli.d1.session_set_parameter(QUERY_STRING_name, options.query_string)
-    if options.rights_holder is not None:
+    if options.rights_holder:
       cli.d1.session_set_parameter(OWNER_name, options.rights_holder)
-    if options.search_object_format is not None:
+    if options.search_object_format:
       try:
         cli.d1.session_set_parameter(SEARCH_FORMAT_name, options.search_object_format)
       except ValueError as e:
         print_error(e.args[0])
-    if options.start is not None:
+    if options.start:
       cli.d1.session_set_parameter(START_name, options.start)
-    if options.submitter is not None:
+    if options.submitter:
       cli.d1.session_set_parameter(SUBMITTER_name, options.submitter)
-    if options.to_date is not None:
+    if options.to_date:
       cli.d1.session_set_parameter(TO_DATE_name, options.to_date)
-    if options.verbose is not None:
+    if options.verbose:
       cli.d1.session_set_parameter(VERBOSE_name, options.verbose)
 
     if options.action_allowPublic is not None:
@@ -387,11 +386,11 @@ def handle_options(cli, options):
         cli.d1.replication_policy_set_replication_allowed(True)
       else:
         cli.d1.replication_policy_set_replication_allowed(False)
-    if options.action_numReplicas is not None:
+    if options.action_numReplicas:
       cli.d1.replication_policy_set_number_of_replicas(options.action_numReplicas)
-    if options.action_blockNode is not None:
+    if options.action_blockNode:
       cli.d1.replication_policy_add_blocked(options.action_blockNode)
-    if options.action_preferNode is not None:
+    if options.action_preferNode:
       cli.d1.replication_policy_add_preferred(options.action_preferNode)
 
 #    if (options.action_configure is not None) and options.action_configure:
@@ -951,7 +950,7 @@ class CLI(cmd.Cmd):
     try:
       params = cli_util.clear_None_from_list(self._split_args(line, 0, 9))
       if len(params) > 0:
-        if not self.show_special_parameter(params):
+        if not self._show_special_parameter(params):
           self.d1.session_print_parameter(params[0])
       else:
         self.d1.session_print_parameter(None)
@@ -960,37 +959,23 @@ class CLI(cmd.Cmd):
     except:
       cli_util._handle_unexpected_exception()
 
-  def show_special_parameter(self, param_list):
-    ''' Check to see if this a "special" parameter.
-    '''
-    if ((param_list is None) or (len(param_list) == 0)):
-      return False
-    #
-    elif param_list[0] == 'formats':
-      print_info(
-        'Known formats:\n  ' + '\n  '.join(sorted(self.d1.get_known_object_formats()))
-      )
-      return True
-    #
-    elif param_list[0] == 'package':
-      pid = ''
-      if len(param_list) > 1:
-        pid = ' ' + param_list[1]
-      self.do_package('show' + pid)
-      return True
-    #
-    return False
-
   def do_set(self, line):
-    '''set <session parameter> <value>
+    '''set <parameter> <value>  or  <parameter>=<value>
     Set the value of a session parameter
     '''
     if len(shlex.split(line)) == 0:
       self.do_show(line)
     else:
       try:
-        session_parameter, value = self._split_args(line, 2, 0)
-        self.d1.session_validate_parameter(session_parameter, value)
+        session_parameter, value = self._split_args(line, 1, 1)
+        if not value:
+          name_value = session_parameter.split('=', 1)
+          if len(name_value) < 1:
+            print_error('Please specify value.')
+            return
+          else:
+            session_parameter = name_value[0]
+            value = name_value[1]
         self.d1.session_set_parameter(session_parameter, value)
       except cli_exceptions.InvalidArguments as e:
         print_error(e)
@@ -1408,6 +1393,27 @@ class CLI(cmd.Cmd):
     # The only reason to define this method is for the help text in the doc
     # string
     cmd.Cmd.do_help(self, line)
+
+  def _show_special_parameter(self, param_list):
+    ''' Check to see if this a "special" parameter.
+    '''
+    if ((param_list is None) or (len(param_list) == 0)):
+      return False
+    #
+    elif param_list[0] == 'formats':
+      print_info(
+        'Known formats:\n  ' + '\n  '.join(sorted(self.d1.get_known_object_formats()))
+      )
+      return True
+    #
+    elif param_list[0] == 'package':
+      pid = ''
+      if len(param_list) > 1:
+        pid = ' ' + param_list[1]
+      self.do_package('show' + pid)
+      return True
+    #
+    return False
 
   #-----------------------------------------------------------------------------
   # Command processing.

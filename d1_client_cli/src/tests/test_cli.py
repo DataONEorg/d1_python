@@ -41,7 +41,11 @@ try:
 
   # App.
   sys.path.append('../d1_client_cli/')
+  from const import (
+    PRETTY_sect, PRETTY_name, COUNT_sect, COUNT_name, QUERY_STRING_sect, QUERY_STRING_name
+  )
   import dataone
+  import session
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
@@ -50,23 +54,85 @@ except ImportError as e:
 
 
 class TestDataONECLI(unittest.TestCase):
-  def test_create(self):
+  def setUp(self):
+    pass
+
+  def tearDown(self):
+    pass
+
+  def testName(self):
+    pass
+
+  def test_010(self):
+    ''' Create and invoke CLI. '''
+    log_setup()
     # Generate PID.
     pid = '_invalid_test_object_{0}'.format(uuid.uuid4())
 
     options = []
-    options.append('--object-format=\'application/octet-stream\'')
+    options.append('--format-id=\'application/octet-stream\'')
     options.append('--rights-holder=somerightsholder')
     options.append('--authoritative-mn=gmn-dev')
-    options.append('--cert-path=/tmp/x509up_u1000')
-    #options.append('--key-path=/tmp/x509up_u1000')
-    #
-    cli = dataone.CLI()
-    dataone.handle_options(cli, options)
+    options.append('--cert-file=/tmp/x509up_u1000')
+    options.append('--key-file=/tmp/x509up_u1000')
 
-    cmd = './dataone.py {0} create {1} test_sciobj.bin'.format(' '.join(options), pid)
-    #print cmd
-    os.system(cmd)
+    cmd = '../d1_client_cli/dataone.py {0} create {1} files/test_sciobj.bin'.format(
+      ' '.join(
+        options
+      ), pid
+    )
+#    os.system(cmd)
+
+  def test_020(self):
+    ''' set '''
+    dataoneCLI = dataone.CLI()
+    dataoneCLI.d1.session.set(PRETTY_sect, PRETTY_name, False)
+    dataoneCLI.do_set('pretty true')
+    self.assertTrue(
+      dataoneCLI.d1.session.get(
+        PRETTY_sect, PRETTY_name
+      ), "'set pretty true' didn't set pretty value"
+    )
+    dataoneCLI.do_set('pretty=false')
+    self.assertFalse(
+      dataoneCLI.d1.session.get(
+        PRETTY_sect, PRETTY_name
+      ), "'set pretty=false' didn't set pretty value"
+    )
+
+  def test_021(self):
+    ''' set '''
+    dataoneCLI = dataone.CLI()
+    dataoneCLI.d1.session.set(COUNT_sect, COUNT_name, 1)
+    dataoneCLI.do_set('count 2')
+    self.assertEquals(
+      2, dataoneCLI.d1.session.get(
+        COUNT_sect, COUNT_name
+      ), "'set count 2' didn't set count value"
+    )
+    dataoneCLI.do_set('count=3')
+    self.assertEquals(
+      3, dataoneCLI.d1.session.get(
+        COUNT_sect, COUNT_name
+      ), "'set count=3' didn't set count value"
+    )
+
+  def test_022(self):
+    ''' set '''
+    dataoneCLI = dataone.CLI()
+    dataoneCLI.d1.session.set(QUERY_STRING_sect, QUERY_STRING_name, 1)
+    dataoneCLI.do_set('query a=b')
+    self.assertEquals(
+      'a=b', dataoneCLI.d1.session.get(
+        QUERY_STRING_sect, QUERY_STRING_name
+      ), "'set query a=b' didn't set query string"
+    )
+    dataoneCLI.do_set('query=a=b')
+    self.assertEquals(
+      'a=b', dataoneCLI.d1.session.get(
+        QUERY_STRING_sect, QUERY_STRING_name
+      ), "'set query=a=b' didn't set query string"
+    )
 
 
 def log_setup():
@@ -81,55 +147,5 @@ def log_setup():
   logging.getLogger('').addHandler(console_logger)
 
 
-def main():
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option(
-    '--dataone-url',
-    dest='dataone_url',
-    action='store',
-    type='string',
-    default=d1_common.const.URL_DATAONE_ROOT,
-    help='URL to DataONE Root'
-  )
-
-  # https://demo1.test.dataone.org/knb/d1/mn/v1
-  # https://localhost:443/mn/
-  # https://knb-test-1.test.dataone.org/knb/d1/mn/v1
-  parser.add_option(
-    '--mn-url',
-    dest='mn_url',
-    action='store',
-    type='string',
-    default='http://localhost:8000/',
-    help='URL to Member Node'
-  )
-
-  parser.add_option(
-    '--cn-url',
-    dest='cn_url',
-    action='store',
-    type='string',
-    default='http://localhost:8000/cn/',
-    help='URL to Coordinating Node'
-  )
-  parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
-  )
-  parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
-
-  (opts, args) = parser.parse_args()
-
-  if not opts.verbose:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  unittest.main(argv=sys.argv)
-
-
 if __name__ == '__main__':
-  main()
+  unittest.main()

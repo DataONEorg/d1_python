@@ -190,21 +190,24 @@ class session(object):
       try:
         type_converter = self.session[section][name][1]
         value_string = self.validate_value_type(value_string, type_converter)
-        self.set(section, name, type_converter(v))
+        value = type_converter(value_string)
+        self.set(section, name, value)
       except ValueError as e:
         raise cli_exceptions.InvalidArguments(
           'Invalid value for {0} / {1}: {2}'.format(section, name, value_string)
         )
 
-  def validate_value_type(self, value_string, type_converter):
+  def validate_value_type(self, value_object, type_converter):
     # Make sure booleans are "sane"
     if type_converter is BooleanType:
-      if value_string in ('true', 'True', 't', 'T', 1, '1', 'yes', 'Yes'):
-        return 'True'
-      elif value_string in ('false', 'False', 'f', 'F', 0, '0', 'no', 'No'):
-        return 'False'
+      if value_object in ('true', 'True', 't', 'T', 1, '1', 'yes', 'Yes'):
+        return True
+      elif value_object in ('false', 'False', 'f', 'F', 0, '0', 'no', 'No'):
+        return False
       else:
-        raise ValueError('"%s": Invalid boolean value' % value_string)
+        raise ValueError('"%s": Invalid boolean value' % value_object)
+    else:
+      return value_object
 
   def set_with_conversion_implicit_section(self, name, value_string):
     section = self._find_section_containing_session_parameter(name)
