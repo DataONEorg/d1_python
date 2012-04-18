@@ -34,29 +34,32 @@ import logging
 import sys
 import unittest
 
-# D1.
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_instance_generator.accesspolicy
-import d1_instance_generator.identifier
-import d1_instance_generator.person
-import d1_instance_generator.random_data
-import d1_instance_generator.replicationpolicy
-import d1_instance_generator.subject
-import d1_instance_generator.systemmetadata
-
-# App.
 try:
+
+  # D1.
+  #  import d1_instance_generator.accesspolicy
+  #  import d1_instance_generator.identifier
+  #  import d1_instance_generator.person
+  #  import d1_instance_generator.random_data
+  #  import d1_instance_generator.replicationpolicy
+  #  import d1_instance_generator.subject
+  #  import d1_instance_generator.systemmetadata
+
+  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+  import d1_common.const
+  import d1_common.date_time
+  import d1_common.types.exceptions
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  #  import testing_utilities
+  #  import testing_context
+
+  # clientlib
   import d1_client.d1baseclient
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
 
-import testing_utilities
-import testing_context
+#===============================================================================
 
 
 class TestDataONEBaseClient(TestCaseWithURLCompare):
@@ -126,16 +129,39 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
     self.assertTrue(len(log.logEntry) >= 2)
 
-  def WAITING_FOR_TEST_ENV_test_110(self):
+  def test_110(self):
     '''CNRead.getLogRecords()'''
     self._getLogRecords(self.options.cn_url)
 
-  def WAITING_FOR_TEST_ENV_test_120(self):
+  def test_120(self):
     '''MNRead.getLogRecords()'''
     self._getLogRecords(self.options.mn_url)
 
-  # CNRead.get()
-  # MNRead.get()
+  # CNCore.ping()
+  # MNCore.ping()
+
+  def test_210(self):
+    ''' ping() '''
+    tests = (
+      ("https://cn-dev-3.dataone.org/cn", True),
+      ("https://demo3.test.dataone.org/knb/d1/mn", True),
+      ("http://bogus.target/mn", False),
+    )
+    success = True
+    for test in tests:
+      client = d1_client.d1baseclient.DataONEBaseClient(test[0])
+      if test[1]:
+        if not client.ping():
+          print 'Unsuccessful ping: "%s".' % test[0]
+          success = False
+      else:
+        if client.ping():
+          print 'Unsuccessful ping: "%s".' % test[0]
+          success = False
+    self.assertTrue(success, 'Unsuccessful ping test.')
+
+    # CNRead.get()
+    # MNRead.get()
 
   def _get(self, base_url, invalid_pid=False):
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
