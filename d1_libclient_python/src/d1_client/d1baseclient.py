@@ -46,7 +46,12 @@ import StringIO
 import sys
 
 # 3rd party.
-import pyxb
+try:
+  import pyxb
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install PyXB\n')
+  raise
 
 # D1.
 try:
@@ -385,6 +390,36 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                                      event=event, start=start, count=count,
                                      vendorSpecific=vendorSpecific)
     return self._read_dataone_type_response(response)
+
+
+
+  # CNCore.ping() → null
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
+  # MNRead.ping() → null
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.ping
+
+  @d1_common.util.utf8_to_unicode
+  def pingResponse(self, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('/monitor/ping')
+    response = self.GET(url, headers=vendorSpecific)
+    return response
+
+
+  @d1_common.util.utf8_to_unicode
+  def ping(self, vendorSpecific=None):
+    '''Note: If the server returns a status code other than '200 OK', 
+        the ping failed.
+    '''
+    try:
+      response = self.pingResponse(vendorSpecific=vendorSpecific)
+      if self._status_is_200_ok(response):
+        return True
+      else:
+        return False
+    except:
+      return False
 
 
   # ----------------------------------------------------------------------------  
