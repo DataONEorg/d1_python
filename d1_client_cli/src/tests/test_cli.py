@@ -45,7 +45,7 @@ try:
     MN_URL_name
   )
   import dataone
-  import session
+  import session #@UnusedImport
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
@@ -85,7 +85,7 @@ class TestDataONECLI(unittest.TestCase):
       ' '.join(
         options
       ), pid
-    )
+    ) #@UnusedVariable
 #    os.system(cmd)
 
   def test_020(self):
