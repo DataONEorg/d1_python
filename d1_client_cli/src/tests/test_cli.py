@@ -29,26 +29,31 @@
 
 # Stdlib.
 import logging
-import optparse
-import os
 import unittest
 import uuid
 import sys
 
 try:
   # D1.
-  import d1_common
+  #  from d1_common import URL_DATAONE_ROOT, DEFAULT_CN_HOST, DEFAULT_MN_HOST
 
   # App.
   sys.path.append('../d1_client_cli/')
   from const import (
-    PRETTY_sect, PRETTY_name, COUNT_sect, COUNT_name, QUERY_STRING_sect, QUERY_STRING_name
+    PRETTY_sect, PRETTY_name, COUNT_sect, COUNT_name, QUERY_STRING_sect,
+    QUERY_STRING_name, VERBOSE_sect, VERBOSE_name, CN_URL_sect, CN_URL_name, MN_URL_sect,
+    MN_URL_name
   )
   import dataone
   import session
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
+
+TEST_CN_URL = 'https://cn-dev-rr.dataone.org/cn'
+TEST_CN_HOST = 'cn-dev-rr.dataone.org'
+TEST_MN_URL = 'https://demo1.test.dataone.org:443/knb/d1/mn'
+TEST_MN_HOST = 'demo1.test.dataone.org'
 
 #===============================================================================
 
@@ -133,6 +138,19 @@ class TestDataONECLI(unittest.TestCase):
         QUERY_STRING_sect, QUERY_STRING_name
       ), "'set query=a=b' didn't set query string"
     )
+
+  def test_030(self):
+    ''' ping '''
+    dataoneCLI = dataone.CLI()
+    dataoneCLI.d1.session.set(CN_URL_sect, CN_URL_name, TEST_CN_URL)
+    dataoneCLI.d1.session.set(MN_URL_sect, MN_URL_name, TEST_MN_URL)
+    dataoneCLI.d1.session.set(PRETTY_sect, PRETTY_name, False)
+    dataoneCLI.d1.session.set(VERBOSE_sect, VERBOSE_name, False)
+    #
+    dataoneCLI.do_ping('')
+    dataoneCLI.do_ping(TEST_CN_URL)
+    dataoneCLI.do_ping(TEST_CN_HOST)
+    dataoneCLI.do_ping(' '.join((TEST_CN_URL, TEST_CN_HOST, TEST_MN_URL, TEST_MN_HOST)))
 
 
 def log_setup():

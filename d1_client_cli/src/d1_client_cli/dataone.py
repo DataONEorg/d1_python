@@ -710,8 +710,69 @@ class DataONECLI():
           .format(pid, e.friendly_format()))
 
   # ----------------------------------------------------------------------------
-  # Search
+  # Ping
   # ----------------------------------------------------------------------------
+
+  def ping(self, hosts):
+    pretty = self.session.is_pretty()
+    if len(hosts) == 0:
+      url = self.session.get(CN_URL_sect, CN_URL_name)
+      success = self._pingCN(url)
+      self._print_ping_result(success, url, pretty)
+      #
+      url = self.session.get(MN_URL_sect, MN_URL_name)
+      success = self._pingMN(url)
+      self._print_ping_result(success, url, pretty)
+    else:
+      for target in hosts:
+        self._ping(target, pretty)
+
+  def _ping(self, target, pretty=True):
+    msg = ''
+    if target.find('http') == 0:
+      msg = target
+      success = self._pingCN(target)
+      if not success:
+        success = self._pingMN(target)
+    else:
+      msg = target
+      url = str(
+        d1_common.const.DEFAULT_CN_PROTOCOL + '://' + target +
+        d1_common.const.DEFAULT_CN_PATH
+      )
+      success = self._pingCN(url)
+      if success:
+        msg = target + ' (a DataONE node)'
+      else:
+        url = str(
+          d1_common.const.DEFAULT_MN_PROTOCOL + '://' + target +
+          d1_common.const.DEFAULT_MN_PATH
+        )
+        success = self._pingMN(url)
+        if success:
+          msg = target + ' (a Member node)'
+    # Show result.
+    self._print_ping_result(success, msg, pretty)
+
+  def _pingCN(self, cnURL):
+    return cli_client.CLICNClient(self.session, cnURL).ping()
+
+  def _pingMN(self, mnURL):
+    return cli_client.CLIMNClient(self.session, mnURL).ping()
+
+  def _print_ping_result(self, result, url, pretty):
+    if pretty is not None and pretty:
+      if result:
+        print_info('%s is awake.' % url)
+      else:
+        print_warn('%s did not respond.' % url)
+    else:
+      if not result:
+        print_warn('%s did not respond.' % url)
+
+      # ----------------------------------------------------------------------------
+      # Search
+      # ----------------------------------------------------------------------------
 
   def search(self, line):
     '''CN search.
@@ -1296,6 +1357,18 @@ class CLI(cmd.Cmd):
     try:
       pid = self._split_args(line, 1, 0)
       self.d1.set_replication_policy(pid)
+    except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
+      print_error(e)
+    except:
+      cli_util._handle_unexpected_exception()
+
+  def do_ping(self, line):
+    ''' _ping [host|url [host|url] ...]
+    Check if the remote host or URL is up and functioning as a DataONE node.
+    '''
+    try:
+      hosts = cli_util.clear_None_from_list(self._split_args(line, 0, 99))
+      self.d1.ping(hosts)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
