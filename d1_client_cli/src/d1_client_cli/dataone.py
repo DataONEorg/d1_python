@@ -548,11 +548,11 @@ class DataONECLI():
 
   ##-- Delete --------------------------------------------------------------
 
-  def science_object_delete(self, pid):
+  def science_object_archive(self, pid):
     client = cli_client.CLIMNClient(self.session)
-    self._delete_from_member_node(client, pid)
+    self._archive_on_member_node(client, pid)
 
-  def _delete_from_member_node(self, client, pid):
+  def _archive_on_member_node(self, client, pid):
     try:
       return client.delete(pid)
     except d1_common.types.exceptions.DataONEException as e:
@@ -1288,13 +1288,13 @@ class CLI(cmd.Cmd):
     except:
       cli_util._handle_unexpected_exception()
 
-  def do_delete(self, line):
-    '''delete <pid>
+  def do_archive(self, line):
+    '''archive <pid>
     Mark an existing Science Object as archived.
     '''
     try:
       pid = self._split_args(line, 1, 0)
-      self.d1.science_object_delete(pid)
+      self.d1.science_object_archive(pid)
     except (cli_exceptions.InvalidArguments, cli_exceptions.CLIError) as e:
       print_error(e)
     except:
