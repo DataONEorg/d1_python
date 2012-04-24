@@ -195,9 +195,9 @@ class PackageCLI(cmd.Cmd):
 
   ##== Commands =============================================================
 
-  def do_create(self, line):
+  def do_new(self, line):
     ''' create <pid> [scimeta [scidata [...]]]
-        Create a package.
+        Create a package in memory.
     '''
     # Check to see if we already have a package and it needs saving.
     if self.package is not None:
@@ -266,24 +266,24 @@ class PackageCLI(cmd.Cmd):
         and cli_util.confirm('Do you really want to clear the package?')):
       self.package = None
 
-  def do_name(self, line):
-    ''' name <pid>
-        Name the package (assign a (possibly new) pid).
-    '''
-    if self.package is None:
-      print_error('There is no package.')
-      return
-
-    msg = 'Changed name '
-    pid = self._split_args(line, 1, 0)
-    if self.package.pid:
-      if cli_util.confirm('Do you really want to clear the name of the package?'):
-        msg += 'from "%s" ' % pid
-        self.pid = None
-    self.package.name(pid)
-    msg += 'to "%s".' % pid
-    if self.session.is_verbose():
-      print_info(msg)
+#  def do_name(self, line):
+#    ''' name <pid>
+#        Name the package (assign a (possibly new) pid).
+#    '''
+#    if self.package is None:
+#      print_error('There is no package.')
+#      return
+#
+#    msg = 'Changed name '
+#    pid = self._split_args(line, 1, 0)
+#    if self.package.pid:
+#      if cli_util.confirm('Do you really want to clear the name of the package?'):
+#        msg += 'from "%s" ' % pid
+#        self.pid = None
+#    self.package.name(pid)
+#    msg += 'to "%s".' % pid
+#    if self.session.is_verbose():
+#      print_info(msg)
 
   def do_print(self, line):
     ''' print [scimeta] [scidata [pid]]
@@ -323,27 +323,27 @@ class PackageCLI(cmd.Cmd):
     else:
       print_error('Don\'t know how to show a "%s".' % sub_cmd)
 
-  def do_meta(self, line):
-    ''' meta [scimeta] [scidata [pid]]
-    
-        Print the sysmeta for an object.
-    '''
-    if self.package is None:
-      print_error('There is no package.')
-      return
-    sub_cmd, pid = self._split_args(line, 0, 2)
-    if not sub_cmd:
-      self._package_meta()
-    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
-      self._scimeta_meta()
-    elif sub_cmd == 'scidata' or sub_cmd == 'data':
-      self._scidata_meta(pid)
-    else:
-      print_error('Don\'t know how to show the sysmeta of a "%s".' % sub_cmd)
+    #  def do_meta(self, line):
+    #    ''' meta [scimeta] [scidata [pid]]
+    #    
+    #        Print the sysmeta for an object.
+    #    '''
+    #    if self.package is None:
+    #      print_error('There is no package.')
+    #      return
+    #    sub_cmd, pid = self._split_args(line, 0, 2)
+    #    if not sub_cmd:
+    #      self._package_meta()
+    #    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
+    #      self._scimeta_meta()
+    #    elif sub_cmd == 'scidata' or sub_cmd == 'data':
+    #      self._scidata_meta(pid)
+    #    else:
+    #      print_error('Don\'t know how to show the sysmeta of a "%s".' % sub_cmd)
 
-  def do_load(self, line):
-    ''' load [pid]
-        Load a package.  If no pid is given, use the current pid.
+  def do_get(self, line):
+    ''' get <pid>
+        Get a package from DataOne and load it into local memory.
     '''
     pid = self._split_args(line, 0, 1)
     if not pid:
@@ -369,15 +369,44 @@ class PackageCLI(cmd.Cmd):
     if new_package.load(self.session):
       self.package = new_package
 
-  def do_save(self, line):
-    ''' save
-        Save the package.
+  def do_create(self, line):
+    ''' Create
+        Create the package in DataONE.
     '''
     if self.package is None:
       raise cli_exceptions.InvalidArguments('There is no package to save.')
     elif self.package.pid is None:
       raise cli_exceptions.InvalidArguments('The current package has no pid.')
     self.package.save(self.session)
+
+  def do_add(self, line):
+    ''' add scimeta|scidata pid [file]
+        Add an object to the package in memory.  If a file is specified, a
+        new object will be created with that pid.
+    '''
+    pkg_obj_type, pid, file_name = self._split_args(line, 2, 1)
+    if (pkg_obj_type.find('scimeta') == 0) or (pkg_obj_type.find('meta') == 0):
+      self.package.add_scimeta(self.session, pid, file_name)
+    elif (pkg_obj_type.find('scidata') == 0) or (pkg_obj_type.find('data') == 0):
+      self.package.add_scidata(self.session, pid, file_name)
+    else:
+      print_error(
+        '"%": unknown package object type - must be "scimeta" or "scidata"' % pkg_obj_type
+      )
+
+  def do_remove(self, line):
+    ''' remove scimeta|scidata pid
+        Remove an object from the package in memory.
+    '''
+    pkg_obj_type, pid, file_name = self._split_args(line, 2, 1)
+    if (pkg_obj_type.find('scimeta') == 0) or (pkg_obj_type.find('meta') == 0):
+      self.package.remove_scimeta(self.session, pid, file_name)
+    elif (pkg_obj_type.find('scidata') == 0) or (pkg_obj_type.find('data') == 0):
+      self.package.remove_scidata(self.session, pid, file_name)
+    else:
+      print_error(
+        '"%": unknown package object type - must be "scimeta" or "scidata"' % pkg_obj_type
+      )
 
   def do_scimeta(self, line):
     ''' scimeta [add | del | desc | show | meta ] [options]
@@ -444,7 +473,7 @@ class PackageCLI(cmd.Cmd):
 
 # Shouldn't be called - handled in do_package.
 
-  def do_leave(self, line):
+  def do_done(self, line):
     ''' Exit package mode.
     '''
     return
