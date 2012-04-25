@@ -54,7 +54,7 @@ class TESTCLIReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLC
 
   def test_010(self):
     '''The replication policy object can be instantiated'''
-    s = replication_policy.replication_policy()
+    self.assertNotEquals(None, replication_policy.replication_policy())
 
   def test_020(self):
     '''After instatiation, get_preferred() returns empty list.'''
