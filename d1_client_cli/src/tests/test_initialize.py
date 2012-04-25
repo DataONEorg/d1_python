@@ -45,7 +45,7 @@ except ImportError as e:
 #===============================================================================
 
 
-class TestInitialize(unittest.TestCase):
+class TESTInitialize(unittest.TestCase):
   def setUp(self):
     self.sess = session.session()
     self.sess.load(suppress_error=True)

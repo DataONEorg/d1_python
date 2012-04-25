@@ -46,7 +46,7 @@ except ImportError as e:
 #===============================================================================
 
 
-class TestDataPackage(unittest.TestCase):
+class TESTDataPackage(unittest.TestCase):
   def setUp(self):
     self.sess = session.session()
     self.sess.load(suppress_error=True)

@@ -46,7 +46,7 @@ PID_SCIMETA = ''
 PID_SCIDATA1 = 'abp-test.csv'
 
 
-class TestCLIClient(unittest.TestCase):
+class TESTCLIClient(unittest.TestCase):
   def setUp(self):
     self.sess = session.session()
     self.sess.load(suppress_error=True)

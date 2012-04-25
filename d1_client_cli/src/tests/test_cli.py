@@ -58,7 +58,7 @@ TEST_MN_HOST = 'demo1.test.dataone.org'
 #===============================================================================
 
 
-class TestDataONECLI(unittest.TestCase):
+class TESTDataONECLI(unittest.TestCase):
   def setUp(self):
     pass
 
