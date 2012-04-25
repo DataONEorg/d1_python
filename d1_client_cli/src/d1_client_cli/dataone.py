@@ -58,7 +58,7 @@ import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
 import initialize #@UnusedImport
-import package
+import package_cli
 import session
 
 known_object_formats = None
@@ -1398,7 +1398,7 @@ class CLI(cmd.Cmd):
         return
 
       if self.packageCLI is None:
-        self.packageCLI = package.PackageCLI(self.d1.session)
+        self.packageCLI = package_cli.PackageCLI(self.d1.session)
 
       self.packageCLI.onecmd(line)
 
