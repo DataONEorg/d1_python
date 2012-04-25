@@ -113,9 +113,9 @@ class TESTCLIReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLC
     self.assertRaises(cli_exceptions.InvalidArguments, s.add_blocked, 'blocked_mn')
 
   def test_060(self):
-    '''Replication is not allowed by default.'''
+    '''Replication is allowed by default.'''
     s = replication_policy.replication_policy()
-    self.assertFalse(s.get_replication_allowed())
+    self.assertTrue(s.get_replication_allowed())
 
   def test_070(self):
     '''set_replication_allowed() is retained and can be retrieved with get_replication_policy()'''
@@ -128,7 +128,7 @@ class TESTCLIReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLC
   def test_080(self):
     '''number_of_replicas can be retrieved and is 0 by default'''
     s = replication_policy.replication_policy()
-    self.assertEqual(0, s.get_number_of_replicas())
+    self.assertEqual(3, s.get_number_of_replicas()) # 3 by default
 
   def test_090(self):
     '''set_number_of_replicas() is retained and can be retrieved with get_number_of_replicas()'''
@@ -189,8 +189,8 @@ class TESTCLIReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLC
     s.clear()
     self.assertTrue(not len(s.get_preferred()))
     self.assertTrue(not len(s.get_blocked()))
-    self.assertFalse(s.get_replication_allowed())
-    self.assertTrue(s.get_number_of_replicas() == 0)
+    self.assertTrue(s.get_replication_allowed())
+    self.assertTrue(s.get_number_of_replicas() == 3)
 
   def test_200(self):
     '''to_pyxb()'''

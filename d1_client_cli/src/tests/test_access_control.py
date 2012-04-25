@@ -113,8 +113,12 @@ class TESTCLIAccessControl(d1_common.testcasewithurlcompare.TestCaseWithURLCompa
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
-    p = 'access:\n  submitter'
-    self.assertEquals(str(a)[:19], p)
+    actual = []
+    for s in str(a).split('\n'):
+      actual.append(s.strip())
+    self.assertEquals(actual[1], 'read                          "public", "subject_1"')
+    self.assertEquals(actual[2], 'write                         "subject_2"')
+    self.assertEquals(actual[3], 'changePermission              "subject_3"')
 
   def test_400(self):
     '''XML serialization / deserialization round trip'''
@@ -125,7 +129,7 @@ class TESTCLIAccessControl(d1_common.testcasewithurlcompare.TestCaseWithURLCompa
     xml = a.to_xml()
     b = access_control.access_control()
     b.from_xml(xml)
-    self.assertEqual(len(b.allow), 3)
+    self.assertEqual(len(b.allow), 4) # default is 3, plus original.
     self.assertTrue('subject_1' in b.allow)
     self.assertEqual(b.allow['subject_1'], 'read')
     self.assertTrue('subject_2' in b.allow)
