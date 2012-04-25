@@ -190,50 +190,24 @@ class PackageCLI(cmd.Cmd):
         self.package = None
       else:
         return
-
     # Get the pid from the arguments.
-    values = cli_util.clear_None_from_list(self._split_args(line, 0, 9))
-    pid = None
-    if len(values) > 0:
-      pid = values[0]
-
-      # See if such an object already exists, if so see if the user wants to continue.
-      mn_client = cli_client.CLICNClient(self.session)
-      object_location_list = None
-      try:
-        object_location_list = mn_client.resolve(pid)
-      except d1_common.types.exceptions.DataONEException as e:
-        if e.errorCode != 404:
-          raise cli_exceptions.CLIError(
-            'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format())
-          )
-      except:
-        exc_type, exc_msgs = sys.exc_info()[:2] # ignore the traceback. @UnusedVariable
-        if exc_type.__name__ != 'NotFound': # The dang thing throws an exeption on a 404.
-          cli_util._handle_unexpected_exception()
-      # Now see if there was something.
-      if ((object_location_list is not None)
-          and (len(object_location_list.objectLocation) > 0)):
-        if not cli_util.confirm(
-          'An object already exists under "%s".  Are you sure you want to create one?' %
-          pid
-        ):
-          return
-
-      # Create the package object (finally!).
-    msg = '  Creating package...'
-    if len(values) > 0:
-      msg = '  Creating package "%s"...' % pid
+    values = cli_util.clear_None_from_list(self._split_args(line, 1, 9))
+    pid = values[0]
+    existing_obj = cli_client.get_object_by_pid(self.session, pid)
+    if existing_obj:
+      if not cli_util.confirm(
+        'An object already exists under "%s".  Are you sure you want to create one?' % pid
+      ):
+        return
+    # Create the package object (finally!).
     if self.session.is_pretty():
-      sys.stdout.write(msg)
+      sys.stdout.write('  Creating package "%s"...' % pid)
     self.package = data_package.DataPackage(pid)
     if self.session.is_pretty():
       print '. [created]'
-
-      # Add an existing scimeta item.
+    # Add an existing scimeta item.
     if len(values) > 1:
       self.package.scimeta_add(self.session, values[1], None)
-
     # Add exiting scidata items.
     if len(values) > 2:
       for scidata_pid in cli_util.clear_None_from_list(values[2:]):
@@ -249,61 +223,27 @@ class PackageCLI(cmd.Cmd):
         and cli_util.confirm('Do you really want to clear the package?')):
       self.package = None
 
-  def do_print(self, line):
-    ''' print [scimeta] [scidata [pid]]
-    
-        Display the contents of the package, the science metadata object or
-        a science data object in the package
-    '''
-    if self.package is None:
-      print_error('There is no package.')
-      return
-    sub_cmd, pid = self._split_args(line, 0, 2)
-    if not sub_cmd:
-      self._package_print()
-    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
-      self._scimeta_print()
-    elif sub_cmd == 'scidata' or sub_cmd == 'data':
-      self._scidata_print(pid)
-    else:
-      print_error('Don\'t know how to print a "%s".' % sub_cmd)
-
   def do_show(self, line):
-    ''' show [scimeta] [scidata [pid]]
+    ''' show [pid]
     
         Display the DataObject of the package, the science metadata object or
         a science data object in the package.
     '''
     if self.package is None:
-      print_error('There is no package.')
+      print_error('There is no package to show.')
       return
-    sub_cmd, pid = self._split_args(line, 0, 2)
-    if not sub_cmd:
+    pid = self._split_args(line, 0, 1)
+    if not pid:
       self._package_summary()
-    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
-      self._scimeta_summary()
-    elif sub_cmd == 'scidata' or sub_cmd == 'data':
-      self._scidata_summary(pid)
     else:
-      print_error('Don\'t know how to show a "%s".' % sub_cmd)
-
-    #  def do_meta(self, line):
-    #    ''' meta [scimeta] [scidata [pid]]
-    #    
-    #        Print the sysmeta for an object.
-    #    '''
-    #    if self.package is None:
-    #      print_error('There is no package.')
-    #      return
-    #    sub_cmd, pid = self._split_args(line, 0, 2)
-    #    if not sub_cmd:
-    #      self._package_meta()
-    #    elif sub_cmd == 'scimeta' or sub_cmd == 'meta':
-    #      self._scimeta_meta()
-    #    elif sub_cmd == 'scidata' or sub_cmd == 'data':
-    #      self._scidata_meta(pid)
-    #    else:
-    #      print_error('Don\'t know how to show the sysmeta of a "%s".' % sub_cmd)
+      scimeta = self.package.get_scimeta(pid)
+      scidata = self.package.get_scidata(pid)
+      if scimeta:
+        self._scimeta_print()
+      elif scidata:
+        self._scidata_print(pid)
+      else:
+        print_error('"%s": no such pid in package.' % pid)
 
   def do_get(self, line):
     ''' get <pid>
@@ -343,80 +283,75 @@ class PackageCLI(cmd.Cmd):
       raise cli_exceptions.InvalidArguments('The current package has no pid.')
     self.package.save(self.session)
 
-  def do_add(self, line):
-    ''' add scimeta|scidata pid [file]
-        Add an object to the package in memory.  If a file is specified, a
-        new object will be created with that pid.
-    '''
-    pkg_obj_type, pid, file_name = self._split_args(line, 2, 1)
-    if (pkg_obj_type.find('scimeta') == 0) or (pkg_obj_type.find('meta') == 0):
-      self.package.add_scimeta(self.session, pid, file_name)
-    elif (pkg_obj_type.find('scidata') == 0) or (pkg_obj_type.find('data') == 0):
-      self.package.add_scidata(self.session, pid, file_name)
-    else:
-      print_error(
-        '"%": unknown package object type - must be "scimeta" or "scidata"' % pkg_obj_type
-      )
-
-  def do_remove(self, line):
-    ''' remove scimeta|scidata pid
-        Remove an object from the package in memory.
-    '''
-    pkg_obj_type, pid, file_name = self._split_args(line, 2, 1)
-    if (pkg_obj_type.find('scimeta') == 0) or (pkg_obj_type.find('meta') == 0):
-      self.package.remove_scimeta(self.session, pid, file_name)
-    elif (pkg_obj_type.find('scidata') == 0) or (pkg_obj_type.find('data') == 0):
-      self.package.remove_scidata(self.session, pid, file_name)
-    else:
-      print_error(
-        '"%": unknown package object type - must be "scimeta" or "scidata"' % pkg_obj_type
-      )
+#
+#  def do_add(self, line):
+#    ''' add scimeta|scidata pid [file]
+#        Add an object to the package in memory.  If a file is specified, a
+#        new object will be created with that pid.
+#    '''
+#    pkg_obj_type, pid, file_name = self._split_args(line, 2, 1)
+#    if (pkg_obj_type.find('scimeta') == 0) or (pkg_obj_type.find('meta') == 0):
+#      self.package.add_scimeta(self.session, pid, file_name)
+#    elif (pkg_obj_type.find('scidata') == 0) or (pkg_obj_type.find('data') == 0):
+#      self.package.add_scidata(self.session, pid, file_name)
+#    else:
+#      print_error('"%": unknown package object type - must be "scimeta" or "scidata"'
+#                  % pkg_obj_type)
+#      
+#
+#  def do_remove(self, line):
+#    ''' remove scimeta|scidata pid
+#        Remove an object from the package in memory.
+#    '''
+#    pkg_obj_type, pid, file_name = self._split_args(line, 2, 1)
+#    if (pkg_obj_type.find('scimeta') == 0) or (pkg_obj_type.find('meta') == 0):
+#      self.package.remove_scimeta(self.session, pid, file_name)
+#    elif (pkg_obj_type.find('scidata') == 0) or (pkg_obj_type.find('data') == 0):
+#      self.package.remove_scidata(self.session, pid, file_name)
+#    else:
+#      print_error('"%": unknown package object type - must be "scimeta" or "scidata"'
+#                  % pkg_obj_type)
 
   def do_scimeta(self, line):
-    ''' scimeta [add | del | desc | show | meta ] [options]
-          add    pid [file]  Assign the science meta object
-          del    Remove the science meta object from the package.
-          show   Display the current science meta object.
-          meta   Display the system meta data for the science meta object.
-          desc   Describe the current science meta object.
+    ''' scimeta [add | del | print ] [options]
+          add <pid> [file]  Assign the science meta object
+          del               Remove the science meta object from the package.
+          show              Display the current science meta object.
     '''
     if self.package is None:
       print_error('There is no package.')
       return
     sub_cmd, pid, file_name = self._split_args(line, 1, 2)
     if sub_cmd is None:
-      msg = 'What do you wish to do to the science metadata object?.\n  (add, del, desc, show, meta)'
+      msg = 'What do you wish to do to the science metadata object?.\n  (add, del, show)'
       raise cli_exceptions.InvalidArguments(msg)
     #
     if string.find('add', sub_cmd) == 0:
       self.package.scimeta_add(self.session, pid, file_name)
     elif string.find('del', sub_cmd) == 0:
       self.package.scimeta_del()
-
-    elif string.find('print', sub_cmd) == 0:
+    elif string.find('show', sub_cmd) == 0:
       self._scimeta_print()
-    elif string.find('sh', sub_cmd) == 0:
-      self._scimeta_summary()
-    elif string.find('meta', sub_cmd) == 0:
-      self._scimeta_meta()
+#    elif string.find('sh', sub_cmd) == 0:
+#      self._scimeta_summary()
+#    elif string.find('meta', sub_cmd) == 0:
+#      self._scimeta_meta()
     else:
       raise cli_exceptions.InvalidArguments('Unknown scimeta sub-command: %s' % sub_cmd)
 
   def do_scidata(self, line):
-    ''' scidata [add | del | desc | show | meta ] <pid>
-          add    <pid>  [file]  Add the science object to the package.
-          del    <pid>  Remove the given science object from the package.
-          clear  Remove all science data objects from the package.
-          print   <pid>  Describe the given science object.
-          show   <pid>  Display the given science object.
-          meta   <pid>  Display the system meta data for the given science object.
+    ''' scidata [add | del | clear | print ] <pid>
+          add <pid> [file]  Add the science object to the package.
+          del <pid>         Remove the given science object from the package.
+          clear             Remove all science data objects from the package.
+          show <pid>        Display the given science object.
     '''
     if self.package is None:
       print_error('There is no package.')
       return
     sub_cmd, pid, opt = self._split_args(line, 2, 1)
     if sub_cmd is None:
-      msg = 'What do you wish to do to the science data object?.\n  (add, del, clear, desc, show, meta)'
+      msg = 'What do you wish to do to the science data object?.\n  (add, del, clear, show)'
       raise cli_exceptions.InvalidArguments(msg)
     #
     if string.find('add', sub_cmd, ) == 0:
@@ -425,13 +360,12 @@ class PackageCLI(cmd.Cmd):
       self.package.scidata_del(pid)
     elif string.find('clear', sub_cmd) == 0:
       self.package.scidata_clear()
-
-    elif string.find('print', sub_cmd) == 0:
+    elif string.find('show', sub_cmd) == 0:
       self._scidata_print(pid)
-    elif string.find('sh', sub_cmd) == 0:
-      self._scidata_summary(pid)
-    elif string.find('meta', sub_cmd) == 0:
-      self._scidata_meta(pid)
+#    elif string.find('sh', sub_cmd) == 0:
+#      self._scidata_summary(pid)
+#    elif string.find('meta', sub_cmd) == 0:
+#      self._scidata_meta(pid)
     else:
       raise cli_exceptions.InvalidArguments('Unknown scidata sub-command: %s' % sub_cmd)
 
