@@ -141,48 +141,7 @@ class PackageCLI(cmd.Cmd):
     queryArgs = self._split_args(line, 0, 99)
     if len(queryArgs) > 0:
       queryArgs = cli_util.clear_None_from_list(queryArgs)
-      lowerCase = queryArgs[0].lower()
-      if lowerCase.find('desc') == 0:
-        self.do_describe(' '.join(filter(None, queryArgs[1:])))
-      elif lowerCase.find('meta') == 0:
-        self.do_scimeta(' '.join(filter(None, queryArgs[1:])))
-      elif lowerCase.find('data') == 0:
-        self.do_scidata(' '.join(filter(None, queryArgs[1:])))
-      elif lowerCase.find('sh') == 0:
-        self.do_show(' '.join(filter(None, queryArgs[1:])))
-      elif lowerCase.find('add') == 0:
-        self._add(queryArgs[1:])
-      else:
-        print_error('Unknown "package" command: "%s"' % queryArgs[0])
-
-  def _add(self, args):
-    ''' Transpose the scimeta and scidata command "add".
-    
-    args: (sub_cmd, pid, file_name)
-    '''
-    if self.package is None:
-      print_error('There is no package.')
-      return
-
-    args_len = len(args)
-    cmd = ''
-    pid = ''
-    path = ''
-    if args_len > 0:
-      cmd = args[0]
-    if args_len > 1:
-      pid = ' ' + args[1]
-    if args_len > 2:
-      path = ' ' + args[2]
-
-    if args_len == 0:
-      print_error("Add to what?")
-    elif ((cmd == 'scimeta') or (cmd == 'meta')):
-      self.do_scimeta('add ' + pid + path)
-    elif ((cmd == 'scidata') or (cmd == 'data')):
-      self.do_scidata('add ' + pid + path)
-    else:
-      print_error('Use "scimeta add" or "scidata add".')
+      print_error('Unknown "package" command: "%s"' % queryArgs[0])
 
   def do_help(self, line):
     '''Get help on commands
@@ -191,12 +150,36 @@ class PackageCLI(cmd.Cmd):
     '''
     # The only reason to define this method is for the help text in the doc
     # string
+    args = cli_util.clear_None_from_list(self._split_args(line, 0, 99))
+    if len(args) == 0:
+      print ''
+      print '+--[ Package ]-----------------------------------------------------------------+'
+      print '|                                                                              |'
+      print '|    Create ORE/XML documents representing aggregates of data (called a        |'
+      print '|  "packages")                                                                 |'
+      print '|                                                                              |'
+      print '|  For example:                                                                |'
+      print '|    Assume that there is a science metadata document ("gce.294.17.xml") and   |'
+      print '|    three data files ("test1.csv", "test2.csv", "test3.csv").  The below      |'
+      print '|    commands would create an data package in DataONE.                         |'
+      print '|                                                                              |'
+      print '|  DataONE Command Line Interface                                              |'
+      print '|  > package new knb-lter-gce.294.17-PKG                                       |'
+      print '|  > set format-id eml://ecoinformatics.org/eml-2.1.0                          |'
+      print '|  > package add scimeta knb-lter-gce.294.17 gce.294.17.xml                    |'
+      print '|  > set format-id text/csv                                                    |'
+      print '|  > package add scidata knb-lter-gce.294.17_csv1 test1.csv                    |'
+      print '|  > package add scidata knb-lter-gce.294.17_csv2 test2.csv                    |'
+      print '|  > package add scidata knb-lter-gce.294.17_csv3 test3.csv                    |'
+      print '|  > package create                                                            |'
+      print '|                                                                              |'
+      print '+------------------------------------------------------------------------------+'
     cmd.Cmd.do_help(self, line)
 
   ##== Commands =============================================================
 
   def do_new(self, line):
-    ''' create <pid> [scimeta [scidata [...]]]
+    ''' new <pid> [scimeta [scidata [...]]]
         Create a package in memory.
     '''
     # Check to see if we already have a package and it needs saving.
@@ -265,25 +248,6 @@ class PackageCLI(cmd.Cmd):
     if (self.package.is_dirty()
         and cli_util.confirm('Do you really want to clear the package?')):
       self.package = None
-
-#  def do_name(self, line):
-#    ''' name <pid>
-#        Name the package (assign a (possibly new) pid).
-#    '''
-#    if self.package is None:
-#      print_error('There is no package.')
-#      return
-#
-#    msg = 'Changed name '
-#    pid = self._split_args(line, 1, 0)
-#    if self.package.pid:
-#      if cli_util.confirm('Do you really want to clear the name of the package?'):
-#        msg += 'from "%s" ' % pid
-#        self.pid = None
-#    self.package.name(pid)
-#    msg += 'to "%s".' % pid
-#    if self.session.is_verbose():
-#      print_info(msg)
 
   def do_print(self, line):
     ''' print [scimeta] [scidata [pid]]
