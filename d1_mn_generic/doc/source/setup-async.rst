@@ -16,14 +16,13 @@ Certificate setup
 ~~~~~~~~~~~~~~~~~
 
 The asynchronous processes authenticate themselves to GMN by connecting via
-SSL/TLS and providing a certificate. By default, the certificate that was
-generated for the MN when it was registered with DataONE is used. This is
-convenient because the certificate is signed by the DataONE CA, which MNs are
-required to trust.
+TLS/SSL and providing a certificate. The instructions below use the certificate
+that was provided by DataONE when the MN was registered. This is convenient
+because the certificate is signed by the DataONE CA, which MNs are required to
+trust.
 
-  Create copies of the certificate and private key that was generated for the MN
-  when it was registered with DataONE. Store the copies in the following
-  location::
+  Create copies of the DataONE provided certificate and private key. Store the
+  copies in the following location::
 
     /var/local/dataone/mn_generic/service/async/
 

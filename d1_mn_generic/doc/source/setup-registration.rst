@@ -54,12 +54,37 @@ Visit **<env>**/portal/ and follow the instructions.
 Obtaining a client side certificate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contact DataONE to request a certificate for the MN. Specify the environment
-for which you require a certificate.
+To obtain a client side certificate, generate a certificate request and email
+it to DataONE. DataONE will return a signed certificate by email.
+
+  Create the private key for the certificate::
+
+    $ openssl genrsa -des3 -out my_member_node.key 4096
+
+  Create the certificate request::
+
+    $ openssl req -new -key my_member_node.key -out my_member_node.csr
+
+  You will be prompted for information that, combined, will become the
+  Distinguished Name (DN) for this MN. Please supply *Country Name*, *State or
+  Province Name*, *Locality Name*, *Organization Name* and *Common Name*. Leave
+  the remaining fields blank. For fields with a default, type a period (".").
+  For fields without a default, press Enter.
+
+Note: Anyone who has the private key can impersonate your Node in the DataONE
+infrastructure. Keep the private key safe. If your private key becomes
+compromised, please inform DataONE so that the certificate can be revoked.
+
+  Email the my_member_node.csr file to DataONE at cert-requests@dataone.org. In
+  the email, include for which environment you would like the certificate to be
+  signed. The certificate will only be trusted in that environment.
 
 
 Registering the MN with DataONE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This step can only be performed after the signed client side certificate has
+been received from DataONE. See `Obtaining a client side certificate`_
 
 Each DataONE Node has an XML document associated with it that describes the
 various aspects of the Node, such as its URL, the services it supports and who
@@ -103,8 +128,7 @@ this process.
 
 To register the new MN with DataONE, the Node XML document is submitted to
 DataONE via a CN REST API. The connection to DataONE is made over TLS/SSL,
-with the client side certificate that DataONE issued. See `Obtaining a client
-side certificate`_
+with the client side certificate that DataONE issued.
 
 A command line tool is provided for submitting the registration.
 
@@ -114,11 +138,13 @@ A command line tool is provided for submitting the registration.
     $ python register.py \
       --cert-path <path to the DataONE issued MN client side certificate> \
       --cert-key <path to the DataONE issued MN client side certificate key> \
+      --dataone-url <dev>/cn
       ../service/stores/static/nodeRegistry.xml
 
 A new MN must be approved by DataONE. The person that is registered as
 *contactSubject* in the Node document, will be contacted by email with the
-outcome of the approval process.
+outcome of the approval process. After the Node has been approved, CNs will
+start processing the information on the node.
 
 
 Revisit the GMN configuration
@@ -133,4 +159,4 @@ because it must be set up to match the value configured in this step.
     in the Node XML document.
 
 
-:doc:`setup-workers`
+:doc:`setup-async`
