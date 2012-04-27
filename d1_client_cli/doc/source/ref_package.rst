@@ -1,11 +1,10 @@
 Package
 -------
 
-Create and modify ORE/XML documents representing aggregates of data (called a "packages").                                                                      
-                                                                                   
-For example:    
-                                                                   
-Assume that there is a science metadata document ("gce.294.17.xml") and three data files ("test1.csv", "test2.csv", "test3.csv").  The below commands would create an data package in DataONE.                                  
+A collection of information is represented by an :term:`OAI-ORE` document.  The "package" commands create and modify ORE/XML documents.
+                                                                                  
+
+For example, assume that there is a science metadata document (``gce.294.17.xml``) and three data files (``test1.csv``, ``test2.csv``, ``test3.csv``).  The below commands would create an data package in DataONE.                                  
                   
 .. code-block:: html
                                                                  
@@ -30,7 +29,7 @@ Clear the current package from memory.
 
 create
 ``````
-Push the package out to DataONE.
+Save the package in DataONE.
 
 .. _help:
 
@@ -63,7 +62,7 @@ scidata
 ```````
 Manipulate the :term:`science data objects<Science Data Object>` in the package.
 
-* **add** Add science data object to the package.
+* **add** _<pid>_ _[file]_ Add science data object to the package.
 * **del** Remove a given science object from the package.
 * **clear**  Remove all science data objects from the package.
 * **show** Display the given science object.

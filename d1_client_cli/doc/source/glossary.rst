@@ -118,3 +118,12 @@ Glossary
     The CILogon project facilitates secure access to CyberInfrastructure (CI).
 
     http://www.cilogon.org/
+
+  OAI-ORE
+    Open Archives Initiative Object Reuse and Exchange (OAI-ORE) defines standards for the description and exchange of aggregations of Web resources. This document (http://www.openarchives.org/ore/1.0/primer) summarizes the motivation for OAI-ORE, the technical foundations on which the OAI-ORE solution to handle aggregations of Web resources builds, as well as the core aspects of that solution.This document is intended for a general audience that wants to obtain a high-level understanding of the OAI-ORE solution.
+
+  Data Model
+    An abstract data model that is the foundation for these standards. This model is conformant with the Architecture of the World Wide Web and leverages concepts from the Semantic Web including RDF descriptions and Linked Data.
+
+    See: http://www.openarchives.org/ore/1.0/datamodel
+
