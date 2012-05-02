@@ -78,7 +78,7 @@ TEST_ACCESS_POLICY1 = '''
 TEST_ACCESS_POLICY2 = '''
   <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1">
     <allow>
-      <subject>CN=Robert Waltz A610,O=Google,C=US,DC=cilogon,DC=org</subject>
+      <subject>CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org</subject>
       <permission>read</permission>
       <permission>write</permission>
       <permission>changePermission</permission>
@@ -93,20 +93,20 @@ TEST_ACCESS_POLICY2 = '''
 TEST_SUBJECT_INFO = '''
   <d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
     <person>
-      <subject>CN=Robert Waltz A610,O=Google,C=US,DC=cilogon,DC=org</subject>
-      <givenName>Robert</givenName>
-      <familyName>Waltz</familyName>
-      <email>rpwaltz@gmail.com</email>
-      <equivalentIdentity>cn=Benjamin Leinfelder A515,o=University of Chicago,c=US,dc=cilogon,dc=org</equivalentIdentity>
+      <subject>CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org</subject>
+      <givenName>Charles</givenName>
+      <familyName>Shcultz</familyName>
+      <email>charles@schultzmuseum.com</email>
+      <equivalentIdentity>cn=Scott Adams 123Z,o=Dilbert Principle,c=US,dc=cilogon,dc=org</equivalentIdentity>
       <verified>true</verified>
     </person>
     <person>
-      <subject>CN=Benjamin Leinfelder A515,O=University of Chicago,C=US,DC=cilogon,DC=org</subject>
-      <givenName>Ben</givenName>
-      <familyName>Leinfelder</familyName>
-      <email>leinfelder@nceas.ucsb.edu</email>
+      <subject>CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org</subject>
+      <givenName>Scott</givenName>
+      <familyName>Adams</familyName>
+      <email>adams@dilbert.com</email>
       <isMemberOf>CN=testGroup,DC=cilogon,DC=org</isMemberOf>
-      <equivalentIdentity>cn=Robert Waltz A610,o=Google,c=US,dc=cilogon,dc=org</equivalentIdentity>
+      <equivalentIdentity>cn=Charles Schultz xyz0,o=Yahoo,c=US,dc=cilogon,dc=org</equivalentIdentity>
       <verified>true</verified>
     </person>
   </d1:subjectInfo>
