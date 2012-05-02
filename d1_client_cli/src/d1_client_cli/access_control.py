@@ -53,6 +53,7 @@ class access_control():
     return self._pretty_format()
 
   def _get_valid_permissions(self):
+    '''  List of permissions, in increasing order. '''
     return ('read', 'write', 'changePermission', 'execute', 'replicate')
 
   def _clear(self):
