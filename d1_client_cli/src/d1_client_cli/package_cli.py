@@ -53,7 +53,6 @@ except ImportError as e:
 # common
 try:
   import d1_common.util as util
-  import d1_common.types.exceptions
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Please install d1_common.\n')

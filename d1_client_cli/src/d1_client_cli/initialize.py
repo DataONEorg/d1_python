@@ -29,11 +29,15 @@
 
 from getpass import getuser
 import os
-import string
 import sys
 from tempfile import gettempdir
-from OpenSSL.SSL import Context, TLSv1_METHOD, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT, OP_NO_SSLv2
-from OpenSSL.crypto import load_certificate, FILETYPE_PEM
+try:
+  #  from OpenSSL.SSL import Context, TLSv1_METHOD, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT, OP_NO_SSLv2
+  from OpenSSL.crypto import load_certificate, FILETYPE_PEM
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Be sure to install pyOpenSSL (v0.13 recommended)\n')
+  raise
 
 # DataONE
 try:
@@ -136,15 +140,30 @@ def get_identity(session):
 
 
 def _get_subject(session, path):
+  #  if os.path.exists(path):
+  #    f = open(path, 'rb')
+  #    buffer = f.read()
+  #    f.close()
+
+  cert = get_certificate(path)
+  subj = cert.get_subject()
+  components = subj.get_components()
+  return _fix_X509_components(components)
+
+
+def get_certificate(path):
   if os.path.exists(path):
     f = open(path, 'rb')
-    buffer = f.read()
+    read_buffer = f.read()
     f.close()
+    return load_certificate(FILETYPE_PEM, read_buffer)
+  else:
+    return None
 
-    cert = load_certificate(FILETYPE_PEM, buffer)
-    subj = cert.get_subject()
-    components = subj.get_components()
-    return _fix_X509_components(components)
+
+def get_extensions(path):
+  cert = load_certificate(FILETYPE_PEM, buffer)
+  print cert.get_extension_count()
 
 
 def _fix_X509_components(components):
