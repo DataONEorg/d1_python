@@ -27,6 +27,8 @@
 :Author: DataONE (Pippin)
 '''
 
+import access_control
+
 
 def get_equivalent_subjects(subject_info):
   equiv_map_list = []
@@ -43,6 +45,8 @@ def get_equivalent_subjects(subject_info):
 def _normalize_subject(subject):
   ''' Clean up white space, capitalize component keys, and set CN first. '''
   new_subject = []
+  if subject.lower() == 'public':
+    return 'public'
   for component in subject.split(','):
     carray = component.split('=', 2)
     carray[0] = carray[0].upper()
@@ -59,15 +63,17 @@ def _flatten_dictionary(equiv_map_list):
   result_map_list = [equiv_map_list[0]]
   ndx = 1
   while ndx < len(equiv_map_list):
-    equiv_map = equiv_map_list[ndx]
+    test_equiv_map = equiv_map_list[ndx]
+    found = False
     for result_map in result_map_list:
-      for subj in equiv_map:
-        if result_map.get(subj):
-          _merge_maps(result_map, equiv_map)
-          found = True
-          break
       if not found:
-        result_map_list.append(equiv_map)
+        for subj in test_equiv_map:
+          if result_map.get(subj):
+            _merge_maps(result_map, test_equiv_map)
+            found = True
+            break
+    if not found:
+      result_map_list.append(test_equiv_map)
     ndx += 1
   result_list_list = []
   for result_map in result_map_list:
@@ -83,3 +89,41 @@ def _merge_maps(result_map, merge_map):
   for m in merge_map:
     if not result_map.get(m):
       result_map[m] = True
+
+
+def highest_authority(subject_info, access_policy):
+  ''' Returns a list of (highest authority, subject matched, policy matched) '''
+  subject_lists = get_equivalent_subjects(subject_info)
+  access_map = _create_policy_maps(access_policy)
+  return _highest_authority(subject_lists, access_map)
+
+
+def _highest_authority(subject_lists, access_map):
+  blank_policy = access_control.access_control()
+  perm_list = list(blank_policy._get_valid_permissions())
+  perm_list.reverse() # Permissions are listed lowest first.
+  for permission in perm_list:
+    permission_map = access_map.get(permission)
+    if permission_map:
+      if permission_map.get('public'):
+        return permission
+      for subject_list in subject_lists:
+        for subject in subject_list:
+          normalized = _normalize_subject(subject)
+          if permission_map.get(normalized):
+            return permission
+
+
+def _create_policy_maps(access_policy):
+  policy_map = {}
+  for allow in access_policy.allow:
+    subject_list = allow.subject
+    for permission in allow.permission:
+      subject_map = policy_map.get(permission)
+      if not subject_map:
+        subject_map = {}
+        policy_map[permission] = subject_map
+      for subject in subject_list:
+        normalized = _normalize_subject(subject.value())
+        subject_map[normalized] = True
+  return policy_map

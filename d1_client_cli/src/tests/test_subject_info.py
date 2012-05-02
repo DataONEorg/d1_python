@@ -32,12 +32,9 @@ import unittest
 import logging
 import os
 import sys
-import uuid
-import StringIO
 
 try:
   # D1.
-  import d1_common.const
   import d1_common.testcasewithurlcompare
   import d1_common.types.generated.dataoneTypes as dataoneTypes
 
@@ -61,62 +58,42 @@ def read_file(path):
     return None
 
 
-TEST_ACCESS_POLICY1 = '''
-  <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1">
-    <allow>
-      <subject>CN=Billy Joe Bob M010,O=Google,C=US,DC=cilogon,DC=org</subject>
-      <permission>read</permission>
-      <permission>write</permission>
-      <permission>changePermission</permission>
-    </allow>
-    <allow>
-      <subject>public</subject>
-      <permission>read</permission>
-    </allow>
-  </d1:accessPolicy>
-'''
-TEST_ACCESS_POLICY2 = '''
-  <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1">
-    <allow>
-      <subject>CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org</subject>
-      <permission>read</permission>
-      <permission>write</permission>
-      <permission>changePermission</permission>
-    </allow>
-    <allow>
-      <subject>public</subject>
-      <permission>read</permission>
-    </allow>
-  </d1:accessPolicy>
-'''
+TEST_ACCESS_POLICY1 = read_file('files/accessPolicy1.xml')
+TEST_ACCESS_POLICY2 = read_file('files/accessPolicy2.xml')
+TEST_ACCESS_POLICY3 = read_file('files/accessPolicy2.xml')
 
-TEST_SUBJECT_INFO = '''
-  <d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
-    <person>
-      <subject>CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org</subject>
-      <givenName>Charles</givenName>
-      <familyName>Shcultz</familyName>
-      <email>charles@schultzmuseum.com</email>
-      <equivalentIdentity>cn=Scott Adams 123Z,o=Dilbert Principle,c=US,dc=cilogon,dc=org</equivalentIdentity>
-      <verified>true</verified>
-    </person>
-    <person>
-      <subject>CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org</subject>
-      <givenName>Scott</givenName>
-      <familyName>Adams</familyName>
-      <email>adams@dilbert.com</email>
-      <isMemberOf>CN=testGroup,DC=cilogon,DC=org</isMemberOf>
-      <equivalentIdentity>cn=Charles Schultz xyz0,o=Yahoo,c=US,dc=cilogon,dc=org</equivalentIdentity>
-      <verified>true</verified>
-    </person>
-  </d1:subjectInfo>
-'''
+TEST_SUBJECT_INFO1 = read_file('files/subjectInfo1.xml')
+TEST_SUBJECT_INFO2 = read_file('files/subjectInfo2.xml')
+TEST_SUBJECT_INFO3 = read_file('files/subjectInfo3.xml')
 
 
 class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
-    pass
+    self.assertNotEquals(None, TEST_ACCESS_POLICY1, "TEST_ACCESS_POLICY1 is None")
+    self.testAccessPolicy1 = dataoneTypes.CreateFromDocument(TEST_ACCESS_POLICY1)
+    self.assertNotEquals(None, self.testAccessPolicy1, "testAccessPolicy1 is None")
+    #
+    self.assertNotEquals(None, TEST_ACCESS_POLICY2, "TEST_ACCESS_POLICY2 is None")
+    self.testAccessPolicy2 = dataoneTypes.CreateFromDocument(TEST_ACCESS_POLICY2)
+    self.assertNotEquals(None, self.testAccessPolicy2, "testAccessPolicy2 is None")
+    #
+    self.assertNotEquals(None, TEST_ACCESS_POLICY3, "TEST_ACCESS_POLICY3 is None")
+    self.testAccessPolicy3 = dataoneTypes.CreateFromDocument(TEST_ACCESS_POLICY3)
+    self.assertNotEquals(None, self.testAccessPolicy3, "testAccessPolicy3 is None")
+    #
+    self.assertNotEquals(None, TEST_SUBJECT_INFO1, "TEST_SUBJECT_INFO1 is None")
+    self.testSubjectInfo1 = dataoneTypes.CreateFromDocument(TEST_SUBJECT_INFO1)
+    self.assertNotEquals(None, self.testSubjectInfo1, "testSubjectInfo1 is None")
+    #
+    self.assertNotEquals(None, TEST_SUBJECT_INFO2, "TEST_SUBJECT_INFO2 is None")
+    self.testSubjectInfo2 = dataoneTypes.CreateFromDocument(TEST_SUBJECT_INFO2)
+    self.assertNotEquals(None, self.testSubjectInfo2, "testSubjectInfo2 is None")
+    #
+    self.assertNotEquals(None, TEST_SUBJECT_INFO3, "TEST_SUBJECT_INFO3 is None")
+    self.testSubjectInfo3 = dataoneTypes.CreateFromDocument(TEST_SUBJECT_INFO3)
+    self.assertNotEquals(None, self.testSubjectInfo3, "testSubjectInfo3 is None")
 
+#
 #  def test_010(self):
 #    ''' Merge two maps. '''
 #    dict1 = { 'a':True, 'b':True, 'c':True, 'd':True}
@@ -205,25 +182,20 @@ class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
 #    
 #  def test_040(self):
 #    ''' Test actual XML '''
-#    raw_xml = read_file('files/subject_info.xml')
-#    self.assertNotEquals(None, raw_xml, 'Couldn\'t load test file.')
-#    subject_info_object = dataoneTypes.CreateFromDocument(raw_xml)
-#    equiv_list_list = subject_info.get_equivalent_subjects(subject_info_object)
+#    equiv_list_list = subject_info.get_equivalent_subjects(self.testSubjectInfo1)
 #    self.assertNotEquals(None, equiv_list_list, 'equiv_list_list is None')
 #    self.assertEquals(1, len(equiv_list_list), 'Expecting 1 list, found %d' % len(equiv_list_list))
 #    equiv_identities = equiv_list_list[0]
 #    self.assertEquals(2, len(equiv_identities), 'Expecting 2 subjects, found %d' % len(equiv_identities))
-#    ben = 'CN=Benjamin Leinfelder A515,O=University of Chicago,C=US,DC=cilogon,DC=org'
-#    robert = 'CN=Robert Waltz A610,O=Google,C=US,DC=cilogon,DC=org'
-#    self.assertEquals(ben, equiv_identities[0], "Found <ben> in wrong place")
-#    self.assertEquals(robert, equiv_identities[1], "Found <robert> in wrong place")
+#    cschultz='CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org'
+#    sadams='CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
+#    self.assertEquals(cschultz, equiv_identities[0], "Found <cschultz> in wrong place")
+#    self.assertEquals(sadams, equiv_identities[1], "Found <sadams> in wrong place")
 #
 #
 #  def test_100(self):
 #    ''' Convert an access policy into a map. '''
-#    access_policy = dataoneTypes.CreateFromDocument(TEST_ACCESS_POLICY)
-#    self.assertNotEquals(None, access_policy, 'access_policy is None')
-#    access_map_by_permission = subject_info._create_policy_maps(access_policy)
+#    access_map_by_permission = subject_info._create_policy_maps(self.testAccessPolicy1)
 #    self.assertNotEquals(None, access_map_by_permission, 'access_map is None')
 #    map_len = len(access_map_by_permission)
 #    self.assertEquals(3, map_len, 'Expecting 3 entries, found %d' % map_len)
@@ -245,18 +217,14 @@ class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
 
   def test_110(self):
     ''' Get the highest level of authorization. '''
-    subject_info_object = dataoneTypes.CreateFromDocument(TEST_SUBJECT_INFO)
-    self.assertNotEquals(None, subject_info_object, 'subject_info_object is None')
+    #    result = subject_info.highest_authority(self.testSubjectInfo1, self.testAccessPolicy1)
+    #    self.assertEquals('read', result, 'Wrong access for subjectInfo1/accessPolicy1')
+    #    #
+    #    result = subject_info.highest_authority(self.testSubjectInfo1, self.testAccessPolicy2)
+    #    self.assertEquals('changePermission', result, 'Wrong access for subjectInfo1/accessPolicy2')
     #
-    access_policy_object_1 = dataoneTypes.CreateFromDocument(TEST_ACCESS_POLICY1)
-    self.assertNotEquals(None, access_policy_object_1, 'access_policy_object_1 is None')
-    result = subject_info.highest_authority(subject_info_object, access_policy_object_1)
-    self.assertEquals('read', result, 'Wrong access for policy 1')
-    #
-    access_policy_object_2 = dataoneTypes.CreateFromDocument(TEST_ACCESS_POLICY2)
-    self.assertNotEquals(None, access_policy_object_2, 'access_policy_object_2 is None')
-    result = subject_info.highest_authority(subject_info_object, access_policy_object_2)
-    self.assertEquals('changePermission', result, 'Wrong access for policy 2')
+    result = subject_info.highest_authority(self.testSubjectInfo3, self.testAccessPolicy3)
+    self.assertEquals('execute', result, 'Wrong access for subjectInfo3/accessPolicy3')
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
