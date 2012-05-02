@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    subjectInfo1.xml - Sample data for test_subject_info.py
+-->
+<d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
+  <person>
+    <subject>CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Charles</givenName>
+    <familyName>Shcultz</familyName>
+    <email>charles@schultzmuseum.com</email>
+    <equivalentIdentity>cn=Scott Adams 123Z,o=Dilbert Principle,c=US,dc=cilogon,dc=org</equivalentIdentity>
+    <verified>true</verified>
+  </person>
+  <person>
+    <subject>CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Scott</givenName>
+    <familyName>Adams</familyName>
+    <email>adams@dilbert.com</email>
+    <isMemberOf>CN=testGroup,DC=cilogon,DC=org</isMemberOf>
+    <equivalentIdentity>cn=Charles Schultz xyz0,o=Yahoo,c=US,dc=cilogon,dc=org</equivalentIdentity>
+    <verified>true</verified>
+  </person>
+</d1:subjectInfo>
