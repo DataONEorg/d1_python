@@ -32,14 +32,44 @@ import access_control
 
 def get_equivalent_subjects(subject_info):
   equiv_map_list = []
-  for person in subject_info.person:
-    subject = _normalize_subject(person.subject.value())
-    inner_map = {subject: True}
-    equivalent_identity_list = person.equivalentIdentity
-    for equivalent_identity in equivalent_identity_list:
-      inner_map[_normalize_subject(equivalent_identity.value())] = True
-    equiv_map_list.append(inner_map)
-  return _flatten_dictionary(equiv_map_list)
+  if subject_info.person:
+    for person in subject_info.person:
+      _add_person(equiv_map_list, person)
+  equiv_list_list = _flatten_dictionary(equiv_map_list)
+  if subject_info.group:
+    for group in subject_info.group:
+      _add_group(equiv_list_list, group)
+  return equiv_list_list
+
+
+def _add_person(equiv_map_list, person):
+  '''  Add a person to the equivalency list. '''
+  personName = _normalize_subject(person.subject.value())
+  inner_map = {personName: True}
+  equivalent_identity_list = person.equivalentIdentity
+  for equivalent_identity in equivalent_identity_list:
+    inner_map[_normalize_subject(equivalent_identity.value())] = True
+  equiv_map_list.append(inner_map)
+  if person.isMemberOf:
+    for group in person.isMemberOf:
+      inner_map[_normalize_subject(group.value())] = True
+
+
+def _add_group(equiv_list_list, group):
+  ''' Add a group to the equivalency lists. '''
+  groupName = _normalize_subject(group.subject.value())
+  for member in group.hasMember:
+    memberName = member.value()
+    for equiv_list in equiv_list_list:
+      try: # Because Python 2.6 doesn't have list.contains()
+        equiv_list.index(memberName)
+        try:
+          equiv_list.index(groupName)
+        except:
+          equiv_list.append(groupName)
+      except:
+        pass
+  return equiv_list_list
 
 
 def _normalize_subject(subject):
@@ -58,7 +88,7 @@ def _normalize_subject(subject):
 
 
 def _flatten_dictionary(equiv_map_list):
-  ''' "flatten" equivalancies. '''
+  ''' "flatten" equivalancies and return a list of lists. '''
   # Go through each disctionary and see if any member is a member of some other.
   result_map_list = [equiv_map_list[0]]
   ndx = 1
@@ -126,4 +156,7 @@ def _create_policy_maps(access_policy):
       for subject in subject_list:
         normalized = _normalize_subject(subject.value())
         subject_map[normalized] = True
+        pass # foreach subject
+      pass # foreach permission
+    pass # foreach allow
   return policy_map

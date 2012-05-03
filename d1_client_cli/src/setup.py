@@ -23,8 +23,8 @@ setup(
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'DataONE_Common >= 1.0.0c6',
-    'DataONE_ClientLib >= 1.0.0c6',
+    'DataONE_Common >= 1.0.0c7-SNAPSHOT',
+    'DataONE_ClientLib >= 1.0.0c7-SNAPSHOT',
     'rdflib >= 2.4.2',
     'python-dateutil',
     'iso8601',
