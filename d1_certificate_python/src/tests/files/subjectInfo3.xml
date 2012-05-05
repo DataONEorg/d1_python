@@ -3,7 +3,7 @@
   <person>
     <subject>CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org</subject>
     <givenName>Charles</givenName>
-    <familyName>Shcultz</familyName>
+    <familyName>Schultz</familyName>
     <email>charles@schultzmuseum.com</email>
     <equivalentIdentity>cn=Scott Adams 123Z,o=Dilbert Principle,c=US,dc=cilogon,dc=org</equivalentIdentity>
     <verified>true</verified>
@@ -25,7 +25,7 @@
     <verified>true</verified>
   </person>
   <group>
-    <subject>CN=testGroup,DC=cilogon,DC=org</subject>
+    <subject>CN=testGroup2,DC=cilogon,DC=org</subject>
     <groupName>Test Group</groupName>
     <hasMember>CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org</hasMember>
     <hasMember>CN=William Watterson,O=Universal Press Syndicate,C=US,DC=amuniversal,DC=com</hasMember>

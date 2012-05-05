@@ -66,6 +66,30 @@ TEST_SUBJECT_INFO1 = read_file('files/subjectInfo1.xml')
 TEST_SUBJECT_INFO2 = read_file('files/subjectInfo2.xml')
 TEST_SUBJECT_INFO3 = read_file('files/subjectInfo3.xml')
 
+TEST_DATA_1 = (
+  (
+    [set(('c', 'b', 'a')),
+     set(('d', 'f', 'e')),
+     set(('h', 'g', 'i')), ], (('a', 'b', 'c'), ('d', 'e', 'f'), ('g', 'h', 'i'))
+  ),
+  (
+    [set(('a', 'b', 'c')),
+     set(('c', 'e', 'f')),
+     set(('g', 'h', 'i')), ], (('a', 'b', 'c', 'e', 'f'), ('g', 'h', 'i'))
+  ),
+  (
+    [set(('a', 'b', 'c')),
+     set(('d', 'e', 'f')),
+     set(('a', 'h', 'f')), ], (('a', 'b', 'c', 'd', 'e', 'f', 'h'), )
+  ),
+)
+
+SUBJ_CS = 'CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org'
+SUBJ_SA = 'CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
+SUBJ_BW = 'CN=William Watterson,O=Universal Press Syndicate,C=US,DC=amuniversal,DC=com'
+SUBJ_G1 = 'CN=testGroup,DC=cilogon,DC=org'
+SUBJ_G2 = 'CN=testGroup2,DC=cilogon,DC=org'
+
 
 class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
@@ -93,225 +117,156 @@ class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     self.testSubjectInfo3 = dataoneTypes.CreateFromDocument(TEST_SUBJECT_INFO3)
     self.assertNotEquals(None, self.testSubjectInfo3, "testSubjectInfo3 is None")
 
-  def test_010(self):
-    ''' Merge two maps. '''
-    dict1 = {'a': True, 'b': True, 'c': True, 'd': True}
-    dict2 = {'c': True, 'd': True, 'e': True, 'f': True}
-    subject_info._merge_maps(dict1, dict2)
-    self.assertEquals(6, len(dict1), 'dict1 is the wrong size')
-    self.assertEquals(4, len(dict2), 'dict2 is the wrong size')
-    self.assertNotEquals(None, dict1.get('a'), "Couldn't find a in dict1")
-    self.assertNotEquals(None, dict1.get('b'), "Couldn't find b in dict1")
-    self.assertNotEquals(None, dict1.get('c'), "Couldn't find c in dict1")
-    self.assertNotEquals(None, dict1.get('d'), "Couldn't find d in dict1")
-    self.assertNotEquals(None, dict1.get('e'), "Couldn't find e in dict1")
-    self.assertNotEquals(None, dict1.get('f'), "Couldn't find f in dict1")
-    self.assertEquals(None, dict2.get('a'), "Found a in dict2")
-    self.assertEquals(None, dict2.get('b'), "Found b in dict2")
-    self.assertNotEquals(None, dict2.get('c'), "Couldn't find c in dict2")
-    self.assertNotEquals(None, dict2.get('d'), "Couldn't find d in dict2")
-    self.assertNotEquals(None, dict2.get('e'), "Couldn't find e in dict2")
-    self.assertNotEquals(None, dict2.get('f'), "Couldn't find f in dict2")
+  # ---  Testing _create_identity_sets()
+  #
+  def _test_01x_compare(self, test_name, set_contents, actual):
+    self.assertEquals(
+      len(set_contents), len(actual), '%s: expecting %d, found %d' %
+      ('%s: wrong size' % test_name, len(set_contents), len(actual))
+    )
+    for ndx in range(len(set_contents)):
+      expect_ndx = set_contents[ndx]
+      actual_ndx = actual[ndx]
+      self.assertEquals(
+        len(expect_ndx), len(actual_ndx), '%s: expecting %d, found %d' % (
+          '%s: set[%d] wrong size' % (test_name, ndx), len(expect_ndx), len(actual_ndx)
+        )
+      )
+      for subj in expect_ndx:
+        self.assertTrue(
+          subj in actual_ndx,
+          "%s: didn't find \"%s\" in actual[%d]" % (test_name, subj, ndx)
+        )
+
+  def test_011(self):
+    ''' Testing:  _create_identity_sets(subjectInfo1) '''
+    #    subj1 = 'CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org'
+    #    subj2 = 'CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
+    set_contents = ((SUBJ_CS, SUBJ_SA), (SUBJ_CS, SUBJ_SA), )
+    actual = subject_info._create_identity_sets(self.testSubjectInfo1)
+    self._test_01x_compare('subjectInfo1', set_contents, actual)
+
+  def test_012(self):
+    ''' Testing:  _create_identity_sets(subjectInfo2) '''
+    subjV = 'CN=v,DC=dataone,DC=org'
+    subjW = 'CN=w,DC=dataone,DC=org'
+    subjX = 'CN=x,DC=dataone,DC=org'
+    subjY = 'CN=y,DC=dataone,DC=org'
+    subjZ = 'CN=z,DC=dataone,DC=org'
+    subjY2 = 'CN=y2,DC=dataone,DC=org'
+    subjY3 = 'CN=y3,DC=dataone,DC=org'
+    subjY4 = 'CN=y4,DC=dataone,DC=org'
+    set_contents = (
+      (subjV, subjW),
+      (subjV, subjW, subjX),
+      (subjW, subjX, subjY),
+      (subjX, subjY, subjZ, subjY2, subjY4),
+      (subjY, subjZ),
+      (subjY, subjY2, subjY3),
+      (subjY2, subjY3, subjY4),
+      (subjY, subjY3, subjY4),
+    )
+    actual = subject_info._create_identity_sets(self.testSubjectInfo2)
+    self._test_01x_compare('subjectInfo2', set_contents, actual)
+
+  def test_013(self):
+    ''' Testing:  _create_identity_sets(subjectInfo3) '''
+    set_contents = ((SUBJ_CS, SUBJ_SA), (SUBJ_SA, SUBJ_CS), (SUBJ_BW, ), )
+    actual = subject_info._create_identity_sets(self.testSubjectInfo3)
+    self._test_01x_compare('subjectInfo3', set_contents, actual)
 
   def test_020(self):
-    ''' Normalize subject. '''
+    ''' Testing: _merge_identity_sets(equiv_list_sets) '''
+    for test_num in range(len(TEST_DATA_1)):
+      expect = TEST_DATA_1[test_num][1]
+      actual = subject_info._merge_identity_sets(TEST_DATA_1[test_num][0])
+      self._test_020_compare(test_num + 1, expect, actual)
+
+  def _test_020_compare(self, test_num, expect, actual):
+    self.assertNotEquals(None, expect, "test %d: expect is None" % test_num)
+    self.assertNotEquals(None, actual, "test %d: actual is None" % test_num)
+    msg = "test %d: expect and actual are different lengths" % test_num
+    self.assertEquals(
+      len(expect), len(actual),
+      "%s: expecting %d, found %d" % (msg, len(expect), len(actual))
+    )
+    for i in range(len(expect)):
+      msg = "test %d: expect[%d] and actual[%d] are different lengths" % (test_num, i, i)
+      self.assertEquals(
+        len(expect[i]), len(actual[i]),
+        "%s - expecting %d, found %d" % (msg, len(expect[i]), len(actual[i]))
+      )
+      for j in expect[i]:
+        self.assertTrue(
+          j in actual[i], "test %d: \"%s\" is not in actual[%d]" % (test_num, j, i)
+        )
+
+  def test_030(self):
+    ''' Testing _find_primary_identity() '''
+    actual = subject_info._find_primary_identity('a', TEST_DATA_1[0][1])
+    self.assertNotEquals(None, actual, 'Didn\'t find "a"')
+    self.assertEquals(3, len(actual), 'Wrong list: %s' % str(actual))
+    self.assertEquals('a', actual[0])
+    self.assertEquals('b', actual[1])
+    self.assertEquals('c', actual[2])
+
+  def test_031(self):
+    ''' Testing _find_primary_identity() '''
+    actual = subject_info._find_primary_identity('g', TEST_DATA_1[0][1])
+    self.assertNotEquals(None, actual, 'Didn\'t find "g"')
+    self.assertEquals(3, len(actual), 'Wrong list: %s' % str(actual))
+    self.assertEquals('g', actual[0])
+    self.assertEquals('h', actual[1])
+    self.assertEquals('i', actual[2])
+
+  def test_032(self):
+    ''' Testing _find_primary_identity() '''
+    actual = subject_info._find_primary_identity('a', TEST_DATA_1[1][1])
+    self.assertNotEquals(None, actual, 'Didn\'t find "a"')
+    self.assertEquals(5, len(actual), 'Wrong list: %s' % str(actual))
+    self.assertEquals('a', actual[0])
+    self.assertEquals('b', actual[1])
+    self.assertEquals('c', actual[2])
+    self.assertEquals('e', actual[3])
+    self.assertEquals('f', actual[4])
+
+  def test_033(self):
+    ''' Testing _find_primary_identity() '''
+    actual = subject_info._find_primary_identity('i', TEST_DATA_1[2][1])
+    self.assertNotEquals(None, actual, 'Didn\'t find "i"')
+    self.assertEquals(0, len(actual), 'Not an empty list: %s' % str(actual))
+
+  def test_040(self):
+    ''' Testing: _normalize_subject() '''
     expected = 'CN=fred,O=Google,C=US,DC=cilogon,DC=org'
     actual = subject_info._normalize_subject('CN=fred,O=Google,C=US,DC=cilogon,DC=org')
     self.assertEquals(expected, actual, "Wrong result for test 1")
     expected = 'CN=fred,O=Google,C=US,DC=cilogon,DC=org'
     actual = subject_info._normalize_subject('dc=org,dC=cilogon,c=US,O=Google,cn=fred')
     self.assertEquals(expected, actual, "Wrong result for test 2")
-    expected = 'CN=fred,O=Google,C=US,DC=cilogon dot org,DC=org'
+    expected = 'CN=fred,O=Google,C=US,DC=cilogon       dot     org,DC=org'
     actual = subject_info._normalize_subject(
       'dc=org,dC=cilogon       dot     org,c=US,O=Google,cn=fred'
     )
     self.assertEquals(expected, actual, "Wrong result for test 3")
 
-  def test_030(self):
-    ''' _flatten_dictionary (single) '''
-    map_list = (
-      {'a': True,
-       'b': True,
-       'c': True,
-       '1': True},
-      {'b': True,
-       'a': True,
-       'c': True,
-       '2': True},
-      {'c': True,
-       'a': True,
-       'b': True,
-       '3': True},
-      {'d': True,
-       'a': True,
-       'b': True,
-       '4': True},
-    )
-    identity_lists = subject_info._flatten_dictionary(map_list)
-    self.assertNotEquals(None, identity_lists, 'identity_lists is None')
+  def test_050(self):
+    ''' Testing: _add_groups() '''
+    expect = set((SUBJ_CS, SUBJ_SA, SUBJ_G1, SUBJ_G2))
+    actual = subject_info._add_groups((SUBJ_SA, SUBJ_CS), self.testSubjectInfo3)
+    msg = "expect and actual are different lengths"
     self.assertEquals(
-      1, len(identity_lists), 'Expecting 1 list, found %d' % len(
-        identity_lists
-      )
+      len(expect), len(actual),
+      "%s: expecting %d, found %d" % (msg, len(expect), len(actual))
     )
-    self.assertEquals(
-      8, len(identity_lists[0]), 'Expecting 8 subjects, found %d' % len(
-        identity_lists[0]
-      )
-    )
-    self.assertEquals('1', identity_lists[0][0], "[0][0] is not '1'")
-    self.assertEquals('2', identity_lists[0][1], "[0][1] is not '2'")
-    self.assertEquals('3', identity_lists[0][2], "[0][2] is not '3'")
-    self.assertEquals('4', identity_lists[0][3], "[0][3] is not '4'")
-    self.assertEquals('a', identity_lists[0][4], "[0][4] is not 'a'")
-    self.assertEquals('b', identity_lists[0][5], "[0][5] is not 'b'")
-    self.assertEquals('c', identity_lists[0][6], "[0][6] is not 'c'")
-    self.assertEquals('d', identity_lists[0][7], "[0][7] is not 'd'")
+    for subj in expect:
+      self.assertTrue(subj in actual, 'Couldn\'t find "%s" in actual' % subj)
 
-  def test_031(self):
-    ''' _flatten_dictionary (disjoint) '''
-    map_list = (
-      {'a': True,
-       'b': True,
-       'c': True,
-       '1': True},
-      {'c': True,
-       'd': True,
-       'e': True,
-       '2': True},
-      {'f': True,
-       'g': True,
-       'h': True,
-       '3': True},
-      {'h': True,
-       'i': True,
-       'j': True,
-       '4': True},
-    )
-    identity_lists = subject_info._flatten_dictionary(map_list)
-    self.assertNotEquals(None, identity_lists, 'identity_lists is None')
-    self.assertEquals(
-      2, len(identity_lists), 'Expecting 2 list, found %d' % len(identity_lists)
-    )
-    self.assertEquals(
-      7, len(identity_lists[0]),
-      'Expecting 7 subjects in list 0, found %d' % len(identity_lists[0])
-    )
-    self.assertEquals(
-      7, len(identity_lists[1]),
-      'Expecting 7 subjects in list 1, found %d' % len(identity_lists[1])
-    )
-    self.assertEquals('1', identity_lists[0][0], "[0][0] is not '1'")
-    self.assertEquals('2', identity_lists[0][1], "[0][1] is not '2'")
-    self.assertEquals('a', identity_lists[0][2], "[0][2] is not 'a'")
-    self.assertEquals('b', identity_lists[0][3], "[0][3] is not 'b'")
-    self.assertEquals('c', identity_lists[0][4], "[0][4] is not 'c'")
-    self.assertEquals('d', identity_lists[0][5], "[0][5] is not 'd'")
-    self.assertEquals('e', identity_lists[0][6], "[0][6] is not 'e'")
-    self.assertEquals('3', identity_lists[1][0], "[1][0] is not '3'")
-    self.assertEquals('4', identity_lists[1][1], "[1][1] is not '4'")
-    self.assertEquals('f', identity_lists[1][2], "[1][2] is not 'f'")
-    self.assertEquals('g', identity_lists[1][3], "[1][3] is not 'g'")
-    self.assertEquals('h', identity_lists[1][4], "[1][4] is not 'h'")
-    self.assertEquals('i', identity_lists[1][5], "[1][5] is not 'i'")
-    self.assertEquals('j', identity_lists[1][6], "[1][6] is not 'j'")
+  def test_060(self):
+    ''' Testing: _highest_authority() '''
 
-  def test_040(self):
-    ''' get_equivalent_subjects '''
-    equiv_list_list = subject_info.get_equivalent_subjects(self.testSubjectInfo1)
-    self.assertNotEquals(None, equiv_list_list, 'equiv_list_list is None')
-    expect = 1
-    actual = len(equiv_list_list)
-    self.assertEquals(
-      expect, actual, '%s; expecting "%s", found "%s"' %
-      ('Wrong number of equivalent lists', expect, actual)
-    )
-    equiv_identities = equiv_list_list[0]
-    expect = 3
-    actual = len(equiv_identities)
-    self.assertEquals(
-      expect, actual, '%s; expecting "%s", found "%s"' %
-      ('Wrong number of equivalent lists', expect, actual)
-    )
-    cschultz = 'CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org'
-    sadams = 'CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
-    self.assertEquals(cschultz, equiv_identities[0], "Found <cschultz> in wrong place")
-    self.assertEquals(sadams, equiv_identities[1], "Found <sadams> in wrong place")
-
-  def test_041(self):
-    ''' get_equivalent_subjects (w/ groups) '''
-    cschultz = 'CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org'
-    sadams = 'CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
-    bwatterson = 'CN=William Watterson,O=Universal Press Syndicate,C=US,DC=amuniversal,DC=com'
-    testGroup = 'CN=testGroup,DC=cilogon,DC=org'
-    #
-    equiv_list_list = subject_info.get_equivalent_subjects(self.testSubjectInfo3)
-    self.assertNotEquals(None, equiv_list_list, 'equiv_list_list is None')
-    list_len = len(equiv_list_list)
-    self.assertEquals(2, list_len, 'Expecting 2 lists, found %d' % list_len)
-    list_len = len(equiv_list_list[0])
-    self.assertEquals(3, list_len, 'Expecting 3 subjects in list[0], found %d' % list_len)
-    self.assertNotEquals(
-      None, equiv_list_list[0].index(
-        cschultz
-      ), "Didn't find <cschultz>"
-    )
-    self.assertNotEquals(None, equiv_list_list[0].index(sadams), "Didn't find <sadams>")
-    self.assertNotEquals(
-      None, equiv_list_list[0].index(
-        testGroup
-      ), "Didn't find <testGroup>"
-    )
-    list_len = len(equiv_list_list[1])
-    self.assertEquals(2, list_len, 'Expecting 2 subjects in list[1], found %d' % list_len)
-    self.assertNotEquals(
-      None, equiv_list_list[1].index(
-        bwatterson
-      ), "Didn't find <bwatterson>"
-    )
-    self.assertNotEquals(
-      None, equiv_list_list[1].index(
-        testGroup
-      ), "Didn't find <testGroup>"
-    )
-
-  def test_042(self):
-    ''' get_equivalent_subjects (Java test file). '''
-    expected = (
-      'CN=v,DC=dataone,DC=org',
-      'CN=w,DC=dataone,DC=org',
-      'CN=x,DC=dataone,DC=org',
-      'CN=y,DC=dataone,DC=org',
-      'CN=y2,DC=dataone,DC=org',
-      'CN=y3,DC=dataone,DC=org',
-      'CN=y4,DC=dataone,DC=org',
-      'CN=z,DC=dataone,DC=org',
-    )
-    equiv_list_list = subject_info.get_equivalent_subjects(self.testSubjectInfo2)
-    self.assertNotEquals(None, equiv_list_list, 'equiv_list_list is None')
-    expect = 1
-    actual = len(equiv_list_list)
-    self.assertEquals(
-      expect, actual,
-      '%s; expecting "%s", found "%s"' % ('Wrong number of lists', expect, actual)
-    )
-    expect = len(expected)
-    actual = len(equiv_list_list[0])
-    self.assertEquals(
-      expect, actual, '%s; expecting "%s", found "%s"' %
-      ('Wrong number of equivalent identities', expect, actual)
-    )
-    ndx = 0
-    actual = equiv_list_list[0]
-    while ndx < len(expected):
-      self.assertEquals(
-        expected[ndx], actual[ndx], '%s; expecting "%s", found "%s"' %
-        ('Wrong value at list[0][%d]' % ndx, expected[ndx], actual[ndx])
-      )
-      ndx += 1
-
-  def test_100(self):
-    ''' Convert an access policy into a map. '''
+  def test_070(self):
+    ''' Testing: _create_policy_maps() '''
     access_map_by_permission = subject_info._create_policy_maps(self.testAccessPolicy1)
     self.assertNotEquals(None, access_map_by_permission, 'access_map is None')
     map_len = len(access_map_by_permission)
@@ -365,28 +320,40 @@ class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       ), 'changePermission is None'
     )
 
-  def test_110(self):
+  def test_080(self):
     ''' Get the highest level of authorization. '''
-    expect = 'read'
-    actual = subject_info.highest_authority(self.testSubjectInfo1, self.testAccessPolicy1)
-    self.assertEquals(
-      expect, actual, '%s; expecting "%s", found "%s"' %
-      ('Wrong access for subjectInfo1/accessPolicy1', expect, actual)
+    identity_chain = set((SUBJ_CS, SUBJ_SA, SUBJ_G1, SUBJ_G2))
+    access_map_1 = {
+        'read': set(('CN=Billy Joe Bob M010,O=Google,C=US,DC=cilogon,DC=org', 'public')),
+        'write': set(('CN=Billy Joe Bob M010,O=Google,C=US,DC=cilogon,DC=org',)),
+        'changePermission': set(('CN=Billy Joe Bob M010,O=Google,C=US,DC=cilogon,DC=org',)),
+        }
+    access_map_2 = {
+      'read': set(('CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org', 'public')),
+      'write': set(('CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org', )),
+      'changePermission': set(),
+    }
+    access_map_3 = {
+        'read': set(('CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org',
+                 'CN=testGroup,DC=cilogon,DC=org',
+                 'public')),
+        'write': set(('CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org',
+                  'CN=testGroup,DC=cilogon,DC=org')),
+        'changePermission': set(('CN=testGroup,DC=cilogon,DC=org',)),
+        }
+    tests = (
+      (access_map_1, 'read'), (access_map_2, 'write'), (
+        access_map_3, 'changePermission'
+      )
     )
     #
-    expect = 'write'
-    actual = subject_info.highest_authority(self.testSubjectInfo1, self.testAccessPolicy2)
-    self.assertEquals(
-      expect, actual, '%s; expecting "%s", found "%s"' %
-      ('Wrong access for subjectInfo1/accessPolicy2', expect, actual)
-    )
-    #
-    expect = 'changePermission'
-    actual = subject_info.highest_authority(self.testSubjectInfo3, self.testAccessPolicy3)
-    self.assertEquals(
-      expect, actual, '%s; expecting "%s", found "%s"' %
-      ('Wrong access for subjectInfo3/accessPolicy3', expect, actual)
-    )
+    for ndx in range(len(tests)):
+      test = tests[ndx]
+      actual = subject_info._highest_authority(identity_chain, test[0])
+      self.assertEquals(
+        test[1], actual, '%s; expecting "%s", found "%s"' %
+        ('Wrong access for subjectInfo1/accessPolicy1', test[1], actual)
+      )
 
 
 if __name__ == "__main__":

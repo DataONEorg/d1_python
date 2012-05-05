@@ -29,116 +29,115 @@
 '''  List of permissions, in increasing order. '''
 ALLOWED_PERMISSIONS = ('changePermission', 'write', 'read')
 
-
-def get_equivalent_subjects(subject_info):
-  equiv_map_list = []
-  if subject_info.person:
-    for person in subject_info.person:
-      _add_person(equiv_map_list, person)
-  equiv_list_list = _flatten_dictionary(equiv_map_list)
-  if subject_info.group:
-    for group in subject_info.group:
-      _add_group(equiv_list_list, group)
-  return equiv_list_list
+#-- PUBLIC -----------------------------------------------------------------------------#
 
 
-def _add_person(equiv_map_list, person):
-  '''  Add a person to the equivalency list. '''
-  personName = _normalize_subject(person.subject.value())
-  inner_map = {personName: True}
-  equivalent_identity_list = person.equivalentIdentity
-  for equivalent_identity in equivalent_identity_list:
-    inner_map[_normalize_subject(equivalent_identity.value())] = True
-  equiv_map_list.append(inner_map)
-  if person.isMemberOf:
-    for group in person.isMemberOf:
-      inner_map[_normalize_subject(group.value())] = True
+def get_equivalent_subjects(primary_subject, subject_info):
+  ''' Find the equivalent identities of the primary subject inside
+     a d1:SubjectInfo structure.
+  '''
+  equiv_list_of_sets = _create_identity_sets(subject_info)
+  merged_list_of_sets = _merge_identity_sets(equiv_list_of_sets)
+  return _find_primary_identity(primary_subject, merged_list_of_sets)
 
 
-def _add_group(equiv_list_list, group):
-  ''' Add a group to the equivalency lists. '''
-  groupName = _normalize_subject(group.subject.value())
-  for member in group.hasMember:
-    memberName = member.value()
-    for equiv_list in equiv_list_list:
-      try: # Because Python 2.6 doesn't have list.contains()
-        equiv_list.index(memberName)
-        try:
-          equiv_list.index(groupName)
-        except:
-          equiv_list.append(groupName)
-      except:
-        pass
-  return equiv_list_list
+def highest_authority(primary_subject, subject_info, access_policy):
+  ''' Returns a list of (highest authority, subject matched, policy matched) '''
+  equiv_list_of_sets = _create_identity_sets(subject_info)
+  merged_list_of_sets = _merge_identity_sets(equiv_list_of_sets)
+  primary_identity_list = _find_primary_identity(primary_subject, merged_list_of_sets)
+  _add_groups(primary_identity_list, subject_info)
+
+  subject_lists = get_equivalent_subjects(subject_info)
+  access_map = _create_policy_maps(access_policy)
+  return _highest_authority(subject_lists, access_map)
+
+#-- PRIVATE ----------------------------------------------------------------------------#
+
+
+def _create_identity_sets(subject_info):
+  ''' Convert a d1:SubjectInfo structure into a list of sets, with each
+      set representing a person.
+  '''
+  equiv_list_of_sets = []
+  for person in subject_info.person:
+    equiv_set = set()
+    subject = _normalize_subject(person.subject.value())
+    equiv_set.add(subject)
+    for equivalentIdentity in person.equivalentIdentity:
+      subject = _normalize_subject(equivalentIdentity.value())
+      equiv_set.add(subject)
+    equiv_list_of_sets.append(equiv_set)
+  return equiv_list_of_sets
+
+
+def _merge_identity_sets(equiv_list_sets):
+  ''' Merge overlapping sets (people) and get rid of empty sets.
+  '''
+  result_list_sets = []
+  if equiv_list_sets:
+    # Make sure there are no intersections.
+    num_sets = len(equiv_list_sets)
+    for i in range(num_sets):
+      for j in range(num_sets):
+        if i != j and len(equiv_list_sets[i]) > 0 and len(equiv_list_sets[j]) > 0:
+          if not equiv_list_sets[i].isdisjoint(equiv_list_sets[j]):
+            equiv_list_sets[i] = equiv_list_sets[i].union(equiv_list_sets[j])
+            equiv_list_sets[j].clear()
+    # At this point, there may be empty sets.
+    for equiv_set in equiv_list_sets:
+      if len(equiv_set) > 0:
+        result_list_sets.append(equiv_set)
+  # And it's done.
+  return result_list_sets
+
+
+def _find_primary_identity(primary_subject, equiv_list_sets):
+  ''' Find the set with the primary identity.  Return it as a sorted list.
+  '''
+  for equiv_set in equiv_list_sets:
+    if primary_subject in equiv_set:
+      result = list(equiv_set)
+      result.sort()
+      return result
+  return ()
 
 
 def _normalize_subject(subject):
-  ''' Clean up white space, capitalize component keys, and set CN first. '''
+  ''' Normalize the subject by:
+      * Capitalizing attribute names
+      * Reverse order if CA attribute is not first.
+          (Note, this may not fix the order, but it will try)
+  '''
   new_subject = []
   if subject.lower() == 'public':
     return 'public'
   for component in subject.split(','):
     carray = component.split('=', 2)
     carray[0] = carray[0].upper()
-    carray[1] = ' '.join(carray[1].split())
+    # *** Do not remove internal whitespace.  It is unknown if it is part of the value.
+    #carray[1] = ' '.join(carray[1].split())
     new_subject.append('='.join(carray))
   if new_subject[0].find("CN=") != 0:
     new_subject.reverse()
   return ','.join(new_subject)
 
 
-def _flatten_dictionary(equiv_map_list):
-  ''' "flatten" equivalancies and return a list of lists. '''
-  # Go through each disctionary and see if any member is a member of some other.
-  result_map_list = [equiv_map_list[0]]
-  ndx = 1
-  while ndx < len(equiv_map_list):
-    test_equiv_map = equiv_map_list[ndx]
-    found = False
-    for result_map in result_map_list:
-      if not found:
-        for subj in test_equiv_map:
-          if result_map.get(subj):
-            _merge_maps(result_map, test_equiv_map)
-            found = True
-            break
-    if not found:
-      result_map_list.append(test_equiv_map)
-    ndx += 1
-  result_list_list = []
-  for result_map in result_map_list:
-    result_list = []
-    for subj in result_map.keys():
-      result_list.append(subj)
-    result_list.sort()
-    result_list_list.append(result_list)
-  return result_list_list
-
-
-def _merge_maps(result_map, merge_map):
-  for m in merge_map:
-    if not result_map.get(m):
-      result_map[m] = True
-
-
-def highest_authority(subject_info, access_policy):
-  ''' Returns a list of (highest authority, subject matched, policy matched) '''
-  subject_lists = get_equivalent_subjects(subject_info)
-  access_map = _create_policy_maps(access_policy)
-  return _highest_authority(subject_lists, access_map)
-
-
-def _highest_authority(subject_lists, access_map):
-  for permission in ALLOWED_PERMISSIONS:
-    permission_map = access_map.get(permission)
-    if permission_map:
-      if permission_map.get('public'):
-        return permission
-      for subject_list in subject_lists:
-        for subject in subject_list:
-          normalized = _normalize_subject(subject)
-          if permission_map.get(normalized):
-            return permission
+def _add_groups(equiv_list, subject_info):
+  ''' Add groups to the identities and return a set. '''
+  equiv_set = set(equiv_list)
+  for person in subject_info.person:
+    person_name = person.subject.value()
+    if person_name in equiv_set:
+      for group in person.isMemberOf:
+        equiv_set.add(group.value())
+  for group in subject_info.group:
+    group_subject = group.subject.value()
+    for member in group.hasMember:
+      member_value = member.value()
+      if member_value in equiv_set:
+        equiv_set.add(group_subject)
+  return equiv_set
 
 
 def _create_policy_maps(access_policy):
@@ -146,14 +145,28 @@ def _create_policy_maps(access_policy):
   for allow in access_policy.allow:
     subject_list = allow.subject
     for permission in allow.permission:
-      subject_map = policy_map.get(permission)
-      if not subject_map:
-        subject_map = {}
-        policy_map[permission] = subject_map
+      subject_set = policy_map.get(permission)
+      if not subject_set:
+        subject_set = set()
+        policy_map[permission] = subject_set
       for subject in subject_list:
         normalized = _normalize_subject(subject.value())
-        subject_map[normalized] = True
+        subject_set.add(normalized)
         pass # foreach subject
       pass # foreach permission
     pass # foreach allow
   return policy_map
+
+
+def _highest_authority(subject_set, access_map):
+  ''' Return the highest level of authorization.
+  '''
+  for permission in ALLOWED_PERMISSIONS:
+    permission_set = access_map.get(permission)
+    if permission_set:
+      if 'public' in permission_set:
+        return permission
+      for subject in subject_set:
+        normalized = _normalize_subject(subject)
+        if normalized in permission_set:
+          return permission
