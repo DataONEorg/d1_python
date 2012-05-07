@@ -89,6 +89,10 @@ SUBJ_SA = 'CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
 SUBJ_BW = 'CN=William Watterson,O=Universal Press Syndicate,C=US,DC=amuniversal,DC=com'
 SUBJ_G1 = 'CN=testGroup,DC=cilogon,DC=org'
 SUBJ_G2 = 'CN=testGroup2,DC=cilogon,DC=org'
+SUBJ_Y3 = 'CN=y3,DC=dataone,DC=org'
+
+#---------------------------------------------------------------------------------------#
+#---------------------------------------------------------------------------------------#
 
 
 class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
@@ -353,6 +357,58 @@ class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       self.assertEquals(
         test[1], actual, '%s; expecting "%s", found "%s"' %
         ('Wrong access for subjectInfo1/accessPolicy1', test[1], actual)
+      )
+
+  def test_500(self):
+    ''' get_equivalent_subjects(primary_subject, subject_info): '''
+    expect = (
+      (
+        'CN=Charles Schultz xyz0,O=Yahoo,C=US,DC=cilogon,DC=org',
+        'CN=Scott Adams 123Z,O=Dilbert Principle,C=US,DC=cilogon,DC=org'
+      ),
+      (
+        'CN=v,DC=dataone,DC=org', 'CN=w,DC=dataone,DC=org', 'CN=x,DC=dataone,DC=org',
+        'CN=y,DC=dataone,DC=org', 'CN=z,DC=dataone,DC=org', 'CN=y2,DC=dataone,DC=org',
+        'CN=y3,DC=dataone,DC=org', 'CN=y4,DC=dataone,DC=org'
+      ),
+      (
+        'CN=William Watterson,O=Universal Press Syndicate,C=US,DC=amuniversal,DC=com',
+      ),
+    )
+    actual = (
+      subject_info.get_equivalent_subjects(SUBJ_CS, self.testSubjectInfo1),
+      subject_info.get_equivalent_subjects(SUBJ_Y3, self.testSubjectInfo2),
+      subject_info.get_equivalent_subjects(SUBJ_BW, self.testSubjectInfo3),
+    )
+    for test in range(2):
+      for exp in expect[test]:
+        msg = 'Test %d: couldn\'t find "%s" in actual result.' % (test + 1, exp)
+        self.assertTrue(exp in actual[test], msg)
+
+  def test_510(self):
+    ''' highest_authority(primary_subject, subject_info, access_policy): '''
+    expect = (
+      ('CS/1/1', SUBJ_CS, self.testSubjectInfo1, self.testAccessPolicy1, 'read'),
+      ('CS/2/2', SUBJ_CS, self.testSubjectInfo2, self.testAccessPolicy2, 'read'),
+      ('Y3/2/2', SUBJ_Y3, self.testSubjectInfo2, self.testAccessPolicy2, 'read'),
+      (
+        'CS/3/3', SUBJ_CS, self.testSubjectInfo3, self.testAccessPolicy3,
+        'changePermission'
+      ),
+      (
+        'BW/3/3', SUBJ_BW, self.testSubjectInfo3, self.testAccessPolicy3,
+        'changePermission'
+      ),
+      (
+        'Y3/3/3', SUBJ_Y3, self.testSubjectInfo3, self.testAccessPolicy3, 'read'
+      ),
+    )
+    for ndx in range(len(expect)):
+      test = expect[ndx]
+      actual = subject_info.highest_authority(test[1], test[2], test[3])
+      msg = 'test[%d] (%s): Wrong authority' % (ndx, test[0])
+      self.assertEquals(
+        test[4], actual, "%s: expecting '%s', found '%s'" % (msg, test[4], actual)
       )
 
 

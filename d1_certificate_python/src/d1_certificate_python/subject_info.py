@@ -46,11 +46,9 @@ def highest_authority(primary_subject, subject_info, access_policy):
   equiv_list_of_sets = _create_identity_sets(subject_info)
   merged_list_of_sets = _merge_identity_sets(equiv_list_of_sets)
   primary_identity_list = _find_primary_identity(primary_subject, merged_list_of_sets)
-  _add_groups(primary_identity_list, subject_info)
-
-  subject_lists = get_equivalent_subjects(subject_info)
+  equiv_set = _add_groups(primary_identity_list, subject_info)
   access_map = _create_policy_maps(access_policy)
-  return _highest_authority(subject_lists, access_map)
+  return _highest_authority(equiv_set, access_map)
 
 #-- PRIVATE ----------------------------------------------------------------------------#
 

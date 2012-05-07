@@ -9,7 +9,7 @@
     <permission>write</permission>
   </allow>
   <allow>
-    <subject>CN=testGroup,DC=cilogon,DC=org</subject>
+    <subject>CN=testGroup2,DC=cilogon,DC=org</subject>
     <permission>read</permission>
     <permission>write</permission>
     <permission>changePermission</permission>
