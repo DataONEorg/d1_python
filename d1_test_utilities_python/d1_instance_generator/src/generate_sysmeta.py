@@ -26,7 +26,7 @@ def getObjectFormatFromID(fmtid, default='application/octet-stream'):
   '''Returns an ObjectFormat instance given a format id
   '''
   formatlistURL = "https://repository.dataone.org/software/cicore/trunk/d1_common_java/src/main/resources/org/dataone/service/resources/config/v1/objectFormatList.xml"
-  doc = urllib2.urlopen(formatlistURL).read()
+  doc = urllib2.urlopen(formatlistURL).read().decode('utf-8')
   formats = dataoneTypes.CreateFromDocument(doc)
   for format in formats.objectFormat:
     if format.formatId == fmtid:

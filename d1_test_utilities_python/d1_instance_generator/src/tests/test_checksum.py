@@ -55,6 +55,18 @@ class TestChecksum(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 
+  def test_010(self):
+    '''get_checksum_calculator_by_dataone_designator() returns a checksum calculator'''
+    calculator = checksum.get_checksum_calculator_by_dataone_designator('SHA-1')
+    calculator.update('test')
+    self.assertTrue(calculator.hexdigest())
+
+  def test_011(self):
+    '''get_checksum_calculator_by_dataone_designator() raises on invalid algorithm'''
+    self.assertRaises(
+      Exception, checksum.get_checksum_calculator_by_dataone_designator, 'SHA-224-bogus'
+    )
+
   def test_020(self):
     '''calculate_checksum_of_string()'''
     h = checksum.calculate_checksum_of_string('ateststring', 'MD5')

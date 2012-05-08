@@ -47,6 +47,7 @@ import os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('../../src/d1_instance_generator'))
 sys.path.append(os.path.abspath('../../src/tests'))
+sys.path.append(os.path.abspath('../../../d1_common_python/src/'))
 
 # -- General configuration -----------------------------------------------------
 

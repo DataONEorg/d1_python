@@ -1,8 +1,7 @@
 General
 =======
 
-Modules that facilitate interacting with distributed systems such as the DataONE
-infrastructure.
+Modules that generate instances of DataONE types for testing.
 
 .. autosummary::
   :toctree: generated/

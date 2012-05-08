@@ -19,13 +19,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`d1_instance_generator`
-============================
+:mod:`oaiore`
+=============
 
-:Synopsis: Example of forming a package form a Science Metadata Object and a Science Data Object.
+:Synopsis: Example of forming a package form a Science Metadata Object and a
+  Science Data Object.
 :Created: 2011-08-08
 :Author: DataONE (Veiglais)
-
 
 Requires:
   RDFLib
@@ -47,16 +47,16 @@ import foresite.utils
 
 
 def example1():
-  '''Basic example of a single science metadata document and a science data 
-  object. That the two form a package is inferred by their presence in the 
-  resource map aggregation. 
-  
+  '''Basic example of a single science metadata document and a science data
+  object. That the two form a package is inferred by their presence in the
+  resource map aggregation.
+
   Relationships between aggregated items are defined using terms from the CITO
-  ontology ( http://speroni.web.cs.unibo.it/cgi-bin/lode/req.py?req=http:/purl.org/spar/cito ) 
+  ontology ( http://speroni.web.cs.unibo.it/cgi-bin/lode/req.py?req=http:/purl.org/spar/cito )
   as described in the DataCite to RDF mapping by David Shotton and Silvio Peroni in:
-  
+
     http://opencitations.wordpress.com/2011/06/30/datacite2rdf-mapping-datacite-metadata-scheme-terms-to-ontologies-2/
-  
+
   '''
   #Add the cito namespace
   foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
@@ -80,7 +80,7 @@ def example1():
   res_2 = foresite.AggregatedResource(scimeta_uri)
   #Capture the DataONE identifier as a dcterms:identifier entry
   res_2._dcterms.identifier = scimeta_id
-  # We could reference the science data here - but that only works for a 
+  # We could reference the science data here - but that only works for a
   # single data set
   #res_2._dcterms.references = scidata_id
   res_2._dcterms.description = "A reference to a science metadata document using a DataONE identifier."
