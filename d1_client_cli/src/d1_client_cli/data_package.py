@@ -66,7 +66,7 @@ from print_level import * #@UnusedWildImport
 ALLOWABLE_PACKAGE_SERIALIZATIONS = (
   'xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'
 )
-RDFXML_FORMATID = 'http://www.w3.org/TR/rdf-syntax-grammar'
+RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
 
 RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 CITO_NS = 'http://purl.org/spar/cito/'
