@@ -64,7 +64,7 @@ import session
 known_object_formats = None
 DEFAULT_PREFIX = ''
 DEFAULT_PROMPT = '> '
-SOLR_FORMAT_ID_NAME = 'objectformat'
+SOLR_FORMAT_ID_NAME = 'formatId'
 
 
 def log_setup():
@@ -830,7 +830,7 @@ class DataONECLI():
   def _time_span_to_solr_filter(self):
     fromdate = self.session.get(FROM_DATE_sect, FROM_DATE_name)
     todate = self.session.get(TO_DATE_sect, TO_DATE_name)
-    return 'datemodified:[{0} TO {1}]'.format(
+    return 'dateModified:[{0} TO {1}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else '*',
       d1_common.date_time.to_http_datetime(todate) if todate else '*'
     )
@@ -1224,7 +1224,9 @@ class CLI(cmd.Cmd):
 
   def do_search(self, line):
     '''search [query]
-    Comprehensive search for Science Data Objects across all available MNs
+    Comprehensive search for Science Data Objects across all available MNs.  See:
+      http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html
+    for the available search terms.
     '''
     try:
       queryArgs = self._split_args(line, 0, 30)
