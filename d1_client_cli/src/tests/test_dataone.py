@@ -27,32 +27,29 @@ Module d1_client_cli.tests.test_data_package
 :Author: DataONE (Pippin)
 '''
 
-# Stdlib.
+# Stdlib
 import sys
-import logging
 import unittest
 
+# D1 Client
+sys.path.append('../d1_client_cli/')
 try:
-  # D1 Client
-  sys.path.append('../d1_client_cli/')
-  from const import *
-  import initialize
+  from const import VERBOSE_sect, VERBOSE_name, PRETTY_sect, PRETTY_name
+  import dataone
   import session
-  from session import VERBOSE_sect, VERBOSE_name, PRETTY_sect, PRETTY_name
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
 
-#===============================================================================
 
-
-class TESTInitialize(unittest.TestCase):
+class TestDataone(unittest.TestCase):
   def setUp(self):
     self.sess = session.session()
     self.sess.load(suppress_error=True)
     self.sess.set(VERBOSE_sect, VERBOSE_name, False)
     self.sess.set(PRETTY_sect, PRETTY_name, False)
-    pass
+    self.cli = dataone.CLI()
+    self.cli.interactive = False
 
   def tearDown(self):
     pass
@@ -61,12 +58,14 @@ class TESTInitialize(unittest.TestCase):
     pass
 
   def test_010(self):
-    '''Test 010: Read certificate.'''
-    subj = initialize._get_subject(session, 'files/pippin.pem')
-    self.assertNotEqual(None, subj, 'No subject found')
+    ''' Test 010: do_access(). '''
+    self.cli.do_allow('"some user named fred" write')
+    access_dict = self.cli.d1.session.access_control.allow
+    permission = access_dict.get('some user named fred')
+    self.assertNotEqual(None, permission, "Couldn't find user in access")
+    self.assertEqual('write', permission, "Wrong permission")
 
 
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  sys.argv = ['', 'TESTInitialize.testName']
+  #  sys.argv = ['', 'TestDataone.test_010']
   unittest.main()

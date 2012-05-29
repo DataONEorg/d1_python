@@ -35,7 +35,7 @@ import StringIO
 
 try:
   # D1.
-  import d1_common.testcasewithurlcompare
+  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
   # App.
   sys.path.append('../d1_client_cli/')
@@ -48,7 +48,7 @@ except ImportError as e:
 #===============================================================================
 
 
-class TESTCLIReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TESTReplicationPolicy(TestCaseWithURLCompare):
   def setUp(self):
     pass
 
@@ -219,4 +219,5 @@ class TESTCLIReplicationPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLC
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
+  #  sys.argv = ['', 'TESTReplicationPolicy.testName']
   unittest.main()

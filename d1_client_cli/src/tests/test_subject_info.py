@@ -391,4 +391,5 @@ class TESTSubjectInfo(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
+  sys.argv = ['', 'Test.testName']
   unittest.main()

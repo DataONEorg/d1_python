@@ -33,8 +33,10 @@ import sys
 import unittest
 
 # D1 Client
-sys.path.append('../d1_client_cli/')
 try:
+  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+
+  sys.path.append('../d1_client_cli/')
   from const import VERBOSE_sect, VERBOSE_name, PRETTY_sect, PRETTY_name
   import cli_client
   import session
@@ -45,8 +47,10 @@ except ImportError as e:
 PID_SCIMETA = ''
 PID_SCIDATA1 = 'abp-test.csv'
 
+#===============================================================================
 
-class TESTCLIClient(unittest.TestCase):
+
+class TESTCLIClient(TestCaseWithURLCompare):
   def setUp(self):
     self.sess = session.session()
     self.sess.load(suppress_error=True)
@@ -70,5 +74,5 @@ class TESTCLIClient(unittest.TestCase):
 
 
 if __name__ == "__main__":
-  #import sys;sys.argv = ['', 'Test.testName']
+  #sys.argv = ['', 'TESTCLIClient.testName']
   unittest.main()

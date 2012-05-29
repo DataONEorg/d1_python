@@ -51,13 +51,14 @@ except ImportError as e:
 #===============================================================================
 
 
-class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TESTSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 
   def test_010(self):
     '''The session object can be instantiated'''
     s = session.session()
+    self.assertNotEquals(None, s, 'Could not instantiate session.')
 
   def test_020(self):
     '''After instatiation, the default session parameters are available via get()'''
@@ -161,4 +162,5 @@ class TESTCLISession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
+  #  sys.argv = ['', 'TESTSession.testName']
   unittest.main()

@@ -1062,17 +1062,14 @@ class CLI(cmd.Cmd):
   #-----------------------------------------------------------------------------
 
   def do_allow(self, line):
-    '''allow <subject> [access level]
-    Allow access to subject.
+    '''allow <subject> <level>
+    Modify the current access access to subject.
 
     Access level is one of:
-        'read', 'write', 'changePermission', 'execute', 'replicate'
+        'read', 'write', 'changePermission'
     '''
     try:
-      subject, permission = self._split_args(line, 1, 1)
-      if subject == 'public':
-        print_error('"public" is a reserved identity.  Please use "allowpublic".')
-        return
+      subject, permission = self._split_args(line, 2, 0)
       self.d1.access_control_add_allowed_subject(subject, permission)
     except cli_exceptions.InvalidArguments as e:
       print_error(e)

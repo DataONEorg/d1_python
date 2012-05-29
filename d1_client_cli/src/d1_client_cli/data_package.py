@@ -234,8 +234,8 @@ class DataPackage(object):
       raise cli_exceptions.InvalidArguments('Missing the session')
     if not pid:
       raise cli_exceptions.InvalidArguments('Missing the pid')
-    if ((self.scimeta is not None)
-         and not cli_util.confirm('Do you wish to delete the existing science metadata object?')):
+    if (self.scimeta and not
+       cli_util.confirm('Do you wish to delete the existing science metadata object?')):
       return
     else:
       self.scimeta = None
@@ -244,7 +244,7 @@ class DataPackage(object):
       sys.stdout.write('  Adding science metadata object "%s"...' % pid)
 
     if not file_name:
-      new_meta = cli_client.get_sysmeta_by_pid(session, pid)
+      new_meta = cli_client.get_sysmeta_by_pid(session, pid, True)
       if not new_meta:
         if session.is_pretty():
           sys.stdout.write('. [error]\n')
@@ -261,10 +261,10 @@ class DataPackage(object):
 
       self.scimeta = self._get_by_pid(session, pid, new_meta)
       authMN = new_meta.authoritativeMemberNode
-      nodeId = authMN.value() #@UnusedVariable
       if authMN:
         baseURL = cli_client.get_baseUrl(session, authMN.value())
-        self.scimeta.url = baseURL + '/object/' + pid
+        if baseURL:
+          self.scimeta.url = cli_client.create_get_url_for_pid(baseURL, pid)
       if session.is_pretty():
         print '. [retrieved]'
 
@@ -291,7 +291,7 @@ class DataPackage(object):
         session, pid, complex_path.path,
         formatId=format_id
       )
-      self.scimeta = DataObject(pid, True, complex_path.path, sysmeta, format_id)
+      self.scimeta = DataObject(pid, False, complex_path.path, None, sysmeta, format_id)
       if session.is_pretty():
         print '. [created]\n'
     scidata_list = self._find_scidata(self.scimeta)
@@ -343,32 +343,29 @@ class DataPackage(object):
           print '. [created]'
 
     else:
-      sysmeta = cli_client.get_sysmeta_by_pid(session, pid)
+      sysmeta = cli_client.get_sysmeta_by_pid(session, pid, True)
       if not sysmeta:
         print_error('That pid (%s) was not found in DataONE.' % pid)
         return
-    # Create pid
       else:
         if session.is_pretty():
           sys.stdout.write('  Adding science data object "%s"...' % pid)
-        new_pid = sysmeta.identifier.value()
-        if new_pid != pid:
-          pid = new_pid # in case something was obsoleted....
+        pid = sysmeta.identifier.value()
         if pid in self.scidata_dict:
           if not cli_util.confirm(
             'That science data object (%s) is already in the package.  Replace?' % pid
           ):
             return
-
-        new_scidata = DataObject(pid=new_pid, meta=sysmeta, format_id=sysmeta.formatId)
+        # Get the scidata object.
+        scidata = self._get_by_pid(session, pid, sysmeta)
         authMN = sysmeta.authoritativeMemberNode
-        nodeId = authMN.value() #@UnusedVariable
         if authMN:
           baseURL = cli_client.get_baseUrl(session, authMN.value())
-          new_scidata.url = baseURL + '/object/' + pid
-        self.scidata_dict[pid] = new_scidata
+          if baseURL:
+            scidata.url = cli_client.create_get_url_for_pid(baseURL, pid)
+        self.scidata_dict[pid] = scidata
         if session.is_pretty():
-          print '. [retreived]'
+          print '. [retrieved]'
 
   def scidata_get(self, pid):
     ''' Get the specified scidata object.
@@ -413,7 +410,8 @@ class DataPackage(object):
       meta = sysmeta
       if not meta:
         meta = cli_client.get_sysmeta_by_pid(session, pid)
-      return DataObject(pid, False, fname, meta, meta.formatId)
+      url = cli_client.create_get_url_for_pid(None, pid, session)
+      return DataObject(pid, False, fname, url, meta, meta.formatId, None)
     else:
       return None
 

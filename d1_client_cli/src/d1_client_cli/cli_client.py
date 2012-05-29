@@ -31,6 +31,7 @@
 import os
 import sys
 import tempfile
+import urllib
 
 # DataONE
 try:
@@ -132,8 +133,31 @@ class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
 #== Static methods =============================================================
 
 
-def get_url_for_pid(pid):
-  return
+def create_get_url_for_pid(baseurl, pid, session=None):
+  return create_url_for_pid(baseurl, 'object', pid, session)
+
+
+def create_meta_url_for_pid(baseurl, pid, session=None):
+  return create_url_for_pid(baseurl, 'meta', pid, session)
+
+
+def create_url_for_pid(baseurl, action, pid, session=None):
+  '''  Create a URL for the specified pid.
+  '''
+  if baseurl:
+    endpoint = baseurl
+  elif session:
+    endpoint = session.get(MN_URL_sect, MN_URL_name)
+  else:
+    raise cli_exceptions.InvalidArguments(
+      'You must specify either the base URL or the session'
+    )
+  if not pid:
+    raise cli_exceptions.InvalidArguments('You must specify the pid')
+  if not action:
+    raise cli_exceptions.InvalidArguments('You must specify the action')
+  encoded_pid = urllib.quote_plus(pid)
+  return '%s/%s/%s/%s' % (endpoint, REST_Version, action, encoded_pid)
 
 
 def get_object_by_pid(session, pid, filename=None, resolve=True):
@@ -207,14 +231,15 @@ def get_baseUrl(session, nodeId):
   return None
 
 
-def get_sysmeta_by_pid(session, pid):
+def get_sysmeta_by_pid(session, pid, search_mn=False):
   '''  Get the system metadata object for this particular pid.
   '''
-  if session is None:
+  if not session:
     raise cli_exceptions.InvalidArguments('Missing session')
-  if pid is None:
+  if not pid:
     raise cli_exceptions.InvalidArguments('Missing pid')
 
+  sysmeta = None
   try:
     cn_client = CLICNClient(session)
     obsolete = True
@@ -237,4 +262,32 @@ def get_sysmeta_by_pid(session, pid):
       raise cli_exceptions.CLIError(
         'Unable to get system metadata for: {0}\n{1}'.format(pid, e.friendly_format())
       )
-  return None
+  # Search the member node?
+  if not sysmeta and (search_mn is not None) and search_mn:
+    try:
+      mn_client = CLIMNClient(session)
+      obsolete = True
+      while obsolete:
+        obsolete = False
+        sysmeta = mn_client.getSystemMetadata(pid)
+        if not sysmeta:
+          return None
+        if sysmeta.obsoletedBy:
+          msg = (
+            'Object "%s" has been obsoleted by "%s".  ' + 'Would you rather use that?'
+          ) % (pid, sysmeta.obsoletedBy)
+          if not cli_util.confirm(msg):
+            break
+          pid = sysmeta.obsoletedBy
+          obsolete = True
+      return sysmeta
+    except d1_common.types.exceptions.DataONEException as e:
+      if e.errorCode != 404:
+        raise cli_exceptions.CLIError(
+          'Unable to get system metadata for: {0}\n{1}'.format(
+            pid, e.friendly_format(
+            )
+          )
+        )
+
+  return sysmeta

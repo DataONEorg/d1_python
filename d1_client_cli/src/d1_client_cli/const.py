@@ -82,6 +82,11 @@ QUERY_ENGINE_name = 'query-type'
 QUERY_STRING_sect = SECTION_search
 QUERY_STRING_name = 'query'
 
+# REST URLs - these shouldn't change, but I dislike hardcoded values....
+REST_Version = 'v1'
+REST_URL_Get = 'object'
+
+# Science Metadata types - this should be pulled from the list.
 ALLOWABLE_SCIMETA_TYPES = (
   'eml://ecoinformatics.org/eml-2.0.0',
   'eml://ecoinformatics.org/eml-2.0.1',

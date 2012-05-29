@@ -114,11 +114,23 @@ class TESTDataPackage(unittest.TestCase):
     now = datetime.datetime.now()
     pkg_pid = now.strftime('pkg_test_030_%Y%m%dT%H%MZ')
     pkg = data_package.DataPackage(pkg_pid)
-    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
-    pkg.scidata_add(self.sess, 'knb-lter-gce.196.27')
-    pkg.scidata_add(self.sess, 'knb-lter-gce.128.27')
+    #    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
+    #    pkg.scidata_add(self.sess, 'knb-lter-gce.196.27')
+    #    pkg.scidata_add(self.sess, 'knb-lter-gce.128.27')
+    pkg.scimeta_add(self.sess, 'doi:10.5072/FK2/KNB/CHL.8.2')
+    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.1')
+    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.2')
+    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.8.1')
+    self.assertTrue(pkg.is_dirty(), 'Package is not marked as dirty.')
     serial = pkg._serialize(self.sess)
     self.assertNotEqual(None, serial, 'Couldn\'t serialize "%s".' % pkg_pid)
+    #
+    # XML generator is non-deterministic.
+    #    f = open('files/expected_dataPackage_test030.xml')
+    #    expected = f.read()
+    #    f.close()
+    #    print 'Expected:\n', expected, '\n\nActual\n', serial
+    #    self.assertEquals(expected, serial, 'Wrong output')
 
   def test_031(self):
     '''Test 031: Add scimeta, scidata objects and serialize.'''
@@ -129,9 +141,9 @@ class TESTDataPackage(unittest.TestCase):
       self.sess, 'abp_knb-lter-gce.294.17',
       'files/knb-lter-gce.294.17.xml;format-id=eml://ecoinformatics.org/eml-2.1.0'
     )
-    pkg.scidata_add(self.sess, 'pkg_test_021a', 'files/small.csv;format-id=text/csv')
-    pkg.scidata_add(self.sess, 'pkg_test_021b', 'files/small.csv;format-id=text/csv')
-    pkg.scidata_add(self.sess, 'pkg_test_021c', 'files/small.csv;format-id=text/csv')
+    pkg.scidata_add(self.sess, 'pkg_test_031a', 'files/small.csv;format-id=text/csv')
+    pkg.scidata_add(self.sess, 'pkg_test_031b', 'files/small.csv;format-id=text/csv')
+    pkg.scidata_add(self.sess, 'pkg_test_031c', 'files/small.csv;format-id=text/csv')
     serial = pkg._serialize(self.sess)
     self.assertNotEqual(None, serial, 'Couldn\'t serialize package "test_031"')
 
@@ -140,14 +152,23 @@ class TESTDataPackage(unittest.TestCase):
     now = datetime.datetime.now()
     pkg_pid = now.strftime('test_040_%Y%m%dT%H%MZ')
     pkg = data_package.DataPackage(pkg_pid)
-    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
-    pkg.scidata_add(self.sess, 'knb-lter-gce.196.27')
-    pkg.scidata_add(self.sess, 'knb-lter-gce.128.27')
+    #    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
+    #    pkg.scidata_add(self.sess, 'knb-lter-gce.196.27')
+    #    pkg.scidata_add(self.sess, 'knb-lter-gce.128.27')
+    pkg.scimeta_add(self.sess, 'doi:10.5072/FK2/KNB/CHL.8.2')
+    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.1')
+    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.2')
+    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.8.1')
     self.assertTrue(pkg.is_dirty(), 'Package is not marked as dirty.')
     new_pid = pkg.save(self.sess)
     try:
       self.assertEqual(pkg_pid, new_pid, 'Couldn\'t save "test_040"')
       self.assertFalse(pkg.is_dirty(), 'Package is still marked as dirty.')
+      f = open("files/expected_dataPackage_test040.xml", "r")
+      expected = f.read()
+      f.close()
+      print expected
+      self.assertEqual(expected, pkg.resmap, "Wrong datapackage")
     finally:
       mn_client = cli_client.CLIMNClient(self.sess)
       mn_client.delete(pkg_pid)
@@ -191,4 +212,5 @@ class TESTDataPackage(unittest.TestCase):
 
 
 if __name__ == "__main__":
+  #    sys.argv = ['', 'TESTDataPackage.test_040']
   unittest.main()

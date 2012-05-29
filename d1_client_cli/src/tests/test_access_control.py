@@ -34,9 +34,10 @@ import sys
 
 try:
   # D1.
-  import d1_common.testcasewithurlcompare
+  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
   # App.
+  sys.path.append('../d1_client_cli/')
   import access_control
   import cli_exceptions
 except ImportError as e:
@@ -46,7 +47,7 @@ except ImportError as e:
 #===============================================================================
 
 
-class TESTCLIAccessControl(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TESTAccessControl(TestCaseWithURLCompare):
   def setUp(self):
     pass
 
@@ -139,5 +140,6 @@ class TESTCLIAccessControl(d1_common.testcasewithurlcompare.TestCaseWithURLCompa
 
 
 if __name__ == "__main__":
+  #  sys.argv = ['', 'TESTAccessControl.test_010']
   logging.basicConfig(level=logging.INFO)
   unittest.main()
