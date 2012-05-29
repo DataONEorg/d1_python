@@ -1,0 +1,87 @@
+Package
+-------
+
+A collection of information is represented by an :term:`OAI-ORE` document.  The "package" commands create and modify ORE/XML documents.
+                                                                                  
+
+For example, assume that there is a science metadata document (``gce.294.17.xml``) and three data files (``test1.csv``, ``test2.csv``, ``test3.csv``).  The below commands would create an data package in DataONE.                                  
+                  
+.. code-block:: html
+                                                                 
+    DataONE Command Line Interface                                                     
+    > package new knb-lter-gce.294.17-PKG                                              
+    > set format-id=eml://ecoinformatics.org/eml-2.1.0                                 
+    > package scimeta add knb-lter-gce.294.17 gce.294.17.xml                           
+    > set format-id=text/csv                                                           
+    > package scidata add knb-lter-gce.294.17_csv1 test1.csv                           
+    > package scidata add knb-lter-gce.294.17_csv2 test2.csv                           
+    > package scidata add knb-lter-gce.294.17_csv3 test3.csv                           
+    > package create                                                                   
+
+
+.. _clear:
+
+clear
+`````
+Clear the current package from memory.
+
+.. _create:
+
+create
+``````
+Save the package in DataONE.
+
+.. _help:
+
+help [sub-command]
+``````````````````
+Help on package commands.
+
+.. _leave:
+
+done
+`````
+If in package mode, go back to the base mode.
+
+.. get:
+
+get [<:term:`pid`>]
+````````````````````
+Retrieve a package.  If no pid is given, use the current pid ("re-load").
+
+.. _new:
+
+new [:term:`package-id <pid>` [:term:`scimeta <pid>` [:term:`scidata <pid>` ...]]]
+``````````````````````````````````````````````````````````````````````````````````
+Create a new package, optionally supplying the the :term:`pid`, the :term:`Science Metadata Object <Science Metadata>`, and a list of :term:`Science Data Objects <Science Data Object>`.
+
+
+.. _scidata:
+
+scidata
+```````
+Manipulate the :term:`science data objects<Science Data Object>` in the package.
+
+* **add** _<pid>_ _[file]_ Add science data object to the package.
+* **del** Remove a given science object from the package.
+* **clear**  Remove all science data objects from the package.
+* **show** Display the given science object.
+
+
+.. _scimeta:
+
+scimeta
+```````
+Manipulate the :term:`science metadata object <Science Metadata>` in the package.
+
+* **add** Add the science metadata object to the package.
+* **del** Remove the given science metadata object from the package.
+* **show** Display the given science metadata object.
+
+
+.. _show:
+
+show [<:term:`pid`>]
+````````````````````
+If no <:term:`pid`> is given, then display the package contents.  Otherwise, display the contents of the given object (if possible).
+

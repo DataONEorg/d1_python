@@ -1,0 +1,187 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Replication Policy &mdash; v1.0.0c7</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0c7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0c7" href="index.html" />
+    <link rel="up" title="Reference" href="reference.html" />
+    <link rel="next" title="Authentication" href="ref_auth.html" />
+    <link rel="prev" title="Access Policy" href="ref_access_policy.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ref_auth.html" title="Authentication"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ref_access_policy.html" title="Access Policy"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="replication-policy">
+<span id="id1"></span><h1>Replication Policy<a class="headerlink" href="#replication-policy" title="Permalink to this headline">¶</a></h1>
+<p>The Replication Policy contains a list of Member Nodes that are specifically
+preferred or blocked as <a class="reference internal" href="glossary.html#term-replication-target"><em class="xref std std-term">replication targets</em></a>. The
+Replication Policy also contains a setting that specifies if replication is
+allowed or disallowed, and the preferred number of replicas.</p>
+<p>The Replication Policy is applied to new objects as they are <a class="reference internal" href="ref_sci.html#create"><em>created</em></a>. The Replication Policy can also be updated on existing Science Data
+Objects with <a class="reference internal" href="ref_sci.html#setreplication"><em>setreplication</em></a>.</p>
+<p>The DataONE infrastructure will never replicate an object to a Member Node that
+is in the list of <a class="reference internal" href="#addblocked"><em>blocked Member Nodes</em></a> for that object. If a
+Member Node is added to the list of blocked Member Nodes after an object has
+been replicated to that Member Node, the DataONE infrastructure will request
+that the Member Node in question remove its copy of the object.</p>
+<p>If the <a class="reference internal" href="#setreplicas"><em>preferred number of replicas</em></a> is larger than the
+number of Member Nodes that have been specified as <a class="reference internal" href="#addpreferred"><em>preferred replication
+targets</em></a>, additional Member Nodes that are not in the blocked
+list will automatically be selected as replication targets.</p>
+<p>If the preferred number of replicas is modified on an existing Science Data
+Object, DataONE will adjust the number of existing replicas by creating and
+deleting replicas of that object as needed.</p>
+<p>Use the <a class="reference internal" href="ref_sci.html#get"><em>get</em></a> command without any parameters to view the current
+Replication Policy.</p>
+<p>Commands to manipulate the Replication Policy:</p>
+<div class="section" id="clearreplication">
+<span id="id2"></span><h2>clearreplication<a class="headerlink" href="#clearreplication" title="Permalink to this headline">¶</a></h2>
+<p>Clear the replication policy. The cleared replication policy has no
+preferred or blocked member nodes, disallows replication and sets the preferred
+number of replicas to zero.</p>
+</div>
+<div class="section" id="addpreferred-member-node">
+<span id="addpreferred"></span><h2>addpreferred &lt;member node&gt;<a class="headerlink" href="#addpreferred-member-node" title="Permalink to this headline">¶</a></h2>
+<p>Add Member Node to list of preferred replication targets.</p>
+</div>
+<div class="section" id="addblocked-member-node">
+<span id="addblocked"></span><h2>addblocked &lt;member node&gt;<a class="headerlink" href="#addblocked-member-node" title="Permalink to this headline">¶</a></h2>
+<p>Add Member Node to list of blocked replication targets.</p>
+</div>
+<div class="section" id="remove-member-node">
+<span id="remove"></span><h2>remove &lt;member node&gt;<a class="headerlink" href="#remove-member-node" title="Permalink to this headline">¶</a></h2>
+<p>Remove Member Node from list of preferred or blocked replication targets.</p>
+</div>
+<div class="section" id="allowreplication">
+<span id="id3"></span><h2>allowreplication<a class="headerlink" href="#allowreplication" title="Permalink to this headline">¶</a></h2>
+<p>Allow objects to be replicated.</p>
+</div>
+<div class="section" id="disallowreplication">
+<span id="id4"></span><h2>disallowreplication<a class="headerlink" href="#disallowreplication" title="Permalink to this headline">¶</a></h2>
+<p>Disallow replication and set the preferred number of replicas to zero.</p>
+</div>
+<div class="section" id="setreplicas-number-of-replicas">
+<span id="setreplicas"></span><h2>setreplicas &lt;number of replicas&gt;<a class="headerlink" href="#setreplicas-number-of-replicas" title="Permalink to this headline">¶</a></h2>
+<p>Set preferred number of replicas. If the preferred number of replicas is set
+to zero, replication is also disallowed.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Replication Policy</a><ul>
+<li><a class="reference internal" href="#clearreplication">clearreplication</a></li>
+<li><a class="reference internal" href="#addpreferred-member-node">addpreferred &lt;member node&gt;</a></li>
+<li><a class="reference internal" href="#addblocked-member-node">addblocked &lt;member node&gt;</a></li>
+<li><a class="reference internal" href="#remove-member-node">remove &lt;member node&gt;</a></li>
+<li><a class="reference internal" href="#allowreplication">allowreplication</a></li>
+<li><a class="reference internal" href="#disallowreplication">disallowreplication</a></li>
+<li><a class="reference internal" href="#setreplicas-number-of-replicas">setreplicas &lt;number of replicas&gt;</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+  <li><a href="reference.html">Reference</a><ul>
+      <li>Previous: <a href="ref_access_policy.html" title="previous chapter">Access Policy</a></li>
+      <li>Next: <a href="ref_auth.html" title="next chapter">Authentication</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2009-2012, DataONE</a>.
+        [ <a href="_sources/ref_replication_policy.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/ref_replication_policy.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>
