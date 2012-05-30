@@ -305,18 +305,14 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   # ----------------------------------------------------------------------------
 
   def _slice_sanity_check(self, start, count):
-    if start < 0:
-      raise d1_common.types.exceptions.InvalidRequest(10002,
-        "'start' must be a positive integer")
     try:
-      if count < 0:
-        raise ValueError
-      if count > d1_common.const.MAX_LISTOBJECTS:
+      start = int(start)
+      count = int(count)
+      if start < 0 or count < 0:
         raise ValueError
     except ValueError:
       raise d1_common.types.exceptions.InvalidRequest(10002,
-        "'count' must be an integer between 0 and {0} (including)".
-        format(d1_common.const.MAX_LISTOBJECTS))
+        "'start' and 'count' must be 0 or a positive integer")
 
 
   def _date_span_sanity_check(self, fromDate, toDate):
