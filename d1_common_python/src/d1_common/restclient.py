@@ -202,8 +202,9 @@ class RESTClient(object):
     headers['Content-Type'] = mmp_body.get_content_type_header()
     headers['Content-Length'] = mmp_body.get_content_length()
 
-    f = open('test.out', 'w')
-    f.write(mmp_body.read())
+##   Debug
+#    f = open('test.out', 'w')
+#    f.write(mmp_body.read())
 
     return self._send_request(method, selector, query=query, headers=headers,
                               body=mmp_body, dump_path=dump_path)
