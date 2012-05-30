@@ -47,15 +47,15 @@ class multipart(object):
   '''
 
   def __init__(self, fields, files, chunk_size=1024**2):
-    '''Constructor for multipart.
+    '''Constructor for MIME Multipart document generator.
     :param fields: sequence of (name, value) elements for regular form fields
     :type fields: [(string, string), ]
     :param files: sequence of (name, filename, value) elements for data to be
-      uploaded as files.
+    uploaded as files.
     :type files: [(string, string, file-like object | string), ]
     :param chunk_size: Max number of bytes to return in a single iteration.
-      If chunk_size is set lower than a few hundred bytes, chunks that include
-      MMP headers and boundaries may exceed this number.
+    If chunk_size is set lower than a few hundred bytes, chunks that include
+    MMP headers and boundaries may exceed this number.
     :type chunk_size: integer
     :returns: None
     '''
@@ -71,7 +71,7 @@ class multipart(object):
   def get_content_length(self):
     '''Get the length, in bytes, of the MIME Multipart document that will be
     generated.
-    
+
     :returns: length
     :returns type: integer
     '''
@@ -84,10 +84,10 @@ class multipart(object):
 
   def reset(self):
     '''Reset the mime_multipart object to its initial state.
-    
+
     This allows the MIME Multipart document to be regenerated from the data with
     which the multipart object was instantiated.
-    
+
     :returns: None
     '''
     self.file_idx = 0
@@ -102,13 +102,13 @@ class multipart(object):
 
   def read(self, n=None):
     '''Read a chunk of the generated MIME Multipart document.
-    
+
     The returned number of bytes will be equal to n for all chunks but the last
     one, which will most likely be smaller. When the method returns an empty
     string, there is no more data to be retrieved.
 
     If n is None, the entire MIME Multipart document is returned.
-    
+
     :param n: Minimum number of bytes to read.
     :type n: integer
     :returns: The bytes that were read.
@@ -209,7 +209,7 @@ class multipart(object):
 
   def _get_len(self, file):
     '''Get the length of a file or FLO.
-    
+
     :param file: File of which to get the length.
     :type file: file object | file-like object
     '''
@@ -229,7 +229,7 @@ class multipart(object):
 
   def _guess_mime_type(self, filename):
     '''Internal method that attempts to map a filename extension to a mimetype.
-    
+
     :param filename: The name of a file, including extension.
     :type filename: string
     :returns: Mimetype.

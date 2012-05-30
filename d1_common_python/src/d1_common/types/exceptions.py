@@ -39,6 +39,7 @@ import pyxb
 
 # D1.
 import d1_common.types.generated.dataoneErrors as dataoneErrors
+import d1_common.util
 '''
 Example of serialized DataONE Exception:
 
@@ -129,6 +130,7 @@ class DataONEException(Exception):
   '''Base class for exceptions raised by DataONE.
   '''
 
+  @d1_common.util.utf8_to_unicode
   def __init__(self, errorCode, detailCode, description, traceInformation=None):
     self.errorCode = errorCode
     self.detailCode = detailCode
@@ -140,14 +142,19 @@ class DataONEException(Exception):
     msg.write(u'name: {0}\n'.format(self.name))
     msg.write(u'errorCode: {0}\n'.format(self.errorCode))
     msg.write(u'detailCode: {0}\n'.format(str(self.detailCode)))
-    msg.write(u'description: {0}\n'.format(self.description.decode('utf-8')))
+    msg.write(u'description: {0}\n'.format(self.description))
     try:
       msg.write(u'PID: {0}\n'.format(self.pid))
     except AttributeError:
       pass
     if self.traceInformation is not None:
       msg.write(u'traceInformation: {0}\n'.format(self.traceInformation))
-    return msg.getvalue()
+    # The unit test framework that comes with Python 2.6 has a bug that has been
+    # fixed in later versions. http://bugs.python.org/issue8313. The bug causes
+    # stack traces containing Unicode to be shown as "unprintable". So, for now,
+    # string representations of exceptions are forced to ascii, where non-ascii
+    # characters are replaced with a box.
+    return unicode(msg.getvalue()).encode("utf-8")
 
   def friendly_format(self):
     '''Serialize to a format more suitable for displaying to end users.
@@ -166,6 +173,21 @@ class DataONEException(Exception):
       pass
     dataone_exception_pyxb.traceInformation = self.traceInformation
     return dataone_exception_pyxb.toxml()
+
+  def serialize_to_headers(self):
+    '''Serialize to a list of HTTP headers (used in responses to HTTP HEAD
+    requests).
+    '''
+    headers = [
+      ('DataONE-Exception-Name', self.__class__.__name__),
+      ('DataONE-Exception-DetailCode', str(self.detailCode)),
+      ('DataONE-Exception-Description', self.description.replace('\n', ' / ')),
+    ]
+    try:
+      headers.append(('DataONE-Exception-PID', self.pid.replace('\n', ' / ')))
+    except AttributeError:
+      pass
+    return headers
 
   @property
   def name(self):
