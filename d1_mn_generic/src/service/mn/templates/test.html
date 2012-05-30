@@ -1,28 +1,45 @@
-<html>
-<head>
-<meta charset="utf-8">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Diagnostics, debugging and testing</title>
 
-<title>Diagnostics, debugging and testing</title>
+<script type="text/javascript">
+function delete_confirmation() {
+  return confirm('You are about to delete all contents on this Member Node. Continue?');
+}
+</script>
 
-<h1>Diagnostics, debugging and testing</h1>
+  </head>
+  <body>
+    <h1>Diagnostics, debugging and testing</h1>
 
-<h2>Replication</h2>
-<ul>
-<li><a href="test/get_replication_queue">Get replication work queue</a>
-<li><a href="test/clear_replication_queue">Clear replication work queue</a>
-</ul>
-
-<h1>Clear everything</h1>
-
-<center>
-<form>
-<p style="font-family:arial black;font-size:40">
-<input type="image" name="clear_db" src="http://s17.postimage.org/xjw88dtun/big_red_button.jpg">
-<br>
-NUKE
-</p>
-</form>
-</center>
-
-</body>
+    <REST interface (v1 GET methods)>
+    <ul>
+      <li><a href="v1/object?fromDate={fromDate}&toDate={toDate}&formatId={formatId}&replicaStatus={replicaStatus}&start={start}&count={count}]">MNRead.listObjects()</a>
+      <li><a href="v1/log?[fromdate={fromDate}][&todate={toDate}][&event={event}][&pidFilter={pidFilter}][&start={start}][&count={count}]">MNCore.getLogRecords()</a>
+      <li><a href="v1/meta/{pid}">MNRead.getSystemMetadata()</a>
+      <li><a href="v1/object/{pid}">MNRead.get()</a>
+      <li><a href="v1/node">MNCore.getCapabilities()</a>
+      <li><a href="v1/checksum/{pid}?checksumAlgorithm={checksumAlgorithm}">MNRead.getChecksum()</a>
+      <li><a href="v1/isAuthorized/{pid}?action={action}">MNAuthorization.isAuthorized()</a>
+      <li><a href="v1/replica/{pid}">MNReplication.getReplica()</a>
+    </ul>
+    
+    <h2>Replication</h2>
+    <ul>
+      <li><a href="test/get_replication_queue">Get replication work queue</a>
+      <li><a href="test/get_replication_queue?excludecompleted">Get replication work queue, excluding completed</a>
+      <li><a href="test/clear_replication_queue">Clear replication work queue</a>
+    </ul>
+    
+    <h2>Misc</h2>
+    <ul>
+      <li><a href="test?clear_db" onclick="return delete_confirmation();">Clear everything (all objects, logs and replication queue)</a>
+      <li><a href="test/echo_session">Display list of active subjects for this session</a>
+      <li><a href="test/trusted_subjects">Display list of implicitly trusted subjects</a>
+    </ul>
+  </body>
 </html>

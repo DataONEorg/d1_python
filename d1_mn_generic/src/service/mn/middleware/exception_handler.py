@@ -77,7 +77,10 @@ GMN complies with this by wrapping any non-DataONE exception in a DataONE
 exception.
 
 When running in Django debug mode (settings.DEBUG = True), non-DataONE
-exceptions are returned as Django HTML exception pages.     
+exceptions are returned as Django HTML exception pages.
+
+Responses to HEAD requests can not contain a body, so the exception is
+serialized to a set of HTTP headers for HEAD requests.
 '''
 
 
@@ -94,15 +97,28 @@ class exception_handler():
       return self.handle_internal_exception()
 
   def handle_dataone_exception(self):
-    return self.serialize_dataone_exception()
+    if self.request.method != 'HEAD':
+      return self.serialize_dataone_exception_for_regular_request()
+    else:
+      return self.serialize_dataone_exception_for_head_request()
 
-  def serialize_dataone_exception(self):
+  def serialize_dataone_exception_for_regular_request(self):
     exception_serialized = self.exception.serialize()
     return HttpResponse(
       exception_serialized,
       status=self.exception.errorCode,
       mimetype=d1_common.const.MIMETYPE_XML
     )
+
+  def serialize_dataone_exception_for_head_request(self):
+    exception_headers = self.exception.serialize_to_headers()
+    http_response = HttpResponse(
+      '', status=self.exception.errorCode,
+      mimetype=d1_common.const.MIMETYPE_XML
+    )
+    for k, v in exception_headers:
+      http_response[k] = v.encode('utf8')
+    return http_response
 
   def handle_internal_exception(self):
     if settings.DEBUG == True:
@@ -118,7 +134,8 @@ class exception_handler():
   def wrap_internal_exception_in_dataone_exception(self):
     exception = d1_common.types.exceptions.ServiceFailure(0, traceback.format_exc(), '')
     exception.detailCode = str(
-      detail_codes.dataone_exception_to_detail_code().detail_code(request, exception)
+      detail_codes.dataone_exception_to_detail_code()
+      .detail_code(self.request, self.exception)
     )
     exception.traceInformation = util.traceback_to_text()
     return exception

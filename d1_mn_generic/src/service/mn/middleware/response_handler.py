@@ -160,12 +160,7 @@ def serialize_object(request, view_result):
   }
 
   d1_type = name_to_func_map[view_result['type']](view_result)
-  try:
-    response.write(d1_type.toxml())
-  except:
-    import pyxb
-    pyxb.RequireValidWhenGenerating(False)
-    response.write(d1_type.toxml())
+  response.write(d1_type.toxml().encode('utf-8'))
 
   # Set headers.
   set_header(response, None, response.tell(), d1_common.const.MIMETYPE_XML)

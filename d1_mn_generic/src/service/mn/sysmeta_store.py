@@ -73,7 +73,10 @@ def read_sysmeta_from_store(pid, serial_version):
 
 def delete_sysmeta_from_store(pid, serial_version):
   sysmeta_path = mn.util.store_path(settings.SYSMETA_STORE_PATH, pid, serial_version)
-  os.unlink(sysmeta_path)
+  try:
+    os.unlink(sysmeta_path)
+  except EnvironmentError:
+    pass
 
 
 class sysmeta():
@@ -97,6 +100,9 @@ class sysmeta():
     self.pid = pid
     with open(sysmeta_path, 'rb') as f:
       sysmeta_xml = f.read()
+    # SysMeta is stored in UTF-8 and CreateFromDocument() does not handle
+    # native Unicode objects, so the SysMeta is passed to CreateFromDocument()
+    # as UTF-8.
     self.sysmeta_pyxb = dataoneTypes.CreateFromDocument(sysmeta_xml)
     if not read_only:
       self._increment_serial_version()

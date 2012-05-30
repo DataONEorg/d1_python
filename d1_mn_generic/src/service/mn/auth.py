@@ -208,8 +208,16 @@ def set_access_policy(pid, access_policy=None):
 # ------------------------------------------------------------------------------
 
 
-def is_trusted(request):
+def is_trusted_subject(request):
   return not request.subjects.isdisjoint(settings.DATAONE_TRUSTED_SUBJECTS)
+
+
+def is_internal_subject(request):
+  return not request.subjects.isdisjoint(settings.GMN_INTERNAL_SUBJECTS)
+
+
+def is_internal_host(request):
+  return request.META['REMOTE_ADDR'] in settings.GMN_INTERNAL_HOSTS
 
 
 def is_allowed(request, level, pid):
@@ -224,7 +232,7 @@ def is_allowed(request, level, pid):
   '''
   # If subjects contains one or more DataONE trusted infrastructure subjects,
   # all rights are given.
-  if is_trusted(request):
+  if is_trusted_subject(request):
     return True
   # - If subject is not trusted infrastructure, a specific permission for
   # subject must exist on object.
@@ -273,7 +281,7 @@ def assert_trusted_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if not is_trusted(request):
+    if not settings.GMN_DEBUG and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for DataONE infrastructure'
       )
@@ -289,10 +297,10 @@ def assert_internal_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if 'gmn_internal' not in request.subjects and \
-      request.META['REMOTE_ADDR'] not in ('127.0.0.1', '174.50.65.170'):
+    if not settings.GMN_DEBUG and not is_internal_subject(request) and not \
+      is_internal_host(request):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for GMN async processes'
+        0, 'Access allowed only for GMN asynchronous processes'
       )
     return f(request, *args, **kwargs)
 
@@ -302,16 +310,19 @@ def assert_internal_permission(f):
 
 
 def assert_create_update_delete_permission(f):
-  '''Access only by subject with Create/Update permission.
-  Allow access to all subjects in debug mode.
+  '''Access only by subject with Create/Update/Delete permission.
+  - Allow access also to trusted subjects.
+  - Allow access to all subjects in debug mode.
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.GMN_DEBUG and \
-      not models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject__subject__in=request.subjects).exists():
+    if not settings.GMN_DEBUG \
+      and not models.WhitelistForCreateUpdateDelete.objects.filter(
+        subject__subject__in=request.subjects).exists() \
+      and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for subjects with Create/Update permission'
+        0, 'Access allowed only for subjects with Create/Update/Delete '
+        'permission'
       )
     return f(request, *args, **kwargs)
 

@@ -50,6 +50,7 @@ import tempfile
 import urllib
 import urlparse
 import uuid
+import StringIO
 
 # D1.
 import d1_common.const
@@ -173,18 +174,24 @@ class ProcessReplicationQueue(object):
     task = self._get_next_replication_task()
     if not task:
       return False
+    self.logger.info('-' * 40)
+    self.logger.info('Processing PID: {0}'.format(task.pid))
     try:
       self._replicate(task)
-    except (d1_common.types.exceptions.DataONEException, ReplicateError) as e:
+    except (
+      d1_common.types.exceptions.DataONEException, ReplicateError, Exception, object
+    ) as e:
       self.logger.exception('Replication failed')
-      if isinstance(d1_common.types.exceptions.DataONEException, e):
+      if isinstance(e, d1_common.types.exceptions.DataONEException):
         self._cn_replicate_task_update(task, 'failed', e)
       else:
         self._cn_replicate_task_update(task, 'failed')
-      self._gmn_replicate_task_update(task, str(e))
-    # Allow any exception in _gmn_replicate_task_update() to halt process.
-    # If the process was to continue without being able to update the status
-    # on the task, it would retry it indefinitely.
+      self._gmn_replicate_task_update(task, str(e) if str(e) else e.__name__)
+      # Allow any exception in _gmn_replicate_task_update() to remain unhandled
+      # so that the script exits. This causes a delay until the next time this
+      # script is run by cron, before the task is retried. Without this, this
+      # script would not exit and a continuous series of retries would happen as
+      # fast as the system could manage.
     return True
 
   def _get_next_replication_task(self):
@@ -194,8 +201,6 @@ class ProcessReplicationQueue(object):
       return None
 
   def _replicate(self, task):
-    self.logger.info('-' * 40)
-    self.logger.info('Processing PID: {0}'.format(task.pid))
     self._gmn_replicate_task_update(task, 'in progress')
     sysmeta_tmp_file = self._get_system_metadata(task)
     science_data_tmp_file = self._get_science_data(task)
@@ -203,29 +208,40 @@ class ProcessReplicationQueue(object):
     self._gmn_replicate_task_update(task, 'completed')
     self._cn_replicate_task_update(task, 'completed')
 
-  def _cn_replicate_task_update(self, task, replication_status):
-    self.cn_client.setReplicationStatus(
-      task.pid, settings.NODE_IDENTIFIER, replication_status
-    )
+  def _cn_replicate_task_update(self, task, replication_status, e=None):
+    try:
+      self.cn_client.setReplicationStatus(
+        task.pid, settings.NODE_IDENTIFIER, replication_status
+      )
+    except Exception as e:
+      self.logger.exception('CNReplication.setReplicationStatus failed')
 
   def _gmn_replicate_task_update(self, task, status):
     return self.gmn_client.update_replicate_task_status(task.taskId, status)
 
   def _get_system_metadata(self, task):
-    sysmeta_stream = self._open_sysmeta_stream_on_coordinating_node(task.pid)
-    return self._copy_stream_to_tmp_file(sysmeta_stream)
+    sysmeta = self._open_sysmeta_stream_on_coordinating_node(task.pid)
+    return self._copy_string_to_tmp_file(sysmeta.toxml())
 
   def _open_sysmeta_stream_on_coordinating_node(self, pid):
-    return self.cn_client.getSystemMetadataResponse(pid)
+    return self.cn_client.getSystemMetadata(pid)
 
   def _get_science_data(self, task):
     source_node_base_url = self._resolve_source_node_id_to_base_url(task.sourceNode)
-    mn_client = d1_client.mnclient.MemberNodeClient(base_url=source_node_base_url)
+    mn_client = d1_client.mnclient.MemberNodeClient(
+      base_url=source_node_base_url,
+      cert_path=self.options.cert_path,
+      key_path=self.options.key_path
+    )
     sci_data_stream = self._open_sci_obj_stream_on_member_node(mn_client, task.pid)
     return self._copy_stream_to_tmp_file(sci_data_stream)
 
+  def _copy_string_to_tmp_file(self, s):
+    return self._copy_stream_to_tmp_file(StringIO.StringIO(s))
+
   def _copy_stream_to_tmp_file(self, stream):
-    f = tempfile.NamedTemporaryFile() # use instead: TemporaryFile()
+    #f = tempfile.TemporaryFile() # for production
+    f = tempfile.NamedTemporaryFile(delete=False) # for debugging
     self.logger.debug(f.name)
     shutil.copyfileobj(stream, f)
     f.seek(0)
@@ -241,8 +257,8 @@ class ProcessReplicationQueue(object):
   def _get_node_list(self):
     return self.cn_client.listNodes()
 
-  def _open_sci_obj_stream_on_member_node(self, gmn_client, pid):
-    return gmn_client.get(pid)
+  def _open_sci_obj_stream_on_member_node(self, mn_client, pid):
+    return mn_client.getReplica(pid)
 
   def _gmn_replicate_create(self, task, sci_obj, sysmeta):
     return self.gmn_client.internal_replicate_create(task.pid, sci_obj, sysmeta)

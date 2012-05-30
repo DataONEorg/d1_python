@@ -33,65 +33,123 @@
 import os
 import sys
 
-# Discover the path of this module
+# D1.
+import d1_common.const
+
+# Discover the path of this module.
+# Use this function to specify a path that is relative to the settings.py file.
+# Absolute paths are specified directly, without using this function.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
-#IDENTIFIER = 'GMN_TEST'
-#NAME = 'GMN TEST'
-#DESCRIPTION = 'GMN'
-#BASE_URL = 'http://localhost:8000'
-#REPLICATE = TRUE
-#SYNCHRONIZE = TRUE
-#NODE_TYPE = MN
-#
-#SERVICE_NAME = "GMN TEST"
-#SERVICE_VERSION = '0.5'
-#SERVICE_AVAILABLE = TRUE
-#
-#
-
 # The name under which this Member Node was registered with DataONE.
-NODE_IDENTIFIER = 'test_gmn'
+# On the form, "urn:node:*"
+NODE_IDENTIFIER = 'urn:node:mnMyDataONEMemberNode'
 
-# Enable debug mode.
-# * WARNING: IN DEBUG MODE, CLIENTS CAN OVERRIDE ALL ACCESS CONTROL RULES AND
-#   RETRIEVE, DELETE OR REPLACE ANY OBJECT ON THE MEMBER NODE.
-# * Enables GMN functionality that should be accessible only during testing and
-#   debugging.
-# * Causes Django to return a page with extensive debug information if a bug is
-#   encountered while servicing a request.
-DEBUG = True
-
-# Enable Django exception page for internal errors.
-# * True: GMN will return a Django exception page for internal errors.
-# * False: GMN returns a stack trace in a DataONE ServiceFailure exception for
+# Enable Django debug mode.
+# True:
+# * May expose sensitive information.
+# * GMN returns a HTML Django exception page with extensive debug information
+#   for internal errors.
+# * GMN returns a HTML Django 404 page that lists all valid URL patterns for
+#   invalid URLs.
+# * The profiling subsystem can be accessed.
+# False:
+# * Use for production.
+# * GMN returns a stack trace in a DataONE ServiceFailure exception for
 #   internal errors.
-# * Only available in debug mode. In production, GMN never returns a Django
-#   exception page.
-GET_DJANGO_EXCEPTION_IN_BROWSER = False
+# * GMN returns a regular 404 page for invalid URLs. The page contains a link
+#   to the GMN home page.
+DEBUG = False
+
+# Enable GMN debug mode.
+# True:
+# * Enables GMN functionality that should be accessible only during testing and
+#   debugging. Use only when there is no sensitive information on the MN.
+# * Clients can override all access control rules and retrieve, delete or
+#   replace any object on the MN.
+# * Skips authentication check for trusted subjects, async processes and
+#   create/update/delete.
+# False:
+# * Use for production.
+GMN_DEBUG = False
+
+# Enable monitoring.
+# * Enables aspects of internal GMN operations to be monitored by public
+#   subjects. This function does not expose any sensitive information and should
+#   be safe to keep enabled in production.
+# * When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
+MONITOR = True
+
+# Enable request echo.
+# * True: GMN will not process any requests. Instead, it will echo the requests
+#   back to the client. The requests are formatted to be human readable. This
+#   enables a client to see exactly what GMN receives after processing by
+#   Apache, mod_wsgi and Django. It is useful for debugging both clients and
+#   GMN.
+# * False: GMN processes all requests as normal.
+# * Only available in debug mode.
+ECHO_REQUEST_OBJECT = False
 
 # Set the level of logging that GMN should perform. Choices are:
 # DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
-if DEBUG:
+if DEBUG or GMN_DEBUG:
   LOG_LEVEL = 'DEBUG'
 else:
   LOG_LEVEL = 'WARNING'
 
-# Implicitly trusted DataONE infrastructure. Connections containing client
-# side certificates with these subjects bypass access control rules and have
-# access to REST interfaces meant only for use by CNs.
-DATAONE_TRUSTED_SUBJECTS = [
-  'CN=testUserWriter,DC=dataone,DC=org',
-  'CN=testUserReader,DC=dataone,DC=org',
-  'CN=testUserNoRights,DC=dataone,DC=org',
-  'cn=test,dc=dataone,dc=org',
-  'cn=c3p0,dc=dataone,dc=org',
-]
+# On startup, GMN connects to the DataONE root CN to discover details about the
+# DataONE environment. For a production instance of GMN, this should be set to
+# the default DataONE root for production systems. For test instances of GMN,
+# this should be set to the root of the environment in which GMN is to run.
+# If GMN_DEBUG is True, the trusted subjects are not required, as the
+# authentication checks for them are skipped. Therefore, they are not retrieved.
+#DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
+#DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
+DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
+
+# Subjects for implicitly trusted DataONE infrastructure. Connections containing
+# client side certificates with these subjects bypass access control rules and
+# have access to REST interfaces meant only for use by CNs.
+DATAONE_TRUSTED_SUBJECTS = set(
+  [
+    #  'CN=cn-dev.dataone.org,DC=dataone,DC=org',
+    #  'CN=cn-dev-3.dataone.org,DC=dataone,DC=org',
+    #  'CN=cn-dev-2.dataone.org,DC=dataone,DC=org',
+    #
+    #  # new ca certs.
+    #  'CN=urn:node:cnSandboxUNM1,DC=dataone,DC=org',
+    #  'CN=urn:node:cnSandboxUCSB1,DC=dataone,DC=org',
+    #  'CN=urn:node:cnSandboxORC1,DC=dataone,DC=org',
+    #
+    #  # old ca certs.
+    #  'CN=cn-sandbox-unm-1.dataone.org,DC=dataone,DC=org',
+    #  'CN=cn-sandbox-ucsb-1.dataone.org,DC=dataone,DC=org',
+    #  'CN=cn-sandbox-orc-1.dataone.org,DC=dataone,DC=org',
+    #
+    #  'CN=cn-stage-orc-1.dataone.org,DC=dataone,DC=org',
+    #
+    #  'CN=testUserWriter,DC=dataone,DC=org',
+    #  'CN=testUserReader,DC=dataone,DC=org',
+    #  'CN=testUserNoRights,DC=dataone,DC=org',
+  ]
+)
+
+# Subjects for asynchronous GMN processes. Connections containing client side
+# certificates with these subjects are allowed to connect to REST services
+# internal to GMN. The internal REST interfaces provide functionality required
+# by the asynchronous components.
+GMN_INTERNAL_SUBJECTS = set(['CN=cn-dev.dataone.org,DC=dataone,DC=org', ])
+
+# As an alternative to the certificate based authentication for asynchronous
+# GMN processes set up in GMN_INTERNAL_SUBJECTS, this setting can be used
+# for allowing the processes to connect based on the IP address of the
+# originating server.
+GMN_INTERNAL_HOSTS = ['127.0.0.1', ]
 
 # In debug mode, a special test subject is added to the list of trusted
 # subjects.
-if DEBUG:
-  DATAONE_TRUSTED_SUBJECTS.append('gmn_test_subject_trusted')
+if GMN_DEBUG:
+  DATAONE_TRUSTED_SUBJECTS.add('gmn_test_subject_trusted')
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
@@ -110,44 +168,68 @@ DATABASES = {
   }
 }
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
+# Path to the directory that holds media.
 MEDIA_ROOT = _here('stores')
 
-# GMN stores.
+# Paths to the GMN data stores. The bytes of all the objects handled by
+# GMN are stored here.
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
 
+# The Node Registry XML Document
+NODE_REGISTRY_XML_PATH = os.path.join(STATIC_STORE_PATH, 'nodeRegistry.xml')
+
+# Path to the log file.
 LOG_PATH = _here('./gmn.log')
-ROOT_PATH = _here('./')
 
 # Set up logging.
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-              'format': '%(asctime)s %(module)s %(levelname)-8s %(message)s',
-              'datefmt': '%y/%m/%d %H:%M:%S'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
+  'version': 1,
+  'disable_existing_loggers': True,
+  'formatters': {
+    'verbose': {
+        'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s ' \
+                  '%(process)d %(thread)d %(message)s',
+        'datefmt': '%Y-%m-%d %H:%M:%S'
     },
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': LOG_PATH,
-            'formatter': 'verbose'
-        },
+    'simple': {
+      'format': '%(levelname)s %(message)s'
     },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'propagate': True,
-            'level': LOG_LEVEL,
-        },
-    }
+  },
+  'handlers': {
+    'file': {
+      'level': 'DEBUG',
+      'class': 'logging.FileHandler',
+      'filename': LOG_PATH,
+      'formatter': 'verbose'
+    },
+    'null': {
+      'level': 'DEBUG',
+      'class': 'django.utils.log.NullHandler',
+    },
+  },
+  'loggers': {
+    # The "catch all" logger is denoted by ''.
+    '': {
+      'handlers': ['file'],
+      'propagate': True,
+      'level': 'DEBUG',
+    },
+    # Django uses this logger.
+    'django': {
+      'handlers': ['file'],
+      'propagate': True,
+      'level': 'DEBUG', #LOG_LEVEL,
+    },
+    # Messages relating to the interaction of code with the database. For
+    # example, every SQL statement executed by a request is logged at the DEBUG
+    # level to this logger.
+    'django.db.backends': {
+      'handlers': ['null'],
+      # Set logging level to "WARNING" to suppress logging of SQL statements.
+      'level': 'WARNING',
+      'propagate': False
+    },
+  }
 }

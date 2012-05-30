@@ -54,6 +54,7 @@ from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.db.models import Avg, Max, Min, Count
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 # D1.
 import d1_common.const
@@ -78,13 +79,13 @@ import mn.view_shared
 import service.settings
 
 # ------------------------------------------------------------------------------
-# Portal.
+# Diagnostics portal.
 # ------------------------------------------------------------------------------
 
 
 @mn.restrict_to_verb.get
 def diagnostics(request):
-  if 'clear_db.x' in request.GET:
+  if 'clear_db' in request.GET:
     _delete_all_objects()
     _clear_replication_queue()
   return render_to_response('test.html', {})
@@ -96,9 +97,13 @@ def diagnostics(request):
 
 @mn.restrict_to_verb.get
 def get_replication_queue(request):
-  return render_to_response('replicate_get_queue.xml',
-    {'replication_queue': mn.models.ReplicationQueue.objects.all() },
-    mimetype=d1_common.const.MIMETYPE_XML)
+  q = mn.models.ReplicationQueue.objects.all()
+  if 'excludecompleted' in request.GET:
+    q = mn.models.ReplicationQueue.objects.filter(~Q(status__status='completed'))
+  return render_to_response(
+    'replicate_get_queue.xml', {'replication_queue': q},
+    mimetype=d1_common.const.MIMETYPE_XML
+  )
 
 
 @mn.restrict_to_verb.get
@@ -136,11 +141,18 @@ def delete_all_access_policies(request):
 # ------------------------------------------------------------------------------
 
 
+@mn.restrict_to_verb.get
 def echo_session(request):
-  response = HttpResponse()
-  for subject in request.subjects:
-    response.write('<p>{0}</p>'.format(subject))
-  return response
+  return render_to_response('echo_session.xhtml',
+                            {'subjects': sorted(request.subjects) },
+                            mimetype=d1_common.const.MIMETYPE_XHTML)
+
+
+@mn.restrict_to_verb.get
+def trusted_subjects(request):
+  return render_to_response('trusted_subjects.xhtml',
+    {'subjects': sorted(service.settings.DATAONE_TRUSTED_SUBJECTS) },
+    mimetype=d1_common.const.MIMETYPE_XHTML)
 
 # ------------------------------------------------------------------------------
 # Misc.
@@ -150,7 +162,7 @@ def echo_session(request):
 def create(request, pid):
   '''Version of create() that performs no locking, testing or validation.
   Used for inserting test objects.'''
-  sysmeta_xml = request.FILES['sysmeta'].read()
+  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
   mn.view_shared.create(request, pid, sysmeta)
   return mn.view_shared.http_response_with_boolean_true_type()

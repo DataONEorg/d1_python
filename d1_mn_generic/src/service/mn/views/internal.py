@@ -114,7 +114,7 @@ def replicate_task_update(request, task_id, status):
 @mn.lock_pid.for_write
 @mn.auth.assert_internal_permission
 def replicate_create(request, pid):
-  sysmeta_xml = request.FILES['sysmeta'].read()
+  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
   mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, pid, sysmeta)
   mn.view_shared.create(request, pid, sysmeta)
@@ -139,33 +139,26 @@ def update_sysmeta(request, pid):
   mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
 
   # Deserialize metadata (implicit validation).
-  sysmeta_xml = request.FILES['sysmeta'].read()
-  try:
-    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
-  except:
-    err = sys.exc_info()[1]
-    raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'System Metadata validation failed: {0}'.format(str(err))
-    )
+  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
+  sysmeta = dataoneTypes.CreateFromDocument(sysmeta_xml)
 
-  # Note: No sanity checking is done on the provided System Metadata. It is
-  # assumed that what the async process pulls from the Coordinating Node makes
-  # sense.
+  # No sanity checking is done on the provided System Metadata. It comes
+  # from a CN and is implicitly trusted.
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-  sciobj.set_format(sysmeta_obj.formatId)
-  sciobj.checksum = sysmeta_obj.checksum.value()
-  sciobj.set_checksum_algorithm(sysmeta_obj.checksum.algorithm)
-  sciobj.mtime = d1_common.date_time.is_utc(sysmeta_obj.dateSysMetadataModified)
-  sciobj.size = sysmeta_obj.size
-  sciobj.serial_version = sysmeta_obj.serialVersion
+  sciobj.set_format(sysmeta.formatId)
+  sciobj.checksum = sysmeta.checksum.value()
+  sciobj.set_checksum_algorithm(sysmeta.checksum.algorithm)
+  sciobj.mtime = d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
+  sciobj.size = sysmeta.size
+  sciobj.serial_version = sysmeta.serialVersion
   sciobj.archived = False
   sciobj.save()
 
   mn.util.update_db_status('update successful')
 
   # If an access policy was provided in the System Metadata, set it.
-  if sysmeta_obj.accessPolicy:
-    auth.set_access_policy(pid, sysmeta_obj.accessPolicy)
+  if sysmeta.accessPolicy:
+    auth.set_access_policy(pid, sysmeta.accessPolicy)
   else:
     auth.set_access_policy(pid)
 

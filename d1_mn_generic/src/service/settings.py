@@ -83,6 +83,7 @@ MIDDLEWARE_CLASSES = (
   'service.mn.middleware.response_handler.response_handler',
   #'service.mn.middleware.profiling_handler.profiling_handler',
   'service.mn.middleware.view_handler.view_handler',
+  'service.mn.middleware.startup_handler.startup_handler',
   # GMN requires that TransactionMiddleware is enabled. TransactionMiddleware
   # causes each view to be wrapped in an implicit transaction. The transaction
   # is rolled back if the view does not successfully return. Upon a successful
@@ -95,6 +96,14 @@ MIDDLEWARE_CLASSES = (
   # view_handler.
   'django.middleware.transaction.TransactionMiddleware',
 )
+
+#CACHES = {
+#  'default': {
+#    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#    'LOCATION': 'trusted_subjects',
+#    'TIMEOUT': -1,
+#  }
+#}
 
 ROOT_URLCONF = 'service.urls'
 

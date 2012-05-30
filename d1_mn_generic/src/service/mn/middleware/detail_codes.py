@@ -122,6 +122,10 @@ class dataone_exception_to_detail_code():
     for path_rx, module, method, exception_name, error_code, detail_code in self.detail_codes_mapping:
       if path_rx == '':
         continue
-      if exception.name == exception_name and re.search(path_rx, request.path):
-        return detail_code
+      try:
+        if exception.name == exception_name and re.search(path_rx, request.path):
+          return detail_code
+      except AttributeError:
+        pass
+
     return 0

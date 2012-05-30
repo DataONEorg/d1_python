@@ -50,44 +50,51 @@ urlpatterns = patterns(
   # function, which checks the verb and dispatches to the appropriate handler.
 
   # Tier 1: Core API (MNCore)
-  # GET /monitor/ping
-  (r'^v1/monitor/ping/?$', 'monitor_ping'),
-  # GET /log
-  (r'^v1/log/?$', 'event_log_view'),
-  # GET /  or  GET /node
-  (r'^v1/?$', 'node'),
-  (r'^v1/node/?$', 'node'),
+  # MNCore.ping() - GET /monitor/ping
+  (r'^v1/monitor/ping/?$', 'get_monitor_ping'),
+  # MNCore.getLogRecords() - GET /log
+  (r'^v1/log/?$', 'get_log'),
+  # MNCore.getCapabilities() - GET / and GET /node
+  (r'^v1/?$', 'get_node'),
+  (r'^v1/node/?$', 'get_node'),
 
   # Tier 1: Read API (MNRead)
-  # GET /object/{pid}
-  # HEAD /object/{pid}
-  (r'^v1/object/(.+)$', 'object_pid'),
-  # GET /meta/{pid}
-  (r'^v1/meta/(.+)$', 'meta_pid_get'),
-  # GET /checksum/{pid}[?checksumAlgorithm={checksumAlgorithm}]
-  (r'^v1/checksum/(.+)$', 'checksum_pid'),
-  # GET /object (listObjects)
-  (r'^v1/object/?$', 'object_no_pid'),
-  # POST /error
-  (r'^v1/error/?$', 'error'),
+  # MNRead.get() - GET /object/{pid}
+  (r'^v1/object/(.+)$', 'dispatch_object_pid'),
+  # MNRead.getSystemMetadata() - GET /meta/{pid} 
+  (r'^v1/meta/(.+)$', 'get_meta_pid'),
+  # MNRead.describe() - HEAD /object/{pid}
+  # (handled by object_pid dispatcher)
+  # MNRead.getChecksum() - GET /checksum/{pid}
+  (r'^v1/checksum/(.+)$', 'get_checksum_pid'),
+  # MNRead.listObjects() - GET /object
+  (r'^v1/object/?$', 'dispatch_object'),
+  # MNRead.synchronizationFailed() - POST /error
+  (r'^v1/error/?$', 'post_error'),
+  # MNRead.getReplica() - GET /replica/{pid}
+  (r'^v1/replica/(.+)/?$', 'get_replica_pid'),
 
   # Tier 2: Authorization API  (MNAuthorization)
-  # GET /isAuthorized/{pid}?action={action}
-  (r'^v1/isAuthorized/(.+)/?$', 'is_authorized'),
+  # MNAuthorization.isAuthorized() - GET /isAuthorized/{pid}
+  (r'^v1/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
+  # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
+  (r'^v1/dirtySystemMetadata/?$', 'post_dirty_system_metadata'),
 
   # Tier 3: Storage API (MNStorage)
-  # Handled by the object dispatcher:
   # MNStorage.create() - POST /object
-  # Handled by the object_pid dispatcher:
+  # (handled by object dispatcher)
   # MNStorage.update() - PUT /object/{pid}
+  # (handled by object dispatcher)
+  # MNStorage.generateIdentifier()
+  (r'^v1/generate/?$', 'post_generate_identifier'),
   # MNStorage.delete() - DELETE /object/{pid}
-  # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
-  (r'^v1/generate/?$', 'generate_identifier_post'),
-  (r'^v1/dirtySystemMetadata/?$', 'dirty_system_metadata_post'),
+  # (handled by object dispatcher)
+  # MNStorage.archive() - PUT /archive/{pid}
+  (r'^v1/archive/(.+)/?$', 'put_archive_pid'),
 
   # Tier 4: Replication API (MNReplication)
-  # POST /replicate  
-  (r'^v1/replicate/?$', 'replicate'),
+  # MNReplication.replicate() - POST /replicate  
+  (r'^v1/replicate/?$', 'post_replicate'),
 )
 
 urlpatterns += patterns(
@@ -129,6 +136,7 @@ if settings.GMN_DEBUG:
     (r'^test/exception/(.+?)/?$', 'exception'),
     (r'^test/delete_all_objects/?$', 'delete_all_objects'),
     (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),
+    (r'^test/trusted_subjects/?$', 'trusted_subjects'),
     # Event Log.
     (r'^test/delete_event_log/?$', 'delete_event_log'),
     (r'^test/inject_fictional_event_log/?$', 'inject_fictional_event_log'),

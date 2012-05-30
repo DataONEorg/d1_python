@@ -92,7 +92,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     date = d1_common.date_time.from_iso8601(date_str)
   except d1_common.date_time.iso8601.ParseError, e:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid date format: {0} {1}'.format(request.GET[key], str(e))
+      0, 'Invalid date format, "{0}": {1}'.format(date_str, str(e))
     )
   mn.view_asserts.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
@@ -118,6 +118,27 @@ def add_string_filter(query, request, column_name, param_name):
   if value is None:
     return query
   return query.filter(**{column_name: value})
+
+
+def add_string_begins_with_filter(query, request, column_name, param_name):
+  '''Add a string filter to a QuerySet. If the provided parameter name is
+  not present in the request, no filtering is performed.
+  :param query: The query to which to add the filters.
+  :type query: QuerySet
+  :param request: The request object to get parameter from.
+  :type request: HttpRequest
+  :param param_name: Name of URL parameter to get string from.
+  :type param_name: string
+  :param column_name: Table column name.
+  :type column_name: string
+  :return: Filtered query.
+  :return type: QuerySet
+  '''
+  value = request.GET.get(param_name, None)
+  if value is None:
+    return query
+  filter_arg = '{0}__startswith'.format(column_name)
+  return query.filter(**{filter_arg: value})
 
 
 def add_slice_filter(query, request):

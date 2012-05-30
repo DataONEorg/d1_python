@@ -41,21 +41,30 @@ to that user (as designated in the Subject DN).
 The list of subjects to use for access control is created with the following
 algorithm:
 
-1. Start with empty list of subjects
-2. Add the symbolic subject, "public"
-3. If the connection was not made with a certificate, stop here.
-4. Get the DN from the Subject and serialize it to a standardized string. This
-   string is called Subject below.
-5. Add Subject
-6. Add the symbolic subject, "authenticatedUser"
-7. If the certificate does not have a SubjectInfo extension, stop here.
-8. Find the Person that has a subject that matches the Subject.
-9. If the Person has the verified flag set, add the symbolic subject, "verifiedUser"
-10. Iterate over the Person's isMemberOf and add those subjects
-11. Iterate over the Person's equivalentIdentity and for each of them:
-  - Add its subject
-  - Find the corresponding Person
-  - Iterate over that Person's isMemberOf and add those subjects
+- Start with empty list of subjects
+- Add the symbolic subject, "public"
+- If the connection was not made with a certificate:
+  - Stop.
+- Get the DN from the Subject and serialize it to a standardized string. This
+  string is called Subject below.
+- Add the symbolic subject, "authenticatedUser"
+- If the certificate does not have a SubjectInfo extension:
+  - Add Subject
+  - Stop.
+- Perform recursive search with detection of circular dependencies, starting
+  with Subject.
+  - If subject is not in list of subjects:
+    - Add subject to list of subjects.
+    - Search for Person with subject.
+      - If Person is found:
+        - If the Person has the verified flag set and if "verifiedUser" has not
+          already been added, add it.
+        - Iterate over isMemberOf and equivalentIdentity:
+          - Recursively add those subjects.
+    - Search for Group with Subject.
+      - If Group is found:
+        - Iterate over hasMember:
+          - Recursively add those subjects.
 '''
 
 # Stdlib.
@@ -81,20 +90,22 @@ import d1_common.util
 import d1_common.date_time
 import d1_common.url
 import d1_common.const
+import d1_x509v3_certificate_extractor
 
 # App.
 import settings
-import x509_extract_session
 
 
 class process_session(object):
   def __init__(self, request):
     '''Process the session in the certificate and store the result in the
     request object.
+    - The primary subject is the certificate subject DN, serialized to a
+      DataONE compliant subject string.
     - The SubjectInfo is stored unprocessed in request.subject_info.
     - The entire list of subjects (primary subject, equivalent identities and
       group memberships) is stored in request.subjects.
-    - In addition, the certificate subject DN is stored separately in
+    - In addition, the primary subject is stored separately in
       request.primary_subject.
     '''
     self.request = request
@@ -111,6 +122,10 @@ class process_session(object):
     else:
       self._process_unauthenticated_session()
 
+  def _is_certificate_provided(self):
+    return 'SSL_CLIENT_CERT' in self.request.META and \
+      self.request.META['SSL_CLIENT_CERT'] != ''
+
   def _add_symbolic_subject_public(self):
     self.subjects.add(d1_common.const.SUBJECT_PUBLIC)
 
@@ -121,55 +136,7 @@ class process_session(object):
   def _process_authenticated_session(self):
     self.primary_subject, self.subject_info = self._get_session_from_certificate()
     self._add_symbolic_subject_authenticated()
-    self._add_primary_subject()
     self._process_subject_info()
-
-  def _add_symbolic_subject_authenticated(self):
-    self.subjects.add(d1_common.const.SUBJECT_AUTHENTICATED)
-
-  def _process_subject_info(self):
-    if self.subject_info is None:
-      return
-    self._add_symbolic_subject_verified()
-    self._add_subject_info()
-
-  def _add_symbolic_subject_verified(self):
-    person = self._find_person_by_subject(self.primary_subject)
-    if person.verified:
-      self.subjects.add(d1_common.const.SUBJECT_VERIFIED)
-
-  def _add_primary_subject(self):
-    self.subjects.add(self.primary_subject)
-
-  def _add_subject_info(self):
-    person = self._find_person_by_subject(self.primary_subject)
-    self._add_person_is_member_of(person)
-    self._add_equivalent_identities(person)
-    for person in self.subject_info.person:
-      self.subjects.add(person.subject.value())
-
-  def _find_person_by_subject(self, subject):
-    for person in self.subject_info.person:
-      if person.subject.value() == subject:
-        return person
-    raise d1_common.types.exceptions.InvalidToken(0,
-      'SubjectInfo does not have any Person records matching Subject: {0}'\
-      .format(person.subject.value()))
-
-  def _add_person_is_member_of(self, person):
-    for is_member_of in person.isMemberOf:
-      self.subjects.add(is_member_of.value())
-
-  def _add_equivalent_identities(self, person):
-    for equivalent_identity in person.equivalentIdentity:
-      subject = equivalent_identity.value()
-      self.subjects.add(subject)
-      person = self._find_person_by_subject(subject)
-      self._add_person_is_member_of(person)
-
-  def _is_certificate_provided(self):
-    return 'SSL_CLIENT_CERT' in self.request.META and \
-      self.request.META['SSL_CLIENT_CERT'] != ''
 
   def _get_session_from_certificate(self):
     subject, subject_info_xml = self._extract_session_from_x509_v3_certificate()
@@ -180,7 +147,7 @@ class process_session(object):
 
   def _extract_session_from_x509_v3_certificate(self):
     try:
-      return x509_extract_session.extract(self.request.META['SSL_CLIENT_CERT'])
+      return d1_x509v3_certificate_extractor.extract(self.request.META['SSL_CLIENT_CERT'])
     except Exception as e:
       raise d1_common.types.exceptions.InvalidToken(
         0, 'Error extracting session from certificate: {0}'.format(str(e))
@@ -191,11 +158,88 @@ class process_session(object):
       return dataoneTypes.CreateFromDocument(subject_info_xml)
     except Exception as e:
       raise d1_common.types.exceptions.InvalidToken(
-        0, 'Error deserializing SubjectInfo: {0}'.format(str(e))
+        0, 'Error deserializing SubjectInfo: {0}\n{1}'.format(
+          str(e), subject_info_xml)
       )
+
+  def _add_symbolic_subject_authenticated(self):
+    self.subjects.add(d1_common.const.SUBJECT_AUTHENTICATED)
+
+  def _process_subject_info(self):
+    if self.subject_info is None:
+      self._add_primary_subject()
+      return
+    self._add_subject_info()
+
+  def _add_symbolic_subject_verified(self):
+    self.subjects.add(d1_common.const.SUBJECT_VERIFIED)
+
+  def _add_primary_subject(self):
+    self.subjects.add(self.primary_subject)
+
+  # Process SubjectInfo.
+
+  def _add_subject_info(self):
+    self._add_subject(self.primary_subject)
+
+  def _add_subject(self, subject):
+    if subject in self.subjects:
+      return
+    self.subjects.add(subject)
+    self._add_person_subject(subject)
+    self._add_group_subject(subject)
+
+  # Person
+
+  def _add_person_subject(self, subject):
+    person = self._find_person_by_subject(subject)
+    if not person:
+      return
+    self._if_person_is_verified_add_symbolic_subject(person)
+    self._add_person_is_member_of(person)
+    self._add_person_equivalent_identities(person)
+
+  def _find_person_by_subject(self, subject):
+    for person in self.subject_info.person:
+      if person.subject.value() == subject:
+        return person
+
+  def _add_person_is_member_of(self, person):
+    for is_member_of in person.isMemberOf:
+      self._add_subject(is_member_of.value())
+
+  def _add_person_equivalent_identities(self, person):
+    for equivalent_identity in person.equivalentIdentity:
+      self._add_subject(equivalent_identity.value())
+
+  def _if_person_is_verified_add_symbolic_subject(self, person):
+    if person.verified:
+      self.subjects.add(d1_common.const.SUBJECT_VERIFIED)
+
+  # Group
+
+  def _add_group_subject(self, subject):
+    group = self._find_group_by_subject(subject)
+    if not group:
+      return
+    self._add_members(group)
+
+  def _find_group_by_subject(self, subject):
+    for group in self.subject_info.group:
+      if group.subject.value() == subject:
+        return group
+
+  def _add_members(self, group):
+    for member in group.hasMember:
+      self._add_subject(member.value())
 
   def _log_session(self):
     logging.info('Session:')
     logging.info('  {0} (primary)'.format(self.request.primary_subject))
     for subject in self.request.subjects:
       logging.info('  {0}'.format(subject))
+    logging.debug('SubjectInfo:')
+    if self.subject_info:
+      logging.debug(u'  {0}'.format(self.subject_info.toxml()))
+    else:
+      logging.debug(u'  <none>')

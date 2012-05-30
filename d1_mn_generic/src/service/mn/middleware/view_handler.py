@@ -62,17 +62,6 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
-    session.process_session(request)
-
-    if settings.GMN_DEBUG == True:
-      # For simulating an HTTPS connection with client authentication when
-      # debugging via regular HTTP, a list of subjects can be passed in by using
-      # a vendor specific extension. If this is used together with TLS, the list
-      # is added to the one derived from any included client side certificate.
-      # The public symbolic principal is always included in the subject list.
-      if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
-        request.subjects.update(request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t'))
-
     # Decode view parameters. This is the counterpart to the changes made to
     # request.path_info detailed in request_handler.py.
     view_args_list = []
@@ -87,6 +76,7 @@ class view_handler():
     # Django's own processing, so the middleware functions must then be called
     # manually.
     try:
+      self.process_session(request)
       response = view_func(request, *view_args, **view_kwargs)
     except Exception, e:
       # If the view raised an exception, run it through exception middleware,
@@ -104,3 +94,15 @@ class view_handler():
     # The request was successfully processed and the response is returned to
     # the client.
     return response
+
+  def process_session(self, request):
+    session.process_session(request)
+
+    if settings.GMN_DEBUG == True:
+      # For simulating an HTTPS connection with client authentication when
+      # debugging via regular HTTP, a list of subjects can be passed in by using
+      # a vendor specific extension. If this is used together with TLS, the list
+      # is added to the one derived from any included client side certificate.
+      # The public symbolic principal is always included in the subject list.
+      if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
+        request.subjects.update(request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t'))

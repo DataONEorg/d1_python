@@ -80,6 +80,23 @@ def register(options, arguments):
   logging.info('Server response:\n{0}'.format(response.read()))
 
 
+def update(options, arguments):
+  try:
+    node = load_node_doc(arguments[0])
+  except IOError:
+    return
+
+  client = d1_client.cnclient.CoordinatingNodeClient(
+    options.dataone_url,
+    cert_path=options.cert_path,
+    key_path=options.key_path
+  )
+
+  response = client.updateNodeCapabilitiesResponse('urn:node:mnSandboxORC1', node)
+
+  logging.info('Server response:\n{0}'.format(response.read()))
+
+
 def main():
   log_setup()
 
@@ -112,6 +129,7 @@ def main():
     type='string',
     default='https://cn-sandbox.dataone.org/cn'
   )
+  parser.add_option('--update', dest='update', action='store_true', default=False)
   (options, arguments) = parser.parse_args()
 
   update_verbose(options.verbose)
@@ -120,7 +138,10 @@ def main():
     logging.error('Must provide a valid node registration xml document')
     sys.exit()
 
-  register(options, arguments)
+  if options.update:
+    update(options, arguments)
+  else:
+    register(options, arguments)
 
 
 if __name__ == '__main__':

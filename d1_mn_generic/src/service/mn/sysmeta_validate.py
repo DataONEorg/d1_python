@@ -53,8 +53,8 @@ def _validate_sysmeta_identifier(pid, sysmeta):
 def _validate_sysmeta_filesize(request, sysmeta):
   if sysmeta.size != request.FILES['object'].size:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'Object size in System Metadata does not match that of the uploaded '
-      'object'
+      0, 'Object size in System Metadata ({0} bytes) does not match that of the '
+      'uploaded object ({1} bytes)'.format(sysmeta.size, request.FILES['object'].size)
     )
 
 

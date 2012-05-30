@@ -74,13 +74,23 @@ import service.settings
 
 
 def deserialize_system_metadata(sysmeta_xml):
+  '''XML document is assumed to be a Unicode object'''
   try:
     return dataoneTypes.CreateFromDocument(sysmeta_xml)
-  except:
-    logging.error('System Metadata validation failed:\n{0}'.format(sysmeta_xml))
-    err = sys.exc_info()[1]
+    #return dataoneTypes.CreateFromDocument(sysmeta_xml.decode('utf-8'))
+  except Exception as e:
+    # TODO: When the PyXB exception contains Unicode, I have been unable to
+    # retrieve the value of the exception. I have submitted a ticket against
+    # PyXB: https://sourceforge.net/apps/trac/pyxb/ticket/132
+    # The issue may also be related to:
+    # http://bugs.python.org/issue2517
+    # The workaround is to show only the XML document, not the value of the
+    # exception (which would show what the actual issue was).
+    #e.__unicode__ = lambda x: x.decode('utf8')
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'System Metadata validation failed:\n{0}'.format(str(err))
+      0, u'System Metadata validation failed for document:\n{0}'.format(
+        sysmeta_xml.decode('utf8')
+      )
     )
 
 
@@ -144,4 +154,4 @@ def http_response_with_identifier_type(pid):
 
 
 def http_response_with_boolean_true_type():
-  return HttpResponse('OK', d1_common.const.MIMETYPE_XML)
+  return HttpResponse('OK', d1_common.const.MIMETYPE_TEXT)
