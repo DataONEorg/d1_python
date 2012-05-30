@@ -200,19 +200,13 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     response_body = response.read()
     if self.capture_response_body:
       self.last_response_body = response_body
-    # The unit test framework that comes with Python 2.6 has a bug that has been
-    # fixed in later versions. http://bugs.python.org/issue8313. The bug causes
-    # stack traces containing Unicode to be shown as "unprintable". To display
-    # such a stack trace, uncomment the following line. It's not good to leave
-    # this in as it breaks other things.
-    #response_body = repr(response_body)
     return response_body
 
 
   def _raise_service_failure(self, description, trace):
     raise d1_common.types.exceptions.ServiceFailure(0, description, trace)
 
-
+  
   def _raise_service_failure_invalid_mimetype(self, response):
     msg = StringIO.StringIO()
     msg.write('Node responded with a valid status code but failed to '
@@ -365,7 +359,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   @d1_common.util.utf8_to_unicode
   def getLogRecordsResponse(self, fromDate=None, toDate=None, event=None,
-                            start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+                            pidFilter=None, start=0,
+                            count=d1_common.const.DEFAULT_LISTOBJECTS,
                             vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
@@ -376,6 +371,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       'fromDate': fromDate,
       'toDate': toDate,
       'event': event,
+      'pidFilter': pidFilter,
       'start': int(start),
       'count': int(count)
     }
@@ -384,11 +380,13 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   @d1_common.util.utf8_to_unicode
   def getLogRecords(self, fromDate=None, toDate=None, event=None,
-                    start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+                    pidFilter=None, start=0,
+                    count=d1_common.const.DEFAULT_LISTOBJECTS,
                     vendorSpecific=None):
     response = self.getLogRecordsResponse(fromDate=fromDate, toDate=toDate,
-                                     event=event, start=start, count=count,
-                                     vendorSpecific=vendorSpecific)
+                                          event=event, pidFilter=pidFilter,
+                                          start=start, count=count,
+                                          vendorSpecific=vendorSpecific)
     return self._read_dataone_type_response(response)
 
 
