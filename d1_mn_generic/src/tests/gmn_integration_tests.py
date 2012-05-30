@@ -558,18 +558,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       object_list, OBJECTS_TOTAL_DATA * 2, 0, OBJECTS_TOTAL_DATA
     )
 
-  def test_1350(self):
-    '''listObjects(): Slicing: Requesting more than MAX_LISTOBJECTS should throw.
-    '''
-    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
-    object_cnt_half = OBJECTS_TOTAL_DATA / 2
-    self.assertRaises(
-      Exception,
-      client.listObjects,
-      count=d1_common.const.MAX_LISTOBJECTS + 1,
-      vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-    )
-
   def test_1360(self):
     '''listObjects(): Date range query: Get all objects from the 1990s.
     '''
@@ -741,18 +729,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assert_log_slice(log, EVENTS_TOTAL_1500 * 2, 0, EVENTS_TOTAL_1500)
-
-  def test_1540(self):
-    '''getLogRecords(): Slicing: Requesting more than MAX_LISTOBJECTS should throw.
-    '''
-    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
-    object_cnt_half = EVENTS_TOTAL / 2
-    self.assertRaises(
-      Exception,
-      client.getLogRecords,
-      count=d1_common.const.MAX_LISTOBJECTS + 1,
-      vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-    )
 
   def test_1550(self):
     '''getLogRecords(): Date range query: Get all events from the 1990s.

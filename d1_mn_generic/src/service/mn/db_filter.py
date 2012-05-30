@@ -145,31 +145,21 @@ def add_slice_filter(query, request):
   '''Create a slice of a query based on request start and count parameters.
   '''
   # Get and validate the 'start' argument, used for setting the first
-  # record to retrieve.
+  # record to retrieve. Silently set invalid value to 0.
   try:
     start = int(request.GET['start'])
     if start < 0:
       raise ValueError
-  except KeyError:
+  except (KeyError, ValueError):
     start = 0
-  except ValueError:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid start value: {0}'.format(request.GET['start'])
-    )
   # Get and validate the 'count' argument, used for setting the number of
-  # records to retrieve.
+  # records to retrieve. Silently set invalid value to MAX_LISTOBJECTS.
   try:
     count = int(request.GET['count'])
-    # Enforce max count.
-    if count < 0 or count > d1_common.const.MAX_LISTOBJECTS:
+    if count < 0:
       raise ValueError
-  except KeyError:
+  except (KeyError, ValueError):
     count = d1_common.const.MAX_LISTOBJECTS
-  except ValueError:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid count value: {0} (count must be 0 <= count <= {1}'.format(
-        request.GET['count'], d1_common.const.MAX_LISTOBJECTS)
-    )
   # If both start and count are present but set to 0, we just tweak the query
   # so that it won't return any results.
   if start == 0 and count == 0:
