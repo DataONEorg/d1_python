@@ -545,6 +545,25 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     response = self.generateIdentifierResponse(scheme, fragment)
     return self._read_dataone_type_response(response)
 
+  # CNStorage.delete(session, pid) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNStorage.archive
+  # MNStorage.delete(session, pid) → Identifier
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.archive
+
+  @d1_common.util.utf8_to_unicode
+  def archiveResponse(self, pid, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    url = self._rest_url('archive/%(pid)s', pid=pid)
+    response = self.PUT(url, headers=vendorSpecific)
+    return response
+
+
+  @d1_common.util.utf8_to_unicode
+  def archive(self, pid, vendorSpecific=None):
+    response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
+    return self._read_dataone_type_response(response)
+
 
   # ----------------------------------------------------------------------------  
   # CNAuthorization / MNAuthorization
