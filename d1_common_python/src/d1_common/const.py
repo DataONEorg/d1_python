@@ -66,6 +66,7 @@ DEFAULT_NUMBER_OF_REPLICAS = 3
 MIMETYPE_XML = 'application/xml'
 MIMETYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
 MIMETYPE_HTML = 'text/html'
+MIMETYPE_XHTML = 'text/html'
 MIMETYPE_TEXT = 'text/plain'
 MIMETYPE_OCTETSTREAM = 'application/octet-stream'
 

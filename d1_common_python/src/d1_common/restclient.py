@@ -81,6 +81,7 @@ class RESTClient(object):
       defaultHeaders = {
         'User-Agent': d1_common.const.USER_AGENT,
       }
+    self.scheme = scheme
     self.connection = self._connect(scheme, host, port, timeout, cert_path,
                                     key_path, strict)
     self.defaultHeaders = defaultHeaders
@@ -160,12 +161,16 @@ class RESTClient(object):
     '''
     headers = self._merge_default_headers(headers)
     url = self._join_url_with_query_params(selector, query)
-    self.logger.debug('operation: {0} {1}'.format(method, url))
+    self.logger.debug('operation: {0} {1}://{2}'.format(method, self.scheme,
+      d1_common.url.joinPathElements(self.connection.host, url)))
     self.logger.debug('headers: {0}'.format(str(headers)))
     if dump_path is not None:
       self._dump_request_to_file(dump_path, method, url, body, headers)
     self.connection.request(method, url, body, headers)
-    return self.connection.getresponse()
+    response_ = self.connection.getresponse()
+    self.logger.debug('return status code: {0}'.format(response_.status))
+    return response_
+
     #return self._get_response()
 
 
