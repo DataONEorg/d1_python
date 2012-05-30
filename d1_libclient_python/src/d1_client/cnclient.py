@@ -570,7 +570,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 #      ('failure', 'failure.xml', failure.serialize().encode('utf-8') if failure
 #       else '')
 #    ]
-    return self.PUT(url, fields=mime_multipart_fields, dump_path='out.dump'
+    return self.PUT(url, fields=mime_multipart_fields, dump_path=None #'out.dump'
                     )#files=mime_multipart_files
 
 
@@ -630,16 +630,16 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # TODO. Spec unclear.
 
   @d1_common.util.utf8_to_unicode
-  def isNodeAuthorizedResponse(self, targetNodeSubject, pid,
-                               replicatePermission):
-    url = self._rest_url('replicaAuthorizations/%(pid)s', pid=pid,
-                         targetNodeSubject=targetNodeSubject.value())
+  def isNodeAuthorizedResponse(self, targetNodeSubject, pid):
+    url = self._rest_url(
+      'replicaAuthorizations/%(pid)s?targetNodeSubject=%(targetNodeSubject)s',
+        pid=pid, targetNodeSubject=targetNodeSubject)
     return self.GET(url)
 
 
   @d1_common.util.utf8_to_unicode
-  def isNodeAuthorized(self, targetNodeSubject, pid, replicatePermission):
-    response = self.isNodeAuthorizedResponse(targetNodeSubject, pid, replicatePermission)
+  def isNodeAuthorized(self, targetNodeSubject, pid):
+    response = self.isNodeAuthorizedResponse(targetNodeSubject, pid)
     return self._read_boolean_response(response)
 
 
@@ -673,10 +673,10 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def updateNodeCapabilitiesResponse(self, nodeId, node):
     url = self._rest_url('node/%(nodeId)s', nodeId=nodeId)
-    mime_multipart_fields = [
-      ('node', node.encode('utf-8')),
+    mime_multipart_files = [
+      ('node', 'node.xml', node.toxml().encode('utf-8')),
     ]
-    return self.PUT(url, fields=mime_multipart_fields)
+    return self.PUT(url, files=mime_multipart_files)
 
 
   @d1_common.util.utf8_to_unicode

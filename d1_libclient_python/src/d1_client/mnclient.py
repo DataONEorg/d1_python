@@ -294,9 +294,12 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNReplication.getReplica
 
   @d1_common.util.utf8_to_unicode
-  def getReplica(self, pid, vendorSpecific=None):
+  def getReplicaResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
     url = self._rest_url('replica/%(pid)s', pid=pid)
     return self.GET(url, headers=vendorSpecific)
 
+  def getReplica(self, pid, vendorSpecific=None):
+    response = self.getReplicaResponse(pid, vendorSpecific)
+    return self._read_stream_response(response)
