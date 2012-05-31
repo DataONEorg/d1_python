@@ -291,7 +291,7 @@ class DataPackage(object):
         session, pid, complex_path.path,
         formatId=format_id
       )
-      self.scimeta = DataObject(pid, False, complex_path.path, None, sysmeta, format_id)
+      self.scimeta = DataObject(pid, True, complex_path.path, None, sysmeta, format_id)
       if session.is_pretty():
         print '. [created]\n'
     scidata_list = self._find_scidata(self.scimeta)

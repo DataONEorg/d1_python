@@ -6,9 +6,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     packageId="knb-lter-gce.294.17"
     system="knb"
-    xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.0
-			http://gce-lter.marsci.uga.edu/public/files/schemas/eml-210/eml.xsd
-">
+    xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.0 http://gce-lter.marsci.uga.edu/public/files/schemas/eml-210/eml.xsd"
+>
   <access authSystem="knb" order="allowFirst" scope="document">
     <allow>
       <principal>uid=GCE,o=lter,dc=ecoinformatics,dc=org</principal>

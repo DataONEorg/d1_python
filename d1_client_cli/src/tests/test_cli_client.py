@@ -45,7 +45,7 @@ except ImportError as e:
   raise
 
 PID_SCIMETA = ''
-PID_SCIDATA1 = 'abp-test.csv'
+PID_SCIDATA1 = 'd1_python_cli-test_scidata.csv'
 
 #===============================================================================
 
@@ -67,12 +67,14 @@ class TESTCLIClient(TestCaseWithURLCompare):
   def test_010(self):
     '''Test 010: Get object by pid.'''
     path = cli_client.get_object_by_pid(self.sess, PID_SCIDATA1)
-    self.assertNotEqual(None, path, 'get_object_by_pid() is None')
+    self.assertNotEqual(
+      None, path, 'get_object_by_pid() is None   (does the test object exist?)'
+    )
     self.assertTrue(os.path.exists(path), 'Object file does not exist')
     length = os.path.getsize(path)
     self.assertEqual(73, length, 'Wrong object size (expecting 73, found %d)' % length)
 
 
 if __name__ == "__main__":
-  #sys.argv = ['', 'TESTCLIClient.testName']
+  sys.argv = ['', 'TESTCLIClient.test_010']
   unittest.main()

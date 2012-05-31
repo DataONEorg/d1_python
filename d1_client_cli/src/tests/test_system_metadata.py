@@ -47,7 +47,7 @@ except ImportError as e:
 #===============================================================================
 
 
-class TESTCLISystemMetadata(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TESTSystemMetadata(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 
@@ -95,5 +95,5 @@ class TESTCLISystemMetadata(d1_common.testcasewithurlcompare.TestCaseWithURLComp
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
-  sys.argv = ['', 'Test.testName']
+  #  sys.argv = ['', 'TESTSystemMetadata.testName']
   unittest.main()

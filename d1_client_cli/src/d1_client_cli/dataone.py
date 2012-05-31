@@ -159,6 +159,13 @@ option_list = [
     help="ID for the Object Format to use when generating System Metadata"
   ),
   make_option(
+    "--formatId",
+    action="store",
+    dest="object_format",
+    metavar="OBJECT-FORMAT",
+    help="ID for the Object Format to use when generating System Metadata"
+  ),
+  make_option(
     "--" + ORIG_MN_name,
     action="store",
     dest="origin_mn",
@@ -554,10 +561,10 @@ class DataONECLI():
 
   def _archive_on_member_node(self, client, pid):
     try:
-      return client.delete(pid)
+      return client.archive(pid)
     except d1_common.types.exceptions.DataONEException as e:
       print_error(
-        'Unable to delete Science Object from Member Node\n{0}'
+        'Unable to archive Science Object from Member Node\n{0}'
         .format(e.friendly_format())
       )
 

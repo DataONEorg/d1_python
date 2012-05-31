@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''
 Module d1_client_cli.tests.test_session
 =======================================
@@ -35,8 +34,8 @@ import sys
 
 try:
   # D1.
-  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare 
-  
+  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+
   # App.
   sys.path.append('../d1_client_cli/')
   import cli_util
@@ -44,13 +43,12 @@ except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
 
-
 #===============================================================================
+
 
 class TESTCLIUtil(TestCaseWithURLCompare):
   def setUp(self):
     pass
-
 
   def test_010(self):
     '''Create a complex path from "string".'''
@@ -77,8 +75,7 @@ class TESTCLIUtil(TestCaseWithURLCompare):
     self.assertEquals(None, complex_path.formatId)
 
 
-
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
-TESTCLIUtil
+  #  sys.argv = ['', 'TESTCLIUtil.testName']
   unittest.main()
