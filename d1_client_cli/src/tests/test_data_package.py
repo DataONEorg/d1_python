@@ -134,33 +134,16 @@ class TESTDataPackage(unittest.TestCase):
 
   def test_031(self):
     '''Test 031: Add scimeta, scidata objects and serialize.'''
-    now = datetime.datetime.now()
-    pid = {
-      'pkg': now.strftime('pkg_test_031_%Y%m%dT%H%MZ'),
-      'sm': now.strftime('knb-lter-gce.294.17_%Y%m%dT%H%MZ'),
-      'sd1': now.strftime('pkg_test_031-scimeta1_%Y%m%dT%H%MZ'),
-      'sd2': now.strftime('pkg_test_031-scimeta2_%Y%m%dT%H%MZ'),
-      'sd3': now.strftime('pkg_test_031-scimeta3_%Y%m%dT%H%MZ'),
-    }
-
-    pkg = data_package.DataPackage(pid['pkg'])
+    pkg = data_package.DataPackage('pkg_test_031')
     pkg.scimeta_add(
-      self.sess, pid['sm'],
+      self.sess, 'sysmeta0',
       'files/knb-lter-gce.294.17.xml;format-id=eml://ecoinformatics.org/eml-2.1.0'
     )
-    pkg.scidata_add(self.sess, pid['sd1'], 'files/small.csv;format-id=text/csv')
-    pkg.scidata_add(self.sess, pid['sd2'], 'files/small.csv;format-id=text/csv')
-    pkg.scidata_add(self.sess, pid['sd3'], 'files/small.csv;format-id=text/csv')
+    pkg.scidata_add(self.sess, 'sysdata1', 'files/small.csv;format-id=text/csv')
+    pkg.scidata_add(self.sess, 'sysdata2', 'files/small.csv;format-id=text/csv')
+    pkg.scidata_add(self.sess, 'sysdata3', 'files/small.csv;format-id=text/csv')
     serial = pkg._serialize(self.sess)
-    try:
-      self.assertNotEqual(None, serial, 'Couldn\'t serialize package "test_031"')
-    finally:
-      mn_client = cli_client.CLIMNClient(self.sess)
-      for k in pid.keys():
-        try:
-          mn_client.archive(pid[k]) # ignore errors.
-        except:
-          pass
+    self.assertNotEqual(None, serial, 'Couldn\'t serialize package "test_031"')
 
   def test_040(self):
     '''Test 040: Add scimeta, scidata objects and serialize.'''

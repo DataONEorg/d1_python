@@ -213,6 +213,15 @@ class DataPackage(object):
     )
     client = cli_client.CLIMNClient(session)
     flo = StringIO.StringIO(pkg_xml)
+
+    # Save all the objects.
+    if self.scimeta and self.scimeta.dirty:
+      self._create_or_update(self.scimeta)
+    for scidata_pid in self.scidata_dict.keys():
+      scidata = self.scidata.get(scidata_pid)
+      if scidata and scidata.dirty:
+        self._create_or_update(scidata)
+
     response = client.create(pid=self.pid, obj=flo, sysmeta=sysmeta)
     if response is None:
       return None
@@ -226,6 +235,42 @@ class DataPackage(object):
       if session.is_pretty():
         print_info('Saved "%s"' % self.pid)
       return response.value()
+
+  def _create_or_update(self, client, data_object):
+    ''' Either update the specified pid if it already exists or create a new one.
+    '''
+    if not data_object:
+      raise cli_exceptions.InvalidArguments('data object cannot be null')
+    if not data_object.pid:
+      raise cli_exceptions.InvalidArguments('data object must have a pid')
+    if not data_object.fname:
+      raise cli_exceptions.InvalidArguments('data object must have a file to write')
+    if not data_object.meta:
+      raise cli_exceptions.InvalidArguments('data object must have system metadata')
+    curr_sysmeta = client.getSystemMetadata(data_object.pid)
+    # Create
+    if not curr_sysmeta:
+      with open(cli_util.expand_path(data_object.fname), 'r') as f:
+        try:
+          return client.create(data_object.pid, f, data_object.meta)
+        except DataONEException as e:
+          print_error(
+            'Unable to create Science Object on Member Node\n{0}'
+            .format(e.friendly_format())
+          )
+    # Update
+    else:
+      data_object.meta.serialVersion = (curr_sysmeta.serialVersion + 1)
+      with open(cli_util.expand_path(data_object.fname), 'r') as f:
+        try:
+          return client.update(data_object.pid, f, data_object.pid, data_object.meta)
+        except DataONEException as e:
+          print_error(
+            'Unable to update Science Object on Member Node\n{0}'
+            .format(e.friendly_format())
+          )
+    # Nothing good happened.
+    return None
 
   def scimeta_add(self, session, pid, file_name=None):
     ''' Add a scimeta object.
@@ -338,7 +383,9 @@ class DataPackage(object):
           session, pid, complex_path.path,
           formatId=format_id
         )
-        self.scidata_dict[pid] = DataObject(pid, True, complex_path.path, meta, format_id)
+        self.scidata_dict[pid] = DataObject(
+          pid, True, complex_path.path, None, meta, format_id
+        )
         if session.is_pretty():
           print '. [created]'
 
@@ -466,7 +513,8 @@ class DataPackage(object):
 
   def _serialize(self, session, fmt='xml'):
     assert (fmt in ALLOWABLE_PACKAGE_SERIALIZATIONS)
-    self._prepare_urls(session)
+    if not self._prepare_urls(session):
+      return
     mn_client = cli_client.CLIMNClient(session)
     self._generate_resmap(mn_client.base_url)
     if self.resmap.serializer is not None:
@@ -481,15 +529,22 @@ class DataPackage(object):
         serialized.
     '''
     if self.scimeta and not self.scimeta.url:
-      if self._check_item(self.scimeta):
-        if self._create_object(session, self.scimeta) and session.is_pretty():
-          print_info('Created science metadata object "%s".' % self.scimeta.pid)
+      if not self._check_item(self.scimeta):
+        return False
+      elif not self.scimeta.url:
+        self.scimeta.url = cli_client.create_get_url_for_pid(
+          None, self.scimeta.pid, session
+        )
     if self.scidata_dict:
       for scidata in self.scidata_dict.values():
         if not scidata.url:
           if self._check_item(scidata):
-            if self._create_object(session, scidata) and session.is_pretty():
-              print_info('Created science data object "%s".' % self.scimeta.pid)
+            return False
+          elif scidata.url:
+            self.scimeta.url = cli_client.create_get_url_for_pid(
+              None, scidata.pid, session
+            )
+    return True
 
   def _check_item(self, item):
     errors = []
@@ -569,7 +624,7 @@ class DataObject(object):
 
   def from_url(self, url):
     self.url = url
-    ndx = url.find('/object/') + 8
+    ndx = url.find('/resolve/') + 8
     if ndx > 8:
       self.pid = url[ndx:]
 
@@ -603,127 +658,16 @@ class DataObject(object):
       flags = flags + post
       print_info('%s%s%s' % (p, self.pid, flags))
 
-
-def _newline(session):
-  if session:
-    if session.get(PRETTY_sect, PRETTY_name):
-      print
-
-      #
-      #  def serialize(self, fmt='xml'):
-      #    assert(fmt in ('xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'))
-      #    if self.resmap.serializer is not None:
-      #      self.resmap.serializer = None
-      #    serializer = foresite.RdfLibSerializer(fmt)
-      #    self.resmap.register_serialization(serializer)
-      #    doc = self.resmap.get_serialization()
-      #    return doc.data
-      #
-      #
-      #  def finalize(self, package_objects):
-      #    ''' Create the resource map.
-      #    '''
-      #    for package_object in package_objects:
-      #      sysmeta_obj = package_object['scimeta_obj']
-      #      if self._is_metadata_format(sysmeta_obj.formatId):
-      #        self._add_inner_package_objects(package_objects, sysmeta_obj)
-      #        
-      #    return self._generate_resmap(package_objects)
-      #
-      #
-      #
-      #  def save(self, session):
-      #    if session is None:
-      #      raise cli_exceptions.InvalidArguments('Must specify a session to save')
-      #  
-      #    pkg_xml = self.serialize('xml')
-      #  
-      #    algorithm = session.get(session.CHECKSUM[0], session.CHECKSUM[1])
-      #    hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
-      #    hash_fcn.update(pkg_xml)
-      #    checksum = hash_fcn.hexdigest()
-      #  
-      #    access_policy = session.access_control.to_pyxb()
-      #    replication_policy = session.replication_policy.to_pyxb()
-      #    sysmeta_creator = system_metadata.system_metadata()
-      #    sysmeta = sysmeta_creator.create_pyxb_object(session, self.pid, len(pkg_xml),
-      #                                                 checksum, access_policy,
-      #                                                 replication_policy,
-      #                                                 formatId=RDFXML_FORMATID)
-      #  
-      #    client = cli_client.CLIMNClient(session)
-      #    flo = StringIO.StringIO(pkg_xml)
-      #    response = client.create(pid=self.pid, obj=flo, sysmeta=sysmeta)
-      #    if response is not None:
-      #      return response.value()
-      #    else:
-      #      return None
-      #
-      #
-      #  def add_data(self, session, scimetapid, scidatapid_list):
-      #    ''' Add a scimeta object and a sequence of scidata objects.
-      #    '''
-      #    # Safety dance.
-      #    if session is None:
-      #      raise cli_exceptions.InvalidArguments('session cannot be None')
-      #
-      #
-      #  def _add_inner_package_objects(self, package_objects, sysmeta_obj):
-      #    ''' The given sysmeta object actually defines a data package.  Process the
-      #        package and add all of the thingsd specified to the package_object_list.
-      #    '''
-      #    print_info('+ Using metadata to add to an existing package')
-      #    print_error('package._add_inner_package_objects() is not implemented!!!')
-      #    
-      #
-      #  def _generate_resmap(self, package_object_list):
-      #    ''' The scimeta is part of a package.  Create a package.
-      #    
-      #        An example package_object item looks like:
-      #                {
-      #                  'scimeta_obj': <d1_common.types.generated.dataoneTypes.SystemMetadata>,
-      #                  'scimeta_url': 'https://demo1.test.dataone.org:443/knb/d1/mn/v1/meta/test-object'
-      #                  'scidata_pid':pid,
-      #                  'scidata_url':get_scimeta_url
-      #                }
-      #    '''
-      #    # Create the aggregation
-      #    foresite.utils.namespaces['cito'] = Namespace("http://purl.org/spar/cito/")
-      #    aggr = foresite.Aggregation(self.pid)
-      #    aggr._dcterms.title = 'Simple aggregation of science metadata and data.'
-      #
-      #
-      #    # Create references to the science data
-      #    for item in package_object_list:
-      #      # Create a reference to the science metadata
-      #      scimeta_obj = item['scimeta_obj']
-      #      scimeta_pid = scimeta_obj.identifier.value()
-      #      uri_scimeta = URIRef(item['scimeta_url'])
-      #      res_scimeta = foresite.AggregatedResource(uri_scimeta)
-      #      res_scimeta._dcterms.identifier = scimeta_pid
-      #      res_scimeta._dcterms.description = 'A reference to a science metadata object using a DataONE identifier'
-      #
-      #      uri_scidata = URIRef(item['scidata_url'])
-      #      res_scidata = foresite.AggregatedResource(uri_scidata)
-      #      res_scidata._dcterms.identifier = item['scidata_pid']
-      #      res_scidata._dcterms.description = 'A reference to a science data object using a DataONE identifier'
-      #      res_scidata._cito.isDocumentedBy = uri_scimeta
-      #      res_scimeta._cito.documents = uri_scidata
-      #
-      #      aggr.add_resource(res_scimeta)
-      #      aggr.add_resource(res_scidata)
-      #
-      #    # Create the resource map
-      #    resmap_id = "resmap_%s" % self.pid
-      #    self.resmap = foresite.ResourceMap("https://cn.dataone.org/object/%s" % resmap_id)
-      #    self.resmap._dcterms.identifier = resmap_id
-      #    self.resmap.set_aggregation(aggr)
-      #    return self.resmap
-
-      #== Static methods ========================================================
+    #== Static methods =======================================================================
 
 
 def find(pid):
   ''' Find the pid.
   '''
   raise cli_exceptions.CLIError('data_pacakge.find(): not implemented')
+
+
+def _newline(session):
+  if session:
+    if session.get(PRETTY_sect, PRETTY_name):
+      print
