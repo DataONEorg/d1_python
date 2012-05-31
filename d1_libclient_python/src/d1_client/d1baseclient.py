@@ -429,7 +429,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def getResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('object/%(pid)s', pid=pid)
+    url = self._rest_url('resolve/%(pid)s', pid=pid)
     return self.GET(url, headers=vendorSpecific)
 
   def get(self, pid, vendorSpecific=None):
@@ -492,7 +492,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
-    url = self._rest_url('object')
+    url = self._rest_url('resolve')
     query = {
       'fromDate': fromDate,
       'toDate': toDate,
