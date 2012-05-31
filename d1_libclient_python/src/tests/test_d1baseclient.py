@@ -94,15 +94,15 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
       "http://bogus.target/mn", version='v1'
     )
     self.assertEqual(
-      '/mn/v1/object/1234xyz',
+      '/mn/v1/resolve/1234xyz',
       client._rest_url(
-        'object/%(pid)s', pid='1234xyz'
+        'resolve/%(pid)s', pid='1234xyz'
       )
     )
     self.assertEqual(
-      '/mn/v1/object/1234%2Fxyz',
+      '/mn/v1/resolve/1234%2Fxyz',
       client._rest_url(
-        'object/%(pid)s', pid='1234/xyz'
+        'resolve/%(pid)s', pid='1234/xyz'
       )
     )
     self.assertEqual(
@@ -116,7 +116,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
   def test_040(self):
     '''get_schema_version()'''
     client = d1_client.d1baseclient.DataONEBaseClient(self.options.cn_url)
-    version = client.get_schema_version('object')
+    version = client.get_schema_version('resolve')
     self.assertTrue(version in ('v1', 'v2', 'v3'))
 
   # CNCore.getLogRecords()
