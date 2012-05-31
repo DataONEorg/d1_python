@@ -66,6 +66,7 @@ class TESTCLIClient(TestCaseWithURLCompare):
 
   def test_010(self):
     '''Test 010: Get object by pid.'''
+    self.verify_pids_exist((PID_SCIDATA1, ))
     path = cli_client.get_object_by_pid(self.sess, PID_SCIDATA1)
     self.assertNotEqual(
       None, path, 'get_object_by_pid() is None   (does the test object exist?)'
@@ -73,6 +74,16 @@ class TESTCLIClient(TestCaseWithURLCompare):
     self.assertTrue(os.path.exists(path), 'Object file does not exist')
     length = os.path.getsize(path)
     self.assertEqual(73, length, 'Wrong object size (expecting 73, found %d)' % length)
+
+  def verify_pids_exist(self, pid_list):
+    '''  Make sure all the pids in use for this test exist in DataONE. '''
+    mn_client = cli_client.CLIMNClient(self.sess)
+    for pid in pid_list:
+      if pid:
+        try:
+          mn_client.getSystemMetadata(pid)
+        except:
+          self.fail('%s: no such pid in system.' % pid)
 
 
 if __name__ == "__main__":

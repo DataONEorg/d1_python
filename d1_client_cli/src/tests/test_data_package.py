@@ -43,6 +43,22 @@ except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
 
+#PID_SciMeta =  'knb-lter-gce.294.17'
+#PID_SciData0 = 'knb-lter-gce.196.27'
+#PID_SciData1 = 'knb-lter-gce.128.27'
+#PID_SciData2 = None
+PID_SciMeta = 'doi:10.5072/FK2/KNB/CHL.8.2'
+PID_SciData0 = 'doi:10.5072/FK2/KNB/6000141086_2.7.1'
+PID_SciData1 = 'doi:10.5072/FK2/KNB/6000141086_2.7.2'
+PID_SciData2 = 'doi:10.5072/FK2/KNB/6000141086_2.8.1'
+PID_List = (PID_SciMeta, PID_SciData0, PID_SciData1, PID_SciData2)
+
+PKG_Pid = 'pkg-20120417T2031Z'
+PKG_SciMeta = 'knb-lter-gce.234.17'
+PKG_SciData0 = 'abp-20120409T2341Z'
+PKG_SciData1 = 'abp-20120403T2021Z'
+PKG_SciData2 = 'abp-20120406T2215Z'
+
 #===============================================================================
 
 
@@ -79,8 +95,9 @@ class TESTDataPackage(unittest.TestCase):
 
   def test_021(self):
     '''Test 021: Get an existing science metadata object. '''
+    self.verify_pids_exist((PID_SciMeta, ))
     pkg = data_package.DataPackage("test_040")
-    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
+    pkg.scimeta_add(self.sess, PID_SciMeta)
     self.assertNotEqual(None, pkg.scimeta, 'scimeta is None')
 
   def test_022(self):
@@ -111,26 +128,18 @@ class TESTDataPackage(unittest.TestCase):
 
   def test_030(self):
     '''Test 030: Add scimeta, scidata objects and serialize.'''
+    self.verify_pids_exist(PID_List)
     now = datetime.datetime.now()
     pkg_pid = now.strftime('pkg_test_030_%Y%m%dT%H%MZ')
     pkg = data_package.DataPackage(pkg_pid)
-    #    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
-    #    pkg.scidata_add(self.sess, 'knb-lter-gce.196.27')
-    #    pkg.scidata_add(self.sess, 'knb-lter-gce.128.27')
-    pkg.scimeta_add(self.sess, 'doi:10.5072/FK2/KNB/CHL.8.2')
-    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.1')
-    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.2')
-    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.8.1')
+    pkg.scimeta_add(self.sess, PID_SciMeta)
+    pkg.scidata_add(self.sess, PID_SciData0)
+    pkg.scidata_add(self.sess, PID_SciData1)
+    pkg.scidata_add(self.sess, PID_SciData2)
     self.assertTrue(pkg.is_dirty(), 'Package is not marked as dirty.')
     serial = pkg._serialize(self.sess)
     self.assertNotEqual(None, serial, 'Couldn\'t serialize "%s".' % pkg_pid)
     #
-    # XML generator is non-deterministic.
-    #    f = open('files/expected_dataPackage_test030.xml')
-    #    expected = f.read()
-    #    f.close()
-    #    print 'Expected:\n', expected, '\n\nActual\n', serial
-    #    self.assertEquals(expected, serial, 'Wrong output')
 
   def test_031(self):
     '''Test 031: Add scimeta, scidata objects and serialize.'''
@@ -147,16 +156,14 @@ class TESTDataPackage(unittest.TestCase):
 
   def test_040(self):
     '''Test 040: Add scimeta, scidata objects and serialize.'''
+    self.verify_pids_exist(PID_List)
     now = datetime.datetime.now()
     pkg_pid = now.strftime('test_040_%Y%m%dT%H%MZ')
     pkg = data_package.DataPackage(pkg_pid)
-    #    pkg.scimeta_add(self.sess, 'knb-lter-gce.294.17')
-    #    pkg.scidata_add(self.sess, 'knb-lter-gce.196.27')
-    #    pkg.scidata_add(self.sess, 'knb-lter-gce.128.27')
-    pkg.scimeta_add(self.sess, 'doi:10.5072/FK2/KNB/CHL.8.2')
-    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.1')
-    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.7.2')
-    pkg.scidata_add(self.sess, 'doi:10.5072/FK2/KNB/6000141086_2.8.1')
+    pkg.scimeta_add(self.sess, PID_SciMeta)
+    pkg.scidata_add(self.sess, PID_SciData0)
+    pkg.scidata_add(self.sess, PID_SciData1)
+    pkg.scidata_add(self.sess, PID_SciData2)
     self.assertTrue(pkg.is_dirty(), 'Package is not marked as dirty.')
     new_pid = pkg.save(self.sess)
     try:
@@ -164,16 +171,13 @@ class TESTDataPackage(unittest.TestCase):
       self.assertFalse(pkg.is_dirty(), 'Package is still marked as dirty.')
       new_sysmeta = cli_client.get_sysmeta_by_pid(self.sess, pkg_pid, True)
       self.assertNotEqual(None, new_sysmeta, 'Couldn\'t find new sysmeta')
-#      f = open("files/expected_dataPackage_test040.xml", "r")
-#      expected = f.read()
-#      f.close()
-#      self.assertEqual(expected, pkg.resmap, "Wrong datapackage")
     finally:
       mn_client = cli_client.CLIMNClient(self.sess)
       mn_client.archive(pkg_pid)
 
   def test_050(self):
     '''Test 050: parse package file.'''
+    self.verify_pids_exist(('knb-lter-gce.128.27', ))
     pkg = data_package.DataPackage()
     result = pkg._parse_rdf_xml('files/test_050-rdf.xml')
     self.assertTrue(result, 'Couldn\'t parse "test_050-rdf.xml"')
@@ -191,10 +195,10 @@ class TESTDataPackage(unittest.TestCase):
 
   def test_051(self):
     '''Test 051: Load and parse a package.'''
+    self.verify_pids_exist((PKG_Pid, ))
     # pkg => (scimeta, (scidata, scidata, ...))
-    tests = { 'pkg-20120417T2031Z': ('knb-lter-gce.234.17',
-                ('abp-20120409T2341Z', 'abp-20120403T2021Z', 'abp-20120406T2215Z')),
-             }
+    tests = {PKG_Pid: (PKG_SciMeta, (PKG_SciData0, PKG_SciData1, PKG_SciData2)), }
+    #
     for (pkg_name, pkg_contents) in tests.items():
       pkg = data_package.DataPackage(pkg_name)
       self.assertNotEqual(None, pkg.load(self.sess), 'Couldn\'t load "%s".' % pkg_name)
@@ -209,6 +213,17 @@ class TESTDataPackage(unittest.TestCase):
           ), 'No Science Data Object "%s" found' % scidata_name
         )
 
+  def verify_pids_exist(self, pid_list):
+    '''  Make sure all the pids in use for this test exist in DataONE. '''
+    mn_client = cli_client.CLIMNClient(self.sess)
+    for pid in pid_list:
+      if pid:
+        try:
+          mn_client.getSystemMetadata(pid)
+        except:
+          self.fail('%s: no such pid in system.' % pid)
+
+
 if __name__ == "__main__":
-  sys.argv = ['', 'TESTDataPackage.test_031']
+  #  sys.argv = ['', 'TESTDataPackage.test_021']
   unittest.main()

@@ -8,13 +8,13 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:rdfs1="http://www.w3.org/2001/01/rdf-schema#"
 >
-  <rdf:Description rdf:about="https://demo3.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.196.27">
-    <cito:isDocumentedBy rdf:resource="https://demo2.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.294.17"/>
+  <rdf:Description rdf:about="https://demo3.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.196.27">
+    <cito:isDocumentedBy rdf:resource="https://demo2.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.294.17"/>
     <dcterms:description>Science data object</dcterms:description>
     <dcterms:identifier>knb-lter-gce.196.27</dcterms:identifier>
   </rdf:Description>
-  <rdf:Description rdf:about="https://demo3.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.128.27">
-    <cito:isDocumentedBy rdf:resource="https://demo2.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.294.17"/>
+  <rdf:Description rdf:about="https://demo3.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.128.27">
+    <cito:isDocumentedBy rdf:resource="https://demo2.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.294.17"/>
     <dcterms:description>Science data object</dcterms:description>
     <dcterms:identifier>knb-lter-gce.128.27</dcterms:identifier>
   </rdf:Description>
@@ -26,13 +26,13 @@
     <rdfs1:label>ResourceMap</rdfs1:label>
     <rdfs1:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
   </rdf:Description>
-  <rdf:Description rdf:about="https://demo2.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.294.17">
+  <rdf:Description rdf:about="https://demo2.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.294.17">
     <dcterms:description>Science metadata object.</dcterms:description>
-    <cito:documents rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.196.27"/>
-    <cito:documents rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.128.27"/>
+    <cito:documents rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.196.27"/>
+    <cito:documents rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.128.27"/>
     <dcterms:identifier>knb-lter-gce.294.17</dcterms:identifier>
   </rdf:Description>
-  <rdf:Description rdf:about="https://demo3.test.dataone.org/knb/d1/mn/object/test_040_20120412T1014Z">
+  <rdf:Description rdf:about="https://demo3.test.dataone.org/knb/d1/mn/resolve/test_040_20120412T1014Z">
     <dcterms:creator rdf:resource="http://foresite-toolkit.googlecode.com/#pythonAgent"/>
     <ore:describes rdf:resource="test_040_20120412T1014Z"/>
     <dcterms:identifier>test_040_20120412T1014Z</dcterms:identifier>
@@ -48,8 +48,8 @@
   <rdf:Description rdf:about="test_040_20120412T1014Z">
     <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
     <dcterms:title>Simple aggregation of science metadata and data.</dcterms:title>
-    <ore:aggregates rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.196.27"/>
-    <ore:aggregates rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.128.27"/>
-    <ore:aggregates rdf:resource="https://demo2.test.dataone.org:443/knb/d1/mn/object/knb-lter-gce.294.17"/>
+    <ore:aggregates rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.196.27"/>
+    <ore:aggregates rdf:resource="https://demo3.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.128.27"/>
+    <ore:aggregates rdf:resource="https://demo2.test.dataone.org:443/knb/d1/mn/resolve/knb-lter-gce.294.17"/>
   </rdf:Description>
 </rdf:RDF>

@@ -171,7 +171,7 @@ class DataPackage(object):
           about_url = desc.getAttributeNS(RDF_NS, 'about')
           scidata.from_url(about_url)
           if not scidata.pid:
-            msg = 'ouldn\'t find pid in "%s"' % about_url
+            msg = 'Couldn\'t find pid in "%s"' % about_url
             print_error(msg)
             self.scimeta = None
             self.scidata_dict = {}
@@ -505,7 +505,7 @@ class DataPackage(object):
       aggr.add_resource(resource)
 
       # Create the resource map
-    resmap_url = mn_client_base_url + "/object/{0}".format(self.pid)
+    resmap_url = cli_client.create_get_url_for_pid(mn_client_base_url, format(self.pid))
     self.resmap = foresite.ResourceMap(resmap_url)
     self.resmap._dcterms.identifier = self.pid
     self.resmap.set_aggregation(aggr)
@@ -537,13 +537,10 @@ class DataPackage(object):
         )
     if self.scidata_dict:
       for scidata in self.scidata_dict.values():
-        if not scidata.url:
-          if self._check_item(scidata):
-            return False
-          elif scidata.url:
-            self.scimeta.url = cli_client.create_get_url_for_pid(
-              None, scidata.pid, session
-            )
+        if not self._check_item(scidata):
+          return False
+        elif not scidata.url:
+          scidata.url = cli_client.create_get_url_for_pid(None, scidata.pid, session)
     return True
 
   def _check_item(self, item):
