@@ -114,7 +114,7 @@ class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
       raise cli_exceptions.CLIError('"' + MN_URL_name + '" parameter required')
 
   def get_url_for_pid(self, pid):
-    return self.base_url + 'object/' + pid
+    return create_get_url_for_pid(self.base_url, pid)
 
 #===============================================================================
 
@@ -134,7 +134,7 @@ class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
 
 
 def create_get_url_for_pid(baseurl, pid, session=None):
-  return create_url_for_pid(baseurl, 'object', pid, session)
+  return create_url_for_pid(baseurl, 'resolve', pid, session)
 
 
 def create_meta_url_for_pid(baseurl, pid, session=None):
