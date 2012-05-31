@@ -68,6 +68,13 @@ def _handle_unexpected_exception(max_traceback_levels=5):
       'There was a problem with the response from the DataONE node. (error %d:%d)' %
       (exc_msgs.__dict__['errorCode'], exc_msgs.__dict__['detailCode'])
     )
+  elif exc_type.__name__ == 'timeout':
+    print_error(
+      '%s%s' % (
+        'Could not communicate with the DataONE node - either',
+        ' it is not correctly defined or it is not currently working.'
+      )
+    )
   elif exc_type.__name__ == 'AttributeError':
     _print_unexpected_exception(max_traceback_levels)
   else:
