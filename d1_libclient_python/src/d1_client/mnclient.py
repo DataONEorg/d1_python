@@ -175,12 +175,12 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def createResponse(self, pid, obj, sysmeta, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('resolve')
+    url = self._rest_url('object')
     mime_multipart_fields = [
       ('pid', pid.encode('utf-8')),
     ]
     mime_multipart_files = [
-      ('resolve', 'content.bin', obj),
+      ('object', 'content.bin', obj),
       ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
     ]
     return self.POST(url, fields=mime_multipart_fields,
@@ -200,12 +200,12 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def updateResponse(self, pid, obj, newPid, sysmeta, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('resolve/%(pid)s', pid=pid)
+    url = self._rest_url('object/%(pid)s', pid=pid)
     mime_multipart_fields = [
       ('newPid', newPid.encode('utf-8')),
     ]
     mime_multipart_files = [
-      ('resolve', 'content.bin', obj),
+      ('object', 'content.bin', obj),
       ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
     ]
     return self.PUT(url, fields=mime_multipart_fields,
