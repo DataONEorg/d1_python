@@ -38,8 +38,8 @@ import StringIO
 import xml.dom.minidom
 
 # 3rd party
-from rdflib import Namespace, URIRef
 try:
+  from rdflib import Namespace, URIRef
   import foresite
   import foresite.utils
 except ImportError as e:

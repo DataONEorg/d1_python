@@ -158,12 +158,22 @@ class TESTDataONE(unittest.TestCase):
     dataoneCLI.do_ping(' '.join((TEST_CN_URL, TEST_CN_HOST, TEST_MN_URL, TEST_MN_HOST)))
 
   def test_040(self):
-    ''' Test 040: do_access(). '''
+    ''' do_access(). '''
     self.cli.do_allow('"some user named fred" write')
     access_dict = self.cli.d1.session.access_control.allow
     permission = access_dict.get('some user named fred')
     self.assertNotEqual(None, permission, "Couldn't find user in access")
     self.assertEqual('write', permission, "Wrong permission")
+
+  def test_050(self):
+    ''' list nodes '''
+    node_list = self.cli.d1.get_known_nodes()
+    self.assertNotEqual(None, node_list, 'Didn\'t find any nodes.')
+    self.assertTrue(len(node_list) > 4, 'Didn\'t find enough nodes')
+    formatted_list = self.cli._format_node_list(node_list)
+    self.assertTrue(
+      len(node_list) + 2 == len(formatted_list), 'format list is wrong size'
+    )
 
 
 def log_setup():
@@ -179,5 +189,5 @@ def log_setup():
 
 
 if __name__ == '__main__':
-  #  sys.argv = ['', 'TESTDataONE.test_040']
+  sys.argv = ['', 'TESTDataONE.test_050']
   unittest.main()

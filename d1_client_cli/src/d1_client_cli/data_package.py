@@ -34,8 +34,8 @@ import StringIO
 from xml.dom.minidom import parse, parseString #@UnusedImport
 
 # 3rd party
-from rdflib import Namespace, URIRef
 try:
+  from rdflib import Namespace, URIRef
   import foresite
   import foresite.utils
 except ImportError as e:

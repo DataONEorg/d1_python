@@ -418,6 +418,17 @@ class DataONECLI():
     self.session.load(suppress_error=True)
     self.known_object_formats = None
 
+  def get_known_nodes(self):
+    client = cli_client.CLICNClient(self.session)
+    nodelist = client.listNodes()
+    if not nodelist:
+      return ()
+    else:
+      result = []
+      for node in nodelist.node:
+        result.append((node.type, node.name, node.baseURL))
+      return result
+
   def get_known_object_formats(self):
     if self.known_object_formats is None:
       formats = None
@@ -1013,6 +1024,7 @@ class CLI(cmd.Cmd):
   [session parameter] is omitted.
   
     "show formats" will display all known object formats.
+    "show nodes"   will display all known DataONE nodes.
     "show package" will invoke "package show".
     '''
     try:
@@ -1485,6 +1497,13 @@ class CLI(cmd.Cmd):
       )
       return True
     #
+    elif param_list[0] == 'nodes':
+      node_list = self.d1.get_known_nodes()
+      print_info(
+        '\nKnown nodes:\n  ' + '\n  '.join(self._format_node_list(node_list)) + '\n'
+      )
+      return True
+    #
     elif param_list[0] == 'package':
       pid = ''
       if len(param_list) > 1:
@@ -1494,11 +1513,52 @@ class CLI(cmd.Cmd):
     #
     return False
 
-  #-----------------------------------------------------------------------------
-  # Command processing.
-  #-----------------------------------------------------------------------------
+  def _format_node_list(self, node_list):
+    '''  node_list = list[(type, name, baseURL)] '''
+    max_type_len = 2
+    max_name_len = 2
+    max_base_len = 7
+    for item in node_list:
+      l = len(item[0])
+      if l > max_type_len:
+        max_type_len = l
+      l = len(item[1])
+      if l > max_name_len:
+        max_name_len = l
+      l = len(item[2])
+      if l > max_base_len:
+        max_base_len = l
+    formatted_list = []
+    pre = ''
+    type_format = '{:<' + str(max_type_len) + '}'
+    if max_type_len == 2:
+      pre = ' '
+      max_type_len = 4
+      type_format = '{:<' + str(max_type_len) + '}'
+    name_format = '{:<' + str(max_name_len) + '}'
+    base_format = '{:<' + str(max_base_len) + '}'
+    space = '  '
+    for item in node_list:
+      value = type_format.format(pre + item[0]) + space + name_format.format(
+        item[1]) + space + item[2]
+      formatted_list.append(value)
+    formatted_list = sorted(formatted_list)
+    # Header
+    value0 = type_format.format('Type') + space
+    value1 = '=' * max_type_len + space
+    value0 = value0 + name_format.format('Id') + space
+    value1 = value1 + '=' * max_name_len + space
+    value0 = value0 + base_format.format('BaseURL')
+    value1 = value1 + '=' * max_base_len
+    formatted_list.insert(0, value0)
+    formatted_list.insert(1, value1)
+    return formatted_list
 
-  ## Override methods in Cmd object ##
+    #-----------------------------------------------------------------------------
+    # Command processing.
+    #-----------------------------------------------------------------------------
+
+    ## Override methods in Cmd object ##
   def preloop(self):
     '''Initialization before prompting user for commands.
        Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
