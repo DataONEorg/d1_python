@@ -532,7 +532,7 @@ class DataPackage(object):
       if not self._check_item(self.scimeta):
         return False
       elif not self.scimeta.url:
-        self.scimeta.url = cli_client.create_get_url_for_pid(
+        self.scimeta.url = cli_client.create_resolve_url_for_pid(
           None, self.scimeta.pid, session
         )
     if self.scidata_dict:
@@ -540,7 +540,7 @@ class DataPackage(object):
         if not self._check_item(scidata):
           return False
         elif not scidata.url:
-          scidata.url = cli_client.create_get_url_for_pid(None, scidata.pid, session)
+          scidata.url = cli_client.create_resolve_url_for_pid(None, scidata.pid, session)
     return True
 
   def _check_item(self, item):

@@ -593,18 +593,41 @@ class DataONECLI():
     else:
       self._copy_file_like_object_to_file(file_like_object, expand_path(path))
 
-  def _get_science_object_from_member_node(self, client, pid):
+  def science_object_get(self, pid, path, resolve=True):
+    errmsg = None
     try:
-      return client.get(pid)
+      mn_client = cli_client.CLIMNClient(self.session)
+      response = mn_client.get(pid)
+      self.output(response, expand_path(path))
+      return True
+      # --- DOES NOT CONTINUE ---
     except d1_common.types.exceptions.DataONEException as e:
-      raise cli_exceptions.CLIError(
-        'Unable to get Science Object from Member Node\n{0}'\
-          .format(e.friendly_format()))
-
-  def science_object_get(self, pid, path):
-    client = cli_client.CLIMNClient(self.session)
-    response = self._get_science_object_from_member_node(client, pid)
-    self.output(response, expand_path(path))
+      errmsg = 'Unable to get Science Object from Member Node\n{0}'\
+          .format(e.friendly_format())
+    # Go and find it?
+    if resolve:
+      cn_client = cli_client.CLICNClient(self.session)
+      try:
+        object_location_list = cn_client.resolve(pid)
+        if object_location_list:
+          for location in object_location_list.objectLocation:
+            try:
+              mn_client = cli_client.CLIMNClient(self.session, mn_url=location.baseURL)
+              response = mn_client.get(pid)
+              self.output(response, expand_path(path))
+              return True
+              # --- DOES NOT CONTINUE ---
+            except Exception as e:
+              pass
+      except d1_common.types.exceptions.DataONEException as e:
+        errmsg = 'Unable to get Science Object from Member Node\n{0}'\
+            .format(e.friendly_format())
+    # Didn't find it - was it because of an exception?
+    if not errmsg:
+      print_warn('%s: couldn\'t find pid' % pid)
+      return False
+    else:
+      raise cli_exceptions.CLIError(errmsg)
 
   def _get_system_metadata(self, client, pid):
     try:
@@ -666,7 +689,7 @@ class DataONECLI():
   def list_objects(self, path):
     '''MN listObjects.
     '''
-    client = cli_client.CLIMNClient(self.session)
+    client = cli_client.CLICNClient(self.session)
     object_list = client.listObjects(
       fromDate=self.session.get(FROM_DATE_sect, FROM_DATE_name),
       toDate=self.session.get(TO_DATE_sect, TO_DATE_name),

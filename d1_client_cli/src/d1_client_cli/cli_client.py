@@ -160,6 +160,23 @@ def create_url_for_pid(baseurl, action, pid, session=None):
   return '%s/%s/%s/%s' % (endpoint, REST_Version, action, encoded_pid)
 
 
+def create_resolve_url_for_pid(baseurl, pid, session=None):
+  '''  Create a URL for the specified pid.
+  '''
+  if baseurl:
+    endpoint = baseurl
+  elif session:
+    endpoint = session.get(CN_URL_sect, CN_URL_name)
+  else:
+    raise cli_exceptions.InvalidArguments(
+      'You must specify either the base URL or the session'
+    )
+  if not pid:
+    raise cli_exceptions.InvalidArguments('You must specify the pid')
+  encoded_pid = urllib.quote_plus(pid)
+  return '%s/%s/resolve/%s' % (endpoint, REST_Version, encoded_pid)
+
+
 def get_object_by_pid(session, pid, filename=None, resolve=True):
   ''' Create a mnclient and look for the object.  If the object is not found,
       simply return a None, don't throw an exception.  If found, return the
