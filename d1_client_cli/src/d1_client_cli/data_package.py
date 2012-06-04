@@ -70,6 +70,7 @@ RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
 
 RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 CITO_NS = 'http://purl.org/spar/cito/'
+DCTERMS_NS = 'http://purl.org/dc/terms/'
 
 #** DataPackage ***************************************************************
 
@@ -152,36 +153,28 @@ class DataPackage(object):
     self.scimeta = None
     self.scidata_dict = {}
     for desc in doc.getElementsByTagNameNS(RDF_NS, 'Description'):
-      if desc.getElementsByTagNameNS(CITO_NS, 'documents'):
+      documentedBy = desc.getElementsByTagNameNS(CITO_NS, 'isDocumentedBy')
+      if documentedBy and len(documentedBy) > 0:
+        scidata = DataObject(dirty=False)
+        pid_element = desc.getElementsByTagNameNS(DCTERMS_NS, 'identifier')
+        if pid_element and pid_element.item(0) and pid_element.item(0).hasChildNodes():
+          scidata.pid = pid_element.item(0).firstChild.nodeValue
+          if len(documentedBy) > 1:
+            print_warn('Using the first Science Metadata Object for %s' % scidata.pid)
+          about_url = documentedBy.item(0).getAttributeNS(RDF_NS, 'resource')
+          scidata.documented_by = about_url
+          self.scidata_dict[scidata.pid] = scidata
+      # scimeta?
+      elif desc.getElementsByTagNameNS(CITO_NS, 'documents'):
         if self.scimeta:
-          msg = 'Already have Science Metadata Object: "%s"' % self.scimeta.url
-          print_error(msg)
-          self.scimeta = None
-          self.scidata_dict = {}
-          return False
+          print_warn(
+            'Already have a science metadata object (%s).  Skipping...' % self.scimeta.pid
+          )
         else:
-          self.scimeta = DataObject()
-          self.scimeta.from_url(desc.getAttributeNS(RDF_NS, 'about'))
-          if not self.scimeta.pid:
-            print_warn('Couldn\'t find pid in %s' % self.scimeta.url)
-      else:
-        documentedBy = desc.getElementsByTagNameNS(CITO_NS, 'isDocumentedBy')
-        if documentedBy:
-          scidata = DataObject()
-          about_url = desc.getAttributeNS(RDF_NS, 'about')
-          scidata.from_url(about_url)
-          if not scidata.pid:
-            msg = 'Couldn\'t find pid in "%s"' % about_url
-            print_error(msg)
-            self.scimeta = None
-            self.scidata_dict = {}
-            return False
-          else:
-            if len(documentedBy) > 1:
-              print_warn('There are several science metadata objects - using the first')
-            e = documentedBy[0]
-            scidata.documented_by = e.getAttributeNS(RDF_NS, 'resource')
-            self.scidata_dict[scidata.pid] = scidata
+          self.scimeta = DataObject(dirty=False)
+          pid_element = desc.getElementsByTagNameNS(DCTERMS_NS, 'identifier')
+          if pid_element and pid_element.item(0) and pid_element.item(0).hasChildNodes():
+            self.scimeta.pid = pid_element.item(0).firstChild.nodeValue
     return True
 
   def save(self, session):
@@ -218,7 +211,7 @@ class DataPackage(object):
     if self.scimeta and self.scimeta.dirty:
       self._create_or_update(self.scimeta)
     for scidata_pid in self.scidata_dict.keys():
-      scidata = self.scidata.get(scidata_pid)
+      scidata = self.scidata_dict.get(scidata_pid)
       if scidata and scidata.dirty:
         self._create_or_update(scidata)
 

@@ -87,5 +87,5 @@ class TESTCLIClient(TestCaseWithURLCompare):
 
 
 if __name__ == "__main__":
-  sys.argv = ['', 'TESTCLIClient.test_010']
+  #  sys.argv = ['', 'TESTCLIClient.test_010']
   unittest.main()

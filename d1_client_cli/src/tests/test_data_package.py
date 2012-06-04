@@ -43,14 +43,14 @@ except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   raise
 
-#PID_SciMeta =  'knb-lter-gce.294.17'
-#PID_SciData0 = 'knb-lter-gce.196.27'
-#PID_SciData1 = 'knb-lter-gce.128.27'
-#PID_SciData2 = None
-PID_SciMeta = 'doi:10.5072/FK2/KNB/CHL.8.2'
-PID_SciData0 = 'doi:10.5072/FK2/KNB/6000141086_2.7.1'
-PID_SciData1 = 'doi:10.5072/FK2/KNB/6000141086_2.7.2'
-PID_SciData2 = 'doi:10.5072/FK2/KNB/6000141086_2.8.1'
+PID_SciMeta = 'knb-lter-gce.294.17'
+PID_SciData0 = 'knb-lter-gce.196.27'
+PID_SciData1 = 'knb-lter-gce.128.27'
+PID_SciData2 = 'knb-lter-gce.129.18'
+#PID_SciMeta =  'doi:10.5072/FK2/KNB/CHL.8.2'
+#PID_SciData0 = 'doi:10.5072/FK2/KNB/6000141086_2.7.1'
+#PID_SciData1 = 'doi:10.5072/FK2/KNB/6000141086_2.7.2'
+#PID_SciData2 = 'doi:10.5072/FK2/KNB/6000141086_2.8.1'
 PID_List = (PID_SciMeta, PID_SciData0, PID_SciData1, PID_SciData2)
 
 PKG_Pid = 'pkg-20120417T2031Z'
@@ -172,12 +172,12 @@ class TESTDataPackage(unittest.TestCase):
       new_sysmeta = cli_client.get_sysmeta_by_pid(self.sess, pkg_pid, True)
       self.assertNotEqual(None, new_sysmeta, 'Couldn\'t find new sysmeta')
     finally:
-      mn_client = cli_client.CLIMNClient(self.sess)
-      mn_client.archive(pkg_pid)
+      #      mn_client = cli_client.CLIMNClient(self.sess)
+      #      mn_client.archive(pkg_pid)
+      pass
 
   def test_050(self):
     '''Test 050: parse package file.'''
-    self.verify_pids_exist(('knb-lter-gce.128.27', ))
     pkg = data_package.DataPackage()
     result = pkg._parse_rdf_xml('files/test_050-rdf.xml')
     self.assertTrue(result, 'Couldn\'t parse "test_050-rdf.xml"')
@@ -193,37 +193,32 @@ class TESTDataPackage(unittest.TestCase):
       ), 'No Science Data Object "knb-lter-gce.196.27" found'
     )
 
-  def test_051(self):
-    '''Test 051: Load and parse a package.'''
-    self.verify_pids_exist((PKG_Pid, ))
-    # pkg => (scimeta, (scidata, scidata, ...))
-    tests = {PKG_Pid: (PKG_SciMeta, (PKG_SciData0, PKG_SciData1, PKG_SciData2)), }
-    #
-    for (pkg_name, pkg_contents) in tests.items():
-      pkg = data_package.DataPackage(pkg_name)
-      self.assertNotEqual(None, pkg.load(self.sess), 'Couldn\'t load "%s".' % pkg_name)
-      self.assertNotEqual(None, pkg.scimeta, 'No Science Metadata Object found')
-      self.assertEqual(
-        pkg_contents[0], pkg.scimeta.pid, 'Wrong Science Metadata Object found'
-      )
-      for scidata_name in pkg_contents[1]:
-        self.assertNotEqual(
-          None, pkg.scidata_get(
-            scidata_name
-          ), 'No Science Data Object "%s" found' % scidata_name
-        )
+    #  def test_051(self):
+    #    '''Test 051: Load and parse a package.'''
+    #    self.verify_pids_exist( (PKG_Pid,) )
+    #    # pkg => (scimeta, (scidata, scidata, ...))
+    #    tests = { PKG_Pid: (PKG_SciMeta, (PKG_SciData0, PKG_SciData1, PKG_SciData2)), }
+    #    #
+    #    for (pkg_name, pkg_contents) in tests.items():
+    #      pkg = data_package.DataPackage(pkg_name)
+    #      self.assertNotEqual(None, pkg.load(self.sess), 'Couldn\'t load "%s".' % pkg_name)
+    #      self.assertNotEqual(None, pkg.scimeta, 'No Science Metadata Object found')
+    #      self.assertEqual(pkg_contents[0], pkg.scimeta.pid, 'Wrong Science Metadata Object found')
+    #      for scidata_name in pkg_contents[1]:
+    #        self.assertNotEqual(None, pkg.scidata_get(scidata_name),
+    #                             'No Science Data Object "%s" found' % scidata_name)
 
   def verify_pids_exist(self, pid_list):
     '''  Make sure all the pids in use for this test exist in DataONE. '''
-    mn_client = cli_client.CLIMNClient(self.sess)
+    cn_client = cli_client.CLICNClient(self.sess)
     for pid in pid_list:
       if pid:
         try:
-          mn_client.getSystemMetadata(pid)
+          cn_client.getSystemMetadata(pid)
         except:
           self.fail('%s: no such pid in system.' % pid)
 
 
 if __name__ == "__main__":
-  #  sys.argv = ['', 'TESTDataPackage.test_031']
+  #  sys.argv = ['', 'TESTDataPackage.test_040']
   unittest.main()

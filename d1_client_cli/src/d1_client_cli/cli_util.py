@@ -262,6 +262,14 @@ def copy_file_like_object_to_file(file_like_object, path):
     raise cli_exceptions.CLIError(error_message)
 
 
+def get_pid_from_url(url, action="object"):
+  if url:
+    ndx = url.find('/' + action + '/')
+    if ndx != -1:
+      return url[(ndx + 2 + len(action)):]
+  return None
+
+
 def create_complex_path(path):
   return ComplexPath(path)
 

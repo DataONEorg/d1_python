@@ -206,7 +206,7 @@ def get_object_by_pid(session, pid, filename=None, resolve=True):
       object_location_list = cn_client.resolve(pid)
       if ((object_location_list is not None)
           and (len(object_location_list.objectLocation) > 0)):
-        baseUrl = object_location_list.objectLocation[0].baseUrl
+        baseUrl = object_location_list.objectLocation[0].baseURL
         # If there is an object, go get it.
         mn_client = CLIMNClient(session, mn_url=baseUrl)
         response = mn_client.get(pid)

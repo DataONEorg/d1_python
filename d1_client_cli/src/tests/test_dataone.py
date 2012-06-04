@@ -29,9 +29,10 @@
 
 # Stdlib.
 import logging
+import os
+import sys
 import unittest
 import uuid
-import sys
 
 try:
   # D1.
@@ -175,6 +176,17 @@ class TESTDataONE(unittest.TestCase):
       len(node_list) + 2 == len(formatted_list), 'format list is wrong size'
     )
 
+  def test_060(self):
+    ''' get '''
+    filename = 'output-test_dataone_060.xml'
+    success = self.cli.d1.science_object_get('knb-lter-gce.294.17', filename, True)
+    self.assertTrue(success, 'Didn\'t find node "knb-lter-gce.294.17".')
+
+  def test_070(self):
+    ''' list '''
+    filename = 'output-test_dataone_070.xml'
+    self.cli.d1.list_objects(filename)
+
 
 def log_setup():
   # Set up logging.
@@ -189,5 +201,5 @@ def log_setup():
 
 
 if __name__ == '__main__':
-  sys.argv = ['', 'TESTDataONE.test_050']
+  sys.argv = ['', 'TESTDataONE.test_070']
   unittest.main()
