@@ -429,13 +429,21 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def getResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('resolve/%(pid)s', pid=pid)
+    url = self._rest_url('object/%(pid)s', pid=pid)
     return self.GET(url, headers=vendorSpecific)
 
   def get(self, pid, vendorSpecific=None):
     response = self.getResponse(pid, vendorSpecific)
     return self._read_stream_response(response)
 
+
+  def get_url(self, url, vendorSpecific=None):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    response = self.GET(url, headers=vendorSpecific)
+    return self._read_stream_response(response)
+
+    
   # CNRead.getSystemMetadata(session, pid) → SystemMetadata
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getSystemMetadata
   # MNRead.getSystemMetadata(session, pid) → SystemMetadata
@@ -492,7 +500,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       vendorSpecific = {}
     self._slice_sanity_check(start, count)
     self._date_span_sanity_check(fromDate, toDate)
-    url = self._rest_url('resolve')
+    url = self._rest_url('object')
     query = {
       'fromDate': fromDate,
       'toDate': toDate,

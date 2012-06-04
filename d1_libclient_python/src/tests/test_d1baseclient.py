@@ -94,15 +94,15 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
       "http://bogus.target/mn", version='v1'
     )
     self.assertEqual(
-      '/mn/v1/resolve/1234xyz',
+      '/mn/v1/object/1234xyz',
       client._rest_url(
-        'resolve/%(pid)s', pid='1234xyz'
+        'object/%(pid)s', pid='1234xyz'
       )
     )
     self.assertEqual(
-      '/mn/v1/resolve/1234%2Fxyz',
+      '/mn/v1/object/1234%2Fxyz',
       client._rest_url(
-        'resolve/%(pid)s', pid='1234/xyz'
+        'object/%(pid)s', pid='1234/xyz'
       )
     )
     self.assertEqual(
