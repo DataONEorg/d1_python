@@ -225,7 +225,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def deleteResponse(self, pid, vendorSpecific=None):
     if vendorSpecific is None:
       vendorSpecific = {}
-    url = self._rest_url('resolve/%(pid)s', pid=pid)
+    url = self._rest_url('object/%(pid)s', pid=pid)
     response = self.DELETE(url, headers=vendorSpecific)
     return response
 
