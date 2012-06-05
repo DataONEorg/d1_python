@@ -826,11 +826,7 @@ class DataONECLI():
     '''Perform a SOLR search.
     '''
     try:
-      query = (
-        line + ' ' + self._object_format_to_solr_filter(line) + ' ' +
-        self._time_span_to_solr_filter()
-      )
-
+      query = self._create_solr_query(line)
       client = cli_client.CLICNClient(self.session)
       object_list = client.search(
         queryType=d1_common.const.DEFAULT_SEARCH_ENGINE,
@@ -863,27 +859,46 @@ class DataONECLI():
         else:
           print_error('Unexpected error')
 
+  def _create_solr_query(self, line):
+    '''  Actual search - easier to test. '''
+    p0 = ''
+    if line:
+      p0 = line.strip()
+    p1 = self._query_string_to_solr_filter(line)
+    p2 = self._object_format_to_solr_filter(line)
+    p3 = self._time_span_to_solr_filter()
+    result = p0 + p1 + p2 + p3
+    return result.strip()
+
   def search_generic(self, line):
     '''Perform a generic search.
     '''
     pass
 
+  def _query_string_to_solr_filter(self, line):
+    query = self.session.get(QUERY_STRING_sect, QUERY_STRING_name)
+    if not query or query == '' or (query == '*:*' and len(line) > 0):
+      return ''
+    else:
+      return ' ' + query
+
   def _time_span_to_solr_filter(self):
     fromdate = self.session.get(FROM_DATE_sect, FROM_DATE_name)
     todate = self.session.get(TO_DATE_sect, TO_DATE_name)
-    return 'dateModified:[{0} TO {1}]'.format(
+    return ' dateModified:[{0} TO {1}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else '*',
       d1_common.date_time.to_http_datetime(todate) if todate else '*'
     )
 
   def _object_format_to_solr_filter(self, line):
     search_format_id = self.session.get(SEARCH_FORMAT_sect, SEARCH_FORMAT_name)
-    if (search_format_id != None) and (search_format_id != ''):
+    if not search_format_id or search_format_id == '':
+      return ''
+    else:
       if line.find(SOLR_FORMAT_ID_NAME) >= 0:
         print_warn('Using query format restriction instead "%s"' % search_format_id)
       else:
-        return '%s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
-    return ''
+        return ' %s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
 
   # ----------------------------------------------------------------------------
   # Session parameters

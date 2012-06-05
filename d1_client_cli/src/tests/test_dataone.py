@@ -42,8 +42,8 @@ try:
   sys.path.append('../d1_client_cli/')
   from const import (
     PRETTY_sect, PRETTY_name, COUNT_sect, COUNT_name, QUERY_STRING_sect,
-    QUERY_STRING_name, VERBOSE_sect, VERBOSE_name, CN_URL_sect, CN_URL_name, MN_URL_sect,
-    MN_URL_name
+    QUERY_STRING_name, VERBOSE_sect, VERBOSE_name, SEARCH_FORMAT_sect, SEARCH_FORMAT_name,
+    CN_URL_sect, CN_URL_name, MN_URL_sect, MN_URL_name
   )
   import dataone
   import session #@UnusedImport
@@ -187,6 +187,44 @@ class TESTDataONE(unittest.TestCase):
     filename = 'output-test_dataone_070.xml'
     self.cli.d1.list_objects(filename)
 
+  def test_080(self):
+    ''' search '''
+    expect = '*:* dateModified:[* TO *]'
+    args = ' '.join(filter(None, ()))
+    actual = self.cli.d1._create_solr_query(args)
+    self.assertEquals(expect, actual, "1: Wrong query string")
+    #
+    args = ' '.join(filter(None, ('id:knb-lter*', )))
+    expect = 'id:knb-lter* dateModified:[* TO *]'
+    actual = self.cli.d1._create_solr_query(args)
+    self.assertEquals(expect, actual, "2: Wrong query string")
+    #
+    self.cli.d1.session.set(QUERY_STRING_sect, QUERY_STRING_name, 'abstract:water')
+    args = ' '.join(filter(None, ('id:knb-lter*', )))
+    expect = 'id:knb-lter* abstract:water dateModified:[* TO *]'
+    actual = self.cli.d1._create_solr_query(args)
+    self.assertEquals(expect, actual, "3: Wrong query string")
+    #
+    args = ' '.join(filter(None, ()))
+    self.cli.d1.session.set(QUERY_STRING_sect, QUERY_STRING_name, 'abstract:water')
+    expect = 'abstract:water dateModified:[* TO *]'
+    actual = self.cli.d1._create_solr_query(args)
+    self.assertEquals(expect, actual, "4: Wrong query string")
+    #
+    self.cli.d1.session.set(QUERY_STRING_sect, QUERY_STRING_name, None)
+    self.cli.d1.session.set(SEARCH_FORMAT_sect, SEARCH_FORMAT_name, 'text/csv')
+    args = ' '.join(filter(None, ('id:knb-lter*', )))
+    expect = 'id:knb-lter* formatId:text/csv dateModified:[* TO *]'
+    actual = self.cli.d1._create_solr_query(args)
+    self.assertEquals(expect, actual, "5: Wrong query string")
+    #
+    args = ' '.join(filter(None, ()))
+    self.cli.d1.session.set(QUERY_STRING_sect, QUERY_STRING_name, 'abstract:water')
+    self.cli.d1.session.set(SEARCH_FORMAT_sect, SEARCH_FORMAT_name, 'text/csv')
+    expect = 'abstract:water formatId:text/csv dateModified:[* TO *]'
+    actual = self.cli.d1._create_solr_query(args)
+    self.assertEquals(expect, actual, "6: Wrong query string")
+
 
 def log_setup():
   # Set up logging.
@@ -201,5 +239,5 @@ def log_setup():
 
 
 if __name__ == '__main__':
-  sys.argv = ['', 'TESTDataONE.test_070']
+  sys.argv = ['', 'TESTDataONE.test_080']
   unittest.main()
