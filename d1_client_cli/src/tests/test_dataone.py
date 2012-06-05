@@ -239,5 +239,5 @@ def log_setup():
 
 
 if __name__ == '__main__':
-  sys.argv = ['', 'TESTDataONE.test_080']
+  #  sys.argv = ['', 'TESTDataONE.test_080']
   unittest.main()
