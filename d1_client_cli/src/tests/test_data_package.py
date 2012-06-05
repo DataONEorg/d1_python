@@ -29,8 +29,21 @@ Module d1_client_cli.tests.test_data_package
 
 # Stdlib
 import datetime
+import os
 import sys
+import tempfile
+import time
 import unittest
+
+# DataONE
+# common
+try:
+  from d1_common.util import get_checksum_calculator_by_dataone_designator
+  from d1_common.const import DEFAULT_CHECKSUM_ALGORITHM
+except ImportError as e:
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Please install d1_common.\n')
+  raise
 
 # D1 Client
 sys.path.append('../d1_client_cli/')
@@ -172,9 +185,11 @@ class TESTDataPackage(unittest.TestCase):
       new_sysmeta = cli_client.get_sysmeta_by_pid(self.sess, pkg_pid, True)
       self.assertNotEqual(None, new_sysmeta, 'Couldn\'t find new sysmeta')
     finally:
-      #      mn_client = cli_client.CLIMNClient(self.sess)
-      #      mn_client.archive(pkg_pid)
-      pass
+      try:
+        mn_client = cli_client.CLIMNClient(self.sess)
+        mn_client.archive(pkg_pid)
+      except:
+        pass
 
   def test_050(self):
     '''Test 050: parse package file.'''
@@ -208,6 +223,22 @@ class TESTDataPackage(unittest.TestCase):
     #        self.assertNotEqual(None, pkg.scidata_get(scidata_name),
     #                             'No Science Data Object "%s" found' % scidata_name)
 
+  def test_060(self):
+    '''Test 060: get object.'''
+    test_pid = self.create_test_object(self.sess)
+    self.assertNotEqual(None, test_pid, "Couldn't create a test object")
+    try:
+      pkg = data_package.DataPackage()
+      get_obj = data_package.DataObject(pid=test_pid)
+      data_object = pkg._download_object(self.sess, get_obj)
+      self.assertNotEqual(None, data_object, "Couldn't get the test object")
+    finally:
+      try: # Try and remove it.
+        mn_client = cli_client.CLIMNClient(self.sess)
+        mn_client.archive(test_pid)
+      except:
+        pass
+
   def verify_pids_exist(self, pid_list):
     '''  Make sure all the pids in use for this test exist in DataONE. '''
     cn_client = cli_client.CLICNClient(self.sess)
@@ -218,7 +249,41 @@ class TESTDataPackage(unittest.TestCase):
         except:
           self.fail('%s: no such pid in system.' % pid)
 
+  def create_test_object(self, session):
+    ''' Create a test object and return the pid. '''
+    # Create the pid
+    now = datetime.datetime.utcnow()
+    pid = now.strftime('data_package-test_object-%Y%m%dT%H%MZ')
+    # Create object
+    test_data = 'This is test data\n'
+    data_length = len(test_data)
+    filename = tempfile.mkstemp(prefix='testobj-', suffix='.txt')[1]
+    f = open(filename, 'w')
+    f.write(test_data)
+    f.close()
+    # Get the checksum
+    algorithm_name = DEFAULT_CHECKSUM_ALGORITHM
+    algo = get_checksum_calculator_by_dataone_designator(algorithm_name)
+    with open(filename, 'r') as f:
+      data = f.read(data_length * 2)
+      algo.update(data)
+    f.close()
+    checksum = algo.hexdigest()
+    # Create the system meta data, push the file, and clean up the litter
+    sysmeta = session.create_system_metadata(pid, checksum, data_length, 'text/plain')
+    mn_client = cli_client.CLIMNClient(session)
+    with open(filename, 'r') as f:
+      try:
+        mn_client.create(pid, f, sysmeta)
+        return pid
+      except e:
+        print 'Error creating file: %s' % str(e)
+        return None
+      finally:
+        f.close()
+        os.remove(filename)
+
 
 if __name__ == "__main__":
-  #  sys.argv = ['', 'TESTDataPackage.test_040']
+  sys.argv = ['', 'TESTDataPackage.test_060']
   unittest.main()

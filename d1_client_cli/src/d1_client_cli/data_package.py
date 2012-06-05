@@ -140,11 +140,16 @@ class DataPackage(object):
     if not self._parse_rdf_xml(rdf_xml_file):
       print_error('Unable to load package "%s".' % self.pid)
       return None
-
     self.original_pid = self.pid
     self.sysmeta = sysmeta
+
     if session.is_pretty():
-      print_error("Loaded %s" % self.pid)
+      print_info("Downloading objects")
+    self.sysmeta = self._download_object(session, self.sysmeta)
+    for sysdata in self.sysdata_dict.values():
+      sysdata = self._download_object(session, sysdata)
+    if session.is_pretty():
+      print_info("Loaded %s" % self.pid)
     return self
 
   def _parse_rdf_xml(self, xml_file):
@@ -438,7 +443,7 @@ class DataPackage(object):
     #== Helpers ===============================================================
 
   def _get_by_pid(self, session, pid, sysmeta=None):
-    ''' Return (pid, dirty, fname, sysmeta)
+    ''' Return DataObject
     '''
     if session is None:
       raise cli_exceptions.InvalidArguments('Missing session')
@@ -448,10 +453,12 @@ class DataPackage(object):
     fname = cli_client.get_object_by_pid(session, pid, resolve=True)
     if fname is not None:
       meta = sysmeta
+      formatId = None
       if not meta:
-        meta = cli_client.get_sysmeta_by_pid(session, pid)
+        meta = cli_client.get_sysmeta_by_pid(session, pid, True)
+        formatId = meta.formatId
       url = cli_client.create_get_url_for_pid(None, pid, session)
-      return DataObject(pid, False, fname, url, meta, meta.formatId, None)
+      return DataObject(pid, False, fname, url, meta, formatId, None)
     else:
       return None
 
@@ -569,6 +576,12 @@ class DataPackage(object):
           .format(e.friendly_format())
         )
         return None
+
+  def _download_object(self, session, data_object):
+    ''' Download the object. '''
+    if not data_object.pid:
+      print_error('There is no pid specified')
+    return self._get_by_pid(session, data_object.pid, data_object.meta)
 
   def _find_scidata(self, scimeta):
     '''  Search through an eml://ecoinformatics.org/eml-2.x.x document '''
