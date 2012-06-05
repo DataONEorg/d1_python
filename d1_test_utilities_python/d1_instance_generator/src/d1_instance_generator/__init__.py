@@ -21,12 +21,11 @@
 '''
 '''
 
-__version__ = "1.0.0"
+__version__ = "1.0.0c7-SNAPSHOT"
 
 __all__ = [
   'accesspolicy',
   'checksum',
-  'd1object',
   'dates',
   'identifier',
   'oaiore',
@@ -34,5 +33,9 @@ __all__ = [
   'random_data',
   'replica',
   'replicationpolicy',
+  'subject',
   'systemmetadata',
+  'unicode_names',
+  'unicode_test_strings',
+  'words',
 ]

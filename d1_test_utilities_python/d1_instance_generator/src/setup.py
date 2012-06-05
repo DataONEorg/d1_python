@@ -31,7 +31,7 @@ import d1_instance_generator
 
 setup(
   name='DataONE_Instance_Generator',
-  version='1.0.0',
+  version=d1_instance_generator.__version__,
   author='DataONE Project',
   author_email='developers@dataone.org',
   url='http://dataone.org',
