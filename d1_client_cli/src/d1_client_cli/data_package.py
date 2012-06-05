@@ -189,6 +189,9 @@ class DataPackage(object):
       raise cli_exceptions.InvalidArguments('Missing pid')
 
     pkg_xml = self._serialize(session, 'xml')
+    if not pkg_xml:
+      print_error("Couldn't serialize object.")
+      return None
 
     algorithm = session.get(CHECKSUM_sect, CHECKSUM_name)
     hash_fcn = util.get_checksum_calculator_by_dataone_designator(algorithm)
@@ -451,14 +454,12 @@ class DataPackage(object):
       raise cli_exceptions.InvalidArguments('Missing pid')
 
     fname = cli_client.get_object_by_pid(session, pid, resolve=True)
-    if fname is not None:
+    if fname:
       meta = sysmeta
-      formatId = None
       if not meta:
         meta = cli_client.get_sysmeta_by_pid(session, pid, True)
-        formatId = meta.formatId
       url = cli_client.create_get_url_for_pid(None, pid, session)
-      return DataObject(pid, False, fname, url, meta, formatId, None)
+      return DataObject(pid, False, fname, url, meta, meta.formatId, None)
     else:
       return None
 
@@ -546,11 +547,11 @@ class DataPackage(object):
   def _check_item(self, item):
     errors = []
     if not self.scimeta.pid:
-      errors.add('missing pid')
+      errors.append('missing pid')
     if not self.scimeta.fname:
-      errors.add('missing fname')
+      errors.append('missing fname')
     if not self.scimeta.format_id:
-      errors.add('missing format-id')
+      errors.append('missing format-id')
     if len(errors) == 0:
       return True
     else:
