@@ -46,7 +46,7 @@ class multipart(object):
   read interface.
   '''
 
-  def __init__(self, fields, files, chunk_size=1024**2):
+  def __init__(self, fields, files, chunk_size=8192):
     '''Constructor for MIME Multipart document generator.
     :param fields: sequence of (name, value) elements for regular form fields
     :type fields: [(string, string), ]
