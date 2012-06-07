@@ -41,7 +41,7 @@ setup(
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires = [
-    'DataONE_Common >= 1.0.0c7-SNAPSHOT',
+    'DataONE_Common >= 1.0.0',
   ],
 
   package_data = {
