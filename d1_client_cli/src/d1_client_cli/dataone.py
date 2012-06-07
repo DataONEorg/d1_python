@@ -131,6 +131,13 @@ option_list = [
     help="URI to use for the Coordinating Node"
   ),
   make_option(
+    "--cn-url",
+    action="store",
+    dest="dataone_url",
+    metavar="URI",
+    help="URI to use for the Coordinating Node"
+  ),
+  make_option(
     "--" + FROM_DATE_name,
     action="store",
     dest="from_date",
