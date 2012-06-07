@@ -91,11 +91,11 @@
 <h1>2.1.1.1.1. cnclient.CoordinatingNodeClient<a class="headerlink" href="#cnclient-coordinatingnodeclient" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cnclient.CoordinatingNodeClient">
-<em class="property">class </em><tt class="descclassname">cnclient.</tt><tt class="descname">CoordinatingNodeClient</tt><big>(</big><em>base_url='https://cn.dataone.org/cn'</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/home/dahl/eclipse_d1/d1_common_python/src/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#cnclient.CoordinatingNodeClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">cnclient.</tt><tt class="descname">CoordinatingNodeClient</tt><big>(</big><em>base_url='https://cn.dataone.org/cn'</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/Users/pippin/.local/lib/python2.6/site-packages/DataONE_Common-1.0.0c7_SNAPSHOT-py2.6.egg/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#cnclient.CoordinatingNodeClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect to a Coordinating Node and perform REST calls against the CN API</p>
 <dl class="method">
 <dt id="cnclient.CoordinatingNodeClient.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>base_url='https://cn.dataone.org/cn'</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/home/dahl/eclipse_d1/d1_common_python/src/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#cnclient.CoordinatingNodeClient.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>base_url='https://cn.dataone.org/cn'</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/Users/pippin/.local/lib/python2.6/site-packages/DataONE_Common-1.0.0c7_SNAPSHOT-py2.6.egg/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#cnclient.CoordinatingNodeClient.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect to a DataONE Coordinating Node.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -280,6 +280,12 @@ deserialization.</li>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">mapIdentityResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">ping</span></tt>(*args,&nbsp;**kwargs)</td>
+<td>Note: If the server returns a status code other than &#8216;200 OK&#8217;,</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">pingResponse</span></tt>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">register</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
@@ -418,7 +424,7 @@ deserialization.</li>
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

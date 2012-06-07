@@ -91,10 +91,10 @@
 <h1>2.1.5.1.1. mnclient.MemberNodeClient<a class="headerlink" href="#mnclient-membernodeclient" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="mnclient.MemberNodeClient">
-<em class="property">class </em><tt class="descclassname">mnclient.</tt><tt class="descname">MemberNodeClient</tt><big>(</big><em>base_url</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/home/dahl/eclipse_d1/d1_common_python/src/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#mnclient.MemberNodeClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mnclient.</tt><tt class="descname">MemberNodeClient</tt><big>(</big><em>base_url</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/Users/pippin/.local/lib/python2.6/site-packages/DataONE_Common-1.0.0c7_SNAPSHOT-py2.6.egg/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#mnclient.MemberNodeClient" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="mnclient.MemberNodeClient.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>base_url</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/home/dahl/eclipse_d1/d1_common_python/src/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#mnclient.MemberNodeClient.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>base_url</em>, <em>timeout=30.0</em>, <em>defaultHeaders=None</em>, <em>cert_path=None</em>, <em>key_path=None</em>, <em>strict=True</em>, <em>capture_response_body=False</em>, <em>version='v1'</em>, <em>types=&lt;module 'd1_common.types.generated.dataoneTypes' from '/Users/pippin/.local/lib/python2.6/site-packages/DataONE_Common-1.0.0c7_SNAPSHOT-py2.6.egg/d1_common/types/generated/dataoneTypes.pyc'&gt;</em><big>)</big><a class="headerlink" href="#mnclient.MemberNodeClient.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect to a DataONE Member Node.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -195,7 +195,7 @@ deserialization.</li>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">getLogRecordsResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">getReplica</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">getReplica</span></tt>(pid[,&nbsp;vendorSpecific])</td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">getResponse</span></tt>(*args,&nbsp;**kwargs)</td>
@@ -225,28 +225,31 @@ deserialization.</li>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">ping</span></tt>([vendorSpecific])</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">replicate</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">pingResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">replicateResponse</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">replicate</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">synchronizationFailed</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">replicateResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">synchronizationFailedResponse</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">synchronizationFailed</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">systemMetadataChanged</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">synchronizationFailedResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">systemMetadataChangedResponse</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">systemMetadataChanged</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">update</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">systemMetadataChangedResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">updateResponse</span></tt>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">update</span></tt>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">updateResponse</span></tt>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
 </tbody>
@@ -285,7 +288,7 @@ deserialization.</li>
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

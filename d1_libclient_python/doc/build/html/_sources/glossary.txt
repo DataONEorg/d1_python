@@ -13,8 +13,8 @@ Glossary
     Part of the DataONE :term:`Investigator Toolkit (ITK)`. Provides
     functionality commonly needed by projects that interact with the
     :term:`DataONE` infrastructure via Python. It is a dependency of
-    :term:`DataONE Client Library for Python`, :term:`GMN` and all other DataONE
-    components written in Python.
+    :term:`DataONE Client Library for Python`, :term:`GMN` and currently all
+    other DataONE components written in Python.
 
 
   DataONE Client Library for Python
