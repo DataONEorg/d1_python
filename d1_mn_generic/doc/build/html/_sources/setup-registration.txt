@@ -84,7 +84,7 @@ Registering the MN with DataONE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This step can only be performed after the signed client side certificate has
-been received from DataONE. See `Obtaining a client side certificate`_
+been received from DataONE. See `Obtaining a client side certificate`_.
 
 Each DataONE Node has an XML document associated with it that describes the
 various aspects of the Node, such as its URL, the services it supports and who
@@ -120,7 +120,7 @@ this process.
     - **baseURL**: The URL at which the Node is available.
 
     - **contactSubject**: The subject field exactly as it is displayed in the
-      DataONE Identity Manager. See `Create a DataONE identify`_
+      DataONE Identity Manager. See `Create a DataONE identify`_.
 
     For more information about the Node document, refer to
     http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
