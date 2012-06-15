@@ -3,7 +3,7 @@ API
 
 A single API method is exposed::
 
-  x509_extract_session.extract(
+  d1_x509v3_certificate_extractor.extract(
     pem_certificate
   )
 
@@ -25,9 +25,11 @@ is returned.
 
 Call the API from Python::
 
-  import x509_extract_session
+  import d1_x509v3_certificate_extractor
 
-  subject, subject_info_xml = self._extract_session_from_x509_v3_certificate()
+  with open('mycert.pem') as f:
+    mycert = f.read()
+  subject, subject_info_xml = d1_x509v3_certificate_extractor.extract(mycert)
   if subject_info_xml == '':
     return subject, None
   else:
