@@ -5,53 +5,53 @@ test_objectlist.TestObjectList
 
 .. autoclass:: TestObjectList
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestObjectList.__init__
+      ~TestObjectList.assertAlmostEqual
+      ~TestObjectList.assertAlmostEquals
+      ~TestObjectList.assertEqual
+      ~TestObjectList.assertEquals
+      ~TestObjectList.assertFalse
+      ~TestObjectList.assertNotAlmostEqual
+      ~TestObjectList.assertNotAlmostEquals
+      ~TestObjectList.assertNotEqual
+      ~TestObjectList.assertNotEquals
+      ~TestObjectList.assertRaises
+      ~TestObjectList.assertTrue
+      ~TestObjectList.assert_
+      ~TestObjectList.countTestCases
+      ~TestObjectList.debug
+      ~TestObjectList.defaultTestResult
+      ~TestObjectList.deserialize_and_check
+      ~TestObjectList.fail
+      ~TestObjectList.failIf
+      ~TestObjectList.failIfAlmostEqual
+      ~TestObjectList.failIfEqual
+      ~TestObjectList.failUnless
+      ~TestObjectList.failUnlessAlmostEqual
+      ~TestObjectList.failUnlessEqual
+      ~TestObjectList.failUnlessRaises
+      ~TestObjectList.id
+      ~TestObjectList.run
+      ~TestObjectList.setUp
+      ~TestObjectList.shortDescription
+      ~TestObjectList.tearDown
+      ~TestObjectList.test_deserialize_xml_bad
+      ~TestObjectList.test_deserialize_xml_gmn
+      ~TestObjectList.test_serialization_bad
+      ~TestObjectList.test_serialization_gmn
+      ~TestObjectList.test_serialization_knb
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: test_objectlist.TestObjectList.__init__
-  .. automethod:: test_objectlist.TestObjectList.assertAlmostEqual
-  .. automethod:: test_objectlist.TestObjectList.assertAlmostEquals
-  .. automethod:: test_objectlist.TestObjectList.assertEqual
-  .. automethod:: test_objectlist.TestObjectList.assertEquals
-  .. automethod:: test_objectlist.TestObjectList.assertFalse
-  .. automethod:: test_objectlist.TestObjectList.assertNotAlmostEqual
-  .. automethod:: test_objectlist.TestObjectList.assertNotAlmostEquals
-  .. automethod:: test_objectlist.TestObjectList.assertNotEqual
-  .. automethod:: test_objectlist.TestObjectList.assertNotEquals
-  .. automethod:: test_objectlist.TestObjectList.assertRaises
-  .. automethod:: test_objectlist.TestObjectList.assertTrue
-  .. automethod:: test_objectlist.TestObjectList.assert_
-  .. automethod:: test_objectlist.TestObjectList.countTestCases
-  .. automethod:: test_objectlist.TestObjectList.debug
-  .. automethod:: test_objectlist.TestObjectList.defaultTestResult
-  .. automethod:: test_objectlist.TestObjectList.deserialize_and_check
-  .. automethod:: test_objectlist.TestObjectList.fail
-  .. automethod:: test_objectlist.TestObjectList.failIf
-  .. automethod:: test_objectlist.TestObjectList.failIfAlmostEqual
-  .. automethod:: test_objectlist.TestObjectList.failIfEqual
-  .. automethod:: test_objectlist.TestObjectList.failUnless
-  .. automethod:: test_objectlist.TestObjectList.failUnlessAlmostEqual
-  .. automethod:: test_objectlist.TestObjectList.failUnlessEqual
-  .. automethod:: test_objectlist.TestObjectList.failUnlessRaises
-  .. automethod:: test_objectlist.TestObjectList.id
-  .. automethod:: test_objectlist.TestObjectList.run
-  .. automethod:: test_objectlist.TestObjectList.setUp
-  .. automethod:: test_objectlist.TestObjectList.shortDescription
-  .. automethod:: test_objectlist.TestObjectList.tearDown
-  .. automethod:: test_objectlist.TestObjectList.test_deserialize_xml_bad
-  .. automethod:: test_objectlist.TestObjectList.test_deserialize_xml_gmn
-  .. automethod:: test_objectlist.TestObjectList.test_serialization_bad
-  .. automethod:: test_objectlist.TestObjectList.test_serialization_gmn
-  .. automethod:: test_objectlist.TestObjectList.test_serialization_knb
-
-
-
-
-
-
+   
+   
+   
+/

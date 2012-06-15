@@ -5,56 +5,56 @@ all_tests.TestRESTClient
 
 .. autoclass:: TestRESTClient
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestRESTClient.__init__
+      ~TestRESTClient.assertAlmostEqual
+      ~TestRESTClient.assertAlmostEquals
+      ~TestRESTClient.assertEqual
+      ~TestRESTClient.assertEquals
+      ~TestRESTClient.assertFalse
+      ~TestRESTClient.assertNotAlmostEqual
+      ~TestRESTClient.assertNotAlmostEquals
+      ~TestRESTClient.assertNotEqual
+      ~TestRESTClient.assertNotEquals
+      ~TestRESTClient.assertRaises
+      ~TestRESTClient.assertTrue
+      ~TestRESTClient.assertUrlEqual
+      ~TestRESTClient.assert_
+      ~TestRESTClient.countTestCases
+      ~TestRESTClient.debug
+      ~TestRESTClient.defaultTestResult
+      ~TestRESTClient.fail
+      ~TestRESTClient.failIf
+      ~TestRESTClient.failIfAlmostEqual
+      ~TestRESTClient.failIfEqual
+      ~TestRESTClient.failUnless
+      ~TestRESTClient.failUnlessAlmostEqual
+      ~TestRESTClient.failUnlessEqual
+      ~TestRESTClient.failUnlessRaises
+      ~TestRESTClient.id
+      ~TestRESTClient.run
+      ~TestRESTClient.setUp
+      ~TestRESTClient.shortDescription
+      ~TestRESTClient.tearDown
+      ~TestRESTClient.test_010
+      ~TestRESTClient.test_020
+      ~TestRESTClient.test_030
+      ~TestRESTClient.test_040
+      ~TestRESTClient.test_050
+      ~TestRESTClient.test_100
+      ~TestRESTClient.test_110
+      ~TestRESTClient.test_200
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: all_tests.TestRESTClient.__init__
-  .. automethod:: all_tests.TestRESTClient.assertAlmostEqual
-  .. automethod:: all_tests.TestRESTClient.assertAlmostEquals
-  .. automethod:: all_tests.TestRESTClient.assertEqual
-  .. automethod:: all_tests.TestRESTClient.assertEquals
-  .. automethod:: all_tests.TestRESTClient.assertFalse
-  .. automethod:: all_tests.TestRESTClient.assertNotAlmostEqual
-  .. automethod:: all_tests.TestRESTClient.assertNotAlmostEquals
-  .. automethod:: all_tests.TestRESTClient.assertNotEqual
-  .. automethod:: all_tests.TestRESTClient.assertNotEquals
-  .. automethod:: all_tests.TestRESTClient.assertRaises
-  .. automethod:: all_tests.TestRESTClient.assertTrue
-  .. automethod:: all_tests.TestRESTClient.assertUrlEqual
-  .. automethod:: all_tests.TestRESTClient.assert_
-  .. automethod:: all_tests.TestRESTClient.countTestCases
-  .. automethod:: all_tests.TestRESTClient.debug
-  .. automethod:: all_tests.TestRESTClient.defaultTestResult
-  .. automethod:: all_tests.TestRESTClient.fail
-  .. automethod:: all_tests.TestRESTClient.failIf
-  .. automethod:: all_tests.TestRESTClient.failIfAlmostEqual
-  .. automethod:: all_tests.TestRESTClient.failIfEqual
-  .. automethod:: all_tests.TestRESTClient.failUnless
-  .. automethod:: all_tests.TestRESTClient.failUnlessAlmostEqual
-  .. automethod:: all_tests.TestRESTClient.failUnlessEqual
-  .. automethod:: all_tests.TestRESTClient.failUnlessRaises
-  .. automethod:: all_tests.TestRESTClient.id
-  .. automethod:: all_tests.TestRESTClient.run
-  .. automethod:: all_tests.TestRESTClient.setUp
-  .. automethod:: all_tests.TestRESTClient.shortDescription
-  .. automethod:: all_tests.TestRESTClient.tearDown
-  .. automethod:: all_tests.TestRESTClient.test_010
-  .. automethod:: all_tests.TestRESTClient.test_020
-  .. automethod:: all_tests.TestRESTClient.test_030
-  .. automethod:: all_tests.TestRESTClient.test_040
-  .. automethod:: all_tests.TestRESTClient.test_050
-  .. automethod:: all_tests.TestRESTClient.test_100
-  .. automethod:: all_tests.TestRESTClient.test_110
-  .. automethod:: all_tests.TestRESTClient.test_200
-
-
-
-
-
-
+   
+   
+   
+/

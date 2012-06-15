@@ -5,50 +5,50 @@ all_tests.TestExceptions
 
 .. autoclass:: TestExceptions
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestExceptions.__init__
+      ~TestExceptions.assertAlmostEqual
+      ~TestExceptions.assertAlmostEquals
+      ~TestExceptions.assertEqual
+      ~TestExceptions.assertEquals
+      ~TestExceptions.assertFalse
+      ~TestExceptions.assertNotAlmostEqual
+      ~TestExceptions.assertNotAlmostEquals
+      ~TestExceptions.assertNotEqual
+      ~TestExceptions.assertNotEquals
+      ~TestExceptions.assertRaises
+      ~TestExceptions.assertTrue
+      ~TestExceptions.assert_
+      ~TestExceptions.countTestCases
+      ~TestExceptions.debug
+      ~TestExceptions.defaultTestResult
+      ~TestExceptions.fail
+      ~TestExceptions.failIf
+      ~TestExceptions.failIfAlmostEqual
+      ~TestExceptions.failIfEqual
+      ~TestExceptions.failUnless
+      ~TestExceptions.failUnlessAlmostEqual
+      ~TestExceptions.failUnlessEqual
+      ~TestExceptions.failUnlessRaises
+      ~TestExceptions.id
+      ~TestExceptions.run
+      ~TestExceptions.setUp
+      ~TestExceptions.shortDescription
+      ~TestExceptions.tearDown
+      ~TestExceptions.test_serialization_bad_1
+      ~TestExceptions.test_serialization_gmn
+      ~TestExceptions.test_xml_round_trip
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: all_tests.TestExceptions.__init__
-  .. automethod:: all_tests.TestExceptions.assertAlmostEqual
-  .. automethod:: all_tests.TestExceptions.assertAlmostEquals
-  .. automethod:: all_tests.TestExceptions.assertEqual
-  .. automethod:: all_tests.TestExceptions.assertEquals
-  .. automethod:: all_tests.TestExceptions.assertFalse
-  .. automethod:: all_tests.TestExceptions.assertNotAlmostEqual
-  .. automethod:: all_tests.TestExceptions.assertNotAlmostEquals
-  .. automethod:: all_tests.TestExceptions.assertNotEqual
-  .. automethod:: all_tests.TestExceptions.assertNotEquals
-  .. automethod:: all_tests.TestExceptions.assertRaises
-  .. automethod:: all_tests.TestExceptions.assertTrue
-  .. automethod:: all_tests.TestExceptions.assert_
-  .. automethod:: all_tests.TestExceptions.countTestCases
-  .. automethod:: all_tests.TestExceptions.debug
-  .. automethod:: all_tests.TestExceptions.defaultTestResult
-  .. automethod:: all_tests.TestExceptions.fail
-  .. automethod:: all_tests.TestExceptions.failIf
-  .. automethod:: all_tests.TestExceptions.failIfAlmostEqual
-  .. automethod:: all_tests.TestExceptions.failIfEqual
-  .. automethod:: all_tests.TestExceptions.failUnless
-  .. automethod:: all_tests.TestExceptions.failUnlessAlmostEqual
-  .. automethod:: all_tests.TestExceptions.failUnlessEqual
-  .. automethod:: all_tests.TestExceptions.failUnlessRaises
-  .. automethod:: all_tests.TestExceptions.id
-  .. automethod:: all_tests.TestExceptions.run
-  .. automethod:: all_tests.TestExceptions.setUp
-  .. automethod:: all_tests.TestExceptions.shortDescription
-  .. automethod:: all_tests.TestExceptions.tearDown
-  .. automethod:: all_tests.TestExceptions.test_serialization_bad_1
-  .. automethod:: all_tests.TestExceptions.test_serialization_gmn
-  .. automethod:: all_tests.TestExceptions.test_xml_round_trip
-
-
-
-
-
-
+   
+   
+   
+/

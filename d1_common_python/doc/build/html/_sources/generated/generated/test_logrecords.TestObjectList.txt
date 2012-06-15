@@ -5,53 +5,53 @@ test_logrecords.TestObjectList
 
 .. autoclass:: TestObjectList
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestObjectList.__init__
+      ~TestObjectList.assertAlmostEqual
+      ~TestObjectList.assertAlmostEquals
+      ~TestObjectList.assertEqual
+      ~TestObjectList.assertEquals
+      ~TestObjectList.assertFalse
+      ~TestObjectList.assertNotAlmostEqual
+      ~TestObjectList.assertNotAlmostEquals
+      ~TestObjectList.assertNotEqual
+      ~TestObjectList.assertNotEquals
+      ~TestObjectList.assertRaises
+      ~TestObjectList.assertTrue
+      ~TestObjectList.assert_
+      ~TestObjectList.countTestCases
+      ~TestObjectList.debug
+      ~TestObjectList.defaultTestResult
+      ~TestObjectList.deserialize_and_check
+      ~TestObjectList.fail
+      ~TestObjectList.failIf
+      ~TestObjectList.failIfAlmostEqual
+      ~TestObjectList.failIfEqual
+      ~TestObjectList.failUnless
+      ~TestObjectList.failUnlessAlmostEqual
+      ~TestObjectList.failUnlessEqual
+      ~TestObjectList.failUnlessRaises
+      ~TestObjectList.id
+      ~TestObjectList.run
+      ~TestObjectList.setUp
+      ~TestObjectList.shortDescription
+      ~TestObjectList.tearDown
+      ~TestObjectList.test_serialization_bad_1
+      ~TestObjectList.test_serialization_bad_2
+      ~TestObjectList.test_serialization_bad_3
+      ~TestObjectList.test_serialization_gmn
+      ~TestObjectList.test_serialization_knb
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: test_logrecords.TestObjectList.__init__
-  .. automethod:: test_logrecords.TestObjectList.assertAlmostEqual
-  .. automethod:: test_logrecords.TestObjectList.assertAlmostEquals
-  .. automethod:: test_logrecords.TestObjectList.assertEqual
-  .. automethod:: test_logrecords.TestObjectList.assertEquals
-  .. automethod:: test_logrecords.TestObjectList.assertFalse
-  .. automethod:: test_logrecords.TestObjectList.assertNotAlmostEqual
-  .. automethod:: test_logrecords.TestObjectList.assertNotAlmostEquals
-  .. automethod:: test_logrecords.TestObjectList.assertNotEqual
-  .. automethod:: test_logrecords.TestObjectList.assertNotEquals
-  .. automethod:: test_logrecords.TestObjectList.assertRaises
-  .. automethod:: test_logrecords.TestObjectList.assertTrue
-  .. automethod:: test_logrecords.TestObjectList.assert_
-  .. automethod:: test_logrecords.TestObjectList.countTestCases
-  .. automethod:: test_logrecords.TestObjectList.debug
-  .. automethod:: test_logrecords.TestObjectList.defaultTestResult
-  .. automethod:: test_logrecords.TestObjectList.deserialize_and_check
-  .. automethod:: test_logrecords.TestObjectList.fail
-  .. automethod:: test_logrecords.TestObjectList.failIf
-  .. automethod:: test_logrecords.TestObjectList.failIfAlmostEqual
-  .. automethod:: test_logrecords.TestObjectList.failIfEqual
-  .. automethod:: test_logrecords.TestObjectList.failUnless
-  .. automethod:: test_logrecords.TestObjectList.failUnlessAlmostEqual
-  .. automethod:: test_logrecords.TestObjectList.failUnlessEqual
-  .. automethod:: test_logrecords.TestObjectList.failUnlessRaises
-  .. automethod:: test_logrecords.TestObjectList.id
-  .. automethod:: test_logrecords.TestObjectList.run
-  .. automethod:: test_logrecords.TestObjectList.setUp
-  .. automethod:: test_logrecords.TestObjectList.shortDescription
-  .. automethod:: test_logrecords.TestObjectList.tearDown
-  .. automethod:: test_logrecords.TestObjectList.test_serialization_bad_1
-  .. automethod:: test_logrecords.TestObjectList.test_serialization_bad_2
-  .. automethod:: test_logrecords.TestObjectList.test_serialization_bad_3
-  .. automethod:: test_logrecords.TestObjectList.test_serialization_gmn
-  .. automethod:: test_logrecords.TestObjectList.test_serialization_knb
-
-
-
-
-
-
+   
+   
+   
+/
