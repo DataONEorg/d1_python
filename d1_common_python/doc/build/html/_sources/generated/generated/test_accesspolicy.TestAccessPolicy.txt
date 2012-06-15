@@ -5,50 +5,50 @@ test_accesspolicy.TestAccessPolicy
 
 .. autoclass:: TestAccessPolicy
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestAccessPolicy.__init__
+      ~TestAccessPolicy.assertAlmostEqual
+      ~TestAccessPolicy.assertAlmostEquals
+      ~TestAccessPolicy.assertEqual
+      ~TestAccessPolicy.assertEquals
+      ~TestAccessPolicy.assertFalse
+      ~TestAccessPolicy.assertNotAlmostEqual
+      ~TestAccessPolicy.assertNotAlmostEquals
+      ~TestAccessPolicy.assertNotEqual
+      ~TestAccessPolicy.assertNotEquals
+      ~TestAccessPolicy.assertRaises
+      ~TestAccessPolicy.assertTrue
+      ~TestAccessPolicy.assert_
+      ~TestAccessPolicy.countTestCases
+      ~TestAccessPolicy.debug
+      ~TestAccessPolicy.defaultTestResult
+      ~TestAccessPolicy.deserialize_and_check
+      ~TestAccessPolicy.fail
+      ~TestAccessPolicy.failIf
+      ~TestAccessPolicy.failIfAlmostEqual
+      ~TestAccessPolicy.failIfEqual
+      ~TestAccessPolicy.failUnless
+      ~TestAccessPolicy.failUnlessAlmostEqual
+      ~TestAccessPolicy.failUnlessEqual
+      ~TestAccessPolicy.failUnlessRaises
+      ~TestAccessPolicy.id
+      ~TestAccessPolicy.run
+      ~TestAccessPolicy.setUp
+      ~TestAccessPolicy.shortDescription
+      ~TestAccessPolicy.tearDown
+      ~TestAccessPolicy.test_serialization_bad_1
+      ~TestAccessPolicy.test_serialization_gmn
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: test_accesspolicy.TestAccessPolicy.__init__
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertAlmostEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertAlmostEquals
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertEquals
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertFalse
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertNotAlmostEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertNotAlmostEquals
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertNotEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertNotEquals
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertRaises
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assertTrue
-  .. automethod:: test_accesspolicy.TestAccessPolicy.assert_
-  .. automethod:: test_accesspolicy.TestAccessPolicy.countTestCases
-  .. automethod:: test_accesspolicy.TestAccessPolicy.debug
-  .. automethod:: test_accesspolicy.TestAccessPolicy.defaultTestResult
-  .. automethod:: test_accesspolicy.TestAccessPolicy.deserialize_and_check
-  .. automethod:: test_accesspolicy.TestAccessPolicy.fail
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failIf
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failIfAlmostEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failIfEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failUnless
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failUnlessAlmostEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failUnlessEqual
-  .. automethod:: test_accesspolicy.TestAccessPolicy.failUnlessRaises
-  .. automethod:: test_accesspolicy.TestAccessPolicy.id
-  .. automethod:: test_accesspolicy.TestAccessPolicy.run
-  .. automethod:: test_accesspolicy.TestAccessPolicy.setUp
-  .. automethod:: test_accesspolicy.TestAccessPolicy.shortDescription
-  .. automethod:: test_accesspolicy.TestAccessPolicy.tearDown
-  .. automethod:: test_accesspolicy.TestAccessPolicy.test_serialization_bad_1
-  .. automethod:: test_accesspolicy.TestAccessPolicy.test_serialization_gmn
-
-
-
-
-
-
+   
+   
+   
+/

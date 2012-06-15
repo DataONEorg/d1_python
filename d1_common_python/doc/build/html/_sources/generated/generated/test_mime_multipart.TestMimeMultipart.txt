@@ -5,48 +5,48 @@ test_mime_multipart.TestMimeMultipart
 
 .. autoclass:: TestMimeMultipart
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestMimeMultipart.__init__
+      ~TestMimeMultipart.assertAlmostEqual
+      ~TestMimeMultipart.assertAlmostEquals
+      ~TestMimeMultipart.assertEqual
+      ~TestMimeMultipart.assertEquals
+      ~TestMimeMultipart.assertFalse
+      ~TestMimeMultipart.assertNotAlmostEqual
+      ~TestMimeMultipart.assertNotAlmostEquals
+      ~TestMimeMultipart.assertNotEqual
+      ~TestMimeMultipart.assertNotEquals
+      ~TestMimeMultipart.assertRaises
+      ~TestMimeMultipart.assertTrue
+      ~TestMimeMultipart.assert_
+      ~TestMimeMultipart.countTestCases
+      ~TestMimeMultipart.debug
+      ~TestMimeMultipart.defaultTestResult
+      ~TestMimeMultipart.fail
+      ~TestMimeMultipart.failIf
+      ~TestMimeMultipart.failIfAlmostEqual
+      ~TestMimeMultipart.failIfEqual
+      ~TestMimeMultipart.failUnless
+      ~TestMimeMultipart.failUnlessAlmostEqual
+      ~TestMimeMultipart.failUnlessEqual
+      ~TestMimeMultipart.failUnlessRaises
+      ~TestMimeMultipart.id
+      ~TestMimeMultipart.run
+      ~TestMimeMultipart.setUp
+      ~TestMimeMultipart.shortDescription
+      ~TestMimeMultipart.tearDown
+      ~TestMimeMultipart.test_correct_mmp_generation
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: test_mime_multipart.TestMimeMultipart.__init__
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertAlmostEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertAlmostEquals
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertEquals
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertFalse
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertNotAlmostEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertNotAlmostEquals
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertNotEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertNotEquals
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertRaises
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assertTrue
-  .. automethod:: test_mime_multipart.TestMimeMultipart.assert_
-  .. automethod:: test_mime_multipart.TestMimeMultipart.countTestCases
-  .. automethod:: test_mime_multipart.TestMimeMultipart.debug
-  .. automethod:: test_mime_multipart.TestMimeMultipart.defaultTestResult
-  .. automethod:: test_mime_multipart.TestMimeMultipart.fail
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failIf
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failIfAlmostEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failIfEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failUnless
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failUnlessAlmostEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failUnlessEqual
-  .. automethod:: test_mime_multipart.TestMimeMultipart.failUnlessRaises
-  .. automethod:: test_mime_multipart.TestMimeMultipart.id
-  .. automethod:: test_mime_multipart.TestMimeMultipart.run
-  .. automethod:: test_mime_multipart.TestMimeMultipart.setUp
-  .. automethod:: test_mime_multipart.TestMimeMultipart.shortDescription
-  .. automethod:: test_mime_multipart.TestMimeMultipart.tearDown
-  .. automethod:: test_mime_multipart.TestMimeMultipart.test_correct_mmp_generation
-
-
-
-
-
-
+   
+   
+   
+/

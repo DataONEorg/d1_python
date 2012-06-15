@@ -5,65 +5,65 @@ all_tests.TestDateTime
 
 .. autoclass:: TestDateTime
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestDateTime.__init__
+      ~TestDateTime.assertAlmostEqual
+      ~TestDateTime.assertAlmostEquals
+      ~TestDateTime.assertEqual
+      ~TestDateTime.assertEquals
+      ~TestDateTime.assertFalse
+      ~TestDateTime.assertNotAlmostEqual
+      ~TestDateTime.assertNotAlmostEquals
+      ~TestDateTime.assertNotEqual
+      ~TestDateTime.assertNotEquals
+      ~TestDateTime.assertRaises
+      ~TestDateTime.assertTrue
+      ~TestDateTime.assert_
+      ~TestDateTime.countTestCases
+      ~TestDateTime.debug
+      ~TestDateTime.defaultTestResult
+      ~TestDateTime.fail
+      ~TestDateTime.failIf
+      ~TestDateTime.failIfAlmostEqual
+      ~TestDateTime.failIfEqual
+      ~TestDateTime.failUnless
+      ~TestDateTime.failUnlessAlmostEqual
+      ~TestDateTime.failUnlessEqual
+      ~TestDateTime.failUnlessRaises
+      ~TestDateTime.id
+      ~TestDateTime.run
+      ~TestDateTime.setUp
+      ~TestDateTime.shortDescription
+      ~TestDateTime.tearDown
+      ~TestDateTime.test_010
+      ~TestDateTime.test_020
+      ~TestDateTime.test_030
+      ~TestDateTime.test_100
+      ~TestDateTime.test_110
+      ~TestDateTime.test_120
+      ~TestDateTime.test_200
+      ~TestDateTime.test_210
+      ~TestDateTime.test_220
+      ~TestDateTime.test_300
+      ~TestDateTime.test_310
+      ~TestDateTime.test_320
+      ~TestDateTime.test_330
+      ~TestDateTime.test_400
+      ~TestDateTime.test_410
+      ~TestDateTime.test_420
+      ~TestDateTime.test_430
+      ~TestDateTime.test_440
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: all_tests.TestDateTime.__init__
-  .. automethod:: all_tests.TestDateTime.assertAlmostEqual
-  .. automethod:: all_tests.TestDateTime.assertAlmostEquals
-  .. automethod:: all_tests.TestDateTime.assertEqual
-  .. automethod:: all_tests.TestDateTime.assertEquals
-  .. automethod:: all_tests.TestDateTime.assertFalse
-  .. automethod:: all_tests.TestDateTime.assertNotAlmostEqual
-  .. automethod:: all_tests.TestDateTime.assertNotAlmostEquals
-  .. automethod:: all_tests.TestDateTime.assertNotEqual
-  .. automethod:: all_tests.TestDateTime.assertNotEquals
-  .. automethod:: all_tests.TestDateTime.assertRaises
-  .. automethod:: all_tests.TestDateTime.assertTrue
-  .. automethod:: all_tests.TestDateTime.assert_
-  .. automethod:: all_tests.TestDateTime.countTestCases
-  .. automethod:: all_tests.TestDateTime.debug
-  .. automethod:: all_tests.TestDateTime.defaultTestResult
-  .. automethod:: all_tests.TestDateTime.fail
-  .. automethod:: all_tests.TestDateTime.failIf
-  .. automethod:: all_tests.TestDateTime.failIfAlmostEqual
-  .. automethod:: all_tests.TestDateTime.failIfEqual
-  .. automethod:: all_tests.TestDateTime.failUnless
-  .. automethod:: all_tests.TestDateTime.failUnlessAlmostEqual
-  .. automethod:: all_tests.TestDateTime.failUnlessEqual
-  .. automethod:: all_tests.TestDateTime.failUnlessRaises
-  .. automethod:: all_tests.TestDateTime.id
-  .. automethod:: all_tests.TestDateTime.run
-  .. automethod:: all_tests.TestDateTime.setUp
-  .. automethod:: all_tests.TestDateTime.shortDescription
-  .. automethod:: all_tests.TestDateTime.tearDown
-  .. automethod:: all_tests.TestDateTime.test_010
-  .. automethod:: all_tests.TestDateTime.test_020
-  .. automethod:: all_tests.TestDateTime.test_030
-  .. automethod:: all_tests.TestDateTime.test_100
-  .. automethod:: all_tests.TestDateTime.test_110
-  .. automethod:: all_tests.TestDateTime.test_120
-  .. automethod:: all_tests.TestDateTime.test_200
-  .. automethod:: all_tests.TestDateTime.test_210
-  .. automethod:: all_tests.TestDateTime.test_220
-  .. automethod:: all_tests.TestDateTime.test_300
-  .. automethod:: all_tests.TestDateTime.test_310
-  .. automethod:: all_tests.TestDateTime.test_320
-  .. automethod:: all_tests.TestDateTime.test_330
-  .. automethod:: all_tests.TestDateTime.test_400
-  .. automethod:: all_tests.TestDateTime.test_410
-  .. automethod:: all_tests.TestDateTime.test_420
-  .. automethod:: all_tests.TestDateTime.test_430
-  .. automethod:: all_tests.TestDateTime.test_440
-
-
-
-
-
-
+   
+   
+   
+/

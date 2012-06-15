@@ -5,49 +5,49 @@ test_systemmetadata.TestSystemMetadata
 
 .. autoclass:: TestSystemMetadata
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestSystemMetadata.__init__
+      ~TestSystemMetadata.assertAlmostEqual
+      ~TestSystemMetadata.assertAlmostEquals
+      ~TestSystemMetadata.assertEqual
+      ~TestSystemMetadata.assertEquals
+      ~TestSystemMetadata.assertFalse
+      ~TestSystemMetadata.assertNotAlmostEqual
+      ~TestSystemMetadata.assertNotAlmostEquals
+      ~TestSystemMetadata.assertNotEqual
+      ~TestSystemMetadata.assertNotEquals
+      ~TestSystemMetadata.assertRaises
+      ~TestSystemMetadata.assertTrue
+      ~TestSystemMetadata.assert_
+      ~TestSystemMetadata.countTestCases
+      ~TestSystemMetadata.debug
+      ~TestSystemMetadata.defaultTestResult
+      ~TestSystemMetadata.fail
+      ~TestSystemMetadata.failIf
+      ~TestSystemMetadata.failIfAlmostEqual
+      ~TestSystemMetadata.failIfEqual
+      ~TestSystemMetadata.failUnless
+      ~TestSystemMetadata.failUnlessAlmostEqual
+      ~TestSystemMetadata.failUnlessEqual
+      ~TestSystemMetadata.failUnlessRaises
+      ~TestSystemMetadata.id
+      ~TestSystemMetadata.run
+      ~TestSystemMetadata.setUp
+      ~TestSystemMetadata.shortDescription
+      ~TestSystemMetadata.tearDown
+      ~TestSystemMetadata.testLoadSystemMetadata
+      ~TestSystemMetadata.testValidateSystemMetadata
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: test_systemmetadata.TestSystemMetadata.__init__
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertAlmostEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertAlmostEquals
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertEquals
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertFalse
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertNotAlmostEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertNotAlmostEquals
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertNotEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertNotEquals
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertRaises
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assertTrue
-  .. automethod:: test_systemmetadata.TestSystemMetadata.assert_
-  .. automethod:: test_systemmetadata.TestSystemMetadata.countTestCases
-  .. automethod:: test_systemmetadata.TestSystemMetadata.debug
-  .. automethod:: test_systemmetadata.TestSystemMetadata.defaultTestResult
-  .. automethod:: test_systemmetadata.TestSystemMetadata.fail
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failIf
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failIfAlmostEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failIfEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failUnless
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failUnlessAlmostEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failUnlessEqual
-  .. automethod:: test_systemmetadata.TestSystemMetadata.failUnlessRaises
-  .. automethod:: test_systemmetadata.TestSystemMetadata.id
-  .. automethod:: test_systemmetadata.TestSystemMetadata.run
-  .. automethod:: test_systemmetadata.TestSystemMetadata.setUp
-  .. automethod:: test_systemmetadata.TestSystemMetadata.shortDescription
-  .. automethod:: test_systemmetadata.TestSystemMetadata.tearDown
-  .. automethod:: test_systemmetadata.TestSystemMetadata.testLoadSystemMetadata
-  .. automethod:: test_systemmetadata.TestSystemMetadata.testValidateSystemMetadata
-
-
-
-
-
-
+   
+   
+   
+/

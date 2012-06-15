@@ -5,53 +5,53 @@ all_tests.TestUtils
 
 .. autoclass:: TestUtils
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestUtils.__init__
+      ~TestUtils.assertAlmostEqual
+      ~TestUtils.assertAlmostEquals
+      ~TestUtils.assertEqual
+      ~TestUtils.assertEquals
+      ~TestUtils.assertFalse
+      ~TestUtils.assertNotAlmostEqual
+      ~TestUtils.assertNotAlmostEquals
+      ~TestUtils.assertNotEqual
+      ~TestUtils.assertNotEquals
+      ~TestUtils.assertRaises
+      ~TestUtils.assertTrue
+      ~TestUtils.assert_
+      ~TestUtils.countTestCases
+      ~TestUtils.debug
+      ~TestUtils.defaultTestResult
+      ~TestUtils.fail
+      ~TestUtils.failIf
+      ~TestUtils.failIfAlmostEqual
+      ~TestUtils.failIfEqual
+      ~TestUtils.failUnless
+      ~TestUtils.failUnlessAlmostEqual
+      ~TestUtils.failUnlessEqual
+      ~TestUtils.failUnlessRaises
+      ~TestUtils.id
+      ~TestUtils.run
+      ~TestUtils.setUp
+      ~TestUtils.shortDescription
+      ~TestUtils.tearDown
+      ~TestUtils.test_050
+      ~TestUtils.test_051
+      ~TestUtils.test_052
+      ~TestUtils.test_053
+      ~TestUtils.test_055
+      ~TestUtils.test_056
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: all_tests.TestUtils.__init__
-  .. automethod:: all_tests.TestUtils.assertAlmostEqual
-  .. automethod:: all_tests.TestUtils.assertAlmostEquals
-  .. automethod:: all_tests.TestUtils.assertEqual
-  .. automethod:: all_tests.TestUtils.assertEquals
-  .. automethod:: all_tests.TestUtils.assertFalse
-  .. automethod:: all_tests.TestUtils.assertNotAlmostEqual
-  .. automethod:: all_tests.TestUtils.assertNotAlmostEquals
-  .. automethod:: all_tests.TestUtils.assertNotEqual
-  .. automethod:: all_tests.TestUtils.assertNotEquals
-  .. automethod:: all_tests.TestUtils.assertRaises
-  .. automethod:: all_tests.TestUtils.assertTrue
-  .. automethod:: all_tests.TestUtils.assert_
-  .. automethod:: all_tests.TestUtils.countTestCases
-  .. automethod:: all_tests.TestUtils.debug
-  .. automethod:: all_tests.TestUtils.defaultTestResult
-  .. automethod:: all_tests.TestUtils.fail
-  .. automethod:: all_tests.TestUtils.failIf
-  .. automethod:: all_tests.TestUtils.failIfAlmostEqual
-  .. automethod:: all_tests.TestUtils.failIfEqual
-  .. automethod:: all_tests.TestUtils.failUnless
-  .. automethod:: all_tests.TestUtils.failUnlessAlmostEqual
-  .. automethod:: all_tests.TestUtils.failUnlessEqual
-  .. automethod:: all_tests.TestUtils.failUnlessRaises
-  .. automethod:: all_tests.TestUtils.id
-  .. automethod:: all_tests.TestUtils.run
-  .. automethod:: all_tests.TestUtils.setUp
-  .. automethod:: all_tests.TestUtils.shortDescription
-  .. automethod:: all_tests.TestUtils.tearDown
-  .. automethod:: all_tests.TestUtils.test_050
-  .. automethod:: all_tests.TestUtils.test_051
-  .. automethod:: all_tests.TestUtils.test_052
-  .. automethod:: all_tests.TestUtils.test_053
-  .. automethod:: all_tests.TestUtils.test_055
-  .. automethod:: all_tests.TestUtils.test_056
-
-
-
-
-
-
+   
+   
+   
+/

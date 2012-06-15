@@ -5,52 +5,52 @@ test_nodelist.TestNodeList
 
 .. autoclass:: TestNodeList
 
+   
+   .. automethod:: __init__
 
+   
+   .. rubric:: Methods
 
-  .. automethod:: __init__
+   .. autosummary::
+   
+      ~TestNodeList.__init__
+      ~TestNodeList.assertAlmostEqual
+      ~TestNodeList.assertAlmostEquals
+      ~TestNodeList.assertEqual
+      ~TestNodeList.assertEquals
+      ~TestNodeList.assertFalse
+      ~TestNodeList.assertNotAlmostEqual
+      ~TestNodeList.assertNotAlmostEquals
+      ~TestNodeList.assertNotEqual
+      ~TestNodeList.assertNotEquals
+      ~TestNodeList.assertRaises
+      ~TestNodeList.assertTrue
+      ~TestNodeList.assert_
+      ~TestNodeList.countTestCases
+      ~TestNodeList.debug
+      ~TestNodeList.defaultTestResult
+      ~TestNodeList.deserialize_and_check
+      ~TestNodeList.fail
+      ~TestNodeList.failIf
+      ~TestNodeList.failIfAlmostEqual
+      ~TestNodeList.failIfEqual
+      ~TestNodeList.failUnless
+      ~TestNodeList.failUnlessAlmostEqual
+      ~TestNodeList.failUnlessEqual
+      ~TestNodeList.failUnlessRaises
+      ~TestNodeList.id
+      ~TestNodeList.run
+      ~TestNodeList.setUp
+      ~TestNodeList.shortDescription
+      ~TestNodeList.tearDown
+      ~TestNodeList.test_serialization_bad_1
+      ~TestNodeList.test_serialization_bad_2
+      ~TestNodeList.test_serialization_gmn
+      ~TestNodeList.test_serialization_knb
+   
+   
 
-
-
-  .. rubric:: Methods
-  
-
-  .. automethod:: test_nodelist.TestNodeList.__init__
-  .. automethod:: test_nodelist.TestNodeList.assertAlmostEqual
-  .. automethod:: test_nodelist.TestNodeList.assertAlmostEquals
-  .. automethod:: test_nodelist.TestNodeList.assertEqual
-  .. automethod:: test_nodelist.TestNodeList.assertEquals
-  .. automethod:: test_nodelist.TestNodeList.assertFalse
-  .. automethod:: test_nodelist.TestNodeList.assertNotAlmostEqual
-  .. automethod:: test_nodelist.TestNodeList.assertNotAlmostEquals
-  .. automethod:: test_nodelist.TestNodeList.assertNotEqual
-  .. automethod:: test_nodelist.TestNodeList.assertNotEquals
-  .. automethod:: test_nodelist.TestNodeList.assertRaises
-  .. automethod:: test_nodelist.TestNodeList.assertTrue
-  .. automethod:: test_nodelist.TestNodeList.assert_
-  .. automethod:: test_nodelist.TestNodeList.countTestCases
-  .. automethod:: test_nodelist.TestNodeList.debug
-  .. automethod:: test_nodelist.TestNodeList.defaultTestResult
-  .. automethod:: test_nodelist.TestNodeList.deserialize_and_check
-  .. automethod:: test_nodelist.TestNodeList.fail
-  .. automethod:: test_nodelist.TestNodeList.failIf
-  .. automethod:: test_nodelist.TestNodeList.failIfAlmostEqual
-  .. automethod:: test_nodelist.TestNodeList.failIfEqual
-  .. automethod:: test_nodelist.TestNodeList.failUnless
-  .. automethod:: test_nodelist.TestNodeList.failUnlessAlmostEqual
-  .. automethod:: test_nodelist.TestNodeList.failUnlessEqual
-  .. automethod:: test_nodelist.TestNodeList.failUnlessRaises
-  .. automethod:: test_nodelist.TestNodeList.id
-  .. automethod:: test_nodelist.TestNodeList.run
-  .. automethod:: test_nodelist.TestNodeList.setUp
-  .. automethod:: test_nodelist.TestNodeList.shortDescription
-  .. automethod:: test_nodelist.TestNodeList.tearDown
-  .. automethod:: test_nodelist.TestNodeList.test_serialization_bad_1
-  .. automethod:: test_nodelist.TestNodeList.test_serialization_bad_2
-  .. automethod:: test_nodelist.TestNodeList.test_serialization_gmn
-  .. automethod:: test_nodelist.TestNodeList.test_serialization_knb
-
-
-
-
-
-
+   
+   
+   
+/
