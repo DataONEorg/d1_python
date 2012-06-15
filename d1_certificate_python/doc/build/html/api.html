@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. API &mdash; DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="2. Build and install" href="setup.html" />
+    <link rel="prev" title="DataONE x509v3 Certificate Extractor for Python" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup.html" title="2. Build and install"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="DataONE x509v3 Certificate Extractor for Python"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. API</a><ul>
+<li><a class="reference internal" href="#example">1.1. Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">DataONE x509v3 Certificate Extractor for Python</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup.html"
+                        title="next chapter">2. Build and install</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api">
+<h1>1. API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<p>A single API method is exposed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d1_x509v3_certificate_extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
+  <span class="n">pem_certificate</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param pem_certificate:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"><p class="first">PEM formatted DataONE certificate.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type pem_certificate:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"><p class="first">string</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><ul class="first simple">
+<li>Subject DN (DataONE compliant serialization)</li>
+<li>SubjectInfo XML document</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">return type:</th><td class="field-body"><p class="first last">list of two strings</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="example">
+<h2>1.1. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Note that if the SubjectInfo is not present in the certificate, an empty string
+is returned.</p>
+<p>Call the API from Python:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">d1_x509v3_certificate_extractor</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;mycert.pem&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">mycert</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">subject</span><span class="p">,</span> <span class="n">subject_info_xml</span> <span class="o">=</span> <span class="n">d1_x509v3_certificate_extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">mycert</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">subject_info_xml</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">subject</span><span class="p">,</span> <span class="bp">None</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">subject</span><span class="p">,</span> <span class="n">subject_info_xml</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup.html" title="2. Build and install"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="DataONE x509v3 Certificate Extractor for Python"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2012 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

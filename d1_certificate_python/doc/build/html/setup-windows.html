@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Build and install for Windows &mdash; DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="4. Tests" href="generated-tests.html" />
+    <link rel="prev" title="2. Build and install" href="setup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="generated-tests.html" title="4. Tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="2. Build and install"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Build and install for Windows</a><ul>
+<li><a class="reference internal" href="#compiling">3.1. Compiling</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup.html"
+                        title="previous chapter">2. Build and install</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated-tests.html"
+                        title="next chapter">4. Tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-windows.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="build-and-install-for-windows">
+<h1>3. Build and install for Windows<a class="headerlink" href="#build-and-install-for-windows" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="compiling">
+<h2>3.1. Compiling<a class="headerlink" href="#compiling" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For Windows, the DataONE x509v3 Certificate Extractor is supplied as a
+precompiled binary so it is typically not necessary to perform the steps in this
+section.</p>
+</div>
+<p></p>
+<blockquote>
+<div>Download and install MinGW from <a class="reference external" href="http://sourceforge.net/projects/mingw/files/">http://sourceforge.net/projects/mingw/files/</a></div></blockquote>
+<p>Distutils contains configuration scripts for the various supported compilers.
+The script called <cite>cygwinccompiler.py</cite> covers compilation both with Cygwin and
+MinGW. However, as of 5/2/2012, it is outdated in respect to the MinGW compiler
+and needs a small adjustment.</p>
+<blockquote>
+<div><p>Edit the MinGW compiler configuration file:</p>
+<div class="highlight-python"><pre>C:\Python27\Lib\distutils\cygwinccompiler.py</pre>
+</div>
+<p>Remove all instances of <cite>-mno-cygwin</cite>.</p>
+</div></blockquote>
+<p>The OpenSSL library must be installed and compiled.</p>
+<blockquote>
+<div><p>Download the OpenSSL source package from <a class="reference external" href="http://www.openssl.org/source/">http://www.openssl.org/source/</a></p>
+<p>Follow instructions in the OpenSSL source package to compile the library
+for Windows.</p>
+</div></blockquote>
+<p>The Python header include path in the extension C file must be modified for
+the default location of Python on Windows (C:Python27).</p>
+<blockquote>
+<div><p>Edit <cite>d1_x509v3_certificate_extractor.c</cite>.</p>
+<p>Change the Python include to <cite>#include &lt;Python.h&gt;</cite>.</p>
+</div></blockquote>
+<p>Paths to the OpenSSL include and lib directories must be added to the setup
+script.</p>
+<blockquote>
+<div><p>Edit <cite>setup.py</cite>.</p>
+<p>Add the OpenSSL include and lib directories. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">module1</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span><span class="s">&#39;d1_x509v3_certificate_extractor&#39;</span><span class="p">,</span>
+  <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;d1_x509v3_certificate_extractor.c&#39;</span><span class="p">],</span>
+  <span class="n">include_dirs</span><span class="o">=</span><span class="p">[</span><span class="s">r&#39;C:\dev\10_32\openssl\include&#39;</span><span class="p">],</span>
+  <span class="n">library_dirs</span><span class="o">=</span><span class="p">[</span><span class="s">r&#39;C:\dev\10_32\openssl\lib&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Compile the extension.</p>
+<blockquote>
+<div><p>Open a command prompt at the location of the <cite>setup.py</cite> file.</p>
+<p>Add a path to MinGW (in the default location):</p>
+<div class="highlight-python"><pre>&gt; set path=%path%;c:\MinGW\bin</pre>
+</div>
+<p>Built the extension with MinGW:</p>
+<div class="highlight-python"><pre>&gt; c:\Python27\python.exe setup.py build -cmingw32</pre>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="generated-tests.html" title="4. Tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="2. Build and install"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE x509v3 Certificate Extractor for Python 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2012 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
