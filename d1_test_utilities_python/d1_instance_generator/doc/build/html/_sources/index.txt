@@ -1,8 +1,11 @@
 DataONE Instance Generator for Python
 =====================================
 
-The DataONE Instance Generator for Python generates randomized DataONE types
-for testing.
+The Instance Generator is used for generating randomized instances of the
+DataONE types for testing.
+
+It is part of the DataONE Test Utilities for Python and is installed as part
+of the test utilities.
 
 
 Index
@@ -12,9 +15,8 @@ Index
   :numbered:
   :maxdepth: 2
 
-  setup
-  generated
-  update
+  generated-api
+  generated-tests
 
 
 Indices and tables

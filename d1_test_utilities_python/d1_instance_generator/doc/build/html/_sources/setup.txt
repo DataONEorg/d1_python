@@ -1,10 +1,5 @@
 Setup
 =====
 
-Setting up the :term:`DataONE Common Library for Python`.
+Setting up the DataONE Instance Generator for Python.
 
-.. toctree::
-  :maxdepth: 1
-
-  setup-python-deps
-  setup-d1-common

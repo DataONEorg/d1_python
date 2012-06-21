@@ -1,5 +1,5 @@
-General
-=======
+API
+===
 
 Modules that generate instances of DataONE types for testing.
 

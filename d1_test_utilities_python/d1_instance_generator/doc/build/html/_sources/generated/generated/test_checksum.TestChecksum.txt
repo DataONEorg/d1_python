@@ -43,6 +43,8 @@ test_checksum.TestChecksum
       ~TestChecksum.setUp
       ~TestChecksum.shortDescription
       ~TestChecksum.tearDown
+      ~TestChecksum.test_010
+      ~TestChecksum.test_011
       ~TestChecksum.test_020
       ~TestChecksum.test_030
       ~TestChecksum.test_040
