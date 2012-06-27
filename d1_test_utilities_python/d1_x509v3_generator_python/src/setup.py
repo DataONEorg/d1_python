@@ -41,7 +41,6 @@ setup(
   name='DataONEx509v3CertificateGenerator',
   version='1.0',
   description='Python extension for creating a PEM formatted X.509 v3 '
-  'certificate that contains a DataONE Session object and is '
-  'signed by the DataONE Test CA',
+  'certificate that contains a DataONE Session object.',
   ext_modules=[module1]
 )
