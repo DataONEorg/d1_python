@@ -157,6 +157,3 @@ because it must be set up to match the value configured in this step.
 
   * Set NODE_IDENTIFIER to match the value specified in the identifier field
     in the Node XML document.
-
-
-:doc:`setup-async`
