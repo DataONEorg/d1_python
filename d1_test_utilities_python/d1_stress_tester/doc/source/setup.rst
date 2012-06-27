@@ -11,8 +11,8 @@ respective documentations:
 
 Install `Multi-Mechanize`_:
 
+  $ sudo apt-get install python-pip
   $ sudo pip install -U multi-mechanize
 
 
 .. _`Multi-Mechanize`: http://multimechanize.com
-

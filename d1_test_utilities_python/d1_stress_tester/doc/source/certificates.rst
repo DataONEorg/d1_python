@@ -3,10 +3,10 @@ Certificates
 
 As the stress tests connect to the MN as regular clients, a set of test
 certificates, with which the connections can be established, must be prepared
-before any given test can be run. The certificates must be trusted by the MNode
-being tested and each certificate must contain one or more DataONE subjects that
-are allowed to perform the operations on the MN which a given stress test is
-exercising.
+before any given test can be run. The certificates must be trusted by the Member
+Node being tested and each certificate must contain one or more DataONE subjects
+that are allowed to perform the operations on the MN which a given stress test
+is exercising.
 
 The certificates are stored in folders below
 `./projects/_shared/certificates`. For each connection, a given test randomly
