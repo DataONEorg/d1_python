@@ -120,7 +120,8 @@ paths below accordingly.</p>
 </div>
 <p></p>
 <blockquote>
-<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>:</p>
+<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add:</p>
 <div class="highlight-python"><pre>WSGIScriptAlias /mn /var/local/dataone/gmn/src/service/gmn.wsgi
 
 &lt;Directory /var/local/dataone/gmn/src/service&gt;
@@ -130,7 +131,6 @@ paths below accordingly.</p>
 &lt;/Directory&gt;</pre>
 </div>
 </div></blockquote>
-<p><a class="reference internal" href="setup-mod-ssl.html"><em>mod_ssl</em></a></p>
 </div>
 
 

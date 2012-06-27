@@ -18,6 +18,3 @@ called :term:`Psycopg2`.
 
   See the :doc:`troubleshooting` section if the version of Psycopg2 installed
   by default causes "can't adapt" errors.
-
-
-:doc:`setup-django`

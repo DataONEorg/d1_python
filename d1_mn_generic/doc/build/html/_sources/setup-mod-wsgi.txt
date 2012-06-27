@@ -30,7 +30,9 @@ Also see: :doc:`setup-example-default-ssl`.
 
 \
 
-  Edit ``/etc/apache2/sites-available/default-ssl``::
+  Edit ``/etc/apache2/sites-available/default-ssl``.
+
+  In the ``VirtualHost`` section, add::
 
     WSGIScriptAlias /mn /var/local/dataone/gmn/src/service/gmn.wsgi
 
@@ -39,6 +41,3 @@ Also see: :doc:`setup-example-default-ssl`.
       Order deny,allow
       Allow from all
     </Directory>
-
-
-:doc:`setup-mod-ssl`

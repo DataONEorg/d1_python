@@ -97,7 +97,7 @@
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>PostgreSQL</td>
-<td>8.4.10</td>
+<td>8.4.10, 8.4.12</td>
 </tr>
 </tbody>
 </table>
@@ -106,7 +106,7 @@ currently only supports <em class="xref std std-term">PostgreSQL</em>. This sect
 PostgreSQL for GMN.</p>
 <blockquote>
 <div><p>Install PostgreSQL:</p>
-<div class="highlight-python"><pre>$ sudo apt-get install postgresql-8.3</pre>
+<div class="highlight-python"><pre>$ sudo apt-get install postgresql</pre>
 </div>
 </div></blockquote>
 <p>In PostgreSQL, the user with unlimited access is called the superuser. The
@@ -143,7 +143,7 @@ in PostgreSQL without also having to have an OS user account.</p>
 <div class="highlight-python"><pre>local   all         all                               md5</pre>
 </div>
 <p>Restart PostgreSQL:</p>
-<div class="highlight-python"><pre>sudo /etc/init.d/postgresql-8.4 restart</pre>
+<div class="highlight-python"><pre>$ sudo service postgresql-8.4 restart</pre>
 </div>
 <p>Create GMN user:</p>
 <div class="highlight-python"><pre>$ sudo -u postgres createuser gmn
@@ -163,7 +163,6 @@ ALTER USER gmn WITH ENCRYPTED password '&lt;your gmn user password&gt;';</pre>
 </div>
 <p>In a later step, you will configure GMN with &lt;your gmn user password&gt;.</p>
 </div></blockquote>
-<p><a class="reference internal" href="setup-psycopg2.html"><em>python-psycopg2</em></a></p>
 </div>
 
 

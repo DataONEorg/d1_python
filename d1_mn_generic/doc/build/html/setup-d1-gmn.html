@@ -53,6 +53,8 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">DataONE Generic Member Node</a><ul>
+<li><a class="reference internal" href="#zip-file">Zip file</a></li>
+<li><a class="reference internal" href="#subversion">Subversion</a></li>
 <li><a class="reference internal" href="#configure-gmn">Configure GMN</a></li>
 <li><a class="reference internal" href="#initialize-the-database">Initialize the database</a></li>
 <li><a class="reference internal" href="#set-filesystem-permissions">Set filesystem permissions</a></li>
@@ -115,8 +117,24 @@
 </tr>
 </tbody>
 </table>
-<p>The distribution of GMN is currently Subversion based. This makes it easy to
-keep up to date with changes.</p>
+<p>GMN is currently distributed as a zip file and as Subversion repository.
+Select one of the distribution methods below.</p>
+<div class="section" id="zip-file">
+<h2>Zip file<a class="headerlink" href="#zip-file" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Create and/or enter the folder where you wish to install GMN:</p>
+<div class="highlight-python"><pre>$ sudo -s
+# mkdir -p /var/local/dataone
+# cd /var/local/dataone</pre>
+</div>
+<p>Download GMN from zip file and install:</p>
+<div class="highlight-python"><pre>$ wget &lt;zip path&gt;
+$ gunzip x &lt;zip&gt;</pre>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="subversion">
+<h2>Subversion<a class="headerlink" href="#subversion" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Install Subversion:</p>
 <div class="highlight-python"><pre>$ sudo apt-get install subversion</pre>
@@ -126,18 +144,22 @@ keep up to date with changes.</p>
 # mkdir -p /var/local/dataone
 # cd /var/local/dataone</pre>
 </div>
-<p>Download GMN:</p>
-<div class="highlight-python"><pre>$ sudo svn co https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/ gmn</pre>
+<p>Download GMN from the Subversion repository:</p>
+<div class="highlight-python"><pre>$ sudo svn co https://repository.dataone.org/software/cicore/tags/D1_MN_GENERIC_V1.0.0-RC1/ gmn</pre>
 </div>
 </div></blockquote>
+</div>
 <div class="section" id="configure-gmn">
 <h2>Configure GMN<a class="headerlink" href="#configure-gmn" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/mn_generic/service/settings_site.py</span></tt></p>
+<div><p>Create a copy of the site settings template:</p>
+<div class="highlight-python"><pre>$ cd /var/local/dataone/gmn/src/service
+$ cp settings_site_template.py settings_site.py</pre>
+</div>
+<p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/gmn/src/service/settings_site.py</span></tt></p>
 <ul class="simple">
 <li>The NODE_IDENTIFIER is configured later, in the <a class="reference internal" href="setup-registration.html"><em>Register the MN</em></a>
 step.</li>
-<li>Set DEBUG = False</li>
 <li>Replace the name and email address in ADMINS with the name and email address
 for a person that should be notified if there are any issues. Additional
 administrators can be added.</li>
@@ -149,7 +171,7 @@ PostgreSQL installation step: <a class="reference internal" href="setup-postgres
 <div class="section" id="initialize-the-database">
 <h2>Initialize the database<a class="headerlink" href="#initialize-the-database" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><div class="highlight-python"><pre>$ cd /var/local/dataone/mn_generic/service
+<div><div class="highlight-python"><pre>$ cd /var/local/dataone/gmn/src/service
 $ python manage.py syncdb</pre>
 </div>
 </div></blockquote>

@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GMN Asynchronous Processes &mdash; DataONE Generic Member Node 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Generic Member Node 1.0.0 documentation" href="index.html" />
+    <link rel="up" title="Setup steps" href="setup-steps.html" />
+    <link rel="next" title="Starting GMN" href="setup-startup.html" />
+    <link rel="prev" title="Register the MN" href="setup-registration.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-startup.html" title="Starting GMN"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-registration.html" title="Register the MN"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GMN Asynchronous Processes</a><ul>
+<li><a class="reference internal" href="#certificate-setup">Certificate setup</a></li>
+<li><a class="reference internal" href="#enable-access-to-internal-rest-service">Enable access to internal REST service</a></li>
+<li><a class="reference internal" href="#replication">Replication</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup-registration.html"
+                        title="previous chapter">Register the MN</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup-startup.html"
+                        title="next chapter">Starting GMN</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup-async.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gmn-asynchronous-processes">
+<h1>GMN Asynchronous Processes<a class="headerlink" href="#gmn-asynchronous-processes" title="Permalink to this headline">¶</a></h1>
+<p>GMN uses asynchronous processes, launched at regular intervals by <a class="reference internal" href="glossary.html#term-cron"><em class="xref std std-term">cron</em></a>,
+to perform various tasks that are not directly related to servicing client
+requests.</p>
+<p>This describes how to set the asynchronous processes up to run from their
+default location of <cite>/var/local/dataone/mn_generic/service/async/</cite>. However,
+the processes can run from any location, including a different server. Running
+the asynchronous processes on a different server may be beneficial if the GMN
+server is very busy.</p>
+<div class="section" id="certificate-setup">
+<h2>Certificate setup<a class="headerlink" href="#certificate-setup" title="Permalink to this headline">¶</a></h2>
+<p>The asynchronous processes authenticate themselves to GMN by connecting via
+TLS/SSL and providing a certificate. The instructions below use the certificate
+that was provided by DataONE when the MN was registered. This is convenient
+because the certificate is signed by the DataONE CA, which MNs are required to
+trust.</p>
+<blockquote>
+<div><p>Create copies of the DataONE provided certificate and private key. Store the
+copies in the following location:</p>
+<div class="highlight-python"><pre>/var/local/dataone/mn_generic/service/async/</pre>
+</div>
+<p>As an alternative, the <cite>&#8211;cert-path</cite> and <cite>&#8211;key-path</cite> command line options,
+supported by all the asynchronous processes, can be set to the absolute paths
+to the certificates in a different location.</p>
+</div></blockquote>
+</div>
+<div class="section" id="enable-access-to-internal-rest-service">
+<h2>Enable access to internal REST service<a class="headerlink" href="#enable-access-to-internal-rest-service" title="Permalink to this headline">¶</a></h2>
+<p>The asynchronous processes use REST services internal to GMN to access and
+update information they require in order to perform their tasks. GMN allows
+only connections made under specific Subject DNs to access these interfaces.</p>
+<blockquote>
+<div><p>Configure GMN to allow the Subject DN in the certificate used by the
+asynchronous processes to access the GMN internal REST APIs.</p>
+<p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/mn_generic/service/settings_site.py</span></tt></p>
+<ul class="simple">
+<li></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="replication">
+<h2>Replication<a class="headerlink" href="#replication" title="Permalink to this headline">¶</a></h2>
+<p>The GMN service stores replication requests in a queue. The asynchronous
+replication process uses</p>
+<blockquote>
+<div><p>Create a cron entry for the replication process:</p>
+<div class="highlight-python"><pre>$ crontab -e</pre>
+</div>
+<p>Add:</p>
+<div class="highlight-python"><pre>* * * * * cd /var/local/dataone/mn_generic/service/async &amp;&amp; ./process_replication_queue.py --cert-path &lt;cert filename&gt; --key-path &lt;key filename&gt;  &gt;&gt;process_replication_queue.log 2&gt;&amp;1</pre>
+</div>
+<p>This sets the replication process to run every minute. To alter the schedule,
+consult the crontab manual:</p>
+<div class="highlight-python"><pre>$ man 5 crontab</pre>
+</div>
+</div></blockquote>
+<p>Brief overview of the processes that must be performed:</p>
+<ul class="simple">
+<li>If the processes are not running locally (on the same machine as GMN), they
+must authenticate themselves to GMN. Alternatives:<ul>
+<li>Get a long term certificate from CILogon (via their regular portal, not the
+DataONE portal). Since GMN is already set up to trust certificates from
+CILogon, all that then remains is to set GMN up to trust the subject in the
+certificate that was obtained from CILogon.</li>
+<li>Create a local CA, set GMN up to trust this CA and sign certificates for the
+processes with this CA.</li>
+<li>Other security schemes may be sufficient, based on the environment in which
+GMN is set up, such as allowing the processes to connect without
+authentication from a local LAN or specific IP address</li>
+</ul>
+</li>
+</ul>
+<p><tt class="xref doc docutils literal"><span class="pre">setup-whitelist</span></tt></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup-startup.html" title="Starting GMN"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup-registration.html" title="Register the MN"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="setup.html" >Setup</a> &raquo;</li>
+          <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

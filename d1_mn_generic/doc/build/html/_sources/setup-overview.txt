@@ -4,21 +4,7 @@ GMN setup overview
 Overview of the GMN software stack
 ----------------------------------
 
-:term:`DataONE` :term:`GMN` is a web app implemented in :term:`Python` based on
-the :term:`Django` web app framework. Django is a :term:`WSGI` compliant
-application. It is served by :term:`Apache` via :term:`mod_wsgi`. The DataONE
-infrastructure uses :term:`SSL` and :term:`X.509` :term:`certificate`\ s for
-security and certificate validation is handled for GMN by :term:`mod_ssl`.
-
-.. graphviz::
-
-  digraph G {
-    OS -> "DataONE Common" -> "DataONE Client" -> GMN;
-    "DataONE Common" -> GMN;
-    OS -> Apache -> mod_wsgi -> Django -> GMN;
-    Apache -> mod_ssl -> "GMN access control";
-  }
-
+.. include:: overview.rst
 
 It may be possible to deploy GMN using a different stack, such as one based on
 `nginx <http://nginx.net/>`_ and `uWSGI

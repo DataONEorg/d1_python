@@ -6,7 +6,7 @@ PostgreSQL
 ==================== ==============================================
 Component            Tested version(s)
 ==================== ==============================================
-PostgreSQL           8.4.10
+PostgreSQL           8.4.10, 8.4.12
 ==================== ==============================================
 
 :term:`Django`, on which GMN is built, is database agnostic. However, GMN
@@ -15,7 +15,7 @@ PostgreSQL for GMN.
 
   Install PostgreSQL::
 
-    $ sudo apt-get install postgresql-8.3
+    $ sudo apt-get install postgresql
 
 In PostgreSQL, the user with unlimited access is called the superuser. The
 superuser does not have a password by default.
@@ -57,7 +57,7 @@ in PostgreSQL without also having to have an OS user account.
 
   Restart PostgreSQL::
 
-    sudo /etc/init.d/postgresql-8.4 restart
+    $ sudo service postgresql-8.4 restart
 
   Create GMN user::
 
@@ -79,5 +79,3 @@ in PostgreSQL without also having to have an OS user account.
     ALTER USER gmn WITH ENCRYPTED password '<your gmn user password>';
 
   In a later step, you will configure GMN with <your gmn user password>.
-
-:doc:`setup-psycopg2`

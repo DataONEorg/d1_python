@@ -29,7 +29,7 @@ Forwarding HTTP to HTTPS
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 GMN does not listen on port 80, so on a web server that exclusively serves
-GMN, HTTP can be forwarded to HTTP.
+GMN, HTTP can be forwarded to HTTPS.
 
   Edit ``/etc/apache2/ports.conf``.
 
@@ -37,14 +37,21 @@ GMN, HTTP can be forwarded to HTTP.
 
     Listen 80
 
-  A NameVirtualHost entry for port 80 is not required and will cause a warning
-  if no Virtual Host is set up for port 80.
+A NameVirtualHost entry for port 80 is not required and will cause a warning
+if no Virtual Host is set up for port 80.
 
-  In ``/etc/apache2/conf.d``, create a file named ``gmn`` containing::
+  Comment out the NameVirtualHost entry for port 80::
+
+    #NameVirtualHost *:80
+
+  In the ``/etc/apache2/conf.d`` directory, create a file named ``gmn``
+  containing::
 
     RewriteEngine On
     RewriteCond %{HTTPS} off
     RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 
+  Enable the rewrite module::
 
-:doc:`setup-authn-server`
+    # a2enmod rewrite
+    

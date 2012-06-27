@@ -23,12 +23,10 @@ release, we install Django from source.
 
   ::
 
-    $ wget http://media.djangoproject.com/releases/1.3/Django-1.3.tar.gz
+    $ wget http://media.djangoproject.com/releases/1.3/Django-1.3.1.tar.gz
 
   Uncompress and install::
 
-    $ tar xzvf Django-1.3.tar.gz
-    $ cd Django-1.3
+    $ tar xzvf Django-1.3.1.tar.gz
+    $ cd Django-1.3.1
     # sudo python setup.py install
-
-:doc:`setup-x509extract`

@@ -106,7 +106,7 @@ certificate has already been obtained.</p>
 named server.crt and server.key, respectively.</p>
 <blockquote>
 <div><p>Create a folder to hold the certificate and key:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># mkdir /var/local/dataone/gmn_certs/</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># mkdir -p /var/local/dataone/gmn_certs/</span>
 </pre></div>
 </div>
 <p>Move the certificate and key to the folder.</p>
@@ -145,17 +145,16 @@ $ sudo a2enmod ssl</pre>
 <p>to:</p>
 <div class="highlight-python"><pre>&lt;VirtualHost *:443&gt;</pre>
 </div>
-<p>Add directives:</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit directives:</p>
 <div class="highlight-python"><pre>SSLEngine on
 SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
 SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.key</pre>
 </div>
 <p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/ports.conf</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">&lt;IfModule</span> <span class="pre">mod_ssl.c&gt;</span></tt> section, add:</p>
+<p>In the <tt class="docutils literal"><span class="pre">&lt;IfModule</span> <span class="pre">mod_ssl.c&gt;</span></tt> section, add or edit:</p>
 <div class="highlight-python"><pre>NameVirtualHost *:443</pre>
 </div>
 </div></blockquote>
-<p><a class="reference internal" href="setup-authn-client.html"><em>Client side authentication</em></a></p>
 </div>
 </div>
 

@@ -18,7 +18,7 @@ named server.crt and server.key, respectively.
 
   Create a folder to hold the certificate and key::
 
-    # mkdir /var/local/dataone/gmn_certs/
+    # mkdir -p /var/local/dataone/gmn_certs/
 
   Move the certificate and key to the folder.
 
@@ -62,7 +62,7 @@ Also see: :doc:`setup-example-default-ssl`.
 
     <VirtualHost *:443>
 
-  Add directives::
+  In the ``VirtualHost`` section, add or edit directives::
 
     SSLEngine on
     SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
@@ -71,9 +71,6 @@ Also see: :doc:`setup-example-default-ssl`.
 
   Edit ``/etc/apache2/ports.conf``.
 
-  In the ``<IfModule mod_ssl.c>`` section, add::
+  In the ``<IfModule mod_ssl.c>`` section, add or edit::
 
     NameVirtualHost *:443
-
-
-:doc:`setup-authn-client`

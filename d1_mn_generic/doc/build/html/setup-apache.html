@@ -147,12 +147,12 @@ MaxClients           64</pre>
 <p>These settings are required for GMN to correctly handle the DataONE <a class="reference internal" href="glossary.html#term-rest"><em class="xref std std-term">REST</em></a>
 calls. See <a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration">Apache Configuration for DataONE Services</a> for more information.</p>
 <blockquote>
-<div><p>Edit the <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt> <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section:</p>
+<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add:</p>
 <div class="highlight-python"><pre>AllowEncodedSlashes On
 AcceptPathInfo On</pre>
 </div>
 </div></blockquote>
-<p><a class="reference internal" href="setup-mod-wsgi.html"><em>mod_wsgi</em></a></p>
 </div>
 </div>
 

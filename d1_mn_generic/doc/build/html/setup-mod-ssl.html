@@ -126,21 +126,31 @@ client side certificates. It is included in the apache2-common package.</p>
 <div class="section" id="forwarding-http-to-https">
 <h2>Forwarding HTTP to HTTPS<a class="headerlink" href="#forwarding-http-to-https" title="Permalink to this headline">¶</a></h2>
 <p>GMN does not listen on port 80, so on a web server that exclusively serves
-GMN, HTTP can be forwarded to HTTP.</p>
+GMN, HTTP can be forwarded to HTTPS.</p>
 <blockquote>
 <div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/ports.conf</span></tt>.</p>
 <p>Add:</p>
 <div class="highlight-python"><pre>Listen 80</pre>
 </div>
+</div></blockquote>
 <p>A NameVirtualHost entry for port 80 is not required and will cause a warning
 if no Virtual Host is set up for port 80.</p>
-<p>In <tt class="docutils literal"><span class="pre">/etc/apache2/conf.d</span></tt>, create a file named <tt class="docutils literal"><span class="pre">gmn</span></tt> containing:</p>
+<blockquote>
+<div><p>Comment out the NameVirtualHost entry for port 80:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#NameVirtualHost *:80</span>
+</pre></div>
+</div>
+<p>In the <tt class="docutils literal"><span class="pre">/etc/apache2/conf.d</span></tt> directory, create a file named <tt class="docutils literal"><span class="pre">gmn</span></tt>
+containing:</p>
 <div class="highlight-python"><pre>RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}</pre>
 </div>
+<p>Enable the rewrite module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># a2enmod rewrite</span>
+</pre></div>
+</div>
 </div></blockquote>
-<p><a class="reference internal" href="setup-authn-server.html"><em>Server Side Authentication</em></a></p>
 </div>
 </div>
 

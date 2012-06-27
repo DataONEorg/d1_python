@@ -11,8 +11,26 @@ subversion           \
 ==================== ==============================================
 
 
-The distribution of GMN is currently Subversion based. This makes it easy to
-keep up to date with changes.
+GMN is currently distributed as a zip file and as Subversion repository.
+Select one of the distribution methods below.
+
+Zip file
+~~~~~~~~
+
+  Create and/or enter the folder where you wish to install GMN::
+
+    $ sudo -s
+    # mkdir -p /var/local/dataone
+    # cd /var/local/dataone
+
+  Download GMN from zip file and install::
+
+    $ wget <zip path>
+    $ gunzip x <zip>
+
+
+Subversion
+~~~~~~~~~~
 
   Install Subversion::
 
@@ -24,20 +42,24 @@ keep up to date with changes.
     # mkdir -p /var/local/dataone
     # cd /var/local/dataone
 
-  Download GMN::
+  Download GMN from the Subversion repository::
 
-    $ sudo svn co https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/ gmn
+    $ sudo svn co https://repository.dataone.org/software/cicore/tags/D1_MN_GENERIC_V1.0.0-RC1/ gmn
+
 
 
 Configure GMN
 ~~~~~~~~~~~~~
 
-  Edit: ``/var/local/dataone/mn_generic/service/settings_site.py``
+  Create a copy of the site settings template::
+
+    $ cd /var/local/dataone/gmn/src/service
+    $ cp settings_site_template.py settings_site.py
+
+  Edit: ``/var/local/dataone/gmn/src/service/settings_site.py``
 
   * The NODE_IDENTIFIER is configured later, in the :doc:`setup-registration`
     step.
-
-  * Set DEBUG = False
 
   * Replace the name and email address in ADMINS with the name and email address
     for a person that should be notified if there are any issues. Additional
@@ -52,7 +74,7 @@ Initialize the database
 
   ::
 
-    $ cd /var/local/dataone/mn_generic/service
+    $ cd /var/local/dataone/gmn/src/service
     $ python manage.py syncdb
 
 

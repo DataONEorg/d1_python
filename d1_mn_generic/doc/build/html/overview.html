@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python dependencies &mdash; DataONE Generic Member Node 1.0.0 documentation</title>
+    <title>&lt;no title&gt; &mdash; DataONE Generic Member Node 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,10 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE Generic Member Node 1.0.0 documentation" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="DataONE libraries" href="setup-d1-libs.html" />
-    <link rel="prev" title="Client side authentication" href="setup-authn-client.html" /> 
+    <link rel="top" title="DataONE Generic Member Node 1.0.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,28 +34,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="setup-d1-libs.html" title="DataONE libraries"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="setup-authn-client.html" title="Client side authentication"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="setup-authn-client.html"
-                        title="previous chapter">Client side authentication</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="setup-d1-libs.html"
-                        title="next chapter">DataONE libraries</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/setup-python-deps.txt"
+    <li><a href="_sources/overview.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -82,12 +65,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="python-dependencies">
-<h1>Python dependencies<a class="headerlink" href="#python-dependencies" title="Permalink to this headline">¶</a></h1>
-<p>GMN currently does not have any Python dependencies that are not also
-dependencies of the DataONE libraries for Python. Those dependencies are
-installed when setting up the DataONE libraries.</p>
-</div>
+  <p><a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a> <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">GMN</em></a> is a web app implemented in <a class="reference internal" href="glossary.html#term-python"><em class="xref std std-term">Python</em></a> based on
+the <a class="reference internal" href="glossary.html#term-django"><em class="xref std std-term">Django</em></a> web app framework. Django is a <a class="reference internal" href="glossary.html#term-wsgi"><em class="xref std std-term">WSGI</em></a> compliant
+application. It is served by <a class="reference internal" href="glossary.html#term-apache"><em class="xref std std-term">Apache</em></a> via <a class="reference internal" href="glossary.html#term-mod-wsgi"><em class="xref std std-term">mod_wsgi</em></a>. The DataONE
+infrastructure uses <a class="reference internal" href="glossary.html#term-ssl"><em class="xref std std-term">SSL</em></a> and <a class="reference internal" href="glossary.html#term-x-509"><em class="xref std std-term">X.509</em></a> <a class="reference internal" href="glossary.html#term-certificate"><em class="xref std std-term">certificate</em></a>s for
+security and certificate validation is handled for GMN by <a class="reference internal" href="glossary.html#term-mod-ssl"><em class="xref std std-term">mod_ssl</em></a>.</p>
+<p class="graphviz">
+<img src="_images/graphviz-256a896e7013410b24fcdbbf1ccb45ebc77c3ff1.png" alt="digraph G {
+  dpi=72;
+  OS -&gt; &quot;DataONE Common&quot; -&gt; &quot;DataONE Client&quot; -&gt; GMN;
+  &quot;DataONE Common&quot; -&gt; GMN;
+  OS -&gt; Apache -&gt; mod_wsgi -&gt; Django -&gt; GMN;
+  Apache -&gt; mod_ssl -&gt; &quot;GMN access control&quot;;
+}" />
+</p>
 
 
           </div>
@@ -101,15 +92,7 @@ installed when setting up the DataONE libraries.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="setup-d1-libs.html" title="DataONE libraries"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="setup-authn-client.html" title="Client side authentication"
-             >previous</a> |</li>
-        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" >Setup steps</a> &raquo;</li> 
+        <li><a href="index.html">DataONE Generic Member Node 1.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

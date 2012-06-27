@@ -134,7 +134,7 @@ expired, and must be signed by the <a class="reference internal" href="glossary.
 <blockquote>
 <div><p>Enable Client side authentication:</p>
 <p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>Add / modify:</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit directives:</p>
 <div class="highlight-python"><pre>SSLVerifyClient optional
 SSLVerifyDepth  10</pre>
 </div>
@@ -144,7 +144,7 @@ mod_ssl to forward the certificate to the GMN WSGI handler in an environment
 variable.</p>
 <blockquote>
 <div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>Add “wsgi” in the FilesMatch expression.</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add “wsgi” in the FilesMatch expression.</p>
 <p>Change:</p>
 <div class="highlight-python"><pre>&lt;FilesMatch "\.(cgi|shtml|phtml|php)$"&gt;
   SSLOptions +StdEnvVars
@@ -158,17 +158,16 @@ variable.</p>
 </div></blockquote>
 <p>Use the CILogon CA certificates instead of the default ones.</p>
 <blockquote>
-<div><p>Add / modify <tt class="docutils literal"><span class="pre">SSLCACertificatePath</span></tt>:</p>
+<div><p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">SSLCACertificatePath</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">dataone</span><span class="o">/</span><span class="n">ca</span>
 </pre></div>
 </div>
 <p>Restart Apache:</p>
-<div class="highlight-python"><pre>$ apache2ctl restart
+<div class="highlight-python"><pre># service apache2 restart
 
 Check for any error messages from Apache.</pre>
 </div>
 </div></blockquote>
-<p><a class="reference internal" href="setup-python-deps.html"><em>Python dependencies</em></a></p>
 </div>
 </div>
 

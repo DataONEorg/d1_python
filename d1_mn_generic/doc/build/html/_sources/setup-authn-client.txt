@@ -52,7 +52,7 @@ Also see: :doc:`setup-example-default-ssl`.
 
   Edit ``/etc/apache2/sites-available/default-ssl``.
 
-  Add / modify::
+  In the ``VirtualHost`` section, add or edit directives::
 
     SSLVerifyClient optional
     SSLVerifyDepth  10
@@ -63,7 +63,7 @@ variable.
 
   Edit ``/etc/apache2/sites-available/default-ssl``.
 
-  Add “wsgi” in the FilesMatch expression.
+  In the ``VirtualHost`` section, add “wsgi” in the FilesMatch expression.
 
   Change::
 
@@ -80,15 +80,12 @@ variable.
 
 Use the CILogon CA certificates instead of the default ones.
 
-  Add / modify ``SSLCACertificatePath``::
+  In the ``VirtualHost`` section, add or edit::
 
     SSLCACertificatePath /var/local/dataone/ca
 
   Restart Apache::
 
-    $ apache2ctl restart
+    # service apache2 restart
 
     Check for any error messages from Apache.
-
-
-:doc:`setup-python-deps`

@@ -50,12 +50,12 @@ These instructions use the existing VirtualHost section.
 These settings are required for GMN to correctly handle the DataONE :term:`REST`
 calls. See `Apache Configuration for DataONE Services`_ for more information.
 
-  Edit the ``/etc/apache2/sites-available/default-ssl`` ``VirtualHost`` section::
+  Edit ``/etc/apache2/sites-available/default-ssl``.
+
+  In the ``VirtualHost`` section, add::
 
     AllowEncodedSlashes On
     AcceptPathInfo On
 
 .. _`Apache Configuration for DataONE Services`:
   http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration
-
-:doc:`setup-mod-wsgi`
