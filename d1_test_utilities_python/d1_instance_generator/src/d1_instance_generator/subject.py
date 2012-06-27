@@ -39,5 +39,8 @@ import random_data
 
 
 def generate():
-  subject = dataoneTypes.Subject(random_data.random_unicode_string_no_whitespace(5, 10))
-  return subject
+  return dataoneTypes.Subject(generate_bare())
+
+
+def generate_bare():
+  return random_data.random_unicode_string_no_whitespace(5, 10)

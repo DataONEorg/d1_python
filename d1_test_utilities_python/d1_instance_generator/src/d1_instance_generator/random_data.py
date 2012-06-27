@@ -55,6 +55,11 @@ def random_bytes(n_bytes):
   return os.urandom(n_bytes)
 
 
+def random_bytes_flo(n_bytes):
+  '''Return a file-like object containing random bytes'''
+  return StringIO.StringIO(random_bytes(n_bytes))
+
+
 def random_unicode_name():
   '''Return a random Unicode name'''
   return random.choice(unicode_names.UNICODE_NAMES)

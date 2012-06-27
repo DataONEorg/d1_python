@@ -18,34 +18,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
+'''
 :mod:`setup`
 ============
 
-:Synopsis: Create egg.
+:Synopsis:
+  Create egg.
 :Author: DataONE (Dahl)
-"""
+'''
 
 from setuptools import setup, find_packages
 import d1_instance_generator
 
 setup(
-  name='DataONE_Instance_Generator',
+  name='Random DataONE Instance Generator for Python',
   version=d1_instance_generator.__version__,
-  author='DataONE Project',
-  author_email='developers@dataone.org',
+  description='Generate randomized instances of DataONE types for testing',
+  author='DataONE (Vieglais, Dahl)',
+  author_email='vieglais at ku edu',
   url='http://dataone.org',
-  description='Generate randomized DataONE types for testing',
-  license='Apache License, Version 2.0',
-  packages=find_packages(),
+  packages = find_packages(),
 
   # Dependencies that are available through PYPI / easy_install.
-  install_requires=[
-    #'iso8601 >= 0.1',
-    #'pyxb >= 1.1.2',
+  install_requires = [
   ],
-  package_data={
-    # If any package contains *.txt or *.rst files, include them:
-    '': ['*.txt', '*.rst'],
+
+  package_data = {
   }
 )
