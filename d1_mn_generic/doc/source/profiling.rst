@@ -8,7 +8,7 @@ the following profiling functionality is available.
 SQL query profiling
 -------------------
 
-All REST calls accept a :term:`vendor specific extension` called
+All REST calls accept a :term:`vendor specific extensions` called
 ``VENDOR_PROFILE_SQL``. When this parameter is provided, the normal output from
 the call is suppressed and a text document containing SQL query profiling
 information is returned instead. The document lists all the SQL queries that
@@ -20,7 +20,7 @@ were used for filling the request together with execution times.
 Python profiling
 ----------------
 
-All REST calls accept a :term:`vendor specific extension` called
+All REST calls accept a :term:`vendor specific extensions` called
 VENDOR_PROFILE_PYTHON. When this parameter is provided, the normal output from
 the call is suppressed and a text document containing Python script profiling
 information is returned instead. The document includes information such as the

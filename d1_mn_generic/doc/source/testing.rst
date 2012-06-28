@@ -114,7 +114,7 @@ simulated certificate>
 Uploading test objects
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The create() call accept a :term:`vendor specific extension` called
+The create() call accept a :term:`vendor specific extensions` called
 VENDOR_TEST_OBJECT. When this parameter is provided, the system metadata for
 the object is accepted without any information being added or overwritten by
 the MN.
