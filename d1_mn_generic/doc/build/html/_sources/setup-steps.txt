@@ -12,6 +12,9 @@ Commands that need to be run from the shell are prefixed with "$" or "#". "$"
 specifies that the command can be run as a regular user, while "#" specifies
 that it must be run as root.
 
+Use the link called `Next` in the sidebar to get to the next page of steps
+after completing the current page.
+
 \
 
 .. toctree::
