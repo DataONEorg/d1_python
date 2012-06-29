@@ -86,5 +86,3 @@ Brief overview of the processes that must be performed:
     GMN is set up, such as allowing the processes to connect without
     authentication from a local LAN or specific IP address
 
-
-:doc:`setup-whitelist`
