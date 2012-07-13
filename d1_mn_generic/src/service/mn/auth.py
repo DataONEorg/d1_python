@@ -37,6 +37,8 @@ except ImportError:
 # Django.
 from django.http import Http404
 from django.http import HttpResponse
+import django.db
+import django.db.transaction
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -126,8 +128,18 @@ def set_access_policy(pid, access_policy=None):
   Postconditions:
     - The Permission and related tables contain the new access policy.
     - The SysMeta object in the filesystem contains the new access policy.
-  '''
+    
+  Notes:  
+    - There can be multiple rules in a policy and each rule can contain multiple
+      subjects. So there are two ways that the same subject can be specified
+      multiple times in a policy. If this happens, multiple, conflicting action
+      levels may be provided for the subject. This is handled by checking for an
+      existing row for the subject for this object and updating it if it
+      contains a lower action level. The end result is that there is one row for
+      each subject for each object and this row contains the highest action
+      level.
 
+  '''
   # Verify that the object for which access policy is being set exists, and
   # retrieve it.
   try:
@@ -136,72 +148,97 @@ def set_access_policy(pid, access_policy=None):
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Attempted to set access for non-existing object', pid
     )
-  # Handle call without access policy.
+
+    # Handle call without access policy.
   if access_policy is None:
     allow = []
   else:
     allow = access_policy.allow
-  # Remove any existing permissions for this object. Because
-  # TransactionMiddleware is enabled, the temporary absence of permissions is
-  # hidden in a transaction.
-  #
-  # The deletes are cascaded so any subjects that are no longer referenced in
-  # any permissions are deleted as well.
+
+    # Remove any existing permissions for this object. Because
+    # TransactionMiddleware is enabled, the temporary absence of permissions is
+    # hidden in a transaction.
+    #
+    # The deletes are cascaded so any subjects that are no longer referenced in
+    # any permissions are deleted as well.
   models.Permission.objects.filter(object__pid=pid).delete()
+
   # Add an implicit allow rule with all permissions for the rights holder.
   allow_rights_holder = dataoneTypes.AccessRule()
-  with sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
-    allow_rights_holder.subject.append(s.rightsHolder)
+
+  #with sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
+  #  allow_rights_holder.subject.append(s.rightsHolder)
+
+  with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as sysmeta:
+    allow_rights_holder.subject.append(sysmeta.rightsHolder)
+    sysmeta.accessPolicy = access_policy
+    sci_obj.serial_version = sysmeta.serialVersion
+    sci_obj.save()
+
   permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
   allow_rights_holder.permission.append(permission)
+
   # Iterate over AccessPolicy and create db entries.
   for allow_rule in allow + [allow_rights_holder]:
+
     # Find the highest level action that this rule sets.
     top_level = 0
     for permission in allow_rule.permission:
       level = action_to_level(permission)
       if level > top_level:
         top_level = level
-    # Set the highest level rule for all subjects in this rule.
-    for subject in allow_rule.subject:
-      # There can be multiple rules in a policy and each rule can contain
-      # multiple subjects. So there are two ways that the same subject can be
-      # specified multiple times in a policy. If this happens, multiple,
-      # conflicting action levels may be provided for the subject. This is
-      # handled by checking for an existing row for the subject for this object
-      # and updating it if it contains a lower action level. The end result is
-      # that there is one row for each subject for each object and this row
-      # contains the highest action level.
-      #
-      # If the subject exists, get it. Otherwise, create it.
-      subject_row = models.PermissionSubject.objects.get_or_create(
-        subject=subject.value()
-      )[0]
-      try:
-        # TODO: Because Django does not (as of 1.3) support indexes that cover
-        # multiple fields, this get() may be slow. When Django gets support for
-        # indexes that cover multiple fields, create an index for the
-        # combination of the two fields in the Permission table.
-        #
-        # http://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys
-        permission = models.Permission.objects.get(object=sci_obj, subject=subject_row)
-      except models.Permission.DoesNotExist:
-        permission = models.Permission()
-        permission.object = sci_obj
-        permission.subject = subject_row
-        permission.level = level
-        permission.save()
-      else:
-        if permission.level < level:
-          permission.level = level
-          permission.save()
+
+    insert_permission_rows(sci_obj, allow_rule, top_level)
+
   # Update the SysMeta object with the new access policy. Because
   # TransactionMiddleware is enabled, the database modifications made above will
   # be rolled back if the SysMeta update fails.
-  with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
-    s.accessPolicy = access_policy
-    sci_obj.serial_version = s.serialVersion
-  sci_obj.save()
+  #with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
+  #  s.accessPolicy = access_policy
+  #  sci_obj.serial_version = s.serialVersion
+
+
+def insert_permission_rows(sci_obj, allow_rule, top_level):
+  # See the comments for TransactionMiddleware in settings.py.
+  while True:
+    try:
+      sid = django.db.transaction.savepoint()
+      insert_permission_rows_transaction(sci_obj, allow_rule, top_level)
+    except django.db.IntegrityError, django.db.DatabaseError:
+      django.db.transaction.savepoint_rollback(sid)
+    else:
+      django.db.transaction.savepoint_commit(sid)
+      break
+
+
+def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
+  subjects_required = set([s.value() for s in allow_rule.subject])
+  permission_create_rows = []
+  subjects_existing = set()
+  for subject_existing_row in models.PermissionSubject.objects.filter(
+    subject__in=subjects_required
+  ):
+    subjects_existing.add(subject_existing_row.subject)
+    permission_create_rows.append(
+      models.Permission(
+        object=sci_obj, subject=subject_existing_row,
+        level=top_level
+      )
+    )
+
+  subjects_missing = subjects_required - subjects_existing
+
+  for s in subjects_missing:
+    subject_row = models.PermissionSubject(subject=s)
+    subject_row.save()
+    permission_create_rows.append(
+      models.Permission(
+        object=sci_obj, subject=subject_row,
+        level=top_level
+      )
+    )
+
+  models.Permission.objects.bulk_create(permission_create_rows)
 
 # ------------------------------------------------------------------------------
 # Check permissions.
@@ -259,8 +296,8 @@ def assert_allowed(request, level, pid):
     )
   if not is_allowed(request, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
-      0, '{0} on "{1}" denied'.format(
-        level_to_action(level), pid), pid
+      0, u'{0} on "{1}" denied. {2}'.format(
+        level_to_action(level), pid), format_active_subjects(request)
     )
 
 # ------------------------------------------------------------------------------
@@ -283,7 +320,8 @@ def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
     if not settings.GMN_DEBUG and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for DataONE infrastructure'
+        0, 'Access allowed only for DataONE infrastructure. {0}'
+        .format(format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -300,7 +338,8 @@ def assert_internal_permission(f):
     if not settings.GMN_DEBUG and not is_internal_subject(request) and not \
       is_internal_host(request):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for GMN asynchronous processes'
+        0, 'Access allowed only for GMN asynchronous processes. {0}'
+        .format(format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -322,7 +361,7 @@ def assert_create_update_delete_permission(f):
       and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for subjects with Create/Update/Delete '
-        'permission'
+        'permission. {0}'.format(format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -339,7 +378,7 @@ def assert_authenticated(f):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.subjects:
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for authenticated subjects. Please reconnect with '
-        'a valid DataONE session certificate'
+        'a valid DataONE session certificate. {0}'.format(format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -357,7 +396,7 @@ def assert_verified(f):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for verified accounts. Please reconnect with a '
         'valid DataONE session certificate in which the identity of the '
-        'primary subject has been verified'
+        'primary subject has been verified. {0}'.format(format_active_subjects(request))
       )
     return f(request, *args, **kwargs)
 
@@ -395,3 +434,17 @@ def assert_read_permission(f):
   '''Assert that subject has read permission or higher for object.
   '''
   return assert_required_permission(f, READ_LEVEL)
+
+
+def format_active_subjects(request):
+  '''Create a string listing active subjects for this connection, suitable
+  for appending to authentication error messages.'''
+  decorated_subjects = []
+  for subject in request.subjects:
+    if subject == request.primary_subject:
+      decorated_subjects.append(subject + ' (primary)')
+    elif subject == d1_common.const.SUBJECT_VERIFIED:
+      decorated_subjects.append(subject + ' (verified)')
+    else:
+      decorated_subjects.append(subject + ' (equivalent)')
+  return 'Active subjects: {0}'.format(', '.join(decorated_subjects))

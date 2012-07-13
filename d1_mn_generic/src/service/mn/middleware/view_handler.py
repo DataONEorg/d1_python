@@ -96,13 +96,41 @@ class view_handler():
     return response
 
   def process_session(self, request):
-    session.process_session(request)
-
     if settings.GMN_DEBUG == True:
       # For simulating an HTTPS connection with client authentication when
-      # debugging via regular HTTP, a list of subjects can be passed in by using
-      # a vendor specific extension. If this is used together with TLS, the list
-      # is added to the one derived from any included client side certificate.
-      # The public symbolic principal is always included in the subject list.
+      # debugging via regular HTTP, two mechanisms are supported. (1) A full
+      # client side certificate can be included and (2) a list of subjects can
+      # be included, both as vendor specific extensions (HTTP headers that start
+      # with the string "VENDOR_".) In some testing scenarios, it is convenient
+      # to submit lists of subjects without having to generate certificates. In
+      # other scenarios, it is desirable to simulate an HTTPS interaction as
+      # closely as possible by providing a complete certificate.
+      #
+      # Handle complete certificate in vendor specific extension.
+      if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
+        request.META['SSL_CLIENT_CERT'] = \
+          self.pem_in_http_header_to_pem_in_string(
+            request.META['HTTP_VENDOR_INCLUDE_CERTIFICATE'])
+
+      # Handle list of subjects in vendor specific extension:
+      #
+      # If this is used together with TLS, the list is added to the one derived
+      # from any included client side certificate. The public symbolic principal
+      # is always included in the subject list.
       if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
         request.subjects.update(request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t'))
+
+    # Always run regular certificate processing.
+    session.process_session(request)
+
+  def pem_in_http_header_to_pem_in_string(self, header_str):
+    header = StringIO.StringIO(header_str)
+    pem = StringIO.StringIO()
+    pem.write('-----BEGIN CERTIFICATE-----\n')
+    while True:
+      pem_line = header.read(64)
+      if len(pem_line) == 0:
+        break
+      pem.write(pem_line + '\n')
+    pem.write('-----END CERTIFICATE-----\n')
+    return pem.getvalue()

@@ -225,13 +225,13 @@ class PermissionSubject(models.Model):
 
 
 class Permission(models.Model):
-  object = models.ForeignKey(ScienceObject)
-  subject = models.ForeignKey(PermissionSubject)
+  object = models.ForeignKey(ScienceObject, db_index=True)
+  subject = models.ForeignKey(PermissionSubject, db_index=True)
   level = models.PositiveSmallIntegerField()
 
 
 class WhitelistForCreateUpdateDelete(models.Model):
-  subject = models.ForeignKey(PermissionSubject)
+  subject = models.ForeignKey(PermissionSubject, db_index=True)
 
   def set(self, subject):
     self.subject = PermissionSubject.objects.get_or_create(subject=subject)[0]

@@ -65,9 +65,10 @@ class request_handler():
     try:
       request_uri = request.environ['REQUEST_URI']
     except KeyError:
-      patch_msg = '# Django must be patched for debugging GMN with the Django '
-      patch_msg += 'development server #\n'
-      patch_msg += 'In basehttp.py, around line 573, add:\n'
+      patch_msg = 'Django must be patched for debugging GMN with the Django '
+      patch_msg += 'development server\n'
+      patch_msg += 'In basehttp.py, line 150 in Django 1.4, line 573 in '
+      patch_msg += 'Django 1.3, add:\n'
       patch_msg += 'env[\'REQUEST_URI\'] = path'
       raise d1_common.types.exceptions.ServiceFailure(0, patch_msg)
 

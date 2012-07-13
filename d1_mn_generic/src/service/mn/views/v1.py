@@ -124,16 +124,15 @@ def get_monitor_ping(request):
   return response
 
 
-# Unrestricted access.
+# Anyone can call getLogRecords but only objects to which they have read access
+# or higher are returned. No access control is applied if called by trusted D1
+# infrastructure.
 @mn.restrict_to_verb.get
 def get_log(request):
   '''MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0]
   [, count=1000]) → Log
   '''
   query = mn.models.EventLog.objects.order_by('-date_logged').select_related()
-  # Anyone can call listObjects but only objects to which they have read access
-  # or higher are returned. No access control is applied if called by trusted D1
-  # infrastructure.
   if not mn.auth.is_trusted_subject(request):
     query = mn.db_filter.add_access_policy_filter(query, request,
                                                   'object__permission')
@@ -315,8 +314,11 @@ def get_checksum_pid(request, pid):
   return HttpResponse(checksum_xml, d1_common.const.MIMETYPE_XML)
 
 
-# Unrestricted access.
+# Anyone can call getLogRecords but only objects to which they have read access
+# or higher are returned. No access control is applied if called by trusted D1
+# infrastructure.
 @mn.restrict_to_verb.get
+#@mn.auth.assert_trusted_permission
 def get_object(request):
   '''MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -329,8 +331,8 @@ def get_object(request):
   # calling by Coordinating Nodes and MAY be configured to allow more general
   # access. Currently, GMN allows general access to this method, with the
   # results filtered to only objects the caller has permissions for.
-  if not mn.auth.is_trusted_subject(request):
-    query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
+  #if not mn.auth.is_trusted_subject(request):
+  #  query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
   query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'fromDate',
                                            'gte')
   query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'toDate',
