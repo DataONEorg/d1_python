@@ -63,7 +63,8 @@ variable.
 
   Edit ``/etc/apache2/sites-available/default-ssl``.
 
-  In the ``VirtualHost`` section, add “wsgi” in the FilesMatch expression.
+  In the ``VirtualHost`` section, add “wsgi” in the FilesMatch expression, and
+  replace +StdEnvVars with +ExportCertData.
 
   Change::
 
@@ -74,7 +75,7 @@ variable.
   to::
 
     <FilesMatch "\.(wsgi|cgi|shtml|phtml|php)$">
-      SSLOptions +StdEnvVars
+      SSLOptions +ExportCertData
     </FilesMatch>
 
 

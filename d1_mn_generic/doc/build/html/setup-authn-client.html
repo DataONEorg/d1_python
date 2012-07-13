@@ -111,7 +111,8 @@ mod_ssl to forward the certificate to the GMN WSGI handler in an environment
 variable.</p>
 <blockquote>
 <div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add “wsgi” in the FilesMatch expression.</p>
+<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add “wsgi” in the FilesMatch expression, and
+replace +StdEnvVars with +ExportCertData.</p>
 <p>Change:</p>
 <div class="highlight-python"><pre>&lt;FilesMatch "\.(cgi|shtml|phtml|php)$"&gt;
   SSLOptions +StdEnvVars
@@ -119,7 +120,7 @@ variable.</p>
 </div>
 <p>to:</p>
 <div class="highlight-python"><pre>&lt;FilesMatch "\.(wsgi|cgi|shtml|phtml|php)$"&gt;
-  SSLOptions +StdEnvVars
+  SSLOptions +ExportCertData
 &lt;/FilesMatch&gt;</pre>
 </div>
 </div></blockquote>
