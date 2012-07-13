@@ -19,8 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`tier_3_mn_storage_create`
-===============================
+:mod:`tier_1_mn_core_get_log_records`
+=====================================
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
@@ -54,62 +54,52 @@ import d1_instance_generator.accesspolicy
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import settings
-import subject_dn
+import pem_in_http_header
 
 # Config
-
-# The number of bytes in each science object.
-n_sci_obj_bytes = 1024
-
-# The number of subjects to allow access to each created test object.
-n_allow = 10
+page_size = 1000
 
 
 class Transaction(object):
   def __init__(self):
     self.custom_timers = {}
+    self.total = self.get_log_records_total()
+    print self.total
+
+  def get_log_records_total(self):
+    client = self.create_client()
+    try:
+      res = client.getLogRecords(count=0, start=0)
+    except Exception as e:
+      with open('/tmp/stress_test_error.html', 'w') as f:
+        f.write(str(e))
+      raise
+    else:
+      return res.total
 
   def run(self):
     start_timer = time.time()
-    self.create_test_file_on_member_node()
+    self.get_log_records_on_member_node()
     latency = time.time() - start_timer
-    self.custom_timers['create'] = latency
 
-  def create_test_file_on_member_node(self):
-    sci_obj = self.create_science_object()
-    subjects = self.create_list_of_random_subjects(n_allow)
-    access_policy = self.create_access_policy(subjects)
-    sys_meta = self.create_system_metadata(sci_obj, access_policy)
+    self.custom_timers['get_log_records'] = latency
+
+  def get_log_records_on_member_node(self):
     client = self.create_client()
+    start = random.randint(0, self.total - 1)
+    count = page_size
+    if start + count >= self.total - 1:
+      count = self.total - start
     try:
-      res = client.create(sys_meta.identifier.value(), sci_obj, sys_meta)
+      res = client.getLogRecords(start=start, count=count)
     except Exception as e:
       with open('/tmp/stress_test_error.html', 'w') as f:
         f.write(str(e))
       raise
 
-  def create_science_object(self):
-    return d1_instance_generator.random_data.random_bytes_flo(n_sci_obj_bytes)
-
-  def create_system_metadata(self, sci_obj, access_policy):
-    return d1_instance_generator.systemmetadata.generate_from_flo(
-      sci_obj, {'accessPolicy': access_policy}
-    )
-
-  def create_access_policy(self, subjects):
-    ap = dataoneTypes.AccessPolicy()
-    ar = dataoneTypes.AccessRule()
-    for subject in subjects:
-      ar.subject.append(
-        subject_dn.get_dataone_compliant_dn_serialization_by_subject(subject)
-      )
-      ar.permission = ['changePermission']
-    ap.allow.append(ar)
-    return ap
-
   def create_client(self):
     cert_path = os.path.join(
-      settings.CLIENT_CERT_DIR, settings.SUBJECT_WITH_CREATE_PERMISSIONS
+      settings.CLIENT_CERT_DIR, settings.SUBJECT_WITH_CN_PERMISSIONS
     )
     key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
     return d1_client.mnclient.MemberNodeClient(
@@ -117,13 +107,6 @@ class Transaction(object):
       cert_path=cert_path,
       key_path=key_path
     )
-
-  def get_subject_list(self):
-    with open(settings.SUBJECTS_PATH, 'r') as f:
-      return filter(None, f.read().split('\n'))
-
-  def create_list_of_random_subjects(self, n_subjects):
-    return random.sample(self.get_subject_list(), n_subjects)
 
 
 if __name__ == '__main__':

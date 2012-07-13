@@ -35,11 +35,13 @@ import unittest
 # D1.
 import d1_instance_generator.random_data
 
+# App.
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+sys.path.append(_here('./shared/'))
+import settings
+
 # Get an instance of a logger.
 logger = logging.getLogger()
-
-# Config.
-subjects_path = './projects/_shared/subjects.txt'
 
 
 def main():
@@ -60,7 +62,7 @@ def main():
 
 
 def create_subject_list(n_subjects):
-  with open(subjects_path, 'w') as f:
+  with open(SUBJECTS_PATH, 'w') as f:
     for i in range(n_subjects):
       f.write(d1_instance_generator.random_data.random_3_words())
       f.write('\n')

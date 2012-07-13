@@ -19,8 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`tier_3_mn_storage_create`
-===============================
+:mod:`tier_1_mn_read_list_objects`
+==================================
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
@@ -51,45 +51,68 @@ import d1_instance_generator.systemmetadata
 import d1_instance_generator.accesspolicy
 
 # App.
-
-# Path to modules shared between projects.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-import sys
-sys.path.append(_here('../../../projects/_shared/'))
-
+sys.path.append(_here('../../../shared/'))
 import settings
+import pem_in_http_header
 
 # Config
-
-cert_dir = './projects/_shared/certificates/certificates'
-cert_key = './projects/_shared/certificates/local_test_client_cert.nopassword.key'
+page_size = 1000
 
 
 class Transaction(object):
   def __init__(self):
     self.custom_timers = {}
+    self.total = self.get_object_total()
+
+  def get_object_total(self):
+    client = self.create_client()
+    try:
+      res = client.listObjects(count=0, start=0)
+    except Exception as e:
+      with open('/tmp/stress_test_error.html', 'w') as f:
+        f.write(str(e))
+      raise
+    else:
+      return res.total
 
   def run(self):
     start_timer = time.time()
     self.list_objects_on_member_node()
     latency = time.time() - start_timer
 
-    self.custom_timers['create'] = latency
+    self.custom_timers['list_objects'] = latency
+
+  # Definition of listObjects from mnclient.py:
+  #
+  # def listObjects(self, fromDate=None, toDate=None, objectFormat=None,
+  #                 replicaStatus=None, start=0,
+  #                 count=d1_common.const.DEFAULT_LISTOBJECTS,
+  #                 vendorSpecific=None):
 
   def list_objects_on_member_node(self):
     client = self.create_client()
-    res = client.listObjects()
-    print len(res.objectInfo)
+    start = random.randint(0, self.total - 1)
+    count = page_size
+    if start + count >= self.total - 1:
+      count = self.total - start
+    try:
+      res = client.listObjects(start=start, count=count)
+    except Exception as e:
+      with open('/tmp/stress_test_error.html', 'w') as f:
+        f.write(str(e))
+      raise
 
   def create_client(self):
+    cert_path = os.path.join(
+      settings.CLIENT_CERT_DIR, settings.SUBJECT_WITH_CN_PERMISSIONS
+    )
+    key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
     return d1_client.mnclient.MemberNodeClient(
       base_url=settings.BASEURL,
-      cert_path=self.get_random_certificate(),
-      key_path=cert_key
+      cert_path=cert_path,
+      key_path=key_path
     )
-
-  def get_random_certificate(self):
-    return os.path.join(cert_dir, random.choice(os.listdir(cert_dir)))
 
 
 if __name__ == '__main__':
