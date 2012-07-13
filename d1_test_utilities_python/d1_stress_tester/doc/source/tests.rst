@@ -19,7 +19,7 @@ Shared test configuration
 
 To avoid duplication of settings that are likely to be the same for each
 test, the tests each read some of their configuration from the file stored in
-`/projects/_shared/settings.py`. The main setting in this file is the Base URL
+`./shared/settings.py`. The main setting in this file is the Base URL
 for the Member Node which is being tested.
 
 
@@ -38,8 +38,15 @@ This test concurrently creates many small, randomized science objects on the
 Member Node. Each science object has System Metadata with a number of randomly
 selected parameters.
 
-To facility stress testing of the `MNRead.listObjects()` API, the science
-objects are created with access permissions for a subset of the subjects.
+In addition to stress testing the `MNStorage.create()` API, this test also sets
+the server up for the other stress tests by creating test objects with a varied
+set of permissions for the subjects for which certificates have been generated.
+
+This stress tester always connects with the `subject_with_create_permissions`
+certificate. This means that the MN must have been set up to allow the DataONE
+subject,
+`DC=com,DC=d1-stress-tester,C=US,O=d1-stress-tester,CN=subject_with_create_permissions`
+to create objects.
 
 To run the test::
 
@@ -51,12 +58,15 @@ MNRead.listObjects()
 
 Stress testing of the `MNRead.listObjects()` API.
 
-This test concurrently calls listObjects for many different subjects on the
-Member Node.
+This test concurrently calls listObjects, requesting random sized result sets
+from the full range objects.
+
+This stress tester always connects with the `subject_with_cn_permissions`
+certificate. This means that the MN must be set up to allow the DataONE subject,
+`DC=com,DC=d1-stress-tester,C=US,O=d1-stress-tester,CN=subject_with_cn_permissions`
+to act as a Coordinating Node. The `MNRead.listObjects()` API is intended
+primarily for CNs.
 
 To run the test::
 
   $ multimech-run projects/list_objects/
-
-
-

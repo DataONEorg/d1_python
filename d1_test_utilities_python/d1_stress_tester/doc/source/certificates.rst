@@ -1,21 +1,34 @@
 Certificates
 ============
 
-As the stress tests connect to the MN as regular clients, a set of test
-certificates, with which the connections can be established, must be prepared
-before any given test can be run. The certificates must be trusted by the Member
-Node being tested and each certificate must contain one or more DataONE subjects
-that are allowed to perform the operations on the MN which a given stress test
-is exercising.
+As many of the stress tests excercise Member Node functionality that is not
+accessible to unauthenticated clients, a set of test certificates, with which
+the connections can be established, must be prepared. The certificates must be
+trusted by the Member Node being tested and each certificate must contain one or
+more DataONE subjects that are allowed to perform the operations on the MN which
+a given stress test is exercising.
 
-The certificates are stored in folders below
-`./projects/_shared/certificates`. For each connection, a given test randomly
-selects a certificate from the certificates that are applicable for the
-operation being tested. For instance, the test for `MNStorage.create()` will
-establish connections with certificates randomly selected from the
+This section describes how to generate and set up the required certificates.
+
+The generated client side certificates are stored in
+`./generated/certificates/client_side_certs`. For each connection, a given test
+selects one or more certificates from the `client_side_certs` folder, depending
+on which functionality is being tested.
+
+
+
+
+
+For instance, the test for
+`MNStorage.create()` will establish all its connections with a certificate called
+`subject_with_create_permissions`. The test for `MNRead.listObjects()` will
+select random certificates to stress test the connections with certificates randomly
+selected from the
 `certificates/create_update_delete` folder. If there is only one certificate in
 the folder, that certificate will be used for all the connections created by
 the test.
+
+
 
 
 CA and Member Node setup
@@ -35,9 +48,9 @@ Setting up the local CA
 The first step in setting up certificates for testing is to set up a local CA
 that will be used for signing the test certificates.
 
-  Enter the `./projects/_shared/certificates` folder::
+  Enter the `./generated/certificates` folder::
 
-    $ cd ./projects/_shared/certificates
+    $ cd ./generated/certificates
 
   Create the private key for the local test CA::
 
@@ -85,9 +98,9 @@ gathering entropy. When generating a set of certificates for testing, it is
 convenient to generate the private key up front and reuse it for all the
 generated certificates.
 
-  Enter the `./projects/_shared/certificates` folder::
+  Enter the `./generated/certificates` folder::
 
-    $ cd ./projects/_shared/certificates
+    $ cd ./generated/certificates
 
   Generate the private key::
 
@@ -135,3 +148,4 @@ the certificates.
 
 Before the certificates can be used by the stress tester, the MN must be set
 up to allow the subjects to create science objects.
+
