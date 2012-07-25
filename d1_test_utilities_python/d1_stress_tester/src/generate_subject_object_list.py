@@ -41,12 +41,14 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_instance_generator.subject
 import d1_instance_generator.random_data
 
+# App.
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+sys.path.append(_here('./shared/'))
+import settings
+import subject_dn
+
 # Get an instance of a logger.
 logger = logging.getLogger()
-
-# Config.
-subjects_and_objects_path = './projects/_shared/subjects_and_objects.txt'
-conn_string = "host='localhost' dbname='gmn' user='gmn' password='gmn'"
 
 q = '''
 select s.pid, u.subject from mn_scienceobject s
@@ -72,12 +74,12 @@ def main():
 
 def get_subjects_and_objects():
   # get a connection, if a connect cannot be made an exception will be raised here
-  conn = psycopg2.connect(conn_string)
+  conn = psycopg2.connect(settings.GMN_CONNECTION_STRING)
   cursor = conn.cursor()
   cursor.execute(q)
   records = cursor.fetchall()
 
-  with open(subjects_and_objects_path, 'wb') as f:
+  with open(settings.SUBJECTS_AND_OBJECTS_PATH, 'wb') as f:
     for r in records:
       f.write(r[0] + '\t' + r[1] + '\n')
 
