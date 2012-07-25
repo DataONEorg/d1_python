@@ -26,6 +26,7 @@ use by the stress tester for MNStorage.create().
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
+import codecs
 import logging
 import optparse
 import os
@@ -83,17 +84,14 @@ def create_certificates():
   subjects.append(settings.SUBJECT_WITH_CREATE_PERMISSIONS)
   subjects.append(settings.SUBJECT_WITH_CN_PERMISSIONS)
   for subject in subjects:
-    subject_dn_serialized = subject_dn.get_dataone_compliant_dn_serialization_by_subject(
-      subject
-    )
-    subject_dn_tuple = subject_dn.get_dn_by_subject(subject)
+    print subject
+    subject_dn_tuple = subject_dn.dataone_compliant_dn_serialization_to_dn_tuple(subject)
     subject_info = create_subject_info(subject)
     create_certificate(subject, subject_dn_tuple, subject_info)
 
 
 def get_subject_list():
-  with open(settings.SUBJECTS_PATH, 'r') as f:
-    return filter(None, f.read().split('\n'))
+  return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf8').read().splitlines()
 
 
 def create_list_of_random_groups(n_groups):
@@ -113,9 +111,7 @@ def create_certificate(subject, subject_dn_tuple, subject_info):
 
 
 def create_subject_info(subject):
-  return subject_info_template.replace(
-    '%subject%', subject_dn.get_dataone_compliant_dn_serialization_by_subject(subject)
-  )
+  return subject_info_template.replace('%subject%', subject)
 
 
 def log_setup():
