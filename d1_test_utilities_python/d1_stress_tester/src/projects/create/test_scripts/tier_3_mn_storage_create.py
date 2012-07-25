@@ -29,21 +29,11 @@
 '''
 
 # Std.
-import datetime
 import os
-import random
 import sys
-import time
-import uuid
-import xml.sax.saxutils
-import StringIO
 
 # D1.
-import d1_common.const
-import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-
-import d1_client.mnclient
 
 import d1_instance_generator
 import d1_instance_generator.random_data
@@ -55,41 +45,33 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import settings
 import subject_dn
+import transaction
 
 # Config
 
 # The number of bytes in each science object.
-n_sci_obj_bytes = 1024
+N_SCI_OBJ_BYTES = 1024
 
 # The number of subjects to allow access to each created test object.
-n_allow = 10
+N_ALLOW_ACCESS = 10
 
 
-class Transaction(object):
+class Transaction(transaction.Transaction):
   def __init__(self):
-    self.custom_timers = {}
+    super(Transaction, self).__init__()
 
-  def run(self):
-    start_timer = time.time()
-    self.create_test_file_on_member_node()
-    latency = time.time() - start_timer
-    self.custom_timers['create'] = latency
-
-  def create_test_file_on_member_node(self):
+  def d1_mn_api_call(self):
+    '''MNStorage.create()'''
     sci_obj = self.create_science_object()
-    subjects = self.create_list_of_random_subjects(n_allow)
+    subjects = self.create_list_of_random_subjects(N_ALLOW_ACCESS)
     access_policy = self.create_access_policy(subjects)
     sys_meta = self.create_system_metadata(sci_obj, access_policy)
-    client = self.create_client()
-    try:
-      res = client.create(sys_meta.identifier.value(), sci_obj, sys_meta)
-    except Exception as e:
-      with open('/tmp/stress_test_error.html', 'w') as f:
-        f.write(str(e))
-      raise
+    client = self.create_client_for_subject(settings.SUBJECT_WITH_CREATE_PERMISSIONS)
+    response = client.createResponse(sys_meta.identifier.value(), sci_obj, sys_meta)
+    self.check_response(response)
 
   def create_science_object(self):
-    return d1_instance_generator.random_data.random_bytes_flo(n_sci_obj_bytes)
+    return d1_instance_generator.random_data.random_bytes_flo(N_SCI_OBJ_BYTES)
 
   def create_system_metadata(self, sci_obj, access_policy):
     return d1_instance_generator.systemmetadata.generate_from_flo(
@@ -106,24 +88,6 @@ class Transaction(object):
       ar.permission = ['changePermission']
     ap.allow.append(ar)
     return ap
-
-  def create_client(self):
-    cert_path = os.path.join(
-      settings.CLIENT_CERT_DIR, settings.SUBJECT_WITH_CREATE_PERMISSIONS
-    )
-    key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
-    return d1_client.mnclient.MemberNodeClient(
-      base_url=settings.BASEURL,
-      cert_path=cert_path,
-      key_path=key_path
-    )
-
-  def get_subject_list(self):
-    with open(settings.SUBJECTS_PATH, 'r') as f:
-      return filter(None, f.read().split('\n'))
-
-  def create_list_of_random_subjects(self, n_subjects):
-    return random.sample(self.get_subject_list(), n_subjects)
 
 
 if __name__ == '__main__':
