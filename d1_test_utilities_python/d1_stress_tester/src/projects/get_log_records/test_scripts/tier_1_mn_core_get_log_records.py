@@ -29,84 +29,42 @@
 '''
 
 # Std.
-import datetime
 import os
 import random
 import sys
-import time
-import uuid
-import xml.sax.saxutils
-import StringIO
 
 # D1.
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-
-import d1_client.mnclient
-
-import d1_instance_generator
-import d1_instance_generator.random_data
-import d1_instance_generator.systemmetadata
-import d1_instance_generator.accesspolicy
 
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
 import settings
-import pem_in_http_header
-
-# Config
-page_size = 1000
+import transaction
 
 
-class Transaction(object):
+class Transaction(transaction.Transaction):
   def __init__(self):
-    self.custom_timers = {}
+    super(Transaction, self).__init__()
     self.total = self.get_log_records_total()
-    print self.total
 
   def get_log_records_total(self):
-    client = self.create_client()
+    client = self.create_client(settings.SUBJECT_WITH_CN_PERMISSIONS)
     try:
-      res = client.getLogRecords(count=0, start=0)
+      log = client.getLogRecords(count=0, start=0)
     except Exception as e:
-      with open('/tmp/stress_test_error.html', 'w') as f:
-        f.write(str(e))
-      raise
+      self.capture_response_and_raise_exception(e)
     else:
-      return res.total
+      return log.total
 
-  def run(self):
-    start_timer = time.time()
-    self.get_log_records_on_member_node()
-    latency = time.time() - start_timer
-
-    self.custom_timers['get_log_records'] = latency
-
-  def get_log_records_on_member_node(self):
-    client = self.create_client()
+  def d1_mn_api_call(self):
+    '''MNRead.getLogRecords()'''
+    client = self.create_client(settings.SUBJECT_WITH_CN_PERMISSIONS)
     start = random.randint(0, self.total - 1)
-    count = page_size
+    count = settings.PAGE_SIZE
     if start + count >= self.total - 1:
       count = self.total - start
-    try:
-      res = client.getLogRecords(start=start, count=count)
-    except Exception as e:
-      with open('/tmp/stress_test_error.html', 'w') as f:
-        f.write(str(e))
-      raise
-
-  def create_client(self):
-    cert_path = os.path.join(
-      settings.CLIENT_CERT_DIR, settings.SUBJECT_WITH_CN_PERMISSIONS
-    )
-    key_path = settings.CLIENT_CERT_PRIVATE_KEY_PATH
-    return d1_client.mnclient.MemberNodeClient(
-      base_url=settings.BASEURL,
-      cert_path=cert_path,
-      key_path=key_path
-    )
+    response = client.getLogRecordsResponse(start=start, count=count)
+    self.check_response(response)
 
 
 if __name__ == '__main__':
