@@ -30,6 +30,8 @@
 
 # Std.
 import os
+import random
+import string
 import sys
 
 # D1.
@@ -75,19 +77,27 @@ class Transaction(transaction.Transaction):
 
   def create_system_metadata(self, sci_obj, access_policy):
     return d1_instance_generator.systemmetadata.generate_from_flo(
-      sci_obj, {'accessPolicy': access_policy}
+      sci_obj, {
+        'identifier': self.generate_random_ascii_pid(),
+        'accessPolicy': access_policy,
+        'rightsHolder': self.select_random_subject(),
+      }
     )
 
   def create_access_policy(self, subjects):
     ap = dataoneTypes.AccessPolicy()
     ar = dataoneTypes.AccessRule()
-    for subject in subjects:
-      ar.subject.append(
-        subject_dn.get_dataone_compliant_dn_serialization_by_subject(subject)
-      )
-      ar.permission = ['changePermission']
+    ar.subject = subjects
+    ar.permission = ['changePermission']
     ap.allow.append(ar)
     return ap
+
+  def generate_random_ascii_pid(self):
+    return ''.join(
+      random.choice(
+        string.ascii_uppercase + string.ascii_lowercase + string.digits
+      ) for x in range(10)
+    )
 
 
 if __name__ == '__main__':

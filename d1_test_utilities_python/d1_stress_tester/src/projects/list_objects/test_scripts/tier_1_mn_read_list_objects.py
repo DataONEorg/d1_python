@@ -91,12 +91,8 @@ class Transaction(transaction.Transaction):
     count = page_size
     if start + count >= self.total - 1:
       count = self.total - start
-    try:
-      res = client.listObjects(start=start, count=count)
-    except Exception as e:
-      with open('/tmp/stress_test_error.html', 'w') as f:
-        f.write(str(e))
-      raise
+    response = client.listObjectsResponse(start=start, count=count)
+    self.check_response(response)
 
 
 if __name__ == '__main__':

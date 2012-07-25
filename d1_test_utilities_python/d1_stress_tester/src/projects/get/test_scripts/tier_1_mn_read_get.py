@@ -71,13 +71,9 @@ class Transaction(transaction.Transaction):
     '''MNRead.get() called by regular user'''
     obj, subject = self.select_random_subject_object()
     client = self.create_client_for_subject(subject)
-    try:
-      res = client.get(obj)
-    except Exception as e:
-      with open('/tmp/stress_test_error.html', 'w') as f:
-        f.write(str(e))
-      raise
-    res.read()
+    response = client.getResponse(obj)
+    self.check_response(response)
+    response.read()
 
 
 if __name__ == '__main__':

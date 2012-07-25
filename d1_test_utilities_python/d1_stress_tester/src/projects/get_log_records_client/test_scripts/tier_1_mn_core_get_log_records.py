@@ -45,25 +45,12 @@ import transaction
 class Transaction(transaction.Transaction):
   def __init__(self):
     super(Transaction, self).__init__()
-    self.total = self.get_log_records_total()
-
-  def get_log_records_total(self):
-    client = self.create_client(settings.SUBJECT_WITH_CN_PERMISSIONS)
-    try:
-      log = client.getLogRecords(count=0, start=0)
-    except Exception as e:
-      self.capture_response_and_raise_exception(e)
-    else:
-      return log.total
 
   def d1_mn_api_call(self):
-    '''MNRead.getLogRecords()'''
-    client = self.create_client(settings.SUBJECT_WITH_CN_PERMISSIONS)
-    start = random.randint(0, self.total - 1)
-    count = settings.PAGE_SIZE
-    if start + count >= self.total - 1:
-      count = self.total - start
-    response = client.getLogRecordsResponse(start=start, count=count)
+    '''MNRead.getLogRecords() for specific object called by regular subject'''
+    obj, subject = self.select_random_subject_object()
+    client = self.create_client_for_subject(subject)
+    response = client.getLogRecordsResponse(pidFilter=obj)
     self.check_response(response)
 
 

@@ -48,7 +48,7 @@ class Transaction(transaction.Transaction):
     self.total = self.get_log_records_total()
 
   def get_log_records_total(self):
-    client = self.create_client(settings.SUBJECT_WITH_CN_PERMISSIONS)
+    client = self.create_client_for_cn()
     try:
       log = client.getLogRecords(count=0, start=0)
     except Exception as e:
@@ -57,8 +57,8 @@ class Transaction(transaction.Transaction):
       return log.total
 
   def d1_mn_api_call(self):
-    '''MNRead.getLogRecords()'''
-    client = self.create_client(settings.SUBJECT_WITH_CN_PERMISSIONS)
+    '''MNRead.getLogRecords(), paged, called by CN'''
+    client = self.create_client_for_cn()
     start = random.randint(0, self.total - 1)
     count = settings.PAGE_SIZE
     if start + count >= self.total - 1:
