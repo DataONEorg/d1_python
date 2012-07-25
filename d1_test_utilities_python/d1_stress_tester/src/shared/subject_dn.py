@@ -59,3 +59,17 @@ def get_dataone_compliant_dn_serialization_by_subject(subject):
 
 def subject_to_filename(subject):
   return re.sub('\W', '_', subject)
+
+
+def dataone_compliant_dn_serialization_to_dn_tuple(d1_dn_string):
+  rdns = d1_dn_string.rsplit(',', 4)
+  rdn_list = []
+  for rdn in rdns:
+    rdn_list.append(tuple(rdn.split('=')))
+  return tuple(reversed(rdn_list))
+
+
+if __name__ == '__main__':
+  print dataone_compliant_dn_serialization_to_dn_tuple(
+    'CN=test1,test2,test3,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+  )

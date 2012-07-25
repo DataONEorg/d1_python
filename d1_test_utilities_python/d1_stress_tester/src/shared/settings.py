@@ -36,7 +36,17 @@ BASEURL = 'https://localhost/mn'
 #BASEURL = 'https://gmn-dev.test.dataone.org/mn'
 
 # Number of objects to retrieve with listObjects.
-PAGESIZE = 1000
+PAGE_SIZE = 1000
+
+# Misc.
+
+SHARED_ROOT = './shared'
+GENERATED_ROOT = './generated'
+
+SUBJECTS_PATH = os.path.join(GENERATED_ROOT, 'subjects.txt')
+SUBJECTS_AND_OBJECTS_PATH = os.path.join(GENERATED_ROOT, 'subjects_and_objects.txt')
+ERROR_PATH = '/tmp/stress_test_error.html'
+GMN_CONNECTION_STRING = "host='localhost' dbname='gmn' user='gmn' password='gmn'"
 
 # Certificates.
 
@@ -55,10 +65,9 @@ CLIENT_CERT_PRIVATE_KEY_PATH = os.path.join(
 )
 
 SUBJECT_ALT_NAME = 'DNS:dataone.org'
-SUBJECTS_PATH = './generated/subjects.txt'
 
 # A DataONE subject that has permissions for creating objects on the MN
 # being tested. For GMN, this means that the subject must be in the
 # update / delete / create whitelist.
-SUBJECT_WITH_CREATE_PERMISSIONS = 'subject_with_create_permissions'
-SUBJECT_WITH_CN_PERMISSIONS = 'subject_with_cn_permissions'
+SUBJECT_WITH_CREATE_PERMISSIONS = 'CN=subject_with_create_permissions,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
+SUBJECT_WITH_CN_PERMISSIONS = 'CN=subject_with_cn_permissions,O=d1-stress-tester,C=US,DC=d1-stress-tester,DC=com'
