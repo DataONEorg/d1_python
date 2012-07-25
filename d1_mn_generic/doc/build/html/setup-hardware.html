@@ -68,8 +68,93 @@ accessible from the web.</p>
 <p>If installed as an <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">adapter</em></a>, GMN must also be accessible from the
 <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">adaptee</em></a> and be able to reach the adaptees storage facilities.</p>
 <p>The requirements for RAM, CPU, disk and network resources are workload
-dependent.</p>
+dependent. Below is benchmarks for two different setups.</p>
+<div class="section" id="benchmarks">
+<h2>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h2>
+<p>t/s = transactions per second</p>
+<ul class="simple">
+<li>Concurrent calls per API: 5</li>
+<li>Science object size: 1024 bytes.</li>
+<li>Allow rules per object: 10</li>
+<li>listObjects / getLogRecords page size: 1000 objects</li>
+</ul>
+<div class="section" id="configuration-1">
+<h3>Configuration 1<a class="headerlink" href="#configuration-1" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Machine type</strong></td>
+<td>Physical</td>
+</tr>
+<tr class="row-even"><td><strong>CPU</strong></td>
+<td>Core2 Quad, 2.4GHz</td>
+</tr>
+<tr class="row-odd"><td><strong>RAM</strong></td>
+<td>4GB</td>
+</tr>
+<tr class="row-even"><td><strong>Disk</strong></td>
+<td>5400 RPM SATA</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="72%" />
+<col width="28%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>MNStorage.create()</td>
+<td>9.8 t/s.</td>
+</tr>
+<tr class="row-even"><td>MNRead.get()</td>
+<td>35.3 t/s</td>
+</tr>
+<tr class="row-odd"><td>MNRead.listObjects()</td>
+<td>0.5 t/s</td>
+</tr>
+<tr class="row-even"><td>MNCore.getLogRecords(), paged, called by CN</td>
+<td>0.36 t/s</td>
+</tr>
+<tr class="row-odd"><td>MNCore.getLogRecords(), specific object, called by regular subject</td>
+<td>40.6 t/s</td>
+</tr>
+<tr class="row-even"><td>Combination of MNStorage.create(), MNRead.get(), MNRead.listObjects()</td>
+<td>4.4 t/s</td>
+</tr>
+<tr class="row-odd"><td>Combination of MNCore.getLogRecords(), MNRead.get()</td>
+<td>36.2 t/s</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="configuration-2">
+<h3>Configuration 2<a class="headerlink" href="#configuration-2" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Machine type</strong></td>
+<td>Virtual</td>
+</tr>
+<tr class="row-even"><td><strong>CPU</strong></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><strong>RAM</strong></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><strong>Disk</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <p><a class="reference internal" href="setup-apache.html"><em>Apache</em></a></p>
+</div>
+</div>
 </div>
 
 
@@ -80,7 +165,19 @@ dependent.</p>
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
-            </a></p><h3>Related Topics</h3>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Hardware</a><ul>
+<li><a class="reference internal" href="#benchmarks">Benchmarks</a><ul>
+<li><a class="reference internal" href="#configuration-1">Configuration 1</a></li>
+<li><a class="reference internal" href="#configuration-2">Configuration 2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="setup.html">Setup</a><ul>
