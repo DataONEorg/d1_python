@@ -129,8 +129,8 @@ def get_monitor_ping(request):
 # infrastructure.
 @mn.restrict_to_verb.get
 def get_log(request):
-  '''MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0]
-  [, count=1000]) → Log
+  '''MNCore.getLogRecords(session[, fromDate][, toDate][, pidFilter][, event]
+  [, start=0][, count=1000]) → Log
   '''
   query = mn.models.EventLog.objects.order_by('-date_logged').select_related()
   if not mn.auth.is_trusted_subject(request):

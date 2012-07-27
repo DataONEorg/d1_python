@@ -297,7 +297,8 @@ def assert_allowed(request, level, pid):
   if not is_allowed(request, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
       0, u'{0} on "{1}" denied. {2}'.format(
-        level_to_action(level), pid), format_active_subjects(request)
+        level_to_action(level), pid, format_active_subjects(request)
+      )
     )
 
 # ------------------------------------------------------------------------------

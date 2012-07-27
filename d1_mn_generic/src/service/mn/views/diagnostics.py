@@ -88,7 +88,8 @@ def diagnostics(request):
   if 'clear_db' in request.GET:
     _delete_all_objects()
     _clear_replication_queue()
-  return render_to_response('test.html', {})
+    _delete_subjects_and_permissions()
+  return render_to_response('test.html', d1_common.const.MIMETYPE_XHTML)
 
 # ------------------------------------------------------------------------------
 # Replication.
@@ -200,12 +201,18 @@ def echo_raw_post_data(request):
 @mn.restrict_to_verb.get
 def delete_all_objects(request):
   _delete_all_objects()
+  delete_event_log(request)
   return mn.view_shared.http_response_with_boolean_true_type()
 
 
 def _delete_all_objects():
   for object_ in mn.models.ScienceObject.objects.all():
     _delete_object(object_.pid)
+
+
+def _delete_subjects_and_permissions():
+  mn.models.Permission.objects.all().delete()
+  mn.models.PermissionSubject.objects.all().delete()
 
 
 @mn.restrict_to_verb.get
