@@ -71,7 +71,6 @@ accessible from the web.</p>
 dependent. Below is benchmarks for two different setups.</p>
 <div class="section" id="benchmarks">
 <h2>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h2>
-<p>t/s = transactions per second</p>
 <ul class="simple">
 <li>Concurrent calls per API: 5</li>
 <li>Science object size: 1024 bytes.</li>
@@ -82,21 +81,21 @@ dependent. Below is benchmarks for two different setups.</p>
 <h3>Configuration 1<a class="headerlink" href="#configuration-1" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="docutils">
 <colgroup>
-<col width="49%" />
-<col width="51%" />
+<col width="35%" />
+<col width="65%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><strong>Machine type</strong></td>
 <td>Physical</td>
 </tr>
 <tr class="row-even"><td><strong>CPU</strong></td>
-<td>Core2 Quad, 2.4GHz</td>
+<td>Intel Core2 Quad Q6600 &#64; 2.40GHz</td>
 </tr>
 <tr class="row-odd"><td><strong>RAM</strong></td>
-<td>4GB</td>
+<td>4GiB</td>
 </tr>
 <tr class="row-even"><td><strong>Disk</strong></td>
-<td>5400 RPM SATA</td>
+<td>5400 RPM SATA (I/O &#64; 60 MiB/s)</td>
 </tr>
 </tbody>
 </table>
@@ -105,27 +104,32 @@ dependent. Below is benchmarks for two different setups.</p>
 <col width="72%" />
 <col width="28%" />
 </colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">API</th>
+<th class="head">Transactions per second</th>
+</tr>
+</thead>
 <tbody valign="top">
-<tr class="row-odd"><td>MNStorage.create()</td>
-<td>9.8 t/s.</td>
+<tr class="row-even"><td>MNStorage.create()</td>
+<td>9.8</td>
 </tr>
-<tr class="row-even"><td>MNRead.get()</td>
-<td>35.3 t/s</td>
+<tr class="row-odd"><td>MNRead.get()</td>
+<td>35.3</td>
 </tr>
-<tr class="row-odd"><td>MNRead.listObjects()</td>
-<td>0.5 t/s</td>
+<tr class="row-even"><td>MNRead.listObjects()</td>
+<td>0.5</td>
 </tr>
-<tr class="row-even"><td>MNCore.getLogRecords(), paged, called by CN</td>
-<td>0.36 t/s</td>
+<tr class="row-odd"><td>MNCore.getLogRecords(), paged, called by CN</td>
+<td>0.36</td>
 </tr>
-<tr class="row-odd"><td>MNCore.getLogRecords(), specific object, called by regular subject</td>
-<td>40.6 t/s</td>
+<tr class="row-even"><td>MNCore.getLogRecords(), specific object, called by regular subject</td>
+<td>40.6</td>
 </tr>
-<tr class="row-even"><td>Combination of MNStorage.create(), MNRead.get(), MNRead.listObjects()</td>
-<td>4.4 t/s</td>
+<tr class="row-odd"><td>Combination of MNStorage.create(), MNRead.get(), MNRead.listObjects()</td>
+<td>4.4</td>
 </tr>
-<tr class="row-odd"><td>Combination of MNCore.getLogRecords(), MNRead.get()</td>
-<td>36.2 t/s</td>
+<tr class="row-even"><td>Combination of MNCore.getLogRecords(), MNRead.get()</td>
+<td>36.2</td>
 </tr>
 </tbody>
 </table>
@@ -134,21 +138,55 @@ dependent. Below is benchmarks for two different setups.</p>
 <h3>Configuration 2<a class="headerlink" href="#configuration-2" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="docutils">
 <colgroup>
-<col width="49%" />
-<col width="51%" />
+<col width="38%" />
+<col width="62%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><strong>Machine type</strong></td>
 <td>Virtual</td>
 </tr>
 <tr class="row-even"><td><strong>CPU</strong></td>
-<td></td>
+<td>Intel Xeon E7540 &#64; 2.00GHz</td>
 </tr>
 <tr class="row-odd"><td><strong>RAM</strong></td>
-<td></td>
+<td>32GiB</td>
 </tr>
 <tr class="row-even"><td><strong>Disk</strong></td>
-<td></td>
+<td>NFS (I/O &#64; 45MiB/s)</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="72%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">API</th>
+<th class="head">Transactions per second</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>MNStorage.create()</td>
+<td>9.3</td>
+</tr>
+<tr class="row-odd"><td>MNRead.get()</td>
+<td>5.6</td>
+</tr>
+<tr class="row-even"><td>MNRead.listObjects()</td>
+<td>0.35</td>
+</tr>
+<tr class="row-odd"><td>MNCore.getLogRecords(), paged, called by CN</td>
+<td>0.2</td>
+</tr>
+<tr class="row-even"><td>MNCore.getLogRecords(), specific object, called by regular subject</td>
+<td>6.0</td>
+</tr>
+<tr class="row-odd"><td>Combination of MNStorage.create(), MNRead.get(), MNRead.listObjects()</td>
+<td>2.8</td>
+</tr>
+<tr class="row-even"><td>Combination of MNCore.getLogRecords(), MNRead.get()</td>
+<td>5.24</td>
 </tr>
 </tbody>
 </table>
