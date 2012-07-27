@@ -153,7 +153,7 @@ if GMN_DEBUG:
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
-ADMINS = (('Roger Dahl', 'dahl@unm.edu'), )
+ADMINS = (('Your Name', 'your-email@your-email.tld'), )
 
 # Database connection.
 DATABASES = {
