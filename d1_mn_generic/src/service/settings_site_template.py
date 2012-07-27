@@ -110,35 +110,13 @@ DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 # Subjects for implicitly trusted DataONE infrastructure. Connections containing
 # client side certificates with these subjects bypass access control rules and
 # have access to REST interfaces meant only for use by CNs.
-DATAONE_TRUSTED_SUBJECTS = set(
-  [
-    #  'CN=cn-dev.dataone.org,DC=dataone,DC=org',
-    #  'CN=cn-dev-3.dataone.org,DC=dataone,DC=org',
-    #  'CN=cn-dev-2.dataone.org,DC=dataone,DC=org',
-    #
-    #  # new ca certs.
-    #  'CN=urn:node:cnSandboxUNM1,DC=dataone,DC=org',
-    #  'CN=urn:node:cnSandboxUCSB1,DC=dataone,DC=org',
-    #  'CN=urn:node:cnSandboxORC1,DC=dataone,DC=org',
-    #
-    #  # old ca certs.
-    #  'CN=cn-sandbox-unm-1.dataone.org,DC=dataone,DC=org',
-    #  'CN=cn-sandbox-ucsb-1.dataone.org,DC=dataone,DC=org',
-    #  'CN=cn-sandbox-orc-1.dataone.org,DC=dataone,DC=org',
-    #
-    #  'CN=cn-stage-orc-1.dataone.org,DC=dataone,DC=org',
-    #
-    #  'CN=testUserWriter,DC=dataone,DC=org',
-    #  'CN=testUserReader,DC=dataone,DC=org',
-    #  'CN=testUserNoRights,DC=dataone,DC=org',
-  ]
-)
+DATAONE_TRUSTED_SUBJECTS = set([])
 
 # Subjects for asynchronous GMN processes. Connections containing client side
 # certificates with these subjects are allowed to connect to REST services
 # internal to GMN. The internal REST interfaces provide functionality required
 # by the asynchronous components.
-GMN_INTERNAL_SUBJECTS = set(['CN=cn-dev.dataone.org,DC=dataone,DC=org', ])
+GMN_INTERNAL_SUBJECTS = set([])
 
 # As an alternative to the certificate based authentication for asynchronous
 # GMN processes set up in GMN_INTERNAL_SUBJECTS, this setting can be used
