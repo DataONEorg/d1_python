@@ -33,6 +33,7 @@ import os
 import re
 import sys
 import unittest
+import xml.sax.saxutils
 
 # D1.
 import d1_x509v3_certificate_generator
@@ -111,7 +112,7 @@ def create_certificate(subject, subject_dn_tuple, subject_info):
 
 
 def create_subject_info(subject):
-  return subject_info_template.replace('%subject%', subject)
+  return subject_info_template.replace('%subject%', xml.sax.saxutils.escape(subject))
 
 
 def log_setup():

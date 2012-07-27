@@ -5,8 +5,8 @@ Multi-Mechanize Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each test has a configuration file that specifies the Multi-Mechanize
-parameters, such as how long to run the test and how many threads to use. The
-file is called `config.cfg` and is in the root folder for each test. For
+parameters, such as how long the test should run and how many threads to use.
+The file is called `config.cfg` and is in the root folder for each test. For
 instance, the test for `MNStorage.create()` has this file in
 `projects/create/config.cfg`. See the `Multi-Mechanize home page
 <http://multimechanize.com>`_ for information on how to use this file. In the
@@ -29,6 +29,16 @@ Certificate configuration
 The tests rely on a set of certifcates. See :doc:`certificates` for details.
 
 
+Checking for valid responses
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To keep the load on the computer running the stress tests to a minimum, the
+tests do not attempt to deserialize the documents returned by the APIs being
+tested. Instead, they perform a simple check for the "200 OK" HTTP status code
+that the APIs are expected to return together with a valid DataONE data type
+upon successful completion.
+
+
 MNStorage.create()
 ~~~~~~~~~~~~~~~~~~
 
@@ -38,7 +48,7 @@ This test concurrently creates many small, randomized science objects on the
 Member Node. Each science object has System Metadata with a number of randomly
 selected parameters.
 
-In addition to stress testing the `MNStorage.create()` API, this test also sets
+In addition to stress testing the `MNStorage.create()` API, this test sets
 the server up for the other stress tests by creating test objects with a varied
 set of permissions for the subjects for which certificates have been generated.
 
@@ -51,6 +61,10 @@ to create objects.
 To run the test::
 
   $ multimech-run projects/create/
+
+After running the test, run the `generate_subject_object_list.py` script. It
+creates a list of the objects that exist on the MN and their permissions, for
+use by the subsequent tests.
 
 
 MNRead.listObjects()
@@ -70,3 +84,5 @@ primarily for CNs.
 To run the test::
 
   $ multimech-run projects/list_objects/
+
+

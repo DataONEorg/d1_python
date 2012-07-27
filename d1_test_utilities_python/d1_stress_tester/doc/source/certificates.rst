@@ -15,20 +15,13 @@ The generated client side certificates are stored in
 selects one or more certificates from the `client_side_certs` folder, depending
 on which functionality is being tested.
 
-
-
-
-
-For instance, the test for
-`MNStorage.create()` will establish all its connections with a certificate called
-`subject_with_create_permissions`. The test for `MNRead.listObjects()` will
-select random certificates to stress test the connections with certificates randomly
-selected from the
+For instance, the test for `MNStorage.create()` will establish all its
+connections with a certificate called `subject_with_create_permissions`. The
+test for `MNRead.listObjects()` will select random certificates to stress test
+the connections with certificates randomly selected from the
 `certificates/create_update_delete` folder. If there is only one certificate in
-the folder, that certificate will be used for all the connections created by
-the test.
-
-
+the folder, that certificate will be used for all the connections created by the
+test.
 
 
 CA and Member Node setup
@@ -61,15 +54,22 @@ that will be used for signing the test certificates.
     $ openssl rsa -in local_test_ca.key -out local_test_ca.nopassword.key
 
   Create the local test CA. You will be prompted for the information that
-  OpenSSL will use for generating the DN of the certificate. Only the Common
-  Name (CN) field is important for the tester. It must match the name of
-  your server, as seen from the tester. For instance, if the Base URL for your
-  server is `https://my-mn.org/mn`, the Common Name should be `my-mn`. An IP
-  address can also be used.
-
+  OpenSSL will use for generating the DN of the certificate. The information
+  you enter is not important, but it is recomended to indicate, in one or more
+  of the fields, that the CA is for testing only. As the DN of the signing
+  CA is included in all signed certificates, it helps with marking those
+  certificates as being for testing only as well.
+  
   ::
 
     $ openssl req -new -x509 -days 3650 -key local_test_ca.nopassword.key -out local_test_ca.crt
+
+
+Setting up local CA trust
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The MN must be set up to trust client side certificates that are signed by the
+local CA.
 
   The procedure to set up your MN to trust the local CA depends on the software
   stack on which your MN is based. If it's based on Apache, the procedure is
@@ -83,6 +83,36 @@ that will be used for signing the test certificates.
   * Enter the certificate path and recreate the certificate hashes with::
 
     $ c_rehash .
+
+
+Setting up the server side certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The MN proves its identity by returning a server side certificate when a client
+connects.
+
+  Enter the `./generated/certificates` folder::
+  
+    $ cd ./generated/certificates
+    
+  Generate the private key::
+
+    $ openssl genrsa -des3 -out local_test_server_cert.key 1024
+
+  For convenience, remove the password from the private key::
+
+    $ openssl rsa -in local_test_server_cert.key -out local_test_server_cert.nopassword.key
+
+  Create a certificate request. Only the Common Name (CN) field is important for
+  the tester. It must match the name of your server, as seen from the tester.
+  For instance, if the Base URL for your server is `https://my-mn.org/mn`, the
+  Common Name should be `my-mn`. An IP address can also be used.
+
+    $ openssl req -new -key local_test_server_cert.nopassword.key -out local_test_server_cert.csr
+    
+  Sign the CSR with the CA:
+  
+    $ openssl x509 -req -days 36500 -in local_test_server_cert.csr -CA local_test_ca.crt -CAkey local_test_ca.nopassword.key -set_serial 01 -out local_test_server_cert.crt
 
 
 Setting up the shared key pair
