@@ -40,15 +40,6 @@ import wsgiref.handlers
 import time
 import json
 
-# 3rd party.
-# Lxml
-try:
-  from lxml import etree
-except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-lxml\n')
-  raise
-
 import d1_common.ext.mimeparser
 
 # Django.

@@ -155,7 +155,7 @@ class ProcessReplicationQueue(object):
   def __init__(self, options):
     self.logger = logging.getLogger(self.__class__.__name__)
     self.options = options
-    self.gmn_client = GMNReplicationClient(self.options.gmn_url)
+    self.gmn_client = GMNReplicationClient(self.options.gmn_url, timeout=60 * 60)
     self.cn_client = self._create_cn_client()
     self._process_replication_queue()
 

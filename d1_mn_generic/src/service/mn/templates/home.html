@@ -1,0 +1,109 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link type="text/css" rel="Stylesheet"
+      href="http://cn-dev.test.dataone.org/cn/xslt/jquery/jqueryui/css/smoothness/jquery-ui-1.8.16.custom.css" />
+    <link type="text/css" rel="Stylesheet" href="http://cn-dev.test.dataone.org/cn/xslt/dataone.css" />
+    <script type="text/javascript" src="http://cn-dev.test.dataone.org/cn/xslt/jquery/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="http://cn-dev.test.dataone.org/cn/xslt/jquery/jqueryui/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript">
+            
+function initTabs() {
+    $(function() {
+        $("#content").tabs();
+        if ($("#organization").is("div")) {
+            $("#content").tabs("add", "#organization", "Organization");
+        }
+    });
+}
+    </script>
+    
+    <style type="text/css">
+      table {
+      }
+      td {
+        padding-right:10px;
+      }
+    </style>
+
+  </head>
+
+  <body onload="initTabs()">
+    <div class="logoheader"><h1></h1></div>
+
+    <div id="content" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+      <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+        <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
+          <a href="#memberNode"><span>Member Node Details</span></a>
+        </li>
+      </ul>
+      
+      <div id="memberNode" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+        <table>
+          <tbody>
+            <tr>
+              <td>GMN version: </td>
+              <td>{{ gmn_version }}</td>
+            </tr>
+            <tr>
+              <td>Django version: </td>
+              <td>{{ django_version }}</td>
+            </tr>
+            <tr>
+              <td>Average size of Science objects: </td>
+              <td>{{ avg_sci_data_size }} bytes</td>
+            </tr>
+            <tr>
+              <td>Objects: </td>
+              <td>{{ n_science_objects }}</td>
+            </tr>
+            <tr>
+              <td>Operations, total: </td>
+              <td>{{ n_connections_total }}</td>
+            </tr>
+            <tr>
+              <td>Operations, last hour: </td>
+              <td>{{ n_connections_in_last_hour }}</td>
+            </tr>
+            <tr>
+              <td>Subjects: </td>
+              <td>{{ n_unique_subjects }}</td>
+            </tr>
+            <tr>
+              <td>Permissions: </td>
+              <td>{{ n_permissions }}</td>
+            </tr>
+            <tr>
+              <td>Server time: </td>
+              <td>{{ server_time }}</td>
+            </tr>
+            <tr>
+              <td>Storage used / remaining: </td>
+              <td>{{ storage_space }}</td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;">Science objects by Format:</td>
+              <td>
+              <table>
+                <tbody>
+                  {% for o in n_objects_by_format_id %}
+                  <tr>
+                    <td>{{ o.format__format_id }}</td>
+                    <td>{{ o.dcount }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="organization" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+        This is a test instance of GMN, operated by DataONE.
+      </div>
+      
+    </div>
+  </body>
+</html>
