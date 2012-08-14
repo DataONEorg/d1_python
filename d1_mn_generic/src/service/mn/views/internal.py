@@ -28,12 +28,14 @@
 import cgi
 import collections
 import csv
+import ctypes
 import datetime
 import glob
 import hashlib
 import httplib
 import mimetypes
 import os
+import platform
 import pprint
 import re
 import stat
@@ -44,12 +46,13 @@ import urlparse
 import uuid
 
 # Django.
+import django
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import Http404
 from django.template import Context, loader
 from django.shortcuts import render_to_response
-from django.db.models import Avg, Max, Min, Count
+from django.db.models import Avg, Max, Min, Count, Sum
 from django.core.exceptions import ObjectDoesNotExist
 
 # DataONE APIs.
@@ -71,6 +74,7 @@ import mn.sysmeta_store
 import mn.sysmeta_validate
 import mn.util
 import mn.view_shared
+import service
 import service.settings
 
 # ==============================================================================
@@ -176,7 +180,67 @@ def update_sysmeta(request, pid):
 
 def home(request):
   '''Home page. Root of web server redirects here.'''
-  n_science_objects = mn.models.ScienceObject.objects.count()
-  avg_sci_data_size = mn.models.ScienceObject.objects.all().\
-    aggregate(Avg('size'))['size__avg']
+  gmn_version = service.__version__
+  django_version = ', '.join(map(str, django.VERSION))
+
+  n_science_objects = group(mn.models.ScienceObject.objects.count())
+
+  avg_sci_data_size_bytes = mn.models.ScienceObject.objects\
+    .aggregate(Avg('size'))['size__avg']
+  avg_sci_data_size = group(int(avg_sci_data_size_bytes))
+
+  n_objects_by_format_id = mn.models.ScienceObject.objects.values(
+    'format', 'format__format_id'
+  ).annotate(dcount=Count('format'))
+
+  n_connections_total = group(mn.models.EventLog.objects.count())
+
+  n_connections_in_last_hour = group(
+    mn.models.EventLog.objects.filter(
+      date_logged__gte=datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    ).count()
+  )
+
+  n_unique_subjects = group(mn.models.PermissionSubject.objects.count())
+
+  n_storage_used_gib = mn.models.ScienceObject.objects\
+    .aggregate(Sum('size'))['size__sum'] / 1024**3
+  n_storage_free_gib = get_free_space(service.settings.MEDIA_ROOT) / 1024**3
+  storage_space = '{0} GiB / {1} GiB'.format(n_storage_used_gib, n_storage_free_gib)
+
+  n_permissions = group(mn.models.Permission.objects.count())
+
+  server_time = datetime.datetime.utcnow()
+
   return render_to_response('home.html', locals(), mimetype="application/xhtml+xml")
+
+
+def get_free_space(folder):
+  '''Return folder/drive free space (in bytes)
+  '''
+  if platform.system() == 'Windows':
+    free_bytes = ctypes.c_ulonglong(0)
+    ctypes.windll.kernel32.GetDiskFreeSpaceExW(
+      ctypes.c_wchar_p(folder), None, None, ctypes.pointer(
+        free_bytes
+      )
+    )
+    return free_bytes.value
+  else:
+    return os.statvfs(folder).f_bfree * os.statvfs(folder).f_frsize
+
+
+def group(n, sep=','):
+  '''Group digits in number by thousands'''
+  # Python 2.7 has support for grouping (the "," format specifier)
+  s = str(abs(n))[::-1]
+  groups = []
+  i = 0
+  while i < len(s):
+    groups.append(s[i:i + 3])
+    i += 3
+  retval = sep.join(groups)[::-1]
+  if n < 0:
+    return '-%s' % retval
+  else:
+    return retval
