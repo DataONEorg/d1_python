@@ -318,7 +318,7 @@ def get_checksum_pid(request, pid):
 # or higher are returned. No access control is applied if called by trusted D1
 # infrastructure.
 @mn.restrict_to_verb.get
-#@mn.auth.assert_trusted_permission
+@mn.auth.assert_trusted_permission
 def get_object(request):
   '''MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
@@ -331,8 +331,8 @@ def get_object(request):
   # calling by Coordinating Nodes and MAY be configured to allow more general
   # access. Currently, GMN allows general access to this method, with the
   # results filtered to only objects the caller has permissions for.
-  #if not mn.auth.is_trusted_subject(request):
-  #  query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
+  if not mn.auth.is_trusted_subject(request):
+    query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
   query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'fromDate',
                                            'gte')
   query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'toDate',

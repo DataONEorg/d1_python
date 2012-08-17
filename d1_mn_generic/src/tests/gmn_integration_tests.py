@@ -53,39 +53,39 @@
 # Stdlib.
 import codecs
 import datetime
-import dateutil
+#import dateutil
 import glob
 import hashlib
-import httplib
-import json
+#import httplib
+#import json
 import logging
 import optparse
 import os
-import pprint
-import random
+#import pprint
+#import random
 import re
-import stat
+#import stat
 import StringIO
 import sys
-import time
+#import time
 import unittest2
-import urllib
-import urlparse
-import uuid
-import xml.parsers.expat
-from xml.sax.saxutils import escape
+#import urllib
+#import urlparse
+#import uuid
+#import xml.parsers.expat
+#from xml.sax.saxutils import escape
 
 # D1.
-import d1_client
+#mport d1_client
 import d1_client.mnclient
-import d1_client.systemmetadata
+#import d1_client.systemmetadata
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.util
+#import d1_common.util
 import d1_common.date_time
 import d1_common.url
-import d1_common.xml_compare
+#import d1_common.xml_compare
 
 # App.
 import gmn_test_client

@@ -36,14 +36,16 @@ import sys
 # D1.
 import d1_common.const
 
-# Discover the path of this module.
-# Use this function to specify a path that is relative to the settings.py file.
-# Absolute paths are specified directly, without using this function.
+# Given a relative path that is relative to the path of this module, create
+# an absolute path.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
 # The name under which this Member Node was registered with DataONE.
 # On the form, "urn:node:*"
 NODE_IDENTIFIER = 'urn:node:mnMyDataONEMemberNode'
+
+# Create a unique string for this node and do not share it.
+SECRET_KEY = 'MySecretKey'
 
 # Enable Django debug mode.
 # True:
@@ -104,8 +106,9 @@ else:
 # If GMN_DEBUG is True, the trusted subjects are not required, as the
 # authentication checks for them are skipped. Therefore, they are not retrieved.
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
-#DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
-DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
+#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
+DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn/'
 
 # Subjects for implicitly trusted DataONE infrastructure. Connections containing
 # client side certificates with these subjects bypass access control rules and
@@ -134,11 +137,14 @@ if GMN_DEBUG:
 ADMINS = (('Your Name', 'your-email@your-email.tld'), )
 
 # Database connection.
+# GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is
+# untested.
 DATABASES = {
   'default': {
-    # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn',
+    'ENGINE': 'django.db.backends.sqlite3', # SQLite3
+    'NAME': _here('gmn.sqlite'),
+    #    'ENGINE': 'django.db.backends.postgresql_psycopg2', # PostgreSQL
+    #    'NAME': 'gmn',
     'USER': 'gmn',
     'PASSWORD': 'gmn',
     'HOST': '', # Set to empty string for localhost.

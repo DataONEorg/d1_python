@@ -19,6 +19,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'service.settings'
+os.environ['SERVER_NAME'] = 'gmn'
+
 from django.core.management import execute_manager
 try:
   import settings # Assumed to be in the same directory.

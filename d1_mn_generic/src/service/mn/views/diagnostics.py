@@ -192,7 +192,22 @@ def echo_request_object(request):
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
-#@mn.restrict_to_verb.post
+@mn.restrict_to_verb.get
+def permissions_for_object(request, pid):
+  mn.view_asserts.object_exists(pid)
+  subjects = []
+  permissions = mn.models.Permission.objects.filter(object__pid=pid)
+  for permission in permissions:
+    action = mn.auth.level_action_map[permission.level]
+    subjects.append((permission.subject.subject, action))
+  return render_to_response(
+    'permissions_for_object.xhtml',
+    locals(
+    ), mimetype="application/xhtml+xml"
+  )
+
+
+  #@mn.restrict_to_verb.post
 def echo_raw_post_data(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse(request.raw_post_data)
@@ -287,9 +302,11 @@ def inject_fictional_event_log(request):
       'REMOTE_ADDR': ip_address,
       'HTTP_USER_AGENT': user_agent,
       'REMOTE_ADDR': subject,
+      'SERVER_NAME': 'dataone.org',
+      'SERVER_PORT': '80',
     }
 
-    mn.event_log._log(pid, request, event, timestamp)
+    mn.event_log._log(pid, request, event, d1_common.date_time.strip_timezone(timestamp))
 
   return mn.view_shared.http_response_with_boolean_true_type()
 
