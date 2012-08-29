@@ -84,8 +84,8 @@ Set filesystem permissions
   * Make sure that all files under ``/var/local/dataone`` can be read by the
     user account under which Apache runs (www-data by default)
   * Make sure that the log files can be written by the Apache user account.
-  * When using SQLite (currently unsupported), make sure that the SQLite
-    database file can be written by the Apache user account.
+  * When using SQLite, make sure that the SQLite database file can be written by
+    the Apache user account.
 
 
 Set server to the UTC timezone (recommended)
@@ -98,7 +98,7 @@ stored in the database and provided in REST responses.
 
   ::
 
-    $ dpkg-reconfigure tzdata
+    # dpkg-reconfigure tzdata
 
 
 :doc:`setup-registration`
