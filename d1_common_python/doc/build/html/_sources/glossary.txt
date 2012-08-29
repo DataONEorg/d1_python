@@ -158,6 +158,11 @@ Glossary
     http://labix.org/python-dateutil
 
 
+  PostgreSQL
+    A freely available object-relational database management system (ORDBMS)
+    used by DataONE.
+
+
   Psycopg2
     Psycopg is a PostgreSQL database adapter for :term:`Python`.
 
@@ -323,6 +328,10 @@ Glossary
 
   Client side certificate
     :term:`Certificate` that is provided by the client during :term:`client side
+    authentication`.
+
+  Server side certificate
+    :term:`Certificate` that is provided by the server during :term:`server side
     authentication`.
 
   CILogon
