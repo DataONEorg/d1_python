@@ -100,5 +100,6 @@ stored in the database and provided in REST responses.
 
     # dpkg-reconfigure tzdata
 
+    Select Etc | UTC.
 
 :doc:`setup-registration`
