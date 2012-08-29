@@ -29,19 +29,21 @@ Install :term:`minixsv`::
   $ sudo easy_install minixsv
 
 
-Install :term:`python-dateutil`::
+Install :term:`python-dateutil`:
 
 * Explicitly install version 1.5; the latest version to support Python 2.
   Without this selection, a later version will be installed for Python 2 even
   though it is incompatible.
 
+::
+
   $ sudo easy_install python-dateutil==1.5
-    
+
 
 Install :term:`python-iso8601`::
 
   $ sudo easy_install iso8601
-  
+
 
 Install :term:`lxml`::
 
