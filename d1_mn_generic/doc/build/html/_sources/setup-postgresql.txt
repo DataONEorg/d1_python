@@ -11,7 +11,7 @@ PostgreSQL           8.4.10, 8.4.12
 
 :term:`Django`, on which GMN is built, supports :term:`PostgreSQL`,
 :term:`SQLite3`, term:`MySQL` and term:`Oracle`. However, GMN currently supports
-only PostgreSQL. and SQLite3. GMN does not support MySQL and is untested with
+only PostgreSQL and SQLite3. GMN does not support MySQL and is untested with
 Oracle.
 
 GMN uses SQLite3 by default and no specific setup is required for SQLite3.
