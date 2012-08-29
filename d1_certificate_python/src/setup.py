@@ -27,14 +27,14 @@
 
 '''
 
-from distutils.core import Extension
-from setuptools import setup, find_packages
+#from distutils.core import Extension
+from setuptools import setup, find_packages, Extension
 import d1_certificate_python
 
 x509v3_module = Extension(
   'd1_x509v3_certificate_extractor',
   sources=[
-    'd1_x509v3_certificate_extractor.c'
+    'extensions/d1_x509v3_certificate_extractor.c'
   ]
 )
 
