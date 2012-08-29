@@ -31,10 +31,17 @@
 from setuptools import setup, find_packages, Extension
 import d1_certificate_python
 
-x509v3_module = Extension(
+x509v3_certificate_extractor = Extension(
   'd1_x509v3_certificate_extractor',
   sources=[
     'extensions/d1_x509v3_certificate_extractor.c'
+  ]
+)
+
+x509v3_certificate_generator = Extension(
+  'd1_x509v3_certificate_generator',
+  sources=[
+    'extensions/d1_x509v3_certificate_generator.c'
   ]
 )
 
@@ -51,6 +58,7 @@ setup(
     'DataONE_Common >= 1.0.0c7-SNAPSHOT',
   ],
   ext_modules=[
-    x509v3_module,
+    x509v3_certificate_extractor,
+    x509v3_certificate_generator,
   ],
 )
