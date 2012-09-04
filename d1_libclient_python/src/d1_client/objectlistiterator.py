@@ -170,13 +170,13 @@ if __name__ == "__main__":
   available from a given node. Output is in YAML.
   '''
   parser = OptionParser()
-  default_baseurl = 'http://dev-dryad-mn.dataone.org/mn'
+  default_base_url = 'http://dev-dryad-mn.dataone.org/mn'
   parser.add_option(
     '-b',
-    '--baseurl',
-    dest='baseurl',
-    default=default_baseurl,
-    help='ListObjects from BASEURL (default=%s)' % default_baseurl
+    '--base_url',
+    dest='base_url',
+    default=default_base_url,
+    help='ListObjects from BASEURL (default=%s)' % default_base_url
   )
   parser.add_option('-l', '--loglevel', dest='llevel', default=20, type='int',
                  help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     options.llevel = 20
   logging.basicConfig(level=int(options.llevel))
 
-  client = restclient.DataONEBaseClient(options.baseurl)
+  client = restclient.DataONEBaseClient(options.base_url)
   ol = ObjectListIterator(
     client, start=options.start,
     pagesize=options.pagesize,

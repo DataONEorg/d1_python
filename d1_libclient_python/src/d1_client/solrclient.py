@@ -109,7 +109,7 @@ class SolrConnection:
     #responses from Solr will always be in UTF-8
     self.decoder = codecs.getdecoder('utf-8')
     #a real connection to the server is not opened at this point.
-    self.conn = httplib.HTTPConnection(self.host)
+    self.conn = httplib.HTTPSConnection(self.host)
     ##Cache fields
     self._fields = None
     #self.conn.set_debuglevel(1000000)
@@ -153,7 +153,7 @@ class SolrConnection:
       #Reconnect in case the connection was broken from the server going down,
       #the server timing out our persistent connection, or another
       #network failure. Also catch httplib.CannotSendRequest because the
-      #HTTPConnection object can get in a bad state.
+      #HTTPSConnection object can get in a bad state.
       self.logger.info('SOLR connection socket error, trying to resend')
       self.__reconnect()
       self.conn.request('POST', url, body, headers)

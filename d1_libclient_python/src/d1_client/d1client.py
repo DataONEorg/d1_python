@@ -67,11 +67,11 @@ class DataONEObject(object):
     self.__client = None
     self._cnBaseUrl = cnBaseUrl
 
-#  def getCredentials(self):
-#    '''Override this method to retrieve credentials that can be used to
-#    authenticate and retrieve a token for further operations.
-#    '''
-#    return {}
+  def getCredentials(self):
+    '''Override this method to retrieve credentials that can be used to
+    authenticate and retrieve a token for further operations.
+    '''
+    return {}
 
   def _getClient(self, forcenew=False):
     '''Internal method used to retrieve an instance of a DataONE client that
@@ -151,7 +151,6 @@ class DataONEClient(object):
     '''
     if credentials is None:
       credentials = {}
-    self.apiVersion = "v1"
     self.cnBaseUrl = cnBaseUrl
     self.cn = None
     self.mn = None
@@ -162,15 +161,14 @@ class DataONEClient(object):
 
   def _getCN(self, forcenew=False):
     if self.cn is None or forcenew:
-      self.cn = cnclient.CoordinatingNodeClient(baseurl=self.cnBaseUrl)
+      self.cn = cnclient.CoordinatingNodeClient(base_url=self.cnBaseUrl)
     return self.cn
 
-  def _getMN(self, baseurl, forcenew=False):
-    baseurl = "%s/%s" % (baseurl, self.apiVersion)
+  def _getMN(self, base_url, forcenew=False):
     if self.mn is None or forcenew:
-      self.mn = mnclient.MemberNodeClient(baseurl=baseurl)
-    elif self.mn.baseurl != baseurl:
-      self.mn = mnclient.MemberNodeClient(baseurl=baseurl)
+      self.mn = mnclient.MemberNodeClient(base_url=base_url)
+    elif self.mn.base_url != base_url:
+      self.mn = mnclient.MemberNodeClient(base_url=base_url)
     return self.mn
 
   def getAuthToken(self, forcenew=False):
@@ -186,7 +184,7 @@ class DataONEClient(object):
   @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
     '''
-    :return type: list of baseurl
+    :return type: list of base_url
     '''
     cn = self._getCN()
     result = cn.resolve(pid)
@@ -335,8 +333,8 @@ if __name__ == '__main__':
   parser = OptionParser()
   parser.add_option(
     '-b',
-    '--baseurl',
-    dest='baseurl',
+    '--base_url',
+    dest='base_url',
     default='URL_DATAONE_ROOT',
     help='Use BASEURL instead of predefined targets for testing'
   )
@@ -371,7 +369,7 @@ if __name__ == '__main__':
     for loc in obj.getLocations():
       print loc
   elif command == 'total':
-    cli = DataONEClient(cnBaseUrl=options.baseurl)
+    cli = DataONEClient(cnBaseUrl=options.base_url)
     objlist = cli.listObjects(start=0, count=0)
     print "total: %d" % objlist.totalObjectCount()
   elif command == 'list':
