@@ -42,7 +42,7 @@ instructions below with one of::
   https://cn.dataone.org
 
 
-Create a DataONE identify
+Create a DataONE identity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Use the DataONE Identity Manager to create a DataONE identity for the
@@ -120,7 +120,7 @@ this process.
     - **baseURL**: The URL at which the Node is available.
 
     - **contactSubject**: The subject field exactly as it is displayed in the
-      DataONE Identity Manager. See `Create a DataONE identify`_.
+      DataONE Identity Manager. See `Create a DataONE identity`_.
 
     For more information about the Node document, refer to
     http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
