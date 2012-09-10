@@ -33,5 +33,6 @@ after completing the current page.
   setup-django
   setup-d1-gmn
   setup-registration
+  setup-tier
   setup-async
   setup-startup

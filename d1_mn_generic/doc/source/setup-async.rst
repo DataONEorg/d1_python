@@ -15,14 +15,28 @@ server is very busy.
 Certificate setup
 ~~~~~~~~~~~~~~~~~
 
-The asynchronous processes authenticate themselves to GMN by connecting via
-TLS/SSL and providing a certificate. The instructions below use the certificate
-that was provided by DataONE when the MN was registered. This is convenient
-because the certificate is signed by the DataONE CA, which MNs are required to
-trust.
+If the asynchronous processes are not running locally (on the same machine as
+GMN), GMN can either be set up to accept connections from the second machine's
+IP address or to require that the asyncronous processes authenticate themselves
+to GMN by connecting via TLS/SSL and providing a certificate. The first
+alternative is easy to set up, but there may be a risk of attacs that use IP
+address spoofing. Because of this, the second alternative is recommended. There
+are several choices to how the authentication can be set up:
 
-  Create copies of the DataONE provided certificate and private key. Store the
-  copies in the following location::
+* Get a long term certificate from CILogon (via their regular portal, not the
+  DataONE portal). Since GMN is already set up to trust certificates from
+  CILogon, all that then remains is to set GMN up to trust the subject in the
+  certificate that was obtained from CILogon.
+
+* Create a local CA, set GMN up to trust this CA and sign certificates for the
+  processes with this CA.
+
+* Use the certificate that was provided by DataONE when the MN was registered.
+  This is convenient because the certificate is signed by the DataONE CA, which
+  MNs are required to trust.
+
+  To use one of these methods, create copies of the certificate and private key.
+  Store the copies in the following location::
 
     /var/local/dataone/mn_generic/service/async/
 
@@ -43,17 +57,19 @@ only connections made under specific Subject DNs to access these interfaces.
 
   Edit: ``/var/local/dataone/mn_generic/service/settings_site.py``
 
-  *
-
+  * Add the DataONE compliant serialization of the DN to GMN_INTERNAL_SUBJECTS.
+    E.g. `CN=MyMemberNode,O=DataONE,C=US,DC=dataone,DC=org`
 
 
 Replication
 ~~~~~~~~~~~
 
+It is only necessary to perform this step if GMN has been configured to run
+as a Tier 4 node. See :doc:`setup-tier`.
+
 The GMN service stores replication requests in a queue. The asynchronous
-replication process uses
-
-
+replication process connects to GMN at regular intervals and processes any
+queued replication requests.
 
   Create a cron entry for the replication process::
 
@@ -67,22 +83,3 @@ replication process uses
   consult the crontab manual::
 
     $ man 5 crontab
-
-
-Brief overview of the processes that must be performed:
-
-* If the processes are not running locally (on the same machine as GMN), they
-  must authenticate themselves to GMN. Alternatives:
-
-  * Get a long term certificate from CILogon (via their regular portal, not the
-    DataONE portal). Since GMN is already set up to trust certificates from
-    CILogon, all that then remains is to set GMN up to trust the subject in the
-    certificate that was obtained from CILogon.
-
-  * Create a local CA, set GMN up to trust this CA and sign certificates for the
-    processes with this CA.
-
-  * Other security schemes may be sufficient, based on the environment in which
-    GMN is set up, such as allowing the processes to connect without
-    authentication from a local LAN or specific IP address
-

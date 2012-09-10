@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
     <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="GMN Asynchronous Processes" href="setup-async.html" />
+    <link rel="next" title="Selecting the DataONE Tier" href="setup-tier.html" />
     <link rel="prev" title="DataONE Generic Member Node" href="setup-d1-gmn.html" />
    
   
@@ -42,7 +42,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-async.html" title="GMN Asynchronous Processes"
+          <a href="setup-tier.html" title="Selecting the DataONE Tier"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="setup-d1-gmn.html" title="DataONE Generic Member Node"
@@ -74,31 +74,50 @@ There are no connections between the environments. For instance, certificates,
 DataONE identities and science objects are exclusive to the environment in
 which they were created.</p>
 <p>The environments are:</p>
-<ul class="simple">
-<li><strong>Development</strong>: Unstable components under active development.</li>
-<li><strong>Staging</strong>: Testing of release candiates.</li>
-<li><strong>Sandbox</strong>: Like Production, but open to test instances of MNs. May contain
-both test and real science objects.</li>
-<li><strong>Production</strong>: Stable production environment for use by the public.</li>
-</ul>
-<p>You may chose to register this MN deployment in the Production environment.
-However, if this deployment is more experimental in nature, for instance, if the
-purpose is to learn more about the DataONE infrastructure or if this MN will
-be populated with objects that may not be of production quality, then one of
-the other environments should be selected.</p>
-<p>Depending on which environment you select, substitute <strong>&lt;env&gt;</strong> in the
-instructions below with one of:</p>
-<div class="highlight-python"><pre>https://cn-dev.dataone.org
-https://cn-stage.dataone.org
-https://cn-sandbox.dataone.org
-https://cn.dataone.org</pre>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="21%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Environment</th>
+<th class="head">URL</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Development</td>
+<td><a href="#id1"><span class="problematic" id="id2">`https://cn-dev.dataone.org`_</span></a></td>
+<td>Unstable components under active development.</td>
+</tr>
+<tr class="row-odd"><td>Staging</td>
+<td><a class="reference external" href="https://cn-stage.dataone.org">https://cn-stage.dataone.org</a></td>
+<td>Testing of release candiates.</td>
+</tr>
+<tr class="row-even"><td>Sandbox</td>
+<td><a class="reference external" href="https://cn-sandbox.dataone.org">https://cn-sandbox.dataone.org</a></td>
+<td>Like Production, but open to test instances of MNs. May contain both test and real science objects.</td>
+</tr>
+<tr class="row-odd"><td>Production</td>
+<td><a class="reference external" href="https://cn.dataone.org">https://cn.dataone.org</a></td>
+<td>Stable production environment for use by the public.</td>
+</tr>
+</tbody>
+</table>
+<p>You may chose to register your MN in the Production environment. However, if
+your MN is more experimental in nature, for instance, if the purpose is
+to learn more about the DataONE infrastructure or if this MN will be populated
+with objects that may not be of production quality, then one of the other
+environments should be selected.</p>
+<p>Depending on which environment you select, substitute <strong>&lt;environment-url&gt;</strong> in
+the instructions below with one of the URLs in the table.</p>
 </div>
-</div>
-<div class="section" id="create-a-dataone-identify">
-<h2>Create a DataONE identify<a class="headerlink" href="#create-a-dataone-identify" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-a-dataone-identity">
+<h2>Create a DataONE identity<a class="headerlink" href="#create-a-dataone-identity" title="Permalink to this headline">¶</a></h2>
 <p>Use the DataONE Identity Manager to create a DataONE identity for the
 administrator / contact for the new MN.</p>
-<p>Visit <strong>&lt;env&gt;</strong>/portal/ and follow the instructions.</p>
+<p>Visit <strong>&lt;environment-url&gt;</strong>/portal/ and follow the instructions.</p>
 </div>
 <div class="section" id="obtaining-a-client-side-certificate">
 <h2>Obtaining a client side certificate<a class="headerlink" href="#obtaining-a-client-side-certificate" title="Permalink to this headline">¶</a></h2>
@@ -147,16 +166,24 @@ $ cp nodeRegistry_template.xml nodeRegistry.xml</pre>
 <p>Replace the upper case texts with information specific to your MN. The parts
 of the document that do not contain upper case text should remain unchanged.</p>
 <ul class="simple">
-<li><strong>identifier</strong>: A unique identifier for the node. This may initially be
-the same as the baseURL, however this value should not change for future
-implementations of the same node, whereas the baseURL may change in the
-future.</li>
-<li><strong>name</strong>: A human readable name of the Node.</li>
+<li><strong>identifier</strong>: A unique identifier for the node, represented as a DataONE
+Node URN. E.g.: <cite>urn:node:MyMemberNode</cite>.</li>
+<li><strong>name</strong>: A human readable name of the Node. E.g.: <cite>My Member Node</cite>.</li>
 <li><strong>description</strong>: Description of content maintained by this node and any
-other free style notes.</li>
-<li><strong>baseURL</strong>: The URL at which the Node is available.</li>
-<li><strong>contactSubject</strong>: The subject field exactly as it is displayed in the
-DataONE Identity Manager. See <a class="reference internal" href="#create-a-dataone-identify">Create a DataONE identify</a>.</li>
+other free style notes. E.g.: <cite>DataONE Member Node for my organization</cite>.</li>
+<li><strong>baseURL</strong>: The URL at which the Node is available. E.g.:
+<cite>https://my.organization.org/mn</cite>.</li>
+<li><strong>subject</strong>: The subject string for the DataONE identity of your Member
+Node. The subject must match the Distinguished Name (DN) of the client
+side certificate that DataONE provided in an earlier step. See <a class="reference internal" href="#obtaining-a-client-side-certificate">Obtaining
+a client side certificate</a>. The string must be a DataONE compliant
+serialization of the DN. E.g.
+<cite>CN=MyMemberNode,O=DataONE,C=US,DC=dataone,DC=org</cite>.</li>
+<li><strong>contactSubject</strong>: The subject string for a DataONE identity that can be
+contacted regarding issues related to your member node. The subject must
+match the subject as it is displayed in the DataONE Identity Manager. See
+<a class="reference internal" href="#create-a-dataone-identity">Create a DataONE identity</a>. E.g. <cite>CN=My
+Name,O=Google,C=US,DC=cilogon,DC=org</cite>.</li>
 </ul>
 <p>For more information about the Node document, refer to
 <a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node">http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node</a></p>
@@ -171,8 +198,8 @@ with the client side certificate that DataONE issued.</p>
 <div class="highlight-python"><pre>$ cd /var/local/dataone/mn_generic/tools
 $ python register.py \
   --cert-path &lt;path to the DataONE issued MN client side certificate&gt; \
-  --cert-key &lt;path to the DataONE issued MN client side certificate key&gt; \
-  --dataone-url &lt;dev&gt;/cn
+  --key-path &lt;path to the DataONE issued MN client side certificate key&gt; \
+  --dataone-url &lt;environment-url&gt;/cn
   ../service/stores/static/nodeRegistry.xml</pre>
 </div>
 </div></blockquote>
@@ -208,7 +235,7 @@ in the Node XML document.</li>
   <ul>
 <li><a class="reference internal" href="#">Register the MN</a><ul>
 <li><a class="reference internal" href="#selecting-a-dataone-environment">Selecting a DataONE environment</a></li>
-<li><a class="reference internal" href="#create-a-dataone-identify">Create a DataONE identify</a></li>
+<li><a class="reference internal" href="#create-a-dataone-identity">Create a DataONE identity</a></li>
 <li><a class="reference internal" href="#obtaining-a-client-side-certificate">Obtaining a client side certificate</a></li>
 <li><a class="reference internal" href="#registering-the-mn-with-dataone">Registering the MN with DataONE</a></li>
 <li><a class="reference internal" href="#revisit-the-gmn-configuration">Revisit the GMN configuration</a></li>
@@ -221,7 +248,7 @@ in the Node XML document.</li>
   <li><a href="setup.html">Setup</a><ul>
   <li><a href="setup-steps.html">Setup steps</a><ul>
       <li>Previous: <a href="setup-d1-gmn.html" title="previous chapter">DataONE Generic Member Node</a></li>
-      <li>Next: <a href="setup-async.html" title="next chapter">GMN Asynchronous Processes</a></li>
+      <li>Next: <a href="setup-tier.html" title="next chapter">Selecting the DataONE Tier</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

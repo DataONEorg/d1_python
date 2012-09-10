@@ -21,34 +21,33 @@ which they were created.
 
 The environments are:
 
-* **Development**: Unstable components under active development.
-* **Staging**: Testing of release candiates.
-* **Sandbox**: Like Production, but open to test instances of MNs. May contain
-  both test and real science objects.
-* **Production**: Stable production environment for use by the public.
+=========== ============================== ===================================================================================================
+Environment URL                            Description
+=========== ============================== ===================================================================================================
+Development `https://cn-dev.dataone.org`_  Unstable components under active development.
+Staging     https://cn-stage.dataone.org   Testing of release candiates.
+Sandbox     https://cn-sandbox.dataone.org Like Production, but open to test instances of MNs. May contain both test and real science objects.
+Production  https://cn.dataone.org         Stable production environment for use by the public.
+=========== ============================== ===================================================================================================
 
-You may chose to register this MN deployment in the Production environment.
-However, if this deployment is more experimental in nature, for instance, if the
-purpose is to learn more about the DataONE infrastructure or if this MN will
-be populated with objects that may not be of production quality, then one of
-the other environments should be selected.
+You may chose to register your MN in the Production environment. However, if
+your MN is more experimental in nature, for instance, if the purpose is
+to learn more about the DataONE infrastructure or if this MN will be populated
+with objects that may not be of production quality, then one of the other
+environments should be selected.
 
-Depending on which environment you select, substitute **<env>** in the
-instructions below with one of::
-
-  https://cn-dev.dataone.org
-  https://cn-stage.dataone.org
-  https://cn-sandbox.dataone.org
-  https://cn.dataone.org
+Depending on which environment you select, substitute **<environment-url>** in
+the instructions below with one of the URLs in the table.
 
 
-Create a DataONE identify
+
+Create a DataONE identity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Use the DataONE Identity Manager to create a DataONE identity for the
 administrator / contact for the new MN.
 
-Visit **<env>**/portal/ and follow the instructions.
+Visit **<environment-url>**/portal/ and follow the instructions.
 
 
 Obtaining a client side certificate
@@ -107,20 +106,29 @@ this process.
     Replace the upper case texts with information specific to your MN. The parts
     of the document that do not contain upper case text should remain unchanged.
 
-    - **identifier**: A unique identifier for the node. This may initially be
-      the same as the baseURL, however this value should not change for future
-      implementations of the same node, whereas the baseURL may change in the
-      future.
+    - **identifier**: A unique identifier for the node, represented as a DataONE
+      Node URN. E.g.: `urn:node:MyMemberNode`.
 
-    - **name**: A human readable name of the Node.
+    - **name**: A human readable name of the Node. E.g.: `My Member Node`.
 
     - **description**: Description of content maintained by this node and any
-      other free style notes.
+      other free style notes. E.g.: `DataONE Member Node for my organization`.
 
-    - **baseURL**: The URL at which the Node is available.
+    - **baseURL**: The URL at which the Node is available. E.g.:
+      `https://my.organization.org/mn`.
 
-    - **contactSubject**: The subject field exactly as it is displayed in the
-      DataONE Identity Manager. See `Create a DataONE identify`_.
+    - **subject**: The subject string for the DataONE identity of your Member
+      Node. The subject must match the Distinguished Name (DN) of the client
+      side certificate that DataONE provided in an earlier step. See `Obtaining
+      a client side certificate`_. The string must be a DataONE compliant
+      serialization of the DN. E.g.
+      `CN=MyMemberNode,O=DataONE,C=US,DC=dataone,DC=org`.
+
+    - **contactSubject**: The subject string for a DataONE identity that can be
+      contacted regarding issues related to your member node. The subject must
+      match the subject as it is displayed in the DataONE Identity Manager. See
+      `Create a DataONE identity`_. E.g. `CN=My
+      Name,O=Google,C=US,DC=cilogon,DC=org`.
 
     For more information about the Node document, refer to
     http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
@@ -137,8 +145,8 @@ A command line tool is provided for submitting the registration.
     $ cd /var/local/dataone/mn_generic/tools
     $ python register.py \
       --cert-path <path to the DataONE issued MN client side certificate> \
-      --cert-key <path to the DataONE issued MN client side certificate key> \
-      --dataone-url <dev>/cn
+      --key-path <path to the DataONE issued MN client side certificate key> \
+      --dataone-url <environment-url>/cn
       ../service/stores/static/nodeRegistry.xml
 
 A new MN must be approved by DataONE. The person that is registered as

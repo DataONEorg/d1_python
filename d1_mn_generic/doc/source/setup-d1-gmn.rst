@@ -81,8 +81,9 @@ Initialize the database
 Set filesystem permissions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  * Make sure that all files under ``/var/local/dataone`` can be read by the
-    user account under which Apache runs (www-data by default)
+  * Make sure that all files under ``/var/local/dataone``, except for the
+    certificate keys, can be read by the user account under which Apache runs
+    (www-data by default)
   * Make sure that the log files can be written by the Apache user account.
   * When using SQLite, make sure that the SQLite database file can be written by
     the Apache user account.

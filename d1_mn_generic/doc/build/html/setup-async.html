@@ -28,7 +28,7 @@
     <link rel="top" title="v1.0.0" href="index.html" />
     <link rel="up" title="Setup steps" href="setup-steps.html" />
     <link rel="next" title="Starting GMN" href="setup-startup.html" />
-    <link rel="prev" title="Register the MN" href="setup-registration.html" />
+    <link rel="prev" title="Selecting the DataONE Tier" href="setup-tier.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -45,7 +45,7 @@
           <a href="setup-startup.html" title="Starting GMN"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-registration.html" title="Register the MN"
+          <a href="setup-tier.html" title="Selecting the DataONE Tier"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
           <li><a href="setup.html" >Setup</a> &raquo;</li>
@@ -70,20 +70,34 @@ the asynchronous processes on a different server may be beneficial if the GMN
 server is very busy.</p>
 <div class="section" id="certificate-setup">
 <h2>Certificate setup<a class="headerlink" href="#certificate-setup" title="Permalink to this headline">¶</a></h2>
-<p>The asynchronous processes authenticate themselves to GMN by connecting via
-TLS/SSL and providing a certificate. The instructions below use the certificate
-that was provided by DataONE when the MN was registered. This is convenient
-because the certificate is signed by the DataONE CA, which MNs are required to
-trust.</p>
-<blockquote>
-<div><p>Create copies of the DataONE provided certificate and private key. Store the
-copies in the following location:</p>
+<p>If the asynchronous processes are not running locally (on the same machine as
+GMN), GMN can either be set up to accept connections from the second machine&#8217;s
+IP address or to require that the asyncronous processes authenticate themselves
+to GMN by connecting via TLS/SSL and providing a certificate. The first
+alternative is easy to set up, but there may be a risk of attacs that use IP
+address spoofing. Because of this, the second alternative is recommended. There
+are several choices to how the authentication can be set up:</p>
+<ul>
+<li><p class="first">Get a long term certificate from CILogon (via their regular portal, not the
+DataONE portal). Since GMN is already set up to trust certificates from
+CILogon, all that then remains is to set GMN up to trust the subject in the
+certificate that was obtained from CILogon.</p>
+</li>
+<li><p class="first">Create a local CA, set GMN up to trust this CA and sign certificates for the
+processes with this CA.</p>
+</li>
+<li><p class="first">Use the certificate that was provided by DataONE when the MN was registered.
+This is convenient because the certificate is signed by the DataONE CA, which
+MNs are required to trust.</p>
+<p>To use one of these methods, create copies of the certificate and private key.
+Store the copies in the following location:</p>
 <div class="highlight-python"><pre>/var/local/dataone/mn_generic/service/async/</pre>
 </div>
 <p>As an alternative, the <cite>&#8211;cert-path</cite> and <cite>&#8211;key-path</cite> command line options,
 supported by all the asynchronous processes, can be set to the absolute paths
 to the certificates in a different location.</p>
-</div></blockquote>
+</li>
+</ul>
 </div>
 <div class="section" id="enable-access-to-internal-rest-service">
 <h2>Enable access to internal REST service<a class="headerlink" href="#enable-access-to-internal-rest-service" title="Permalink to this headline">¶</a></h2>
@@ -95,14 +109,18 @@ only connections made under specific Subject DNs to access these interfaces.</p>
 asynchronous processes to access the GMN internal REST APIs.</p>
 <p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/mn_generic/service/settings_site.py</span></tt></p>
 <ul class="simple">
-<li></li>
+<li>Add the DataONE compliant serialization of the DN to GMN_INTERNAL_SUBJECTS.
+E.g. <cite>CN=MyMemberNode,O=DataONE,C=US,DC=dataone,DC=org</cite></li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="replication">
 <h2>Replication<a class="headerlink" href="#replication" title="Permalink to this headline">¶</a></h2>
+<p>It is only necessary to perform this step if GMN has been configured to run
+as a Tier 4 node. See <a class="reference internal" href="setup-tier.html"><em>Selecting the DataONE Tier</em></a>.</p>
 <p>The GMN service stores replication requests in a queue. The asynchronous
-replication process uses</p>
+replication process connects to GMN at regular intervals and processes any
+queued replication requests.</p>
 <blockquote>
 <div><p>Create a cron entry for the replication process:</p>
 <div class="highlight-python"><pre>$ crontab -e</pre>
@@ -115,22 +133,6 @@ consult the crontab manual:</p>
 <div class="highlight-python"><pre>$ man 5 crontab</pre>
 </div>
 </div></blockquote>
-<p>Brief overview of the processes that must be performed:</p>
-<ul class="simple">
-<li>If the processes are not running locally (on the same machine as GMN), they
-must authenticate themselves to GMN. Alternatives:<ul>
-<li>Get a long term certificate from CILogon (via their regular portal, not the
-DataONE portal). Since GMN is already set up to trust certificates from
-CILogon, all that then remains is to set GMN up to trust the subject in the
-certificate that was obtained from CILogon.</li>
-<li>Create a local CA, set GMN up to trust this CA and sign certificates for the
-processes with this CA.</li>
-<li>Other security schemes may be sufficient, based on the environment in which
-GMN is set up, such as allowing the processes to connect without
-authentication from a local LAN or specific IP address</li>
-</ul>
-</li>
-</ul>
 </div>
 </div>
 
@@ -157,7 +159,7 @@ authentication from a local LAN or specific IP address</li>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="setup.html">Setup</a><ul>
   <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-registration.html" title="previous chapter">Register the MN</a></li>
+      <li>Previous: <a href="setup-tier.html" title="previous chapter">Selecting the DataONE Tier</a></li>
       <li>Next: <a href="setup-startup.html" title="next chapter">Starting GMN</a></li>
   </ul></li>
   </ul></li>

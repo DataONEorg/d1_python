@@ -143,11 +143,12 @@ $ python manage.py syncdb</pre>
 <h2>Set filesystem permissions<a class="headerlink" href="#set-filesystem-permissions" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
-<li>Make sure that all files under <tt class="docutils literal"><span class="pre">/var/local/dataone</span></tt> can be read by the
-user account under which Apache runs (www-data by default)</li>
+<li>Make sure that all files under <tt class="docutils literal"><span class="pre">/var/local/dataone</span></tt>, except for the
+certificate keys, can be read by the user account under which Apache runs
+(www-data by default)</li>
 <li>Make sure that the log files can be written by the Apache user account.</li>
-<li>When using SQLite (currently unsupported), make sure that the SQLite
-database file can be written by the Apache user account.</li>
+<li>When using SQLite, make sure that the SQLite database file can be written by
+the Apache user account.</li>
 </ul>
 </div></blockquote>
 </div>
@@ -158,7 +159,9 @@ UTC. Because of this, it may also convenient to run the server in UTC, so that
 server related date-times, such as the ones in logs, match up with date-times
 stored in the database and provided in REST responses.</p>
 <blockquote>
-<div><div class="highlight-python"><pre>$ dpkg-reconfigure tzdata</pre>
+<div><div class="highlight-python"><pre># dpkg-reconfigure tzdata
+
+Select Etc | UTC.</pre>
 </div>
 </div></blockquote>
 <p><a class="reference internal" href="setup-registration.html"><em>Register the MN</em></a></p>
