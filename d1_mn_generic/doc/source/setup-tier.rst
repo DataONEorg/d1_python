@@ -15,7 +15,8 @@ Tier 3  Write (create, update and delete objects)
 Tier 4  Replication target
 ======= ========================================================================
 
-Each tier implicitly includes all lower numbered tiers.
+Each tier implicitly includes all lower numbered tiers. For instance, a Tier 3
+node must implement tiers 1, 2 and 3.
 
 GMN supports all tiers. To select the tier for your Member Node, take the
 following into account:
@@ -33,7 +34,8 @@ following into account:
   creating Python scripts or Java programs that are based on the libraries
   provided by DataONE. The objects can be set up with storage managed either by
   GMN itself or by another, independent server that makes the object data
-  available on the web. Access to the write functions is limited by a whitelist.
+  available on the web. Access to the write functions is restricted by a
+  whitelist.
 
 * A Tier 4 member node can act as a replication target, which allows the Member
   Node operator to provide storage space to DataONE (for storing object

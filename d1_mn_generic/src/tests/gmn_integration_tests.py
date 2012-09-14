@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -989,6 +989,19 @@ class TestSequenceFunctions(unittest2.TestCase):
 # ----------------------------------------------------------------------------
 
   def test_1900(self):
+    '''MNReplication.replicate(): Request to replicate new object raises returns 200 OK.
+    Does NOT check if GMN acts on the request and actually performs the replication.
+    '''
+    known_pid = 'new_pid'
+    scidata, sysmeta = self.generate_test_object(known_pid)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    client.replicate(
+      sysmeta,
+      'test_source_node',
+      vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+
+  def test_1910(self):
     '''MNReplication.replicate(): Request to replicate existing object raises IdentifierNotUnique.
     Does NOT check if GMN acts on the request and actually performs the replication.
     '''
@@ -1003,20 +1016,7 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
-  def test_1910(self):
-    '''MNReplication.replicate(): Request to replicate new object raises returns 200 OK.
-    Does NOT check if GMN acts on the request and actually performs the replication.
-    '''
-    known_pid = 'new_pid'
-    scidata, sysmeta = self.generate_test_object(known_pid)
-    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
-    client.replicate(
-      sysmeta,
-      'test_source_node',
-      vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-    )
-
-  def test_1910(self):
+  def test_1920(self):
     '''MNReplication.replicate(): Request from non-trusted subject returns NotAuthorized.
     Does NOT check if GMN acts on the request and actually performs the replication.
     '''

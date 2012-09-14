@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,41 +26,43 @@
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
-import cgi
-import collections
-import csv
+#import cgi
+#import collections
+#import csv
 import datetime
-import glob
-import hashlib
+#import glob
+#import hashlib
 import httplib
 import logging
-import mimetypes
+#import mimetypes
 import os
-import pprint
-import re
-import stat
-import sys
-import time
-import urllib
+#import pprint
+#import re
+#import stat
+#import sys
+#import time
+#import urllib
 import urlparse
 import uuid
 
 # Django.
 from django.http import HttpResponse
 from django.http import HttpResponseNotAllowed
-from django.http import HttpResponseBadRequest
-from django.http import Http404
-from django.template import Context, loader
-from django.shortcuts import render_to_response
-from django.db.models import Avg, Max, Min, Count
-from django.core.exceptions import ObjectDoesNotExist
+#from django.http import HttpResponseBadRequest
+#from django.http import Http404
+#from django.template import Context, loader
+#from django.shortcuts import render_to_response
+#from django.db.models import Avg, Max, Min, Count
+from django.db.models import Sum
+#from django.core.exceptions import ObjectDoesNotExist
+import django.core.cache
 
 # DataONE APIs.
 import d1_client.cnclient
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneErrors as dataoneErrors
+#import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
@@ -69,6 +71,7 @@ import mn.db_filter
 import mn.event_log
 import mn.lock_pid
 import mn.models
+import mn.node
 import mn.psycopg_adapter
 import mn.restrict_to_verb
 import mn.sysmeta_store
@@ -156,15 +159,8 @@ def get_log(request):
 def get_node(request):
   '''MNCore.getCapabilities() → Node
   '''
-  # Django closes the file. (Can't use "with".)
-  try:
-    file = open(service.settings.NODE_REGISTRY_XML_PATH, 'rb')
-  except EnvironmentError:
-    raise d1_common.types.exceptions.ServiceFailure(0,
-      'The administrator of this node has not yet provided Member Node '
-      'capabilities information.')
-
-  return HttpResponse(file, d1_common.const.MIMETYPE_XML)
+  n = mn.node.Node()
+  return HttpResponse(n.get().toxml(), d1_common.const.MIMETYPE_XML)
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 1: Read API  
@@ -625,12 +621,57 @@ def post_replicate(request):
 
   sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
+  _assert_request_complies_with_replication_policy(sysmeta)
   mn.view_asserts.pid_does_not_exist(sysmeta.identifier.value())
-  create_replication_work_item(request, sysmeta)
+  _create_replication_work_item(request, sysmeta)
   return mn.view_shared.http_response_with_boolean_true_type()
 
 
-def create_replication_work_item(request, sysmeta):
+def _assert_request_complies_with_replication_policy(sysmeta):
+  if service.settings.REPLICATION_MAXOBJECTSIZE != -1:
+    if sysmeta.size > service.settings.REPLICATION_MAXOBJECTSIZE:
+      raise d1_common.types.exceptions.InvalidRequest(0,
+        'This node does not allow objects of size larger than {0}. '
+        'The size of this object is {1}'
+        .format(service.settings.REPLICATION_MAXOBJECTSIZE, sysmeta.size))
+
+  if service.settings.REPLICATION_SPACEALLOCATED != -1:
+    total = _get_total_size_of_replicated_objects()
+    if total > service.settings.REPLICATION_SPACEALLOCATED:
+      raise d1_common.types.exceptions.InvalidRequest(0,
+        'The total size allowed for replicas on this node has been exceeded. '
+        'Used: {0}. Allowed: {1}'
+        .format(total, service.settings.REPLICATION_MAXOBJECTSIZE))
+
+  if len(service.settings.REPLICATION_ALLOWEDNODE):
+    if sysmeta.originMemberNode.value() not in service.settings.REPLICATION_ALLOWEDNODE:
+      raise d1_common.types.exceptions.InvalidRequest(0,
+        'This node does not allow replicas from {0}'
+        .format(sysmeta.originMemberNode.value()))
+
+  if len(service.settings.REPLICATION_ALLOWEDOBJECTFORMAT):
+    if sysmeta.formatId.value() not in service.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
+      raise d1_common.types.exceptions.InvalidRequest(0,
+        'This node does not allow objects of format {0}'
+        .format(sysmeta.formatId.value()))
+
+
+def _get_total_size_of_replicated_objects():
+  total = django.core.cache.cache.get('replicated_objects_total')
+  if total is not None:
+    return total
+
+  total = mn.models.ScienceObject.objects.filter(replica=True)\
+    .aggregate(Sum('size'))['size__sum']
+
+  if total is None:
+    total = 0
+  
+  django.core.cache.cache.set('replicated_objects_total', total)
+  return total
+
+
+def _create_replication_work_item(request, sysmeta):
   replication_item = mn.models.ReplicationQueue()
   replication_item.set_status('new')
   replication_item.set_source_node(request.POST['sourceNode'])

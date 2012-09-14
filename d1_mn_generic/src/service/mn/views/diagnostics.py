@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ import mn.db_filter
 import mn.event_log
 import mn.lock_pid
 import mn.models
+import mn.node_registry
 import mn.psycopg_adapter
 import mn.restrict_to_verb
 import mn.sysmeta_store
@@ -152,7 +153,7 @@ def echo_session(request):
 @mn.restrict_to_verb.get
 def trusted_subjects(request):
   return render_to_response('trusted_subjects.xhtml',
-    {'subjects': sorted(service.settings.DATAONE_TRUSTED_SUBJECTS) },
+    {'subjects': sorted(mn.node_registry.get_cn_subjects()) },
     mimetype=d1_common.const.MIMETYPE_XHTML)
 
 # ------------------------------------------------------------------------------

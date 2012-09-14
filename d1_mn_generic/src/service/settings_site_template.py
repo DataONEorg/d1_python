@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,16 +36,76 @@ import sys
 # D1.
 import d1_common.const
 
-# Given a relative path that is relative to the path of this module, create
-# an absolute path.
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
-# The name under which this Member Node was registered with DataONE.
-# On the form, "urn:node:*"
-NODE_IDENTIFIER = 'urn:node:mnMyDataONEMemberNode'
+# Create absolute path from path that is relative to the module from which
+# the function is called.
+def make_absolute(p):
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
-# Create a unique string for this node and do not share it.
-SECRET_KEY = 'MySecretKey'
+# The unique identifier under which this node was registered with DataONE,
+# represented as a DataONE Node URN.
+# E.g.: 'urn:node:MyMemberNode'
+NODE_IDENTIFIER = 'urn:node:MyMemberNode'
+
+# The human readable name of this node.
+# E.g.: 'My Member Node'
+NODE_NAME = 'My Member Node'
+
+# Description of content maintained by this node and any other free style notes.
+# E.g.: 'This DataONE Member Node is operated by My Company. The main
+# contents are sea level measurements.'
+NODE_DESCRIPTION = 'Test Member Node'
+
+# The URL at which the Node is available.
+# E.g.: https://server.example.edu/app/d1/mn
+NODE_BASEURL = 'https://localhost/mn'
+
+# Set to False to prevent the DataONE Coordinating Nodes from synchronizing
+# (discovering new content and other changes) on this node.
+NODE_SYNCHRONIZE = True
+
+# The schedule on which synchronization will run for this node. The schedule
+# should reflect the frequency at which content is expected to change on the
+# node. Syntax for each time slot follows the syntax conventions defined by the
+# Quartz Scheduler (http://www.quartz-
+# scheduler.org/api/2.1.0/org/quartz/CronExpression.html) These settings are
+# ignored if NODE_SYNCHRONIZE is False.
+# E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*', 
+# MINUTE = '0/3', SECOND = '0'.
+NODE_SYNC_SCHEDULE_YEAR = '*'
+NODE_SYNC_SCHEDULE_MONTH = '*'
+NODE_SYNC_SCHEDULE_WEEKDAY = '?'
+NODE_SYNC_SCHEDULE_MONTHDAY = '*'
+NODE_SYNC_SCHEDULE_HOUR = '*'
+NODE_SYNC_SCHEDULE_MINUTE = '0/3'
+NODE_SYNC_SCHEDULE_SECOND = '0'
+
+# The Subject of this node. The subject is the DataONE compliant serialization
+# of the Distinguished Name (DN) of the X.509 client side certificate that has
+# been issued for this node by DataONE.
+# E.g.: 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
+NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
+
+# The contact subject is a DataONE identity that can be contacted regarding
+# issues related to this member node. The subject must match the subject as it
+# is displayed for the given identity in the DataONE Identity Manager.
+# E.g.: 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+
+# Signal the status of this node to the DataONE infrastructure
+# E.g.:
+# 'up: This node is operating as normal.
+# 'down': This node is currently not in operation.
+NODE_STATE = 'up'
+
+# Set the Tier for this node.
+# See https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/doc/build/html/setup-tier.html
+# Tier 1: Read, public objects
+# Tier 2: Access controlled objects (authentication and authorization)
+# Tier 3: Write (create, update and delete objects)
+# Tier 4: Replication target
+# E.g.: 4
+TIER = 4
 
 # Enable Django debug mode.
 # True:
@@ -61,7 +121,7 @@ SECRET_KEY = 'MySecretKey'
 #   internal errors.
 # * GMN returns a regular 404 page for invalid URLs. The page contains a link
 #   to the GMN home page.
-DEBUG = False
+DEBUG = True
 
 # Enable GMN debug mode.
 # True:
@@ -73,7 +133,7 @@ DEBUG = False
 #   create/update/delete.
 # False:
 # * Use for production.
-GMN_DEBUG = False
+GMN_DEBUG = True
 
 # Enable monitoring.
 # * Enables aspects of internal GMN operations to be monitored by public
@@ -92,6 +152,46 @@ MONITOR = True
 # * Only available in debug mode.
 ECHO_REQUEST_OBJECT = False
 
+# Create a unique string for this node and do not share it.
+SECRET_KEY = 'MySecretKey'
+
+# Path to the client side certificate that GMN uses when initiating TLS/SSL
+# connections to Coordinating Nodes. The certificate must be in PEM format.
+CLIENT_CERT_PATH = make_absolute('./certificates/server_crt.pem')
+
+# Path to the private key for the client side certificate set in
+# CLIENT_CERT_PATH. The private key must be in PEM format. This is only ONLY
+# required to be set if the certificate does not contain an embedded private
+# key. Otherwise, set it to None.
+CLIENT_CERT_PRIV_KEY_PATH = make_absolute('./certificates/server_key.pem')
+
+# Set to True to enable this node to be used as a replication target. DataONE
+# uses replication targets to store replicas of science objects. This setting is
+# ignored if TIER is set less than 4. It is intended for temporarily disabling
+# replication. For permanently disabling replication, set TIER lower than 4 as
+# well as this setting to False.
+NODE_REPLICATE = False
+
+# The maximum size, in octets (8-bit bytes), of objects this node is willing to
+# accept for replication. Set to -1 to allow any size.
+# E.g. for a maximum object size of 1GiB: 1024**3
+REPLICATION_MAXOBJECTSIZE = -1
+
+# The total space, in octets (8-bit bytes), that this node is providing for
+# replication. Set to -1 to provide unlimited space (not recommended).
+# E.g. for a total space of 10 TiB: 10 * 1024**4
+REPLICATION_SPACEALLOCATED = 10 * 1024**4
+
+# A list of nodes for which this node is willing to replicate content. To allow
+# objects from any node to be replicated, set to an empty list. 
+# E.g.: ('urn:node:MemberNodeA','urn:node:MemberNodeB','urn:node:MemberNodeC')
+REPLICATION_ALLOWEDNODE = ()
+
+# A list of object formats for objects which this node is willing replicate.
+# To allow any object type to be replicated, set to an empty list.
+# E.g.: ('eml://ecoinformatics.org/eml-2.0.0', 'CF-1.0')
+REPLICATION_ALLOWEDOBJECTFORMAT = ()
+
 # Set the level of logging that GMN should perform. Choices are:
 # DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
 if DEBUG or GMN_DEBUG:
@@ -105,10 +205,10 @@ else:
 # this should be set to the root of the environment in which GMN is to run.
 # If GMN_DEBUG is True, the trusted subjects are not required, as the
 # authentication checks for them are skipped. Therefore, they are not retrieved.
-#DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
-#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
-DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn/'
+DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
+#DATAONE_ROOT = 'https://cn-dev.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 
 # Subjects for implicitly trusted DataONE infrastructure. Connections containing
 # client side certificates with these subjects bypass access control rules and
@@ -134,17 +234,25 @@ if GMN_DEBUG:
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
-ADMINS = (('Your Name', 'your-email@your-email.tld'), )
+ADMINS = (('My Name', 'my_address@my_email.tld'), )
 
 # Database connection.
 # GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is
 # untested.
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.sqlite3', # SQLite3
-    'NAME': _here('gmn.sqlite'),
-    #    'ENGINE': 'django.db.backends.postgresql_psycopg2', # PostgreSQL
-    #    'NAME': 'gmn',
+    # PostgreSQL
+    #'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+    #'NAME': 'gmn',
+
+    # MySQL
+    #'ENGINE': 'django.db.backends.mysql', 
+    #'NAME': 'gmn',
+
+    # SQLite3
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': make_absolute('./gmn.sqlite'),
+
     'USER': 'gmn',
     'PASSWORD': 'gmn',
     'HOST': '', # Set to empty string for localhost.
@@ -153,7 +261,7 @@ DATABASES = {
 }
 
 # Path to the directory that holds media.
-MEDIA_ROOT = _here('stores')
+MEDIA_ROOT = make_absolute('./stores')
 
 # Paths to the GMN data stores. The bytes of all the objects handled by
 # GMN are stored here.
@@ -161,11 +269,8 @@ SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
 
-# The Node Registry XML Document
-NODE_REGISTRY_XML_PATH = os.path.join(STATIC_STORE_PATH, 'nodeRegistry.xml')
-
 # Path to the log file.
-LOG_PATH = _here('./gmn.log')
+LOG_PATH = make_absolute('./gmn.log')
 
 # Set up logging.
 LOGGING = {
@@ -217,3 +322,20 @@ LOGGING = {
     },
   }
 }
+
+# ==============================================================================
+# Validation of settings.
+
+
+def check_path(path):
+  if path is None:
+    return
+  if not os.path.exists(path):
+    raise Exception('Invalid path: {0}'.format(path))
+
+
+check_path(CLIENT_CERT_PATH)
+check_path(CLIENT_CERT_PRIV_KEY_PATH)
+
+if SECRET_KEY == 'MySecretKey':
+  raise Exception('SECRET_KEY is unset. See install documentation.')

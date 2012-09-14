@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,14 +34,17 @@
 import os
 import sys
 
+
+# Create absolute path from path that is relative to the module from which
+# the function is called.
+def make_absolute(p):
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
 # Add site specific settings.
 from settings_site import *
 
-# Discover the path of this module
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-
 # Add path to gmn types.
-sys.path.append(_here('./types/generated'))
+sys.path.append(make_absolute('./types/generated'))
 
 # GMN does not use templates in production. However, some of the testing
 # functions use them.
@@ -70,12 +73,7 @@ USE_I18N = True
 MEDIA_URL = ''
 
 # List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-  'django.template.loaders.filesystem.Loader',
-  #  'django.template.loaders.filesystem.load_template_source',
-  #  'django.template.loaders.app_directories.load_template_source',
-  #  'django.template.loaders.eggs.load_template_source',
-)
+TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader', )
 
 MIDDLEWARE_CLASSES = (
   # Custom GMN middleware.
@@ -108,17 +106,18 @@ MIDDLEWARE_CLASSES = (
   'django.middleware.transaction.TransactionMiddleware',
 )
 
-#CACHES = {
-#  'default': {
-#    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-#    'LOCATION': 'trusted_subjects',
-#    'TIMEOUT': -1,
-#  }
-#}
+
+CACHES = {
+  'default': {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'trusted_subjects',
+    'TIMEOUT': 60 * 60,
+  }
+}
 
 ROOT_URLCONF = 'service.urls'
 
-TEMPLATE_DIRS = (_here('mn/templates'), )
+TEMPLATE_DIRS = (make_absolute('./mn/templates'), )
 
 INSTALLED_APPS = ('service.mn', )
 

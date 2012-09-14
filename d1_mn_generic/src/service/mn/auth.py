@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import d1_common.const
 import settings
 import util
 import models
+import node_registry
 import sysmeta_store
 
 # ------------------------------------------------------------------------------
@@ -246,7 +247,7 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
 
 
 def is_trusted_subject(request):
-  return not request.subjects.isdisjoint(settings.DATAONE_TRUSTED_SUBJECTS)
+  return not request.subjects.isdisjoint(node_registry.get_cn_subjects())
 
 
 def is_internal_subject(request):
@@ -321,8 +322,11 @@ def assert_trusted_permission(f):
   def wrap(request, *args, **kwargs):
     if not settings.GMN_DEBUG and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for DataONE infrastructure. {0}'
-        .format(format_active_subjects(request))
+        0, 'Access allowed only for DataONE infrastructure. {0}. '
+        'Trusted subjects: {1}'.format(
+          format_active_subjects(request), node_registry.get_cn_subjects_string(
+          )
+        )
       )
     return f(request, *args, **kwargs)
 
