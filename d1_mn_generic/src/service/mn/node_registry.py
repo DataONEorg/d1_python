@@ -39,10 +39,10 @@ import settings
 
 
 def get_cn_subjects():
-  # In debug mode, access control is not enforced, so there is no need to
-  # fetch the node registry.
+  # In debug mode, fetching the node registry is skipped, causing only the
+  # subjects specifically added in settings_site.py to be active.
   if settings.GMN_DEBUG:
-    return set([])
+    return settings.DATAONE_TRUSTED_SUBJECTS
 
   cn_subjects = django.core.cache.cache.get('cn_subjects')
   if cn_subjects is not None:

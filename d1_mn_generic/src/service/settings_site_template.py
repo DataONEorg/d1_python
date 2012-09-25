@@ -42,70 +42,8 @@ import d1_common.const
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
-# The unique identifier under which this node was registered with DataONE,
-# represented as a DataONE Node URN.
-# E.g.: 'urn:node:MyMemberNode'
-NODE_IDENTIFIER = 'urn:node:MyMemberNode'
-
-# The human readable name of this node.
-# E.g.: 'My Member Node'
-NODE_NAME = 'My Member Node'
-
-# Description of content maintained by this node and any other free style notes.
-# E.g.: 'This DataONE Member Node is operated by My Company. The main
-# contents are sea level measurements.'
-NODE_DESCRIPTION = 'Test Member Node'
-
-# The URL at which the Node is available.
-# E.g.: https://server.example.edu/app/d1/mn
-NODE_BASEURL = 'https://localhost/mn'
-
-# Set to False to prevent the DataONE Coordinating Nodes from synchronizing
-# (discovering new content and other changes) on this node.
-NODE_SYNCHRONIZE = True
-
-# The schedule on which synchronization will run for this node. The schedule
-# should reflect the frequency at which content is expected to change on the
-# node. Syntax for each time slot follows the syntax conventions defined by the
-# Quartz Scheduler (http://www.quartz-
-# scheduler.org/api/2.1.0/org/quartz/CronExpression.html) These settings are
-# ignored if NODE_SYNCHRONIZE is False.
-# E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*', 
-# MINUTE = '0/3', SECOND = '0'.
-NODE_SYNC_SCHEDULE_YEAR = '*'
-NODE_SYNC_SCHEDULE_MONTH = '*'
-NODE_SYNC_SCHEDULE_WEEKDAY = '?'
-NODE_SYNC_SCHEDULE_MONTHDAY = '*'
-NODE_SYNC_SCHEDULE_HOUR = '*'
-NODE_SYNC_SCHEDULE_MINUTE = '0/3'
-NODE_SYNC_SCHEDULE_SECOND = '0'
-
-# The Subject of this node. The subject is the DataONE compliant serialization
-# of the Distinguished Name (DN) of the X.509 client side certificate that has
-# been issued for this node by DataONE.
-# E.g.: 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
-NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
-
-# The contact subject is a DataONE identity that can be contacted regarding
-# issues related to this member node. The subject must match the subject as it
-# is displayed for the given identity in the DataONE Identity Manager.
-# E.g.: 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
-NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
-
-# Signal the status of this node to the DataONE infrastructure
-# E.g.:
-# 'up: This node is operating as normal.
-# 'down': This node is currently not in operation.
-NODE_STATE = 'up'
-
-# Set the Tier for this node.
-# See https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/doc/build/html/setup-tier.html
-# Tier 1: Read, public objects
-# Tier 2: Access controlled objects (authentication and authorization)
-# Tier 3: Write (create, update and delete objects)
-# Tier 4: Replication target
-# E.g.: 4
-TIER = 4
+# ==============================================================================
+# Debuging
 
 # Enable Django debug mode.
 # True:
@@ -135,13 +73,6 @@ DEBUG = True
 # * Use for production.
 GMN_DEBUG = True
 
-# Enable monitoring.
-# * Enables aspects of internal GMN operations to be monitored by public
-#   subjects. This function does not expose any sensitive information and should
-#   be safe to keep enabled in production.
-# * When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
-MONITOR = True
-
 # Enable request echo.
 # * True: GMN will not process any requests. Instead, it will echo the requests
 #   back to the client. The requests are formatted to be human readable. This
@@ -151,6 +82,82 @@ MONITOR = True
 # * False: GMN processes all requests as normal.
 # * Only available in debug mode.
 ECHO_REQUEST_OBJECT = False
+
+# ==============================================================================
+# Node parameters
+
+# The unique identifier for this node, represented as a DataONE Node URN.
+# E.g.: 'urn:node:MyMemberNode'
+NODE_IDENTIFIER = 'urn:node:MyMemberNode'
+
+# The human readable name of this node.
+# E.g.: 'My Member Node'
+NODE_NAME = 'My Member Node'
+
+# Description of content maintained by this node and any other free style notes.
+# E.g.: 'This DataONE Member Node is operated by My Company. The main
+# contents are sea level measurements.'
+NODE_DESCRIPTION = 'Test Member Node'
+
+# The URL at which the Node is available.
+# E.g.: https://server.example.edu/app/d1/mn
+NODE_BASEURL = 'https://localhost/mn'
+
+# Enable synchronization.
+# Set to False to prevent the DataONE Coordinating Nodes from synchronizing
+# (discovering new content and other changes) on this node.
+NODE_SYNCHRONIZE = True
+
+# The schedule on which synchronization will run for this node. The schedule
+# should reflect the frequency at which content is expected to change on the
+# node. The syntax for each time slot follows that of the Quartz Scheduler
+# (http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html).
+# These settings are ignored if NODE_SYNCHRONIZE is False.
+# E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*', 
+# MINUTE = '0/3', SECOND = '0'.
+NODE_SYNC_SCHEDULE_YEAR = '*'
+NODE_SYNC_SCHEDULE_MONTH = '*'
+NODE_SYNC_SCHEDULE_WEEKDAY = '?'
+NODE_SYNC_SCHEDULE_MONTHDAY = '*'
+NODE_SYNC_SCHEDULE_HOUR = '*'
+NODE_SYNC_SCHEDULE_MINUTE = '0/3'
+NODE_SYNC_SCHEDULE_SECOND = '0'
+
+# The Subject of this node. The subject is the DataONE compliant serialization
+# of the Distinguished Name (DN) of the X.509 client side certificate that has
+# been issued for this node by DataONE. The subject must match that of the
+# DN in the certificate.
+# E.g.: 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
+NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
+
+# The contact subject is a DataONE identity that can be contacted regarding
+# issues related to this member node. The subject must match the subject as it
+# is displayed for the given identity in the DataONE Identity Manager.
+# E.g.: 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+
+# Signal the status of this node to the DataONE infrastructure.
+# E.g.:
+# 'up: This node is operating as normal.
+# 'down': This node is currently not in operation.
+NODE_STATE = 'up'
+
+# Set the Tier for this node.
+# For information on selecting a tier, see https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/doc/build/html/setup-tier.html
+# Tier 1: Read, public objects
+# Tier 2: Access controlled objects (authentication and authorization)
+# Tier 3: Write (create, update and delete objects)
+# Tier 4: Replication target
+# Each tier includes all lower tiers.
+# E.g.: 4
+TIER = 4
+
+# Enable monitoring.
+# * Enables aspects of internal GMN operations to be monitored by public
+#   subjects. This function does not expose any sensitive information and should
+#   be safe to keep enabled in production.
+# * When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
+MONITOR = True
 
 # Create a unique string for this node and do not share it.
 SECRET_KEY = 'MySecretKey'
@@ -224,7 +231,8 @@ GMN_INTERNAL_SUBJECTS = set([])
 # As an alternative to the certificate based authentication for asynchronous
 # GMN processes set up in GMN_INTERNAL_SUBJECTS, this setting can be used
 # for allowing the processes to connect based on the IP address of the
-# originating server.
+# originating server. Note that this method may be vulnerable to IP address
+# spoofing attacks.
 GMN_INTERNAL_HOSTS = ['127.0.0.1', ]
 
 # In debug mode, a special test subject is added to the list of trusted
@@ -235,6 +243,22 @@ if GMN_DEBUG:
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
 ADMINS = (('My Name', 'my_address@my_email.tld'), )
+
+# Enable MNRead.listObjects() for public and regular authenticated users.
+# False:
+# * MNRead.listObjects() can only be called by trusted infrastructure (CNs).
+# True:
+# * MNRead.listObjects() can be called by any level of user (trusted
+#   infrastructure, authenticated and public), and results are filtered
+#   to list only objects to which the user has access.
+# The primary means for a user to discover objects is to use the search
+# facilities exposed by CNs. By enabling this option, regular users can also
+# discover objects directly on the node by iterating over the object list. This
+# is disabled by default because the call can be expensive (as it must create a
+# filtered list of all objects on the node for each page that is returned).
+# These are also the reasons that DataONE specified implementation of access
+# control for public and regular users to be optional for this API.
+PUBLIC_OBJECT_LIST = False
 
 # Database connection.
 # GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is

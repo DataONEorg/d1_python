@@ -208,7 +208,13 @@ def permissions_for_object(request, pid):
   )
 
 
-  #@mn.restrict_to_verb.post
+@mn.restrict_to_verb.get
+def get_setting(request, setting):
+  '''Get a value from settings.py or settings_site.py'''
+  return HttpResponse(getattr(service.settings, setting, '<NOT SET>'))
+
+
+#@mn.restrict_to_verb.post
 def echo_raw_post_data(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse(request.raw_post_data)

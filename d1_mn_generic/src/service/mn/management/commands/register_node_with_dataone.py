@@ -30,6 +30,9 @@ import logging
 import optparse
 import sys
 
+# 3rd party.
+import pyxb.utils.domutils
+
 # D1.
 import d1_client.cnclient
 
@@ -92,7 +95,7 @@ class Command(NoArgsCommand):
 
   def view(self):
     node = self.generate_node_doc()
-    logging.info('{0}'.format(node.toxml()))
+    logging.info('{0}'.format(node.toDOM().toprettyxml(indent='  ')))
 
   def generate_node_doc(node_xml_path):
     n = mn.node.Node()

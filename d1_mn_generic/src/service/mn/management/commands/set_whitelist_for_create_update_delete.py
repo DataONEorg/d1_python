@@ -80,12 +80,18 @@ class Command(NoArgsCommand):
     if verbosity <= 1:
       logging.getLogger('').setLevel(logging.ERROR)
 
-    self.set_whitelist(args[0])
+    n_subjects = self.set_whitelist(args[0])
+
+    print 'Successfully whitelisted {0} subjects'.format(n_subjects)
 
   def set_whitelist(self, whitelist_path):
     with open(whitelist_path) as f:
       mn.models.WhitelistForCreateUpdateDelete.objects.all().delete()
+      cnt = 0
       for subject in f:
         w = mn.models.WhitelistForCreateUpdateDelete()
         w.set(subject.strip())
         w.save()
+        cnt += 1
+
+    return cnt

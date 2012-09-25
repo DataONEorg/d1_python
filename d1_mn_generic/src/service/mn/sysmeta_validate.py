@@ -39,8 +39,9 @@ import service.settings
 
 def validate_sysmeta_against_uploaded(request, pid, sysmeta):
   _validate_sysmeta_identifier(pid, sysmeta)
-  _validate_sysmeta_filesize(request, sysmeta)
-  _validate_sysmeta_checksum(request, sysmeta)
+  if not 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
+    _validate_sysmeta_filesize(request, sysmeta)
+    _validate_sysmeta_checksum(request, sysmeta)
 
 
 def _validate_sysmeta_identifier(pid, sysmeta):

@@ -72,9 +72,8 @@ import settings
 '''Handle exceptions that are raised when processing a request.
 
 An MN is required to always return a DataONE exception on errors. When running
-in production mode (settings.DEBUG = False and settings.GMN_DEBUG = False),
-GMN complies with this by wrapping any non-DataONE exception in a DataONE
-exception.
+in production mode (settings.DEBUG = False and settings.GMN_DEBUG = False), GMN
+complies with this by wrapping any non-DataONE exception in a DataONE exception.
 
 When running in Django debug mode (settings.DEBUG = True), non-DataONE
 exceptions are returned as Django HTML exception pages.

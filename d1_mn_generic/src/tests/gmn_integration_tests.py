@@ -207,7 +207,6 @@ class TestSequenceFunctions(unittest2.TestCase):
       for permission in access_rule[1]:
         permission_pyxb = dataoneTypes.Permission(permission)
         accessRule.permission.append(permission_pyxb)
-      #accessRule.resource.append('<dummy. field will be removed>')
       accessPolicy.append(accessRule)
     return accessPolicy
 
@@ -217,9 +216,9 @@ class TestSequenceFunctions(unittest2.TestCase):
     sciobj = pid.encode('utf-8')
     # Create corresponding System Metadata for the test object.
     size = len(sciobj)
-    # hashlib.md5 can't hash a unicode string. If it did, we would get a hash
+    # hashlib.md5 can't hash a Unicode string. If it did, we would get a hash
     # of the internal Python encoding for the string. So we maintain sciobj
-    # as a utf-8 string.
+    # as a UTF-8 string.
     md5 = hashlib.md5(sciobj).hexdigest()
     now = datetime.datetime.now()
     sysmeta = self.generate_sysmeta(
@@ -232,13 +231,22 @@ class TestSequenceFunctions(unittest2.TestCase):
       subjects = [subjects]
     return {'VENDOR_INCLUDE_SUBJECTS': '\t'.join(subjects)}
 
+  def has_public_object_list(self):
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    return eval(client.get_setting('PUBLIC_OBJECT_LIST'))
+
   # ============================================================================
   # Setup.
   # ============================================================================
 
-  # ----------------------------------------------------------------------------
-  # Set up test objects. Also checks create()
-  # ----------------------------------------------------------------------------
+  def test_1000(self):
+    '''GMN must be in debug mode when running unit tests'''
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    self.assertEqual(client.get_setting('GMN_DEBUG'), 'True')
+
+    # ----------------------------------------------------------------------------
+    # Set up test objects. Also checks create()
+    # ----------------------------------------------------------------------------
 
   def test_1010_A(self):
     '''Delete all objects.'''
@@ -630,7 +638,10 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1410(self):
     '''listObjects(): Returns only public objects when called by public user.
     '''
-    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    # This test can only run if public access has been enabled for listObjects.
+    if not self.has_public_object_list():
+      return
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)
@@ -640,6 +651,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1420(self):
     '''listObjects(): Returns only public objects when called by unknown user.
     '''
+    # This test can only run if public access has been enabled for listObjects.
+    if not self.has_public_object_list():
+      return
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS,
@@ -650,6 +664,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1430(self):
     '''listObjects(): returns only public + specific user's objects
     '''
+    # This test can only run if public access has been enabled for listObjects.
+    if not self.has_public_object_list():
+      return
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS,
@@ -660,6 +677,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1440(self):
     '''listObjects(): slicing + specific user
     '''
+    # This test can only run if public access has been enabled for listObjects.
+    if not self.has_public_object_list():
+      return
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(
       count=5, vendorSpecific=self.include_subjects(AUTH_SPECIFIC_USER)
@@ -669,6 +689,9 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_1450(self):
     '''listObjects(): slicing + specific user + objectFormat
     '''
+    # This test can only run if public access has been enabled for listObjects.
+    if not self.has_public_object_list():
+      return
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(
       count=5,

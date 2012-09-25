@@ -320,14 +320,7 @@ def assert_trusted_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.GMN_DEBUG and not is_trusted_subject(request):
-      raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for DataONE infrastructure. {0}. '
-        'Trusted subjects: {1}'.format(
-          format_active_subjects(request), node_registry.get_cn_subjects_string(
-          )
-        )
-      )
+    assert_trusted(request)
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__
@@ -335,12 +328,35 @@ def assert_trusted_permission(f):
   return wrap
 
 
+def assert_list_objects_access(f):
+  '''Access to listObjects() controlled by settings.PUBLIC_OBJECT_LIST.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    if not settings.PUBLIC_OBJECT_LIST:
+      assert_trusted(request)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
+def assert_trusted(request):
+  if not is_trusted_subject(request):
+    raise d1_common.types.exceptions.NotAuthorized(
+      0, 'Access allowed only for DataONE infrastructure. {0}. '
+      'Trusted subjects: {1}'.format(
+        format_active_subjects(request), node_registry.get_cn_subjects_string())
+    )
+
+
 def assert_internal_permission(f):
   '''Access only by GMN async process.
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.GMN_DEBUG and not is_internal_subject(request) and not \
+    if not is_internal_subject(request) and not \
       is_internal_host(request):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for GMN asynchronous processes. {0}'
@@ -360,8 +376,7 @@ def assert_create_update_delete_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if not settings.GMN_DEBUG \
-      and not models.WhitelistForCreateUpdateDelete.objects.filter(
+    if not models.WhitelistForCreateUpdateDelete.objects.filter(
         subject__subject__in=request.subjects).exists() \
       and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(

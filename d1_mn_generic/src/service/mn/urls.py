@@ -138,6 +138,7 @@ if settings.GMN_DEBUG:
     (r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),
     (r'^test/trusted_subjects/?$', 'trusted_subjects'),
     (r'^test/permissions_for_object/(.+?)/?$', 'permissions_for_object'),
+    (r'^test/get_setting/(.+)$', 'get_setting'),
     # Event Log.
     (r'^test/delete_event_log/?$', 'delete_event_log'),
     (r'^test/inject_fictional_event_log/?$', 'inject_fictional_event_log'),
