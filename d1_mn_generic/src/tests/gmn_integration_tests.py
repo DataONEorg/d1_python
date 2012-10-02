@@ -641,7 +641,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     # This test can only run if public access has been enabled for listObjects.
     if not self.has_public_object_list():
       return
-    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(
       count=d1_common.const.MAX_LISTOBJECTS,
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_PUBLIC)

@@ -138,7 +138,7 @@ def get_log(request):
   query = mn.models.EventLog.objects.order_by('-date_logged').select_related()
   if not mn.auth.is_trusted_subject(request):
     query = mn.db_filter.add_access_policy_filter(query, request,
-                                                  'object__permission')
+                                                  'object__id')
   query = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
                                            'fromDate', 'gte')
   query = mn.db_filter.add_datetime_filter(query, request, 'date_logged',
@@ -321,7 +321,7 @@ def get_object(request):
   # for them.
   query = mn.models.ScienceObject.objects.order_by('mtime').select_related()
   if not mn.auth.is_trusted_subject(request):
-    query = mn.db_filter.add_access_policy_filter(query, request, 'permission')
+    query = mn.db_filter.add_access_policy_filter(query, request, 'id')
   query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'fromDate',
                                            'gte')
   query = mn.db_filter.add_datetime_filter(query, request, 'mtime', 'toDate',

@@ -51,8 +51,10 @@ def add_access_policy_filter(query, request, column_name):
   :return: Filtered query.
   :return type: QuerySet
   '''
-  filter_arg = '{0}__subject__subject__in'.format(column_name)
-  return query.filter(**{filter_arg: request.subjects})
+  q = mn.models.PermissionSubject.objects.filter(subject__in=request.subjects)\
+    .values('permission__object')
+  filter_arg = '{0}__in'.format(column_name)
+  return query.filter(**{filter_arg: q})
 
 
 def add_bool_filter(query, request, column_name, param_name):
