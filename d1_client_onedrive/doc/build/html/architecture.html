@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Architecture &mdash; ONEDrive 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ONEDrive 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="1. Setup" href="setup.html" />
+    <link rel="prev" title="2. Launching ONEDrive" href="run.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup.html" title="1. Setup"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run.html" title="2. Launching ONEDrive"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Architecture</a><ul>
+<li><a class="reference internal" href="#production">3.1. Production</a></li>
+<li><a class="reference internal" href="#testing-and-debugging">3.2. Testing and Debugging</a></li>
+<li><a class="reference internal" href="#resolvers">3.3. Resolvers</a><ul>
+<li><a class="reference internal" href="#the-hierarchy-of-resolvers">3.3.1. The hierarchy of resolvers</a></li>
+<li><a class="reference internal" href="#notes">3.3.2. Notes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#command-processor">3.4. Command Processor</a></li>
+<li><a class="reference internal" href="#index">3.5. Index</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">4. Indices and tables</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run.html"
+                        title="previous chapter">2. Launching ONEDrive</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setup.html"
+                        title="next chapter">1. Setup</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/architecture.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="architecture">
+<h1>3. Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="production">
+<h2>3.1. Production<a class="headerlink" href="#production" title="Permalink to this headline">¶</a></h2>
+<p>The main components of ONEDrive when in regular operation.</p>
+<p class="graphviz">
+<img src="_images/graphviz-134f55bdae817fc790b56b41f32249ecd1523def.png" alt="digraph G {
+  ranksep = .75;
+  size = &quot;7,20&quot;;
+  dpi = 72;
+  node [shape = box];
+  &quot;ONEDrive&quot; -&gt; &quot;FUSE Callbacks&quot;
+  &quot;ONEDrive&quot; -&gt; &quot;Dependency Checker&quot;
+  &quot;FUSE Driver&quot; -&gt; &quot;FUSE Callbacks&quot;
+  &quot;FUSE Callbacks&quot; -&gt; Cache
+  &quot;FUSE Callbacks&quot; -&gt; Resolvers
+  &quot;Utility Classes&quot; -&gt; Resolvers
+  &quot;Resolvers&quot; -&gt; &quot;Command Processor&quot;
+  &quot;Command Processor&quot; -&gt; &quot;Solr Client&quot;
+  &quot;Command Processor&quot; -&gt; &quot;DataONE Client&quot;
+}
+
+/*
+    subgraph cluster0 {
+      node [style=filled, color=white];
+      style=filled;
+      color=lightgrey;
+      label = &quot;Utility Classes&quot;;
+      &quot;Directory&quot;
+      &quot;FacetPathParser&quot;
+      &quot;Filename Extensions&quot;
+      &quot;PathException&quot;
+      &quot;QueryEngineDescription&quot;
+      &quot;Resolver ABC&quot;
+      &quot;Settings&quot;
+    }
+*/" />
+</p>
+<p>The utility classes include <tt class="docutils literal"><span class="pre">Directory</span></tt>, <tt class="docutils literal"><span class="pre">FacetPathParser</span></tt>,
+<tt class="docutils literal"><span class="pre">PathException</span></tt>, <tt class="docutils literal"><span class="pre">Filename</span> <span class="pre">Extensions</span></tt>, <tt class="docutils literal"><span class="pre">QueryEngineDescription</span></tt>,
+<tt class="docutils literal"><span class="pre">ResolverABC</span></tt>, <tt class="docutils literal"><span class="pre">Settings</span></tt>.</p>
+</div>
+<div class="section" id="testing-and-debugging">
+<h2>3.2. Testing and Debugging<a class="headerlink" href="#testing-and-debugging" title="Permalink to this headline">¶</a></h2>
+<p>The main components of ONEDrive when testing and debugging.</p>
+<p class="graphviz">
+<img src="_images/graphviz-af9fa0ee89c4270747894460e27a058ff005f09a.png" alt="digraph G {
+  ranksep = .75;
+  size = &quot;7,20&quot;;
+  dpi = 72;
+  node [shape = box];
+  &quot;Unit Tests&quot; -&gt; Resolvers
+  &quot;Unit Tests&quot; -&gt; &quot;Utility Classes&quot;
+  &quot;Resolvers&quot; -&gt; &quot;Command Echoer&quot;
+}" />
+</p>
+<p>When testing and debugging, the FUSE specific classes are replaced by the unit
+testing framework. Also, <a class="reference internal" href="#command-processor">Command Processor</a> is replaced with <tt class="docutils literal"><span class="pre">Command</span>
+<span class="pre">Echoer</span></tt>, a component that simply echoes the commands back instead of returning
+actual results. The unit tests for the resolvers compare the echoed commands
+with the commands that were expected to be issued for a given path.</p>
+<p>One consequence of this is that the FUSE related classes and the <tt class="docutils literal"><span class="pre">Command</span>
+<span class="pre">Processor</span></tt> are not tested. There is almost no code in the FUSE related classes
+and what is there is linear in nature and is fully tested for each time the
+drive is mounted and a path is opened. The <tt class="docutils literal"><span class="pre">Command</span> <span class="pre">Processor</span></tt> contains more
+logic but is hard to test reliably since it interacts with databases that change
+over time.</p>
+<p>This layout facilitates TDD, as the unit tests can be run quickly, with
+reproducible results.</p>
+</div>
+<div class="section" id="resolvers">
+<h2>3.3. Resolvers<a class="headerlink" href="#resolvers" title="Permalink to this headline">¶</a></h2>
+<p>The resolvers are classes that &#8220;resolve&#8221; filesystem paths to lists of files and
+folders for those paths. The resolvers are arranged into a hierarchy. Each
+resolver examines the path and may resolve the path itself and/or pass control
+to another resolver. If a resolver does both, its list of files and folders
+appears above the ones provided by resolvers deeper in the hierarchy.</p>
+<p>Resolvers deeper in the hierarchy corresponds to sections that are further to
+the right in the path. If a resolver passes control to another resolver, it
+first removes the section of the left side of the path that it processed. Thus,
+each resolver needs to know only how to parse the section of the path that it is
+designed to handle. This also enables the same functionality to be exposed
+several places in the filesystem. For instance, the resolver for the object
+package level can be reached though each of the root level search types.</p>
+<p>If a resolver determines that the path that it has received is invalid, it can
+abort processing of the path by raising a PathException. The resolver stores a
+brief error message in the exception. The exception is caught by the Root
+resolver, which renders it as a file in the ONEDrive filesystem, using the
+error message as the filename.</p>
+<div class="section" id="the-hierarchy-of-resolvers">
+<h3>3.3.1. The hierarchy of resolvers<a class="headerlink" href="#the-hierarchy-of-resolvers" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="_images/graphviz-99936c8349eec440fb1db02ae1e744676e9564c8.png" alt="digraph G {
+  ranksep = .75;
+  size = &quot;7,20&quot;;
+  dpi = 72;
+  node [shape = box];
+  {
+    rank = same;
+    Root;
+  }
+  {
+    rank = same;
+    &quot;Preconfigured Search&quot;;
+  }
+  {
+    rank = same;
+    &quot;Faceted Search Selector&quot;;
+    &quot;Flat Space&quot;;
+    Status;
+  }
+  {
+    rank = same;
+    &quot;Faceted Search&quot;;
+  }
+  {
+    rank = same;
+    &quot;DataONE Object&quot;;
+  }
+  {
+    rank = same;
+    Package;
+  }
+  {
+    rank = same;
+    &quot;Science Object&quot;;
+  }
+
+  Root -&gt; &quot;Faceted Search Selector&quot;;
+  Root -&gt; &quot;Preconfigured Search&quot;;
+  Root -&gt; &quot;Flat Space&quot;;
+  Root -&gt; Status
+
+  &quot;Faceted Search Selector&quot; -&gt; &quot;DataONE Object&quot;;
+  &quot;Faceted Search Selector&quot; -&gt; &quot;Faceted Search&quot;;
+  &quot;Preconfigured Search&quot; -&gt; &quot;Faceted Search Selector&quot;
+  &quot;Flat Space&quot; -&gt; &quot;DataONE Object&quot;;
+  Status -&gt; &quot;Coordinating Nodes&quot;;
+  Status -&gt; &quot;Member Nodes&quot;;
+
+  &quot;Faceted Search&quot; -&gt; &quot;DataONE Object&quot;;
+
+  &quot;DataONE Object&quot; -&gt; Package
+  &quot;DataONE Object&quot; -&gt; &quot;Science Object&quot;
+
+  Package -&gt; &quot;Science Object&quot;
+  Package -&gt; &quot;System Metadata&quot;
+
+  &quot;Science Object&quot; -&gt; &quot;System Metadata&quot;
+  &quot;Science Object&quot; -&gt; &quot;Science Metadata&quot;
+  &quot;Science Object&quot; -&gt; &quot;Science Data&quot;
+}" />
+</p>
+</div>
+<div class="section" id="notes">
+<h3>3.3.2. Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">The resolvers are all derived from <tt class="docutils literal"><span class="pre">ResolverABC</span></tt>, not from each other.</p>
+</li>
+<li><p class="first">The <tt class="docutils literal"><span class="pre">Root</span></tt> resolver renders the root directory, which contains a set of
+directories designating different types of interactions which can be performed
+with the DataONE infrastructure. It also parses the root elements of paths and
+transfers control to the appropriate path resolver.</p>
+</li>
+<li><p class="first">The <tt class="docutils literal"><span class="pre">Faceted</span> <span class="pre">Search</span> <span class="pre">Selector</span></tt> exists so that faceted search can be turned off
+once a specific object has been selected. In other words, the path:</p>
+<div class="highlight-python"><pre>/FacetedSearch/@facet1/#value1/@facet2/#value2/mydataonepid/science_object.jpg</pre>
+</div>
+<p>does not cause a faceted search to be performed even though one is included.
+The user has already found and selected an object, so the <tt class="docutils literal"><span class="pre">Faceted</span> <span class="pre">Search</span>
+<span class="pre">Selector</span></tt> just strips the faceted search section off the path and passes
+control to <tt class="docutils literal"><span class="pre">Package</span></tt>. This eliminates superfluous searches. It also causes the
+path to remain valid even if the specified object stops matching the facets in
+the future.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Faceted</span> <span class="pre">Search</span></tt> also appears under <tt class="docutils literal"><span class="pre">Preconfigured</span> <span class="pre">Search</span></tt>. This enables the
+user to specify preconfigured searches for various classes of objects of
+interest while still enabling the user to use faceted search to further narrow
+down the results from the preconfigured searches.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Flat</span> <span class="pre">Space</span></tt> enables direct access to objects and enables users to share
+short ONEDrive paths to directly access specific objects.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">DataONE</span> <span class="pre">Object</span></tt> determines what type of object has been selected and calls
+a resolver that is appropriate for the type. Currently, regular science
+objects and packages are supported.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Package</span></tt> renders the contents of a OAI-ORE Resource Map.</p>
+</li>
+<li><p class="first">The <tt class="docutils literal"><span class="pre">Status</span></tt> hierarchy is not implemented. It&#8217;s just an indication of how
+other DataONE related information can be exposed in the filesystem.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="command-processor">
+<h2>3.4. Command Processor<a class="headerlink" href="#command-processor" title="Permalink to this headline">¶</a></h2>
+<p>To retrieve lists of files and folders for display in the filesystem, the
+resolvers issue commands to the Command Processor. The Command Processor
+transforms the commands into one or more queries against the DataONE Solr index
+and the DataONE infrastructure and wraps up the results.</p>
+</div>
+<div class="section" id="index">
+<h2>3.5. Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">1. Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#fusepy">1.1. fusepy</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>4. Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setup.html" title="1. Setup"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run.html" title="2. Launching ONEDrive"
+             >previous</a> |</li>
+        <li><a href="index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

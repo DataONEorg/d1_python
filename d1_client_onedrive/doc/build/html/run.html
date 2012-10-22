@@ -1,0 +1,143 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Launching ONEDrive &mdash; ONEDrive 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ONEDrive 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="3. Architecture" href="architecture.html" />
+    <link rel="prev" title="1. Setup" href="setup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="architecture.html" title="3. Architecture"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="1. Setup"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup.html"
+                        title="previous chapter">1. Setup</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="architecture.html"
+                        title="next chapter">3. Architecture</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/run.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="launching-onedrive">
+<h1>2. Launching ONEDrive<a class="headerlink" href="#launching-onedrive" title="Permalink to this headline">¶</a></h1>
+<p>This driver provides access to objects in the DataONE infrastructure through
+DataONE&#8217;s Apache Solr interface. Faceted search is provided through <tt class="xref doc docutils literal"><span class="pre">Solr</span></tt>.</p>
+<p>How to use:</p>
+<ul class="simple">
+<li>Install FUSE or MacFUSE</li>
+<li>Set PYTHONPATH to include d1_common_python/src and d1_libclient_python/src</li>
+<li>On OS X, set DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH</li>
+<li>Make sure option &#8216;user_allow_other&#8217; is set in /etc/fuse.conf.</li>
+</ul>
+<p>Run as:</p>
+<div class="highlight-python"><pre>python d1_fuse2.py -h
+                   -v [-l] [-g] [-b base_url] [-s solr_path] [-f filter]
+                   mountpoint</pre>
+</div>
+<p>where:</p>
+<div class="highlight-python"><pre>-h = print help
+-l = log level, 10=debug, 20=info, 50=exception
+-v = print version info and exit
+-g = run in foreground (for debugging)
+-b = base_url for coordinating node
+-s = path to append to base_url to get Solr index URL
+-f = filter for limiting content view (e.g. "keywords:zinc")
+mountpoint = the folder to use as the mount point.</pre>
+</div>
+<p>If you get an exception on OSX that looks like this:</p>
+<div class="highlight-python"><pre>OSError: dlopen(/opt/local/lib/libfuse.dylib, 6): Symbol not found: _iconv
+  Referenced from: /opt/local/lib/libfuse.dylib</pre>
+</div>
+<p>run d1fuse with:</p>
+<div class="highlight-python"><pre>export DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="architecture.html" title="3. Architecture"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="1. Setup"
+             >previous</a> |</li>
+        <li><a href="index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
