@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+<lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int><lst name="params"><str name="facet">on</str><str name="q">*:*</str><str name="facet.field">submitter</str><str name="rows">0</str></lst></lst><result name="response" numFound="1357" start="0"/><lst name="facet_counts"><lst name="facet_queries"/><lst name="facet_fields"><lst name="submitter"><int name="CN=testRightsHolder,DC=dataone,DC=org">1225</int><int name="public">48</int><int name="CN=testPerson,DC=dataone,DC=org">40</int><int name="CN=testSubmitter,DC=dataone,DC=org">37</int><int name="CN=urn:node:cnDevUNM1,DC=dataone,DC=org">4</int><int name="CN=Andy Pippin T6339,O=Google,C=US,DC=cilogon,DC=org">3</int><int name="CN=Andy Pippin A882,O=Google,C=US,DC=cilogon,DC=org">0</int></lst></lst><lst name="facet_dates"/><lst name="facet_ranges"/></lst>
+</response>
