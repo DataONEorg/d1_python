@@ -27,44 +27,66 @@
 '''
 
 # Stdlib.
+import logging
 import sys
 import unittest
 
 # D1.
 sys.path.append('..')
 import onedrive_d1_client
-print d1_client.__file__
 
-#class TestSolrClient(unittest.TestCase):
-#  def setUp(self):
-#    qes = query_engine_description.QueryEngineDescription()
-#    qes.load('test_index/query_engine_description.xml')
-#    self.s = solr_query.SolrQuery(qes)
-#    self.facet_path_parser = facet_path_parser.FacetPathParser()
-#
-#
-#  def test_100_query(self):
-#    print self.s.query('/')
-#
-#
-#  def _test_100_query(self):
-#    dir_items = self.s.query('/')
-#    self._assert_is_facet_name_list(dir_items)
-#    dir_items = self.s.query('/@origin/#test/')
-#    self._assert_is_facet_name_list(dir_items)
-#
-#
-#  def test_200_create_facet_query_string(self):
-#    str = self.s.create_facet_query_string('/test')
-#    self.assertTrue(str.startswith('facet.field=origin&facet.field=noBoundingBox&facet.field=endDate'))
-#    str = self.s.create_facet_query_string('/@origin/#a/@noBoundingBox/#b')
-#    self.assertTrue(str.startswith('facet.field=projectText&facet.field=endDate&facet.field=family'))
-#
-#
-#  def _assert_is_facet_name_list(self, dir_items):
-#    for dir_item in dir_items:
-#      self.assertTrue(self.facet_path_parser.is_facet_name(dir_item))
-#
-#
-#if __name__ == "__main__":
-#  unittest.main()
+
+class TestD1Client(unittest.TestCase):
+  def setUp(self):
+    self.d1 = onedrive_d1_client.D1Client()
+
+  def test_100(self):
+    print self.d1.get_searchable_facet_names()
+
+#===============================================================================
+
+
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestD1Client
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()

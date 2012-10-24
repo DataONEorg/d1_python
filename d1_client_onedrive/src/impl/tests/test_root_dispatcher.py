@@ -36,15 +36,15 @@ import unittest
 # D1.
 sys.path.append('../fuse')
 import solr_query_simulator
-import root_dispatcher
+import root_resolver
 import test_resolver
 
 
 class TestRootDispatcher(unittest.TestCase):
   def setUp(self):
-    self.r = root_dispatcher.RootDispatcher(solr_query_simulator.SolrQuerySimulator())
+    self.r = root_resolver.RootDispatcher(solr_query_simulator.SolrQuerySimulator())
     # Monkey-patch the RootDispatcher.
-    self.r.resolvers['TestResolver'] = test_resolver.Resolver()
+    self.r.resolvers['TestResolver'] = test_resolver_abc.Resolver()
 
   def test_100_resolve(self):
     d = self.r.resolve('relative/path')

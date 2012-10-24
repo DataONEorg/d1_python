@@ -28,45 +28,28 @@
 
 # Stdlib.
 #import os
+import logging
 import sys
 import unittest
 
 # D1.
-sys.path.append('../fuse')
-import cache
+
+# App.
+sys.path.append('..')
+import command_processor
 
 
-class TestCache(unittest.TestCase):
+class TestCommandProcessor(unittest.TestCase):
   def setUp(self):
-    pass
+    self.c = command_processor.CommandProcessor()
 
-  def test_100_cache(self):
-    c = cache.Cache(10)
-    c['a'] = 1
-    self.assertEqual(len(c), 1)
-    self.assertEqual(c['a'], 1)
-    #self.assertEqual(len(c), 1)
+  def test_100_get_all_field_names_good_for_faceting(self):
+    field_names = self.c.get_all_field_names_good_for_faceting()
+    self.assertTrue(len(field_names) > 5)
+    self.assertTrue(isinstance(field_names, list))
 
-  def test_110_cache(self):
-    c = cache.Cache(2)
-    c['a'] = 1
-    c['b'] = 2
-    c['c'] = 3
-    self.assertEqual(len(c), 2)
-    self.assertRaises(KeyError, c.__getitem__, 'a')
-    self.assertEqual(c['b'], 2)
-    self.assertEqual(c['c'], 3)
-
-  def test_120_cache(self):
-    c = cache.Cache(2)
-    c['a'] = 1
-    c['b'] = 2
-    c['c'] = 3
-    c['a'] = 4
-    self.assertEqual(len(c), 2)
-    self.assertRaises(KeyError, c.__getitem__, 'b')
-    self.assertEqual(c['a'], 4)
-    self.assertEqual(c['c'], 3)
+  def _test_(self):
+    print self.c.solr_query([])
 
 #===============================================================================
 
@@ -102,7 +85,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCache
+  s = TestCommandProcessor
   s.options = options
 
   if options.test != '':

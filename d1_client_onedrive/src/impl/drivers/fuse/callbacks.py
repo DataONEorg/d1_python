@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-''':mod:`fuse_callbacks`
+''':mod:`callbacks`
 ========================
 
 :Synopsis:
@@ -42,12 +42,10 @@ import urlparse
 import fuse
 
 # App.
-sys.path.append('../tests')
 import cache
 from directory import Directory, DirectoryItem
-import root_dispatcher
+import root_resolver
 import settings
-import solr_query_simulator
 
 
 # Set up logger for this module.
@@ -56,8 +54,7 @@ log = logging.getLogger(__name__)
 
 class FUSECallbacks(fuse.Operations):
   def __init__(self):
-    query_engine = solr_query_simulator.SolrQuerySimulator()
-    self.dispatcher = root_dispatcher.RootResolver(query_engine)
+    self.root_resolver = root_resolver.RootResolver()
     self.start_time = time.time()
     self.directory_cache = cache.Cache(settings.DIRECTORY_CACHE_SIZE)
 
@@ -123,7 +120,7 @@ class FUSECallbacks(fuse.Operations):
       log.debug('Found in cache: {0}'.format(path))
     except KeyError:
       log.debug('Not found in cache. {0}'.format(path))
-      directory = self.dispatcher.resolve(path)
+      directory = self.root_resolver.resolve(path)
       file_to_attributes_map = self._create_file_to_attributes_map(directory)
       self.directory_cache[path] = directory, file_to_attributes_map
     return directory, file_to_attributes_map
@@ -158,6 +155,4 @@ class FUSECallbacks(fuse.Operations):
     for prefix in OSX_SPECIAL:
       if parts[len(parts)-1].startswith(prefix):
         self._raise_error_no_such_file_or_directory('todo')
-
-
 

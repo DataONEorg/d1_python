@@ -35,13 +35,13 @@ import os
 # D1.
 from directory import Directory, DirectoryItem
 import path_exception
-import resolver
+import resolver_abc
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class ObjectResolver(resolver.Resolver):
+class ObjectResolver(resolver_abc.Resolver):
   def __init__(self, query_engine):
     pass
 

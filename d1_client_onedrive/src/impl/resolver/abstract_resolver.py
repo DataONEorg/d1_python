@@ -34,13 +34,13 @@ import os
 
 # App.
 from directory import Directory, DirectoryItem
-import resolver
+import resolver_abc
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class Resolver(resolver.Resolver):
+class Resolver(resolver_abc.Resolver):
   def __init__(self):
     pass
 

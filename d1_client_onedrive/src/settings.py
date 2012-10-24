@@ -27,12 +27,12 @@
 '''
 
 # Stdlib.
+import d1_common.const
 import logging
 import os
 import sys
 
 # D1.
-import d1_common.const
 
 
 # Create absolute path from path that is relative to the module from which
@@ -49,7 +49,7 @@ def make_absolute(p):
 # environments are used by software developers for testing and debugging of new
 # components. This setting controls to which environment ONEDrive connects.
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-DATAONE_ROOT = 'https://cn-dev.dataone.org/cn'
+DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 
@@ -87,21 +87,40 @@ DEBUG = True
 FACET_NAME_DECORATOR = '@' # (default is '@')
 FACET_VALUE_DECORATOR = '#' # (default is '#')
 
+# FACET_FILTER:
+# A list of regular expressions that filter the values returned by the DataONE
+# CNRead.getQueryEngineDescription() API to determine which ones are suitable
+# for faceting. For a field to be available for faceting, it must be listed as
+# searchable in the query engine description and it must NOT match any of the
+# the regular expressions in this list.
+FACET_FILTER = [r'.*Text$', r'.*Date$', r'date.*']
+
 # Type of connection to use when connecting to the Solr server.
 # True: A persistent connection is maintained (default)
 # False: A new connection is created each time a query is sent
-SOLR_PERSIST_CONNECTION = True
+#SOLR_PERSIST_CONNECTION = True
 
 # Objects that match this query are filtered out of all search results.
 # None: No filter (default)
-SOLR_QUERY_FILTER = None
+SOLR_FILTER_QUERY = None
+
+# The path that is appended to the DataONE root URL to reach the endpoint for
+# the DataONE CNRead.query() API.
+SOLR_QUERY_PATH = '/v1/query/solr/'
+
+# SOLR_DEBUG_LEVEL:
+# Setting this value to 1 causes the Solr client to output debug information.
+# True: Turn on debug output in the Solr Client (for debugging)
+# False: Turn off debug output (for normal use)
+SOLR_DEBUG = True if DEBUG else False # (enabled when running in debug mode)
 
 # FOREGROUND:
 # During normal use, the FUSE driver will go into the background, causing the
 # onedrive.py command to return immediately. Setting this value to True
 # causes the driver to remain in the foreground.
 # True: Run driver in foreground (for debugging)
-# False: Run driver in background (for normal use, default)
+# False: Run driver in background (for normal use)
+FOREGROUND = True if DEBUG else False # (enabled when running in debug mode)
 
 # NOTHREADS:
 # During normal use, the FUSE drive will use multiple threads to improve
@@ -109,26 +128,12 @@ SOLR_QUERY_FILTER = None
 # in a single thread.
 # True: Do not create multiple threads (for debugging)
 # False: Create multiple threads (for normal use)
+NOTHREADS = True if DEBUG else False # (enabled when running in debug mode)
 
 # LOG_LEVEL:
 # Set how serious a log message or error must be before it is logged.
 # Choices are: DEBUG, INFO, WARNING, ERROR, CRITICAL and NOTSET.
-
-# SOLR_DEBUG_LEVEL:
-# Setting this value to 1 causes the Solr client to output debug information.
-# 1: Turn on debug output in the Solr Client (for debugging)
-# 0: Turn off debug output (for normal use)
-
-if DEBUG:
-  FOREGROUND = True
-  NOTHREADS = True
-  LOG_LEVEL = 'DEBUG'
-  SOLR_DEBUG_LEVEL = 1
-else:
-  FOREGROUND = False
-  NOTHREADS = False
-  LOG_LEVEL = 'WARNING'
-  SOLR_DEBUG_LEVEL = 0
+LOG_LEVEL = 'DEBUG' if DEBUG else 'WARNING' # (set according to debug mode)
 
 # Path to the file containing the icon that is displayed for ONEDrive when
 # accessing the filesystem through a GUI.

@@ -40,20 +40,21 @@ import os
 # D1.
 from directory import Directory, DirectoryItem
 import path_exception
-import resolver
+import resolver_abc
 import faceted_search_resolver
 import preconfigured_search_resolver
+import flat_space_resolver
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class RootResolver(resolver.Resolver):
-  def __init__(self, query_engine):
+class RootResolver(resolver_abc.Resolver):
+  def __init__(self):
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self.resolvers = {
-      'FacetedSearch': faceted_search_resolver.Resolver(query_engine),
+      'FacetedSearch': faceted_search_resolver.Resolver(),
       'PreconfiguredSearch': preconfigured_search_resolver.Resolver(),
       'FlatSpace': flat_space_resolver.Resolver(),
     }
@@ -73,6 +74,7 @@ class RootResolver(resolver.Resolver):
 
   def dispatch(self, path):
     p = path.split(os.path.sep)
+    print p
     try:
       return self.resolvers[p[1]].resolve(os.path.join('/', *p[2:]))
     except KeyError:

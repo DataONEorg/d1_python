@@ -27,24 +27,28 @@
 '''
 
 # Stdlib.
+import httplib
+import HTMLParser
 import logging
 import os
+import pprint
+import query_engine_description
+import settings
+import socket
+import urllib
+import urlparse
 
 # D1.
 import d1_client.solr_client
 import d1_common.const
-
-# App.
-import facet_path_parser
-import query_engine_description
-import settings
+import d1_common.url
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 #===============================================================================
 '''
-If path is for facet name container, list unused facet names then result of query based on applied facets.
+If path is for facet name container, list unapplied facet names then result of query based on applied facets.
 
 if path is for facet value container, list facet names / counts, then result of query based on applied facets.
 
@@ -63,179 +67,311 @@ https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*&rows=0&facet=true&
 class SolrClient(object):
   def __init__(
     self,
-    base_url=d1_common.const.URL_DATAONE_ROOT,
-    solr_path=None,
-    filter_query=None
+    base_url=settings.DATAONE_ROOT,
+    relative_solr_path=settings.SOLR_QUERY_PATH,
+    filter_query=settings.SOLR_FILTER_QUERY,
+    solr_debug=settings.SOLR_DEBUG
   ):
-    '''
-    :param base_url: The Base URL to the DataONE CN to connect to
-    :type base_url: str
-    :param filter_query: Optional filter query that will be applied to the view
-    of DataONE. Only content matching the filter will appear in the file system
-    view.
-    :type filter_query: str
-    '''
-    self.base_url = base_url
-    self.solr_path = solr_path
-    self.solr_connection = d1_client.solr_client.SolrConnection(
-      host=base_url, solrBase=solr_path, debug=True
-    )
-    #self._filter_query = filter_query
-    # The columns to get from the Solr index.
-    self.fields = ['id', 'identifier', 'title', 'formatId', 'update_date', 'size']
+    self.custom_filter_query = filter_query
+    self.solr_debug = solr_debug
+    self.solr_path = self.get_solr_path(base_url, relative_solr_path)
+    self.connection = self.create_connection(base_url)
+#    self.solr_connection = self.create_connection(base_url,
+#                                                       relative_solr_path)
 
-  def create_solr_connection(self, forceNew=True):
-    '''Get a SolrConnection for interacting with Solr.
-    :param forceNew: Create a new connection even if one exists.
-    :type forceNew: bool
-    :return: A connection to a Solr host.
-    :rtype: SolrConnection.
-    '''
-    if forceNew or self.solr_connection is None:
-      print '0' * 100
-      print self.get_solr_host()
-      print self.solr_path
-      print '0' * 100
-      self.solr_connection = solr_client.SolrConnection(
-        self.get_solr_host(
-        ),
-        solrBase=self.solr_path,
-        persistent=settings.SOLR_PERSIST_CONNECTION
+  def create_connection(self, base_url):
+    solr_host = self.get_hostname(base_url)
+    return httplib.HTTPSConnection(solr_host)
+
+  # Want to return a result that:
+  # - starts with all available objects
+  # - returns the objects that match the applied facets.
+  # - includes a list of all the unapplied facets and their counts, for counts > 0
+  def faceted_search(self, all_facets, applied_facets):
+    unapplied_facets = self.get_unapplied_facets(all_facets, applied_facets)
+    unapplied_facet_fields = self.facet_fields_from_facet_names(unapplied_facets)
+    query_params = [
+      ('q', '*:*'),
+      ('rows', '3'),
+      ('indent', 'on'),
+      ('facet', 'true'),
+      ('facet.limit', '5'),
+      ('facet.mincount', '1'),
+      ('facet.sort', 'count'),
+      #('facet.count', 'sort'),
+      #('group.facet', 'true'),
+      ('wt', 'python'),
+    ]
+    query_params.extend(unapplied_facet_fields)
+    response = self.send_request(query_params)
+    unapplied_facet_counts, entries = self.parse_result_dict(response)
+    return unapplied_facet_counts, entries
+
+#  def create_filter_query(self, all_facets, applied_facets, unapplied_facets):
+#    facet_settings = ['rows=100', 'facet=true', 'facet.limit=10',
+#                      'facet.count=sort']
+#    unapplied_facets_string = self.create_facet_query_segment_for_unapplied_facets(
+#      unapplied_facets)
+#    return '*:*&{0}&{1}'.format('&'.join(facet_settings),
+#                                unapplied_facets_string)
+
+  def facet_fields_from_facet_names(self, facet_names):
+    return [('facet.field', f) for f in facet_names]
+
+#  def get_facet_fields_for_unapplied_facets(self, all_facets, applied_facets):
+#    unapplied_facets = self.get_unapplied_facets(all_facets, applied_facets)
+#    return ['facet.field={0}'.format(f) for f in unapplied_facets]
+
+  def get_unapplied_facets(self, all_facets, applied_facets):
+    return list(set(all_facets) - set(applied_facets))
+
+#  def get_facet_values_for_facet_name(self, applied_facets, facet_name):
+#    q = 'title:moorx' # moor
+#    q = 'text:#1;dnatsrednu'
+#    return self.solr_connection.fieldValues(facet_name, q=q)
+
+  def get_hostname(self, base_url):
+    return urlparse.urlsplit(base_url).netloc
+
+  def get_solr_path(self, base_url, relative_solr_path):
+    base = urlparse.urlsplit(base_url).path
+    return '/' + d1_common.url.joinPathElements(base, relative_solr_path) + '/'
+
+  def get_solr_base(self, base_url, relative_solr_path):
+    return d1_common.url.joinPathElements(base_url, relative_solr_path) + '/'
+
+#  def create_facet_query_segment_for_unapplied_facets(self, unapplied_facets):
+#    facet_query = []
+#    for unapplied_facet in unapplied_facets:
+#      facet_query.append('facet.field={0}'.format(unapplied_facet))
+#    return '&'.join(facet_query)
+
+  def send_request(self, params):
+    query_url = urllib.urlencode(params, doseq=True)
+    response = self.get(query_url)
+    return eval(response.read())
+
+  def get(self, query_url, headers=None):
+    if headers is None:
+      headers = {}
+    abs_query_url = self.solr_path + '?' + query_url
+    log.debug('GET {0}'.format(abs_query_url))
+    try:
+      self.connection.request('GET', abs_query_url, headers=headers)
+      response = self.connection.getresponse()
+    except (socket.error, httplib.HTTPException) as e:
+      log.error('Solr query failed: {0}: {0}'.format(abs_query_url, str(e)))
+      raise e
+    self.assert_response_is_ok(response)
+    return response
+
+  def parse_result_dict(self, d):
+    unapplied_facet_counts = self.get_unapplied_facet_counts(d)
+    entries = self.get_directory_entries(d)
+    return unapplied_facet_counts, entries
+
+  def get_unapplied_facet_counts(self, d):
+    facet_counts = d['facet_counts']['facet_fields']
+    facets = {}
+    for facet_name, facet_value_counts in facet_counts.items():
+      facet_count_tuples = self.pairs_from_list(facet_value_counts)
+      count = 0
+      for facet in facet_count_tuples:
+        count += int(facet[1])
+      if count:
+        facets[facet_name] = {'count': count, 'values': facet_count_tuples, }
+    return facets
+
+  def pairs_from_list(self, list_with_pairs):
+    pairs = []
+    for i in range(0, len(list_with_pairs), 2):
+      pairs.append((urllib.quote(list_with_pairs[i], safe=''), list_with_pairs[i + 1]))
+    return pairs
+
+  def get_directory_entries(self, d):
+    docs = d['response']['docs']
+    entry = []
+    for doc in docs:
+      #    # The columns to get from the Solr index.
+      #    self.fields = [
+      #      'id',
+      #      'identifier',
+      #      'title',
+      #      'formatId',
+      #      'update_date',
+      #      'size'
+      #    ]
+      entry.append(
+        {
+          'format_id': doc['formatId'],
+          'pid': urllib.quote(doc['id'], safe=''),
+          'size': doc['size'],
+        }
       )
-    return self.solr_connection
+    return entry
 
-  def get_facet_values_for_facet_name(self, facet_name):
-    facet_values = self.solr_connection.fieldValues(facet_name)
-    print facet_values
+  def assert_response_is_ok(self, response):
+    if response.status not in (200, ):
+      try:
+        html_body = response.read()
+      except:
+        html_body = ''
+      s = SimpleHTMLToText()
+      txt_body = s.get_text(html_body)
+      msg = '{0}\n{1}\n{2}'.format(response.status, response.reason, txt_body)
+      raise Exception(msg)
 
-  #  entries = self.getRecords(facetkey, facetval)
+  def escape_query_term(self, term):
+    reserved = [
+      '+',
+      '-',
+      '&',
+      '|',
+      '!',
+      '(',
+      ')',
+      '{',
+      '}',
+      '[',
+      ']',
+      '^',
+      '"',
+      '~',
+      '*',
+      '?',
+      ':',
+    ]
+    term = term.replace(u'\\', u'\\\\')
+    for c in reserved:
+      term = term.replace(c, u"\%s" % c)
+    return term
 
-  # example for getting facet values:
-  # Facet level of file system, subdirs are facet values
-  #      st_nlink = len(facet_values)
-  #    else:
-  #      st_nlink = len(self.facets.keys())
-
-  #def query(self, path):
-  #  q = self.create_solr_query_string(path)
-  #  print q
-
-  #def connect(query_base_url, query_endpoint):
-  #  self.solr_connection = d1_client.solr_client.SolrConnection(
-  #    host=query_base_url, solrBase=options.query_endpoint)
-  #
-  #
-  #def query(q='*:*', fq=None, fields='*', pagesize=100):
-  #  return solr_client.SOLRSearchResponseIterator(self.solr_connection, q,
-  #    fq=fq, fields=fields, pagesize=pagesize)
-
-  def create_solr_query_string(self, path):
-    facet_settings = 'rows=100&facet=true&facet.limit=10&facet.count=sort'
-    return '?q=*:*&' + facet_settings + '&' + self.create_facet_query_string(path)
-
-  def create_facet_query_string(self, path):
-    unused_facets = self._get_unused_facet_names(path)
-    facet_query = []
-    for unused_facet in unused_facets:
-      facet_query.append('facet.field={0}'.format(unused_facet))
-    return '&'.join(facet_query)
-
-  def _get_unused_facet_names(self, path):
-    assert (self.facet_path_parser.dir_contains_facet_names(path))
-    searchable_facet_names = set(
-      self.query_engine_description.get_searchable_facet_names(
-      )
-    )
-    used_facets = self.facet_path_parser.undecorate_facets(path)
-    used_facets_names = set(
-      [
-        self.facet_path_parser.undecorate_facet_name(
-          f[0]
-        ) for f in used_facets
-      ]
-    )
-    #return [self.facet_path_parser.decorate_facet_name(n) for n in
-    #        searchable_facet_names - used_facets_names]
-    return searchable_facet_names - used_facets_names
-
-  def encode_path_element(path_element):
-    return urllib.quote(path_element.encode('utf-8'), safe=PATHELEMENT_SAFE_CHARS)
-
-  def get_solr_host(self):
-    '''Get the Solr host from the CN Base URL.
-    :return: Solr host URL.
-    :rtype: str
+  def prepare_query_term(self, field, term):
     '''
-    url_parts = urlparse.urlsplit(self.base_url)
-    return url_parts.netloc
-
-  def get_facet_values(self, facet, refresh=False):
-    '''Get facet values.
-    This method supports faceted search. From the user perspective, faceted
-    search breaks up search results into multiple categories, typically showing
-    counts for each, and allows the user to "drill down" or further restrict
-    their search results based on those facets.
-    :param facet: Facet for which to get values.
-    :type facet: str
-    :param refresh: Read facet from server even if cached
-    :type refresh: bool
-    :return: Facet values
-    :rtype:
+    Prepare a query term for inclusion in a query.  This escapes the term and
+    if necessary, wraps the term in quotes.
     '''
-    self.logger.debug('get_facet_values: {0}'.format(facet))
-    now = time.time()
-    dt = now - self.facets[facet]['tstamp']
-    self.logger.debug('dt = {0}'.format(str(dt)))
-    if refresh or (len(self.facets[facet]['v']) < 1) or (dt > FACET_REFRESH):
-      self.logger.debug('get_facet_values: cache miss')
-      sc = self.create_solr_connection()
-      self.facets[facet]['tstamp'] = time.time()
-      self.facets[facet]['v'] = []
-      self.facets[facet]['n'] = []
-      fname = self.facets[facet]['f']
-      fvals = sc.fieldValues(fname, fq=self._filter_query)
-      for i in xrange(0, len(fvals[fname]), 2):
-        fv = encode_path_element(fvals[fname][i])
-        #fv = fvals[fname][i]
-        if len(fv) > 0:
-          self.logger.debug('get_facet_values: {0}'.format(fv))
-          fc = fvals[fname][i + 1]
-          self.facets[facet]['v'].append(fv)
-          self.facets[facet]['n'].append(fc)
-          # Can we also append the latest of beginDate and endDate for each of
-          # the value groups?
-    return self.facets[facet]['v']
+    if term == "*":
+      return term
+    addstar = False
+    if term[len(term) - 1] == '*':
+      addstar = True
+      term = term[0:len(term) - 1]
+    term = self.escape_query_term(term)
+    if addstar:
+      term = '%s*' % term
+    if self.getSolrType(field) in ['string', 'text', 'text_ws']:
+      return '"%s"' % term
+    return term
 
-  def get_records(self, facet, term):
-    self.logger.debug('get_records: {0}'.format(facet))
-    fname = self.facets[facet]['f']
-    sc = self.create_solr_connection()
-    q = "%s:%s" % (fname, sc.prepareQueryTerm(fname, term))
-    self.logger.info("q= %s" % q)
-    self.logger.info("fq = %s" % self._filter_query)
-    records = solr_client.SOLRArrayResponseIterator(
-      sc, q, fq=self._filter_query,
-      cols=self.fields,
-      pagesize=ITERATOR_PER_FETCH
-    )
-    return records
+#  def escapeVal(self,val):
+#    val = val.replace(u"&", u"&amp;")
+#    val = val.replace(u"<", u"&lt;")
+#    val = val.replace(u"]]>", u"]]&gt;")
+#    return self.encoder(val)[0]  #to utf8
+#
+#
+#  def escapeKey(self,key):
+#    key = key.replace(u"&", u"&amp;")
+#    key = key.replace(u'"', u"&quot;")
+#    return self.encoder(key)[0]  #to utf8
 
-  def get_abstract(self, pid):
-    ''':type pid: DataONE Persistent ID
-    '''
-    self.logger.debug('get_abstract: {0}'.format(pid))
-    sc = self.create_solr_connection()
-    q = sc.prepareQueryTerm('identifier', pid)
-    records = solr_client.SOLRArrayResponseIterator(
-      sc, q,
-      fq=self._filter_query,
-      cols=[
-        'abstract',
-      ], pagesize=ITERATOR_PER_FETCH
-    )
-    self.abstract_cache[pid] = ''
-    for rec in records:
-      if rec[0] is not None:
-        self.abstract_cache[pid] = rec[0]
-      break
-    return self.abstract_cache[pid]
+# USED
+################################################################################
+# UNUSED
+
+#  entries = self.getRecords(facetkey, facetval)
+
+#
+#
+#def query(q='*:*', fq=None, fields='*', pagesize=100):
+#  return solr_client.SOLRSearchResponseIterator(self.solr_connection, q,
+#    fq=fq, fields=fields, pagesize=pagesize)
+
+#  def encode_path_element(path_element):
+#    return urllib.quote(path_element.encode('utf-8'), safe=PATHELEMENT_SAFE_CHARS)
+
+#  def get_facet_values(self, facet, refresh=False):
+#    '''Get facet values.
+#    This method supports faceted search. From the user perspective, faceted
+#    search breaks up search results into multiple categories, typically showing
+#    counts for each, and allows the user to "drill down" or further restrict
+#    their search results based on those facets.
+#    :param facet: Facet for which to get values.
+#    :type facet: str
+#    :param refresh: Read facet from server even if cached
+#    :type refresh: bool
+#    :return: Facet values
+#    :rtype:
+#    '''
+#    self.logger.debug('get_facet_values: {0}'.format(facet))
+#    now = time.time()
+#    dt = now - self.facets[facet]['tstamp']
+#    self.logger.debug('dt = {0}'.format(str(dt)))
+#    if refresh or (len(self.facets[facet]['v']) < 1) or (dt > FACET_REFRESH):
+#      self.logger.debug('get_facet_values: cache miss')
+#      sc = self.create_connection()
+#      self.facets[facet]['tstamp'] = time.time()
+#      self.facets[facet]['v'] = []
+#      self.facets[facet]['n'] = []
+#      fname = self.facets[facet]['f']
+#      fvals = sc.fieldValues(fname, fq=self.filter_query)
+#      for i in xrange(0,len(fvals[fname]),2):
+#        fv = encode_path_element(fvals[fname][i])
+#        #fv = fvals[fname][i]
+#        if len(fv) > 0:
+#          self.logger.debug('get_facet_values: {0}'.format(fv))
+#          fc = fvals[fname][i+1]
+#          self.facets[facet]['v'].append(fv)
+#          self.facets[facet]['n'].append(fc)
+#          # Can we also append the latest of beginDate and endDate for each of
+#          # the value groups?
+#    return self.facets[facet]['v']
+#
+#
+#  def get_records(self, facet, term):
+#    self.logger.debug('get_records: {0}'.format(facet))
+#    fname = self.facets[facet]['f']
+#    sc = self.create_connection()
+#    q = "%s:%s" % (fname, sc.prepare_query_term(fname, term))
+#    self.logger.info("q= %s" % q)
+#    self.logger.info("fq = %s" % self.filter_query)
+#    records = solr_client.SOLRArrayResponseIterator(sc, q, fq=self.filter_query,
+#                                                   cols=self.fields,
+#                                                   pagesize=ITERATOR_PER_FETCH)
+#    return records
+#
+#
+#  def get_abstract(self, pid):
+#    ''':type pid: DataONE Persistent ID
+#    '''
+#    self.logger.debug('get_abstract: {0}'.format(pid))
+#    sc = self.create_connection()
+#    q = sc.prepare_query_term('identifier', pid)
+#    records = solr_client.SOLRArrayResponseIterator(sc, q, fq=self.filter_query,
+#                                                   cols=['abstract', ],
+#                                                   pagesize=ITERATOR_PER_FETCH)
+#    self.abstract_cache[pid] = ''
+#    for rec in records:
+#      if rec[0] is not None:
+#        self.abstract_cache[pid] = rec[0]
+#      break
+#    return self.abstract_cache[pid]
+
+#===============================================================================
+
+
+class SimpleHTMLToText(HTMLParser.HTMLParser):
+  def __init__(self):
+    self.reset()
+    self.fed = []
+
+  def get_text(self, html):
+    self.feed(html)
+    return self.get_data()
+
+  def handle_data(self, d):
+    self.fed.append(d)
+
+  def get_data(self):
+    return ''.join(self.fed)

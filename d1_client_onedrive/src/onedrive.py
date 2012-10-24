@@ -40,9 +40,12 @@ import fuse
 import d1_common.const
 
 # App.
+sys.path.append('impl')
+sys.path.append('impl/drivers/fuse')
+sys.path.append('impl/resolver')
 import settings
 import check_dependencies
-import fuse_callbacks
+import callbacks
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -86,6 +89,7 @@ def main():
     'foreground': settings.FOREGROUND,
     'fsname': 'ONEDrive',
     'nothreads': settings.NOTHREADS,
+    'nonempty': True,
   }
   if os.uname()[0] == 'Darwin':
     fuse_args['volicon'] = settings.ICON
@@ -94,7 +98,7 @@ def main():
   log_startup_parameters(options, arguments, fuse_args)
 
   # Mount the drive and handle callbacks forever.
-  fuse.FUSE(fuse_callbacks.FUSECallbacks(), mount_point, **fuse_args)
+  fuse.FUSE(callbacks.FUSECallbacks(), mount_point, **fuse_args)
 
 
 def log_setup():
@@ -117,11 +121,11 @@ def log_setup():
 
 def map_level_string_to_level(level_string):
   return {
-    'debug': logging.DEBUG,
-    'info': logging.INFO,
-    'warning': logging.WARNING,
-    'error': logging.ERROR,
-    'critical': logging.CRITICAL,
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL,
   }[level_string]
 
 

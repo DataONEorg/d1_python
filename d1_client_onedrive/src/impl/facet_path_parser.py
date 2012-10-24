@@ -18,8 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`facet_path`
-====================
+''':mod:`facet_path_parser`
+===========================
 
 :Synopsis:
  - Convert between facet list and filesystem path.
@@ -51,7 +51,7 @@ Notes on the faceted path format:
 - The elements in the facet sections must start with a facet name and alternate
   between facet names and facet values.
 
-Implentation notes:
+Implementation notes:
 
 - path is the string representation of a path.
 - p is the array representation of a path.
@@ -92,6 +92,14 @@ class FacetPathParser(object):
     self._raise_if_invalid_object_section(object_section)
     return facet_section, object_section
 
+  def facets_from_path(self, path):
+    if path == '/':
+      return []
+    #print path
+    p = self._split_path(path)
+    #print p
+    return self.facets_from_facet_list(p)
+
   def undecorate_facets(self, p):
     facets = []
     for i, e in enumerate(p):
@@ -99,6 +107,17 @@ class FacetPathParser(object):
         facets.append(self.undecorate_facet_name(e))
       else:
         facets.append(self.undecorate_facet_value(e))
+    return facets
+
+  def facets_from_facet_list(self, p_decorated):
+    p = self.undecorate_facets(p_decorated)
+    facets = []
+    print p
+    for i in range(0, len(p) - 1, 2):
+      print i
+      facets.append((p[i], p[i + 1]))
+    if self._is_facet_name_position(len(p) - 1):
+      facets.append((p[-1], None))
     return facets
 
   #def decorate_facets(self, facets):

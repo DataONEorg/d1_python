@@ -35,22 +35,49 @@ import d1_client.cnclient_1_1
 import d1_client.mnclient
 
 # App.
+import settings
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
 class D1Client(object):
-  def __init__(self):
-    pass
+  def __init__(self, base_url=settings.DATAONE_ROOT):
+    self.client = d1_client.cnclient_1_1.CoordinatingNodeClient(base_url=base_url)
+    self.query_engine_description = None
+    self.all_facet_names = None
 
-  def get_searchable_facet_names(self):
-    self.assert_is_initialized()
-    query_field_names = []
-    for qf in self.doc.queryField:
-      if qf.searchable == True:
-        query_field_names.append(qf.name)
-    return query_field_names
+  def get_all_searchable_facet_names(self):
+    if self.all_facet_names is not None:
+      return self.all_facet_names
+    if self.query_engine_description is None:
+      self.init_query_engine_description()
+    self.all_facet_names = []
+    for f in self.query_engine_description.queryField:
+      if f.searchable == True:
+        self.all_facet_names.append(f.name)
+    return self.all_facet_names
+
+  def get_unapplied_facet_names(self, applied_facets):
+    all_facet_names = set(self.get_all_searchable_facet_names())
+    applied_facets = self.facet_path_parser.undecorate_facets(path)
+    applied_facet_names = set(
+      [
+        self.facet_path_parser.undecorate_facet_name(
+          f[0]
+        ) for f in applied_facets
+      ]
+    )
+    #return [self.facet_path_parser.decorate_facet_name(n) for n in
+    #        all_facet_names - applied_facet_names]
+    return all_facet_names - applied_facet_names
+
+  def init_query_engine_description(self):
+    self.query_engine_description = self.client.getQueryEngineDescription('solr')
+
+# USED
+################################################################################
+# UNUSED
 
   def get_science_object(self, pid):
     try:
