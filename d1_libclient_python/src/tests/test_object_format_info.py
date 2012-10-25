@@ -72,6 +72,14 @@ class TestObjectFormatInfo(TestCaseWithURLCompare):
     j.reread_csv_file('csv_test.csv')
     self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
+  def test_700_bad_csv_file(self):
+    try:
+      self.i.reread_csv_file('csv_test_bad.csv')
+    except Exception as e:
+      self.assertTrue(str(e).startswith('Error in CSV file.'))
+    else:
+      self.assertTrue(False, "Expected exception")
+
 #===============================================================================
 
 
