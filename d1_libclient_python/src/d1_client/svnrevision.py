@@ -45,7 +45,7 @@ except ImportError as e:
   sys.stderr.write('See:  http://pysvn.tigris.org/project_downloads.html\n')
   raise
 
-_default_revision = "3356" ##TAG
+_default_revision = "10035" ##TAG
 
 
 def getSvnRevision(update_static=False):

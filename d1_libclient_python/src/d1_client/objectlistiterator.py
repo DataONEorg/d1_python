@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''' 
+'''
 Module d1_client.objectlistiterator
 ===================================
 
-Implements an iterator that iterates over the entire ObjectList for a 
+Implements an iterator that iterates over the entire ObjectList for a
 DataONE node. Data is retrieved from the target only when required.
-  
+
 :Created: 2010-04-07
 :Author: DataONE (Vieglais)
 :Dependencies:
@@ -32,9 +32,7 @@ DataONE node. Data is retrieved from the target only when required.
 
 Example::
 
-  $python objectlistiterator.py -b "http://knb-mn.ecoinformatics.org/knb/d1" \
-    -m 5 -s 1000
-
+  $ python objectlistiterator.py -b "https://cn.dataone.org/cn" -m 5 -s 1000
   ---
   total: 5
   ---
@@ -94,13 +92,13 @@ from optparse import OptionParser
 
 
 class ObjectListIterator(object):
-  '''Implements an iterator that iterates over the entire ObjectList for a 
+  '''Implements an iterator that iterates over the entire ObjectList for a
   DataONE node.  Data is retrieved from the target only when required.
   '''
 
   def __init__(self, client, start=0, fromDate=None, pagesize=500, max=-1):
     '''Initializes the iterator.
-    
+
      TODO: Extend this with date range and other restrictions
 
     :param client: The client instance for retrieving stuff.
@@ -131,12 +129,12 @@ class ObjectListIterator(object):
     return self
 
   def totalObjectCount(self):
-    '''Returns the total number of objects in the 
+    '''Returns the total number of objects in the
     '''
     return self._objectlist.total
 
   def next(self):
-    '''Implements the next() method for the iterator.  Returns the next 
+    '''Implements the next() method for the iterator.  Returns the next
     ObjectInfo instance.
     '''
     if self._citem >= self._maxitem:
@@ -170,7 +168,7 @@ if __name__ == "__main__":
   available from a given node. Output is in YAML.
   '''
   parser = OptionParser()
-  default_base_url = 'http://dev-dryad-mn.dataone.org/mn'
+  default_base_url = 'https://mn-unm-1.dataone.org/mn'
   parser.add_option(
     '-b',
     '--base_url',

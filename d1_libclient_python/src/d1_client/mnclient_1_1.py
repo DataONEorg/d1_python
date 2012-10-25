@@ -19,12 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Module d1_client.mnclient
-============================
+'''Module d1_client.mnclient_1_1
+================================
 
 :Synopsis:
-  This module implements MemberNodeClient, which extends DataONEBaseClient
-  with functionality specific to Member Nodes.
+  This module implements MemberNodeClient_1_1, which extends
+  DataONEBaseClient_1_1 with functionality specific to Member Nodes.
 :Created: 2011-01-21
 :Author: DataONE (Vieglais, Dahl)
 '''
@@ -45,10 +45,10 @@ except ImportError as e:
   raise
 
 # App.
-import d1baseclient
+import d1baseclient_1_1
 
 
-class MemberNodeClient(d1baseclient.DataONEBaseClient):
+class MemberNodeClient(d1baseclient_1_1.DataONEBaseClient_1_1):
   def __init__(self,
                base_url,
                timeout=d1_common.const.RESPONSE_TIMEOUT,
@@ -86,7 +86,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     :type types: PyXB
     :returns: None    
     '''
-    d1baseclient.DataONEBaseClient.__init__(self, base_url=base_url,
+    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, base_url=base_url,
       timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
       key_path=key_path, strict=strict,
       capture_response_body=capture_response_body, version=version, types=types)
