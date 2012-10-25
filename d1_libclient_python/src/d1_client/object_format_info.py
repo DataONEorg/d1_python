@@ -76,13 +76,13 @@ class ObjectFormatInfo(Singleton):
   def _create_format_id_map_from_csv_file(self):
     try:
       with open(self.csv_path) as f:
-        d = dict((r[0], r[1:]) for r in csv.reader(f))
-    except csv.Error, e:
+        csv_reader = csv.reader(f)
+        return dict((r[0], r[1:]) for r in csv_reader)
+    except (csv.Error, Exception) as e:
       raise Exception(
         'Error in CSV file. Path: {0}  Line: {1}  Error: {2}'
-        .format(filename, csv_reader.line_num, e)
+        .format(self.csv_path, csv_reader.line_num, e)
       )
-    return d
 
   def _get_format_id_entry(self, format_id):
     try:
