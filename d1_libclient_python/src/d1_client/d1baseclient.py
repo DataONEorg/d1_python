@@ -58,7 +58,7 @@ try:
   import d1_common.const
   import d1_common.restclient
   import d1_common.types.exceptions
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
   import d1_common.util
   import d1_common.url
 except ImportError as e:
@@ -70,15 +70,15 @@ except ImportError as e:
 #=============================================================================
 
 class DataONEBaseClient(d1_common.restclient.RESTClient):
-  '''Implements DataONE client functionality common between Member and 
+  '''Implements DataONE client functionality common between Member and
   Coordinating nodes by extending the RESTClient.
-  
+
   Wraps REST methods that have the same signatures on Member Nodes and
-  Coordinating Nodes. 
-  
+  Coordinating Nodes.
+
   On error response, an attempt to raise a DataONE exception is made.
-    
-  Unless otherwise indicated, methods with names that end in "Response" return 
+
+  Unless otherwise indicated, methods with names that end in "Response" return
   the HTTPResponse object, otherwise the deserialized object is returned.
   '''
   def __init__(self,
@@ -90,7 +90,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                strict=True,
                capture_response_body=False,
                version='v1',
-               types=dataoneTypes):
+               types=dataoneTypes_v1_1):
     '''Connect to a DataONE Coordinating Node or Member Node.
 
     :param base_url: DataONE Node REST service BaseURL
@@ -103,7 +103,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     :type cert_path: string
     :param key_path: Path to a PEM formatted file that contains the private key
       for the certificate file. Only required if the certificate file does not
-      itself contain a private key. 
+      itself contain a private key.
     :type key_path: string
     :param strict: Raise BadStatusLine if the status line can’t be parsed
       as a valid HTTP/1.0 or 1.1 status line.
@@ -158,41 +158,41 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     host = parts.netloc.split(':')[0]
     return parts.scheme, host, port, parts.path, parts.query, parts.fragment
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # Response handling.
   # ----------------------------------------------------------------------------
 
   # When expecting boolean response:
   #   If status is 200:
   #     -> Ignore mimetype and return True
-  # 
+  #
   #   If status is NOT 200:
   #     -> ERROR
-  # 
+  #
   # When expecting DataONE type with regular non-redirect method:
   #   If status is 200 and mimetype is "text/xml":
   #     -> Attempt to deserialize to DataONE type.
   #     If deserialize fails:
   #       -> SERVICEFAILURE
-  # 
+  #
   #   if status is 200 and mimetype is NOT "text/xml":
   #     -> SERVICEFAILURE
-  # 
+  #
   #   If status is NOT 200:
   #     -> ERROR
-  # 
+  #
   # When expecting DataONE type together with 303 redirect:
   #   -> Substitute 303 for 200 above.
-  # 
+  #
   # ERROR:
   #   If mimetype is "text/xml":
   #     -> Attempt to deserialize to DataONEError.
   #     If deserialize fails:
-  #       -> SERVICEFAILURE 
-  # 
+  #       -> SERVICEFAILURE
+  #
   #   If mimetype is NOT "text/xml":
   #     -> SERVICEFAILURE
-  # 
+  #
   # SERVICEFAILURE:
   #   -> raise ServiceFailure that wraps up information returned from Node.
 
@@ -206,7 +206,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def _raise_service_failure(self, description, trace):
     raise d1_common.types.exceptions.ServiceFailure(0, description, trace)
 
-  
+
   def _raise_service_failure_invalid_mimetype(self, response):
     msg = StringIO.StringIO()
     msg.write('Node responded with a valid status code but failed to '
@@ -300,7 +300,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       return response
     self._error(response)
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # Misc.
   # ----------------------------------------------------------------------------
 
@@ -344,7 +344,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return m.group(1)
 
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # CNCore / MNCore
   # ----------------------------------------------------------------------------
 
@@ -403,7 +403,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   @d1_common.util.utf8_to_unicode
   def ping(self, vendorSpecific=None):
-    '''Note: If the server returns a status code other than '200 OK', 
+    '''Note: If the server returns a status code other than '200 OK',
         the ping failed.
     '''
     try:
@@ -416,7 +416,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       return False
 
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # CNRead / MNRead
   # ----------------------------------------------------------------------------
 
@@ -443,7 +443,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     response = self.GET(url, headers=vendorSpecific)
     return self._read_stream_response(response)
 
-    
+
   # CNRead.getSystemMetadata(session, pid) → SystemMetadata
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getSystemMetadata
   # MNRead.getSystemMetadata(session, pid) → SystemMetadata
@@ -525,7 +525,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return self._read_dataone_type_response(response)
 
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # CNCore / MNStorage
   # ----------------------------------------------------------------------------
 
@@ -569,7 +569,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return self._read_dataone_type_response(response)
 
 
-  # ----------------------------------------------------------------------------  
+  # ----------------------------------------------------------------------------
   # CNAuthorization / MNAuthorization
   # ----------------------------------------------------------------------------
 

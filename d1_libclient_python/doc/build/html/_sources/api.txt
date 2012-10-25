@@ -1,6 +1,8 @@
 API
 ===
 
+.. include:: overview.rst
+
 .. toctree::
   :numbered:
   :maxdepth: 2

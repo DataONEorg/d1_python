@@ -7,6 +7,7 @@ may be used to form the basis of larger applications or to extend existing
 applications to utilize the services of DataONE. It is a dependency of
 :term:`GMN` and currently all other DataONE components written in Python.
 
+.. include:: overview.rst
 
 Index
 -----

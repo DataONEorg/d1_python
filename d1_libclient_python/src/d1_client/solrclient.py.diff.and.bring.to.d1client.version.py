@@ -1,16 +1,6 @@
-'''
-:mod:`SolrClient`
-=================
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-:Synopsis
-  Python SOLR Client Library
-
-  This client code is built from:
-  http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
-  though has been modified in many respects.
-
-
-'''
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -26,10 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# $Id: solrclient.py 251 2009-12-02 16:38:01Z DaveV $
-# A simple Solr client for python.
-# This is prototype level code and subject to change.
-#
+# A simple Solr client for Python.
+# This is prototype level code and subject to change, based on:
+# http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
+# Modifications by DataONE (Vieglais, Dahl)
+
 # quick examples on use:
 #
 # from solr import *
@@ -47,14 +38,15 @@ import socket
 from xml.dom.minidom import parseString
 import codecs
 import urllib
-import datetime
+from mx import DateTime
 import random
 
 #===============================================================================
 
 
 class SolrException(Exception):
-  """ An exception thrown by solr connections """
+  '''Exception thrown by Solr connections.
+    '''
 
   def __init__(self, httpcode, reason=None, body=None):
     self.httpcode = httpcode
@@ -71,8 +63,7 @@ class SolrException(Exception):
 
 
 class SolrConnection:
-  '''
-  Provides a connection to the SOLR index.
+  '''Provides a connection to the SOLR index.
   '''
 
   def __init__(
@@ -106,11 +97,11 @@ class SolrConnection:
     self.persistent = persistent
     self.reconnects = 0
     self.encoder = codecs.getencoder('utf-8')
-    #responses from Solr will always be in UTF-8
+    # Responses from Solr will always be in UTF-8.
     self.decoder = codecs.getdecoder('utf-8')
-    #a real connection to the server is not opened at this point.
+    # A real connection to the server is not opened at this point.
     self.conn = httplib.HTTPSConnection(self.host)
-    ##Cache fields
+    # Cache fields.
     self._fields = None
     #self.conn.set_debuglevel(1000000)
     self.xmlheaders = {'Content-Type': 'text/xml; charset=utf-8'}
@@ -153,7 +144,7 @@ class SolrConnection:
       #Reconnect in case the connection was broken from the server going down,
       #the server timing out our persistent connection, or another
       #network failure. Also catch httplib.CannotSendRequest because the
-      #HTTPSConnection object can get in a bad state.
+      #HTTPConnection object can get in a bad state.
       self.logger.info('SOLR connection socket error, trying to resend')
       self.__reconnect()
       self.conn.request('POST', url, body, headers)
@@ -278,10 +269,7 @@ class SolrConnection:
         return None
     elif ftype == 'date':
       try:
-        v = datetime.datetime(
-          value['year'], value['month'], value['day'], value['hour'], value['minute'],
-          value['second']
-        )
+        v = DateTime.DateTimeFrom(value)
         v = v.strftime('%Y-%m-%dT%H:%M:%S.0Z')
         return v
       except:
@@ -357,7 +345,6 @@ class SolrConnection:
       self.__add(lst, doc)
     lst.append(u'</add>')
     xstr = u''.join(lst)
-    logging.debug(xstr)
     return self.doUpdateXML(xstr)
 
   def commit(self, waitFlush=True, waitSearcher=True, optimize=False):
@@ -476,11 +463,12 @@ class SolrConnection:
     params = {'numTerms': str(numTerms), 'wt': 'python'}
     request = urllib.urlencode(params, doseq=True)
     rsp = self.doPost(self.solrBase + '/admin/luke', request, self.formheaders)
+    print '5' * 100
     data = eval(rsp.read())
     self._fields = data
     return data
 
-  def fieldValues(self, name, q="*:*", fq=None, maxvalues=-1, sort=True):
+  def fieldValues(self, name, q="*:*", fq=None, maxvalues=-1):
     '''
     Retrieve the unique values for a field, along with their usage counts.
     http://localhost:8080/solr/select/?q=*:*&rows=0&facet=true&indent=on&wt=python&facet.field=genus_s&facet.limit=10&facet.zeros=false&facet.sort=false
@@ -500,16 +488,13 @@ class SolrConnection:
       'facet.limit': str(maxvalues),
       'facet.zeros': 'false',
       'wt': 'python',
-      'facet.sort': str(sort).lower()
+      'facet.sort': 'false'
     }
     if not fq is None:
       params['fq'] = fq
     request = urllib.urlencode(params, doseq=True)
     rsp = self.doPost(self.solrBase + '/select', request, self.formheaders)
     data = eval(rsp.read())
-    response = data['facet_counts']['facet_fields']
-    response['numFound'] = data['response']['numFound']
-    return response
     return data['facet_counts']['facet_fields'] #, data['response']['numFound']
 
   def fieldMinMax(self, name, q='*:*', fq=None):
@@ -751,7 +736,7 @@ class SolrConnection:
         qbin.append(binq)
         bins.append(bin)
 
-      #now execute the facet query request
+        #now execute the facet query request
       params = {
         'q': q,
         'rows': '0',
@@ -895,7 +880,7 @@ class SolrConnection:
         self.conn.close()
     return result
 
-#===============================================================================
+  #===============================================================================
 
 
 class SOLRRecordTransformer(object):
@@ -936,7 +921,7 @@ class SOLRArrayTransformer(SOLRRecordTransformer):
         res.append(None)
     return res
 
-#===============================================================================
+    #===============================================================================
 
 
 class SOLRSearchResponseIterator(object):
@@ -1021,7 +1006,7 @@ class SOLRSearchResponseIterator(object):
     self.crecord = self.crecord + 1
     return self.transformer.transform(row)
 
-#===============================================================================
+  #===============================================================================
 
 
 class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
@@ -1096,7 +1081,7 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
     self.crecord = self.crecord + 1
     return self.processRow(row)
 
-#===============================================================================
+  #===============================================================================
 
 
 class SOLRValuesResponseIterator(object):
@@ -1180,14 +1165,20 @@ class SOLRValuesResponseIterator(object):
     self.crecord = self.crecord + 1
     return row
 
-#===============================================================================
+  #===============================================================================
+
 
 if __name__ == '__main__':
   #some simple tests
 
+  # https://cn-dev-unm-1.test.dataone.org/solr/d1-cn-index/select/?q=*:*
+
   def test1():
-    client = SolrConnection(host="cn-dev.dataone.org", solrBase="/datanet_solr")
-    q = 'sciName_s:Ba*'
+    client = SolrConnection(
+      host="cn-dev-unm-1.test.dataone.org",
+      solrBase="/solr/d1-cn-index"
+    )
+    q = '*:*'
     fq = None
     fields = 'lat,lng'
     pagesize = 5
@@ -1199,7 +1190,10 @@ if __name__ == '__main__':
       print row
 
   def test2():
-    client = SolrConnection(host="cn-dev.dataone.org", solrBase="/datanet_solr")
+    client = SolrConnection(
+      host="cn-dev-unm-1.test.dataone.org",
+      solrBase="/solr/d1-cn-index"
+    )
     q = '*:*'
     fq = None
     field = 'size'
@@ -1208,8 +1202,12 @@ if __name__ == '__main__':
     for row in rows:
       print row
 
-  def listFields():
-    client = SolrConnection(host="cn-dev.dataone.org", solrBase="/datanet_solr")
+  def test3():
+    '''listFields'''
+    client = SolrConnection(
+      host="cn-dev-unm-1.test.dataone.org",
+      solrBase="/solr/d1-cn-index"
+    )
     flds = client.getFields()
     print "%d fields indexed\n" % len(flds['fields'].keys())
     for name in flds['fields'].keys():
@@ -1217,7 +1215,10 @@ if __name__ == '__main__':
       print "%s (%s) %d / %d" % (name, fld['type'], fld['distinct'], fld['docs'])
 
   def test4():
-    solr = SolrConnection(host="cn-dev.dataone.org", solrBase="/datanet_solr")
+    client = SolrConnection(
+      host="cn-dev-unm-1.test.dataone.org",
+      solrBase="/solr/d1-cn-index"
+    )
     results = SOLRSearchResponseIterator(solr, 'id:[* TO *]')
     for rec in results:
       print rec

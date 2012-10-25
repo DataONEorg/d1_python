@@ -36,7 +36,7 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
   import d1_common.util
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
@@ -58,9 +58,9 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
                strict=True,
                capture_response_body=False,
                version='v1',
-               types=dataoneTypes):
+               types=dataoneTypes_v1_1):
     '''Connect to a DataONE Coordinating Node.
-    
+
     :param base_url: DataONE Node REST service BaseURL
     :type host: string
     :param timeout: Time in seconds that requests will wait for a response.
@@ -71,7 +71,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     :type cert_path: string
     :param key_path: Path to a PEM formatted file that contains the private key
       for the certificate file. Only required if the certificate file does not
-      itself contain a private key. 
+      itself contain a private key.
     :type key_path: string
     :param strict: Raise BadStatusLine if the status line can’t be parsed
       as a valid HTTP/1.0 or 1.1 status line.
@@ -284,6 +284,37 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     response = self.searchResponse(queryType, query, **kwargs)
     return self._read_dataone_type_response(response)
 
+
+  # CNRead.query(session, queryEngine, query) → OctetStream
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.query
+
+  #@d1_common.util.utf8_to_unicode
+  def queryResponse(self, queryEngine, query=None, **kwargs):
+    url = self._rest_url('query/%(queryEngine)s/%(query)s', queryEngine=queryEngine,
+                         query=query if query is not None else '')
+    return self.GET(url, query=kwargs)
+
+
+  #@d1_common.util.utf8_to_unicode
+  def query(self, queryEngine, query=None, **kwargs):
+    response = self.queryResponse(queryEngine, query, **kwargs)
+    return self._read_stream_response(response)
+
+
+  # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getQueryEngineDescription
+
+  #@d1_common.util.utf8_to_unicode
+  def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
+    url = self._rest_url('query/%(queryEngine)s', queryEngine=queryEngine)
+    return self.GET(url, query=kwargs)
+
+
+  #@d1_common.util.utf8_to_unicode
+  def getQueryEngineDescription(self, queryEngine, **kwargs):
+    response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
+    return self._read_dataone_type_response(response)
+
   #=============================================================================
   # Authorization API
   #=============================================================================
@@ -343,7 +374,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   #=============================================================================
-  # Identity API 
+  # Identity API
   #=============================================================================
 
   # CNIdentity.registerAccount(session, person) → Subject
@@ -663,7 +694,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     return self._read_boolean_response(response)
 
   #=============================================================================
-  # Register API 
+  # Register API
   #=============================================================================
 
 
@@ -700,4 +731,3 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   def register(self, node):
     response = self.registerResponse(node)
     return self._read_boolean_response(response)
-

@@ -18,18 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''' 
+'''
 Module d1_client.logrecorditerator
 ==================================
 
-Implements an iterator that iterates over the entire set of LogRecords 
+Implements an iterator that iterates over the entire set of LogRecords
 for a DataONE node.  Data is retrieved from the target only when required.
 
 :Created: 2010-07-24
 :Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
-  
+
 Example:
 
 ::
@@ -37,7 +37,7 @@ Example:
   import d1_client.client
   import sys
   logging.basicConfig(level=logging.INFO)
-  target = "http://dev-dryad-mn.dataone.org/mn"
+  target = "https://mn-unm-1.dataone.org/mn"
   client = d1_client.client.DataOneClient(target=target)
   log_record_iterator = LogRecordIterator(client)
   for event in log_record_iterator:
@@ -54,13 +54,13 @@ import logging
 
 
 class LogRecordIterator(object):
-  '''Implements an iterator that iterates over the entire set of LogRecords 
+  '''Implements an iterator that iterates over the entire set of LogRecords
   for a DataONE node.  Data is retrieved from the target only when required.
   '''
 
   def __init__(self, client, fromDate=None):
     '''Initializes the iterator.
-    
+
      TODO: Extend this with date range and other restrictions
 
     :param DataOneClient client: The client instance for retrieving stuff.
@@ -76,7 +76,7 @@ class LogRecordIterator(object):
     return self
 
   def next(self):
-    '''Implements the next() method for the iterator.  Returns the next 
+    '''Implements the next() method for the iterator.  Returns the next
     logEntry instance.
     '''
     if self._citem >= len(self._logRecords.logEntry):

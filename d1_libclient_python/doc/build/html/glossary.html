@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Glossary &mdash; DataONE Client Library for Python 1.0.0 documentation</title>
+    <title>Glossary &mdash; DataONE Client Library for Python 1.1.0-SNAPSHOT documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.0.0',
+        VERSION:     '1.1.0-SNAPSHOT',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DataONE Client Library for Python 1.0.0 documentation" href="index.html" /> 
+    <link rel="top" title="DataONE Client Library for Python 1.1.0-SNAPSHOT documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DataONE Client Library for Python 1.1.0-SNAPSHOT documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -156,7 +156,7 @@ pragmatic design.</p>
 <dt id="term-mod-wsgi">mod_wsgi</dt>
 <dd>An <a class="reference internal" href="#term-apache"><em class="xref std std-term">Apache</em></a> module that implements <a class="reference internal" href="#term-wsgi"><em class="xref std std-term">WSGI</em></a>.</dd>
 <dt id="term-mod-ssl">mod_ssl</dt>
-<dd>An <a class="reference internal" href="#term-apache"><em class="xref std std-term">Apache</em></a> module that interfaces to <a class="reference internal" href="#term-41"><em class="xref std std-term">OpenSSL</em></a>.</dd>
+<dd>An <a class="reference internal" href="#term-apache"><em class="xref std std-term">Apache</em></a> module that interfaces to <a class="reference internal" href="#term-45"><em class="xref std std-term">OpenSSL</em></a>.</dd>
 <dt id="term-pyxb">PyXB</dt>
 <dd><p class="first">Python XML Schema Bindings</p>
 <p class="last"><a class="reference external" href="http://pyxb.sourceforge.net/">http://pyxb.sourceforge.net/</a></p>
@@ -172,6 +172,23 @@ pragmatic design.</p>
 <dt id="term-python-dateutil">python-dateutil</dt>
 <dd><p class="first">Extends the standard datetime module</p>
 <p class="last"><a class="reference external" href="http://labix.org/python-dateutil">http://labix.org/python-dateutil</a></p>
+</dd>
+<dt id="term-postgresql">PostgreSQL</dt>
+<dd><p class="first">A freely available object-relational database management system (ORDBMS).</p>
+<p class="last"><a class="reference external" href="http://www.postgresql.org/">http://www.postgresql.org/</a></p>
+</dd>
+<dt id="term-mysql">MySQL</dt>
+<dd><p class="first">A freely available object-relational database management system (ORDBMS).</p>
+<p class="last"><a class="reference external" href="http://www.mysql.com/">http://www.mysql.com/</a></p>
+</dd>
+<dt id="term-sqlite3">SQLite3</dt>
+<dd><p class="first">A freely available object-relational database management system (ORDBMS).</p>
+<p class="last"><a class="reference external" href="http://www.sqlite.org/">http://www.sqlite.org/</a></p>
+</dd>
+<dt id="term-oracle">Oracle</dt>
+<dd><p class="first">A object-relational database management system (ORDBMS) that is available
+in both free and commercial versions.</p>
+<p class="last"><a class="reference external" href="http://www.oracle.com/">http://www.oracle.com/</a></p>
 </dd>
 <dt id="term-psycopg2">Psycopg2</dt>
 <dd><p class="first">Psycopg is a PostgreSQL database adapter for <a class="reference internal" href="#term-python"><em class="xref std std-term">Python</em></a>.</p>
@@ -258,7 +275,7 @@ receiver to verify that the sender and all intermediates certificates are
 trustworthy.</p>
 <p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Chain_of_trust">http://en.wikipedia.org/wiki/Chain_of_trust</a></p>
 </dd>
-<dt id="term-41">OpenSSL</dt>
+<dt id="term-45">OpenSSL</dt>
 <dd>Toolkit implementing the <a class="reference internal" href="#term-ssl"><em class="xref std std-term">SSL</em></a> v2/v3 and <a class="reference internal" href="#term-tls"><em class="xref std std-term">TLS</em></a> v1 protocols as
 well as a full-strength general purpose cryptography library.</dd>
 <dt id="term-ssl">SSL</dt>
@@ -293,6 +310,9 @@ must be signed by a <a class="reference internal" href="#term-ca"><em class="xre
 Authentication is a required part of the handshake.</dd>
 <dt id="term-client-side-certificate">Client side certificate</dt>
 <dd><a class="reference internal" href="#term-certificate"><em class="xref std std-term">Certificate</em></a> that is provided by the client during <a class="reference internal" href="#term-client-side-authentication"><em class="xref std std-term">client side
+authentication</em></a>.</dd>
+<dt id="term-server-side-certificate">Server side certificate</dt>
+<dd><a class="reference internal" href="#term-certificate"><em class="xref std std-term">Certificate</em></a> that is provided by the server during <a class="reference internal" href="#term-server-side-authentication"><em class="xref std std-term">server side
 authentication</em></a>.</dd>
 <dt id="term-cilogon">CILogon</dt>
 <dd><p class="first">The CILogon project facilitates secure access to CyberInfrastructure (CI).</p>
@@ -333,12 +353,12 @@ the World Wide Web.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DataONE Client Library for Python 1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DataONE Client Library for Python 1.1.0-SNAPSHOT documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
