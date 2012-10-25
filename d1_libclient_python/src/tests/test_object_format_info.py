@@ -18,86 +18,61 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.tests.test_mnclient
-=======================================
+'''Module d1_client.tests.test_object_format_info
+=================================================
 
-:Synopsis: Unit tests for mnclient.
-:Created: 2011-01-20
-:Author: DataONE (Vieglais, Dahl)
+Unit tests for ObjectFormatInfo.
+
+:Created: 2012-10-25
+:Author: DataONE (Dahl)
+:Dependencies:
+  - python 2.6
 '''
 
 # Stdlib.
 import logging
-import random
 import sys
 import unittest
-import uuid
-import StringIO
-
-# 3rd party.
-import pyxb
 
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
-import d1_instance_generator.accesspolicy
-import d1_instance_generator.identifier
-import d1_instance_generator.person
-import d1_instance_generator.random_data
-import d1_instance_generator.replicationpolicy
-import d1_instance_generator.subject
-import d1_instance_generator.systemmetadata
 
 # App.
-from d1_client import mnclient
+import d1_client.object_format_info
 import testing_utilities
 import testing_context
 
+# Typical mapping (format id, mimetype, extension):
+# netCDF-3,application/netcdf,.nc
 
-class TestMNClient(TestCaseWithURLCompare):
+
+class TestObjectFormatInfo(TestCaseWithURLCompare):
   def setUp(self):
-    #self.baseurl = 'https://localhost/mn/'
-    self.baseurl = 'http://127.0.0.1:8000'
-    self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
+    self.i = d1_client.object_format_info.ObjectFormatInfo()
 
-  def tearDown(self):
-    pass
+  def test_100_init(self):
+    pass # Successful setup of the test means that the class initialized ok.
 
-  #=============================================================================
-  # MNCore
-  #=============================================================================
+  def test_200_mimetype_from_format_id(self):
+    self.assertEqual(self.i.mimetype_from_format_id('netCDF-3'), 'application/netcdf')
 
-  def WAITING_FOR_STABLE_MN_test_1010(self):
-    '''MNCore.ping() returns True'''
-    ping = self.client.ping()
-    self.assertTrue(isinstance(ping, bool))
-    self.assertTrue(ping)
+  def test_300_filename_extension_from_format_id(self):
+    self.assertEqual(self.i.filename_extension_from_format_id('netCDF-3'), '.nc')
 
-  def WAITING_FOR_STABLE_MN_test_1020(self):
-    '''MNCore.getCapabilities() returns a valid Node'''
-    node = self.client.getCapabilities()
-    self.assertTrue(isinstance(node, dataoneTypes_v1_1.Node))
+  def test_400_reread_csv_file(self):
+    self.i.reread_csv_file()
+    self.assertEqual(self.i.filename_extension_from_format_id('netCDF-3'), '.nc')
 
-  # ============================================================================
-  # MNRead
-  # ============================================================================
+  def test_500_reread_csv_file_new_csv(self):
+    self.i.reread_csv_file('csv_test.csv')
+    self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
-  # Only tested through GMN integration tests for now.
+  def test_600_singleton(self):
+    j = d1_client.object_format_info.ObjectFormatInfo()
+    j.reread_csv_file('csv_test.csv')
+    self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
-  #=============================================================================
-  # MNStorage
-  #=============================================================================
-
-  # Only tested through GMN integration tests for now.
-
-  #=============================================================================
-  # MNReplication
-  #=============================================================================
-
-  # Only tested through GMN integration tests for now.
-
-  #===============================================================================
+#===============================================================================
 
 
 def log_setup():
@@ -140,7 +115,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestMNClient
+  s = TestObjectFormatInfo
   s.options = options
 
   if options.test != '':

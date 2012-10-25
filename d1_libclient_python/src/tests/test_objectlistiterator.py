@@ -35,7 +35,7 @@ import sys
 
 import d1_client.mnclient
 import d1_client.objectlistiterator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
 
 
 class TestObjectListIterator(unittest.TestCase):
@@ -56,7 +56,7 @@ class TestObjectListIterator(unittest.TestCase):
     counter = 0
     for e in rl:
       counter += 1
-      self.assertTrue(isinstance(e, dataoneTypes.ObjectInfo))
+      self.assertTrue(isinstance(e, dataoneTypes_v1_1.ObjectInfo))
       # TODO: Check if ObjectInfo members are valid.
 
 
