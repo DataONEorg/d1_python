@@ -49,7 +49,7 @@ try:
   import d1_common.const
   import d1_common.date_time
   import d1_common.types.exceptions
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
   #  import testing_utilities
   #  import testing_context
 
@@ -126,7 +126,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''getLogRecords() returns a valid Log that contains at least 2 entries'''
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
     log = client.getLogRecords()
-    self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
+    self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes_v1_1.Log))
     self.assertTrue(len(log.logEntry) >= 2)
 
   def test_110(self):
@@ -198,7 +198,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     sysmeta = client.getSystemMetadata(pid)
     self.assertTrue(
       isinstance(
-        sysmeta, d1_common.types.generated.dataoneTypes.SystemMetadata
+        sysmeta, d1_common.types.generated.dataoneTypes_v1_1.SystemMetadata
       )
     )
 
@@ -257,7 +257,11 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     else:
       pid = testing_utilities.get_random_pid(client)
     checksum = client.getChecksum(pid)
-    self.assertTrue(isinstance(checksum, d1_common.types.generated.dataoneTypes.Checksum))
+    self.assertTrue(
+      isinstance(
+        checksum, d1_common.types.generated.dataoneTypes_v1_1.Checksum
+      )
+    )
 
   def WAITING_FOR_TEST_ENV_test_710(self):
     '''CNRead.getChecksum()'''
@@ -280,17 +284,21 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''listObjects() returns a valid ObjectList that contains at least 3 entries'''
     client = d1_client.d1baseclient.DataONEBaseClient(baseURL)
     list = client.listObjects(start=0, count=10, fromDate=None, toDate=None)
-    self.assertTrue(isinstance(list, d1_common.types.generated.dataoneTypes.ObjectList))
+    self.assertTrue(
+      isinstance(
+        list, d1_common.types.generated.dataoneTypes_v1_1.ObjectList
+      )
+    )
     self.assertEqual(list.count, len(list.objectInfo))
     entry = list.objectInfo[0]
     self.assertTrue(
       isinstance(
-        entry.identifier, d1_common.types.generated.dataoneTypes.Identifier
+        entry.identifier, d1_common.types.generated.dataoneTypes_v1_1.Identifier
       )
     )
     self.assertTrue(
       isinstance(
-        entry.formatId, d1_common.types.generated.dataoneTypes.ObjectFormatIdentifier
+        entry.formatId, d1_common.types.generated.dataoneTypes_v1_1.ObjectFormatIdentifier
       )
     )
 

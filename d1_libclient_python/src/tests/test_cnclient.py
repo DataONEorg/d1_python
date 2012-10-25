@@ -43,7 +43,7 @@ import pyxb
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
 import d1_instance_generator.accesspolicy
 import d1_instance_generator.identifier
 import d1_instance_generator.person
@@ -96,14 +96,14 @@ class TestCNClient(TestCaseWithURLCompare):
     formats = self.client.listFormats()
     self.assertTrue(len(formats.objectFormat) >= 3)
     format = formats.objectFormat[0]
-    self.assertTrue(isinstance(format.formatId, dataoneTypes.ObjectFormatIdentifier))
+    self.assertTrue(isinstance(format.formatId, dataoneTypes_v1_1.ObjectFormatIdentifier))
 
   def test_1020(self):
     '''CNCore.getFormat() returns a valid ObjectFormat for known formatIds'''
     formats = self.client.listFormats()
     for format_ in formats.objectFormat:
       f = self.client.getFormat(format_.formatId)
-      self.assertTrue(isinstance(f.formatId, dataoneTypes.ObjectFormatIdentifier))
+      self.assertTrue(isinstance(f.formatId, dataoneTypes_v1_1.ObjectFormatIdentifier))
       self.assertEqual(format_.formatId, f.formatId)
 
   def test_1040_A(self):
@@ -118,7 +118,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def CURRENTLY_FAILING_SEE_TICKET_2361_test_1060(self):
     '''CNCore.listChecksumAlgorithms() returns a valid ChecksumAlgorithmList'''
     algorithms = self.client.listChecksumAlgorithms()
-    self.assertTrue(isinstance(algorithms, dataoneTypes.ChecksumAlgorithmList))
+    self.assertTrue(isinstance(algorithms, dataoneTypes_v1_1.ChecksumAlgorithmList))
 
   def CURRENTLY_FAILING_SEE_TICKET_2363_test_1061(self):
     '''CNCore.setObsoletedBy()'''
@@ -130,7 +130,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def CURRENTLY_FAILING_SEE_TICKET_2090_test_1065(self):
     '''CNCore.listNodes() returns a valid NodeList that contains at least 3 entries'''
     nodes = self.client.listNodes()
-    self.assertTrue(isinstance(nodes, dataoneTypes.NodeList))
+    self.assertTrue(isinstance(nodes, dataoneTypes_v1_1.NodeList))
     self.assertTrue(len(nodes.node) >= 1)
     entry = nodes.node[0]
 
@@ -158,7 +158,7 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNRead.resolve() returns a valid ObjectLocationList when called with an existing PID'''
     random_existing_pid = testing_utilities.get_random_pid(self.client)
     oll = self.client.resolve(random_existing_pid)
-    self.assertTrue(isinstance(oll, dataoneTypes.ObjectLocationList))
+    self.assertTrue(isinstance(oll, dataoneTypes_v1_1.ObjectLocationList))
 
   def WAITING_FOR_STABLE_CN_test_2010_B(self):
     '''CNRead.resolve() raises NotFound when called with an existing PID'''
@@ -169,7 +169,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_2020(self):
     '''CNRead.getChecksum() returns a valid Checksum when called with an existing PID'''
     checksum = self.client.getChecksum(testing_utilities.get_random_pid(self.client))
-    self.assertTrue(isinstance(checksum, dataoneTypes.Checksum))
+    self.assertTrue(isinstance(checksum, dataoneTypes_v1_1.Checksum))
 
   def WAITING_FOR_STABLE_CN_test_2030(self):
     '''CNRead.search() returns a valid search result'''
@@ -262,7 +262,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4120(self):
     '''CNIdentity.addGroupMembers()'''
     random_group_name = d1_instance_generator.subject.generate()
-    subject_list = dataoneTypes.SubjectList()
+    subject_list = dataoneTypes_v1_1.SubjectList()
     for i in range(10):
       subject_list.append(d1_instance_generator.subject.generate())
     self.client.addGroupMembers(random_group_name, subject_list)
@@ -270,7 +270,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4130(self):
     '''CNIdentity.removeGroupMembers()'''
     random_group_name = d1_instance_generator.subject.generate()
-    subject_list = dataoneTypes.SubjectList()
+    subject_list = dataoneTypes_v1_1.SubjectList()
     for i in range(10):
       subject_list.append(d1_instance_generator.subject.generate())
     self.client.removeGroupMembers(random_group_name, subject_list)
@@ -307,7 +307,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_6010(self):
     '''CNRegister.updateNodeCapabilities()'''
     test_node = 'test_node_' + d1_instance_generator.random_data.random_3_words()
-    node = dataoneTypes.Node()
+    node = dataoneTypes_v1_1.Node()
     node.identifier = test_node
     node.name = 'test_name'
     node.description = 'test_description'
@@ -318,7 +318,7 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_STABLE_CN_test_6020(self):
     '''CNRegister.register()'''
-    node = dataoneTypes.Node()
+    node = dataoneTypes_v1_1.Node()
     node.identifier = 'test_node_' + d1_instance_generator.random_data.random_3_words()
     node.name = 'test_name'
     node.description = 'test_description'
