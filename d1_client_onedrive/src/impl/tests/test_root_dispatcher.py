@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_root_resolver`
+''':mod:`test_root`
 ============================
 
 :Synopsis:
@@ -36,13 +36,13 @@ import unittest
 # D1.
 sys.path.append('../fuse')
 import solr_query_simulator
-import root_resolver
+import root
 import test_resolver
 
 
 class TestRootDispatcher(unittest.TestCase):
   def setUp(self):
-    self.r = root_resolver.RootDispatcher(solr_query_simulator.SolrQuerySimulator())
+    self.r = root.RootDispatcher(solr_query_simulator.SolrQuerySimulator())
     # Monkey-patch the RootDispatcher.
     self.r.resolvers['TestResolver'] = test_resolver_abc.Resolver()
 

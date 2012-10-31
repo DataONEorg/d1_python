@@ -31,7 +31,7 @@ Notes on the faceted path format:
 - A facet path is on the form:
   [/@facet_name_1/#facet_value_1/.../@facet_name_N/#facet_value_N]/
   [pid_folder/[folder_1/.../folder_N/[file]]]
-- The path must be rooted.
+- The path is represented as a list of path segments.
 - The facet path consists of two sections. Both sections are optional.
 - The first section, if present, must be a list of facets, representing a
   faceted search. All of the facet elements must start with one of the two
@@ -53,8 +53,7 @@ Notes on the faceted path format:
 
 Implementation notes:
 
-- path is the string representation of a path.
-- p is the array representation of a path.
+- path is a list of path elements
 - e is a path element, excluding any path separators
 '''
 
@@ -67,6 +66,7 @@ import sys
 sys.path.append('..')
 import path_exception
 import settings
+import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -82,35 +82,31 @@ class FacetPathParser(object):
     self.facet_value_decorator = facet_value_decorator
 
   def split_path_to_facet_and_object_sections(self, path):
-    p = self._split_path(path)
-    i = self._index_of_last_facet_name_or_value(p)
+    i = self._index_of_last_facet_name_or_value(path)
     if i is None:
-      facet_section, object_section = [], p
+      facet_section, object_section = [], path
     else:
-      facet_section, object_section = p[:i + 1], p[i + 1:]
+      facet_section, object_section = path[:i + 1], path[i + 1:]
     self._raise_if_invalid_facet_section(facet_section)
     self._raise_if_invalid_object_section(object_section)
     return facet_section, object_section
 
   def facets_from_path(self, path):
-    if path == '/':
+    if util.is_root(path):
       return []
-    #print path
-    p = self._split_path(path)
-    #print p
-    return self.facets_from_facet_list(p)
+    return self.facets_from_facet_list(path)
 
-  def undecorate_facets(self, p):
+  def undecorate_facets(self, path):
     facets = []
-    for i, e in enumerate(p):
+    for i, e in enumerate(path):
       if self._is_facet_name_position(i):
         facets.append(self.undecorate_facet_name(e))
       else:
         facets.append(self.undecorate_facet_value(e))
     return facets
 
-  def facets_from_facet_list(self, p_decorated):
-    p = self.undecorate_facets(p_decorated)
+  def facets_from_facet_list(self, decorated_path):
+    p = self.undecorate_facets(decorated_path)
     facets = []
     print p
     for i in range(0, len(p) - 1, 2):
@@ -130,8 +126,7 @@ class FacetPathParser(object):
   #  return self._join_path(p)
 
   def undecorated_tail(self, path):
-    p = self._split_path(path)
-    e = self._get_tail(p)
+    e = self._get_tail(path)
     if self.is_facet_name(e):
       return self.undecorate_facet_name(e)
     if self.is_facet_value(e):
@@ -163,22 +158,22 @@ class FacetPathParser(object):
     return facet_value[1:]
 
   def dir_contains_facet_names(self, path):
-    if self.is_root(path):
+    if util.is_root(path):
       return True
     e = self._get_tail(path)
     return self.is_facet_value(e)
 
   def dir_contains_facet_values(self, path):
-    if self.is_root(path):
+    if util.is_root(path):
       return False
     e = self._get_tail(path)
     return self.is_facet_name(e)
 
   # ----------------------------------------------------------------------------
 
-  def _index_of_last_facet_name_or_value(self, p):
+  def _index_of_last_facet_name_or_value(self, path):
     last = None
-    for i, e in enumerate(p):
+    for i, e in enumerate(path):
       if self._is_facet_name_or_value(e):
         last = i
     return last
@@ -193,28 +188,28 @@ class FacetPathParser(object):
   #def path_after_facets(self, path):
   #  i = self._find_last_facet(path)
   #  if i is None:
-  #    p = self._split_path_and_strip_empty(path)
+  #    path = self._split_path_and_strip_empty(path)
   #  else:
-  #    p = self._split_path_and_strip_empty(path)[i + 2:]
-  #  if not len(p):
+  #    path = self._split_path_and_strip_empty(path)[i + 2:]
+  #  if not len(path):
   #    return '/'
-  #  return os.path.join(*p)
+  #  return os.path.join(*path)
 
   #def has_one_or_more_facets(self, path):
   #  return self._find_index_of_first_facet(path) is not None
 
-  def _raise_if_invalid_facet_section(self, p):
-    self._raise_if_facet_section_contains_object_elements(p)
-    self._raise_if_facet_section_is_incorrectly_ordered(p)
+  def _raise_if_invalid_facet_section(self, path):
+    self._raise_if_facet_section_contains_object_elements(path)
+    self._raise_if_facet_section_is_incorrectly_ordered(path)
 
-  def _raise_if_facet_section_contains_object_elements(self, p):
-    for e in p:
+  def _raise_if_facet_section_contains_object_elements(self, path):
+    for e in path:
       if not self._is_facet_name_or_value(e):
         raise path_exception.PathException('Expected facet element. Got: {0}'.format(e))
 
-  def _raise_if_facet_section_is_incorrectly_ordered(self, p):
+  def _raise_if_facet_section_is_incorrectly_ordered(self, path):
     facet_name_value_toggle = True
-    for e in p:
+    for e in path:
       if facet_name_value_toggle:
         if not self.is_facet_name(e):
           raise path_exception.PathException('Expected facet name. Got: {0}'.format(e))
@@ -229,38 +224,38 @@ class FacetPathParser(object):
   def _is_facet_value_position(self, i):
     return not self._is_facet_name_position(i)
 
-  def _raise_if_invalid_object_section(self, p):
-    self._raise_if_object_section_contains_facet_elements(p)
+  def _raise_if_invalid_object_section(self, path):
+    self._raise_if_object_section_contains_facet_elements(path)
 
-  def _raise_if_object_section_contains_facet_elements(self, p):
-    for e in p:
+  def _raise_if_object_section_contains_facet_elements(self, path):
+    for e in path:
       if self._is_facet_name_or_value(e):
         raise path_exception.PathException('Expect object element. Got: {0}'.format(e))
 
-  def _is_only_facet_elements(self, p):
-    for e in p:
+  def _is_only_facet_elements(self, path):
+    for e in path:
       if not self._is_facet_name_or_value(e):
         return False
     return True
 
-  def _is_only_object_elements(self, p):
-    for e in p:
+  def _is_only_object_elements(self, path):
+    for e in path:
       if self._is_facet_name_or_value(e):
         return False
     return True
 
-    #print self._find_index_of_first_facet(p)
-    #return self._find_index_of_first_facet(p) is None
+    #print self._find_index_of_first_facet(path)
+    #return self._find_index_of_first_facet(path) is None
 
-    #def _find_index_of_first_facet(self, p):
-    #  for i, f in enumerate(p[:-1]):
-    #    if self.is_facet((f, p[i + 1])):
+    #def _find_index_of_first_facet(self, path):
+    #  for i, f in enumerate(path[:-1]):
+    #    if self.is_facet((f, path[i + 1])):
     #      return i
 
-    #def _find_index_of_last_facet(self, p):
+    #def _find_index_of_last_facet(self, path):
     #  last = None
-    #  for i, f in enumerate(p[:-1]):
-    #    if self.is_facet((f, p[i + 1])):
+    #  for i, f in enumerate(path[:-1]):
+    #    if self.is_facet((f, path[i + 1])):
     #      last = i
     #  return last
     #
@@ -281,24 +276,7 @@ class FacetPathParser(object):
       return False
     return e[0] == self.facet_value_decorator
 
-  def is_root(self, path):
-    return path == os.path.sep
-
-  def _split_path_and_strip_empty(self, path):
-    self._assert_is_abs_path(path)
-    return path.rstrip(os.path.sep).split(os.path.sep)[1:]
-
-  def _split_path(self, path):
-    self._assert_is_abs_path(path)
-    return path.split(os.path.sep)[1:]
-
-  def _join_path(self, p):
-    return os.path.sep.join(p)
-
-  def _get_tail(self, p):
-    if not len(p):
+  def _get_tail(self, path):
+    if not len(path):
       return None
-    return p[-1]
-
-  def _assert_is_abs_path(self, path):
-    assert (os.path.isabs(path))
+    return path[-1]

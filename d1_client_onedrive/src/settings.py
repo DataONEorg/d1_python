@@ -62,15 +62,34 @@ DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 MOUNTPOINT = make_absolute('one') # (default, relative path)
 #MOUNTPOINT = '/mnt/onedrive' # (example, absolute path)
 
-# This value determines how many folders that can be held simultaneously
-# in the folder cache. The number represents a tradeoff between performance
-# and memory footprint. A higher number gives better performance and a larger
-# memory footprint. The default is 100. A value below 10 is not recommended.
-DIRECTORY_CACHE_SIZE = 100
+# The maximum number of science objects to display in a folder. This setting is
+# in effect when there are more science objects available than can be retrieved
+# and displayed when a folder is opened. To reach objects that are filtered by
+# this setting, use a faceted search to reduce the number of matching objects.
+# Increasing this setting causes longer lists of science objects to to appear in
+# the filesystem, increases memory footprint for the application and causes
+# longer response times when opening folders. The default value is 1000.
+MAX_OBJECTS_IN_DIRECTORY = 1000
 
-# This value determines how many science objects that can be held simultaneously
-# in the object cache. The default is 10.
-OBJECT_CACHE_SIZE = 10
+# The maximum number of folders that can be held simultaneously in the folder
+# cache. Increasing this number may give better performance, but also a larger
+# memory footprint. The default is 100. A value below 10 is not recommended.
+MAX_DIRECTORY_CACHE_SIZE = 100
+
+# The maximum number of science objects that can be held simultaneously in the
+# object cache. Increasing this number may give better performance, but also a
+# larger memory footprint. The default is 10.
+MAX_OBJECT_CACHE_SIZE = 10
+
+# The maximum number of faceting selections that can be displayed for a facet.
+# The faceting selections are displayed when opening a facet to add a
+# restriction to a faceted search. The selections are ordered by the number of
+# matching science objects. If there are more faceting selections than this
+# setting allows, the selections that match the fewest objects are not
+# displayed. Increasing this setting causes longer lists of faceting selections
+# to appear in the filesystem, increases memory footprint for the application
+# and causes longer response times when opening folders.
+MAX_FACET_VALUES = 100
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.

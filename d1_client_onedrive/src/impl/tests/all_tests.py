@@ -45,7 +45,7 @@ from test_cache import TestCache
 from test_filename_extension import TestFilenameExtension
 #from test_query_engine_description import TestQueryEngineDescription
 from test_solr_query_simulator import TestSolrQuerySimulator
-from test_faceted_search_resolver import TestFacetedSearchResolver
+from test_faceted_search import TestFacetedSearchResolver
 
 #from test_solr_query import TestSolrQuery
 

@@ -18,11 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`sciobj_resolver`
-=========================
+''':mod:`resolver.abstract`
+===========================
 
 :Synopsis:
- - Resolve a DataONE Science Object.
+ - Resolve the abstract description for a DataONE package.
 :Author: DataONE (Dahl)
 '''
 
@@ -34,7 +34,6 @@ import os
 
 # App.
 from directory import Directory, DirectoryItem
-import facet_path
 import resolver_abc
 
 # Set up logger for this module.
@@ -48,10 +47,7 @@ class Resolver(resolver_abc.Resolver):
   def resolve(self, path):
     raise PathException('<not implemented>')
 
-    #reading the object bytes
-    sysm = self.get_system_metadata(pid)
-    if offset + size > sysm.size:
-      size = sysm.size - offset
-    #trigger loading of the data if necessary
-    self.get(pid)
-    return self.datacache[pid][offset:offset + size]
+    abstxt = self.getAbstract(pid)
+    if offset + size > len(abstxt):
+      size = len(abstxt) - offset
+    return abstxt[offset:offset + size]

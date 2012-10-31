@@ -18,12 +18,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`preconfigured_search_resolver`
-=======================================
+''':mod:`resolver.flat_space`
+=============================
 
 :Synopsis:
- - Resolve a filesystem path to a preconfigured solr query.
+ - Resolve a filesystem path that points to a directory to the contents
+   of the directory by querying the query engine.
 :Author: DataONE (Dahl)
+
+directory entries:
+  filename / directory name
+  filename / directory boolean. False = filename, True = directory
+  size in bytes
 '''
 
 # Stdlib.
@@ -31,6 +37,8 @@ import logging
 import os
 
 # D1.
+
+# App.
 from directory import Directory, DirectoryItem
 import resolver_abc
 
@@ -44,8 +52,4 @@ class Resolver(resolver_abc.Resolver):
 
   def resolve(self, path):
     directory = Directory()
-    self.append_parent_and_self_references(directory)
-    directory.append(DirectoryItem('<not implemented>', 0))
-    #directory.append(DirectoryItem('Received path: {0}'.format(path), 0))
-    directory.append(DirectoryItem('Received path: {0}'.format(path.replace('/', '')), 0))
     return directory

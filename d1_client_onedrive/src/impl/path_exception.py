@@ -22,7 +22,7 @@
 ========================
 
 :Synopsis:
- - Type that gets raised as exception for malformed paths.
+ - Type that gets raised as exception for invalid paths.
 :Author: DataONE (Dahl)
 '''
 

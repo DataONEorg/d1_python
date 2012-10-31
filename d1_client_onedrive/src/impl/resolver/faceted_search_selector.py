@@ -18,8 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`faceted_search_selector`
-=================================
+''':mod:`resolver.faceted_search_selector`
+==========================================
 
 :Synopsis:
  - Disable faceted searching once an object has been selected.

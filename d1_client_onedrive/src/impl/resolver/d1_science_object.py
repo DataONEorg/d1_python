@@ -18,13 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`object_resolver`
-=========================
+''':mod:`resolver.d1_science_object`
+====================================
 
 :Synopsis:
- - Determine what type of DataONE object a given PID references and branch out
-   to a resolver that is specialized for that type.
-
+ - Resolve a DataONE Science Object.
 :Author: DataONE (Dahl)
 '''
 
@@ -33,20 +31,27 @@ import logging
 import os
 
 # D1.
+
+# App.
 from directory import Directory, DirectoryItem
-import path_exception
+import facet_path
 import resolver_abc
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class ObjectResolver(resolver_abc.Resolver):
-  def __init__(self, query_engine):
+class Resolver(resolver_abc.Resolver):
+  def __init__(self):
     pass
 
   def resolve(self, path):
-    raise PathException('Not implemented')
-    # systemmetadata.txt
-    # abstract.txt
-    # science object
+    raise PathException('<not implemented>')
+
+    #reading the object bytes
+    sysm = self.get_system_metadata(pid)
+    if offset + size > sysm.size:
+      size = sysm.size - offset
+    #trigger loading of the data if necessary
+    self.get(pid)
+    return self.datacache[pid][offset:offset + size]

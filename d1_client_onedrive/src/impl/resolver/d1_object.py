@@ -18,11 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`abstract_resolver`
-===========================
+''':mod:`resolver.d1_object`
+============================
 
 :Synopsis:
- - Resolve the abstract description for a DataONE package.
+ - Determine what type of DataONE object a given PID references and branch out
+   to a resolver that is specialized for that type.
+
 :Author: DataONE (Dahl)
 '''
 
@@ -31,23 +33,20 @@ import logging
 import os
 
 # D1.
-
-# App.
 from directory import Directory, DirectoryItem
+import path_exception
 import resolver_abc
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self):
+class ObjectResolver(resolver_abc.Resolver):
+  def __init__(self, query_engine):
     pass
 
   def resolve(self, path):
-    raise PathException('<not implemented>')
-
-    abstxt = self.getAbstract(pid)
-    if offset + size > len(abstxt):
-      size = len(abstxt) - offset
-    return abstxt[offset:offset + size]
+    raise PathException('Not implemented')
+    # systemmetadata.txt
+    # abstract.txt
+    # science object

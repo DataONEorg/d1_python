@@ -106,8 +106,8 @@ def log_setup():
   # Log entries are written to both file and stdout.
   logging.getLogger('').setLevel(logging.DEBUG)
   formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(name)s '
-    '%(message)s', '%Y-%m-%d %H:%M:%S'
+    '%(asctime)s %(levelname)-8s %(name)s'
+    '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'
   )
   # File.
   file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
@@ -146,8 +146,8 @@ def log_library_versions():
 
 def log_startup_parameters(options, arguments, fuse_args):
   log.info('Mounting ONEDrive (FUSE)')
-  log.info('  options: {0}'.format(str(options)))
-  log.info('  arguments: {0}'.format(str(arguments)))
+  log.info('  Options: {0}'.format(str(options)))
+  log.info('  Arguments: {0}'.format(str(arguments)))
   log.info('  FUSE arguments: {0}'.format(str(fuse_args)))
 
 

@@ -47,14 +47,14 @@ class D1Client(object):
     self.query_engine_description = None
     self.all_facet_names = None
 
-  def get_all_searchable_facet_names(self):
+  def get_all_searchable_and_returnable_facet_names(self):
     if self.all_facet_names is not None:
       return self.all_facet_names
     if self.query_engine_description is None:
       self.init_query_engine_description()
     self.all_facet_names = []
     for f in self.query_engine_description.queryField:
-      if f.searchable == True:
+      if f.searchable and f.returnable:
         self.all_facet_names.append(f.name)
     return self.all_facet_names
 

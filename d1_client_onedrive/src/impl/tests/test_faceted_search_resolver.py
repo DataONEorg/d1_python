@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_faceted_search_resolver`
+''':mod:`test_faceted_search`
 ======================================
 
 :Synopsis:
@@ -37,12 +37,12 @@ import unittest
 sys.path.append('../fuse')
 from directory import Directory, DirectoryItem
 import solr_query_simulator
-import faceted_search_resolver
+import faceted_search
 
 
 class TestFacetedSearchResolver(unittest.TestCase):
   def setUp(self):
-    self.i = faceted_search_resolver.Resolver(solr_query_simulator.SolrQuerySimulator())
+    self.i = faceted_search.Resolver(solr_query_simulator.SolrQuerySimulator())
 
   def test_100_resolve(self):
     d = self.i.resolve('/')

@@ -18,38 +18,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`flat_space_resolver`
-=================================
+''':mod:`util`
+==============
 
 :Synopsis:
- - Resolve a filesystem path that points to a directory to the contents
-   of the directory by querying the query engine.
+ - Misc utilities that don't fit anywhere else.
 :Author: DataONE (Dahl)
-
-directory entries:
-  filename / directory name
-  filename / directory boolean. False = filename, True = directory
-  size in bytes
 '''
 
 # Stdlib.
+import collections
 import logging
 import os
-
-# D1.
+import pprint
 
 # App.
-from directory import Directory, DirectoryItem
-import resolver_abc
+import os_escape
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
+#def log_dump(s):
+#  log.debug('{0}: {1}'.format(s, pprint.pformat(eval(s))))
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self):
-    pass
 
-  def resolve(self, path):
-    directory = Directory()
-    return directory
+def log_dump(s):
+  log.debug(pprint.pformat(s))
+
+
+def string_from_path_array(path):
+  return os.path.sep.join(path)
+
+
+def is_root(path):
+  return path == ['', '']

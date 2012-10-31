@@ -44,7 +44,7 @@ import fuse
 # App.
 import cache
 from directory import Directory, DirectoryItem
-import root_resolver
+import root
 import settings
 
 
@@ -54,9 +54,9 @@ log = logging.getLogger(__name__)
 
 class FUSECallbacks(fuse.Operations):
   def __init__(self):
-    self.root_resolver = root_resolver.RootResolver()
+    self.root = root.RootResolver()
     self.start_time = time.time()
-    self.directory_cache = cache.Cache(settings.DIRECTORY_CACHE_SIZE)
+    self.directory_cache = cache.Cache(settings.MAX_DIRECTORY_CACHE_SIZE)
 
 
   def getattr(self, path, fh):
@@ -85,7 +85,7 @@ class FUSECallbacks(fuse.Operations):
     except KeyError:
       #print file_to_attributes_map
       self._raise_error_no_such_file_or_directory(path)
-    return self._create_stat_dict(o[1], o[0])
+    return self._create_stat_dict(is_directory=o[1], size=o[0])
 
 
   def open(self, path, flags):
@@ -115,12 +115,13 @@ class FUSECallbacks(fuse.Operations):
 
 
   def _get_and_cache_directory(self, path):
+    #self.directory_cache.log_dump()
     try:
       directory, file_to_attributes_map = self.directory_cache[path]
       log.debug('Found in cache: {0}'.format(path))
     except KeyError:
       log.debug('Not found in cache. {0}'.format(path))
-      directory = self.root_resolver.resolve(path)
+      directory = self.root.resolve(path)
       file_to_attributes_map = self._create_file_to_attributes_map(directory)
       self.directory_cache[path] = directory, file_to_attributes_map
     return directory, file_to_attributes_map
@@ -130,14 +131,19 @@ class FUSECallbacks(fuse.Operations):
     return dict((d.name(), (d.size(), d.is_directory())) for d in directory)
 
 
-  def _create_stat_dict(self, is_directory=False, size=0, n_links=2, atime=0,
-                        mtime=0, ctime=0):
+  def _create_stat_dict(self, is_directory=False, size=0, n_links=2, atime=None,
+                        mtime=None, ctime=None):
     return dict(
       st_mode = stat.S_IFDIR | 0755 if is_directory else stat.S_IFREG | 0644,
-      st_nlink = 2,
-      st_atime = atime, #self.start_time,
-      st_mtime = mtime, #self.start_time,
-      st_ctime = ctime, #self.start_time,
+      st_ino = 0,
+      st_dev = 0,
+      st_nlink = n_links,
+      st_uid = 0,
+      st_gid = 0,
+      st_size = size,
+      st_atime = atime if atime else self.start_time,
+      st_mtime = mtime if mtime else self.start_time,
+      st_ctime = ctime if ctime else self.start_time,
     )
 
 
