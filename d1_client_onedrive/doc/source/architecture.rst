@@ -179,6 +179,12 @@ Notes
   directories designating different types of interactions which can be performed
   with the DataONE infrastructure. It also parses the root elements of paths and
   transfers control to the appropriate path resolver.
+  
+- All the resolvers handle paths as lists of path segments. The root resolver performs
+  the conversion of the path string to a list of path segments by splitting
+  the path on the path separator and unescaping the segments. This allows the
+  path segments to contain DataONE identifiers that include the path separator
+  and simplifies path handling in the resolvers.
 
 - The ``Faceted Search Selector`` exists so that faceted search can be turned off
   once a specific object has been selected. In other words, the path::
@@ -210,13 +216,34 @@ Notes
   other DataONE related information can be exposed in the filesystem.
 
 
-Command Processor
+Command processor
 -----------------
 
 To retrieve lists of files and folders for display in the filesystem, the
-resolvers issue commands to the Command Processor. The Command Processor
+resolvers issue commands to the Command processor. The Command processor
 transforms the commands into one or more queries against the DataONE Solr index
 and the DataONE infrastructure and wraps up the results.
+
+
+Path representation
+-------------------
+
+Only the driver specific part of ONEDrive handles paths as strings. The bulk
+of the code handles paths as lists of path segments. The segments are strings
+or Unicode. They do not contain any escaped characters. The segments may contain
+characters that have special meaning in the filesystem, such as the path
+separator character ("/" on *nix). If so, these characters do NOT have the
+special meaning that they would have in a normal path string. When joining
+the segments together to a path string, the special characters would be
+escaped.
+
+Normally, when
+splitting the root path, "/", one ends up with a list
+of two empty strings. The first empty string shows that the path is absolute
+(starting at root), and the second that there is nothing after root. In ONEDrive,
+all paths represented as lists of path segments are assumed to be rooted, so
+the first, empty, segment is removed. 
+
 
 
 Index

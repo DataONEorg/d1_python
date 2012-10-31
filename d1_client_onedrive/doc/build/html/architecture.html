@@ -57,8 +57,9 @@
 <li><a class="reference internal" href="#notes">3.3.2. Notes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#command-processor">3.4. Command Processor</a></li>
-<li><a class="reference internal" href="#index">3.5. Index</a><ul>
+<li><a class="reference internal" href="#command-processor">3.4. Command processor</a></li>
+<li><a class="reference internal" href="#path-representation">3.5. Path representation</a></li>
+<li><a class="reference internal" href="#index">3.6. Index</a><ul>
 </ul>
 </li>
 </ul>
@@ -262,6 +263,12 @@ directories designating different types of interactions which can be performed
 with the DataONE infrastructure. It also parses the root elements of paths and
 transfers control to the appropriate path resolver.</p>
 </li>
+<li><p class="first">All the resolvers handle paths as lists of path segments. The root resolver performs
+the conversion of the path string to a list of path segments by splitting
+the path on the path separator and unescaping the segments. This allows the
+path segments to contain DataONE identifiers that include the path separator
+and simplifies path handling in the resolvers.</p>
+</li>
 <li><p class="first">The <tt class="docutils literal"><span class="pre">Faceted</span> <span class="pre">Search</span> <span class="pre">Selector</span></tt> exists so that faceted search can be turned off
 once a specific object has been selected. In other words, the path:</p>
 <div class="highlight-python"><pre>/FacetedSearch/@facet1/#value1/@facet2/#value2/mydataonepid/science_object.jpg</pre>
@@ -294,14 +301,31 @@ other DataONE related information can be exposed in the filesystem.</p>
 </div>
 </div>
 <div class="section" id="command-processor">
-<h2>3.4. Command Processor<a class="headerlink" href="#command-processor" title="Permalink to this headline">¶</a></h2>
+<h2>3.4. Command processor<a class="headerlink" href="#command-processor" title="Permalink to this headline">¶</a></h2>
 <p>To retrieve lists of files and folders for display in the filesystem, the
-resolvers issue commands to the Command Processor. The Command Processor
+resolvers issue commands to the Command processor. The Command processor
 transforms the commands into one or more queries against the DataONE Solr index
 and the DataONE infrastructure and wraps up the results.</p>
 </div>
+<div class="section" id="path-representation">
+<h2>3.5. Path representation<a class="headerlink" href="#path-representation" title="Permalink to this headline">¶</a></h2>
+<p>Only the driver specific part of ONEDrive handles paths as strings. The bulk
+of the code handles paths as lists of path segments. The segments are strings
+or Unicode. They do not contain any escaped characters. The segments may contain
+characters that have special meaning in the filesystem, such as the path
+separator character (&#8220;/&#8221; on <a href="#id1"><span class="problematic" id="id2">*</span></a>nix). If so, these characters do NOT have the
+special meaning that they would have in a normal path string. When joining
+the segments together to a path string, the special characters would be
+escaped.</p>
+<p>Normally, when
+splitting the root path, &#8220;/&#8221;, one ends up with a list
+of two empty strings. The first empty string shows that the path is absolute
+(starting at root), and the second that there is nothing after root. In ONEDrive,
+all paths represented as lists of path segments are assumed to be rooted, so
+the first, empty, segment is removed.</p>
+</div>
 <div class="section" id="index">
-<h2>3.5. Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
+<h2>3.6. Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">1. Setup</a><ul>
