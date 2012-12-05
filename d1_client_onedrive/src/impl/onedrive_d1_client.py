@@ -75,6 +75,9 @@ class D1Client(object):
   def init_query_engine_description(self):
     self.query_engine_description = self.client.getQueryEngineDescription('solr')
 
+  def describe(self, pid):
+    return self.client.describe(pid)
+
 # USED
 ################################################################################
 # UNUSED

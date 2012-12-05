@@ -49,7 +49,8 @@ def make_absolute(p):
 # environments are used by software developers for testing and debugging of new
 # components. This setting controls to which environment ONEDrive connects.
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn' # Bypass RR.
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 
@@ -68,18 +69,28 @@ MOUNTPOINT = make_absolute('one') # (default, relative path)
 # this setting, use a faceted search to reduce the number of matching objects.
 # Increasing this setting causes longer lists of science objects to to appear in
 # the filesystem, increases memory footprint for the application and causes
-# longer response times when opening folders. The default value is 1000.
-MAX_OBJECTS_IN_DIRECTORY = 1000
+# longer response times when opening folders. Default value: 1000.
+MAX_OBJECTS_IN_DIRECTORY = 3
 
-# The maximum number of folders that can be held simultaneously in the folder
-# cache. Increasing this number may give better performance, but also a larger
-# memory footprint. The default is 100. A value below 10 is not recommended.
+# The maximum number of path attributes to cache. Increasing this number may
+# give better performance, but also a larger memory footprint. A value below 100
+# is not recommended. Default value: 1000.
+MAX_ATTRIBUTE_CACHE_SIZE = 1000
+
+# The maximum number of folders to cache. Increasing this number may give better
+# performance, but also a larger memory footprint. A value below 10 is not
+# recommended. Default value: 100.
 MAX_DIRECTORY_CACHE_SIZE = 100
 
-# The maximum number of science objects that can be held simultaneously in the
-# object cache. Increasing this number may give better performance, but also a
-# larger memory footprint. The default is 10.
+# The maximum number of science objects to cache. Increasing this number may
+# give better performance, but also a larger memory footprint. Default value:
+# 10.
 MAX_OBJECT_CACHE_SIZE = 10
+
+# The maximum number of error message file paths to cache. Decreasing this
+# number below the default is not recommended, as it may cause error messages
+# not to be displayed correctly in the ONEDrive filesystem. Default value: 1000.
+MAX_ERROR_PATH_CACHE_SIZE = 1000
 
 # The maximum number of faceting selections that can be displayed for a facet.
 # The faceting selections are displayed when opening a facet to add a
@@ -88,8 +99,22 @@ MAX_OBJECT_CACHE_SIZE = 10
 # setting allows, the selections that match the fewest objects are not
 # displayed. Increasing this setting causes longer lists of faceting selections
 # to appear in the filesystem, increases memory footprint for the application
-# and causes longer response times when opening folders.
+# and causes longer response times when opening folders. Default value: 100.
 MAX_FACET_VALUES = 100
+
+# The maximum number of facet names for which to cache available facet values.
+# Increasing the size of this cache from its default is not necessary, as the
+# default value has been chosen to make it unlikely that the cache will
+# overflow. Decreasing the size is not recommended, as the cache has very little
+# impact on the memory footprint, while holding values which would be expensive
+# to keep pulling from DataONE. Default value: 1000.
+#MAX_FACET_NAME_CACHE_SIZE = 1000
+# TODO: Will probably end up removing this one, as the counts of matching
+# objects must be retrieved from SolR, and the values that this cache was
+# intended to hold are included with that information.
+
+# The maximum number of SolR query results to cache.
+MAX_SOLR_QUERY_CACHE_SIZE = 1000
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
@@ -106,7 +131,6 @@ DEBUG = True
 FACET_NAME_DECORATOR = '@' # (default is '@')
 FACET_VALUE_DECORATOR = '#' # (default is '#')
 
-# FACET_FILTER:
 # A list of regular expressions that filter the values returned by the DataONE
 # CNRead.getQueryEngineDescription() API to determine which ones are suitable
 # for faceting. For a field to be available for faceting, it must be listed as

@@ -29,9 +29,12 @@
 # Stdlib.
 import logging
 import os
+import util
 
 # D1.
-from directory import Directory, DirectoryItem
+import directory
+import directory_item
+import path_exception
 import resolver_abc
 
 # Set up logger for this module.
@@ -42,10 +45,23 @@ class Resolver(resolver_abc.Resolver):
   def __init__(self):
     pass
 
-  def resolve(self, path):
-    directory = Directory()
-    self.append_parent_and_self_references(directory)
-    directory.append(DirectoryItem('<not implemented>', 0))
-    #directory.append(DirectoryItem('Received path: {0}'.format(path), 0))
-    directory.append(DirectoryItem('Received path: {0}'.format(path.replace('/', '')), 0))
-    return directory
+  def get_attributes(self, path):
+    raise path_exception.PathException('<not implemented>')
+
+  def get_directory(self, path):
+    raise path_exception.PathException('<not implemented>')
+
+#  def resolve(self, path):
+#    log.debug('Resolve: {0}'.format(util.string_from_path_elements(path)))
+#
+#    directory = Directory()
+#    
+#    self.append_parent_and_self_references(directory)
+#
+#    return directory
+#      directory = Directory()
+#    self.append_parent_and_self_references(directory)
+##    directory.append(DirectoryItem('<not implemented>', 0))
+##    #directory.append(DirectoryItem('Received path: {0}'.format(path), 0))
+##    directory.append(DirectoryItem('Received path: {0}'.format(path.replace('/', '')), 0))
+#    return directory

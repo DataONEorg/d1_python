@@ -35,7 +35,8 @@ import unittest
 
 # D1.
 sys.path.append('../fuse')
-from directory import Directory, DirectoryItem
+import directory
+import directory_item
 import solr_query_simulator
 import faceted_search
 

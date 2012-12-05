@@ -46,7 +46,7 @@ def log_dump(s):
   log.debug(pprint.pformat(s))
 
 
-def string_from_path_array(path):
+def string_from_path_elements(path):
   return os.path.sep.join(path)
 
 

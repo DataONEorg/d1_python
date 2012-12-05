@@ -35,21 +35,40 @@ directory entries:
 # Stdlib.
 import logging
 import os
+import util
 
 # D1.
 
 # App.
-from directory import Directory, DirectoryItem
+import attributes
+import directory
+import directory_item
+import path_exception
 import resolver_abc
+import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
+how_to_use = 'Use FlatSpace to go directly to any DataONE object by typing ' \
+  'the PID in the path'
+
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self):
-    pass
+    self.resource_map_resolver = resource_map.Resolver()
 
-  def resolve(self, path):
-    directory = Directory()
-    return directory
+  def get_attributes(self, path):
+    if not len(path):
+      return attributes.Attributes(is_dir=True)
+
+    if path[0] == how_to_use:
+      return attributes.Attributes()
+
+    return self.resource_map_resolver.get_attributes(path)
+
+  def get_directory(self, path):
+    if not len(path):
+      return [directory_item.DirectoryItem(how_to_use)]
+
+    return self.resource_map_resolver.get_directory(path)

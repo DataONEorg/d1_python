@@ -18,55 +18,43 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.resolver_abc`
-===============================
+''':mod:`attributes`
+====================
 
 :Synopsis:
- - Base class for the resolvers.
- - The resolvers are a class of objects that translate filesystem paths to
-   their corresponding files and folders.
+ - Hold the size and other attributes for a file or folder.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-import abc
+import collections
 import logging
 import os
 
 # App.
-import directory
-import directory_item
+import os_escape
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class Resolver(object):
-  __metaclass__ = abc.ABCMeta
+class Attributes(object):
+  def __init__(self, size=0, date=None, is_dir=False):
+    self.size_ = size
+    self.date_ = date
+    self.is_dir_ = is_dir
 
-  def __init__(self):
-    pass
+  def __eq__(self, other):
+    return self.__dict__ == other.__dict__
 
-  @abc.abstractmethod
-  def get_attributes(self, path):
-    pass
+  def __repr__(self):
+    return '{0}({1})'.format(self.__class__, self.__dict__)
 
-  @abc.abstractmethod
-  def get_directory(self, path):
-    pass
+  def size(self):
+    return self.size_
 
-  #def invalid_directory_error(self):
-  #  directory = Directory()
-  #  self.append_parent_and_self_references(directory)
-  #  directory.append(DirectoryItem('<non-existing directory>', 0, False))
-  #  return directory
+  def date(self):
+    return self.date_
 
-  def append_parent_and_self_references(self, directory):
-    directory.append(directory_item.DirectoryItem('.'))
-    directory.append(directory_item.DirectoryItem('..'))
-
-  def is_root(self, path):
-    return path == ['', '']
-
-  def _is_root(self, path):
-    return not len(path)
+  def is_dir(self):
+    return self.is_dir_

@@ -23,7 +23,6 @@
 
 :Synopsis:
  - Hold the list of files and folders for a directory.
- - Hold the name, size and is_directory flag for each file or folder.
 :Author: DataONE (Dahl)
 '''
 
@@ -33,6 +32,7 @@ import logging
 import os
 
 # App.
+import directory_item
 import os_escape
 
 # Set up logger for this module.
@@ -68,34 +68,3 @@ class Directory(collections.MutableSequence):
 
   def names(self):
     return [d.name() for d in self.list]
-
-#===============================================================================
-
-
-class DirectoryItem(object):
-  def __init__(self, name, size=0, is_dir=False):
-    self.name_ = name
-    self.size_ = size
-    self.is_directory_ = is_dir
-
-  def __eq__(self, other):
-    return self.__dict__ == other.__dict__
-
-  def __str__(self):
-    return 'DirectoryItem({0}, {1}, {2})'.format(
-      repr(
-        self.name_
-      ), self.size_, self.is_directory_
-    )
-
-  def __repr__(self):
-    return str(self)
-
-  def name(self):
-    return self.name_
-
-  def size(self):
-    return self.size_
-
-  def is_directory(self):
-    return self.is_directory_

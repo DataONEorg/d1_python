@@ -96,6 +96,7 @@ def main():
     fuse_args['local'] = True
 
   log_startup_parameters(options, arguments, fuse_args)
+  log_settings()
 
   # Mount the drive and handle callbacks forever.
   fuse.FUSE(callbacks.FUSECallbacks(), mount_point, **fuse_args)
@@ -149,6 +150,13 @@ def log_startup_parameters(options, arguments, fuse_args):
   log.info('  Options: {0}'.format(str(options)))
   log.info('  Arguments: {0}'.format(str(arguments)))
   log.info('  FUSE arguments: {0}'.format(str(fuse_args)))
+
+
+def log_settings():
+  log.info('Settings:')
+  for k, v in sorted(settings.__dict__.items()):
+    if k == k.upper():
+      log.info('  {0}: {1}'.format(k, v))
 
 
 if __name__ == '__main__':

@@ -30,6 +30,7 @@
 
 # Std.
 import errno
+import fuse
 import logging
 import os
 import stat
@@ -39,11 +40,14 @@ import urllib
 import urlparse
 
 # 3rd party.
-import fuse
+
+# D1.
+import d1_common.date_time
 
 # App.
+import directory
+import directory_item
 import cache
-from directory import Directory, DirectoryItem
 import root
 import settings
 
@@ -56,6 +60,7 @@ class FUSECallbacks(fuse.Operations):
   def __init__(self):
     self.root = root.RootResolver()
     self.start_time = time.time()
+    self.attribute_cache = cache.Cache(settings.MAX_ATTRIBUTE_CACHE_SIZE)
     self.directory_cache = cache.Cache(settings.MAX_DIRECTORY_CACHE_SIZE)
 
 
@@ -65,85 +70,85 @@ class FUSECallbacks(fuse.Operations):
     Returns a dictionary with keys identical to the stat C structure of stat(2).
     st_atime, st_mtime and st_ctime should be floats. On OSX, st_nlink should
     count all files inside the directory. On Linux, only the subdirectories are
-    counted.
-
-    The 'st_dev' and 'st_blksize' fields are ignored. The 'st_ino' field is
-    ignored except if the 'use_ino' mount option is given.
+    counted. The 'st_dev' and 'st_blksize' fields are ignored. The 'st_ino'
+    field is ignored except if the 'use_ino' mount option is given.
 
     This method gets very heavy traffic.
     '''
-    # Handle root as special case. Set to directory.
-    if path == '/':
-      return self._create_stat_dict(is_directory=True)
-    #
-    head, tail = os.path.split(path)
-    #print 'head: ', head
-    #print 'tail: ', tail
-    directory, file_to_attributes_map = self._get_and_cache_directory(head)
+    log.debug('getattr(): {0}'.format(path))
     try:
-      o = file_to_attributes_map[tail]
+      attr = self.attribute_cache[path]
     except KeyError:
-      #print file_to_attributes_map
-      self._raise_error_no_such_file_or_directory(path)
-    return self._create_stat_dict(is_directory=o[1], size=o[0])
-
-
-  def open(self, path, flags):
-    '''Called by FUSE when a file is opened.
-    Determines if the provided path and open flags are valid.
-    '''
-    self.logger.debug('open: {0}'.format(path))
-    split0 = os.path.split(path)
-    if split0[0] in ['/object', '/meta']:
-      if split0[1] not in self.objects.keys():
-        self._raise_error_no_such_file_or_directory(path)
-    if (flags & O_ACCMODE) != os.O_RDONLY:
-      self._raise_error_permission_denied(path)
-    return 0
-
+      attr = self.root.get_attributes(path)
+      #self.attribute_cache[path] = attr //////////////////////////////////////// for debugging, disable cache
+    log.debug('getattr() returned attribute: {0}'.format(attr))
+    return self._stat_from_attributes(attr)
+  
 
   def readdir(self, path, fh):
     '''Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
     '''
-    directory, file_to_attributes_map = self._get_and_cache_directory(path)
-    return directory.names()
-
-
-  def read(self, path, size, offset, fh):
-    pass
-
-
-  def _get_and_cache_directory(self, path):
-    #self.directory_cache.log_dump()
+    log.debug('readdir(): {0}'.format(path))
     try:
-      directory, file_to_attributes_map = self.directory_cache[path]
-      log.debug('Found in cache: {0}'.format(path))
+      dir = self.directory_cache[path]
     except KeyError:
-      log.debug('Not found in cache. {0}'.format(path))
-      directory = self.root.resolve(path)
-      file_to_attributes_map = self._create_file_to_attributes_map(directory)
-      self.directory_cache[path] = directory, file_to_attributes_map
-    return directory, file_to_attributes_map
+      dir = self.root.get_directory(path)
+      self.directory_cache[path] = dir
+    return dir.names()
+      
+
+  def open(self, path, flags):
+    '''Called by FUSE when a file is opened.
+    Determines if the provided path and open flags are valid.
+    '''
+    log.debug('open(): {0}'.format(path))
+    self._raise_error_no_such_file_or_directory(path)
+#    split0 = os.path.split(path)
+#    if split0[0] in ['/object', '/meta']:
+#      if split0[1] not in self.objects.keys():
+#    if (flags & O_ACCMODE) != os.O_RDONLY:
+#      self._raise_error_permission_denied(path)
+#    return 0
+
+  
+  def read(self, path, size, offset, fh):
+    log.debug('read(): {0}'.format(path))
+    self._raise_error_no_such_file_or_directory(path)
 
 
-  def _create_file_to_attributes_map(self, directory):
-    return dict((d.name(), (d.size(), d.is_directory())) for d in directory)
+#  def _get_and_cache_directory(self, path):
+#    #self.directory_cache.log_dump()
+#    try:
+#      directory, file_to_attributes_map = self.directory_cache[path]
+#      log.debug('Found in cache: {0}'.format(path))
+#    except KeyError:
+#      log.debug('Not found in cache. {0}'.format(path))
+#      directory = self.root.resolve(path)
+#      file_to_attributes_map = self._create_file_to_attributes_map(directory)
+#      self.directory_cache[path] = directory, file_to_attributes_map
+#    return directory, file_to_attributes_map
 
 
-  def _create_stat_dict(self, is_directory=False, size=0, n_links=2, atime=None,
-                        mtime=None, ctime=None):
+#  def _create_file_to_attributes_map(self, directory):
+#    return dict((d.name(), (d.size(), d.is_dir())) for d in directory)
+
+
+  def _stat_from_attributes(self, attributes):
+    date_time = d1_common.date_time.to_seconds_since_epoch(
+      attributes.date()) if attributes.date() is not None else self.start_time 
     return dict(
-      st_mode = stat.S_IFDIR | 0755 if is_directory else stat.S_IFREG | 0644,
+      st_mode = stat.S_IFDIR | 0755 if attributes.is_dir() else \
+        stat.S_IFREG | 0644,
       st_ino = 0,
       st_dev = 0,
-      st_nlink = n_links,
+      st_nlink = 2, # TODO
       st_uid = 0,
       st_gid = 0,
-      st_size = size,
-      st_atime = atime if atime else self.start_time,
-      st_mtime = mtime if mtime else self.start_time,
-      st_ctime = ctime if ctime else self.start_time,
+      st_size = attributes.size(),
+      st_atime = date_time,
+      st_mtime = date_time,
+      st_ctime = date_time,
     )
 
 
@@ -152,9 +157,9 @@ class FUSECallbacks(fuse.Operations):
     raise OSError(errno.ENOENT, '')
 
 
-  def _raise_error_permission_denied(self, path):
-    log.debug('Error: Permission denied: {0}'.format(path))
-    raise OSError(errno.EACCES, '')
+#  def _raise_error_permission_denied(self, path):
+#    log.debug('Error: Permission denied: {0}'.format(path))
+#    raise OSError(errno.EACCES, '')
 
 
   def _osx_special():

@@ -49,7 +49,17 @@ import urllib
 
 
 def filename_from_identifier(identifier):
-  return urllib.quote(identifier.encode('utf8'), safe='`~!@#$%^&*()-=<>,.: ')
+  # "%" is not safe because it causes the URL "percent-encoding" to become
+  # non-reversible.
+  #
+  # TODO: "@" and "#" are reserved as decorators for facet names and values.
+  # They are only reserved as the first character. For now, they are allowed in
+  # all positions because it allows escaping to be performed in a single
+  # location (the root resolver), instead of individually by each resolver.
+  #
+  # On Windows, the following characters are not allowed:
+  # \ / :  * ? " < > |
+  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
 
 
 def identifier_from_filename(filename):
