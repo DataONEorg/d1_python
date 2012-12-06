@@ -208,7 +208,6 @@ class DataONEClient(object):
       except Exception, e:
         self.logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
-    return None
 
   @d1_common.util.utf8_to_unicode
   def create(self, targetNodeId=None, ):

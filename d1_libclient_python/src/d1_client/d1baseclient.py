@@ -287,18 +287,31 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       return self._read_and_deserialize_dataone_type(response)
     self._error(response)
 
-
-  def _read_header_response(self, response):
-    if self._status_is_200_ok(response):
-      self._read_and_capture(response)
-      return response.getheaders()
-    self._error(response)
-
-
+  
   def _read_stream_response(self, response):
     if self._status_is_200_ok(response):
       return response
     self._error(response)
+
+
+  def _read_header_response(self, response):
+    headers = dict(response.getheaders()) 
+    if self._status_is_200_ok(response):
+      self._read_and_capture(response)
+      return headers
+    self._raise_dataone_exception_from_header(response, headers)
+
+
+  def _raise_dataone_exception_from_header(self, response, headers):
+    error_code = response.status
+    detail_code = 0;
+    description = headers.get('dataone-exception-description',
+                              '<unknown error>')
+    trace_information = None
+    pid = headers.get('dataone-exception-pid', '<unknown pid>')
+
+    raise d1_common.types.exceptions.DataONEIdentifierException(error_code,
+      detail_code, description, trace_information, pid)
 
   # ----------------------------------------------------------------------------
   # Misc.
