@@ -144,7 +144,7 @@ class Resolver(resolver_abc.Resolver):
     # the faceted search area, so the facet section is stripped off the path,
     # and the remainder is passed to the package resolver.
     if len(object_section):
-      return self.resource_map_resolver.get_attributes(path)
+      return self.resource_map_resolver.get_attributes(object_section)
 
     # Handle faceted path that is syntactically valid but uses a non-existing
     # facet name or value.

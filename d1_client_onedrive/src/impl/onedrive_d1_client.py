@@ -43,6 +43,7 @@ log = logging.getLogger(__name__)
 
 class D1Client(object):
   def __init__(self, base_url=settings.DATAONE_ROOT):
+    self.base_url = base_url
     self.client = d1_client.cnclient_1_1.CoordinatingNodeClient(base_url=base_url)
     self.query_engine_description = None
     self.all_facet_names = None
@@ -78,17 +79,13 @@ class D1Client(object):
   def describe(self, pid):
     return self.client.describe(pid)
 
+  def get_science_object(self, pid):
+    d1client = d1_client.d1client.DataONEClient(cnBaseUrl=self.base_url)
+    return d1client.get(pid)
+
 # USED
 ################################################################################
 # UNUSED
-
-  def get_science_object(self, pid):
-    try:
-      return self.objectcache[pid]
-    except:
-      logging.info('get_object: Cache miss on PID {0}'.format(pid))
-    self.objectcache[pid] = d1_client.d1client.DataONEObject(pid, cnBaseUrl=self.base_url)
-    return self.objectcache[pid]
 
   def get_system_metadata(self, pid):
     try:
@@ -118,14 +115,3 @@ class D1Client(object):
     :rtype: DataONE Persistent ID
     '''
     return filename[:filename.rfind('.')]
-
-  def get(self, pid):
-    '''Get object bytes.
-    '''
-    try:
-      return self.datacache[pid]
-    except:
-      logging.info('get: Cache miss on PID {0}'.format(pid))
-    obj = self.get_object(pid)
-    self.datacache[pid] = obj.get().read()
-    return self.datacache[pid]

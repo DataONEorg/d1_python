@@ -18,23 +18,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`path_exception`
-========================
+''':mod:`singleton`
+===================
 
 :Synopsis:
- - Type that gets raised as exception for invalid paths.
+ - Base class for singletons.
 :Author: DataONE (Dahl)
 '''
 
-import inspect
+# Stdlib.
 import logging
+import os
+
+# App.
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class PathException(Exception):
-  def __init__(self, message):
-    Exception.__init__(self, message)
-    trace = ', '.join(['{0}({1})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
-    log.debug('PathException("{0}"): {1}'.format(message, trace))
+# Note: This Singleton class does not prevent __init__() in the derived class
+# from getting called each time the class is instantiated. I did not find
+# a singleton class that prevented __init__() from getting called.
+class Singleton(object):
+  _instances = {}
+
+  def __new__(class_, *args, **kwargs):
+    if class_ not in class_._instances:
+      class_._instances[class_] = super(Singleton, class_)\
+        .__new__(class_, *args, **kwargs)
+    return class_._instances[class_]

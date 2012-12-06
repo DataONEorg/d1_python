@@ -67,7 +67,7 @@ class Resolver(resolver_abc.Resolver):
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
     if len(path) > 1 or not self._is_resource_map(path[0]):
-      return self.d1_object_resolver.get_attributes(path)
+      return self.d1_object_resolver.get_attributes(path[1:])
 
     return self._get_attribute(path[0])
 
@@ -89,7 +89,9 @@ class Resolver(resolver_abc.Resolver):
     return attributes.Attributes(is_dir=True, size=123)
 
   def _get_directory(self, path):
-    return [directory_item.DirectoryItem(('test-resource-map')) for u in [1, 2, 3]]
+    resource_map = self.command_processor.get_and_cache_science_object(path[0])
+    pids = self.deserialize_resource_map(resource_map)
+    return [directory_item.DirectoryItem(pid) for pid in pids]
 
   def _is_resource_map(self, pid):
     #try:
@@ -114,37 +116,29 @@ class Resolver(resolver_abc.Resolver):
     #      # BadStatusLine means that the object was not found on the server
     #      return False
 
-  def deserialize_resource_map(self):
-    xml_doc = open('r_test3.package.2012111515031353017039.rdf').read()
-
+  def deserialize_resource_map(self, resource_map):
     package = d1_client.data_package.DataPackage()
+    package._parse_rdf_xml(resource_map)
+    return sorted(package.scidata_dict.keys())
 
-    package._parse_rdf_xml(xml_doc)
+  #    for sci_obj_pid, sci_obj in package.scidata_dict.items():
+  #      print sci_obj_pid
+  #      print sci_obj.meta
 
-    for sci_obj_pid, sci_obj in package.scidata_dict.items():
-      print sci_obj_pid
-      print sci_obj.meta
-
-    print package.scimeta.pid
-    #    {
-    #     'original_pid': None, 
-    #     'pid': None, 
-    #     'scidata_dict': 
-    #      {u'r_test3.scidata.1.2012111515031353017039':
-    #        <d1_client.data_package.DataObject object at 0x32edf90>,
-    #        u'r_test3.scidata.2.2012111515031353017039':
-    #        <d1_client.data_package.DataObject object at 0x32f5890>
-    #      },
-    #      'sysmeta': None,
-    #      'resmap': None,
-    #      'scimeta':
-    #        <d1_client.data_package.DataObject object at 0x3300110>
-    #    }
-    #
-    #    
-    #    print package.__dict__
-
-    return
+  #    {
+  #     'original_pid': None, 
+  #     'pid': None, 
+  #     'scidata_dict': 
+  #      {u'r_test3.scidata.1.2012111515031353017039':
+  #        <d1_client.data_package.DataObject object at 0x32edf90>,
+  #        u'r_test3.scidata.2.2012111515031353017039':
+  #        <d1_client.data_package.DataObject object at 0x32f5890>
+  #      },
+  #      'sysmeta': None,
+  #      'resmap': None,
+  #      'scimeta':
+  #        <d1_client.data_package.DataObject object at 0x3300110>
+  #    }
 
   # Private.
 

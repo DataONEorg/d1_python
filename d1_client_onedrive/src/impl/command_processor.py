@@ -33,6 +33,7 @@ import os
 import re
 
 # D1.
+import d1_client.d1client
 import d1_common.date_time
 
 # App.
@@ -41,18 +42,29 @@ import onedrive_d1_client
 import onedrive_solr_client
 import path_exception
 import settings
+import singleton
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class CommandProcessor(object):
+class CommandProcessor(singleton.Singleton):
   def __init__(self):
+    # The Singleton base class does not prevent __init__() from being called
+    # each time the class is instantiated.
+    try:
+      self.is_initialized
+    except AttributeError:
+      pass
+    else:
+      return
+    self.is_initialized = True
     #self.d1_client = onedrive_d1_client.D1Client()
     #self.solr_client = onedrive_solr_client.SolrClient()
     self.fields_good_for_faceting = self.init_field_names_good_for_faceting()
     self.solr_query_cache = cache.Cache(settings.MAX_SOLR_QUERY_CACHE_SIZE)
     self.object_description_cache = cache.Cache(1000)
+    self.science_object_cache = cache.Cache(10)
 
   # Solr.
 
@@ -106,9 +118,10 @@ class CommandProcessor(object):
       return self.object_description_cache[pid]
     except KeyError:
       pass
-
     try:
-      return self.get_description(pid)
+      description = self.get_description(pid)
+      self.object_description_cache[pid] = description
+      return description
     except d1_common.types.exceptions.DataONEIdentifierException as e:
       raise path_exception.PathException(e.description)
 
@@ -121,8 +134,23 @@ class CommandProcessor(object):
     if 'Content-Length' not in describe_response_dict:
       describe_response_dict['Content-Length'] = 666
     self._parse_http_date_to_native_date_time(describe_response_dict)
-    self.object_description_cache[pid] = describe_response_dict
     return describe_response_dict
+
+  def get_and_cache_science_object(self, pid):
+    try:
+      return self.science_object_cache[pid]
+    except KeyError:
+      pass
+    try:
+      science_object = self.get_science_object(pid)
+      self.science_object_cache[pid] = science_object
+      return science_object
+    except d1_common.types.exceptions.DataONEIdentifierException as e:
+      raise path_exception.PathException(e.description)
+
+  def get_science_object(self, pid):
+    d1_client = onedrive_d1_client.D1Client()
+    return d1_client.get_science_object(pid).read()
 
   def _parse_http_date_to_native_date_time(self, describe_response_dict):
     date_fields = ['last-modified', 'date']
