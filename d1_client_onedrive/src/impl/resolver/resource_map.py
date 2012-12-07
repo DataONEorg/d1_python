@@ -61,29 +61,44 @@ class Resolver(resolver_abc.Resolver):
     self.d1_object_resolver = d1_object.Resolver()
     #self.facet_value_cache = cache.Cache(settings.MAX_FACET_NAME_CACHE_SIZE)
 
+    # The resource map resolver handles only one hierarchy level, so anything
+    # that has more levels is handed to the d1_object resolver.
+    # If the object is not a resource map, control is handed to the d1_object
+    # resolver.
+
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
     if len(path) > 1 or not self._is_resource_map(path[0]):
-      return self.d1_object_resolver.get_attributes(path[1:])
+      return self.d1_object_resolver.get_attributes(path)
 
     return self._get_attribute(path[0])
 
   def get_directory(self, path):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    # The resource map resolver handles only one hierarchy level, so anything
-    # that has more levels is handed to the d1_object resolver.
-    # If the object is not a resource map, control is handed to the d1_object
-    # resolver.
     if len(path) > 1 or not self._is_resource_map(path[0]):
       return self.d1_object_resolver.get_directory(path)
 
     return self._get_directory(path)
 
-  # Private.
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(
+          path
+        ), size, offset
+      )
+    )
+
+    #    if len(path) > 1 or not self._is_resource_map(path[0]):
+    return self.d1_object_resolver.read_file(path, size, offset)
+
+    #    return self._get_directory(path)
+
+    # Private.
 
   def _get_attribute(self, path):
     return attributes.Attributes(is_dir=True, size=123)

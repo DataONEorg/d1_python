@@ -36,6 +36,7 @@ import d1_client.mnclient
 
 # App.
 import settings
+import path_exception
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -77,25 +78,27 @@ class D1Client(object):
     self.query_engine_description = self.client.getQueryEngineDescription('solr')
 
   def describe(self, pid):
-    return self.client.describe(pid)
+    try:
+      return self.client.describe(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise path_exception.PathException(e.description)
 
   def get_science_object(self, pid):
-    d1client = d1_client.d1client.DataONEClient(cnBaseUrl=self.base_url)
-    return d1client.get(pid)
+    try:
+      d1client = d1_client.d1client.DataONEClient(cnBaseUrl=self.base_url)
+      return d1client.get(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise path_exception.PathException(e.description)
+
+  def get_system_metadata(self, pid):
+    try:
+      return self.client.getSystemMetadata(pid)
+    except d1_common.types.exceptions.DataONEException as e:
+      raise path_exception.PathException(e.description)
 
 # USED
 ################################################################################
 # UNUSED
-
-  def get_system_metadata(self, pid):
-    try:
-      return self.sysmetacache[pid]
-    except:
-      logging.info('get_system_metadata: Cache miss on PID {0}'.format(pid))
-    obj = self.get_object(pid)
-    sysm = obj.get_system_metadata()
-    self.sysmetacache[pid] = sysm
-    return self.sysmetacache[pid]
 
   def get_object_filename(self, pid):
     '''Get filename for object. Filename format is pid.ext. Ext is looked up

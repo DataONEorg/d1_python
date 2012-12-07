@@ -184,7 +184,6 @@ ICON = make_absolute(os.path.join('impl', 'd1.icon'))
 
 # TODO: Describe these.
 
-O_ACCMODE = 3
 PATHELEMENT_SAFE_CHARS = ' @$,~*&'
 ITERATOR_PER_FETCH = 400
 FACET_REFRESH = 20 #seconds between cache refresh for facet values

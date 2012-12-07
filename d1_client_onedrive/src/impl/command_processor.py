@@ -65,6 +65,7 @@ class CommandProcessor(singleton.Singleton):
     self.solr_query_cache = cache.Cache(settings.MAX_SOLR_QUERY_CACHE_SIZE)
     self.object_description_cache = cache.Cache(1000)
     self.science_object_cache = cache.Cache(10)
+    self.system_metadata_cache = cache.Cache(10)
 
   # Solr.
 
@@ -118,12 +119,9 @@ class CommandProcessor(singleton.Singleton):
       return self.object_description_cache[pid]
     except KeyError:
       pass
-    try:
-      description = self.get_description(pid)
-      self.object_description_cache[pid] = description
-      return description
-    except d1_common.types.exceptions.DataONEIdentifierException as e:
-      raise path_exception.PathException(e.description)
+    description = self.get_description(pid)
+    self.object_description_cache[pid] = description
+    return description
 
   def get_description(self, pid):
     d1_client = onedrive_d1_client.D1Client()
@@ -132,7 +130,7 @@ class CommandProcessor(singleton.Singleton):
     # TODO. This is a workaround for Content-Length (sometimes?) missing
     # from the DescribeResponse.
     if 'Content-Length' not in describe_response_dict:
-      describe_response_dict['Content-Length'] = 666
+      describe_response_dict['Content-Length'] = 0
     self._parse_http_date_to_native_date_time(describe_response_dict)
     return describe_response_dict
 
@@ -141,16 +139,26 @@ class CommandProcessor(singleton.Singleton):
       return self.science_object_cache[pid]
     except KeyError:
       pass
-    try:
-      science_object = self.get_science_object(pid)
-      self.science_object_cache[pid] = science_object
-      return science_object
-    except d1_common.types.exceptions.DataONEIdentifierException as e:
-      raise path_exception.PathException(e.description)
+    science_object = self.get_science_object(pid)
+    self.science_object_cache[pid] = science_object
+    return science_object
 
   def get_science_object(self, pid):
     d1_client = onedrive_d1_client.D1Client()
     return d1_client.get_science_object(pid).read()
+
+  def get_and_cache_system_metadata(self, pid):
+    try:
+      return self.system_metadata_cache[pid]
+    except KeyError:
+      pass
+    system_metadata = self.get_system_metadata(pid)
+    self.system_metadata_cache[pid] = system_metadata
+    return system_metadata
+
+  def get_system_metadata(self, pid):
+    d1_client = onedrive_d1_client.D1Client()
+    return d1_client.get_system_metadata(pid)
 
   def _parse_http_date_to_native_date_time(self, describe_response_dict):
     date_fields = ['last-modified', 'date']

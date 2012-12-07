@@ -45,12 +45,12 @@ import urlparse
 import d1_common.date_time
 
 # App.
+import cache
 import directory
 import directory_item
-import cache
+import path_exception
 import root
 import settings
-
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -58,11 +58,14 @@ log = logging.getLogger(__name__)
 
 class FUSECallbacks(fuse.Operations):
   def __init__(self):
+    self.READ_ONLY_ACCESS_MODE = 3
     self.root = root.RootResolver()
     self.start_time = time.time()
+    self.gid = os.getgid()
+    self.uid = os.getuid()
     self.attribute_cache = cache.Cache(settings.MAX_ATTRIBUTE_CACHE_SIZE)
     self.directory_cache = cache.Cache(settings.MAX_DIRECTORY_CACHE_SIZE)
-
+    
 
   def getattr(self, path, fh):
     '''Called by FUSE when the attributes for a file or directory are required.
@@ -76,13 +79,9 @@ class FUSECallbacks(fuse.Operations):
     This method gets very heavy traffic.
     '''
     log.debug('getattr(): {0}'.format(path))
-    try:
-      attr = self.attribute_cache[path]
-    except KeyError:
-      attr = self.root.get_attributes(path)
-      #self.attribute_cache[path] = attr //////////////////////////////////////// for debugging, disable cache
-    log.debug('getattr() returned attribute: {0}'.format(attr))
-    return self._stat_from_attributes(attr)
+    attribute = self._get_attributes_through_cache(path)
+    log.debug('getattr() returned attribute: {0}'.format(attribute))
+    return self._stat_from_attributes(attribute)
   
 
   def readdir(self, path, fh):
@@ -103,18 +102,20 @@ class FUSECallbacks(fuse.Operations):
     Determines if the provided path and open flags are valid.
     '''
     log.debug('open(): {0}'.format(path))
-    self._raise_error_no_such_file_or_directory(path)
-#    split0 = os.path.split(path)
-#    if split0[0] in ['/object', '/meta']:
-#      if split0[1] not in self.objects.keys():
-#    if (flags & O_ACCMODE) != os.O_RDONLY:
-#      self._raise_error_permission_denied(path)
-#    return 0
+    # ONEDrive is currently read only. Anything but read access is denied.
+    if (flags & self.READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
+      self._raise_error_permission_denied(path)
+    # Any file in the filesystem can be opened.
+    attribute = self._get_attributes_through_cache(path)
+    return attribute.is_dir()
 
-  
+
   def read(self, path, size, offset, fh):
     log.debug('read(): {0}'.format(path))
-    self._raise_error_no_such_file_or_directory(path)
+    try:
+      return self.root.read_file(path, size, offset)
+    except path_exception.PathException as e:
+      raise OSError(errno.ENOENT, e)
 
 
 #  def _get_and_cache_directory(self, path):
@@ -134,17 +135,28 @@ class FUSECallbacks(fuse.Operations):
 #    return dict((d.name(), (d.size(), d.is_dir())) for d in directory)
 
 
+  # Private.
+
+  def _get_attributes_through_cache(self, path):
+    try:
+      return self.attribute_cache[path]
+    except KeyError:
+      attribute = self.root.get_attributes(path)
+      #self.attribute_cache[path] = attr //////////////////////////////////////// for debugging, disable cache
+      return attribute
+
+  
   def _stat_from_attributes(self, attributes):
     date_time = d1_common.date_time.to_seconds_since_epoch(
       attributes.date()) if attributes.date() is not None else self.start_time 
     return dict(
-      st_mode = stat.S_IFDIR | 0755 if attributes.is_dir() else \
-        stat.S_IFREG | 0644,
+      st_mode = stat.S_IFDIR | 0555 if attributes.is_dir() else \
+        stat.S_IFREG | 0444,
       st_ino = 0,
       st_dev = 0,
       st_nlink = 2, # TODO
-      st_uid = 0,
-      st_gid = 0,
+      st_uid = self.uid,
+      st_gid = self.gid,
       st_size = attributes.size(),
       st_atime = date_time,
       st_mtime = date_time,

@@ -72,16 +72,35 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path)
 
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(
+          path
+        ), size, offset
+      )
+    )
+
+    return self._read_file(path, size, offset)
+
   # Private.
 
   def _get_attribute(self, path):
-    # d1_object handles two levels. The first level is a folder named after the
-    # pid. The second level is files for the data and system metadata.
+    # d1_object handles two levels:
+    # /pid
+    # /pid/pid.ext
+    # /pid/system.xml
 
-    if len(path) > 2:
-      self._raise_invalid_path()
+    # The calling resolver must not strip the PID off the path.
+    assert (len(path))
 
-    description = self._get_description(path[0])
+    pid = path[0]
+
+    description = self.command_processor.get_and_cache_description(pid)
+
+    # This resolver does not call out to any other resolves. Any path that
+    # is deeper than two levels, and any path that is one level, but does
+    # not reference "pid.ext" or "system.xml" is invalid.
 
     if len(path) == 1:
       return attributes.Attributes(
@@ -90,36 +109,50 @@ class Resolver(resolver_abc.Resolver):
         date=description['last-modified']
       )
 
-    #root, ext = os.path.splitext(path[1])
+    if len(path) == 2:
+      if path[1] == self._get_pid_filename(pid, description):
+        return attributes.Attributes(
+          size=description['Content-Length'],
+          date=description['last-modified']
+        )
 
-    if path[1] == 'system.xml':
-      return attributes.Attributes(date=description['last-modified'])
+      if path[1] == 'system.xml':
+        sys_meta = self.command_processor.get_system_metadata(pid)
+        return attributes.Attributes(
+          size=len(sys_meta.toxml()),
+          date=description['last-modified']
+        )
 
-    return attributes.Attributes(
-      size=description['Content-Length'],
-      date=description['last-modified']
-    )
+    self._raise_invalid_path()
 
   def _get_directory(self, path):
-    description = self._get_description(path[0])
-    dir = []
-    ext = self.object_format_info.filename_extension_from_format_id(
-      description['dataone-objectformat']
-    )
-    dir.append(directory_item.DirectoryItem(path[0] + ext))
+    pid = path[0]
+    description = self.command_processor.get_and_cache_description(pid)
+    return [
+      directory_item.DirectoryItem(self._get_pid_filename(pid, description)),
+      directory_item.DirectoryItem('system.xml'),
+    ]
 
-    dir.append(directory_item.DirectoryItem('system.xml'))
+  def _read_file(self, path, size, offset):
+    if path[1] == 'system.xml':
+      sys_meta = self.command_processor.get_system_metadata(path[0]).toxml()
+      return sys_meta[offset:offset + size]
 
-    return dir
+    description = self.command_processor.get_and_cache_description(path[0])
 
-  def _get_description(self, pid):
-    try:
-      return self.command_processor.get_and_cache_description(pid)
-    except:
-      self._raise_invalid_pid(pid)
+    if path[1] == self._get_pid_filename(path[0], description):
+      sci_obj = self.command_processor.get_science_object(path[0])
+      return sci_obj[offset:offset + size]
+
+    self._raise_invalid_path()
 
   def _raise_invalid_pid(self, pid):
     raise path_exception.PathException('Invalid PID: {0}'.format(pid))
 
   def _raise_invalid_path(self):
     raise path_exception.PathException('Invalid path')
+
+  def _get_pid_filename(self, pid, description):
+    return pid + self.object_format_info.filename_extension_from_format_id(
+      description['dataone-objectformat']
+    )

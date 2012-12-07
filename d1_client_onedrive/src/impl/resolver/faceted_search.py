@@ -180,7 +180,26 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path)
 
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(
+          path
+        ), size, offset
+      )
+    )
+    return self._read_file(path, size, offset)
+
   # Private.
+
+  def _read_file(self, path, size, offset):
+    facet_section, object_section = self.facet_path_parser \
+      .split_path_to_facet_and_object_sections(path)
+
+    if len(object_section):
+      return self.resource_map_resolver.read_file(object_section, size, offset)
+
+    self._raise_invalid_path()
 
   def _get_facet_name_attribute(self, path_facets):
     applied_facets = self._get_applied_facets(path_facets)
