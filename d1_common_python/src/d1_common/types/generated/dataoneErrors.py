@@ -1,6 +1,6 @@
 # ./d1_common/types/generated/dataoneErrors.py
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2012-10-15 11:46:13.659788 by PyXB version 1.1.3
+# Generated 2012-12-10 10:56:04.076311 by PyXB version 1.1.3
 # Namespace AbsentNamespace0
 
 import pyxb
@@ -12,7 +12,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:367900b0-16f0-11e2-bb52-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:dd851de8-42f2-11e2-bea1-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -77,16 +77,16 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     detailCode = property(__detailCode.value, __detailCode.set, None, None)
 
     
-    # Attribute name uses Python identifier name
-    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__AbsentNamespace0_CTD_ANON_name', pyxb.binding.datatypes.string, required=True)
-    
-    name = property(__name.value, __name.set, None, None)
-
-    
     # Attribute pid uses Python identifier pid
     __pid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'pid'), 'pid', '__AbsentNamespace0_CTD_ANON_pid', pyxb.binding.datatypes.string)
     
     pid = property(__pid.value, __pid.set, None, None)
+
+    
+    # Attribute name uses Python identifier name
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__AbsentNamespace0_CTD_ANON_name', pyxb.binding.datatypes.string, required=True)
+    
+    name = property(__name.value, __name.set, None, None)
 
 
     _ElementMap = {
@@ -96,8 +96,8 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {
         __errorCode.name() : __errorCode,
         __detailCode.name() : __detailCode,
-        __name.name() : __name,
-        __pid.name() : __pid
+        __pid.name() : __pid,
+        __name.name() : __name
     }
 
 
