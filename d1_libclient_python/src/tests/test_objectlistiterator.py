@@ -35,7 +35,7 @@ import sys
 
 import d1_client.mnclient
 import d1_client.objectlistiterator
-import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 
 class TestObjectListIterator(unittest.TestCase):

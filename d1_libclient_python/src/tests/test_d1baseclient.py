@@ -49,7 +49,7 @@ try:
   import d1_common.const
   import d1_common.date_time
   import d1_common.types.exceptions
-  import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
   #  import testing_utilities
   #  import testing_context
 
