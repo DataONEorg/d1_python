@@ -37,7 +37,7 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes_v1_1
+  import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes_1_1
   import d1_common.util
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
@@ -60,7 +60,7 @@ class CoordinatingNodeClient(d1baseclient_1_1.DataONEBaseClient_1_1):
                strict=True,
                capture_response_body=False,
                version='v1',
-               types=dataoneTypes_v1_1):
+               types=dataoneTypes_1_1):
     '''Connect to a DataONE Coordinating Node.
 
     :param base_url: DataONE Node REST service BaseURL
