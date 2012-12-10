@@ -37,14 +37,10 @@ except ImportError:
   print 'Try: sudo apt-get install python-svn'
   raise
 
-# Note: Even if the schema is in multiple files, pyxbgen is still
-# run only once, but with multiple sets of -u and -m.
-
 
 def main():
   # Command line options.
   parser = optparse.OptionParser()
-  # The default location for the schemas relative to d1_common_python if both were checked out as part of cicore.
   parser.add_option(
     '--schemas',
     dest='schema_dir',
@@ -59,68 +55,66 @@ def main():
     type='string',
     default='./d1_common/types/generated'
   )
-  #parser.add_option('--process', dest='process_schemas', action='store', type='string', default='dataoneTypes_v1.1.xsd;dataoneErrors.xsd')
-  parser.add_option(
-    '--process',
-    dest='process_schemas',
-    action='store',
-    type='string',
-    default='dataoneTypes.xsd;dataoneTypes_v1.1.xsd;dataoneErrors.xsd'
-  )
 
   (options, args) = parser.parse_args()
 
-  if not os.path.exists(options.binding_dir):
-    print 'The destination folder for the bindings does not exist.'
+  if not os.path.exists(options.schema_dir):
+    print 'Could not find the schema folder: {0}'.format(options.schema_dir)
     print 'This script should be run from ./d1_common_python/src'
     exit()
 
-  schema_groups = options.process_schemas.split(';')
+  if not os.path.exists(options.binding_dir):
+    print 'Could not find the bindings destination folder: {0}'.format(options.schema_dir)
+    print 'This script should be run from ./d1_common_python/src'
+    exit()
 
-  g = GenerateBindings(options.binding_dir, options.schema_dir)
-  g.process_schema_groups(schema_groups)
+  g = GenerateBindings(options.schema_dir, options.binding_dir)
+
+  # Generate bindings for 1.0. Also create a types archive for use by the the
+  # 1.1 bindings.
+  g.generate_bindings(
+    [
+      '--schema-location=dataoneTypes.xsd',
+      '--module=dataoneTypes',
+      '--archive-to-file dataoneTypes.wxs',
+    ]
+  )
+
+  # Generate additional bindings for 1.1. Pull 1.0 dependencies from archive.
+  g.generate_bindings(
+    [
+      '--schema-location=dataoneTypes_v1.1.xsd',
+      '--module=dataoneTypes_1_1',
+      '--archive-path .:+',
+    ]
+  )
+
+  # Generate bindings for the exception types.
+  g.generate_bindings(['--schema-location=dataoneErrors.xsd', '--module=dataoneErrors', ])
+
+  # Generate version text files for the bindings, using the Subversion
+  # revision numbers from the schema files.
+  g = GenerateVersionFile(options.schema_dir, options.binding_dir)
+  g.generate_version_file('dataoneTypes.xsd', 'dataoneTypes')
+  g.generate_version_file('dataoneTypes_v1.1.xsd', 'dataoneTypes_1_1')
+  g.generate_version_file('dataoneErrors.xsd', 'dataoneErrors')
+
+#===============================================================================
 
 
 class GenerateBindings(object):
-  def __init__(self, binding_dir, schema_dir):
-    self.binding_dir = binding_dir
+  def __init__(self, schema_dir, binding_dir):
     self.schema_dir = schema_dir
+    self.binding_dir = binding_dir
 
-  def process_schema_groups(self, schema_groups):
-    for schema_group_str in schema_groups:
-      schema_group = schema_group_str.split(',')
-      self.process_schema_group(schema_group)
-
-  def process_schema_group(self, schema_group):
-    print 'Processing: {0}'.format(schema_group)
-    self.generate_pyxb_bindings_for_schema_group(schema_group)
-    self.generate_version_text_files_for_schema_group(schema_group)
-
-  def generate_pyxb_bindings_for_schema_group(self, schema_group):
+  def generate_bindings(self, args):
     pyxbgen_args = []
-    #pyxbgen_args.append('--location-prefix-rewrite=\'https://repository.dataone.org/software/cicore/trunk/schemas/={0}/\''.format(self.schema_dir))
-    #pyxbgen_args.append('--location-prefix-rewrite=\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/={0}/\''.format(self.schema_dir))
+    pyxbgen_args.append('--schema-root=\'{0}\''.format(self.schema_dir))
+    pyxbgen_args.append('--binding-root=\'{0}\''.format(self.binding_dir))
     pyxbgen_args.append(
       '--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\''
     )
-
-    pyxbgen_args.append('--binding-root=\'{0}\''.format(self.binding_dir))
-
-    for schema_filename in schema_group:
-      schema_name = os.path.splitext(schema_filename)[0]
-      schema_path = os.path.join(self.schema_dir, schema_filename)
-      pyxbgen_args.append('--schema-location=\'{0}\''.format(schema_path))
-      pyxbgen_args.append('--module=\'{0}\''.format(schema_name.replace('.', '_')))
-
-    binding_path = os.path.join(
-      self.binding_dir, os.path.splitext(schema_group[0])[0] + '.py'
-    )
-
-    # pyxbgen sometimes does not want to overwrite existing binding classes.
-    try:
-      os.unlink(binding_path)
-    except OSError:
-      pass
+    pyxbgen_args.extend(args)
 
     self.run_pyxbgen(pyxbgen_args)
 
@@ -129,15 +123,19 @@ class GenerateBindings(object):
     print(cmd)
     os.system(cmd)
 
-  def generate_version_text_files_for_schema_group(self, schema_group):
-    for schema_filename in schema_group:
-      self.generate_version_text_file(schema_filename)
+#===============================================================================
 
-  def generate_version_text_file(self, schema_filename):
+
+class GenerateVersionFile(object):
+  def __init__(self, schema_dir, binding_dir):
+    self.schema_dir = schema_dir
+    self.binding_dir = binding_dir
+
+  def generate_version_file(self, schema_filename, binding_filename):
     '''Given a DataONE schema, generates a file that contains version
     information about the schema.
     '''
-    version_filename = os.path.splitext(schema_filename)[0] + '_version.txt'
+    version_filename = binding_filename + '_version.txt'
     version_path = os.path.join(self.binding_dir, version_filename)
     schema_path = os.path.join(self.schema_dir, schema_filename)
     try:
@@ -148,11 +146,8 @@ class GenerateBindings(object):
       self.write_version_file(version_path, tstamp, svnpath, svnrev, version)
 
   def get_version_info_from_svn(self, schema_path):
-    print schema_path
     cli = pysvn.Client()
     svninfo = cli.info(schema_path)
-    if svninfo is None:
-      return
     svnrev = str(svninfo.revision.number)
     svnpath = svninfo.url
     doc = xml.etree.ElementTree.parse(schema_path)
