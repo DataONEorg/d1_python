@@ -1,19 +1,32 @@
 Register the MN
 ===============
 
-Registering the MN is a two step process. First, a client side certificate is
-obtained for the MN. The MN will use the client side certificate to identify
-itself in all calls to DataONE nodes.
+Before a Member Node can participate in the DataONE infrastructure, it must be
+registered. Registering the MN involves the following steps:
 
-Second, an XML document, called a Node document is submitted to a DataONE
-CN. The document contains the information required by the DataONE infrastructure
-to interact with the MN.
+#. Selecting a DataONE environment for the MN.
+
+#. Creating a DataONE identity that is valid in the selected environment.
+
+#. Obtaining a client side certificate from DataONE. The certificate enables the
+   MN to authenticate itself in the selected environment.
+
+#. Creating a Node document. The Node document describes the MN and
+   the level at which it will participate in the DataONE infrastructure
+
+#. The Node document is submitted to DataONE over a TLS/SSL connection that has
+   been authenticated with the certificate obtained above.
+
+#. DataONE evaluates the submission. Upon approval, the registration is
+   complete.
+
+Perform the steps in order, as each step depends on earlier steps.
 
 
 Selecting a DataONE environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In addition the the default production environment, DataONE maintains several
+In addition to the default production environment, DataONE maintains several
 separate environments for use when developing and testing DataONE components.
 There are no connections between the environments. For instance, certificates,
 DataONE identities and science objects are exclusive to the environment in
@@ -24,7 +37,7 @@ The environments are:
 =========== ============================== ===================================================================================================
 Environment URL                            Description
 =========== ============================== ===================================================================================================
-Development `https://cn-dev.dataone.org`_  Unstable components under active development.
+Development https://cn-dev.dataone.org     Unstable components under active development.
 Staging     https://cn-stage.dataone.org   Testing of release candiates.
 Sandbox     https://cn-sandbox.dataone.org Like Production, but open to test instances of MNs. May contain both test and real science objects.
 Production  https://cn.dataone.org         Stable production environment for use by the public.
@@ -36,9 +49,11 @@ to learn more about the DataONE infrastructure or if this MN will be populated
 with objects that may not be of production quality, then one of the other
 environments should be selected.
 
+It may be easier to obtain a certificate for the development, staging or sandbox
+environment than for the production environment.
+
 Depending on which environment you select, substitute **<environment-url>** in
 the instructions below with one of the URLs in the table.
-
 
 
 Create a DataONE identity
@@ -47,7 +62,7 @@ Create a DataONE identity
 Use the DataONE Identity Manager to create a DataONE identity for the
 administrator / contact for the new MN.
 
-Visit **<environment-url>**/portal/ and follow the instructions.
+  Visit **<environment-url>**/portal/ and follow the instructions.
 
 
 Obtaining a client side certificate
@@ -66,11 +81,11 @@ it to DataONE. DataONE will return a signed certificate by email.
 
   You will be prompted for information that, combined, will become the
   Distinguished Name (DN) for this MN. Please supply *Country Name*, *State or
-  Province Name*, *Locality Name*, *Organization Name* and *Common Name*. Leave
-  the remaining fields blank. For fields with a default, type a period (".").
-  For fields without a default, press Enter.
+  Province Name*, *Locality Name*, *Organization Name* and *Common Name*. The
+  remaining fields may be left blank. To remove the default value from a field,
+  type a period ("."). To leave a field blank, press Enter.
 
-Note: Anyone who has the private key can impersonate your Node in the DataONE
+Note: Anyone who has the private key can act as your Node in the DataONE
 infrastructure. Keep the private key safe. If your private key becomes
 compromised, please inform DataONE so that the certificate can be revoked.
 
@@ -79,89 +94,48 @@ compromised, please inform DataONE so that the certificate can be revoked.
   signed. The certificate will only be trusted in that environment.
 
 
+Installing the client side certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  When the signed client side certificate has been received from DataONE,
+  move it and its private key to the
+  ``/var/local/dataone/mn_generic/service/certificates`` folder.
+
+  Edit the GMN settings file::
+
+  ``/var/local/dataone/mn_generic/service/settings_site.py``.
+
+  Set the paths to the certificate files in CLIENT_CERT_PATH and
+  CLIENT_CERT_PRIV_KEY_PATH.
+
+
 Registering the MN with DataONE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This step can only be performed after the signed client side certificate has
-been received from DataONE. See `Obtaining a client side certificate`_.
+GMN generates the Node document automatically based on the settings in
+``settings_site.py``.
 
-Each DataONE Node has an XML document associated with it that describes the
-various aspects of the Node, such as its URL, the services it supports and who
-maintains and runs the Node. For now, it is necessary to manually edit this
-file with information specific to this MN. A template is provided to simplify
-this process.
+  Edit the GMN settings file::
 
-  Customize the Node document.
+  ``/var/local/dataone/mn_generic/service/settings_site.py``.
 
-  Copy the Node XML template::
+  Each setting is described in the file.
 
-    $ cd /var/local/dataone/mn_generic/service/stores/static/
-    $ cp nodeRegistry_template.xml nodeRegistry.xml
+  After editing ``settings_site.py``, check if the Node document is successfully
+  generated::
 
-  Edit the document:
+    ./manage.py register_node_with_dataone --view
 
-    Edit
-    ``/var/local/dataone/mn_generic/service/stores/static/nodeRegistry.xml``.
+  For more information about the Node document, refer to
+  http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
 
-    Replace the upper case texts with information specific to your MN. The parts
-    of the document that do not contain upper case text should remain unchanged.
+  If the Node document is successfully generated and displayed, register the
+  MN by submitting the Node document to DataONE::
 
-    - **identifier**: A unique identifier for the node, represented as a DataONE
-      Node URN. E.g.: `urn:node:MyMemberNode`.
+    ./manage.py register_node_with_dataone
 
-    - **name**: A human readable name of the Node. E.g.: `My Member Node`.
-
-    - **description**: Description of content maintained by this node and any
-      other free style notes. E.g.: `DataONE Member Node for my organization`.
-
-    - **baseURL**: The URL at which the Node is available. E.g.:
-      `https://my.organization.org/mn`.
-
-    - **subject**: The subject string for the DataONE identity of your Member
-      Node. The subject must match the Distinguished Name (DN) of the client
-      side certificate that DataONE provided in an earlier step. See `Obtaining
-      a client side certificate`_. The string must be a DataONE compliant
-      serialization of the DN. E.g.
-      `CN=MyMemberNode,O=DataONE,C=US,DC=dataone,DC=org`.
-
-    - **contactSubject**: The subject string for a DataONE identity that can be
-      contacted regarding issues related to your member node. The subject must
-      match the subject as it is displayed in the DataONE Identity Manager. See
-      `Create a DataONE identity`_. E.g. `CN=My
-      Name,O=Google,C=US,DC=cilogon,DC=org`.
-
-    For more information about the Node document, refer to
-    http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
-
-
-To register the new MN with DataONE, the Node XML document is submitted to
-DataONE via a CN REST API. The connection to DataONE is made over TLS/SSL,
-with the client side certificate that DataONE issued.
-
-A command line tool is provided for submitting the registration.
-
-  Register the MN with DataONE::
-
-    $ cd /var/local/dataone/mn_generic/tools
-    $ python register.py \
-      --cert-path <path to the DataONE issued MN client side certificate> \
-      --key-path <path to the DataONE issued MN client side certificate key> \
-      --dataone-url <environment-url>/cn
-      ../service/stores/static/nodeRegistry.xml
 
 A new MN must be approved by DataONE. The person that is registered as
 *contactSubject* in the Node document, will be contacted by email with the
 outcome of the approval process. After the Node has been approved, CNs will
 start processing the information on the node.
-
-
-Revisit the GMN configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In the :doc:`setup-d1-gmn` step, setting the NODE_IDENTIFIER value was deferred
-because it must be set up to match the value configured in this step.
-
-  Edit: ``/var/local/dataone/mn_generic/service/settings_site.py``
-
-  * Set NODE_IDENTIFIER to match the value specified in the identifier field
-    in the Node XML document.

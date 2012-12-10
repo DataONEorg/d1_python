@@ -1,13 +1,17 @@
 Register the MN
 ===============
 
-Registering the MN is a two step process. First, a client side certificate is
-obtained for the MN. The MN will use the client side certificate to identify
-itself in all calls to DataONE nodes.
+Before a Member Node can participate in the DataONE infrastructure, it must be
+registered. Registering the MN involves the following steps:
 
-Second, an XML document, called a Node document is submitted to a DataONE
-CN. The document contains the information required by the DataONE infrastructure
-to interact with the MN.
+#. Selecting which DataONE environment the Member Node.
+
+#. A client side certificate is obtained for the MN. The MN will use the
+   client side certificate to identify itself in all calls to DataONE nodes.
+
+#. An XML document, called a Node document is submitted to a DataONE CN.
+   The document contains the information required by the DataONE infrastructure
+   to interact with the MN.
 
 
 Selecting a DataONE environment
