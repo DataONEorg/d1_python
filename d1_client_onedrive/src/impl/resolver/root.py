@@ -88,6 +88,11 @@ class RootResolver(resolver_abc.Resolver):
     # Exception handling removed because I don't think FUSE would ever call
     # get_directory() for a folder (except for the root), without that folder
     # first having been designated as a valid folder by get_attributes().
+
+    # If this call raises a PathException, it is because an earlier
+    # get_attributes() call erroneously designated the path which caused the
+    # exception to be raised as a valid path to a folder in an earlier call.
+
     #try:
     return self._get_directory(p)
     #except path_exception.PathException as e:

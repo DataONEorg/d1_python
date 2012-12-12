@@ -90,7 +90,7 @@ class SolrClient(object):
   # - starts with all available objects
   # - returns the objects that match the applied facets.
   # - includes a list of all the unapplied facets and their counts, for counts > 0
-  def faceted_search(self, all_facet_names, applied_facets):
+  def faceted_search(self, all_facet_names, applied_facets, filter_queries):
     unapplied_facets = self.get_unapplied_facets(all_facet_names, applied_facets)
     unapplied_facet_fields = self.facet_fields_from_facet_names(unapplied_facets)
     query_params = [
@@ -107,6 +107,7 @@ class SolrClient(object):
       ('wt', 'python'),
     ]
     query_params.extend(unapplied_facet_fields)
+    query_params.extend(filter_queries)
     response = self.send_request(query_params)
     #log.debug(pprint.pformat(response))
     unapplied_facet_counts, entries = self.parse_result_dict(response)

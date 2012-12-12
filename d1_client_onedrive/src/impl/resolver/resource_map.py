@@ -104,13 +104,13 @@ class Resolver(resolver_abc.Resolver):
     return attributes.Attributes(is_dir=True, size=123)
 
   def _get_directory(self, path):
-    resource_map = self.command_processor.get_and_cache_science_object(path[0])
+    resource_map = self.command_processor.get_science_object_through_cache(path[0])
     pids = self.deserialize_resource_map(resource_map)
     return [directory_item.DirectoryItem(pid) for pid in pids]
 
   def _is_resource_map(self, pid):
     #try:
-    description = self.command_processor.get_and_cache_description(pid)
+    description = self.command_processor.get_description_through_cache(pid)
     #except:
     #self._raise_invalid_pid(pid)
     return description['dataone-objectformat'] == \
@@ -118,7 +118,7 @@ class Resolver(resolver_abc.Resolver):
 
   def _get_description(self, pid):
     #try:
-    return self.command_processor.get_and_cache_description(pid)
+    return self.command_processor.get_description_through_cache(pid)
     #except:
     #self._raise_invalid_pid(pid)
 

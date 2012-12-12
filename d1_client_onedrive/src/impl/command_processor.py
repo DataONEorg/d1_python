@@ -69,21 +69,26 @@ class CommandProcessor(singleton.Singleton):
 
   # Solr.
 
-  def solr_query(self, applied_facets=None):
+  def solr_query(self, applied_facets=None, filter_queries=None):
     if applied_facets is None:
       applied_facets = []
+
+    if filter_queries is None:
+      filter_queries = []
 
     solr_client = onedrive_solr_client.SolrClient()
 
     try:
-      return self._get_query_from_cache(applied_facets)
+      return self._get_query_from_cache(applied_facets + filter_queries)
     except KeyError:
       pass
 
     #log.debug('Fields good for faceting: {0}'.format(self.fields_good_for_faceting))
-    res = solr_client.faceted_search(self.fields_good_for_faceting, applied_facets)
+    res = solr_client.faceted_search(
+      self.fields_good_for_faceting, applied_facets, filter_queries
+    )
 
-    self._add_query_to_cache(applied_facets, res)
+    self._add_query_to_cache(applied_facets + filter_queries, res)
 
     return res
 
@@ -114,16 +119,37 @@ class CommandProcessor(singleton.Singleton):
         good.append(f)
     return good
 
-  def get_and_cache_description(self, pid):
+  def get_description_through_cache(self, pid):
     try:
       return self.object_description_cache[pid]
     except KeyError:
       pass
-    description = self.get_description(pid)
+    description = self._get_description(pid)
     self.object_description_cache[pid] = description
     return description
 
-  def get_description(self, pid):
+  def get_science_object_through_cache(self, pid):
+    try:
+      return self.science_object_cache[pid]
+    except KeyError:
+      pass
+    science_object = self._get_science_object(pid)
+    self.science_object_cache[pid] = science_object
+    return science_object
+
+  def get_system_metadata_through_cache(self, pid):
+    try:
+      return self.system_metadata_cache[pid]
+    except KeyError:
+      pass
+    system_metadata_pyxb = self._get_system_metadata(pid)
+    system_metadata_xml = system_metadata_pyxb.toxml().encode('utf8')
+    self.system_metadata_cache[pid] = system_metadata_pyxb, system_metadata_xml
+    return system_metadata_pyxb, system_metadata_xml
+
+  # Private.
+
+  def _get_description(self, pid):
     d1_client = onedrive_d1_client.D1Client()
     describe_response = d1_client.describe(pid)
     describe_response_dict = dict(describe_response)
@@ -134,29 +160,11 @@ class CommandProcessor(singleton.Singleton):
     self._parse_http_date_to_native_date_time(describe_response_dict)
     return describe_response_dict
 
-  def get_and_cache_science_object(self, pid):
-    try:
-      return self.science_object_cache[pid]
-    except KeyError:
-      pass
-    science_object = self.get_science_object(pid)
-    self.science_object_cache[pid] = science_object
-    return science_object
-
-  def get_science_object(self, pid):
+  def _get_science_object(self, pid):
     d1_client = onedrive_d1_client.D1Client()
     return d1_client.get_science_object(pid).read()
 
-  def get_and_cache_system_metadata(self, pid):
-    try:
-      return self.system_metadata_cache[pid]
-    except KeyError:
-      pass
-    system_metadata = self.get_system_metadata(pid)
-    self.system_metadata_cache[pid] = system_metadata
-    return system_metadata
-
-  def get_system_metadata(self, pid):
+  def _get_system_metadata(self, pid):
     d1_client = onedrive_d1_client.D1Client()
     return d1_client.get_system_metadata(pid)
 

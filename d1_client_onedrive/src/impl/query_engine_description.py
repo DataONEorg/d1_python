@@ -34,7 +34,7 @@ import os
 #import pyxb
 
 # D1.
-#import d1_common.types.generated.dataoneTypes_v1_1 as dataoneTypes
+#import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

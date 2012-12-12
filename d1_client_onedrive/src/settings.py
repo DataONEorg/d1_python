@@ -48,11 +48,16 @@ def make_absolute(p):
 # environments. The production environment is used by the general public. Other
 # environments are used by software developers for testing and debugging of new
 # components. This setting controls to which environment ONEDrive connects.
+
+# Round-robin CN endpoints
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
-DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn' # Bypass RR.
+DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
+#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+
+# Bypass round-robin and go directly to a specific CN.
+#DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
 # Select the mountpoint for ONEDrive. The mountpoint is the folder in the local
 # filesystem in which the ONEDrive filesystem appears. The default is to mount
@@ -115,6 +120,21 @@ MAX_FACET_VALUES = 100
 
 # The maximum number of SolR query results to cache.
 MAX_SOLR_QUERY_CACHE_SIZE = 1000
+
+################################################################################
+# Preconfigured searches
+################################################################################
+
+# Expert users can use this feature to set up searches that then can be further
+# refined through faceted searching in the filesystem. These searches are
+# reached through the PreconfiguredSearch root folder in the ONEDrive
+# filesystem.
+
+PRECONFIGURED_SEARCHES = {
+  'CSV files': [('fq', 'formatId:text/csv')],
+  'Objects from Member Node: Demo 5': [('fq', 'datasource:urn\\:node\\:mnDemo5')],
+  'PISCO project': [('fq', 'project:\'Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)\'')],
+}
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
