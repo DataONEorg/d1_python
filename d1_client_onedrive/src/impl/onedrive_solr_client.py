@@ -184,7 +184,7 @@ class SolrClient(object):
         log.error('Too many retries: {0}: {0}'.format(abs_query_url, str(e)))
         raise (e)
       retrycount += 1
-      self.connection = self.create_connection(self.base_url)
+      self.connection = self.create_connection()
       return self.get(query_url, headers, retrycount=retrycount)
     except (socket.error, httplib.HTTPException) as e:
       log.error('Solr query failed: {0}: {0}'.format(abs_query_url, str(e)))
