@@ -157,9 +157,11 @@ class CommandProcessor(singleton.Singleton):
     describe_response_dict = dict(describe_response)
     # TODO. This is a workaround for Content-Length (sometimes?) missing
     # from the DescribeResponse.
-    if 'Content-Length' not in describe_response_dict:
-      describe_response_dict['Content-Length'] = 0
-    self._parse_http_date_to_native_date_time(describe_response_dict)
+    date_modified, size = self.solr_client.get_modified_date_size(pid)
+    describe_response_dict['Content-Length'] = size
+    describe_response_dict['last-modified'] = date_modified
+    describe_response_dict['date'] = date_modified
+    #self._parse_http_date_to_native_date_time(describe_response_dict)
     return describe_response_dict
 
   def _get_science_object(self, pid):

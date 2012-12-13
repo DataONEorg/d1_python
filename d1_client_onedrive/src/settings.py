@@ -52,14 +52,13 @@ def make_absolute(p):
 # Round-robin CN endpoints
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
 #DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn' # Bypass RR.
-DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn' 
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 
 # Bypass round-robin and go directly to a specific CN.
-#DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
+DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
 # Select the mountpoint for ONEDrive. The mountpoint is the folder in the local
 # filesystem in which the ONEDrive filesystem appears. The default is to mount
@@ -145,7 +144,7 @@ PRECONFIGURED_SEARCHES = {
 # Debug mode.
 # True: Turn on verbose logging and various other debugging facilities.
 # False: Log only error messages (for normal use, default)
-DEBUG = False
+DEBUG = True
 
 # The facet name and value decorates select the characters which denote
 # facet names and facet values in filesystem paths where a faceted search

@@ -39,6 +39,7 @@ import urlparse
 # D1.
 import d1_client.solr_client
 import d1_common.const
+import d1_common.date_time
 import d1_common.url
 
 # App.
@@ -123,6 +124,19 @@ class SolrClient(object):
         ) for f in applied_facets
       ]
     )
+
+  def get_modified_date_size(self, pid):
+    query_params = [
+      ('q', 'id:{0}'.format(self.escape_query_term(pid))),
+      ('fl', 'dateModified,size'),
+      ('wt', 'python'),
+    ]
+    response = self.send_request(query_params)
+    date_modified = d1_common.date_time.from_iso8601(
+      response['response']['docs'][0]['dateModified']
+    )
+    size = response['response']['docs'][0]['size']
+    return date_modified, size
 
 #  def create_filter_query(self, all_facet_names, applied_facets, unapplied_facets):
 #    facet_settings = ['rows=100', 'facet=true', 'facet.limit=10',
