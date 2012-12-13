@@ -133,7 +133,7 @@ MAX_SOLR_QUERY_CACHE_SIZE = 1000
 PRECONFIGURED_SEARCHES = {
   'CSV files': [('fq', 'formatId:text/csv')],
   'Objects from Member Node: Demo 5': [('fq', 'datasource:urn\\:node\\:mnDemo5')],
-  'PISCO project': [('fq', 'project:\'Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)\'')],
+  'PISCO project': [('fq', 'project:Partnership for Interdisciplinary Studies of Coastal Oceans \\\\(PISCO\\\\)')],
 }
 
 ################################################################################
