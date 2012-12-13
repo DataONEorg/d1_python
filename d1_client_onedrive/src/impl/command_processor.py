@@ -66,6 +66,7 @@ class CommandProcessor(singleton.Singleton):
     self.object_description_cache = cache.Cache(1000)
     self.science_object_cache = cache.Cache(10)
     self.system_metadata_cache = cache.Cache(10)
+    self.solr_client = onedrive_solr_client.SolrClient()
 
   # Solr.
 
@@ -76,7 +77,7 @@ class CommandProcessor(singleton.Singleton):
     if filter_queries is None:
       filter_queries = []
 
-    solr_client = onedrive_solr_client.SolrClient()
+    #solr_client = onedrive_solr_client.SolrClient()
 
     try:
       return self._get_query_from_cache(applied_facets + filter_queries)
@@ -84,7 +85,7 @@ class CommandProcessor(singleton.Singleton):
       pass
 
     #log.debug('Fields good for faceting: {0}'.format(self.fields_good_for_faceting))
-    res = solr_client.faceted_search(
+    res = self.solr_client.faceted_search(
       self.fields_good_for_faceting, applied_facets, filter_queries
     )
 
@@ -115,7 +116,8 @@ class CommandProcessor(singleton.Singleton):
       d1_client.get_all_searchable_and_returnable_facet_names()
     good = []
     for f in candidate_facet_names:
-      if not self.facet_matches_filter(f):
+      #if not self.facet_matches_filter(f):
+      if self.facet_matches_filter(f):
         good.append(f)
     return good
 

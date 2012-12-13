@@ -70,6 +70,7 @@ log = logging.getLogger(__name__)
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self):
+    log.debug("New FacetedSearch Resolver")
     self.facet_path_formatter = facet_path_formatter.FacetPathFormatter()
     self.facet_path_parser = facet_path_parser.FacetPathParser()
     self.command_processor = command_processor.CommandProcessor()

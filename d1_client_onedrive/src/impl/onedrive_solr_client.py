@@ -78,12 +78,14 @@ class SolrClient(object):
     self.custom_filter_query = filter_query
     self.solr_debug = solr_debug
     self.solr_path = self.get_solr_path(base_url, relative_solr_path)
-    self.connection = self.create_connection(base_url)
+    self.base_url = base_url
+    self.connection = self.create_connection()
 #    self.solr_connection = self.create_connection(base_url,
 #                                                       relative_solr_path)
 
-  def create_connection(self, base_url):
-    solr_host = self.get_hostname(base_url)
+  def create_connection(self):
+    print("**** Creating new connection to %s ****" % self.base_url)
+    solr_host = self.get_hostname(self.base_url)
     return httplib.HTTPSConnection(solr_host)
 
   # Want to return a result that:
@@ -163,10 +165,11 @@ class SolrClient(object):
 
   def send_request(self, params):
     query_url = urllib.urlencode(params, doseq=True)
+    log.debug("SOLR GET = %s" % query_url)
     response = self.get(query_url)
     return eval(response.read())
 
-  def get(self, query_url, headers=None):
+  def get(self, query_url, headers=None, retrycount=0):
     if headers is None:
       headers = {}
     abs_query_url = self.solr_path + '?' + query_url
@@ -174,6 +177,15 @@ class SolrClient(object):
     try:
       self.connection.request('GET', abs_query_url, headers=headers)
       response = self.connection.getresponse()
+    except (httplib.BadStatusLine, httplib.CannotSendRequest) as e:
+      #socket was closed, reinitialize and try again
+      log.info("Connection was closed, retrying...")
+      if retrycount > 2:
+        log.error('Too many retries: {0}: {0}'.format(abs_query_url, str(e)))
+        raise (e)
+      retrycount += 1
+      self.connection = self.create_connection(self.base_url)
+      return self.get(query_url, headers, retrycount=retrycount)
     except (socket.error, httplib.HTTPException) as e:
       log.error('Solr query failed: {0}: {0}'.format(abs_query_url, str(e)))
       raise e

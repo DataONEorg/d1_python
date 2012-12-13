@@ -58,6 +58,7 @@ log = logging.getLogger(__name__)
 
 class FUSECallbacks(fuse.Operations):
   def __init__(self):
+    log.debug("Enter FUSECalbacks.__init__")
     self.READ_ONLY_ACCESS_MODE = 3
     self.root = root.RootResolver()
     self.start_time = time.time()
@@ -65,6 +66,7 @@ class FUSECallbacks(fuse.Operations):
     self.uid = os.getuid()
     self.attribute_cache = cache.Cache(settings.MAX_ATTRIBUTE_CACHE_SIZE)
     self.directory_cache = cache.Cache(settings.MAX_DIRECTORY_CACHE_SIZE)
+    log.debug("Exit FUSECalbacks.__init__")
     
 
   def getattr(self, path, fh):
@@ -78,6 +80,10 @@ class FUSECallbacks(fuse.Operations):
 
     This method gets very heavy traffic.
     '''
+    #Ignore names that have special meaning for the OS, e.g. OS X
+    for test in settings.IGNORE_SPECIAL:
+      if path.find(test) >= 0:
+        raise OSError(errno.ENOENT)
     log.debug('getattr(): {0}'.format(path))
     attribute = self._get_attributes_through_cache(path)
     log.debug('getattr() returned attribute: {0}'.format(attribute))
@@ -166,16 +172,10 @@ class FUSECallbacks(fuse.Operations):
 
   def _raise_error_no_such_file_or_directory(self, path):
     log.debug('Error: No such file or directory: {0}'.format(path))
-    raise OSError(errno.ENOENT, '')
+    raise OSError(errno.ENOENT)
 
 
 #  def _raise_error_permission_denied(self, path):
 #    log.debug('Error: Permission denied: {0}'.format(path))
 #    raise OSError(errno.EACCES, '')
-
-
-  def _osx_special():
-    for prefix in OSX_SPECIAL:
-      if parts[len(parts)-1].startswith(prefix):
-        self._raise_error_no_such_file_or_directory('todo')
 

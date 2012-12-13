@@ -51,7 +51,9 @@ def make_absolute(p):
 
 # Round-robin CN endpoints
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn' # Bypass RR.
+DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
@@ -143,7 +145,7 @@ PRECONFIGURED_SEARCHES = {
 # Debug mode.
 # True: Turn on verbose logging and various other debugging facilities.
 # False: Log only error messages (for normal use, default)
-DEBUG = True
+DEBUG = False
 
 # The facet name and value decorates select the characters which denote
 # facet names and facet values in filesystem paths where a faceted search
@@ -156,7 +158,8 @@ FACET_VALUE_DECORATOR = '#' # (default is '#')
 # for faceting. For a field to be available for faceting, it must be listed as
 # searchable in the query engine description and it must NOT match any of the
 # the regular expressions in this list.
-FACET_FILTER = [r'.*Text$', r'.*Date$', r'date.*']
+#FACET_FILTER = [r'.*Text$', r'.*Date$', r'date.*']
+FACET_FILTER = [r'.*keywords$', ]
 
 # Type of connection to use when connecting to the Solr server.
 # True: A persistent connection is maintained (default)
@@ -182,8 +185,9 @@ SOLR_DEBUG = True if DEBUG else False # (enabled when running in debug mode)
 # onedrive.py command to return immediately. Setting this value to True
 # causes the driver to remain in the foreground.
 # True: Run driver in foreground (for debugging)
-# False: Run driver in background (for normal use)
-FOREGROUND = True if DEBUG else False # (enabled when running in debug mode)
+# False: Run driver in background (for normal use) 
+#FOREGROUND = True if DEBUG else False # (enabled when running in debug mode)
+FOREGROUND = True
 
 # NOTHREADS:
 # During normal use, the FUSE drive will use multiple threads to improve
@@ -207,5 +211,7 @@ ICON = make_absolute(os.path.join('impl', 'd1.icon'))
 PATHELEMENT_SAFE_CHARS = ' @$,~*&'
 ITERATOR_PER_FETCH = 400
 FACET_REFRESH = 20 #seconds between cache refresh for facet values
-OSX_SPECIAL = ['._', '.DS_Store', ]
+IGNORE_SPECIAL = []
+if os.uname()[0] == "Darwin":
+  IGNORE_SPECIAL = ['._', '.DS_Store', 'Backups.backupdb', '.Trashes', ]
 TSTAMP = 1280664000.0 #2010-08-01T08:00:00
