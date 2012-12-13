@@ -89,11 +89,12 @@ def main():
     'foreground': settings.FOREGROUND,
     'fsname': 'ONEDrive',
     'nothreads': settings.NOTHREADS,
-    'nonempty': True,
   }
   if os.uname()[0] == 'Darwin':
     fuse_args['volicon'] = settings.ICON
     fuse_args['local'] = True
+  else:
+    fuse_args['nonempty'] = True
 
   log_startup_parameters(options, arguments, fuse_args)
   log_settings()
