@@ -99,6 +99,7 @@ class SolrClient(object):
     query_params = [
       ('q', '*:*'),
       ('fq', self.format_filter_query(applied_facets)),
+      ('fl', 'id,dateModified,size,formatId'),
       ('rows', settings.MAX_OBJECTS_IN_DIRECTORY),
       ('indent', 'on'),
       ('facet', 'true'),
@@ -125,18 +126,16 @@ class SolrClient(object):
       ]
     )
 
-  def get_modified_date_size(self, pid):
+  def get_object_info(self, pid):
     query_params = [
       ('q', 'id:{0}'.format(self.escape_query_term(pid))),
-      ('fl', 'dateModified,size'),
+      ('fl', 'dateModified,size,formatId'),
       ('wt', 'python'),
     ]
     response = self.send_request(query_params)
-    date_modified = d1_common.date_time.from_iso8601(
-      response['response']['docs'][0]['dateModified']
-    )
-    size = response['response']['docs'][0]['size']
-    return date_modified, size
+    doc = response['response']['docs'][0]
+    doc['dateModified'] = d1_common.date_time.from_iso8601(doc['dateModified'])
+    return doc
 
 #  def create_filter_query(self, all_facet_names, applied_facets, unapplied_facets):
 #    facet_settings = ['rows=100', 'facet=true', 'facet.limit=10',
@@ -252,6 +251,7 @@ class SolrClient(object):
           'format_id': doc['formatId'],
           'pid': doc['id'],
           'size': doc['size'],
+          'date': doc['dateModified']
         }
       )
     return entry

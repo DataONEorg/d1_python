@@ -85,16 +85,19 @@ def main():
     log_library_versions()
     sys.exit()
 
+  # FUSE settings common to FUSE and MacFUSE.
   fuse_args = {
-    'foreground': settings.FOREGROUND,
-    'fsname': 'ONEDrive',
-    'nothreads': settings.NOTHREADS,
+    'foreground': settings.FUSE_FOREGROUND,
+    'fsname': settings.FUSE_FILESYSTEM_NAME,
+    'nothreads': settings.FUSE_NOTHREADS,
   }
+  # FUSE settings specific to MacFUSE.
   if os.uname()[0] == 'Darwin':
-    fuse_args['volicon'] = settings.ICON
-    fuse_args['local'] = True
+    fuse_args['volicon'] = settings.MACFUSE_ICON
+    fuse_args['local'] = settings.MACFUSE_LOCAL_DISK
+  # FUSE settings specific to regular FUSE.
   else:
-    fuse_args['nonempty'] = True
+    fuse_args['nonempty'] = settings.FUSE_NONEMPTY
 
   log_startup_parameters(options, arguments, fuse_args)
   log_settings()

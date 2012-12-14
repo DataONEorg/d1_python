@@ -117,7 +117,7 @@ class Resolver(resolver_abc.Resolver):
     Most logical way may be to run a query where the facet has been applied and
     get the number of matching objects. But a faster way has been implemented,
     which is that, even though the @facet_name/#facet_value is defined, it is
-    not applied with the other facets. Instead, a query is submitted to SolR
+    not applied with the other facets. Instead, a query is submitted to Solr
     without the last facet applied and the read count is pulled from the
     faceting metadata that is returned in unapplied_facet_counts.
 
@@ -126,7 +126,7 @@ class Resolver(resolver_abc.Resolver):
     "open", meaning that its name is defined, but not its value. For an open
     facet, the number of available facet values is returned. Because only
     facet values that would yield at least one object should be listed, the
-    number can only be obtained by running a full SolR query where all fully
+    number can only be obtained by running a full Solr query where all fully
     defined facets are applied.
 
     If the path references a facet value, the last facet is fully defined. For a
@@ -208,7 +208,7 @@ class Resolver(resolver_abc.Resolver):
     # the applied facets. And it finds the names of the facets that are not
     # yet applied, together with their matching object counts.
     unapplied_facet_counts, sci_objs = self.command_processor.solr_query(
-      applied_facets=applied_facets
+      applied_facets=[]
     )
     n = self._get_last_element_facet_name(path_facets)
     return attributes.Attributes(is_dir=True, size=unapplied_facet_counts[n]['count'])
@@ -268,7 +268,7 @@ class Resolver(resolver_abc.Resolver):
     return dir
 
   # This was the initial implementation of error file detection in the faceted
-  # search. It is very resource intensive as it causes SolR queries to be
+  # search. It is very resource intensive as it causes Solr queries to be
   # performed for each folder touched by get_attributes(). Leaving it in, in
   # case the new implementation does not work out.
   def _raise_if_any_invalid_facet(self, path_facets):

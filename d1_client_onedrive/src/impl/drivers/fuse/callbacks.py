@@ -80,10 +80,7 @@ class FUSECallbacks(fuse.Operations):
 
     This method gets very heavy traffic.
     '''
-    #Ignore names that have special meaning for the OS, e.g. OS X
-    for test in settings.IGNORE_SPECIAL:
-      if path.find(test) >= 0:
-        raise OSError(errno.ENOENT)
+    self._raise_error_for_os_special_file(path)
     log.debug('getattr(): {0}'.format(path))
     attribute = self._get_attributes_through_cache(path)
     log.debug('getattr() returned attribute: {0}'.format(attribute))
@@ -168,6 +165,12 @@ class FUSECallbacks(fuse.Operations):
       st_mtime = date_time,
       st_ctime = date_time,
     )
+
+
+  def _raise_error_for_os_special_file(self, path):
+    for test in settings.IGNORE_SPECIAL:
+      if path.find(test) >= 0:
+        _raise_error_no_such_file_or_directory(self, path)
 
 
   def _raise_error_no_such_file_or_directory(self, path):

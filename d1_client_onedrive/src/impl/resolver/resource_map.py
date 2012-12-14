@@ -110,15 +110,15 @@ class Resolver(resolver_abc.Resolver):
 
   def _is_resource_map(self, pid):
     #try:
-    description = self.command_processor.get_description_through_cache(pid)
+    description = self.command_processor.get_object_info_through_cache(pid)
     #except:
     #self._raise_invalid_pid(pid)
-    return description['dataone-objectformat'] == \
+    return description['format_id'] == \
       d1_client.data_package.RDFXML_FORMATID
 
   def _get_description(self, pid):
     #try:
-    return self.command_processor.get_description_through_cache(pid)
+    return self.command_processor.get_object_info_through_cache(pid)
     #except:
     #self._raise_invalid_pid(pid)
 

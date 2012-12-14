@@ -66,6 +66,7 @@ class CommandProcessor(singleton.Singleton):
     self.object_description_cache = cache.Cache(1000)
     self.science_object_cache = cache.Cache(10)
     self.system_metadata_cache = cache.Cache(10)
+    self.object_description_cache2 = cache.Cache(1000)
     self.solr_client = onedrive_solr_client.SolrClient()
 
   # Solr.
@@ -89,15 +90,33 @@ class CommandProcessor(singleton.Singleton):
       self.fields_good_for_faceting, applied_facets, filter_queries
     )
 
-    self._add_query_to_cache(applied_facets + filter_queries, res)
+    self._cache_query_results(applied_facets + filter_queries, res)
+    self._cache_object_info(res)
 
     return res
 
   def _get_query_from_cache(self, applied_facets):
     return self.solr_query_cache[tuple(applied_facets)]
 
-  def _add_query_to_cache(self, applied_facets, q):
+  def _cache_query_results(self, applied_facets, q):
     self.solr_query_cache[tuple(applied_facets)] = q
+
+  def _cache_object_info(self, res):
+    for o in res[1]:
+      o['date'] = d1_common.date_time.from_iso8601(o['date'])
+      self.object_description_cache2[o['pid']] = o
+
+  def get_object_info_through_cache(self, pid):
+    try:
+      return self.object_description_cache2[pid]
+    except KeyError:
+      pass
+    o = self.solr_client.get_object_info(pid)
+    self.object_description_cache2[o['pid']] = o
+    #    dict(
+    #      format_id = o['format_id'], , o['size'],
+    #                                                  o['date'])
+    return o
 
   def get_all_field_names_good_for_faceting(self):
     return self.fields_good_for_faceting
@@ -121,14 +140,14 @@ class CommandProcessor(singleton.Singleton):
         good.append(f)
     return good
 
-  def get_description_through_cache(self, pid):
-    try:
-      return self.object_description_cache[pid]
-    except KeyError:
-      pass
-    description = self._get_description(pid)
-    self.object_description_cache[pid] = description
-    return description
+#  def get_object_info_through_cache(self, pid):
+#    try:
+#      return self.object_description_cache[pid]
+#    except KeyError:
+#      pass    
+#    description = self._get_description(pid)
+#    self.object_description_cache[pid] = description
+#    return description
 
   def get_science_object_through_cache(self, pid):
     try:
@@ -151,18 +170,20 @@ class CommandProcessor(singleton.Singleton):
 
   # Private.
 
-  def _get_description(self, pid):
-    d1_client = onedrive_d1_client.D1Client()
-    describe_response = d1_client.describe(pid)
-    describe_response_dict = dict(describe_response)
-    # TODO. This is a workaround for Content-Length (sometimes?) missing
-    # from the DescribeResponse.
-    date_modified, size = self.solr_client.get_modified_date_size(pid)
-    describe_response_dict['Content-Length'] = size
-    describe_response_dict['last-modified'] = date_modified
-    describe_response_dict['date'] = date_modified
-    #self._parse_http_date_to_native_date_time(describe_response_dict)
-    return describe_response_dict
+  #  def _get_description(self, pid):
+  ##    d1_client = onedrive_d1_client.D1Client()
+  ##    describe_response = d1_client.describe(pid)
+  ##    describe_response_dict = dict(describe_response)
+  #    # TODO. This is a workaround for size (sometimes?) missing
+  #    # from the DescribeResponse.
+  #    date_modified, size = self.solr_client.get_modified_date_size(pid)
+  #    describe_response_dict = {}
+  #    describe_response_dict['format_id'] = 'xml'
+  #    describe_response_dict['size'] = size
+  #    describe_response_dict['date'] = date_modified
+  #    describe_response_dict['date'] = date_modified
+  #    #self._parse_http_date_to_native_date_time(describe_response_dict)
+  #    return describe_response_dict
 
   def _get_science_object(self, pid):
     d1_client = onedrive_d1_client.D1Client()
@@ -173,7 +194,7 @@ class CommandProcessor(singleton.Singleton):
     return d1_client.get_system_metadata(pid)
 
   def _parse_http_date_to_native_date_time(self, describe_response_dict):
-    date_fields = ['last-modified', 'date']
+    date_fields = ['date', 'date']
     for date_field in date_fields:
       if date_field in describe_response_dict:
         describe_response_dict[date_field] = \
