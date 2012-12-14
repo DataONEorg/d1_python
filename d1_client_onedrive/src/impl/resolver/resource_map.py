@@ -74,7 +74,7 @@ class Resolver(resolver_abc.Resolver):
     if len(path) > 1 or not self._is_resource_map(path[0]):
       return self.d1_object_resolver.get_attributes(path)
 
-    return self._get_attribute(path[0])
+    return self._get_attribute(path)
 
   def get_directory(self, path):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
@@ -101,7 +101,10 @@ class Resolver(resolver_abc.Resolver):
     # Private.
 
   def _get_attribute(self, path):
-    return attributes.Attributes(is_dir=True, size=123)
+    return attributes.Attributes(
+      self.get_total_size_of_objects_in_resource_map(path[0]),
+      is_dir=True
+    )
 
   def _get_directory(self, path):
     resource_map = self.command_processor.get_science_object_through_cache(path[0])
@@ -113,8 +116,7 @@ class Resolver(resolver_abc.Resolver):
     description = self.command_processor.get_object_info_through_cache(pid)
     #except:
     #self._raise_invalid_pid(pid)
-    return description['format_id'] == \
-      d1_client.data_package.RDFXML_FORMATID
+    return description['format_id'] == d1_client.data_package.RDFXML_FORMATID
 
   def _get_description(self, pid):
     #try:
@@ -136,26 +138,37 @@ class Resolver(resolver_abc.Resolver):
     package._parse_rdf_xml(resource_map)
     return sorted(package.scidata_dict.keys())
 
-  #    for sci_obj_pid, sci_obj in package.scidata_dict.items():
-  #      print sci_obj_pid
-  #      print sci_obj.meta
+  def get_total_size_of_objects_in_resource_map(self, resource_map_pid):
+    resource_map = self.command_processor.get_science_object_through_cache(
+      resource_map_pid
+    )
+    pids = self.deserialize_resource_map(resource_map)
+    total = 0
+    for pid in pids:
+      o = self.command_processor.get_object_info_through_cache(pid)
+      total += o['size']
+    return total
 
-  #    {
-  #     'original_pid': None, 
-  #     'pid': None, 
-  #     'scidata_dict': 
-  #      {u'r_test3.scidata.1.2012111515031353017039':
-  #        <d1_client.data_package.DataObject object at 0x32edf90>,
-  #        u'r_test3.scidata.2.2012111515031353017039':
-  #        <d1_client.data_package.DataObject object at 0x32f5890>
-  #      },
-  #      'sysmeta': None,
-  #      'resmap': None,
-  #      'scimeta':
-  #        <d1_client.data_package.DataObject object at 0x3300110>
-  #    }
+    #    for sci_obj_pid, sci_obj in package.scidata_dict.items():
+    #      print sci_obj_pid
+    #      print sci_obj.meta
 
-  # Private.
+    #    {
+    #     'original_pid': None, 
+    #     'pid': None, 
+    #     'scidata_dict': 
+    #      {u'r_test3.scidata.1.2012111515031353017039':
+    #        <d1_client.data_package.DataObject object at 0x32edf90>,
+    #        u'r_test3.scidata.2.2012111515031353017039':
+    #        <d1_client.data_package.DataObject object at 0x32f5890>
+    #      },
+    #      'sysmeta': None,
+    #      'resmap': None,
+    #      'scimeta':
+    #        <d1_client.data_package.DataObject object at 0x3300110>
+    #    }
+
+    # Private.
 
   def ___docs___():
     # Documentation of the foresite Python library

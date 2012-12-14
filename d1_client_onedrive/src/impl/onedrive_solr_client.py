@@ -27,8 +27,8 @@
 '''
 
 # Stdlib.
-import httplib
 import HTMLParser
+import httplib
 import logging
 import os
 import pprint
@@ -43,8 +43,9 @@ import d1_common.date_time
 import d1_common.url
 
 # App.
-import settings
+import path_exception
 import query_engine_description
+import settings
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -129,13 +130,15 @@ class SolrClient(object):
   def get_object_info(self, pid):
     query_params = [
       ('q', 'id:{0}'.format(self.escape_query_term(pid))),
-      ('fl', 'dateModified,size,formatId'),
+      ('fl', 'id,dateModified,size,formatId'),
       ('wt', 'python'),
     ]
     response = self.send_request(query_params)
-    doc = response['response']['docs'][0]
-    doc['dateModified'] = d1_common.date_time.from_iso8601(doc['dateModified'])
-    return doc
+    try:
+      doc = response['response']['docs'][0]
+    except IndexError:
+      raise path_exception.PathException('Invalid PID: {0}'.format(pid))
+    return self.object_info_from_solr_record(doc)
 
 #  def create_filter_query(self, all_facet_names, applied_facets, unapplied_facets):
 #    facet_settings = ['rows=100', 'facet=true', 'facet.limit=10',
@@ -227,34 +230,17 @@ class SolrClient(object):
     p.append(None)
     return zip(p[::2], p[1::2])
 
-#    pairs = []
-#    for i in range(0, len(list_with_pairs), 2):
-#      #pairs.append((urllib.quote(list_with_pairs[i], safe=''), list_with_pairs[i + 1]))
-#      pairs.append((list_with_pairs[i], list_with_pairs[i + 1]))
-#    return pairs
-
   def get_directory_entries(self, d):
     docs = d['response']['docs']
-    entry = []
-    for doc in docs:
-      #    # The columns to get from the Solr index.
-      #    self.fields = [
-      #      'id',
-      #      'identifier',
-      #      'title',
-      #      'formatId',
-      #      'update_date',
-      #      'size'
-      #    ]
-      entry.append(
-        {
-          'format_id': doc['formatId'],
-          'pid': doc['id'],
-          'size': doc['size'],
-          'date': doc['dateModified']
-        }
-      )
-    return entry
+    return [self.object_info_from_solr_record(r) for r in docs]
+
+  def object_info_from_solr_record(self, r):
+    return {
+      'pid': r['id'],
+      'format_id': r['formatId'],
+      'size': r['size'],
+      'date': d1_common.date_time.from_iso8601(r['dateModified'])
+    }
 
   def assert_response_is_ok(self, response):
     if response.status not in (200, ):
