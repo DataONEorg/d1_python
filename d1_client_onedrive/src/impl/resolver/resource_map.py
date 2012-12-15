@@ -101,15 +101,19 @@ class Resolver(resolver_abc.Resolver):
     # Private.
 
   def _get_attribute(self, path):
-    return attributes.Attributes(
-      self.get_total_size_of_objects_in_resource_map(path[0]),
-      is_dir=True
-    )
+    return attributes.Attributes(self._get_resource_map_size(path[0]), is_dir=True)
 
   def _get_directory(self, path):
     resource_map = self.command_processor.get_science_object_through_cache(path[0])
     pids = self.deserialize_resource_map(resource_map)
     return [directory_item.DirectoryItem(pid) for pid in pids]
+
+  def _get_resource_map_size(self, pid):
+    return {
+      'total': self.get_total_size_of_objects_in_resource_map,
+      'number': self.get_number_of_objects_in_resource_map,
+      'zero': self.get_zero,
+    }[settings.FOLDER_SIZE_FOR_RESOURCE_MAPS](pid)
 
   def _is_resource_map(self, pid):
     #try:
@@ -148,6 +152,15 @@ class Resolver(resolver_abc.Resolver):
       o = self.command_processor.get_object_info_through_cache(pid)
       total += o['size']
     return total
+
+  def get_number_of_objects_in_resource_map(self, resource_map_pid):
+    resource_map = self.command_processor.get_science_object_through_cache(
+      resource_map_pid
+    )
+    return len(self.deserialize_resource_map(resource_map))
+
+  def get_zero(self, pid):
+    return 0
 
     #    for sci_obj_pid, sci_obj in package.scidata_dict.items():
     #      print sci_obj_pid

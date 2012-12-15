@@ -64,8 +64,8 @@ class CommandProcessor(singleton.Singleton):
     self.fields_good_for_faceting = self.init_field_names_good_for_faceting()
     self.solr_query_cache = cache.Cache(settings.MAX_SOLR_QUERY_CACHE_SIZE)
     self.object_description_cache = cache.Cache(1000)
-    self.science_object_cache = cache.Cache(10)
-    self.system_metadata_cache = cache.Cache(10)
+    self.science_object_cache = cache.Cache(1000)
+    self.system_metadata_cache = cache.Cache(1000)
     self.object_description_cache2 = cache.Cache(1000)
     self.solr_client = onedrive_solr_client.SolrClient()
 

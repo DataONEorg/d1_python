@@ -145,7 +145,7 @@ class FUSECallbacks(fuse.Operations):
       return self.attribute_cache[path]
     except KeyError:
       attribute = self.root.get_attributes(path)
-      #self.attribute_cache[path] = attr //////////////////////////////////////// for debugging, disable cache
+      self.attribute_cache[path] = attribute
       return attribute
 
   
@@ -168,9 +168,8 @@ class FUSECallbacks(fuse.Operations):
 
 
   def _raise_error_for_os_special_file(self, path):
-    for test in settings.IGNORE_SPECIAL:
-      if path.find(test) >= 0:
-        _raise_error_no_such_file_or_directory(self, path)
+    if len(set(path.split(os.path.sep)) & settings.IGNORE_SPECIAL): 
+      self._raise_error_no_such_file_or_directory(path)
 
 
   def _raise_error_no_such_file_or_directory(self, path):

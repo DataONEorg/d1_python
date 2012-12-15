@@ -76,7 +76,7 @@ MOUNTPOINT = make_absolute('one') # (default, relative path)
 # Increasing this setting causes longer lists of science objects to to appear in
 # the filesystem, increases memory footprint for the application and causes
 # longer response times when opening folders. Default value: 1000.
-MAX_OBJECTS_IN_DIRECTORY = 20
+MAX_OBJECTS_IN_DIRECTORY = 1000
 
 # The maximum number of faceting selections that can be displayed for a facet.
 # The faceting selections are displayed when opening a facet to add a
@@ -124,12 +124,12 @@ MAX_ATTRIBUTE_CACHE_SIZE = 1000
 # The maximum number of folders to cache. Increasing this number may give better
 # performance, but also a larger memory footprint. A value below 10 is not
 # recommended. Default value: 100.
-MAX_DIRECTORY_CACHE_SIZE = 100
+MAX_DIRECTORY_CACHE_SIZE = 1000
 
 # The maximum number of science objects to cache. Increasing this number may
 # give better performance, but also a larger memory footprint. Default value:
 # 10.
-MAX_OBJECT_CACHE_SIZE = 10
+MAX_OBJECT_CACHE_SIZE = 100
 
 # The maximum number of error message file paths to cache. Decreasing this
 # number below the default is not recommended, as it may cause error messages
@@ -164,6 +164,19 @@ FACET_VALUE_DECORATOR = '#' # (default is '#')
 #FACET_FILTER = [r'.*Text$', r'.*Date$', r'date.*']
 #FACET_FILTER = [r'.*keywords$',]
 FACET_FILTER = [r'.*', ]
+
+# In the ONEDrive filesystem, resource maps (data packages) are represented as
+# folders which can be opened to access the mapped science objects. This setting
+# controls how the size is displayed for the resource map folders. To display
+# the total size of mapped objects, ONEDrive must retrieve the resource maps,
+# parse them and retrieve the sizes of the individual objects, which slows down
+# opening of folders that contain many resource maps. Also, many clients do not
+# show size for folders, so the information retrieved by this setting may not be
+# displayed.
+# 'total': Show total size of all objects in resource maps (slow)
+# 'number': Show number of objects in resource maps (less slow)
+# 'zero': Show zero size for all resource maps (fast, default)
+FOLDER_SIZE_FOR_RESOURCE_MAPS = 'zero'
 
 # Type of connection to use when connecting to the Solr server.
 # True: A persistent connection is maintained (default)
@@ -216,4 +229,17 @@ MACFUSE_LOCAL_DISK = True
 
 # Paths that have special meaning to the operating system and that should be
 # ignored by ONEDrive.
-IGNORE_SPECIAL = ['._', '.DS_Store', 'Backups.backupdb', '.Trashes', ]
+IGNORE_SPECIAL = set(
+  [
+    # OSX / Finder
+    '._',
+    '.DS_Store',
+    'Backups.backupdb',
+    '.Trashes',
+    # KDE / Krusader                
+    '.directory',
+    '.Trash',
+    'BDMV',
+    '.xdg-volume-info',
+  ]
+)
