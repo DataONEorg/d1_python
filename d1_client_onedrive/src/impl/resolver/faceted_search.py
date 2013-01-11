@@ -51,18 +51,18 @@ import os
 # D1.
 
 # App.
-import attributes
-import cache
-import command_processor
-import directory
-import directory_item
-import facet_path_formatter
-import facet_path_parser
-import path_exception
-import resolver_abc
-import resource_map
-import settings
-import util
+from impl import attributes
+from impl import cache
+from impl import command_processor
+from impl import directory
+from impl import directory_item
+from impl import facet_path_formatter
+from impl import facet_path_parser
+from impl import path_exception
+from . import resolver_abc
+from . import resource_map
+from impl import settings
+from impl import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

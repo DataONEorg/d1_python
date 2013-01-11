@@ -35,17 +35,17 @@ directory entries:
 # Stdlib.
 import logging
 import os
-import util
+from impl import util
 
 # D1.
 
 # App.
-import attributes
-import directory
-import directory_item
-import path_exception
-import resolver_abc
-import resource_map
+from impl import attributes
+from impl import directory
+from impl import directory_item
+from impl import path_exception
+from . import resolver_abc
+from . import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

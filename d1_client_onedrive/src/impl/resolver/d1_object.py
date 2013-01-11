@@ -40,18 +40,18 @@ import d1_client.data_package
 import d1_client.object_format_info
 
 # App.
-sys.path.append('.')
-import attributes
-import cache
-import command_processor
-import directory
-import directory_item
-import facet_path_formatter
-import facet_path_parser
-import path_exception
-import resolver_abc
-import settings
-import util
+#sys.path.append('.')
+from impl import attributes
+from impl import cache
+from impl import command_processor
+from impl import directory
+from impl import directory_item
+from impl import facet_path_formatter
+from impl import facet_path_parser
+from impl import path_exception
+from . import resolver_abc
+from impl import settings
+from impl import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

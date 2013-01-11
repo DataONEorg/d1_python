@@ -44,19 +44,19 @@ import logging
 import os
 
 # D1.
-import attributes
-import cache
-import directory
-import directory_item
-import faceted_search
-import flat_space
-import os_escape
-import path_exception
-import path_exception
-import preconfigured_search
-import resolver_abc
-import settings
-import util
+from impl import attributes
+from impl import cache
+from impl import directory
+from impl import directory_item
+from . import faceted_search
+from . import flat_space
+from impl import os_escape
+from impl import path_exception
+from impl import path_exception
+from . import preconfigured_search
+from . import resolver_abc
+from .. import settings
+from impl import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)

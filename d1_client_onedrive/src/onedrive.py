@@ -40,19 +40,18 @@ import fuse
 import d1_common.const
 
 # App.
-sys.path.append('impl')
-sys.path.append('impl/drivers/fuse')
-sys.path.append('impl/resolver')
+#sys.path.append('impl')
+#sys.path.append('impl/drivers/fuse')
+#sys.path.append('impl/resolver')
 import settings
-import check_dependencies
-import callbacks
+from impl import check_dependencies
+from impl.drivers.fuse import callbacks
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
 def main():
-  log_setup()
 
   if not check_dependencies.check_dependencies():
     raise Exception('Dependency check failed')
@@ -65,6 +64,14 @@ def main():
     action='store_true',
     default=False,
     help='Display version information and exit'
+  )
+  parser.add_option(
+    '-l',
+    '--logfile',
+    action='store',
+    type='str',
+    dest='logfile',
+    help='Log to the file specified'
   )
 
   (options, arguments) = parser.parse_args()
@@ -79,6 +86,12 @@ def main():
   else:
     mount_point = settings.MOUNTPOINT
 
+  # Handles the logfile option
+  if options.logfile is not None:
+    settings.LOG_FILE = options.logfile
+
+    # Setup logging
+  log_setup()
   log.setLevel(map_level_string_to_level(settings.LOG_LEVEL))
 
   if options.version:
@@ -114,14 +127,17 @@ def log_setup():
     '%(asctime)s %(levelname)-8s %(name)s'
     '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'
   )
-  # File.
-  file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-  file_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(file_logger)
-  # Stdout.
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
+  # Log to a file
+  if settings.LOG_FILE is not None:
+    file_logger = logging.FileHandler(settings.LOG_FILE, 'a')
+    file_logger.setFormatter(formatter)
+    logging.getLogger('').addHandler(file_logger)
+
+  # Log to stdout
+  else:
+    console_logger = logging.StreamHandler(sys.stdout)
+    console_logger.setFormatter(formatter)
+    logging.getLogger('').addHandler(console_logger)
 
 
 def map_level_string_to_level(level_string):
