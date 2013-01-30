@@ -90,7 +90,7 @@ class Command(NoArgsCommand):
   def update(self):
     node = self.generate_node_doc()
     client = self.create_client()
-    response = client.updateNodeCapabilitiesResponse(settings.NODE_SUBJECT, node)
+    response = client.updateNodeCapabilitiesResponse(settings.NODE_IDENTIFIER, node)
     logging.info('Server response:\n{0}'.format(response.read()))
 
   def view(self):

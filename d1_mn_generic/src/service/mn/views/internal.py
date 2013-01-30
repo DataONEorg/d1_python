@@ -186,7 +186,7 @@ def home(request):
   n_science_objects = group(mn.models.ScienceObject.objects.count())
 
   avg_sci_data_size_bytes = mn.models.ScienceObject.objects\
-    .aggregate(Avg('size'))['size__avg']
+    .aggregate(Avg('size'))['size__avg'] or 0
   avg_sci_data_size = group(int(avg_sci_data_size_bytes))
 
   n_objects_by_format_id = mn.models.ScienceObject.objects.values(
@@ -203,10 +203,12 @@ def home(request):
 
   n_unique_subjects = group(mn.models.PermissionSubject.objects.count())
 
-  n_storage_used_gib = mn.models.ScienceObject.objects\
-    .aggregate(Sum('size'))['size__sum'] / 1024**3
-  n_storage_free_gib = get_free_space(service.settings.MEDIA_ROOT) / 1024**3
-  storage_space = '{0} GiB / {1} GiB'.format(n_storage_used_gib, n_storage_free_gib)
+  n_storage_used = mn.models.ScienceObject.objects\
+    .aggregate(Sum('size'))['size__sum'] or 0
+  n_storage_free = get_free_space(service.settings.MEDIA_ROOT)
+  storage_space = '{0} GiB / {1} GiB'.format(
+    n_storage_used / 1024**3, n_storage_free / 1024**3
+  )
 
   n_permissions = group(mn.models.Permission.objects.count())
 

@@ -113,7 +113,7 @@ NODE_SYNCHRONIZE = True
 # node. The syntax for each time slot follows that of the Quartz Scheduler
 # (http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html).
 # These settings are ignored if NODE_SYNCHRONIZE is False.
-# E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*', 
+# E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*',
 # MINUTE = '0/3', SECOND = '0'.
 NODE_SYNC_SCHEDULE_YEAR = '*'
 NODE_SYNC_SCHEDULE_MONTH = '*'
@@ -164,13 +164,13 @@ SECRET_KEY = 'MySecretKey'
 
 # Path to the client side certificate that GMN uses when initiating TLS/SSL
 # connections to Coordinating Nodes. The certificate must be in PEM format.
-CLIENT_CERT_PATH = make_absolute('./certificates/server_crt.pem')
+CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.crt'
 
 # Path to the private key for the client side certificate set in
 # CLIENT_CERT_PATH. The private key must be in PEM format. This is only ONLY
 # required to be set if the certificate does not contain an embedded private
 # key. Otherwise, set it to None.
-CLIENT_CERT_PRIV_KEY_PATH = make_absolute('./certificates/server_key.pem')
+CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.key'
 
 # Set to True to enable this node to be used as a replication target. DataONE
 # uses replication targets to store replicas of science objects. This setting is
@@ -190,7 +190,7 @@ REPLICATION_MAXOBJECTSIZE = -1
 REPLICATION_SPACEALLOCATED = 10 * 1024**4
 
 # A list of nodes for which this node is willing to replicate content. To allow
-# objects from any node to be replicated, set to an empty list. 
+# objects from any node to be replicated, set to an empty list.
 # E.g.: ('urn:node:MemberNodeA','urn:node:MemberNodeB','urn:node:MemberNodeC')
 REPLICATION_ALLOWEDNODE = ()
 
@@ -266,32 +266,33 @@ PUBLIC_OBJECT_LIST = False
 DATABASES = {
   'default': {
     # PostgreSQL
-    #'ENGINE': 'django.db.backends.postgresql_psycopg2', 
-    #'NAME': 'gmn',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'gmn',
 
     # MySQL
-    #'ENGINE': 'django.db.backends.mysql', 
+    #'ENGINE': 'django.db.backends.mysql',
     #'NAME': 'gmn',
 
     # SQLite3
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': make_absolute('./gmn.sqlite'),
+    #'ENGINE': 'django.db.backends.sqlite3',
+    #'NAME': make_absolute('./gmn.sqlite'),
 
     'USER': 'gmn',
-    'PASSWORD': 'gmn',
+    'PASSWORD': 'gmn', # Set to match the password set up for the gmn user in
+                       # the PostgreSQL installation.
     'HOST': '', # Set to empty string for localhost.
     'PORT': '', # Set to empty string for default.
   }
 }
 
-# Path to the directory that holds media.
-MEDIA_ROOT = make_absolute('./stores')
-
-# Paths to the GMN data stores. The bytes of all the objects handled by
-# GMN are stored here.
+# Paths to the GMN data stores. The bytes of all the objects handled by GMN are
+# stored here. By default, these are below the service folder. Typically,
+# these are changed to use an area that is dedicated for storage, for instance
+# a separate filesystem / disk.
+MEDIA_ROOT = make_absolute('./stores') # relative location
+#MEDIA_ROOT = '/mnt/my_large_disk/dataone/' # example for absolute location
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
-STATIC_STORE_PATH = os.path.join(MEDIA_ROOT, 'static')
 
 # Path to the log file.
 LOG_PATH = make_absolute('./gmn.log')

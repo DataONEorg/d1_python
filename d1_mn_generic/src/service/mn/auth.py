@@ -179,16 +179,13 @@ def set_access_policy(pid, access_policy=None):
   permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
   allow_rights_holder.permission.append(permission)
 
-  # Iterate over AccessPolicy and create db entries.
-  for allow_rule in allow + [allow_rights_holder]:
+  # Create db entry for rights holder.
+  top_level = get_highest_level_action_for_rule(allow_rights_holder)
+  insert_permission_rows(sci_obj, allow_rights_holder, top_level)
 
-    # Find the highest level action that this rule sets.
-    top_level = 0
-    for permission in allow_rule.permission:
-      level = action_to_level(permission)
-      if level > top_level:
-        top_level = level
-
+  # Create db entries for all subjects for which permissions have been granted.
+  for allow_rule in allow:
+    top_level = get_highest_level_action_for_rule(allow_rule)
     insert_permission_rows(sci_obj, allow_rule, top_level)
 
   # Update the SysMeta object with the new access policy. Because
@@ -197,6 +194,15 @@ def set_access_policy(pid, access_policy=None):
   #with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
   #  s.accessPolicy = access_policy
   #  sci_obj.serial_version = s.serialVersion
+
+
+def get_highest_level_action_for_rule(allow_rule):
+  top_level = 0
+  for permission in allow_rule.permission:
+    level = action_to_level(permission)
+    if level > top_level:
+      top_level = level
+  return top_level
 
 
 def insert_permission_rows(sci_obj, allow_rule, top_level):
