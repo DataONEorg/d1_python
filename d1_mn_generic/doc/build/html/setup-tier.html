@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Selecting the DataONE Tier &mdash; v1.0.0</title>
+    <title>Select the DataONE Tier &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="GMN Asynchronous Processes" href="setup-async.html" />
-    <link rel="prev" title="Register the MN" href="setup-registration.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Configure the GMN Asynchronous Processes" href="setup-async.html" />
+    <link rel="prev" title="Register the new Member Node with DataONE" href="setup-registration.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-async.html" title="GMN Asynchronous Processes"
+          <a href="setup-async.html" title="Configure the GMN Asynchronous Processes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-registration.html" title="Register the MN"
+          <a href="setup-registration.html" title="Register the new Member Node with DataONE"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,8 +57,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="selecting-the-dataone-tier">
-<h1>Selecting the DataONE Tier<a class="headerlink" href="#selecting-the-dataone-tier" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="select-the-dataone-tier">
+<h1>Select the DataONE Tier<a class="headerlink" href="#select-the-dataone-tier" title="Permalink to this headline">¶</a></h1>
 <p>DataONE has defined several tiers, each of which designates a certain level of
 functionality exposed by the Member Node. The tiers enable Member Nodes to
 implement only the functionality for the level at which they wish to participate
@@ -92,8 +91,9 @@ following into account:</p>
 <ul class="simple">
 <li>A Tier 1 node is typically used for exposing existing data to DataONE. As
 there is no support for manipulating the data through DataONE interfaces in
-this tier, GMN should not initially be set to this tier. Instead, set GMN to
-Tier 3, create the objects, and then set the Tier to 1.</li>
+this tier, GMN cannot be populated with objects while in this tier. Therefore,
+GMN should not initially be set to this tier. Instead, set GMN to Tier 3,
+populate the node with objects, and then set the Tier to 1.</li>
 <li>A Tier 2 node allows the access to objects to be controlled via access control
 lists (ACLs). Using this Tier implies the same strategy as for Tier 1.</li>
 <li>A Tier 3 node allows using DataONE interfaces to set up the objects on the
@@ -108,7 +108,7 @@ Node operator to provide storage space to DataONE (for storing object
 replicas).</li>
 </ul>
 <p>When you have determined which tier to use, edit:
-<tt class="docutils literal"><span class="pre">/var/local/dataone/mn_generic/service/settings_site.py</span></tt></p>
+<tt class="docutils literal"><span class="pre">/var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py</span></tt></p>
 <blockquote>
 <div><ul class="simple">
 <li>Set TIER to 1, 2, 3 or 4.</li>
@@ -127,11 +127,9 @@ replicas).</li>
             </a></p><h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-registration.html" title="previous chapter">Register the MN</a></li>
-      <li>Next: <a href="setup-async.html" title="next chapter">GMN Asynchronous Processes</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-registration.html" title="previous chapter">Register the new Member Node with DataONE</a></li>
+      <li>Next: <a href="setup-async.html" title="next chapter">Configure the GMN Asynchronous Processes</a></li>
   </ul></li>
   </ul></li>
 </ul>

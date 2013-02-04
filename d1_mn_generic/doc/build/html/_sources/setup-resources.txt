@@ -24,10 +24,10 @@ How to add DataONE test certificate into the system wide trusted CA store:
 ::
 
   $ sudo -s
-  # cp /var/local/dataone/gmn_certs/ca.crt /usr/share/ca-certificates/dataone-gmn-test-ca.crt
-  # dpkg-reconfigure ca-certificates
-  # update-ca-certificates
-  
+  $ sudo cp /var/local/dataone/gmn_certs/ca.crt /usr/share/ca-certificates/dataone-gmn-test-ca.crt
+  $ sudo dpkg-reconfigure ca-certificates
+  $ sudo update-ca-certificates
+
 
 Integration testing using certificates
 --------------------------------------
@@ -40,10 +40,10 @@ installed in :doc:`setup-authn-client`.
 ::
 
   $ sudo -s
-  # cd /var/local/dataone/ca
-  # cp ../gmn_certs/ca.crt dataone-gmn-test-ca.crt
-  # c_rehash .
-  # <ctrl-d>
+  $ sudo cd /var/local/dataone/ca
+  $ sudo cp ../gmn_certs/ca.crt dataone-gmn-test-ca.crt
+  $ sudo c_rehash .
+  $ sudo <ctrl-d>
 
 Then, we create two test certificates signed by the CA. We simulate valid
 and invalid sessions by using "valid" and "invalid" strings in the Common
@@ -52,15 +52,15 @@ Names.
 ::
 
   $ sudo -s
-  # cd /var/local/dataone/gmn_certs
-  
+  $ sudo cd /var/local/dataone/gmn_certs
+
 Create the private keys:
 
 ::
 
-  # openssl genrsa -des3 -out test_valid.key 4096
-  # openssl genrsa -des3 -out test_invalid.key 4096
-  
+  $ sudo openssl genrsa -des3 -out test_valid.key 4096
+  $ sudo openssl genrsa -des3 -out test_invalid.key 4096
+
 Create :term:`CSR`\ s:
 
 * When prompted for Common Name (CN), type "test_valid" for the certificate
@@ -69,22 +69,22 @@ Create :term:`CSR`\ s:
 
 ::
 
-  # openssl req -new -key test_valid.key -out test_valid.csr
-  # openssl req -new -key test_invalid.key -out test_invalid.csr
-  
+  $ sudo openssl req -new -key test_valid.key -out test_valid.csr
+  $ sudo openssl req -new -key test_invalid.key -out test_invalid.csr
+
 Sign the :term:`CSR` with the :term:`CA signing key`:
 
 ::
 
-  # openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt
-  # openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt
+  $ sudo openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt
+  $ sudo openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt
 
 Remove pass phrases from the private keys:
 
 ::
 
-  # openssl rsa -in test_valid.key -out test_valid.nopassword.key
-  # openssl rsa -in test_invalid.key -out test_invalid.nopassword.key
+  $ sudo openssl rsa -in test_valid.key -out test_valid.nopassword.key
+  $ sudo openssl rsa -in test_invalid.key -out test_invalid.nopassword.key
 
 
 Copy the keys to the integration tests::

@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup" href="setup.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
     <link rel="next" title="Setting up testing and debugging environment for GMN" href="testing.html" />
-    <link rel="prev" title="Complete default-ssl Apache configuration file" href="setup-example-default-ssl.html" />
+    <link rel="prev" title="Installing on CentOS 5.5" href="setup-centos.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -45,10 +45,10 @@
           <a href="testing.html" title="Setting up testing and debugging environment for GMN"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-example-default-ssl.html" title="Complete default-ssl Apache configuration file"
+          <a href="setup-centos.html" title="Installing on CentOS 5.5"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" accesskey="U">Setup</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,13 +60,15 @@
   <div class="section" id="resources">
 <h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
 <p>Apache2 Configuration under Debian GNU/Linux:</p>
-<div class="highlight-python"><pre>$ zless /usr/share/doc/apache2.2-common/README.Debian.gz</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ zless /usr/share/doc/apache2.2-common/README.Debian.gz
+</pre></div>
 </div>
 <p>Viewing the files involved in the SSL handshake:</p>
-<div class="highlight-python"><pre>openssl rsa -noout -text -in server.key
+<div class="highlight-none"><div class="highlight"><pre>openssl rsa -noout -text -in server.key
 openssl req -noout -text -in server.csr
 openssl rsa -noout -text -in ca.key
-openssl x509 -noout -text -in ca.crt</pre>
+openssl x509 -noout -text -in ca.crt
+</pre></div>
 </div>
 <p>Overview of the SSL handshake:</p>
 <blockquote>
@@ -75,33 +77,36 @@ openssl x509 -noout -text -in ca.crt</pre>
 <ul class="simple">
 <li>In the dpkg-reconfigure GUI, enable the dataone-gmn-test-ca.crt.</li>
 </ul>
-<div class="highlight-python"><pre>$ sudo -s
-# cp /var/local/dataone/gmn_certs/ca.crt /usr/share/ca-certificates/dataone-gmn-test-ca.crt
-# dpkg-reconfigure ca-certificates
-# update-ca-certificates</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -s
+$ sudo cp /var/local/dataone/gmn_certs/ca.crt /usr/share/ca-certificates/dataone-gmn-test-ca.crt
+$ sudo dpkg-reconfigure ca-certificates
+$ sudo update-ca-certificates
+</pre></div>
 </div>
 </div>
 <div class="section" id="integration-testing-using-certificates">
 <h1>Integration testing using certificates<a class="headerlink" href="#integration-testing-using-certificates" title="Permalink to this headline">¶</a></h1>
 <p>For running automated integration tests against GMN, test certificates
 that are trusted by GMN are needed. We accomplish this by adding the CA that was
-created in <a class="reference internal" href="setup-authn-server.html"><em>Server Side Authentication</em></a> to the <a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a> CAs that were
-installed in <a class="reference internal" href="setup-authn-client.html"><em>Client side authentication</em></a>.</p>
-<div class="highlight-python"><pre>$ sudo -s
-# cd /var/local/dataone/ca
-# cp ../gmn_certs/ca.crt dataone-gmn-test-ca.crt
-# c_rehash .
-# &lt;ctrl-d&gt;</pre>
+created in <a class="reference internal" href="setup-authn-server.html"><em>Install the server side certificate</em></a> to the <a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a> CAs that were
+installed in <a class="reference internal" href="setup-authn-client.html"><em>Install the DataONE client side certificate</em></a>.</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -s
+$ sudo cd /var/local/dataone/ca
+$ sudo cp ../gmn_certs/ca.crt dataone-gmn-test-ca.crt
+$ sudo c_rehash .
+$ sudo &lt;ctrl-d&gt;
+</pre></div>
 </div>
 <p>Then, we create two test certificates signed by the CA. We simulate valid
 and invalid sessions by using &#8220;valid&#8221; and &#8220;invalid&#8221; strings in the Common
 Names.</p>
-<div class="highlight-python"><pre>$ sudo -s
-# cd /var/local/dataone/gmn_certs</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -s
+$ sudo cd /var/local/dataone/gmn_certs
+</pre></div>
 </div>
 <p>Create the private keys:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl genrsa -des3 -out test_valid.key 4096</span>
-<span class="c"># openssl genrsa -des3 -out test_invalid.key 4096</span>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl genrsa -des3 -out test_valid.key 4096
+$ sudo openssl genrsa -des3 -out test_invalid.key 4096
 </pre></div>
 </div>
 <p>Create <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a>s:</p>
@@ -110,23 +115,24 @@ Names.</p>
 signed with the test_valid key and &#8220;test_invalid&#8221; for the certificate signed
 with the test_invalid key.</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl req -new -key test_valid.key -out test_valid.csr</span>
-<span class="c"># openssl req -new -key test_invalid.key -out test_invalid.csr</span>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl req -new -key test_valid.key -out test_valid.csr
+$ sudo openssl req -new -key test_invalid.key -out test_invalid.csr
 </pre></div>
 </div>
 <p>Sign the <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a> with the <a class="reference internal" href="glossary.html#term-ca-signing-key"><em class="xref std std-term">CA signing key</em></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt</span>
-<span class="c"># openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt</span>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt
+$ sudo openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt
 </pre></div>
 </div>
 <p>Remove pass phrases from the private keys:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl rsa -in test_valid.key -out test_valid.nopassword.key</span>
-<span class="c"># openssl rsa -in test_invalid.key -out test_invalid.nopassword.key</span>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl rsa -in test_valid.key -out test_valid.nopassword.key
+$ sudo openssl rsa -in test_invalid.key -out test_invalid.nopassword.key
 </pre></div>
 </div>
 <p>Copy the keys to the integration tests:</p>
-<div class="highlight-python"><pre>cp test_valid.nopassword.key /var/local/dataone/gmn/src/tests
-cp test_invalid.nopassword.key /var/local/dataone/gmn/src/tests</pre>
+<div class="highlight-none"><div class="highlight"><pre>cp test_valid.nopassword.key /var/local/dataone/gmn/src/tests
+cp test_invalid.nopassword.key /var/local/dataone/gmn/src/tests
+</pre></div>
 </div>
 </div>
 
@@ -147,8 +153,8 @@ cp test_invalid.nopassword.key /var/local/dataone/gmn/src/tests</pre>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-      <li>Previous: <a href="setup-example-default-ssl.html" title="previous chapter">Complete <tt class="docutils literal docutils literal docutils literal"><span class="pre">default-ssl</span></tt> Apache configuration file</a></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-centos.html" title="previous chapter">Installing on CentOS 5.5</a></li>
       <li>Next: <a href="testing.html" title="next chapter">Setting up testing and debugging environment for GMN</a></li>
   </ul></li>
   </ul></li>

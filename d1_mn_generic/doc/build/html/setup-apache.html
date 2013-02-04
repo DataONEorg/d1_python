@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Apache &mdash; v1.0.0</title>
+    <title>Install and configure Apache &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="mod_wsgi" href="setup-mod-wsgi.html" />
-    <link rel="prev" title="Hardware" href="setup-hardware.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Install and configure PostgreSQL" href="setup-postgresql.html" />
+    <link rel="prev" title="Install CILogon and DataONE root CA certificates" href="setup-authn-ca.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-mod-wsgi.html" title="mod_wsgi"
+          <a href="setup-postgresql.html" title="Install and configure PostgreSQL"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-hardware.html" title="Hardware"
+          <a href="setup-authn-ca.html" title="Install CILogon and DataONE root CA certificates"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,69 +57,49 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="apache">
-<h1>Apache<a class="headerlink" href="#apache" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="install-and-configure-apache">
+<h1>Install and configure Apache<a class="headerlink" href="#install-and-configure-apache" title="Permalink to this headline">¶</a></h1>
 <p>Setting up Apache.</p>
-<p></p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="30%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Component</th>
-<th class="head">Tested version(s)</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Apache 2</td>
-<td>2.2.14-5ubuntu8.4</td>
-</tr>
-<tr class="row-odd"><td>apache2-threaded-dev</td>
-<td>2.2.14-5ubuntu8.4</td>
-</tr>
-</tbody>
-</table>
 <blockquote>
 <div><p>Install Apache2 packages:</p>
-<div class="highlight-python"><pre>$ sudo apt-get install apache2 apache2-threaded-dev</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install apache2 apache2-threaded-dev
+</pre></div>
+</div>
+<p>Install the GMN virtual host file and custom apache2.conf file:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd /var/local/dataone/gmn/lib/python2.6/site-packages/deployment
+$ sudo cp apache2.conf ports.conf /etc/apache2/
+$ sudo cp gmn-ssl /etc/apache2/sites-available/
+$ sudo cp forward_http_to_https /etc/apache2/conf.d/
+</pre></div>
 </div>
 </div></blockquote>
-<div class="section" id="mpm-setup">
-<h2><a class="reference internal" href="glossary.html#term-mpm"><em class="xref std std-term">MPM</em></a> setup<a class="headerlink" href="#mpm-setup" title="Permalink to this headline">¶</a></h2>
-<p>Setting up Apache to run GMN in a single process.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">GMN <strong>must</strong> run within a single process as it uses thread
-based locking. Failure to correctly set up Apache can cause spurious errors
-when multiple clients access the same resource simultaneously.</p>
-</div>
-<p>The default Apache2 package for Ubuntu is built with the &#8220;worker&#8221; MPM. The
-&#8220;worker&#8221; MPM must be configured to use a single process and multiple threads.</p>
+<p>The <a class="reference internal" href="glossary.html#term-mod-ssl"><em class="xref std std-term">mod_ssl</em></a> module handles TLS/SSL connections for GMN and validates
+client side certificates. It is included in the apache2-common package.</p>
+<p>The <a class="reference internal" href="glossary.html#term-mod-wsgi"><em class="xref std std-term">mod_wsgi</em></a> module enables Apache to communicate with Django and GMN.</p>
 <blockquote>
-<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/apache2.conf</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">IfModule</span> <span class="pre">mpm_worker_module</span></tt> section, add or edit:</p>
-<div class="highlight-python"><pre>StartServers          1
-ServerLimit           1
-ThreadsPerChild      64
-MaxClients           64</pre>
+<div><p>Install and enable required modules:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install libapache2-mod-wsgi apache2.2-common
+$ sudo a2enmod wsgi ssl rewrite
+</pre></div>
 </div>
+<p>Enable the GMN virtual host:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo a2ensite gmn-ssl
+</pre></div>
+</div>
+<ul class="simple">
+<li>If an intermediate certificate file or certificate chain file was installed
+in <a class="reference internal" href="setup-authn-server.html"><em>Install the server side certificate</em></a>, edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/gmn-ssl</span></tt>
+and uncomment the line for <tt class="docutils literal"><span class="pre">SSLCertificateChainFile</span></tt>.</li>
+</ul>
 </div></blockquote>
-</div>
-<div class="section" id="initial-virtualhost-setup">
-<h2>Initial VirtualHost setup<a class="headerlink" href="#initial-virtualhost-setup" title="Permalink to this headline">¶</a></h2>
-<p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
-<p>These instructions use the existing VirtualHost section.</p>
-<p>These settings are required for GMN to correctly handle the DataONE <a class="reference internal" href="glossary.html#term-rest"><em class="xref std std-term">REST</em></a>
-calls. See <a class="reference external" href="http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration">Apache Configuration for DataONE Services</a> for more information.</p>
+<p></p>
 <blockquote>
-<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add:</p>
-<div class="highlight-python"><pre>AllowEncodedSlashes On
-AcceptPathInfo On</pre>
-</div>
+<div><ul class="simple">
+<li>If a key without password was NOT created in <a class="reference internal" href="setup-authn-server.html"><em>Install the server side certificate</em></a>, edit
+<tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/gmn-ssl</span></tt> and substitute
+<tt class="docutils literal"><span class="pre">server.nopassword.key</span></tt> with <tt class="docutils literal"><span class="pre">server.key</span></tt>.</li>
+</ul>
 </div></blockquote>
-</div>
 </div>
 
 
@@ -131,23 +110,12 @@ AcceptPathInfo On</pre>
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Apache</a><ul>
-<li><a class="reference internal" href="#mpm-setup"><tt class="docutils literal"><span class="pre">MPM</span></tt> setup</a></li>
-<li><a class="reference internal" href="#initial-virtualhost-setup">Initial VirtualHost setup</a></li>
-</ul>
-</li>
-</ul>
-<h3>Related Topics</h3>
+            </a></p><h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-hardware.html" title="previous chapter">Hardware</a></li>
-      <li>Next: <a href="setup-mod-wsgi.html" title="next chapter">mod_wsgi</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-authn-ca.html" title="previous chapter">Install CILogon and DataONE root CA certificates</a></li>
+      <li>Next: <a href="setup-postgresql.html" title="next chapter">Install and configure PostgreSQL</a></li>
   </ul></li>
   </ul></li>
 </ul>

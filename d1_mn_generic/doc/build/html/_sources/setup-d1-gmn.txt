@@ -1,106 +1,54 @@
-DataONE Generic Member Node
-===========================
+Install the GMN software stack
+==============================
 
-\
+GMN user account
+~~~~~~~~~~~~~~~~
 
-==================== ==============================================
-Component            Tested version(s)
-==================== ==============================================
-Python               2.6
-subversion           \
-==================== ==============================================
+A user account named "gmn" is created. It will be set up to own the files that
+belong to GMN. It will also be used for authentication.
 
+  Create the gmn user account::
 
-GMN is currently distributed as a zip file and as Subversion repository.
-Select one of the distribution methods below.
+    $ sudo adduser --ingroup www-data gmn
 
-Zip file
-~~~~~~~~
-
-  Create and/or enter the folder where you wish to install GMN::
-
-    $ sudo -s
-    # mkdir -p /var/local/dataone
-    # cd /var/local/dataone
-
-  Download GMN from zip file and install::
-
-    $ wget <zip path>
-    $ gunzip x <zip>
+  Follow the prompts.
 
 
-Subversion
-~~~~~~~~~~
+GMN software stack
+~~~~~~~~~~~~~~~~~~
 
-  Install Subversion::
+GMN is distributed via PyPI, the Python Package Index.
 
-    $ sudo apt-get install subversion
+  Set up server packages:
 
-  Create and/or enter the folder where you wish to install GMN::
-
-    $ sudo -s
-    # mkdir -p /var/local/dataone
-    # cd /var/local/dataone
-
-  Download GMN from the Subversion repository::
-
-    $ sudo svn co https://repository.dataone.org/software/cicore/tags/D1_MN_GENERIC_V1.0.0-RC1/ gmn
-
-
-
-Configure GMN
-~~~~~~~~~~~~~
-
-  Create a copy of the site settings template::
-
-    $ cd /var/local/dataone/gmn/src/service
-    $ cp settings_site_template.py settings_site.py
-
-  Edit: ``/var/local/dataone/gmn/src/service/settings_site.py``
-
-  * The NODE_IDENTIFIER is configured later, in the :doc:`setup-registration`
-    step.
-
-  * Replace the name and email address in ADMINS with the name and email address
-    for a person that should be notified if there are any issues. Additional
-    administrators can be added.
-
-  * In the DATABASES section, set the password to what was specified during the
-    PostgreSQL installation step: :doc:`setup-postgresql`.
-
-
-Initialize the database
-~~~~~~~~~~~~~~~~~~~~~~~
+  * The build environment for DataONE Python extensions and lxml
+  * Commands used in the install
 
   ::
 
-    $ cd /var/local/dataone/gmn/src/service
-    $ python manage.py syncdb
+    $ sudo apt-get install build-essential python-dev libssl-dev libxml2-dev \
+    libxslt-dev postgresql-server-dev-8.4 openssl curl
 
+  Install the GMN software stack from PyPI, into a Python virtual environment::
 
-Set filesystem permissions
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+    $ sudo apt-get install python-pip
+    $ sudo pip install pip --upgrade
+    $ sudo pip install virtualenv
+    $ sudo mkdir -p /var/local/dataone/gmn
+    $ cd /var/local/dataone
+    $ sudo chown gmn:www-data gmn
+    $ su gmn
+    $ virtualenv --distribute gmn
+    $ cd gmn
+    $ . bin/activate
+    $ pip install dataone.generic_member_node
+    $ <ctrl-d>
 
-  * Make sure that all files under ``/var/local/dataone``, except for the
-    certificate keys, can be read by the user account under which Apache runs
-    (www-data by default)
-  * Make sure that the log files can be written by the Apache user account.
-  * When using SQLite, make sure that the SQLite database file can be written by
-    the Apache user account.
+  Use the GMN Python virtual environment by default for the gmn user::
 
+    $ sudo pico /home/gmn/.bashrc
 
-Set server to the UTC timezone (recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  * Close to the top, just after the line that aborts if not running
+    interactively, add::
 
-GMN translates incoming date-times to UTC and provides outgoing date-times in
-UTC. Because of this, it may also convenient to run the server in UTC, so that
-server related date-times, such as the ones in logs, match up with date-times
-stored in the database and provided in REST responses.
-
-  ::
-
-    # dpkg-reconfigure tzdata
-
-    Select Etc | UTC.
-
-:doc:`setup-registration`
+      PATH=/var/local/dataone/gmn/:$PATH

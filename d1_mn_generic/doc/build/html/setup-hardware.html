@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hardware &mdash; v1.0.0</title>
+    <title>Hardware requirements and configuration &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="Apache" href="setup-apache.html" />
-    <link rel="prev" title="Setup steps" href="setup-steps.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Install the GMN software stack" href="setup-d1-gmn.html" />
+    <link rel="prev" title="GMN setup overview" href="setup.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-apache.html" title="Apache"
+          <a href="setup-d1-gmn.html" title="Install the GMN software stack"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-steps.html" title="Setup steps"
+          <a href="setup.html" title="GMN setup overview"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,27 +57,31 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="hardware">
-<h1>Hardware<a class="headerlink" href="#hardware" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="hardware-requirements-and-configuration">
+<h1>Hardware requirements and configuration<a class="headerlink" href="#hardware-requirements-and-configuration" title="Permalink to this headline">¶</a></h1>
 <p>Setting up the hardware.</p>
-<p>GMN is installed on a physical or virtual machine. Network connectivity is
+<p><a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">GMN</em></a> is installed on a physical or virtual machine. Network connectivity is
 arranged so that GMN can be reached from the DataONE <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>s and from
 <a class="reference internal" href="glossary.html#term-client"><em class="xref std std-term">client</em></a>s. Typically, this means that GMN is set up to be globally
 accessible from the web.</p>
-<p>If installed as an <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">adapter</em></a>, GMN must also be accessible from the
-<a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">adaptee</em></a> and be able to reach the adaptees storage facilities.</p>
+<p>GMN can be used in a mode where it provides a DataONE interface to data that is
+already available on the web. When used in this way, GMN must also have access
+to the web site which holds the data.</p>
 <p>The requirements for RAM, CPU, disk and network resources are workload
 dependent. Below is benchmarks for two different setups.</p>
 <div class="section" id="benchmarks">
 <h2>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h2>
+<p>To give an indication of the hardware that may be required for hosting GMN, some
+benchmarks are provided.</p>
+<p>Configuration of benchmarking scripts:</p>
 <ul class="simple">
 <li>Concurrent calls per API: 5</li>
 <li>Science object size: 1024 bytes.</li>
 <li>Allow rules per object: 10</li>
 <li>listObjects / getLogRecords page size: 1000 objects</li>
 </ul>
-<div class="section" id="configuration-1">
-<h3>Configuration 1<a class="headerlink" href="#configuration-1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="hardware-configuration-1">
+<h3>Hardware configuration 1<a class="headerlink" href="#hardware-configuration-1" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="docutils">
 <colgroup>
 <col width="35%" />
@@ -134,8 +137,8 @@ dependent. Below is benchmarks for two different setups.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="configuration-2">
-<h3>Configuration 2<a class="headerlink" href="#configuration-2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="hardware-configuration-2">
+<h3>Hardware configuration 2<a class="headerlink" href="#hardware-configuration-2" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="docutils">
 <colgroup>
 <col width="38%" />
@@ -190,7 +193,6 @@ dependent. Below is benchmarks for two different setups.</p>
 </tr>
 </tbody>
 </table>
-<p><a class="reference internal" href="setup-apache.html"><em>Apache</em></a></p>
 </div>
 </div>
 </div>
@@ -206,10 +208,10 @@ dependent. Below is benchmarks for two different setups.</p>
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Hardware</a><ul>
+<li><a class="reference internal" href="#">Hardware requirements and configuration</a><ul>
 <li><a class="reference internal" href="#benchmarks">Benchmarks</a><ul>
-<li><a class="reference internal" href="#configuration-1">Configuration 1</a></li>
-<li><a class="reference internal" href="#configuration-2">Configuration 2</a></li>
+<li><a class="reference internal" href="#hardware-configuration-1">Hardware configuration 1</a></li>
+<li><a class="reference internal" href="#hardware-configuration-2">Hardware configuration 2</a></li>
 </ul>
 </li>
 </ul>
@@ -218,11 +220,9 @@ dependent. Below is benchmarks for two different setups.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-steps.html" title="previous chapter">Setup steps</a></li>
-      <li>Next: <a href="setup-apache.html" title="next chapter">Apache</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup.html" title="previous chapter">GMN setup overview</a></li>
+      <li>Next: <a href="setup-d1-gmn.html" title="next chapter">Install the GMN software stack</a></li>
   </ul></li>
   </ul></li>
 </ul>

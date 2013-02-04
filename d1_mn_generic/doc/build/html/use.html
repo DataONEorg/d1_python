@@ -60,13 +60,13 @@
 <p>After <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">GMN</em></a> has been set up according the setup instructions, it exposes
 the complete REST interface that DataONE has defined for Member Nodes.
 Currently, the easiest way to interact with GMN is to use the DataONE Command
-Line Client (CLI). The CLI can also be scripted to perform tasks such as bulk
-object creations to populate an instance of GMN with science data for exsposure
-to DataONE.</p>
+Line Client (CLI). The CLI is installed automatically with GMN and can be
+started by typing &#8220;dataone&#8221;. The CLI can also be scripted to perform tasks such
+as bulk object creations to populate an instance of GMN with science data.</p>
 <p>If more comprehensive access to the node is desired, DataONE provides libraries
-in Java and Python that simplify the process of interacting with DataONE. The
-libraries can be used as foundations for custom applications that use the
-DataONE infrastructure.</p>
+in Java and Python that simplify the process of interacting with DataONE Member
+Nodes and Coordinating Nodes. The libraries can be used as foundations for
+custom applications that use the DataONE infrastructure.</p>
 <div class="section" id="vendor-specific-extensions">
 <h2>Vendor specific extensions<a class="headerlink" href="#vendor-specific-extensions" title="Permalink to this headline">¶</a></h2>
 <p>GMN implements a set of extensions that expand the functionality of GMN. Most of
@@ -81,7 +81,7 @@ having to create another copy of that data.</p>
 objects are provided, and the MN manages the storage of the science objects.
 When using the Remote URL extension, the bytes of the objects are not provided
 and instead, a HTTP or HTTPS URL to the original location of the data is
-provided. GMN then managaes all aspects of exposing the science data except for
+provided. GMN then manages all aspects of exposing the science data except for
 the actual storage of the bytes of the exposed object.</p>
 <p>When the object is downloaded from GMN, GMN streams the object from its original
 location in the background.</p>

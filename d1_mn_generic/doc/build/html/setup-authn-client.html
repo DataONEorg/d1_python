@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Client side authentication &mdash; v1.0.0</title>
+    <title>Install the DataONE client side certificate &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="Python dependencies" href="setup-python-deps.html" />
-    <link rel="prev" title="Server Side Authentication" href="setup-authn-server.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Install CILogon and DataONE root CA certificates" href="setup-authn-ca.html" />
+    <link rel="prev" title="Install the server side certificate" href="setup-authn-server.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-python-deps.html" title="Python dependencies"
+          <a href="setup-authn-ca.html" title="Install CILogon and DataONE root CA certificates"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-authn-server.html" title="Server Side Authentication"
+          <a href="setup-authn-server.html" title="Install the server side certificate"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,83 +57,58 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="client-side-authentication">
-<h1>Client side authentication<a class="headerlink" href="#client-side-authentication" title="Permalink to this headline">¶</a></h1>
-<p>In the <a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a> infrastructure, <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a>s and <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>s use
-<a class="reference internal" href="glossary.html#term-x-509"><em class="xref std std-term">X.509</em></a> client side <a class="reference internal" href="glossary.html#term-certificate"><em class="xref std std-term">certificate</em></a>s for authenticating
-<a class="reference internal" href="glossary.html#term-client"><em class="xref std std-term">client</em></a>s and other DataONE nodes.</p>
+  <div class="section" id="install-the-dataone-client-side-certificate">
+<h1>Install the DataONE client side certificate<a class="headerlink" href="#install-the-dataone-client-side-certificate" title="Permalink to this headline">¶</a></h1>
+<p>In addition to its regular server role, GMN also acts as a client, initiating
+connections to other Nodes.</p>
 <p>During <a class="reference internal" href="glossary.html#term-client-side-authentication"><em class="xref std std-term">client side authentication</em></a>, the client provides a certificate,
 proving its identity to the server. A DataONE client or Node may connecty to
 another Node without providing a client side certificate, but then gains only
 public access on the Node.</p>
-<p>For a client side certificate to be considered valid by the server, the server
-must trust the <a class="reference internal" href="glossary.html#term-ca"><em class="xref std std-term">CA</em></a> that signed the client side certificate. This step
-sets up the CAs to be trusted.</p>
-<div class="section" id="cilogon-ca-certificates">
-<h2>CILogon CA certificates<a class="headerlink" href="#cilogon-ca-certificates" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a> provides three <a class="reference internal" href="glossary.html#term-loa"><em class="xref std std-term">LOA</em></a>s. These instructions set GMN up to
-accept all three. Ubuntu comes with a complete set of commonly trusted
-<a class="reference internal" href="glossary.html#term-ca"><em class="xref std std-term">CA</em></a> certificates. However, DataONE Nodes should not accept certificates
-signed by these, so we establish a separate CA store for the CILogon CAs.</p>
+<div class="section" id="obtaining-a-client-side-certificate">
+<h2>Obtaining a client side certificate<a class="headerlink" href="#obtaining-a-client-side-certificate" title="Permalink to this headline">¶</a></h2>
+<p>To obtain a client side certificate, generate a certificate request and email
+it to DataONE. DataONE will return a signed certificate by email.</p>
 <blockquote>
-<div><p>Download and install the CA certificates from CILogon:</p>
-<div class="highlight-python"><pre>$ sudo -s
-# mkdir -p /var/local/dataone/ca
-# cd /var/local/dataone/ca
-# wget https://cilogon.org/cilogon-ca-certificates.tar.gz
-# tar xzf cilogon-ca-certificates.tar.gz
-# mv cilogon-ca/certificates/* .
-# rm -r cilogon-ca cilogon-ca-certificates.tar.gz
-# c_rehash .
-# &lt;ctrl-d&gt;</pre>
-</div>
-</div></blockquote>
-</div>
-<div class="section" id="apache-ssl-setup">
-<h2>Apache SSL setup<a class="headerlink" href="#apache-ssl-setup" title="Permalink to this headline">¶</a></h2>
-<p>Set Apache up to accept optional <a class="reference internal" href="glossary.html#term-ssl"><em class="xref std std-term">SSL</em></a> Client side authentication.</p>
-<p>Setting the client side certificate to be optional allows a client to connect to
-the Node without a certificate for anonymous access to public science data. If
-the client does supply a certificate, the certificate must be valid, not
-expired, and must be signed by the <a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a> <a class="reference internal" href="glossary.html#term-ca"><em class="xref std std-term">CA</em></a>.</p>
-<p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
-<blockquote>
-<div><p>Enable Client side authentication:</p>
-<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit directives:</p>
-<div class="highlight-python"><pre>SSLVerifyClient optional
-SSLVerifyDepth  10</pre>
-</div>
-</div></blockquote>
-<p>GMN needs to have access to the submitted client side certificate. Configure
-mod_ssl to forward the certificate to the GMN WSGI handler in an environment
-variable.</p>
-<blockquote>
-<div><p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add “wsgi” in the FilesMatch expression, and
-replace +StdEnvVars with +ExportCertData.</p>
-<p>Change:</p>
-<div class="highlight-python"><pre>&lt;FilesMatch "\.(cgi|shtml|phtml|php)$"&gt;
-  SSLOptions +StdEnvVars
-&lt;/FilesMatch&gt;</pre>
-</div>
-<p>to:</p>
-<div class="highlight-python"><pre>&lt;FilesMatch "\.(wsgi|cgi|shtml|phtml|php)$"&gt;
-  SSLOptions +ExportCertData
-&lt;/FilesMatch&gt;</pre>
-</div>
-</div></blockquote>
-<p>Use the CILogon CA certificates instead of the default ones.</p>
-<blockquote>
-<div><p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">SSLCACertificatePath</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">dataone</span><span class="o">/</span><span class="n">ca</span>
+<div><p>Create the private key for the certificate request:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo mkdir -p /var/local/dataone/certs/client
+$ cd /var/local/dataone/certs/client
+$ sudo openssl genrsa -des3 -out my_member_node.key 4096
 </pre></div>
 </div>
-<p>Restart Apache:</p>
-<div class="highlight-python"><pre># service apache2 restart
-
-Check for any error messages from Apache.</pre>
+<p>Create the certificate request:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ openssl req -new -key my_member_node.key -out my_member_node.csr
+</pre></div>
 </div>
+<ul class="simple">
+<li>You will be prompted for information that, combined, will become the
+Distinguished Name (DN) for this MN. Please supply <em>Country Name</em>, <em>State or
+Province Name</em>, <em>Locality Name</em>, <em>Organization Name</em> and <em>Common Name</em>. The
+remaining fields may be left blank. To remove the default value from a
+field, type a period (&#8221;.&#8221;). To leave a field blank, press Enter.</li>
+</ul>
+</div></blockquote>
+<p>Note: Anyone who has the private key can act as your Node in the DataONE
+infrastructure. Keep the private key safe. If your private key becomes
+compromised, please inform DataONE so that the certificate can be revoked.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Email the my_member_node.csr file to DataONE at <a class="reference external" href="mailto:cert-requests&#37;&#52;&#48;dataone&#46;org">cert-requests<span>&#64;</span>dataone<span>&#46;</span>org</a>.
+In the email, include for which environment you would like the certificate
+to be signed. The certificate will only be trusted in that environment.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="installing-the-client-side-certificate">
+<h2>Installing the client side certificate<a class="headerlink" href="#installing-the-client-side-certificate" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>When the signed client side certificate has been received from DataONE, move
+it and its private key to the <tt class="docutils literal"><span class="pre">/var/local/dataone/certs/client</span></tt> folder.</p>
+<ul class="simple">
+<li>Rename the files to client.crt and client.key.</li>
+</ul>
+<p>Other names may be used. If so, update the GMN <tt class="docutils literal"><span class="pre">settings_site.py</span></tt> file to
+match the new names.</p>
 </div></blockquote>
 </div>
 </div>
@@ -150,20 +124,18 @@ Check for any error messages from Apache.</pre>
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Client side authentication</a><ul>
-<li><a class="reference internal" href="#cilogon-ca-certificates">CILogon CA certificates</a></li>
-<li><a class="reference internal" href="#apache-ssl-setup">Apache SSL setup</a></li>
+<li><a class="reference internal" href="#">Install the DataONE client side certificate</a><ul>
+<li><a class="reference internal" href="#obtaining-a-client-side-certificate">Obtaining a client side certificate</a></li>
+<li><a class="reference internal" href="#installing-the-client-side-certificate">Installing the client side certificate</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-authn-server.html" title="previous chapter">Server Side Authentication</a></li>
-      <li>Next: <a href="setup-python-deps.html" title="next chapter">Python dependencies</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-authn-server.html" title="previous chapter">Install the server side certificate</a></li>
+      <li>Next: <a href="setup-authn-ca.html" title="next chapter">Install CILogon and DataONE root CA certificates</a></li>
   </ul></li>
   </ul></li>
 </ul>

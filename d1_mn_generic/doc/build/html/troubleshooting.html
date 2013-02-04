@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="next" title="Implementation" href="impl.html" />
+    <link rel="next" title="Optimizing GMN performance" href="performance.html" />
     <link rel="prev" title="Using GMN" href="use.html" />
    
   
@@ -41,7 +41,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="impl.html" title="Implementation"
+          <a href="performance.html" title="Optimizing GMN performance"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="use.html" title="Using GMN"
@@ -62,19 +62,22 @@
 <p>The version of Psycopg2 that was installed by default was not compatible.</p>
 <p>Try uninstalling the default version and installing a specific version. The
 version referenced below had been found to work well with PostgreSQL 8.4.10.</p>
-<div class="highlight-python"><pre>$ sudo apt-get remove python-psycopg2
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get remove python-psycopg2
 $ mkdir ~/install
 $ cd ~/install
 $ wget http://initd.org/psycopg/tarballs/PSYCOPG-2-4/psycopg2-2.4.2.tar.gz
 $ tar xzf psycopg2-2.4.2.tar.gz
 $ cd psycopg2-2.4.2
-$ sudo python setup.py install</pre>
+$ sudo python setup.py install
+</pre></div>
 </div>
 <p>Another option is to try to install Psycopg2 via easy_install:</p>
-<div class="highlight-python"><pre>$ sudo easy_install -m psycopg2</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo easy_install -m psycopg2
+</pre></div>
 </div>
 <p>To remove a version of Psycopg2 that was installed with easy_install:</p>
-<div class="highlight-python"><pre>$ sudo rm -rf /usr/lib/python2.6/dist-packages/psycopg2</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo rm -rf /usr/lib/python2.6/dist-packages/psycopg2
+</pre></div>
 </div>
 </div>
 </div>
@@ -99,7 +102,7 @@ $ sudo python setup.py install</pre>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
       <li>Previous: <a href="use.html" title="previous chapter">Using GMN</a></li>
-      <li>Next: <a href="impl.html" title="next chapter">Implementation</a></li>
+      <li>Next: <a href="performance.html" title="next chapter">Optimizing GMN performance</a></li>
   </ul></li>
 </ul>
 <div id="searchbox" style="display: none">

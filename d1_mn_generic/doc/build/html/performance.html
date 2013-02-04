@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Performance &mdash; v1.0.0</title>
+    <title>Optimizing GMN performance &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,6 +26,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="next" title="Implementation" href="impl.html" />
+    <link rel="prev" title="Troubleshooting" href="troubleshooting.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -38,6 +40,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="impl.html" title="Implementation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="troubleshooting.html" title="Troubleshooting"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,36 +55,55 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="performance">
-<h1>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
-<p>&lt;scratch&gt;</p>
-<p>Optimizing GMN for performance.</p>
+  <div class="section" id="optimizing-gmn-performance">
+<h1>Optimizing GMN performance<a class="headerlink" href="#optimizing-gmn-performance" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="database">
+<h2>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h2>
 <p>The MNRead.listObjects() call does ordered, sliced and filtered selects from the
 object table. The object table should be clustered on mtime. With PostgreSQL,
 this can be done with the CLUSTER command:</p>
-<div class="highlight-python"><pre>cluster mn_object using mtime;</pre>
+<div class="highlight-none"><div class="highlight"><pre>&gt; cluster mn_object using mtime;
+</pre></div>
 </div>
-<p>PostgreSQL will not automatically keep the table clustered. Instead, the
-table must be clustered whenever sufficient changes have been accumulated.</p>
-<p>To keep the table clustered for longer, adjust the fill factor.</p>
-<p>&#8211;</p>
 <p>MNCore.getLogRecords() can be optimized in the same ways as MNRead.listObjects().</p>
 <p>The mn_event_log should be clustered on date_logged:</p>
-<div class="highlight-python"><pre>cluster mn_event_log using date_logged</pre>
+<div class="highlight-none"><div class="highlight"><pre>&gt; cluster mn_event_log using date_logged
+</pre></div>
 </div>
-<p>&#8211;</p>
-<p>cluster mn_object using mn_object_mtime;</p>
-<p>&#8211;</p>
-<p>analyze</p>
-<p>vacuum</p>
-<p>~~</p>
-<p>The bad is that since there is no additional overhead aside from the usual index
-key creation during table inserts and updates, you need to schedule reclustering
-to maintain your fine order and the clustering causes a table lock. The annoying
-locking hopefully will be improved in later versions. Scheduling a cluster can
-be done with a Cron Job or the more OS agnostic PgAgent approach. In another
-issue, we&#8217;ll cover how to use PgAgent for backup and other scheduling
-maintenance tasks such as this.</p>
+<ul class="simple">
+<li>PostgreSQL will not automatically keep the table clustered. Instead, the
+table must be clustered whenever sufficient changes have been accumulated.</li>
+<li>To keep the table clustered for longer, adjust the fill factor.</li>
+<li>Use cron to schedule automatic clustering. Note that the tables are locked
+while the clustering operation runs.</li>
+<li>Search the web for PostgreSQL &#8220;analyze&#8221; and &#8220;vacuum&#8221; for more information.</li>
+</ul>
+</div>
+<div class="section" id="profiling">
+<h2>Profiling<a class="headerlink" href="#profiling" title="Permalink to this headline">¶</a></h2>
+<p>When GMN is in debug mode (DEBUG is set to True in the GMN settings.py file),
+the following profiling functionality is available.</p>
+<div class="section" id="sql-query-profiling">
+<h3>SQL query profiling<a class="headerlink" href="#sql-query-profiling" title="Permalink to this headline">¶</a></h3>
+<p>All REST calls accept a <a class="reference internal" href="glossary.html#term-vendor-specific-extensions"><em class="xref std std-term">vendor specific extensions</em></a> called
+<tt class="docutils literal"><span class="pre">VENDOR_PROFILE_SQL</span></tt>. When this parameter is provided, the normal output from
+the call is suppressed and a text document containing SQL query profiling
+information is returned instead. The document lists all the SQL queries that
+were used for filling the request together with execution times.</p>
+<p>..note:: If a REST call returns an exception, the exception is also supressed.</p>
+</div>
+<div class="section" id="python-profiling">
+<h3>Python profiling<a class="headerlink" href="#python-profiling" title="Permalink to this headline">¶</a></h3>
+<p>All REST calls accept a <a class="reference internal" href="glossary.html#term-vendor-specific-extensions"><em class="xref std std-term">vendor specific extensions</em></a> called
+VENDOR_PROFILE_PYTHON. When this parameter is provided, the normal output from
+the call is suppressed and a text document containing Python script profiling
+information is returned instead. The document includes information such as the
+name and location, number of calls and cumulative execution times for the
+longest running functions.</p>
+<p>..note:: Only the view functions are covered. In particular, response_handler,
+where the SQL queries are executed, is not covered.</p>
+</div>
+</div>
 </div>
 
 
@@ -87,9 +114,24 @@ maintenance tasks such as this.</p>
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
-            </a></p><h3>Related Topics</h3>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Optimizing GMN performance</a><ul>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#profiling">Profiling</a><ul>
+<li><a class="reference internal" href="#sql-query-profiling">SQL query profiling</a></li>
+<li><a class="reference internal" href="#python-profiling">Python profiling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
+      <li>Previous: <a href="troubleshooting.html" title="previous chapter">Troubleshooting</a></li>
+      <li>Next: <a href="impl.html" title="next chapter">Implementation</a></li>
   </ul></li>
 </ul>
 <div id="searchbox" style="display: none">

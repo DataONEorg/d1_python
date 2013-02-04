@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Server Side Authentication &mdash; v1.0.0</title>
+    <title>Install the server side certificate &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="Client side authentication" href="setup-authn-client.html" />
-    <link rel="prev" title="mod_ssl" href="setup-mod-ssl.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Install the DataONE client side certificate" href="setup-authn-client.html" />
+    <link rel="prev" title="Select a DataONE environment" href="setup-env.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-authn-client.html" title="Client side authentication"
+          <a href="setup-authn-client.html" title="Install the DataONE client side certificate"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-mod-ssl.html" title="mod_ssl"
+          <a href="setup-env.html" title="Select a DataONE environment"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,68 +57,36 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="server-side-authentication">
-<h1>Server Side Authentication<a class="headerlink" href="#server-side-authentication" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="install-the-server-side-certificate">
+<h1>Install the server side certificate<a class="headerlink" href="#install-the-server-side-certificate" title="Permalink to this headline">¶</a></h1>
 <p>GMN proves its identity to <a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a> <a class="reference internal" href="glossary.html#term-client"><em class="xref std std-term">client</em></a>s and other parts of
 the DataONE infrastructure, such as <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>s by providing a server side
-certificate during the TLS handshake.</p>
+certificate during the SSL/TLS handshake.</p>
 <p>The certificate must be signed by a <a class="reference internal" href="glossary.html#term-ca"><em class="xref std std-term">CA</em></a> that is recognized by DataONE. It
 is obtained through the same procedure that one would use for obtaining a
 certificate for any secure web site. The procedure below assumes that a valid
 certificate has already been obtained.</p>
 <div class="section" id="setup-the-server-side-certificate-and-private-key">
 <h2>Setup the server side certificate and private key<a class="headerlink" href="#setup-the-server-side-certificate-and-private-key" title="Permalink to this headline">¶</a></h2>
-<p>The following section assumes that the server side certificate and key is
-named server.crt and server.key, respectively.</p>
 <blockquote>
 <div><p>Create a folder to hold the certificate and key:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># mkdir -p /var/local/dataone/gmn_certs/</span>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo mkdir -p /var/local/dataone/certs/server
 </pre></div>
 </div>
-<p>Move the certificate and key to the folder.</p>
-</div></blockquote>
-<p>Note that, unlike the certificate, the contents of the private key are
-sensitive. Set it to be readable only by root and follow best practices for
-security to keep root from being compromised.</p>
-<blockquote>
-<div><p>Set the private key to be readable only by root:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># chown root:root server.key</span>
-<span class="c"># chmod 400 server.key</span>
+<ul class="simple">
+<li>Move the certificate and key to the folder.</li>
+<li>If the server certificate is signed by an intermedite certificate, move
+the intermediate certificate or certificate chain to the folder.</li>
+<li>Rename the files to server.crt, server.key and server_intermediate.crt</li>
+</ul>
+<p>Other names may be used. If so, update the GMN <tt class="docutils literal"><span class="pre">settings_site.py</span></tt> file to
+match the new names.</p>
+<p>If the key is password protected, Apache will prompt for the password each
+time it&#8217;s started. As an optional step, the password can be removed:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl rsa -in server.key -out server.nopassword.key
+$ sudo chown root:root server.nopassword.key
+$ sudo chmod 400 server.nopassword.key
 </pre></div>
-</div>
-</div></blockquote>
-<p>If the key is password protected, Apache will prompt for the password each time
-it&#8217;s started. As an optional step, the password can be removed:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># openssl rsa -in server.key -out server.nopassword.key</span>
-</pre></div>
-</div>
-<p>If this step is performed, substitute server.key with server.nopassword.key
-below.</p>
-</div>
-<div class="section" id="apache-ssl-setup">
-<h2>Apache SSL setup<a class="headerlink" href="#apache-ssl-setup" title="Permalink to this headline">¶</a></h2>
-<p>Set Apache up to provide <a class="reference internal" href="glossary.html#term-tls"><em class="xref std std-term">TLS</em></a> <a class="reference internal" href="glossary.html#term-server-side-authentication"><em class="xref std std-term">Server Side Authentication</em></a> for GMN.</p>
-<p>Also see: <a class="reference internal" href="setup-example-default-ssl.html"><em>Complete default-ssl Apache configuration file</em></a>.</p>
-<blockquote>
-<div><p>Enable the default TLS protected site in Apache:</p>
-<div class="highlight-python"><pre>$ sudo a2ensite default-ssl
-$ sudo a2enmod ssl</pre>
-</div>
-<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/sites-available/default-ssl</span></tt>.</p>
-<p>Change:</p>
-<div class="highlight-python"><pre>&lt;VirtualHost _default_:443&gt;</pre>
-</div>
-<p>to:</p>
-<div class="highlight-python"><pre>&lt;VirtualHost *:443&gt;</pre>
-</div>
-<p>In the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section, add or edit directives:</p>
-<div class="highlight-python"><pre>SSLEngine on
-SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
-SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.key</pre>
-</div>
-<p>Edit <tt class="docutils literal"><span class="pre">/etc/apache2/ports.conf</span></tt>.</p>
-<p>In the <tt class="docutils literal"><span class="pre">&lt;IfModule</span> <span class="pre">mod_ssl.c&gt;</span></tt> section, add or edit:</p>
-<div class="highlight-python"><pre>NameVirtualHost *:443</pre>
 </div>
 </div></blockquote>
 </div>
@@ -136,20 +103,17 @@ SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.key</pre>
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Server Side Authentication</a><ul>
+<li><a class="reference internal" href="#">Install the server side certificate</a><ul>
 <li><a class="reference internal" href="#setup-the-server-side-certificate-and-private-key">Setup the server side certificate and private key</a></li>
-<li><a class="reference internal" href="#apache-ssl-setup">Apache SSL setup</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-mod-ssl.html" title="previous chapter">mod_ssl</a></li>
-      <li>Next: <a href="setup-authn-client.html" title="next chapter">Client side authentication</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-env.html" title="previous chapter">Select a DataONE environment</a></li>
+      <li>Next: <a href="setup-authn-client.html" title="next chapter">Install the DataONE client side certificate</a></li>
   </ul></li>
   </ul></li>
 </ul>

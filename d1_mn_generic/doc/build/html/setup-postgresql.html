@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PostgreSQL &mdash; v1.0.0</title>
+    <title>Install and configure PostgreSQL &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="python-psycopg2" href="setup-psycopg2.html" />
-    <link rel="prev" title="DataONE libraries" href="setup-d1-libs.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Register the new Member Node with DataONE" href="setup-registration.html" />
+    <link rel="prev" title="Install and configure Apache" href="setup-apache.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-psycopg2.html" title="python-psycopg2"
+          <a href="setup-registration.html" title="Register the new Member Node with DataONE"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-d1-libs.html" title="DataONE libraries"
+          <a href="setup-apache.html" title="Install and configure Apache"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,89 +57,74 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="postgresql">
-<h1>PostgreSQL<a class="headerlink" href="#postgresql" title="Permalink to this headline">¶</a></h1>
-<p></p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="30%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Component</th>
-<th class="head">Tested version(s)</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>PostgreSQL</td>
-<td>8.4.10, 8.4.12</td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="install-and-configure-postgresql">
+<h1>Install and configure PostgreSQL<a class="headerlink" href="#install-and-configure-postgresql" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference internal" href="glossary.html#term-django"><em class="xref std std-term">Django</em></a>, on which GMN is built, supports <a class="reference internal" href="glossary.html#term-postgresql"><em class="xref std std-term">PostgreSQL</em></a>,
-<a class="reference internal" href="glossary.html#term-sqlite3"><em class="xref std std-term">SQLite3</em></a>, term:<cite>MySQL</cite> and term:<cite>Oracle</cite>. However, GMN currently supports
-only PostgreSQL and SQLite3. GMN does not support MySQL and is untested with
-Oracle.</p>
-<p>GMN uses SQLite3 by default and no specific setup is required for SQLite3.</p>
-<p>This section describes how to set up PostgreSQL for GMN.</p>
+<a class="reference internal" href="glossary.html#term-sqlite3"><em class="xref std std-term">SQLite3</em></a>, <a class="reference internal" href="glossary.html#term-mysql"><em class="xref std std-term">MySQL</em></a> and <a class="reference internal" href="glossary.html#term-oracle"><em class="xref std std-term">Oracle</em></a>. However, GMN currently
+supports only PostgreSQL and SQLite3. GMN does not support MySQL and is untested
+with Oracle.</p>
+<p>This section describes how to set up PostgreSQL for GMN. The section can be
+skipped if SQLite3 will be used. If so, modify the database setting in the GMN
+<tt class="docutils literal"><span class="pre">settings_site.py</span></tt> file as described in that file.</p>
 <blockquote>
 <div><p>Install PostgreSQL:</p>
-<div class="highlight-python"><pre>$ sudo apt-get install postgresql</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install postgresql
+</pre></div>
 </div>
 </div></blockquote>
 <p>In PostgreSQL, the user with unlimited access is called the superuser. The
 superuser does not have a password by default.</p>
 <blockquote>
 <div><p>Set the password for the superuser:</p>
-<div class="highlight-python"><pre>$ sudo su postgres -c psql template1
-template1=# alter user postgres with encrypted password '&lt;your superuser password&gt;';
-template1=# &lt;ctrl-d&gt;</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo su postgres -c psql template1
+postgres=# alter user postgres with encrypted password &#39;&lt;your superuser password&gt;&#39;;
+postgres=# &lt;ctrl-d&gt;
+</pre></div>
 </div>
 </div></blockquote>
 <p>PostgreSQL runs under a separate user account called postgres.</p>
 <blockquote>
 <div><p>Set the password of the postgres user account to match the one of the
 superuser:</p>
-<div class="highlight-python"><pre>$ sudo passwd -d postgres
-$ sudo su postgres -c passwd</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo passwd -d postgres
+$ sudo su postgres -c passwd
+</pre></div>
 </div>
 <p>When prompted for the password, enter &lt;your superuser password&gt;.</p>
 </div></blockquote>
-<p>Under Ubuntu, PostgreSQL uses Ident-based authentication by default. This means
-that PostgreSQL requires that database users each have separate OS user
-accounts. It&#8217;s more convenient to separate the two, so that GMN can have a user
-in PostgreSQL without also having to have an OS user account.</p>
+<p>Under Ubuntu, PostgreSQL uses Ident-based authentication by default. Change
+this to md5.</p>
 <blockquote>
 <div><p>Edit <tt class="docutils literal"><span class="pre">/etc/postgresql/8.4/main/pg_hba.conf</span></tt>.</p>
-<p>Remove or comment out line:</p>
-<div class="highlight-python"><pre>local   all         postgres                          ident</pre>
-</div>
 <p>Change:</p>
-<div class="highlight-python"><pre>local   all         all                               ident</pre>
+<div class="highlight-none"><div class="highlight"><pre>local   all         all                               ident
+</pre></div>
 </div>
 <p>To:</p>
-<div class="highlight-python"><pre>local   all         all                               md5</pre>
+<div class="highlight-none"><div class="highlight"><pre>local   all         all                               md5
+</pre></div>
 </div>
 <p>Restart PostgreSQL:</p>
-<div class="highlight-python"><pre>$ sudo service postgresql-8.4 restart</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo service postgresql-8.4 restart
+</pre></div>
 </div>
 <p>Create GMN user:</p>
-<div class="highlight-python"><pre>$ sudo -u postgres createuser gmn
-postgres@ubuntu:~$
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -u postgres createuser gmn
 Shall the new role be a superuser? (y/n) n
 Shall the new role be allowed to create databases? (y/n) n
 Shall the new role be allowed to create more new roles? (y/n) n
-Password: &lt;your superuser password&gt;</pre>
+</pre></div>
 </div>
 <p>Create a database for GMN:</p>
-<div class="highlight-python"><pre>$ sudo -u postgres createdb -E UTF8 gmn
-Password: &lt;your superuser password&gt;</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -u postgres createdb -E UTF8 gmn
+</pre></div>
 </div>
 <p>Set the password for the GMN user:</p>
-<div class="highlight-python"><pre>$ sudo -u postgres psql template1
-ALTER USER gmn WITH ENCRYPTED password '&lt;your gmn user password&gt;';</pre>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -u postgres psql template1
+template1=# ALTER USER gmn WITH ENCRYPTED password &#39;&lt;your gmn user password&gt;&#39;;
+template1=# &lt;ctrl-d&gt;
+</pre></div>
 </div>
-<p>In a later step, you will configure GMN with &lt;your gmn user password&gt;.</p>
 </div></blockquote>
 </div>
 
@@ -155,11 +139,9 @@ ALTER USER gmn WITH ENCRYPTED password '&lt;your gmn user password&gt;';</pre>
             </a></p><h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-d1-libs.html" title="previous chapter">DataONE libraries</a></li>
-      <li>Next: <a href="setup-psycopg2.html" title="next chapter">python-psycopg2</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-apache.html" title="previous chapter">Install and configure Apache</a></li>
+      <li>Next: <a href="setup-registration.html" title="next chapter">Register the new Member Node with DataONE</a></li>
   </ul></li>
   </ul></li>
 </ul>

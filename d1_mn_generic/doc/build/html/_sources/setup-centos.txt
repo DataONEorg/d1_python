@@ -1,32 +1,17 @@
-Installation on CentOS 5.5
-==========================
+Installing on CentOS 5.5
+========================
 
 The following instructions for setting GMN up on CentOS should be considered in
 the context of the setup documentation that is provided for Ubuntu. Study the
 setup instructions for Ubuntu first and use the information below to adapt that
 information for a CentOS install.
 
-==================== ==============================================
-Component            Tested version(s)
-==================== ==============================================
-CentOS               5.5
-==================== ==============================================
-
-
 Platform
 --------
 
 Install required packages (some of these may already be installed)::
 
-  $ sudo yum install python26
-  $ sudo yum install sqlite
-  $ sudo yum install mod_wsgi
-  $ sudo yum install openssh-server
-  $ sudo yum install libxml2-devel
-  $ sudo yum install libxslt-devel
-  $ sudo yum install python26-devel
-  $ sudo yum install Django
-  $ sudo yum install python-iso8601
+  $ sudo yum install python26 sqlite mod_wsgi openssh-server libxml2-devel libxslt-devel python26-devel Django python-iso8601
 
 (Verify if these are needed)::
 
@@ -41,42 +26,39 @@ CentOS requires Python 2.4 while Django and GMN requires Python 2.6. These
 requirements are met by installing the two versions of Python side by side and
 making sure that Python 2.6 is used by Django and the GMN scripts.
 
-::
+  Install :term:`python-setuptools`::
 
-Install :term:`python-setuptools`::
+    $ sudo yum install python26-setuptools python26-setuptools-devel
 
-  $ sudo yum install python26-setuptools python26-setuptools-devel
+  Verify easy_install installed correctly::
 
-Verify easy_install installed correctly:
-  
-  $ easy_install
+    $ easy_install
 
-Create staging area::
+  Create staging area::
 
-  $ mkdir ~/building
+    $ mkdir ~/building
 
-Install :term:`lxml`::
+  Install :term:`lxml`::
 
-  $ cd ~/building
-  $ wget http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/i386/python26-lxml-2.0.11-1.ius.el5.i386.rpm
-  $ rpm -i python26-lxml-2.0.11-1.ius.el5.i386.rpm
+    $ cd ~/building
+    $ wget http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/i386/python26-lxml-2.0.11-1.ius.el5.i386.rpm
+    $ rpm -i python26-lxml-2.0.11-1.ius.el5.i386.rpm
 
-Install :term:`PyXB`::  
+  Install :term:`PyXB`::
 
-  $ cd ~/building
-  $ wget http://surfnet.dl.sourceforge.net/project/pyxb/pyxb/1.1.2%20%28Beta%29/PyXB-base-1.1.2.tar.gz
-  $ tar xzf PyXB-base-1.1.2.tar.gz
-  $ cd PyXB-1.1.2/
-  $ sudo python setup.py install
-  
+    $ cd ~/building
+    $ wget http://surfnet.dl.sourceforge.net/project/pyxb/pyxb/1.1.2%20%28Beta%29/PyXB-base-1.1.2.tar.gz
+    $ tar xzf PyXB-base-1.1.2.tar.gz
+    $ cd PyXB-1.1.2/
+    $ sudo python setup.py install
 
-Install :term:`minixsv`::
+  Install :term:`minixsv`::
 
-  $ cd ~/building/
-  $ wget http://www.familieleuthe.de/minixsv/minixsv-0.9.0.tar.gz
-  $ tar xzf minixsv-0.9.0.tar.gz
-  $ cd minixsv-0.9.0
-  $ sudo python26 setup.py install
+    $ cd ~/building/
+    $ wget http://www.familieleuthe.de/minixsv/minixsv-0.9.0.tar.gz
+    $ tar xzf minixsv-0.9.0.tar.gz
+    $ cd minixsv-0.9.0
+    $ sudo python26 setup.py install
 
 
 GMN
@@ -99,7 +81,7 @@ CentOS stores mod_wsgi.so in a different location than Ubuntu. Modify configurat
 
   ./install/config.py:       88 parser.add_option('-w', '--mod-wsgi-path', dest='mod_wsgi_path', action='store', type='string', default='/etc/httpd/modules/mod_wsgi.so')
 
-Modified other *.py files that execute other scripts to call python26.
+Modified other \*.py files that execute other scripts to call python26.
 
 Run the GMN install script under Python 2.6::
 

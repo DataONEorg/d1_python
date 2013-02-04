@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DataONE Generic Member Node &mdash; v1.0.0</title>
+    <title>Install the GMN software stack &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Setup steps" href="setup-steps.html" />
-    <link rel="next" title="Register the MN" href="setup-registration.html" />
-    <link rel="prev" title="Django" href="setup-django.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Select a DataONE environment" href="setup-env.html" />
+    <link rel="prev" title="Hardware requirements and configuration" href="setup-hardware.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +42,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="setup-registration.html" title="Register the MN"
+          <a href="setup-env.html" title="Select a DataONE environment"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-django.html" title="Django"
+          <a href="setup-hardware.html" title="Hardware requirements and configuration"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="setup.html" >Setup</a> &raquo;</li>
-          <li><a href="setup-steps.html" accesskey="U">Setup steps</a> &raquo;</li> 
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,113 +57,61 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="dataone-generic-member-node">
-<h1>DataONE Generic Member Node<a class="headerlink" href="#dataone-generic-member-node" title="Permalink to this headline">¶</a></h1>
-<p></p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="30%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Component</th>
-<th class="head">Tested version(s)</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Python</td>
-<td>2.6</td>
-</tr>
-<tr class="row-odd"><td>subversion</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>GMN is currently distributed as a zip file and as Subversion repository.
-Select one of the distribution methods below.</p>
-<div class="section" id="zip-file">
-<h2>Zip file<a class="headerlink" href="#zip-file" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="install-the-gmn-software-stack">
+<h1>Install the GMN software stack<a class="headerlink" href="#install-the-gmn-software-stack" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="gmn-user-account">
+<h2>GMN user account<a class="headerlink" href="#gmn-user-account" title="Permalink to this headline">¶</a></h2>
+<p>A user account named &#8220;gmn&#8221; is created. It will be set up to own the files that
+belong to GMN. It will also be used for authentication.</p>
 <blockquote>
-<div><p>Create and/or enter the folder where you wish to install GMN:</p>
-<div class="highlight-python"><pre>$ sudo -s
-# mkdir -p /var/local/dataone
-# cd /var/local/dataone</pre>
+<div><p>Create the gmn user account:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo adduser --ingroup www-data gmn
+</pre></div>
 </div>
-<p>Download GMN from zip file and install:</p>
-<div class="highlight-python"><pre>$ wget &lt;zip path&gt;
-$ gunzip x &lt;zip&gt;</pre>
-</div>
+<p>Follow the prompts.</p>
 </div></blockquote>
 </div>
-<div class="section" id="subversion">
-<h2>Subversion<a class="headerlink" href="#subversion" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="gmn-software-stack">
+<h2>GMN software stack<a class="headerlink" href="#gmn-software-stack" title="Permalink to this headline">¶</a></h2>
+<p>GMN is distributed via PyPI, the Python Package Index.</p>
 <blockquote>
-<div><p>Install Subversion:</p>
-<div class="highlight-python"><pre>$ sudo apt-get install subversion</pre>
-</div>
-<p>Create and/or enter the folder where you wish to install GMN:</p>
-<div class="highlight-python"><pre>$ sudo -s
-# mkdir -p /var/local/dataone
-# cd /var/local/dataone</pre>
-</div>
-<p>Download GMN from the Subversion repository:</p>
-<div class="highlight-python"><pre>$ sudo svn co https://repository.dataone.org/software/cicore/tags/D1_MN_GENERIC_V1.0.0-RC1/ gmn</pre>
-</div>
-</div></blockquote>
-</div>
-<div class="section" id="configure-gmn">
-<h2>Configure GMN<a class="headerlink" href="#configure-gmn" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>Create a copy of the site settings template:</p>
-<div class="highlight-python"><pre>$ cd /var/local/dataone/gmn/src/service
-$ cp settings_site_template.py settings_site.py</pre>
-</div>
-<p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/gmn/src/service/settings_site.py</span></tt></p>
+<div><p>Set up server packages:</p>
 <ul class="simple">
-<li>The NODE_IDENTIFIER is configured later, in the <a class="reference internal" href="setup-registration.html"><em>Register the MN</em></a>
-step.</li>
-<li>Replace the name and email address in ADMINS with the name and email address
-for a person that should be notified if there are any issues. Additional
-administrators can be added.</li>
-<li>In the DATABASES section, set the password to what was specified during the
-PostgreSQL installation step: <a class="reference internal" href="setup-postgresql.html"><em>PostgreSQL</em></a>.</li>
+<li>The build environment for DataONE Python extensions and lxml</li>
+<li>Commands used in the install</li>
+</ul>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install build-essential python-dev libssl-dev libxml2-dev \
+libxslt-dev postgresql-server-dev-8.4 openssl curl
+</pre></div>
+</div>
+<p>Install the GMN software stack from PyPI, into a Python virtual environment:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install python-pip
+$ sudo pip install pip --upgrade
+$ sudo pip install virtualenv
+$ sudo mkdir -p /var/local/dataone/gmn
+$ cd /var/local/dataone
+$ sudo chown gmn:www-data gmn
+$ su gmn
+$ virtualenv --distribute gmn
+$ cd gmn
+$ . bin/activate
+$ pip install dataone.generic_member_node
+$ &lt;ctrl-d&gt;
+</pre></div>
+</div>
+<p>Use the GMN Python virtual environment by default for the gmn user:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo pico /home/gmn/.bashrc
+</pre></div>
+</div>
+<ul>
+<li><p class="first">Close to the top, just after the line that aborts if not running
+interactively, add:</p>
+<div class="highlight-none"><div class="highlight"><pre>PATH=/var/local/dataone/gmn/:$PATH
+</pre></div>
+</div>
+</li>
 </ul>
 </div></blockquote>
-</div>
-<div class="section" id="initialize-the-database">
-<h2>Initialize the database<a class="headerlink" href="#initialize-the-database" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><div class="highlight-python"><pre>$ cd /var/local/dataone/gmn/src/service
-$ python manage.py syncdb</pre>
-</div>
-</div></blockquote>
-</div>
-<div class="section" id="set-filesystem-permissions">
-<h2>Set filesystem permissions<a class="headerlink" href="#set-filesystem-permissions" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li>Make sure that all files under <tt class="docutils literal"><span class="pre">/var/local/dataone</span></tt>, except for the
-certificate keys, can be read by the user account under which Apache runs
-(www-data by default)</li>
-<li>Make sure that the log files can be written by the Apache user account.</li>
-<li>When using SQLite, make sure that the SQLite database file can be written by
-the Apache user account.</li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="set-server-to-the-utc-timezone-recommended">
-<h2>Set server to the UTC timezone (recommended)<a class="headerlink" href="#set-server-to-the-utc-timezone-recommended" title="Permalink to this headline">¶</a></h2>
-<p>GMN translates incoming date-times to UTC and provides outgoing date-times in
-UTC. Because of this, it may also convenient to run the server in UTC, so that
-server related date-times, such as the ones in logs, match up with date-times
-stored in the database and provided in REST responses.</p>
-<blockquote>
-<div><div class="highlight-python"><pre># dpkg-reconfigure tzdata
-
-Select Etc | UTC.</pre>
-</div>
-</div></blockquote>
-<p><a class="reference internal" href="setup-registration.html"><em>Register the MN</em></a></p>
 </div>
 </div>
 
@@ -179,24 +126,18 @@ Select Etc | UTC.</pre>
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">DataONE Generic Member Node</a><ul>
-<li><a class="reference internal" href="#zip-file">Zip file</a></li>
-<li><a class="reference internal" href="#subversion">Subversion</a></li>
-<li><a class="reference internal" href="#configure-gmn">Configure GMN</a></li>
-<li><a class="reference internal" href="#initialize-the-database">Initialize the database</a></li>
-<li><a class="reference internal" href="#set-filesystem-permissions">Set filesystem permissions</a></li>
-<li><a class="reference internal" href="#set-server-to-the-utc-timezone-recommended">Set server to the UTC timezone (recommended)</a></li>
+<li><a class="reference internal" href="#">Install the GMN software stack</a><ul>
+<li><a class="reference internal" href="#gmn-user-account">GMN user account</a></li>
+<li><a class="reference internal" href="#gmn-software-stack">GMN software stack</a></li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="setup.html">Setup</a><ul>
-  <li><a href="setup-steps.html">Setup steps</a><ul>
-      <li>Previous: <a href="setup-django.html" title="previous chapter">Django</a></li>
-      <li>Next: <a href="setup-registration.html" title="next chapter">Register the MN</a></li>
-  </ul></li>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-hardware.html" title="previous chapter">Hardware requirements and configuration</a></li>
+      <li>Next: <a href="setup-env.html" title="next chapter">Select a DataONE environment</a></li>
   </ul></li>
   </ul></li>
 </ul>
