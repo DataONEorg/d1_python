@@ -1,22 +1,14 @@
-PostgreSQL
-==========
-
-\
-
-==================== ==============================================
-Component            Tested version(s)
-==================== ==============================================
-PostgreSQL           8.4.10, 8.4.12
-==================== ==============================================
+Install and configure PostgreSQL
+================================
 
 :term:`Django`, on which GMN is built, supports :term:`PostgreSQL`,
-:term:`SQLite3`, term:`MySQL` and term:`Oracle`. However, GMN currently supports
-only PostgreSQL and SQLite3. GMN does not support MySQL and is untested with
-Oracle.
+:term:`SQLite3`, :term:`MySQL` and :term:`Oracle`. However, GMN currently
+supports only PostgreSQL and SQLite3. GMN does not support MySQL and is untested
+with Oracle.
 
-GMN uses SQLite3 by default and no specific setup is required for SQLite3.
-
-This section describes how to set up PostgreSQL for GMN.
+This section describes how to set up PostgreSQL for GMN. The section can be
+skipped if SQLite3 will be used. If so, modify the database setting in the GMN
+``settings_site.py`` file as described in that file.
 
   Install PostgreSQL::
 
@@ -28,8 +20,8 @@ superuser does not have a password by default.
   Set the password for the superuser::
 
     $ sudo su postgres -c psql template1
-    template1=# alter user postgres with encrypted password '<your superuser password>';
-    template1=# <ctrl-d>
+    postgres=# alter user postgres with encrypted password '<your superuser password>';
+    postgres=# <ctrl-d>
 
 PostgreSQL runs under a separate user account called postgres.
 
@@ -41,16 +33,10 @@ PostgreSQL runs under a separate user account called postgres.
 
   When prompted for the password, enter <your superuser password>.
 
-Under Ubuntu, PostgreSQL uses Ident-based authentication by default. This means
-that PostgreSQL requires that database users each have separate OS user
-accounts. It's more convenient to separate the two, so that GMN can have a user
-in PostgreSQL without also having to have an OS user account.
+Under Ubuntu, PostgreSQL uses Ident-based authentication by default. Change
+this to md5.
 
   Edit ``/etc/postgresql/8.4/main/pg_hba.conf``.
-
-  Remove or comment out line::
-
-    local   all         postgres                          ident
 
   Change::
 
@@ -67,20 +53,16 @@ in PostgreSQL without also having to have an OS user account.
   Create GMN user::
 
     $ sudo -u postgres createuser gmn
-    postgres@ubuntu:~$
     Shall the new role be a superuser? (y/n) n
     Shall the new role be allowed to create databases? (y/n) n
     Shall the new role be allowed to create more new roles? (y/n) n
-    Password: <your superuser password>
 
   Create a database for GMN::
 
     $ sudo -u postgres createdb -E UTF8 gmn
-    Password: <your superuser password>
 
   Set the password for the GMN user::
 
     $ sudo -u postgres psql template1
-    ALTER USER gmn WITH ENCRYPTED password '<your gmn user password>';
-
-  In a later step, you will configure GMN with <your gmn user password>.
+    template1=# ALTER USER gmn WITH ENCRYPTED password '<your gmn user password>';
+    template1=# <ctrl-d>

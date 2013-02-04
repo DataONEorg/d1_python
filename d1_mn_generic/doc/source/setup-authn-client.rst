@@ -1,92 +1,53 @@
-Client side authentication
-==========================
+Install the DataONE client side certificate
+===========================================
 
-In the :term:`DataONE` infrastructure, :term:`MN`\ s and :term:`CN`\ s use
-:term:`X.509` client side :term:`certificate`\ s for authenticating
-:term:`client`\ s and other DataONE nodes.
+In addition to its regular server role, GMN also acts as a client, initiating
+connections to other Nodes.
 
 During :term:`client side authentication`, the client provides a certificate,
 proving its identity to the server. A DataONE client or Node may connecty to
 another Node without providing a client side certificate, but then gains only
 public access on the Node.
 
-For a client side certificate to be considered valid by the server, the server
-must trust the :term:`CA` that signed the client side certificate. This step
-sets up the CAs to be trusted.
+
+Obtaining a client side certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To obtain a client side certificate, generate a certificate request and email
+it to DataONE. DataONE will return a signed certificate by email.
+
+  Create the private key for the certificate request::
+
+    $ sudo mkdir -p /var/local/dataone/certs/client
+    $ cd /var/local/dataone/certs/client
+    $ sudo openssl genrsa -des3 -out my_member_node.key 4096
+
+  Create the certificate request::
+
+    $ openssl req -new -key my_member_node.key -out my_member_node.csr
+
+  * You will be prompted for information that, combined, will become the
+    Distinguished Name (DN) for this MN. Please supply *Country Name*, *State or
+    Province Name*, *Locality Name*, *Organization Name* and *Common Name*. The
+    remaining fields may be left blank. To remove the default value from a
+    field, type a period ("."). To leave a field blank, press Enter.
+
+Note: Anyone who has the private key can act as your Node in the DataONE
+infrastructure. Keep the private key safe. If your private key becomes
+compromised, please inform DataONE so that the certificate can be revoked.
+
+  * Email the my_member_node.csr file to DataONE at cert-requests@dataone.org.
+    In the email, include for which environment you would like the certificate
+    to be signed. The certificate will only be trusted in that environment.
 
 
-CILogon CA certificates
------------------------
+Installing the client side certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:term:`CILogon` provides three :term:`LOA`\ s. These instructions set GMN up to
-accept all three. Ubuntu comes with a complete set of commonly trusted
-:term:`CA` certificates. However, DataONE Nodes should not accept certificates
-signed by these, so we establish a separate CA store for the CILogon CAs.
+  When the signed client side certificate has been received from DataONE, move
+  it and its private key to the ``/var/local/dataone/certs/client`` folder.
 
-  Download and install the CA certificates from CILogon::
+  * Rename the files to client.crt and client.key.
 
-    $ sudo -s
-    # mkdir -p /var/local/dataone/ca
-    # cd /var/local/dataone/ca
-    # wget https://cilogon.org/cilogon-ca-certificates.tar.gz
-    # tar xzf cilogon-ca-certificates.tar.gz
-    # mv cilogon-ca/certificates/* .
-    # rm -r cilogon-ca cilogon-ca-certificates.tar.gz
-    # c_rehash .
-    # <ctrl-d>
-
-
-Apache SSL setup
-----------------
-
-Set Apache up to accept optional :term:`SSL` Client side authentication.
-
-Setting the client side certificate to be optional allows a client to connect to
-the Node without a certificate for anonymous access to public science data. If
-the client does supply a certificate, the certificate must be valid, not
-expired, and must be signed by the :term:`CILogon` :term:`CA`.
-
-Also see: :doc:`setup-example-default-ssl`.
-
-  Enable Client side authentication:
-
-  Edit ``/etc/apache2/sites-available/default-ssl``.
-
-  In the ``VirtualHost`` section, add or edit directives::
-
-    SSLVerifyClient optional
-    SSLVerifyDepth  10
-
-GMN needs to have access to the submitted client side certificate. Configure
-mod_ssl to forward the certificate to the GMN WSGI handler in an environment
-variable.
-
-  Edit ``/etc/apache2/sites-available/default-ssl``.
-
-  In the ``VirtualHost`` section, add “wsgi” in the FilesMatch expression, and
-  replace +StdEnvVars with +ExportCertData.
-
-  Change::
-
-    <FilesMatch "\.(cgi|shtml|phtml|php)$">
-      SSLOptions +StdEnvVars
-    </FilesMatch>
-
-  to::
-
-    <FilesMatch "\.(wsgi|cgi|shtml|phtml|php)$">
-      SSLOptions +ExportCertData
-    </FilesMatch>
-
-
-Use the CILogon CA certificates instead of the default ones.
-
-  In the ``VirtualHost`` section, add or edit::
-
-    SSLCACertificatePath /var/local/dataone/ca
-
-  Restart Apache::
-
-    # service apache2 restart
-
-    Check for any error messages from Apache.
+  Other names may be used. If so, update the GMN ``settings_site.py`` file to
+  match the new names.

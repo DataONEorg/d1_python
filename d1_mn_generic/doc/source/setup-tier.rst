@@ -1,5 +1,5 @@
-Selecting the DataONE Tier
-==========================
+Select the DataONE Tier
+=======================
 
 DataONE has defined several tiers, each of which designates a certain level of
 functionality exposed by the Member Node. The tiers enable Member Nodes to
@@ -23,8 +23,9 @@ following into account:
 
 * A Tier 1 node is typically used for exposing existing data to DataONE. As
   there is no support for manipulating the data through DataONE interfaces in
-  this tier, GMN should not initially be set to this tier. Instead, set GMN to
-  Tier 3, create the objects, and then set the Tier to 1.
+  this tier, GMN cannot be populated with objects while in this tier. Therefore,
+  GMN should not initially be set to this tier. Instead, set GMN to Tier 3,
+  populate the node with objects, and then set the Tier to 1.
 
 * A Tier 2 node allows the access to objects to be controlled via access control
   lists (ACLs). Using this Tier implies the same strategy as for Tier 1.
@@ -42,6 +43,6 @@ following into account:
   replicas).
 
 When you have determined which tier to use, edit:
-``/var/local/dataone/mn_generic/service/settings_site.py``
+``/var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py``
 
   * Set TIER to 1, 2, 3 or 4.

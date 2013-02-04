@@ -11,6 +11,7 @@ Installation and usage of the :term:`GMN`.
   testing
   use
   troubleshooting
+  performance
   impl
   generated
   glossary

@@ -1,61 +1,40 @@
-Apache
-======
+Install and configure Apache
+============================
 
 Setting up Apache.
-
-\
-
-==================== ==============================================
-Component            Tested version(s)
-==================== ==============================================
-Apache 2             2.2.14-5ubuntu8.4
-apache2-threaded-dev 2.2.14-5ubuntu8.4
-==================== ==============================================
-
 
   Install Apache2 packages::
 
     $ sudo apt-get install apache2 apache2-threaded-dev
 
+  Install the GMN virtual host file and custom apache2.conf file::
 
-:term:`MPM` setup
------------------
-
-Setting up Apache to run GMN in a single process.
-
-.. warning:: GMN **must** run within a single process as it uses thread
-  based locking. Failure to correctly set up Apache can cause spurious errors
-  when multiple clients access the same resource simultaneously.
-
-The default Apache2 package for Ubuntu is built with the "worker" MPM. The
-"worker" MPM must be configured to use a single process and multiple threads.
-
-  Edit ``/etc/apache2/apache2.conf``.
-
-  In the ``IfModule mpm_worker_module`` section, add or edit::
-
-    StartServers          1
-    ServerLimit           1
-    ThreadsPerChild      64
-    MaxClients           64
+    $ cd /var/local/dataone/gmn/lib/python2.6/site-packages/deployment
+    $ sudo cp apache2.conf ports.conf /etc/apache2/
+    $ sudo cp gmn-ssl /etc/apache2/sites-available/
+    $ sudo cp forward_http_to_https /etc/apache2/conf.d/
 
 
-Initial VirtualHost setup
--------------------------
+The :term:`mod_ssl` module handles TLS/SSL connections for GMN and validates
+client side certificates. It is included in the apache2-common package.
 
-Also see: :doc:`setup-example-default-ssl`.
+The :term:`mod_wsgi` module enables Apache to communicate with Django and GMN.
 
-These instructions use the existing VirtualHost section.
+  Install and enable required modules::
 
-These settings are required for GMN to correctly handle the DataONE :term:`REST`
-calls. See `Apache Configuration for DataONE Services`_ for more information.
+    $ sudo apt-get install libapache2-mod-wsgi apache2.2-common
+    $ sudo a2enmod wsgi ssl rewrite
 
-  Edit ``/etc/apache2/sites-available/default-ssl``.
+  Enable the GMN virtual host::
 
-  In the ``VirtualHost`` section, add::
+    $ sudo a2ensite gmn-ssl
 
-    AllowEncodedSlashes On
-    AcceptPathInfo On
+  * If an intermediate certificate file or certificate chain file was installed
+    in :doc:`setup-authn-server`, edit ``/etc/apache2/sites-available/gmn-ssl``
+    and uncomment the line for ``SSLCertificateChainFile``.
 
-.. _`Apache Configuration for DataONE Services`:
-  http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration
+\
+
+  * If a key without password was NOT created in :doc:`setup-authn-server`, edit
+    ``/etc/apache2/sites-available/gmn-ssl`` and substitute
+    ``server.nopassword.key`` with ``server.key``.

@@ -11,5 +11,5 @@ security and certificate validation is handled for GMN by :term:`mod_ssl`.
     OS -> "DataONE Common" -> "DataONE Client" -> GMN;
     "DataONE Common" -> GMN;
     OS -> Apache -> mod_wsgi -> Django -> GMN;
-    Apache -> mod_ssl -> "GMN access control";
+    Apache -> mod_ssl -> "GMN access control" -> GMN;
   }
