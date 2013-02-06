@@ -1,0 +1,12 @@
+
+URI-R MUST be a protocol-based URI
+URI-A MUST be a protocol-based URI
+URI-AR MUST be a protocol-based URI
+ReM MUST describe 1 Aggregation
+ReM MUST enumerate 1+ ARs 
+URI-A MUST NOT be URI-R
+Graph MUST contain: URI-R ore:describes URI-A
+Graph MUST NOT contain more than one ore:describes
+Graph MUST be connected
+
+

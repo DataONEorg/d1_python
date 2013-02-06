@@ -26,22 +26,64 @@ Created on Jan 11, 2013
 @author: brumgard
 '''
 import sys
-
+import tarfile
 from setuptools import setup, find_packages
 
 sys.argv = [sys.argv[0], 'bdist_egg']
 
+
+#tarball = tarfile.open(name='deps/dataone.common-1.1.0-RC3.tar.gz', mode='r:gz')
+#tarball.extractall('./tmp')
+
 setup(
     name = "Onedrive",
     version = "0.1",
-    py_modules = ['main', '__main__', 'onedrive', 'settings'],
-    package_dir = {'impl':'../src/impl', 'onedrive':'../src/' },
-    packages = ['onedrive', 'impl', 'impl.drivers', 'impl.drivers.fuse', 
-                'impl.resolver'],
+    py_modules = ['main', '__main__', 'onedrive', 'settings' ],
+    package_dir = {'impl':'../src/impl', 
+                   'onedrive':'../src/',
+                   'd1_common':'deps/dataone.common-1.1.0/d1_common',
+                   'iso8601' : 'deps/iso8601-0.1.4/iso8601', 
+                   'd1_client' :'deps/dataone.libclient-1.1.0/d1_client',
+                   'pyxb' : 'deps/PyXB-1.2.1/pyxb', 
+                   'rdflib':'deps/rdflib-2.4.2/rdflib',
+                   'foresite' : 'deps/foresite-1.2/foresite',
+                   'lxml' : 'deps/lxml-3.1beta1/lxml',
+                   'fuse' : 'deps/fuse'
+                    },
+    packages = ['onedrive', 
+                'impl', 
+                'impl.drivers', 
+                'impl.drivers.fuse', 
+                'impl.resolver', 
+                'd1_common', 
+                'd1_common.types', 
+                'd1_common.types.generated', 
+                'iso8601', 
+                'd1_client', 
+                'pyxb', 
+                'pyxb.namespace', 
+                'pyxb.utils', 
+                'pyxb.binding', 
+                'rdflib', 
+                'rdflib.syntax', 
+                'rdflib.store', 
+                'rdflib.syntax.serializers',
+                'rdflib.syntax.parsers', 
+                'rdflib.sparql',
+                'foresite', 
+                'lxml',
+                'fuse'],
     
     entry_points = {
         'setuptools.installation': [
             'eggsecutable = main:entrypoint0',
         ]
-    }
+        },  
+      
+    package_data = {
+        'lxml': ['resources/macosx/*.dylib',
+                 'resources/linux/x86_64/*.so',
+                 'resources/windows/amd64/*.pyd', ],
+        'd1_client' : ['mime_mappings.csv', ],
+    }    
 )
