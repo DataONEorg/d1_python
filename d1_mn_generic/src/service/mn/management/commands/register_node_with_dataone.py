@@ -105,7 +105,7 @@ class Command(NoArgsCommand):
     client = d1_client.cnclient.CoordinatingNodeClient(
       settings.DATAONE_ROOT,
       cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIV_KEY_PATH
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client
 

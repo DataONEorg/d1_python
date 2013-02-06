@@ -27,6 +27,7 @@ import d1_client.cnclient
 
 # App.
 import settings
+import d1_common.types.exceptions
 '''
 :mod:`node_registry`
 ====================
@@ -39,10 +40,10 @@ import settings
 
 
 def get_cn_subjects():
-  # In debug mode, fetching the node registry is skipped, causing only the
-  # subjects specifically added in settings_site.py to be active.
-  if settings.GMN_DEBUG:
-    return settings.DATAONE_TRUSTED_SUBJECTS
+  #  # In debug mode, fetching the node registry is skipped, causing only the
+  #  # subjects specifically added in settings_site.py to be active.
+  #  if settings.GMN_DEBUG:
+  #    return settings.DATAONE_TRUSTED_SUBJECTS
 
   cn_subjects = django.core.cache.cache.get('cn_subjects')
   if cn_subjects is not None:
@@ -71,11 +72,16 @@ def get_cn_subjects_from_dataone_root():
   nodes = download_node_registry()
   cn_subjects = set()
   for node in nodes.node:
-    for service in node.services.service:
-      if service.name == 'CNCore':
-        for subject in node.subject:
-          cn_subjects.add(subject.value())
-        break
+    try:
+      services = node.services.service
+    except AttributeError:
+      pass
+    else:
+      for service in services:
+        if service.name == 'CNCore':
+          for subject in node.subject:
+            cn_subjects.add(subject.value())
+          break
   return cn_subjects
 
 

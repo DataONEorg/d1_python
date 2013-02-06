@@ -1,7 +1,7 @@
 # ./generated/gmn_types.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2013-01-09 09:12:32.879210 by PyXB version 1.2.1
+# Generated 2013-02-02 13:54:01.608018 by PyXB version 1.2.1
 # Namespace AbsentNamespace0
 
 import pyxb
@@ -13,7 +13,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:5fbf508a-5a77-11e2-b865-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:ac1e8fb6-6d7a-11e2-8551-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -116,6 +116,9 @@ class CTD_ANON (pyxb.binding.basis.complexTypeDefinition):
     }
 
 
+
+setting = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'setting'), pyxb.binding.datatypes.string, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_mn_generic/src/service/types/gmn_types.xsd', 19, 4))
+Namespace.addCategoryObject('elementBinding', setting.name().localName(), setting)
 
 replicationRequest = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'replicationRequest'), CTD_ANON, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_mn_generic/src/service/types/gmn_types.xsd', 7, 4))
 Namespace.addCategoryObject('elementBinding', replicationRequest.name().localName(), replicationRequest)

@@ -1,4 +1,7 @@
 <IfModule mod_ssl.c>
+
+WSGIPythonHome /var/local/dataone/gmn
+
 <VirtualHost *:443>
   # DataONE Generic Member Node (GMN)
 
@@ -60,9 +63,8 @@
   #   SSLCertificateFile directive is needed.
 
   # ** GMN **
-  # Set Apache up to provide TLS Server Side Authentication for GMN.
-  SSLCertificateFile /var/local/dataone/gmn_certs/server.crt
-  SSLCertificateKeyFile /var/local/dataone/gmn_certs/server.nopassword.key
+  SSLCertificateFile    /var/local/dataone/certs/server/server.crt
+  SSLCertificateKeyFile /var/local/dataone/certs/server/server.nopassword.key
 
   #   Server Certificate Chain:
   #   Point SSLCertificateChainFile at a file containing the
@@ -71,7 +73,9 @@
   #   the referenced file can be the same as SSLCertificateFile
   #   when the CA certificates are directly appended to the server
   #   certificate for convinience.
-  #SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
+
+  # ** GMN **
+  #SSLCertificateChainFile /var/local/dataone/certs/server/server_intermediate.crt
 
   #   Certificate Authority (CA):
   #   Set the CA certificate verification path where to find CA
@@ -82,9 +86,9 @@
   #         Makefile to update the hash symlinks after changes.
 
   # ** GMN **
-  # Use the CILogon CA certificates instead of the default ones.
-  SSLCACertificatePath /var/local/dataone/certs/cilogon_ca
-  #SSLCACertificateFile /etc/apache2/ssl.crt/ca-bundle.crt
+  #SSLCACertificatePath /var/local/dataone/certs/cilogon_ca
+  SSLCACertificateFile /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt
+
 
   #   Certificate Revocation Lists (CRL):
   #   Set the CA revocation path where to find CA CRLs for client
@@ -102,12 +106,13 @@
   #   number which specifies how deeply to verify the certificate
   #   issuer chain before deciding the certificate is not valid.
 
-  # ** GMN **
   # Set Apache up to accept optional :term:`SSL` Client side authentication.
   # Setting the client side certificate to be optional allows a client to
   # connect to the Node without a certificate for anonymous access to public
   # science data. If the client does supply a certificate, the certificate must
   # be valid, not expired, and must be signed by the CILogon CA.
+
+  # ** GMN **
   SSLVerifyClient optional
   SSLVerifyDepth  10
 
@@ -194,6 +199,7 @@
   # MSIE 7 and newer should be able to use keepalive
   BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
 
+  # ** GMN **
   # WSGI
   WSGIScriptAlias /mn /var/local/dataone/gmn/lib/python2.6/site-packages/service/gmn.wsgi
 

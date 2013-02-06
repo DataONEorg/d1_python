@@ -72,12 +72,163 @@ import settings
 import gmn_types
 
 
-class ReplicateError(Exception):
-  def __init__(self, value):
-    self.value = value
+def main():
+  log_setup()
+  abort_if_other_instance_is_running()
+  logging.getLogger('').setLevel(logging.DEBUG if settings.GMN_DEBUG else logging.WARNING)
+  print settings.NODE_BASEURL
+  print settings.DATAONE_ROOT
+  print settings.CLIENT_CERT_PATH
+  print settings.CLIENT_CERT_PRIVATE_KEY_PATH
+  #exit()
+  ProcessReplicationQueue()
 
-  def __str__(self):
-    return str(self.value)
+
+def abort_if_other_instance_is_running():
+  single_path = os.path.splitext(__file__)[0] + '.single'
+  f = open(single_path, 'w')
+  try:
+    fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+  except IOError:
+    self.logger.info('Aborted: Another instance is still running')
+    exit(0)
+
+
+def log_setup():
+  # Set up logging. We output only to stdout. Instead of also writing to a log
+  # file, redirect stdout to a log file when the script is executed from cron.
+  logging.getLogger('').setLevel(logging.DEBUG)
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(name)s '
+    '%(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+#===============================================================================
+
+
+class ProcessReplicationQueue(object):
+  def __init__(self):
+    self.logger = logging.getLogger(self.__class__.__name__)
+    self.gmn_client = GMNReplicationClient('https://localhost/mn', timeout=60 * 60)
+    self.cn_client = self._create_cn_client()
+    self._process_replication_queue()
+
+  def _create_cn_client(self):
+    return d1_client.cnclient.CoordinatingNodeClient(
+      base_url=settings.DATAONE_ROOT,
+      cert_path=settings.CLIENT_CERT_PATH,
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    )
+
+  def _process_replication_queue(self):
+    while self._process_replication_task():
+      pass
+
+  def _process_replication_task(self):
+    task = self._get_next_replication_task()
+    if not task:
+      return False
+    self.logger.info('-' * 40)
+    self.logger.info('Processing PID: {0}'.format(task.pid))
+    try:
+      self._replicate(task)
+    except d1_common.types.exceptions.DataONEException as e:
+      self.logger.exception('Replication failed with DataONE Exception:')
+      self._cn_replicate_task_update(task, 'failed', e)
+      self._gmn_replicate_task_update(task, str(e))
+    except (ReplicateError, Exception, object) as e:
+      self.logger.exception('Replication failed with internal exception:')
+      self._cn_replicate_task_update(task, 'failed')
+      self._gmn_replicate_task_update(task, str(e))
+    return True
+
+  def _get_next_replication_task(self):
+    try:
+      return self.gmn_client.internal_replicate_task_get()
+    except d1_common.types.exceptions.NotFound:
+      return None
+
+  def _replicate(self, task):
+    self._gmn_replicate_task_update(task, 'in progress')
+    sysmeta_tmp_file = self._get_system_metadata(task)
+    science_data_tmp_file = self._get_science_data(task)
+    self._gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
+    self._gmn_replicate_task_update(task, 'completed')
+    self._cn_replicate_task_update(task, 'completed')
+
+  def _cn_replicate_task_update(self, task, replication_status, e=None):
+    try:
+      self.cn_client.setReplicationStatus(
+        task.pid, settings.NODE_IDENTIFIER, replication_status, e
+      )
+    except Exception as e:
+      self.logger.exception(
+        'CNReplication.setReplicationStatus() failed with '
+        'the following exception:'
+      )
+
+  # Allow any exception in _gmn_replicate_task_update() to remain unhandled
+  # so that the script exits. This causes a delay until the next time this
+  # script is run by cron, before the task is retried. Without this, this
+  # script would not exit and a continuous series of retries would happen as
+  # fast as the system could manage.
+  def _gmn_replicate_task_update(self, task, status=None):
+    if status is None or status == '':
+      status = 'Unknown error. See replication log.'
+    return self.gmn_client.update_replicate_task_status(task.taskId, status[:1024])
+
+  def _get_system_metadata(self, task):
+    sysmeta = self._open_sysmeta_stream_on_coordinating_node(task.pid)
+    return self._copy_string_to_tmp_file(sysmeta.toxml())
+
+  def _open_sysmeta_stream_on_coordinating_node(self, pid):
+    return self.cn_client.getSystemMetadata(pid)
+
+  def _get_science_data(self, task):
+    source_node_base_url = self._resolve_source_node_id_to_base_url(task.sourceNode)
+    mn_client = d1_client.mnclient.MemberNodeClient(
+      base_url=source_node_base_url,
+      cert_path=settings.CLIENT_CERT_PATH,
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    )
+    sci_data_stream = self._open_sci_obj_stream_on_member_node(mn_client, task.pid)
+    return self._copy_stream_to_tmp_file(sci_data_stream)
+
+  def _copy_string_to_tmp_file(self, s):
+    return self._copy_stream_to_tmp_file(StringIO.StringIO(s))
+
+  def _copy_stream_to_tmp_file(self, stream):
+    #f = tempfile.TemporaryFile() # for production
+    f = tempfile.NamedTemporaryFile(delete=False) # for debugging
+    self.logger.debug(f.name)
+    shutil.copyfileobj(stream, f)
+    f.seek(0)
+    return f
+
+  def _resolve_source_node_id_to_base_url(self, source_node):
+    node_list = self._get_node_list()
+    discovered_nodes = []
+    for node in node_list.node:
+      discovered_node_id = node.identifier.value()
+      discovered_nodes.append(discovered_node_id)
+      if discovered_node_id == source_node:
+        return node.baseURL
+    raise ReplicateError(
+      'Unable to resolve Source Node ID: {0}. '
+      'Discovered nodes: {1}'.format(source_node, ', '.join(discovered_nodes))
+    )
+
+  def _get_node_list(self):
+    return self.cn_client.listNodes()
+
+  def _open_sci_obj_stream_on_member_node(self, mn_client, pid):
+    return mn_client.getReplica(pid)
+
+  def _gmn_replicate_create(self, task, sci_obj, sysmeta):
+    return self.gmn_client.internal_replicate_create(task.pid, sci_obj, sysmeta)
 
 # ==============================================================================
 
@@ -115,6 +266,11 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
 
     self.logger = logging.getLogger(self.__class__.__name__)
 
+  def internal_get_setting(self, setting):
+    url = self._rest_url('get_setting/%(setting)s', setting=setting)
+    response = self.GET(url)
+    return self._read_dataone_type_response(response)
+
   def internal_replicate_task_get(self):
     url = self._rest_url('replicate/task_get')
     response = self.GET(url)
@@ -148,196 +304,15 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
     )
     return self._read_boolean_response(response)
 
-#===============================================================================
+# ==============================================================================
 
 
-class ProcessReplicationQueue(object):
-  def __init__(self, options):
-    self.logger = logging.getLogger(self.__class__.__name__)
-    self.options = options
-    self.gmn_client = GMNReplicationClient(self.options.gmn_url, timeout=60 * 60)
-    self.cn_client = self._create_cn_client()
-    self._process_replication_queue()
+class ReplicateError(Exception):
+  def __init__(self, value):
+    self.value = value
 
-  def _create_cn_client(self):
-    return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=self.options.cn_url,
-      cert_path=self.options.cert_path,
-      key_path=self.options.key_path
-    )
-
-  def _process_replication_queue(self):
-    while self._process_replication_task():
-      pass
-
-  def _process_replication_task(self):
-    task = self._get_next_replication_task()
-    if not task:
-      return False
-    self.logger.info('-' * 40)
-    self.logger.info('Processing PID: {0}'.format(task.pid))
-    try:
-      self._replicate(task)
-    except (
-      d1_common.types.exceptions.DataONEException, ReplicateError, Exception, object
-    ) as e:
-      self.logger.exception('Replication failed')
-      if isinstance(e, d1_common.types.exceptions.DataONEException):
-        self._cn_replicate_task_update(task, 'failed', e)
-      else:
-        self._cn_replicate_task_update(task, 'failed')
-      self._gmn_replicate_task_update(task, str(e) if str(e) else e.__name__)
-      # Allow any exception in _gmn_replicate_task_update() to remain unhandled
-      # so that the script exits. This causes a delay until the next time this
-      # script is run by cron, before the task is retried. Without this, this
-      # script would not exit and a continuous series of retries would happen as
-      # fast as the system could manage.
-    return True
-
-  def _get_next_replication_task(self):
-    try:
-      return self.gmn_client.internal_replicate_task_get()
-    except d1_common.types.exceptions.NotFound:
-      return None
-
-  def _replicate(self, task):
-    self._gmn_replicate_task_update(task, 'in progress')
-    sysmeta_tmp_file = self._get_system_metadata(task)
-    science_data_tmp_file = self._get_science_data(task)
-    self._gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
-    self._gmn_replicate_task_update(task, 'completed')
-    self._cn_replicate_task_update(task, 'completed')
-
-  def _cn_replicate_task_update(self, task, replication_status, e=None):
-    try:
-      self.cn_client.setReplicationStatus(
-        task.pid, settings.NODE_IDENTIFIER, replication_status
-      )
-    except Exception as e:
-      self.logger.exception('CNReplication.setReplicationStatus failed')
-
-  def _gmn_replicate_task_update(self, task, status):
-    return self.gmn_client.update_replicate_task_status(task.taskId, status)
-
-  def _get_system_metadata(self, task):
-    sysmeta = self._open_sysmeta_stream_on_coordinating_node(task.pid)
-    return self._copy_string_to_tmp_file(sysmeta.toxml())
-
-  def _open_sysmeta_stream_on_coordinating_node(self, pid):
-    return self.cn_client.getSystemMetadata(pid)
-
-  def _get_science_data(self, task):
-    source_node_base_url = self._resolve_source_node_id_to_base_url(task.sourceNode)
-    mn_client = d1_client.mnclient.MemberNodeClient(
-      base_url=source_node_base_url,
-      cert_path=self.options.cert_path,
-      key_path=self.options.key_path
-    )
-    sci_data_stream = self._open_sci_obj_stream_on_member_node(mn_client, task.pid)
-    return self._copy_stream_to_tmp_file(sci_data_stream)
-
-  def _copy_string_to_tmp_file(self, s):
-    return self._copy_stream_to_tmp_file(StringIO.StringIO(s))
-
-  def _copy_stream_to_tmp_file(self, stream):
-    #f = tempfile.TemporaryFile() # for production
-    f = tempfile.NamedTemporaryFile(delete=False) # for debugging
-    self.logger.debug(f.name)
-    shutil.copyfileobj(stream, f)
-    f.seek(0)
-    return f
-
-  def _resolve_source_node_id_to_base_url(self, source_node):
-    node_list = self._get_node_list()
-    for node in node_list.node:
-      if node.identifier.value() == source_node:
-        return node.baseURL
-    raise ReplicateError('Unable to resolve Source Node ID: {0}'.format(source_node))
-
-  def _get_node_list(self):
-    return self.cn_client.listNodes()
-
-  def _open_sci_obj_stream_on_member_node(self, mn_client, pid):
-    return mn_client.getReplica(pid)
-
-  def _gmn_replicate_create(self, task, sci_obj, sysmeta):
-    return self.gmn_client.internal_replicate_create(task.pid, sci_obj, sysmeta)
-
-#===============================================================================
-
-
-def abort_if_other_instance_is_running():
-  single_path = os.path.splitext(__file__)[0] + '.single'
-  f = open(single_path, 'w')
-  try:
-    fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-  except IOError:
-    self.logger.info('Aborted: Another instance is still running')
-    exit(0)
-
-
-def log_setup():
-  # Set up logging.
-  # We output everything to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(name)s '
-    '%(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  #file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log',
-  #                                  'a')
-  #file_logger.setFormatter(formatter)
-  #logging.getLogger('').addHandler(file_logger)
-  # Stdout.
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  log_setup()
-  abort_if_other_instance_is_running()
-
-  # Command line options.
-  parser = optparse.OptionParser()
-  parser.add_option(
-    '--gmn-url',
-    dest='gmn_url',
-    action='store',
-    type='string',
-    default='https://localhost/mn'
-  )
-  parser.add_option(
-    '--cn-url',
-    dest='cn_url',
-    action='store',
-    type='string',
-    default=d1_common.const.URL_DATAONE_ROOT
-  )
-  parser.add_option(
-    '--cert-path',
-    dest='cert_path',
-    action='store',
-    type='string',
-    default='client_side_cert.pem'
-  )
-  parser.add_option(
-    '--key-path',
-    dest='key_path',
-    action='store',
-    type='string',
-    default='client_side_key.pem'
-  )
-  parser.add_option('--verbose', action='store_true', default=False, dest='verbose')
-
-  (options, args) = parser.parse_args()
-
-  #  if not options.verbose:
-  #    logging.getLogger('').setLevel(logging.ERROR)
-
-  logging.getLogger('').setLevel(logging.DEBUG)
-
-  ProcessReplicationQueue(options)
+  def __str__(self):
+    return str(self.value)
 
 
 if __name__ == '__main__':

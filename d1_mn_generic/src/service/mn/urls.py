@@ -99,6 +99,7 @@ urlpatterns = patterns(
 
 urlpatterns += patterns(
   'service.mn.views.internal',
+  (r'^internal/get_setting/(.+)$', 'get_setting'),
   (r'^internal/replicate/task_get$', 'replicate_task_get'),
   (r'^internal/replicate/task_update/(.+?)/(.+?)/?$', 'replicate_task_update'),
   (r'^internal/replicate/create/(.+)$', 'replicate_create'),

@@ -95,11 +95,12 @@ NODE_IDENTIFIER = 'urn:node:MyMemberNode'
 NODE_NAME = 'My Member Node'
 
 # Description of content maintained by this node and any other free style notes.
-# E.g.: 'This DataONE Member Node is operated by My Company. The main
+# E.g.: 'This DataONE Member Node is operated by My Organization. The main
 # contents are sea level measurements.'
 NODE_DESCRIPTION = 'Test Member Node'
 
 # The URL at which the Node is available.
+# The version tag, e.g., /v1/ is not included in this URL.
 # E.g.: https://server.example.edu/app/d1/mn
 NODE_BASEURL = 'https://localhost/mn'
 
@@ -108,9 +109,10 @@ NODE_BASEURL = 'https://localhost/mn'
 # (discovering new content and other changes) on this node.
 NODE_SYNCHRONIZE = True
 
-# The schedule on which synchronization will run for this node. The schedule
+# The schedule on which synchronization should run for this node. The schedule
 # should reflect the frequency at which content is expected to change on the
-# node. The syntax for each time slot follows that of the Quartz Scheduler
+# node. The schedule is only a hint to the CNs. The syntax for each time slot
+# follows that of the Quartz Scheduler
 # (http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html).
 # These settings are ignored if NODE_SYNCHRONIZE is False.
 # E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*',
@@ -170,14 +172,14 @@ CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.crt'
 # CLIENT_CERT_PATH. The private key must be in PEM format. This is only ONLY
 # required to be set if the certificate does not contain an embedded private
 # key. Otherwise, set it to None.
-CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.key'
+CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client.key'
 
 # Set to True to enable this node to be used as a replication target. DataONE
 # uses replication targets to store replicas of science objects. This setting is
 # ignored if TIER is set less than 4. It is intended for temporarily disabling
 # replication. For permanently disabling replication, set TIER lower than 4 as
 # well as this setting to False.
-NODE_REPLICATE = False
+NODE_REPLICATE = True
 
 # The maximum size, in octets (8-bit bytes), of objects this node is willing to
 # accept for replication. Set to -1 to allow any size.
@@ -258,7 +260,7 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 # filtered list of all objects on the node for each page that is returned).
 # These are also the reasons that DataONE specified implementation of access
 # control for public and regular users to be optional for this API.
-PUBLIC_OBJECT_LIST = False
+PUBLIC_OBJECT_LIST = True
 
 # Database connection.
 # GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is
@@ -360,7 +362,7 @@ def check_path(path):
 
 
 check_path(CLIENT_CERT_PATH)
-check_path(CLIENT_CERT_PRIV_KEY_PATH)
+check_path(CLIENT_CERT_PRIVATE_KEY_PATH)
 
 if SECRET_KEY == 'MySecretKey':
   raise Exception('SECRET_KEY is unset. See install documentation.')

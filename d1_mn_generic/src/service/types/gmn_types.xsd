@@ -15,4 +15,7 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    
+    <xs:element name="setting" type="xs:string"/>
+
 </xs:schema>

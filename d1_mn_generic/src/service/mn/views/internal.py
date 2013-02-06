@@ -63,7 +63,6 @@ import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import mn.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -73,13 +72,34 @@ import mn.psycopg_adapter
 import mn.sysmeta_store
 import mn.sysmeta_validate
 import mn.util
+import mn.view_asserts
 import mn.view_shared
 import service
 import service.settings
+import service.types.generated.gmn_types
 
 # ==============================================================================
 # Internal API
 # ==============================================================================
+
+# ------------------------------------------------------------------------------  
+# Internal API: General.
+# ------------------------------------------------------------------------------
+
+
+@mn.auth.assert_internal_permission
+def get_setting(request, setting_name):
+  try:
+    v = getattr(service.settings, setting_name)
+  except AttributeError:
+    raise d1_common.types.exceptions.NotFound(
+      0, 'Unknown setting: {0}'.format(setting_name)
+    )
+  else:
+    return HttpResponse(
+      service.types.generated.gmn_types.setting(v).toxml(
+      ), d1_common.const.MIMETYPE_XML
+    )
 
 # ------------------------------------------------------------------------------  
 # Internal API: Replication.
@@ -174,7 +194,7 @@ def update_sysmeta(request, pid):
   return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------  
-# Internal: Misc. 
+# Internal: Public. 
 # ------------------------------------------------------------------------------
 
 
@@ -215,6 +235,8 @@ def home(request):
   server_time = datetime.datetime.utcnow()
 
   return render_to_response('home.html', locals(), mimetype="application/xhtml+xml")
+
+# Util.
 
 
 def get_free_space(folder):
