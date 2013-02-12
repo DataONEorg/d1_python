@@ -21,7 +21,7 @@
 ''':mod:`auth`
 ==============
 
-:Synopsis: Authentication and authorization. 
+:Synopsis: Authentication and authorization.
 :Author: DataONE (Dahl)
 '''
 
@@ -125,19 +125,19 @@ def set_access_policy(pid, access_policy=None):
   Preconditions:
     - Each subject has been verified to a valid DataONE account.
     - Subject has changePermission for object.
-    
+
   Postconditions:
     - The Permission and related tables contain the new access policy.
     - The SysMeta object in the filesystem contains the new access policy.
-    
-  Notes:  
+
+  Notes:
     - There can be multiple rules in a policy and each rule can contain multiple
       subjects. So there are two ways that the same subject can be specified
       multiple times in a policy. If this happens, multiple, conflicting action
       levels may be provided for the subject. This is handled by checking for an
       existing row for the subject for this object and updating it if it
       contains a lower action level. The end result is that there is one row for
-      each subject for each object and this row contains the highest action
+      each subject, for each object and this row contains the highest action
       level.
 
   '''
@@ -150,18 +150,18 @@ def set_access_policy(pid, access_policy=None):
       0, 'Attempted to set access for non-existing object', pid
     )
 
-    # Handle call without access policy.
+  # Handle call without access policy.
   if access_policy is None:
     allow = []
   else:
     allow = access_policy.allow
 
-    # Remove any existing permissions for this object. Because
-    # TransactionMiddleware is enabled, the temporary absence of permissions is
-    # hidden in a transaction.
-    #
-    # The deletes are cascaded so any subjects that are no longer referenced in
-    # any permissions are deleted as well.
+  # Remove any existing permissions for this object. Because
+  # TransactionMiddleware is enabled, the temporary absence of permissions is
+  # hidden in a transaction.
+  #
+  # The deletes are cascaded so any subjects that are no longer referenced in
+  # any permissions are deleted as well.
   models.Permission.objects.filter(object__pid=pid).delete()
 
   # Add an implicit allow rule with all permissions for the rights holder.
@@ -272,7 +272,7 @@ def is_allowed(request, level, pid):
   Return:
     True if one or more subjects are allowed to perform action on object.
     False if PID does not exist.
-    False if level is invalid.  
+    False if level is invalid.
   '''
   # If subjects contains one or more DataONE trusted infrastructure subjects,
   # all rights are given.

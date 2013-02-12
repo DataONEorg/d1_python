@@ -169,7 +169,7 @@ SECRET_KEY = 'MySecretKey'
 CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.crt'
 
 # Path to the private key for the client side certificate set in
-# CLIENT_CERT_PATH. The private key must be in PEM format. This is only ONLY
+# CLIENT_CERT_PATH. The private key must be in PEM format. This is only
 # required to be set if the certificate does not contain an embedded private
 # key. Otherwise, set it to None.
 CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client.key'
@@ -271,7 +271,7 @@ DATABASES = {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'gmn',
 
-    # MySQL
+    # MySQL (currently not supported)
     #'ENGINE': 'django.db.backends.mysql',
     #'NAME': 'gmn',
 
@@ -279,11 +279,17 @@ DATABASES = {
     #'ENGINE': 'django.db.backends.sqlite3',
     #'NAME': make_absolute('./gmn.sqlite'),
 
+    # When using PostgreSQL, set these to match the username and password
+    # specified for the gmn user during the PostgreSQL install. These are not
+    # used for SQLite3.
     'USER': 'gmn',
-    'PASSWORD': 'gmn', # Set to match the password set up for the gmn user in
-                       # the PostgreSQL installation.
-    'HOST': '', # Set to empty string for localhost.
-    'PORT': '', # Set to empty string for default.
+    'PASSWORD': 'gmn',
+
+    # Set HOST to empty string for localhost.
+    'HOST': '',
+
+    # Set PORT to empty string for default.
+    'PORT': '',
   }
 }
 
