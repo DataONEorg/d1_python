@@ -29,10 +29,8 @@
 :Author: DataONE (Dahl)
 '''
 
-# TODO: Currently copies the objects to temporary files. Everything is in place
-# for streaming the objects instead.
-
 # Stdlib.
+import StringIO
 import datetime
 import fcntl
 import glob
@@ -45,22 +43,36 @@ import re
 import shutil
 import stat
 import sys
-import time
 import tempfile
+import time
 import urllib
 import urlparse
 import uuid
-import StringIO
+
+# Django.
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.base import BaseCommand
+from django.core.management.base import NoArgsCommand
+from django.core.management.base import CommandError
+#from django.http import HttpResponse
+#from django.http import Http404
+#from django.template import Context
+#from django.template import loader
+#from django.shortcuts import render_to_response
+#from django.utils.html import escape
+import django.utils.log
+import django.db.models
 
 # D1.
-import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
-import d1_client.mnclient
 import d1_client.cnclient
+import d1_client.d1client
+import d1_client.mnclient
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.url
+import d1_common.util
 
 # Add some GMN paths to include path.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -68,62 +80,72 @@ sys.path.append(_here('../'))
 sys.path.append(_here('../types/generated'))
 
 # App.
-import settings
 import gmn_types
+import mn.models
+import settings
+
+# TODO: Currently copies the objects to temporary files. Everything is in place
+# for streaming the objects instead.
 
 
-def main():
-  log_setup()
-  abort_if_other_instance_is_running()
-  logging.getLogger('').setLevel(logging.DEBUG if settings.GMN_DEBUG else logging.WARNING)
-  print settings.NODE_BASEURL
-  print settings.DATAONE_ROOT
-  print settings.CLIENT_CERT_PATH
-  print settings.CLIENT_CERT_PRIVATE_KEY_PATH
-  #exit()
-  ProcessReplicationQueue()
+class Command(NoArgsCommand):
+  help = 'Process the replication queue.'
 
+  def handle_noargs(self, **options):
+    self.log_setup()
 
-def abort_if_other_instance_is_running():
-  single_path = os.path.splitext(__file__)[0] + '.single'
-  f = open(single_path, 'w')
-  try:
-    fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-  except IOError:
-    self.logger.info('Aborted: Another instance is still running')
-    exit(0)
+    self.abort_if_other_instance_is_running()
 
+    logging.info('Running management command: ' 'process_replication_queue')
 
-def log_setup():
-  # Set up logging. We output only to stdout. Instead of also writing to a log
-  # file, redirect stdout to a log file when the script is executed from cron.
-  logging.getLogger('').setLevel(logging.DEBUG)
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(name)s '
-    '%(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
+    verbosity = int(options.get('verbosity', 1))
 
-#===============================================================================
+    if verbosity <= 1:
+      logging.getLogger('').setLevel(logging.ERROR)
+
+#    logging.getLogger('').setLevel(logging.DEBUG if settings.GMN_DEBUG
+#                                   else logging.WARNING)
+
+    p = ProcessReplicationQueue()
+    p.process_replication_queue()
+
+#    print settings.NODE_BASEURL
+#    print settings.DATAONE_ROOT
+#    print settings.CLIENT_CERT_PATH
+#    print settings.CLIENT_CERT_PRIVATE_KEY_PATH
+
+  def log_setup(self):
+    # Set up logging. We output only to stdout. Instead of also writing to a log
+    # file, redirect stdout to a log file when the script is executed from cron.
+    logging.getLogger('').setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
+    )
+    console_logger = logging.StreamHandler(sys.stdout)
+    console_logger.setFormatter(formatter)
+    logging.getLogger('').addHandler(console_logger)
+
+  def abort_if_other_instance_is_running(self):
+    single_path = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
+    f = open(single_path, 'w')
+    try:
+      fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+      self.logger.info('Aborted: Another instance is still running')
+      exit(0)
+
+  #===============================================================================
 
 
 class ProcessReplicationQueue(object):
   def __init__(self):
     self.logger = logging.getLogger(self.__class__.__name__)
-    self.gmn_client = GMNReplicationClient('https://localhost/mn', timeout=60 * 60)
+    self.gmn_client = GMNReplicationClient(settings.GMN_INTERNAL_ROOT, timeout=60 * 60)
     self.cn_client = self._create_cn_client()
-    self._process_replication_queue()
 
-  def _create_cn_client(self):
-    return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=settings.DATAONE_ROOT,
-      cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
-    )
-
-  def _process_replication_queue(self):
+  def process_replication_queue(self):
     while self._process_replication_task():
       pass
 
@@ -179,6 +201,13 @@ class ProcessReplicationQueue(object):
     if status is None or status == '':
       status = 'Unknown error. See replication log.'
     return self.gmn_client.update_replicate_task_status(task.taskId, status[:1024])
+
+  def _create_cn_client(self):
+    return d1_client.cnclient.CoordinatingNodeClient(
+      base_url=settings.DATAONE_ROOT,
+      cert_path=settings.CLIENT_CERT_PATH,
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    )
 
   def _get_system_metadata(self, task):
     sysmeta = self._open_sysmeta_stream_on_coordinating_node(task.pid)
@@ -313,7 +342,3 @@ class ReplicateError(Exception):
 
   def __str__(self):
     return str(self.value)
-
-
-if __name__ == '__main__':
-  main()

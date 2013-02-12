@@ -237,6 +237,9 @@ GMN_INTERNAL_SUBJECTS = set([])
 # spoofing attacks.
 GMN_INTERNAL_HOSTS = ['127.0.0.1', ]
 
+# Local processes use this URL to reach GMN.
+GMN_INTERNAL_ROOT = 'https://localhost/mn'
+
 # In debug mode, a special test subject is added to the list of trusted
 # subjects.
 if GMN_DEBUG:

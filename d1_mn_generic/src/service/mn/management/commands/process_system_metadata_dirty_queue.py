@@ -138,24 +138,12 @@ class Command(NoArgsCommand):
     mn.models.SystemMetadataDirtyQueue.objects.filter(status__status='completed').delete()
 
   def log_setup(self):
-    # Set up logging.
-    # We output everything to both file and stdout.
+    # Set up logging. We output only to stdout. Instead of also writing to a log
+    # file, redirect stdout to a log file when the script is executed from cron.
     logging.getLogger('').setLevel(logging.DEBUG)
     formatter = logging.Formatter(
       '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
     )
-    # File.
-    file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
-    file_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(file_logger)
-    # Console.
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(console_logger)
-    # Suppress Django's logging of SQL statements.
-    null_logger = django.utils.log.NullHandler()
-    logger = logging.getLogger('django.db.backends')
-    logger.setLevel(logging.WARNING)
-
-    #print logging.getLogger('django.db.backends').handlers
-    #exit()
