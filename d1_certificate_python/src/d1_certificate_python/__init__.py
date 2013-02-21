@@ -23,10 +23,14 @@
 
 :Synopsis: DataONE Certificate Utilities.
 :Created: 2012-05-03
-:Author: DataONE (Pippin, Dahl)
+:Author: DataONE (Dahl)
 
 '''
 
-__version__ = "1.0.0-SNAPSHOT"
+__version__ = "1.1.0"
 
-__all__ = ['certificate_extractor', 'subject_info', ]
+__all__ = [
+  'd1_x509v3_certificate_extractor',
+  'd1_x509v3_certificate_generator',
+  'subject_info',
+]

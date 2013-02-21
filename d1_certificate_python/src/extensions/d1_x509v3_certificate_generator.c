@@ -23,7 +23,7 @@
 // :Author:
 //   DataONE (Dahl)
 
-#include <python2.6/Python.h>
+#include <Python.h>
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>

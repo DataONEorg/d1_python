@@ -29,7 +29,7 @@
 // :Author:
 //   DataONE (dahl)
 
-#include <python2.6/Python.h>
+#include <Python.h>
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>

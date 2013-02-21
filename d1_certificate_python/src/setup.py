@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:setup.py`
-==============
+:mod:`setup`
+============
 
-:Synopsis: Build the DataONE Python Certificate extension.
-:Author: DataONE (Dahl, Pippin)
-
+:Synopsis:
+  - Build the DataONE Python Certificate extensions.
+  - Create egg.
+:Author: DataONE (Dahl)
 '''
 
-#from distutils.core import Extension
 from setuptools import setup, find_packages, Extension
 import d1_certificate_python
 
@@ -46,16 +46,16 @@ x509v3_certificate_generator = Extension(
 )
 
 setup(
-  name='d1_certificate',
+  name='dataone.certificate_extensions',
   version=d1_certificate_python.__version__,
-  author='Roger Dahl, Andy Pippin, and the DataONE Development Team',
+  description='Python extensions for generating and extracting PEM formatted X.509 v3 certificates that contain DataONE Session information',
+  author='DataONE Project',
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-  description='Python extension for extracting DataONE Session information from PEM formatted X.509 v3 certificates',
   packages=find_packages(),
   install_requires=[
-    'DataONE_Common >= 1.0.0c7-SNAPSHOT',
+    'dataone.common >= 1.0.0',
   ],
   ext_modules=[
     x509v3_certificate_extractor,
