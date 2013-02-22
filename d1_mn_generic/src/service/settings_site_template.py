@@ -59,7 +59,7 @@ def make_absolute(p):
 #   internal errors.
 # * GMN returns a regular 404 page for invalid URLs. The page contains a link
 #   to the GMN home page.
-DEBUG = True
+DEBUG = False
 
 # Enable GMN debug mode.
 # True:
@@ -71,7 +71,7 @@ DEBUG = True
 #   create/update/delete.
 # False:
 # * Use for production.
-GMN_DEBUG = True
+GMN_DEBUG = False
 
 # Enable request echo.
 # * True: GMN will not process any requests. Instead, it will echo the requests
@@ -219,15 +219,20 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 
-# Subjects for implicitly trusted DataONE infrastructure. Connections containing
-# client side certificates with these subjects bypass access control rules and
-# have access to REST interfaces meant only for use by CNs.
+# Additional subjects for implicitly trusted DataONE infrastructure. Connections
+# containing client side certificates with these subjects bypass access control
+# rules and have access to REST interfaces meant only for use by CNs. The
+# subjects in this list are added to the list of subjects that GMN creates on
+# startup by reading the NodeList on the root CN of the environment configured
+# in the DATAONE_ROOT setting.
 DATAONE_TRUSTED_SUBJECTS = set([])
 
-# Subjects for asynchronous GMN processes. Connections containing client side
-# certificates with these subjects are allowed to connect to REST services
+# Additional subjects for internal GMN processes. Connections containing client
+# side certificates with these subjects are allowed to connect to REST services
 # internal to GMN. The internal REST interfaces provide functionality required
-# by the asynchronous components.
+# by the asynchronous processes. The subjects in this list is added to the
+# subject of the client side certificate issued by DataONE, configured in the
+# CLIENT_CERT_PATH setting.
 GMN_INTERNAL_SUBJECTS = set([])
 
 # As an alternative to the certificate based authentication for asynchronous
@@ -237,8 +242,8 @@ GMN_INTERNAL_SUBJECTS = set([])
 # spoofing attacks.
 GMN_INTERNAL_HOSTS = ['127.0.0.1', ]
 
-# Local processes use this URL to reach GMN.
-GMN_INTERNAL_ROOT = 'https://localhost/mn'
+# Local processes use this URL to connect to GMN.
+INTERNAL_BASEURL = 'https://localhost/mn'
 
 # In debug mode, a special test subject is added to the list of trusted
 # subjects.

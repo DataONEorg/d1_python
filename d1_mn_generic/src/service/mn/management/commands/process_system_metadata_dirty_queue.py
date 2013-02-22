@@ -69,6 +69,8 @@ class Command(NoArgsCommand):
   def handle_noargs(self, **options):
     self.log_setup()
 
+    self.abort_if_other_instance_is_running()
+
     logging.info('Running management command: ' 'process_system_metadata_dirty_queue')
 
     verbosity = int(options.get('verbosity', 1))
@@ -117,10 +119,7 @@ class Command(NoArgsCommand):
     return response
 
   def get_sysmeta_from_cn(self, pid):
-    # d1_common.const.URL_DATAONE_ROOT
-    client = d1_client.d1client.DataONEClient(
-      settings.LOCAL_BASE_URL
-    ) ### settings.LOCAL_BASE_URL is for testing.
+    client = d1_client.d1client.DataONEClient(settings.DATAONE_ROOT)
     sysmeta = client.getSystemMetadata(pid)
     return sysmeta
 
@@ -147,3 +146,14 @@ class Command(NoArgsCommand):
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(console_logger)
+
+  def abort_if_other_instance_is_running(self):
+    single_path = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
+    f = open(single_path, 'w')
+    try:
+      fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+      self.logger.info('Aborted: Another instance is still running')
+      exit(0)

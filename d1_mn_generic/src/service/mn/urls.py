@@ -103,6 +103,10 @@ urlpatterns += patterns(
   (r'^internal/replicate/task_get$', 'replicate_task_get'),
   (r'^internal/replicate/task_update/(.+?)/(.+?)/?$', 'replicate_task_update'),
   (r'^internal/replicate/create/(.+)$', 'replicate_create'),
+  (
+    r'^internal/replicate/remove_completed_tasks_from_queue/?$',
+    'replicate_remove_completed_tasks_from_queue'
+  ),
   (r'^internal/update_sysmeta/(.+)$', 'update_sysmeta'),
   (r'^internal/home/?$', 'home'),
 )

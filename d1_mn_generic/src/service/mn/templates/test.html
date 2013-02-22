@@ -18,24 +18,24 @@ function delete_confirmation() {
     
     <h2>Replication</h2>
     <ul>
-      <li><a href="test/get_replication_queue">Get replication work queue</a>
-      <li><a href="test/get_replication_queue?excludecompleted">Get replication work queue, excluding completed</a>
-      <li><a href="test/clear_replication_queue">Clear replication work queue</a>
+      <li><a href="get_replication_queue">Get replication work queue</a>
+      <li><a href="get_replication_queue?excludecompleted">Get replication work queue, excluding completed</a>
+      <li><a href="clear_replication_queue">Clear replication work queue</a>
     </ul>
     
     <h2>Misc</h2>
     <ul>
-      <li><a href="test?clear_db" onclick="return delete_confirmation();">Clear Member Node (delete all objects, logs, subjects and replication queue)</a>
-      <li><a href="test/echo_session">List of active subjects for this session</a>
-      <li><a href="test/trusted_subjects">List of implicitly trusted subjects</a>
-      <li><a href="test/permissions_for_object/my_object">List of permissions for an object</a>
+      <li><a href="clear_db" onclick="return delete_confirmation();">Clear Member Node (delete all objects, logs, subjects and replication queue)</a>
+      <li><a href="echo_session">List of active subjects for this session</a>
+      <li><a href="trusted_subjects">List of implicitly trusted subjects</a>
+      <li><a href="permissions_for_object/my_object">List of permissions for an object</a>
     </ul>
 
 	<h2>REST interface (v1 GET methods)</h2>
 	<p>
 		Run simple queries against the MN as the public subject. Some links<br/>
 		can be used directly, but most require parameters to be inserted<br/>
-		by hand in the browser address bar.<br/>
+		by hand into URL.<br/>
 	</p>        
 
 	<ul>
@@ -43,23 +43,23 @@ function delete_confirmation() {
 		<li>MNRead.listObjects()</li>
 		<ul>
 		  	<li>
-		  		<a href="v1/object">
+		  		<a href="../v1/object">
 			  		Unfiltered
 		      	</a>
 		  	</li>
 		  	<li>
-		  		<a href="v1/object?fromDate=2005-01-01T12:00:00Z&toDate=2012-01-01T12:00:00Z">
+		  		<a href="../v1/object?fromDate=2005-01-01T12:00:00Z&toDate=2012-01-01T12:00:00Z">
 			  		Filter by date range
 		      	</a>
 		  	</li>
 		  	<li>
-				<a href="v1/object?formatId=my_format_id">
+				<a href="../v1/object?formatId=my_format_id">
 		      		Filtered by Format ID
 		      	</a>
 		  	</li>
 
 		  	<li>
-      			<a href="v1/object?fromDate={fromDate}&toDate={toDate}&formatId={formatId}&replicaStatus={replicaStatus}&start={start}&count={count}]">
+      			<a href="../v1/object?fromDate={fromDate}&toDate={toDate}&formatId={formatId}&replicaStatus={replicaStatus}&start={start}&count={count}]">
       				Complete (must be modified)
 		      	</a>
 		  	</li>
@@ -70,17 +70,17 @@ function delete_confirmation() {
 		<li>MNCore.getLogRecords()</li>
 		<ul>
 		  	<li>
-		  		<a href="v1/log">
+		  		<a href="../v1/log">
 			  		Unfiltered
 		      	</a>
 		  	</li>
 		  	<li>
-		  		<a href="v1/log?pidFilter=my_pid">
+		  		<a href="../v1/log?pidFilter=my_pid">
 			  		Filter by object
 		      	</a>
 		  	</li>
       		<li>
-      			<a href="v1/log?[fromdate={fromDate}][&todate={toDate}][&event={event}][&pidFilter={pidFilter}][&start={start}][&count={count}]">
+      			<a href="../v1/log?[fromdate={fromDate}][&todate={toDate}][&event={event}][&pidFilter={pidFilter}][&start={start}][&count={count}]">
       				Complete (must be modified)
       			</a>
 			</li>
@@ -89,7 +89,7 @@ function delete_confirmation() {
 		<li>MNRead.get()</li>
 		<ul>
 			<li>
-				<a href="v1/object/my_pid">
+				<a href="../v1/object/my_pid">
 					Get object
 				</a>
 			</li>
@@ -98,7 +98,7 @@ function delete_confirmation() {
 		<li>MNRead.getSystemMetadata()</li>
 		<ul>
 			<li>
-				<a href="v1/meta/my_pid">
+				<a href="../v1/meta/my_pid">
 					Get System Metadata for object
 				</a>
 			</li>
@@ -107,7 +107,7 @@ function delete_confirmation() {
 		<li>MNCore.getCapabilities()</li>
 		<ul>
 			<li>
-				<a href="v1/node">
+				<a href="../v1/node">
 					Get capabilities of this Member Node
 				</a>
 			</li>
@@ -116,7 +116,7 @@ function delete_confirmation() {
 		<li>MNRead.getChecksum()</li>
 		<ul>
 			<li>
-				<a href="v1/checksum/my_pid">
+				<a href="../v1/checksum/my_pid">
 					Get checksum of object
 				</a>
 			</li>
@@ -125,17 +125,17 @@ function delete_confirmation() {
 		<li>MNAuthorization.isAuthorized()</li>
 		<ul>
 		  	<li>
-		  		<a href="v1/isAuthorized/my_pid?action=read">
+		  		<a href="../v1/isAuthorized/my_pid?action=read">
 			  		Check for read permission
 		      	</a>
 		  	</li>
 		  	<li>
-		  		<a href="v1/isAuthorized/my_pid?action=write">
+		  		<a href="../v1/isAuthorized/my_pid?action=write">
 			  		Check for write permission
 		      	</a>
 		  	</li>
 		  	<li>
-				<a href="v1/isAuthorized/my_pid?action=changePermission">
+				<a href="../v1/isAuthorized/my_pid?action=changePermission">
 		      		Check for permission to change permissions
 		      	</a>
 		  	</li>

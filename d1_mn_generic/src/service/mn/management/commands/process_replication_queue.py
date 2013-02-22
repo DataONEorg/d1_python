@@ -106,13 +106,13 @@ class Command(NoArgsCommand):
 #    logging.getLogger('').setLevel(logging.DEBUG if settings.GMN_DEBUG
 #                                   else logging.WARNING)
 
-    p = ProcessReplicationQueue()
-    p.process_replication_queue()
-
 #    print settings.NODE_BASEURL
 #    print settings.DATAONE_ROOT
 #    print settings.CLIENT_CERT_PATH
 #    print settings.CLIENT_CERT_PRIVATE_KEY_PATH
+
+    p = ProcessReplicationQueue()
+    p.process_replication_queue()
 
   def log_setup(self):
     # Set up logging. We output only to stdout. Instead of also writing to a log
@@ -142,12 +142,13 @@ class Command(NoArgsCommand):
 class ProcessReplicationQueue(object):
   def __init__(self):
     self.logger = logging.getLogger(self.__class__.__name__)
-    self.gmn_client = GMNReplicationClient(settings.GMN_INTERNAL_ROOT, timeout=60 * 60)
+    self.gmn_client = GMNReplicationClient(settings.INTERNAL_BASEURL, timeout=60 * 60)
     self.cn_client = self._create_cn_client()
 
   def process_replication_queue(self):
     while self._process_replication_task():
       pass
+    self.gmn_client.remove_completed_tasks_from_queue()
 
   def _process_replication_task(self):
     task = self._get_next_replication_task()
@@ -331,6 +332,11 @@ class GMNReplicationClient(d1_client.mnclient.MemberNodeClient):
       files=mime_multipart_files,
       headers=vendorSpecific
     )
+    return self._read_boolean_response(response)
+
+  def remove_completed_tasks_from_queue(self):
+    url = self._rest_url('replicate/remove_completed_tasks_from_queue')
+    response = self.GET(url)
     return self._read_boolean_response(response)
 
 # ==============================================================================

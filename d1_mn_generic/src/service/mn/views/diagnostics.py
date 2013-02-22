@@ -204,7 +204,7 @@ def permissions_for_object(request, pid):
   return render_to_response(
     'permissions_for_object.xhtml',
     locals(
-    ), mimetype="application/xhtml+xml"
+    ), mimetype=d1_common.const.MIMETYPE_XHTML
   )
 
 

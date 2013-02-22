@@ -42,43 +42,55 @@ function initTabs() {
         <table>
           <tbody>
             <tr>
-              <td>GMN version: </td>
+              <td>Node ID:</td>
+              <td>{{ node_identifier }}</td>
+            </tr>
+            <tr>
+              <td>Name:</td>
+              <td>{{ node_name }}</td>
+            </tr>
+            <tr>
+              <td>Description:</td>
+              <td>{{ node_description }}</td>
+            </tr>
+            <tr>
+              <td>GMN version:</td>
               <td>{{ gmn_version }}</td>
             </tr>
             <tr>
-              <td>Django version: </td>
+              <td>Django version:</td>
               <td>{{ django_version }}</td>
             </tr>
             <tr>
-              <td>Average size of Science objects: </td>
+              <td>Average size of Science objects:</td>
               <td>{{ avg_sci_data_size }} bytes</td>
             </tr>
             <tr>
-              <td>Objects: </td>
+              <td>Objects:</td>
               <td>{{ n_science_objects }}</td>
             </tr>
             <tr>
-              <td>Operations, total: </td>
+              <td>Operations, total:</td>
               <td>{{ n_connections_total }}</td>
             </tr>
             <tr>
-              <td>Operations, last hour: </td>
+              <td>Operations, last hour:</td>
               <td>{{ n_connections_in_last_hour }}</td>
             </tr>
             <tr>
-              <td>Subjects: </td>
+              <td>Subjects:</td>
               <td>{{ n_unique_subjects }}</td>
             </tr>
             <tr>
-              <td>Permissions: </td>
+              <td>Permissions:</td>
               <td>{{ n_permissions }}</td>
             </tr>
             <tr>
-              <td>Server time: </td>
+              <td>Server time:</td>
               <td>{{ server_time }}</td>
             </tr>
             <tr>
-              <td>Storage used / remaining: </td>
+              <td>Storage used / remaining:</td>
               <td>{{ storage_space }}</td>
             </tr>
             <tr>
@@ -100,9 +112,12 @@ function initTabs() {
         </table>
       </div>
 
+      <!--
       <div id="organization" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-        This is a test instance of GMN, operated by DataONE.
+        Uncomment this section and add text here to display an Organization tab
+        on the GMN Home page.
       </div>
+      -->
       
     </div>
   </body>

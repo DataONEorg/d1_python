@@ -25,35 +25,16 @@
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
-import cgi
-import collections
-import csv
 import ctypes
 import datetime
-import glob
-import hashlib
-import httplib
-import mimetypes
 import os
 import platform
-import pprint
-import re
-import stat
-import sys
-import time
-import urllib
-import urlparse
-import uuid
 
 # Django.
 import django
 from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
-from django.http import Http404
-from django.template import Context, loader
 from django.shortcuts import render_to_response
-from django.db.models import Avg, Max, Min, Count, Sum
-from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Avg, Count, Sum
 
 # DataONE APIs.
 import d1_common.const
@@ -142,6 +123,13 @@ def replicate_create(request, pid):
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
   mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, pid, sysmeta)
   mn.view_shared.create(request, pid, sysmeta)
+  return mn.view_shared.http_response_with_boolean_true_type()
+
+
+@mn.auth.assert_internal_permission
+def replicate_remove_completed_tasks_from_queue(request):
+  q = mn.models.ReplicationQueue.objects.filter(status__status='completed')
+  q.delete()
   return mn.view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------  
@@ -234,7 +222,14 @@ def home(request):
 
   server_time = datetime.datetime.utcnow()
 
-  return render_to_response('home.html', locals(), mimetype="application/xhtml+xml")
+  node_identifier = service.settings.NODE_IDENTIFIER
+  node_name = service.settings.NODE_NAME
+  node_description = service.settings.NODE_DESCRIPTION
+
+  return render_to_response(
+    'home.html', locals(
+    ), mimetype=d1_common.const.MIMETYPE_XHTML
+  )
 
 # Util.
 

@@ -29,29 +29,26 @@
 import os
 import urllib
 
-try:
-  from functools import update_wrapper
-except ImportError:
-  from django.utils.functional import update_wrapper
-
 # Django.
 from django.http import Http404
 from django.http import HttpResponse
+import django.core.cache
 import django.db
 import django.db.transaction
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.types.exceptions
 import d1_client.systemmetadata
 import d1_common.const
+import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_x509v3_certificate_extractor
 
 # App.
-import settings
-import util
 import models
 import node_registry
+import settings
 import sysmeta_store
+import util
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -257,7 +254,40 @@ def is_trusted_subject(request):
 
 
 def is_internal_subject(request):
-  return not request.subjects.isdisjoint(settings.GMN_INTERNAL_SUBJECTS)
+  return not request.subjects.isdisjoint(
+    settings.GMN_INTERNAL_SUBJECTS | set([_get_client_side_certificate_subject()])
+  )
+
+
+def _get_client_side_certificate_subject():
+  subject = django.core.cache.cache.get('client_side_certificate_subject')
+  if subject is not None:
+    return subject
+
+  cert_pem = _get_client_side_certificate_pem()
+  subject = _extract_subject_from_pem(cert_pem)
+
+  django.core.cache.cache.set('client_side_certificate_subject', subject)
+  return subject
+
+
+def _get_client_side_certificate_pem():
+  try:
+    return open(settings.CLIENT_CERT_PATH, 'rb').read()
+  except EnvironmentError as e:
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, 'Error reading client side certificate. File: {0}. Error: {1}'
+      .format(settings.CLIENT_CERT_PATH, str(e))
+    )
+
+
+def _extract_subject_from_pem(cert_pem):
+  try:
+    return d1_x509v3_certificate_extractor.extract(cert_pem)[0]
+  except Exception as e:
+    raise d1_common.types.exceptions.InvalidToken(
+      0, 'Error extracting session from certificate: {0}'.format(str(e))
+    )
 
 
 def is_internal_host(request):

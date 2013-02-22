@@ -48,13 +48,7 @@ import uuid
 # Django.
 from django.http import HttpResponse
 from django.http import HttpResponseNotAllowed
-#from django.http import HttpResponseBadRequest
-#from django.http import Http404
-#from django.template import Context, loader
-#from django.shortcuts import render_to_response
-#from django.db.models import Avg, Max, Min, Count
 from django.db.models import Sum
-#from django.core.exceptions import ObjectDoesNotExist
 import django.core.cache
 
 # DataONE APIs.

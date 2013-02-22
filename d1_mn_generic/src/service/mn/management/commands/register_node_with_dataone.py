@@ -86,6 +86,10 @@ class Command(NoArgsCommand):
     client = self.create_client()
     response = client.registerResponse(node)
     logging.info('Server response:\n{0}'.format(response.read()))
+    if response.status == 200:
+      logging.info('SUCCESSFUL REGISTRATION')
+    else:
+      logging.info('REGISTRATION FAILED')
 
   def update(self):
     node = self.generate_node_doc()
