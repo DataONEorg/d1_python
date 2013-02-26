@@ -35,7 +35,7 @@
    error messages as files. The resolvers should still be prepared to recognize
    error files, as it is possible that the cache fills up so the root
    resolver forgets about earlier exceptions, and forwards get_attribute()
-   requests for error files to the resolvers. 
+   requests for error files to the resolvers.
 :Author: DataONE (Dahl)
 '''
 
@@ -213,12 +213,17 @@ class RootResolver(resolver_abc.Resolver):
     return dir
 
   def _render_error_message_as_file(self, error_message):
+    # Windows
+    #error_message = error_message.replace(':', ';')
+    log.error(error_message)
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     dir.append(directory_item.DirectoryItem(error_message))
     return dir
 
   def error_message_from_path_exception(self, path_exception):
+    # Windows. TODO: Implement platform agnostic solution
+    #return 'Error; ' + str(path_exception)
     return 'Error: ' + str(path_exception)
 
   def _is_root(self, path):

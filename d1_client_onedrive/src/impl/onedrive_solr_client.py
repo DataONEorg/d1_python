@@ -197,14 +197,20 @@ class SolrClient(object):
       #socket was closed, reinitialize and try again
       log.info("Connection was closed, retrying...")
       if retrycount > 2:
-        log.error('Too many retries: {0}: {0}'.format(abs_query_url, str(e)))
-        raise (e)
+        log.error('Unable to connect to Solr: {0}: Error:'.format(abs_query_url))
+        log.exception(e)
+        raise path_exception.PathException(
+          'Unable to connect to Solr: {0}: {1}'.format(abs_query_url, str(e.args[0]))
+        )
       retrycount += 1
       self.connection = self.create_connection()
       return self.get(query_url, headers, retrycount=retrycount)
     except (socket.error, httplib.HTTPException) as e:
-      log.error('Solr query failed: {0}: {0}'.format(abs_query_url, str(e)))
-      raise e
+      log.error('Solr query failed: {0}: Error:'.format(abs_query_url))
+      log.exception(e)
+      raise path_exception.PathException(
+        'Solr query failed: {0}: {1}'.format(abs_query_url, str(e.args[0]))
+      )
     self.assert_response_is_ok(response)
     return response
 
@@ -250,8 +256,14 @@ class SolrClient(object):
         html_doc = ''
       #s = SimpleHTMLToText()
       #txt_doc = s.get_text(html_doc)
-      msg = '{0}\n{1}\n{2}'.format(response.status, response.reason, html_doc)
-      raise Exception(msg)
+      log.error(
+        'Error in Solr response: {0}\n{1}\n{2}'
+        .format(response.status, response.reason, html_doc)
+      )
+      raise path_exception.PathException(
+        'Error in Solr response: {0}'.format(response.reason)
+      )
+      #raise Exception(msg)
 
   def escape_query_term(self, term):
     reserved = [

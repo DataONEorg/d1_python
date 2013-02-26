@@ -25,15 +25,17 @@ def make_absolute(p):
 # User configurable settings.
 ################################################################################
 
-# DataONE maintains several instances of the DataONE infrastructure, called
-# environments. The production environment is used by the general public. Other
-# environments are used by software developers for testing and debugging of new
-# components. This setting controls to which environment ONEDrive connects.
+# In addition to the default production environment, DataONE maintains several
+# separate environments for use when developing and testing DataONE components.
+# There are no connections between the environments. For instance, certificates,
+# DataONE identities and science objects are exclusive to the environment in
+# which they were created. This setting controls to which environment ONEDrive
+# connects.
 
 # Round-robin CN endpoints
 #DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
 #DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn' 
+#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
@@ -57,7 +59,7 @@ MOUNTPOINT = make_absolute('one') # (default, relative path)
 # Increasing this setting causes longer lists of science objects to to appear in
 # the filesystem, increases memory footprint for the application and causes
 # longer response times when opening folders. Default value: 1000.
-MAX_OBJECTS_IN_DIRECTORY = 1000
+MAX_OBJECTS_IN_DIRECTORY = 50
 
 # The maximum number of faceting selections that can be displayed for a facet.
 # The faceting selections are displayed when opening a facet to add a
@@ -220,7 +222,7 @@ IGNORE_SPECIAL = set(
     '.DS_Store',
     'Backups.backupdb',
     '.Trashes',
-    # KDE / Krusader                
+    # KDE / Krusader
     '.directory',
     '.Trash',
     'BDMV',

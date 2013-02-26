@@ -25,7 +25,7 @@
  - Escape DataONE identifiers, so that they follow the filesystem conventions
    and restrictions for valid file- and folder names on a given OS.
  - Unescape the escaped file- and folder names to arrive at the original DataONE
-  identifiers. 
+  identifiers.
 :Author: DataONE (Dahl)
 
 DataONE supports identifiers containing characters that cannot (or should not)
@@ -59,7 +59,10 @@ def filename_from_identifier(identifier):
   #
   # On Windows, the following characters are not allowed:
   # \ / :  * ? " < > |
+  # Linux
   return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
+  # Windows
+  #return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
 
 
 def identifier_from_filename(filename):
