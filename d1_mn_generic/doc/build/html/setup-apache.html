@@ -62,12 +62,12 @@
 <p>Setting up Apache.</p>
 <blockquote>
 <div><p>Install Apache2 packages:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install apache2 apache2-threaded-dev
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get --yes install apache2 apache2-threaded-dev
 </pre></div>
 </div>
 <p>Install the GMN virtual host file and custom apache2.conf file:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ cd /var/local/dataone/gmn/lib/python2.6/site-packages/deployment
-$ sudo cp apache2.conf ports.conf /etc/apache2/
+$ sudo cp apache2.conf ports.conf httpd /etc/apache2/
 $ sudo cp gmn-ssl /etc/apache2/sites-available/
 $ sudo cp forward_http_to_https /etc/apache2/conf.d/
 </pre></div>
@@ -78,7 +78,7 @@ client side certificates. It is included in the apache2-common package.</p>
 <p>The <a class="reference internal" href="glossary.html#term-mod-wsgi"><em class="xref std std-term">mod_wsgi</em></a> module enables Apache to communicate with Django and GMN.</p>
 <blockquote>
 <div><p>Install and enable required modules:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install libapache2-mod-wsgi apache2.2-common
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get --yes install libapache2-mod-wsgi apache2.2-common
 $ sudo a2enmod wsgi ssl rewrite
 </pre></div>
 </div>

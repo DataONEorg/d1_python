@@ -80,22 +80,21 @@ belong to GMN. It will also be used for authentication.</p>
 <li>The build environment for DataONE Python extensions and lxml</li>
 <li>Commands used in the install</li>
 </ul>
-<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install build-essential python-dev libssl-dev libxml2-dev \
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get --yes install build-essential python-dev libssl-dev libxml2-dev \
 libxslt-dev postgresql-server-dev-8.4 openssl curl
 </pre></div>
 </div>
 <p>Install the GMN software stack from PyPI, into a Python virtual environment:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get install python-pip
-$ sudo pip install pip --upgrade
-$ sudo pip install virtualenv
-$ sudo mkdir -p /var/local/dataone/gmn
-$ cd /var/local/dataone
-$ sudo chown gmn:www-data gmn
-$ su gmn
-$ virtualenv --distribute gmn
-$ cd gmn
-$ . bin/activate
-$ pip install dataone.generic_member_node
+<div class="highlight-none"><div class="highlight"><pre>$ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade; \
+sudo pip install virtualenv; sudo mkdir -p /var/local/dataone/gmn; \
+cd /var/local/dataone; sudo chown gmn:www-data gmn; su gmn;
+</pre></div>
+</div>
+<ul class="simple">
+<li>Type the password for the gmn user when prompted.</li>
+</ul>
+<div class="highlight-none"><div class="highlight"><pre>$ virtualenv --distribute gmn; cd gmn; . bin/activate; \
+pip install dataone.generic_member_node
 $ &lt;ctrl-d&gt;
 </pre></div>
 </div>
@@ -106,7 +105,7 @@ $ &lt;ctrl-d&gt;
 <ul>
 <li><p class="first">Close to the top, just after the line that aborts if not running
 interactively, add:</p>
-<div class="highlight-none"><div class="highlight"><pre>PATH=/var/local/dataone/gmn/:$PATH
+<div class="highlight-none"><div class="highlight"><pre>PATH=/var/local/dataone/gmn/bin/:$PATH
 </pre></div>
 </div>
 </li>

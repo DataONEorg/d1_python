@@ -26,23 +26,23 @@ GMN is distributed via PyPI, the Python Package Index.
 
   ::
 
-    $ sudo apt-get install build-essential python-dev libssl-dev libxml2-dev \
+    $ sudo apt-get --yes install build-essential python-dev libssl-dev libxml2-dev \
     libxslt-dev postgresql-server-dev-8.4 openssl curl
 
   Install the GMN software stack from PyPI, into a Python virtual environment::
 
-    $ sudo apt-get install python-pip
-    $ sudo pip install pip --upgrade
-    $ sudo pip install virtualenv
-    $ sudo mkdir -p /var/local/dataone/gmn
-    $ cd /var/local/dataone
-    $ sudo chown gmn:www-data gmn
-    $ su gmn
-    $ virtualenv --distribute gmn
-    $ cd gmn
-    $ . bin/activate
-    $ pip install dataone.generic_member_node
+    $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade; \
+    sudo pip install virtualenv; sudo mkdir -p /var/local/dataone/gmn; \
+    cd /var/local/dataone; sudo chown gmn:www-data gmn; su gmn;
+
+  * Type the password for the gmn user when prompted.
+
+  ::
+
+    $ virtualenv --distribute gmn; cd gmn; . bin/activate; \
+    pip install dataone.generic_member_node
     $ <ctrl-d>
+
 
   Use the GMN Python virtual environment by default for the gmn user::
 
@@ -51,4 +51,4 @@ GMN is distributed via PyPI, the Python Package Index.
   * Close to the top, just after the line that aborts if not running
     interactively, add::
 
-      PATH=/var/local/dataone/gmn/:$PATH
+      PATH=/var/local/dataone/gmn/bin/:$PATH

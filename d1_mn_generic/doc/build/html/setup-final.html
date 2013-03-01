@@ -28,7 +28,7 @@
     <link rel="top" title="v1.0.0" href="index.html" />
     <link rel="up" title="GMN setup overview" href="setup.html" />
     <link rel="next" title="Installing on CentOS 5.5" href="setup-centos.html" />
-    <link rel="prev" title="Configure the GMN Asynchronous Processes" href="setup-async.html" />
+    <link rel="prev" title="Configure the GMN asynchronous processes" href="setup-async.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -45,7 +45,7 @@
           <a href="setup-centos.html" title="Installing on CentOS 5.5"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup-async.html" title="Configure the GMN Asynchronous Processes"
+          <a href="setup-async.html" title="Configure the GMN asynchronous processes"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
           <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
@@ -98,6 +98,14 @@ Select Etc | UTC.
 </pre></div>
 </div>
 </div></blockquote>
+<p>12.04 LTS</p>
+<p>sed -i &#8216;s/python2.6/python2.7/g&#8217; <cite>find /etc/apache2/ -type f</cite></p>
+</div>
+<div class="section" id="firewall">
+<h2>Firewall<a class="headerlink" href="#firewall" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo ufw allow 443
+</pre></div>
+</div>
 </div>
 <div class="section" id="starting-gmn">
 <h2>Starting GMN<a class="headerlink" href="#starting-gmn" title="Permalink to this headline">¶</a></h2>
@@ -125,6 +133,7 @@ Select Etc | UTC.
 <li><a class="reference internal" href="#">Final configuration and startup</a><ul>
 <li><a class="reference internal" href="#filesystem-permissions">Filesystem permissions</a></li>
 <li><a class="reference internal" href="#set-server-to-the-utc-timezone-recommended">Set server to the UTC timezone (recommended)</a></li>
+<li><a class="reference internal" href="#firewall">Firewall</a></li>
 <li><a class="reference internal" href="#starting-gmn">Starting GMN</a></li>
 </ul>
 </li>
@@ -133,7 +142,7 @@ Select Etc | UTC.
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="setup.html">GMN setup overview</a><ul>
-      <li>Previous: <a href="setup-async.html" title="previous chapter">Configure the GMN Asynchronous Processes</a></li>
+      <li>Previous: <a href="setup-async.html" title="previous chapter">Configure the GMN asynchronous processes</a></li>
       <li>Next: <a href="setup-centos.html" title="next chapter">Installing on CentOS 5.5</a></li>
   </ul></li>
   </ul></li>

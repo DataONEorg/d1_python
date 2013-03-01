@@ -12,7 +12,7 @@ skipped if SQLite3 will be used. If so, modify the database setting in the GMN
 
   Install PostgreSQL::
 
-    $ sudo apt-get install postgresql
+    $ sudo apt-get --yes install postgresql
 
 In PostgreSQL, the user with unlimited access is called the superuser. The
 superuser does not have a password by default.

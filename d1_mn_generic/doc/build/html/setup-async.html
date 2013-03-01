@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configure the GMN Asynchronous Processes &mdash; v1.0.0</title>
+    <title>Configure the GMN asynchronous processes &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -58,56 +58,38 @@
           <div class="body">
             
   <div class="section" id="configure-the-gmn-asynchronous-processes">
-<h1>Configure the GMN Asynchronous Processes<a class="headerlink" href="#configure-the-gmn-asynchronous-processes" title="Permalink to this headline">¶</a></h1>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It is only necessary to perform this step if GMN has been configured
-to run as a Tier 4 node. See <a class="reference internal" href="setup-tier.html"><em>Select the DataONE Tier</em></a>.</p>
+<h1>Configure the GMN asynchronous processes<a class="headerlink" href="#configure-the-gmn-asynchronous-processes" title="Permalink to this headline">¶</a></h1>
+<p>CNs may send various messages to MNs. These include replication requests and
+System Metadata update notifications. Such requests are queued by GMN and
+handled asynchronously.</p>
+<p>The asynchronous processes are implemented as Django management commands that
+are launched at regular intervals by <a class="reference internal" href="glossary.html#term-cron"><em class="xref std std-term">cron</em></a>. The management commands
+examine the queues and process the requests.</p>
+<div class="section" id="security">
+<h2>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h2>
+<p>The asynchronous processes connect to CNs and other MNs on behalf of your GMN
+instance. Also, they connect directly to your GMN instance. All of these
+connections are made over TLS/SSL and use the client side certificate that was
+issued to you by DataONE in the registration process. GMN recognizes this
+certificate and gives such connections access to internal APIs.</p>
 </div>
-<p>GMN stores replication requests, submitted by CNs, in a queue. An asynchronous
-replication process, launched at regular intervals by <a class="reference internal" href="glossary.html#term-cron"><em class="xref std std-term">cron</em></a>, connects to
-GMN and process any queued replication requests.</p>
-<p>This describes how to set the asynchronous processes up to run from their
-default location. However, the processes can run from any location, including a
-different server. Running the asynchronous processes on a different server <em>may</em>
-be beneficial if the GMN server is very busy.</p>
-<p>The asynchronous processes connect to CNs and other MNs on behalf of this GMN
-instance and thus need access to the DataONE client side certificate (issued to
-this GMN instance by DataONE in the registration process). As this GMN instance
-already has been set up to accept connections from other DataONE signed
-certificates, the async processes only need to be set up with a single
-certificate.</p>
-<div class="section" id="enable-access-to-internal-rest-service">
-<h2>Enable access to internal REST service<a class="headerlink" href="#enable-access-to-internal-rest-service" title="Permalink to this headline">¶</a></h2>
-<p>The asynchronous processes use REST interfaces internal to GMN to access and
-update information they require in order to perform their tasks. Only the client
-side certificate issued to this instance of GMN by DataONE should enable
-connection to GMNs internal interfaces. Because of this, access to the internal
-interfaces is protected by a whitelist of subjects.</p>
+<div class="section" id="set-up-cron-jobs">
+<h2>Set up cron jobs<a class="headerlink" href="#set-up-cron-jobs" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>Configure GMN to allow the Subject DN in the certificate used by the
-asynchronous processes to access the GMN internal REST APIs.</p>
-<p>Edit: <tt class="docutils literal"><span class="pre">/var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py</span></tt></p>
-<ul class="simple">
-<li>Add the DataONE compliant serialization of the DN to GMN_INTERNAL_SUBJECTS.
-E.g., <cite>CN=MyMemberNode,O=DataONE,C=US,DC=dataone,DC=org</cite></li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="replication">
-<h2>Replication<a class="headerlink" href="#replication" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>Create a cron entry for the replication process:</p>
+<div><p>Edit the cron table for the gmn user:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ su gmn
 $ crontab -e
 </pre></div>
 </div>
 <p>Add:</p>
-<div class="highlight-none"><div class="highlight"><pre>* * * * * cd /var/local/dataone/gmn/lib/python2.6/site-packages/service/async &amp;&amp; /var/local/dataone/gmn/bin/python ./process_replication_queue.py &gt;&gt;process_replication_queue.log 2&gt;&amp;1
+<div class="highlight-none"><div class="highlight"><pre># Process the replication queue.
+* * * * * cd /var/local/dataone/gmn/lib/python2.6/site-packages/service &amp;&amp; /var/local/dataone/gmn/bin/python ./manage.py process_replication_queue &gt;&gt;gmn_replication.log 2&gt;&amp;1
+# Process the System Metadata dirty queue.
+* * * * * cd /var/local/dataone/gmn/lib/python2.6/site-packages/service &amp;&amp; /var/local/dataone/gmn/bin/python ./manage.py process_system_metadata_dirty_queue &gt;&gt;gmn_sysmeta.log 2&gt;&amp;1
 </pre></div>
 </div>
-<p>This sets the replication process to run every minute. To alter the schedule,
-consult the crontab manual:</p>
+<p>This sets the processes to run every minute. To alter the schedule, consult
+the crontab manual:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ man 5 crontab
 </pre></div>
 </div>
@@ -126,9 +108,9 @@ consult the crontab manual:</p>
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Configure the GMN Asynchronous Processes</a><ul>
-<li><a class="reference internal" href="#enable-access-to-internal-rest-service">Enable access to internal REST service</a></li>
-<li><a class="reference internal" href="#replication">Replication</a></li>
+<li><a class="reference internal" href="#">Configure the GMN asynchronous processes</a><ul>
+<li><a class="reference internal" href="#security">Security</a></li>
+<li><a class="reference internal" href="#set-up-cron-jobs">Set up cron jobs</a></li>
 </ul>
 </li>
 </ul>
