@@ -20,8 +20,8 @@ Prepare for setting up a local CA::
   $ cd /usr/lib/ssl/misc/
   $ sudo pico CA.pl
 
-* Comment out the existing line starting with ``$SSLEAY_CONFIG`` by putting a hash
-mark ("#") in front of it. Then, add this line::
+* Comment out the existing line starting with ``$SSLEAY_CONFIG`` by putting a
+  hash mark ("#") in front of it. Then, add this line::
 
   $SSLEAY_CONFIG="-config /etc/ssl/local_ca/openssl.cnf";
 
