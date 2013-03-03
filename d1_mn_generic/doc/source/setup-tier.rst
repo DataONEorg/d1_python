@@ -42,7 +42,8 @@ following into account:
   Node operator to provide storage space to DataONE (for storing object
   replicas).
 
-When you have determined which tier to use, edit:
-``/var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py``
+When you have determined which tier to use, edit ``settings_site.py``::
 
-  * Set TIER to 1, 2, 3 or 4.
+  $ sudo pico /var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py
+
+* Set TIER to 1, 2, 3 or 4.

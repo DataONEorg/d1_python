@@ -34,8 +34,8 @@ Figure: The various scenarios that GMN can be served under.
 * Red: Testing and debugging with simulated certificate. This path is used by
   the integration tests. Debugging is supported. Because HTTP is used, no
   certificate can be provided. Instead, a valid certificate is simulated by
-  using a Vendor Specific Extension to pass in a session. 
-  
+  using a Vendor Specific Extension to pass in a session.
+
   Because Apache rejects connections with invalid certificates in production,
   there is no need to simulate a scenario where an invalid certificate is
   passed to GMN.
@@ -52,7 +52,7 @@ Figure: The various scenarios that GMN can be served under.
   #. Connection with valid certificate
   #. Connection without certificate (accepted, fall back to Public)
   #. Connection with simulated certificate (accepted only in debug mode)
-  
+
 
 Integration tests against production instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,7 +83,7 @@ certificates to the browser's trusted CA store:
 * Open the Certificate Manager (Edit | Preferences | Advanced | Encryption |
   View Certificates)
 * Import new CA (Authorities | Import)
-* Browse to /var/local/dataone/ca/cilogon-basic.pem
+* Browse to ``/var/local/dataone/ca/cilogon-basic.pem``
 * Select "Trust this CA to identify web sites."
 
 Repeat with the ``cilogon-openid.pem`` and ``cilogon-silver.pem`` certificates.
@@ -118,4 +118,3 @@ The create() call accept a :term:`vendor specific extensions` called
 VENDOR_TEST_OBJECT. When this parameter is provided, the system metadata for
 the object is accepted without any information being added or overwritten by
 the MN.
-

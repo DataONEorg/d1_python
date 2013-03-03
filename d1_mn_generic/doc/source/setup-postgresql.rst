@@ -12,7 +12,7 @@ skipped if SQLite3 will be used. If so, modify the database setting in the GMN
 
   Install PostgreSQL::
 
-    $ sudo apt-get install postgresql
+    $ sudo apt-get --yes install postgresql
 
 In PostgreSQL, the user with unlimited access is called the superuser. The
 superuser does not have a password by default.
@@ -36,7 +36,9 @@ PostgreSQL runs under a separate user account called postgres.
 Under Ubuntu, PostgreSQL uses Ident-based authentication by default. Change
 this to md5.
 
-  Edit ``/etc/postgresql/8.4/main/pg_hba.conf``.
+  Edit ``pg_hba.conf``::
+
+    $ sudo pico /etc/postgresql/8.4/main/pg_hba.conf
 
   Change::
 

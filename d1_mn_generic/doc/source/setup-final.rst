@@ -1,11 +1,14 @@
 Final configuration and startup
 ===============================
 
-Initialize the database::
+Initialize the database
+~~~~~~~~~~~~~~~~~~~~~~~
+
+::
 
   $ su gmn
   $ python /var/local/dataone/gmn/lib/python2.6/site-packages/service/manage.py syncdb
-
+  $ <ctrl-d>
 
 Filesystem permissions
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -16,9 +19,9 @@ Set all the files to be owned by the gmn account, and to be writable by www-data
   $ sudo chown -R gmn:www-data .
   $ sudo chmod -R g+w .
 
-Unlike the certificates, the contents of the private keys is sensitive. Set them
-to be readable only by root and follow best practices for security to keep root
-from being compromised.
+Unlike the certificates, the contents of the private keys are sensitive. Set
+them to be readable only by root and follow best practices for security to keep
+root from being compromised.
 
 Protect the certificate key files. The gmn user must have access to the client
 key because the asynchronous replication task runs under that user.
@@ -40,7 +43,27 @@ stored in the database and provided in REST responses.
 
     $ sudo dpkg-reconfigure tzdata
 
-    Select Etc | UTC.
+  * Select Etc | UTC.
+
+
+Firewall
+~~~~~~~~
+
+Open for HTTPS in the firewall::
+
+  $ sudo ufw allow 443
+
+
+Stand-alone mode
+~~~~~~~~~~~~~~~~
+
+When setting up a :doc:`stand-alone node <setup-local>`, set ``STAND_ALONE`` to
+``True`` in the ``settings_site.py`` file::
+
+  # Only perform this step on a stand-alone instance of GMN.
+  $ sudo pico /var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py
+
+* Set ``STAND_ALONE`` to ``True``.
 
 
 Starting GMN

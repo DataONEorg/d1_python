@@ -5,12 +5,12 @@ Setting up Apache.
 
   Install Apache2 packages::
 
-    $ sudo apt-get install apache2 apache2-threaded-dev
+    $ sudo apt-get --yes install apache2 apache2-threaded-dev
 
   Install the GMN virtual host file and custom apache2.conf file::
 
     $ cd /var/local/dataone/gmn/lib/python2.6/site-packages/deployment
-    $ sudo cp apache2.conf ports.conf /etc/apache2/
+    $ sudo cp apache2.conf ports.conf httpd /etc/apache2/
     $ sudo cp gmn-ssl /etc/apache2/sites-available/
     $ sudo cp forward_http_to_https /etc/apache2/conf.d/
 
@@ -22,7 +22,7 @@ The :term:`mod_wsgi` module enables Apache to communicate with Django and GMN.
 
   Install and enable required modules::
 
-    $ sudo apt-get install libapache2-mod-wsgi apache2.2-common
+    $ sudo apt-get --yes install libapache2-mod-wsgi apache2.2-common
     $ sudo a2enmod wsgi ssl rewrite
 
   Enable the GMN virtual host::
@@ -30,11 +30,17 @@ The :term:`mod_wsgi` module enables Apache to communicate with Django and GMN.
     $ sudo a2ensite gmn-ssl
 
   * If an intermediate certificate file or certificate chain file was installed
-    in :doc:`setup-authn-server`, edit ``/etc/apache2/sites-available/gmn-ssl``
-    and uncomment the line for ``SSLCertificateChainFile``.
+    in :doc:`setup-authn-server`, edit ``gmn-ssl``::
+
+    $ sudo pico /etc/apache2/sites-available/gmn-ssl
+
+  * Uncomment the line for ``SSLCertificateChainFile``.
 
 \
 
   * If a key without password was NOT created in :doc:`setup-authn-server`, edit
-    ``/etc/apache2/sites-available/gmn-ssl`` and substitute
-    ``server.nopassword.key`` with ``server.key``.
+    ``gmn-ssl``::
+
+    $ sudo pico /etc/apache2/sites-available/gmn-ssl
+
+  * Substitute ``server.nopassword.key`` with ``server.key``.

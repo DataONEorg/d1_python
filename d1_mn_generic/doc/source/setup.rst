@@ -26,11 +26,14 @@ set up a working instance of GMN, certificates must be obtained both from
 DataONE and from a publicly trusted certificate authority. Procedures for this
 are included.
 
+If a stand-alone test instance is being set up, see :doc:`setup-local` before
+starting the install.
+
 Commands that need to be run from the shell are prefixed with "$".
 
 The instructions describe an installation into subfolders of
-/var/local/dataone/. To install into another location, all related paths must be
-adjusted accordingly.
+``/var/local/dataone/``. To install into another location, all related paths
+must be adjusted accordingly.
 
 The instructions describe how to set GMN up to run in a separate Apache Virtual
 Host on a fresh install of Ubuntu. General setup and configuration issues, such
@@ -47,6 +50,7 @@ completing the current page.
 .. toctree::
   :maxdepth: 1
 
+  setup-local
   setup-hardware
   setup-d1-gmn
   setup-env
@@ -61,3 +65,4 @@ completing the current page.
   setup-final
   setup-centos
   setup-resources
+  setup-local-ca
