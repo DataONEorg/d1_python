@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Optimizing GMN performance &mdash; v1.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="next" title="Implementation" href="impl.html" />
+    <link rel="prev" title="Troubleshooting" href="troubleshooting.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="impl.html" title="Implementation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="troubleshooting.html" title="Troubleshooting"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="optimizing-gmn-performance">
+<h1>Optimizing GMN performance<a class="headerlink" href="#optimizing-gmn-performance" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="database">
+<h2>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h2>
+<p>The MNRead.listObjects() call does ordered, sliced and filtered selects from the
+object table. The object table should be clustered on mtime. With PostgreSQL,
+this can be done with the CLUSTER command:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; cluster mn_object using mtime;
+</pre></div>
+</div>
+<p>MNCore.getLogRecords() can be optimized in the same ways as MNRead.listObjects().</p>
+<p>The mn_event_log should be clustered on date_logged:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; cluster mn_event_log using date_logged
+</pre></div>
+</div>
+<ul class="simple">
+<li>PostgreSQL will not automatically keep the table clustered. Instead, the
+table must be clustered whenever sufficient changes have been accumulated.</li>
+<li>To keep the table clustered for longer, adjust the fill factor.</li>
+<li>Use cron to schedule automatic clustering. Note that the tables are locked
+while the clustering operation runs.</li>
+<li>Search the web for PostgreSQL &#8220;analyze&#8221; and &#8220;vacuum&#8221; for more information.</li>
+</ul>
+</div>
+<div class="section" id="profiling">
+<h2>Profiling<a class="headerlink" href="#profiling" title="Permalink to this headline">¶</a></h2>
+<p>When GMN is in debug mode (DEBUG is set to True in the GMN settings.py file),
+the following profiling functionality is available.</p>
+<div class="section" id="sql-query-profiling">
+<h3>SQL query profiling<a class="headerlink" href="#sql-query-profiling" title="Permalink to this headline">¶</a></h3>
+<p>All REST calls accept a <a class="reference internal" href="glossary.html#term-vendor-specific-extensions"><em class="xref std std-term">vendor specific extensions</em></a> called
+<tt class="docutils literal"><span class="pre">VENDOR_PROFILE_SQL</span></tt>. When this parameter is provided, the normal output from
+the call is suppressed and a text document containing SQL query profiling
+information is returned instead. The document lists all the SQL queries that
+were used for filling the request together with execution times.</p>
+<p>..note:: If a REST call returns an exception, the exception is also supressed.</p>
+</div>
+<div class="section" id="python-profiling">
+<h3>Python profiling<a class="headerlink" href="#python-profiling" title="Permalink to this headline">¶</a></h3>
+<p>All REST calls accept a <a class="reference internal" href="glossary.html#term-vendor-specific-extensions"><em class="xref std std-term">vendor specific extensions</em></a> called
+VENDOR_PROFILE_PYTHON. When this parameter is provided, the normal output from
+the call is suppressed and a text document containing Python script profiling
+information is returned instead. The document includes information such as the
+name and location, number of calls and cumulative execution times for the
+longest running functions.</p>
+<p>..note:: Only the view functions are covered. In particular, response_handler,
+where the SQL queries are executed, is not covered.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Optimizing GMN performance</a><ul>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#profiling">Profiling</a><ul>
+<li><a class="reference internal" href="#sql-query-profiling">SQL query profiling</a></li>
+<li><a class="reference internal" href="#python-profiling">Python profiling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+      <li>Previous: <a href="troubleshooting.html" title="previous chapter">Troubleshooting</a></li>
+      <li>Next: <a href="impl.html" title="next chapter">Implementation</a></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2010-2012 Participating institutions in DataONE</a>.
+        [ <a href="_sources/performance.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/performance.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>

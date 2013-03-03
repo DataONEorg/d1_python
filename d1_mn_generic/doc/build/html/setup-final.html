@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Final configuration and startup &mdash; v1.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Installing on CentOS 5.5" href="setup-centos.html" />
+    <link rel="prev" title="Configure the GMN asynchronous processes" href="setup-async.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-centos.html" title="Installing on CentOS 5.5"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-async.html" title="Configure the GMN asynchronous processes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="final-configuration-and-startup">
+<h1>Final configuration and startup<a class="headerlink" href="#final-configuration-and-startup" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="initialize-the-database">
+<h2>Initialize the database<a class="headerlink" href="#initialize-the-database" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>$ su gmn
+$ python /var/local/dataone/gmn/lib/python2.6/site-packages/service/manage.py syncdb
+$ &lt;ctrl-d&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="filesystem-permissions">
+<h2>Filesystem permissions<a class="headerlink" href="#filesystem-permissions" title="Permalink to this headline">¶</a></h2>
+<p>Set all the files to be owned by the gmn account, and to be writable by www-data:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd /var/local/dataone/
+$ sudo chown -R gmn:www-data .
+$ sudo chmod -R g+w .
+</pre></div>
+</div>
+<p>Unlike the certificates, the contents of the private keys are sensitive. Set
+them to be readable only by root and follow best practices for security to keep
+root from being compromised.</p>
+<p>Protect the certificate key files. The gmn user must have access to the client
+key because the asynchronous replication task runs under that user.</p>
+<blockquote>
+<div><p>Set the private keys to be readable only by the gmn user:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd /var/local/dataone/certs
+$ sudo chmod 400 `find . -name &#39;*.key&#39;`
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="set-server-to-the-utc-timezone-recommended">
+<h2>Set server to the UTC timezone (recommended)<a class="headerlink" href="#set-server-to-the-utc-timezone-recommended" title="Permalink to this headline">¶</a></h2>
+<p>GMN translates incoming date-times to UTC and provides outgoing date-times in
+UTC. Because of this, it may also convenient to run the server in UTC, so that
+server related date-times, such as the ones in logs, match up with date-times
+stored in the database and provided in REST responses.</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre>$ sudo dpkg-reconfigure tzdata
+</pre></div>
+</div>
+<ul class="simple">
+<li>Select Etc | UTC.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="firewall">
+<h2>Firewall<a class="headerlink" href="#firewall" title="Permalink to this headline">¶</a></h2>
+<p>Open for HTTPS in the firewall:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo ufw allow 443
+</pre></div>
+</div>
+</div>
+<div class="section" id="stand-alone-mode">
+<h2>Stand-alone mode<a class="headerlink" href="#stand-alone-mode" title="Permalink to this headline">¶</a></h2>
+<p>When setting up a <a class="reference internal" href="setup-local.html"><em>stand-alone node</em></a>, set <tt class="docutils literal"><span class="pre">STAND_ALONE</span></tt> to
+<tt class="docutils literal"><span class="pre">True</span></tt> in the <tt class="docutils literal"><span class="pre">settings_site.py</span></tt> file:</p>
+<div class="highlight-none"><div class="highlight"><pre># Only perform this step on a stand-alone instance of GMN.
+$ sudo pico /var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py
+</pre></div>
+</div>
+<ul class="simple">
+<li>Set <tt class="docutils literal"><span class="pre">STAND_ALONE</span></tt> to <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</div>
+<div class="section" id="starting-gmn">
+<h2>Starting GMN<a class="headerlink" href="#starting-gmn" title="Permalink to this headline">¶</a></h2>
+<p>GMN should now be ready to start. Simply restart Apache:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo service apache2 restart
+</pre></div>
+</div>
+<p>Check the Apache logs for error messages. In case of any issues, refer to
+<a class="reference internal" href="troubleshooting.html"><em>Troubleshooting</em></a> and <a class="reference internal" href="setup-resources.html"><em>Resources</em></a>.</p>
+<p>See <a class="reference internal" href="use.html"><em>Using GMN</em></a> for notes on how to use the Node.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Final configuration and startup</a><ul>
+<li><a class="reference internal" href="#initialize-the-database">Initialize the database</a></li>
+<li><a class="reference internal" href="#filesystem-permissions">Filesystem permissions</a></li>
+<li><a class="reference internal" href="#set-server-to-the-utc-timezone-recommended">Set server to the UTC timezone (recommended)</a></li>
+<li><a class="reference internal" href="#firewall">Firewall</a></li>
+<li><a class="reference internal" href="#stand-alone-mode">Stand-alone mode</a></li>
+<li><a class="reference internal" href="#starting-gmn">Starting GMN</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-async.html" title="previous chapter">Configure the GMN asynchronous processes</a></li>
+      <li>Next: <a href="setup-centos.html" title="next chapter">Installing on CentOS 5.5</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2010-2012 Participating institutions in DataONE</a>.
+        [ <a href="_sources/setup-final.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/setup-final.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>

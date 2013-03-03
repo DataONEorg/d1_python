@@ -1,0 +1,205 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using GMN &mdash; v1.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
+    <link rel="prev" title="Setting up testing and debugging environment for GMN" href="testing.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="troubleshooting.html" title="Troubleshooting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="testing.html" title="Setting up testing and debugging environment for GMN"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-gmn">
+<h1>Using GMN<a class="headerlink" href="#using-gmn" title="Permalink to this headline">¶</a></h1>
+<p>After <a class="reference internal" href="glossary.html#term-gmn"><em class="xref std std-term">GMN</em></a> has been set up according the setup instructions, it exposes
+the complete REST interface that DataONE has defined for Member Nodes.
+Currently, the easiest way to interact with GMN is to use the DataONE Command
+Line Client (CLI). The CLI is installed automatically with GMN and can be
+started by typing &#8220;dataone&#8221;. The CLI can also be scripted to perform tasks such
+as bulk object creations to populate an instance of GMN with science data.</p>
+<p>If more comprehensive access to the node is required, DataONE provides libraries
+in Java and Python that simplify the process of interacting with DataONE Member
+Nodes and Coordinating Nodes. The libraries can be used as foundations for
+custom applications that use the DataONE infrastructure.</p>
+<div class="section" id="populating-your-new-node">
+<h2>Populating your new node<a class="headerlink" href="#populating-your-new-node" title="Permalink to this headline">¶</a></h2>
+<p>The DataONE Client Library for Python includes an example on how to iterate over
+a set of files, create data packages (resource maps) for them, and upload them
+to a Member Node.</p>
+<div class="section" id="authenticating-to-your-node">
+<h3>Authenticating to your node<a class="headerlink" href="#authenticating-to-your-node" title="Permalink to this headline">¶</a></h3>
+<p>To authenticate to your node, you must connect over HTTPS and provide a
+certificate. The certificate must be issued by CILogon or DataONE (the two CAs
+that a Member Node trusts by default). In addition, the certificate must be for
+a subject that has the rights required for performing the operation(s) the
+client intends to perform after connecting. For instance, GMN requires that the
+subject used in connections that create content on the node validate against an
+internal whitelist.</p>
+<p>When running operations against the node as a regular user, it is natural to
+a certificate obtained from from CILogon. CILogon provides certificates that
+are secured by a having a time limit of 18 hours.</p>
+<p>However, when running an automated task, such as a task that connects to the
+Node once a day and creates new objects, the CILogon certificate is not a good
+fit, as someone would have to manually update the certificate every day. There
+are two basic ways to resolve this:</p>
+<p>1) Use the certificate that was issued to the node by DataONE. GMN automatically
+trusts this certificate. However, there are security implications to this.
+Anyone that gains access to this certificate can access all the content on your
+node and can act as your node in the DataONE infrastructure. So, it&#8217;s best to
+only use this approach when running the automated tasks on the same server on
+which GMN runs, or from another tightly controlled server. To use the DataONE
+issued certificate in local connections, simply provide the paths to the
+certificate and its private key in <tt class="docutils literal"><span class="pre">/var/local/dataone/certs/client</span></tt> when
+creating a Member Node client in script.</p>
+<p>2) Set up a local CA. This is the only option if the node has been set up as a
+<a class="reference internal" href="setup-local.html"><em>stand-alone test instance</em></a>. This CA is then added to the CAs
+trusted by GMN and used for issuing one or more certificates, which are then
+used by the automated processes. This is the most secure solution as
+certificates issued by your local CA cannot be used for representing you in the
+DataONE infrastructure, should your local CA be compromised. See
+<a class="reference internal" href="setup-local-ca.html"><em>Setting up a local CA</em></a> for instructions on how to set this up.</p>
+</div>
+</div>
+<div class="section" id="vendor-specific-extensions">
+<h2>Vendor specific extensions<a class="headerlink" href="#vendor-specific-extensions" title="Permalink to this headline">¶</a></h2>
+<p>GMN implements a set of extensions that enhance the functionality of GMN. Most
+of these are designed to help with debugging and profiling and they are
+described in another section.</p>
+<div class="section" id="remote-url">
+<h3>Remote URL<a class="headerlink" href="#remote-url" title="Permalink to this headline">¶</a></h3>
+<p>The Remote URL vendor specific extension enables GMN to be used for exposing
+science data that is already available through another web based service without
+having to create another copy of that data.</p>
+<p>In the regular create() and update() REST calls, the bytes of the science
+objects are provided, and the MN manages the storage of the science objects.
+When using the Remote URL extension, the bytes of the objects are not provided
+and instead, a HTTP or HTTPS URL to the original location of the data is
+provided. GMN then manages all aspects of exposing the science data except for
+the actual storage of the bytes of the exposed object.</p>
+<p>When the object is downloaded from GMN, GMN streams the object from its original
+location in the background.</p>
+<p>This extension is activated by added an HTTP header to the REST call for
+create() and update(). The name of the header is VENDOR_GMN_REMOTE_URL and the
+value is the HTTP or HTTPS URL that references the object in the remote
+location.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using GMN</a><ul>
+<li><a class="reference internal" href="#populating-your-new-node">Populating your new node</a><ul>
+<li><a class="reference internal" href="#authenticating-to-your-node">Authenticating to your node</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vendor-specific-extensions">Vendor specific extensions</a><ul>
+<li><a class="reference internal" href="#remote-url">Remote URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+      <li>Previous: <a href="testing.html" title="previous chapter">Setting up testing and debugging environment for GMN</a></li>
+      <li>Next: <a href="troubleshooting.html" title="next chapter">Troubleshooting</a></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2010-2012 Participating institutions in DataONE</a>.
+        [ <a href="_sources/use.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/use.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>

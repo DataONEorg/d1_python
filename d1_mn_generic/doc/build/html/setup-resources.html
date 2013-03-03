@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Resources &mdash; v1.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Setting up a local CA" href="setup-local-ca.html" />
+    <link rel="prev" title="Installing on CentOS 5.5" href="setup-centos.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-local-ca.html" title="Setting up a local CA"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-centos.html" title="Installing on CentOS 5.5"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="resources">
+<h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
+<p>Apache2 Configuration under Debian GNU/Linux:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ zless /usr/share/doc/apache2.2-common/README.Debian.gz
+</pre></div>
+</div>
+<p>Viewing the files involved in the SSL handshake:</p>
+<div class="highlight-none"><div class="highlight"><pre>openssl rsa -noout -text -in server.key
+openssl req -noout -text -in server.csr
+openssl rsa -noout -text -in ca.key
+openssl x509 -noout -text -in ca.crt
+</pre></div>
+</div>
+<p>Overview of the SSL handshake:</p>
+<blockquote>
+<div><a class="reference external" href="http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png">SSL Handshake</a></div></blockquote>
+<p>How to add DataONE test certificate into the system wide trusted CA store:</p>
+<ul class="simple">
+<li>In the dpkg-reconfigure GUI, enable the dataone-gmn-test-ca.crt.</li>
+</ul>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -s
+$ sudo cp /var/local/dataone/gmn_certs/ca.crt /usr/share/ca-certificates/dataone-gmn-test-ca.crt
+$ sudo dpkg-reconfigure ca-certificates
+$ sudo update-ca-certificates
+</pre></div>
+</div>
+</div>
+<div class="section" id="integration-testing-using-certificates">
+<h1>Integration testing using certificates<a class="headerlink" href="#integration-testing-using-certificates" title="Permalink to this headline">¶</a></h1>
+<p>For running automated integration tests against GMN, test certificates
+that are trusted by GMN are needed. We accomplish this by adding the CA that was
+created in <a class="reference internal" href="setup-authn-server.html"><em>Install the server side certificate</em></a> to the <a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a> CAs that were
+installed in <a class="reference internal" href="setup-authn-client.html"><em>Install the DataONE client side certificate</em></a>.</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -s
+$ sudo cd /var/local/dataone/ca
+$ sudo cp ../gmn_certs/ca.crt dataone-gmn-test-ca.crt
+$ sudo c_rehash .
+$ sudo &lt;ctrl-d&gt;
+</pre></div>
+</div>
+<p>Then, we create two test certificates signed by the CA. We simulate valid
+and invalid sessions by using &#8220;valid&#8221; and &#8220;invalid&#8221; strings in the Common
+Names.</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo -s
+$ sudo cd /var/local/dataone/gmn_certs
+</pre></div>
+</div>
+<p>Create the private keys:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl genrsa -des3 -out test_valid.key 4096
+$ sudo openssl genrsa -des3 -out test_invalid.key 4096
+</pre></div>
+</div>
+<p>Create <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a>s:</p>
+<ul class="simple">
+<li>When prompted for Common Name (CN), type &#8220;test_valid&#8221; for the certificate
+signed with the test_valid key and &#8220;test_invalid&#8221; for the certificate signed
+with the test_invalid key.</li>
+</ul>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl req -new -key test_valid.key -out test_valid.csr
+$ sudo openssl req -new -key test_invalid.key -out test_invalid.csr
+</pre></div>
+</div>
+<p>Sign the <a class="reference internal" href="glossary.html#term-csr"><em class="xref std std-term">CSR</em></a> with the <a class="reference internal" href="glossary.html#term-ca-signing-key"><em class="xref std std-term">CA signing key</em></a>:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt
+$ sudo openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt
+</pre></div>
+</div>
+<p>Remove pass phrases from the private keys:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl rsa -in test_valid.key -out test_valid.nopassword.key
+$ sudo openssl rsa -in test_invalid.key -out test_invalid.nopassword.key
+</pre></div>
+</div>
+<p>Copy the keys to the integration tests:</p>
+<div class="highlight-none"><div class="highlight"><pre>cp test_valid.nopassword.key /var/local/dataone/gmn/src/tests
+cp test_invalid.nopassword.key /var/local/dataone/gmn/src/tests
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Resources</a></li>
+<li><a class="reference internal" href="#integration-testing-using-certificates">Integration testing using certificates</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-centos.html" title="previous chapter">Installing on CentOS 5.5</a></li>
+      <li>Next: <a href="setup-local-ca.html" title="next chapter">Setting up a local CA</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2010-2012 Participating institutions in DataONE</a>.
+        [ <a href="_sources/setup-resources.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/setup-resources.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>

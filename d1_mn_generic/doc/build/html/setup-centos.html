@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installing on CentOS 5.5 &mdash; v1.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="up" title="GMN setup overview" href="setup.html" />
+    <link rel="next" title="Resources" href="setup-resources.html" />
+    <link rel="prev" title="Final configuration and startup" href="setup-final.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setup-resources.html" title="Resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-final.html" title="Final configuration and startup"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li>
+          <li><a href="setup.html" accesskey="U">GMN setup overview</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installing-on-centos-5-5">
+<h1>Installing on CentOS 5.5<a class="headerlink" href="#installing-on-centos-5-5" title="Permalink to this headline">¶</a></h1>
+<p>The following instructions for setting GMN up on CentOS should be considered in
+the context of the setup documentation that is provided for Ubuntu. Study the
+setup instructions for Ubuntu first and use the information below to adapt that
+information for a CentOS install.</p>
+<div class="section" id="platform">
+<h2>Platform<a class="headerlink" href="#platform" title="Permalink to this headline">¶</a></h2>
+<p>Install required packages (some of these may already be installed):</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo yum install python26 sqlite mod_wsgi openssh-server libxml2-devel libxslt-devel python26-devel Django python-iso8601
+</pre></div>
+</div>
+<p>(Verify if these are needed):</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo yum install python26-tools (may not be necessary, but gives you tk/tcl)
+$ sudo yum install python-sqlite2 (may be incorrect....)
+</pre></div>
+</div>
+</div>
+<div class="section" id="python">
+<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>CentOS requires Python 2.4 while Django and GMN requires Python 2.6. These
+requirements are met by installing the two versions of Python side by side and
+making sure that Python 2.6 is used by Django and the GMN scripts.</p>
+<blockquote>
+<div><p>Install <a class="reference internal" href="glossary.html#term-python-setuptools"><em class="xref std std-term">python-setuptools</em></a>:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo yum install python26-setuptools python26-setuptools-devel
+</pre></div>
+</div>
+<p>Verify easy_install installed correctly:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ easy_install
+</pre></div>
+</div>
+<p>Create staging area:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ mkdir ~/building
+</pre></div>
+</div>
+<p>Install <a class="reference internal" href="glossary.html#term-lxml"><em class="xref std std-term">lxml</em></a>:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd ~/building
+$ wget http://dl.iuscommunity.org/pub/ius/stable/Redhat/5/i386/python26-lxml-2.0.11-1.ius.el5.i386.rpm
+$ rpm -i python26-lxml-2.0.11-1.ius.el5.i386.rpm
+</pre></div>
+</div>
+<p>Install <a class="reference internal" href="glossary.html#term-pyxb"><em class="xref std std-term">PyXB</em></a>:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd ~/building
+$ wget http://surfnet.dl.sourceforge.net/project/pyxb/pyxb/1.1.2%20%28Beta%29/PyXB-base-1.1.2.tar.gz
+$ tar xzf PyXB-base-1.1.2.tar.gz
+$ cd PyXB-1.1.2/
+$ sudo python setup.py install
+</pre></div>
+</div>
+<p>Install <a class="reference internal" href="glossary.html#term-minixsv"><em class="xref std std-term">minixsv</em></a>:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ cd ~/building/
+$ wget http://www.familieleuthe.de/minixsv/minixsv-0.9.0.tar.gz
+$ tar xzf minixsv-0.9.0.tar.gz
+$ cd minixsv-0.9.0
+$ sudo python26 setup.py install
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="gmn">
+<h2>GMN<a class="headerlink" href="#gmn" title="Permalink to this headline">¶</a></h2>
+<p>Install GMN as described in the instructions for Ubuntu. Then modify GMN to
+explicitly use Python 2.6. This is needed because CentOS includes Python 2.4
+and used that version by default.</p>
+<p>Files that must be modified:</p>
+<div class="highlight-none"><div class="highlight"><pre>./install/config.py:       63 res = os.system(&#39;/usr/bin/python26 ./manage.py syncdb&#39;)
+./service/mk_fixtures.py:  23 print os.system(&#39;/usr/bin/python26 ./manage.py syncdb&#39;)
+./service/mk_fixtures.py:  24 print os.system(&#39;/usr/bin/python26 ./manage.py update_db&#39;)
+./service/mk_fixtures.py:  25 print os.system(&#39;/usr/bin/python26 ./manage.py insert_test_log&#39;)
+./service/mk_fixtures.py:  39   cmd = &#39;/usr/bin/python26 ./manage.py dumpdata {0} &gt; \&#39;{1}\&#39;&#39;.format(app, os.path.join(fixture_dir, &#39;base.fixture.json&#39;))
+./install/config_util.py:  60 run([&#39;/usr/bin/python26&#39;,&#39;./manage.py&#39;, &#39;set_node_val&#39;, key, val])
+</pre></div>
+</div>
+<p>CentOS stores mod_wsgi.so in a different location than Ubuntu. Modify configuration script accordingly:</p>
+<div class="highlight-none"><div class="highlight"><pre>./install/config.py:       88 parser.add_option(&#39;-w&#39;, &#39;--mod-wsgi-path&#39;, dest=&#39;mod_wsgi_path&#39;, action=&#39;store&#39;, type=&#39;string&#39;, default=&#39;/etc/httpd/modules/mod_wsgi.so&#39;)
+</pre></div>
+</div>
+<p>Modified other *.py files that execute other scripts to call python26.</p>
+<p>Run the GMN install script under Python 2.6:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo python26 ../install/config.py
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing on CentOS 5.5</a><ul>
+<li><a class="reference internal" href="#platform">Platform</a></li>
+<li><a class="reference internal" href="#python">Python</a></li>
+<li><a class="reference internal" href="#gmn">GMN</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+  <li><a href="setup.html">GMN setup overview</a><ul>
+      <li>Previous: <a href="setup-final.html" title="previous chapter">Final configuration and startup</a></li>
+      <li>Next: <a href="setup-resources.html" title="next chapter">Resources</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2010-2012 Participating institutions in DataONE</a>.
+        [ <a href="_sources/setup-centos.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/setup-centos.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>

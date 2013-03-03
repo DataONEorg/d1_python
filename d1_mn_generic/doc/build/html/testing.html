@@ -1,0 +1,229 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Setting up testing and debugging environment for GMN &mdash; v1.0.0</title>
+    
+    <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="top" title="v1.0.0" href="index.html" />
+    <link rel="next" title="Using GMN" href="use.html" />
+    <link rel="prev" title="Setting up a local CA" href="setup-local-ca.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="use.html" title="Using GMN"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup-local-ca.html" title="Setting up a local CA"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="setting-up-testing-and-debugging-environment-for-gmn">
+<h1>Setting up testing and debugging environment for GMN<a class="headerlink" href="#setting-up-testing-and-debugging-environment-for-gmn" title="Permalink to this headline">¶</a></h1>
+<p>In production, GMN is always served over SSL with an optional <a class="reference internal" href="glossary.html#term-client-side-certificate"><em class="xref std std-term">client side
+certificate</em></a>. For testing and debugging, GMN must be served over HTTP because
+the Django development server does not support HTTPS. In that scenario, it is
+not possible for the client to provide a certificate.</p>
+<p class="graphviz">
+<img src="_images/graphviz-b25f48e648319fefc72323c7b2b1db92e7705aed.png" alt="digraph G {
+  production -&gt; HTTPS -&gt; Apache -&gt; certificate -&gt; GMN [color=green];
+  production -&gt; HTTPS -&gt; Apache -&gt; &quot;no certificate&quot; -&gt; GMN [color=blue];
+
+  debugging -&gt; HTTP -&gt; &quot;Django dev server&quot; -&gt; &quot;simulated certificate&quot; -&gt; GMN [color=red];
+  debugging -&gt; HTTP -&gt; &quot;Django dev server&quot; -&gt; &quot;no certificate&quot; -&gt; GMN [color=orange];
+
+  &quot;integration tests&quot; -&gt; production;
+  &quot;integration tests&quot; -&gt; debugging;
+
+  &quot;browser&quot; -&gt; production;
+  &quot;browser&quot; -&gt; debugging;
+}" />
+</p>
+<p>Figure: The various scenarios that GMN can be served under.</p>
+<ul>
+<li><p class="first">Green: Production with client side certificate. Apache will reject the
+connection if the certificate is not valid, and GMN will not see the
+connection attempt. The certificate must be signed by <a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a>.</p>
+</li>
+<li><p class="first">Blue: Production without a client side certificate. Apache accepts the
+connection. GMN falls back to the default Public session.</p>
+</li>
+<li><p class="first">Red: Testing and debugging with simulated certificate. This path is used by
+the integration tests. Debugging is supported. Because HTTP is used, no
+certificate can be provided. Instead, a valid certificate is simulated by
+using a Vendor Specific Extension to pass in a session.</p>
+<p>Because Apache rejects connections with invalid certificates in production,
+there is no need to simulate a scenario where an invalid certificate is
+passed to GMN.</p>
+<p>This path is only available when GMN is running in debug mode.</p>
+</li>
+<li><p class="first">Orange: Testing and debugging without a certificate. Same as the testing path
+with simulated certificate except that it simulates a connection without a
+session by not providing a session in the Vendor Specific Extension. This
+requires GMN to fall back to the default Public session.</p>
+</li>
+<li><p class="first">From the point of view of GMN, there are 3 types of connections:</p>
+<ol class="arabic simple">
+<li>Connection with valid certificate</li>
+<li>Connection without certificate (accepted, fall back to Public)</li>
+<li>Connection with simulated certificate (accepted only in debug mode)</li>
+</ol>
+</li>
+</ul>
+<div class="section" id="integration-tests-against-production-instance">
+<h2>Integration tests against production instance<a class="headerlink" href="#integration-tests-against-production-instance" title="Permalink to this headline">¶</a></h2>
+<p>&lt;TODO: Add instructions on how to run the integration tests with a valid
+certificate signed by CILogon&gt;</p>
+</div>
+<div class="section" id="integration-tests-against-debug-instance">
+<h2>Integration tests against debug instance<a class="headerlink" href="#integration-tests-against-debug-instance" title="Permalink to this headline">¶</a></h2>
+<p>The integration tests are by deafult set up to assume that the GMN instance they
+connect to is in debug mode and they should all pass without any additional
+configuration.</p>
+</div>
+<div class="section" id="browser-testing-against-production-instance">
+<h2>Browser testing against production instance<a class="headerlink" href="#browser-testing-against-production-instance" title="Permalink to this headline">¶</a></h2>
+<p>In some cases, it&#8217;s convenient to test GMN via a browser though only the GET
+based REST calls are conveniently reproducible from a browser. These
+instructions focus on <a class="reference external" href="http://www.mozilla.com/firefox">Firefox</a>.</p>
+<p>GMN will authenticate with a <a class="reference internal" href="glossary.html#term-server-side-certificate"><em class="xref std std-term">server side certificate</em></a> signed by CILogon.
+Set the browser up to accept this certificate by adding the CILogon CA
+certificates to the browser&#8217;s trusted CA store:</p>
+<ul class="simple">
+<li>Open the Certificate Manager (Edit | Preferences | Advanced | Encryption |
+View Certificates)</li>
+<li>Import new CA (Authorities | Import)</li>
+<li>Browse to <tt class="docutils literal"><span class="pre">/var/local/dataone/ca/cilogon-basic.pem</span></tt></li>
+<li>Select &#8220;Trust this CA to identify web sites.&#8221;</li>
+</ul>
+<p>Repeat with the <tt class="docutils literal"><span class="pre">cilogon-openid.pem</span></tt> and <tt class="docutils literal"><span class="pre">cilogon-silver.pem</span></tt> certificates.</p>
+<p>The functionality accessible by the Public principal through GET based REST
+calls can now be tested.</p>
+<p>To test functionality accessible only to authenticated users, the browser must
+be set up to provide a valid certificate signed by CILogon.</p>
+<p>&lt;TODO: Add instructions on how to obtain a certificate from CILogon and install
+it in Firefox&gt;</p>
+</div>
+<div class="section" id="browser-testing-against-debug-instance">
+<h2>Browser testing against debug instance<a class="headerlink" href="#browser-testing-against-debug-instance" title="Permalink to this headline">¶</a></h2>
+<p>In debug mode, GMN supports providing a simulated certificate via <a class="reference internal" href="glossary.html#term-vendor-specific-extensions"><em class="xref std std-term">vendor
+specific extensions</em></a>. In this mode, the session object that a certificate would
+normally contain is passed to GMN via a custom HTTP header. To enable Firefox to
+provide the header, install a Firefox extension such as <a class="reference external" href="https://addons.mozilla.org/en-us/firefox/addon/modify-headers/">Modify Headers</a>.</p>
+<p>&lt;TODO: Add instructions on how to use the Modify Headers extension to add a
+simulated certificate&gt;</p>
+</div>
+<div class="section" id="uploading-test-objects">
+<h2>Uploading test objects<a class="headerlink" href="#uploading-test-objects" title="Permalink to this headline">¶</a></h2>
+<p>The create() call accept a <a class="reference internal" href="glossary.html#term-vendor-specific-extensions"><em class="xref std std-term">vendor specific extensions</em></a> called
+VENDOR_TEST_OBJECT. When this parameter is provided, the system metadata for
+the object is accepted without any information being added or overwritten by
+the MN.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Setting up testing and debugging environment for GMN</a><ul>
+<li><a class="reference internal" href="#integration-tests-against-production-instance">Integration tests against production instance</a></li>
+<li><a class="reference internal" href="#integration-tests-against-debug-instance">Integration tests against debug instance</a></li>
+<li><a class="reference internal" href="#browser-testing-against-production-instance">Browser testing against production instance</a></li>
+<li><a class="reference internal" href="#browser-testing-against-debug-instance">Browser testing against debug instance</a></li>
+<li><a class="reference internal" href="#uploading-test-objects">Uploading test objects</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation Overview</a><ul>
+      <li>Previous: <a href="setup-local-ca.html" title="previous chapter">Setting up a local CA</a></li>
+      <li>Next: <a href="use.html" title="next chapter">Using GMN</a></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright <a href="http:/www.dataone.org">2010-2012 Participating institutions in DataONE</a>.
+        [ <a href="_sources/testing.txt"
+               rel="nofollow">Page Source</a> | 
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/testing.txt'
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+    </div>
+    <!--
+    <hr />
+     <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">HTML Comment Box</a> is loading comments...</div>
+     <link rel="stylesheet" type="text/css" href="_static/skin.css" />
+     <script type="text/javascript" language="javascript" id="hcb"> 
+     /*<! -*/ 
+     (function()
+     {s=document.createElement("script");
+     s.setAttribute("type","text/javascript");
+     s.setAttribute("src", "http://www.htmlcommentbox.com/jread?page="+escape((typeof hcb_user !== "undefined" && hcb_user.PAGE)||(""+window.location)).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24Gg8J5iYSHJWwAJtlYu/yU."+"&opts=21407&num=10");
+     if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})();
+      /* ->*/ 
+     </script>
+   -->
+  </body>
+</html>
