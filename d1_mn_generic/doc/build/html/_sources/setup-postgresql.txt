@@ -36,7 +36,9 @@ PostgreSQL runs under a separate user account called postgres.
 Under Ubuntu, PostgreSQL uses Ident-based authentication by default. Change
 this to md5.
 
-  Edit ``/etc/postgresql/8.4/main/pg_hba.conf``.
+  Edit ``pg_hba.conf``::
+
+    $ sudo pico /etc/postgresql/8.4/main/pg_hba.conf
 
   Change::
 
