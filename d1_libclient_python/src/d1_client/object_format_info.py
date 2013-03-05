@@ -77,11 +77,17 @@ class ObjectFormatInfo(Singleton):
     try:
       with open(self.csv_path) as f:
         csv_reader = csv.reader(f)
-        return dict((r[0], r[1:]) for r in csv_reader)
-    except (csv.Error, Exception) as e:
+        try:
+          return dict((r[0], r[1:]) for r in csv_reader)
+        except (csv.Error, Exception) as e:
+          raise Exception(
+            'Error in CSV file. Path: {0}  Line: {1}  Error: {2}'
+            .format(self.csv_path, csv_reader.line_num, e)
+          )
+    except IOError as e:
       raise Exception(
-        'Error in CSV file. Path: {0}  Line: {1}  Error: {2}'
-        .format(self.csv_path, csv_reader.line_num, e)
+        'Unable to open CSV file: {0}. Error: {1}: {2}'
+        .format(self.csv_path, e.errno, e.strerror)
       )
 
   def _get_format_id_entry(self, format_id):
