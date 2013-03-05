@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright 2009-2012 DataONE
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+:mod:`get_and_display_data_package`
+===================================
+
+:Synopsis:
+  This is an example on how to use the DataONE Client Library for Python. It
+  shows how to:
+
+  - Download a Resource Map (Data Package)
+  - Parse and display the Resource Map.
+
+:Author:
+  DataONE (Dahl)
+
+:Created:
+  2013-03-04
+
+:Requires:
+  - Python 2.6 or 2.7.
+  - DataONE Common Library for Python (automatically installed as a dependency)
+  - DataONE Client Library for Python (sudo pip install dataone.libclient)
+'''
+
+# Stdlib.
+import codecs
+import datetime
+import hashlib
+import os
+import sys
+
+# 3rd party.
+import pyxb
+
+# D1.
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.const
+import d1_client.data_package
+import d1_client.mnclient
+
+# Config.
+
+# The identifier (PID) of the DataONE Data Package (Resource Map) to download
+# and display.
+SCIENCE_OBJECT_PID = 'dataone_test_object_pid'
+
+# BaseURL for the Member Node. If the script is run on the same server as the
+# Member Node, this can be localhost.
+MN_BASE_URL = 'https://gmn.test.dataone.org/mn'
+#MN_BASE_URL = 'https://localhost/mn'
+
+# Paths to the certificate and key to use when creating the object. If the
+# certificate has the key embedded, the _KEY setting should be set to None. If
+# the objects have public access, these can both be set to None.
+CERTIFICATE_FOR_CREATE = None
+CERTIFICATE_FOR_CREATE_KEY = None
+
+
+def main():
+  # Create a Member Node client that can be used for running commands against
+  # a specific Member Node.
+  client = d1_client.mnclient.MemberNodeClient(
+    MN_BASE_URL,
+    cert_path=CERTIFICATE_FOR_CREATE,
+    key_path=CERTIFICATE_FOR_CREATE_KEY
+  )
+
+  resource_map_parser = d1_client.data_package.ResourceMapParser()
+  print resource_map_parser.simple_parse_resource_map(r)
+
+
+if __name__ == '__main__':
+  main()
