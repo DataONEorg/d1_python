@@ -108,11 +108,11 @@ $ sudo cp settings_site_template.py settings_site.py
 <li>SECRET_KEY: Replace &#8216;MySecretKey&#8217; with the string that was generated in
 the previous step.</li>
 <li>NODE_IDENTIFIER: Select a short string that will uniquely designate your
-node in the DataONE infrastructure.</li>
-<li>NODE_NAME: Select a name for your node.</li>
-<li>NODE_DESCRIPTION: Select a brief description for your node.</li>
-<li>NODE_BASEURL: Specify the URL at which your node will be available.</li>
-<li>NODE_SUBJECT: Specify the subject for this node (retrieved from the client
+Node in the DataONE infrastructure.</li>
+<li>NODE_NAME: Select a name for your Node.</li>
+<li>NODE_DESCRIPTION: Select a brief description for your Node.</li>
+<li>NODE_BASEURL: Specify the URL at which your Node will be available.</li>
+<li>NODE_SUBJECT: Specify the subject for this Node (retrieved from the client
 certificate provided by DataONE)</li>
 <li>NODE_CONTACT_SUBJECT: Specify the subject that was submitted as the
 contact person for DataONE.</li>
@@ -134,8 +134,9 @@ displayed. For more information about this document, refer to
 MN by submitting the Node document to DataONE. The Node document is
 automatically submitted to DataONE over a TLS/SSL connection that has been
 authenticated with the certificate obtained in <a class="reference internal" href="setup-authn-client.html"><em>Install the DataONE client side certificate</em></a>.</p>
-<blockquote>
-<div>$ python lib/python2.6/site-packages/service/manage.py register_node_with_dataone</div></blockquote>
+<div class="highlight-none"><div class="highlight"><pre>$ python lib/python2.6/site-packages/service/manage.py register_node_with_dataone
+</pre></div>
+</div>
 <ul class="simple">
 <li>Check for a message saying that the registration was successful.</li>
 </ul>
@@ -147,7 +148,7 @@ authenticated with the certificate obtained in <a class="reference internal" hre
 <em>contactSubject</em> in the Node document will be contacted by email with the
 outcome of the approval process. After the Node has been approved, the Node is
 part of the DataONE infrastructure and CNs will start processing the information
-on the node.</p>
+on the Node.</p>
 </div>
 </div>
 

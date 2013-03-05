@@ -119,18 +119,27 @@ $ sudo CA.pl -newca
 <li>For the common Name (CN) use something like &#8220;Local CA root&#8221;.</li>
 </ul>
 <p>Create a client side certificate signed by the local CA:</p>
-<div class="highlight-none"><div class="highlight"><pre>$ sudo CA.pl -newcert
+<div class="highlight-none"><div class="highlight"><pre>$ sudo CA.pl -newreq
+$ sudo CA.pl -signreq
 </pre></div>
 </div>
 <ul class="simple">
 <li>For the common Name (CN) use something like &#8220;Local client side certificate&#8221;.</li>
 </ul>
+<p>The new client side certificate is password protected, causing a prompt for the
+password every time the certificate is used. If the certificate will be used in
+an automated process or in a stand-alone test instance (see below), the password
+should be removed:</p>
+<div class="highlight-none"><div class="highlight"><pre>$ sudo openssl rsa -in newkey.pem -out newkey.nopassword.pem
+</pre></div>
+</div>
 <p>You now have a local CA root certificate and a certificate signed by that root:</p>
 <div class="line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">cacert.pem</span></tt>: The local CA root cert</div>
 <div class="line"><tt class="docutils literal"><span class="pre">private/cakey.pem</span></tt>: The local CA root cert private key</div>
 <div class="line"><tt class="docutils literal"><span class="pre">newcert.pem</span></tt>: The local client side certificate</div>
 <div class="line"><tt class="docutils literal"><span class="pre">newkey.pem</span></tt>: The local client side certificate private key</div>
+<div class="line"><tt class="docutils literal"><span class="pre">newkey.nopassword.pem</span></tt>: The local client side certificate private key without password</div>
 </div>
 <p>Ensure that the GMN certificate chain ends with a linefeed:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ sudo sed -i -e &#39;$a\&#39; /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt
@@ -149,7 +158,7 @@ serve that role.</p>
 <p>Copy the local client side certificates to the GMN standard locations:</p>
 <div class="highlight-none"><div class="highlight"><pre>$ sudo mkdir -p /var/local/dataone/certs/client
 $ sudo cp newcert.pem /var/local/dataone/certs/client/client.crt
-$ sudo cp newkey.pem /var/local/dataone/certs/client/client.key
+$ sudo cp newkey.nopassword.pem /var/local/dataone/certs/client/client.key
 </pre></div>
 </div>
 <p>For test instances of GMN, a server side certificate may not exist. If so, the

@@ -54,15 +54,15 @@ Django requires a unique, secret key to be set up for each application.
     the previous step.
 
   * NODE_IDENTIFIER: Select a short string that will uniquely designate your
-    node in the DataONE infrastructure.
+    Node in the DataONE infrastructure.
 
-  * NODE_NAME: Select a name for your node.
+  * NODE_NAME: Select a name for your Node.
 
-  * NODE_DESCRIPTION: Select a brief description for your node.
+  * NODE_DESCRIPTION: Select a brief description for your Node.
 
-  * NODE_BASEURL: Specify the URL at which your node will be available.
+  * NODE_BASEURL: Specify the URL at which your Node will be available.
 
-  * NODE_SUBJECT: Specify the subject for this node (retrieved from the client
+  * NODE_SUBJECT: Specify the subject for this Node (retrieved from the client
     certificate provided by DataONE)
 
   * NODE_CONTACT_SUBJECT: Specify the subject that was submitted as the
@@ -89,6 +89,8 @@ Django requires a unique, secret key to be set up for each application.
   automatically submitted to DataONE over a TLS/SSL connection that has been
   authenticated with the certificate obtained in :doc:`setup-authn-client`.
 
+  ::
+
     $ python lib/python2.6/site-packages/service/manage.py register_node_with_dataone
 
   * Check for a message saying that the registration was successful.
@@ -101,4 +103,4 @@ A new MN must be approved by DataONE. The person that is registered as
 *contactSubject* in the Node document will be contacted by email with the
 outcome of the approval process. After the Node has been approved, the Node is
 part of the DataONE infrastructure and CNs will start processing the information
-on the node.
+on the Node.

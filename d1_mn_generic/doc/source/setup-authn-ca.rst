@@ -3,7 +3,7 @@ Install CILogon and DataONE root CA certificates
 
 In the :term:`DataONE` infrastructure, :term:`MN`\ s and :term:`CN`\ s use
 :term:`X.509` client side :term:`certificate`\ s for authenticating
-:term:`client`\ s and other DataONE nodes.
+:term:`client`\ s and other DataONE Nodes.
 
 For a client side certificate to be considered valid by the server, the server
 must trust the :term:`CA` that signed the client side certificate. This step
