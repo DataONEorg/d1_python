@@ -76,6 +76,8 @@ CERTIFICATE_FOR_CREATE_KEY = None
 
 
 def main():
+  assert False, "This example is not implemented yet."
+
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient.MemberNodeClient(
