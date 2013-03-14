@@ -31,21 +31,37 @@
   Google Foresite Toolkit ($ pip install google.foresite-toolkit)
 '''
 
+#https://groups.google.com/forum/#!msg/foresite/3vS3_ZZ8Aj0/8tr_SgjbTAUJ
+#http://code.google.com/p/foresite-toolkit/source/browse/foresite-python/trunk/foresite/README.txt?r=85
+
 # Stdlib.
-import os
-import sys
-import StringIO
 #import xml.dom.minidom.parse
-import xml.dom.minidom
-import sys
-import optparse
+#import xml.dom.minidom
+import StringIO
+import codecs
+import datetime
+import hashlib
 import logging
+import optparse
+import os
+import pprint
+import sys
 
 # 3rd party.
+import pyxb
+import foresite
+#from foresite import *
+#from rdflib import URIRef, Namespace, Graph
 import rdflib.Namespace
 import rdflib.URIRef
 import foresite
 import foresite.utils
+
+# D1.
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.const
+import d1_client.data_package
+import d1_client.mnclient
 
 # D1.
 import d1_common.const
@@ -60,6 +76,8 @@ RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
 RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 CITO_NS = 'http://purl.org/spar/cito/'
 DCTERMS_NS = 'http://purl.org/dc/terms/'
+
+DATAONE_IDENTIFIER_PREDICATE = 'http://purl.org/dc/terms/identifier'
 
 D1_API_OBJECT_REST_PATH = 'object/'
 D1_API_RESOLVE_REST_PATH = 'resolve/'
@@ -137,3 +155,58 @@ class ResourceMapGenerator():
     if not path.endswith('/'):
       path += '/'
     return path
+
+#===============================================================================
+
+
+class ResourceMapParser():
+  def __init__(self):
+    pass
+
+  def get_identifiers_referenced_by_package(self, rdf_xml_doc):
+    ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
+    format'''
+    # foresite.ore.AggregatedResource -> OREResource
+    pids = []
+    for aggregated_resource in self.get_aggregation(rdf_xml_doc):
+      graph = aggregated_resource.graph
+      for s, p, o in graph:
+        # s = subject = rdflib.URIRef.URIRef
+        # p = predicate = rdflib.URIRef.URIRef
+        # o = object = rdflib.Literal.Literal or rdflib.URIRef.URIRef
+        if str(p) == DATAONE_IDENTIFIER_PREDICATE:
+          pids.append(str(o))
+    return pids
+
+  def get_triples_by_package(self, rdf_xml_doc):
+    ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
+    format'''
+    triples = []
+    for aggregated_resource in self.get_aggregation(rdf_xml_doc):
+      graph = aggregated_resource.graph
+      for s, p, o in graph:
+        # s = subject = rdflib.URIRef.URIRef
+        # p = predicate = rdflib.URIRef.URIRef
+        # o = object = rdflib.Literal.Literal or rdflib.URIRef.URIRef
+        triples.append((str(s), str(p), str(o)))
+    return triples
+
+  def get_rdflib_graphs_by_package(self, rdf_xml_doc):
+    ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
+    format'''
+    return [
+      aggregated_resource.graph
+      for aggregated_resource in self.get_aggregation(rdf_xml_doc)
+    ]
+
+  def get_aggregation(self, rdf_xml_doc):
+    resource_map = self.parse(rdf_xml_doc)
+    return resource_map.aggregation
+
+  def parse(self, rdf_xml_doc):
+    '''Parse a string containing a OAI-ORE document in RDF-XML
+    format to a Foresite ResourceMap object'''
+    foresite_doc = foresite.ReMDocument('file:data', data=rdf_xml_doc)
+    foresite_doc.format = 'xml'
+    rdf_libparser = foresite.RdfLibParser()
+    return rdf_libparser.parse(foresite_doc)
