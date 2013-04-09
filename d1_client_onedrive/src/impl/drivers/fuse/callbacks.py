@@ -67,7 +67,7 @@ class FUSECallbacks(fuse.Operations):
     self.attribute_cache = cache.Cache(settings.MAX_ATTRIBUTE_CACHE_SIZE)
     self.directory_cache = cache.Cache(settings.MAX_DIRECTORY_CACHE_SIZE)
     log.debug("Exit FUSECalbacks.__init__")
-    
+
 
   def getattr(self, path, fh):
     '''Called by FUSE when the attributes for a file or directory are required.
@@ -85,7 +85,7 @@ class FUSECallbacks(fuse.Operations):
     attribute = self._get_attributes_through_cache(path)
     log.debug('getattr() returned attribute: {0}'.format(attribute))
     return self._stat_from_attributes(attribute)
-  
+
 
   def readdir(self, path, fh):
     '''Called by FUSE when a directory is opened.
@@ -98,7 +98,7 @@ class FUSECallbacks(fuse.Operations):
       dir = self.root.get_directory(path)
       self.directory_cache[path] = dir
     return dir.names()
-      
+
 
   def open(self, path, flags):
     '''Called by FUSE when a file is opened.
@@ -148,10 +148,10 @@ class FUSECallbacks(fuse.Operations):
       self.attribute_cache[path] = attribute
       return attribute
 
-  
+
   def _stat_from_attributes(self, attributes):
     date_time = d1_common.date_time.to_seconds_since_epoch(
-      attributes.date()) if attributes.date() is not None else self.start_time 
+      attributes.date()) if attributes.date() is not None else self.start_time
     return dict(
       st_mode = stat.S_IFDIR | 0555 if attributes.is_dir() else \
         stat.S_IFREG | 0444,
@@ -168,16 +168,15 @@ class FUSECallbacks(fuse.Operations):
 
 
   def _raise_error_for_os_special_file(self, path):
-    if len(set(path.split(os.path.sep)) & settings.IGNORE_SPECIAL): 
+    if len(set(path.split(os.path.sep)) & settings.IGNORE_SPECIAL):
       self._raise_error_no_such_file_or_directory(path)
 
 
   def _raise_error_no_such_file_or_directory(self, path):
     log.debug('Error: No such file or directory: {0}'.format(path))
-    raise OSError(errno.ENOENT)
+    raise OSError(errno.ENOENT, '')
 
 
 #  def _raise_error_permission_denied(self, path):
 #    log.debug('Error: Permission denied: {0}'.format(path))
 #    raise OSError(errno.EACCES, '')
-
