@@ -79,8 +79,8 @@ DCTERMS_NS = 'http://purl.org/dc/terms/'
 
 DATAONE_IDENTIFIER_PREDICATE = 'http://purl.org/dc/terms/identifier'
 
-D1_API_OBJECT_REST_PATH = 'object/'
-D1_API_RESOLVE_REST_PATH = 'resolve/'
+#D1_API_OBJECT_REST_PATH = 'object/'
+D1_API_RESOLVE_REST_PATH = 'v1/resolve/'
 
 #===============================================================================
 
@@ -106,7 +106,7 @@ class ResourceMapGenerator():
     '''
     relations = {science_metadata_pid: science_data_pids}
     resource_map = self._generate_resource_map(
-      resource_map_pid, resource_map_pid, relations
+      self._aggregation_uri_from_pid(resource_map_pid), resource_map_pid, relations
     )
     return self._serialize_resource_map(resource_map)
 
@@ -119,11 +119,11 @@ class ResourceMapGenerator():
     foresite.utils.namespaces['cito'] = rdflib.Namespace(CITO_NS)
     aggr = foresite.Aggregation(aggregation_id)
     for sci_id in relations.keys():
-      sci_uri = self._uri_from_pid(sci_id)
+      sci_uri = self._resolvable_uri_from_pid(sci_id)
       meta_res = foresite.AggregatedResource(sci_uri)
       meta_res._dcterms.identifier = sci_id
       for data_id in relations[sci_id]:
-        data_uri = self._uri_from_pid(data_id)
+        data_uri = self._resolvable_uri_from_pid(data_id)
         data_res = foresite.AggregatedResource(data_uri)
         data_res._dcterms.identifier = data_id
         data_res._cito.isDocumentedBy = sci_uri
@@ -131,9 +131,7 @@ class ResourceMapGenerator():
         meta_res._cito.documents = data_uri
         aggr.add_resource(data_res)
       aggr.add_resource(meta_res)
-    resmap = foresite.ResourceMap(
-      self.dataone_root + D1_API_RESOLVE_REST_PATH + resource_map_id
-    )
+    resmap = foresite.ResourceMap(self._resolvable_uri_from_pid(resource_map_id))
     resmap._dcterms.identifier = resource_map_id
     resmap.set_aggregation(aggr)
     return resmap
@@ -148,8 +146,13 @@ class ResourceMapGenerator():
   def _assert_is_valid_serialization_format(self, serialization_format):
     assert (serialization_format in ALLOWABLE_PACKAGE_SERIALIZATIONS)
 
-  def _uri_from_pid(self, pid):
-    return rdflib.URIRef(self.dataone_root + D1_API_OBJECT_REST_PATH + pid)
+  def _resolvable_uri_from_pid(self, pid):
+    return rdflib.URIRef(self.dataone_root + D1_API_RESOLVE_REST_PATH + pid)
+
+  def _aggregation_uri_from_pid(self, pid):
+    return rdflib.URIRef(
+      self.dataone_root + D1_API_RESOLVE_REST_PATH + pid + '#aggregation'
+    )
 
   def _append_slash(self, path):
     if not path.endswith('/'):
