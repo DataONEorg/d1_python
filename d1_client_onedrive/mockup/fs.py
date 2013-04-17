@@ -153,16 +153,10 @@ start_date_mockup = start_year_facet_vals + unapplied_facets + objects_unfiltere
 # Mockup of keyword restriction.
 
 
-def get_random_words_sorted(n_words):
-  words = [
-    re.sub(r'[^a-z]', '', line.strip().lower())
-    for line in open(
-      '/etc/dictionaries-common/words'
-    )
-  ]
+def get_random_words_sorted():
+  words = open('./words.txt').read().split('\n')
   words = [re.sub('\'s', '', w) for w in words]
-  random.seed(1)
-  return sorted(random.sample(words, n_words))
+  return words
 
 
 def group_words(words, n_words_in_group):
@@ -197,7 +191,7 @@ def group_from_first_last(words, first_last):
   return g
 
 
-random_words = get_random_words_sorted(1000)
+random_words = get_random_words_sorted()
 
 keyword_group = [
   (f, group_from_first_last(random_words, f), d) for f in first_last(
