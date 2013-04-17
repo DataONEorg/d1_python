@@ -44,9 +44,9 @@ import fs
 
 def dbg(func):
   def debug_print(*args, **kwargs):
-    logging.debug('DBG CALL: {0}({1} {2})'.format(func.__name__, args, kwargs))
+    #logging.debug('DBG CALL: {0}({1} {2})'.format(func.__name__, args, kwargs))
     f = func(*args, **kwargs)
-    logging.debug('DBG RET: {0}: {1}'.format(func.__name__, f))
+    #logging.debug('DBG RET: {0}: {1}'.format(func.__name__, f))
     return f
 
   return debug_print
@@ -56,6 +56,9 @@ class FUSECallbacks(fuse.Operations):
   def __init__(self):
     self.start_time = datetime.datetime.now() # time.time()
     self.fs = self._flatten(fs.fs)
+    self.file_paths = set([p[0] for p in self.fs])
+
+    print 'Generated files: {0}'.format(len(self.fs))
 
   @dbg
   def getattr(self, path, fh):
@@ -198,10 +201,11 @@ class FUSECallbacks(fuse.Operations):
 
   @dbg
   def _is_file(self, path):
-    for p in self.fs:
-      if path == p[0]:
-        return True
-    return False
+    return path in self.file_paths
+    #for p in self.fs:
+    #  if path == p[0]:
+    #    return True
+    #return False
 
   @dbg
   def _is_direct_child(self, base, child):
