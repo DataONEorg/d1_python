@@ -1,6 +1,6 @@
 '''
-:mod:`SolrClient`
-=================
+:mod:`solr_client`
+==================
 
 :Synopsis:
   Python SOLR Client Library
@@ -24,17 +24,6 @@
 # This is prototype level code and subject to change, based on:
 # http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
 # Modifications by DataONE (Vieglais, Dahl)
-
-# quick examples on use:
-#
-# from solr import *
-# c = SolrConnection(host='localhost:8983', persistent=True)
-# c.add(id='500',name='python test doc')
-# c.delete('123')
-# c.commit()
-# print c.search(q='id:[* TO *]', wt='python', rows='10',indent='on')
-# data = c.search(q='id:500', wt='python')
-# print 'first match=', eval(data)['response']['docs'][0]
 '''
 
 import logging
@@ -73,8 +62,8 @@ class SolrConnection:
 
   def __init__(
     self,
-    host='localhost:8080',
-    solrBase='/solr',
+    host='cn.dataone.org',
+    solrBase='/cn/v1/query/solr/',
     persistent=True,
     postHeaders={},
     debug=False
