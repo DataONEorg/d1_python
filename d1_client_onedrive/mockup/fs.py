@@ -286,6 +286,34 @@ geo_restriction_mockup = (
 #exit()
 
 ################################################################################
+# Mockup of data package
+
+data_package_1 = (
+  (
+    'data_package_1', (
+      ('data_package_1.bagit.zip', 48321, d),
+      ('pid_abc.jpg', 483, d),
+      ('pid_def.csv', 4833, d),
+      ('pid_ghi.csv', 6553, d),
+      ('pid_jkl.eml', 46553, d),
+      ('pid_jkl.html', 32522, d),
+      (
+        'system', (
+          ('pid_abc.jpg.xml', 483, d),
+          ('pid_abc.jpg.html', 821, d),
+          ('pid_def.xml', 4833, d),
+          ('pid_def.html', 8222, d),
+          ('pid_ghi.csv.xml', 6553, d),
+          ('pid_ghi.csv.html', 12964, d),
+          ('pid_jkl.eml.xml', 46553, d),
+          ('pid_jkl.eml.html', 83212, d),
+        ), d
+      ),
+    ), d
+  ),
+)
+
+################################################################################
 
 fs = (
   ('@StartDate', start_date_mockup, d),
@@ -294,7 +322,7 @@ fs = (
   ('@MemberNode', member_node_restriction_mockup, d),
   ('@GeographicalArea', geo_restriction_mockup, d),
   ('@Field', empty_folder, d),
-) + objects_unfiltered
+) + objects_unfiltered + data_package_1
 
 #pprint.pprint(fs)
 #exit()
