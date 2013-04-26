@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. Setup &mdash; ONEDrive 1.0.0 documentation</title>
+    <title>1. Installation &mdash; ONEDrive 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -27,6 +27,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="ONEDrive 1.0.0 documentation" href="index.html" />
     <link rel="up" title="3. Architecture" href="architecture.html" />
+    <link rel="next" title="5. User Interface Mockup" href="mockup/index.html" />
     <link rel="prev" title="3. Architecture" href="architecture.html" /> 
   </head>
   <body>
@@ -36,6 +37,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mockup/index.html" title="5. User Interface Mockup"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="architecture.html" title="3. Architecture"
              accesskey="P">previous</a> |</li>
@@ -47,8 +51,10 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">1. Setup</a><ul>
-<li><a class="reference internal" href="#fusepy">1.1. fusepy</a></li>
+<li><a class="reference internal" href="#">1. Installation</a><ul>
+<li><a class="reference internal" href="#mac-os-x">1.1. Mac OS X</a></li>
+<li><a class="reference internal" href="#linux">1.2. Linux</a></li>
+<li><a class="reference internal" href="#windows">1.3. Windows</a></li>
 </ul>
 </li>
 </ul>
@@ -56,6 +62,9 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="architecture.html"
                         title="previous chapter">3. Architecture</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mockup/index.html"
+                        title="next chapter">5. User Interface Mockup</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/setup.txt"
@@ -82,15 +91,54 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="setup">
-<h1>1. Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h1>
-<p>Setting up the <em class="xref std std-term">ONEDrive</em>.</p>
-<div class="section" id="fusepy">
-<h2>1.1. fusepy<a class="headerlink" href="#fusepy" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><pre>$ git clone git://github.com/terencehonles/fusepy.git fusepy
+  <div class="section" id="installation">
+<h1>1. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>The process for installing ONEDrive on OS X and Linux is similar:</p>
+<ol class="arabic simple">
+<li>Install FUSE</li>
+<li>Install python dependencies</li>
+<li>Install ONEDrive</li>
+</ol>
+<div class="section" id="mac-os-x">
+<h2>1.1. Mac OS X<a class="headerlink" href="#mac-os-x" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Install FUSE</li>
+</ol>
+<p>Development of ONEDrive on OS X has been done using the <a href="#id1"><span class="problematic" id="id2">`Fuse for OS X`_</span></a>
+distribution. Download the latest installer (currently 2.5.4) and follow the
+instructions to install.</p>
+<ol class="arabic simple" start="2">
+<li>Install Python dependencies</li>
+</ol>
+<p><a href="#id3"><span class="problematic" id="id4">fusepy_</span></a> provides the Python bindings to the FUSE library. To install fusepy,
+use the commands:</p>
+<div class="highlight-python"><pre>$ cd Downloads
+$ git clone git://github.com/terencehonles/fusepy.git fusepy
 $ cd fusepy
 $ sudo python setup.py install</pre>
 </div>
+<ol class="arabic simple" start="3">
+<li>Install ONEDrive</li>
+</ol>
+<p>There is currently no setup script for ONEDrive, so installation means simply
+downloading to a local folder:</p>
+<div class="highlight-python"><pre>$ cd ~/opt
+$ svn co https://repository.dataone.org/software/cicore/trunk/itk/d1_client_onedrive
+$ cd d1_client_onedrive</pre>
+</div>
+</div>
+<div class="section" id="linux">
+<h2>1.2. Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>TODO::</dt>
+<dd>Detail steps for setting up on linux, which will be the same as OS X
+except with the regular FUSE distro instead.</dd>
+</dl>
+</div>
+<div class="section" id="windows">
+<h2>1.3. Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
+<p>TODO:: Need to setup a windows system and detail the steps.</p>
+<p>Setting up the <em class="xref std std-term">ONEDrive</em>.</p>
 </div>
 </div>
 
@@ -107,6 +155,9 @@ $ sudo python setup.py install</pre>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="mockup/index.html" title="5. User Interface Mockup"
+             >next</a> |</li>
+        <li class="right" >
           <a href="architecture.html" title="3. Architecture"
              >previous</a> |</li>
         <li><a href="index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li>
@@ -115,7 +166,7 @@ $ sudo python setup.py install</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2010,2011 Participating institutions in DataONE.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
 </html>

@@ -13,6 +13,7 @@ Index
   setup
   run
   architecture
+  mockup/index
 
 Indices and tables
 ==================
