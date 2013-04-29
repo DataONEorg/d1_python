@@ -1,0 +1,129 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.1. OS specific integration &mdash; ONEDrive 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="ONEDrive 1.0.0 documentation" href="../../index.html" />
+    <link rel="up" title="5. ONEDrive Mockups" href="../index.html" />
+    <link rel="next" title="5.2. ONEMercury Integration" href="../onemercury-integration/index.html" />
+    <link rel="prev" title="5. ONEDrive Mockups" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../onemercury-integration/index.html" title="5.2. ONEMercury Integration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="5. ONEDrive Mockups"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">5. ONEDrive Mockups</a> &raquo;</li> 
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="os-specific-integration">
+<h1>5.1. OS specific integration<a class="headerlink" href="#os-specific-integration" title="Permalink to this headline">¶</a></h1>
+<p>As an extension of the standard filesystem, ONEDrive is by nature a platform specific user interface. Here are several user interface mockups that take advantage of the user interface approach on each platform on which we plan to operate.</p>
+<div class="section" id="mac-os-x">
+<h2>5.1.1. Mac OS X<a class="headerlink" href="#mac-os-x" title="Permalink to this headline">¶</a></h2>
+<p>Mac OS X displays files using the Finder.  The standard Finder view would be used to display a set of browse hierarchies representing the authors, locations, time periods, taxa, etc. associated with the data sets.  At the leaves of this folder hierarchy are Data Packages, each of which is represented as a folder containing the science metadata for the package in an HTML file and each of the data files in their natural format, and with an appropriate filename (e.g., with proper extension).</p>
+<div class="section" id="basic-folder-view">
+<h3>5.1.1.1. Basic folder view<a class="headerlink" href="#basic-folder-view" title="Permalink to this headline">¶</a></h3>
+<p>The basic folder view shows only browse hierarchies that are sensible from a user perspective.  These will need to be controlled hierarchies that are cleaned up from our metadata indexing corpus.  The ONEDrive mount point is shown in the Finder window on the left.</p>
+<div class="figure">
+<img alt="../../_images/onedrive-mockup-1-folders1.png" src="../../_images/onedrive-mockup-1-folders1.png" style="width: 1000px;" />
+<p class="caption"><em>Figure 1.</em> Mac OS X Mockup of the hierarchical folder view.</p>
+</div>
+</div>
+<div class="section" id="get-info-dialog-used-to-display-system-metadata">
+<h3>5.1.1.2. Get Info Dialog used to display System Metadata<a class="headerlink" href="#get-info-dialog-used-to-display-system-metadata" title="Permalink to this headline">¶</a></h3>
+<p>Package and file-oriented metadata that comes from the DataONE SystemMetadata corpus would be added as extended attributes to the file and folders, so that the standard Get Info dialog box can show these metadata fields.  Note the presence of the DOI identifier listed in the middle.</p>
+<div class="figure">
+<img alt="../../_images/onedrive-mockup-2-getinfo1.png" src="../../_images/onedrive-mockup-2-getinfo1.png" style="width: 1000px;" />
+<p class="caption"><em>Figure 2.</em> Mac OS X Get Info dialog is used to display system metadata.</p>
+</div>
+</div>
+<div class="section" id="filtering-approach-1-spotlight">
+<h3>5.1.1.3. Filtering approach 1: Spotlight<a class="headerlink" href="#filtering-approach-1-spotlight" title="Permalink to this headline">¶</a></h3>
+<p>In our first UI for filtering, we use the built-in Mac OS X Spotlight filtering system that provides an UI for specifying search filters and applies them to the extended attributes of the items.</p>
+<div class="figure">
+<img alt="../../_images/onedrive-mockup-3-filters1.png" src="../../_images/onedrive-mockup-3-filters1.png" style="width: 1000px;" />
+<p class="caption"><em>Figure 3.</em> Mac OS X Mockup of the filter UI showing a restricted set of data packages.</p>
+</div>
+</div>
+<div class="section" id="filtering-approach-2-filter-dialog">
+<h3>5.1.1.4. Filtering approach 2: Filter Dialog<a class="headerlink" href="#filtering-approach-2-filter-dialog" title="Permalink to this headline">¶</a></h3>
+<p>Many users are unaware of the Spotlight filter UI described above, and don&#8217;t naturally find it in the Finder interface.  A potential alternative is to provide our own Filter Dialog that is accessed via a ONEDrive dropdown menu.  The following two screenshots show first the dropdown menu and then a mockup of a potential filtering dialog box.</p>
+<div class="figure">
+<img alt="../../_images/onedrive-mockup-4-menu1.png" src="../../_images/onedrive-mockup-4-menu1.png" style="width: 1000px;" />
+<p class="caption"><em>Figure 1.</em> Mac OS X Mockup showing the ONEDrive dropdown menu.</p>
+</div>
+<p>The use of a filtering dialog box gives us a lot of flexibility in layoing out filter widgets, including the capability to use map widgets and other UI widgets to make constructing filters powerful. Once a filter is applied, the view in the ONEDrive window is constrained to display only packages that match the filter criteria.</p>
+<div class="figure">
+<img alt="../../_images/onedrive-mockup-5-filter-dialog1.png" src="../../_images/onedrive-mockup-5-filter-dialog1.png" style="width: 1000px;" />
+<p class="caption"><em>Figure 1.</em> Mac OS X Mockup showing the filter dialog for constraining what is shown in the window.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../onemercury-integration/index.html" title="5.2. ONEMercury Integration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="5. ONEDrive Mockups"
+             >previous</a> |</li>
+        <li><a href="../../index.html">ONEDrive 1.0.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >5. ONEDrive Mockups</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2011 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
