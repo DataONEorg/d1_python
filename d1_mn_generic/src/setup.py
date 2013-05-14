@@ -66,8 +66,8 @@ setup(
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'dataone.common == 1.1.0',
-    'dataone.libclient == 1.1.0',
+    'dataone.common >= 1.1.0',
+    'dataone.libclient >= 1.2.0',
     'dataone.certificate_extensions == 1.1.0',
     'dataone.cli >= 1.0.0',
     'django == 1.4.1',
