@@ -47,13 +47,14 @@ def make_absolute(p):
 
 # Enable Django debug mode.
 # True:
+# * Use only for debugging and testing on non-production instances.
 # * May expose sensitive information.
 # * GMN returns a HTML Django exception page with extensive debug information
 #   for internal errors.
 # * GMN returns a HTML Django 404 page that lists all valid URL patterns for
 #   invalid URLs.
 # * The profiling subsystem can be accessed.
-# False:
+# False (default):
 # * Use for production.
 # * GMN returns a stack trace in a DataONE ServiceFailure exception for
 #   internal errors.
@@ -69,19 +70,32 @@ DEBUG = False
 #   replace any object on the MN.
 # * Skips authentication check for trusted subjects, async processes and
 #   create/update/delete.
-# False:
+# False (default):
 # * Use for production.
 GMN_DEBUG = False
 
 # Enable request echo.
-# * True: GMN will not process any requests. Instead, it will echo the requests
+# True:
+# * GMN will not process any requests. Instead, it will echo the requests
 #   back to the client. The requests are formatted to be human readable. This
 #   enables a client to see exactly what GMN receives after processing by
 #   Apache, mod_wsgi and Django. It is useful for debugging both clients and
 #   GMN.
-# * False: GMN processes all requests as normal.
 # * Only available in debug mode.
+# False (default):
+# * GMN processes all requests as normal.
+# * Use for production.
 ECHO_REQUEST_OBJECT = False
+
+# Enable stand-alone mode.
+# True:
+# * GMN will not attempt to connect to the root CN on startup.
+# False (default):
+# * On startup, GMN attempts to connect to the root CN of the environment
+#   that has been configured in the DATAONE_ROOT setting. If the connection fails,
+#   GMN does not serve any requests. 
+# * Use for production.
+STAND_ALONE = False
 
 # ==============================================================================
 # Node parameters
@@ -105,8 +119,11 @@ NODE_DESCRIPTION = 'Test Member Node'
 NODE_BASEURL = 'https://localhost/mn'
 
 # Enable synchronization.
-# Set to False to prevent the DataONE Coordinating Nodes from synchronizing
-# (discovering new content and other changes) on this node.
+# True (default):
+# * Enable the DataONE Coordinating Nodes to synchronize (discover new
+#   content and other changes) on this node.
+# False:
+# * Prevent the DataONE Coordinating Nodes from synchronizing.
 NODE_SYNCHRONIZE = True
 
 # The schedule on which synchronization should run for this node. The schedule
@@ -181,8 +198,8 @@ CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client.key'
 # well as this setting to False.
 NODE_REPLICATE = True
 
-# The maximum size, in octets (8-bit bytes), of objects this node is willing to
-# accept for replication. Set to -1 to allow any size.
+# The maximum size, in octets (8-bit bytes), of each object this node is willing to
+# accept for replication. Set to -1 to allow objects of any size.
 # E.g. for a maximum object size of 1GiB: 1024**3
 REPLICATION_MAXOBJECTSIZE = -1
 
@@ -200,13 +217,6 @@ REPLICATION_ALLOWEDNODE = ()
 # To allow any object type to be replicated, set to an empty list.
 # E.g.: ('eml://ecoinformatics.org/eml-2.0.0', 'CF-1.0')
 REPLICATION_ALLOWEDOBJECTFORMAT = ()
-
-# Set the level of logging that GMN should perform. Choices are:
-# DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
-if DEBUG or GMN_DEBUG:
-  LOG_LEVEL = 'DEBUG'
-else:
-  LOG_LEVEL = 'WARNING'
 
 # On startup, GMN connects to the DataONE root CN to discover details about the
 # DataONE environment. For a production instance of GMN, this should be set to
@@ -235,20 +245,8 @@ DATAONE_TRUSTED_SUBJECTS = set([])
 # CLIENT_CERT_PATH setting.
 GMN_INTERNAL_SUBJECTS = set([])
 
-# As an alternative to the certificate based authentication for asynchronous
-# GMN processes set up in GMN_INTERNAL_SUBJECTS, this setting can be used
-# for allowing the processes to connect based on the IP address of the
-# originating server. Note that this method may be vulnerable to IP address
-# spoofing attacks.
-GMN_INTERNAL_HOSTS = ['127.0.0.1', ]
-
 # Local processes use this URL to connect to GMN.
 INTERNAL_BASEURL = 'https://localhost/mn'
-
-# In debug mode, a special test subject is added to the list of trusted
-# subjects.
-if GMN_DEBUG:
-  DATAONE_TRUSTED_SUBJECTS.add('gmn_test_subject_trusted')
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
@@ -314,6 +312,14 @@ OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 LOG_PATH = make_absolute('./gmn.log')
 
 # Set up logging.
+
+# Set the level of logging that GMN should perform. Choices are:
+# DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
+if DEBUG or GMN_DEBUG:
+  LOG_LEVEL = 'DEBUG'
+else:
+  LOG_LEVEL = 'WARNING'
+
 LOGGING = {
   'version': 1,
   'disable_existing_loggers': True,
@@ -329,13 +335,13 @@ LOGGING = {
   },
   'handlers': {
     'file': {
-      'level': 'DEBUG',
+      'level': LOG_LEVEL,
       'class': 'logging.FileHandler',
       'filename': LOG_PATH,
       'formatter': 'verbose'
     },
     'null': {
-      'level': 'DEBUG',
+      'level': LOG_LEVEL,
       'class': 'django.utils.log.NullHandler',
     },
   },
@@ -344,13 +350,13 @@ LOGGING = {
     '': {
       'handlers': ['file'],
       'propagate': True,
-      'level': 'DEBUG',
+      'level': LOG_LEVEL,
     },
     # Django uses this logger.
     'django': {
       'handlers': ['file'],
       'propagate': True,
-      'level': 'DEBUG', #LOG_LEVEL,
+      'level': LOG_LEVEL
     },
     # Messages relating to the interaction of code with the database. For
     # example, every SQL statement executed by a request is logged at the DEBUG

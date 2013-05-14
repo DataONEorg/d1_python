@@ -290,10 +290,6 @@ def _extract_subject_from_pem(cert_pem):
     )
 
 
-def is_internal_host(request):
-  return request.META['REMOTE_ADDR'] in settings.GMN_INTERNAL_HOSTS
-
-
 def is_allowed(request, level, pid):
   '''Check if one or more subjects are allowed to perform action on object.
   If a subject holds permissions for one action level on object, all lower
@@ -392,8 +388,7 @@ def assert_internal_permission(f):
   '''
 
   def wrap(request, *args, **kwargs):
-    if not is_internal_subject(request) and not \
-      is_internal_host(request):
+    if not is_internal_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for GMN asynchronous processes. {0}'
         .format(format_active_subjects(request))
@@ -406,9 +401,8 @@ def assert_internal_permission(f):
 
 
 def assert_create_update_delete_permission(f):
-  '''Access only by subject with Create/Update/Delete permission.
-  - Allow access also to trusted subjects.
-  - Allow access to all subjects in debug mode.
+  '''Access only by subjects with Create/Update/Delete permission and by
+  trusted infrastructure (CNs).
   '''
 
   def wrap(request, *args, **kwargs):

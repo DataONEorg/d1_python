@@ -89,8 +89,11 @@ class Command(NoArgsCommand):
       mn.models.WhitelistForCreateUpdateDelete.objects.all().delete()
       cnt = 0
       for subject in f:
+        subject = subject.strip()
+        if subject == '' or subject.startswith('#'):
+          continue
         w = mn.models.WhitelistForCreateUpdateDelete()
-        w.set(subject.strip())
+        w.set(subject)
         w.save()
         cnt += 1
 

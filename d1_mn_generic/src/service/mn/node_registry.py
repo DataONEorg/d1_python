@@ -40,10 +40,10 @@ import d1_common.types.exceptions
 
 
 def get_cn_subjects():
-  #  # In debug mode, fetching the node registry is skipped, causing only the
-  #  # subjects specifically added in settings_site.py to be active.
-  #  if settings.GMN_DEBUG:
-  #    return settings.DATAONE_TRUSTED_SUBJECTS
+  # In stand-alone mode, fetching the node registry is skipped, causing only the
+  # subjects specifically added in settings_site.py to be active.
+  if settings.STAND_ALONE:
+    return settings.DATAONE_TRUSTED_SUBJECTS
 
   cn_subjects = django.core.cache.cache.get('cn_subjects')
   if cn_subjects is not None:
@@ -54,9 +54,10 @@ def get_cn_subjects():
   try:
     cn_subjects = get_cn_subjects_from_dataone_root()
   except d1_common.types.exceptions.DataONEException as e:
-    raise d1_common.types.exceptions.ServiceFailure(0,
-      'Unable to get trusted subjects from CN root. Error: {0}'\
-        .format(str(e)))
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, 'Unable to get trusted subjects from CN root. See STAND_ALONE setting. '
+      'Error: {0}'.format(str(e))
+    )
 
   cn_subjects = settings.DATAONE_TRUSTED_SUBJECTS | set(cn_subjects)
   django.core.cache.cache.set('cn_subjects', cn_subjects)
