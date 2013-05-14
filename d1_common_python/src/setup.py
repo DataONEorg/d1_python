@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 # limitations under the License.
 """
 :mod:`setup`
-====================
+============
 
 :Synopsis: Create egg.
 :Author: DataONE (Dahl)
@@ -30,19 +30,19 @@ from setuptools import setup, find_packages
 import d1_common
 
 setup(
-  name='DataONE_Common',
+  name='dataone.common',
   version=d1_common.__version__,
+  description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
   author='DataONE Project',
   author_email='developers@dataone.org',
   url='http://dataone.org',
-  description='Contains functionality common to projects that interact with the DataONE infrastructure via Python',
   license='Apache License, Version 2.0',
   packages=find_packages(),
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
     'iso8601 >= 0.1',
-    'pyxb >= 1.1.2',
+    'pyxb == 1.2.1',
   ],
   package_data={
     # If any package contains *.txt or *.rst files, include them:

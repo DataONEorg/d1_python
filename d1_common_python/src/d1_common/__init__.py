@@ -20,7 +20,7 @@
 '''Shared code for DataONE Python libraries
 '''
 
-__version__ = "1.1.0-SNAPSHOT"
+__version__ = "1.1.0"
 
 __all__ = [
   'const',
