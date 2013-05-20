@@ -1,0 +1,10 @@
+setup.py
+d1_workspace/__init__.py
+d1_workspace/types/__init__.py
+d1_workspace/types/pyxbgen_all.py
+d1_workspace/types/generated/__init__.py
+d1_workspace/types/generated/workspace_types.py
+dataone.workspace_client.egg-info/PKG-INFO
+dataone.workspace_client.egg-info/SOURCES.txt
+dataone.workspace_client.egg-info/dependency_links.txt
+dataone.workspace_client.egg-info/top_level.txt

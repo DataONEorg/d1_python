@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="0.0.1"
+  elementFormDefault="unqualified" attributeFormDefault="unqualified">
+
+  <xs:element name="folder" type="Folder"/>
+
+  <xs:complexType name="Folder">
+    <xs:sequence>
+      <xs:element name="folder" type="Folder" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="identifier" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="query" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+</xs:schema>
