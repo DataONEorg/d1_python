@@ -82,7 +82,7 @@ import sys
 
 # D1
 try:
-  import d1_common.restclient as restclient
+  from d1_client import d1baseclient
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: easy_install DataONE_Common\n')
@@ -112,8 +112,10 @@ class ObjectListIterator(object):
     :param max: Maximum number of items to retrieve (all)
     :type max: integer
     '''
+    self.log = logging.getLogger(self.__class__.__name__)
     self._objectList = None
     self._czero = 0
+    self._citem = 0
     self._client = client
     if max >= 0 and max < pagesize:
       pagesize = max
@@ -135,23 +137,31 @@ class ObjectListIterator(object):
 
   def next(self):
     '''Implements the next() method for the iterator.  Returns the next
-    ObjectInfo instance.
+    ObjectInfo instance. Loads more if at the end of the page and there's more
+    pages to load.
     '''
+    self.log.debug(
+      "%d / %d (%d)" % (
+        self._citem, self._maxitem, len(
+          self._objectList.objectInfo
+        )
+      )
+    )
     if self._citem >= self._maxitem:
       raise StopIteration
-    if self._citem >= len(self._objectList.objectInfo):
+    if (self._citem - self._czero) >= len(self._objectList.objectInfo):
       self._loadMore(start=self._czero + len(self._objectList.objectInfo))
       if len(self._objectList.objectInfo) < 1:
         raise StopIteration
-    res = self._objectList.objectInfo[self._citem]
+    res = self._objectList.objectInfo[self._citem - self._czero]
     self._citem += 1
     return res
 
   def _loadMore(self, start=0):
     '''Retrieves the next page of results
     '''
+    self.log.debug("Loading page starting from %d" % start)
     self._czero = start
-    self._citem = 0
     self._objectList = self._client.listObjects(
       start=start, count=self._pagesize,
       fromDate=self.fromDate
@@ -168,7 +178,7 @@ if __name__ == "__main__":
   available from a given node. Output is in YAML.
   '''
   parser = OptionParser()
-  default_base_url = 'https://mn-unm-1.dataone.org/mn'
+  default_base_url = 'https://cn.dataone.org/cn'
   parser.add_option(
     '-b',
     '--base_url',
@@ -191,24 +201,24 @@ if __name__ == "__main__":
     '-m',
     '--max',
     dest='max',
-    default=-1,
+    default=500,
     type='int',
-    help='Maximum number of entries to retrieve (all)'
+    help='Maximum number of entries to retrieve (500)'
   )
   parser.add_option(
     '-p',
     '--page',
     dest='pagesize',
-    default=500,
+    default=100,
     type='int',
-    help='Maximum number of entries to retrieve per call (500)'
+    help='Maximum number of entries to retrieve per call (100)'
   )
   (options, args) = parser.parse_args()
   if options.llevel not in [10, 20, 30, 40, 50]:
     options.llevel = 20
   logging.basicConfig(level=int(options.llevel))
 
-  client = restclient.DataONEBaseClient(options.base_url)
+  client = d1baseclient.DataONEBaseClient(options.base_url)
   ol = ObjectListIterator(
     client, start=options.start,
     pagesize=options.pagesize,
@@ -224,7 +234,7 @@ if __name__ == "__main__":
     print "  item     : %d" % counter
     print "  pid      : %s" % o.identifier.value()
     print "  modified : %s" % o.dateSysMetadataModified
-    print "  format   : %s" % o.objectFormat
+    print "  format   : %s" % o.formatId
     print "  size     : %s" % o.size
     print "  checksum : %s" % o.checksum.value()
     print "  algorithm: %s" % o.checksum.algorithm
