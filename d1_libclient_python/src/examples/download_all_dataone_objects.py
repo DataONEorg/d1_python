@@ -98,8 +98,8 @@ import d1_client.mnclient
 # separate environments for use when developing and testing DataONE components.
 # There are no connections between the environments. For instance, certificates,
 # DataONE identities and science objects are exclusive to the environment in
-# which they were created. This setting controls to which environment ONEDrive
-# connects.
+# which they were created. This setting controls to which environment the CN
+# client connects.
 
 # Round-robin CN endpoints
 DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
