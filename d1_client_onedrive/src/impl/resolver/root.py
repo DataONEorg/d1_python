@@ -48,28 +48,32 @@ from impl import attributes
 from impl import cache
 from impl import directory
 from impl import directory_item
-from . import faceted_search
+from . import workspace
 from . import flat_space
 from impl import os_escape
 from impl import path_exception
 from impl import path_exception
-from . import preconfigured_search
 from . import resolver_abc
 from .. import settings
 from impl import util
+
+import impl.command_processor
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
 class RootResolver(resolver_abc.Resolver):
-  def __init__(self):
+  def __init__(self, options):
+    self.options = options
+    # The command processor is shared between all resolvers. It holds db and
+    # REST connections and caches items that may be shared between resolvers.
+    self.command_processor = impl.command_processor.CommandProcessor(self.options)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self.resolvers = {
-      'FacetedSearch': faceted_search.Resolver(),
-      'PreconfiguredSearch': preconfigured_search.Resolver(),
-      'FlatSpace': flat_space.Resolver(),
+      'Workspace': workspace.Resolver(self.command_processor),
+      'FlatSpace': flat_space.Resolver(self.command_processor),
     }
     self.error_file_cache = cache.Cache(settings.MAX_ERROR_PATH_CACHE_SIZE)
 

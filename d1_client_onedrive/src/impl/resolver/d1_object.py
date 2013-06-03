@@ -46,8 +46,6 @@ from impl import cache
 from impl import command_processor
 from impl import directory
 from impl import directory_item
-from impl import facet_path_formatter
-from impl import facet_path_parser
 from impl import path_exception
 from . import resolver_abc
 from impl import settings
@@ -58,8 +56,8 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self):
-    self.command_processor = command_processor.CommandProcessor()
+  def __init__(self, command_processor):
+    self.command_processor = command_processor
     self.object_format_info = d1_client.object_format_info.ObjectFormatInfo()
 
   def get_attributes(self, path):

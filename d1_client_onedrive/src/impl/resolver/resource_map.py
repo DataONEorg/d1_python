@@ -44,8 +44,6 @@ from impl import command_processor
 import d1_object
 from impl import directory
 from impl import directory_item
-from impl import facet_path_formatter
-from impl import facet_path_parser
 from impl import path_exception
 import resolver_abc
 from impl import settings
@@ -56,9 +54,9 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self):
-    self.command_processor = command_processor.CommandProcessor()
-    self.d1_object_resolver = d1_object.Resolver()
+  def __init__(self, command_processor):
+    self.command_processor = command_processor
+    self.d1_object_resolver = d1_object.Resolver(command_processor)
     #self.facet_value_cache = cache.Cache(settings.MAX_FACET_NAME_CACHE_SIZE)
 
     # The resource map resolver handles only one hierarchy level, so anything
@@ -96,9 +94,9 @@ class Resolver(resolver_abc.Resolver):
     #    if len(path) > 1 or not self._is_resource_map(path[0]):
     return self.d1_object_resolver.read_file(path, size, offset)
 
-    #    return self._get_directory(path)
+#    return self._get_directory(path)
 
-    # Private.
+# Private.
 
   def _get_attribute(self, path):
     return attributes.Attributes(self._get_resource_map_size(path[0]), is_dir=True)
@@ -131,11 +129,11 @@ class Resolver(resolver_abc.Resolver):
   def _raise_invalid_pid(self, pid):
     raise path_exception.PathException('Invalid PID: {0}'.format(pid))
 
-    #    except Exception as e:
-    #      print e
-    #    except httplib.BadStatusLine as e:
-    #      # BadStatusLine means that the object was not found on the server
-    #      return False
+#    except Exception as e:
+#      print e
+#    except httplib.BadStatusLine as e:
+#      # BadStatusLine means that the object was not found on the server
+#      return False
 
   def deserialize_resource_map(self, resource_map):
     package = d1_client.data_package.DataPackage()
@@ -162,26 +160,26 @@ class Resolver(resolver_abc.Resolver):
   def get_zero(self, pid):
     return 0
 
-    #    for sci_obj_pid, sci_obj in package.scidata_dict.items():
-    #      print sci_obj_pid
-    #      print sci_obj.meta
+#    for sci_obj_pid, sci_obj in package.scidata_dict.items():
+#      print sci_obj_pid
+#      print sci_obj.meta
 
-    #    {
-    #     'original_pid': None, 
-    #     'pid': None, 
-    #     'scidata_dict': 
-    #      {u'r_test3.scidata.1.2012111515031353017039':
-    #        <d1_client.data_package.DataObject object at 0x32edf90>,
-    #        u'r_test3.scidata.2.2012111515031353017039':
-    #        <d1_client.data_package.DataObject object at 0x32f5890>
-    #      },
-    #      'sysmeta': None,
-    #      'resmap': None,
-    #      'scimeta':
-    #        <d1_client.data_package.DataObject object at 0x3300110>
-    #    }
+#    {
+#     'original_pid': None,
+#     'pid': None,
+#     'scidata_dict':
+#      {u'r_test3.scidata.1.2012111515031353017039':
+#        <d1_client.data_package.DataObject object at 0x32edf90>,
+#        u'r_test3.scidata.2.2012111515031353017039':
+#        <d1_client.data_package.DataObject object at 0x32f5890>
+#      },
+#      'sysmeta': None,
+#      'resmap': None,
+#      'scimeta':
+#        <d1_client.data_package.DataObject object at 0x3300110>
+#    }
 
-    # Private.
+# Private.
 
   def ___docs___():
     # Documentation of the foresite Python library
@@ -323,7 +321,6 @@ class Resolver(resolver_abc.Resolver):
     utils.unconnectedAction = 'drop' # drop unconnected parts of graph
     utils.unconnectedAction = 'warn' # print a warning to stdout
     utils.unconnectedAction = 'raise' # raise exception
-
 
 if __name__ == '__main__':
   r = Resolver()

@@ -44,8 +44,8 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self):
-    pass
+  def __init__(self, command_processor):
+    self.command_processor = command_processor
 
   def get_attributes(self, path):
     raise path_exception.PathException('<not implemented>')

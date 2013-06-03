@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 class Resolver(object):
   __metaclass__ = abc.ABCMeta
 
-  def __init__(self):
+  def __init__(self, command_processor):
     pass
 
   @abc.abstractmethod

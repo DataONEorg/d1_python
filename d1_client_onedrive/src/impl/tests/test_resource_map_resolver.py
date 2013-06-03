@@ -38,7 +38,7 @@ sys.path.append('../fuse')
 import directory
 import directory_item
 import solr_query_simulator
-import faceted_search
+import workspace
 
 
 class TestResourceMapResolver(unittest.TestCase):

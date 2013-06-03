@@ -23,12 +23,15 @@
 
 :Synopsis:
  - Top level module for ONEDrive.
- - Argument parser.
+ - Parse arguments.
+ - Instantiate the Root resolver.
+ - Mount FUSE.
 :Author: DataONE (Dahl)
 '''
 
 # Std.
 import logging
+#import logging.config # Needs 2.7.
 import os
 import sys
 import optparse
@@ -46,13 +49,13 @@ import d1_common.const
 import settings
 from impl import check_dependencies
 from impl.drivers.fuse import callbacks
+import impl.resolver.root
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
 def main():
-
   if not check_dependencies.check_dependencies():
     raise Exception('Dependency check failed')
 
@@ -73,6 +76,14 @@ def main():
     dest='logfile',
     help='Log to the file specified'
   )
+  parser.add_option(
+    '-w',
+    '--workspace',
+    action='store',
+    type='str',
+    dest='workspace',
+    help='Workspace XML file'
+  )
 
   (options, arguments) = parser.parse_args()
 
@@ -90,7 +101,8 @@ def main():
   if options.logfile is not None:
     settings.LOG_FILE = options.logfile
 
-    # Setup logging
+  # Setup logging
+  # logging.config.dictConfig(settings.LOGGING) # Needs 2.7
   log_setup()
   log.setLevel(map_level_string_to_level(settings.LOG_LEVEL))
 
@@ -118,8 +130,11 @@ def main():
   log_startup_parameters(options, arguments, fuse_args)
   log_settings()
 
+  # Instantiate the Root resolver.
+  root_resolver = impl.resolver.root.RootResolver(options)
+
   # Mount the drive and handle callbacks forever.
-  fuse.FUSE(callbacks.FUSECallbacks(), mount_point, **fuse_args)
+  fuse.FUSE(callbacks.FUSECallbacks(root_resolver), mount_point, **fuse_args)
 
 
 def log_setup():
@@ -131,16 +146,14 @@ def log_setup():
     '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'
   )
   # Log to a file
-  if settings.LOG_FILE is not None:
-    file_logger = logging.FileHandler(settings.LOG_FILE, 'a')
+  if settings.LOG_FILE_PATH is not None:
+    file_logger = logging.FileHandler(settings.LOG_FILE_PATH, 'a')
     file_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(file_logger)
-
-  # Log to stdout
-  else:
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
+  # Also log to stdout
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
 
 
 def map_level_string_to_level(level_string):

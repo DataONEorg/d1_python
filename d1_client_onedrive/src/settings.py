@@ -1,4 +1,23 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright 2009-2012 DataONE
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 ''':mod:`settings`
 ==================
 
@@ -33,7 +52,7 @@ def make_absolute(p):
 # connects.
 
 # Round-robin CN endpoints
-#DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
+DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
 #DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
@@ -41,7 +60,7 @@ def make_absolute(p):
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 
 # Bypass round-robin and go directly to a specific CN.
-DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
 # Select the mountpoint for ONEDrive. The mountpoint is the folder in the local
 # filesystem in which the ONEDrive filesystem appears. The default is to mount
@@ -52,39 +71,21 @@ DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
 MOUNTPOINT = make_absolute('one') # (default, relative path)
 #MOUNTPOINT = '/mnt/onedrive' # (example, absolute path)
 
-# The maximum number of science objects to display in a folder. This setting is
-# in effect when there are more science objects available than can be retrieved
-# and displayed when a folder is opened. To reach objects that are filtered by
-# this setting, use a faceted search to reduce the number of matching objects.
-# Increasing this setting causes longer lists of science objects to to appear in
-# the filesystem, increases memory footprint for the application and causes
-# longer response times when opening folders. Default value: 1000.
-MAX_OBJECTS_IN_DIRECTORY = 50
+# The username and encrypted password to use for accessing the ONEDrive
+# workspace.
+WORKSPACE_USERNAME = 'dahl'
+WORKSPACE_PASSWORD = '23af498ecc5732493671abbf'
 
-# The maximum number of faceting selections that can be displayed for a facet.
-# The faceting selections are displayed when opening a facet to add a
-# restriction to a faceted search. The selections are ordered by the number of
-# matching science objects. If there are more faceting selections than this
-# setting allows, the selections that match the fewest objects are not
-# displayed. Increasing this setting causes longer lists of faceting selections
-# to appear in the filesystem, increases memory footprint for the application
-# and causes longer response times when opening folders. Default value: 100.
-MAX_FACET_VALUES = 100
+# The maximum number of science objects to display for a search item. Increasing
+# this setting causes longer lists of science objects to to appear in the
+# filesystem, increases memory footprint for the application and causes longer
+# response times when opening folders. Default value: 1000.
+MAX_OBJECTS_FOR_SEARCH = 50
 
-################################################################################
-# Preconfigured searches
-################################################################################
-
-# Expert users can use this feature to set up searches that then can be further
-# refined through faceted searching in the filesystem. These searches are
-# reached through the PreconfiguredSearch root folder in the ONEDrive
-# filesystem.
-
-PRECONFIGURED_SEARCHES = {
-  'CSV files': [('fq', 'formatId:text/csv')],
-  'Objects from Member Node: Demo 5': [('fq', 'datasource:urn\\:node\\:mnDemo5')],
-  'PISCO project': [('fq', 'project:Partnership for Interdisciplinary Studies of Coastal Oceans \\\\(PISCO\\\\)')],
-}
+# The maximum number of objects to show in a flat list. ONEDrive can display
+# science objects in a flat list or in a hierarchy. This settings determines the
+# threshold at which ONEDrive switches from a flat to a hierarchical display.
+MAX_OBJECTS_FOR_FLAT_LIST = 10
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
@@ -95,12 +96,8 @@ PRECONFIGURED_SEARCHES = {
 # False: Log only error messages (for normal use, default)
 DEBUG = True
 
-# Set how serious a log message or error must be before it is logged.
-# Choices are: DEBUG, INFO, WARNING, ERROR, CRITICAL and NOTSET.
-LOG_LEVEL = 'DEBUG' if DEBUG else 'WARNING' # (set according to debug mode)
-
 # Set the default file to log to or None for logging to stdout
-LOG_FILE = 'onedrive.log'
+LOG_FILE_PATH = make_absolute('onedrive.log')
 
 # The maximum number of path attributes to cache. Increasing this number may
 # give better performance, but also a larger memory footprint. A value below 100
@@ -122,43 +119,18 @@ MAX_OBJECT_CACHE_SIZE = 100
 # not to be displayed correctly in the ONEDrive filesystem. Default value: 1000.
 MAX_ERROR_PATH_CACHE_SIZE = 1000
 
-# The maximum number of facet names for which to cache available facet values.
-# Increasing the size of this cache from its default is not necessary, as the
-# default value has been chosen to make it unlikely that the cache will
-# overflow. Decreasing the size is not recommended, as the cache has very little
-# impact on the memory footprint, while holding values which would be expensive
-# to keep pulling from DataONE. Default value: 1000.
-#MAX_FACET_NAME_CACHE_SIZE = 1000
-# TODO: Will probably end up removing this one, as the counts of matching
-# objects must be retrieved from Solr, and the values that this cache was
-# intended to hold are included with that information.
-
 # The maximum number of Solr query results to cache.
 MAX_SOLR_QUERY_CACHE_SIZE = 1000
-
-# The facet name and value decorates select the characters which denote
-# facet names and facet values in filesystem paths where a faceted search
-# is supported.
-FACET_NAME_DECORATOR = '@' # (default is '@')
-FACET_VALUE_DECORATOR = '#' # (default is '#')
-
-# A list of regular expressions that filter the values returned by the DataONE
-# CNRead.getQueryEngineDescription() API to determine which ones are suitable
-# for faceting. For a field to be available for faceting, it must be listed as
-# searchable in the query engine description and it must match one or more of
-# the the regular expressions in this list.
-#FACET_FILTER = [r'.*Text$', r'.*Date$', r'date.*']
-#FACET_FILTER = [r'.*keywords$',]
-FACET_FILTER = [r'.*', ]
 
 # In the ONEDrive filesystem, resource maps (data packages) are represented as
 # folders which can be opened to access the mapped science objects. This setting
 # controls how the size is displayed for the resource map folders. To display
 # the total size of mapped objects, ONEDrive must retrieve the resource maps,
 # parse them and retrieve the sizes of the individual objects, which slows down
-# opening of folders that contain many resource maps. Also, many clients do not
-# show size for folders, so the information retrieved by this setting may not be
-# displayed.
+# opening of folders that contain many resource maps. Also, many filesystem
+# browsers do not show size for folders, so the information retrieved by this
+# setting may not be displayed.
+#
 # 'total': Show total size of all objects in resource maps (slow)
 # 'number': Show number of objects in resource maps (less slow)
 # 'zero': Show zero size for all resource maps (fast, default)
@@ -168,10 +140,6 @@ FOLDER_SIZE_FOR_RESOURCE_MAPS = 'zero'
 # True: A persistent connection is maintained (default)
 # False: A new connection is created each time a query is sent
 #SOLR_PERSIST_CONNECTION = True
-
-# Objects that match this query are filtered out of all search results.
-# None: No filter (default)
-SOLR_FILTER_QUERY = None
 
 # The path that is appended to the DataONE root URL to reach the endpoint for
 # the DataONE CNRead.query() API.
@@ -229,3 +197,45 @@ IGNORE_SPECIAL = set(
     '.xdg-volume-info',
   ]
 )
+
+# Set up logging.
+
+## Set the level of logging that PASTA GMN Adapter should perform. Choices are:
+## DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
+if DEBUG or GMN_ADAPTER_DEBUG:
+  LOG_LEVEL = 'DEBUG'
+else:
+  LOG_LEVEL = 'WARNING'
+
+# Needs Python 2.7
+
+#LOGGING = {
+#  'version': 1,
+#  'disable_existing_loggers': True,
+#  'formatters': {
+#    'verbose': {
+#        'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s ' \
+#                  '%(process)d %(thread)d %(message)s',
+#        'datefmt': '%Y-%m-%d %H:%M:%S'
+#    },
+#    'simple': {
+#      'format': '%(levelname)s %(message)s'
+#    },
+#  },
+#  'handlers': {
+#    'file': {
+#      'level': LOG_LEVEL,
+#      'class': 'logging.FileHandler',
+#      'filename': LOG_FILE_PATH,
+#      'formatter': 'verbose'
+#    },
+#  },
+#  'loggers': {
+#    # The "catch all" logger is denoted by ''.
+#    '': {
+#      'handlers': ['file'],
+#      'propagate': True,
+#      'level': LOG_LEVEL,
+#    },
+#  }
+#}

@@ -49,7 +49,6 @@ from impl import cache
 from impl import directory
 from impl import directory_item
 from impl import path_exception
-from impl.resolver import root
 from ... import settings
 
 # Set up logger for this module.
@@ -57,10 +56,10 @@ log = logging.getLogger(__name__)
 
 
 class FUSECallbacks(fuse.Operations):
-  def __init__(self):
+  def __init__(self, root_resolver):
     log.debug("Enter FUSECalbacks.__init__")
     self.READ_ONLY_ACCESS_MODE = 3
-    self.root = root.RootResolver()
+    self.root_resolver = root_resolver
     self.start_time = time.time()
     self.gid = os.getgid()
     self.uid = os.getuid()
@@ -95,7 +94,7 @@ class FUSECallbacks(fuse.Operations):
     try:
       dir = self.directory_cache[path]
     except KeyError:
-      dir = self.root.get_directory(path)
+      dir = self.root_resolver.get_directory(path)
       self.directory_cache[path] = dir
     return dir.names()
 
@@ -116,7 +115,7 @@ class FUSECallbacks(fuse.Operations):
   def read(self, path, size, offset, fh):
     log.debug('read(): {0}'.format(path))
     try:
-      return self.root.read_file(path, size, offset)
+      return self.root_resolver.read_file(path, size, offset)
     except path_exception.PathException as e:
       raise OSError(errno.ENOENT, e)
 
@@ -128,7 +127,7 @@ class FUSECallbacks(fuse.Operations):
 #      log.debug('Found in cache: {0}'.format(path))
 #    except KeyError:
 #      log.debug('Not found in cache. {0}'.format(path))
-#      directory = self.root.resolve(path)
+#      directory = self.root_resolver.resolve(path)
 #      file_to_attributes_map = self._create_file_to_attributes_map(directory)
 #      self.directory_cache[path] = directory, file_to_attributes_map
 #    return directory, file_to_attributes_map
@@ -144,7 +143,7 @@ class FUSECallbacks(fuse.Operations):
     try:
       return self.attribute_cache[path]
     except KeyError:
-      attribute = self.root.get_attributes(path)
+      attribute = self.root_resolver.get_attributes(path)
       self.attribute_cache[path] = attribute
       return attribute
 
