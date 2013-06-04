@@ -79,6 +79,10 @@ Example::
 '''
 import logging
 import sys
+import httplib
+import time
+import pyxb
+import d1_common.types.exceptions
 
 # D1
 try:
@@ -116,6 +120,7 @@ class ObjectListIterator(object):
     self._objectList = None
     self._czero = 0
     self._citem = 0
+    self._pageoffs = 0
     self._client = client
     if max >= 0 and max < pagesize:
       pagesize = max
@@ -149,23 +154,41 @@ class ObjectListIterator(object):
     )
     if self._citem >= self._maxitem:
       raise StopIteration
-    if (self._citem - self._czero) >= len(self._objectList.objectInfo):
+    if (self._pageoffs) >= len(self._objectList.objectInfo):
       self._loadMore(start=self._czero + len(self._objectList.objectInfo))
       if len(self._objectList.objectInfo) < 1:
         raise StopIteration
-    res = self._objectList.objectInfo[self._citem - self._czero]
+    res = self._objectList.objectInfo[self._pageoffs]
     self._citem += 1
+    self._pageoffs += 1
     return res
 
-  def _loadMore(self, start=0):
+  def _loadMore(self, start=0, trys=0, validation=True):
     '''Retrieves the next page of results
     '''
     self.log.debug("Loading page starting from %d" % start)
     self._czero = start
-    self._objectList = self._client.listObjects(
-      start=start, count=self._pagesize,
-      fromDate=self.fromDate
-    )
+    self._pageoffs = 0
+    try:
+      pyxb.RequireValidWhenParsing(validation)
+      self._objectList = self._client.listObjects(
+        start=start, count=self._pagesize,
+        fromDate=self.fromDate
+      )
+    except httplib.BadStatusLine as e:
+      self.log.warn("Server responded with Bad Status Line. Retrying in 5sec")
+      self._client.connection.close()
+      if trys > 3:
+        raise e
+      trys += 1
+      self._loadMore(start, trys)
+    except d1_common.types.exceptions.ServiceFailure as e:
+      self.log.error(e)
+      if trys > 3:
+        raise e
+      trys += 1
+      self._loadMore(start, trys, validation=False)
+    self._client.connection.close()
 
   def __len__(self):
     '''Implements len(ObjectListIterator)
@@ -224,12 +247,11 @@ if __name__ == "__main__":
     pagesize=options.pagesize,
     max=options.max
   )
-  counter = 0
+  counter = options.start
   print "---"
   print "total: %d" % len(ol)
   print "---"
   for o in ol:
-    counter += 1
     print "-"
     print "  item     : %d" % counter
     print "  pid      : %s" % o.identifier.value()
@@ -238,3 +260,4 @@ if __name__ == "__main__":
     print "  size     : %s" % o.size
     print "  checksum : %s" % o.checksum.value()
     print "  algorithm: %s" % o.checksum.algorithm
+    counter += 1
