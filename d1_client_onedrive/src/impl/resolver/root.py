@@ -54,7 +54,7 @@ from impl import os_escape
 from impl import path_exception
 from impl import path_exception
 from . import resolver_abc
-from .. import settings
+#from ..   #import settings
 from impl import util
 
 import impl.command_processor
@@ -65,17 +65,17 @@ log = logging.getLogger(__name__)
 
 class RootResolver(resolver_abc.Resolver):
   def __init__(self, options):
-    self.options = options
+    self._options = options
     # The command processor is shared between all resolvers. It holds db and
     # REST connections and caches items that may be shared between resolvers.
-    self.command_processor = impl.command_processor.CommandProcessor(self.options)
+    self.command_processor = impl.command_processor.CommandProcessor(options)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self.resolvers = {
-      'Workspace': workspace.Resolver(self.command_processor),
-      'FlatSpace': flat_space.Resolver(self.command_processor),
+      'Workspace': workspace.Resolver(options, self.command_processor),
+      'FlatSpace': flat_space.Resolver(options, self.command_processor),
     }
-    self.error_file_cache = cache.Cache(settings.MAX_ERROR_PATH_CACHE_SIZE)
+    self.error_file_cache = cache.Cache(self._options.MAX_ERROR_PATH_CACHE_SIZE)
 
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(path))

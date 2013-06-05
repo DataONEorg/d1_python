@@ -36,7 +36,7 @@ import d1_client.cnclient_1_1
 import d1_client.mnclient
 
 # App.
-import settings
+#import settings
 import path_exception
 
 # Set up logger for this module.
@@ -44,9 +44,11 @@ log = logging.getLogger(__name__)
 
 
 class D1Client(object):
-  def __init__(self, base_url=settings.DATAONE_ROOT):
-    self.base_url = base_url
-    self.client = d1_client.cnclient_1_1.CoordinatingNodeClient(base_url=base_url)
+  def __init__(self, options):
+    self._options = options
+    self.client = d1_client.cnclient_1_1.CoordinatingNodeClient(
+      base_url=self._options.BASE_URL
+    )
     self.query_engine_description = None
     self.all_facet_names = None
 
@@ -88,7 +90,7 @@ class D1Client(object):
 
   def get_science_object(self, pid):
     try:
-      d1client = d1_client.d1client.DataONEClient(cnBaseUrl=self.base_url)
+      d1client = d1_client.d1client.DataONEClient(cnBaseUrl=self._options.BASE_URL)
       return d1client.get(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise path_exception.PathException(e.description)

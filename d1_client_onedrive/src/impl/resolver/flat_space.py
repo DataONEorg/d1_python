@@ -55,9 +55,10 @@ how_to_use = 'Use FlatSpace to go directly to any DataONE object by typing ' \
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self, command_processor):
+  def __init__(self, options, command_processor):
+    self._options = options
     self.command_processor = command_processor
-    self.resource_map_resolver = resource_map.Resolver(command_processor)
+    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
 
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))

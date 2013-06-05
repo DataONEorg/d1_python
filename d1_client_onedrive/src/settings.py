@@ -41,7 +41,7 @@ def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
 ################################################################################
-# User configurable settings.
+# User configurable self._options.
 ################################################################################
 
 # In addition to the default production environment, DataONE maintains several
@@ -52,15 +52,15 @@ def make_absolute(p):
 # connects.
 
 # Round-robin CN endpoints
-DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
-#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+BASE_URL = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
+#BASE_URL = 'https://cn-dev.test.dataone.org/cn'
+#BASE_URL = 'https://cn-stage.test.dataone.org/cn'
+#BASE_URL = 'https://cn-sandbox.dataone.org/cn'
+#BASE_URL = 'https://cn-stage.dataone.org/cn/'
+#BASE_URL = 'https://cn-stage.test.dataone.org/cn'
 
 # Bypass round-robin and go directly to a specific CN.
-#DATAONE_ROOT = 'https://cn-dev-unm-1.test.dataone.org/cn'
+#BASE_URL = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
 # Select the mountpoint for ONEDrive. The mountpoint is the folder in the local
 # filesystem in which the ONEDrive filesystem appears. The default is to mount
@@ -73,8 +73,9 @@ MOUNTPOINT = make_absolute('one') # (default, relative path)
 
 # The username and encrypted password to use for accessing the ONEDrive
 # workspace.
-WORKSPACE_USERNAME = 'dahl'
-WORKSPACE_PASSWORD = '23af498ecc5732493671abbf'
+#WORKSPACE_USERNAME = 'dahl'
+#WORKSPACE_PASSWORD = '23af498ecc5732493671abbf'
+WORKSPACE_XML = make_absolute('workspace.xml')
 
 # The maximum number of science objects to display for a search item. Increasing
 # this setting causes longer lists of science objects to to appear in the

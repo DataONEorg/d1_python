@@ -43,7 +43,7 @@ from impl import directory_item
 from impl import path_exception
 from . import resolver_abc
 from . import resource_map
-from impl import settings
+#from impl #import settings
 from impl import util
 from impl.resolver import author
 from impl.resolver import taxa
@@ -84,10 +84,10 @@ class WorkspaceFolderObjects(object):
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self, command_processor):
-    log.debug("New FacetedSearch Resolver")
+  def __init__(self, options, command_processor):
+    self._options = options
     self.command_processor = command_processor
-    self.resource_map_resolver = resource_map.Resolver(command_processor)
+    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
 
     self.resolvers = {
       'Authors': author.Resolver(self.command_processor),
@@ -96,7 +96,7 @@ class Resolver(resolver_abc.Resolver):
       'Taxa': taxa.Resolver(self.command_processor),
       'TimePeriods': time_period.Resolver(self.command_processor),
     }
-    #self.facet_value_cache = cache.Cache(settings.MAX_FACET_NAME_CACHE_SIZE)
+    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))

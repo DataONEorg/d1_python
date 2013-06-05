@@ -45,7 +45,7 @@ from impl import directory
 from impl import directory_item
 from impl import path_exception
 import resolver_abc
-from impl import settings
+#from impl #import settings
 from impl import util
 
 # Set up logger for this module.
@@ -56,7 +56,7 @@ class Resolver(resolver_abc.Resolver):
   def __init__(self, command_processor):
     self.command_processor = command_processor
     self.d1_object_resolver = d1_object.Resolver(command_processor)
-    #self.facet_value_cache = cache.Cache(settings.MAX_FACET_NAME_CACHE_SIZE)
+    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
     # The region resolver handles hierarchy levels:
     # / = all regions with one or more members (e.g., /Yosemite National Park)

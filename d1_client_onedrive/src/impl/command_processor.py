@@ -42,7 +42,7 @@ import cache
 import onedrive_d1_client
 import onedrive_solr_client
 import path_exception
-import settings
+#import settings
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -50,23 +50,23 @@ log = logging.getLogger(__name__)
 
 class CommandProcessor():
   def __init__(self, options):
-    self.options = options
+    self._options = options
     # Set up workspace.
-    xml_doc = open(self.options.workspace, 'rb').read()
-    self.workspace = workspace_types.CreateFromDocument(xml_doc)
+    xml_doc = open(options.WORKSPACE_XML, 'rb').read()
+    self._workspace = workspace_types.CreateFromDocument(xml_doc)
 
     #self.fields_good_for_faceting = self.init_field_names_good_for_faceting()
-    #self.solr_query_cache = cache.Cache(settings.MAX_SOLR_QUERY_CACHE_SIZE)
+    #self.solr_query_cache = cache.Cache(self._options.MAX_SOLR_QUERY_CACHE_SIZE)
     #self.object_description_cache = cache.Cache(1000)
     #self.science_object_cache = cache.Cache(1000)
     #self.system_metadata_cache = cache.Cache(1000)
     self.object_description_cache2 = cache.Cache(1000)
-    self.solr_client = onedrive_solr_client.SolrClient()
+    self.solr_client = onedrive_solr_client.SolrClient(options)
 
   # Solr.
 
   def get_workspace(self):
-    return self.workspace
+    return self._workspace
 
   def solr_query_raw(self, query_string):
     #try:

@@ -59,7 +59,7 @@ def main():
   if not check_dependencies.check_dependencies():
     raise Exception('Dependency check failed')
 
-  parser = optparse.OptionParser('%prog [options] [mountpoint]')
+  parser = optparse.OptionParser('%prog [options]')
   parser.add_option(
     '-v',
     '--version',
@@ -68,43 +68,36 @@ def main():
     default=False,
     help='Display version information and exit'
   )
-  parser.add_option(
-    '-l',
-    '--logfile',
-    action='store',
-    type='str',
-    dest='logfile',
-    help='Log to the file specified'
-  )
-  parser.add_option(
-    '-w',
-    '--workspace',
-    action='store',
-    type='str',
-    dest='workspace',
-    help='Workspace XML file'
-  )
+
+  # Add options to override defaults in settings.py.
+  for k, v in settings.__dict__.items():
+    # Only allow overriding strings and ints.
+    if not (isinstance(v, str) or isinstance(v, int)):
+      continue
+    if k == k.upper():
+      parser.add_option(
+        '--{0}'.format(k.lower().replace('_', '-')),
+        action='store',
+        type='str',
+        dest=k.upper(),
+        default=v,
+        metavar=v
+      )
 
   (options, arguments) = parser.parse_args()
 
-  if len(arguments) > 1:
-    log.error('Too many command line arguments')
+  if len(arguments) > 0:
     parser.print_help()
     sys.exit()
 
-  if len(arguments) == 1:
-    mount_point = arguments[0]
-  else:
-    mount_point = settings.MOUNTPOINT
-
-  # Handles the logfile option
-  if options.logfile is not None:
-    settings.LOG_FILE = options.logfile
+  ## Handles the logfile option
+  #if options.logfile is not None:
+  #    self._options.LOG_FILE = options.logfile
 
   # Setup logging
-  # logging.config.dictConfig(settings.LOGGING) # Needs 2.7
-  log_setup()
-  log.setLevel(map_level_string_to_level(settings.LOG_LEVEL))
+  # logging.config.dictConfig(self._options.LOGGING) # Needs 2.7
+  log_setup(options)
+  log.setLevel(map_level_string_to_level(options.LOG_LEVEL))
 
   if options.version:
     log_library_versions()
@@ -112,32 +105,36 @@ def main():
 
   # FUSE settings common to FUSE and MacFUSE.
   fuse_args = {
-    'foreground': settings.FUSE_FOREGROUND,
-    'fsname': settings.FUSE_FILESYSTEM_NAME,
-    'nothreads': settings.FUSE_NOTHREADS,
+    'foreground': options.FUSE_FOREGROUND,
+    'fsname': options.FUSE_FILESYSTEM_NAME,
+    'nothreads': options.FUSE_NOTHREADS,
     # Allow sharing the mount point with Samba / smb / smbd.
     # Requires user_allow_other in /etc/fuse.conf
     # 'allow_other': True,
   }
   # FUSE settings specific to MacFUSE.
   if os.uname()[0] == 'Darwin':
-    fuse_args['volicon'] = settings.MACFUSE_ICON
-    fuse_args['local'] = settings.MACFUSE_LOCAL_DISK
+    fuse_args['volicon'] = self._options.MACFUSE_ICON
+    fuse_args['local'] = self._options.MACFUSE_LOCAL_DISK
   # FUSE settings specific to regular FUSE.
   else:
-    fuse_args['nonempty'] = settings.FUSE_NONEMPTY
+    fuse_args['nonempty'] = options.FUSE_NONEMPTY
 
   log_startup_parameters(options, arguments, fuse_args)
-  log_settings()
+  log_settings(options)
 
   # Instantiate the Root resolver.
   root_resolver = impl.resolver.root.RootResolver(options)
 
   # Mount the drive and handle callbacks forever.
-  fuse.FUSE(callbacks.FUSECallbacks(root_resolver), mount_point, **fuse_args)
+  fuse.FUSE(
+    callbacks.FUSECallbacks(
+      options, root_resolver
+    ), options.MOUNTPOINT, **fuse_args
+  )
 
 
-def log_setup():
+def log_setup(options):
   # Set up logging.
   # Log entries are written to both file and stdout.
   logging.getLogger('').setLevel(logging.DEBUG)
@@ -146,8 +143,8 @@ def log_setup():
     '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'
   )
   # Log to a file
-  if settings.LOG_FILE_PATH is not None:
-    file_logger = logging.FileHandler(settings.LOG_FILE_PATH, 'a')
+  if options.LOG_FILE_PATH is not None:
+    file_logger = logging.FileHandler(options.LOG_FILE_PATH, 'a')
     file_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(file_logger)
   # Also log to stdout
@@ -188,9 +185,9 @@ def log_startup_parameters(options, arguments, fuse_args):
   log.info('  FUSE arguments: {0}'.format(str(fuse_args)))
 
 
-def log_settings():
+def log_settings(options):
   log.info('Settings:')
-  for k, v in sorted(settings.__dict__.items()):
+  for k, v in sorted(options.__dict__.items()):
     if k == k.upper():
       log.info('  {0}: {1}'.format(k, v))
 

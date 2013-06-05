@@ -56,16 +56,15 @@ log = logging.getLogger(__name__)
 
 
 class FUSECallbacks(fuse.Operations):
-  def __init__(self, root_resolver):
-    log.debug("Enter FUSECalbacks.__init__")
+  def __init__(self, options, root_resolver):
+    self._options = options
     self.READ_ONLY_ACCESS_MODE = 3
     self.root_resolver = root_resolver
     self.start_time = time.time()
     self.gid = os.getgid()
     self.uid = os.getuid()
-    self.attribute_cache = cache.Cache(settings.MAX_ATTRIBUTE_CACHE_SIZE)
-    self.directory_cache = cache.Cache(settings.MAX_DIRECTORY_CACHE_SIZE)
-    log.debug("Exit FUSECalbacks.__init__")
+    self.attribute_cache = cache.Cache(self._options.MAX_ATTRIBUTE_CACHE_SIZE)
+    self.directory_cache = cache.Cache(self._options.MAX_DIRECTORY_CACHE_SIZE)
 
 
   def getattr(self, path, fh):

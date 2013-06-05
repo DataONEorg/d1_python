@@ -46,7 +46,7 @@ from impl import directory
 from impl import directory_item
 from impl import path_exception
 import resolver_abc
-from impl import settings
+#from impl #import settings
 from impl import util
 
 # Set up logger for this module.
@@ -54,10 +54,11 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self, command_processor):
+  def __init__(self, options, command_processor):
+    self._options = options
     self.command_processor = command_processor
     self.d1_object_resolver = d1_object.Resolver(command_processor)
-    #self.facet_value_cache = cache.Cache(settings.MAX_FACET_NAME_CACHE_SIZE)
+    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
@@ -111,7 +112,7 @@ class Resolver(resolver_abc.Resolver):
       'total': self.get_total_size_of_objects_in_resource_map,
       'number': self.get_number_of_objects_in_resource_map,
       'zero': self.get_zero,
-    }[settings.FOLDER_SIZE_FOR_RESOURCE_MAPS](pid)
+    }[self._options.FOLDER_SIZE_FOR_RESOURCE_MAPS](pid)
 
   def _is_resource_map(self, pid):
     #try:

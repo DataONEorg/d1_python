@@ -45,7 +45,7 @@ import d1_common.url
 # App.
 import path_exception
 import query_engine_description
-import settings
+#import settings
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -72,15 +72,11 @@ https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*&rows=10&facet=true
 # SolrConnection is a thin layer on top of HTTPSConnection that automatically
 # retries queries and connection attempts.
 class SolrConnection(object):
-  def __init__(
-    self,
-    base_url=settings.DATAONE_ROOT,
-    solr_selector='/v1/query/solr/',
-    _n_tries=3
-  ):
-    self._base_url = base_url
-    self._solr_host = self._get_hostname(base_url)
-    self._solr_selector = self._get_solr_selector(base_url, solr_selector)
+  def __init__(self, options, solr_selector='/v1/query/solr/', _n_tries=3):
+    self._options = options
+    self._base_url = options.BASE_URL
+    self._solr_host = self._get_hostname(options.BASE_URL)
+    self._solr_selector = self._get_solr_selector(options.BASE_URL, solr_selector)
     self._connection = self._create_connection()
     self._n_tries = _n_tries
 
@@ -139,22 +135,19 @@ class SolrConnection(object):
 
 
 class SolrClient(object):
-  def __init__(self, base_url=settings.DATAONE_ROOT,
-               relative_solr_path=settings.SOLR_QUERY_PATH,
-               filter_query=None, # settings.SOLR_FILTER_QUERY,
-               solr_debug=settings.SOLR_DEBUG
-               ):
-    self._solr_connection = SolrConnection(base_url)
-    self.custom_filter_query = filter_query
-    self.solr_debug = solr_debug
+  def __init__(self, options):
+    self._options = options
+    self._solr_connection = SolrConnection(options)
+    #self._custom_filter_query = None
+    #self._solr_debug = solr_debug
     #self.solr_path = self.get_solr_path(base_url, relative_solr_path)
-    self.base_url = base_url
+    #self._base_url = base_url
 
   def query(self, query, field_list, filter_query=None):
     query_params = [
       ('q', query),
       ('fl', field_list), #'id,dateModified,size,formatId'),
-      ('rows', settings.MAX_OBJECTS_FOR_SEARCH),
+      ('rows', self._options.MAX_OBJECTS_FOR_SEARCH),
       ('indent', 'on'),
       #('facet', 'true'),
       #('facet.limit', '5'),
@@ -193,7 +186,7 @@ class SolrClient(object):
   #  query_params = [tuple(field_value.split('=')) for field_value in query_string.split('&')]
   #  query_params.append(('fl', 'python'))
   #  query_params.append(('wt', 'python'))
-  #  ('rows', settings.MAX_OBJECTS_IN_DIRECTORY),
+  #  ('rows', self._options.MAX_OBJECTS_IN_DIRECTORY),
   #  return self.send_request(query_params)
 
   ## Want to return a result that:
@@ -207,7 +200,7 @@ class SolrClient(object):
   #    ('q', '*:*'),
   #    ('fq', self.format_filter_query(applied_facets)),
   #    ('fl', 'id,dateModified,size,formatId'),
-  #    ('rows', settings.MAX_OBJECTS_IN_DIRECTORY),
+  #    ('rows', self._options.MAX_OBJECTS_IN_DIRECTORY),
   #    ('indent', 'on'),
   #    ('facet', 'true'),
   #    ('facet.limit', '5'),
