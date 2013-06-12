@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. Setup &mdash; DataONE Common Library for Python 1.0.0 documentation</title>
+    <title>1. DataONE Common Library for Python &mdash; DataONE Common Library for Python 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="DataONE Common Library for Python 1.0.0 documentation" href="index.html" />
-    <link rel="next" title="1.1. Python dependencies" href="setup-python-deps.html" />
+    <link rel="next" title="2. API and tests" href="generated.html" />
     <link rel="prev" title="DataONE Common Library for Python" href="index.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="setup-python-deps.html" title="1.1. Python dependencies"
+          <a href="generated.html" title="2. API and tests"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="DataONE Common Library for Python"
@@ -54,8 +54,8 @@
   <p class="topless"><a href="index.html"
                         title="previous chapter">DataONE Common Library for Python</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="setup-python-deps.html"
-                        title="next chapter">1.1. Python dependencies</a></p>
+  <p class="topless"><a href="generated.html"
+                        title="next chapter">2. API and tests</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/setup.txt"
@@ -82,15 +82,27 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="setup">
-<h1>1. Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h1>
-<p>Setting up the <a class="reference internal" href="glossary.html#term-dataone-common-library-for-python"><em class="xref std std-term">DataONE Common Library for Python</em></a>.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="setup-python-deps.html">1.1. Python dependencies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup-d1-common.html">1.2. DataONE Common Library for Python</a></li>
+  <div class="section" id="dataone-common-library-for-python">
+<h1>1. DataONE Common Library for Python<a class="headerlink" href="#dataone-common-library-for-python" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="glossary.html#term-dataone-common-library-for-python"><em class="xref std std-term">DataONE Common Library for Python</em></a> is distributed via PyPI, the Python
+Package Index.</p>
+<blockquote>
+<div><p>Set up server packages:</p>
+<ul class="simple">
+<li>The build environment for DataONE Python extensions and lxml</li>
+<li>Commands used in the install</li>
 </ul>
+<div class="highlight-python"><pre>$ sudo apt-get --yes install build-essential python-dev libssl-dev \
+libxml2-dev libxslt-dev openssl</pre>
 </div>
+<p>Install pip (Python package installer):</p>
+<div class="highlight-python"><pre>$ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;</pre>
+</div>
+<p>Install the DataONE Client Library for Python and all its dependencies. This
+will also automatically build several Python C extensions:</p>
+<div class="highlight-python"><pre>$ sudo pip install dataone.common</pre>
+</div>
+</div></blockquote>
 </div>
 
 
@@ -109,7 +121,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="setup-python-deps.html" title="1.1. Python dependencies"
+          <a href="generated.html" title="2. API and tests"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="DataONE Common Library for Python"
