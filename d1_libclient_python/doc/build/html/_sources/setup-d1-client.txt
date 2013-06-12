@@ -1,33 +1,30 @@
 DataONE Client Library for Python
 =================================
 
-First, install :term:`DataONE Common Library for Python` according to the
-instructions in the documentation for that project. It is a dependency of
-:term:`DataONE Client Library for Python`.
+:term:`DataONE Common Library for Python` is distributed via PyPI, the Python
+Package Index.
 
-The distribution of DataONE Common Library for Python is currently
-:term:`Subversion` based. This makes it easy to keep up to date with changes. A
-package will be released at some point in the future once things stabilize a
-bit.
+  Set up server packages:
 
-Install Subversion::
+  * The build environment for DataONE Python extensions and lxml
+  * Commands used in the install
 
-  $ sudo apt-get install subversion
+  ::
+
+    $ sudo apt-get --yes install build-essential python-dev libssl-dev \
+    libxml2-dev libxslt-dev openssl
+
+  Install pip (Python package installer)::
+
+    $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
+
+  Install the DataONE Client Library for Python and all its dependencies. This
+  will also automatically build several Python C extensions::
+
+    $ sudo pip install dataone.libclient
 
 
-Install DataONE Client Library for Python
------------------------------------------
+The library can be tested by running one of the included usage examples. The
+examples can be found in the `dist-packages` folder, for instance::
 
-To set the library up in ``/var/local/dataone/d1_client_python`` using
-:term:`Bash` (which is often the default shell)::
-
-  $ sudo -s
-  # cd /var/local/dataone
-  # svn co https://repository.dataone.org/software/cicore/trunk/d1_libclient_python d1_libclient_python
-  # cd d1_libclient_python/src/
-  # python setup.py develop
-
-To update your copy of the library::
-
-  $ cd /var/local/dataone/d1_client_python
-  $ svn update
+  /usr/local/lib/python2.6/dist-packages/examples/
