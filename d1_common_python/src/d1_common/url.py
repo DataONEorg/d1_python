@@ -91,7 +91,8 @@ def stripElementSlashes(element):
 
 
 def joinPathElements(*elements):
-  '''Join two or more URL elements, inserting '/' as needed.
+  '''Join two or more URL elements, inserting '/' as needed. Note: Any leading
+  and trailing slashes are stripped from the resulting URL. 
   '''
   url = []
   for element in elements:
@@ -100,6 +101,17 @@ def joinPathElements(*elements):
       continue
     url.append(element)
   return '/'.join(url)
+
+
+def joinPathElementsNoStrip(*elements):
+  '''Join two or more URL elements, inserting '/' as needed. As opposed to
+  joinPathElements(), this function never removes slashes.
+  '''
+  e = list(elements)
+  for i, (x, y) in enumerate(zip(e, e[1:])):
+    if not (x.endswith('/') or y.startswith('/')):
+      e[i] = x + '/'
+  return ''.join(e)
 
 
 def normalizeTarget(target):
