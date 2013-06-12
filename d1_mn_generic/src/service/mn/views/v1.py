@@ -195,7 +195,7 @@ def get_object_pid(request, pid):
 
 def _get_object_byte_stream(sciobj):
   url_split = urlparse.urlparse(sciobj.url)
-  if url_split.scheme == 'http':
+  if url_split.scheme in ('http', 'https'):
     return _get_object_byte_stream_remote(sciobj.url, url_split)
   return _get_object_byte_stream_local(sciobj.pid)
 

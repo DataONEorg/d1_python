@@ -407,7 +407,7 @@ def assert_create_update_delete_permission(f):
 
   def wrap(request, *args, **kwargs):
     if not models.WhitelistForCreateUpdateDelete.objects.filter(
-        subject__subject__in=request.subjects).exists() \
+      subject__subject__in=request.subjects).exists() \
       and not is_trusted_subject(request):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for subjects with Create/Update/Delete '
