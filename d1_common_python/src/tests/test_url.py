@@ -94,6 +94,24 @@ class TestUrl(unittest.TestCase):
     self.assertEqual('a/b', d1_common.url.joinPathElements('a', 'b'))
     self.assertEqual('a/b/c', d1_common.url.joinPathElements('a/', '/b', 'c'))
 
+  def test_055(self):
+    '''joinPathElementsNoStrip()'''
+    self.assertEqual('', d1_common.url.joinPathElementsNoStrip(''))
+    self.assertEqual('/', d1_common.url.joinPathElementsNoStrip('/'))
+    self.assertEqual('//', d1_common.url.joinPathElementsNoStrip('//'))
+    self.assertEqual('ab', d1_common.url.joinPathElementsNoStrip('ab'))
+    self.assertEqual('a/b', d1_common.url.joinPathElementsNoStrip('a/b'))
+    self.assertEqual('a/b', d1_common.url.joinPathElementsNoStrip('a', 'b'))
+    self.assertEqual('a/b/c', d1_common.url.joinPathElementsNoStrip('a', 'b', 'c'))
+    self.assertEqual('a/b', d1_common.url.joinPathElementsNoStrip('a/', 'b'))
+    self.assertEqual('a//b', d1_common.url.joinPathElementsNoStrip('a//', 'b'))
+    self.assertEqual('a/b/', d1_common.url.joinPathElementsNoStrip('a/', 'b/'))
+    self.assertEqual(
+      'a//b///c', d1_common.url.joinPathElementsNoStrip(
+        'a//', 'b', '///c'
+      )
+    )
+
   def test_060(self):
     '''normalizeTarget()'''
     u0 = "http://some.server/base/mn/"
@@ -139,7 +157,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestUtils
+  s = TestUrl
   s.options = options
 
   if options.test != '':
