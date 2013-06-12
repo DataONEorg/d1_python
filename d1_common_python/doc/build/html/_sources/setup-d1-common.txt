@@ -1,25 +1,24 @@
 DataONE Common Library for Python
 =================================
 
-The distribution of DataONE Common Library for Python is currently
-:term:`Subversion` based. This makes it easy to keep up to date with changes. A
-package will be released at some point in the future once things stabilize a
-bit.
+:term:`DataONE Common Library for Python` is distributed via PyPI, the Python
+Package Index.
 
-Install Subversion::
+  Set up server packages:
 
-  $ sudo apt-get install subversion
+  * The build environment for DataONE Python extensions and lxml
+  * Commands used in the install
 
+  ::
 
-Install DataONE Common Library for Python
------------------------------------------
+    $ sudo apt-get --yes install build-essential python-dev libssl-dev \
+    libxml2-dev libxslt-dev openssl
 
-To set the library up in ``/var/local/dataone/d1_common_python`` using
-:term:`Bash` (which is often the default shell)::
+  Install pip (Python package installer)::
 
-  $ sudo -s
-  # mkdir -p /var/local/dataone
-  # cd /var/local/dataone
-  # svn co https://repository.dataone.org/software/cicore/trunk/d1_common_python d1_common_python
-  # cd d1_common_python/src/
-  # python setup.py develop
+    $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
+
+  Install the DataONE Client Library for Python and all its dependencies. This
+  will also automatically build several Python C extensions::
+
+    $ sudo pip install dataone.common

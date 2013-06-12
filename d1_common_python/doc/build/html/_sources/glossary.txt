@@ -159,8 +159,28 @@ Glossary
 
 
   PostgreSQL
-    A freely available object-relational database management system (ORDBMS)
-    used by DataONE.
+    A freely available object-relational database management system (ORDBMS).
+
+    http://www.postgresql.org/
+
+
+  MySQL
+    A freely available object-relational database management system (ORDBMS).
+
+    http://www.mysql.com/
+
+
+  SQLite3
+    A freely available object-relational database management system (ORDBMS).
+
+    http://www.sqlite.org/
+
+
+  Oracle
+    A object-relational database management system (ORDBMS) that is available
+    in both free and commercial versions.
+
+    http://www.oracle.com/
 
 
   Psycopg2
