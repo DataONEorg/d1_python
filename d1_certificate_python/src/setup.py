@@ -53,7 +53,10 @@ setup(
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-  packages=find_packages(),
+
+  # Accept all data files and directories matched by MANIFEST.in or found in
+  # source control.
+  include_package_data=True,
   install_requires=[
     'dataone.common >= 1.0.0',
   ],
