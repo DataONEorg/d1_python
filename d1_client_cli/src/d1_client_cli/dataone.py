@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -527,6 +527,8 @@ class DataONECLI():
       try:
         return client.create(pid, f, sysmeta)
       except d1_common.types.exceptions.DataONEException as e:
+        # For debugging. capture_response_body must be enabled in CLIClient.
+        #open('/tmp/out.html', 'wb').write(client.last_response_body)
         print_error(
           'Unable to create Science Object on Member Node\n{0}'
           .format(e.friendly_format())
@@ -818,9 +820,9 @@ class DataONECLI():
       if not result:
         print_warn('%s did not respond.' % url)
 
-      # ----------------------------------------------------------------------------
-      # Search
-      # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # Search
+  # ----------------------------------------------------------------------------
 
   def search(self, line):
     '''CN search.
@@ -1067,7 +1069,7 @@ class CLI(cmd.Cmd):
     '''show [session parameter]
     Display the value of a session parameter. Display all parameters if
   [session parameter] is omitted.
-  
+
     "show formats" will display all known object formats.
     "show nodes"   will display all known DataONE nodes.
     "show package" will invoke "package show".
@@ -1599,11 +1601,11 @@ class CLI(cmd.Cmd):
     formatted_list.insert(1, value1)
     return formatted_list
 
-    #-----------------------------------------------------------------------------
-    # Command processing.
-    #-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  # Command processing.
+  #-----------------------------------------------------------------------------
 
-    ## Override methods in Cmd object ##
+  ## Override methods in Cmd object ##
   def preloop(self):
     '''Initialization before prompting user for commands.
        Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.

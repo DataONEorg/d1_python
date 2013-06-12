@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
-# jointly copyrighted by participating institutions in DataONE. For 
+# jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
 #   Copyright ${year}
@@ -16,11 +16,11 @@
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and 
+# See the License for the specific language governing permissions and
 # limitations under the License.
 """
 :mod:`setup`
-====================
+============
 
 :Synopsis: Create egg.
 :Author: DataONE (Pippin)
@@ -30,23 +30,28 @@ from setuptools import setup, find_packages
 import d1_client_cli
 
 setup(
-  name='DataONE_CLI',
+  name='dataone.cli',
   version=d1_client_cli.__version__,
-  author='Roger Dahl, and the DataONE Development Team',
+  description='A DataONE Command-line interface',
+  author='DataONE Project',
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-  description='A DataONE Command-line interface',
-  packages=find_packages(),
+
+  # Accept all data files and directories matched by MANIFEST.in or found in
+  # source control.
+  include_package_data=True,
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'DataONE_Common >= 1.0.0',
-    'DataONE_ClientLib >= 1.0.0',
-    'rdflib >= 2.4.2',
+    'dataone.common >= 1.0.0',
+    'dataone.libclient >= 1.0.0',
+    'google.foresite-toolkit == 1.2',
+    'rdflib < 3a', #'rdflib < 2.4.2',
     'python-dateutil',
-    'PyXB >= 1.1.2',
-    'iso8601',
+    'pyxb == 1.2.1',
+    'iso8601 >= 0.1',
+    'pyOpenSSL >= 0.13',
   ],
   dependency_links=[
     'http://foresite-toolkit.googlecode.com/files/foresite-1.2.tgz',

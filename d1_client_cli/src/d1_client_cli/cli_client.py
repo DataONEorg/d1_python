@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -67,7 +67,10 @@ class CLIClient(object):
       return super(CLIClient, self).__init__(
         self.base_url,
         cert_path=self._get_certificate(),
-        key_path=self._get_certificate_private_key()
+        key_path=self._get_certificate_private_key(
+        )
+        # For debugging. Used by _post_file_and_system_metadat_to_member_node()
+        #capture_response_body=True
       )
     except d1_common.types.exceptions.DataONEException as e:
       err_msg = []
