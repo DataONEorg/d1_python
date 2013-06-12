@@ -52,14 +52,6 @@
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">1.1. DataONE Client Library for Python</a><ul>
-<li><a class="reference internal" href="#install-dataone-client-library-for-python">1.1.1. Install DataONE Client Library for Python</a></li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
   <p class="topless"><a href="setup.html"
                         title="previous chapter">1. Setup</a></p>
@@ -94,30 +86,28 @@
             
   <div class="section" id="dataone-client-library-for-python">
 <h1>1.1. DataONE Client Library for Python<a class="headerlink" href="#dataone-client-library-for-python" title="Permalink to this headline">¶</a></h1>
-<p>First, install <a class="reference internal" href="glossary.html#term-dataone-common-library-for-python"><em class="xref std std-term">DataONE Common Library for Python</em></a> according to the
-instructions in the documentation for that project. It is a dependency of
-<a class="reference internal" href="glossary.html#term-dataone-client-library-for-python"><em class="xref std std-term">DataONE Client Library for Python</em></a>.</p>
-<p>The distribution of DataONE Common Library for Python is currently
-<a class="reference internal" href="glossary.html#term-subversion"><em class="xref std std-term">Subversion</em></a> based. This makes it easy to keep up to date with changes. A
-package will be released at some point in the future once things stabilize a
-bit.</p>
-<p>Install Subversion:</p>
-<div class="highlight-python"><pre>$ sudo apt-get install subversion</pre>
+<p><a class="reference internal" href="glossary.html#term-dataone-common-library-for-python"><em class="xref std std-term">DataONE Common Library for Python</em></a> is distributed via PyPI, the Python
+Package Index.</p>
+<blockquote>
+<div><p>Set up server packages:</p>
+<ul class="simple">
+<li>The build environment for DataONE Python extensions and lxml</li>
+<li>Commands used in the install</li>
+</ul>
+<div class="highlight-python"><pre>$ sudo apt-get --yes install build-essential python-dev libssl-dev \
+libxml2-dev libxslt-dev openssl</pre>
 </div>
-<div class="section" id="install-dataone-client-library-for-python">
-<h2>1.1.1. Install DataONE Client Library for Python<a class="headerlink" href="#install-dataone-client-library-for-python" title="Permalink to this headline">¶</a></h2>
-<p>To set the library up in <tt class="docutils literal"><span class="pre">/var/local/dataone/d1_client_python</span></tt> using
-<a class="reference internal" href="glossary.html#term-bash"><em class="xref std std-term">Bash</em></a> (which is often the default shell):</p>
-<div class="highlight-python"><pre>$ sudo -s
-# cd /var/local/dataone
-# svn co https://repository.dataone.org/software/cicore/trunk/d1_libclient_python d1_libclient_python
-# cd d1_libclient_python/src/
-# python setup.py develop</pre>
+<p>Install pip (Python package installer):</p>
+<div class="highlight-python"><pre>$ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;</pre>
 </div>
-<p>To update your copy of the library:</p>
-<div class="highlight-python"><pre>$ cd /var/local/dataone/d1_client_python
-$ svn update</pre>
+<p>Install the DataONE Client Library for Python and all its dependencies. This
+will also automatically build several Python C extensions:</p>
+<div class="highlight-python"><pre>$ sudo pip install dataone.libclient</pre>
 </div>
+</div></blockquote>
+<p>The library can be tested by running one of the included usage examples. The
+examples can be found in the <cite>dist-packages</cite> folder, for instance:</p>
+<div class="highlight-python"><pre>/usr/local/lib/python2.6/dist-packages/examples/</pre>
 </div>
 </div>
 
