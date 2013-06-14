@@ -18,37 +18,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_command_processor`
-================================
+''':mod:`test_region_resolver`
+==============================
 
 :Synopsis:
- - Test the CommandProcessor class.
-:Author: DataONE (Dahl)
+ - Test the RegionResolver class.
+:Region: DataONE (Dahl)
 '''
 
 # Stdlib.
-#import os
 import logging
+#import os
+import pprint
 import sys
 import unittest
 
 # D1.
-
-# App.
 sys.path.append('..')
-import command_processor
+sys.path.append('../..')
+import resolver.region
+import command_echoer
 
 
-class O():
-  pass
-
-
-class TestCommandProcessor(unittest.TestCase):
+class TestRegionResolver(unittest.TestCase):
   def setUp(self):
-    options = O()
-    options.BASE_URL = 'https://localhost/'
-    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.c = command_processor.CommandProcessor(options)
+    self._resolver = resolver.region.Resolver(command_echoer.CommandEchoer())
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())
@@ -88,7 +82,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCommandProcessor
+  s = TestRegionResolver
   s.options = options
 
   if options.test != '':

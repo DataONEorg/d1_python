@@ -18,12 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_preconfigured_search`
-============================================
+''':mod:`test_resource_map_resolver`
+====================================
 
 :Synopsis:
- - Test the PreconfiguredSearchResolver class.
-:Author: DataONE (Dahl)
+ - Test the ResourceMapResolver class.
+:Taxa: DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -34,13 +34,19 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('../fuse')
-import preconfigured_search
+sys.path.append('..')
+sys.path.append('../..')
+import resolver.taxa
+import command_echoer
 
 
-class TestPreconfiguredSearchResolver(unittest.TestCase):
+class TestTaxaResolver(unittest.TestCase):
   def setUp(self):
-    self.p = preconfigured_search.Resolver()
+    self._resolver = resolver.taxa.Resolver(command_echoer.CommandEchoer())
+
+  def test_100_init(self):
+    # Test class instantiation (done in setUp())
+    pass
 
 #===============================================================================
 
@@ -76,7 +82,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestPreconfiguredSearchResolver
+  s = TestTaxaResolver
   s.options = options
 
   if options.test != '':

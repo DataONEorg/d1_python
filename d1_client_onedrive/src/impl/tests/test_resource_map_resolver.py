@@ -34,18 +34,18 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('../fuse')
-import directory
-import directory_item
-import solr_query_simulator
-import workspace
+sys.path.append('..')
+sys.path.append('../..')
+import resolver.resource_map
+import command_echoer
 
 
 class TestResourceMapResolver(unittest.TestCase):
   def setUp(self):
-    pass
+    self._resolver = resolver.resource_map.Resolver(None, command_echoer.CommandEchoer())
 
-  def test_100_resolve(self):
+  def test_100_init(self):
+    # Test class instantiation (done in setUp())
     pass
 
 #===============================================================================

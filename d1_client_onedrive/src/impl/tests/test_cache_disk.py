@@ -18,41 +18,70 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_command_processor`
-================================
+''':mod:`test_disk_cache`
+=========================
 
 :Synopsis:
- - Test the CommandProcessor class.
+ - Test the DiskCache class.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
 #import os
 import logging
+import os
 import sys
+import time
 import unittest
 
 # D1.
-
-# App.
 sys.path.append('..')
-import command_processor
+import cache_disk
+
+# Set up logger for this module.
+log = logging.getLogger(__name__)
+
+TEST_CACHE_PATH = './test_cache'
 
 
-class O():
-  pass
-
-
-class TestCommandProcessor(unittest.TestCase):
+class TestDiskCache(unittest.TestCase):
   def setUp(self):
-    options = O()
-    options.BASE_URL = 'https://localhost/'
-    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.c = command_processor.CommandProcessor(options)
+    try:
+      os.mkdir(TEST_CACHE_PATH)
+    except OSError:
+      pass
+    for f in os.listdir(TEST_CACHE_PATH):
+      os.unlink(os.path.join(TEST_CACHE_PATH, f))
 
-  def test_100_init(self):
-    # Test class instantiation (done in setUp())
-    pass
+  def test_100_cache(self):
+    c = cache_disk.DiskCache(10, TEST_CACHE_PATH)
+    c['a'] = 1
+    self.assertEqual(len(c), 1)
+    self.assertEqual(c['a'], 1)
+    self.assertEqual(len(c), 1)
+
+  def test_110_cache(self):
+    c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
+    c['a'] = 1
+    time.sleep(1.1) # see comment in _delete_oldest_file()
+    c['b'] = 2
+    time.sleep(1.1)
+    c['c'] = 3
+    self.assertEqual(len(c), 2)
+    self.assertRaises(KeyError, c.__getitem__, 'a')
+    self.assertEqual(c['b'], 2)
+    self.assertEqual(c['c'], 3)
+
+  def test_120_cache(self):
+    c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
+    c['a'] = 1
+    c['b'] = 2
+    c['c'] = 3
+    c['a'] = 4
+    self.assertEqual(len(c), 2)
+    self.assertRaises(KeyError, c.__getitem__, 'b')
+    self.assertEqual(c['a'], 4)
+    self.assertEqual(c['c'], 3)
 
 #===============================================================================
 
@@ -88,7 +117,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCommandProcessor
+  s = TestDiskCache
   s.options = options
 
   if options.test != '':

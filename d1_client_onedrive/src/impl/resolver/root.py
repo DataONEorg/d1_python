@@ -97,11 +97,11 @@ class RootResolver(resolver_abc.Resolver):
     # get_attributes() call erroneously designated the path which caused the
     # exception to be raised as a valid path to a folder in an earlier call.
 
-    #try:
-    return self._get_directory(p)
-    #except path_exception.PathException as e:
-    #self._cache_error_file_path(p, e)
-    #return self._render_path_exception_as_file(e)
+    try:
+      return self._get_directory(p)
+    except path_exception.PathException as e:
+      self._cache_error_file_path(p, e)
+      return self._render_path_exception_as_file(e)
 
   def read_file(self, path, size, offset):
     log.debug('read_file: {0}, {1}, {2}'.format(path, size, offset))

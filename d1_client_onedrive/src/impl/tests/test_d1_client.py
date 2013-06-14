@@ -36,12 +36,19 @@ sys.path.append('..')
 import onedrive_d1_client
 
 
+class O():
+  pass
+
+
 class TestD1Client(unittest.TestCase):
   def setUp(self):
-    self.d1 = onedrive_d1_client.D1Client()
+    options = O()
+    options.BASE_URL = 'https://localhost/'
+    self.d1 = onedrive_d1_client.D1Client(options)
 
-  def test_100(self):
-    print self.d1.get_searchable_facet_names()
+  def test_100_init(self):
+    # Test class instantiation (done in setUp())
+    pass
 
 #===============================================================================
 

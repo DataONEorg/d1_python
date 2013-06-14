@@ -51,6 +51,9 @@ from impl import util
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
+# Any open ranges have been closed by the command processor, so don't have to
+# deal with those here.
+
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, command_processor):
@@ -66,16 +69,16 @@ class Resolver(resolver_abc.Resolver):
   def get_attributes(self, path): #workspace_folder_objects
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) >= 2:
-      return self.d1_object_resolver.get_attributes(path[1:])
+    if len(path) >= 3:
+      return self.d1_object_resolver.get_attributes(path[2:])
 
     return self._get_attribute(path)
 
   def get_directory(self, path, workspace_folder_objects):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) >= 2:
-      return self.d1_object_resolver.get_directory(path[1:])
+    if len(path) >= 3:
+      return self.d1_object_resolver.get_directory(path[2:])
 
     return self._get_directory(path, workspace_folder_objects)
 
@@ -86,29 +89,97 @@ class Resolver(resolver_abc.Resolver):
 
   def _get_directory(self, path, workspace_folder_objects):
     if len(path) == 0:
-      return self._resolve_time_period_root(workspace_folder_objects)
+      return self._resolve_decades(workspace_folder_objects)
+    elif len(path) == 1:
+      decade_range_str = path[0]
+      return self._resolve_years_in_decade(decade_range_str, workspace_folder_objects)
+    else:
+      try:
+        year = int(path[1])
+      except ValueError:
+        raise path_exception.PathException('Expected year element in path')
+      else:
+        return self._resolve_objects_in_year(year, workspace_folder_objects)
 
-    time_period = path[0]
-    return self._resolve_time_period(time_period, workspace_folder_objects)
-
-  def _resolve_time_period_root(self, workspace_folder_objects):
+  def _resolve_decades(self, workspace_folder_objects):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     sites = set()
     for o in workspace_folder_objects.objects:
-      if 'decade' in o:
-        for s in o['site']:
-          sites.add(s)
-    dir.extend([directory_item.DirectoryItem(a) for a in sorted(sites)])
+      if 'beginDate' in o and 'endDate' in o:
+        for decade in self._decade_ranges_in_date_range(o['beginDate'], o['endDate']):
+          sites.add(decade)
+    dir.extend([directory_item.DirectoryItem(a) for a in sites])
     return dir
 
-  def _resolve_time_period(self, time_period, workspace_folder_objects):
+  #def _add_decade_if_date_is_populated(self, sites, record, date_field):
+  #  try:
+  #    d = record['beginDate']
+  #  except LookupError:
+  #    pass
+  #  else:
+  #    sites.add(self._decade_from_date(d))
+
+  #def _decade_from_date(self, d):
+  #  decade = d.year / 10 * 10
+  #  return '{0}-{1}'.format(decade, decade + 9)
+
+  def _resolve_years_in_decade(self, decade, workspace_folder_objects):
+    first_year_in_decade = self._validate_and_split_decade_range(decade)[0]
+    dir = directory.Directory()
+    self.append_parent_and_self_references(dir)
+    sites = set()
+    for o in workspace_folder_objects.objects:
+      if 'beginDate' in o and 'endDate' in o:
+        for year in self._years_in_date_range_within_decade(
+          first_year_in_decade, o['beginDate'], o['endDate']
+        ):
+          sites.add(str(year))
+    dir.extend([directory_item.DirectoryItem(a) for a in sites])
+    self._raise_exception_if_empty_directory(dir)
+    return dir
+
+  def _resolve_objects_in_year(self, year, workspace_folder_objects):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     for o in workspace_folder_objects.objects:
-      try:
-        if o['time_period'] == time_period:
+      if 'beginDate' in o and 'endDate' in o:
+        if self._is_year_in_date_range(year, o['beginDate'], o['endDate']):
           dir.append(directory_item.DirectoryItem(o['id']))
-      except KeyError:
-        pass
+    self._raise_exception_if_empty_directory(dir)
     return dir
+
+  def _decade_ranges_in_date_range(self, begin_date, end_date):
+    '''Return a list of decades which is covered by date range'''
+    begin_dated = begin_date.year / 10
+    end_dated = end_date.year / 10
+    decades = []
+    for d in range(begin_dated, end_dated + 1):
+      decades.append('{0}-{1}'.format(d * 10, d * 10 + 9))
+    return decades
+
+  def _is_year_in_date_range(self, year, begin_date, end_date):
+    return year >= begin_date.year and year <= end_date.year
+
+  def _years_in_date_range_within_decade(self, decade, begin_date, end_date):
+    '''Return a list of years in one decade which is covered by date range'''
+    begin_year = begin_date.year
+    end_year = end_date.year
+    if begin_year < decade:
+      begin_year = decade
+    if end_year > decade + 9:
+      end_year = decade + 9
+    return range(begin_year, end_year + 1)
+
+  def _validate_and_split_decade_range(self, decade):
+    try:
+      first_year, last_year = decade.split('-')
+      if len(first_year) != 4 or len(last_year) != 4:
+        raise ValueError
+      first_year, last_year = int(first_year), int(last_year)
+      if first_year > last_year:
+        raise ValueError
+    except ValueError:
+      raise path_exception.PathException('Expected decade range on form yyyy-yyyy')
+    else:
+      return first_year, last_year

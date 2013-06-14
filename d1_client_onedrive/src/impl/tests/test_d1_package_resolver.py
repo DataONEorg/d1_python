@@ -18,59 +18,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_cache`
-====================
+''':mod:`test_d1_package_resolver`
+==================================
 
 :Synopsis:
- - Test the Cache class.
+ - Test the TestD1PackageResolver class.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-#import os
 import logging
+#import os
+import pprint
 import sys
 import unittest
 
 # D1.
-sys.path.append('../fuse')
-import cache
+sys.path.append('..')
+sys.path.append('../..')
+import resolver.d1_package
+import command_echoer
 
-# Set up logger for this module.
-log = logging.getLogger(__name__)
 
-
-class TestCache(unittest.TestCase):
+class TestD1PackageResolver(unittest.TestCase):
   def setUp(self):
+    self._resolver = resolver.d1_package.Resolver(command_echoer.CommandEchoer())
+
+  def test_100_init(self):
+    # Test class instantiation (done in setUp())
     pass
-
-  def test_100_cache(self):
-    c = cache.Cache(10)
-    c['a'] = 1
-    self.assertEqual(len(c), 1)
-    self.assertEqual(c['a'], 1)
-    #self.assertEqual(len(c), 1)
-
-  def test_110_cache(self):
-    c = cache.Cache(2)
-    c['a'] = 1
-    c['b'] = 2
-    c['c'] = 3
-    self.assertEqual(len(c), 2)
-    self.assertRaises(KeyError, c.__getitem__, 'a')
-    self.assertEqual(c['b'], 2)
-    self.assertEqual(c['c'], 3)
-
-  def test_120_cache(self):
-    c = cache.Cache(2)
-    c['a'] = 1
-    c['b'] = 2
-    c['c'] = 3
-    c['a'] = 4
-    self.assertEqual(len(c), 2)
-    self.assertRaises(KeyError, c.__getitem__, 'b')
-    self.assertEqual(c['a'], 4)
-    self.assertEqual(c['c'], 3)
 
 #===============================================================================
 
@@ -106,7 +82,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCache
+  s = TestD1PackageResolver
   s.options = options
 
   if options.test != '':

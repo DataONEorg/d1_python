@@ -43,7 +43,7 @@ import resolver.workspace
 import command_processor
 import path_exception
 
-# Workspace XML doc example.
+# Example Workspace XML doc.
 #
 #<?xml version="1.0" encoding="UTF-8"?>
 #<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -81,9 +81,12 @@ class O():
 class TestWorkspaceResolver(unittest.TestCase):
   def setUp(self):
     options = O()
-    options.workspace = './test_workspace.xml'
+    options.BASE_URL = 'https://localhost/'
+    options.WORKSPACE_XML = './test_workspace.xml'
+    options.MAX_ERROR_PATH_CACHE_SIZE = 1000
+    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
     self.command_processor = command_processor.CommandProcessor(options)
-    self.w = resolver.workspace.Resolver(self.command_processor)
+    self.w = resolver.workspace.Resolver(options, self.command_processor)
 
   def test_050_path_root(self):
     f = self.w._get_workspace_folder([])

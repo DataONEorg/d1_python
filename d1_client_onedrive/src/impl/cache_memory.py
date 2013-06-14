@@ -18,14 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`cache`
-===============
+''':mod:`cache_memory`
+======================
 
 :Synopsis:
- - Cache Python objects with a limit on how many objects can be cached. When
-   the cache reaches a configured size, adding a new object causes the oldest
-   object to be removed. The oldest object is the object that was added first
-   of the objects still in the cache.
+  - Cache Python objects with a limit on how many objects can be cached. When
+    the cache reaches a configured size, adding a new object causes the oldest
+    object to be removed. The oldest object is the object that was added first
+    of the objects still in the cache.
+  - The cache is stored in memory.
 :Author: DataONE (Dahl)
 '''
 
@@ -40,7 +41,7 @@ import util
 log = logging.getLogger(__name__)
 
 
-class Cache(dict):
+class MemoryCache(dict):
   def __init__(self, max_items):
     self.max_items = max_items
     self._keys = []

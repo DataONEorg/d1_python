@@ -39,103 +39,6 @@ import d1_client.cnclient_1_1
 sys.path.append('..')
 import onedrive_solr_client
 
-all_facet_names = [
-  'origin',
-  'noBoundingBox',
-  'endDate',
-  'family',
-  'text',
-  'abstract',
-  'rightsHolder',
-  'LTERSite',
-  'site',
-  'datePublished',
-  'topic',
-  'edition',
-  'geoform',
-  'phylum',
-  'gcmdKeyword',
-  'keywords',
-  'genus',
-  'titlestr',
-  'id',
-  'decade',
-  'size',
-  'sku',
-  'isSpatial',
-  'documents',
-  'changePermission',
-  'authorLastName',
-  'author',
-  'termText',
-  'species',
-  'source',
-  'formatId',
-  'contactOrganizationText',
-  'obsoletes',
-  'projectText',
-  'updateDate',
-  'obsoletedBy',
-  'parameter',
-  'dateModified',
-  'datasource',
-  'kingdom',
-  'topicText',
-  'southBoundCoord',
-  'westBoundCoord',
-  'northBoundCoord',
-  'isPublic',
-  'namedLocation',
-  'contactOrganization',
-  'investigatorText',
-  'formatType',
-  'resourceMap',
-  'readPermission',
-  'originator',
-  'keyConcept',
-  'writePermission',
-  'siteText',
-  'class',
-  'parameterText',
-  'originatorText',
-  'term',
-  'identifier',
-  'pubDate',
-  'eastBoundCoord',
-  'keywordsText',
-  'dateUploaded',
-  'sensor',
-  'beginDate',
-  'title',
-  'order',
-  'sourceText',
-  'presentationCat',
-  'scientificName',
-  'sensorText',
-  'placeKey',
-  'originText',
-  'submitter',
-  'isDocumentedBy',
-  'relatedOrganizations',
-  'project',
-  'investigator',
-  'fileID',
-  'purpose',
-]
-
-field_names_good_for_faceting = [
-  'abstract', 'author', 'authorLastName', 'changePermission', 'class',
-  'contactOrganization', 'datasource', 'decade', 'documents', 'eastBoundCoord', 'edition',
-  'family', 'fileID', 'formatId', 'formatType', 'gcmdKeyword', 'genus', 'geoform', 'id',
-  'identifier', 'investigator', 'isDocumentedBy', 'isPublic', 'isSpatial', 'keyConcept',
-  'keywords', 'kingdom', 'LTERSite', 'namedLocation', 'noBoundingBox', 'northBoundCoord',
-  'obsoletedBy', 'obsoletes', 'order', 'origin', 'originator', 'parameter', 'phylum',
-  'placeKey', 'presentationCat', 'project', 'purpose', 'readPermission',
-  'relatedOrganizations', 'resourceMap', 'rightsHolder', 'scientificName', 'sensor',
-  'site', 'size', 'sku', 'source', 'southBoundCoord', 'species', 'submitter', 'term',
-  'text', 'title', 'titlestr', 'topic', 'westBoundCoord', 'writePermission'
-]
-
 # Example results
 
 # GET /cn/v1/query/solr/?q=%2A%3A%2A&rows=3&indent=on&facet=true&facet.limit=3&facet.mincount=1&facet.sort=false&facet.count=sort&wt=python&facet.field=origin&facet.field=noBoundingBox&facet.field=family&facet.field=text&facet.field=abstract&facet.field=rightsHolder&facet.field=LTERSite&facet.field=site&facet.field=namedLocation&facet.field=topic&facet.field=edition&facet.field=geoform&facet.field=phylum&facet.field=gcmdKeyword&facet.field=keywords&facet.field=titlestr&facet.field=id&facet.field=decade&facet.field=size&facet.field=sku&facet.field=isSpatial&facet.field=documents&facet.field=changePermission&facet.field=authorLastName&facet.field=author&facet.field=species&facet.field=source&facet.field=formatId&facet.field=obsoletes&facet.field=fileID&facet.field=obsoletedBy&facet.field=parameter&facet.field=kingdom&facet.field=southBoundCoord&facet.field=westBoundCoord&facet.field=identifier&facet.field=northBoundCoord&facet.field=isPublic&facet.field=formatType&facet.field=resourceMap&facet.field=readPermission&facet.field=originator&facet.field=keyConcept&facet.field=writePermission&facet.field=class&facet.field=term&facet.field=genus&facet.field=eastBoundCoord&facet.field=investigator&facet.field=sensor&facet.field=contactOrganization&facet.field=title&facet.field=project&facet.field=presentationCat&facet.field=scientificName&facet.field=datasource&facet.field=placeKey&facet.field=submitter&facet.field=isDocumentedBy&facet.field=relatedOrganizations&facet.field=order&facet.field=purpose&wt=python
@@ -410,61 +313,47 @@ example_query_result_1 = \
                     'status': 0}}
 
 
+class O():
+  pass
+
+
 class TestSolrClient(unittest.TestCase):
   def setUp(self):
-    self.c = onedrive_solr_client.SolrClient()
+    options = O()
+    options.BASE_URL = 'https://localhost/'
+    self.c = onedrive_solr_client.SolrClient(options)
 
-  def _test_100_unapplied_facets(self):
-    self.assertEqual(
-      self.c.get_unapplied_facets(
-        ['a', 'b', 'c', 'd'], ['b', 'd']), ['a', 'c']
-    )
+  #def _test_300_parse_result(self):
+  #  r = self.c.parse_result_dict(example_query_result_1)
 
-  def _test_151(self):
-    facet_fields = self.c.facet_fields_from_facet_names(field_names_good_for_faceting)
-    self.assertTrue('facet.field=isSpatial')
+  ##qes = query_engine_description.QueryEngineDescription()
+  #qes.load('test_index/query_engine_description.xml')
+  #self.s = solr_query.SolrQuery(qes)
+  #self.facet_path_parser = facet_path_parser.FacetPathParser()
 
-  def _test_150_1(self):
-    result = self.c.send_request([('q', '*:*')])
-    self.assertTrue(isinstance(result, dict))
-    #pprint.pprint(result)
+  #def test_100_query(self):
+  #  print self.s.query('/')
+  #
+  #
+  #def _test_100_query(self):
+  #  dir_items = self.s.query('/')
+  #  self._assert_is_facet_name_list(dir_items)
+  #  dir_items = self.s.query('/@origin/#test/')
+  #  self._assert_is_facet_name_list(dir_items)
+  #
+  #
+  #def test_200_create_facet_query_string(self):
+  #  str = self.s.create_facet_query_string('/test')
+  #  self.assertTrue(str.startswith('facet.field=origin&facet.field=noBoundingBox&facet.field=endDate'))
+  #  str = self.s.create_facet_query_string('/@origin/#a/@noBoundingBox/#b')
+  #  self.assertTrue(str.startswith('facet.field=projectText&facet.field=endDate&facet.field=family'))
+  #
+  #
+  #def _assert_is_facet_name_list(self, dir_items):
+  #  for dir_item in dir_items:
+  #    self.assertTrue(self.facet_path_parser.is_facet_name(dir_item))
 
-  def test_200_workspace(self):
-    result = self.c.workspace(field_names_good_for_faceting, [])
-    #facet_values = self.c.get_facet_values_for_facet_name('id')
-    #pprint.pprint(result)
-
-  def _test_300_parse_result(self):
-    r = self.c.parse_result_dict(example_query_result_1)
-
-    ##qes = query_engine_description.QueryEngineDescription()
-    #qes.load('test_index/query_engine_description.xml')
-    #self.s = solr_query.SolrQuery(qes)
-    #self.facet_path_parser = facet_path_parser.FacetPathParser()
-
-    #def test_100_query(self):
-    #  print self.s.query('/')
-    #
-    #
-    #def _test_100_query(self):
-    #  dir_items = self.s.query('/')
-    #  self._assert_is_facet_name_list(dir_items)
-    #  dir_items = self.s.query('/@origin/#test/')
-    #  self._assert_is_facet_name_list(dir_items)
-    #
-    #
-    #def test_200_create_facet_query_string(self):
-    #  str = self.s.create_facet_query_string('/test')
-    #  self.assertTrue(str.startswith('facet.field=origin&facet.field=noBoundingBox&facet.field=endDate'))
-    #  str = self.s.create_facet_query_string('/@origin/#a/@noBoundingBox/#b')
-    #  self.assertTrue(str.startswith('facet.field=projectText&facet.field=endDate&facet.field=family'))
-    #
-    #
-    #def _assert_is_facet_name_list(self, dir_items):
-    #  for dir_item in dir_items:
-    #    self.assertTrue(self.facet_path_parser.is_facet_name(dir_item))
-
-    #===============================================================================
+  #===============================================================================
 
 
 def log_setup():

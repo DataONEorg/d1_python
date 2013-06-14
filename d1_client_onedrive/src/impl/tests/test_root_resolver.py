@@ -18,41 +18,67 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_command_processor`
-================================
+''':mod:`test_root`
+============================
 
 :Synopsis:
- - Test the CommandProcessor class.
+ - Test the RootResolver class.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-#import os
 import logging
+#import os
+import pprint
 import sys
 import unittest
 
 # D1.
-
-# App.
 sys.path.append('..')
-import command_processor
+sys.path.append('../..')
+import resolver.root
+import command_echoer
 
 
 class O():
   pass
 
 
-class TestCommandProcessor(unittest.TestCase):
+class TestRootResolver(unittest.TestCase):
   def setUp(self):
     options = O()
     options.BASE_URL = 'https://localhost/'
+    options.WORKSPACE_XML = './test_workspace.xml'
+    options.MAX_ERROR_PATH_CACHE_SIZE = 1000
     options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.c = command_processor.CommandProcessor(options)
+    self.r = resolver.root.RootResolver(options)
 
-  def test_100_init(self):
-    # Test class instantiation (done in setUp())
-    pass
+  def test_100_get_directory(self):
+    d = self.r.get_directory('relative/path')
+    self.assertTrue('<non-existing directory>' in [f[0] for f in d])
+
+  def test_110_resolve(self):
+    d = self.r.get_directory('/absolute/path/invalid')
+    self.assertTrue('<non-existing directory>' in [f[0] for f in d])
+
+  def test_120_resolve(self):
+    d = self.r.get_directory('/')
+    self.assertFalse('<non-existing directory>' in [f[0] for f in d])
+    self.assertTrue('FacetedSearch' in [f[0] for f in d])
+    self.assertTrue('PreconfiguredSearch' in [f[0] for f in d])
+
+  def test_130_resolve(self):
+    d = self.r.get_directory('/TestResolver')
+    self.assertTrue('##/##' in [f[0] for f in d])
+
+  def test_140_resolve(self):
+    d = self.r.get_directory('/TestResolver/')
+    self.assertTrue('##/##' in [f[0] for f in d])
+
+  def _test_150_resolve(self):
+    d = self.r.get_directory('/TestResolver/abc/def')
+    print d
+    self.assertTrue('/abc/def' in [f[0] for f in d])
 
 #===============================================================================
 
@@ -88,7 +114,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCommandProcessor
+  s = TestRootResolver
   s.options = options
 
   if options.test != '':

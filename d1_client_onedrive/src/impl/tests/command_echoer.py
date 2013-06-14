@@ -18,41 +18,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.abstract`
-===========================
+''':mod:`command_echoer`
+========================
 
 :Synopsis:
- - Resolve the abstract description for a DataONE package.
-:Author: DataONE (Dahl)
+ - Echo commands back. For unit testing / TDD.
+:Author:
+ - DataONE (Dahl)
 '''
 
 # Stdlib.
 import logging
 import os
-
-# D1.
-
-# App.
-import directory
-import directory_item
-import path_exception
-import resolver_abc
+import re
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
-class Resolver(resolver_abc.Resolver):
+class CommandEchoer():
   def __init__(self):
     pass
 
-  def get_attributes(self, path):
-    raise path_exception.PathException('<not implemented>')
+  def solr_query_raw(self, query_string):
+    return query_string
 
-  def get_directory(self, path):
-    raise path_exception.PathException('<not implemented>')
+  def solr_query(self, applied_facets=None, filter_queries=None):
+    return applied_facets, filter_queries
 
-#    abstxt = self.getAbstract(pid)
-#    if offset + size > len(abstxt):
-#      size = len(abstxt) - offset
-#    return abstxt[offset:offset + size]
+  def get_science_object_through_cache(self, pid):
+    return pid
+
+  def get_system_metadata_through_cache(self, pid):
+    return pid

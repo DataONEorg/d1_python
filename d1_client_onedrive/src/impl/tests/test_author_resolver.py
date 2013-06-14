@@ -18,11 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_root`
-============================
+''':mod:`test_author_resolver`
+==============================
 
 :Synopsis:
- - Test the RootResolver class.
+ - Test the TestAuthorResolver class.
 :Author: DataONE (Dahl)
 '''
 
@@ -34,44 +34,19 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('../fuse')
-import solr_query_simulator
-import root
-import test_resolver
+sys.path.append('..')
+sys.path.append('../..')
+import resolver.author
+import command_echoer
 
 
-class TestRootDispatcher(unittest.TestCase):
+class TestAuthorResolver(unittest.TestCase):
   def setUp(self):
-    self.r = root.RootDispatcher(solr_query_simulator.SolrQuerySimulator())
-    # Monkey-patch the RootDispatcher.
-    self.r.resolvers['TestResolver'] = test_resolver_abc.Resolver()
+    self._resolver = resolver.author.Resolver(command_echoer.CommandEchoer())
 
-  def test_100_resolve(self):
-    d = self.r.resolve('relative/path')
-    self.assertTrue('<non-existing directory>' in [f[0] for f in d])
-
-  def test_110_resolve(self):
-    d = self.r.resolve('/absolute/path/invalid')
-    self.assertTrue('<non-existing directory>' in [f[0] for f in d])
-
-  def test_120_resolve(self):
-    d = self.r.resolve('/')
-    self.assertFalse('<non-existing directory>' in [f[0] for f in d])
-    self.assertTrue('FacetedSearch' in [f[0] for f in d])
-    self.assertTrue('PreconfiguredSearch' in [f[0] for f in d])
-
-  def test_130_resolve(self):
-    d = self.r.resolve('/TestResolver')
-    self.assertTrue('##/##' in [f[0] for f in d])
-
-  def test_140_resolve(self):
-    d = self.r.resolve('/TestResolver/')
-    self.assertTrue('##/##' in [f[0] for f in d])
-
-  def _test_150_resolve(self):
-    d = self.r.resolve('/TestResolver/abc/def')
-    print d
-    self.assertTrue('/abc/def' in [f[0] for f in d])
+  def test_100_init(self):
+    # Test class instantiation (done in setUp())
+    pass
 
 #===============================================================================
 
@@ -107,7 +82,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestRootDispatcher
+  s = TestAuthorResolver
   s.options = options
 
   if options.test != '':

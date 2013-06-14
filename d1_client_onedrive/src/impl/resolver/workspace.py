@@ -50,7 +50,7 @@ from impl.resolver import taxa
 from impl.resolver import region
 from impl.resolver import time_period
 
-import d1_workspace.types.generated.workspace_types
+import d1_workspace.types.generated.workspace_types as workspace_types
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -70,7 +70,8 @@ class WorkspaceFolderObjects(object):
   def _get_objects_by_identifier(self):
     for pid in self._workspace_folder.identifier:
       q = 'id:{0}'.format(pid)
-      object_info = self._command_processor.solr_query_raw(q)
+      response = self._command_processor.solr_query(q)
+      object_info = response['response']['docs']
       try:
         self.objects.append(object_info[0])
       except IndexError:
@@ -78,7 +79,8 @@ class WorkspaceFolderObjects(object):
 
   def _get_objects_by_query(self):
     for q in self._workspace_folder.query:
-      sci_objs = self._command_processor.solr_query_raw(q)
+      response = self._command_processor.solr_query(q)
+      sci_objs = response['response']['docs']
       for s in sci_objs:
         self.objects.append(s)
 
@@ -88,7 +90,7 @@ class Resolver(resolver_abc.Resolver):
     self._options = options
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
-
+    self._workspace = self._create_workspace_from_xml_doc(options.WORKSPACE_XML)
     self.resolvers = {
       'Authors': author.Resolver(self.command_processor),
       'Regions': region.Resolver(self.command_processor),
@@ -201,6 +203,10 @@ class Resolver(resolver_abc.Resolver):
     ##self.append_queries(d, f)
     #return d
 
+  def _create_workspace_from_xml_doc(self, xml_doc_path):
+    xml_doc = open(xml_doc_path, 'rb').read()
+    return workspace_types.CreateFromDocument(xml_doc)
+
   def _split_path_by_reserved_name(self, path):
     for i, e in enumerate(path):
       if e in self.resolvers:
@@ -258,15 +264,14 @@ class Resolver(resolver_abc.Resolver):
   def _get_workspace_folder(self, path):
     '''Given a path, return the members of that path from the workspace.
     '''
-    workspace = self.command_processor.get_workspace()
-    return self._get_workspace_folder_rec(workspace, path, 0)
+    return self._get_workspace_folder_recursive(self._workspace, path, 0)
 
-  def _get_workspace_folder_rec(self, folder, path, c):
+  def _get_workspace_folder_recursive(self, folder, path, c):
     if len(path) == c:
       return folder
     for f in folder.folder:
       if f.name == path[c]:
-        return self._get_workspace_folder_rec(f, path, c + 1)
+        return self._get_workspace_folder_recursive(f, path, c + 1)
 
 #    # If the path references something outside of the faceted search area, the
 #    # facet section is stripped off the path, and the remainder is passed to the

@@ -18,41 +18,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_command_processor`
-================================
+''':mod:`test_directory`
+========================
 
 :Synopsis:
- - Test the CommandProcessor class.
+ - Test the Directory class.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-#import os
 import logging
+#import os
+import pprint
 import sys
 import unittest
 
 # D1.
-
-# App.
 sys.path.append('..')
-import command_processor
+import directory
+import directory_item
 
 
-class O():
-  pass
-
-
-class TestCommandProcessor(unittest.TestCase):
+class TestDirectory(unittest.TestCase):
   def setUp(self):
-    options = O()
-    options.BASE_URL = 'https://localhost/'
-    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.c = command_processor.CommandProcessor(options)
+    pass
 
   def test_100_init(self):
-    # Test class instantiation (done in setUp())
-    pass
+    d = directory.Directory()
+
+  def test_110_add_directory_item(self):
+    d = directory.Directory()
+    i = directory_item.DirectoryItem('fname', size=123, is_dir=True)
+    d.append(i)
+    self.assertEqual(len(d), 1)
 
 #===============================================================================
 
@@ -88,7 +86,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCommandProcessor
+  s = TestDirectory
   s.options = options
 
   if options.test != '':

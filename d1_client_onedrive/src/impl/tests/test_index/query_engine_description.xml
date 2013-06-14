@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/cn/xslt/dataone.types.v1.xsl"?>
-<d1:queryEngineDescription xmlns:d1="http://ns.dataone.org/service/types/v1">
+<d1:queryEngineDescription xmlns:d1="http://ns.dataone.org/service/types/v1.1">
   <queryEngineVersion>3.4.0.2011.09.20.17.19.53</queryEngineVersion>
   <querySchemaVersion>1</querySchemaVersion>
   <name>solr</name>

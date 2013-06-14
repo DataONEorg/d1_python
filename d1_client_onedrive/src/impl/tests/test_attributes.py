@@ -18,41 +18,48 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_command_processor`
-================================
+''':mod:`test_attributes`
+=========================
 
 :Synopsis:
- - Test the CommandProcessor class.
+ - Test the Attributes class.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-#import os
+import datetime
 import logging
+#import os
+import pprint
 import sys
 import unittest
 
 # D1.
-
-# App.
 sys.path.append('..')
-import command_processor
+import attributes
 
 
-class O():
-  pass
-
-
-class TestCommandProcessor(unittest.TestCase):
+class TestAttributes(unittest.TestCase):
   def setUp(self):
-    options = O()
-    options.BASE_URL = 'https://localhost/'
-    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.c = command_processor.CommandProcessor(options)
-
-  def test_100_init(self):
-    # Test class instantiation (done in setUp())
     pass
+
+  def test_100_create_attribute_with_defaults(self):
+    a = attributes.Attributes()
+
+  def test_110_create_attribute_with_size(self):
+    a = attributes.Attributes(123)
+    self.assertEqual(123, a.size())
+    self.assertTrue(a.date() is None)
+    self.assertTrue(a.is_dir() is False)
+
+  def test_120_representation(self):
+    a = attributes.Attributes(123, date=datetime.date(2003, 05, 23), is_dir=True)
+    self.assertEqual(
+      "<class 'attributes.Attributes'>({'size_': 123, 'is_dir_': True, 'date_': datetime.date(2003, 5, 23)})",
+      str(
+        a
+      )
+    )
 
 #===============================================================================
 
@@ -88,7 +95,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestCommandProcessor
+  s = TestAttributes
   s.options = options
 
   if options.test != '':

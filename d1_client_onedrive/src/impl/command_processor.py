@@ -28,6 +28,7 @@
 '''
 
 # Stdlib.
+import hashlib
 import logging
 import os
 import re
@@ -35,14 +36,12 @@ import re
 # D1.
 import d1_client.d1client
 import d1_common.date_time
-import d1_workspace.types.generated.workspace_types as workspace_types
 
 # App.
-import cache
+import cache_memory
 import onedrive_d1_client
 import onedrive_solr_client
 import path_exception
-#import settings
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -51,64 +50,47 @@ log = logging.getLogger(__name__)
 class CommandProcessor():
   def __init__(self, options):
     self._options = options
-    # Set up workspace.
-    xml_doc = open(options.WORKSPACE_XML, 'rb').read()
-    self._workspace = workspace_types.CreateFromDocument(xml_doc)
-
     #self.fields_good_for_faceting = self.init_field_names_good_for_faceting()
-    #self.solr_query_cache = cache.Cache(self._options.MAX_SOLR_QUERY_CACHE_SIZE)
+    self._solr_query_cache = cache_memory.MemoryCache(
+      self._options.MAX_SOLR_QUERY_CACHE_SIZE
+    )
     #self.object_description_cache = cache.Cache(1000)
     #self.science_object_cache = cache.Cache(1000)
     #self.system_metadata_cache = cache.Cache(1000)
-    self.object_description_cache2 = cache.Cache(1000)
-    self.solr_client = onedrive_solr_client.SolrClient(options)
+    self.object_description_cache2 = cache_memory.MemoryCache(1000)
+    self._solr_client = onedrive_solr_client.SolrClient(options)
 
-  # Solr.
-
-  def get_workspace(self):
-    return self._workspace
-
-  def solr_query_raw(self, query_string):
-    #try:
-    #  return self._get_query_from_cache(applied_facets + filter_queries)
-    #except KeyError:
-    #  pass
-    #
-    ##log.debug('Fields good for faceting: {0}'.format(self.fields_good_for_faceting))
-    response = self.solr_client.query(query_string, field_list='*')
-    return response['response']['docs']
-
-  def solr_query(self, applied_facets=None, filter_queries=None):
-    if applied_facets is None:
-      applied_facets = []
-
-    if filter_queries is None:
-      filter_queries = []
-
-    #solr_client = onedrive_solr_client.SolrClient()
-
+  def solr_query(self, query, filter_queries=None, fields=None):
     try:
-      return self._get_query_from_cache(applied_facets + filter_queries)
+      return self._get_query_from_cache(query, filter_queries, fields)
     except KeyError:
       pass
-
-    #log.debug('Fields good for faceting: {0}'.format(self.fields_good_for_faceting))
-    res = self.solr_client.faceted_search(
-      self.fields_good_for_faceting, applied_facets, filter_queries
+    response = self._solr_client.query(
+      query, filter_queries=filter_queries,
+      fields=fields
     )
+    for record in response['response']['docs']:
+      self._close_open_date_ranges(record)
+      self._parse_iso8601_date_to_native_date_time(record)
+    self._cache_query_response(response, query, filter_queries, fields)
+    return response
 
-    self._cache_query_results(applied_facets + filter_queries, res)
-    self._cache_object_info(res)
+  def _get_query_from_cache(self, query, filter_queries, fields):
+    return self._solr_query_cache[self._dict_key_from_solr_query(query, filter_queries,
+                                                                 fields)]
 
-    return res
+  def _cache_query_response(self, response, query, filter_queries, fields):
+    self._solr_query_cache[self._dict_key_from_solr_query(query, filter_queries, fields)
+                           ] = response
 
-  def _get_query_from_cache(self, applied_facets):
-    return self.solr_query_cache[tuple(applied_facets)]
+  def _dict_key_from_solr_query(self, query, filter_queries, fields):
+    if filter_queries is None:
+      filter_queries = []
+    if fields is None:
+      fields = []
+    return tuple(query) + tuple(filter_queries) + tuple(fields)
 
-  def _cache_query_results(self, applied_facets, q):
-    self.solr_query_cache[tuple(applied_facets)] = q
-
-  def _cache_object_info(self, res):
+  def _cache_solr_query(self, res):
     for o in res[1]:
       self.object_description_cache2[o['pid']] = o
 
@@ -118,8 +100,8 @@ class CommandProcessor():
     #except KeyError:
     #  pass
 
-    pid_filter = 'id:{0}'.format(self.solr_client.escape_query_term_string(pid))
-    response = self.solr_client.query(pid_filter, field_list='*')
+    pid_filter = 'id:{0}'.format(self._solr_client.escape_query_term_string(pid))
+    response = self._solr_client.query(pid_filter, field_list='*')
 
     try:
       doc = response['response']['docs'][0]
@@ -189,7 +171,7 @@ class CommandProcessor():
   ##    describe_response_dict = dict(describe_response)
   #    # TODO. This is a workaround for size (sometimes?) missing
   #    # from the DescribeResponse.
-  #    date_modified, size = self.solr_client.get_modified_date_size(pid)
+  #    date_modified, size = self._solr_client.get_modified_date_size(pid)
   #    describe_response_dict = {}
   #    describe_response_dict['format_id'] = 'xml'
   #    describe_response_dict['size'] = size
@@ -213,3 +195,21 @@ class CommandProcessor():
         describe_response_dict[date_field] = \
           d1_common.date_time.from_http_datetime(
             describe_response_dict[date_field])
+
+  def _close_open_date_ranges(self, record):
+    '''If a date range is missing the start or end date, close it by copying
+    the date from the existing value.'''
+    date_ranges = (('beginDate', 'endDate'), )
+    for begin, end in date_ranges:
+      if begin in record and end in record:
+        return
+      elif begin in record:
+        record[end] = record[begin]
+      elif end in record:
+        record[begin] = record[end]
+
+  def _parse_iso8601_date_to_native_date_time(self, record):
+    date_fields = ['beginDate', 'endDate']
+    for date_field in date_fields:
+      if date_field in record:
+        record[date_field] = d1_common.date_time.from_iso8601(record[date_field])

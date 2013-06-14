@@ -31,7 +31,8 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('../fuse')
+sys.path.append('..')
+sys.path.append('../..')
 import query_engine_description
 
 
@@ -40,11 +41,11 @@ class TestQueryEngineDescription(unittest.TestCase):
     self.q = query_engine_description.QueryEngineDescription()
     self.q.load('test_index/query_engine_description.xml')
 
-  def test_get_searchable_facet_names(self):
-    n = self.q.get_searchable_facet_names()
-    self.assertTrue(u'abstract' in n)
-    self.assertTrue(u'author' in n)
-    self.assertTrue(u'authorLastName' in n)
+  def test_100_init(self):
+    pass
+
+  def test_110_get_query_engine_version(self):
+    self.assertEqual(self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53')
 
 
 if __name__ == "__main__":
