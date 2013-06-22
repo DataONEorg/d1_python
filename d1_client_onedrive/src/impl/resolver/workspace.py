@@ -57,32 +57,38 @@ log = logging.getLogger(__name__)
 
 
 class WorkspaceFolderObjects(object):
+  '''A workspace folder contains queries (that resolve to any number of matching
+  PIDs) and PIDs that are specified directly. This class iteraterates over the
+  queries and PIDs and issues Solr queries to get the records for each PID. This
+  object then holds those records. Because the same object can be returned by
+  any number of queries as well as be specified directly, the results are stored
+  in a dictionary, keyed on the PID'''
+
   def __init__(self, command_processor, workspace_folder):
-    self._workspace_folder = workspace_folder
     self._command_processor = command_processor
-    self.objects = []
-    self._get_objects()
+    self._workspace_folder = workspace_folder
+    self._records = self._get_records_for_identifiers()
+    self._records.update(self._get_records_for_queries())
 
-  def _get_objects(self):
-    self._get_objects_by_identifier()
-    self._get_objects_by_query()
+  def get_records(self):
+    return self._records.values()
 
-  def _get_objects_by_identifier(self):
+  def _get_records_for_identifiers(self):
+    records = {}
     for pid in self._workspace_folder.identifier:
-      q = 'id:{0}'.format(pid)
-      response = self._command_processor.solr_query(q)
-      object_info = response['response']['docs']
       try:
-        self.objects.append(object_info[0])
-      except IndexError:
+        records[pid] = self._command_processor.get_solr_record(pid)
+      except path_exception.PathException:
         pass
+    return records
 
-  def _get_objects_by_query(self):
+  def _get_records_for_queries(self):
+    records = {}
     for q in self._workspace_folder.query:
       response = self._command_processor.solr_query(q)
-      sci_objs = response['response']['docs']
-      for s in sci_objs:
-        self.objects.append(s)
+      for sci_obj in response['response']['docs']:
+        records[sci_obj['id']] = sci_obj
+    return records
 
 
 class Resolver(resolver_abc.Resolver):
@@ -94,7 +100,7 @@ class Resolver(resolver_abc.Resolver):
     self.resolvers = {
       'Authors': author.Resolver(self.command_processor),
       'Regions': region.Resolver(self.command_processor),
-      'ScienceDiscipline': author.Resolver(self.command_processor),
+      #'ScienceDiscipline': author.Resolver(self.command_processor),
       'Taxa': taxa.Resolver(self.command_processor),
       'TimePeriods': time_period.Resolver(self.command_processor),
     }
@@ -103,7 +109,37 @@ class Resolver(resolver_abc.Resolver):
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    return attributes.Attributes(is_dir=True)
+    # All items rendered by the Workspace Resolver are folders. Anything else
+    # is deferred to one of the child resolvers.
+
+    # To determine where the path transitions from the workspace to the
+    # controlled hierarchy, we check for the controlled hierarchy root names.
+    # This means that those names are reserved. They can not be used as
+    # workspace folder names by the user.
+    workspace_folder = self._get_workspace_folder(path)
+
+    # All workspace items are folders.
+    if workspace_folder is not None:
+      return attributes.Attributes(is_dir=True)
+
+    # If the path is not to a workspace folder root, a valid path must go to a
+    # controlled hierarchy root or subfolder THROUGH a workspace folder root. In
+    # that case, the first path element that matches the reserved name of one of
+    # the controlled hierarchy roots becomes the separator between the two
+    # sections and determines which resolver to use for the tail section of the
+    # path.
+    workspace_path, resolver, controlled_path = \
+      self._split_path_by_reserved_name(path)
+
+    # If the workspace_path is not valid now, then the path is invalid.
+    workspace_folder = self._get_workspace_folder(workspace_path)
+    if workspace_folder is None:
+      raise path_exception.PathException('Invalid folder')
+
+    # Now have all information required for gathering information about all the
+    # objects in the workspace folder and dispatching to a controlled hierarchy
+    # resolver.
+    return self.resolvers[resolver].get_attributes(controlled_path)
 
 #    # The facet path parser split method validates the path to make sure it can
 #    # be cleanly split to a valid facet and/or object section. If the path is
@@ -194,7 +230,7 @@ class Resolver(resolver_abc.Resolver):
     #
     ##self.append_folders(d, f)
     ## Add contents of folder.
-    #for o in workspace_folder_objects.objects:
+    #for o in workspace_folder_objects.get_records():
     #  d.append(directory_item.DirectoryItem(o['id'] + ' ' + o.get('author', '')))
     ##pprint.pprint(w.objects)
     #
@@ -202,6 +238,36 @@ class Resolver(resolver_abc.Resolver):
     ##self.append_pids(d, f)
     ##self.append_queries(d, f)
     #return d
+
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(
+          path
+        ), size, offset
+      )
+    )
+
+    # The workspace resolver exposes no readable files.
+
+    workspace_folder = self._get_workspace_folder(path)
+
+    if workspace_folder is not None:
+      raise path_exception.PathException('Invalid file')
+
+    workspace_path, resolver, controlled_path = \
+      self._split_path_by_reserved_name(path)
+
+    workspace_folder = self._get_workspace_folder(workspace_path)
+    if workspace_folder is None:
+      raise path_exception.PathException('Invalid file')
+
+    #print self.resolvers[resolver]
+    return self.resolvers[resolver].read_file(controlled_path, size, offset)
+
+  #
+  # Private.
+  #
 
   def _create_workspace_from_xml_doc(self, xml_doc_path):
     xml_doc = open(xml_doc_path, 'rb').read()
@@ -285,13 +351,7 @@ class Resolver(resolver_abc.Resolver):
 #    return self._get_directory(path, preconfigured_query)
 #
 #
-#  def read_file(self, path, size, offset):
-#    log.debug('read_file: {0}, {1}, {2}'.format(util.string_from_path_elements(
-#      path), size, offset))
-#    return self._read_file(path, size, offset)
 #
-#
-#  # Private.
 #
 #  def _read_file(self, path, size, offset):
 #    facet_section, object_section = self.facet_path_parser \

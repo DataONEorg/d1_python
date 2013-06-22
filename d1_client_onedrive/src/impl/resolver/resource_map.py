@@ -116,25 +116,19 @@ class Resolver(resolver_abc.Resolver):
 
   def _is_resource_map(self, pid):
     #try:
-    description = self.command_processor.get_object_info_through_cache(pid)
+    description = self.command_processor.get_solr_record(pid)
     #except:
     #self._raise_invalid_pid(pid)
     return description['format_id'] == d1_client.data_package.RDFXML_FORMATID
 
   def _get_description(self, pid):
     #try:
-    return self.command_processor.get_object_info_through_cache(pid)
+    return self.command_processor.get_solr_record(pid)
     #except:
     #self._raise_invalid_pid(pid)
 
   def _raise_invalid_pid(self, pid):
     raise path_exception.PathException('Invalid PID: {0}'.format(pid))
-
-#    except Exception as e:
-#      print e
-#    except httplib.BadStatusLine as e:
-#      # BadStatusLine means that the object was not found on the server
-#      return False
 
   def deserialize_resource_map(self, resource_map):
     package = d1_client.data_package.DataPackage()
@@ -148,7 +142,7 @@ class Resolver(resolver_abc.Resolver):
     pids = self.deserialize_resource_map(resource_map)
     total = 0
     for pid in pids:
-      o = self.command_processor.get_object_info_through_cache(pid)
+      o = self.command_processor.get_solr_record(pid)
       total += o['size']
     return total
 

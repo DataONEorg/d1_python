@@ -79,6 +79,17 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(path), size, offset)
+    )
+
+    if len(path) >= 2:
+      return self.d1_object_resolver.read_file(path[1:], size, offset)
+
+    raise path_exception.PathException('Invalid file')
+
   # Private.
 
   def _get_attribute(self, path):
@@ -95,7 +106,7 @@ class Resolver(resolver_abc.Resolver):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     authors = set()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       try:
         authors.add(o['author'])
       except KeyError:
@@ -105,7 +116,7 @@ class Resolver(resolver_abc.Resolver):
 
   def _resolve_author(self, author, workspace_folder_objects):
     dir = directory.Directory()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       try:
         if o['author'] == author:
           dir.append(directory_item.DirectoryItem(o['id']))

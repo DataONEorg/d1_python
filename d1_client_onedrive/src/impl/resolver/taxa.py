@@ -98,6 +98,17 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(path), size, offset)
+    )
+
+    if len(path) >= 3:
+      return self.d1_object_resolver.read_file(path[2:], size, offset)
+
+    raise path_exception.PathException('Invalid file')
+
   # Private.
 
   def _get_attribute(self, path):
@@ -122,7 +133,7 @@ class Resolver(resolver_abc.Resolver):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     for g in self.classifications:
-      for o in workspace_folder_objects.objects:
+      for o in workspace_folder_objects.get_records():
         if g in o.keys():
           dir.append(directory_item.DirectoryItem(g))
           break
@@ -134,14 +145,13 @@ class Resolver(resolver_abc.Resolver):
     u = self._get_unique_values_for_classification(
       classification, workspace_folder_objects
     )
-    print u
     return [directory_item.DirectoryItem(v) for v in u]
 
   def _resolve_taxa_classification_value(
     self, classification, value, workspace_folder_objects
   ):
     dir = directory.Directory()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       try:
         if value in o[classification]:
           dir.append(directory_item.DirectoryItem(o['id']))
@@ -158,7 +168,7 @@ class Resolver(resolver_abc.Resolver):
     self, classification, workspace_folder_objects
   ):
     u = set()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       try:
         for v in o[classification]:
           u.add(v)

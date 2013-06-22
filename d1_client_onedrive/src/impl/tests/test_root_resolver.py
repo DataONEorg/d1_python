@@ -77,7 +77,6 @@ class TestRootResolver(unittest.TestCase):
 
   def _test_150_resolve(self):
     d = self.r.get_directory('/TestResolver/abc/def')
-    print d
     self.assertTrue('/abc/def' in [f[0] for f in d])
 
 #===============================================================================

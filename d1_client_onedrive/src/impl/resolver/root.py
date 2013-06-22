@@ -131,11 +131,11 @@ class RootResolver(resolver_abc.Resolver):
     return self._escape_directory_entries(dir)
 
   def _read_file(self, path, size, offset):
-    #    if self._is_root(path):
-    #      return self._resolve_root()
-    #    if self._is_cached_error_folder_path(path):
-    #      error_message = self._get_cached_error_message(path)
-    #      return self._render_error_message_as_file(error_message)
+    if self._is_root(path):
+      return self._resolve_root()
+    if self._is_cached_error_folder_path(path):
+      error_message = self._get_cached_error_message(path)
+      return self._render_error_message_as_file(error_message)
     return self._dispatch_read_file(path, size, offset)
 
   def _is_cached_error_folder_path(self, path):

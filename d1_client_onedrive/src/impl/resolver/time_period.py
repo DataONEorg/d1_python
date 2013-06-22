@@ -82,6 +82,17 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(path), size, offset)
+    )
+
+    if len(path) >= 3:
+      return self.d1_object_resolver.read_file(path[2:], size, offset)
+
+    raise path_exception.PathException('Invalid file')
+
   # Private.
 
   def _get_attribute(self, path):
@@ -105,7 +116,7 @@ class Resolver(resolver_abc.Resolver):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     sites = set()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       if 'beginDate' in o and 'endDate' in o:
         for decade in self._decade_ranges_in_date_range(o['beginDate'], o['endDate']):
           sites.add(decade)
@@ -129,7 +140,7 @@ class Resolver(resolver_abc.Resolver):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     sites = set()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       if 'beginDate' in o and 'endDate' in o:
         for year in self._years_in_date_range_within_decade(
           first_year_in_decade, o['beginDate'], o['endDate']
@@ -142,7 +153,7 @@ class Resolver(resolver_abc.Resolver):
   def _resolve_objects_in_year(self, year, workspace_folder_objects):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       if 'beginDate' in o and 'endDate' in o:
         if self._is_year_in_date_range(year, o['beginDate'], o['endDate']):
           dir.append(directory_item.DirectoryItem(o['id']))

@@ -104,26 +104,3 @@ class D1Client(object):
       raise path_exception.PathException(e.description)
     except (ssl.SSLError, Exception) as e:
       raise path_exception.PathException(str(e))
-
-# USED
-################################################################################
-# UNUSED
-
-  def get_object_filename(self, pid):
-    '''Get filename for object. Filename format is pid.ext. Ext is looked up
-    in object format map.
-    '''
-    sysm = self.get_system_metadata(pid)
-    ofmt = sysm.formatId
-    extension = getExtensionFromObjectFormat(ofmt)
-    filename = pid + extension
-    return filename
-
-  def get_object_pid(self, filename):
-    '''Get pid from filename. Filename format is pid.ext.
-    :param filename: Name of file for which to get PID
-    :type filename: str
-    :return: object identifier
-    :rtype: DataONE Persistent ID
-    '''
-    return filename[:filename.rfind('.')]

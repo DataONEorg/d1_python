@@ -50,24 +50,6 @@ import query_engine_description
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
-#===============================================================================
-'''
-If path is for facet name container, list unapplied facet names then result of
-query based on applied facets.
-
-if path is for facet value container, list facet names / counts, then result of
-query based on applied facets.
-
-https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*&rows=10
-
-https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*&rows=0&facet=true&
-indent=on&wt=python&facet.field=genus_s&facet.limit=10&facet.zeros=false&facet.s
-ort=false
-
-https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*&rows=10&facet=true
-&facet.field=rightsHolder
-'''
-
 
 # SolrConnection is a thin layer on top of HTTPSConnection that automatically
 # retries queries and connection attempts.
@@ -157,6 +139,13 @@ class SolrClient(object):
     query_url = urllib.urlencode(query_params, doseq=True)
     return self._solr_connection.get(query_url)
 
+  def escape_query_term_string(self, term):
+    '''Escape a query term string and wrap it in quotes.
+    '''
+    return '"{0}"'.format(self._escape_query_term(term))
+
+  # Private.
+
   def _make_query_param_tuples(self, query_type, terms):
     return [(query_type, t) for t in self.__escape_query_term_list(terms)]
 
@@ -187,11 +176,6 @@ class SolrClient(object):
     for c in reserved:
       term = term.replace(c, u'\{0}'.format(c))
     return term
-
-  def _escape_query_term_string(self, term):
-    '''Escape a query term string and wrap it in quotes.
-    '''
-    return '"{0}"'.format(self._escape_query_term(term))
 
   #def prepare_query_term(self, field, term):
   #  '''

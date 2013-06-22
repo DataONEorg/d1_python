@@ -51,7 +51,8 @@
   <query>scientificName:['' TO *]</query>
   <query>author:['' TO *]</query>
   <query>site:['' TO *]</query>
-  <query>decade:['' TO *]</query>
+  <query>beginDate:*</query>
+  <query>endDate:*</query>
   <query>id:G*</query>
   <query>id:H*</query>
 </folder>

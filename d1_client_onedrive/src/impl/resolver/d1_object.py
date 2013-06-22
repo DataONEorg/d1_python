@@ -94,7 +94,7 @@ class Resolver(resolver_abc.Resolver):
 
     pid = path[0]
 
-    description = self.command_processor.get_object_info_through_cache(pid)
+    record = self.command_processor.get_solr_record(pid)
 
     # This resolver does not call out to any other resolves. Any path that
     # is deeper than two levels, and any path that is one level, but does
@@ -102,27 +102,32 @@ class Resolver(resolver_abc.Resolver):
 
     if len(path) == 1:
       return attributes.Attributes(
-        is_dir=True, size=description['size'],
-        date=description['date']
+        is_dir=True, size=record['size'],
+        date=record['dateUploaded']
       )
 
     if len(path) == 2:
-      if path[1] == self._get_pid_filename(pid, description):
-        return attributes.Attributes(size=description['size'], date=description['date'])
+      if path[1] == self._get_pid_filename(pid, record):
+        return attributes.Attributes(size=record['size'], date=record['dateUploaded'])
 
       if path[1] == 'system.xml':
         sys_meta_xml = self.command_processor.get_system_metadata_through_cache(pid)[1]
-        return attributes.Attributes(size=len(sys_meta_xml), date=description['date'])
+        return attributes.Attributes(size=len(sys_meta_xml), date=record['dateUploaded'])
 
     self._raise_invalid_path()
 
   def _get_directory(self, path):
     pid = path[0]
-    description = self.command_processor.get_object_info_through_cache(pid)
+    record = self.command_processor.get_solr_record(pid)
     return [
-      directory_item.DirectoryItem(self._get_pid_filename(pid, description)),
+      self._make_directory_item_for_solr_record(record),
       directory_item.DirectoryItem('system.xml'),
     ]
+
+  def _make_directory_item_for_solr_record(self, record):
+    return directory_item.DirectoryItem(
+      self._get_pid_filename(record['id'], record), record['size']
+    )
 
   def _read_file(self, path, size, offset):
     pid = path[0]
@@ -132,9 +137,9 @@ class Resolver(resolver_abc.Resolver):
       sys_meta_xml = self.command_processor.get_system_metadata_through_cache(pid)[1]
       return sys_meta_xml[offset:offset + size]
 
-    description = self.command_processor.get_object_info_through_cache(pid)
+    record = self.command_processor.get_solr_record(pid)
 
-    if filename == self._get_pid_filename(pid, description):
+    if filename == self._get_pid_filename(pid, record):
       sci_obj = self.command_processor.get_science_object_through_cache(pid)
       return sci_obj[offset:offset + size]
 
@@ -146,7 +151,7 @@ class Resolver(resolver_abc.Resolver):
   def _raise_invalid_path(self):
     raise path_exception.PathException('Invalid path')
 
-  def _get_pid_filename(self, pid, description):
+  def _get_pid_filename(self, pid, record):
     return pid + self.object_format_info.filename_extension_from_format_id(
-      description['format_id']
+      record['formatId']
     )

@@ -79,6 +79,17 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
+  def read_file(self, path, size, offset):
+    log.debug(
+      'read_file: {0}, {1}, {2}'.format(
+        util.string_from_path_elements(path), size, offset)
+    )
+
+    if len(path) >= 2:
+      return self.d1_object_resolver.read_file(path[1:], size, offset)
+
+    raise path_exception.PathException('Invalid file')
+
   # Private.
 
   def _get_attribute(self, path):
@@ -95,7 +106,7 @@ class Resolver(resolver_abc.Resolver):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     sites = set()
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       if 'site' in o:
         for s in o['site']:
           sites.add(s)
@@ -103,10 +114,9 @@ class Resolver(resolver_abc.Resolver):
     return dir
 
   def _resolve_region(self, region, workspace_folder_objects):
-    print workspace_folder_objects.objects
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    for o in workspace_folder_objects.objects:
+    for o in workspace_folder_objects.get_records():
       try:
         if region in o['site']:
           dir.append(directory_item.DirectoryItem(o['id']))

@@ -137,7 +137,7 @@ def main():
 def log_setup(options):
   # Set up logging.
   # Log entries are written to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
+  logging.getLogger('').setLevel(logging.ERROR)
   formatter = logging.Formatter(
     '%(asctime)s %(levelname)-8s %(name)s'
     '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'
