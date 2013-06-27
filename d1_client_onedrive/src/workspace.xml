@@ -41,6 +41,8 @@
   <identifier>resourceMap_SH15XX_015MHP2014R00_20110412.50.1</identifier>
   <identifier>resourceMap_SH15XX_015MXTI004R00_20050420.50.6</identifier>
 
+  <identifier>resourceMap_AKCRRAB.36.1</identifier>
+
   <query>kingdom:['' TO *]</query>
   <query>phylum:['' TO *]</query>
   <query>class:['' TO *]</query>

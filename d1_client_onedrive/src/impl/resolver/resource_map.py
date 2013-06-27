@@ -119,7 +119,7 @@ class Resolver(resolver_abc.Resolver):
     description = self.command_processor.get_solr_record(pid)
     #except:
     #self._raise_invalid_pid(pid)
-    return description['format_id'] == d1_client.data_package.RDFXML_FORMATID
+    return description['formatId'] == d1_client.data_package.RDFXML_FORMATID
 
   def _get_description(self, pid):
     #try:
@@ -131,9 +131,9 @@ class Resolver(resolver_abc.Resolver):
     raise path_exception.PathException('Invalid PID: {0}'.format(pid))
 
   def deserialize_resource_map(self, resource_map):
-    package = d1_client.data_package.DataPackage()
-    package._parse_rdf_xml(resource_map)
-    return sorted(package.scidata_dict.keys())
+    package = d1_client.data_package.ResourceMapParser()
+    return package.get_identifiers_referenced_by_package(resource_map)
+    #return sorted(package.scidata_dict.keys())
 
   def get_total_size_of_objects_in_resource_map(self, resource_map_pid):
     resource_map = self.command_processor.get_science_object_through_cache(
