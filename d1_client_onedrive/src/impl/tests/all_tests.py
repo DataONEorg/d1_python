@@ -46,7 +46,7 @@ from test_directory_item import TestDirectoryItem
 from test_query_engine_description import TestQueryEngineDescription
 from test_solr_client import TestSolrClient
 
-from test_cache_memory import TestMemoryCache
+from test_cache_memory import TestCache
 from test_cache_disk import TestDiskCache
 from test_util import TestUtil
 

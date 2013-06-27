@@ -41,7 +41,7 @@ import util
 log = logging.getLogger(__name__)
 
 
-class MemoryCache(dict):
+class Cache(dict):
   def __init__(self, max_items):
     self.max_items = max_items
     self._keys = []

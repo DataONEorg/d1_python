@@ -36,7 +36,7 @@ import os
 
 # App.
 from impl import attributes
-from impl import cache
+from impl import cache_memory as cache
 from impl import command_processor
 from impl import directory
 from impl import directory_item

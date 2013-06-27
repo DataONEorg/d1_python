@@ -54,18 +54,18 @@ class CommandProcessor():
     # The solr_query_cache and object_info_cache contain the same information.
     # solr_query_cache is keyed by the query string.
     # object_info_cache is keyed by the pid.
-    #self._solr_query_cache = cache_memory.MemoryCache(self._options.MAX_SOLR_QUERY_CACHE_SIZE)
+    #self._solr_query_cache = cache_memory.Cache(self._options.MAX_SOLR_QUERY_CACHE_SIZE)
     self._solr_query_cache = cache_disk.DiskCache(
       self._options.MAX_SOLR_QUERY_CACHE_SIZE, './cache_solr'
     )
-    #self._object_info_cache = cache_memory.MemoryCache(1000)
+    #self._object_info_cache = cache_memory.Cache(1000)
     self._object_info_cache = cache_disk.DiskCache(1000, './cache_object_info')
 
     self._science_object_cache = cache_disk.DiskCache(1000, './cache_science_objects')
     self._system_metadata_cache = cache_disk.DiskCache(1000, './cache_system_metadata')
 
     #self.object_description_cache = cache.Cache(1000)
-    #self.object_description_cache2 = cache_memory.MemoryCache(1000)
+    #self.object_description_cache2 = cache_memory.Cache(1000)
     self._solr_client = onedrive_solr_client.SolrClient(options)
 
   def solr_query(self, query, filter_queries=None, fields=None):

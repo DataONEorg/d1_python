@@ -45,7 +45,7 @@ import os
 
 # D1.
 from impl import attributes
-from impl import cache
+from impl import cache_memory as cache
 from impl import directory
 from impl import directory_item
 from . import workspace

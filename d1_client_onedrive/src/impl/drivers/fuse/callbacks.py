@@ -45,7 +45,7 @@ import urlparse
 import d1_common.date_time
 
 # App.
-from impl import cache
+from impl import cache_memory as cache
 from impl import directory
 from impl import directory_item
 from impl import path_exception

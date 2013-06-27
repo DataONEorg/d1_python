@@ -39,7 +39,7 @@ import d1_client.data_package
 # App.
 sys.path.append('.')
 from impl import attributes
-from impl import cache
+from impl import cache_memory as cache
 from impl import command_processor
 import d1_object
 from impl import directory
