@@ -71,7 +71,7 @@ class Resolver(resolver_abc.Resolver):
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
     if len(path) > 1 or not self._is_resource_map(path[0]):
-      return self.d1_object_resolver.get_attributes(path)
+      return self.d1_object_resolver.get_attributes(path[1:])
 
     return self._get_attribute(path)
 
@@ -79,7 +79,7 @@ class Resolver(resolver_abc.Resolver):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) > 1 or not self._is_resource_map(path[0]):
-      return self.d1_object_resolver.get_directory(path)
+      return self.d1_object_resolver.get_directory(path[1:])
 
     return self._get_directory(path)
 
@@ -93,7 +93,7 @@ class Resolver(resolver_abc.Resolver):
     )
 
     #    if len(path) > 1 or not self._is_resource_map(path[0]):
-    return self.d1_object_resolver.read_file(path, size, offset)
+    return self.d1_object_resolver.read_file(path[1:], size, offset)
 
 #    return self._get_directory(path)
 
