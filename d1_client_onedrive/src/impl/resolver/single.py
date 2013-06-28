@@ -18,11 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.author`
+''':mod:`resolver.single`
 =========================
 
 :Synopsis:
- - Resolve a filesystem path pointing into an Authors controlled hierarchy.
+ - This resolver simply renders all objects into a single folder.
 :Author: DataONE (Dahl)
 '''
 
@@ -58,26 +58,20 @@ class Resolver(resolver_abc.Resolver):
     self._options = options
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
-    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
-    # The author resolver handles hierarchy levels:
-    # / = List of Authors
-    # /author_names = List of objects for author
-    # All longer paths are handled by d1_object resolver.
-
-  def get_attributes(self, path): #workspace_folder_objects
+  def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) > 2:
-      return self.resource_map_resolver.get_attributes(path[1:])
+    if len(path) >= 1:
+      return self.resource_map_resolver.get_attributes(path[0:])
 
     return self._get_attribute(path)
 
   def get_directory(self, path, workspace_folder_objects):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) >= 2:
-      return self.resource_map_resolver.get_directory(path[1:])
+    if len(path) >= 1:
+      return self.resource_map_resolver.get_directory(path[0:])
 
     return self._get_directory(path, workspace_folder_objects)
 
@@ -87,8 +81,8 @@ class Resolver(resolver_abc.Resolver):
         util.string_from_path_elements(path), size, offset)
     )
 
-    if len(path) >= 2:
-      return self.resource_map_resolver.read_file(path[1:], size, offset)
+    if len(path) >= 1:
+      return self.resource_map_resolver.read_file(path[0:], size, offset)
 
     raise path_exception.PathException('Invalid file')
 
@@ -98,35 +92,8 @@ class Resolver(resolver_abc.Resolver):
     return attributes.Attributes(0, is_dir=True)
 
   def _get_directory(self, path, workspace_folder_objects):
-    if len(path) == 0:
-      return self._resolve_author_root(workspace_folder_objects)
-
-    author = path[0]
-    return self._resolve_author(author, workspace_folder_objects)
-
-  def _resolve_author_root(self, workspace_folder_objects):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    authors = set()
-    for o in workspace_folder_objects.get_records():
-      try:
-        authors.add(o['author'])
-      except KeyError:
-        pass
-    dir.extend([directory_item.DirectoryItem(a) for a in authors])
-    return dir
-
-  def _resolve_author(self, author, workspace_folder_objects):
-    dir = directory.Directory()
-    for o in workspace_folder_objects.get_records():
-      try:
-        if o['author'] == author:
-          dir.append(directory_item.DirectoryItem(o['id']))
-      except KeyError:
-        pass
-    # As each author folder in the root has at least one object, an empty folder
-    # here can only be due to an invalid path.
-    if not len(dir):
-      raise path_exception.PathException('Invalid author')
-    self.append_parent_and_self_references(dir)
+    for r in workspace_folder_objects.get_records():
+      dir.append(directory_item.DirectoryItem(r['id']))
     return dir

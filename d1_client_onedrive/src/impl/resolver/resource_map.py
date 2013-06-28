@@ -57,13 +57,12 @@ class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
     self._options = options
     self.command_processor = command_processor
-    self.d1_object_resolver = d1_object.Resolver(command_processor)
-    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
+    self.d1_object_resolver = d1_object.Resolver(options, command_processor)
 
-    # The resource map resolver handles only one hierarchy level, so anything
-    # that has more levels is handed to the d1_object resolver.
-    # If the object is not a resource map, control is handed to the d1_object
-    # resolver.
+  # The resource map resolver handles only one hierarchy level, so anything
+  # that has more levels is handed to the d1_object resolver.
+  # If the object is not a resource map, control is handed to the d1_object
+  # resolver.
 
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
@@ -71,7 +70,7 @@ class Resolver(resolver_abc.Resolver):
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
     if len(path) > 1 or not self._is_resource_map(path[0]):
-      return self.d1_object_resolver.get_attributes(path[1:])
+      return self.d1_object_resolver.get_attributes(path)
 
     return self._get_attribute(path)
 
@@ -79,7 +78,7 @@ class Resolver(resolver_abc.Resolver):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) > 1 or not self._is_resource_map(path[0]):
-      return self.d1_object_resolver.get_directory(path[1:])
+      return self.d1_object_resolver.get_directory(path)
 
     return self._get_directory(path)
 

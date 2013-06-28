@@ -40,22 +40,23 @@ sys.path.append('.')
 from impl import attributes
 from impl import cache_memory as cache
 from impl import command_processor
-import d1_object
 from impl import directory
 from impl import directory_item
 from impl import path_exception
 import resolver_abc
 #from impl #import settings
 from impl import util
+import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_abc.Resolver):
-  def __init__(self, command_processor):
+  def __init__(self, options, command_processor):
+    self._options = options
     self.command_processor = command_processor
-    self.d1_object_resolver = d1_object.Resolver(command_processor)
+    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
     # The region resolver handles hierarchy levels:
@@ -67,7 +68,7 @@ class Resolver(resolver_abc.Resolver):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) >= 2:
-      return self.d1_object_resolver.get_attributes(path[1:])
+      return self.resource_map_resolver.get_attributes(path[1:])
 
     return self._get_attribute(path)
 
@@ -75,7 +76,7 @@ class Resolver(resolver_abc.Resolver):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) >= 2:
-      return self.d1_object_resolver.get_directory(path[1:])
+      return self.resource_map_resolver.get_directory(path[1:])
 
     return self._get_directory(path, workspace_folder_objects)
 
@@ -86,7 +87,7 @@ class Resolver(resolver_abc.Resolver):
     )
 
     if len(path) >= 2:
-      return self.d1_object_resolver.read_file(path[1:], size, offset)
+      return self.resource_map_resolver.read_file(path[1:], size, offset)
 
     raise path_exception.PathException('Invalid file')
 

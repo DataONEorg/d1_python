@@ -49,6 +49,7 @@ from impl.resolver import author
 from impl.resolver import taxa
 from impl.resolver import region
 from impl.resolver import time_period
+from impl.resolver import single
 
 import d1_workspace.types.generated.workspace_types as workspace_types
 
@@ -98,11 +99,11 @@ class Resolver(resolver_abc.Resolver):
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self._workspace = self._create_workspace_from_xml_doc(options.WORKSPACE_XML)
     self.resolvers = {
-      'Authors': author.Resolver(self.command_processor),
-      'Regions': region.Resolver(self.command_processor),
-      #'ScienceDiscipline': author.Resolver(self.command_processor),
-      'Taxa': taxa.Resolver(self.command_processor),
-      'TimePeriods': time_period.Resolver(self.command_processor),
+      'Authors': author.Resolver(self._options, self.command_processor),
+      'Regions': region.Resolver(self._options, self.command_processor),
+      'Taxa': taxa.Resolver(self._options, self.command_processor),
+      'TimePeriods': time_period.Resolver(self._options, self.command_processor),
+      'Single': single.Resolver(self._options, self.command_processor),
     }
     #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
