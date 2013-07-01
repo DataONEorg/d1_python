@@ -63,8 +63,10 @@ class FUSECallbacks(fuse.Operations):
     self.start_time = time.time()
     self.gid = os.getgid()
     self.uid = os.getuid()
-    self.attribute_cache = cache.Cache(self._options.MAX_ATTRIBUTE_CACHE_SIZE)
-    self.directory_cache = cache.Cache(self._options.MAX_DIRECTORY_CACHE_SIZE)
+    #self.attribute_cache = cache.Cache(self._options.MAX_ATTRIBUTE_CACHE_SIZE)
+    #self.directory_cache = cache.Cache(self._options.MAX_DIRECTORY_CACHE_SIZE)
+    self.attribute_cache = options.attribute_cache
+    self.directory_cache = options.directory_cache
 
 
   def getattr(self, path, fh):

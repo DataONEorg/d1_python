@@ -45,25 +45,31 @@ encoding of the Unicode strings.
 '''
 
 # Stdlib.
+import os
 import urllib
+
+LINUX = ["posix", ]
+WINDOWS = ["nt", ]
 
 
 def filename_from_identifier(identifier):
-  # "%" is not safe because it causes the URL "percent-encoding" to become
-  # non-reversible.
-  #
-  # TODO: "@" and "#" are reserved as decorators for facet names and values.
-  # They are only reserved as the first character. For now, they are allowed in
-  # all positions because it allows escaping to be performed in a single
-  # location (the root resolver), instead of individually by each resolver.
+  #TODO: This method of encoding is bad because it downgrades unicode and so
+  # presents readability issues. The only character that *really* needs to be
+  # escaped on posix systems is "/"
   #
   # On Windows, the following characters are not allowed:
   # \ / :  * ? " < > |
   # Linux
-  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
-  # Windows
-  #return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
+  if os.name in LINUX:
+    return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
+  elif os.name in WINDOWS:
+    return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
+  return identifier
 
 
 def identifier_from_filename(filename):
-  return urllib.unquote(filename).decode('utf8')
+  if os.name in LINUX:
+    return urllib.unquote(filename).decode('utf8')
+  elif os.name in WINDOWS:
+    return urllib.unquote(filename).decode('utf8')
+  return filename

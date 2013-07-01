@@ -51,6 +51,8 @@ from impl import check_dependencies
 from impl.drivers.fuse import callbacks
 import impl.resolver.root
 
+from impl import cache_memory as cache
+
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 
@@ -114,14 +116,20 @@ def main():
   }
   # FUSE settings specific to MacFUSE.
   if os.uname()[0] == 'Darwin':
-    fuse_args['volicon'] = self._options.MACFUSE_ICON
-    fuse_args['local'] = self._options.MACFUSE_LOCAL_DISK
+    fuse_args['volicon'] = options.MACFUSE_ICON
+    fuse_args['local'] = options.MACFUSE_LOCAL_DISK
   # FUSE settings specific to regular FUSE.
   else:
     fuse_args['nonempty'] = options.FUSE_NONEMPTY
 
   log_startup_parameters(options, arguments, fuse_args)
   log_settings(options)
+
+  #create the caches here and add references to them in options.
+  #enables child resolvers to invalidate entries so that 
+  #changes can be reflected in the listings
+  options.attribute_cache = cache.Cache(options.MAX_ATTRIBUTE_CACHE_SIZE)
+  options.directory_cache = cache.Cache(options.MAX_DIRECTORY_CACHE_SIZE)
 
   # Instantiate the Root resolver.
   root_resolver = impl.resolver.root.RootResolver(options)
@@ -137,7 +145,7 @@ def main():
 def log_setup(options):
   # Set up logging.
   # Log entries are written to both file and stdout.
-  logging.getLogger('').setLevel(logging.DEBUG)
+  logging.getLogger('').setLevel(logging.INFO)
   formatter = logging.Formatter(
     '%(asctime)s %(levelname)-8s %(name)s'
     '(%(lineno)d): %(message)s', '%Y-%m-%d %H:%M:%S'

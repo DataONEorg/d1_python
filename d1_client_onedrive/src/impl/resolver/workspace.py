@@ -55,6 +55,12 @@ import d1_workspace.types.generated.workspace_types as workspace_types
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+try:
+  if __name__ in logging.DEBUG_MODULES:
+    __level = logging.getLevelName("DEBUG")
+    log.setLevel(__level)
+except:
+  pass
 
 
 class WorkspaceFolderObjects(object):
@@ -89,6 +95,7 @@ class WorkspaceFolderObjects(object):
       response = self._command_processor.solr_query(q)
       for sci_obj in response['response']['docs']:
         records[sci_obj['id']] = sci_obj
+        #log.debug("solr response doc: %s" % str(sci_obj))
     return records
 
 
@@ -97,7 +104,7 @@ class Resolver(resolver_abc.Resolver):
     self._options = options
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
-    self._workspace = self._create_workspace_from_xml_doc(options.WORKSPACE_XML)
+    self.load_workspace(options.WORKSPACE_XML)
     self.resolvers = {
       'Authors': author.Resolver(self._options, self.command_processor),
       'Regions': region.Resolver(self._options, self.command_processor),
@@ -240,7 +247,7 @@ class Resolver(resolver_abc.Resolver):
     ##self.append_queries(d, f)
     #return d
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, size, offset, opath=u''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -266,9 +273,15 @@ class Resolver(resolver_abc.Resolver):
     #print self.resolvers[resolver]
     return self.resolvers[resolver].read_file(controlled_path, size, offset)
 
-  #
-  # Private.
-  #
+  def load_workspace(self, workspace_xml):
+    '''Loads the workspace XML document
+    '''
+    self._workspace = self._create_workspace_from_xml_doc(workspace_xml)
+    #Additional processing to flush cache etc
+
+    #
+    # Private.
+    #
 
   def _create_workspace_from_xml_doc(self, xml_doc_path):
     xml_doc = open(xml_doc_path, 'rb').read()

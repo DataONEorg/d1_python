@@ -36,6 +36,7 @@ directory entries:
 import logging
 import os
 from impl import util
+from datetime import datetime
 
 # D1.
 
@@ -49,34 +50,65 @@ from . import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-
-how_to_use = 'Use FlatSpace to go directly to any DataONE object by typing ' \
-  'the PID in the path'
+try:
+  if __name__ in logging.DEBUG_MODULES:
+    __level = logging.getLevelName("DEBUG")
+    log.setLevel(__level)
+except:
+  pass
 
 
 class Resolver(resolver_abc.Resolver):
+
+  HELP = {'name': 'readme.txt',
+          'content': '''
+Use FlatSpace to go directly to any DataONE object by typing 
+the PID in the path.
+'''
+
+
+   ,
+            }
+
   def __init__(self, options, command_processor):
     self._options = options
+    self.modified()
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
+    self._manual_pid_list = {}
 
   def get_attributes(self, path):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
     if not len(path):
-      return attributes.Attributes(is_dir=True)
+      return attributes.Attributes(is_dir=True, date=self._modified)
 
-    if path[0] == how_to_use:
-      return attributes.Attributes()
+    if path[0] == Resolver.HELP['name']:
+      return attributes.Attributes(size=len(Resolver.HELP['content']))
 
-    return self.resource_map_resolver.get_attributes(path)
+    res = self.resource_map_resolver.get_attributes(path)
+    if not self._manual_pid_list.has_key(path[0]):
+      #try:
+      #  k = os.path.join(*path[:-1])
+      #  del self._options.directory_cache[k]
+      #except KeyError:
+      #  log.debug("No cache entry for %s" % os.path.join(*path))
+      self.modified()
+      self._manual_pid_list[path[0]] = res
+    return res
 
   def get_directory(self, path):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    if not len(path):
-      return [directory_item.DirectoryItem(how_to_use)]
-
+    if len(path) == 0:
+      res = [
+        directory_item.DirectoryItem(
+          Resolver.HELP['name'], size=len(Resolver.HELP['content'])
+        )
+      ]
+      for k in self._manual_pid_list.keys():
+        res.append(directory_item.DirectoryItem(k))
+      return res
     return self.resource_map_resolver.get_directory(path)
 
   def read_file(self, path, size, offset):
@@ -88,7 +120,16 @@ class Resolver(resolver_abc.Resolver):
       )
     )
 
-    if not len(path):
-      return [directory_item.DirectoryItem(how_to_use)]
+    if len(path) == 0:
+      return [
+        directory_item.DirectoryItem(
+          Resolver.HELP['name'], size=len(Resolver.HELP['content'])
+        )
+      ]
+    if path[1] == Resolver.HELP['name']:
+      return Resolver.HELP['content' [offset:size]]
 
     return self.resource_map_resolver.read_file(path, size, offset)
+
+  def modified(self):
+    self._modified = datetime.utcnow()

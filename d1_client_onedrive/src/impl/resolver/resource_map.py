@@ -51,6 +51,12 @@ from impl import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+try:
+  if __name__ in logging.DEBUG_MODULES:
+    __level = logging.getLevelName("DEBUG")
+    log.setLevel(__level)
+except:
+  pass
 
 
 class Resolver(resolver_abc.Resolver):
@@ -58,7 +64,6 @@ class Resolver(resolver_abc.Resolver):
     self._options = options
     self.command_processor = command_processor
     self.d1_object_resolver = d1_object.Resolver(options, command_processor)
-
   # The resource map resolver handles only one hierarchy level, so anything
   # that has more levels is handed to the d1_object resolver.
   # If the object is not a resource map, control is handed to the d1_object
@@ -69,17 +74,27 @@ class Resolver(resolver_abc.Resolver):
 
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
-    if len(path) > 1 or not self._is_resource_map(path[0]):
+    is_resource_map = self._is_resource_map(path[0])
+    if not is_resource_map:
       return self.d1_object_resolver.get_attributes(path)
-
+    if len(path) > 1:
+      if is_resource_map:
+        return self.d1_object_resolver.get_attributes(path[1:])
+      else:
+        return self.d1_object_resolver.get_attributes(path)
     return self._get_attribute(path)
 
   def get_directory(self, path):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) > 1 or not self._is_resource_map(path[0]):
+    is_resource_map = self._is_resource_map(path[0])
+    if not is_resource_map:
       return self.d1_object_resolver.get_directory(path)
-
+    if len(path) > 1:
+      if is_resource_map:
+        return self.d1_object_resolver.get_directory(path[1:])
+      else:
+        return self.d1_object_resolver.get_directory(path)
     return self._get_directory(path)
 
   def read_file(self, path, size, offset):
@@ -91,12 +106,11 @@ class Resolver(resolver_abc.Resolver):
       )
     )
 
-    #    if len(path) > 1 or not self._is_resource_map(path[0]):
-    return self.d1_object_resolver.read_file(path[1:], size, offset)
+    if len(path) > 1 and self._is_resource_map(path[0]):
+      return self.d1_object_resolver.read_file(path[1:], size, offset)
+    return self.d1_object_resolver.read_file(path, size, offset)
 
-#    return self._get_directory(path)
-
-# Private.
+  # Private.
 
   def _get_attribute(self, path):
     return attributes.Attributes(self._get_resource_map_size(path[0]), is_dir=True)

@@ -95,7 +95,7 @@ MAX_OBJECTS_FOR_FLAT_LIST = 10
 # Debug mode.
 # True: Turn on verbose logging and various other debugging facilities.
 # False: Log only error messages (for normal use, default)
-DEBUG = True
+DEBUG = False
 
 # Set the default file to log to or None for logging to stdout
 LOG_FILE_PATH = make_absolute('onedrive.log')
@@ -163,7 +163,7 @@ FUSE_NONEMPTY = True
 # True: Run driver in foreground (for debugging)
 # False: Run driver in background (for normal use)
 FUSE_FOREGROUND = True if DEBUG else False # (enabled when running in debug mode)
-#FUSE_FOREGROUND = True
+FUSE_FOREGROUND = True
 
 # During normal use, the FUSE drive will use multiple threads to improve
 # performance. Settings this value to True causes the driver to run everything
@@ -171,6 +171,7 @@ FUSE_FOREGROUND = True if DEBUG else False # (enabled when running in debug mode
 # True: Do not create multiple threads (for debugging)
 # False: Create multiple threads (for normal use)
 FUSE_NOTHREADS = True if DEBUG else False # (enabled when running in debug mode)
+FUSE_NOTHREADS = True
 
 # The following settings are specific for MacFUSE.
 # http://code.google.com/p/macfuse/wiki/OPTIONS
@@ -203,10 +204,25 @@ IGNORE_SPECIAL = set(
 
 ## Set the level of logging that PASTA GMN Adapter should perform. Choices are:
 ## DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
+try:
+  test = GMN_DEBUG_ADAPTOR
+except NameError:
+  GMN_ADAPTER_DEBUG = False
+
 if DEBUG or GMN_ADAPTER_DEBUG:
   LOG_LEVEL = 'DEBUG'
 else:
   LOG_LEVEL = 'WARNING'
+
+#Kind of a hack - add a module variable to logging that lists the modules that
+#will be set to logging at DEBUG level. Each module needs to check for presence
+#of its __name__ in the list.
+logging.DEBUG_MODULES = [
+  'impl.resolver.workspace',
+  'impl.resolver.author',
+  'impl.resolver.single',
+  'impl.resolver.root',
+]
 
 # Needs Python 2.7
 

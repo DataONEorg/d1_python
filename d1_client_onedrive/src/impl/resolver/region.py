@@ -50,6 +50,12 @@ import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+try:
+  if __name__ in logging.DEBUG_MODULES:
+    __level = logging.getLevelName("DEBUG")
+    log.setLevel(__level)
+except:
+  pass
 
 
 class Resolver(resolver_abc.Resolver):
@@ -120,7 +126,11 @@ class Resolver(resolver_abc.Resolver):
     for o in workspace_folder_objects.get_records():
       try:
         if region in o['site']:
-          dir.append(directory_item.DirectoryItem(o['id']))
+          if o.has_key("resourceMap"):
+            for rmap_id in o['resourceMap']:
+              dir.append(directory_item.DirectoryItem(rmap_id))
+          else:
+            dir.append(directory_item.DirectoryItem(o['id']))
       except KeyError:
         pass
     return dir

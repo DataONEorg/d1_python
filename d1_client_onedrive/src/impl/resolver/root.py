@@ -61,9 +61,19 @@ import impl.command_processor
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+try:
+  if __name__ in logging.DEBUG_MODULES:
+    __level = logging.getLevelName("DEBUG")
+    log.setLevel(__level)
+except:
+  pass
 
 
 class RootResolver(resolver_abc.Resolver):
+
+  FLDR_WORKSPACE = "Workspace"
+  FLDR_FLATSPACE = "FlatSpace"
+
   def __init__(self, options):
     self._options = options
     # The command processor is shared between all resolvers. It holds db and
@@ -71,9 +81,10 @@ class RootResolver(resolver_abc.Resolver):
     self.command_processor = impl.command_processor.CommandProcessor(options)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
+    options._root_cache_delete_callback = self.cbClearCacheItem
     self.resolvers = {
-      'Workspace': workspace.Resolver(options, self.command_processor),
-      'FlatSpace': flat_space.Resolver(options, self.command_processor),
+      RootResolver.FLDR_WORKSPACE: workspace.Resolver(options, self.command_processor),
+      RootResolver.FLDR_FLATSPACE: flat_space.Resolver(options, self.command_processor),
     }
     self.error_file_cache = cache.Cache(self._options.MAX_ERROR_PATH_CACHE_SIZE)
 
@@ -107,6 +118,13 @@ class RootResolver(resolver_abc.Resolver):
     log.debug('read_file: {0}, {1}, {2}'.format(path, size, offset))
     p = self._split_and_unescape_path(path)
     return self._read_file(p, size, offset)
+
+  def cbClearCacheItem(self, path):
+    '''Callback method that can be used to remove an entry from the 
+    _cache_error_file_path cache. USed for example, if a child folder
+    has change content.
+    '''
+    return
 
   # Private.
 
@@ -162,7 +180,11 @@ class RootResolver(resolver_abc.Resolver):
   def _resolve_root(self):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    dir.extend([directory_item.DirectoryItem(name) for name in sorted(self.resolvers)])
+    dir.extend(
+      [
+        directory_item.DirectoryItem(name) for name in sorted(self.resolvers.keys())
+      ]
+    )
     return dir
 
   def _dispatch_get_attributes(self, path):
