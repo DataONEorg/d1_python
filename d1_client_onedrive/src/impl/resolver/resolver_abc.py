@@ -34,6 +34,7 @@ import logging
 import os
 
 # App.
+from impl import attributes
 from impl import directory
 from impl import directory_item
 from impl import path_exception
@@ -47,20 +48,29 @@ try:
 except:
   pass
 
+README_NAME = "readme.txt"
+
 
 class Resolver(object):
   __metaclass__ = abc.ABCMeta
 
   def __init__(self, options, command_processor):
-    pass
+    self._options = options
+    self.command_processor = command_processor
+    self.helpText = ""
 
-  @abc.abstractmethod
-  def get_attributes(self, path, full_path=[]):
-    pass
+  def get_attributes(self, path, fs_path=''):
+    if self.hasHelpEntry(path):
+      return attributes.Attributes(size=self.helpSize(), is_dir=False)
+    raise path_exception.NoResultException()
 
-  @abc.abstractmethod
-  def get_directory(self, path, full_path=[]):
-    pass
+  def get_directory(self, path, fs_path=''):
+    raise path_exception.NoResultException()
+
+  def read_file(self, path, size, offset, fs_path=''):
+    if self.hasHelpEntry(path):
+      return self.getHelp(offset, size)
+    raise path_exception.NoResultException()
 
   #def invalid_directory_error(self):
   #  directory = Directory()
@@ -84,3 +94,21 @@ class Resolver(object):
     means that the path is invalid.'''
     if len(directory) <= 2:
       raise path_exception.PathException(msg)
+
+  def hasHelpEntry(self, path):
+    if len(path) > 0:
+      if path[0] == README_NAME and self.helpSize() > 0:
+        return True
+    return False
+
+  def helpName(self):
+    return README_NAME
+
+  def helpSize(self):
+    return len(self.helpText)
+
+  def getHelp(self, offset=0, size=None):
+    return self.helpText[offset:size]
+
+  def getHelpDirectoryItem(self):
+    return directory_item.DirectoryItem(README_NAME, size=self.helpSize(), is_dir=False)

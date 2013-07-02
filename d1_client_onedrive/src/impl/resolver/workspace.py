@@ -31,6 +31,7 @@
 import pprint
 import logging
 import os
+from StringIO import StringIO
 
 # D1.
 
@@ -51,6 +52,7 @@ from impl.resolver import region
 from impl.resolver import time_period
 from impl.resolver import single
 
+from d1_workspace.types.generated import generateFolderHelpText
 import d1_workspace.types.generated.workspace_types as workspace_types
 
 # Set up logger for this module.
@@ -61,6 +63,8 @@ try:
     log.setLevel(__level)
 except:
   pass
+
+README = "readme.txt"
 
 
 class WorkspaceFolderObjects(object):
@@ -76,6 +80,7 @@ class WorkspaceFolderObjects(object):
     self._workspace_folder = workspace_folder
     self._records = self._get_records_for_identifiers()
     self._records.update(self._get_records_for_queries())
+    self.helpText = "Workspace Folder Object help text"
 
   def get_records(self):
     return self._records.values()
@@ -98,11 +103,16 @@ class WorkspaceFolderObjects(object):
         #log.debug("solr response doc: %s" % str(sci_obj))
     return records
 
+  def helpSize(self):
+    return len(self.helpText)
+
+  def getHelp(self, offset=0, size=None):
+    return self.helpText[offset:size]
+
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
-    self._options = options
-    self.command_processor = command_processor
+    super(Resolver, self).__init__(options, command_processor)
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self.load_workspace(options.WORKSPACE_XML)
     self.resolvers = {
@@ -110,25 +120,42 @@ class Resolver(resolver_abc.Resolver):
       'Regions': region.Resolver(self._options, self.command_processor),
       'Taxa': taxa.Resolver(self._options, self.command_processor),
       'TimePeriods': time_period.Resolver(self._options, self.command_processor),
-      'Single': single.Resolver(self._options, self.command_processor),
+      'All': single.Resolver(self._options, self.command_processor),
     }
     #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
+    self._generateHelp()
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, fs_path=''):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
     # All items rendered by the Workspace Resolver are folders. Anything else
     # is deferred to one of the child resolvers.
+    try:
+      return super(Resolver, self).get_attributes(path, fs_path)
+    except path_exception.NoResultException:
+      pass
 
+    log.debug('get_attributes2: {0}'.format(util.string_from_path_elements(path)))
     # To determine where the path transitions from the workspace to the
     # controlled hierarchy, we check for the controlled hierarchy root names.
     # This means that those names are reserved. They can not be used as
     # workspace folder names by the user.
     workspace_folder = self._get_workspace_folder(path)
 
+    log.debug('get_attributes3: {0}'.format(util.string_from_path_elements(path)))
+
     # All workspace items are folders.
     if workspace_folder is not None:
+      if len(path) > 0:
+        if path[-1] == self.helpName():
+          return attributes.Attributes(
+            size=self.folderHelpSize(
+              workspace_folder
+            ), is_dir=False
+          )
       return attributes.Attributes(is_dir=True)
+
+    log.debug('get_attributes4: {0}'.format(util.string_from_path_elements(path)))
 
     # If the path is not to a workspace folder root, a valid path must go to a
     # controlled hierarchy root or subfolder THROUGH a workspace folder root. In
@@ -139,10 +166,19 @@ class Resolver(resolver_abc.Resolver):
     workspace_path, resolver, controlled_path = \
       self._split_path_by_reserved_name(path)
 
+    log.debug('get_attributes5: {0}'.format(util.string_from_path_elements(path)))
+
     # If the workspace_path is not valid now, then the path is invalid.
     workspace_folder = self._get_workspace_folder(workspace_path)
     if workspace_folder is None:
       raise path_exception.PathException('Invalid folder')
+
+    if resolver == self.helpName():
+      return attributes.Attributes(
+        size=self.folderHelpSize(
+          workspace_folder
+        ), is_dir=False
+      )
 
     # Now have all information required for gathering information about all the
     # objects in the workspace folder and dispatching to a controlled hierarchy
@@ -180,7 +216,7 @@ class Resolver(resolver_abc.Resolver):
 #
 #
 
-  def get_directory(self, path, preconfigured_query=None):
+  def get_directory(self, path, preconfigured_query=None, fs_path=''):
     # the directory will typically be in the cache. already retrieved by
     # get_attributes, since get_attributes() needs to know how many items
     # there are in the directory, in order to return that count.
@@ -198,7 +234,10 @@ class Resolver(resolver_abc.Resolver):
     # metadata from solr at this point, as it is not yet known if the user will
     # actually enter one of the controlled hierarchies.
     if workspace_folder is not None:
-      return self._resolve_workspace_folder(workspace_folder)
+      res = self._resolve_workspace_folder(workspace_folder)
+      if self.folderHelpSize(workspace_folder) > 0:
+        res.append(self.getHelpDirectoryItem())
+      return res
 
     # If the path is not to a workspace folder root, a valid path must go to a
     # controlled hierarchy root or subfolder THROUGH a workspace folder root. In
@@ -247,7 +286,7 @@ class Resolver(resolver_abc.Resolver):
     ##self.append_queries(d, f)
     #return d
 
-  def read_file(self, path, size, offset, opath=u''):
+  def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -255,13 +294,21 @@ class Resolver(resolver_abc.Resolver):
         ), size, offset
       )
     )
+    try:
+      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
+    except path_exception.NoResultException:
+      pass
 
     # The workspace resolver exposes no readable files.
-
     workspace_folder = self._get_workspace_folder(path)
 
     if workspace_folder is not None:
+      if len(path) > 0:
+        if path[-1] == workspace_folder.helpName():
+          return self.getFolderHelp(workspace_folder, offset, size)
+          #return workspace_folder.getHelp(offset, size)
       raise path_exception.PathException('Invalid file')
+
 
     workspace_path, resolver, controlled_path = \
       self._split_path_by_reserved_name(path)
@@ -270,6 +317,10 @@ class Resolver(resolver_abc.Resolver):
     if workspace_folder is None:
       raise path_exception.PathException('Invalid file')
 
+    if resolver == self.helpName():
+      res = self.getFolderHelp(workspace_folder, offset, size)
+      log.debug(res)
+      return res
     #print self.resolvers[resolver]
     return self.resolvers[resolver].read_file(controlled_path, size, offset)
 
@@ -279,19 +330,65 @@ class Resolver(resolver_abc.Resolver):
     self._workspace = self._create_workspace_from_xml_doc(workspace_xml)
     #Additional processing to flush cache etc
 
+  def folderHelpSize(self, folder):
+    '''Return the size of the help text for a folder
+    '''
+    try:
+      return len(folder._helpText)
+    except AttributeError:
+      #Generate help text for folder
+      self.getFolderHelp(folder)
+      return len(folder._helpText)
+    pass
+
+  def getFolderHelp(self, folder, offset=0, size=None):
+    '''Return help text for specific folder. If not available, then the 
+    help text is generated by reviewing the folder attributes. The help text
+    is then attached to the folder object for future use.
+    #TODO: consider thread safety for this.
+    '''
+    try:
+      test = folder._helpText
+    except AttributeError:
+      #Need to generate the help text
+      folder._helpText = generateFolderHelpText(folder)
+      #folder._helpText = "This is some folder help text"
+    res = folder._helpText[offset:size]
+    log.debug(res)
+    return res
+
     #
     # Private.
     #
+  def _generateHelp(self):
+    res = StringIO()
+    t = u"ONEDrive Workspace Overview"
+    res.write(t)
+    res.write(u"\n")
+    res.write(u"%s\n" % u"=" * len(t))
+    res.write(u"\n")
+    res.write(
+      u"""
+The ONEDrive Workspace folder contains objects that match queries specified
+in the workspace configuration and individual identifiers 
+    """
+    )
+
+    return res.getvalue().encode('utf8')
 
   def _create_workspace_from_xml_doc(self, xml_doc_path):
     xml_doc = open(xml_doc_path, 'rb').read()
     return workspace_types.CreateFromDocument(xml_doc)
 
   def _split_path_by_reserved_name(self, path):
+    '''Return: workspace_path, resolver, controlled_path
+    '''
     for i, e in enumerate(path):
       if e in self.resolvers:
         return path[:i], path[i], path[i + 1:]
-    raise path_exception.PathException('Invalid folder')
+      elif e == self.helpName():
+        return path[:i], path[i], path[i + 1:]
+    raise path_exception.PathException('Invalid folder: %s' % str(path))
 
   #def _resolve_controlled_roots(self, workspace_folder):
   #  dir = directory.Directory()
@@ -306,6 +403,8 @@ class Resolver(resolver_abc.Resolver):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     self.append_folders(dir, workspace_folder)
+    #if self.helpSize() > 0:
+    #  dir.append(self.getHelpDirectoryItem())
     dir.extend([directory_item.DirectoryItem(name) for name in sorted(self.resolvers)])
     return dir
 

@@ -60,31 +60,27 @@ except:
 
 class Resolver(resolver_abc.Resolver):
 
-  HELP = {'name': 'readme.txt',
-          'content': '''
+  HELP = '''
 Use FlatSpace to go directly to any DataONE object by typing 
 the PID in the path.
 '''
 
-
-   ,
-            }
-
   def __init__(self, options, command_processor):
-    self._options = options
+    super(Resolver, self).__init__(options, command_processor)
     self.modified()
-    self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self._manual_pid_list = {}
+    self.helpText = Resolver.HELP
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, fs_path=''):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    try:
+      return super(Resolver, self).get_attributes(path, fs_path)
+    except path_exception.NoResultException:
+      pass
 
     if not len(path):
       return attributes.Attributes(is_dir=True, date=self._modified)
-
-    if path[0] == Resolver.HELP['name']:
-      return attributes.Attributes(size=len(Resolver.HELP['content']))
 
     res = self.resource_map_resolver.get_attributes(path)
     if not self._manual_pid_list.has_key(path[0]):
@@ -97,21 +93,19 @@ the PID in the path.
       self._manual_pid_list[path[0]] = res
     return res
 
-  def get_directory(self, path):
+  def get_directory(self, path, fs_path=''):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
+    res = []
+    if self.helpSize() > 0:
+      res.append(self.getHelpDirectoryItem())
 
     if len(path) == 0:
-      res = [
-        directory_item.DirectoryItem(
-          Resolver.HELP['name'], size=len(Resolver.HELP['content'])
-        )
-      ]
       for k in self._manual_pid_list.keys():
         res.append(directory_item.DirectoryItem(k))
       return res
     return self.resource_map_resolver.get_directory(path)
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -119,16 +113,10 @@ the PID in the path.
         ), size, offset
       )
     )
-
-    if len(path) == 0:
-      return [
-        directory_item.DirectoryItem(
-          Resolver.HELP['name'], size=len(Resolver.HELP['content'])
-        )
-      ]
-    if path[1] == Resolver.HELP['name']:
-      return Resolver.HELP['content' [offset:size]]
-
+    try:
+      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
+    except path_exception.NoResultException:
+      pass
     return self.resource_map_resolver.read_file(path, size, offset)
 
   def modified(self):

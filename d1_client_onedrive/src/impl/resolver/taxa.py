@@ -73,8 +73,7 @@ except:
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
-    self._options = options
-    self.command_processor = command_processor
+    super(Resolver, self).__init__(options, command_processor)
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
@@ -89,15 +88,19 @@ class Resolver(resolver_abc.Resolver):
   # /classification/value = all objects
   # All longer paths are handled by d1_object resolver.
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, fs_path=''):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    try:
+      return super(Resolver, self).get_attributes(path, fs_path)
+    except path_exception.NoResultException:
+      pass
 
     if len(path) >= 3:
       return self.resource_map_resolver.get_attributes(path[2:])
 
     return self._get_attribute(path)
 
-  def get_directory(self, path, workspace_folder_objects):
+  def get_directory(self, path, workspace_folder_objects, fs_path=''):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) >= 3:
@@ -105,11 +108,15 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
+    try:
+      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
+    except path_exception.NoResultException:
+      pass
 
     if len(path) >= 3:
       return self.resource_map_resolver.read_file(path[2:], size, offset)

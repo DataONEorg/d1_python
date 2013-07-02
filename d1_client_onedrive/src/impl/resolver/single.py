@@ -61,19 +61,22 @@ except:
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
-    self._options = options
-    self.command_processor = command_processor
+    super(Resolver, self).__init__(options, command_processor)
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, fs_path=''):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    try:
+      return super(Resolver, self).get_attributes(path, fs_path)
+    except path_exception.NoResultException:
+      pass
 
     if len(path) >= 1:
       return self.resource_map_resolver.get_attributes(path[0:])
 
     return self._get_attribute(path)
 
-  def get_directory(self, path, workspace_folder_objects):
+  def get_directory(self, path, workspace_folder_objects, fs_path=''):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) >= 1:
@@ -81,11 +84,15 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
+    try:
+      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
+    except path_exception.NoResultException:
+      pass
 
     if len(path) >= 1:
       return self.resource_map_resolver.read_file(path[0:], size, offset)
@@ -100,6 +107,8 @@ class Resolver(resolver_abc.Resolver):
   def _get_directory(self, path, workspace_folder_objects):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
+    if self.hasHelpEntry(path):
+      dir.append(self.getHelpDirectoryItem())
     for r in workspace_folder_objects.get_records():
       dir.append(directory_item.DirectoryItem(r['id']))
     return dir

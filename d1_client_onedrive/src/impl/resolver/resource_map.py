@@ -61,16 +61,19 @@ except:
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
-    self._options = options
-    self.command_processor = command_processor
+    super(Resolver, self).__init__(options, command_processor)
     self.d1_object_resolver = d1_object.Resolver(options, command_processor)
   # The resource map resolver handles only one hierarchy level, so anything
   # that has more levels is handed to the d1_object resolver.
   # If the object is not a resource map, control is handed to the d1_object
   # resolver.
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, fs_path=''):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    try:
+      return super(Resolver, self).get_attributes(path, fs_path)
+    except path_exception.NoResultException:
+      pass
 
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
@@ -84,9 +87,8 @@ class Resolver(resolver_abc.Resolver):
         return self.d1_object_resolver.get_attributes(path)
     return self._get_attribute(path)
 
-  def get_directory(self, path):
+  def get_directory(self, path, fs_path=''):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
-
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
       return self.d1_object_resolver.get_directory(path)
@@ -97,7 +99,7 @@ class Resolver(resolver_abc.Resolver):
         return self.d1_object_resolver.get_directory(path)
     return self._get_directory(path)
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -105,6 +107,10 @@ class Resolver(resolver_abc.Resolver):
         ), size, offset
       )
     )
+    try:
+      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
+    except path_exception.NoResultException:
+      pass
 
     if len(path) > 1 and self._is_resource_map(path[0]):
       return self.d1_object_resolver.read_file(path[1:], size, offset)

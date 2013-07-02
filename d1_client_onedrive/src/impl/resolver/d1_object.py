@@ -63,21 +63,23 @@ except:
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
-    self._options = options
-    self.command_processor = command_processor
+    super(Resolver, self).__init__(options, command_processor)
     self.object_format_info = d1_client.object_format_info.ObjectFormatInfo()
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, fs_path=''):
     log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    try:
+      return super(Resolver, self).get_attributes(path, fs_path)
+    except path_exception.NoResultException:
+      pass
 
     return self._get_attribute(path)
 
-  def get_directory(self, path):
+  def get_directory(self, path, fs_path=''):
     log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
-
     return self._get_directory(path)
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -85,7 +87,10 @@ class Resolver(resolver_abc.Resolver):
         ), size, offset
       )
     )
-
+    try:
+      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
+    except path_exception.NoResultException:
+      pass
     return self._read_file(path, size, offset)
 
   # Private.
@@ -120,18 +125,6 @@ class Resolver(resolver_abc.Resolver):
       if path[1] == 'system.xml':
         sys_meta_xml = self.command_processor.get_system_metadata_through_cache(pid)[1]
         return attributes.Attributes(size=len(sys_meta_xml), date=record['dateUploaded'])
-      #DV
-      #The subfolder "Packages" lists all the resource maps that reference the 
-      #parent PID
-      if path[1] == "Packages":
-        #list package identifiers
-        dirlen = 0
-        if record.has_key("resourceMap"):
-          dirlen += len(record['resourceMap'])
-
-        return attributes.Attributes(
-          is_dir=True, size=dirlen, date=record['dateUploaded']
-        )
     self._raise_invalid_path()
 
   def _get_directory(self, path):
@@ -141,9 +134,8 @@ class Resolver(resolver_abc.Resolver):
       self._make_directory_item_for_solr_record(record),
       directory_item.DirectoryItem('system.xml'),
     ]
-    #DV
-    #if record.has_key("resourceMap"):
-    #  res.append( directory_item.DirectoryItem("Packages") )
+    if self.hasHelpEntry(path):
+      res.append(self.getHelpDirectoryItem())
     return res
 
   def _make_directory_item_for_solr_record(self, record):
