@@ -42,6 +42,12 @@ import util
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+#Set level specific for this module if specified
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
+except:
+  pass
 
 
 class DiskCache(dict):
@@ -50,6 +56,9 @@ class DiskCache(dict):
     self._cache_directory_path = cache_directory_path
     self._make_cache_directory(cache_directory_path)
     self._n_items = self._count_items_in_cache()
+
+  def clear(self):
+    return self._clear_cache()
 
   def __repr__(self):
     return '{0}({1})'.format(self.__class__, self.__dict__)

@@ -100,6 +100,11 @@ def main():
   # logging.config.dictConfig(self._options.LOGGING) # Needs 2.7
   log_setup(options)
   log.setLevel(map_level_string_to_level(options.LOG_LEVEL))
+  #Set level specific for this module if specified
+  try:
+    log.setLevel(logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__]))
+  except:
+    pass
 
   if options.version:
     log_library_versions()
@@ -118,12 +123,16 @@ def main():
   if os.uname()[0] == 'Darwin':
     fuse_args['volicon'] = options.MACFUSE_ICON
     fuse_args['local'] = options.MACFUSE_LOCAL_DISK
+    fuse_args['volname'] = options.FUSE_FILESYSTEM_NAME
   # FUSE settings specific to regular FUSE.
   else:
     fuse_args['nonempty'] = options.FUSE_NONEMPTY
 
   log_startup_parameters(options, arguments, fuse_args)
   log_settings(options)
+
+  log.info("Starting ONEDrive...")
+  log.info("Base URL = %s" % settings.BASE_URL)
 
   #create the caches here and add references to them in options.
   #enables child resolvers to invalidate entries so that 
@@ -140,6 +149,7 @@ def main():
       options, root_resolver
     ), options.MOUNTPOINT, **fuse_args
   )
+  log.info("Exiting ONEDrive.")
 
 
 def log_setup(options):
@@ -187,17 +197,17 @@ def log_library_versions():
 
 
 def log_startup_parameters(options, arguments, fuse_args):
-  log.info('Mounting ONEDrive (FUSE)')
-  log.info('  Options: {0}'.format(str(options)))
-  log.info('  Arguments: {0}'.format(str(arguments)))
-  log.info('  FUSE arguments: {0}'.format(str(fuse_args)))
+  log.debug('Mounting ONEDrive (FUSE)')
+  log.debug('  Options: {0}'.format(str(options)))
+  log.debug('  Arguments: {0}'.format(str(arguments)))
+  log.debug('  FUSE arguments: {0}'.format(str(fuse_args)))
 
 
 def log_settings(options):
-  log.info('Settings:')
+  log.debug('Settings:')
   for k, v in sorted(options.__dict__.items()):
     if k == k.upper():
-      log.info('  {0}: {1}'.format(k, v))
+      log.debug('  {0}: {1}'.format(k, v))
 
 
 if __name__ == '__main__':

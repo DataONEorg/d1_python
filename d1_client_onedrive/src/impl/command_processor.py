@@ -46,6 +46,12 @@ import path_exception
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+#Set level specific for this module if specified
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
+except:
+  pass
 
 
 class CommandProcessor():
@@ -54,18 +60,50 @@ class CommandProcessor():
     # The solr_query_cache and object_info_cache contain the same information.
     # solr_query_cache is keyed by the query string.
     # object_info_cache is keyed by the pid.
-    #self._solr_query_cache = cache_memory.Cache(self._options.MAX_SOLR_QUERY_CACHE_SIZE)
-    self._solr_query_cache = cache_disk.DiskCache(
-      self._options.MAX_SOLR_QUERY_CACHE_SIZE, './cache_solr'
-    )
-    #self._object_info_cache = cache_memory.Cache(1000)
-    self._object_info_cache = cache_disk.DiskCache(1000, './cache_object_info')
+    if self._options.CACHE_TYPE == "DISK":
+      cache_root = "."
+      try:
+        cache_root = self._options.CACHE_DISK_ROOT
+      except:
+        pass
+      self._solr_query_cache = cache_disk.DiskCache(\
+                               self._options.MAX_SOLR_QUERY_CACHE_SIZE, \
+                               os.path.abspath(\
+                                  os.path.join(cache_root,'cache_solr')))
+      self._object_info_cache = cache_disk.DiskCache(\
+                                self._options.MAX_OBJECT_CACHE_SIZE, \
+                                os.path.abspath(\
+                                  os.path.join(cache_root,'cache_object_info')))
+      self._science_object_cache = cache_disk.DiskCache(\
+                                self._options.MAX_OBJECT_CACHE_SIZE, \
+                                os.path.abspath(\
+                                  os.path.join(cache_root,'cache_science_objects')))
+      self._system_metadata_cache = cache_disk.DiskCache(\
+                                self._options.MAX_OBJECT_CACHE_SIZE, \
+                                os.path.abspath(\
+                                  os.path.join(cache_root,'cache_system_metadata')))
+      if self._options.CACHE_STARTUP_CLEAN:
+        self._solr_query_cache.clear()
+        self._object_info_cache.clear()
+        self._science_object_cache.clear()
+        self._system_metadata_cache.clear()
+      else:
+        self._solr_query_cache._delete_oldest_file_if_full()
+        self._object_info_cache._delete_oldest_file_if_full()
+        self._science_object_cache._delete_oldest_file_if_full()
+        self._system_metadata_cache._delete_oldest_file_if_full()
+    else:
+      self._solr_query_cache = cache_memory.Cache(\
+                                 self._options.MAX_SOLR_QUERY_CACHE_SIZE)
+      self._object_info_cache = cache_memory.Cache(\
+                                 self._options.MAX_OBJECT_CACHE_SIZE)
+      self._science_object_cache = cache_memory.Cache(\
+                                 self._options.MAX_OBJECT_CACHE_SIZE)
+      self._system_metadata_cache = cache_memory.Cache(\
+                                 self._options.MAX_OBJECT_CACHE_SIZE)
 
-    self._science_object_cache = cache_disk.DiskCache(1000, './cache_science_objects')
-    self._system_metadata_cache = cache_disk.DiskCache(1000, './cache_system_metadata')
-
-    #self.object_description_cache = cache.Cache(1000)
-    #self.object_description_cache2 = cache_memory.Cache(1000)
+      #self.object_description_cache = cache.Cache(1000)
+      #self.object_description_cache2 = cache_memory.Cache(1000)
     self._solr_client = onedrive_solr_client.SolrClient(options)
 
   def solr_query(self, query, filter_queries=None, fields=None):

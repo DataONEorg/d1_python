@@ -41,6 +41,12 @@ import path_exception
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+#Set level specific for this module if specified
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
+except:
+  pass
 
 
 class D1Client(object):

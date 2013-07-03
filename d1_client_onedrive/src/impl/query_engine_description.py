@@ -38,6 +38,12 @@ import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+#Set level specific for this module if specified
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
+except:
+  pass
 
 
 class QueryEngineDescription(object):

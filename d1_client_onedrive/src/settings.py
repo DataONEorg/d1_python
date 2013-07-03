@@ -80,13 +80,13 @@ WORKSPACE_XML = make_absolute('workspace.xml')
 # The maximum number of science objects to display for a search item. Increasing
 # this setting causes longer lists of science objects to to appear in the
 # filesystem, increases memory footprint for the application and causes longer
-# response times when opening folders. Default value: 1000.
+# response times when opening folders. Default value: 50.
 MAX_OBJECTS_FOR_SEARCH = 50
 
 # The maximum number of objects to show in a flat list. ONEDrive can display
 # science objects in a flat list or in a hierarchy. This settings determines the
 # threshold at which ONEDrive switches from a flat to a hierarchical display.
-MAX_OBJECTS_FOR_FLAT_LIST = 10
+#MAX_OBJECTS_FOR_FLAT_LIST = 10
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
@@ -112,8 +112,8 @@ MAX_DIRECTORY_CACHE_SIZE = 1000
 
 # The maximum number of science objects to cache. Increasing this number may
 # give better performance, but also a larger memory footprint. Default value:
-# 10.
-MAX_OBJECT_CACHE_SIZE = 100
+# 1000.
+MAX_OBJECT_CACHE_SIZE = 1000
 
 # The maximum number of error message file paths to cache. Decreasing this
 # number below the default is not recommended, as it may cause error messages
@@ -122,6 +122,16 @@ MAX_ERROR_PATH_CACHE_SIZE = 1000
 
 # The maximum number of Solr query results to cache.
 MAX_SOLR_QUERY_CACHE_SIZE = 1000
+
+# Specify the type of cache to use. Can be MEMORY or DISK
+CACHE_TYPE = "DISK"
+
+# Set to True if the cache should be cleared on startup. Has no effect on 
+# memory cache.
+CACHE_STARTUP_CLEAN = True
+
+# Location of the disk caches if used
+CACHE_DISK_ROOT = "/tmp/onedrive"
 
 # In the ONEDrive filesystem, resource maps (data packages) are represented as
 # folders which can be opened to access the mapped science objects. This setting
@@ -212,17 +222,18 @@ except NameError:
 if DEBUG or GMN_ADAPTER_DEBUG:
   LOG_LEVEL = 'DEBUG'
 else:
-  LOG_LEVEL = 'WARNING'
+  LOG_LEVEL = 'INFO'
 
 #Kind of a hack - add a module variable to logging that lists the modules that
 #will be set to logging at DEBUG level. Each module needs to check for presence
 #of its __name__ in the list.
-logging.DEBUG_MODULES = [
-  'impl.resolver.workspace',
-  'impl.resolver.author',
-  'impl.resolver.single',
-  'impl.resolver.root',
-]
+logging.DEBUG_MODULES = []
+
+#Kind of a hack - add a module variable to logging that lists the modules that
+#will be set to logging at a specific level. Each module needs to check for 
+#presence of its __name__ in the list. If not present, then logging will 
+#continue at the app global set level for logging.
+logging.ONEDRIVE_MODULES = {'__main__': 'INFO', }
 
 # Needs Python 2.7
 

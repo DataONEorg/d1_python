@@ -57,10 +57,10 @@ import d1_workspace.types.generated.workspace_types as workspace_types
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+#Set level specific for this module if specified
 try:
-  if __name__ in logging.DEBUG_MODULES:
-    __level = logging.getLevelName("DEBUG")
-    log.setLevel(__level)
+  log.setLevel(logging.getLevelName( \
+               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
 except:
   pass
 

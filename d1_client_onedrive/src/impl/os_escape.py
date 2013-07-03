@@ -47,12 +47,19 @@ encoding of the Unicode strings.
 # Stdlib.
 import os
 import urllib
+import logging
 
-LINUX = ["posix", ]
-WINDOWS = ["nt", ]
+# Set up logger for this module.
+log = logging.getLogger(__name__)
+#Set level specific for this module if specified
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
+except:
+  pass
 
 
-def filename_from_identifier(identifier):
+def posix_filename_from_identifier(identifier):
   #TODO: This method of encoding is bad because it downgrades unicode and so
   # presents readability issues. The only character that *really* needs to be
   # escaped on posix systems is "/"
@@ -60,16 +67,27 @@ def filename_from_identifier(identifier):
   # On Windows, the following characters are not allowed:
   # \ / :  * ? " < > |
   # Linux
-  if os.name in LINUX:
-    return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
-  elif os.name in WINDOWS:
-    return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
-  return identifier
+  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
 
 
-def identifier_from_filename(filename):
-  if os.name in LINUX:
-    return urllib.unquote(filename).decode('utf8')
-  elif os.name in WINDOWS:
-    return urllib.unquote(filename).decode('utf8')
-  return filename
+def posix_identifier_from_filename(filename):
+  return urllib.unquote(filename).decode('utf8')
+
+
+def windows_filename_from_identifier(identifier):
+  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
+
+
+def windows_identifier_from_filename(filename):
+  return urllib.unquote(filename).decode('utf8')
+
+
+LINUX = ["posix", ]
+WINDOWS = ["nt", ]
+
+filename_from_identifier = posix_filename_from_identifier
+identifier_from_filename = posix_identifier_from_filename
+
+if os.name in WINDOWS:
+  filename_from_identifier = windows_filename_from_identifier
+  identifier_from_filename = windows_identifier_from_filename
