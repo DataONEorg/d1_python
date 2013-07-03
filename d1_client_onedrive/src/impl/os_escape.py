@@ -57,6 +57,44 @@ try:
                getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
 except:
   pass
+'''Quote and unquote are somewhat borrowed from python urllib standard
+library.
+'''
+_hexdig = '0123456789ABCDEFabcdef'
+_hextochr = dict((a + b, chr(int(a + b, 16))) for a in _hexdig for b in _hexdig)
+
+
+def unquote(s):
+  """unquote('abc%20def') -> 'abc def'."""
+  res = s.split('%')
+  # fastpath
+  if len(res) == 1:
+    return s
+  s = res[0]
+  for item in res[1:]:
+    try:
+      s += _hextochr[item[:2]] + item[2:]
+    except KeyError:
+      s += '%' + item
+    except UnicodeDecodeError:
+      s += unichr(int(item[:2], 16)) + item[2:]
+  return s
+
+
+'''Pass in a dictionary that has unsafe characters as the keys, and the
+percent encoded value as the value.
+'''
+
+
+def quote(s, unsafe={u'/': u'%2F', }):
+  if not s:
+    if s is None:
+      raise TypeError('None object cannot be quoted')
+    return s
+  res = s.replace(u'%', u'%25')
+  for c in unsafe:
+    res = res.replace(c, unsafe[c])
+  return res
 
 
 def posix_filename_from_identifier(identifier):
@@ -67,19 +105,23 @@ def posix_filename_from_identifier(identifier):
   # On Windows, the following characters are not allowed:
   # \ / :  * ? " < > |
   # Linux
-  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
+  #return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
+  return quote(identifier)
 
 
 def posix_identifier_from_filename(filename):
-  return urllib.unquote(filename).decode('utf8')
+  #return urllib.unquote(filename).decode('utf8')
+  return unquote(filename)
 
 
 def windows_filename_from_identifier(identifier):
-  return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
+  #return urllib.quote(identifier.encode('utf8'), safe='`@#~!$^&()-=,. ')
+  return quote(identifier)
 
 
 def windows_identifier_from_filename(filename):
-  return urllib.unquote(filename).decode('utf8')
+  #return urllib.unquote(filename).decode('utf8')
+  return unquote(filename)
 
 
 LINUX = ["posix", ]
