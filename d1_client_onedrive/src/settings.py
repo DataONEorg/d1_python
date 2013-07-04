@@ -75,6 +75,7 @@ MOUNTPOINT = make_absolute('one') # (default, relative path)
 # workspace.
 #WORKSPACE_USERNAME = 'dahl'
 #WORKSPACE_PASSWORD = '23af498ecc5732493671abbf'
+#WORKSPACE_XML = make_absolute('workspace.xml')
 WORKSPACE_XML = make_absolute('workspace.xml')
 
 # The maximum number of science objects to display for a search item. Increasing

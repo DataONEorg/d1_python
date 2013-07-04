@@ -41,21 +41,21 @@ def check_dependencies():
     import pyxb
   except ImportError as e:
     exceptions.append(e)
-    messages.append('PyXB: Try: easy_install PyXB\n')
+    messages.append(u'PyXB: Try: easy_install PyXB\n')
 
   try:
     import fuse
   except ImportError as e:
     exceptions.append(e)
     messages.append(
-      'FUSE: Read the documentation for instructions on how to install fusepy'
+      u'FUSE: Read the documentation for instructions on how to install fusepy'
     )
 
   if len(exceptions):
-    log.critical('Importing of the following dependencies failed.')
+    log.critical(u'Importing of the following dependencies failed.')
     for msg in messages:
       log.critical(msg)
-    log.critical('Import errors:')
+    log.critical(u'Import errors:')
     for e in exceptions:
       log.critical(str(e))
 

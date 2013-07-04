@@ -80,7 +80,7 @@ class WorkspaceFolderObjects(object):
     self._workspace_folder = workspace_folder
     self._records = self._get_records_for_identifiers()
     self._records.update(self._get_records_for_queries())
-    self.helpText = "Workspace Folder Object help text"
+    self.helpText = u"Workspace Folder Object help text"
 
   def get_records(self):
     return self._records.values()
@@ -100,7 +100,7 @@ class WorkspaceFolderObjects(object):
       response = self._command_processor.solr_query(q)
       for sci_obj in response['response']['docs']:
         records[sci_obj['id']] = sci_obj
-        #log.debug("solr response doc: %s" % str(sci_obj))
+        #log.debug(u"solr response doc: %s" % str(sci_obj))
     return records
 
   def helpSize(self):
@@ -116,17 +116,17 @@ class Resolver(resolver_abc.Resolver):
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self.load_workspace(options.WORKSPACE_XML)
     self.resolvers = {
-      'Authors': author.Resolver(self._options, self.command_processor),
-      'Regions': region.Resolver(self._options, self.command_processor),
-      'Taxa': taxa.Resolver(self._options, self.command_processor),
-      'TimePeriods': time_period.Resolver(self._options, self.command_processor),
-      'All': single.Resolver(self._options, self.command_processor),
+      u'Authors': author.Resolver(self._options, self.command_processor),
+      u'Regions': region.Resolver(self._options, self.command_processor),
+      u'Taxa': taxa.Resolver(self._options, self.command_processor),
+      u'TimePeriods': time_period.Resolver(self._options, self.command_processor),
+      u'All': single.Resolver(self._options, self.command_processor),
     }
     #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
     self._generateHelp()
 
   def get_attributes(self, path, fs_path=''):
-    log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
     # All items rendered by the Workspace Resolver are folders. Anything else
     # is deferred to one of the child resolvers.
@@ -135,14 +135,11 @@ class Resolver(resolver_abc.Resolver):
     except path_exception.NoResultException:
       pass
 
-    log.debug('get_attributes2: {0}'.format(util.string_from_path_elements(path)))
-    # To determine where the path transitions from the workspace to the
-    # controlled hierarchy, we check for the controlled hierarchy root names.
-    # This means that those names are reserved. They can not be used as
-    # workspace folder names by the user.
+      # To determine where the path transitions from the workspace to the
+      # controlled hierarchy, we check for the controlled hierarchy root names.
+      # This means that those names are reserved. They can not be used as
+      # workspace folder names by the user.
     workspace_folder = self._get_workspace_folder(path)
-
-    log.debug('get_attributes3: {0}'.format(util.string_from_path_elements(path)))
 
     # All workspace items are folders.
     if workspace_folder is not None:
@@ -155,8 +152,6 @@ class Resolver(resolver_abc.Resolver):
           )
       return attributes.Attributes(is_dir=True)
 
-    log.debug('get_attributes4: {0}'.format(util.string_from_path_elements(path)))
-
     # If the path is not to a workspace folder root, a valid path must go to a
     # controlled hierarchy root or subfolder THROUGH a workspace folder root. In
     # that case, the first path element that matches the reserved name of one of
@@ -166,12 +161,10 @@ class Resolver(resolver_abc.Resolver):
     workspace_path, resolver, controlled_path = \
       self._split_path_by_reserved_name(path)
 
-    log.debug('get_attributes5: {0}'.format(util.string_from_path_elements(path)))
-
     # If the workspace_path is not valid now, then the path is invalid.
     workspace_folder = self._get_workspace_folder(workspace_path)
     if workspace_folder is None:
-      raise path_exception.PathException('Invalid folder')
+      raise path_exception.PathException(u'Invalid folder')
 
     if resolver == self.helpName():
       return attributes.Attributes(
@@ -220,7 +213,7 @@ class Resolver(resolver_abc.Resolver):
     # the directory will typically be in the cache. already retrieved by
     # get_attributes, since get_attributes() needs to know how many items
     # there are in the directory, in order to return that count.
-    log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     # To determine where the path transitions from the workspace to the
     # controlled hierarchy, we check for the controlled hierarchy root names.
@@ -251,7 +244,7 @@ class Resolver(resolver_abc.Resolver):
     # If the workspace_path is not valid now, then the path is invalid.
     workspace_folder = self._get_workspace_folder(workspace_path)
     if workspace_folder is None:
-      raise path_exception.PathException('Invalid folder')
+      raise path_exception.PathException(u'Invalid folder')
 
     # Now have all information required for gathering information about all the
     # objects in the workspace folder and dispatching to a controlled hierarchy
@@ -288,7 +281,7 @@ class Resolver(resolver_abc.Resolver):
 
   def read_file(self, path, size, offset, fs_path=''):
     log.debug(
-      'read_file: {0}, {1}, {2}'.format(
+      u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
           path
         ), size, offset
@@ -307,7 +300,7 @@ class Resolver(resolver_abc.Resolver):
         if path[-1] == workspace_folder.helpName():
           return self.getFolderHelp(workspace_folder, offset, size)
           #return workspace_folder.getHelp(offset, size)
-      raise path_exception.PathException('Invalid file')
+      raise path_exception.PathException(u'Invalid file')
 
 
     workspace_path, resolver, controlled_path = \
@@ -315,11 +308,10 @@ class Resolver(resolver_abc.Resolver):
 
     workspace_folder = self._get_workspace_folder(workspace_path)
     if workspace_folder is None:
-      raise path_exception.PathException('Invalid file')
+      raise path_exception.PathException(u'Invalid file')
 
     if resolver == self.helpName():
       res = self.getFolderHelp(workspace_folder, offset, size)
-      log.debug(res)
       return res
     #print self.resolvers[resolver]
     return self.resolvers[resolver].read_file(controlled_path, size, offset)
@@ -352,9 +344,7 @@ class Resolver(resolver_abc.Resolver):
     except AttributeError:
       #Need to generate the help text
       folder._helpText = generateFolderHelpText(folder)
-      #folder._helpText = "This is some folder help text"
     res = folder._helpText[offset:size]
-    log.debug(res)
     return res
 
     #
@@ -374,7 +364,7 @@ in the workspace configuration and individual identifiers
     """
     )
 
-    return res.getvalue().encode('utf8')
+    return res.getvalue()
 
   def _create_workspace_from_xml_doc(self, xml_doc_path):
     xml_doc = open(xml_doc_path, 'rb').read()
@@ -388,7 +378,7 @@ in the workspace configuration and individual identifiers
         return path[:i], path[i], path[i + 1:]
       elif e == self.helpName():
         return path[:i], path[i], path[i + 1:]
-    raise path_exception.PathException('Invalid folder: %s' % str(path))
+    raise path_exception.PathException(u'Invalid folder: %s' % str(path))
 
   #def _resolve_controlled_roots(self, workspace_folder):
   #  dir = directory.Directory()

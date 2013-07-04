@@ -128,13 +128,13 @@ class CommandProcessor():
     except KeyError:
       pass
 
-    query = 'id:{0}'.format(self._solr_client.escape_query_term_string(pid))
+    query = u'id:{0}'.format(self._solr_client.escape_query_term_string(pid))
     self.solr_query(query)
 
     try:
       return self._get_solr_record_from_cache(pid)
     except KeyError:
-      raise path_exception.PathException('Invalid PID: {0}'.format(pid))
+      raise path_exception.PathException(u'Invalid PID: {0}'.format(pid))
     #  pass
     #
     #try:
@@ -271,4 +271,7 @@ class CommandProcessor():
     ]
     for date_field in date_fields:
       if date_field in record:
-        record[date_field] = d1_common.date_time.from_iso8601(record[date_field])
+        try:
+          record[date_field] = d1_common.date_time.from_iso8601(record[date_field])
+        except Exception as e:
+          log.exception(e)

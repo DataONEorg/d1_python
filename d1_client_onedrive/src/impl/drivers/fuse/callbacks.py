@@ -87,9 +87,9 @@ class FUSECallbacks(fuse.Operations):
     This method gets very heavy traffic.
     '''
     self._raise_error_for_os_special_file(path)
-    log.debug('getattr(): {0}'.format(path))
+    #log.debug(u'getattr(): {0}'.format(path))
     attribute = self._get_attributes_through_cache(path)
-    log.debug('getattr() returned attribute: {0}'.format(attribute))
+    #log.debug('getattr() returned attribute: {0}'.format(attribute))
     return self._stat_from_attributes(attribute)
 
 
@@ -97,7 +97,7 @@ class FUSECallbacks(fuse.Operations):
     '''Called by FUSE when a directory is opened.
     Returns a list of file and directory names for the directory.
     '''
-    log.debug('readdir(): {0}'.format(path))
+    log.debug(u'readdir(): {0}'.format(path))
     try:
       dir = self.directory_cache[path]
     except KeyError:
@@ -110,7 +110,7 @@ class FUSECallbacks(fuse.Operations):
     '''Called by FUSE when a file is opened.
     Determines if the provided path and open flags are valid.
     '''
-    log.debug('open(): {0}'.format(path))
+    log.debug(u'open(): {0}'.format(path))
     # ONEDrive is currently read only. Anything but read access is denied.
     if (flags & self.READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
       self._raise_error_permission_denied(path)
@@ -120,7 +120,7 @@ class FUSECallbacks(fuse.Operations):
 
 
   def read(self, path, size, offset, fh):
-    log.debug('read(): {0}'.format(path))
+    log.debug(u'read(): {0}'.format(path))
     try:
       return self.root_resolver.read_file(path, size, offset)
     except path_exception.PathException as e:
@@ -179,7 +179,7 @@ class FUSECallbacks(fuse.Operations):
 
 
   def _raise_error_no_such_file_or_directory(self, path):
-    log.debug('Error: No such file or directory: {0}'.format(path))
+    log.debug(u'Error: No such file or directory: {0}'.format(path))
     raise OSError(errno.ENOENT, '')
 
 

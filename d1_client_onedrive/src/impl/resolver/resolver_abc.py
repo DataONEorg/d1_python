@@ -48,7 +48,7 @@ try:
 except:
   pass
 
-README_NAME = "readme.txt"
+README_NAME = u"readme.txt"
 
 
 class Resolver(object):

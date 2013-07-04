@@ -75,7 +75,7 @@ def unquote(s):
     try:
       s += _hextochr[item[:2]] + item[2:]
     except KeyError:
-      s += '%' + item
+      s += u'%' + item
     except UnicodeDecodeError:
       s += unichr(int(item[:2], 16)) + item[2:]
   return s

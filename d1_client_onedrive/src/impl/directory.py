@@ -63,8 +63,11 @@ class Directory(collections.MutableSequence):
   def __setitem__(self, i, v):
     self.list[i] = v
 
+  def __unicode__(self):
+    return unicode(self.list)
+
   def __str__(self):
-    return str(self.list)
+    return unicode(self).encode('utf-8')
 
   def __repr__(self):
     return str(self)

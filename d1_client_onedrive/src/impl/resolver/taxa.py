@@ -89,7 +89,7 @@ class Resolver(resolver_abc.Resolver):
   # All longer paths are handled by d1_object resolver.
 
   def get_attributes(self, path, fs_path=''):
-    log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     try:
       return super(Resolver, self).get_attributes(path, fs_path)
     except path_exception.NoResultException:
@@ -101,7 +101,7 @@ class Resolver(resolver_abc.Resolver):
     return self._get_attribute(path)
 
   def get_directory(self, path, workspace_folder_objects, fs_path=''):
-    log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) >= 3:
       return self.resource_map_resolver.get_directory(path[2:])
@@ -110,7 +110,7 @@ class Resolver(resolver_abc.Resolver):
 
   def read_file(self, path, size, offset, fs_path=''):
     log.debug(
-      'read_file: {0}, {1}, {2}'.format(
+      u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
     try:
@@ -121,7 +121,7 @@ class Resolver(resolver_abc.Resolver):
     if len(path) >= 3:
       return self.resource_map_resolver.read_file(path[2:], size, offset)
 
-    raise path_exception.PathException('Invalid file')
+    raise path_exception.PathException(u'Invalid file')
 
   # Private.
 
@@ -178,7 +178,7 @@ class Resolver(resolver_abc.Resolver):
     # As empty folders in the taxa tree are pruned in the root and first level,
     # an empty folder here can only be due to an invalid path.
     if not len(dir):
-      raise path_exception.PathException('Invalid taxonomic classification value')
+      raise path_exception.PathException(u'Invalid taxonomic classification value')
     self.append_parent_and_self_references(dir)
     return dir
 

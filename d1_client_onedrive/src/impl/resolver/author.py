@@ -71,7 +71,7 @@ class Resolver(resolver_abc.Resolver):
     # All longer paths are handled by d1_object resolver.
 
   def get_attributes(self, path, fs_path=''): #workspace_folder_objects
-    log.debug('get_attributes: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     try:
       return super(Resolver, self).get_attributes(path, fs_path)
     except path_exception.NoResultException:
@@ -83,7 +83,7 @@ class Resolver(resolver_abc.Resolver):
     return self._get_attribute(path)
 
   def get_directory(self, path, workspace_folder_objects, fs_path=''):
-    log.debug('get_directory: {0}'.format(util.string_from_path_elements(path)))
+    log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) >= 2:
       return self.resource_map_resolver.get_directory(path[1:])
@@ -92,7 +92,7 @@ class Resolver(resolver_abc.Resolver):
 
   def read_file(self, path, size, offset, fs_path=''):
     log.debug(
-      'read_file: {0}, {1}, {2}'.format(
+      u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
     try:
@@ -103,7 +103,7 @@ class Resolver(resolver_abc.Resolver):
     if len(path) >= 2:
       return self.resource_map_resolver.read_file(path[1:], size, offset)
 
-    raise path_exception.PathException('Invalid file')
+    raise path_exception.PathException(u'Invalid file')
 
   # Private.
 
@@ -126,7 +126,7 @@ class Resolver(resolver_abc.Resolver):
     authors = set()
     for o in workspace_folder_objects.get_records():
       try:
-        authors.add(o['author'])
+        authors.add(o[u'author'])
       except KeyError:
         pass
     dir.extend([directory_item.DirectoryItem(a) for a in authors])
@@ -137,7 +137,7 @@ class Resolver(resolver_abc.Resolver):
     for o in workspace_folder_objects.get_records():
       try:
         if o['author'] == author:
-          if o.has_key("resourceMap"):
+          if o.has_key('resourceMap'):
             for rmap_id in o['resourceMap']:
               dir.append(directory_item.DirectoryItem(rmap_id))
           else:
@@ -147,6 +147,6 @@ class Resolver(resolver_abc.Resolver):
     # As each author folder in the root has at least one object, an empty folder
     # here can only be due to an invalid path.
     if not len(dir):
-      raise path_exception.PathException('Invalid author')
+      raise path_exception.PathException(u'Invalid author')
     self.append_parent_and_self_references(dir)
     return dir

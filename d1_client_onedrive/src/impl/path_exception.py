@@ -42,8 +42,8 @@ except:
 class PathException(Exception):
   def __init__(self, message):
     Exception.__init__(self, message)
-    trace = ', '.join(['{0}({1})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
-    log.debug('PathException("{0}"): {1}'.format(message, trace))
+    trace = u', '.join([u'{0}({1})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+    log.debug(u'PathException("{0}"): {1}'.format(message, trace))
 
 
 class NoResultException(Exception):
