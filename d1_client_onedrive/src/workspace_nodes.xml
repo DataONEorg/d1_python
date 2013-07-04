@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
+
+  <folder name="MemberNodes">
+    <folder name="KNB">
+      <query>datasource:urn\:node\:KNB AND -obsoletedBy:*</query>
+    </folder>
+    <folder name="PISCO">
+      <query>datasource:urn\:node\:PISCO AND -obsoletedBy:*</query>
+    </folder>
+    <folder name="ESA">
+      <query>datasource:urn\:node\:ESA AND -obsoletedBy:*</query>
+    </folder>
+    <folder name="ORNLDAAC">
+      <query>datasource:urn\:node\:ORNLDAAC AND -obsoletedBy:*</query>
+    </folder>
+    <folder name="USGSCSAS">
+      <query>datasource:urn\:node\:USGSCSAS AND -obsoletedBy:*</query>
+    </folder>
+    <folder name="LTER">
+      <query>datasource:urn\:node\:LTER AND -obsoletedBy:*</query>
+    </folder>
+    <folder name="TFRI">
+      <query>datasource:urn\:node\:TFRI AND -obsoletedBy:*</query>
+    </folder>
+  </folder>
+
+</folder>
