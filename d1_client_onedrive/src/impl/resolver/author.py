@@ -70,7 +70,7 @@ class Resolver(resolver_abc.Resolver):
     # /author_names = List of objects for author
     # All longer paths are handled by d1_object resolver.
 
-  def get_attributes(self, path, fs_path=''): #workspace_folder_objects
+  def get_attributes(self, path, workspace_folder_objects, fs_path=''):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     try:
       return super(Resolver, self).get_attributes(path, fs_path)
@@ -90,7 +90,7 @@ class Resolver(resolver_abc.Resolver):
 
     return self._get_directory(path, workspace_folder_objects)
 
-  def read_file(self, path, size, offset, fs_path=''):
+  def read_file(self, path, workspace_folder_objects, size, offset, fs_path=''):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)

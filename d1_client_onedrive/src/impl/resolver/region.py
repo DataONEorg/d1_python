@@ -60,8 +60,11 @@ try:
 except:
   pass
 
-#GAZETTEER_HOST = '192.168.1.116'
-GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
+log.setLevel(logging.DEBUG)
+
+GAZETTEER_HOST = '192.168.1.116'
+
+#GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
 
 class Resolver(resolver_abc.Resolver):
@@ -71,35 +74,42 @@ class Resolver(resolver_abc.Resolver):
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
 
-  def get_attributes(self, path):
+  def get_attributes(self, path, workspace_folder_objects):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    return self._get_attribute(path)
+    return self._get_attribute(path, workspace_folder_objects)
 
   def get_directory(self, path, workspace_folder_objects):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     return self._get_directory(path, workspace_folder_objects)
 
-  def read_file(self, path, size, offset):
+  def read_file(self, path, workspace_folder_objects, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
 
-    if len(path) >= 2:
-      return self.resource_map_resolver.read_file(path[1:], size, offset)
+    return self._read_file(path, workspace_folder_objects, size, offset)
 
-    raise path_exception.PathException(u'Invalid file')
-
+  #
   # Private.
+  #
 
-  def _get_attribute(self, path):
-    #merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
-    #region_tree_folder, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(merged_region_tree, path)
-    #if region_tree_folder is None:
-    #  return attributes.Attributes(0)
-    #else:
+  def _get_attribute(self, path, workspace_folder_objects, fs_path=''):
+    merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+    region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+      merged_region_tree, path
+    )
+    if self._region_tree_item_is_pid(region_tree_item):
+      try:
+        return self.resource_map_resolver.get_attributes(
+          [
+            region_tree_item
+          ] + unconsumed_path, fs_path
+        )
+      except path_exception.NoResultException:
+        pass
     return attributes.Attributes(0, is_dir=True)
 
   def _get_directory(self, path, workspace_folder_objects):
@@ -108,22 +118,44 @@ class Resolver(resolver_abc.Resolver):
 
     merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
 
-    #region_tree_folder = self._get_region_tree_item(merged_region_tree, path)
-    region_tree_folder, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+    region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
     )
+    if self._region_tree_item_is_pid(region_tree_item):
+      # If there is an unconsumed path section, the path exits through a valid
+      # PID (any other exit would have raised an exception).
+      #if len(unconsumed_path):
+      return self.resource_map_resolver.get_directory(
+        [
+          region_tree_item
+        ] + unconsumed_path
+      )
+      #else:
+      #  # The user has attempted to "dir" a PID.
+      #  raise path_exception.PathException('not a directory')
 
-    if region_tree_folder is None:
-      return self.resource_map_resolver.get_directory([path[-1]] + unconsumed_path)
-
+      # The whole path was consumed and a folder within the tree was returned.
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     #if self.hasHelpEntry(path):
     #  dir.append(self.getHelpDirectoryItem())
 
-    for r in region_tree_folder:
+    for r in region_tree_item:
       dir.append(directory_item.DirectoryItem(r))
     return dir
+
+  def _read_file(self, path, workspace_folder_objects, size, offset):
+    merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+    region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+      merged_region_tree, path
+    )
+
+    if self._region_tree_item_is_pid(region_tree_item):
+      return self.resource_map_resolver.read_file(
+        [
+          region_tree_item
+        ] + unconsumed_path, size, offset
+      )
 
   #def _resolve_region_root(self, workspace_folder_objects):
   #  sites = set()
@@ -189,9 +221,9 @@ class Resolver(resolver_abc.Resolver):
       if v is not None:
         self._merge_region_trees(dst_tree[k], v, pid)
 
-  def _get_region_tree_item_and_unconsumed_path(self, region_tree, path):
+  def _get_region_tree_item_and_unconsumed_path(self, region_tree, path, parent_key=''):
     '''Return the region_tree item specified by path. An item can be a a folder
-    (represented by a dictionary) or a file (represented by None).
+    (represented by a dictionary) or a PID (represented by None).
 
     This function is also used for determining which section of a path is within
     the region tree and which section should be passed to the next resolver. To
@@ -200,24 +232,38 @@ class Resolver(resolver_abc.Resolver):
     - If the path points to an item in the region tree, the item is returned and
       the path, having been fully consumed, is returned as an empty list.
 
-    - If the path exits through a valid file in the region tree, None is
+    - If the path exits through a valid PID in the region tree, the PID is
       returned for the item and the section of the path that was not consumed
       within the region tree is returned.
 
     - If the path exits through a valid folder in the region tree, an "invalid
-      path" PathException is raised. This is because only the files (the PIDs)
-      are valid "exit points" in the tree.
+      path" PathException is raised. This is because only the PIDs are valid
+      "exit points" in the tree.
 
     - If the path goes to an invalid location within the region tree, an
       "invalid path" PathException is raised.
     '''
+    # Handle valid item within region tree.
     if not len(path):
-      return region_tree, []
+      if region_tree is None:
+        return parent_key, []
+      else:
+        return region_tree, []
+    # Handle valid exit through PID.
     if region_tree is None:
-      return None, path
+      return parent_key, path
+    # Handle next level in path.
     if path[0] in region_tree.keys():
       return self._get_region_tree_item_and_unconsumed_path(
-        region_tree[path[0]], path[1:]
+        region_tree[path[0]], path[1:], path[0]
       )
     else:
       raise path_exception.PathException('Invalid path')
+
+    #if path[0] in region_tree.keys():
+    #  if region_tree[path[0]] is None:
+    #    return [path[0]], path
+    #  else:
+
+  def _region_tree_item_is_pid(self, region_tree_item):
+    return isinstance(region_tree_item, basestring)

@@ -53,6 +53,7 @@ from impl.drivers.fuse import callbacks
 import impl.resolver.root
 
 from impl import cache_memory as cache
+from impl import cache_disk
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -136,10 +137,14 @@ def main():
   log.info("Base URL = %s" % settings.BASE_URL)
 
   #create the caches here and add references to them in options.
-  #enables child resolvers to invalidate entries so that 
+  #enables child resolvers to invalidate entries so that
   #changes can be reflected in the listings
-  options.attribute_cache = cache.Cache(options.MAX_ATTRIBUTE_CACHE_SIZE)
-  options.directory_cache = cache.Cache(options.MAX_DIRECTORY_CACHE_SIZE)
+  options.attribute_cache = cache_disk.DiskCache(
+    options.MAX_ATTRIBUTE_CACHE_SIZE, 'cache_attribute'
+  )
+  options.directory_cache = cache_disk.DiskCache(
+    options.MAX_DIRECTORY_CACHE_SIZE, 'cache_directory'
+  )
 
   # Instantiate the Root resolver.
   root_resolver = impl.resolver.root.RootResolver(options)

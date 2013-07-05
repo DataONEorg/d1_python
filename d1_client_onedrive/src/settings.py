@@ -96,7 +96,7 @@ MAX_OBJECTS_FOR_SEARCH = 50
 # Debug mode.
 # True: Turn on verbose logging and various other debugging facilities.
 # False: Log only error messages (for normal use, default)
-DEBUG = False
+DEBUG = True
 
 # Set the default file to log to or None for logging to stdout
 LOG_FILE_PATH = make_absolute('onedrive.log')
@@ -127,7 +127,7 @@ MAX_SOLR_QUERY_CACHE_SIZE = 1000
 # Specify the type of cache to use. Can be MEMORY or DISK
 CACHE_TYPE = "DISK"
 
-# Set to True if the cache should be cleared on startup. Has no effect on 
+# Set to True if the cache should be cleared on startup. Has no effect on
 # memory cache.
 CACHE_STARTUP_CLEAN = True
 
@@ -213,14 +213,9 @@ IGNORE_SPECIAL = set(
 
 # Set up logging.
 
-## Set the level of logging that PASTA GMN Adapter should perform. Choices are:
+## Set the level of logging that should be performed. Choices are:
 ## DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
-try:
-  test = GMN_DEBUG_ADAPTOR
-except NameError:
-  GMN_ADAPTER_DEBUG = False
-
-if DEBUG or GMN_ADAPTER_DEBUG:
+if DEBUG:
   LOG_LEVEL = 'DEBUG'
 else:
   LOG_LEVEL = 'INFO'
@@ -231,8 +226,8 @@ else:
 logging.DEBUG_MODULES = []
 
 #Kind of a hack - add a module variable to logging that lists the modules that
-#will be set to logging at a specific level. Each module needs to check for 
-#presence of its __name__ in the list. If not present, then logging will 
+#will be set to logging at a specific level. Each module needs to check for
+#presence of its __name__ in the list. If not present, then logging will
 #continue at the app global set level for logging.
 logging.ONEDRIVE_MODULES = {'__main__': 'INFO', }
 

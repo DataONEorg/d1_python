@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
 
   <folder name="coastal">
-    <query>abstract:*coastal* AND resourceMap:* and -obsoletedBy:*</query> 
+    <query>abstract:*coastal* AND resourceMap:* and -obsoletedBy:*</query>
     <!-- <query>id:doi*</query>
      -->
   </folder>
@@ -34,7 +34,7 @@
     <query>id:F*</query>
 
   </folder>
-<!-- 
+<!--
   <identifier>doi\:10.6073/AA/knb-lter-mcr.32.9</identifier>
   <identifier>doi\:10.6073/AA/knb-lter-hfr.41.12</identifier>
   <identifier>doi\:10.6085/AA/LB30XX_030MXTI004R00_20050722.50.</identifier>
@@ -60,4 +60,9 @@
   <query>id:G*</query>
   <query>id:H*</query>
  -->
+
+ <folder name="RegionTest">
+    <query>eastBoundCoord:[1 TO 100]</query>
+ </folder>
+
 </folder>

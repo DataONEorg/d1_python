@@ -60,6 +60,8 @@ try:
 except:
   pass
 
+log.setLevel(logging.DEBUG)
+
 
 class Resolver(resolver_abc.Resolver):
 

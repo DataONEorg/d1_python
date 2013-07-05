@@ -135,10 +135,10 @@ class Resolver(resolver_abc.Resolver):
     except path_exception.NoResultException:
       pass
 
-      # To determine where the path transitions from the workspace to the
-      # controlled hierarchy, we check for the controlled hierarchy root names.
-      # This means that those names are reserved. They can not be used as
-      # workspace folder names by the user.
+    # To determine where the path transitions from the workspace to the
+    # controlled hierarchy, we check for the controlled hierarchy root names.
+    # This means that those names are reserved. They can not be used as
+    # workspace folder names by the user.
     workspace_folder = self._get_workspace_folder(path)
 
     # All workspace items are folders.
@@ -176,38 +176,12 @@ class Resolver(resolver_abc.Resolver):
     # Now have all information required for gathering information about all the
     # objects in the workspace folder and dispatching to a controlled hierarchy
     # resolver.
-    return self.resolvers[resolver].get_attributes(controlled_path)
-
-#    # The facet path parser split method validates the path to make sure it can
-#    # be cleanly split to a valid facet and/or object section. If the path is
-#    # not syntactically valid, the parser raises an exception.
-#    facet_section, object_section = self.facet_path_parser \
-#      .split_path_to_facet_and_object_sections(path)
-#
-#    # If object_section is not empty, the path references something outside of
-#    # the faceted search area, so the facet section is stripped off the path,
-#    # and the remainder is passed to the package resolver.
-#    if len(object_section):
-#      return self.resource_map_resolver.get_attributes(object_section)
-#
-#    # Handle faceted path that is syntactically valid but uses a non-existing
-#    # facet name or value.
-#    path_facets = self.facet_path_parser.facets_from_path(facet_section)
-#    self._raise_if_any_invalid_facet(path_facets)
-#
-#    # It is not necessary to check if the path points to a file because an
-#    # earlier step determined that path if a valid facet_section, and all
-#    # elements in a facet_section path are folders.
-#
-#    # The path can reference either the root, a facet name or a facet value.
-#    if self._is_root(path_facets):
-#      return self._get_root_attribute()
-#    elif self._is_path_to_undefined_facet(path_facets):
-#      return self._get_facet_name_attribute(path_facets)
-#    else:
-#      return self._get_facet_value_attribute(path_facets)
-#
-#
+    workspace_folder_objects = WorkspaceFolderObjects(
+      self.command_processor, workspace_folder
+    )
+    return self.resolvers[resolver].get_attributes(
+      controlled_path, workspace_folder_objects
+    )
 
   def get_directory(self, path, preconfigured_query=None, fs_path=''):
     # the directory will typically be in the cache. already retrieved by
@@ -256,29 +230,6 @@ class Resolver(resolver_abc.Resolver):
       controlled_path, workspace_folder_objects
     )
 
-    #d = directory.Directory()
-    #self.append_parent_and_self_references(d)
-    #
-    #d.append(directory_item.DirectoryItem('Authors'))
-    #
-    #
-    ## Each workspace folder corresponds to a specific set of objects, which is
-    ## determined here. Thee objects are rendered by the child resolvers.
-    #
-    #
-    #self.resolvers
-    #
-    ##self.append_folders(d, f)
-    ## Add contents of folder.
-    #for o in workspace_folder_objects.get_records():
-    #  d.append(directory_item.DirectoryItem(o['id'] + ' ' + o.get('author', '')))
-    ##pprint.pprint(w.objects)
-    #
-    ##self.append_folders(d, f)
-    ##self.append_pids(d, f)
-    ##self.append_queries(d, f)
-    #return d
-
   def read_file(self, path, size, offset, fs_path=''):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
@@ -292,7 +243,6 @@ class Resolver(resolver_abc.Resolver):
     except path_exception.NoResultException:
       pass
 
-    # The workspace resolver exposes no readable files.
     workspace_folder = self._get_workspace_folder(path)
 
     if workspace_folder is not None:
@@ -302,19 +252,24 @@ class Resolver(resolver_abc.Resolver):
           #return workspace_folder.getHelp(offset, size)
       raise path_exception.PathException(u'Invalid file')
 
-
     workspace_path, resolver, controlled_path = \
       self._split_path_by_reserved_name(path)
 
     workspace_folder = self._get_workspace_folder(workspace_path)
     if workspace_folder is None:
-      raise path_exception.PathException(u'Invalid file')
+      raise path_exception.PathException(u'Invalid folder')
 
     if resolver == self.helpName():
       res = self.getFolderHelp(workspace_folder, offset, size)
       return res
-    #print self.resolvers[resolver]
-    return self.resolvers[resolver].read_file(controlled_path, size, offset)
+
+    workspace_folder_objects = WorkspaceFolderObjects(
+      self.command_processor, workspace_folder
+    )
+
+    return self.resolvers[resolver].read_file(
+      controlled_path, workspace_folder_objects, size, offset
+    )
 
   def load_workspace(self, workspace_xml):
     '''Loads the workspace XML document
@@ -334,7 +289,7 @@ class Resolver(resolver_abc.Resolver):
     pass
 
   def getFolderHelp(self, folder, offset=0, size=None):
-    '''Return help text for specific folder. If not available, then the 
+    '''Return help text for specific folder. If not available, then the
     help text is generated by reviewing the folder attributes. The help text
     is then attached to the folder object for future use.
     #TODO: consider thread safety for this.
@@ -347,9 +302,10 @@ class Resolver(resolver_abc.Resolver):
     res = folder._helpText[offset:size]
     return res
 
-    #
-    # Private.
-    #
+  #
+  # Private.
+  #
+
   def _generateHelp(self):
     res = StringIO()
     t = u"ONEDrive Workspace Overview"
@@ -360,7 +316,7 @@ class Resolver(resolver_abc.Resolver):
     res.write(
       u"""
 The ONEDrive Workspace folder contains objects that match queries specified
-in the workspace configuration and individual identifiers 
+in the workspace configuration and individual identifiers
     """
     )
 
@@ -380,15 +336,6 @@ in the workspace configuration and individual identifiers
         return path[:i], path[i], path[i + 1:]
     raise path_exception.PathException(u'Invalid folder: %s' % str(path))
 
-  #def _resolve_controlled_roots(self, workspace_folder):
-  #  dir = directory.Directory()
-  #  dir.append(directory_item.DirectoryItem('Authors'))
-  #  dir.append(directory_item.DirectoryItem('Regions'))
-  #  dir.append(directory_item.DirectoryItem('ScienceDiscipline'))
-  #  dir.append(directory_item.DirectoryItem('Taxa'))
-  #  dir.append(directory_item.DirectoryItem('TimePeriods'))
-  #  return dir
-
   def _resolve_workspace_folder(self, workspace_folder):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
@@ -402,23 +349,8 @@ in the workspace configuration and individual identifiers
     for f in workspace_folder.folder:
       d.append(directory_item.DirectoryItem(f.name))
     return d
-  #
-  #
-  #def append_pids(self, d, workspace_folder):
-  #  for pid in workspace_folder.identifier:
-  #    d.append(directory_item.DirectoryItem(pid))
-  #  return d
-  #
-  #
-  #def append_queries(self, d, workspace_folder):
-  #  for q in workspace_folder.query:
-  #    sci_objs = self.command_processor.solr_query_raw(q)
-  #    for s in sci_objs:
-  #      d.append(directory_item.DirectoryItem(s['id']))
-  #  return d
 
   # A workspace folder can contain other folders, identifiers or queries.
-
   # Identifiers and queries are rendered directly into a folder.
 
   #def is_workspace_folder(self, path):
@@ -441,240 +373,3 @@ in the workspace configuration and individual identifiers
     for f in folder.folder:
       if f.name == path[c]:
         return self._get_workspace_folder_recursive(f, path, c + 1)
-
-#    # If the path references something outside of the faceted search area, the
-#    # facet section is stripped off the path, and the remainder is passed to the
-#    # next resolver.
-#    facet_section, object_section = self.facet_path_parser \
-#      .split_path_to_facet_and_object_sections(path)
-#
-#    if len(object_section):
-#      return self.resource_map_resolver.get_directory(object_section)
-#
-#    return self._get_directory(path, preconfigured_query)
-#
-#
-#
-#
-#  def _read_file(self, path, size, offset):
-#    facet_section, object_section = self.facet_path_parser \
-#      .split_path_to_facet_and_object_sections(path)
-#
-#    if len(object_section):
-#      return self.resource_map_resolver.read_file(object_section, size, offset)
-#
-#    self._raise_invalid_path()
-#
-#
-#  def _get_facet_name_attribute(self, path_facets):
-#    applied_facets = self._get_applied_facets(path_facets)
-#    # solr_query finds the pid and size of all science objects that match
-#    # the applied facets. And it finds the names of the facets that are not
-#    # yet applied, together with their matching object counts.
-#    unapplied_facet_counts, sci_objs = self.command_processor.solr_query(
-#      applied_facets=[])
-#    n = self._get_last_element_facet_name(path_facets)
-#    return attributes.Attributes(is_dir=True,
-#                                 size=unapplied_facet_counts[n]['count'])
-#
-#
-#  def _get_facet_value_attribute(self, path_facets):
-#    applied_facets = self._get_applied_facets(path_facets)[:-1]
-#    unapplied_facet_counts, sci_objs = self.command_processor.solr_query(
-#      applied_facets=applied_facets)
-#
-#    self._raise_if_invalid_facet_value(unapplied_facet_counts, path_facets[-1])
-#
-#    last_facet_name = self._get_last_element_facet_name(path_facets)
-#    last_facet_value = self._get_last_element_facet_value(path_facets)
-#    n_matches = self._get_match_count_for_facet_value(unapplied_facet_counts,
-#                                                      last_facet_name,
-#                                                      last_facet_value)
-#    return attributes.Attributes(is_dir=True, size=n_matches)
-#
-#
-#  def _get_match_count_for_facet_value(self, unapplied_facet_counts, facet_name,
-#                                       facet_value):
-#    for value in unapplied_facet_counts[facet_name]['values']:
-#      if facet_value == value[0]:
-#        return value[1]
-#
-#
-#  def _get_root_attribute(self):
-#    return attributes.Attributes(is_dir=True,
-#                                 size=self._get_match_count_for_root())
-#
-#
-#  def _get_match_count_for_root(self):
-#    sci_objs = self.command_processor.solr_query()[1]
-#    return len(sci_objs)
-#
-#
-#  def _get_directory(self, path, preconfigured_query):
-#    dir = directory.Directory()
-#    self.append_parent_and_self_references(dir)
-#
-#    path_facets = self.facet_path_parser.facets_from_path(path)
-#    applied_facets = self._get_applied_facets(path_facets)
-#
-#    unapplied_facet_counts, sci_objs = self.command_processor.solr_query(
-#      applied_facets=applied_facets, filter_queries=preconfigured_query)
-#
-#    if self._is_path_to_undefined_facet(path_facets):
-#      dir.extend(self._get_facet_values(unapplied_facet_counts,
-#        self._get_last_element_facet_name(path_facets)))
-#    else:
-#      dir.extend(self._get_unapplied_facets(unapplied_facet_counts))
-#
-#    dir.extend(self._directory_items_from_science_objects(sci_objs))
-#
-#    return dir
-#
-#
-#  # This was the initial implementation of error file detection in the faceted
-#  # search. It is very resource intensive as it causes Solr queries to be
-#  # performed for each folder touched by get_attributes(). Leaving it in, in
-#  # case the new implementation does not work out.
-#  def _raise_if_any_invalid_facet(self, path_facets):
-#    for facet in path_facets:
-#      self._raise_if_invalid_facet(facet)
-#
-#
-#  def _raise_if_invalid_facet(self, facet):
-#    self._raise_if_invalid_facet_name(facet)
-#    #self._raise_if_invalid_facet_value(facet)
-#
-#
-#  def _raise_if_invalid_facet_name(self, facet):
-#    if facet[0] not in \
-#      self.command_processor.get_all_field_names_good_for_faceting():
-#        raise path_exception.PathException(
-#          'Invalid facet name: {0}'.format(facet[0]))
-#
-#
-#  def _raise_if_invalid_facet_value(self, unapplied_facet_counts, facet):
-#    for facet_value in unapplied_facet_counts[facet[0]]['values']:
-#      if facet_value[0] == facet[1]:
-#        return
-#    raise path_exception.PathException(
-#      'Invalid facet value: {0}'.format(facet[1]))
-#
-#
-#  def _is_error_file_alternative(self, path):
-#    if len(path) <= 1:
-#      return False
-#    try:
-#      self.get_directory(path[:-1])
-#    except path_exception.PathException as e:
-#      return True
-#    return False
-#
-#
-#  def _get_applied_facets(self, path_facets):
-#    if self._is_path_to_undefined_facet(path_facets):
-#      return path_facets[:-1]
-#    else:
-#      return path_facets
-#
-#
-#  def _is_path_to_undefined_facet(self, path_facets):
-#    return len(path_facets) and path_facets[-1][1] is None
-#
-#
-#  def _get_last_element_facet_name(self, path_facets):
-#    return path_facets[-1][0]
-#
-#
-#  def _get_last_element_facet_value(self, path_facets):
-#    return path_facets[-1][1]
-#
-#
-#  def _get_facet_values(self, unapplied_facet_counts, facet_name):
-#    try:
-#      return [directory_item.DirectoryItem(self.facet_path_formatter
-#        .decorate_facet_value(u[0]))
-#          for u in unapplied_facet_counts[facet_name]['values']]
-#    except KeyError:
-#      raise path_exception.PathException(
-#        'Invalid facet name: {0}'.format(facet_name))
-#
-#
-#  def _get_unapplied_facets(self, unapplied_facet_counts):
-#    return [directory_item.DirectoryItem(self.facet_path_formatter.
-#      decorate_facet_name(f))
-#        for f in sorted(unapplied_facet_counts)]
-#
-#
-#  def _directory_items_from_science_objects(self, sci_obj):
-#    return [directory_item.DirectoryItem(s['pid'])
-#            for s in sci_obj]
-#
-#
-##    facet_counts = self.query_engine.unapplied_facet_names_with_value_counts(facets)
-##    for facet_count in facet_counts:
-##      facet_name = self.facet_path_parser.decorate_facet_name(facet_count[0])
-##      dir.append(directory_item.DirectoryItem(facet_name, facet_count[1], True))
-##
-##    # def append_facet_value_selection_directories(self, dir, objects, facets, facet_name):
-##    facet_value_counts = self.query_engine.count_matches_for_unapplied_facet(objects, facets, facet_name)
-##    for facet_value_count in facet_value_counts:
-##      facet_value = self.facet_path_parser.decorate_facet_value(facet_value_count[0])
-##      dir.append(directory_item.DirectoryItem(facet_value, facet_value_count[1], True))
-##
-##    # def append_objects_matching_facets(self, dir, facets):
-##    objects = self.query_engine.search_and(facets)
-##    dir.extend([directory_item.DirectoryItem(o[0], 123) for o in objects])
-#
-#    #facets = self.facet_path_parser.undecorate_facets(path)
-#    #if self.facet_path_parser.dir_contains_facet_names(path):
-#    #  return self.resolve_dir_containing_facet_names(path, facets)
-#    #if self.facet_path_parser.dir_contains_facet_values(path):
-#    #  return self.resolve_dir_containing_facet_values(path, facets)
-#    #if self.n_path_components_after_facets(path) == 1:
-#    #  return self.resolve_package_dir(path)
-#    #return self.invalid_directory_error()
-#
-#
-#  def _is_undefined_facet(self, facet):
-#    return self._is_facet_name_or_value(facet[0]) and facet[1] is None
-#
-#
-##  def append_facet_directories(dir, facet_section):
-##    facets = self.facet_path_parser.undecorate_facets(facet_section)
-##
-##
-##  def append_dir_containing_facet_names(self, dir, path, facets):
-##    self.append_facet_name_selection_directories(dir, facets)
-##    self.append_objects_matching_facets(dir, facets)
-##
-##
-##  def append_dir_containing_facet_values(self, dir, path, facets):
-##    dir = directory.Directory()
-##    facet_name = self.facet_path_parser.undecorated_tail(path)
-##    objects = self.query_engine.search_and(facets)
-##    self.append_facet_value_selection_directories(dir, objects, facets,
-##                                                  facet_name)
-##    dir.extend([directory_item.DirectoryItem(o[0], 123) for o in objects])
-#
-#
-##  def append_facet_name_selection_directories(self, dir, facets):
-##    facet_counts = self.query_engine.unapplied_facet_names_with_value_counts(facets)
-##    for facet_count in facet_counts:
-##      facet_name = self.facet_path_parser.decorate_facet_name(facet_count[0])
-##      dir.append(directory_item.DirectoryItem(facet_name, facet_count[1], True))
-##
-##
-##  def append_facet_value_selection_directories(self, dir, objects, facets, facet_name):
-##    facet_value_counts = self.query_engine.count_matches_for_unapplied_facet(objects, facets, facet_name)
-##    for facet_value_count in facet_value_counts:
-##      facet_value = self.facet_path_parser.decorate_facet_value(facet_value_count[0])
-##      dir.append(directory_item.DirectoryItem(facet_value, facet_value_count[1], True))
-##
-##
-##  def append_objects_matching_facets(self, dir, facets):
-##    objects = self.query_engine.search_and(facets)
-##    dir.extend([directory_item.DirectoryItem(o[0], 123) for o in objects])
-#
-#
-##  def is_valid_facet_value_for_facet_name(self, facet_name):
-##    pass
