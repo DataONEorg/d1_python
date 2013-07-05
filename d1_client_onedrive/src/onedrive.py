@@ -139,12 +139,10 @@ def main():
   #create the caches here and add references to them in options.
   #enables child resolvers to invalidate entries so that
   #changes can be reflected in the listings
-  options.attribute_cache = cache_disk.DiskCache(
-    options.MAX_ATTRIBUTE_CACHE_SIZE, 'cache_attribute'
-  )
-  options.directory_cache = cache_disk.DiskCache(
-    options.MAX_DIRECTORY_CACHE_SIZE, 'cache_directory'
-  )
+  #options.attribute_cache = cache_disk.DiskCache(options.MAX_ATTRIBUTE_CACHE_SIZE, 'cache_attribute')
+  #options.directory_cache = cache_disk.DiskCache(options.MAX_DIRECTORY_CACHE_SIZE, 'cache_directory')
+  options.attribute_cache = cache.Cache(options.MAX_ATTRIBUTE_CACHE_SIZE)
+  options.directory_cache = cache.Cache(options.MAX_DIRECTORY_CACHE_SIZE)
 
   # Instantiate the Root resolver.
   root_resolver = impl.resolver.root.RootResolver(options)

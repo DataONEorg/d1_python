@@ -66,6 +66,33 @@ log.setLevel(logging.DEBUG)
 #GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
+README = '''Region Folder
+
+The Region folder provides a geographically ordered view of science data objects
+for which the geographical area being covered is known to DataONE. Objects with
+unknown geographical coverage do not appear in this folder.
+
+The earth is divided into countries. Within the countries, there are various
+administrative areas that differ in organization from country to country. There
+can be several layers of administrative areas. For instance, in the US, there
+are states and within the states, there are counties.
+
+The Region folder arranges the science objects into folders that represent these
+administrative areas. In a given level of the Region tree, all the science
+objects that contain data for that administrative area will appear. Lower level
+folders do not contain more science objects. They simply contain the same
+science objects as in the current level, only arranged into smaller
+administrative areas.
+
+For instance, if the current workspace folder contains two objects, one that has
+data for California and Arizona and another that has data for Arizona and New
+Mexico, both objects will appear under United States and under Arizona. But only
+the first object will appear under California and only the second will appear
+under New Mexico.
+'''
+
+README_TXT = 'readme.txt'
+
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
@@ -73,6 +100,7 @@ class Resolver(resolver_abc.Resolver):
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
+    self.helpText = README
 
   def get_attributes(self, path, workspace_folder_objects):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
@@ -97,6 +125,9 @@ class Resolver(resolver_abc.Resolver):
   #
 
   def _get_attribute(self, path, workspace_folder_objects, fs_path=''):
+    if path == ['readme.txt']:
+      return attributes.Attributes(len(self.helpText))
+
     merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
@@ -142,9 +173,17 @@ class Resolver(resolver_abc.Resolver):
 
     for r in region_tree_item:
       dir.append(directory_item.DirectoryItem(r))
+
+    # Add readme.txt to root.
+    if not len(path):
+      dir.append(directory_item.DirectoryItem('readme.txt'))
+
     return dir
 
   def _read_file(self, path, workspace_folder_objects, size, offset):
+    if path == ['readme.txt']:
+      return self.helpText[offset:size]
+
     merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
@@ -156,13 +195,6 @@ class Resolver(resolver_abc.Resolver):
           region_tree_item
         ] + unconsumed_path, size, offset
       )
-
-  #def _resolve_region_root(self, workspace_folder_objects):
-  #  sites = set()
-  #  for o in workspace_folder_objects.get_records():
-  #    if 'site' in o:
-  #      for s in o['site']:
-  #        sites.add(s)
 
   def _get_merged_region_tree(self, workspace_folder_objects):
     k = self._get_unique_dictionary_key(workspace_folder_objects)
