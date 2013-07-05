@@ -27,7 +27,9 @@
 '''
 
 # Stdlib.
+import hashlib
 import httplib
+import json
 import logging
 import os
 import pprint
@@ -47,6 +49,7 @@ import resolver_abc
 #from impl #import settings
 from impl import util
 import resource_map
+from impl import cache_disk
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -57,32 +60,24 @@ try:
 except:
   pass
 
+#GAZETTEER_HOST = '192.168.1.116'
+GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
+
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
     self._options = options
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
-    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
+    self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
 
-    # The region resolver handles hierarchy levels:
-    # / = all regions with one or more members (e.g., /Yosemite National Park)
-    # /region = all PIDs for region (e.g., /Yosemite National Park/my_pid)
-    # All longer paths are handled by d1_object resolver.
-
-  def get_attributes(self, path): #workspace_folder_objects
+  def get_attributes(self, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-
-    if len(path) >= 2:
-      return self.resource_map_resolver.get_attributes(path[1:])
 
     return self._get_attribute(path)
 
   def get_directory(self, path, workspace_folder_objects):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
-
-    if len(path) >= 2:
-      return self.resource_map_resolver.get_directory(path[1:])
 
     return self._get_directory(path, workspace_folder_objects)
 
@@ -100,37 +95,129 @@ class Resolver(resolver_abc.Resolver):
   # Private.
 
   def _get_attribute(self, path):
+    #merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+    #region_tree_folder, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(merged_region_tree, path)
+    #if region_tree_folder is None:
+    #  return attributes.Attributes(0)
+    #else:
     return attributes.Attributes(0, is_dir=True)
 
   def _get_directory(self, path, workspace_folder_objects):
-    if len(path) == 0:
-      return self._resolve_region_root(workspace_folder_objects)
-
-    region = path[0]
-    return self._resolve_region(region, workspace_folder_objects)
-
-  def _resolve_region_root(self, workspace_folder_objects):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    sites = set()
-    for o in workspace_folder_objects.get_records():
-      if 'site' in o:
-        for s in o['site']:
-          sites.add(s)
-    dir.extend([directory_item.DirectoryItem(a) for a in sorted(sites)])
+
+    merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+
+    #region_tree_folder = self._get_region_tree_item(merged_region_tree, path)
+    region_tree_folder, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
+      merged_region_tree, path
+    )
+
+    if region_tree_folder is None:
+      return self.resource_map_resolver.get_directory([path[-1]] + unconsumed_path)
+
+    dir = directory.Directory()
+    self.append_parent_and_self_references(dir)
+    #if self.hasHelpEntry(path):
+    #  dir.append(self.getHelpDirectoryItem())
+
+    for r in region_tree_folder:
+      dir.append(directory_item.DirectoryItem(r))
     return dir
 
-  def _resolve_region(self, region, workspace_folder_objects):
-    dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
+  #def _resolve_region_root(self, workspace_folder_objects):
+  #  sites = set()
+  #  for o in workspace_folder_objects.get_records():
+  #    if 'site' in o:
+  #      for s in o['site']:
+  #        sites.add(s)
+
+  def _get_merged_region_tree(self, workspace_folder_objects):
+    k = self._get_unique_dictionary_key(workspace_folder_objects)
+    try:
+      return self._region_tree_cache[k]
+    except KeyError:
+      pass
+
+    geo_records = self._get_records_with_geo_bounding_box(workspace_folder_objects)
+
+    merged_region_tree = {}
+    for g in geo_records:
+      t = self._get_region_tree_for_geo_record(g)
+      self._merge_region_trees(merged_region_tree, t, g[0])
+
+    self._region_tree_cache[k] = merged_region_tree
+    return merged_region_tree
+
+  def _get_unique_dictionary_key(self, workspace_folder_objects):
+    m = hashlib.sha1()
+    for r in workspace_folder_objects.get_records():
+      m.update(r['id'])
+    return m.hexdigest()
+
+  def _get_region_tree_for_geo_record(self, geo_record):
+    c = httplib.HTTPConnection(GAZETTEER_HOST)
+    c.request('GET', '/region_tree/{0}/{1}/{2}/{3}'.format(*geo_record[1:]))
+    return json.loads(c.getresponse().read())
+
+  def _get_records_with_geo_bounding_box(self, workspace_folder_objects):
+    geo_records = []
     for o in workspace_folder_objects.get_records():
       try:
-        if region in o['site']:
-          if o.has_key("resourceMap"):
-            for rmap_id in o['resourceMap']:
-              dir.append(directory_item.DirectoryItem(rmap_id))
-          else:
-            dir.append(directory_item.DirectoryItem(o['id']))
+        w = o['westBoundCoord']
+        s = o['southBoundCoord']
+        e = o['eastBoundCoord']
+        n = o['northBoundCoord']
       except KeyError:
         pass
-    return dir
+      else:
+        geo_records.append((o['id'], w, s, e, n))
+    return geo_records
+
+  def _merge_region_trees(self, dst_tree, src_tree, pid):
+    '''Merge conflicts occur if a folder in one tree is a file in the other. As
+    the files are PIDs, this can only happen if a PID matches one of the
+    geographical areas that the dataset covers and should be very rare. In such
+    conflicts, the destination wins.'''
+    for k, v in src_tree.items():
+      # Prepend an underscore to the administrative area names, to make them
+      # sort separately from the identifiers.
+      #k = '_' + k
+      if k not in dst_tree or dst_tree[k] is None:
+        dst_tree[k] = {}
+      dst_tree[k][pid] = None
+      if v is not None:
+        self._merge_region_trees(dst_tree[k], v, pid)
+
+  def _get_region_tree_item_and_unconsumed_path(self, region_tree, path):
+    '''Return the region_tree item specified by path. An item can be a a folder
+    (represented by a dictionary) or a file (represented by None).
+
+    This function is also used for determining which section of a path is within
+    the region tree and which section should be passed to the next resolver. To
+    support this, the logic is as follows:
+
+    - If the path points to an item in the region tree, the item is returned and
+      the path, having been fully consumed, is returned as an empty list.
+
+    - If the path exits through a valid file in the region tree, None is
+      returned for the item and the section of the path that was not consumed
+      within the region tree is returned.
+
+    - If the path exits through a valid folder in the region tree, an "invalid
+      path" PathException is raised. This is because only the files (the PIDs)
+      are valid "exit points" in the tree.
+
+    - If the path goes to an invalid location within the region tree, an
+      "invalid path" PathException is raised.
+    '''
+    if not len(path):
+      return region_tree, []
+    if region_tree is None:
+      return None, path
+    if path[0] in region_tree.keys():
+      return self._get_region_tree_item_and_unconsumed_path(
+        region_tree[path[0]], path[1:]
+      )
+    else:
+      raise path_exception.PathException('Invalid path')
