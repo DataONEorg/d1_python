@@ -968,7 +968,8 @@ class SOLRSearchResponseIterator(object):
     fq=None,
     fields='*',
     pagesize=100,
-    transformer=SOLRRecordTransformer()
+    transformer=SOLRRecordTransformer(),
+    max_records=1000
   ):
     '''
     Initialize.
@@ -984,6 +985,9 @@ class SOLRSearchResponseIterator(object):
     self.q = q
     self.fq = fq
     self.fields = fields
+    if max_records is None:
+      max_records = 99999999
+    self.max_records = max_records
     self.crecord = 0
     self.pagesize = pagesize
     self.res = None
@@ -998,10 +1002,13 @@ class SOLRSearchResponseIterator(object):
     Retrieves the next set of results from the service.
     '''
     self.logger.debug("Iterator crecord=%s" % str(self.crecord))
+    pagesize = self.pagesize
+    if (offset + pagesize) > self.max_records:
+      pagesize = self.max_records - offset
     params = {
       'q': self.q,
       'start': str(offset),
-      'rows': str(self.pagesize),
+      'rows': str(pagesize),
       'fl': self.fields,
       'explainOther': '',
       'hl.fl': ''
@@ -1022,6 +1029,9 @@ class SOLRSearchResponseIterator(object):
 
   def next(self):
     if self.done:
+      raise StopIteration()
+    if self.crecord > self.max_records:
+      self.done = True
       raise StopIteration()
     idx = self.crecord - self.res['response']['start']
     try:
