@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2013 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,29 +35,28 @@ try:
   #  from OpenSSL.SSL import Context, TLSv1_METHOD, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT, OP_NO_SSLv2
   from OpenSSL.crypto import load_certificate, FILETYPE_PEM
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Be sure to install pyOpenSSL (v0.13 recommended)\n')
+  sys.stderr.write(u'Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(u'Be sure to install pyOpenSSL (v0.13 recommended)\n')
   raise
 
 # DataONE
 try:
   import d1_common.const
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  sys.stderr.write(u'Import error: {0}\n'.format(str(e)))
+  sys.stderr.write(u'Try: easy_install DataONE_Common\n')
   raise
 
 # CLI
 import cli_client
 import cli_util
 from const import * #@UnusedWildImport
-from print_level import * #@UnusedWildImport
 
 
 def _prompt(prompt, default=None):
   while True:
     response = None
-    p = ''
+    p = u''
     if not default:
       p = str(default)
     try:
@@ -72,28 +71,28 @@ def _prompt(prompt, default=None):
 
 
 def configuration(session):
-  '''  Initialize the configuration.  '''
-  session.set(CN_URL_sect, CN_URL_name, get_cn(session))
-  session.set(MN_URL_sect, MN_URL_name, get_mn(session))
+  '''Initialize the session.
+  '''
+  session.set(CN_URL_SECT, CN_URL_NAME, get_cn(session))
+  session.set(MN_URL_SECT, MN_URL_NAME, get_mn(session))
   #
   identity = get_identity(session)
-  session.set(ANONYMOUS_name, ANONYMOUS_name, identity.get(ANONYMOUS_name))
-  session.set(CERT_FILENAME_name, CERT_FILENAME_name, identity.get(CERT_FILENAME_name))
-  session.set(KEY_FILENAME_name, KEY_FILENAME_name, identity.get(KEY_FILENAME_name))
-  session.set(SUBMITTER_name, SUBMITTER_name, identity.get(SUBMITTER_name))
-  session.set(OWNER_name, OWNER_name, identity.get(OWNER_name))
+  session.set(ANONYMOUS_NAME, ANONYMOUS_NAME, identity.get(ANONYMOUS_NAME))
+  session.set(CERT_FILENAME_NAME, CERT_FILENAME_NAME, identity.get(CERT_FILENAME_NAME))
+  session.set(KEY_FILENAME_NAME, KEY_FILENAME_NAME, identity.get(KEY_FILENAME_NAME))
+  session.set(SUBMITTER_NAME, SUBMITTER_NAME, identity.get(SUBMITTER_NAME))
+  session.set(OWNER_NAME, OWNER_NAME, identity.get(OWNER_NAME))
 
 
 def get_cn(session):
   ''' Find a CN. '''
-  print 'The first thing to do is point to one of the DataONE nodes.\n'
   keep_checking_cn = True
-  cn = session.get(CN_URL_sect, CN_URL_name)
+  cn = session.get(CN_URL_SECT, CN_URL_NAME)
 
   while keep_checking_cn:
     if not cn:
       cn = d1_common.const.URL_DATAONE_ROOT
-    cn = _prompt('URL of DataONE: ', default=cn)
+    cn = _prompt(u'URL of DataONE: ', default=cn)
     if cn:
       cn_client = cli_client.CLICNClient(cn)
       ping_okay = False
@@ -110,38 +109,38 @@ def get_cn(session):
             return cn
         except:
           pass
-        print '%s: not a DataONE Coordinating Node.' % cn
+        print u'%s: not a DataONE Coordinating Node.' % cn
       else:
-        print '%s: connection failed.' % cn
+        print u'%s: connection failed.' % cn
 
     else:
-      print '\nWithout access to a DataONE site, things won\'t work very well.'
-      keep_checking_cn = cli_util.confirm('Do you want to try again?', default='yes')
+      print u'\nWithout access to a DataONE site, things won\'t work very well.'
+      keep_checking_cn = cli_util.confirm(u'Do you want to try again?', default='yes')
   # Never found one
   return None
 
 
 def get_mn(session):
-  return session.get(MN_URL_sect, MN_URL_name)
+  return session.get(MN_URL_SECT, MN_URL_NAME)
 
 
 def get_identity(session):
   identity = {
-    ANONYMOUS_name: session.get(ANONYMOUS_sect, ANONYMOUS_name),
-    CERT_FILENAME_name: session.get(CERT_FILENAME_sect, CERT_FILENAME_name),
-    KEY_FILENAME_name: session.get(KEY_FILENAME_name, KEY_FILENAME_name),
-    SUBMITTER_name: session.get(SUBMITTER_sect, SUBMITTER_name),
-    OWNER_name: session.get(OWNER_sect, OWNER_name),
+    ANONYMOUS_NAME: session.get(ANONYMOUS_SECT, ANONYMOUS_NAME),
+    CERT_FILENAME_NAME: session.get(CERT_FILENAME_SECT, CERT_FILENAME_NAME),
+    KEY_FILENAME_NAME: session.get(KEY_FILENAME_NAME, KEY_FILENAME_NAME),
+    SUBMITTER_NAME: session.get(SUBMITTER_SECT, SUBMITTER_NAME),
+    OWNER_NAME: session.get(OWNER_SECT, OWNER_NAME),
   }
 
   cert_path = _get_cert_path(session)
   subject = _get_subject(session, cert_path)
-  session.set(SUBMITTER_sect, SUBMITTER_name, subject)
+  session.set(SUBMITTER_SECT, SUBMITTER_NAME, subject)
 
 
 def _get_subject(session, path):
   #  if os.path.exists(path):
-  #    f = open(path, 'rb')
+  #    f = open(path, u'rb')
   #    buffer = f.read()
   #    f.close()
 
@@ -153,7 +152,7 @@ def _get_subject(session, path):
 
 def get_certificate(path):
   if os.path.exists(path):
-    f = open(path, 'rb')
+    f = open(path, u'rb')
     read_buffer = f.read()
     f.close()
     return load_certificate(FILETYPE_PEM, read_buffer)
@@ -168,56 +167,54 @@ def get_extensions(path):
 
 def _fix_X509_components(components):
   if len(components) > 0:
-    if components[0][0] == 'DC':
+    if components[0][0] == u'DC':
       components.reverse()
-    subj_string = ''
-    subj_prefix = ''
+    subj_string = u''
+    subj_prefix = u''
     for part in components:
-      subj_string += subj_prefix + part[0] + '=' + part[1]
-      subj_prefix = ','
+      subj_string += subj_prefix + part[0] + u'=' + part[1]
+      subj_prefix = u','
   return subj_string
 
 
 def _get_cert_path(session):
   cert_path = _path_in_list_exists(
     (
-      session.get(CERT_FILENAME_sect, CERT_FILENAME_name),
-      '/tmp/x509up_u%s' % str(os.getuid()),
-      '/tmp/x509up_u%s' % getuser(),
-      '%s/x509up_u%s' % (gettempdir(), str(os.getuid())),
-      '%s/x509up_u%s' % (gettempdir(), getuser()),
+      session.get(CERT_FILENAME_SECT, CERT_FILENAME_NAME),
+      u'/tmp/x509up_u%s' % str(os.getuid()),
+      u'/tmp/x509up_u%s' % getuser(),
+      u'%s/x509up_u%s' % (gettempdir(), str(os.getuid())),
+      u'%s/x509up_u%s' % (gettempdir(), getuser()),
     )
   )
-  cert_path = _prompt('Path to certificate file: ', default=cert_path)
+  cert_path = _prompt(u'Path to certificate file: ', default=cert_path)
   while not os.path.exists(cert_path):
-    print '%s: file not found.'
-    if not cli_util.confirm('Do you want to try again?', default='yes'):
+    print u'%s: file not found.'
+    if not cli_util.confirm(u'Do you want to try again?', default='yes'):
       break
-    cert_path = _prompt('Path to certificate file: ', default=None)
+    cert_path = _prompt(u'Path to certificate file: ', default=None)
 
 
 def _get_key_path(session):
   key_path = _path_in_list_exists(
     (
-      session.get(KEY_FILENAME_sect, KEY_FILENAME_name),
-      session.get(CERT_FILENAME_sect, CERT_FILENAME_name),
-      '/tmp/x509up_u%s' % str(os.getuid()),
-      '/tmp/x509up_u%s' % getuser(),
-      '%s/x509up_u%s' % (gettempdir(), str(os.getuid())),
-      '%s/x509up_u%s' % (gettempdir(), getuser()),
+      session.get(KEY_FILENAME_SECT, KEY_FILENAME_NAME),
+      session.get(CERT_FILENAME_SECT, CERT_FILENAME_NAME),
+      u'/tmp/x509up_u%s' % str(os.getuid()),
+      u'/tmp/x509up_u%s' % getuser(),
+      u'%s/x509up_u%s' % (gettempdir(), str(os.getuid())),
+      u'%s/x509up_u%s' % (gettempdir(), getuser()),
     )
   )
-  key_path = _prompt('Path to key file: ', default=key_path)
+  key_path = _prompt(u'Path to key file: ', default=key_path)
   while not os.path.exists(key_path):
-    print '%s: file not found.'
-    if not cli_util.confirm('Do you want to try again?', default='yes'):
+    print u'%s: file not found.'
+    if not cli_util.confirm(u'Do you want to try again?', default='yes'):
       break
-    key_path = _prompt('Path to certificate file: ', default=None)
+    key_path = _prompt(u'Path to certificate file: ', default=None)
 
 
-def _path_in_list_exists(path_list):
-  for possibility in path_list:
-    if possibility:
-      if os.path.exists(possibility):
-        return possibility
-  return None
+def _path_in_list_exists(paths):
+  for path in paths:
+    if path and os.path.exists(path):
+      return path

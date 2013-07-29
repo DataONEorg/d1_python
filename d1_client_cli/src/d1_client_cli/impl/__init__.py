@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2013 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,29 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
-:mod:`cli_exceptions`
-=====================
-
-:Synopsis:
-  Classes used for passing exceptions within and between components of the
-  DataONE Command Line Client.
-:Created: 2011-11-20
-:Author: DataONE (Dahl)
+'''DataONE Command-line Client
 '''
 
-
-class InvalidArguments(Exception):
-  def __init__(self, value):
-    self.value = value
-
-  def __str__(self):
-    return str(self.value)
-
-
-class CLIError(Exception):
-  def __init__(self, value):
-    self.value = value
-
-  def __str__(self):
-    return str(self.value)
+__all__ = []

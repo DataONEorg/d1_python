@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2013 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,34 +19,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`print_level`
-==================
+:mod:`cli_exceptions`
+=====================
 
-:Synopsis: Create a data package
-:Created: 2011-12-02
+:Synopsis:
+  Classes used for passing exceptions within and between components of the
+  DataONE Command Line Client.
+:Created: 2011-11-20
 :Author: DataONE (Dahl)
 '''
 
 
-def print_level(level, msg):
-  ''' Print the information in as Unicode safe manner as possible.
-  '''
-  for l in unicode(msg).split(u'\n'):
-    msg = u'%s%s' % (u'{0: <8s}'.format(level), unicode(l))
-    print msg.encode('utf-8')
+class InvalidArguments(Exception):
+  def __init__(self, value):
+    self.value = value
+
+  def __str__(self):
+    return str(self.value)
 
 
-def print_debug(msg):
-  print_level(u'DEBUG', unicode(msg))
+class CLIError(Exception):
+  def __init__(self, value):
+    self.value = value
 
-
-def print_error(msg):
-  print_level(u'ERROR', unicode(msg))
-
-
-def print_warn(msg):
-  print_level(u'WARN', unicode(msg))
-
-
-def print_info(msg):
-  print_level(u'', unicode(msg))
+  def __str__(self):
+    return str(self.value)

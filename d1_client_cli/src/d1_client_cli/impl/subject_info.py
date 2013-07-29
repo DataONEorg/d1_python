@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2013 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -75,16 +75,16 @@ def _add_group(equiv_list_list, group):
 def _normalize_subject(subject):
   ''' Clean up white space, capitalize component keys, and set CN first. '''
   new_subject = []
-  if subject.lower() == 'public':
-    return 'public'
-  for component in subject.split(','):
-    carray = component.split('=', 2)
+  if subject.lower() == u'public':
+    return u'public'
+  for component in subject.split(u','):
+    carray = component.split(u'=', 2)
     carray[0] = carray[0].upper()
-    carray[1] = ' '.join(carray[1].split())
-    new_subject.append('='.join(carray))
+    carray[1] = u' '.join(carray[1].split())
+    new_subject.append(u'='.join(carray))
   if new_subject[0].find("CN=") != 0:
     new_subject.reverse()
-  return ','.join(new_subject)
+  return u','.join(new_subject)
 
 
 def _flatten_dictionary(equiv_map_list):
@@ -135,7 +135,7 @@ def _highest_authority(subject_lists, access_map):
   for permission in perm_list:
     permission_map = access_map.get(permission)
     if permission_map:
-      if permission_map.get('public'):
+      if permission_map.get(u'public'):
         return permission
       for subject_list in subject_lists:
         for subject in subject_list:

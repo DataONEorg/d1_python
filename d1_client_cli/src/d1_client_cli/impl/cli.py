@@ -1,0 +1,582 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright 2009-2013 DataONE
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+'''
+:mod:`cli`
+==========
+
+:Synopsis:
+  * Generic boiler plate for Python CLI apps.
+  * Simple command tokenizing and validation.
+:Created: 2013-07-16
+:Author: DataONE (Dahl)
+'''
+
+# Stdlib.
+import cmd
+import hashlib
+import logging
+import os
+import re
+import sys
+
+# App.
+import cli_util
+import cli_exceptions
+import command_processor
+import session
+
+
+class CLI(cmd.Cmd):
+  def __init__(self):
+    self._command_processor = command_processor.CommandProcessor()
+    cmd.Cmd.__init__(self)
+    self.prefix = u''
+    self.prompt = u'> '
+    #self.intro = u'DataONE Command Line Interface'
+    self.keep_looping = False
+    self.interactive = False
+
+  #-----------------------------------------------------------------------------
+  # Command processing.
+  #-----------------------------------------------------------------------------
+
+  ## Override methods in Cmd object ##
+  def preloop(self):
+    '''Initialization before prompting user for commands.
+       Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
+    '''
+    # Set up command completion.
+    cmd.Cmd.preloop(self)
+    self._history = []
+
+  def postloop(self):
+    '''Take care of any unfinished business.
+       Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
+    '''
+    cmd.Cmd.postloop(self) ## Clean up command completion
+    cli_util.print_info(u'Exiting...')
+
+  def precmd(self, line):
+    ''' This method is called after the line has been input but before
+      it has been interpreted. If you want to modify the input line
+      before execution (for example, variable substitution) do it here.
+    '''
+    line = self.prefix + line
+    self._history += [line.strip()]
+    return line
+
+  def postcmd(self, stop, line):
+    '''If you want to stop the console, return something that evaluates to true.
+       If you want to do some post command processing, do it here.
+    '''
+    return stop
+
+  def emptyline(self):
+    '''Do nothing on empty input line'''
+    pass
+
+  def default(self, line):
+    '''Called on an input line when the command prefix is not recognized.
+    '''
+    args = self._split_args(line, 0, 99)
+    cli_util.print_error(u'Unknown command: {0}'.format(args[0]))
+
+  def run_command_line_arguments(self, commands):
+    for command in commands:
+      self.onecmd(command)
+
+  #-----------------------------------------------------------------------------
+  # Session Parameters
+  #-----------------------------------------------------------------------------
+
+  def do_reset(self, line):
+    '''reset
+    Set all session parameters to their default values
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().reset()
+    self._print_info_if_verbose('Successfully reset session parameters')
+
+  def do_load(self, line):
+    '''load [file]
+    Load session parameters from file
+    load (without parameters): Load session from default file ~/.dataone_cli.conf
+    load <file>: Load session from specified file
+    '''
+    config_file = self._split_args(line, 0, 1)[0]
+    self._command_processor.get_session().load(config_file)
+    if config_file is None:
+      config_file = self._command_processor.get_session().get_default_pickle_file_path()
+    self._print_info_if_verbose('Loaded session from file: {0}'.format(config_file))
+
+  def do_save(self, line):
+    '''save [config_file]
+    Save session parameters to file
+    save (without parameters): Save session to default file ~/.dataone_cli.conf
+    save <file>: Save session to specified file
+    '''
+    config_file = self._split_args(line, 0, 1)[0]
+    self._command_processor.get_session().save(config_file)
+    if config_file is None:
+      config_file = self._command_processor.get_session().get_default_pickle_file_path()
+    self._print_info_if_verbose('Saved session to file: {0}'.format(config_file))
+
+  def do_set(self, line):
+    '''set [[parameter] [value]]
+    set (without parameters): Display the value of all session parameters.
+    set <session parameter>: Display the value of a single session parameter.
+    set <session parameter> <value>: Set the value of a session parameter.
+    '''
+    session_parameter, value = self._split_args(line, 0, 2)
+    if value is None:
+      self._command_processor.get_session().print_parameter(session_parameter)
+    else:
+      self._command_processor.set_session_parameter(session_parameter, value)
+      self._print_info_if_verbose(
+        'Set session parameter {0} to "{1}"'.format(
+          session_parameter, value
+        )
+      )
+
+  # Access control
+
+  def do_allow(self, line):
+    '''allow <subject> [access-level]
+    Set the access level for subject
+    Access level is "read", "write" or "changePermission".
+    Access level defaults to "read" if not specified.
+    Special subjects:
+      public: Any subject, authenticated and not authenticated
+      authenticatedUser: Any subject that has authenticated with CILogon
+      verifiedUser: Any subject that has authenticated with CILogon and has been verified by DataONE
+    '''
+    subject, permission = self._split_args(line, 1, 1)
+    self._command_processor.get_session().get_access_control().add_allowed_subject(
+      subject, permission
+    )
+    self._print_info_if_verbose(
+      'Set {0} access for subject "{1}"'.format(
+        permission, subject
+      )
+    )
+
+  def do_deny(self, line):
+    '''deny <subject>
+    Remove subject from access policy
+    '''
+    subject, = self._split_args(line, 1, 0)
+    self._command_processor.get_session().get_access_control().remove_allowed_subject(
+      subject
+    )
+    self._print_info_if_verbose(
+      'Removed subject "{0}" from access policy'.format(
+        subject
+      )
+    )
+
+  def do_denyall(self, line):
+    '''denyall
+    Remove all subjects from access policy and deny public read
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().get_access_control().clear()
+    self._print_info_if_verbose('Removed all subjects from access policy')
+
+  # Replication policy
+
+  def do_clearreplication(self, line):
+    '''clearreplication
+    Clear replication policy
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().get_replication_policy().clear()
+    self._print_info_if_verbose('Cleared the replication policy')
+
+  def do_addpreferred(self, line):
+    '''addpreferred <member node> [member node ...]
+    Add one or more preferred Member Nodes to replication policy
+    '''
+    mns = self._split_args(line, 1, -1)
+    self._command_processor.get_session().get_replication_policy().add_preferred(mns)
+    self._print_info_if_verbose(
+      'Set {0} as preferred replication target(s)'.format(
+        ', '.join(
+          mns
+        )
+      )
+    )
+
+  def do_addblocked(self, line):
+    '''addblocked <member node> [member node ...]
+    Add one or more blocked Member Node to replication policy
+    '''
+    mns = self._split_args(line, 1, -1)
+    self._command_processor.get_session().get_replication_policy().add_blocked(mns)
+    self._print_info_if_verbose(
+      'Set {0} as blocked replication target(s)'.format(
+        ', '.join(
+          mns
+        )
+      )
+    )
+
+  def do_remove(self, line):
+    '''remove <member node> [member node ...]
+    Remove one or more Member Nodes from replication policy
+    '''
+    mns = self._split_args(line, 1, -1)
+    self._command_processor.get_session().get_replication_policy().remove(mns)
+    self._print_info_if_verbose(
+      'Removed {0} from replication policy'.format(
+        ', '.join(
+          mns
+        )
+      )
+    )
+
+  def do_allowreplication(self, line):
+    '''allowreplication
+    Allow new objects to be replicated
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().get_replication_policy(
+    ).set_replication_allowed(
+      True
+    )
+    self._print_info_if_verbose('Set replication policy to allow replication')
+
+  def do_denyreplication(self, line):
+    '''denyreplication
+    Prevent new objects from being replicated
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().get_replication_policy(
+    ).set_replication_allowed(
+      False
+    )
+    self._print_info_if_verbose(
+      'Set replication policy to deny replication'.format(
+        ', '.join(
+          mns
+        )
+      )
+    )
+
+  def do_setreplicas(self, line):
+    '''setreplicas <number of replicas>
+    Set preferred number of replicas for new objects
+    '''
+    n_replicas = self._split_args(line, 1, 0)[0]
+    self._command_processor.get_session().get_replication_policy().set_number_of_replicas(
+      n_replicas
+    )
+    self._print_info_if_verbose('Set number of replicas to {0}'.format(n_replicas))
+
+  #-----------------------------------------------------------------------------
+  # Operations against Coordinating Nodes
+  #-----------------------------------------------------------------------------
+
+  def do_ping(self, line):
+    '''ping [base-url ...]
+    Check if a server responds to the DataONE ping() API method
+    ping (no arguments): Ping the CN and MN that is specified in the session
+    ping <base-url> [base-url ...]: Ping each CN or MN
+
+    If an incomplete base-url is provided, default CN and MN base URLs at the
+    given url are pinged.
+    '''
+    hosts = self._split_args(line, 0, 99, pad=False)
+    self._command_processor.ping(hosts)
+
+  def do_search(self, line):
+    '''search [query]
+    Comprehensive search for Science Data Objects across all available MNs.  See:
+      http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html
+    for the available search terms.
+    '''
+    queryArgs = self._split_args(line, 0, -1)
+    query = u' '.join(filter(None, queryArgs))
+    self._command_processor.search(query)
+
+  def do_listformats(self, line):
+    '''listformats
+    Display all known Object Format IDs
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.list_format_ids()
+
+  def do_listnodes(self, line):
+    '''listnodes
+    Display all known DataONE Nodes
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.list_nodes()
+
+  def do_resolve(self, line):
+    '''resolve <identifier>
+    Given the PID for a Science Object, find all locations from which the
+    Science Object can be downloaded
+    '''
+    pid = self._split_args(line, 1, 0)
+    self._command_processor.resolve(pid)
+
+  #-----------------------------------------------------------------------------
+  # Operations against Member Nodes
+  #-----------------------------------------------------------------------------
+
+  # Read operations.
+
+  def do_get(self, line):
+    '''get <identifier> <file>
+    Get an object from a Member Node
+    '''
+    pid, output_file = self._split_args(line, 2, 0)
+    self._command_processor.science_object_get(pid, output_file)
+    self._print_info_if_verbose('Downloaded "{0}" to file: {1}'.format(pid, output_file))
+
+  def do_meta(self, line):
+    '''meta <identifier> [file]
+    Get System Metadata from Coordinating Node or Member Node
+    If the metadata is not on the Coordinating Node, the Member Node is checked.
+    '''
+    pid, output_file = self._split_args(line, 1, 1)
+    self._command_processor.system_metadata_get(pid, output_file)
+    if output_file is not None:
+      self._print_info_if_verbose(
+        'Downloaded system metadata for "{0}" to file: {1}'.format(
+          pid, output_file
+        )
+      )
+
+  def do_log(self, line):
+    '''log [path]
+    Retrieve event log from Member Node
+    The response is filtered by the from-date, to-date, start and count session
+    parameters.
+    '''
+    path = self._split_args(line, 0, 1, pad=False)
+    if len(path):
+      path = path[0]
+    self._command_processor.log(path)
+
+  def do_list(self, line):
+    '''list [path]
+    Retrieve a list of available Science Data Objects from Member Node
+    The response is filtered by the from-date, to-date, search, start and count
+    session parameters.
+    '''
+    path = self._split_args(line, 0, 1, pad=False)
+    if len(path):
+      path = path[0]
+    self._command_processor.list_objects(path)
+
+  # Write operations (queued)
+
+  def do_create(self, line):
+    '''create <identifier> <file>
+    Create a new Science Object on a Member Node
+    '''
+    pid, input_file = self._split_args(line, 2, 0)
+    complex_path = cli_util.create_complex_path(input_file)
+    self._command_processor.science_object_create(
+      pid, complex_path.path, complex_path.format_id
+    )
+    self._print_info_if_verbose(
+      'Added create operation for identifier "{0}" to write queue'.format(
+        pid
+      )
+    )
+
+  def do_update(self, line):
+    '''update <old-pid> <new-pid> <file>
+    Update an existing Science Object on a Member Node
+    '''
+    curr_pid, pid_new, input_file = self._split_args(line, 3, 0)
+    self._command_processor.science_object_update(curr_pid, input_file, pid_new)
+    self._print_info_if_verbose(
+      'Added update operation for identifier "{0}" to write queue'.format(
+        curr_pid
+      )
+    )
+
+  def do_package(self, line):
+    '''package <package-pid> <science-metadata-pid> <science-pid> [science-pid]...
+    Create a simple OAI-ORE Resource Map on a Member Node
+    '''
+    pids = self._split_args(line, 3, -1, pad=False)
+    self._command_processor.create_package(pids)
+    self._print_info_if_verbose(
+      'Added package create operation for identifier "{0}" to write queue'.format(
+        pids[0]
+      )
+    )
+
+  def do_archive(self, line):
+    '''archive <identifier> [identifier ...]
+    Mark one or more existing Science Objects as archived
+    '''
+    pids = self._split_args(line, 1, -1)
+    self._command_processor.science_object_archive(pids)
+    self._print_info_if_verbose(
+      'Added archive operation for identifier(s) {0} to write queue'.format(
+        ', '.join(
+          pids
+        )
+      )
+    )
+
+  #def do_updateaccess(self, line):
+  #  '''updateaccess <identifier> [identifier ...]
+  #  Update the Access Policy on one or more existing Science Data Objects
+  #  '''
+  #  pids = self._split_args(line, 1, -1)
+  #  self._command_processor.update_access_policy(pids)
+  #  self._print_info_if_verbose('Added access policy update operation for identifiers {0} to write queue'.format(', '.join(pids)))
+  #
+  #
+  #def do_updatereplication(self, line):
+  #  '''updatereplication <identifier> [identifier ...]
+  #  Update the Replication Policy on one or more existing Science Data Object
+  #  '''
+  #  pids = self._split_args(line, 1, -1)
+  #  self._command_processor.update_replication_policy(pids)
+  #  self._print_info_if_verbose('Added replication policy update operation for identifiers {0} to write queue'.format(', '.join(pids)))
+
+  #-----------------------------------------------------------------------------
+  # Operation Queue Commands
+  #-----------------------------------------------------------------------------
+
+  def do_queue(self, line):
+    '''queue
+    Print the queue of write operations
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_operation_queue().display()
+
+  def do_edit(self, line):
+    '''edit
+    Edit the queue of write operations
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_operation_queue().edit()
+
+  def do_run(self, line):
+    '''run
+    Perform each operation in the queue of write operations
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_operation_queue().execute()
+
+  def do_clearqueue(self, line):
+    '''clearqueue
+    Remove the operations in the queue of write operations without performing them
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_operation_queue().clear()
+
+  #-----------------------------------------------------------------------------
+  # CLI
+  #-----------------------------------------------------------------------------
+
+  def do_history(self, line):
+    '''history
+    Display a list of commands that have been entered
+    '''
+    self._split_args(line, 0, 0)
+    for idx, item in enumerate(self._history):
+      cli_util.print_info(u'{0: 3d} {1}'.format(idx, item))
+
+  def do_exit(self, line):
+    '''exit
+    Exit from the CLI
+    '''
+    n_remaining_operations = len(self._command_processor.get_operation_queue())
+    if n_remaining_operations:
+      cli_util.print_warn(
+        '''There are {0} unperformed operations in the write operation queue. These will
+be lost if you exit.'''.format(n_remaining_operations)
+      )
+      if not cli_util.confirm('Exit?', default='yes'):
+        return
+    sys.exit()
+
+  def do_quit(self, line):
+    '''quit
+    Exit from the CLI
+    '''
+    self.do_exit(line)
+
+  def do_EOF(self, line):
+    '''Exit on system EOF character'''
+    cli_util.print_info('')
+    self.do_exit(line)
+
+  def do_help(self, line):
+    '''Get help on commands
+    "help" or "?" with no arguments displays a list_objects of commands for which help is available
+    "help <command>" or "? <command>" gives help on <command>
+    '''
+    # The only reason to define this method is for the help text in the doc
+    # string
+    cmd.Cmd.do_help(self, line)
+
+  #
+  # Private.
+  #
+
+  def _split_args(self, line, n_required, n_optional, pad=True):
+    args = re.split(r'\s+', line, re.UNICODE)
+    if args == [u'']:
+      args = []
+    n_optional_max = 1000 if n_optional == -1 else n_optional
+    if len(args) < n_required or len(args) > n_required + n_optional_max:
+      msg = self._text_description_of_required_and_optional(n_required, n_optional)
+      raise cli_exceptions.InvalidArguments(msg)
+    if pad:
+      # Pad the list_objects out with None for any optional parameters that were
+      # not provided.
+      args += [None] * (n_required + n_optional - len(args))
+    #if len(args) == 1:
+    #  return args[0]
+    return args
+
+  def _text_description_of_required_and_optional(self, n_required, n_optional):
+    if n_required == 0:
+      req = 'no required parameters'
+    elif n_required == 1:
+      req = 'one required parameter'
+    else:
+      req = '{0} required parameters'.format(n_required)
+    if n_optional == 0:
+      opt = ''
+    elif n_optional == 1:
+      opt = ' and one optional parameter'
+    elif n_optional < 0:
+      opt = ' and an unlimited number of optional parameters'
+    else:
+      opt = ' and {0} optional parameters'.format(n_required)
+    return 'Command takes {0}'.format(req + opt)
+
+  def _print_info_if_verbose(self, msg):
+    if self._command_processor.get_session().get(
+      session.VERBOSE_SECT, session.VERBOSE_NAME
+    ):
+      cli_util.print_info(msg)
