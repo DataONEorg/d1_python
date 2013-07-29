@@ -33,12 +33,58 @@ Module d1_common.restclient
 import copy
 import logging
 import httplib
+import socket
 
 # D1.
 import d1_common.url
 import d1_common.const
 import d1_common.mime_multipart
 
+
+DEFAULT_NUMER_OF_TRIES = 3
+
+
+class HTTPConnectionWithRetry(httplib.HTTPConnection):
+  '''Add automatic reconnect and retry to HTTPConnection.request()
+  '''
+  def __init__(self, *args, **kwargs):
+    httplib.HTTPConnection.__init__(self, *args, **kwargs)
+
+
+  def request(self, n_tries, *args, **kwargs):
+    for i in range(n_tries):      
+      try:
+        if i > 0:
+          logging.error('Request failed. Reconnecting and retrying')
+          self.close()
+          self.connect()
+        return httplib.HTTPConnection.request(self, *args, **kwargs)
+      except (httplib.BadStatusLine, httplib.CannotSendRequest, socket.error):
+        if i == n_tries - 1:
+          raise
+
+#===============================================================================
+
+class HTTPSConnectionWithRetry(httplib.HTTPSConnection):
+  '''Add automatic reconnect and retry to HTTPSConnection.request().
+  '''
+  def __init__(self, *args, **kwargs):
+    httplib.HTTPSConnection.__init__(self, *args, **kwargs)
+
+
+  def request(self, n_tries, *args, **kwargs):
+    for i in range(n_tries):      
+      try:
+        if i > 0:
+          logging.error('Request failed. Reconnecting and retrying')
+          self.close()
+          self.connect()
+        return httplib.HTTPSConnection.request(self, *args, **kwargs)
+      except (httplib.BadStatusLine, httplib.CannotSendRequest, socket.error):
+        if i == n_tries - 1:
+          raise
+
+#===============================================================================
 
 class RESTClient(object):
   '''REST HTTP client that encodes POST and PUT using MIME multipart encoding.
@@ -64,6 +110,8 @@ class RESTClient(object):
     :type port: integer
     :param timeout: Time in seconds that requests will wait for a response.
     :type timeout: integer
+    :param n_tries: Number of times to try a request before failing.
+    :type n_tries: integer 
     :param defaultHeaders: headers that will be sent with all requests.
     :type defaultHeaders: dictionary
     :param cert_path: Path to a PEM formatted certificate file.
@@ -88,18 +136,149 @@ class RESTClient(object):
     self.logger = logging.getLogger(__file__)
 
 
-  def _connect(self, scheme, host, port, timeout, cert_path, key_path, strict):
+  def GET(self, url, query=None, headers=None, n_tries=DEFAULT_NUMER_OF_TRIES,
+          dump_path=None):
+    '''GET, HEAD, DELETE:
+    
+    Perform an HTTP request and return the response. Any Unicode values must be
+    UTF-8 encoded.
+
+    :param url: The Selector URL to the target
+    :type url: string
+    :param query: Parameters that will be encoded in the query portion of
+    the final URL.
+    :type query: dictionary of key-value pairs, or list of (key, value)
+    :param headers: Additional headers in addition to default to send
+    :type headers: Dictionary
+
+    :returns: The server's response to the HTTP request
+    :return type: httplib.HTTPResponse 
+    '''
+    return self._send_request('GET', url, query, headers, n_tries=n_tries,
+                              dump_path=dump_path)
+
+
+  def HEAD(self, url, query=None, headers=None, n_tries=DEFAULT_NUMER_OF_TRIES,
+           dump_path=None):
+    return self._send_request('HEAD', url, query, headers, n_tries=n_tries,
+                              dump_path=dump_path)
+
+
+  def DELETE(self, url, query=None, headers=None, n_tries=DEFAULT_NUMER_OF_TRIES,
+             dump_path=None):
+    return self._send_request('DELETE', url, query, headers, n_tries=n_tries,
+                              dump_path=dump_path)
+
+
+  def POST(self, url, query=None, headers=None, fields=None, files=None,
+           n_tries=1, dump_path=None):
+    '''POST and PUT accepts the same parameters as GET, HEAD and DELETE.
+    In addition, they accept paramters that are encoded into a MIME
+    multipart-mixed document and submitted in the request.
+    
+    :param fields: List of fields that will be included in the MIME document.
+    Each field in the list is a name / value pair. 
+    
+    :param files: List of files that will be included in the MIME document. The
+    "name" is the name of the parameter in the MMP, "filename" is the value of
+    the "filename" parameter in the MMP, and "value" is a file-like object open 
+    for reading that will be transmitted. 
+    :type files: list of (name, filename, value)
+    
+    :dump_path: For debugging, the generated HTTP request can be written to
+    a file.
+    :type path: String containing the path to the file to write.
+    '''
+    return self._send_mime_multipart_request('POST', url, query, headers,
+                                             fields, files, n_tries=n_tries,
+                                             dump_path=dump_path)
+
+
+  def PUT(self, url, query=None, headers=None, fields=None, files=None,
+          n_tries=1, dump_path=None):
+    return self._send_mime_multipart_request('PUT', url, query, headers,
+                                             fields, files, n_tries=n_tries,
+                                             dump_path=dump_path)
+
+  #
+  # Private.
+  #
+  
+  def _connect(self, scheme, host, port, timeout, cert_path, key_path,
+               strict):
     '''Create connection object. As of Python 2.6, this does not establish a
     connection. Instead, a separate connection is established for each request.
     http://bugs.python.org/issue9740
     '''
     if scheme == 'https':
-      return httplib.HTTPSConnection(host=host, port=port, timeout=timeout,
+      return HTTPSConnectionWithRetry(host=host, port=port, timeout=timeout,
         cert_file=cert_path, key_file=key_path, strict=strict)
     else:
-      return httplib.HTTPConnection(host, port, timeout)
+      return HTTPConnectionWithRetry(host=host, port=port, timeout=timeout)
 
 
+  def _send_request(self, method, selector, query=None, headers=None,
+                    body=None, n_tries=1, dump_path=None):
+    '''Send request and retrieve response.
+
+    :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
+    :type method: string
+    :param selector: Selector URL.
+    :type selector: string
+    :param body: Request body
+    :type body: string or open file-like object
+    :param query: URL query parameters.
+    :type query: dictionary
+    :param headers: HTTP headers.
+    :type headers: dictionary
+    '''
+    headers = self._merge_default_headers(headers)
+    url = self._join_url_with_query_params(selector, query)
+    self.logger.debug('operation: {0} {1}://{2}'.format(method, self.scheme,
+      d1_common.url.joinPathElements(self.connection.host, url)))
+    self.logger.debug('headers: {0}'.format(str(headers)))
+    if dump_path is not None:
+      self._dump_request_to_file(dump_path, method, url, body, headers)
+    self.connection.request(n_tries, method, url, body, headers)
+    response_ = self.connection.getresponse()
+    self.logger.debug('return status code: {0}'.format(response_.status))
+    return response_
+
+    #return self._get_response()
+
+
+  def _send_mime_multipart_request(self, method, selector, query=None,
+                                   headers=None, fields=None, files=None,
+                                   n_tries=1, dump_path=None):
+    '''Generate MIME multipart document, send it and retrieve response.
+
+    :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
+    :type method: string
+    :param selector: Selector URL.
+    :type selector: string
+    :param query: URL query parameters.
+    :type query: dictionary
+    :param headers: HTTP headers.
+    :type headers: dictionary
+    :param fields: MIME multipart document fields
+    :type fields: dictionary of strings
+    :param files: MIME multipart document files
+    :type files: dictionary of file-like-objects
+    '''
+    if headers is None:
+      headers = {}
+    if fields is None:
+      fields = {}
+    if files is None:
+      files = []
+    mmp_body = d1_common.mime_multipart.multipart(fields, files)
+    headers['Content-Type'] = mmp_body.get_content_type_header()
+    headers['Content-Length'] = mmp_body.get_content_length()
+
+    return self._send_request(method, selector, query=query, headers=headers,
+                              body=mmp_body, n_tries=n_tries, dump_path=dump_path)
+
+  
   def _merge_default_headers(self, headers=None):
     if headers is None:
       headers = {}
@@ -126,12 +305,6 @@ class RESTClient(object):
     return ' '.join(curl)
 
 
-#  def _get_response(self):
-#    '''Override this to provide automatic processing of response.
-#    '''
-#    return self.connection.getresponse()
-
-
   def _dump_request_to_file(self, dump_path, method, url, body, headers):
     with open(dump_path, 'w') as f:
       f.write('{0} {1}\n'.format(method, url))
@@ -143,127 +316,3 @@ class RESTClient(object):
         body_string = body
       f.write('\n{0}\n'.format(body_string))
 
-
-  def _send_request(self, method, selector, query=None, headers=None,
-                    body=None, dump_path=None):
-    '''Send request and retrieve response.
-
-    :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
-    :type method: string
-    :param selector: Selector URL.
-    :type selector: string
-    :param body: Request body
-    :type body: string or open file-like object
-    :param query: URL query parameters.
-    :type query: dictionary
-    :param headers: HTTP headers.
-    :type headers: dictionary
-    '''
-    headers = self._merge_default_headers(headers)
-    url = self._join_url_with_query_params(selector, query)
-    self.logger.debug('operation: {0} {1}://{2}'.format(method, self.scheme,
-      d1_common.url.joinPathElements(self.connection.host, url)))
-    self.logger.debug('headers: {0}'.format(str(headers)))
-    if dump_path is not None:
-      self._dump_request_to_file(dump_path, method, url, body, headers)
-    self.connection.request(method, url, body, headers)
-    response_ = self.connection.getresponse()
-    self.logger.debug('return status code: {0}'.format(response_.status))
-    return response_
-
-    #return self._get_response()
-
-
-  def _send_mime_multipart_request(self, method, selector, query=None,
-                                   headers=None, fields=None, files=None,
-                                   dump_path=None):
-    '''Generate MIME multipart document, send it and retrieve response.
-
-    :param method: HTTP verb. GET, HEAD, PUT, POST or DELETE.
-    :type method: string
-    :param selector: Selector URL.
-    :type selector: string
-    :param query: URL query parameters.
-    :type query: dictionary
-    :param headers: HTTP headers.
-    :type headers: dictionary
-    :param fields: MIME multipart document fields
-    :type fields: dictionary of strings
-    :param files: MIME multipart document files
-    :type files: dictionary of file-like-objects
-    '''
-    if headers is None:
-      headers = {}
-    if fields is None:
-      fields = {}
-    if files is None:
-      files = []
-    mmp_body = d1_common.mime_multipart.multipart(fields, files)
-    headers['Content-Type'] = mmp_body.get_content_type_header()
-    headers['Content-Length'] = mmp_body.get_content_length()
-
-##   Debug
-#    f = open('test.out', 'w')
-#    f.write(mmp_body.read())
-
-    return self._send_request(method, selector, query=query, headers=headers,
-                              body=mmp_body, dump_path=dump_path)
-
-
-  def GET(self, url, query=None, headers=None, dump_path=None):
-    '''GET, HEAD, DELETE:
-    
-    Perform an HTTP request and return the response. Any Unicode values must be
-    UTF-8 encoded.
-
-    :param url: The Selector URL to the target
-    :type url: string
-
-    :param query: Parameters that will be encoded in the query portion of
-    the final URL.
-    :type query: dictionary of key-value pairs, or list of (key, value)
-
-    :param headers: Additional headers in addition to default to send
-    :type headers: Dictionary
-
-    :returns: The server's response to the HTTP request
-    :return type: httplib.HTTPResponse 
-    '''
-    return self._send_request('GET', url, query, headers, dump_path)
-
-
-  def HEAD(self, url, query=None, headers=None, dump_path=None):
-    return self._send_request('HEAD', url, query, headers, dump_path)
-
-
-  def DELETE(self, url, query=None, headers=None, dump_path=None):
-    return self._send_request('DELETE', url, query, headers, dump_path)
-
-
-  def POST(self, url, query=None, headers=None, fields=None, files=None,
-           dump_path=None):
-    '''POST and PUT accepts the same parameters as GET, HEAD and DELETE.
-    In addition, they accept paramters that are encoded into a MIME
-    multipart-mixed document and submitted in the request.
-    
-    :param fields: List of fields that will be included in the MIME document.
-    Each field in the list is a name / value pair. 
-    
-    :param files: List of files that will be included in the MIME document. The
-    "name" is the name of the parameter in the MMP, "filename" is the value of
-    the "filename" parameter in the MMP, and "value" is a file-like object open 
-    for reading that will be transmitted. 
-    :type files: list of (name, filename, value)
-    
-    :dump_path: For debugging, the generated HTTP request can be written to
-    a file.
-    :type path: String containing the path to the file to write.
-    '''
-    return self._send_mime_multipart_request('POST', url, query, headers,
-                                             fields, files, dump_path)
-
-
-  def PUT(self, url, query=None, headers=None, fields=None, files=None,
-          dump_path=None):
-    return self._send_mime_multipart_request('PUT', url, query, headers,
-                                             fields, files, dump_path)

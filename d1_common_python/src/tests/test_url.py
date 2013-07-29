@@ -123,6 +123,52 @@ class TestUrl(unittest.TestCase):
     self.assertEqual(u0, d1_common.url.normalizeTarget(u2))
     self.assertEqual(u0, d1_common.url.normalizeTarget(u3))
 
+  def test_070(self):
+    '''makeCNBaseURL()'''
+    self.assertEqual(d1_common.url.makeCNBaseURL(''), 'https://cn.dataone.org/cn')
+    self.assertEqual(d1_common.url.makeCNBaseURL('test.com'), 'https://test.com/cn')
+    self.assertEqual(d1_common.url.makeCNBaseURL('test.com/cn'), 'https://test.com/cn')
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL(
+        'test.com/a/cn'
+      ), 'https://test.com/a/cn'
+    )
+    self.assertEqual(d1_common.url.makeCNBaseURL('http://test.com'), 'http://test.com/cn')
+    self.assertEqual(d1_common.url.makeCNBaseURL('http://test.com/'), 'http://test.com/')
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL(
+        'http://test.com/cn'
+      ), 'http://test.com/cn'
+    )
+    self.assertEqual(
+      d1_common.url.makeCNBaseURL(
+        'http://test.com/a/b/c/cn'
+      ), 'http://test.com/a/b/c/cn'
+    )
+
+  def test_080(self):
+    '''makeMNBaseURL()'''
+    self.assertEqual(d1_common.url.makeMNBaseURL(''), 'https://localhost/mn')
+    self.assertEqual(d1_common.url.makeMNBaseURL('test.com'), 'https://test.com/mn')
+    self.assertEqual(d1_common.url.makeMNBaseURL('test.com/mn'), 'https://test.com/mn')
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL(
+        'test.com/a/mn'
+      ), 'https://test.com/a/mn'
+    )
+    self.assertEqual(d1_common.url.makeMNBaseURL('http://test.com'), 'http://test.com/mn')
+    self.assertEqual(d1_common.url.makeMNBaseURL('http://test.com/'), 'http://test.com/')
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL(
+        'http://test.com/mn'
+      ), 'http://test.com/mn'
+    )
+    self.assertEqual(
+      d1_common.url.makeMNBaseURL(
+        'http://test.com/a/b/c/mn'
+      ), 'http://test.com/a/b/c/mn'
+    )
+
 #===============================================================================
 
 
