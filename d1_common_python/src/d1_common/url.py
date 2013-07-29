@@ -30,6 +30,7 @@ Module d1_common.url
 import re
 import sys
 import urllib
+import urlparse
 
 # D1.
 import const
@@ -126,8 +127,8 @@ def normalizeTarget(target):
 
 
 def urlencode(query, doseq=0):
-  '''Modified version of the standard urllib.urlencode that is conformant
-  with RFC3986. The urllib version encodes spaces as '+' which can lead
+  '''Modified version of the standard urllib.urlencode that is conforms
+  to RFC3986. The urllib version encodes spaces as '+' which can lead
   to inconsistency. This version will always encode spaces as '%20'.
   
   TODO: verify the unicode encoding process - looks a bit suspect.
@@ -203,3 +204,49 @@ def urlencode(query, doseq=0):
           for elt in v:
             l.append(k + '=' + encodeQueryElement(str(elt)))
   return '&'.join(l)
+
+
+def makeCNBaseURL(url):
+  '''Attempt to create a valid CN BaseURL when one or more sections of the URL
+  are missing'''
+  o = urlparse.urlparse(url, scheme=const.DEFAULT_CN_PROTOCOL)
+  if o.netloc and o.path:
+    netloc = o.netloc
+    path = o.path
+  elif o.netloc:
+    netloc = o.netloc
+    path = const.DEFAULT_CN_PATH
+  elif o.path:
+    s = o.path.split('/', 1)
+    netloc = s[0]
+    if len(s) == 1:
+      path = const.DEFAULT_CN_PATH
+    else:
+      path = s[1]
+  else:
+    netloc = const.DEFAULT_CN_HOST
+    path = const.DEFAULT_CN_PATH
+  return urlparse.urlunparse((o.scheme, netloc, path, o.params, o.query, o.fragment))
+
+
+def makeMNBaseURL(url):
+  '''Attempt to create a valid MN BaseURL when one or more sections of the URL
+  are missing'''
+  o = urlparse.urlparse(url, scheme=const.DEFAULT_MN_PROTOCOL)
+  if o.netloc and o.path:
+    netloc = o.netloc
+    path = o.path
+  elif o.netloc:
+    netloc = o.netloc
+    path = const.DEFAULT_MN_PATH
+  elif o.path:
+    s = o.path.split('/', 1)
+    netloc = s[0]
+    if len(s) == 1:
+      path = const.DEFAULT_MN_PATH
+    else:
+      path = s[1]
+  else:
+    netloc = const.DEFAULT_MN_HOST
+    path = const.DEFAULT_MN_PATH
+  return urlparse.urlunparse((o.scheme, netloc, path, o.params, o.query, o.fragment))
