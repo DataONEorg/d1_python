@@ -61,7 +61,7 @@ class ReplicationPolicy():
     for mn in mns:
       self._add_preferred(mn)
 
-  def remove(self, mns):
+  def repremove(self, mns):
     for mn in mns:
       self._remove_policy(mn)
 

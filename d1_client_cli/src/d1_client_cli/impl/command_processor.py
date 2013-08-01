@@ -147,40 +147,33 @@ class CommandProcessor():
 
   # Read operations
 
-  def science_object_get(self, pid, path, resolve=True):
+  def science_object_get(self, pid, path):
+    '''First try the MN set in the session. Then try to resolve via the CN set
+    in the session.'''
+    mn_client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
     try:
-      mn_client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
       response = mn_client.get(pid)
-      self._output(response, path)
-      return True
-    except d1_common.types.exceptions.DataONEException as e:
-      errmsg = u'Unable to get Science Object from Member Node\n{0}'\
-          .format(e.friendly_format())
-    # Go and find it?
-    if resolve:
-      cn_client = cli_client.CLICNClient(**self._mn_client_connect_params_from_session())
-      try:
-        object_location_list = cn_client.resolve(pid)
-        if object_location_list:
-          for location in object_location_list.objectLocation:
-            try:
-              params = self._mn_client_connect_params_from_session()
-              params['base_url'] = location.baseURL
-              mn_client = cli_client.CLIMNClient(**params)
-              response = mn_client.get(pid)
-              self._output(response, path)
-              return True
-            except Exception as e:
-              pass
-      except d1_common.types.exceptions.DataONEException as e:
-        errmsg = u'Unable to get Science Object from Member Node\n{0}'\
-            .format(e.friendly_format())
-    # Didn't find it - was it because of an exception?
-    if not errmsg:
-      cli_util.print_warn(u'Could not find identifier: {0}'.format(pid))
-      return False
+    except d1_common.types.exceptions.DataONEException:
+      pass
     else:
-      raise cli_exceptions.CLIError(errmsg)
+      self._output(response, path)
+      return
+
+    cn_client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
+    object_location_list = cn_client.resolve(pid)
+    for location in object_location_list.objectLocation:
+      try:
+        params = self._mn_client_connect_params_from_session()
+        params['base_url'] = location.baseURL
+        mn_client = cli_client.CLIMNClient(**params)
+        response = mn_client.get(pid)
+      except d1_common.types.exceptions.DataONEException:
+        pass
+      else:
+        self._output(response, path)
+        return
+
+    raise cli_exceptions.CLIError(u'Could not find object: {0}'.format(pid))
 
   def system_metadata_get(self, pid, path):
     metadata = None
@@ -371,10 +364,10 @@ class CommandProcessor():
   def _cn_client_connect_params_from_session(self):
     return self._mn_cn_client_connect_params_from_session(session.CN_URL_NAME)
 
-  def _mn_cn_client_connect_params_from_session(self, url_sect, url_name):
+  def _mn_cn_client_connect_params_from_session(self, url_name):
     anonymous = self._session.get(session.ANONYMOUS_NAME)
     return {
-      'base_url': self._session.get(url_sect, url_name),
+      'base_url': self._session.get(url_name),
       'cert_path': self._session.get(session.CERT_FILENAME_NAME)
         if not anonymous  else None,
       'key_path': self._session.get(session.KEY_FILENAME_NAME)
@@ -410,3 +403,118 @@ class CommandProcessor():
       pid
     )
     self._operation_queue.append(update_replication_policy_operation)
+
+#def get_object_by_pid(session, pid, filename=None, resolve=True):
+#  ''' Create a mnclient and look for the object.  If the object is not found,
+#      simply return a None, don't throw an exception.  If found, return the
+#      filename.
+#  '''
+#  if session is None:
+#    raise cli_exceptions.InvalidArguments(u'Missing session')
+#  if pid is None:
+#    raise cli_exceptions.InvalidArguments(u'Missing pid')
+#  # Create member node client and try to get the object.
+#  mn_client = CLIMNClient(session)
+#  try:
+#    response = mn_client.get(pid)
+#    if response is not None:
+#      fname = _get_fname(filename)
+#      cli_util.output(response, fname, session.is_verbose())
+#      return fname
+#  except d1_common.types.exceptions.DataONEException as e:
+#    if e.errorCode != 404:
+#      raise cli_exceptions.CLIError(
+#        u'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format()))
+#  if resolve:
+#    cn_client = CLICNClient(session)
+#    object_location_list = None
+#    try:
+#      object_location_list = cn_client.resolve(pid)
+#      if ((object_location_list is not None)
+#          and (len(object_location_list.objectLocation) > 0)):
+#        baseUrl = object_location_list.objectLocation[0].baseURL
+#        # If there is an object, go get it.
+#        mn_client = CLIMNClient(session, mn_url=baseUrl)
+#        response = mn_client.get(pid)
+#        if response is not None:
+#          fname = _get_fname(filename)
+#          cli_util.output(response, os.path.expanduser(fname))
+#          return fname
+#    except d1_common.types.exceptions.DataONEException as e:
+#      if e.errorCode != 404:
+#        raise cli_exceptions.CLIError(
+#          u'Unable to get resolve: {0}\n{1}'.format(pid, e.friendly_format()))
+#  # Nope, didn't find anything
+#  return None
+#
+#
+
+#
+#
+#def get_baseUrl(session, nodeId):
+#  '''  Get the base url of the given node id.
+#  '''
+#  cn_client = CLICNClient(session)
+#  try:
+#    nodes = cn_client.listNodes()
+#    for node in list(nodes.node):
+#      if node.identifier.value() == nodeId:
+#        return node.baseURL
+#  except (d1_common.types.exceptions.ServiceFailure) as e:
+#    cli_util.print_error("Unable to get node list.")
+#  return None
+#
+#
+#def get_sys_meta_by_pid(session, pid, search_mn = False):
+#  '''  Get the system metadata object for this particular pid.
+#  '''
+#  if not session:
+#    raise cli_exceptions.InvalidArguments(u'Missing session')
+#  if not pid:
+#    raise cli_exceptions.InvalidArguments(u'Missing pid')
+#
+#  sys_meta = None
+#  try:
+#    cn_client = CLICNClient(session)
+#    obsolete = True;
+#    while obsolete:
+#      obsolete = False;
+#      sys_meta = cn_client.getSystemMetadata(pid)
+#      if not sys_meta:
+#        return None
+#      if sys_meta.obsoletedBy:
+#        msg = (u'Object "%s" has been obsoleted by "%s".  '
+#            + u'Would you rather use that?') % (pid, sys_meta.obsoletedBy)
+#        if not cli_util.confirm(msg):
+#          break;
+#        pid = sys_meta.obsoletedBy
+#        obsolete = True
+#    return sys_meta
+#  except d1_common.types.exceptions.DataONEException as e:
+#      if e.errorCode != 404:
+#        raise cli_exceptions.CLIError(
+#          u'Unable to get system metadata for: {0}\n{1}'.format(pid, e.friendly_format()))
+#  # Search the member node?
+#  if not sys_meta and (search_mn is not None) and search_mn:
+#    try:
+#      mn_client = CLIMNClient(session)
+#      obsolete = True;
+#      while obsolete:
+#        obsolete = False;
+#        sys_meta = mn_client.getSystemMetadata(pid)
+#        if not sys_meta:
+#          return None
+#        if sys_meta.obsoletedBy:
+#          msg = (u'Object "%s" has been obsoleted by "%s".  '
+#              + u'Would you rather use that?') % (pid, sys_meta.obsoletedBy)
+#          if not cli_util.confirm(msg):
+#            break;
+#          pid = sys_meta.obsoletedBy
+#          obsolete = True
+#      return sys_meta
+#    except d1_common.types.exceptions.DataONEException as e:
+#        if e.errorCode != 404:
+#          raise cli_exceptions.CLIError(
+#            u'Unable to get system metadata for: {0}\n{1}'.format(pid, e.friendly_format()))
+#
+#  return sys_meta

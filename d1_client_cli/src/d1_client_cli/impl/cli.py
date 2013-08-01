@@ -158,8 +158,8 @@ class CLI(cmd.Cmd):
 
   # Access control
 
-  def do_allow(self, line):
-    '''allow <subject> [access-level]
+  def do_allowaccess(self, line):
+    '''allowaccess <subject> [access-level]
     Set the access level for subject
     Access level is "read", "write" or "changePermission".
     Access level defaults to "read" if not specified.
@@ -178,8 +178,8 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_deny(self, line):
-    '''deny <subject>
+  def do_denyaccess(self, line):
+    '''denyaccess <subject>
     Remove subject from access policy
     '''
     subject, = self._split_args(line, 1, 0)
@@ -192,9 +192,9 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_denyall(self, line):
-    '''denyall
-    Remove all subjects from access policy and deny public read
+  def do_clearaccess(self, line):
+    '''clearaccess
+    Remove all subjects from access policy
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_session().get_access_control().clear()
@@ -202,16 +202,16 @@ class CLI(cmd.Cmd):
 
   # Replication policy
 
-  def do_clearreplication(self, line):
-    '''clearreplication
+  def do_clearrep(self, line):
+    '''clearrep
     Clear replication policy
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_session().get_replication_policy().clear()
     self._print_info_if_verbose('Cleared the replication policy')
 
-  def do_addpreferred(self, line):
-    '''addpreferred <member node> [member node ...]
+  def do_preferrep(self, line):
+    '''preferrep <member node> [member node ...]
     Add one or more preferred Member Nodes to replication policy
     '''
     mns = self._split_args(line, 1, -1)
@@ -224,8 +224,8 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_addblocked(self, line):
-    '''addblocked <member node> [member node ...]
+  def do_blockrep(self, line):
+    '''blockrep <member node> [member node ...]
     Add one or more blocked Member Node to replication policy
     '''
     mns = self._split_args(line, 1, -1)
@@ -238,8 +238,8 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_remove(self, line):
-    '''remove <member node> [member node ...]
+  def do_removerep(self, line):
+    '''removerep <member node> [member node ...]
     Remove one or more Member Nodes from replication policy
     '''
     mns = self._split_args(line, 1, -1)
@@ -252,8 +252,8 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_allowreplication(self, line):
-    '''allowreplication
+  def do_allowrep(self, line):
+    '''allowrep
     Allow new objects to be replicated
     '''
     self._split_args(line, 0, 0)
@@ -263,8 +263,8 @@ class CLI(cmd.Cmd):
     )
     self._print_info_if_verbose('Set replication policy to allow replication')
 
-  def do_denyreplication(self, line):
-    '''denyreplication
+  def do_denyrep(self, line):
+    '''denyrep
     Prevent new objects from being replicated
     '''
     self._split_args(line, 0, 0)
@@ -280,8 +280,8 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_setreplicas(self, line):
-    '''setreplicas <number of replicas>
+  def do_numberrep(self, line):
+    '''numberrep <number of replicas>
     Set preferred number of replicas for new objects
     '''
     n_replicas = self._split_args(line, 1, 0)[0]
@@ -335,7 +335,7 @@ class CLI(cmd.Cmd):
     Given the PID for a Science Object, find all locations from which the
     Science Object can be downloaded
     '''
-    pid = self._split_args(line, 1, 0)
+    pid, = self._split_args(line, 1, 0)
     self._command_processor.resolve(pid)
 
   #-----------------------------------------------------------------------------
@@ -550,8 +550,9 @@ be lost if you exit.'''.format(n_remaining_operations)
     "help" or "?" with no arguments displays a list_objects of commands for which help is available
     "help <command>" or "? <command>" gives help on <command>
     '''
-    # The only reason to define this method is for the help text in the doc
-    # string
+    command, = self._split_args(line, 0, 1)
+    if command is None:
+      return self._print_help()
     cmd.Cmd.do_help(self, line)
 
   #
@@ -597,3 +598,24 @@ be lost if you exit.'''.format(n_remaining_operations)
   def _print_info_if_verbose(self, msg):
     if self._command_processor.get_session().get(session.VERBOSE_NAME):
       cli_util.print_info(msg)
+
+  def _print_help(self):
+    '''Custom help message to group commands by functionality'''
+    cli_util.print_info(
+      '''Commands (type help <command> for details)
+
+CLI:                     help history exit quit
+Session, General:        set load save reset
+Session, Access Control: allowaccess denyaccess clearaccess
+Session, Replication:    allowrep denyrep preferrep blockrep
+                         removerep numberrep clearrep
+Read Operations:         get meta list log resolve
+Write Operations:        update create package archive
+                         updateaccess updatereplication
+Utilities:               listformats listnodes search ping
+Write Operation Queue:   queue run edit clearqueue
+
+Command History:         Arrow Up, Arrow Down
+Command Editing:         Arrow Left, Arrow Right, Delete
+'''
+    )

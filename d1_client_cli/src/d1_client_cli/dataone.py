@@ -278,18 +278,6 @@ option_list = [
     help='Use editor specified in EDITOR environment variable'
   ),
   optparse.make_option(
-    '--allow-public',
-    action='store_true',
-    dest='action_allowPublic',
-    help='Allow public read access.'
-  ),
-  optparse.make_option(
-    '--deny-public',
-    action='store_false',
-    dest='action_allowPublic',
-    help='Deny public read access.'
-  ),
-  optparse.make_option(
     '--allow-replication',
     action='store_true',
     dest='action_allowReplication',
@@ -429,12 +417,7 @@ def handle_options(cli, options):
       cli.d1.session_set_parameter(session.VERBOSE_NAME, options.verbose)
     if options.editor:
       cli.d1.session_set_parameter(session.EDITOR_NAME, options.editor)
-
-    if options.action_allowPublic is not None:
-      if options.action_allowPublic:
-        cli.d1.get_access_control().allow_public(True)
-      else:
-        cli.d1.get_access_control().allow_public(False)
+    # Replication.
     if options.action_allowReplication is not None:
       if options.action_allowReplication:
         cli.d1.replication_policy_set_replication_allowed(True)
