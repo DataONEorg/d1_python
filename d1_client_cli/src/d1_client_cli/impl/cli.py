@@ -109,15 +109,15 @@ class CLI(cmd.Cmd):
 
   def do_reset(self, line):
     '''reset
-    Set all session parameters to their default values
+    Set all session variables to their default values
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_session().reset()
-    self._print_info_if_verbose('Successfully reset session parameters')
+    self._print_info_if_verbose('Successfully reset session variables')
 
   def do_load(self, line):
     '''load [file]
-    Load session parameters from file
+    Load session variables from file
     load (without parameters): Load session from default file ~/.dataone_cli.conf
     load <file>: Load session from specified file
     '''
@@ -129,7 +129,7 @@ class CLI(cmd.Cmd):
 
   def do_save(self, line):
     '''save [config_file]
-    Save session parameters to file
+    Save session variables to file
     save (without parameters): Save session to default file ~/.dataone_cli.conf
     save <file>: Save session to specified file
     '''
@@ -140,18 +140,18 @@ class CLI(cmd.Cmd):
     self._print_info_if_verbose('Saved session to file: {0}'.format(config_file))
 
   def do_set(self, line):
-    '''set [[parameter] [value]]
-    set (without parameters): Display the value of all session parameters.
-    set <session parameter>: Display the value of a single session parameter.
-    set <session parameter> <value>: Set the value of a session parameter.
+    '''set [parameter [value]]
+    set (without parameters): Display the value of all session variables.
+    set <session variable>: Display the value of a single session variable.
+    set <session variable> <value>: Set the value of a session variable.
     '''
     session_parameter, value = self._split_args(line, 0, 2)
     if value is None:
-      self._command_processor.get_session().print_parameter(session_parameter)
+      self._command_processor.get_session().print_variable(session_parameter)
     else:
-      self._command_processor.set_session_parameter(session_parameter, value)
+      self._command_processor.get_session().set_with_conversion(session_parameter, value)
       self._print_info_if_verbose(
-        'Set session parameter {0} to "{1}"'.format(
+        'Set session variable {0} to "{1}"'.format(
           session_parameter, value
         )
       )
@@ -381,7 +381,7 @@ class CLI(cmd.Cmd):
     '''list [path]
     Retrieve a list of available Science Data Objects from Member Node
     The response is filtered by the from-date, to-date, search, start and count
-    session parameters.
+    session variables.
     '''
     path = self._split_args(line, 0, 1, pad=False)
     if len(path):
@@ -443,22 +443,33 @@ class CLI(cmd.Cmd):
       )
     )
 
-  #def do_updateaccess(self, line):
-  #  '''updateaccess <identifier> [identifier ...]
-  #  Update the Access Policy on one or more existing Science Data Objects
-  #  '''
-  #  pids = self._split_args(line, 1, -1)
-  #  self._command_processor.update_access_policy(pids)
-  #  self._print_info_if_verbose('Added access policy update operation for identifiers {0} to write queue'.format(', '.join(pids)))
-  #
-  #
-  #def do_updatereplication(self, line):
-  #  '''updatereplication <identifier> [identifier ...]
-  #  Update the Replication Policy on one or more existing Science Data Object
-  #  '''
-  #  pids = self._split_args(line, 1, -1)
-  #  self._command_processor.update_replication_policy(pids)
-  #  self._print_info_if_verbose('Added replication policy update operation for identifiers {0} to write queue'.format(', '.join(pids)))
+  def do_updateaccess(self, line):
+    '''updateaccess <identifier> [identifier ...]
+    Update the Access Policy on one or more existing Science Data Objects
+    '''
+    pids = self._split_args(line, 1, -1)
+    self._command_processor.update_access_policy(pids)
+    self._print_info_if_verbose(
+      'Added access policy update operation for identifiers {0} to write queue'.format(
+        ', '.join(
+          pids
+        )
+      )
+    )
+
+  def do_updatereplication(self, line):
+    '''updatereplication <identifier> [identifier ...]
+    Update the Replication Policy on one or more existing Science Data Object
+    '''
+    pids = self._split_args(line, 1, -1)
+    self._command_processor.update_replication_policy(pids)
+    self._print_info_if_verbose(
+      'Added replication policy update operation for identifiers {0} to write queue'.format(
+        ', '.join(
+          pids
+        )
+      )
+    )
 
   #-----------------------------------------------------------------------------
   # Operation Queue Commands
@@ -477,6 +488,7 @@ class CLI(cmd.Cmd):
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().edit()
+    self._print_info_if_verbose('The write operation queue was successfully edited')
 
   def do_run(self, line):
     '''run
@@ -484,6 +496,9 @@ class CLI(cmd.Cmd):
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().execute()
+    self._print_info_if_verbose(
+      'All operations in the write queue were successfully issued'
+    )
 
   def do_clearqueue(self, line):
     '''clearqueue
@@ -491,6 +506,7 @@ class CLI(cmd.Cmd):
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().clear()
+    self._print_info_if_verbose('All operations in the write queue were cleared')
 
   #-----------------------------------------------------------------------------
   # CLI
@@ -560,7 +576,10 @@ be lost if you exit.'''.format(n_remaining_operations)
 
   def _text_description_of_required_and_optional(self, n_required, n_optional):
     if n_required == 0:
-      req = 'no required parameters'
+      if n_optional == 0:
+        req = 'no parameters'
+      else:
+        req = 'no required parameters'
     elif n_required == 1:
       req = 'one required parameter'
     else:
@@ -572,11 +591,9 @@ be lost if you exit.'''.format(n_remaining_operations)
     elif n_optional < 0:
       opt = ' and an unlimited number of optional parameters'
     else:
-      opt = ' and {0} optional parameters'.format(n_required)
+      opt = ' and {0} optional parameters'.format(n_optional)
     return 'Command takes {0}'.format(req + opt)
 
   def _print_info_if_verbose(self, msg):
-    if self._command_processor.get_session().get(
-      session.VERBOSE_SECT, session.VERBOSE_NAME
-    ):
+    if self._command_processor.get_session().get(session.VERBOSE_NAME):
       cli_util.print_info(msg)

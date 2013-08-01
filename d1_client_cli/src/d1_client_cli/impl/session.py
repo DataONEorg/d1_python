@@ -22,10 +22,46 @@
 :mod:`session`
 ==============
 
-:Synopsis: Hold and manipulate session parameters.
+:Synopsis: Hold and manipulate session variables.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
 '''
+
+#> set
+#         cli:
+#           editor                        nano
+#           verbose                       True
+#         node:
+#           cn-url                   https://cn.dataone.org/cn
+#           mn-url                        http://127.0.0.1:8000
+#         slice:
+#           count                         1000
+#           start                         0
+#         auth:
+#           anonymous                     False
+#           cert-file                     /tmp/x509up_u1000
+#           key-file                      None
+#         search:
+#           from-date                     None
+#           query                         *:*
+#           query-type                    solr
+#           search-format-id              None
+#           to-date                       None
+#         sys-meta:
+#           algorithm                     SHA-1
+#           authoritative-mn              None
+#           format-id                     text/xml
+#           origin-mn                     None
+#           rights-holder                 public
+#           submitter                     public
+#         access:
+#           read                          "s1", "s2", "usera", "userb", "userc"
+#         replication:
+#           preferred member nodes        "p1", "p2", "p3"
+#           blocked member nodes          "b1", "b2", "b3", "b4"
+#           number of replicas            3
+#           replication allowed           True
+#
 
 # Stdlib.
 import ast
@@ -50,176 +86,160 @@ import cli_util
 from const import * #@UnusedWildImport
 import replication_policy
 import system_metadata
+import operation_formatter
 
-# Identifiers for names.
-
-SECTION_CLI = u'cli'
-SECTION_NODE = u'node'
-SECTION_SLICE = u'slice'
-SECTION_AUTH = u'auth'
-SECTION_SYSMETA = u'sys-meta'
-SECTION_SEARCH = u'search'
-
-VERBOSE_SECT = SECTION_CLI
+# Names for variables.
 VERBOSE_NAME = u'verbose'
-EDITOR_SECT = SECTION_CLI
 EDITOR_NAME = u'editor'
-CN_URL_SECT = SECTION_NODE
-CN_URL_NAME = u'dataone-url'
-MN_URL_SECT = SECTION_NODE
+CN_URL_NAME = u'cn-url'
 MN_URL_NAME = u'mn-url'
-START_SECT = SECTION_SLICE
 START_NAME = u'start'
-COUNT_SECT = SECTION_SLICE
 COUNT_NAME = u'count'
-ANONYMOUS_SECT = SECTION_AUTH
 ANONYMOUS_NAME = u'anonymous'
-CERT_FILENAME_SECT = SECTION_AUTH
 CERT_FILENAME_NAME = u'cert-file'
-KEY_FILENAME_SECT = SECTION_AUTH
 KEY_FILENAME_NAME = u'key-file'
-FORMAT_SECT = SECTION_SYSMETA
 FORMAT_NAME = u'format-id'
-SUBMITTER_SECT = SECTION_SYSMETA
 SUBMITTER_NAME = u'submitter'
-OWNER_SECT = SECTION_SYSMETA
 OWNER_NAME = u'rights-holder'
-ORIG_MN_SECT = SECTION_SYSMETA
 ORIG_MN_NAME = u'origin-mn'
-AUTH_MN_SECT = SECTION_SYSMETA
 AUTH_MN_NAME = u'authoritative-mn'
-CHECKSUM_SECT = SECTION_SYSMETA
 CHECKSUM_NAME = u'algorithm'
-FROM_DATE_SECT = SECTION_SEARCH
 FROM_DATE_NAME = u'from-date'
-TO_DATE_SECT = SECTION_SEARCH
 TO_DATE_NAME = u'to-date'
-SEARCH_FORMAT_SECT = SECTION_SEARCH
 SEARCH_FORMAT_NAME = u'search-format-id'
-QUERY_ENGINE_SECT = SECTION_SEARCH
 QUERY_ENGINE_NAME = u'query-type'
-QUERY_STRING_SECT = SECTION_SEARCH
 QUERY_STRING_NAME = u'query'
 
-# Session variable map.
+variable_type_map = {
+  VERBOSE_NAME: bool,
+  EDITOR_NAME: unicode,
+  CN_URL_NAME: unicode,
+  MN_URL_NAME: unicode,
+  START_NAME: int,
+  COUNT_NAME: int,
+  ANONYMOUS_NAME: bool,
+  CERT_FILENAME_NAME: unicode,
+  KEY_FILENAME_NAME: unicode,
+  FORMAT_NAME: unicode,
+  SUBMITTER_NAME: unicode,
+  OWNER_NAME: unicode,
+  ORIG_MN_NAME: unicode,
+  AUTH_MN_NAME: unicode,
+  CHECKSUM_NAME: unicode,
+  FROM_DATE_NAME: unicode,
+  TO_DATE_NAME: unicode,
+  SEARCH_FORMAT_NAME: unicode,
+  QUERY_ENGINE_NAME: unicode,
+  QUERY_STRING_NAME: unicode,
+}
 
-session_variable_dict = {
-  u'dataoneurl': (CN_URL_NAME, unicode),
-  u'mnurl': (MN_URL_NAME, unicode),
-  u'certpath': (CERT_FILENAME_NAME, unicode),
-  u'keypath': (KEY_FILENAME_NAME, unicode),
-  u'object-format': (FORMAT_NAME, unicode),
-  u'objectformat': (FORMAT_NAME, unicode),
-  u'rightsholder': (OWNER_NAME, unicode),
-  u'originmn': (ORIG_MN_NAME, unicode),
-  u'authoritativemn': (AUTH_MN_NAME, unicode),
-  u'fromdate': (FROM_DATE_NAME, unicode),
-  u'todate': (TO_DATE_NAME, unicode),
-  u'search-object-format': (SEARCH_FORMAT_NAME, unicode),
-  u'searchobjectformat': (SEARCH_FORMAT_NAME, unicode),
-  u'querytype': (QUERY_ENGINE_NAME, unicode),
+variable_defaults_map = {
+  VERBOSE_NAME: True,
+  EDITOR_NAME: u'nano',
+  CN_URL_NAME: d1_common.const.URL_DATAONE_ROOT,
+  MN_URL_NAME: d1_common.const.DEFAULT_MN_HOST,
+  START_NAME: 0,
+  COUNT_NAME: d1_common.const.MAX_LISTOBJECTS,
+  ANONYMOUS_NAME: True,
+  CERT_FILENAME_NAME: None,
+  KEY_FILENAME_NAME: None,
+  FORMAT_NAME: None,
+  SUBMITTER_NAME: None,
+  OWNER_NAME: None,
+  ORIG_MN_NAME: None,
+  AUTH_MN_NAME: None,
+  CHECKSUM_NAME: d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
+  FROM_DATE_NAME: None,
+  TO_DATE_NAME: None,
+  SEARCH_FORMAT_NAME: None,
+  QUERY_ENGINE_NAME: d1_common.const.DEFAULT_SEARCH_ENGINE,
+  QUERY_STRING_NAME: u'*:*',
 }
 
 
-class session(object):
+class Session(object):
   def __init__(self, nodes, format_ids):
     self._nodes = nodes
     self._format_ids = format_ids
-    self.session = self._create_default_session()
-    self.access_control = access_control.AccessControl()
-    self.replication_policy = replication_policy.ReplicationPolicy()
+    self.reset()
 
   def reset(self):
-    self.session = self._create_default_session()
-    self.access_control = access_control.AccessControl()
-    self.replication_policy = replication_policy.ReplicationPolicy()
+    self._variables = self._create_default_variables()
+    self._access_control = access_control.AccessControl()
+    self._replication_policy = replication_policy.ReplicationPolicy()
+
+  def get(self, variable):
+    return self._variables[variable]
 
   def get_access_control(self):
-    return self.access_control
+    return self._access_control
 
   def get_replication_policy(self):
-    return self.replication_policy
+    return self._replication_policy
 
-  def get(self, section, name=None):
-    self._assert_valid_session_parameter(section, name)
-    return self.session[section][name][0]
+  def set(self, variable, value):
+    self._assert_valid_variable(variable)
+    self._assert_valid_variable_value(variable, value)
+    self._variables[variable] = value
 
-  def get_with_implicit_section(self, name):
-    section = self._find_section_containing_session_parameter(name)
-    return self.get(section, name)
-
-  def set(self, section, name, value):
-    self._assert_valid_session_parameter(section, name)
-    self._assert_valid_session_parameter_value(section, name, value)
-    name_type = self.session[section][name][1]
-    self.session[section][name] = (value, name_type)
-
-  def set_with_implicit_section(self, name, value):
-    section = self._find_section_containing_session_parameter(name)
-    self.set(section, name, value)
-
-  def set_with_conversion(self, section, name, value_string):
+  def set_with_conversion(self, variable, value_string):
     '''Convert user supplied string to Python type. Lets user use values such as
-    True, False and integers. All parameters can be set to None, regardless of
+    True, False and integers. All variables can be set to None, regardless of
     type. Handle the case where a string is typed by the user and is not quoted,
     as a string literal.
     '''
-    self._assert_valid_session_parameter(section, name)
+    self._assert_valid_variable(variable)
     try:
       v = ast.literal_eval(value_string)
     except (ValueError, SyntaxError):
       v = value_string
-    if v is None:
-      self.set(section, name, None)
+    if v is None or v == u'none':
+      self._variables[variable] = value
     else:
       try:
-        type_converter = self.session[section][name][1]
-        value_string = self.validate_value_type(value_string, type_converter)
+        type_converter = variable_type_map[variable]
+        value_string = self._validate_variable_type(value_string, type_converter)
         value = type_converter(value_string)
-        self.set(section, name, value)
+        self._variables[variable] = value
       except ValueError as e:
         raise cli_exceptions.InvalidArguments(
-          u'Invalid value for {0} / {1}: {2}'.format(section, name, value_string)
+          u'Invalid value for {0}: {1}'.format(variable, value_string)
         )
 
-  def validate_value_type(self, value, type_converter):
-    # Make sure booleans are "sane"
-    if type_converter is BooleanType:
-      if value in (u'true', 'True', 't', 'T', 1, '1', 'yes', 'Yes'):
-        return True
-      elif value in (u'false', 'False', 'f', 'F', 0, '0', 'no', 'No'):
-        return False
-      else:
-        raise ValueError(u'Invalid boolean value: {0}'.format(value))
+  def print_variable(self, variable):
+    if not variable:
+      self.print_all_variables()
     else:
-      return value
+      self.print_single_variable(variable)
 
-  def set_with_conversion_implicit_section(self, name, value_string):
-    section = self._find_section_containing_session_parameter(name)
-    self.set_with_conversion(section, name, value_string)
+  def print_single_variable(self, variable):
+    self._assert_valid_variable(variable)
+    cli_util.print_info(u'{0: <30s}{1}'.format(variable, self.get(variable)))
 
-  def print_single_parameter(self, name):
-    section = self._find_section_containing_session_parameter(name)
-    cli_util.print_info(u'{0: <30s}{1}'.format(name, self.get(section, name)))
+  def print_all_variables(self):
+    f = operation_formatter.OperationFormatter()
+    d = copy.deepcopy(self._variables)
+    d['replication'] = {
+      u'replication-allowed': self._replication_policy.get_replication_allowed(),
+      u'preferred-nodes': self._replication_policy.get_preferred(),
+      u'blocked-nodes': self._replication_policy.get_blocked(),
+      u'number-of-replicas': self._replication_policy.get_number_of_replicas(),
+    }
+    d['access'] = {u'allow': self._access_control.get_list(), }
+    f.print_operation(d)
 
-  def print_all_parameters(self):
-    # Debug: Print types.
-    #pprint.pprint(self.session)
     #return
-    sections = self._get_session_section_ordering()
-    for section in sections:
-      cli_util.print_info(u'{0}:'.format(section))
-      for k in sorted(self.session[section].keys()):
-        cli_util.print_info(u'  {0: <30s}{1}'.format(k, self.session[section][k][0]))
-    cli_util.print_info(str(self.access_control))
-    cli_util.print_info(str(self.replication_policy))
-    cli_util.print_info(u'\n')
-
-  def print_parameter(self, name):
-    if not name:
-      self.print_all_parameters()
-    else:
-      self.print_single_parameter(name)
+    # Debug: Print types.
+    #pprint.pprint(self._variables)
+    #return
+    #sections = self._get_session_section_ordering()
+    #for section in sections:
+    #  cli_util.print_info(u'{0}:'.format(section))
+    #  for k in sorted(self._variables[section].keys()):
+    #    cli_util.print_info(u'  {0: <30s}{1}'.format(k, self._variables[section][k][0]))
+    #cli_util.print_info(str(self._access_control))
+    #cli_util.print_info(str(self._replication_policy))
+    #cli_util.print_info(u'\n')
 
   def load(self, pickle_file_path=None, suppress_error=False):
     if pickle_file_path is None:
@@ -251,7 +271,7 @@ class session(object):
         )
 
   def is_verbose(self):
-    verbose = self.session[VERBOSE_SECT][VERBOSE_NAME][0]
+    verbose = self.get(VERBOSE_NAME)
     return (verbose is not None) and verbose
 
   def get_default_pickle_file_path(self):
@@ -261,120 +281,37 @@ class session(object):
   # Private.
   #
 
-  # Go through the session variables and make sure that all the new names
-  # are there and any missing variable is there added.
-  #def _verify_session_variables(self):
-  #  dflt = self._create_default_session()
-  #  curr = self.session
-  #  changed = False
-  #  #
-  #  for section in dflt.keys():
-  #    curr_section = curr.get(section)
-  #    dflt_section = dflt.get(section)
-  #    #
-  #    # Replace old names with new names.
-  #    for old_name in curr_section.keys():
-  #      new_value = session_variable_dict.get(old_name)
-  #      if new_value is not None:
-  #        curr_value = curr_section[old_name]
-  #        cli_util.print_info(u'Replacing session variable "{0}" with "{1}" (value "{2}")'
-  #            .format(old_name, new_value[0], str(curr_value[0])))
-  #        curr_section[new_value[0]] = (curr_value[0], new_value[0])
-  #        del(curr_section[old_name])
-  #        changed = True
-  #    # Add new values.
-  #    for v in dflt_section.keys():
-  #      if curr_section.get(v) is None:
-  #        add_value = dflt_section[v][0]
-  #        cli_util.print_info(u'Adding missing value: "{0}" = "{1}"'
-  #            .format(v, str(add_value)))
-  #        curr_section[v] = (dflt_section[v][0], dflt_section[v][1])
-  #        changed = True
-  #  if (changed is not None) and changed:
-  #    cli_util.print_info('\nThis session has been updated.  Please save the new values.\n\
-  #  (see "save" operation)\n')
+  def _create_default_variables(self):
+    return copy.deepcopy(variable_defaults_map)
 
-  #def session_validate_parameter(self, name, value):
-  #  # Skip None.
-  #  if value is None:
-  #    return
-  #  #
-  #  # Validate the object format.
-  #  if name == session.FORMAT_NAME or name == session.SEARCH_FORMAT_NAME:
-  #    formats = self.get_known_object_format_ids()
-  #    if len(formats) > 0 and value not in formats:
-  #      raise ValueError(u'"%s": Invalid format' % value)
-
-  def _create_default_session(self):
-    return copy.deepcopy({
-      SECTION_CLI: {
-        VERBOSE_NAME: (True, bool),
-        EDITOR_NAME: ('nano', unicode),
-      },
-      SECTION_NODE: {
-        CN_URL_NAME: (d1_common.const.URL_DATAONE_ROOT, unicode),
-        MN_URL_NAME: (u'https://localhost/mn/', unicode),
-      },
-      SECTION_SLICE: {
-        START_NAME: (0, int),
-        COUNT_NAME: (d1_common.const.MAX_LISTOBJECTS, int),
-      },
-      SECTION_AUTH: {
-        ANONYMOUS_NAME: (True, bool),
-        CERT_FILENAME_NAME: (None, unicode),
-        KEY_FILENAME_NAME: (None, unicode),
-      },
-      SECTION_SEARCH: {
-        FROM_DATE_NAME: (None, unicode),
-        TO_DATE_NAME: (None, unicode),
-        SEARCH_FORMAT_NAME: (None, unicode),
-        QUERY_ENGINE_NAME: (d1_common.const.DEFAULT_SEARCH_ENGINE, unicode),
-        QUERY_STRING_NAME: (u'*:*', unicode),
-      },
-      SECTION_SYSMETA: {
-        FORMAT_NAME: (None, unicode),
-        SUBMITTER_NAME: (None, unicode),
-        OWNER_NAME: (None, unicode),
-        ORIG_MN_NAME: (None, unicode),
-        AUTH_MN_NAME: (None, unicode),
-        CHECKSUM_NAME: (d1_common.const.DEFAULT_CHECKSUM_ALGORITHM, unicode),
-      },
-    })
-
-  def _get_session_section_ordering(self):
-    return (
-      SECTION_CLI, SECTION_NODE, SECTION_SLICE, SECTION_AUTH, SECTION_SEARCH,
-      SECTION_SYSMETA
-    )
-
-  def _find_section_containing_session_parameter(self, name):
-    '''Find the section containing a session parameter.'''
-    # Because the session parameters are split into sections and the user does
-    # not specify the section when setting a parameter, it is necessary to
-    # search for the parameter.
-    for section in self.session:
-      if name in self.session[section]:
-        return section
-    raise cli_exceptions.InvalidArguments(u'Invalid session parameter: {0}'.format(name))
-
-  def _assert_valid_session_parameter(self, section, name):
-    try:
-      self.session[section][name]
-    except LookupError:
+  def _assert_valid_variable(self, variable):
+    if variable not in self._variables:
       raise cli_exceptions.InvalidArguments(
-        u'Invalid session parameter: {0} / {1}'.format(section, name)
+        u'Invalid session variable: {0}'.format(variable)
       )
 
-  def _assert_valid_session_parameter_value(self, section, name, value):
-    if section == CHECKSUM_SECT and name == CHECKSUM_NAME:
+  def _validate_variable_type(self, value, type_converter):
+    # Make sure booleans are "sane"
+    if type_converter is BooleanType:
+      if value in (u'true', u'True', u't', u'T', 1, u'1', u'yes', u'Yes'):
+        return True
+      elif value in (u'false', u'False', u'f', u'F', 0, u'0', u'no', u'No'):
+        return False
+      else:
+        raise ValueError(u'Invalid boolean value: {0}'.format(value))
+    else:
+      return value
+
+  def _assert_valid_variable_value(self, variable, value):
+    if variable == CHECKSUM_NAME:
       try:
         d1_common.util.get_checksum_calculator_by_dataone_designator(value)
       except LookupError:
         raise cli_exceptions.InvalidArguments(
           u'Invalid checksum algorithm: {0}'.format(value)
         )
-    elif section == CN_URL_SECT and name == CN_URL_NAME:
-      cn_base_url = self.get(CN_URL_SECT, CN_URL_NAME)
+    elif variable == CN_URL_NAME:
+      cn_base_url = self.get(CN_URL_NAME)
       if value not in [n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'cn']:
         if not cli_util.confirm(
           '"{0}" is not a known DataONE Coordinating Node. Use anyway?'.format(
@@ -382,8 +319,8 @@ class session(object):
           )
         ):
           raise cli_exceptions.InvalidArguments(u'Coordinating Node update cancelled')
-    elif section == MN_URL_SECT and name == MN_URL_NAME:
-      cn_base_url = self.get(CN_URL_SECT, CN_URL_NAME)
+    elif variable == MN_URL_NAME:
+      cn_base_url = self.get(CN_URL_NAME)
       if value not in [n[2] for n in self._nodes.get(cn_base_url) if n[0] == 'mn']:
         if not cli_util.confirm(
           '"{0}" is not a known DataONE Member Node. Use anyway?'.format(
@@ -391,8 +328,8 @@ class session(object):
           )
         ):
           raise cli_exceptions.InvalidArguments(u'Member Node update cancelled')
-    elif section == FORMAT_SECT and name == FORMAT_NAME:
-      cn_base_url = self.get(CN_URL_SECT, CN_URL_NAME)
+    elif variable == FORMAT_NAME:
+      cn_base_url = self.get(CN_URL_NAME)
       if value not in self._format_ids.get(cn_base_url):
         raise cli_exceptions.InvalidArguments(
           u'Invalid Object Format ID: {0}'.format(value)

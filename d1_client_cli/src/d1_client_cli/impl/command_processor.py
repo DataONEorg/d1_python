@@ -68,7 +68,7 @@ class CommandProcessor():
   def __init__(self):
     self._nodes = nodes.Nodes()
     self._format_ids = format_ids.FormatIDs()
-    self._session = session.session(self._nodes, self._format_ids)
+    self._session = session.Session(self._nodes, self._format_ids)
     self._session.load(suppress_error=True)
     self._object_format_id_cache = None
     self._operation_queue = operation_queue.OperationQueue(self._session)
@@ -86,17 +86,16 @@ class CommandProcessor():
   def get_format_ids(self):
     return self._format_ids
 
-  def set_session_parameter(self, session_parameter, value):
-    self._session.set_with_conversion_implicit_section(session_parameter, value)
-
   #-----------------------------------------------------------------------------
   # Operations against Coordinating Nodes
   #-----------------------------------------------------------------------------
 
+  # Read operations.
+
   def ping(self, hosts):
     if not len(hosts):
-      self._ping_base(self._session.get(session.CN_URL_SECT, session.CN_URL_NAME))
-      self._ping_base(self._session.get(session.MN_URL_SECT, session.MN_URL_NAME))
+      self._ping_base(self._session.get(session.CN_URL_NAME))
+      self._ping_base(self._session.get(session.MN_URL_NAME))
     else:
       for host in hosts:
         cn_base_url = d1_common.url.makeCNBaseURL(host)
@@ -108,7 +107,7 @@ class CommandProcessor():
   def search(self, line):
     '''CN search.
     '''
-    if self._session.get(session.QUERY_ENGINE_SECT, session.QUERY_ENGINE_NAME) == u'solr':
+    if self._session.get(session.QUERY_ENGINE_NAME) == u'solr':
       return self._search_solr(line)
     raise cli_exceptions.InvalidArguments(
       'Unsupported query engine: {0}'.format(
@@ -117,11 +116,11 @@ class CommandProcessor():
     )
 
   def list_format_ids(self):
-    cn_base_url = self._session.get(session.CN_URL_SECT, session.CN_URL_NAME)
+    cn_base_url = self._session.get(session.CN_URL_NAME)
     self._output(self._format_ids.format(cn_base_url))
 
   def list_nodes(self):
-    cn_base_url = self._session.get(session.CN_URL_SECT, session.CN_URL_NAME)
+    cn_base_url = self._session.get(session.CN_URL_NAME)
     self._output(self._nodes.format(cn_base_url))
 
   def resolve(self, pid):
@@ -131,6 +130,16 @@ class CommandProcessor():
     object_location_list = client.resolve(pid)
     for location in object_location_list.objectLocation:
       cli_util.print_info(location.url)
+
+  # Write operations (queued)
+
+  def update_access_policy(self, pids):
+    for pid in pids:
+      self._queue_update_access_policy(pid)
+
+  def update_replication_policy(self, pids):
+    for pid in pids:
+      self._queue_update_replication_policy(pid)
 
   #-----------------------------------------------------------------------------
   # Operations against Member Nodes
@@ -196,10 +205,10 @@ class CommandProcessor():
   def log(self, path):
     client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
     object_log = client.getLogRecords(
-      fromDate=self._session.get(session.FROM_DATE_SECT, session.FROM_DATE_NAME),
-      toDate=self._session.get(session.TO_DATE_SECT, session.TO_DATE_NAME),
-      start=self._session.get(session.START_SECT, session.START_NAME),
-      count=self._session.get(session.COUNT_SECT, session.COUNT_NAME)
+      fromDate=self._session.get(session.FROM_DATE_NAME),
+      toDate=self._session.get(session.TO_DATE_NAME),
+      start=self._session.get(session.START_NAME),
+      count=self._session.get(session.COUNT_NAME)
     )
     object_log_xml = object_log.toxml()
     self._output(StringIO.StringIO(self._pretty(object_log_xml)), path)
@@ -207,13 +216,11 @@ class CommandProcessor():
   def list_objects(self, path):
     client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
     object_list = client.listObjects(
-      fromDate=self._session.get(session.FROM_DATE_SECT, session.FROM_DATE_NAME),
-      toDate=self._session.get(session.TO_DATE_SECT, session.TO_DATE_NAME),
-      objectFormat=self._session.get(
-        session.SEARCH_FORMAT_SECT, session.SEARCH_FORMAT_NAME
-      ),
-      start=self._session.get(session.START_SECT, session.START_NAME),
-      count=self._session.get(session.COUNT_SECT, session.COUNT_NAME)
+      fromDate=self._session.get(session.FROM_DATE_NAME),
+      toDate=self._session.get(session.TO_DATE_NAME),
+      objectFormat=self._session.get(session.SEARCH_FORMAT_NAME),
+      start=self._session.get(session.START_NAME),
+      count=self._session.get(session.COUNT_NAME)
     )
     object_list_xml = object_list.toxml()
     self._output(StringIO.StringIO(self._pretty(object_list_xml)), path)
@@ -236,14 +243,6 @@ class CommandProcessor():
   def science_object_archive(self, pids):
     for pid in pids:
       self._queue_science_object_archive(pid)
-
-  def update_access_policy(self, pids):
-    for pid in pids:
-      self._queue_update_access_policy(pid)
-
-  def update_replication_policy(self, pids):
-    for pid in pids:
-      self._queue_update_replication_policy(pid)
 
   #
   # Private.
@@ -303,8 +302,8 @@ class CommandProcessor():
       object_list = client.search(
         queryType=d1_common.const.DEFAULT_SEARCH_ENGINE,
         q=query,
-        start=self._session.get(session.START_SECT, session.START_NAME),
-        rows=self._session.get(session.COUNT_SECT, session.COUNT_NAME)
+        start=self._session.get(session.START_NAME),
+        rows=self._session.get(session.COUNT_NAME)
       )
       cli_util.print_info(self._pretty(object_list.toxml()))
     #
@@ -340,24 +339,22 @@ class CommandProcessor():
     return result.strip()
 
   def _query_string_to_solr_filter(self, line):
-    query = self._session.get(session.QUERY_STRING_SECT, session.QUERY_STRING_NAME)
+    query = self._session.get(session.QUERY_STRING_NAME)
     if not query or query == u'' or (query == '*:*' and len(line) > 0):
       return u''
     else:
       return u' ' + query
 
   def _time_span_to_solr_filter(self):
-    fromdate = self._session.get(session.FROM_DATE_SECT, session.FROM_DATE_NAME)
-    todate = self._session.get(session.TO_DATE_SECT, session.TO_DATE_NAME)
+    fromdate = self._session.get(session.FROM_DATE_NAME)
+    todate = self._session.get(session.TO_DATE_NAME)
     return u' dateModified:[{0} TO {1}]'.format(
       d1_common.date_time.to_http_datetime(fromdate) if fromdate else u'*',
       d1_common.date_time.to_http_datetime(todate) if todate else u'*'
     )
 
   def _object_format_to_solr_filter(self, line):
-    search_format_id = self._session.get(
-      session.SEARCH_FORMAT_SECT, session.SEARCH_FORMAT_NAME
-    )
+    search_format_id = self._session.get(session.SEARCH_FORMAT_NAME)
     if not search_format_id or search_format_id == u'':
       return u''
     else:
@@ -369,22 +366,18 @@ class CommandProcessor():
         return u' %s:%s' % (SOLR_FORMAT_ID_NAME, search_format_id)
 
   def _mn_client_connect_params_from_session(self):
-    return self._mn_cn_client_connect_params_from_session(
-      session.MN_URL_SECT, session.MN_URL_NAME
-    )
+    return self._mn_cn_client_connect_params_from_session(session.MN_URL_NAME)
 
   def _cn_client_connect_params_from_session(self):
-    return self._mn_cn_client_connect_params_from_session(
-      session.CN_URL_SECT, session.CN_URL_NAME
-    )
+    return self._mn_cn_client_connect_params_from_session(session.CN_URL_NAME)
 
   def _mn_cn_client_connect_params_from_session(self, url_sect, url_name):
-    anonymous = self._session.get(session.ANONYMOUS_SECT, session.ANONYMOUS_NAME)
+    anonymous = self._session.get(session.ANONYMOUS_NAME)
     return {
       'base_url': self._session.get(url_sect, url_name),
-      'cert_path': self._session.get(session.CERT_FILENAME_SECT, session.CERT_FILENAME_NAME)
+      'cert_path': self._session.get(session.CERT_FILENAME_NAME)
         if not anonymous  else None,
-      'key_path': self._session.get(session.KEY_FILENAME_SECT, session.KEY_FILENAME_NAME)
+      'key_path': self._session.get(session.KEY_FILENAME_NAME)
         if not anonymous  else None,
     }
 

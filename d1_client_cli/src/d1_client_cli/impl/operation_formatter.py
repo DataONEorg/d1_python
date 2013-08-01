@@ -40,18 +40,33 @@ TAB = 30
 class OperationFormatter(object):
   '''Print an operation according to the template. The template contains all
   parameters that can be in any of the operations and determines the relative
-  position of each parameter that is present in the operation.'''
+  position of each parameter that is present in the operation.
+  '''
 
   def __init__(self):
     self._template = (
       u'comment',
       u'operation',
-      (u'authentication',
+      (u'CLI',
+       u'verbose',
+       u'editor', ),
+      (u'Slicing',
+       u'start',
+       u'count', ),
+      (
+        u'Searching',
+        u'query',
+        u'query-type',
+        u'from-date',
+        u'to-date',
+        u'search-format-id',
+      ),
+      (u'Authentication',
        u'anonymous',
        u'cert-file',
        u'key-file', ),
       (
-        u'parameters',
+        u'Parameters',
         u'identifier',
         u'identifier-new',
         u'identifier-old',
@@ -59,16 +74,21 @@ class OperationFormatter(object):
         u'identifier-science-meta',
         u'identifier-science-data',
         u'science-file',
-        u'member-node',
-        u'format-id',
-        u'algorithm',
-        u'submitter',
-        u'rights-holder',
-        u'authoritative-mn',
-        u'origin-mn',
-        u'access-control',
+        (u'Misc',
+         u'format-id',
+         u'algorithm', ),
+        (u'Nodes',
+         u'cn-url',
+         u'mn-url',
+         u'authoritative-mn',
+         u'origin-mn', ),
+        (u'Subjects',
+         u'submitter',
+         u'rights-holder', ),
+        (u'Access Control',
+         u'allow', ),
         (
-          u'replication',
+          u'Replication',
           u'replication-allowed',
           u'number-of-replicas',
           u'blocked-nodes',

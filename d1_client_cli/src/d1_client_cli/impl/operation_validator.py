@@ -40,34 +40,6 @@ import cli_util
 import cli_exceptions
 import const
 
-# Create operation:
-#return {
-#  u'operation': 'create',
-#  u'authentication': {
-#    u'anonymous': self._session.get('auth', 'anonymous'),
-#    u'cert-file': self._session.get('auth', 'cert-file'),
-#    u'key-file': self._session.get('auth', 'key-file'),
-#  },
-#  u'parameters': {
-#    u'identifier': pid,
-#    u'science-file': path,
-#    u'member-node': self._session.get('node', 'mn-url'),
-#    u'algorithm': self._session.get('sys-meta', 'algorithm'),
-#    u'authoritative-mn': self._session.get('sys-meta', 'authoritative-mn'),
-#    u'format-id': self._session.get('sys-meta', 'format-id'),
-#    u'origin-mn': self._session.get('sys-meta', 'origin-mn'),
-#    u'rights-holder': self._session.get('sys-meta', 'rights-holder'),
-#    u'submitter': self._session.get('sys-meta', 'submitter'),
-#    u'access-control': self._session.get_access_control().get_list(),
-#    u'replication': {
-#      u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
-#      u'preferred-nodes': self._session.get_replication_policy().get_preferred(),
-#      u'blocked-nodes': self._session.get_replication_policy().get_blocked(),
-#      u'number-of-replicas': self._session.get_replication_policy().get_number_of_replicas(),
-#    },
-#  }
-#}
-
 
 class OperationValidator(object):
   def __init__(self):
@@ -102,8 +74,9 @@ class OperationValidator(object):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
     self._assert_valid_path(operation, 'parameters', 'science-file')
-    self._assert_valid_member_node(operation, 'parameters', 'member-node')
+    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
+    self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
@@ -115,8 +88,9 @@ class OperationValidator(object):
     self._assert_valid_identifier(operation, 'parameters', 'identifier-new')
     self._assert_valid_identifier(operation, 'parameters', 'identifier-old')
     self._assert_valid_path(operation, 'parameters', 'science-file')
-    self._assert_valid_member_node(operation, 'parameters', 'member-node')
+    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
+    self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
@@ -128,8 +102,9 @@ class OperationValidator(object):
     self._assert_valid_identifier(operation, 'parameters', 'identifier-package')
     self._assert_valid_identifier(operation, 'parameters', 'identifier-science-meta')
     self._assert_valid_identifiers(operation, 'parameters', 'identifier-science-data')
-    self._assert_valid_member_node(operation, 'parameters', 'member-node')
+    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
+    self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
     self._assert_value_access_control(operation)
@@ -138,18 +113,20 @@ class OperationValidator(object):
   def assert_valid_archive(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
-    self._assert_valid_member_node(operation, 'parameters', 'member-node')
+    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
 
   def assert_valid_update_access_policy(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
+    self._assert_authenticated_access(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
-    self._assert_valid_member_node(operation, 'parameters', 'member-node')
+    self._assert_valid_coordinating_node(operation)
     self._assert_value_access_control(operation)
 
   def assert_valid_update_replication_policy(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
+    self._assert_authenticated_access(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
-    self._assert_valid_member_node(operation, 'parameters', 'member-node')
+    self._assert_valid_coordinating_node(operation)
     self._assert_valid_replication_policy(operation)
 
   #
@@ -236,6 +213,15 @@ class OperationValidator(object):
         'Specified a certificate private key without specifying a certificate'
       )
 
+  def _assert_authenticated_access(self, operation):
+    self._assert_value_type(operation, types.BooleanType, 'authentication', 'anonymous')
+    auth = operation['authentication']
+    if auth['anonymous']:
+      raise cli_exceptions.InvalidArguments(
+        'This operation cannot be performed without authentication'
+      )
+    cli_util.assert_file_exists(operation['authentication']['cert-file'])
+
   def _assert_valid_checksum_algorithm(self, operation):
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'algorithm')
     algorithm = operation['parameters']['algorithm']
@@ -247,7 +233,7 @@ class OperationValidator(object):
       )
 
   def _assert_valid_access_control(self, operation, *keys):
-    self._assert_value_type(operation, types.ListType, 'parameters', 'access-control')
+    self._assert_value_type(operation, types.ListType, 'parameters', 'allow')
 
   def _assert_valid_path(self, operation, *keys):
     self._assert_value_type(operation, types.StringTypes, *keys)
@@ -263,6 +249,10 @@ class OperationValidator(object):
     self._assert_valid_base_url(operation, *keys)
     #TODO: Validate against member node list from CN.
 
+  def _assert_valid_coordinating_node(self, operation):
+    self._assert_valid_base_url(operation, 'parameters', 'cn-url')
+    #TODO: Validate against member node list from CN.
+
   def _assert_valid_base_url(self, operation, *keys):
     self._assert_value_type(operation, types.StringTypes, *keys)
     for key in keys:
@@ -274,8 +264,8 @@ class OperationValidator(object):
       )
 
   def _assert_value_access_control(self, operation):
-    self._assert_value_type(operation, types.ListType, 'parameters', 'access-control')
-    for allow in operation['parameters']['access-control']:
+    self._assert_value_type(operation, types.ListType, 'parameters', 'allow')
+    for allow in operation['parameters']['allow']:
       if len(allow) != 2:
         raise cli_exceptions.InvalidArguments(
           'Access control rule must be subject and permission: {0}'

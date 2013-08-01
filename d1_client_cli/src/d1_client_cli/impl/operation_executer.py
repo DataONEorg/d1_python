@@ -57,11 +57,11 @@ import operation_validator
 #        },
 #        "operation": "create",
 #        "parameters": {
-#            "access-control": [],
+#            "allow": [],
 #            "algorithm": "SHA-1",
 #            "authoritative-mn": null,
 #            "format-id": null,
-#            "member-node": "https://localhost/mn/",
+#            "mn-url": "https://localhost/mn/",
 #            "origin-mn": null,
 #            "replication": {
 #                "blocked-nodes": [],
@@ -148,13 +148,13 @@ class OperationExecuter(object):
 
   def execute_update_access_policy(self, operation):
     pid = operation[u'parameters']['identifier']
-    sys_meta = self._create_system_metadata(operation)
-    client = cli_client.CLIMNClient(
-      **self._mn_client_connect_params_from_operation(
+    client = cli_client.CLICNClient(
+      **self._cn_client_connect_params_from_operation(
         operation
       )
     )
-    client.setAccessPolicy(pid, access_policy, metadata.serialVersion)
+    sys_meta = client.getSystemMetadata(pid)
+    client.setAccessPolicy(pid, access_policy, sys_meta.serialVersion)
 
   def execute_valid_update_replication_policy(self, operation):
     pid = operation[u'parameters']['identifier']
@@ -175,7 +175,14 @@ class OperationExecuter(object):
 
   def _mn_client_connect_params_from_operation(self, operation):
     return {
-      'base_url': operation['parameters']['member-node'],
+      'base_url': operation['parameters']['mn-url'],
+      'cert_path': operation['authentication']['cert-file'],
+      'key_path': operation['authentication']['key-file'],
+    }
+
+  def _cn_client_connect_params_from_operation(self, operation):
+    return {
+      'base_url': operation['parameters']['cn-url'],
       'cert_path': operation['authentication']['cert-file'],
       'key_path': operation['authentication']['key-file'],
     }
@@ -190,7 +197,7 @@ class OperationExecuter(object):
 
   def _generate_resource_map(self, operation, package_pid, pid_sci_meta, pid_sci_datas):
     resource_map_generator = d1_client.data_package.ResourceMapGenerator(
-      dataone_root=operation[u'parameters']['member-node']
+      dataone_root=operation[u'parameters']['mn-url']
     )
     return resource_map_generator.simple_generate_resource_map(
       package_pid, pid_sci_meta, pid_sci_datas
@@ -214,7 +221,7 @@ class OperationExecuter(object):
 #  if baseurl:
 #    endpoint = baseurl
 #  elif session:
-#    endpoint = session.get(MN_URL_SECT, MN_URL_NAME)
+#    endpoint = session.get(MN_URL_NAME)
 #  else:
 #    raise cli_exceptions.InvalidArguments(u'You must specify either the base URL or the session')
 #  if not pid:
@@ -231,7 +238,7 @@ class OperationExecuter(object):
 #  if baseurl:
 #    endpoint = baseurl
 #  elif session:
-#    endpoint = session.get(CN_URL_SECT, CN_URL_NAME)
+#    endpoint = session.get(CN_URL_NAME)
 #  else:
 #    raise cli_exceptions.InvalidArguments(u'You must specify either the base URL or the session')
 #  if not pid:

@@ -34,6 +34,7 @@ import os
 # App
 import const
 import operation_validator
+import session
 
 
 class OperationMaker(object):
@@ -45,21 +46,21 @@ class OperationMaker(object):
     operation = {
       u'operation': 'create',
       u'authentication': {
-        u'anonymous': self._session.get('auth', 'anonymous'),
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
         u'cert-file': self._get_certificate(),
         u'key-file': self._get_certificate_key(),
       },
       u'parameters': {
         u'identifier': pid,
         u'science-file': path,
-        u'member-node': self._session.get('node', 'mn-url'),
-        u'algorithm': self._session.get('sys-meta', 'algorithm'),
-        u'authoritative-mn': self._session.get('sys-meta', 'authoritative-mn'),
-        u'format-id': format_id if format_id is not None else self._session.get('sys-meta', 'format-id'),
-        u'origin-mn': self._session.get('sys-meta', 'origin-mn'),
-        u'rights-holder': self._session.get('sys-meta', 'rights-holder'),
-        u'submitter': self._session.get('sys-meta', 'submitter'),
-        u'access-control': self._session.get_access_control().get_list(),
+        u'mn-url': self._session.get(session.MN_URL_NAME),
+        u'algorithm': self._session.get(session.CHECKSUM_NAME),
+        u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
+        u'format-id': format_id if format_id is not None else self._session.get(session.FORMAT_NAME),
+        u'origin-mn': self._session.get(session.ORIG_MN_NAME),
+        u'rights-holder': self._session.get(session.OWNER_NAME),
+        u'submitter': self._session.get(session.SUBMITTER_NAME),
+        u'allow': self._session.get_access_control().get_list(),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
           u'preferred-nodes': self._session.get_replication_policy().get_preferred(),
@@ -75,7 +76,7 @@ class OperationMaker(object):
     operation = {
       u'operation': 'update',
       u'authentication': {
-        u'anonymous': self._session.get('auth', 'anonymous'),
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
         u'cert-file': self._get_certificate(),
         u'key-file': self._get_certificate_key(),
       },
@@ -83,14 +84,14 @@ class OperationMaker(object):
         u'identifier-new': pid_new,
         u'identifier-old': pid,
         u'science-file': path,
-        u'member-node': self._session.get('node', 'mn-url'),
-        u'algorithm': self._session.get('sys-meta', 'algorithm'),
-        u'authoritative-mn': self._session.get('sys-meta', 'authoritative-mn'),
-        u'format-id': format_id if format_id is not None else self._session.get('sys-meta', 'format-id'),
-        u'origin-mn': self._session.get('sys-meta', 'origin-mn'),
-        u'rights-holder': self._session.get('sys-meta', 'rights-holder'),
-        u'submitter': self._session.get('sys-meta', 'submitter'),
-        u'access-control': self._session.get_access_control().get_list(),
+        u'mn-url': self._session.get(session.MN_URL_NAME),
+        u'algorithm': self._session.get(session.CHECKSUM_NAME),
+        u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
+        u'format-id': format_id if format_id is not None else self._session.get(session.FORMAT_NAME),
+        u'origin-mn': self._session.get(session.ORIG_MN_NAME),
+        u'rights-holder': self._session.get(session.OWNER_NAME),
+        u'submitter': self._session.get(session.SUBMITTER_NAME),
+        u'allow': self._session.get_access_control().get_list(),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
           u'preferred-nodes': self._session.get_replication_policy().get_preferred(),
@@ -106,7 +107,7 @@ class OperationMaker(object):
     operation = {
       u'operation': 'create_package',
       u'authentication': {
-        u'anonymous': self._session.get('auth', 'anonymous'),
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
         u'cert-file': self._get_certificate(),
         u'key-file': self._get_certificate_key(),
       },
@@ -114,13 +115,13 @@ class OperationMaker(object):
         u'identifier-package': pids[0],
         u'identifier-science-meta': pids[1],
         u'identifier-science-data': pids[2:],
-        u'member-node': self._session.get('node', 'mn-url'),
-        u'algorithm': self._session.get('sys-meta', 'algorithm'),
-        u'authoritative-mn': self._session.get('sys-meta', 'authoritative-mn'),
-        u'origin-mn': self._session.get('sys-meta', 'origin-mn'),
-        u'rights-holder': self._session.get('sys-meta', 'rights-holder'),
-        u'submitter': self._session.get('sys-meta', 'submitter'),
-        u'access-control': self._session.get_access_control().get_list(),
+        u'mn-url': self._session.get(session.MN_URL_NAME),
+        u'algorithm': self._session.get(session.CHECKSUM_NAME),
+        u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
+        u'origin-mn': self._session.get(session.ORIG_MN_NAME),
+        u'rights-holder': self._session.get(session.OWNER_NAME),
+        u'submitter': self._session.get(session.SUBMITTER_NAME),
+        u'allow': self._session.get_access_control().get_list(),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
           u'preferred-nodes': self._session.get_replication_policy().get_preferred(),
@@ -136,13 +137,13 @@ class OperationMaker(object):
     operation = {
       u'operation': 'archive',
       u'authentication': {
-        u'anonymous': self._session.get('auth', 'anonymous'),
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
         u'cert-file': self._get_certificate(),
         u'key-file': self._get_certificate_key(),
       },
       u'parameters': {
         u'identifier': pid,
-        u'member-node': self._session.get('node', 'mn-url'),
+        u'mn-url': self._session.get(session.MN_URL_NAME),
       }
     }
     self._operation_validator.assert_valid(operation)
@@ -152,14 +153,14 @@ class OperationMaker(object):
     operation = {
       u'operation': 'update_access_policy',
       u'authentication': {
-        u'anonymous': self._session.get('auth', 'anonymous'),
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
         u'cert-file': self._get_certificate(),
         u'key-file': self._get_certificate_key(),
       },
       u'parameters': {
         u'identifier': pid,
-        u'member-node': self._session.get('node', 'mn-url'),
-        u'access-control': self._session.get_access_control().get_list(),
+        u'cn-url': self._session.get(session.CN_URL_NAME),
+        u'allow': self._session.get_access_control().get_list(),
       }
     }
     self._operation_validator.assert_valid(operation)
@@ -169,13 +170,13 @@ class OperationMaker(object):
     operation = {
       u'operation': 'update_replication_policy',
       u'authentication': {
-        u'anonymous': self._session.get('auth', 'anonymous'),
+        u'anonymous': self._session.get(session.ANONYMOUS_NAME),
         u'cert-file': self._get_certificate(),
         u'key-file': self._get_certificate_key(),
       },
       u'parameters': {
         u'identifier': pid,
-        u'member-node': self._session.get('node', 'mn-url'),
+        u'cn-url': self._session.get(session.CN_URL_NAME),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
           u'preferred-nodes': self._session.get_replication_policy().get_preferred(),
@@ -188,8 +189,8 @@ class OperationMaker(object):
     return operation
 
   def _get_certificate(self):
-    if not self._session.get('auth', 'anonymous'):
-      cert_path = self._session.get('auth', 'cert-file')
+    if not self._session.get(session.ANONYMOUS_NAME):
+      cert_path = self._session.get(session.CERT_FILENAME_NAME)
       if not cert_path:
         cert_path = self._get_cilogon_certificate_path()
       return cert_path
@@ -200,7 +201,7 @@ class OperationMaker(object):
     return u'/tmp/x509up_u{0}'.format(os.getuid())
 
   def _get_certificate_key(self):
-    if not self._session.get('auth', 'anonymous'):
-      return self._session.get('auth', 'key-file')
+    if not self._session.get(session.ANONYMOUS_NAME):
+      return self._session.get(session.KEY_FILENAME_NAME)
     else:
       return None

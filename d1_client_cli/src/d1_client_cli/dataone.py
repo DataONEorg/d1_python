@@ -164,14 +164,7 @@ option_list = [
   optparse.make_option(
     '--' + session.CN_URL_NAME,
     action='store',
-    dest='dataone_url',
-    metavar='URI',
-    help='URI to use for the Coordinating Node'
-  ),
-  optparse.make_option(
-    '--cn-url',
-    action='store',
-    dest='dataone_url',
+    dest='cn_url',
     metavar='URI',
     help='URI to use for the Coordinating Node'
   ),
@@ -387,8 +380,8 @@ def handle_options(cli, options):
       cli.d1.session_set_parameter(session.CERT_FILENAME_NAME, options.cert_file)
     if options.count:
       cli.d1.session_set_parameter(session.COUNT_NAME, options.count)
-    if options.dataone_url:
-      cli.d1.session_set_parameter(session.CN_URL_NAME, options.dataone_url)
+    if options.cn_url:
+      cli.d1.session_set_parameter(session.CN_URL_NAME, options.cn_url)
     if options.cn_host:
       url = u''.join(
         (
@@ -465,11 +458,11 @@ def handle_unexpected_exception(max_traceback_levels=100):
   exc_type, exc_msgs = sys.exc_info()[:2]
   if exc_type.__name__ == u'SSLError':
     cli_util.print_error(
-      u'''HTTPS/TLS/SSL/X509v3 Error:
+      u'''HTTPS / TLS / SSL / X.509v3 Certificate Error:
   An HTTPS connection could not be established. Verify that a DataONE node
-  responds at the URL provided in the cn-url or mn-url session parameter. If the
+  responds at the URL provided in the cn-url or mn-url session variable. If the
   URL is valid and if you intended to connect without authentication, make sure
-  that the session parameter, "anonymous", is set to True. If you intended to
+  that the session variable, "anonymous", is set to True. If you intended to
   connect with authentication, make sure that the parameter, "cert-file", points
   to a valid certificate from CILogon. If the certificate has the private
   key in a separate file, also set "key-file" to the private key file.
@@ -481,7 +474,7 @@ def handle_unexpected_exception(max_traceback_levels=100):
     cli_util.print_error(
       u'''Timeout error:
   A connection to a DataONE node timed out. Verify that a DataONE node responds
-  at the URL provided in the cn-url or mn-url session parameter.
+  at the URL provided in the cn-url or mn-url session variable.
 '''
     )
   else:

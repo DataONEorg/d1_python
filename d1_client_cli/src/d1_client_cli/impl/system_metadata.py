@@ -22,7 +22,7 @@
 :mod:`system_metadata`
 ======================
 
-:Synopsis: Create System Metadata documents based on session parameters.
+:Synopsis: Create System Metadata documents based on session variables.
 :Created: 2011-11-20
 :Author: DataONE (Dahl)
 '''
@@ -119,7 +119,7 @@ class SystemMetadataCreator():
     return sys_meta
 
   def _create_access_policy_pyxb_object(self, operation):
-    acl = operation['parameters']['access-control']
+    acl = operation['parameters']['allow']
     if not len(acl):
       return None
     access_policy = dataoneTypes.accessPolicy()
@@ -164,8 +164,7 @@ class SystemMetadataCreator():
     return h.hexdigest()
 
   #def _create_system_metadata(self, pid, path, format_id=None):
-  #  checksum = self._get_file_checksum(cli_util.os.path.expanduser(path), self.session.get(
-  #    CHECKSUM_SECT, CHECKSUM_NAME))
+  #  checksum = self._get_file_checksum(cli_util.os.path.expanduser(path), self.session.get(CHECKSUM_NAME))
   #  size = cli_util.get_file_size(cli_util.os.path.expanduser(path))
   #  sys_meta = self.session.create_system_metadata(pid, checksum, size, format_id)
   #  return sys_meta
@@ -198,26 +197,26 @@ class SystemMetadataCreator():
   #      * authoritative-mn, origin-mn, rights-holder
   #  '''
   #  save_data = False
-  #  if self.get(AUTH_MN_SECT, AUTH_MN_NAME) is None:
-  #    mn = self.get(MN_URL_SECT, MN_URL_NAME)
+  #  if self.get(AUTH_MN_NAME) is None:
+  #    mn = self.get(MN_URL_NAME)
   #    mn_host = self._get_host_from_url(mn)
   #    if mn_host is not None:
-  #      self.set(AUTH_MN_SECT, AUTH_MN_NAME, mn_host)
+  #      self.set(AUTH_MN_NAME, mn_host)
   #      cli_util.print_info(u'Setting %s to "%s"' % (AUTH_MN_NAME, mn_host))
   #      save_data = True;
   #
-  #  if self.get(ORIG_MN_SECT, ORIG_MN_NAME) is None:
-  #    mn = self.get(MN_URL_SECT, MN_URL_NAME)
+  #  if self.get(ORIG_MN_NAME) is None:
+  #    mn = self.get(MN_URL_NAME)
   #    mn_host = self._get_host_from_url(mn)
   #    if mn_host is not None:
-  #      self.set(ORIG_MN_SECT, ORIG_MN_NAME, mn_host)
+  #      self.set(ORIG_MN_NAME, mn_host)
   #      cli_util.print_info(u'Setting %s to "%s"' % (ORIG_MN_NAME, mn_host))
   #      save_data = True;
   #
-  #  if self.get(OWNER_SECT, OWNER_NAME) is None:
-  #    submitter = self.get(SUBMITTER_SECT, SUBMITTER_NAME)
+  #  if self.get(OWNER_NAME) is None:
+  #    submitter = self.get(SUBMITTER_NAME)
   #    if submitter is not None:
-  #      self.set(OWNER_SECT, OWNER_NAME, submitter)
+  #      self.set(OWNER_NAME, submitter)
   #      cli_util.print_info(u'Setting %s to "%s"' % (OWNER_NAME, submitter))
   #      save_data = True;
   #  if save_data:
@@ -241,7 +240,7 @@ class SystemMetadataCreator():
   #    if value is None:
   #      missing_parameters.append(name)
   #  if len(missing_parameters):
-  #    msg_missing = u'Missing session parameters: {0}'.format(
+  #    msg_missing = u'Missing session variables: {0}'.format(
   #      u', '.join(missing_parameters))
   #    raise cli_exceptions.InvalidArguments(msg_missing)
 
@@ -267,24 +266,24 @@ class SystemMetadataCreator():
   #  # Fix arguments.
   #  _formatId = formatId
   #  if _formatId is None:
-  #    _formatId = session.get(FORMAT_SECT, FORMAT_NAME)
+  #    _formatId = session.get(FORMAT_NAME)
   #  _algorithm = algorithm
   #  if _algorithm is None:
-  #    _algorithm = session.get(CHECKSUM_SECT, CHECKSUM_NAME)
+  #    _algorithm = session.get(CHECKSUM_NAME)
   #
   #  sys_meta = dataoneTypes.systemMetadata()
   #  sys_meta.serialVersion = 1
   #  sys_meta.identifier = pid
   #  sys_meta.formatId = _formatId
   #  sys_meta.size = size
-  #  sys_meta.submitter = session.get(SUBMITTER_SECT, SUBMITTER_NAME)
-  #  sys_meta.rightsHolder = session.get(OWNER_SECT, OWNER_NAME)
+  #  sys_meta.submitter = session.get(SUBMITTER_NAME)
+  #  sys_meta.rightsHolder = session.get(OWNER_NAME)
   #  sys_meta.checksum = dataoneTypes.checksum(checksum)
   #  sys_meta.checksum.algorithm = _algorithm
   #  sys_meta.dateUploaded = datetime.datetime.utcnow()
   #  sys_meta.dateSysMetadataModified = datetime.datetime.utcnow()
-  #  sys_meta.originmn = session.get(ORIG_MN_SECT, ORIG_MN_NAME)
-  #  sys_meta.authoritativemn = session.get(AUTH_MN_SECT, AUTH_MN_NAME)
+  #  sys_meta.originmn = session.get(ORIG_MN_NAME)
+  #  sys_meta.authoritativemn = session.get(AUTH_MN_NAME)
   #  sys_meta.accessPolicy = access_policy
   #  sys_meta.replicationPolicy = replication_policy
   #  #pyxb.RequireValidWhenGenerating(False)

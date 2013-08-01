@@ -73,8 +73,8 @@ def _prompt(prompt, default=None):
 def configuration(session):
   '''Initialize the session.
   '''
-  session.set(CN_URL_SECT, CN_URL_NAME, get_cn(session))
-  session.set(MN_URL_SECT, MN_URL_NAME, get_mn(session))
+  session.set(CN_URL_NAME, get_cn(session))
+  session.set(MN_URL_NAME, get_mn(session))
   #
   identity = get_identity(session)
   session.set(ANONYMOUS_NAME, ANONYMOUS_NAME, identity.get(ANONYMOUS_NAME))
@@ -87,7 +87,7 @@ def configuration(session):
 def get_cn(session):
   ''' Find a CN. '''
   keep_checking_cn = True
-  cn = session.get(CN_URL_SECT, CN_URL_NAME)
+  cn = session.get(CN_URL_NAME)
 
   while keep_checking_cn:
     if not cn:
@@ -121,21 +121,21 @@ def get_cn(session):
 
 
 def get_mn(session):
-  return session.get(MN_URL_SECT, MN_URL_NAME)
+  return session.get(MN_URL_NAME)
 
 
 def get_identity(session):
   identity = {
-    ANONYMOUS_NAME: session.get(ANONYMOUS_SECT, ANONYMOUS_NAME),
-    CERT_FILENAME_NAME: session.get(CERT_FILENAME_SECT, CERT_FILENAME_NAME),
-    KEY_FILENAME_NAME: session.get(KEY_FILENAME_NAME, KEY_FILENAME_NAME),
-    SUBMITTER_NAME: session.get(SUBMITTER_SECT, SUBMITTER_NAME),
-    OWNER_NAME: session.get(OWNER_SECT, OWNER_NAME),
+    ANONYMOUS_NAME: session.get(ANONYMOUS_NAME),
+    CERT_FILENAME_NAME: session.get(CERT_FILENAME_NAME),
+    KEY_FILENAME_NAME: session.get(KEY_FILENAME_NAME),
+    SUBMITTER_NAME: session.get(SUBMITTER_NAME),
+    OWNER_NAME: session.get(OWNER_NAME),
   }
 
   cert_path = _get_cert_path(session)
   subject = _get_subject(session, cert_path)
-  session.set(SUBMITTER_SECT, SUBMITTER_NAME, subject)
+  session.set(SUBMITTER_NAME, subject)
 
 
 def _get_subject(session, path):
@@ -180,7 +180,7 @@ def _fix_X509_components(components):
 def _get_cert_path(session):
   cert_path = _path_in_list_exists(
     (
-      session.get(CERT_FILENAME_SECT, CERT_FILENAME_NAME),
+      session.get(CERT_FILENAME_NAME),
       u'/tmp/x509up_u%s' % str(os.getuid()),
       u'/tmp/x509up_u%s' % getuser(),
       u'%s/x509up_u%s' % (gettempdir(), str(os.getuid())),
@@ -198,8 +198,8 @@ def _get_cert_path(session):
 def _get_key_path(session):
   key_path = _path_in_list_exists(
     (
-      session.get(KEY_FILENAME_SECT, KEY_FILENAME_NAME),
-      session.get(CERT_FILENAME_SECT, CERT_FILENAME_NAME),
+      session.get(KEY_FILENAME_NAME),
+      session.get(CERT_FILENAME_NAME),
       u'/tmp/x509up_u%s' % str(os.getuid()),
       u'/tmp/x509up_u%s' % getuser(),
       u'%s/x509up_u%s' % (gettempdir(), str(os.getuid())),

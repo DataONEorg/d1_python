@@ -148,13 +148,13 @@ class OperationQueue(object):
       subprocess.call([editor, path])
     except OSError:
       cli_util.print_error(
-        'Unable to launch editor. Please set the editor session parameter\n'
+        'Unable to launch editor. Please set the editor session variable\n'
         'or the EDITOR environment variable to the filename of a valid editor\n'
         'executable on your system.'
       )
 
   def _get_editor_command(self):
-    editor = self._session.get(session.EDITOR_SECT, session.EDITOR_NAME)
+    editor = self._session.get(session.EDITOR_NAME)
     if editor:
       return editor
     try:
@@ -166,13 +166,37 @@ class OperationQueue(object):
     for i, operation in enumerate(operations):
       j = i + 1
       k = len(operations)
-      if operation[u'operation'] == 'create':
+      if operation[u'operation'] == u'create':
         pid = operation[u'parameters']['identifier']
         path = operation[u'parameters']['science-file']
         operation[u'_comment'] = '{0} of {1}: create({2}, {3})'.format(j, k, pid, path)
-      elif operation[u'operation'] == 'archive':
+      elif operation[u'operation'] == u'update':
+        pid_new = operation[u'parameters']['identifier-new']
+        pid_old = operation[u'parameters']['identifier-old']
+        path = operation[u'parameters']['science-file']
+        operation[u'_comment'] = '{0} of {1}: update({2}, {3}, {4})'.format(
+          j, k, pid_new, pid_old, path
+        )
+      elif operation[u'operation'] == u'create_package':
+        pid_package = operation[u'parameters']['identifier-package']
+        pid_meta = operation[u'parameters'][u'identifier-science-meta']
+        pid_datas = operation[u'parameters'][u'identifier-science-data']
+        operation[u'_comment'] = '{0} of {1}: create_package({2}, {3}, {4})'.format(
+          j, k, pid_package, pid_meta, ', '.join(
+            pid_datas
+          )
+        )
+      elif operation[u'operation'] == u'archive':
         pid = operation[u'parameters']['identifier']
         operation[u'_comment'] = '{0} of {1}: archive({2})'.format(j, k, pid)
+      elif operation[u'operation'] == u'update_access_policy':
+        pid = operation[u'parameters']['identifier']
+        operation[u'_comment'] = '{0} of {1}: update_access_policy({2})'.format(j, k, pid)
+      elif operation[u'operation'] == u'update_replication_policy':
+        pid = operation[u'parameters']['identifier']
+        operation[u'_comment'] = '{0} of {1}: update_replication_policy({2})'.format(
+          j, k, pid
+        )
 
   def _execute_operation(self, operation):
     o = operation_executer.OperationExecuter()

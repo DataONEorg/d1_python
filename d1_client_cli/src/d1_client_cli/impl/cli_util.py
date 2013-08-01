@@ -131,7 +131,7 @@ def assert_file_exists(path):
 #    raise cli_exceptions.InvalidArguments(u'Missing pid')
 #  if path is None:
 #    raise cli_exceptions.InvalidArguments(u'Missing filename')
-#  algorithm = session.get(CHECKSUM_SECT, CHECKSUM_NAME)
+#  algorithm = session.get(CHECKSUM_NAME)
 #  if algorithm is None:
 #    raise cli_exceptions.InvalidArguments(u'Checksum algorithm is not defined.')
 #
@@ -195,7 +195,7 @@ def print_info(msg):
 def _print_level(level, msg):
   '''Print the information in as Unicode safe manner as possible.
   '''
-  for l in unicode(msg).split(u'\n'):
+  for l in unicode(msg.strip()).split(u'\n'):
     print u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8')
 
 #===============================================================================
