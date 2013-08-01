@@ -195,7 +195,7 @@ def print_info(msg):
 def _print_level(level, msg):
   '''Print the information in as Unicode safe manner as possible.
   '''
-  for l in unicode(msg.strip()).split(u'\n'):
+  for l in unicode(msg.rstrip()).split(u'\n'):
     print u'{0:<9s}{1}'.format(level, unicode(l)).encode(u'utf-8')
 
 #===============================================================================

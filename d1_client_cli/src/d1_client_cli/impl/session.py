@@ -214,7 +214,7 @@ class Session(object):
 
   def print_single_variable(self, variable):
     self._assert_valid_variable(variable)
-    cli_util.print_info(u'{0: <30s}{1}'.format(variable, self.get(variable)))
+    cli_util.print_info(u'{0}: {1}'.format(variable, self.get(variable)))
 
   def print_all_variables(self):
     f = operation_formatter.OperationFormatter()
