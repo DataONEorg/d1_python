@@ -58,3 +58,5 @@ before any of the commands specified as arguments are executed. When the session
 variables are specified with arguments, such as :ref:`set`, they become
 active when they are specified and only apply to arguments specified later on
 the command line.
+
+Also see :ref:`command_line_options`.

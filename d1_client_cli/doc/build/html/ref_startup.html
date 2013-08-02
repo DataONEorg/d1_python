@@ -28,7 +28,7 @@
     <link rel="top" title="v1.0.0" href="index.html" />
     <link rel="up" title="Reference" href="reference.html" />
     <link rel="next" title="Commands" href="ref_commands.html" />
-    <link rel="prev" title="Reference" href="reference.html" />
+    <link rel="prev" title="Overview of operation" href="ref_operation.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -45,7 +45,7 @@
           <a href="ref_commands.html" title="Commands"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="reference.html" title="Reference"
+          <a href="ref_operation.html" title="Overview of operation"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
           <li><a href="reference.html" accesskey="U">Reference</a> &raquo;</li> 
@@ -59,14 +59,14 @@
             
   <div class="section" id="startup">
 <h1>Startup<a class="headerlink" href="#startup" title="Permalink to this headline">¶</a></h1>
-<p>When the CLI is started, it attempts to load the <a class="reference internal" href="operation.html#session"><em>Session</em></a> variables from
+<p>When the CLI is started, it attempts to load the <a class="reference internal" href="ref_operation.html#session"><em>Session</em></a> variables from
 a default configuration file named <tt class="docutils literal"><span class="pre">.dataone_cli.conf</span></tt>, located in the user&#8217;s
 home directory. If the configuration file is not present, the session variables
 are set to default values as shown in the <tt class="docutils literal"><span class="pre">Default</span></tt> column in the
-<a class="reference internal" href="ref_session.html#id2"><em>overview of session variables</em></a>.</p>
+<a class="reference internal" href="ref_session.html#session-variables"><em>overview of session variables</em></a>.</p>
 <p>The CLI then applies any options and executes any commands specified on the
 <em class="xref std std-ref">command line</em>, in the specified order. This
-includes any <a class="reference internal" href="ref_session.html#set"><em>set</em></a> commands that modify the session variables.</p>
+includes any <a class="reference internal" href="ref_commands.html#set"><em>set</em></a> commands that modify the session variables.</p>
 <div class="section" id="command-line-arguments">
 <span id="id1"></span><h2>Command line arguments<a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h2>
 <p>The CLI accepts a set of options and arguments on the command line. The options
@@ -74,7 +74,7 @@ are used for setting the session variables. The arguments are executed as CLI
 commands. By default, the CLI will enter interactive mode after modifying the
 session according to the options and executing any commands provided as
 arguments. This can be prevented by passing the <em class="xref std std-ref">&#8211;no-interactive</em> option
-or giving the <a class="reference internal" href="ref_cli.html#exit"><em>exit</em></a> command as the last argument. When the CLI enters
+or giving the <a class="reference internal" href="ref_commands.html#exit"><em>exit</em></a> command as the last argument. When the CLI enters
 interactive mode, the session that was set up with command line options remains
 active.</p>
 <p>The command line arguments can also include commands that alter the session.
@@ -91,14 +91,15 @@ user&#8217;s <tt class="docutils literal"><span class="pre">~/.dataone_cli.conf<
 shell must be quoted. The examples use single quotes. Double quotes can also be
 used if it&#8217;s desired to have the shell expand variables.</p>
 <p>Since any CLI command is accepted on the command line, sessions can also be
-loaded with the <a class="reference internal" href="ref_session.html#load"><em>load [file]</em></a> command. If the CLI is called from a script, it
+loaded with the <a class="reference internal" href="ref_commands.html#load"><em>load [file]</em></a> command. If the CLI is called from a script, it
 may be desirable to start with a known, default session. This can be
-accomplished by issuing the <a class="reference internal" href="ref_session.html#reset"><em>reset</em></a> command before any other commands.</p>
+accomplished by issuing the <a class="reference internal" href="ref_commands.html#reset"><em>reset</em></a> command before any other commands.</p>
 <p>When the session variables are set with the options, they are all applied
 before any of the commands specified as arguments are executed. When the session
-variables are specified with arguments, such as <a class="reference internal" href="ref_session.html#set"><em>set [variable [value]]</em></a>, they become
+variables are specified with arguments, such as <a class="reference internal" href="ref_commands.html#set"><em>set [variable [value]]</em></a>, they become
 active when they are specified and only apply to arguments specified later on
 the command line.</p>
+<p>Also see <a class="reference internal" href="ref_options.html#command-line-options"><em>Overview of command line options</em></a>.</p>
 </div>
 </div>
 
@@ -122,7 +123,7 @@ the command line.</p>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="reference.html">Reference</a><ul>
-      <li>Previous: <a href="reference.html" title="previous chapter">Reference</a></li>
+      <li>Previous: <a href="ref_operation.html" title="previous chapter">Overview of operation</a></li>
       <li>Next: <a href="ref_commands.html" title="next chapter">Commands</a></li>
   </ul></li>
   </ul></li>
