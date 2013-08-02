@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
     <link rel="next" title="Reference" href="reference.html" />
-    <link rel="prev" title="DataONE Command Line Interface (CLI)" href="index.html" />
+    <link rel="prev" title="Overview of operation" href="operation.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -44,7 +44,7 @@
           <a href="reference.html" title="Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="DataONE Command Line Interface (CLI)"
+          <a href="operation.html" title="Overview of operation"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li> 
       </ul>
@@ -59,42 +59,33 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Instead of retyping commands, use the the Up arrow key to find
-previous commands and hit Enter to run them again. Instead of typing a
-modified command, use the Uu arrow to find a similar command, use text editing
-to modify that command and then hit Enter.</p>
+<p class="last">Use the Arrow Up and Arrow Down keys to find commands in the command
+history. These can then be edited and run again.</p>
 </div>
-<div class="section" id="viewing-and-manipulating-the-session-parameters">
-<h2>Viewing and manipulating the session parameters<a class="headerlink" href="#viewing-and-manipulating-the-session-parameters" title="Permalink to this headline">¶</a></h2>
-<p>Viewing and manipulating the <a class="reference internal" href="ref_session.html#id2"><em>session parameters</em></a>
+<div class="section" id="viewing-and-manipulating-the-session-variables">
+<h2>Viewing and manipulating the session variables<a class="headerlink" href="#viewing-and-manipulating-the-session-variables" title="Permalink to this headline">¶</a></h2>
+<p>Viewing and manipulating the <a class="reference internal" href="ref_session.html#id8"><em>session variables</em></a>
 used when performing operations against the <a class="reference internal" href="glossary.html#term-dataone"><em class="xref std std-term">DataONE</em></a> infrastructure
 via the DataONE Command Line Interface (CLI).</p>
-<p>Start the CLI:</p>
-<div class="highlight-python"><pre>$ dataone.py</pre>
-</div>
-<p>If desired, the session parameters can be reset back to their defaults (useful
-if they were modified by an existing <tt class="docutils literal"><span class="pre">.d1client.conf</span></tt> file at startup):</p>
+<p>If desired, the session variables can be <a class="reference internal" href="ref_session.html#reset"><em>reset</em></a> back to their defaults
+(useful if they were modified by an existing <tt class="docutils literal"><span class="pre">.dataone_cli.conf</span></tt> file at
+startup):</p>
 <div class="highlight-python"><pre>&gt; reset</pre>
 </div>
-<p>Set some of the session parameters used by many of the operations when they
-establish connections to <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MNs</em></a> and <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CNs</em></a>:</p>
-<div class="highlight-python"><pre>&gt; set cert-path /etc/dataone/client/certs/myclientcert.pem
-&gt; set key-path /etc/dataone/client/certs/myclientcert.pem
-&gt; set query *:*</pre>
+<p>Set the authentication session variables for authenticated access using a
+certificate from CILogon (downloaded to the default location in /tmp):</p>
+<div class="highlight-python"><pre>&gt; set anonymous false
+&gt; set cert-file none
+&gt; set key-file none</pre>
 </div>
-<p>Search results are returned as XML. Set the CLI to format XML to be more easily
-readable by setting <a class="reference internal" href="ref_session.html#pretty"><em>pretty</em></a> to <strong>True</strong>:</p>
-<div class="highlight-python"><pre>&gt; set pretty true</pre>
+<p>Or set to use a certificate in a non-standard location:</p>
+<blockquote>
+<div>&gt; set cert-file /etc/dataone/client/certs/myclientcert.pem</div></blockquote>
+<p>View all the session variables:</p>
+<div class="highlight-python"><pre>&gt; set</pre>
 </div>
-<p>Include a restriction to only search for Science Data created at a specific
-time or later:</p>
-<div class="highlight-python"><pre>&gt; set from-date 1998-01-01T05:00:00</pre>
-</div>
-<p>View all the session parameters:</p>
-<div class="highlight-python"><pre>&gt; get</pre>
-</div>
-<p>Save the session parameters to a file for later use:</p>
-<div class="highlight-python"><pre>&gt; save ~/d1/searchsettings</pre>
+<p>Save the session variables to a file for later use:</p>
+<div class="highlight-python"><pre>&gt; save ~/d1/mysettings</pre>
 </div>
 <p>Exit the CLI:</p>
 <div class="highlight-python"><pre>&gt; exit</pre>
@@ -104,17 +95,22 @@ time or later:</p>
 <h2>Searching for Science Data<a class="headerlink" href="#searching-for-science-data" title="Permalink to this headline">¶</a></h2>
 <p>A scientist can discover and download Science Data to leverage them in
 their own research.</p>
-<p>Start the CLI:</p>
-<div class="highlight-python"><pre>$ dataone.py</pre>
+<p>Load the session variables from the file created in the previous step:</p>
+<div class="highlight-python"><pre>&gt; load ~/d1/mysettings</pre>
 </div>
-<p>Load the session parameters from the file created in the previous step:</p>
-<div class="highlight-python"><pre>&gt; load ~/d1/searchsettings</pre>
+<p>View the session variables:</p>
+<div class="highlight-python"><pre>&gt; set</pre>
 </div>
-<p>View the session parameters:</p>
-<div class="highlight-python"><pre>&gt; show</pre>
+<p>Perform an unlimited search:</p>
+<div class="highlight-python"><pre>&gt; set query *:*
+&gt; search</pre>
+</div>
+<p>Restrict the search to a specific time or later:</p>
+<div class="highlight-python"><pre>&gt; set from-date 1998-01-01T05:00:00
+&gt; search</pre>
 </div>
 <p>Modify the search parameters to find only Science Data that originated from
-the &#8220;DEMO3&#8221; <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> and search again:</p>
+the &#8220;DEMO3&#8221; <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> and search:</p>
 <div class="highlight-python"><pre>&gt; set query origin_mn:DEMO3
 &gt; search</pre>
 </div>
@@ -129,11 +125,8 @@ text/csv and search again:</p>
 </div>
 <div class="section" id="downloading-science-data-objects">
 <h2>Downloading Science Data Objects<a class="headerlink" href="#downloading-science-data-objects" title="Permalink to this headline">¶</a></h2>
-<p>Start the CLI:</p>
-<div class="highlight-python"><pre>$ dataone.py</pre>
-</div>
-<p>View the session parameters:</p>
-<div class="highlight-python"><pre>&gt; show</pre>
+<p>View the session variables:</p>
+<div class="highlight-python"><pre>&gt; set</pre>
 </div>
 <p>Set <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> from which to download the Science Data Object:</p>
 <div class="highlight-python"><pre>&gt; set mn-url https://dataone.member.node.com/mn/</pre>
@@ -146,12 +139,6 @@ text/csv and search again:</p>
 <h2>Downloading System Metadata<a class="headerlink" href="#downloading-system-metadata" title="Permalink to this headline">¶</a></h2>
 <p>System Metadata is an XML document that contains additional information about
 a Science Data Object.</p>
-<p>Start the CLI:</p>
-<div class="highlight-python"><pre>$ dataone.py</pre>
-</div>
-<p>Set the CLI to format XML to be more easily readable by setting <a class="reference internal" href="ref_session.html#pretty"><em>pretty</em></a> to <strong>True</strong>:</p>
-<div class="highlight-python"><pre>&gt; set pretty true</pre>
-</div>
 <p>Retrieve the System Metadata and display it:</p>
 <div class="highlight-python"><pre>&gt; meta hdl:10255/dryad.669/mets.xml</pre>
 </div>
@@ -159,30 +146,51 @@ a Science Data Object.</p>
 <div class="highlight-python"><pre>&gt; meta hdl:10255/dryad.669/mets.xml ~/d1/dryad669_system_metadata.xml</pre>
 </div>
 </div>
+<div class="section" id="downloading-an-access-restricted-object">
+<h2>Downloading an access restricted object<a class="headerlink" href="#downloading-an-access-restricted-object" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Authenticate with CILogon, at <a class="reference external" href="https://cilogon.org/?skin=DataONE">https://cilogon.org/?skin=DataONE</a></li>
+</ul>
+<p>Tell the CLI that you wish to use authentication:</p>
+<div class="highlight-python"><pre>&gt; set anonymous False</pre>
+</div>
+<ul>
+<li><p class="first">Download an object for which you have read access:</p>
+<div class="highlight-python"><pre>&gt; get my-access-controlled-identifier</pre>
+</div>
+</li>
+</ul>
+<p>See <a class="reference internal" href="ref_auth.html"><em>Authentication</em></a> for more information.</p>
+</div>
 <div class="section" id="uploading-science-data-objects">
 <h2>Uploading Science Data Objects<a class="headerlink" href="#uploading-science-data-objects" title="Permalink to this headline">¶</a></h2>
 <p>A scientist can upload a set of Science Data to benefit from the services
 provided by DataONE.</p>
-<p>Start the CLI:</p>
-<div class="highlight-python"><pre>$ dataone.py</pre>
-</div>
 <p>Select <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> to which to upload the Science Data Object:</p>
 <div class="highlight-python"><pre>&gt; set mn-url https://dataone.member.node.com/mn/</pre>
 </div>
-<p>Configure the session parameters used when generating <a class="reference internal" href="glossary.html#term-system-metadata"><em class="xref std std-term">System Metadata</em></a>:</p>
-<div class="highlight-python"><pre>&gt; set submitter CN=MATTJTEMP,DC=dataone,DC=org
-&gt; set rights-holder CN=MATTJTEMP,DC=dataone,DC=org
+<p>Configure the session variables used when generating <a class="reference internal" href="glossary.html#term-system-metadata"><em class="xref std std-term">System Metadata</em></a>:</p>
+<div class="highlight-python"><pre>&gt; set rights-holder CN=MATTJTEMP,DC=dataone,DC=org
 &gt; set origin-mn DEMO1
 &gt; set authoritative-mn DEMO1</pre>
 </div>
 <p>Create an Access Policy that has only public read permisisons:</p>
-<div class="highlight-python"><pre>&gt; denyall
-&gt; allowpublic</pre>
+<div class="highlight-python"><pre>&gt; clearaccess
+&gt; allowaccess public read</pre>
 </div>
-<p>Create (upload) the Science Data Object:</p>
+<p>Add a create (upload) operation of the Science Data Object to the write operation queue:</p>
 <div class="highlight-python"><pre>&gt; create mynewpid ~/path/to/my/file</pre>
 </div>
-<p>Store the settings in <tt class="docutils literal"><span class="pre">.d1client.conf</span></tt> for use when creating similar
+<p>View the queue:</p>
+<div class="highlight-python"><pre>&gt; queue</pre>
+</div>
+<p>Edit the queue if there are any mistakes in the create operation:</p>
+<div class="highlight-python"><pre>&gt; edit</pre>
+</div>
+<p>Perform all operations in the queue:</p>
+<div class="highlight-python"><pre>&gt; run</pre>
+</div>
+<p>Store the settings in <tt class="docutils literal"><span class="pre">.dataone_cli.conf</span></tt> for use when creating similar
 Science Data Objects later:</p>
 <div class="highlight-python"><pre>&gt; save</pre>
 </div>
@@ -196,15 +204,16 @@ Science Data Objects later:</p>
 <div class="highlight-python"><pre>&gt; resolve hdl:10255/dryad.669/mets.xml</pre>
 </div>
 <p>Display list of Science Data Objects on a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> or <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a>:</p>
-<div class="highlight-python"><pre>&gt; set mn-url https://dataone.org/mn
+<div class="highlight-python"><pre>&gt; set mn-url https://mn.dataone.org/mn
 &gt; set start 100
 &gt; set count 10
 &gt; list</pre>
 </div>
 <p>Display event log on a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a>:</p>
 <div class="highlight-python"><pre>&gt; reset
-&gt; set cert-path /etc/dataone/client/certs/myclientcert.pem
-&gt; set key-path None
+&gt; set anonymous false
+&gt; set cert-file /etc/dataone/client/certs/myclientcert.pem
+&gt; set key-file None
 &gt; set mn-url https://dataone.org/mn
 &gt; log</pre>
 </div>
@@ -226,10 +235,11 @@ Science Data Objects later:</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Examples</a><ul>
-<li><a class="reference internal" href="#viewing-and-manipulating-the-session-parameters">Viewing and manipulating the session parameters</a></li>
+<li><a class="reference internal" href="#viewing-and-manipulating-the-session-variables">Viewing and manipulating the session variables</a></li>
 <li><a class="reference internal" href="#searching-for-science-data">Searching for Science Data</a></li>
 <li><a class="reference internal" href="#downloading-science-data-objects">Downloading Science Data Objects</a></li>
 <li><a class="reference internal" href="#downloading-system-metadata">Downloading System Metadata</a></li>
+<li><a class="reference internal" href="#downloading-an-access-restricted-object">Downloading an access restricted object</a></li>
 <li><a class="reference internal" href="#uploading-science-data-objects">Uploading Science Data Objects</a></li>
 <li><a class="reference internal" href="#misc-operations">Misc operations</a></li>
 </ul>
@@ -238,7 +248,7 @@ Science Data Objects later:</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">DataONE Command Line Interface (CLI)</a></li>
+      <li>Previous: <a href="operation.html" title="previous chapter">Overview of operation</a></li>
       <li>Next: <a href="reference.html" title="next chapter">Reference</a></li>
   </ul></li>
 </ul>
@@ -261,11 +271,18 @@ Science Data Objects later:</p>
     </div>
 
     <div class="footer">
-      &copy; Copyright <a href="http:/www.dataone.org">2009-2012, DataONE</a>.
+      &copy; Copyright <a href="http://www.dataone.org">2009-2012, DataONE</a>.
         [ <a href="_sources/examples.txt"
                rel="nofollow">Page Source</a> | 
           <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/examples.txt'
-            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;<br />
+      <div id="acknowledgement" style="text-align:center">
+        <p>This material is based upon work supported by the National Science Foundation 
+          under <a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=0830944">Grant Number 083094</a>.</p>
+        <p>Any opinions, findings, and conclusions or recommendations expressed in this 
+           material are those of the author(s) and do not necessarily reflect the views 
+           of the National Science Foundation.</p>
+      </div>
     </div>
     <!--
     <hr />

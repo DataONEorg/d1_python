@@ -1,22 +1,23 @@
 Package
 -------
 
-A collection of information is represented by an :term:`OAI-ORE` document.  The "package" commands create and modify ORE/XML documents.
-                                                                                  
 
-For example, assume that there is a science metadata document (``gce.294.17.xml``) and three data files (``test1.csv``, ``test2.csv``, ``test3.csv``).  The below commands would create an data package in DataONE.                                  
-                  
+
+For example, assume that there is a science metadata document
+(``gce.294.17.xml``) and three data files (``test1.csv``, ``test2.csv``,
+``test3.csv``). The below commands would create an data package in DataONE.
+
 .. code-block:: html
-                                                                 
-    DataONE Command Line Interface                                                     
-    > package new knb-lter-gce.294.17-PKG                                              
-    > set format-id=eml://ecoinformatics.org/eml-2.1.0                                 
-    > package scimeta add knb-lter-gce.294.17 gce.294.17.xml                           
-    > set format-id=text/csv                                                           
-    > package scidata add knb-lter-gce.294.17_csv1 test1.csv                           
-    > package scidata add knb-lter-gce.294.17_csv2 test2.csv                           
-    > package scidata add knb-lter-gce.294.17_csv3 test3.csv                           
-    > package create                                                                   
+
+    DataONE Command Line Interface
+    > package new knb-lter-gce.294.17-PKG
+    > set format-id=eml://ecoinformatics.org/eml-2.1.0
+    > package scimeta add knb-lter-gce.294.17 gce.294.17.xml
+    > set format-id=text/csv
+    > package scidata add knb-lter-gce.294.17_csv1 test1.csv
+    > package scidata add knb-lter-gce.294.17_csv2 test2.csv
+    > package scidata add knb-lter-gce.294.17_csv3 test3.csv
+    > package create
 
 
 .. _clear:

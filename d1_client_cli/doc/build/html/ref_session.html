@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Session parameters &mdash; v1.0.0</title>
+    <title>Overview of session variables &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
     <link rel="up" title="Reference" href="reference.html" />
-    <link rel="next" title="Access Policy" href="ref_access_policy.html" />
-    <link rel="prev" title="CLI" href="ref_cli.html" />
+    <link rel="next" title="Implementation" href="implementation.html" />
+    <link rel="prev" title="Commands" href="ref_commands.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,10 +42,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="ref_access_policy.html" title="Access Policy"
+          <a href="implementation.html" title="Implementation"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ref_cli.html" title="CLI"
+          <a href="ref_commands.html" title="Commands"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
           <li><a href="reference.html" accesskey="U">Reference</a> &raquo;</li> 
@@ -57,58 +57,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="session-parameters">
-<h1>Session parameters<a class="headerlink" href="#session-parameters" title="Permalink to this headline">¶</a></h1>
-<p>Commands to view and manipulate the <a class="reference internal" href="reference.html#session-parameters-intro"><em>session parameters</em></a>.</p>
-<p>Session parameters can be set to their default values with <a class="reference internal" href="#reset"><em>reset</em></a>.</p>
-<p>Session parameters can be stored in files for reuse with <a class="reference internal" href="#load"><em>load</em></a> and
-<a class="reference internal" href="#save"><em>save</em></a>. When these commands are issued without filenames, they
-default to using the <tt class="docutils literal"><span class="pre">.d1client.conf</span></tt> file, located in the user&#8217;s home
-directory.</p>
-<p>The full set of session parameters can be displayed with <a class="reference internal" href="ref_sci.html#get"><em>get</em></a> and
-individual parameters can be displayed with <a class="reference internal" href="ref_sci.html#get"><em>get &lt;pid&gt; &lt;file&gt;</em></a>.</p>
-<p>Most of the session parameters are modified with <a class="reference internal" href="#set"><em>set</em></a>. The session
-parameters also contain an access control list. The access control list is
-manipulated with a <a class="reference internal" href="ref_access_policy.html#access-policy"><em>separate set of commands</em></a>.</p>
-<p>An unset session parameter has its value displayed as None. A session parameter
-can either be a Boolean (True / False), numeric or string value. See <a class="reference internal" href="#set"><em>set</em></a> for more information on how to set session parameters.</p>
-<p>In the following commands, <tt class="docutils literal"><span class="pre">session</span> <span class="pre">parameter</span></tt> is a parameter name taken from
-the <tt class="docutils literal"><span class="pre">Name</span></tt> column in the <a class="reference internal" href="#id2"><em>overview of session parameters</em></a>.</p>
-<div class="section" id="reset">
-<span id="id1"></span><h2>reset<a class="headerlink" href="#reset" title="Permalink to this headline">¶</a></h2>
-<p>Set all session parameters to their default values, listed in the <tt class="docutils literal"><span class="pre">Default</span></tt>
-column in the <a class="reference internal" href="#id2"><em>overview of session parameters</em></a>.</p>
-</div>
-<div class="section" id="load-file">
-<span id="load"></span><h2>load [file]<a class="headerlink" href="#load-file" title="Permalink to this headline">¶</a></h2>
-<p>Load session parameters from file. If <tt class="docutils literal"><span class="pre">file</span></tt> is not provided, defaults to
-<tt class="docutils literal"><span class="pre">.d1client.conf</span></tt>, located in the user&#8217;s home directory.</p>
-</div>
-<div class="section" id="save-file">
-<span id="save"></span><h2>save [file]<a class="headerlink" href="#save-file" title="Permalink to this headline">¶</a></h2>
-<p>Save session parameters to file. If <tt class="docutils literal"><span class="pre">file</span></tt> is not provided, defaults to
-<tt class="docutils literal"><span class="pre">.d1client.conf</span></tt>, located in the user&#8217;s home directory.</p>
-</div>
-<div class="section" id="show-session-parameter">
-<h2>show [session parameter]<a class="headerlink" href="#show-session-parameter" title="Permalink to this headline">¶</a></h2>
-<p>Display the value of a session parameter. If <tt class="docutils literal"><span class="pre">session</span> <span class="pre">parameter</span></tt> is not
-provided, display all session parameters.</p>
-</div>
-<div class="section" id="set-session-parameter-value">
-<span id="set"></span><h2>set &lt;session parameter&gt; &lt;value&gt;<a class="headerlink" href="#set-session-parameter-value" title="Permalink to this headline">¶</a></h2>
-<p>Set the value of a session parameter.</p>
-</div>
-<div class="section" id="clear-session-parameter">
-<span id="clear"></span><h2>clear &lt;session parameter&gt;<a class="headerlink" href="#clear-session-parameter" title="Permalink to this headline">¶</a></h2>
-<p>Clear the value of a session parameter.</p>
-<div class="section" id="overview-of-session-parameters">
-<span id="id2"></span><h3>Overview of session parameters<a class="headerlink" href="#overview-of-session-parameters" title="Permalink to this headline">¶</a></h3>
+  <div class="section" id="overview-of-session-variables">
+<span id="session-variables"></span><h1>Overview of session variables<a class="headerlink" href="#overview-of-session-variables" title="Permalink to this headline">¶</a></h1>
 <table border="1" class="docutils">
 <colgroup>
-<col width="18%" />
-<col width="15%" />
+<col width="17%" />
+<col width="17%" />
 <col width="6%" />
-<col width="61%" />
+<col width="60%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -120,27 +76,45 @@ provided, display all session parameters.</p>
 <tbody valign="top">
 <tr class="row-even"><td colspan="4"><strong>CLI configuration</strong></td>
 </tr>
-<tr class="row-odd"><td><span class="target" id="pretty">pretty</span></td>
-<td>True</td>
-<td>Boolean</td>
-<td>Display XML with human friendly formatting</td>
-</tr>
-<tr class="row-even"><td><span class="target" id="verbose">verbose</span></td>
+<tr class="row-odd"><td><span class="target" id="verbose">verbose</span></td>
 <td>False</td>
 <td>Boolean</td>
 <td>Display more information</td>
 </tr>
-<tr class="row-odd"><td colspan="4"><strong>Node selection</strong></td>
-</tr>
-<tr class="row-even"><td><span class="target" id="dataone-url">dataone-url</span></td>
-<td>SYSTEM DEFAULT</td>
+<tr class="row-even"><td><span class="target" id="editor">editor</span></td>
+<td>nano</td>
 <td>String</td>
-<td>Node to which to connect for operations that access the DataONE Root <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a></td>
+<td>Editor to use when editing the queue</td>
+</tr>
+<tr class="row-odd"><td colspan="4"><strong>Target Nodes</strong></td>
+</tr>
+<tr class="row-even"><td><span class="target" id="cn-url">cn-url</span></td>
+<td><a class="reference external" href="https://cn.dataone.org/cn">https://cn.dataone.org/cn</a></td>
+<td>String</td>
+<td>Node to which to connect for operations that access a DataONE Root <a class="reference internal" href="glossary.html#term-cn"><em class="xref std std-term">CN</em></a></td>
 </tr>
 <tr class="row-odd"><td><span class="target" id="mn-url">mn-url</span></td>
 <td><a class="reference external" href="https://localhost/mn/">https://localhost/mn/</a></td>
 <td>String</td>
-<td>Node to connect to for operations that access a DataONE <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a></td>
+<td>Node to which to connect for operations that access a DataONE <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a></td>
+</tr>
+<tr class="row-even"><td colspan="4"><strong>Authentication</strong></td>
+</tr>
+<tr class="row-odd"><td><span class="target" id="anonymous">anonymous</span></td>
+<td>True</td>
+<td>Boolean</td>
+<td>Ignore any installed certificates and connect anonymously</td>
+</tr>
+<tr class="row-even"><td><span class="target" id="cert-file">cert-file</span></td>
+<td>None</td>
+<td>String</td>
+<td>Filesystem path to client certificate</td>
+</tr>
+<tr class="row-odd"><td><span class="target" id="key-file">key-file</span></td>
+<td>None</td>
+<td>String</td>
+<td>Filesystem path to the client certificate private key. Not required if the certificate
+provided with <tt class="docutils literal"><span class="pre">certpath</span></tt> contains both the public and private keys</td>
 </tr>
 <tr class="row-even"><td colspan="4"><strong>Slicing</strong></td>
 </tr>
@@ -150,76 +124,11 @@ provided, display all session parameters.</p>
 <td>First item to display for operations that display lists of items</td>
 </tr>
 <tr class="row-even"><td><span class="target" id="count">count</span></td>
-<td>SYSTEM DEFAULT</td>
+<td>1000</td>
 <td>Integer</td>
 <td>Maximum number of items to display for operations that display lists of items</td>
 </tr>
-<tr class="row-odd"><td colspan="4"><strong>Authentication</strong></td>
-</tr>
-<tr class="row-even"><td><span class="target" id="anonymous">anonymous</span></td>
-<td>True</td>
-<td>Boolean</td>
-<td>Ignore any installed certificates and connect anonymously</td>
-</tr>
-<tr class="row-odd"><td><span class="target" id="cert-path">cert-path</span></td>
-<td>None</td>
-<td>String</td>
-<td>Filesystem path to client certificate</td>
-</tr>
-<tr class="row-even"><td><span class="target" id="key-path">key-path</span></td>
-<td>None</td>
-<td>String</td>
-<td>Filesystem path to the client certificate private key. Not required if the certificate
-provided with <tt class="docutils literal"><span class="pre">certpath</span></tt> contains both the public and private keys</td>
-</tr>
-<tr class="row-odd"><td colspan="4"><strong>System Metadata</strong></td>
-</tr>
-<tr class="row-even"><td><span class="target" id="algorithm">algorithm</span></td>
-<td>SYSTEM DEFAULT</td>
-<td>String</td>
-<td>Checksum algorithm to use when calculating the checksum for a Science Data Object</td>
-</tr>
-<tr class="row-odd"><td><span class="target" id="authoritative-mn">authoritative-mn</span></td>
-<td>None</td>
-<td>String</td>
-<td>Authoritative Member Node to use when generating System Metadata</td>
-</tr>
-<tr class="row-even"><td><span class="target" id="origin-mn">origin-mn</span></td>
-<td>None</td>
-<td>String</td>
-<td>Originating Member Node to use when generating System Metadata</td>
-</tr>
-<tr class="row-odd"><td><span class="target" id="format-id">format-id</span></td>
-<td>None</td>
-<td>String</td>
-<td>ID for the Object Format to use when generating System Metadata</td>
-</tr>
-<tr class="row-even"><td><span class="target" id="rights-holder">rights-holder</span></td>
-<td>None</td>
-<td>String</td>
-<td>Subject of the rights holder to use when generating System Metadata</td>
-</tr>
-<tr class="row-odd"><td><span class="target" id="submitter">submitter</span></td>
-<td>None</td>
-<td>String</td>
-<td>Subject of the submitter to use when generating System Metadata</td>
-</tr>
-<tr class="row-even"><td colspan="4"><strong>Search</strong></td>
-</tr>
-<tr class="row-odd"><td><span class="target" id="from-date">from-date</span></td>
-<td>None</td>
-<td>String</td>
-<td>Start time used by operations that accept a time range</td>
-</tr>
-<tr class="row-even"><td><span class="target" id="to-date">to-date</span></td>
-<td>None</td>
-<td>String</td>
-<td>End time used by operations that accept a time range</td>
-</tr>
-<tr class="row-odd"><td><span class="target" id="search-format-id">search-format-id</span></td>
-<td>None</td>
-<td>String</td>
-<td>Include only objects of this format</td>
+<tr class="row-odd"><td colspan="4"><strong>Searching</strong></td>
 </tr>
 <tr class="row-even"><td><span class="target" id="query">query</span></td>
 <td><cite>*:*</cite></td>
@@ -231,18 +140,67 @@ provided with <tt class="docutils literal"><span class="pre">certpath</span></tt
 <td>String</td>
 <td>Select search engine (currently, only SOLR is available)</td>
 </tr>
-<tr class="row-even"><td colspan="4"><strong>Access Policy</strong></td>
+<tr class="row-even"><td><span class="target" id="from-date">from-date</span></td>
+<td>None</td>
+<td>String</td>
+<td>Start time used by operations that accept a time range</td>
 </tr>
-<tr class="row-odd"><td colspan="4">Parameters managed by a <a class="reference internal" href="ref_access_policy.html#access-policy"><em>separate set of commands</em></a>.</td>
+<tr class="row-odd"><td><span class="target" id="to-date">to-date</span></td>
+<td>None</td>
+<td>String</td>
+<td>End time used by operations that accept a time range</td>
 </tr>
-<tr class="row-even"><td colspan="4"><strong>Replication Policy</strong></td>
+<tr class="row-even"><td><span class="target" id="search-format-id">search-format-id</span></td>
+<td>None</td>
+<td>String</td>
+<td>Include only objects of this format</td>
 </tr>
-<tr class="row-odd"><td colspan="4">Parameters managed by a <a class="reference internal" href="ref_replication_policy.html#replication-policy"><em>separate set of commands</em></a>.</td>
+<tr class="row-odd"><td colspan="4"><strong>Parameters | Misc</strong></td>
+</tr>
+<tr class="row-even"><td><span class="target" id="algorithm">algorithm</span></td>
+<td>SHA-1</td>
+<td>String</td>
+<td>Checksum algorithm to use when calculating the checksum for a Science Data Object</td>
+</tr>
+<tr class="row-odd"><td><span class="target" id="format-id">format-id</span></td>
+<td>None</td>
+<td>String</td>
+<td>ID for the Object Format to use when generating System Metadata</td>
+</tr>
+<tr class="row-even"><td colspan="4"><strong>Parameters | Reference Nodes</strong></td>
+</tr>
+<tr class="row-odd"><td><span class="target" id="authoritative-mn">authoritative-mn</span></td>
+<td>None</td>
+<td>String</td>
+<td>Authoritative Member Node to use when generating System Metadata</td>
+</tr>
+<tr class="row-even"><td><span class="target" id="origin-mn">origin-mn</span></td>
+<td>None</td>
+<td>String</td>
+<td>Originating Member Node to use when generating System Metadata</td>
+</tr>
+<tr class="row-odd"><td colspan="4"><strong>Parameters | Subjects</strong></td>
+</tr>
+<tr class="row-even"><td><span class="target" id="rights-holder">rights-holder</span></td>
+<td>None</td>
+<td>String</td>
+<td>Subject of the rights holder to use when generating System Metadata</td>
+</tr>
+<tr class="row-odd"><td><span class="target" id="submitter">submitter</span></td>
+<td>None</td>
+<td>String</td>
+<td>Subject of the submitter to use when generating System Metadata</td>
+</tr>
+<tr class="row-even"><td colspan="4"><strong>Access Control</strong></td>
+</tr>
+<tr class="row-odd"><td colspan="4">Access Control Policy parameters managed by a <em class="xref std std-ref">separate set of commands</em>.</td>
+</tr>
+<tr class="row-even"><td colspan="4"><strong>Replication</strong></td>
+</tr>
+<tr class="row-odd"><td colspan="4">Replication Policy parameters managed by a <a class="reference internal" href="ref_commands.html#replication-policy"><em>separate set of commands</em></a>.</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
 </div>
 
 
@@ -253,28 +211,12 @@ provided with <tt class="docutils literal"><span class="pre">certpath</span></tt
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Session parameters</a><ul>
-<li><a class="reference internal" href="#reset">reset</a></li>
-<li><a class="reference internal" href="#load-file">load [file]</a></li>
-<li><a class="reference internal" href="#save-file">save [file]</a></li>
-<li><a class="reference internal" href="#show-session-parameter">show [session parameter]</a></li>
-<li><a class="reference internal" href="#set-session-parameter-value">set &lt;session parameter&gt; &lt;value&gt;</a></li>
-<li><a class="reference internal" href="#clear-session-parameter">clear &lt;session parameter&gt;</a><ul>
-<li><a class="reference internal" href="#overview-of-session-parameters">Overview of session parameters</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3>Related Topics</h3>
+            </a></p><h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="reference.html">Reference</a><ul>
-      <li>Previous: <a href="ref_cli.html" title="previous chapter">CLI</a></li>
-      <li>Next: <a href="ref_access_policy.html" title="next chapter">Access Policy</a></li>
+      <li>Previous: <a href="ref_commands.html" title="previous chapter">Commands</a></li>
+      <li>Next: <a href="implementation.html" title="next chapter">Implementation</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -297,11 +239,18 @@ provided with <tt class="docutils literal"><span class="pre">certpath</span></tt
     </div>
 
     <div class="footer">
-      &copy; Copyright <a href="http:/www.dataone.org">2009-2012, DataONE</a>.
+      &copy; Copyright <a href="http://www.dataone.org">2009-2012, DataONE</a>.
         [ <a href="_sources/ref_session.txt"
                rel="nofollow">Page Source</a> | 
           <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/ref_session.txt'
-            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;<br />
+      <div id="acknowledgement" style="text-align:center">
+        <p>This material is based upon work supported by the National Science Foundation 
+          under <a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=0830944">Grant Number 083094</a>.</p>
+        <p>Any opinions, findings, and conclusions or recommendations expressed in this 
+           material are those of the author(s) and do not necessarily reflect the views 
+           of the National Science Foundation.</p>
+      </div>
     </div>
     <!--
     <hr />

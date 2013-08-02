@@ -26,8 +26,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Reference" href="reference.html" />
-    <link rel="next" title="Glossary" href="glossary.html" />
+    <link rel="up" title="Commands" href="ref_commands.html" />
+    <link rel="next" title="Implementation" href="implementation.html" />
     <link rel="prev" title="Science Object Operations" href="ref_sci.html" />
    
   
@@ -42,13 +42,14 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="glossary.html" title="Glossary"
+          <a href="implementation.html" title="Implementation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ref_sci.html" title="Science Object Operations"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="reference.html" accesskey="U">Reference</a> &raquo;</li> 
+          <li><a href="reference.html" >Reference</a> &raquo;</li>
+          <li><a href="ref_commands.html" accesskey="U">Commands</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,8 +60,9 @@
             
   <div class="section" id="package">
 <h1>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h1>
-<p>A collection of information is represented by an <a class="reference internal" href="glossary.html#term-oai-ore"><em class="xref std std-term">OAI-ORE</em></a> document.  The &#8220;package&#8221; commands create and modify ORE/XML documents.</p>
-<p>For example, assume that there is a science metadata document (<tt class="docutils literal"><span class="pre">gce.294.17.xml</span></tt>) and three data files (<tt class="docutils literal"><span class="pre">test1.csv</span></tt>, <tt class="docutils literal"><span class="pre">test2.csv</span></tt>, <tt class="docutils literal"><span class="pre">test3.csv</span></tt>).  The below commands would create an data package in DataONE.</p>
+<p>For example, assume that there is a science metadata document
+(<tt class="docutils literal"><span class="pre">gce.294.17.xml</span></tt>) and three data files (<tt class="docutils literal"><span class="pre">test1.csv</span></tt>, <tt class="docutils literal"><span class="pre">test2.csv</span></tt>,
+<tt class="docutils literal"><span class="pre">test3.csv</span></tt>). The below commands would create an data package in DataONE.</p>
 <div class="highlight-html"><div class="highlight"><pre>DataONE Command Line Interface
 &gt; package new knb-lter-gce.294.17-PKG
 &gt; set format-id=eml://ecoinformatics.org/eml-2.1.0
@@ -149,8 +151,10 @@
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="reference.html">Reference</a><ul>
+  <li><a href="ref_commands.html">Commands</a><ul>
       <li>Previous: <a href="ref_sci.html" title="previous chapter">Science Object Operations</a></li>
-      <li>Next: <a href="glossary.html" title="next chapter">Glossary</a></li>
+      <li>Next: <a href="implementation.html" title="next chapter">Implementation</a></li>
+  </ul></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -173,11 +177,18 @@
     </div>
 
     <div class="footer">
-      &copy; Copyright <a href="http:/www.dataone.org">2009-2012, DataONE</a>.
+      &copy; Copyright <a href="http://www.dataone.org">2009-2012, DataONE</a>.
         [ <a href="_sources/ref_package.txt"
                rel="nofollow">Page Source</a> | 
           <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/ref_package.txt'
-            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;<br />
+      <div id="acknowledgement" style="text-align:center">
+        <p>This material is based upon work supported by the National Science Foundation 
+          under <a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=0830944">Grant Number 083094</a>.</p>
+        <p>Any opinions, findings, and conclusions or recommendations expressed in this 
+           material are those of the author(s) and do not necessarily reflect the views 
+           of the National Science Foundation.</p>
+      </div>
     </div>
     <!--
     <hr />

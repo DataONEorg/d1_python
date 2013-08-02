@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; v1.0.0</title>
+    <title>Overview of operation &mdash; v1.0.0</title>
     
     <link rel="stylesheet" href="_static/dataone.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,9 +26,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Commands" href="ref_commands.html" />
-    <link rel="next" title="Authentication" href="ref_auth.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="ref_access_policy.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Installing the DataONE CLI" href="install.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_dataone.css" type= "text/css" rel="stylesheet" />
@@ -42,14 +41,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="ref_auth.html" title="Authentication"
+          <a href="examples.html" title="Examples"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ref_access_policy.html" title="&lt;no title&gt;"
+          <a href="install.html" title="Installing the DataONE CLI"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="reference.html" >Reference</a> &raquo;</li>
-          <li><a href="ref_commands.html" accesskey="U">Commands</a> &raquo;</li> 
+        <li><a href="index.html"></a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,7 +55,43 @@
         <div class="bodywrapper">
           <div class="body">
             
-  
+  <div class="section" id="overview-of-operation">
+<h1>Overview of operation<a class="headerlink" href="#overview-of-operation" title="Permalink to this headline">¶</a></h1>
+<p>The DataONE Command Line Interface enables basic interactions with the DataONE
+infrastructure via the command line.</p>
+<div class="section" id="session">
+<span id="id1"></span><h2>Session<a class="headerlink" href="#session" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="read-vs-write-operations">
+<span id="read-write-operations"></span><h2>Read vs. write operations<a class="headerlink" href="#read-vs-write-operations" title="Permalink to this headline">¶</a></h2>
+<p>The commands that cause operations to be issued against Coordinating Nodes and
+Member Nodes are divided into two broad categories; read commands and write
+commands. These two categories are handled differently by the CLI. Read
+operations are issued immediately and their results displayed on screen or saved
+to a file. Write operations, however, are added to a queue, called the write
+operation queue, to be issued later.</p>
+</div>
+<div class="section" id="write-operation-queue">
+<h2>Write operation queue<a class="headerlink" href="#write-operation-queue" title="Permalink to this headline">¶</a></h2>
+<p>The DataONE infrastructure does not allow science objects to be modified or
+deleted once created. Objects can be updated, but the original object stays in
+the system forever. The write operation queue allows operations to be viewed and
+edited, thus adding a buffer where mistakes, such as typos, can be caught
+before the permanent operations are issued.</p>
+<p>Like read commands, write commands use session variables. Each time an
+operation is added to the write operation queue, the relevant session variables
+are used for creating parameters for the operation. When an operation is later
+issued, it uses the parameters stored in the operation, not the current session
+variables.</p>
+<p>When the commands have been verified, the queue is issued with a single command,
+after which each of the operations in the queue are automatically performed in
+sequence. If any operation fails, the process is stopped. The failed operation
+and all subsequent operations remain in the queue and can be manipulated before
+the queue is issued again. The sucessfully performed operations cannot be
+undone.</p>
+</div>
+</div>
+
 
           </div>
         </div>
@@ -67,15 +100,21 @@
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/dataone_logo.png" alt="Logo"/>
-            </a></p><h3>Related Topics</h3>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Overview of operation</a><ul>
+<li><a class="reference internal" href="#session">Session</a></li>
+<li><a class="reference internal" href="#read-vs-write-operations">Read vs. write operations</a></li>
+<li><a class="reference internal" href="#write-operation-queue">Write operation queue</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
-  <li><a href="reference.html">Reference</a><ul>
-  <li><a href="ref_commands.html">Commands</a><ul>
-      <li>Previous: <a href="ref_access_policy.html" title="previous chapter">&lt;no title&gt;</a></li>
-      <li>Next: <a href="ref_auth.html" title="next chapter">Authentication</a></li>
-  </ul></li>
-  </ul></li>
+      <li>Previous: <a href="install.html" title="previous chapter">Installing the DataONE CLI</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
   </ul></li>
 </ul>
 <div id="searchbox" style="display: none">
@@ -98,9 +137,9 @@
 
     <div class="footer">
       &copy; Copyright <a href="http://www.dataone.org">2009-2012, DataONE</a>.
-        [ <a href="_sources/ref_replication_policy.txt"
+        [ <a href="_sources/operation.txt"
                rel="nofollow">Page Source</a> | 
-          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/ref_replication_policy.txt'
+          <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/operation.txt'
             rel="nofollow">Revision History</a> ]&nbsp;&nbsp;<br />
       <div id="acknowledgement" style="text-align:center">
         <p>This material is based upon work supported by the National Science Foundation 

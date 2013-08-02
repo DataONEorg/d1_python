@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="top" title="v1.0.0" href="index.html" />
-    <link rel="up" title="Reference" href="reference.html" />
+    <link rel="up" title="Commands" href="ref_commands.html" />
     <link rel="next" title="Searching" href="ref_search.html" />
     <link rel="prev" title="Replication Policy" href="ref_replication_policy.html" />
    
@@ -48,7 +48,8 @@
           <a href="ref_replication_policy.html" title="Replication Policy"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html"></a> &raquo;</li>
-          <li><a href="reference.html" accesskey="U">Reference</a> &raquo;</li> 
+          <li><a href="reference.html" >Reference</a> &raquo;</li>
+          <li><a href="ref_commands.html" accesskey="U">Commands</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -74,20 +75,20 @@ user to act as a specific subject within a Node.</p>
 download process stores the certificate in a standard location. The CLI can
 automatically find certificates in this location. In some cases, certificates
 may be stored in custom locations. In such cases, the automatic location of
-certificates can be bypassed by setting the <a class="reference internal" href="ref_session.html#cert-path"><em>cert-path</em></a> session
-parameter to the filesystem path of the certificate. Because CILogon provides a
+certificates can be bypassed by setting the <a class="reference internal" href="ref_session.html#cert-file"><em>cert-file</em></a> session
+variable to the filesystem path of the certificate. Because CILogon provides a
 certificate that holds both the public and private keys in the same file, only
-<a class="reference internal" href="ref_session.html#cert-path"><em>cert-path</em></a> is required and <a class="reference internal" href="ref_session.html#key-path"><em>key-path</em></a> should be
+<a class="reference internal" href="ref_session.html#cert-file"><em>cert-file</em></a> is required and <a class="reference internal" href="ref_session.html#key-file"><em>key-file</em></a> should be
 set to None. If the certificate was obtained in some other way, and the
-certificate&#8217;s private key is stored in a separate file, the <a class="reference internal" href="ref_session.html#key-path"><em>key-path</em></a> session parameter must be set to the filesystem path of the private
+certificate&#8217;s private key is stored in a separate file, the <a class="reference internal" href="ref_session.html#key-file"><em>key-file</em></a> session variable must be set to the filesystem path of the private
 key.</p>
 <p>When a user types a command that requires the CLI to connect to a Node, the CLI
 starts by examining the value of the the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session
-parameter. If the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session parameter is <strong>True</strong>,
+variable. If the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session variable is <strong>True</strong>,
 the CLI ignores any available certificate and connects to the DataONE Node
 without providing a certificate. This causes the Node to allow access only to
 publicly available operations and data.</p>
-<p>If the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session parameter is <strong>False</strong>, the CLI
+<p>If the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session variable is <strong>False</strong>, the CLI
 attempts to locate the user&#8217;s certificate as described above. If a certificate
 is not found, the operation is aborted. If a certificate is found, the CLI
 passes the certificate to the Node when establishing the connection. The Node
@@ -109,8 +110,10 @@ CLI proceeds with the operation.</p>
 <ul>
   <li><a href="index.html">Documentation Overview</a><ul>
   <li><a href="reference.html">Reference</a><ul>
+  <li><a href="ref_commands.html">Commands</a><ul>
       <li>Previous: <a href="ref_replication_policy.html" title="previous chapter">Replication Policy</a></li>
       <li>Next: <a href="ref_search.html" title="next chapter">Searching</a></li>
+  </ul></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -133,11 +136,18 @@ CLI proceeds with the operation.</p>
     </div>
 
     <div class="footer">
-      &copy; Copyright <a href="http:/www.dataone.org">2009-2012, DataONE</a>.
+      &copy; Copyright <a href="http://www.dataone.org">2009-2012, DataONE</a>.
         [ <a href="_sources/ref_auth.txt"
                rel="nofollow">Page Source</a> | 
           <a href='https://redmine.dataone.org/projects/d1/repository/changes/documents/Projects/cicore/architecture/api-documentation/source/ref_auth.txt'
-            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;
+            rel="nofollow">Revision History</a> ]&nbsp;&nbsp;<br />
+      <div id="acknowledgement" style="text-align:center">
+        <p>This material is based upon work supported by the National Science Foundation 
+          under <a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=0830944">Grant Number 083094</a>.</p>
+        <p>Any opinions, findings, and conclusions or recommendations expressed in this 
+           material are those of the author(s) and do not necessarily reflect the views 
+           of the National Science Foundation.</p>
+      </div>
     </div>
     <!--
     <hr />
