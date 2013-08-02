@@ -130,6 +130,45 @@ replication targets.</p>
 Object, DataONE will adjust the number of existing replicas by creating and
 deleting replicas of that object as needed.</p>
 </div>
+<div class="section" id="authentication">
+<span id="id5"></span><h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
+<p>A user that accesses a <a class="reference internal" href="glossary.html#term-node"><em class="xref std std-term">Node</em></a> may connect either anonymously or as an
+authenticated subject. The Node to which the user connects will allow access to
+operations, Science Objects and other data based on the permissions that have
+been granted to the subject for which the user has authenticated.</p>
+<p>A user that connects anonymously is granted access only to publicly available
+operations and data. Access is typically denied for operations that create or
+modify data, such as the <a class="reference internal" href="ref_commands.html#create"><em>create</em></a> operation.</p>
+<p>When the CLI connects to a Node on a user&#8217;s behalf, it passes authentication
+information for that user via a <a class="reference internal" href="glossary.html#term-certificate"><em class="xref std std-term">certificate</em></a>. The certificate enables the
+user to act as a specific subject within a Node.</p>
+<p>The user obtains a certificate for the subject with which to access a Node from
+<a class="reference internal" href="glossary.html#term-cilogon"><em class="xref std std-term">CILogon</em></a>. When the user downloads a certificate from CILogon, the CILogon
+download process stores the certificate in a standard location. The CLI can
+automatically find certificates in this location. In some cases, certificates
+may be stored in custom locations. In such cases, the automatic location of
+certificates can be bypassed by setting the <em class="xref std std-ref">cert-path</em> session
+parameter to the filesystem path of the certificate. Because CILogon provides a
+certificate that holds both the public and private keys in the same file, only
+<em class="xref std std-ref">cert-path</em> is required and <em class="xref std std-ref">key-path</em> should
+be set to None. If the certificate was obtained in some other way, and the
+certificate&#8217;s private key is stored in a separate file, the <em class="xref std std-ref">key-path</em> session parameter must be set to the filesystem path of the private
+key.</p>
+<p>When a user types a command that requires the CLI to connect to a Node, the CLI
+starts by examining the value of the the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session
+parameter. If the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session parameter is <strong>True</strong>,
+the CLI ignores any available certificate and connects to the DataONE Node
+without providing a certificate. This causes the Node to allow access only to
+publicly available operations and data.</p>
+<p>If the <a class="reference internal" href="ref_session.html#anonymous"><em>anonymous</em></a> session parameter is <strong>False</strong>, the CLI
+attempts to locate the user&#8217;s certificate as described above. If a certificate
+is not found, the operation is aborted. If a certificate is found, the CLI
+passes the certificate to the Node when establishing the connection. The Node
+validates the certificate and may reject it, causing the operation to be
+aborted. If the certificate is successfully validated, the Node grants access to
+the user, authenticated as the subject designated in the certificate, and the
+CLI proceeds with the operation.</p>
+</div>
 </div>
 
 
@@ -149,6 +188,7 @@ deleting replicas of that object as needed.</p>
 <li><a class="reference internal" href="#write-operation-queue">Write operation queue</a></li>
 <li><a class="reference internal" href="#access-policy">Access Policy</a></li>
 <li><a class="reference internal" href="#replication-policy">Replication Policy</a></li>
+<li><a class="reference internal" href="#authentication">Authentication</a></li>
 </ul>
 </li>
 </ul>
