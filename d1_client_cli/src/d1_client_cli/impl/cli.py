@@ -104,16 +104,72 @@ class CLI(cmd.Cmd):
       self.onecmd(command)
 
   #-----------------------------------------------------------------------------
-  # Session Parameters
+  # CLI
   #-----------------------------------------------------------------------------
 
-  def do_reset(self, line):
-    '''reset
-    Set all session variables to their default values
+  def do_help(self, line):
+    '''Get help on commands
+    "help" or "?" with no arguments displays a list_objects of commands for which help is available
+    "help <command>" or "? <command>" gives help on <command>
+    '''
+    command, = self._split_args(line, 0, 1)
+    if command is None:
+      return self._print_help()
+    cmd.Cmd.do_help(self, line)
+
+  def do_history(self, line):
+    '''history
+    Display a list of commands that have been entered
     '''
     self._split_args(line, 0, 0)
-    self._command_processor.get_session().reset()
-    self._print_info_if_verbose('Successfully reset session variables')
+    for idx, item in enumerate(self._history):
+      cli_util.print_info(u'{0: 3d} {1}'.format(idx, item))
+
+  def do_exit(self, line):
+    '''exit
+    Exit from the CLI
+    '''
+    n_remaining_operations = len(self._command_processor.get_operation_queue())
+    if n_remaining_operations:
+      cli_util.print_warn(
+        '''There are {0} unperformed operations in the write operation queue. These will
+be lost if you exit.'''.format(n_remaining_operations)
+      )
+      if not cli_util.confirm('Exit?', default='yes'):
+        return
+    sys.exit()
+
+  def do_quit(self, line):
+    '''quit
+    Exit from the CLI
+    '''
+    self.do_exit(line)
+
+  def do_EOF(self, line):
+    '''Exit on system EOF character'''
+    cli_util.print_info('')
+    self.do_exit(line)
+
+  #-----------------------------------------------------------------------------
+  # Session, General
+  #-----------------------------------------------------------------------------
+
+  def do_set(self, line):
+    '''set [parameter [value]]
+    set (without parameters): Display the value of all session variables.
+    set <session variable>: Display the value of a single session variable.
+    set <session variable> <value>: Set the value of a session variable.
+    '''
+    session_parameter, value = self._split_args(line, 0, 2)
+    if value is None:
+      self._command_processor.get_session().print_variable(session_parameter)
+    else:
+      self._command_processor.get_session().set_with_conversion(session_parameter, value)
+      self._print_info_if_verbose(
+        'Set session variable {0} to "{1}"'.format(
+          session_parameter, value
+        )
+      )
 
   def do_load(self, line):
     '''load [file]
@@ -139,24 +195,17 @@ class CLI(cmd.Cmd):
       config_file = self._command_processor.get_session().get_default_pickle_file_path()
     self._print_info_if_verbose('Saved session to file: {0}'.format(config_file))
 
-  def do_set(self, line):
-    '''set [parameter [value]]
-    set (without parameters): Display the value of all session variables.
-    set <session variable>: Display the value of a single session variable.
-    set <session variable> <value>: Set the value of a session variable.
+  def do_reset(self, line):
+    '''reset
+    Set all session variables to their default values
     '''
-    session_parameter, value = self._split_args(line, 0, 2)
-    if value is None:
-      self._command_processor.get_session().print_variable(session_parameter)
-    else:
-      self._command_processor.get_session().set_with_conversion(session_parameter, value)
-      self._print_info_if_verbose(
-        'Set session variable {0} to "{1}"'.format(
-          session_parameter, value
-        )
-      )
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().reset()
+    self._print_info_if_verbose('Successfully reset session variables')
 
-  # Access control
+  #-----------------------------------------------------------------------------
+  # Session, Access Control
+  #-----------------------------------------------------------------------------
 
   def do_allowaccess(self, line):
     '''allowaccess <subject> [access-level]
@@ -195,20 +244,43 @@ class CLI(cmd.Cmd):
   def do_clearaccess(self, line):
     '''clearaccess
     Remove all subjects from access policy
+    Only the submitter will have access to the object.
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_session().get_access_control().clear()
     self._print_info_if_verbose('Removed all subjects from access policy')
 
-  # Replication policy
+  #-----------------------------------------------------------------------------
+  # Session, Replication Policy
+  #-----------------------------------------------------------------------------
 
-  def do_clearrep(self, line):
-    '''clearrep
-    Clear replication policy
+  def do_allowrep(self, line):
+    '''allowrep
+    Allow new objects to be replicated
     '''
     self._split_args(line, 0, 0)
-    self._command_processor.get_session().get_replication_policy().clear()
-    self._print_info_if_verbose('Cleared the replication policy')
+    self._command_processor.get_session().get_replication_policy(
+    ).set_replication_allowed(
+      True
+    )
+    self._print_info_if_verbose('Set replication policy to allow replication')
+
+  def do_denyrep(self, line):
+    '''denyrep
+    Prevent new objects from being replicated
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_session().get_replication_policy(
+    ).set_replication_allowed(
+      False
+    )
+    self._print_info_if_verbose(
+      'Set replication policy to deny replication'.format(
+        ', '.join(
+          mns
+        )
+      )
+    )
 
   def do_preferrep(self, line):
     '''preferrep <member node> [member node ...]
@@ -252,37 +324,10 @@ class CLI(cmd.Cmd):
       )
     )
 
-  def do_allowrep(self, line):
-    '''allowrep
-    Allow new objects to be replicated
-    '''
-    self._split_args(line, 0, 0)
-    self._command_processor.get_session().get_replication_policy(
-    ).set_replication_allowed(
-      True
-    )
-    self._print_info_if_verbose('Set replication policy to allow replication')
-
-  def do_denyrep(self, line):
-    '''denyrep
-    Prevent new objects from being replicated
-    '''
-    self._split_args(line, 0, 0)
-    self._command_processor.get_session().get_replication_policy(
-    ).set_replication_allowed(
-      False
-    )
-    self._print_info_if_verbose(
-      'Set replication policy to deny replication'.format(
-        ', '.join(
-          mns
-        )
-      )
-    )
-
   def do_numberrep(self, line):
     '''numberrep <number of replicas>
     Set preferred number of replicas for new objects
+    If the preferred number of replicas is set to zero, replication is also disallowed.
     '''
     n_replicas = self._split_args(line, 1, 0)[0]
     self._command_processor.get_session().get_replication_policy().set_number_of_replicas(
@@ -290,63 +335,26 @@ class CLI(cmd.Cmd):
     )
     self._print_info_if_verbose('Set number of replicas to {0}'.format(n_replicas))
 
-  #-----------------------------------------------------------------------------
-  # Operations against Coordinating Nodes
-  #-----------------------------------------------------------------------------
+  def do_clearrep(self, line):
+    '''clearrep
+    Set the replication policy to default
 
-  def do_ping(self, line):
-    '''ping [base-url ...]
-    Check if a server responds to the DataONE ping() API method
-    ping (no arguments): Ping the CN and MN that is specified in the session
-    ping <base-url> [base-url ...]: Ping each CN or MN
-
-    If an incomplete base-url is provided, default CN and MN base URLs at the
-    given url are pinged.
-    '''
-    hosts = self._split_args(line, 0, 99, pad=False)
-    self._command_processor.ping(hosts)
-
-  def do_search(self, line):
-    '''search [query]
-    Comprehensive search for Science Data Objects across all available MNs.  See:
-      http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html
-    for the available search terms.
-    '''
-    queryArgs = self._split_args(line, 0, -1)
-    query = u' '.join(filter(None, queryArgs))
-    self._command_processor.search(query)
-
-  def do_listformats(self, line):
-    '''listformats
-    Display all known Object Format IDs
+    The default replication policy has no preferred or blocked member nodes, allows
+    replication and sets the preferred number of replicas to 3.
     '''
     self._split_args(line, 0, 0)
-    self._command_processor.list_format_ids()
-
-  def do_listnodes(self, line):
-    '''listnodes
-    Display all known DataONE Nodes
-    '''
-    self._split_args(line, 0, 0)
-    self._command_processor.list_nodes()
-
-  def do_resolve(self, line):
-    '''resolve <identifier>
-    Given the PID for a Science Object, find all locations from which the
-    Science Object can be downloaded
-    '''
-    pid, = self._split_args(line, 1, 0)
-    self._command_processor.resolve(pid)
+    self._command_processor.get_session().get_replication_policy().clear()
+    self._print_info_if_verbose('Cleared the replication policy')
 
   #-----------------------------------------------------------------------------
-  # Operations against Member Nodes
+  # Read Operations
   #-----------------------------------------------------------------------------
-
-  # Read operations.
 
   def do_get(self, line):
     '''get <identifier> <file>
     Get an object from a Member Node
+
+    The object is saved to <file>.
     '''
     pid, output_file = self._split_args(line, 2, 0)
     self._command_processor.science_object_get(pid, output_file)
@@ -354,8 +362,11 @@ class CLI(cmd.Cmd):
 
   def do_meta(self, line):
     '''meta <identifier> [file]
-    Get System Metadata from Coordinating Node or Member Node
+    Get the System Metadata that is associated with a Science Object
+
     If the metadata is not on the Coordinating Node, the Member Node is checked.
+
+    Provide ``file`` to save the System Metada to disk instead of displaying it.
     '''
     pid, output_file = self._split_args(line, 1, 1)
     self._command_processor.system_metadata_get(pid, output_file)
@@ -365,6 +376,19 @@ class CLI(cmd.Cmd):
           pid, output_file
         )
       )
+
+  def do_list(self, line):
+    '''list [path]
+    Retrieve a list of available Science Data Objects from Member Node
+    The response is filtered by the from-date, to-date, search, start and count
+    session variables.
+
+    See also: search
+    '''
+    path = self._split_args(line, 0, 1, pad=False)
+    if len(path):
+      path = path[0]
+    self._command_processor.list_objects(path)
 
   def do_log(self, line):
     '''log [path]
@@ -377,22 +401,23 @@ class CLI(cmd.Cmd):
       path = path[0]
     self._command_processor.log(path)
 
-  def do_list(self, line):
-    '''list [path]
-    Retrieve a list of available Science Data Objects from Member Node
-    The response is filtered by the from-date, to-date, search, start and count
-    session variables.
+  def do_resolve(self, line):
+    '''resolve <identifier>
+    Find all locations from which the given Science Object can be downloaded
     '''
-    path = self._split_args(line, 0, 1, pad=False)
-    if len(path):
-      path = path[0]
-    self._command_processor.list_objects(path)
+    pid, = self._split_args(line, 1, 0)
+    self._command_processor.resolve(pid)
 
-  # Write operations (queued)
+  #-----------------------------------------------------------------------------
+  # Write Operations
+  #-----------------------------------------------------------------------------
 
   def do_create(self, line):
     '''create <identifier> <file>
     Create a new Science Object on a Member Node
+
+    The System Metadata that becomes associated with the new Science Object is
+    generated from the session variables.
     '''
     pid, input_file = self._split_args(line, 2, 0)
     complex_path = cli_util.create_complex_path(input_file)
@@ -407,7 +432,7 @@ class CLI(cmd.Cmd):
 
   def do_update(self, line):
     '''update <old-pid> <new-pid> <file>
-    Update an existing Science Object on a Member Node
+    Replace an existing Science Object in a :term:`MN` with another
     '''
     curr_pid, pid_new, input_file = self._split_args(line, 3, 0)
     self._command_processor.science_object_update(curr_pid, input_file, pid_new)
@@ -418,7 +443,7 @@ class CLI(cmd.Cmd):
     )
 
   def do_package(self, line):
-    '''package <package-pid> <science-metadata-pid> <science-pid> [science-pid]...
+    '''package <package-pid> <science-metadata-pid> <science-pid> [science-pid ...]
     Create a simple OAI-ORE Resource Map on a Member Node
     '''
     pids = self._split_args(line, 3, -1, pad=False)
@@ -459,7 +484,7 @@ class CLI(cmd.Cmd):
 
   def do_updatereplication(self, line):
     '''updatereplication <identifier> [identifier ...]
-    Update the Replication Policy on one or more existing Science Data Object
+    Update the Replication Policy on one or more existing Science Data Objects
     '''
     pids = self._split_args(line, 1, -1)
     self._command_processor.update_replication_policy(pids)
@@ -472,7 +497,48 @@ class CLI(cmd.Cmd):
     )
 
   #-----------------------------------------------------------------------------
-  # Operation Queue Commands
+  # Utilities
+  #-----------------------------------------------------------------------------
+
+  def do_listformats(self, line):
+    '''listformats
+    Display all known Object Format IDs
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.list_format_ids()
+
+  def do_listnodes(self, line):
+    '''listnodes
+    Display all known DataONE Nodes
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.list_nodes()
+
+  def do_search(self, line):
+    '''search [query]
+    Comprehensive search for Science Data Objects across all available MNs
+
+    See http://mule1.dataone.org/ArchitectureDocs-current/design/SearchMetadata.html
+    for the available search terms.
+    '''
+    args = self._split_args(line, 0, -1)
+    query = u' '.join(filter(None, args))
+    self._command_processor.search(query)
+
+  def do_ping(self, line):
+    '''ping [base-url ...]
+    Check if a server responds to the DataONE ping() API method
+    ping (no arguments): Ping the CN and MN that is specified in the session
+    ping <base-url> [base-url ...]: Ping each CN or MN
+
+    If an incomplete base-url is provided, default CN and MN base URLs at the
+    given url are pinged.
+    '''
+    hosts = self._split_args(line, 0, 99, pad=False)
+    self._command_processor.ping(hosts)
+
+  #-----------------------------------------------------------------------------
+  # Write Operation Queue
   #-----------------------------------------------------------------------------
 
   def do_queue(self, line):
@@ -481,14 +547,6 @@ class CLI(cmd.Cmd):
     '''
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().display()
-
-  def do_edit(self, line):
-    '''edit
-    Edit the queue of write operations
-    '''
-    self._split_args(line, 0, 0)
-    self._command_processor.get_operation_queue().edit()
-    self._print_info_if_verbose('The write operation queue was successfully edited')
 
   def do_run(self, line):
     '''run
@@ -500,6 +558,14 @@ class CLI(cmd.Cmd):
       'All operations in the write queue were successfully issued'
     )
 
+  def do_edit(self, line):
+    '''edit
+    Edit the queue of write operations
+    '''
+    self._split_args(line, 0, 0)
+    self._command_processor.get_operation_queue().edit()
+    self._print_info_if_verbose('The write operation queue was successfully edited')
+
   def do_clearqueue(self, line):
     '''clearqueue
     Remove the operations in the queue of write operations without performing them
@@ -507,53 +573,6 @@ class CLI(cmd.Cmd):
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().clear()
     self._print_info_if_verbose('All operations in the write queue were cleared')
-
-  #-----------------------------------------------------------------------------
-  # CLI
-  #-----------------------------------------------------------------------------
-
-  def do_history(self, line):
-    '''history
-    Display a list of commands that have been entered
-    '''
-    self._split_args(line, 0, 0)
-    for idx, item in enumerate(self._history):
-      cli_util.print_info(u'{0: 3d} {1}'.format(idx, item))
-
-  def do_exit(self, line):
-    '''exit
-    Exit from the CLI
-    '''
-    n_remaining_operations = len(self._command_processor.get_operation_queue())
-    if n_remaining_operations:
-      cli_util.print_warn(
-        '''There are {0} unperformed operations in the write operation queue. These will
-be lost if you exit.'''.format(n_remaining_operations)
-      )
-      if not cli_util.confirm('Exit?', default='yes'):
-        return
-    sys.exit()
-
-  def do_quit(self, line):
-    '''quit
-    Exit from the CLI
-    '''
-    self.do_exit(line)
-
-  def do_EOF(self, line):
-    '''Exit on system EOF character'''
-    cli_util.print_info('')
-    self.do_exit(line)
-
-  def do_help(self, line):
-    '''Get help on commands
-    "help" or "?" with no arguments displays a list_objects of commands for which help is available
-    "help <command>" or "? <command>" gives help on <command>
-    '''
-    command, = self._split_args(line, 0, 1)
-    if command is None:
-      return self._print_help()
-    cmd.Cmd.do_help(self, line)
 
   #
   # Private.
