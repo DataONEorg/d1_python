@@ -1,0 +1,23 @@
+Installing the DataONE CLI
+==========================
+
+.. include:: overview.rst
+
+Install
+~~~~~~~
+
+The CLI is distributed via PyPI, the Python Package Index.
+
+  Set up OS packages required by some of the CLI's PyPI distributed
+  dependencies. This includes a build environment for DataONE Python extensions
+  and lxml.
+
+  ::
+
+    $ sudo apt-get --yes install build-essential python-dev libssl-dev \
+    libxml2-dev libxslt-dev openssl curl
+
+  Install the CLI from PyPI::
+
+    $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade; \
+    pip install dataone.cli

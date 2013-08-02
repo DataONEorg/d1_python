@@ -1,20 +1,26 @@
 DataONE Command Line Interface (CLI)
 ====================================
 
-.. include:: overview.rst
+The DataONE Command Line Interface enables basic interactions with the DataONE
+infrastructure via the command line.
 
-Contents:
+
+Contents
+~~~~~~~~
 
 .. toctree::
   :maxdepth: 3
 
+  install
+  operation
   examples
   reference
+  implementation
   glossary
 
 
 Indices and tables
-==================
+~~~~~~~~~~~~~~~~~~
 
 * :ref:`genindex`
 * :ref:`modindex`
