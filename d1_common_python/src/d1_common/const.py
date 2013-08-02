@@ -38,8 +38,8 @@ DEFAULT_CN_PATH = '/cn'
 DEFAULT_MN_PROTOCOL = 'https'
 DEFAULT_MN_HOST = 'localhost'
 DEFAULT_MN_PATH = '/mn'
-
 URL_DATAONE_ROOT = ''.join((DEFAULT_CN_PROTOCOL, '://', DEFAULT_CN_HOST, DEFAULT_CN_PATH))
+DEFAULT_MN_HOST = ''.join((DEFAULT_MN_PROTOCOL, '://', DEFAULT_MN_HOST, DEFAULT_MN_PATH))
 
 # Version of this software.
 VERSION = d1_common.__version__
