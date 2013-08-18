@@ -1,6 +1,9 @@
 Glossary
 ========
 
+DataONE Terms
+~~~~~~~~~~~~~
+
 .. glossary::
 
   DataONE
@@ -30,14 +33,7 @@ Glossary
     GMN is a complete implementation of a :term:`MN`. It provides an
     implementation of all MN APIs and can be used by organizations to expose
     their science data to DataONE if they do not wish to create their own,
-    native MN.
-
-    GMN can be used as a standalone MN or it can be used for exposing
-    data that is already available on the web, to DataONE. When used in this
-    way, GMN provides a DataONE compatible interface to existing data and does
-    not store the data.
-
-    GMN can also be used as a workbone or reference for a 3rd party
+    native MN. GMN can also be used as a workbone or reference for a 3rd party
     MN implementation. If an organization wishes to donate storage space
     to DataONE, GMN can be set up as a :term:`replication target`.
 
@@ -48,8 +44,11 @@ Glossary
 
 
   Vendor specific extensions
-    Functionality that is not part of the DataONE APIs but is supported by
-    a DataONE component. DataONE has defined APIs for accessing such extensions.
+    Functionality that is not part of the DataONE APIs but is supported by a
+    DataONE component. Vendor specific extensions are activated by adding custom
+    HTTP headers when calling the existing DataONE API methods. When activated,
+    they modify the behavior of the method in a vendor specific way. DataONE has
+    reserved the namespace starting with "VENDOR_" for such custom headers.
 
 
   Investigator Toolkit (ITK)
@@ -86,6 +85,162 @@ Glossary
     An object (file) that contains system level information about a SciData or a
     SciMeta object.
 
+
+  Workspace
+    The Workspace is an online storage area where users can store search filters
+    and references to DataONE objects. It follows the files and folders metaphor
+    of regular filesystems. Objects are added to the Workspace from the
+    ONEMercury search engine.
+
+
+Authentication and security
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. glossary::
+
+  X.509
+    An ITU-T standard for a public key infrastructure (PKI) for single sign-on
+    (SSO) and Privilege Management Infrastructure (PMI). X.509 specifies, amongst
+    other things, standard formats for public key certificates, certificate
+    revocation lists, attribute certificates, and a certification path validation
+    algorithm.
+
+    http://en.wikipedia.org/wiki/X509
+
+
+  CA
+    Certificate Authority
+
+    A certificate authority is an entity that issues digital :term:`certificate`
+    s. The digital certificate certifies the ownership of a public key by the
+    named subject of the certificate. This allows others (relying parties) to
+    rely upon signatures or assertions made by the private key that corresponds
+    to the public key that is certified. In this model of trust relationships, a
+    CA is a trusted third party that is trusted by both the subject (owner) of
+    the certificate and the party relying upon the certificate. CAs are
+    characteristic of many public key infrastructure (PKI) schemes.
+
+    http://en.wikipedia.org/wiki/Certificate_authority
+
+
+  CA signing key
+    The private key which the :term:`CA` uses for signing :term:`CSR`\ s.
+
+
+  Server key
+    The private key that Apache will use for proving that it is the owner
+    of the :term:`certificate` that it provides to the client during the
+    SSL handshake.
+
+
+  CSR
+    Certificate Signing Request
+
+    A message sent from an applicant to a :term:`CA` in order to apply for a
+    :term:`certificate`.
+
+    http://en.wikipedia.org/wiki/Certificate_signing_request
+
+
+  Certificate
+    A public key certificate (also known as a digital certificate or identity
+    certificate) is an electronic document which uses a digital signature to bind
+    a public key with an identity -- information such as the name of a person or an
+    organization, their address, and so forth. The certificate can be used to
+    verify that a public key belongs to an individual.
+
+    http://en.wikipedia.org/wiki/Public_key_certificate
+
+
+  CA certificate
+    A certificate that belongs to a :term:`CA` and serves as the root
+    certificate in a term:`chain of trust`.
+
+
+  Self signed certificate
+    A :term:`certificate` that is signed by its own creator. A self signed
+    certificate is not a part of a :term:`chain of trust` and so, it is not
+    possible to validate the information stored in the certificate. Because of
+    this, self signed certificates are useful mostly for testing in an
+    implicitly trusted environment.
+
+    http://en.wikipedia.org/wiki/Self-signed_certificate
+
+
+  Chain of trust
+    The Chain of Trust of a Certificate Chain is an ordered list of
+    certificates, containing an end-user subscriber certificate and intermediate
+    certificates (that represents the Intermediate CA), that enables the
+    receiver to verify that the sender and all intermediates certificates are
+    trustworthy.
+
+    http://en.wikipedia.org/wiki/Chain_of_trust
+
+
+  DN
+    Distinguished Name.
+
+
+  OpenSSL
+    Toolkit implementing the :term:`SSL` v2/v3 and :term:`TLS` v1 protocols as
+    well as a full-strength general purpose cryptography library.
+
+
+  SSL
+    Secure Sockets Layer
+
+    A protocol for transmitting private information via the Internet. SSL uses a
+    cryptographic system that uses two keys to encrypt data − a public key known
+    to everyone and a private or secret key known only to the recipient of the
+    message.
+
+
+  SSL handshake
+    The initial negotiation between two machines that communicate over SSL.
+
+    http://developer.connectopensource.org/display/CONNECTWIKI/SSL+Handshake
+
+    http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png
+
+
+  TLS
+    Transport Layer Security
+
+    Successor of :term:`SSL`.
+
+
+  Client side authentication
+    :term:`SSL` Client side authentication is part of the :term:`SSL handshake`,
+    where the client proves its identity to the web server by providing a
+    :term:`certificate` to the server. The certificate provided by the client
+    must be signed by a :term:`CA` that is trusted by the server. Client Side
+    Authentication is not a required part of the handshake. The server can be
+    set up to not allow Client side authentication, to require it or to let it
+    be optional.
+
+
+  Server Side Authentication
+    :term:`SSL` Server Side Authentication is part of the :term:`SSL handshake`,
+    where the server proves its identity to the client by providing a
+    :term:`certificate` to the client. The certificate provided by the server
+    must be signed by a :term:`CA` that is trusted by the client. Server Side
+    Authentication is a required part of the handshake.
+
+
+  Client side certificate
+    :term:`Certificate` that is provided by the client during :term:`client side
+    authentication`.
+
+
+  Server side certificate
+    :term:`Certificate` that is provided by the server during :term:`server side
+    authentication`.
+
+
+Misc
+~~~~
+
+.. glossary::
 
   Subversion
     Version control system
@@ -228,138 +383,6 @@ Glossary
     http://pypi.python.org/pypi/iso8601/
 
 
-  X.509
-    An ITU-T standard for a public key infrastructure (PKI) for single sign-on
-    (SSO) and Privilege Management Infrastructure (PMI). X.509 specifies, amongst
-    other things, standard formats for public key certificates, certificate
-    revocation lists, attribute certificates, and a certification path validation
-    algorithm.
-
-    http://en.wikipedia.org/wiki/X509
-
-
-  CA
-    Certificate Authority
-
-    A certificate authority is an entity that issues digital :term:`certificate`
-    s. The digital certificate certifies the ownership of a public key by the
-    named subject of the certificate. This allows others (relying parties) to
-    rely upon signatures or assertions made by the private key that corresponds
-    to the public key that is certified. In this model of trust relationships, a
-    CA is a trusted third party that is trusted by both the subject (owner) of
-    the certificate and the party relying upon the certificate. CAs are
-    characteristic of many public key infrastructure (PKI) schemes.
-
-    http://en.wikipedia.org/wiki/Certificate_authority
-
-
-  CA signing key
-    The private key which the :term:`CA` uses for signing :term:`CSR`\ s.
-
-
-  Server key
-    The private key that Apache will use for proving that it is the owner
-    of the :term:`certificate` that it provides to the client during the
-    SSL handshake.
-
-
-  CSR
-    Certificate Signing Request
-
-    A message sent from an applicant to a :term:`CA` in order to apply for a
-    :term:`certificate`.
-
-    http://en.wikipedia.org/wiki/Certificate_signing_request
-
-
-  Certificate
-    A public key certificate (also known as a digital certificate or identity
-    certificate) is an electronic document which uses a digital signature to bind
-    a public key with an identity -- information such as the name of a person or an
-    organization, their address, and so forth. The certificate can be used to
-    verify that a public key belongs to an individual.
-
-    http://en.wikipedia.org/wiki/Public_key_certificate
-
-
-  CA certificate
-    A certificate that belongs to a :term:`CA` and serves as the root
-    certificate in a term:`chain of trust`.
-
-
-  Self signed certificate
-    A :term:`certificate` that is signed by its own creator. A self signed
-    certificate is not a part of a :term:`chain of trust` and so, it is not
-    possible to validate the information stored in the certificate. Because of
-    this, self signed certificates are useful mostly for testing in an
-    implicitly trusted environment.
-
-    http://en.wikipedia.org/wiki/Self-signed_certificate
-
-
-  Chain of trust
-    The Chain of Trust of a Certificate Chain is an ordered list of
-    certificates, containing an end-user subscriber certificate and intermediate
-    certificates (that represents the Intermediate CA), that enables the
-    receiver to verify that the sender and all intermediates certificates are
-    trustworthy.
-
-    http://en.wikipedia.org/wiki/Chain_of_trust
-
-
-  OpenSSL
-    Toolkit implementing the :term:`SSL` v2/v3 and :term:`TLS` v1 protocols as
-    well as a full-strength general purpose cryptography library.
-
-
-  SSL
-    Secure Sockets Layer
-
-    A protocol for transmitting private information via the Internet. SSL uses a
-    cryptographic system that uses two keys to encrypt data − a public key known
-    to everyone and a private or secret key known only to the recipient of the
-    message.
-
-
-  SSL handshake
-    The initial negotiation between two machines that communicate over SSL.
-
-    http://developer.connectopensource.org/display/CONNECTWIKI/SSL+Handshake
-
-    http://developer.connectopensource.org/download/attachments/34210577/Ssl_handshake_with_two_way_authentication_with_certificates.png
-
-
-  TLS
-    Transport Layer Security
-
-    Successor of :term:`SSL`.
-
-
-  Client side authentication
-    :term:`SSL` Client side authentication is part of the :term:`SSL handshake`,
-    where the client proves its identity to the web server by providing a
-    :term:`certificate` to the server. The certificate provided by the client
-    must be signed by a :term:`CA` that is trusted by the server. Client Side
-    Authentication is not a required part of the handshake. The server can be
-    set up to not allow Client side authentication, to require it or to let it
-    be optional.
-
-
-  Server Side Authentication
-    :term:`SSL` Server Side Authentication is part of the :term:`SSL handshake`,
-    where the server proves its identity to the client by providing a
-    :term:`certificate` to the client. The certificate provided by the server
-    must be signed by a :term:`CA` that is trusted by the client. Server Side
-    Authentication is a required part of the handshake.
-
-
-  Client side certificate
-    :term:`Certificate` that is provided by the client during :term:`client side
-    authentication`.
-
-  Server side certificate
-    :term:`Certificate` that is provided by the server during :term:`server side
-    authentication`.
 
   CILogon
     The CILogon project facilitates secure access to CyberInfrastructure (CI).
