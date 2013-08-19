@@ -29,7 +29,7 @@
   DataONE (Vieglais, Dahl)
 '''
 
-# DataONE x509v3 Certificate Extractor for Python documentation build
+# DataONE Certificate Extensions for Python documentation build
 # configuration file.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -75,7 +75,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'DataONE x509v3 Certificate Extractor for Python'
+project = u'DataONE Certificate Extensions for Python'
 copyright = u'2010,2012 Participating institutions in DataONE'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -195,7 +195,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'DataONEx509v3CertificateExtractor'
+htmlhelp_basename = 'DataONECertificateExtensionsforPython'
 
 # -- Options for LaTeX output --------------------------------------------------
 

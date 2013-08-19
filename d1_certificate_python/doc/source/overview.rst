@@ -1,18 +1,14 @@
-Authentication within the DataONE infrastructure is based on x509 certificates.
+The `DataONE Certificate Extensions for Python`_ provides Python extensions for
+parsing and generating PEM formatted :term:`X.509` v3 certificates as used for
+authentication within the DataONE infrastructure.
 
-This module provides a Python extension for extracting DataONE Session
-information from PEM formatted X.509 v3 certificates. It supports extracting the
-DataONE SubjectInfo x509v3 extension, in which equivalent identities and group
-memberships are passed. It also extract the Subject DN and serializes it to a
-DataONE compliant subject string.
+DataONE uses a custom X.509 v3 certificate extension to pass additional identity
+information such as equivalent identities and group memberships. In addition,
+DataONE uses a specific serialization format of the certificate :term:`DN` to
+represent DataONE identities. The library hides these implementation details,
+lowering the implementation effort involved in supporting authentication and
+authorization within DataONE.
 
-.. graphviz::
+The library is a high performance C extension based on :term:`OpenSSL`.
 
-  digraph G {
-    size = "6,20";
-    ratio = "compress";
-    "OpenSSL C library" -> "x509v3 Extractor"
-    "Python Dev" -> "x509v3 Extractor"
-
-    "DataONE Common" -> "x509v3 Extractor (tests)"
-  }
+.. _`DataONE Certificate Extensions for Python`: http://pythonhosted.org/dataone.certificate_extensions/

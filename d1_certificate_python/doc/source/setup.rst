@@ -1,22 +1,16 @@
 Build and install
 =================
 
-The DataONE x509v3 Certificate Extractor is a Python extension written in C. It
-depends on the OpenSSL C library. A working GCC compiler environment and a
-development version of Python must be present to compile the extension.
+The DataONE Certificate Extensions are Python extensions implemented in C. They
+depend on the OpenSSL C library. When installing the extensions, they are
+automatically compiled, so the following instructions set up a working build
+environment before installing the extensions from PyPI.
 
-Install GCC and related tools::
+Prepare the build environment::
 
-  $ sudo apt-get install build-essential
+  $ sudo apt-get --yes install build-essential python-dev libssl-dev \
+  python-pip; sudo pip install pip --upgrade;
 
-Install the development version of Python::
+Install::
 
-  $ sudo apt-get install python-dev
-
-Install the OpenSSL development library::
-
-  $ sudo apt-get install libssl-dev
-
-Build and install the x509v3 Certificate Extractor::
-
-  $ sudo python setup.py install
+  $ sudo pip install dataone.certificate_extensions

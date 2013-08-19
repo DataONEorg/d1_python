@@ -1,8 +1,12 @@
-DataONE x509v3 Certificate Extractor for Python
-===============================================
+DataONE Certificate Extensions for Python
+=========================================
+
+See `DataONE Python Products`_ for an overview of the DataONE libraries and
+other products implemented in Python.
+
+.. _`DataONE Python Products`: http://pythonhosted.org/dataone.python/
 
 .. include:: overview.rst
-
 
 
 Index
@@ -16,6 +20,8 @@ Index
   setup
   setup-windows
   generated-tests
+  local-ca
+  impl
 
 
 Indices and tables
