@@ -1,9 +1,6 @@
+The `DataONE Command Line Interface`_ enables operations to be performed against
+the DataONE infrastructure from the command line. Supported operations include
+creating and retrieving DataONE objects, searching, updating access control
+rules and retrieving statistics.
 
-.. graphviz::
-
-  digraph G {
-    size = "6,20";
-    ratio = "compress";
-    "DataONE Common" -> CLI
-    "DataONE Client Library" -> CLI
-  }
+.. _`DataONE Command Line Interface`: http://pythonhosted.org/dataone.cli/

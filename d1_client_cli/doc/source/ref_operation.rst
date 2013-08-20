@@ -113,7 +113,7 @@ been granted to the subject for which the user has authenticated.
 
 A user that connects anonymously is granted access only to publicly available
 operations and data. Access is typically denied for operations that create or
-modify data, such as the :ref:`create <create>` operation.
+update data, such as the :ref:`create <create>` operation.
 
 When the CLI connects to a Node on a user's behalf, it passes authentication
 information for that user via a :term:`certificate`. The certificate enables the

@@ -129,7 +129,7 @@ Tell the CLI that you wish to use authentication::
 
   > get my-access-controlled-identifier
 
-See :doc:`ref_auth` for more information.
+See :ref:`authentication` for more information.
 
 
 

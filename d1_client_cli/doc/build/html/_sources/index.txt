@@ -1,9 +1,12 @@
 DataONE Command Line Interface (CLI)
 ====================================
 
-The DataONE Command Line Interface enables basic interactions with the DataONE
-infrastructure via the command line.
+See `DataONE Python Products`_ for an overview of the DataONE libraries and
+other products implemented in Python.
 
+.. _`DataONE Python Products`: http://pythonhosted.org/dataone.python/
+
+.. include:: overview.rst
 
 Contents
 ~~~~~~~~

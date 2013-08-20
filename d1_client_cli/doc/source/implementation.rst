@@ -1,6 +1,19 @@
 Implementation
 ==============
 
+Dependencies
+~~~~~~~~~~~~
+
+.. graphviz::
+
+  digraph G {
+    dpi = 60;
+    ratio = "compress";
+    "DataONE Common" -> CLI
+    "DataONE Client Library" -> CLI
+  }
+
+
 Class hierarchy
 ~~~~~~~~~~~~~~~
 

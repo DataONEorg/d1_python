@@ -166,7 +166,7 @@ available</p>
 <p><tt class="docutils literal"><span class="pre">set</span> <span class="pre">(without</span> <span class="pre">parameters)</span></tt>: Display the value of all session variables</p>
 <p><tt class="docutils literal"><span class="pre">set</span> <span class="pre">&lt;session</span> <span class="pre">variable&gt;</span></tt>: Display the value of a single session variable.</p>
 <p><tt class="docutils literal"><span class="pre">set</span> <span class="pre">&lt;session</span> <span class="pre">variable&gt;</span> <span class="pre">&lt;value&gt;</span></tt>: Set the value of a session variable.</p>
-<p>See <a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a> and <em class="xref std std-ref">replication_policy</em> for information about how
+<p>See <a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a> and <a class="reference internal" href="ref_operation.html#replication-policy"><em>Replication Policy</em></a> for information about how
 to set the Access Policy and Replication Policy session variables.</p>
 <p>An unset session variable has its value displayed as None. A session variable
 can either be a Boolean (True / False), numeric or string value. See <a class="reference internal" href="#set"><em>set [variable [value]]</em></a>
@@ -275,14 +275,14 @@ Member Nodes.</p>
 <span id="get"></span><h3><a class="toc-backref" href="#id43">get &lt;identifier&gt; &lt;file&gt;</a><a class="headerlink" href="#get-identifier-file" title="Permalink to this headline">¶</a></h3>
 <p>Get an object from a Member Node</p>
 <p>The object is saved to <tt class="docutils literal"><span class="pre">file</span></tt>.</p>
-<p>Active session variables: <a class="reference internal" href="ref_session.html#mn-url"><em>mn-url</em></a>, <em class="xref std std-ref">authentication</em></p>
+<p>Active session variables: <a class="reference internal" href="ref_session.html#mn-url"><em>mn-url</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 <div class="section" id="meta-identifier-file">
 <span id="meta"></span><h3><a class="toc-backref" href="#id44">meta &lt;identifier&gt; [file]</a><a class="headerlink" href="#meta-identifier-file" title="Permalink to this headline">¶</a></h3>
 <p>Get the System Metadata that is associated with a Science Object</p>
 <p>If the metadata is not on the Coordinating Node, the Member Node is checked.</p>
 <p>Provide <tt class="docutils literal"><span class="pre">file</span></tt> to save the System Metada to disk instead of displaying it.</p>
-<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <em class="xref std std-ref">authentication</em></p>
+<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 <div class="section" id="list">
 <span id="id10"></span><h3><a class="toc-backref" href="#id45">list</a><a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
@@ -291,7 +291,7 @@ Member Nodes.</p>
 session variables.</p>
 <p>Active session variables: <a class="reference internal" href="ref_session.html#mn-url"><em>mn-url</em></a>, <a class="reference internal" href="ref_session.html#start"><em>start</em></a>,
 <a class="reference internal" href="ref_session.html#count"><em>count</em></a>, <a class="reference internal" href="ref_session.html#from-date"><em>from-date</em></a>, <a class="reference internal" href="ref_session.html#to-date"><em>to-date</em></a>,
-<a class="reference internal" href="ref_session.html#search-format-id"><em>search-format-id</em></a>, <em class="xref std std-ref">authentication</em></p>
+<a class="reference internal" href="ref_session.html#search-format-id"><em>search-format-id</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 <p>See also: <a class="reference internal" href="search.html"><em>Search Page</em></a></p>
 </div>
 <div class="section" id="log">
@@ -301,12 +301,12 @@ session variables.</p>
 parameters.</p>
 <p>Active session variables: <a class="reference internal" href="ref_session.html#mn-url"><em>mn-url</em></a>, <a class="reference internal" href="ref_session.html#start"><em>start</em></a>,
 <a class="reference internal" href="ref_session.html#count"><em>count</em></a>, <a class="reference internal" href="ref_session.html#from-date"><em>from-date</em></a>, <a class="reference internal" href="ref_session.html#to-date"><em>to-date</em></a>,
-<a class="reference internal" href="ref_session.html#search-format-id"><em>search-format-id</em></a>, <em class="xref std std-ref">authentication</em></p>
+<a class="reference internal" href="ref_session.html#search-format-id"><em>search-format-id</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 <div class="section" id="resolve-pid">
 <span id="resolve"></span><h3><a class="toc-backref" href="#id47">resolve &lt;<a class="reference internal" href="glossary.html#term-pid"><em class="xref std std-term">pid</em></a>&gt;</a><a class="headerlink" href="#resolve-pid" title="Permalink to this headline">¶</a></h3>
 <p>Find all locations from which the given Science Object can be downloaded.</p>
-<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <em class="xref std std-ref">authentication</em></p>
+<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 </div>
 <div class="section" id="write-operations">
@@ -322,22 +322,22 @@ generated from the session variables.</p>
 for the new object. If the value is unset, it defaults to the DataONE system
 wide default, which is currently SHA1.</p>
 <p>Active session variables: <a class="reference internal" href="ref_session.html#mn-url"><em>mn-url</em></a>, <a class="reference internal" href="ref_session.html#format-id"><em>format-id</em></a>, <a class="reference internal" href="ref_session.html#submitter"><em>submitter</em></a>, <a class="reference internal" href="ref_session.html#rights-holder"><em>rights-holder</em></a>, <a class="reference internal" href="ref_session.html#origin-mn"><em>origin-mn</em></a>, <a class="reference internal" href="ref_session.html#authoritative-mn"><em>authoritative-mn</em></a>, <a class="reference internal" href="ref_session.html#algorithm"><em>algorithm</em></a>, <a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a>,
-<em class="xref std std-ref">replication_policy</em>, <em class="xref std std-ref">authentication</em></p>
+<a class="reference internal" href="ref_operation.html#replication-policy"><em>Replication Policy</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 <div class="section" id="update-old-pid-new-pid-file">
 <span id="update"></span><h3><a class="toc-backref" href="#id50">update &lt;old-pid&gt; &lt;new-pid&gt; &lt;file&gt;</a><a class="headerlink" href="#update-old-pid-new-pid-file" title="Permalink to this headline">¶</a></h3>
 <p>Replace an existing Science Object in a <a class="reference internal" href="glossary.html#term-mn"><em class="xref std std-term">MN</em></a> with another.</p>
 <p>The existing Science Object becomes obsoleted by the new Science Object.
 obsoleted by the new values in the <a class="reference internal" href="ref_session.html#session-variables"><em>System Metadata</em></a>,
-<a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a> and <em class="xref std std-ref">replication_policy</em> session variables.</p>
+<a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a> and <a class="reference internal" href="ref_operation.html#replication-policy"><em>Replication Policy</em></a> session variables.</p>
 <p>The algorithm set in <a class="reference internal" href="ref_session.html#algorithm"><em>algorithm</em></a> is used for calculating the
 checksum for the new object. If the value is unset, it defaults to the DataONE
 system wide default, which is currently SHA1.</p>
 <p>Active session variables: <a class="reference internal" href="ref_session.html#mn-url"><em>mn-url</em></a>, <a class="reference internal" href="ref_session.html#format-id"><em>format-id</em></a>,
 <a class="reference internal" href="ref_session.html#submitter"><em>submitter</em></a>, <a class="reference internal" href="ref_session.html#rights-holder"><em>rights-holder</em></a>,
 <a class="reference internal" href="ref_session.html#origin-mn"><em>origin-mn</em></a>, <a class="reference internal" href="ref_session.html#authoritative-mn"><em>authoritative-mn</em></a>,
-<a class="reference internal" href="ref_session.html#algorithm"><em>algorithm</em></a>, <a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a>, <em class="xref std std-ref">replication_policy</em>,
-<em class="xref std std-ref">authentication</em></p>
+<a class="reference internal" href="ref_session.html#algorithm"><em>algorithm</em></a>, <a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a>, <a class="reference internal" href="ref_operation.html#replication-policy"><em>Replication Policy</em></a>,
+<a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 <div class="section" id="package-package-pid-science-metadata-pid-science-pid-science-pid">
 <span id="package"></span><h3><a class="toc-backref" href="#id51">package &lt;package-pid&gt; &lt;science-metadata-pid&gt; &lt;science-pid&gt; [science-pid ...]</a><a class="headerlink" href="#package-package-pid-science-metadata-pid-science-pid-science-pid" title="Permalink to this headline">¶</a></h3>
@@ -350,20 +350,20 @@ system wide default, which is currently SHA1.</p>
 <div class="section" id="updateaccess-identifier-identifier">
 <span id="updateaccess"></span><h3><a class="toc-backref" href="#id53">updateaccess &lt;identifier&gt; [identifier ...]</a><a class="headerlink" href="#updateaccess-identifier-identifier" title="Permalink to this headline">¶</a></h3>
 <p>Update the Access Policy on one or more existing Science Data Objects</p>
-<p>Requires that the calling subject has <em class="xref std std-ref">authenticated</em> and
+<p>Requires that the calling subject has <a class="reference internal" href="ref_operation.html#authentication"><em>authenticated</em></a> and
 has changePermission access level on the object for which Access Policy is to be
 updated.</p>
-<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <em class="xref std std-ref">authentication</em>,
+<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a>,
 <a class="reference internal" href="ref_operation.html#access-policy"><em>Access Policy</em></a></p>
 </div>
 <div class="section" id="updatereplication-identifier-identifier">
 <span id="updatereplication"></span><h3><a class="toc-backref" href="#id54">updatereplication &lt;identifier&gt; [identifier ...]</a><a class="headerlink" href="#updatereplication-identifier-identifier" title="Permalink to this headline">¶</a></h3>
 <p>Update the Replication Policy on one or more existing Science Data Objects</p>
-<p>Requires that the calling subject has <em class="xref std std-ref">authenticated</em> and
+<p>Requires that the calling subject has <a class="reference internal" href="ref_operation.html#authentication"><em>authenticated</em></a> and
 has changePermission access level on the object for which Replication Policy is
 to be updated.</p>
-<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <em class="xref std std-ref">replication_policy</em>,
-<em class="xref std std-ref">authentication</em></p>
+<p>Active session variables: <a class="reference internal" href="ref_session.html#cn-url"><em>cn-url</em></a>, <a class="reference internal" href="ref_operation.html#replication-policy"><em>Replication Policy</em></a>,
+<a class="reference internal" href="ref_operation.html#authentication"><em>Authentication</em></a></p>
 </div>
 </div>
 <div class="section" id="utilities">
