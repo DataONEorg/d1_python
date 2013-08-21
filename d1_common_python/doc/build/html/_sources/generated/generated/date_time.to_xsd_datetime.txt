@@ -1,6 +1,0 @@
-date_time.to_xsd_datetime
-=========================
-
-.. currentmodule:: date_time
-
-.. autofunction:: to_xsd_datetime

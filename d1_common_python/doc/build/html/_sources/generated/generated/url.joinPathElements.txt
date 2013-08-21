@@ -1,6 +1,0 @@
-url.joinPathElements
-====================
-
-.. currentmodule:: url
-
-.. autofunction:: joinPathElements

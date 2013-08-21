@@ -1,6 +1,0 @@
-exceptions.ImportError
-======================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: ImportError

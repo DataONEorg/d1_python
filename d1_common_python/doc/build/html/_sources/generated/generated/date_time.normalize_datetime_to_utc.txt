@@ -1,6 +1,0 @@
-date_time.normalize_datetime_to_utc
-===================================
-
-.. currentmodule:: date_time
-
-.. autofunction:: normalize_datetime_to_utc

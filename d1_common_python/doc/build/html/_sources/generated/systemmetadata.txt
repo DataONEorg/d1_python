@@ -1,6 +1,0 @@
-systemmetadata
-==============
-
-.. currentmodule:: 
-
-.. autodata:: systemmetadata

@@ -1,6 +1,0 @@
-date_time.strip_timezone
-========================
-
-.. currentmodule:: date_time
-
-.. autofunction:: strip_timezone

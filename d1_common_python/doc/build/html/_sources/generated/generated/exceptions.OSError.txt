@@ -1,6 +1,0 @@
-exceptions.OSError
-==================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: OSError

@@ -1,6 +1,0 @@
-exceptions.EOFError
-===================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: EOFError

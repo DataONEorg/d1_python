@@ -1,6 +1,0 @@
-date_time.from_iso8601
-======================
-
-.. currentmodule:: date_time
-
-.. autofunction:: from_iso8601

@@ -1,6 +1,0 @@
-exceptions.AttributeError
-=========================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: AttributeError

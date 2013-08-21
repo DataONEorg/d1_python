@@ -1,6 +1,0 @@
-checksum_serialization
-======================
-
-.. currentmodule:: 
-
-.. autodata:: checksum_serialization

@@ -1,6 +1,0 @@
-exceptions.StandardError
-========================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: StandardError

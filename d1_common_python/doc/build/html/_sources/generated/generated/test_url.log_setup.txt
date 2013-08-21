@@ -1,6 +1,0 @@
-test_url.log_setup
-==================
-
-.. currentmodule:: test_url
-
-.. autofunction:: log_setup

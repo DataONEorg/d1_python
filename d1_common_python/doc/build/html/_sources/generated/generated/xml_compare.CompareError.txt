@@ -1,6 +1,0 @@
-xml_compare.CompareError
-========================
-
-.. currentmodule:: xml_compare
-
-.. autoexception:: CompareError

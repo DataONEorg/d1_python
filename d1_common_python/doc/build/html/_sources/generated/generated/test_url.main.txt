@@ -1,6 +1,0 @@
-test_url.main
-=============
-
-.. currentmodule:: test_url
-
-.. autofunction:: main

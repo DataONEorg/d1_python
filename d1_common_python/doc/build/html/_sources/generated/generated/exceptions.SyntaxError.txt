@@ -1,6 +1,0 @@
-exceptions.SyntaxError
-======================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: SyntaxError

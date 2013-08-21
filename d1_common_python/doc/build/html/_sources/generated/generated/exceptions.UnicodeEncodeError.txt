@@ -1,6 +1,0 @@
-exceptions.UnicodeEncodeError
-=============================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: UnicodeEncodeError

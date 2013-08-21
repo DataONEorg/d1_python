@@ -1,6 +1,0 @@
-test_date_time.main
-===================
-
-.. currentmodule:: test_date_time
-
-.. autofunction:: main
