@@ -1,6 +1,0 @@
-exceptions.BaseException
-========================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: BaseException

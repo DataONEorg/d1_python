@@ -1,6 +1,0 @@
-url.decodeQueryElement
-======================
-
-.. currentmodule:: url
-
-.. autofunction:: decodeQueryElement

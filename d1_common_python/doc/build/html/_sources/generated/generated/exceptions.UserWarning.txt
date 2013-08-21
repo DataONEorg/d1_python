@@ -1,6 +1,0 @@
-exceptions.UserWarning
-======================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: UserWarning

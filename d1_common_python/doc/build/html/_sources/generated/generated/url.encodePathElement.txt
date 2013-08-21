@@ -1,6 +1,0 @@
-url.encodePathElement
-=====================
-
-.. currentmodule:: url
-
-.. autofunction:: encodePathElement

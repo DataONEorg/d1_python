@@ -1,6 +1,0 @@
-date_time.create_utc_datetime
-=============================
-
-.. currentmodule:: date_time
-
-.. autofunction:: create_utc_datetime

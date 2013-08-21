@@ -1,6 +1,0 @@
-date_time.cast_datetime_to_utc
-==============================
-
-.. currentmodule:: date_time
-
-.. autofunction:: cast_datetime_to_utc

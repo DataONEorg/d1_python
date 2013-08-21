@@ -1,6 +1,0 @@
-date_time.utc_now
-=================
-
-.. currentmodule:: date_time
-
-.. autofunction:: utc_now

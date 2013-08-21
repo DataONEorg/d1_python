@@ -1,6 +1,0 @@
-objectlist_serialization
-========================
-
-.. currentmodule:: 
-
-.. autodata:: objectlist_serialization

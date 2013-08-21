@@ -1,6 +1,0 @@
-exceptions.OverflowError
-========================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: OverflowError

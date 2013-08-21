@@ -1,6 +1,0 @@
-url.normalizeTarget
-===================
-
-.. currentmodule:: url
-
-.. autofunction:: normalizeTarget

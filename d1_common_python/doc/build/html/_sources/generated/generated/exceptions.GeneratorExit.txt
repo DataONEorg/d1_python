@@ -1,6 +1,0 @@
-exceptions.GeneratorExit
-========================
-
-.. currentmodule:: exceptions
-
-.. autoexception:: GeneratorExit
