@@ -10,6 +10,7 @@ Installation and usage of the :term:`GMN`.
   setup
   testing
   use
+  maintenance
   troubleshooting
   performance
   impl

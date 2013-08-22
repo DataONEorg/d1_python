@@ -1,3 +1,0 @@
-Automatically generated documentation
-=====================================
-

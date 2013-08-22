@@ -1,15 +1,14 @@
-:term:`DataONE` :term:`GMN` is a web app implemented in :term:`Python` based on
-the :term:`Django` web app framework. Django is a :term:`WSGI` compliant
-application. It is served by :term:`Apache` via :term:`mod_wsgi`. The DataONE
-infrastructure uses :term:`SSL` and :term:`X.509` :term:`certificate`\ s for
-security and certificate validation is handled for GMN by :term:`mod_ssl`.
+The `DataONE Generic Member Node`_ (GMN) is a complete implementation of a
+DataONE Member Node (:term:`MN`). It provides an implementation of all MN APIs
+and can be used by organizations to expose their science data to DataONE if they
+do not wish to create their own, native MN.
 
-.. graphviz::
+GMN can be used as a standalone MN or it can be used for exposing data that is
+already available on the web, to DataONE. When used in this way, GMN provides a
+DataONE compatible interface to existing data and does not store the data.
 
-  digraph G {
-    dpi=72;
-    OS -> "DataONE Common" -> "DataONE Client" -> GMN;
-    "DataONE Common" -> GMN;
-    OS -> Apache -> mod_wsgi -> Django -> GMN;
-    Apache -> mod_ssl -> "GMN access control" -> GMN;
-  }
+GMN can also be used as a workbone or reference for a 3rd party MN
+implementation. If an organization wishes to donate storage space to DataONE,
+GMN can be set up as a replication target.
+
+.. _`DataONE Generic Member Node`: http://pythonhosted.org/dataone.generic_member_node
