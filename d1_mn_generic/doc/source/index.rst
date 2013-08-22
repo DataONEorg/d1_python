@@ -1,8 +1,7 @@
 Generic Member Node (GMN)
 =========================
 
-Installation and usage of the :term:`GMN`.
-
+.. include:: overview.rst
 
 .. toctree::
   :maxdepth: 2
