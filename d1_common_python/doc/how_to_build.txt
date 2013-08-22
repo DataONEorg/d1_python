@@ -1,5 +1,0 @@
-How to build the documentation.
-
-- Install Sphinx. http://sphinx.pocoo.org/
-- Install the library.
-- $ make html
