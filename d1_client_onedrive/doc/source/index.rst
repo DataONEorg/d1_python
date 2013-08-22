@@ -1,10 +1,15 @@
 ONEDrive
 ========
 
+See `DataONE Python Products`_ for an overview of the DataONE libraries and
+other products implemented in Python.
+
+.. _`DataONE Python Products`: http://pythonhosted.org/dataone.python/
+
 .. include:: overview.rst
 
-Index
------
+Contents
+~~~~~~~~
 
 .. toctree::
   :numbered:
@@ -13,10 +18,10 @@ Index
   setup
   run
   architecture
-  mockup/index
+  mockups/index
 
 Indices and tables
-==================
+~~~~~~~~~~~~~~~~~~
 
 * :ref:`genindex`
 * :ref:`modindex`

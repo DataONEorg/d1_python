@@ -1,38 +1,55 @@
 Launching ONEDrive
 ==================
 
-This driver provides access to objects in the DataONE infrastructure through
-DataONE's Apache Solr interface. Faceted search is provided through :doc:`Solr`.
+The default settings for ONEDrive are in the ``settings.py`` file that resides
+in the same location as the ``onedrive.py`` script. To modify the default
+settings, edit ``settings.py``.
 
-How to use:
+To launch ONEDrive with the default settings, simply run the ``onedrive.py``
+script.
 
-- Install FUSE or MacFUSE
-- Set PYTHONPATH to include d1_common_python/src and d1_libclient_python/src
-- On OS X, set DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH
-- Make sure option 'user_allow_other' is set in /etc/fuse.conf.
+Most of the defaults can be overridden at launch time by adding options on the
+command line. The options are listed below, together with their default values
+(from ``settings.py``)::
 
-Run as::
+  Usage: onedrive.py [options]
 
-  python d1_fuse2.py -h
-                     -v [-l] [-g] [-b base_url] [-s solr_path] [-f filter]
-                     mountpoint
+  Options:
+    -h, --help            show this help message and exit
+    -v, --version         Display version information and exit
+    --max-objects-for-flat-list=10
+    --macfuse-icon=/home/dahl/d1/d1_python/d1_client_onedrive/src/impl/d1.icon
+    --fuse-foreground=True
+    --max-error-path-cache-size=1000
+    --fuse-nothreads=True
+    --mountpoint=/example/one
+    --max-solr-query-cache-size=1000
+    --max-objects-for-search=50
+    --workspace-xml=/example/workspace.xml
+    --log-level=DEBUG
+    --fuse-nonempty=True
+    --base-url=https://cn.dataone.org/cn
+    --max-object-cache-size=100
+    --macfuse-local-disk=True
+    --folder-size-for-resource-maps=zero
+    --fuse-filesystem-name=ONEDrive
+    --debug=True
+    --max-attribute-cache-size=1000
+    --max-directory-cache-size=1000
+    --solr-debug=True
+    --log-file-path=/example/onedrive.log
+    --solr-query-path=/v1/query/solr/
 
-where::
 
-  -h = print help
-  -l = log level, 10=debug, 20=info, 50=exception
-  -v = print version info and exit
-  -g = run in foreground (for debugging)
-  -b = base_url for coordinating node
-  -s = path to append to base_url to get Solr index URL
-  -f = filter for limiting content view (e.g. "keywords:zinc")
-  mountpoint = the folder to use as the mount point.
+OSX specific
+~~~~~~~~~~~~
 
-If you get an exception on OSX that looks like this::
+If the library search path is incomplete, an exception such as the following
+may occour::
 
   OSError: dlopen(/opt/local/lib/libfuse.dylib, 6): Symbol not found: _iconv
     Referenced from: /opt/local/lib/libfuse.dylib
 
-run d1fuse with::
+To work around this, run ``onedrive.py`` with::
 
   export DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH

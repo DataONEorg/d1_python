@@ -1,6 +1,19 @@
 Architecture
 ============
 
+.. graphviz::
+
+  digraph G {
+    size = "8,20";
+    ratio = "compress";
+    "Linux / OSX" -> "FUSE Driver" -> "FUSE for Python" -> "ONEDrive";
+    "Windows" -> "Dokan Driver" -> "Dokan for Python" -> "ONEDrive";
+    "DataONE Client Library\n(Python)" -> "ONEDrive";
+    "DataONE Common\n(Python)" -> "ONEDrive";
+    "SolR Client\n(Python)" -> "ONEDrive";
+  }
+
+
 Production
 ----------
 
@@ -268,6 +281,8 @@ To retrieve lists of files and folders for display in the filesystem, the
 resolvers issue commands to the Command processor. The Command processor
 transforms the commands into one or more queries against the DataONE Solr index
 and the DataONE infrastructure and wraps up the results.
+
+TODO: Describe normalization. Like self._close_open_date_ranges(record).
 
 
 Path representation
