@@ -29,37 +29,17 @@
 #import cgi
 #import collections
 #import csv
-import datetime
-#import glob
-#import hashlib
-import httplib
-import logging
-#import mimetypes
-import os
-#import pprint
-#import re
-#import stat
-#import sys
-#import time
-#import urllib
-import urlparse
-import uuid
-
-# Django.
-from django.http import HttpResponse
-from django.http import HttpResponseNotAllowed
 from django.db.models import Sum
-import django.core.cache
-
-# DataONE APIs.
+from django.http import HttpResponse, HttpResponseNotAllowed
 import d1_client.cnclient
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-#import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-
-# App.
+import datetime
+import django.core.cache
+import httplib
+import logging
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -73,7 +53,26 @@ import mn.sysmeta_validate
 import mn.util
 import mn.view_asserts
 import mn.view_shared
+import os
 import service.settings
+import urlparse
+import uuid
+#import glob
+#import hashlib
+#import mimetypes
+#import pprint
+#import re
+#import stat
+#import sys
+#import time
+#import urllib
+
+# Django.
+
+# DataONE APIs.
+#import d1_common.types.generated.dataoneErrors as dataoneErrors
+
+# App.
 
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP verb)
@@ -91,6 +90,7 @@ def dispatch_object_pid(request, pid):
   else:
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
 
+
 def dispatch_object(request):
   if request.method == 'GET':
     return get_object(request)
@@ -107,9 +107,6 @@ def dispatch_object(request):
 # Public API: Tier 1: Core API  
 # ------------------------------------------------------------------------------
 
-def _add_http_date_to_response_header(response, date_time):
-  response['Date'] = d1_common.date_time.to_http_datetime(date_time)
-
 
 # Unrestricted access.
 @mn.restrict_to_verb.get
@@ -117,7 +114,7 @@ def get_monitor_ping(request):
   '''MNCore.ping() → Boolean
   '''
   response = mn.view_shared.http_response_with_boolean_true_type()
-  _add_http_date_to_response_header(response, datetime.datetime.utcnow())
+  mn.view_shared.add_http_date_to_response_header(response, datetime.datetime.utcnow())
   return response
 
 
@@ -167,7 +164,7 @@ def _add_object_properties_to_response_header(response, sciobj):
   response['DataONE-Checksum'] = '{0},{1}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum)
   response['DataONE-SerialVersion'] = sciobj.serial_version
-  _add_http_date_to_response_header(response, datetime.datetime.utcnow())
+  mn.view_shared.add_http_date_to_response_header(response, datetime.datetime.utcnow())
 
 
 @mn.lock_pid.for_read
@@ -205,7 +202,9 @@ def _get_object_byte_stream_remote(url, url_split):
   try:
     conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
     conn.connect()
-    conn.request('HEAD', url)
+    headers = {}
+    mn.util.add_basic_auth_header_if_enabled(headers)
+    conn.request('HEAD', url, headers=headers)
     remote_response = conn.getresponse()
     if remote_response.status == httplib.FOUND:
       url = remote_response.getheader('location')
@@ -217,7 +216,9 @@ def _get_object_byte_stream_remote(url, url_split):
   try:
     conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
     conn.connect()
-    conn.request('GET', url)
+    headers = {}
+    mn.util.add_basic_auth_header_if_enabled(headers)
+    conn.request('GET', url, headers=headers)
     remote_response = conn.getresponse()
     if remote_response.status != httplib.OK:
       raise d1_common.types.exceptions.ServiceFailure(0,
@@ -431,19 +432,21 @@ def post_dirty_system_metadata(request):
 # Locks and checks:
 #
 # create()
-# - Obtain a write lock on the pid of the NEW object
+# - Check if subject is in whitelist for creating NEW objects on MN.
+# - Obtain a write lock on the NEW pid
 # - Check that the NEW pid does not already exist
 # - Check that the caller has the right to create NEW objects on the MN
 # - Check that the submitted SysMeta does NOT include obsoletes or obsoletedBy
 # 
 # update()
-# - All the locks and checks of create() (for the NEW pid), plus a similar set
-#   of steps for the OLD pid:
-# - Obtain a write lock on the OLD pid
+# - If settings.REQUIRE_WHITELIST_FOR_UPDATE is True: 
+#   - Check if subject is in whitelist for creating NEW objects on MN.
+# - Obtain a write lock on the NEW pid
 # - Check that the OLD pid exists
+# - Obtain a write lock on the OLD pid
 # - Check that the caller has write permissions on the OLD object
-# - Check that the submitted SysMeta DOES include obsoletes and that the
-#   PID matches the OLD pid.
+# - If the submitted SysMeta includes obsoletes, check that it matches the
+#   OLD pid.
 #
 # For convenience, the functions below do not perform the locking and checks
 # in the same order as described above.
@@ -461,6 +464,7 @@ def post_dirty_system_metadata(request):
 # client, wrapped in DataONE ServiceFailure exceptions. In production, the
 # actual exception is not included.
 
+@mn.auth.decorator_assert_create_update_delete_permission
 def object_post(request):
   '''MNStorage.create(session, pid, object, sysmeta) → Identifier
   '''
@@ -482,17 +486,20 @@ def object_post(request):
 def put_object_pid(request, old_pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   '''
+  if service.settings.REQUIRE_WHITELIST_FOR_UPDATE:
+    mn.auth.assert_create_update_delete_permission(request)
   mn.util.coerce_put_post(request)
   mn.view_asserts.post_has_mime_parts(request, (('field', 'newPid'),
                                           ('file', 'object'),
                                           ('file', 'sysmeta')))
   mn.view_asserts.pid_exists(old_pid)
+  mn.view_asserts.pid_not_obsoleted(old_pid)
   mn.view_asserts.sci_obj_is_not_replica(old_pid)
   sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
   sysmeta = mn.view_shared.deserialize_system_metadata(
     sysmeta_xml.encode('utf-8'))
-  mn.view_asserts.obsoletes_specified(sysmeta)
-  mn.view_asserts.obsoletes_matches_pid(sysmeta, old_pid)
+  mn.view_asserts.obsoletes_matches_pid_if_specified(sysmeta, old_pid)
+  sysmeta.obsoletes = old_pid
   new_pid = request.POST['newPid']
   _create(request, new_pid, sysmeta)
   _set_obsoleted_by(old_pid, new_pid)
@@ -500,7 +507,6 @@ def put_object_pid(request, old_pid):
 
 
 @mn.lock_pid.for_write # NEW object
-@mn.auth.assert_create_update_delete_permission # NEW object
 def _create(request, pid, sysmeta):
   mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
   mn.view_asserts.obsoleted_by_not_specified(sysmeta)
@@ -535,7 +541,7 @@ def post_generate_identifier(request):
 
 
 @mn.lock_pid.for_write
-@mn.auth.assert_create_update_delete_permission
+@mn.auth.decorator_assert_create_update_delete_permission
 def delete_object_pid(request, pid):
   '''MNStorage.delete(session, pid) → Identifier
   '''

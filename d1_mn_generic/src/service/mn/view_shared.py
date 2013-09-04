@@ -98,11 +98,7 @@ def create(request, pid, sysmeta, replica=False):
   mn.view_asserts.pid_does_not_exist(pid)
   mn.sysmeta_store.write_sysmeta_to_store(pid, sysmeta)
 
-  # GMN implements a vendor specific extension for create(). Instead of
-  # providing an object for GMN to manage, the object can be left empty and a
-  # URL to a remote location be provided instead. In that case, GMN will stream
-  # the object bytes from the remote server while handling all other object
-  # related operations like usual.
+  # "wrapped mode" vendor specific extension.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
     mn.view_asserts.url_is_http_or_https(url)
@@ -113,18 +109,18 @@ def create(request, pid, sysmeta, replica=False):
     _object_pid_post_store_local(request, pid)
 
   # Create database entry for object.
-  object = mn.models.ScienceObject()
-  object.pid = pid
-  object.url = url
-  object.set_format(sysmeta.formatId)
-  object.checksum = sysmeta.checksum.value()
-  object.set_checksum_algorithm(sysmeta.checksum.algorithm)
-  object.mtime = sysmeta.dateSysMetadataModified
-  object.size = sysmeta.size
-  object.replica = replica
-  object.serial_version = sysmeta.serialVersion
-  object.archived = False
-  object.save()
+  sci_obj = mn.models.ScienceObject()
+  sci_obj.pid = pid
+  sci_obj.url = url
+  sci_obj.set_format(sysmeta.formatId)
+  sci_obj.checksum = sysmeta.checksum.value()
+  sci_obj.set_checksum_algorithm(sysmeta.checksum.algorithm)
+  sci_obj.mtime = sysmeta.dateSysMetadataModified
+  sci_obj.size = sysmeta.size
+  sci_obj.replica = replica
+  sci_obj.serial_version = sysmeta.serialVersion
+  sci_obj.archived = False
+  sci_obj.save()
 
   mn.util.update_db_status('update successful')
 
@@ -156,3 +152,7 @@ def http_response_with_identifier_type(pid):
 
 def http_response_with_boolean_true_type():
   return HttpResponse('OK', d1_common.const.MIMETYPE_TEXT)
+
+
+def add_http_date_to_response_header(response, date_time):
+  response['Date'] = d1_common.date_time.to_http_datetime(date_time)

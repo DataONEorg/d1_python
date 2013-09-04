@@ -317,6 +317,23 @@ def is_allowed(request, level, pid):
   ).exists()
 
 
+def has_create_update_delete_permission(request):
+  return models.WhitelistForCreateUpdateDelete.objects.filter(
+    subject__subject__in=request.subjects).exists() \
+      or is_trusted_subject(request)
+
+
+def assert_create_update_delete_permission(request):
+  '''Access only by subjects with Create/Update/Delete permission and by
+  trusted infrastructure (CNs).
+  '''
+  if not has_create_update_delete_permission(request):
+    raise d1_common.types.exceptions.NotAuthorized(
+      0, 'Access allowed only for subjects with Create/Update/Delete '
+      'permission. {0}'.format(format_active_subjects(request))
+    )
+
+
 def assert_allowed(request, level, pid):
   '''Assert that one or more subjects are allowed to perform action on object.
   Raise NotAuthorized if object exists and subject is not allowed.
@@ -400,19 +417,13 @@ def assert_internal_permission(f):
   return wrap
 
 
-def assert_create_update_delete_permission(f):
+def decorator_assert_create_update_delete_permission(f):
   '''Access only by subjects with Create/Update/Delete permission and by
   trusted infrastructure (CNs).
   '''
 
   def wrap(request, *args, **kwargs):
-    if not models.WhitelistForCreateUpdateDelete.objects.filter(
-      subject__subject__in=request.subjects).exists() \
-      and not is_trusted_subject(request):
-      raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for subjects with Create/Update/Delete '
-        'permission. {0}'.format(format_active_subjects(request))
-      )
+    assert_create_update_delete_permission(request)
     return f(request, *args, **kwargs)
 
   wrap.__doc__ = f.__doc__

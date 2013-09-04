@@ -67,6 +67,7 @@ import mn.db_filter
 import mn.event_log
 import mn.lock_pid
 import mn.models
+import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta_store
 import mn.urls
@@ -140,24 +141,28 @@ def obsoleted_by_not_specified(sysmeta):
 def obsoletes_not_specified(sysmeta):
   if sysmeta.obsoletes is not None:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'obsoletes cannot be specified in the System Metadata for create(). '
-      'Must use update()'
+      0, 'obsoletes cannot be specified in the System Metadata when calling this method'
     )
 
+# def obsoletes_specified(sysmeta):
+#   if sysmeta.obsoletes is None:
+#     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+#       'obsoletes must be specified in the System Metadata when calling this method')
 
-def obsoletes_specified(sysmeta):
-  if sysmeta.obsoletes is None:
-    raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'obsoletes must be specified in the System Metadata for update()'
-    )
+# def obsoletes_matches_pid(sysmeta, old_pid):
+#   if sysmeta.obsoletes.value() != old_pid:
+#     raise d1_common.types.exceptions.InvalidSystemMetadata(0,
+#       'The identifier specified in the System Metadata obsoletes field does not '
+#       'match the identifier specified in the URL')
 
 
-def obsoletes_matches_pid(sysmeta, old_pid):
-  if sysmeta.obsoletes.value() != old_pid:
-    raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, 'The identifier specified in the System Metadata obsoletes field does not '
-      'match the identifier specified in the URL'
-    )
+def obsoletes_matches_pid_if_specified(sysmeta, old_pid):
+  if sysmeta.obsoletes is not None:
+    if sysmeta.obsoletes.value() != old_pid:
+      raise d1_common.types.exceptions.InvalidSystemMetadata(
+        0, 'The identifier specified in the System Metadata obsoletes field was '
+        'specified and does not match the identifier specified in the URL'
+      )
 
 
 def pid_does_not_exist(pid):
@@ -176,6 +181,16 @@ def pid_exists(pid):
     )
 
 
+def pid_not_obsoleted(pid):
+  sci_obj = mn.models.ScienceObject.objects.get(pid=pid)
+  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
+    if s.obsoletedBy is not None:
+      raise d1_common.types.exceptions.InvalidRequest(
+        0, 'Object has already '
+        'been obsoleted', pid
+      )
+
+
 def url_is_http_or_https(url):
   url_split = urlparse.urlparse(url)
   if url_split.scheme not in ('http', 'https'):
@@ -191,12 +206,14 @@ def url_references_retrievable(url):
     conn = httplib.HTTPConnection(url_split.netloc)
   else:
     conn = httplib.HTTPSConnection(url_split.netloc)
-  conn.request('HEAD', url_split.path)
+  headers = {}
+  mn.util.add_basic_auth_header_if_enabled(headers)
+  conn.request('HEAD', url_split.path, headers=headers)
   res = conn.getresponse()
   if res.status != 200:
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid URL specified for remote storage: {0}. '
-      'The referenced object is not retrievable'.format(url)
+      'The referenced object is not retrievable. Error: {1}'.format(url, res.read())
     )
 
 

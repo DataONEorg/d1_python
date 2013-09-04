@@ -27,6 +27,7 @@
 '''
 
 # Stdlib.
+import base64
 import datetime
 import exceptions
 import glob
@@ -260,3 +261,21 @@ def coerce_put_post(request):
       request.META['REQUEST_METHOD'] = 'PUT'
 
     request.PUT = request.POST
+
+
+def add_basic_auth_header_if_enabled(headers):
+  if settings.WRAPPED_MODE_BASIC_AUTH_ENABLED:
+    headers.update((_mk_http_basic_auth_header(), ))
+
+
+def _mk_http_basic_auth_header():
+  return (
+    'Authorization', 'Basic {0}'.format(
+      base64.standard_b64encode(
+        '{0}:{1}'.format(
+          settings.WRAPPED_MODE_BASIC_AUTH_USERNAME,
+          settings.WRAPPED_MODE_BASIC_AUTH_PASSWORD
+        )
+      )
+    )
+  )

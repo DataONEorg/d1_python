@@ -308,6 +308,31 @@ MEDIA_ROOT = make_absolute('./stores') # relative location
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 
+# GMN implements a vendor specific extension for create(). Instead of providing
+# an object for GMN to manage, the object can be left empty and the URL of the
+# object on a 3rd party server be provided instead. In that case, GMN will
+# stream the object bytes from the remote server while handling all other object
+# related operations like usual. An object that is created using this extension
+# is said to be "wrapped" while an object for which GMN also stores the data
+# bytes (the most common usage) is referred to as "managed". GMN can stream
+# wrapped objects from HTTP and HTTPS.
+#
+# GMN provides limited support for streaming objects that are access controlled
+# on the remote server. GMN has the ability to supply credentials to the remote
+# server via simple HTTP Basic Authentication. This type of authentication is
+# secure only when it is performed over an HTTPS connection. The username and
+# password provided here must provide access to all the wrapped objects handled
+# by this instance of GMN. Because of this, this type of authentication is ONLY
+# secure if ALL subjects that have permission to create objects on this GMN
+# instance also have full access to ALL objects on the remote server. The attack
+# vector would be that someone could gain access to an object on the remote
+# server for which they do not have access by creating a wrapped object on GMN,
+# supplying the URL for the access controlled object together with an access
+# control list that lets them access the object on GMN.
+WRAPPED_MODE_BASIC_AUTH_ENABLED = False
+WRAPPED_MODE_BASIC_AUTH_USERNAME = ''
+WRAPPED_MODE_BASIC_AUTH_PASSWORD = ''
+
 # Path to the log file.
 LOG_PATH = make_absolute('./gmn.log')
 
