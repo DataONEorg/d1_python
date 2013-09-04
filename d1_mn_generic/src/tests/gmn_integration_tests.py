@@ -24,12 +24,12 @@
 
 :Synopsis:
   Integration testing of ITK and GMN.
-  
+
 :Warning:
   This test deletes any existing objects and event log records on the
   destination GMN instance.
 
-:Details:  
+:Details:
   This test works by first putting the target GMN into a known state by deleting
   any existing objects and all event logs from the instance and then creating a
   set of test objects of which all object properties and exact contents are
@@ -45,7 +45,7 @@
   the command line. For the wrapped mode tests to work, the test objects must be
   available on a web server. The location can be specified as a program
   argument.
-  
+
 :Created: 2010-06-14
 :Author: DataONE (Dahl)
 '''
@@ -244,9 +244,9 @@ class TestSequenceFunctions(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     self.assertEqual(client.get_setting('GMN_DEBUG'), 'True')
 
-    # ----------------------------------------------------------------------------
-    # Set up test objects. Also checks create()
-    # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # Set up test objects. Also checks create()
+  # ----------------------------------------------------------------------------
 
   def test_1010_A(self):
     '''Delete all objects.'''
@@ -947,69 +947,9 @@ class TestSequenceFunctions(unittest2.TestCase):
     pid2 = self._generate_identifier()
     self.assertNotEqual(pid1, pid2)
 
-#  def test_1060_update_sysmeta(self):
-#    '''Update System Metadata.
-#    '''
-#    pid = '12Cpaup.txt'
-#    
-#    # Generate a new System Metadata object with Access Policy.
-#    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
-#                                    datetime.datetime(1976, 7, 8),
-#                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
-#
-#    access_policy_spec = (
-#      (('test_user_1',), ('read',)),
-#      (('test_user_2',), ('read',))
-#    )
-#
-#    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
-#
-#    sysmeta.rightsHolder = 'test_user_1'
-#
-#    # Serialize System Metadata to XML.
-#    sysmeta_xml = sysmeta.toxml()
-#    mime_multipart_files = [
-#      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
-#    ]
-#
-#    # POST to /meta/pid.
-#    test_test_1060_update_sysmeta_url = urlparse.urljoin('/v1/meta/',
-#      d1_common.url.encodePathElement(pid))
-#    
-#    root = gmn_test_client.GMNTestClient(self.options.gmn_url)
-#    response = root.POST(
-#      test_test_1060_update_sysmeta_url, files=mime_multipart_files,
-#      headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
-#    self.assertEqual(response.status, 200)
-
-#  def test_1050_object_update(self):
-#    '''Update an object.
-#    '''
-#    # New object.
-#    # SysMeta
-#    sysmeta_file = 'hdl%3A10255%2Fdryad.669%2Fmets.xml.sysmeta'
-#    sysmeta_path = os.path.join(self.options.obj_path, sysmeta_file)
-#    sysmeta_xml = open(sysmeta_path, 'rb').read()
-#    # SciData
-#    object_path = os.path.splitext(sysmeta_path)[0]
-#    object_str = open(object_path, 'rb')
-#    object_str = ''
-#    for i in range(10 * 1024 * 1024):
-#      object_str += 'a'
-#    object_str += 'z'
-#    # 
-#    obsoleted_pid = 'AnserMatrix.htm'
-#    new_pid = 'update_object_pid'
-#    # Update.
-#    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
-#    response = client.updateResponse(obsoleted_pid,
-#                                     object_str, new_pid, sysmeta_xml,
-#                                     vendorSpecific=self.include_subjects('test_user_1'))
-#    return response
-
-# ----------------------------------------------------------------------------
-# MNReplication.replicate()
-# ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # MNReplication.replicate()
+  # ----------------------------------------------------------------------------
 
   def test_1900(self):
     '''MNReplication.replicate(): Request to replicate new object raises returns 200 OK.
@@ -1055,53 +995,96 @@ class TestSequenceFunctions(unittest2.TestCase):
   # MNStorage.update()
   # ----------------------------------------------------------------------------
 
-  def update(self, wrapped=False):
-    '''update(): Creating a new object that obsoletes another object
+  #  def test_2000(self):
+  #    '''Update System Metadata.
+  #    '''
+  #    pid = '12Cpaup.txt'
+  #
+  #    # Generate a new System Metadata object with Access Policy.
+  #    sysmeta = self.generate_sysmeta(pid, 123, 'baadf00d',
+  #                                    datetime.datetime(1976, 7, 8),
+  #                                    gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+  #
+  #    access_policy_spec = (
+  #      (('test_user_1',), ('read',)),
+  #      (('test_user_2',), ('read',))
+  #    )
+  #
+  #    sysmeta.accessPolicy = self.generate_access_policy(access_policy_spec)
+  #
+  #    sysmeta.rightsHolder = 'test_user_1'
+  #
+  #    # Serialize System Metadata to XML.
+  #    sysmeta_xml = sysmeta.toxml()
+  #    mime_multipart_files = [
+  #      ('sysmeta','systemmetadata.abc', sysmeta_xml.encode('utf-8')),
+  #    ]
+  #
+  #    # POST to /meta/pid.
+  #    test_test_1060_update_sysmeta_url = urlparse.urljoin('/v1/meta/',
+  #      d1_common.url.encodePathElement(pid))
+  #
+  #    root = gmn_test_client.GMNTestClient(self.options.gmn_url)
+  #    response = root.POST(
+  #      test_test_1060_update_sysmeta_url, files=mime_multipart_files,
+  #      headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+  #    self.assertEqual(response.status, 200)
+
+  def test_2010_A(self):
+    '''MNStorage.update(): Creating a new object that obsoletes another object.
     '''
+    new_pid = 'update_object_pid_1'
+    old_pid = 'AnserMatrix.htm'
+    sci_obj, sys_meta = self.generate_test_object(new_pid)
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    client.update(
+      old_pid,
+      StringIO.StringIO(sci_obj),
+      new_pid,
+      sys_meta,
+      vendorSpecific=self.include_subjects('test_user_1')
+    )
 
-    for sysmeta_path in sorted(
-      glob.glob(
-        os.path.join(
-          self.options.obj_path, '*.sysmeta'
-        )
-      )
-    ):
-      # Get name of corresponding object and open it.
-      object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
-      object_file = open(object_path, 'r')
+  def test_2010_B(self):
+    '''MNStorage.update(): Attempt to update an obsoleted object raises InvalidRequest.
+    '''
+    new_pid = 'update_object_pid_2'
+    old_pid = 'AnserMatrix.htm'
+    sci_obj, sys_meta = self.generate_test_object(new_pid)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidRequest,
+      client.update,
+      old_pid,
+      StringIO.StringIO(sci_obj),
+      new_pid,
+      sys_meta,
+      vendorSpecific=self.include_subjects('test_user_1')
+    )
 
-      # The pid is stored in the sysmeta.
-      sysmeta_file = open(sysmeta_path, 'r')
-      sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
-      sysmeta_obj.rightsHolder = 'test_user_1'
-
-      headers = self.include_subjects('test_user_1')
-      headers.update({'VENDOR_TEST_OBJECT': 1})
-
-      if wrapped:
-        vendor_specific = {
-          'VENDOR_GMN_REMOTE_URL': self.options.obj_url + '/' + \
-          d1_common.url.encodePathElement(
-            d1_common.url.encodePathElement(sysmeta_obj.identifier.value()))
-        }
-        headers.update(vendor_specific)
-
-      client.create(
-        sysmeta_obj.identifier.value(
-        ),
-        object_file,
-        sysmeta_obj,
-        vendorSpecific=headers
-      )
+  def test_2010_C(self):
+    '''MNStorage.update(): Attempt to update an object with existing PID, raises IdentifierNotUnique.
+    '''
+    new_pid = 'update_object_pid_1'
+    old_pid = 'fitch2.mc'
+    sci_obj, sys_meta = self.generate_test_object(new_pid)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    self.assertRaises(
+      d1_common.types.exceptions.IdentifierNotUnique,
+      client.update,
+      old_pid,
+      StringIO.StringIO(sci_obj),
+      new_pid,
+      sys_meta,
+      vendorSpecific=self.include_subjects('test_user_1')
+    )
 
   # ----------------------------------------------------------------------------
   # MNStorage.delete()
   # ----------------------------------------------------------------------------
 
-  def _test_2000(self):
-    '''MNStorage.delete():
+  def test_2100(self):
+    '''MNStorage.delete()
     '''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     # Find the PID for a random object that exists on the server.
@@ -1110,16 +1093,37 @@ class TestSequenceFunctions(unittest2.TestCase):
     pid_deleted = client.delete(pid)
     self.assertEqual(pid, pid_deleted.value())
     # Verify that the object no longer exists.
-    # We check for SyntaxError raised by the XML deserializer when it attempts
-    # to deserialize a DataONEException. The exception is caused by the body
-    # being empty since describe() uses a HEAD request.
-    self.assertRaises(SyntaxError, client.describe, pid)
+    self.assertRaises(
+      d1_common.types.exceptions.DataONEIdentifierException, client.describe, pid
+    )
+
+  # ----------------------------------------------------------------------------
+  # MNStorage.archive()
+  # ----------------------------------------------------------------------------
+
+  def test_2200_A(self):
+    '''MNStorage.archive()
+    '''
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    # Find the PID for a random object that exists on the server.
+    pid = self.find_valid_pid(client)
+    # Archive the object on GMN.
+    pid_archived = client.archive(
+      pid, vendorSpecific=self.include_subjects(
+        'test_user_1'
+      )
+    )
+    self.assertEqual(pid, pid_archived.value())
+    # Verify that the object no longer exists.
+    self.assertRaises(
+      d1_common.types.exceptions.DataONEIdentifierException, client.describe, pid
+    )
 
   # ----------------------------------------------------------------------------
   # Unicode.
   # ----------------------------------------------------------------------------
 
-  def test_2100(self):
+  def test_2300(self):
     '''Unicode: GMN and libraries handle Unicode correctly.
     '''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
@@ -1198,7 +1202,7 @@ def main():
     dest='cn_url',
     action='store',
     type='string',
-    default='http://cn-dev.dataone.org/cn/'
+    default='http://cn.dataone.org/cn/'
   )
   parser.add_option(
     '--xsd-path',
@@ -1254,7 +1258,7 @@ def main():
   else:
     suite = unittest2.TestLoader().loadTestsFromTestCase(s)
 
-#  if options.debug == True:    
+#  if options.debug == True:
 #    unittest2.TextTestRunner(verbosity=2).debug(suite)
 #  else:
   unittest2.TextTestRunner(verbosity=2, failfast=True).run(suite)
