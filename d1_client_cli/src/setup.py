@@ -37,25 +37,16 @@ setup(
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
+  packages=find_packages(),
 
   # Accept all data files and directories matched by MANIFEST.in or found in
   # source control.
-  include_package_data=True,
+  #include_package_data = True,
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'dataone.common >= 1.0.0',
-    'dataone.libclient >= 1.0.0',
-    'google.foresite-toolkit == 1.2',
-    'rdflib < 3a', #'rdflib < 2.4.2',
-    'python-dateutil',
-    'pyxb == 1.2.1',
-    'iso8601 >= 0.1',
-    'pyOpenSSL >= 0.13',
-  ],
-  dependency_links=[
-    'http://foresite-toolkit.googlecode.com/files/foresite-1.2.tgz',
-    'http://downloads.sourceforge.net/project/pyxb/pyxb/1.1.3/PyXB-full-1.1.3.tar.gz',
+    'dataone.common == 1.1.2RC1',
+    'dataone.libclient == 1.2.1',
   ],
   package_data={
     # If any package contains *.txt or *.rst files, include them:

@@ -20,4 +20,4 @@ The CLI is distributed via PyPI, the Python Package Index.
   Install the CLI from PyPI::
 
     $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade; \
-    pip install dataone.cli
+    sudo pip install dataone.cli

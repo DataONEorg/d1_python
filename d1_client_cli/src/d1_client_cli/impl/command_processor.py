@@ -51,7 +51,7 @@ import cli_client
 import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
-import initialize #@UnusedImport
+#import initialize #@UnusedImport
 import session
 import check_dependencies
 import operation_queue

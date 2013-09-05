@@ -43,9 +43,16 @@ import xml.dom.minidom
 # D1.
 import d1_common.types.exceptions
 
-# App.
-sys.path.append(u'./impl')
 
+# Create absolute path from path that is relative to the module from which
+# the function is called.
+def make_absolute(p):
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
+
+sys.path.append(make_absolute(u'./impl'))
+
+# App.
 import cli_util
 import cli_exceptions
 import check_dependencies
@@ -54,6 +61,8 @@ import cli
 
 
 def main():
+  log_setup(True)
+
   if not check_dependencies.check_dependencies():
     raise Exception(u'Dependency check failed')
 

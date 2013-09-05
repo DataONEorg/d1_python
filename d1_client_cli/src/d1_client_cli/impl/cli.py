@@ -636,5 +636,7 @@ Write Operation Queue:   queue run edit clearqueue
 
 Command History:         Arrow Up, Arrow Down
 Command Editing:         Arrow Left, Arrow Right, Delete
+Command Completion:      Single Tab: Complete unique command
+                         Double Tab: Display possible commands
 '''
     )
