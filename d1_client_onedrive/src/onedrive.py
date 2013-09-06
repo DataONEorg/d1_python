@@ -54,6 +54,7 @@ import impl.resolver.root
 
 from impl import cache_memory as cache
 from impl import cache_disk
+import impl
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -109,7 +110,7 @@ def main():
     pass
 
   if options.version:
-    log_library_versions()
+    log_version()
     sys.exit()
 
   # FUSE settings common to FUSE and MacFUSE.
@@ -185,19 +186,8 @@ def map_level_string_to_level(level_string):
   }[level_string]
 
 
-def log_library_versions():
-  import d1_common.svnrevision
-  import d1_client.svnrevision
-  import svnrevision
-
-  d1_common_rev = str(d1_common.svnrevision.getSvnRevision(update_static=True))
-  d1_client_rev = str(d1_client.svnrevision.getSvnRevision(update_static=True))
-  onedrive_rev = str(svnrevision.getSvnRevision(update_static=True))
-
-  log.info('Software revisions:')
-  log.info('  d1_common SVN revision: {0}'.format(d1_common_rev))
-  log.info('  d1_client SVN revision: {0}'.format(d1_client_rev))
-  log.info('  ONEDrive SVN revision: {0}'.format(onedrive_rev))
+def log_version():
+  log.info('ONEDrive version: {0}'.format(impl.__version__))
 
 
 def log_startup_parameters(options, arguments, fuse_args):
