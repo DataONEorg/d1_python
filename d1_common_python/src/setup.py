@@ -45,7 +45,7 @@ setup(
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'iso8601 >= 0.1',
+    'iso8601 == 0.1.4',
     'pyxb == 1.2.1',
   ],
   package_data={
