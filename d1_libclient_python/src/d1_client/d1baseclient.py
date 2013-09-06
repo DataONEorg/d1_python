@@ -34,6 +34,7 @@
   CNRead/MNRead.describe()
   CNRead/MNRead.listObjects()
   CNAuthorization/MNAuthorization.isAuthorized()
+  CNCore/MNCore.ping()
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
 '''

@@ -110,16 +110,16 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 
 # Only retrieve objects of this type. A complete list of valid formatIds can be
-# found at https://cn-ucsb-1.dataone.org/cn/v1/formats
+# found at https://cn.dataone.org/cn/v1/formats
 LIST_OBJECTS_FORMAT_ID = 'eml://ecoinformatics.org/eml-2.1.1'
 
 # The number of objects to list each time listObjects() is called.
 LIST_OBJECTS_PAGE_SIZE = 100
 
-# The location to store downloaded objects.
+# The location in which to store downloaded objects.
 DOWNLOAD_FOLDER = './d1_objects'
 
-# Ignore objects larger than this size.
+# Don't download objects larger than this size.
 MAX_FILE_SIZE_TO_DOWNLOAD = 1024**2
 
 
@@ -127,6 +127,11 @@ def main():
   # Setting the default logger to level "DEBUG" causes the script to become
   # very verbose.
   logging.getLogger('').setLevel(logging.DEBUG)
+
+  try:
+    os.makedirs(DOWNLOAD_FOLDER)
+  except OSError:
+    pass
 
   node_list = get_node_list_from_coordinating_node()
   for node in node_list.node:
