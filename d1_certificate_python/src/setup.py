@@ -58,7 +58,7 @@ setup(
   # source control.
   include_package_data=True,
   install_requires=[
-    'dataone.common >= 1.0.0',
+    'dataone.common == 1.1.2RC1',
   ],
   ext_modules=[
     x509v3_certificate_extractor,
