@@ -30,36 +30,32 @@ from setuptools import setup, find_packages
 import d1_workspace
 
 setup(
-  name='dataone.workspace_client',
-  version=d1_workspace.__version__,
-  description='A DataONE Workspace client library for Python',
-  author='DataONE Project',
-  author_email='developers@dataone.org',
-  url='http://dataone.org',
-  license='Apache License, Version 2.0',
-  packages=find_packages(),
+  name = 'dataone.workspace_client',
+  version = d1_workspace.__version__,
+  description = 'A DataONE Workspace client library for Python',
+  author = 'DataONE Project',
+  author_email = 'developers@dataone.org',
+  url = 'http://dataone.org',
+  license = 'Apache License, Version 2.0',
 
   # Accept all data files and directories matched by MANIFEST.in or found in
   # source control.
-  include_package_data=True,
+  include_package_data = True,
 
   # Specify additional patterns to match files and directories that may or may
   # not be matched by MANIFEST.in or found in source control.
-  package_data={
+  package_data = {
     #'': ['*.txt', '*.rst', '*.csv'],
   },
 
   # Specify patterns for data files and directories that should not be included
   # when a package is installed, even if they would otherwise have been included
   # due to the use of the preceding options.
-  exclude_package_data={
+  exclude_package_data = {
     '': ['*.log', '*.txt'],
   },
 
   # Dependencies that are available through PYPI / easy_install.
-  install_requires=[
-    #'dataone.common >= 1.0.0',
-    #'rdflib < 3a',
-    #'google.foresite-toolkit == 1.2',
+  install_requires = [
   ],
 )

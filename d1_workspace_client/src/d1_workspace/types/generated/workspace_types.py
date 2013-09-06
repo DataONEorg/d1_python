@@ -1,7 +1,7 @@
 # ./generated/workspace_types.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2013-05-17 09:55:28.582636 by PyXB version 1.2.1
+# Generated 2013-06-27 10:01:02.305269 by PyXB version 1.2.1
 # Namespace AbsentNamespace0
 
 import pyxb
@@ -13,7 +13,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:32134568-bf0a-11e2-8a24-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:c3f167c8-df42-11e2-85b9-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
