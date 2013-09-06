@@ -1,44 +1,52 @@
 Install the DataONE client side certificate
 ===========================================
 
-In addition to its regular server role, GMN also acts as a client, initiating
-connections to other Nodes.
+In addition to acting as servers in the DataONE infrastructure, Member Nodes
+also act as clients, initiating connections to other Nodes. When connecting to
+other Nodes, Member Nodes authenticate themselves in a process called
+:term:`client side authentication`, in which a client side certificate is
+provided over an LTS/SSL connection. This client side certificate is obtained
+from DataONE.
 
-During :term:`client side authentication`, the client provides a certificate,
-proving its identity to the server. A DataONE client or Node may connecty to
-another Node without providing a client side certificate, but then gains only
-public access on the Node.
 
+Obtain a client side certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Obtaining a client side certificate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DataONE will create and issue your node an :term:`X.509` certificate issued by
+the DataONE :term:`CA`.  This :term:`client side certificate` is to be used when
+the MN initiates REST API calls to CNs and other MNs.  Certificates issued by
+DataONE are long-lasting :term:`X.509` certificates linked to a specific MN via
+its :term:`DN`.
 
-To obtain a client side certificate, generate a certificate request and email
-it to DataONE. DataONE will return a signed certificate by email.
+Tier 1 MNs using http for MN API calls will likely only need this certificate
+when administering their node using the CNRegister API calls, which may
+be done from any client machine.  Nevertheless, it is advisable to store this
+certificate on the Member Node server.
 
-  Create the private key for the certificate request::
+To obtain a client side certificate:
 
-    $ sudo mkdir -p /var/local/dataone/certs/client
-    $ cd /var/local/dataone/certs/client
-    $ sudo openssl genrsa -des3 -out my_member_node.key 4096
+#. create an account on the `DataONE Registration page
+   <https://docs.dataone.org/join_form>`_,
 
-  Create the certificate request::
+#. notify DataONE by sending an email to support@dataone.org. In the email,
+   state that you are requesting a client side certificate for a new MN and
+   include the MN identifier, in the form ``urn:node:NODEID``,
+   :ref:`selected previously <create_node_document>`.
 
-    $ openssl req -new -key my_member_node.key -out my_member_node.csr
+DataONE will create the certificate for you and notify you of its creation with
+reply to your email. At this point:
 
-  * You will be prompted for information that, combined, will become the
-    Distinguished Name (DN) for this MN. Please supply *Country Name*, *State or
-    Province Name*, *Locality Name*, *Organization Name* and *Common Name*. The
-    remaining fields may be left blank. To remove the default value from a
-    field, type a period ("."). To leave a field blank, press Enter.
+#. follow the link provided in the email, and sign in using the account created
+   or used in the first step, above.
 
-Note: Anyone who has the private key can act as your Node in the DataONE
-infrastructure. Keep the private key safe. If your private key becomes
-compromised, please inform DataONE so that the certificate can be revoked.
+You will initially receive a certificate that is valid for any and all of the test
+environments. When the new MN is ready to go into production, you will receive a
+production certificate.
 
-  * Email the my_member_node.csr file to DataONE at cert-requests@dataone.org.
-    In the email, include for which environment you would like the certificate
-    to be signed. The certificate will only be trusted in that environment.
+.. WARNING:: Anyone who has the private key can act as your Node in the DataONE
+  infrastructure. Keep the private key safe. If your private key becomes
+  compromised, please inform DataONE so that the certificate can be revoked and
+  a new one generated.
 
 
 Installing the client side certificate
