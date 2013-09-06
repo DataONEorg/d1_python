@@ -110,11 +110,31 @@ class ResourceMapGenerator():
     )
     return self._serialize_resource_map(resource_map)
 
-  '''Generate an OAI-ORE resource map.
-  :relations: {metaid:[data id, data id, ...], ...}
-  '''
+  def generate_system_metadata_for_resource_map(self, resource_map, checksum_algorithm):
+    '''Generate a system metadata object for a resource map. The generated 
+    system metadata object is intended for use in DataONE API methods such as
+    MNStorage.Create(). The object contains an access control rule allowing
+    public access. For simple use cases with public access, the object can
+    often be used as is. For more complex use cases, the object can be modified
+    programmatically before use.
+    '''
+    size = len(science_object)
+    now = datetime.datetime.now()
+    sys_meta = generate_sys_meta(pid, format_id, size, md5, now)
+    return sys_meta
+
+    checksum = self._generate_checksum(resource_map)
+    size = len(resource_map)
+    return self.session.create_system_metadata(pid, checksum, size, RDFXML_FORMATID)
+
+  #
+  # Private.
+  #
 
   def _generate_resource_map(self, aggregation_id, resource_map_id, relations):
+    '''Generate an OAI-ORE resource map.
+    :relations: {metaid:[data id, data id, ...], ...}
+    '''
     uris = {}
     foresite.utils.namespaces['cito'] = rdflib.Namespace(CITO_NS)
     aggr = foresite.Aggregation(aggregation_id)
@@ -158,6 +178,33 @@ class ResourceMapGenerator():
     if not path.endswith('/'):
       path += '/'
     return path
+
+  def generate_sys_meta(pid, format_id, size, md5, now):
+    sys_meta = dataoneTypes.systemMetadata()
+    sys_meta.identifier = pid
+    sys_meta.formatId = format_id
+    sys_meta.size = size
+    sys_meta.rightsHolder = SYSMETA_RIGHTSHOLDER
+    sys_meta.checksum = dataoneTypes.checksum(md5)
+    sys_meta.checksum.algorithm = 'MD5'
+    sys_meta.dateUploaded = now
+    sys_meta.dateSysMetadataModified = now
+    sys_meta.accessPolicy = generate_public_access_policy()
+    return sys_meta
+
+  def _generate_checksum(self, resource_map, algorithm='SHA-1'):
+    h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+    h.update(resource_map)
+    return h.hexdigest()
+
+  def generate_public_access_policy():
+    accessPolicy = dataoneTypes.accessPolicy()
+    accessRule = dataoneTypes.AccessRule()
+    accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
+    permission = dataoneTypes.Permission('read')
+    accessRule.permission.append(permission)
+    accessPolicy.append(accessRule)
+    return accessPolicy
 
 #===============================================================================
 
