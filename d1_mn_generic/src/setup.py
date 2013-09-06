@@ -65,13 +65,16 @@ setup(
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'dataone.common >= 1.1.0',
-    'dataone.libclient >= 1.2.0',
+    'dataone.common == 1.1.2RC1',
+    'dataone.libclient == 1.2.1',
     'dataone.certificate_extensions == 1.1.0',
-    'dataone.cli >= 1.0.0',
     'django == 1.4.1',
     'pyxb == 1.2.1',
     'iso8601 == 0.1.4',
     'psycopg2 == 2.4.6',
+    # GMN does not use the CLI programmatically -- it's just included because
+    # the CLI is a convenient way to interact with a GMN instance. So the
+    # latest version is installed, instead of a specific version.
+    'dataone.cli >= 1.0.0',
   ],
 )

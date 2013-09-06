@@ -227,7 +227,7 @@ REPLICATION_ALLOWEDOBJECTFORMAT = ()
 DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 #DATAONE_ROOT = 'https://cn-dev.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.dataone.org/cn/'
+#DATAONE_ROOT = 'https://cn-stage.dataone.org/cn'
 
 # Additional subjects for implicitly trusted DataONE infrastructure. Connections
 # containing client side certificates with these subjects bypass access control
