@@ -68,7 +68,8 @@ import ast
 import copy
 import os
 import pickle
-from types import * #@UnusedWildImport
+import platform
+import types
 import urlparse
 
 # D1.
@@ -135,7 +136,7 @@ variable_type_map = {
 
 variable_defaults_map = {
   VERBOSE_NAME: True,
-  EDITOR_NAME: u'nano',
+  EDITOR_NAME: u'notepad' if platform.system() == 'Windows' else 'nano',
   CN_URL_NAME: d1_common.const.URL_DATAONE_ROOT,
   MN_URL_NAME: d1_common.const.DEFAULT_MN_HOST,
   START_NAME: 0,
@@ -275,7 +276,8 @@ class Session(object):
     return (verbose is not None) and verbose
 
   def get_default_pickle_file_path(self):
-    return os.path.join(os.environ[u'HOME'], '.dataone_cli.conf')
+    # This method of finding the user's home directory is safe on all platforms.
+    return os.path.join(os.path.expanduser('~'), '.dataone_cli.conf')
 
   #
   # Private.
@@ -292,7 +294,7 @@ class Session(object):
 
   def _validate_variable_type(self, value, type_converter):
     # Make sure booleans are "sane"
-    if type_converter is BooleanType:
+    if type_converter is types.BooleanType:
       if value in (u'true', u'True', u't', u'T', 1, u'1', u'yes', u'Yes'):
         return True
       elif value in (u'false', u'False', u'f', u'F', 0, u'0', u'no', u'No'):

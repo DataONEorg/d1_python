@@ -34,6 +34,7 @@ import cmd
 import hashlib
 import logging
 import os
+import platform
 import re
 import sys
 
@@ -620,8 +621,7 @@ be lost if you exit.'''.format(n_remaining_operations)
 
   def _print_help(self):
     '''Custom help message to group commands by functionality'''
-    cli_util.print_info(
-      '''Commands (type help <command> for details)
+    msg = '''Commands (type help <command> for details)
 
 CLI:                     help history exit quit
 Session, General:        set load save reset
@@ -636,7 +636,9 @@ Write Operation Queue:   queue run edit clearqueue
 
 Command History:         Arrow Up, Arrow Down
 Command Editing:         Arrow Left, Arrow Right, Delete
-Command Completion:      Single Tab: Complete unique command
+'''
+    if platform.system() != 'Windows':
+      msg += '''Command Completion:      Single Tab: Complete unique command
                          Double Tab: Display possible commands
 '''
-    )
+    cli_util.print_info(msg)

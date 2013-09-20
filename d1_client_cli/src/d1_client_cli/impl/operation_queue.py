@@ -95,6 +95,7 @@ class OperationQueue(object):
         return
       self._operations = self._operations[1:]
     cli_util.print_info('All operations in the queue were executed successfully')
+    self._clear()
 
   def clear(self):
     self._assert_queue_not_empty()

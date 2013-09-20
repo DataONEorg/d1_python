@@ -43,21 +43,44 @@ import xml.dom.minidom
 # D1.
 import d1_common.types.exceptions
 
-
 # Create absolute path from path that is relative to the module from which
 # the function is called.
-def make_absolute(p):
-  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+#def make_absolute(p):
+#  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+#
+#sys.path.append(make_absolute(u'./impl'))
 
-
-sys.path.append(make_absolute(u'./impl'))
+# def module_path():
+#     """ This will get us the program's directory,
+#     even if we are frozen using py2exe"""
+#
+#     if we_are_frozen():
+#         return os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
+#
+#     return os.path.dirname(unicode(__file__, sys.getfilesystemencoding( )))
+#
+# sys.path.append(os.path.join(module_path(), u'./impl'))
 
 # App.
-import cli_util
-import cli_exceptions
-import check_dependencies
-import session
-import cli
+# import cli_util
+# import cli_exceptions
+# import check_dependencies
+# import session
+
+if hasattr(sys, 'frozen'):
+  import d1_client_cli.d1_client_cli as d1_client_cli
+  import d1_client_cli.impl.cli_util as cli_util
+  import d1_client_cli.impl.cli_exceptions as cli_exceptions
+  import d1_client_cli.impl.check_dependencies as check_dependencies
+  import d1_client_cli.impl.session as session
+  import d1_client_cli.impl.cli as cli
+else:
+  import d1_client_cli
+  import impl.cli_util as cli_util
+  import impl.cli_exceptions as cli_exceptions
+  import impl.check_dependencies as check_dependencies
+  import impl.session as session
+  import impl.cli as cli
 
 
 def main():
@@ -66,7 +89,7 @@ def main():
   if not check_dependencies.check_dependencies():
     raise Exception(u'Dependency check failed')
 
-  print u'DataONE Command Line Interface'
+  print u'DataONE Command Line Interface ({0})'.format(d1_client_cli.__version__)
 
   parser = optparse.OptionParser(
     usage=u'usage: %prog [command] ...',
