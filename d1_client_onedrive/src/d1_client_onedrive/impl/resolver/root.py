@@ -42,30 +42,29 @@
 # Stdlib.
 import logging
 import os
+import sys
 
 # D1.
-from impl import attributes
-from impl import cache_memory as cache
-from impl import directory
-from impl import directory_item
-from . import workspace
-from . import flat_space
-from impl import os_escape
-from impl import path_exception
-from impl import path_exception
-from . import resolver_abc
-#from ..   #import settings
-from impl import util
-
-import impl.command_processor
+from d1_client_onedrive.impl import attributes
+from d1_client_onedrive.impl import cache_memory as cache
+from d1_client_onedrive.impl import directory
+from d1_client_onedrive.impl import directory_item
+from d1_client_onedrive.impl import os_escape
+from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import util
+import flat_space
+import resolver_abc
+import workspace
+from d1_client_onedrive.impl import command_processor
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-#Set level specific for this module if specified
+# Set specific logging level for this module if specified.
 try:
   log.setLevel(logging.getLevelName( \
-               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
-except:
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
   pass
 
 
@@ -77,16 +76,15 @@ class RootResolver(resolver_abc.Resolver):
   def __init__(self, options):
     # The command processor is shared between all resolvers. It holds db and
     # REST connections and caches items that may be shared between resolvers.
-    command_processor = impl.command_processor.CommandProcessor(options)
-
-    super(RootResolver, self).__init__(options, command_processor)
+    self._command_processor = command_processor.CommandProcessor(options)
+    super(RootResolver, self).__init__(options, self._command_processor)
 
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     options._root_cache_delete_callback = self.cbClearCacheItem
     self.resolvers = {
-      RootResolver.FLDR_WORKSPACE: workspace.Resolver(options, self.command_processor),
-      RootResolver.FLDR_FLATSPACE: flat_space.Resolver(options, self.command_processor),
+      RootResolver.FLDR_WORKSPACE: workspace.Resolver(options, self._command_processor),
+      RootResolver.FLDR_FLATSPACE: flat_space.Resolver(options, self._command_processor),
     }
     self.error_file_cache = cache.Cache(self._options.MAX_ERROR_PATH_CACHE_SIZE)
 
@@ -132,7 +130,7 @@ class RootResolver(resolver_abc.Resolver):
   def cbClearCacheItem(self, path):
     '''Callback method that can be used to remove an entry from the 
     _cache_error_file_path cache. USed for example, if a child folder
-    has change content.
+    has changed content.
     '''
     return
 

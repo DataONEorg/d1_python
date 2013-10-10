@@ -35,42 +35,40 @@ directory entries:
 # Stdlib.
 import logging
 import os
-from impl import util
 from datetime import datetime
 
 # D1.
 
 # App.
-from impl import attributes
-from impl import directory
-from impl import directory_item
-from impl import path_exception
-from . import resolver_abc
-from . import resource_map
+from d1_client_onedrive.impl import attributes
+from d1_client_onedrive.impl import directory
+from d1_client_onedrive.impl import directory_item
+from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import util
+import resolver_abc
+import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-#Set level specific for this module if specified
+# Set specific logging level for this module if specified.
 try:
   log.setLevel(logging.getLevelName( \
-               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
-except:
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
   pass
 
-
-class Resolver(resolver_abc.Resolver):
-
-  HELP = '''
-Use FlatSpace to go directly to any DataONE object by typing 
+README_TXT = '''Use FlatSpace to go directly to any DataONE object by typing 
 the PID in the path.
 '''
 
+
+class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
     super(Resolver, self).__init__(options, command_processor)
     self.modified()
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self._manual_pid_list = {}
-    self.helpText = Resolver.HELP
+    self.helpText = util.os_format(README_TXT)
 
   def get_attributes(self, path, fs_path=''):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))

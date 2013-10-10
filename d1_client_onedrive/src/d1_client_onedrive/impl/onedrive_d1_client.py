@@ -41,11 +41,11 @@ import path_exception
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-#Set level specific for this module if specified
+# Set specific logging level for this module if specified.
 try:
   log.setLevel(logging.getLevelName( \
-               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
-except:
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
   pass
 
 

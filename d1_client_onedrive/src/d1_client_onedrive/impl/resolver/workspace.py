@@ -34,34 +34,32 @@ import os
 from StringIO import StringIO
 
 # D1.
+from d1_workspace.types.generated import generateFolderHelpText
+from d1_workspace.types.generated import workspace_types
 
 # App.
-from impl import attributes
-from impl import cache_memory as cache
-from impl import command_processor
-from impl import directory
-from impl import directory_item
-from impl import path_exception
-from . import resolver_abc
-from . import resource_map
-#from impl #import settings
-from impl import util
-from impl.resolver import author
-from impl.resolver import taxa
-from impl.resolver import region
-from impl.resolver import time_period
-from impl.resolver import single
-
-from d1_workspace.types.generated import generateFolderHelpText
-import d1_workspace.types.generated.workspace_types as workspace_types
+from d1_client_onedrive.impl import attributes
+from d1_client_onedrive.impl import cache_memory as cache
+from d1_client_onedrive.impl import command_processor
+from d1_client_onedrive.impl import directory
+from d1_client_onedrive.impl import directory_item
+from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl.resolver import author
+from d1_client_onedrive.impl.resolver import taxa
+from d1_client_onedrive.impl.resolver import region
+from d1_client_onedrive.impl.resolver import time_period
+from d1_client_onedrive.impl.resolver import single
+from d1_client_onedrive.impl import util
+import resolver_abc
+import resource_map
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-#Set level specific for this module if specified
+# Set specific logging level for this module if specified.
 try:
   log.setLevel(logging.getLevelName( \
-               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
-except:
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
   pass
 
 README = "readme.txt"
@@ -298,7 +296,7 @@ class Resolver(resolver_abc.Resolver):
       test = folder._helpText
     except AttributeError:
       #Need to generate the help text
-      folder._helpText = generateFolderHelpText(folder)
+      folder._helpText = util.os_format(generateFolderHelpText(folder))
     res = folder._helpText[offset:size]
     return res
 
@@ -319,7 +317,6 @@ The ONEDrive Workspace folder contains objects that match queries specified
 in the workspace configuration and individual identifiers
     """
     )
-
     return res.getvalue()
 
   def _create_workspace_from_xml_doc(self, xml_doc_path):

@@ -45,19 +45,19 @@ import urlparse
 import d1_common.date_time
 
 # App.
-from impl import cache_memory as cache
-from impl import directory
-from impl import directory_item
-from impl import path_exception
-from ... import settings
+from d1_client_onedrive.impl import cache_memory as cache
+from d1_client_onedrive.impl import directory
+from d1_client_onedrive.impl import directory_item
+from d1_client_onedrive.impl import path_exception
+
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-#Set level specific for this module if specified
+# Set specific logging level for this module if specified.
 try:
   log.setLevel(logging.getLevelName( \
-               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
-except:
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
   pass
 
 
@@ -174,7 +174,7 @@ class FUSECallbacks(fuse.Operations):
 
 
   def _raise_error_for_os_special_file(self, path):
-    if len(set(path.split(os.path.sep)) & settings.IGNORE_SPECIAL):
+    if len(set(path.split(os.path.sep)) & self._options.IGNORE_SPECIAL):
       self._raise_error_no_such_file_or_directory(path)
 
 

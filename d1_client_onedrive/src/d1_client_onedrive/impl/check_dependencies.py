@@ -28,9 +28,16 @@
 
 # Stdlib.
 import logging
+import platform
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+# Set specific logging level for this module if specified.
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
+  pass
 
 
 def check_dependencies():
@@ -43,13 +50,22 @@ def check_dependencies():
     exceptions.append(e)
     messages.append(u'PyXB: Try: easy_install PyXB\n')
 
-  try:
-    import fuse
-  except ImportError as e:
-    exceptions.append(e)
-    messages.append(
-      u'FUSE: Read the documentation for instructions on how to install fusepy'
-    )
+  if platform.system() == 'Linux':
+    try:
+      import fuse
+    except ImportError as e:
+      exceptions.append(e)
+      messages.append(
+        u'FUSE: Read the documentation for instructions on how to install fusepy'
+      )
+
+  # What's the best way to check if Dokan has been installed?
+  #if platform.system() == 'Windows':
+  #  try:
+  #    import dokan
+  #  except ImportError as e:
+  #    exceptions.append(e)
+  #    messages.append(u'FUSE: Read the documentation for instructions on how to install fusepy')
 
   if len(exceptions):
     log.critical(u'Importing of the following dependencies failed.')

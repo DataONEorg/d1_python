@@ -39,26 +39,24 @@ import sys
 # D1.
 
 # App.
-sys.path.append('.')
-from impl import attributes
-from impl import cache_memory as cache
-from impl import command_processor
-from impl import directory
-from impl import directory_item
-from impl import path_exception
+from d1_client_onedrive.impl import attributes
+from d1_client_onedrive.impl import cache_disk
+from d1_client_onedrive.impl import cache_memory as cache
+from d1_client_onedrive.impl import command_processor
+from d1_client_onedrive.impl import directory
+from d1_client_onedrive.impl import directory_item
+from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import util
 import resolver_abc
-#from impl #import settings
-from impl import util
 import resource_map
-from impl import cache_disk
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
-#Set level specific for this module if specified
+# Set specific logging level for this module if specified.
 try:
   log.setLevel(logging.getLevelName( \
-               getattr(logging,'ONEDRIVE_MODULES')[__name__]) )
-except:
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
   pass
 
 log.setLevel(logging.DEBUG)
@@ -66,7 +64,7 @@ log.setLevel(logging.DEBUG)
 #GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
-README = '''Region Folder
+README_TXT = '''Region Folder
 
 The Region folder provides a geographically ordered view of science data objects
 for which the geographical area being covered is known to DataONE. Objects with
@@ -91,8 +89,6 @@ the first object will appear under California and only the second will appear
 under New Mexico.
 '''
 
-README_TXT = 'readme.txt'
-
 
 class Resolver(resolver_abc.Resolver):
   def __init__(self, options, command_processor):
@@ -100,7 +96,7 @@ class Resolver(resolver_abc.Resolver):
     self.command_processor = command_processor
     self.resource_map_resolver = resource_map.Resolver(options, command_processor)
     self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
-    self.helpText = README
+    self.helpText = util.os_format(README_TXT)
 
   def get_attributes(self, path, workspace_folder_objects):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))

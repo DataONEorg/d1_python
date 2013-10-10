@@ -33,13 +33,19 @@ import os
 # D1.
 
 # App.
-import directory
-import directory_item
-import path_exception
-import resolver_abc
+from d1_client_onedrive.impl import directory
+from d1_client_onedrive.impl import directory_item
+from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import resolver_abc
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+# Set specific logging level for this module if specified.
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
+  pass
 
 
 class Resolver(resolver_abc.Resolver):
