@@ -314,6 +314,21 @@ data_package_1 = (
 )
 
 ################################################################################
+# Mockup of ONEMercury integration
+
+#fs = (
+#  ('dahl', (
+#    ('Easter Seaboard, water temperatures, 2000-2005', (
+#      ('ark:_13030_m5z60p9f_1_cadwsap-s3410003-005.xml', 34822, d),
+#      ('ark:_13030_m5mk6bww_1_cadwsap-s4900546-001.xml', 4676, d),
+#      ('scimeta_1067.xml', 9573, d),
+#    ), d),
+#    ('My project 1', empty_folder, d),
+#    ('My project 2', empty_folder, d),
+#  ), d),
+#)
+
+################################################################################
 
 fs = (
   ('@StartDate', start_date_mockup, d),
