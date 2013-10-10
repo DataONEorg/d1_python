@@ -19,7 +19,9 @@ Contents
   run
   architecture
   mockups/index
+  glossary
 
+  
 Indices and tables
 ~~~~~~~~~~~~~~~~~~
 

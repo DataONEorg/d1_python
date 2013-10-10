@@ -1,15 +1,21 @@
 Installation
 ============
 
-The process for installing ONEDrive on OS X and Linux is similar:
+Windows
+~~~~~~~
 
-1. Install FUSE
-#. Install python dependencies
-#. Install ONEDrive
+1. Download the `latest ONEDrive for Windows setup <https://repository.dataone.org/software/cicore/trunk/itk/d1_client_onedrive/src/onedrive-setup-2.0.0RC1.exe>`_.
+
+#. Start the setup and follow the prompts.
+
+#. Start ONEDrive from the Windows Start menu.
+
+#. See :doc:`run` for notes on how to customize and access ONEDrive.
+
 
 
 Mac OS X
---------
+~~~~~~~~
 
 1. Install FUSE
 
@@ -44,23 +50,15 @@ downloading to a local folder::
 
 * Make sure option 'user_allow_other' is set in /etc/fuse.conf.
 
-.. _Fuse for OS X:: http://osxfuse.github.com/
-
-.. _fusepy:: https://github.com/terencehonles/fusepy
-
 
 Linux
------
+~~~~~
 
 TODO::
   Detail steps for setting up on linux, which will be the same as OS X
   except with the regular FUSE distro instead.
 
 
-Windows
--------
+.. _Fuse for OS X:: http://osxfuse.github.com/
 
-TODO:: Need to setup a windows system and detail the steps.
-
-
-Setting up the :term:`ONEDrive`.
+.. _fusepy:: https://github.com/terencehonles/fusepy
