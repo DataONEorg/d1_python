@@ -6,14 +6,14 @@ as a regular application, independent of any existing Python environment on the
 computer. These instructions detail how to create the installer and is intended
 as a reference for DataONE and 3rd party developers.
 
-
-Install ONEDrive into an existing Python environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 To create the ONEDrive installer for Windows, ONEDrive is first installed from
 the DataONE Subversion repository into a regular Python environment. The regular
 distribution for DataONE's Python products is PyPI, but the PyPI distribution
 does not include various files needed for building the installer.
+
+Then, a stand-alone, executable version of ONEDrive is created with py2exe.
+
+Finally, an installer is built for the executable and all dependencies.
 
 1. If you do not already have a working 32-bit Python 2.7 environment, download
    the latest 32-bit Python 2.7 Windows installer from
