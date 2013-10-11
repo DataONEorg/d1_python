@@ -8,6 +8,7 @@ other products implemented in Python.
 
 .. include:: overview.rst
 
+
 Contents
 ~~~~~~~~
 
@@ -19,9 +20,11 @@ Contents
   run
   architecture
   mockups/index
+  windows_setup
   glossary
+  local_glossary
 
-  
+
 Indices and tables
 ~~~~~~~~~~~~~~~~~~
 

@@ -292,7 +292,7 @@ Only the driver specific part of ONEDrive handles paths as strings. The bulk
 of the code handles paths as lists of path elements. The elements are strings
 or Unicode. They do not contain any escaped characters. The elements may contain
 characters that have special meaning in the filesystem, such as the path
-separator character ("/" on *nix). If so, these characters do NOT have the
+separator character ("/" on \\*nix). If so, these characters do NOT have the
 special meaning that they would have in a normal path string. When joining
 the segments together to a path string, the special characters would be
 escaped.

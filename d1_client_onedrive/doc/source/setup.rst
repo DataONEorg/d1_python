@@ -1,8 +1,8 @@
 Installation
 ============
 
-Windows
-~~~~~~~
+Microsoft Windows
+~~~~~~~~~~~~~~~~~
 
 1. Download the `latest ONEDrive for Windows setup <https://repository.dataone.org/software/cicore/trunk/itk/d1_client_onedrive/src/onedrive-setup-2.0.0RC1.exe>`_.
 
@@ -59,6 +59,6 @@ TODO::
   except with the regular FUSE distro instead.
 
 
-.. _Fuse for OS X:: http://osxfuse.github.com/
+.. _`Fuse for OS X`: http://osxfuse.github.com/
 
-.. _fusepy:: https://github.com/terencehonles/fusepy
+.. _fusepy: https://github.com/terencehonles/fusepy

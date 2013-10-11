@@ -52,7 +52,7 @@ a local representation of the Workspace, stored in a file called
 select the DataONE objects which should be available in ONEDrive, it is
 necessary to manually edit this file. When the Workspace service becomes
 available, a new version of ONEDrive will be released, which connects directly
-to the service, without the need for a ``workspace.xml`` file.
+to the service, eliminating the need for a ``workspace.xml`` file.
 
 See the OS specific sections below for instructions on how to find the
 ``workspace.xml`` file on your computer.
@@ -108,8 +108,8 @@ and </query> at the beginning and end of the query. For example::
   </folder>
 
 
-Windows specific
-~~~~~~~~~~~~~~~~
+Microsoft Windows
+~~~~~~~~~~~~~~~~~
 
 If the defaults were used when installing ONEDrive, the ``workspace.xml`` file
 is typically stored in ``C:\Program Files\ONEDrive`` on an English edition of a
@@ -122,8 +122,8 @@ in use, it can be changed in the ``settings.py`` file, which is stored where
 the ``workspace.xml`` file is.
 
 
-OSX specific
-~~~~~~~~~~~~
+Mac OS X
+~~~~~~~~
 
 If the library search path is incomplete, an exception such as the following
 may occur::
