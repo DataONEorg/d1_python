@@ -1,1 +1,0 @@
-../../get/test_scripts/tier_1_mn_read_get.py

@@ -1,1 +1,0 @@
-../../create/test_scripts/tier_3_mn_storage_create.py
