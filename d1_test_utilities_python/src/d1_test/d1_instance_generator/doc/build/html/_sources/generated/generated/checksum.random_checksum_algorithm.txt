@@ -1,6 +1,0 @@
-checksum.random_checksum_algorithm
-==================================
-
-.. currentmodule:: checksum
-
-.. autofunction:: random_checksum_algorithm

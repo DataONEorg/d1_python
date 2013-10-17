@@ -1,6 +1,0 @@
-random_data.random_word_unique_list
-===================================
-
-.. currentmodule:: random_data
-
-.. autofunction:: random_word_unique_list

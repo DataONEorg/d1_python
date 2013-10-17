@@ -1,6 +1,0 @@
-replica.generate_list
-=====================
-
-.. currentmodule:: replica
-
-.. autofunction:: generate_list

@@ -1,6 +1,0 @@
-random_data.random_email
-========================
-
-.. currentmodule:: random_data
-
-.. autofunction:: random_email

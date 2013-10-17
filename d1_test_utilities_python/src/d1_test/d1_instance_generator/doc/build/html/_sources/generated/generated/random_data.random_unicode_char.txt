@@ -1,6 +1,0 @@
-random_data.random_unicode_char
-===============================
-
-.. currentmodule:: random_data
-
-.. autofunction:: random_unicode_char

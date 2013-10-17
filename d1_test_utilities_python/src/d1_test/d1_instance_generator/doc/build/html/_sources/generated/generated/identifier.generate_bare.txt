@@ -1,6 +1,0 @@
-identifier.generate_bare
-========================
-
-.. currentmodule:: identifier
-
-.. autofunction:: generate_bare

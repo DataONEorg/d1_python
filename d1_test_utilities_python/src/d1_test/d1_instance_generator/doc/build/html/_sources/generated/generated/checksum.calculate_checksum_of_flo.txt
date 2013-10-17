@@ -1,6 +1,0 @@
-checksum.calculate_checksum_of_flo
-==================================
-
-.. currentmodule:: checksum
-
-.. autofunction:: calculate_checksum_of_flo

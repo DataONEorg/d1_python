@@ -1,6 +1,0 @@
-accesspolicy.random_subject_with_permission_labels
-==================================================
-
-.. currentmodule:: accesspolicy
-
-.. autofunction:: random_subject_with_permission_labels
