@@ -4,8 +4,8 @@ DataONE Member Node Stress Tester
 .. include:: overview.rst
 
 
-Index
------
+Contents
+~~~~~~~~
 
 .. toctree::
   :numbered:
@@ -17,7 +17,7 @@ Index
 
 
 Indices and tables
-==================
+~~~~~~~~~~~~~~~~~~
 
 * :ref:`genindex`
 * :ref:`modindex`

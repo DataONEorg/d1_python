@@ -8,8 +8,8 @@ It is part of the DataONE Test Utilities for Python and is installed as part
 of the test utilities.
 
 
-Index
------
+Contents
+~~~~~~~~
 
 .. toctree::
   :numbered:
@@ -20,7 +20,7 @@ Index
 
 
 Indices and tables
-==================
+~~~~~~~~~~~~~~~~~~
 
 * :ref:`genindex`
 * :ref:`modindex`

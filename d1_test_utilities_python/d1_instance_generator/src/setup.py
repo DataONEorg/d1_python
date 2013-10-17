@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,31 +18,47 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`setup`
 ============
 
-:Synopsis:
-  Create egg.
+:Synopsis: Create egg.
 :Author: DataONE (Dahl)
-'''
+"""
 
 from setuptools import setup, find_packages
-import d1_instance_generator
+import d1_client
 
 setup(
-  name='Random DataONE Instance Generator for Python',
-  version=d1_instance_generator.__version__,
+  name='dataone.instance_generator',
+  version=d1_client.__version__,
   description='Generate randomized instances of DataONE types for testing',
-  author='DataONE (Vieglais, Dahl)',
-  author_email='vieglais at ku edu',
+  author='DataONE Project',
+  author_email='developers@dataone.org',
   url='http://dataone.org',
-  packages = find_packages(),
+  license='Apache License, Version 2.0',
+  # By removing find_packages(), only version controlled files are included.
+  #packages = find_packages(),
+
+  # Accept all data files and directories matched by MANIFEST.in or found in
+  # source control.
+  include_package_data=True,
+
+  # Specify additional patterns to match files and directories that may or may
+  # not be matched by MANIFEST.in or found in source control.
+  package_data={
+    #'': ['*.txt', '*.rst', '*.csv'],
+  },
+
+  # Specify patterns for data files and directories that should not be included
+  # when a package is installed, even if they would otherwise have been included
+  # due to the use of the preceding options.
+  exclude_package_data={
+    '': ['*.log', '*.txt'],
+  },
 
   # Dependencies that are available through PYPI / easy_install.
-  install_requires = [
+  install_requires=[
+    'dataone.libclient',
   ],
-
-  package_data = {
-  }
 )
