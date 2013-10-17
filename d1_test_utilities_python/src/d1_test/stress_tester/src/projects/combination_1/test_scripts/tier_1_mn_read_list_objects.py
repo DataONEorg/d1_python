@@ -1,0 +1,1 @@
+../../list_objects/test_scripts/tier_1_mn_read_list_objects.py

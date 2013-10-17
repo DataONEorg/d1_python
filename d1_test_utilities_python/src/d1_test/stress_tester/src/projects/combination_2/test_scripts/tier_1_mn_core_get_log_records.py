@@ -1,0 +1,1 @@
+../../get_log_records_client/test_scripts/tier_1_mn_core_get_log_records.py

@@ -1,0 +1,156 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Tests &mdash; DataONE Member Node Stress Tester 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Member Node Stress Tester 1.0.0 documentation" href="index.html" />
+    <link rel="prev" title="2. Certificates" href="certificates.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="certificates.html" title="2. Certificates"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Member Node Stress Tester 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Tests</a><ul>
+<li><a class="reference internal" href="#multi-mechanize-configuration">3.1. Multi-Mechanize Configuration</a></li>
+<li><a class="reference internal" href="#shared-test-configuration">3.2. Shared test configuration</a></li>
+<li><a class="reference internal" href="#certificate-configuration">3.3. Certificate configuration</a></li>
+<li><a class="reference internal" href="#mnstorage-create">3.4. MNStorage.create()</a></li>
+<li><a class="reference internal" href="#mnread-listobjects">3.5. MNRead.listObjects()</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="certificates.html"
+                        title="previous chapter">2. Certificates</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tests.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tests">
+<h1>3. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="multi-mechanize-configuration">
+<h2>3.1. Multi-Mechanize Configuration<a class="headerlink" href="#multi-mechanize-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Each test has a configuration file that specifies the Multi-Mechanize
+parameters, such as how long to run the test and how many threads to use. The
+file is called <cite>config.cfg</cite> and is in the root folder for each test. For
+instance, the test for <cite>MNStorage.create()</cite> has this file in
+<cite>projects/create/config.cfg</cite>. See the <a class="reference external" href="http://multimechanize.com">Multi-Mechanize home page</a> for information on how to use this file. In the
+descriptions of the individual tests below, it is assumed that the settings in
+<cite>config.cfg</cite> have already been configured.</p>
+</div>
+<div class="section" id="shared-test-configuration">
+<h2>3.2. Shared test configuration<a class="headerlink" href="#shared-test-configuration" title="Permalink to this headline">¶</a></h2>
+<p>To avoid duplication of settings that are likely to be the same for each
+test, the tests each read some of their configuration from the file stored in
+<cite>/projects/_shared/settings.py</cite>. The main setting in this file is the Base URL
+for the Member Node which is being tested.</p>
+</div>
+<div class="section" id="certificate-configuration">
+<h2>3.3. Certificate configuration<a class="headerlink" href="#certificate-configuration" title="Permalink to this headline">¶</a></h2>
+<p>The tests rely on a set of certifcates. See <a class="reference internal" href="certificates.html"><em>Certificates</em></a> for details.</p>
+</div>
+<div class="section" id="mnstorage-create">
+<h2>3.4. MNStorage.create()<a class="headerlink" href="#mnstorage-create" title="Permalink to this headline">¶</a></h2>
+<p>Stress testing of the <cite>MNStorage.create()</cite> API.</p>
+<p>This test concurrently creates many small, randomized science objects on the
+Member Node. Each science object has System Metadata with a number of randomly
+selected parameters.</p>
+<p>To facility stress testing of the <cite>MNRead.listObjects()</cite> API, the science
+objects are created with access permissions for a subset of the subjects.</p>
+<p>To run the test:</p>
+<div class="highlight-python"><pre>$ multimech-run projects/create/</pre>
+</div>
+</div>
+<div class="section" id="mnread-listobjects">
+<h2>3.5. MNRead.listObjects()<a class="headerlink" href="#mnread-listobjects" title="Permalink to this headline">¶</a></h2>
+<p>Stress testing of the <cite>MNRead.listObjects()</cite> API.</p>
+<p>This test concurrently calls listObjects for many different subjects on the
+Member Node.</p>
+<p>To run the test:</p>
+<div class="highlight-python"><pre>$ multimech-run projects/list_objects/</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="certificates.html" title="2. Certificates"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Member Node Stress Tester 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2012 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

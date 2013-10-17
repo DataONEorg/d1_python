@@ -1,0 +1,239 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Certificates &mdash; DataONE Member Node Stress Tester 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DataONE Member Node Stress Tester 1.0.0 documentation" href="index.html" />
+    <link rel="next" title="3. Tests" href="tests.html" />
+    <link rel="prev" title="1. Build and install" href="setup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tests.html" title="3. Tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="1. Build and install"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DataONE Member Node Stress Tester 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2. Certificates</a><ul>
+<li><a class="reference internal" href="#ca-and-member-node-setup">2.1. CA and Member Node setup</a></li>
+<li><a class="reference internal" href="#setting-up-the-local-ca">2.2. Setting up the local CA</a></li>
+<li><a class="reference internal" href="#setting-up-the-shared-key-pair">2.3. Setting up the shared key pair</a></li>
+<li><a class="reference internal" href="#generate-list-of-test-subjects">2.4. Generate list of test subjects</a></li>
+<li><a class="reference internal" href="#generate-certificates">2.5. Generate certificates</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup.html"
+                        title="previous chapter">1. Build and install</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tests.html"
+                        title="next chapter">3. Tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/certificates.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="certificates">
+<h1>2. Certificates<a class="headerlink" href="#certificates" title="Permalink to this headline">¶</a></h1>
+<p>As the stress tests connect to the MN as regular clients, a set of test
+certificates, with which the connections can be established, must be prepared
+before any given test can be run. The certificates must be trusted by the MNode
+being tested and each certificate must contain one or more DataONE subjects that
+are allowed to perform the operations on the MN which a given stress test is
+exercising.</p>
+<p>The certificates are stored in folders below
+<cite>./projects/_shared/certificates</cite>. For each connection, a given test randomly
+selects a certificate from the certificates that are applicable for the
+operation being tested. For instance, the test for <cite>MNStorage.create()</cite> will
+establish connections with certificates randomly selected from the
+<cite>certificates/create_update_delete</cite> folder. If there is only one certificate in
+the folder, that certificate will be used for all the connections created by
+the test.</p>
+<div class="section" id="ca-and-member-node-setup">
+<h2>2.1. CA and Member Node setup<a class="headerlink" href="#ca-and-member-node-setup" title="Permalink to this headline">¶</a></h2>
+<p>A Member Node that runs in the DataONE production environment must trust the
+CILogon CAs. But, because only CILogon can sign certificates with that CA, a
+Member Node is typically set up to trust a locally generated CA for testing.
+The DataONE Member Node Stress Tester is based on such a setup. This section
+outlines generating the local CA and then describes procedures and requirements
+for setting up the certificates that are required by each test.</p>
+</div>
+<div class="section" id="setting-up-the-local-ca">
+<h2>2.2. Setting up the local CA<a class="headerlink" href="#setting-up-the-local-ca" title="Permalink to this headline">¶</a></h2>
+<p>The first step in setting up certificates for testing is to set up a local CA
+that will be used for signing the test certificates.</p>
+<blockquote>
+<div><p>Enter the <cite>./projects/_shared/certificates</cite> folder:</p>
+<div class="highlight-python"><pre>$ cd ./projects/_shared/certificates</pre>
+</div>
+<p>Create the private key for the local test CA:</p>
+<div class="highlight-python"><pre>$ openssl genrsa -des3 -out local_test_ca.key 1024</pre>
+</div>
+<p>For convenience, remove the password from the key:</p>
+<div class="highlight-python"><pre>$ openssl rsa -in local_test_ca.key -out local_test_ca.nopassword.key</pre>
+</div>
+<p>Create the local test CA. You will be prompted for the information that
+OpenSSL will use for generating the DN of the certificate. Only the Common
+Name (CN) field is important for the tester. It must match the name of
+your server, as seen from the tester. For instance, if the Base URL for your
+server is <cite>https://my-mn.org/mn</cite>, the Common Name should be <cite>my-mn</cite>. An IP
+address can also be used.</p>
+<div class="highlight-python"><pre>$ openssl req -new -x509 -days 3650 -key local_test_ca.nopassword.key -out local_test_ca.crt</pre>
+</div>
+<p>The procedure to set up your MN to trust the local CA depends on the software
+stack on which your MN is based. If it&#8217;s based on Apache, the procedure is
+likely to be similar to the following:</p>
+<ul>
+<li><p class="first">Find the location in which Apache is storing CAs for your MN by reading the
+configuration file for the MN service, for instance,
+<cite>/etc/apache2/sites-enabled/default-ssl</cite>.</p>
+</li>
+<li><p class="first">Note the certificate path set in <cite>SSLCACertificatePath</cite>.</p>
+</li>
+<li><p class="first">Move the new local CA, <cite>local_test_ca.crt</cite>, to the certificate path.</p>
+</li>
+<li><p class="first">Enter the certificate path and recreate the certificate hashes with:</p>
+<div class="highlight-python"><pre>$ c_rehash .</pre>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="setting-up-the-shared-key-pair">
+<h2>2.3. Setting up the shared key pair<a class="headerlink" href="#setting-up-the-shared-key-pair" title="Permalink to this headline">¶</a></h2>
+<p>The normal procedure for setting up a new certificate involves creating a
+private key and a certificate request. The certificate request is then signed by
+the public key (which is implicitly contained by the private key) and sent to
+the signing entity.</p>
+<p>Generating a private key is computationally expensive because it requires
+gathering entropy. When generating a set of certificates for testing, it is
+convenient to generate the private key up front and reuse it for all the
+generated certificates.</p>
+<blockquote>
+<div><p>Enter the <cite>./projects/_shared/certificates</cite> folder:</p>
+<div class="highlight-python"><pre>$ cd ./projects/_shared/certificates</pre>
+</div>
+<p>Generate the private key:</p>
+<div class="highlight-python"><pre>$ openssl genrsa -des3 -out local_test_client_cert.key 1024</pre>
+</div>
+<p>For convenience, remove the password from the private key:</p>
+<div class="highlight-python"><pre>$ openssl rsa -in local_test_client_cert.key -out local_test_client_cert.nopassword.key</pre>
+</div>
+<p>The private key implicitly contains the public key. The public key is derived
+from the private key whenever the private key is passed to a procedure in
+which the public key is required. For better performance, generate the public
+key in a separate step:</p>
+<div class="highlight-python"><pre>$ openssl rsa -in local_test_client_cert.nopassword.key -pubout -out local_test_client_cert.public.key</pre>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="generate-list-of-test-subjects">
+<h2>2.4. Generate list of test subjects<a class="headerlink" href="#generate-list-of-test-subjects" title="Permalink to this headline">¶</a></h2>
+<p>The stress tests randomly pick subjects from a list of subjects. These subjects
+can be set up automatically with the <cite>generate_subject_list.py</cite> script, or the
+list can be created manually. The advantage of creating this list manually is
+that subjects that already known to Member Node can be selected. However, if a
+completely random list of subjects is sufficient, simply run the script with the
+desired number of subjects as the only argument. 100 subjects may be a good
+starting point for the tests.</p>
+<div class="highlight-python"><pre>$ ./generate_subject_list.py 100</pre>
+</div>
+</div>
+<div class="section" id="generate-certificates">
+<h2>2.5. Generate certificates<a class="headerlink" href="#generate-certificates" title="Permalink to this headline">¶</a></h2>
+<p>The final step is to generate the certificates. A script,
+<cite>generate_certificates.py</cite>, has been provided for this. It uses the subjects
+file, certificates and keys that were set up in the earlier sections to create
+the certificates.</p>
+<div class="highlight-python"><pre>$ ./generate_certificates.py</pre>
+</div>
+<p>Before the certificates can be used by the stress tester, the MN must be set
+up to allow the subjects to create science objects.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tests.html" title="3. Tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="1. Build and install"
+             >previous</a> |</li>
+        <li><a href="index.html">DataONE Member Node Stress Tester 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010,2012 Participating institutions in DataONE.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
