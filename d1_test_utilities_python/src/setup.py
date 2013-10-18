@@ -29,36 +29,32 @@
 from setuptools import setup, find_packages
 import d1_client
 
+# The setup() parameters are described here:
+# http://pythonhosted.org/setuptools/setuptools.html
+
 setup(
-  name='dataone.instance_generator',
+  name='dataone.test_utilities',
   version=d1_client.__version__,
-  description='Generate randomized instances of DataONE types for testing',
+  description='Utilities for testing DataONE infrastructure components',
   author='DataONE Project',
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-  # By removing find_packages(), only version controlled files are included.
-  #packages = find_packages(),
-
-  # Accept all data files and directories matched by MANIFEST.in or found in
-  # source control.
+  packages=find_packages(
+  ),
   include_package_data=True,
 
-  # Specify additional patterns to match files and directories that may or may
-  # not be matched by MANIFEST.in or found in source control.
-  package_data={
-    #'': ['*.txt', '*.rst', '*.csv'],
-  },
+  #package_data = {
+  #  '': ['*.txt', '*.rst', '*.csv'],
+  #},
 
-  # Specify patterns for data files and directories that should not be included
-  # when a package is installed, even if they would otherwise have been included
-  # due to the use of the preceding options.
-  exclude_package_data={
-    '': ['*.log', '*.txt'],
-  },
+  #exclude_package_data = {
+  #  '': ['*.log', '*.txt'],
+  #},
 
-  # Dependencies that are available through PYPI / easy_install.
-  install_requires=[
-    'dataone.libclient',
-  ],
+  # Many of the tests have DataONE dependencies but, since those are also the
+  # modules being tested, it is best to manage them manually, and not have them
+  # be automatically installed.
+  #install_requires = [
+  #],
 )
