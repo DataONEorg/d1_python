@@ -6,4 +6,4 @@ implementations. The stress_tester can create many concurrent connections to
 a Member Node and simultaneously create any number of randomly generated objects
 while running queries and object retrievals.
 
-.. _`DataONE Test Utilities`: http://pythonhosted.org/dataone.test_utilities`
+.. _`DataONE Test Utilities`: http://pythonhosted.org/dataone.test_utilities
