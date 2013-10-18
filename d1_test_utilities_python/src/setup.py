@@ -27,14 +27,14 @@
 """
 
 from setuptools import setup, find_packages
-import d1_client
+import d1_test
 
 # The setup() parameters are described here:
 # http://pythonhosted.org/setuptools/setuptools.html
 
 setup(
   name='dataone.test_utilities',
-  version=d1_client.__version__,
+  version=d1_test.__version__,
   description='Utilities for testing DataONE infrastructure components',
   author='DataONE Project',
   author_email='developers@dataone.org',
