@@ -94,8 +94,8 @@ SCIENCE_OBJECTS_DIR_PATH = './testfiles'
 SCIENCE_OBJECT_PID = 'dataone_test_object_pid'
 
 # The formatId to use for the Science Object. It should be the ID of an Object
-# Format that is registered in the DataONE Object Format Vocabulary. The valid
-# IDs can be retrieved from https://cn.dataone.org/cn/v1/formats.
+# Format that is registered in the DataONE Object Format Vocabulary. A list of
+# valid IDs can be retrieved from https://cn.dataone.org/cn/v1/formats.
 SYSMETA_FORMATID = 'application/octet-stream'
 
 # The DataONE subject to set as the rights holder of the created objects. The
