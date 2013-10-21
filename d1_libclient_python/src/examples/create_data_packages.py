@@ -26,7 +26,7 @@
   This is an example on how to use the DataONE Client Library for Python. It
   shows how to:
 
-  - Automatically create data packages from local objects
+  - Automatically create data packages from local objects.
   - Generate the system metadata for a local file.
   - Generate an access policy for public access.
   - Upload the local files to a Member Node as science Science Object.
@@ -42,7 +42,7 @@
   - Python 2.6 or 2.7.
   - DataONE Common Library for Python (automatically installed as a dependency)
   - DataONE Client Library for Python (sudo pip install dataone.libclient)
-  - A client side certificate that is valid on the target Member Node.
+  - A client side certificate that is trusted by the target Member Node.
 
 :Operation:
   Data packages are created from files in a folder provided by the user.
@@ -110,9 +110,9 @@ SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
 
 # BaseURL for the Member Node. If the script is run on the same server as the
 # Member Node, this can be localhost.
-MN_BASE_URL = 'https://gmn.test.dataone.org/mn'
-#MN_BASE_URL = 'https://localhost/mn'
-MN_BASE_URL = 'https://192.168.1.121/mn'
+MN_BASE_URL = 'https://localhost/mn'
+#MN_BASE_URL = 'http://localhost:8000'
+#MN_BASE_URL = 'https://gmn.test.dataone.org/mn'
 
 # Paths to the certificate and key to use when creating the object. If the
 # certificate has the key embedded, the _KEY setting should be set to None. The

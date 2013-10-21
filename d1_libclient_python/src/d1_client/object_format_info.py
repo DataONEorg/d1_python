@@ -91,7 +91,4 @@ class ObjectFormatInfo(Singleton):
       )
 
   def _get_format_id_entry(self, format_id):
-    try:
-      return self.format_id_map[format_id]
-    except KeyError:
-      raise Exception('Unknown FormatID: {0}'.format(format_id))
+    return self.format_id_map[format_id]

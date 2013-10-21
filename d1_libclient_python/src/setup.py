@@ -29,6 +29,9 @@
 from setuptools import setup, find_packages
 import d1_client
 
+# The setup() parameters are described here:
+# http://pythonhosted.org/setuptools/setuptools.html
+
 setup(
   name='dataone.libclient',
   version=d1_client.__version__,
@@ -37,28 +40,22 @@ setup(
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-
-  # Accept all data files and directories matched by MANIFEST.in or found in
-  # source control.
+  packages=find_packages(),
   include_package_data=True,
 
-  # Specify additional patterns to match files and directories that may or may
-  # not be matched by MANIFEST.in or found in source control.
-  package_data={
-    #'': ['*.txt', '*.rst', '*.csv'],
-  },
+  #package_data = {
+  #  '': ['*.txt', '*.rst', '*.csv'],
+  #},
 
-  # Specify patterns for data files and directories that should not be included
-  # when a package is installed, even if they would otherwise have been included
-  # due to the use of the preceding options.
-  exclude_package_data={
-    '': ['*.log', '*.txt'],
-  },
+  #exclude_package_data = {
+  #  '': ['*.log', '*.txt'],
+  #},
 
-  # Dependencies that are available through PYPI / easy_install.
+  # Dependencies that are available through PyPI / easy_install.
   install_requires=[
     'dataone.common == 1.1.2RC1',
-    'rdflib < 3a',
-    'google.foresite-toolkit == 1.2',
+    'rdflib == 4.0.1',
+    'google.foresite-toolkit == 1.3',
+    'python-dateutil == 2.1',
   ],
 )
