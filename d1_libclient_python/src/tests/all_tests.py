@@ -35,11 +35,22 @@ import logging
 import unittest
 from d1_common import xmlrunner
 from test_d1baseclient import TestDataONEBaseClient
-from test_cnclient import TestCNClient
+
+#from test_cnclient import TestCNClient
+#from test_d1client import TestDataONEClientTestD1Client
+#from test_data_package import TestDataPackage
+#test_logrecorditerator
+#test_mnclient
+#test_object_access
+#test_object_format_info
+#test_objectlistiterator
+#test_solr_client
+#test_systemmetadata.py
 
 #===============================================================================
 
-if __name__ == "__main__":
+
+def main():
   from d1_common import svnrevision
   argv = sys.argv
   if "--debug" in argv:
@@ -50,3 +61,8 @@ if __name__ == "__main__":
     unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
   else:
     unittest.main(argv=argv)
+
+
+if __name__ == '__main__':
+  print 'Not implemented. See ticket #4109.'
+  #main()
