@@ -52,8 +52,8 @@ import pyxb
 import foresite
 #from foresite import *
 #from rdflib import URIRef, Namespace, Graph
-import rdflib.Namespace
-import rdflib.URIRef
+import rdflib.namespace
+import rdflib.term
 import foresite
 import foresite.utils
 
@@ -78,6 +78,8 @@ CITO_NS = 'http://purl.org/spar/cito/'
 DCTERMS_NS = 'http://purl.org/dc/terms/'
 
 DATAONE_IDENTIFIER_PREDICATE = 'http://purl.org/dc/terms/identifier'
+CITO_DOCUMENTS_PREDICATE = 'http://purl.org/spar/cito/documents'
+CITO_IS_DOCUMENTED_BY_PREDICATE = 'http://purl.org/spar/cito/isDocumentedBy'
 
 #D1_API_OBJECT_REST_PATH = 'object/'
 D1_API_RESOLVE_REST_PATH = 'v1/resolve/'
@@ -108,10 +110,15 @@ class ResourceMapGenerator():
     resource_map = self._generate_resource_map(
       self._aggregation_uri_from_pid(resource_map_pid), resource_map_pid, relations
     )
-    return self._serialize_resource_map(resource_map)
+    serialized_resource_map = self._serialize_resource_map(resource_map)
+    # TODO: See ticket #4107.
+    return serialized_resource_map.replace(
+      '<rdfs1:isDefinedBy>http://www.openarchives.org/ore/terms/</rdfs1:isDefinedBy>',
+      '<rdfs1:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>'
+    )
 
   def generate_system_metadata_for_resource_map(self, resource_map, checksum_algorithm):
-    '''Generate a system metadata object for a resource map. The generated 
+    '''Generate a system metadata object for a resource map. The generated
     system metadata object is intended for use in DataONE API methods such as
     MNStorage.Create(). The object contains an access control rule allowing
     public access. For simple use cases with public access, the object can
@@ -136,7 +143,7 @@ class ResourceMapGenerator():
     :relations: {metaid:[data id, data id, ...], ...}
     '''
     uris = {}
-    foresite.utils.namespaces['cito'] = rdflib.Namespace(CITO_NS)
+    foresite.utils.namespaces['cito'] = rdflib.namespace.Namespace(CITO_NS)
     aggr = foresite.Aggregation(aggregation_id)
     for sci_id in relations.keys():
       sci_uri = self._resolvable_uri_from_pid(sci_id)
@@ -167,10 +174,10 @@ class ResourceMapGenerator():
     assert (serialization_format in ALLOWABLE_PACKAGE_SERIALIZATIONS)
 
   def _resolvable_uri_from_pid(self, pid):
-    return rdflib.URIRef(self.dataone_root + D1_API_RESOLVE_REST_PATH + pid)
+    return rdflib.term.URIRef(self.dataone_root + D1_API_RESOLVE_REST_PATH + pid)
 
   def _aggregation_uri_from_pid(self, pid):
-    return rdflib.URIRef(
+    return rdflib.term.URIRef(
       self.dataone_root + D1_API_RESOLVE_REST_PATH + pid + '#aggregation'
     )
 
@@ -210,53 +217,67 @@ class ResourceMapGenerator():
 
 
 class ResourceMapParser():
-  def __init__(self):
-    pass
-
-  def get_identifiers_referenced_by_package(self, rdf_xml_doc):
+  def __init__(self, rdf_xml_doc):
     ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
     format'''
-    # foresite.ore.AggregatedResource -> OREResource
-    pids = []
-    for aggregated_resource in self.get_aggregation(rdf_xml_doc):
-      graph = aggregated_resource.graph
-      for s, p, o in graph:
-        # s = subject = rdflib.URIRef.URIRef
-        # p = predicate = rdflib.URIRef.URIRef
-        # o = object = rdflib.Literal.Literal or rdflib.URIRef.URIRef
-        if str(p) == DATAONE_IDENTIFIER_PREDICATE:
-          pids.append(str(o))
-    return pids
+    self._resource_map = self._parse(rdf_xml_doc)
 
-  def get_triples_by_package(self, rdf_xml_doc):
-    ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
-    format'''
-    triples = []
-    for aggregated_resource in self.get_aggregation(rdf_xml_doc):
-      graph = aggregated_resource.graph
-      for s, p, o in graph:
-        # s = subject = rdflib.URIRef.URIRef
-        # p = predicate = rdflib.URIRef.URIRef
-        # o = object = rdflib.Literal.Literal or rdflib.URIRef.URIRef
-        triples.append((str(s), str(p), str(o)))
-    return triples
-
-  def get_rdflib_graphs_by_package(self, rdf_xml_doc):
-    ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
-    format'''
-    return [
-      aggregated_resource.graph
-      for aggregated_resource in self.get_aggregation(rdf_xml_doc)
-    ]
-
-  def get_aggregation(self, rdf_xml_doc):
-    resource_map = self.parse(rdf_xml_doc)
-    return resource_map.aggregation
-
-  def parse(self, rdf_xml_doc):
+  def _parse(self, rdf_xml_doc):
     '''Parse a string containing a OAI-ORE document in RDF-XML
     format to a Foresite ResourceMap object'''
     foresite_doc = foresite.ReMDocument('file:data', data=rdf_xml_doc)
+    # Possible values for format: xml, trix, n3, nt, rdfa
     foresite_doc.format = 'xml'
     rdf_libparser = foresite.RdfLibParser()
     return rdf_libparser.parse(foresite_doc)
+    pass
+
+  def get_resource_map_pid(self):
+    return str(self._resource_map)
+
+  def get_all_triples(self):
+    triples = []
+    for subject, arbitrary_resource in self._resource_map.triples.items():
+      for s, p, o in arbitrary_resource.graph:
+        triples.append((str(s), str(p), str(o)))
+    return triples
+
+  def get_all_predicates(self):
+    predicates = []
+    for subject, arbitrary_resource in self._resource_map.triples.items():
+      for p in arbitrary_resource.predicates():
+        predicates.append(str(p))
+    return predicates
+
+  def get_identifiers_referenced_by_package(self):
+    triples = self.get_all_triples()
+    pids = []
+    for s, p, o in triples:
+      if p == DATAONE_IDENTIFIER_PREDICATE:
+        pids.append(o)
+    return pids
+
+  def get_sci_meta_pids(self):
+    return self.get_sci_relations()[0]
+
+  def get_sci_data_pids(self):
+    return self.get_sci_relations()[1]
+
+  def get_sci_relations(self):
+    triples = self.get_all_triples()
+    sci_meta = set()
+    sci_data = set()
+    for s, p, o in triples:
+      if p == CITO_DOCUMENTS_PREDICATE:
+        sci_meta.add(s)
+        sci_data.add(o)
+      if p == CITO_IS_DOCUMENTED_BY_PREDICATE:
+        sci_meta.add(o)
+        sci_data.add(s)
+    return list(sci_meta), list(sci_data)
+
+  def get_aggregation(self):
+    return self._resource_map.aggregation
+
+  def get_graphs(self):
+    return self._resource_map.graph

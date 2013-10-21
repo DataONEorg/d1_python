@@ -196,6 +196,7 @@ class ObjectListIterator(object):
     return self._maxitem
 
 #===============================================================================
+
 if __name__ == "__main__":
   '''A simple demonstration of the iterator.  Walks over the list of objects
   available from a given node. Output is in YAML.

@@ -86,9 +86,9 @@ class SystemMetadata(object):
     self._parse(xmldoc)
 
   def _parse(self, xmldoc):
-    '''Parse the content and generate the internal "etree" which is the 
+    '''Parse the content and generate the internal "etree" which is the
     element tree instance that results from parsing.
-    
+
     :param xmldoc: (Unicode) The System Metadata document to parse.
     '''
     if not isinstance(xmldoc, basestring):
@@ -101,7 +101,7 @@ class SystemMetadata(object):
 
   def toXml(self, encoding='utf-8', pretty=True):
     '''Spits out representation of the parsed xml.
-    
+
     :param pretty: Output is a bit easier for human digestion if True
     :rtype: (string) UTF-8 encoded string
     '''
@@ -129,7 +129,7 @@ class SystemMetadata(object):
     '''Try and automate getting the simple properties of the schema. This works
     for elements that are simple string values.  Multiple values or things that
     require type casting need their own accessor method.
-    
+
     TODO: Go through the propterties for simple string values below and see
     if they can be removed.
     '''

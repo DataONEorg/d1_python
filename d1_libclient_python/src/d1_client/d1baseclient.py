@@ -288,7 +288,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       return self._read_and_deserialize_dataone_type(response)
     self._error(response)
 
-  
+
   def _read_stream_response(self, response):
     if self._status_is_200_ok(response):
       return response
@@ -296,7 +296,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
 
   def _read_header_response(self, response):
-    headers = dict(response.getheaders()) 
+    headers = dict(response.getheaders())
     if self._status_is_200_ok(response):
       self._read_and_capture(response)
       return headers
@@ -344,17 +344,18 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return url
 
 
-  def get_schema_version(self, method_signature):
-    '''Find which schema version Node returns for a given method.
+  def get_schema_version(self, method_signature='node'):
+    '''Find which schema version Node returns for a given REST API endpoint. The
+    method must be a valid query against the Node. For instance: "node".
     '''
     rest_url = self._rest_url(method_signature)
     response = self.GET(rest_url)
-    doc = response.read(1024)
-    m = re.search(r'//ns.dataone.org/service/types/(v\d)', doc)
+    doc = response.read()
+    m = re.search(r'http://ns.dataone.org/service/types/(v\d)', doc)
     if not m:
-      raise Exception(
-        'Unable to detect schema version. RESTURL({0}) Method({1})'
-        .format(rest_url, method_signature))
+      msg = 'Unable to detect schema version. rest_url({0}) method({1})'\
+        .format(rest_url, method_signature)
+      raise d1_common.types.exceptions.ServiceFailure(0, msg)
     return m.group(1)
 
 
