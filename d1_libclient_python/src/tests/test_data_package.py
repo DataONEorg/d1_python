@@ -31,6 +31,7 @@ Unit tests for ResourceMapGenerator and ResourceMapParser.
 
 # Stdlib.
 import logging
+import os
 import sys
 import unittest
 
@@ -43,41 +44,101 @@ import testing_utilities
 import testing_context
 
 
+# Create absolute path from path that is relative to the module from which
+# the function is called.
+def make_absolute(p):
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
+
 class TestDataPackage(TestCaseWithURLCompare):
   def setUp(self):
-    self.parser = d1_client.data_package.ResourceMapParser()
+    self.ore_doc = open(make_absolute('./d1_testdocs/oai_ore.xml')).read()
     self.generator = d1_client.data_package.ResourceMapGenerator()
-    self.ore_doc = open('./d1_testdocs/oai_ore.xml').read()
+    self.parser = d1_client.data_package.ResourceMapParser(self.ore_doc)
 
-  def test_100_init(self):
-    pass # Successful setup of the test means that the parser and generators
-    # initialized successfully.
-
-  def test_200_generator(self):
-    doc = self.generator.simple_generate_resource_map('abc', 'def', ['ghi', 'jkl'])
+  def test_050(self):
+    '''simple_generate_resource_map()'''
+    doc = self.generator.simple_generate_resource_map(
+      'MAP_PID', 'SCIMETA_PID', [
+        'SCIDATA_PID_1', 'SCIDATA_PID_2'
+      ]
+    )
     # There are many possible variations in the resource map that doesn't change
     # the information, so only a few basic checks are performed on the returned
-    # map in this test. A thorough tester is performed below, after the parser
-    # has been tested.
+    # map in this test. A more thorough test is performed below, after the
+    # parser has been tested.
     self.assertTrue('http://www.openarchives.org/ore/terms/' in doc)
-    self.assertTrue('https://cn.dataone.org/cn/object/ghi' in doc)
-    self.assertTrue('<dcterms:identifier>def</dcterms:identifier>' in doc)
-    self.assertTrue('<ore:describes rdf:resource="abc"/>' in doc)
+    self.assertTrue('/resolve/SCIDATA_PID' in doc)
+    self.assertTrue('<dcterms:identifier>SCIMETA_PID</dcterms:identifier>' in doc)
 
-  def test_300_parser(self):
-    doc = self.parser.get_identifiers_referenced_by_package(self.ore_doc)
-    self.assertTrue('ghi' in doc)
-    self.assertTrue('jkl' in doc)
-    self.assertTrue('def' in doc)
+  def test_100(self):
+    '''init()'''
+    pass # Successful setup of the test means that the parser and generator
+    # initialized successfully.
 
-  def test_310_parser(self):
-    doc = self.parser.get_triples_by_package(self.ore_doc)
-    self.check_triples(doc)
+  def test_110(self):
+    '''get_graphs()'''
+    graph = self.parser.get_graphs()
+    self.assertEqual(len(graph), 7)
 
-  def test_400_generator_and_parser_1(self):
-    doc = self.generator.simple_generate_resource_map('abc', 'def', ['ghi', 'jkl'])
-    triples = self.parser.get_triples_by_package(doc)
+  def test_120(self):
+    '''get_aggregation()'''
+    aggr = self.parser.get_aggregation()
+    self.assertEqual(str(aggr), 'abc')
+
+  def test_130(self):
+    pid = self.parser.get_resource_map_pid()
+    self.assertEqual(pid, 'https://cn.dataone.org/cn/resolve/abc')
+
+  def test_140(self):
+    '''get_all_triples()'''
+    triples = self.parser.get_all_triples()
     self.check_triples(triples)
+
+  def test_150(self):
+    '''get_all_predicates()'''
+    preds = self.parser.get_all_predicates()
+    expected_preds = [
+      'http://www.openarchives.org/ore/terms/aggregates',
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+      'http://www.w3.org/2001/01/rdf-schema#isDefinedBy',
+      'http://www.w3.org/2001/01/rdf-schema#label',
+      'http://purl.org/spar/cito/isDocumentedBy',
+      'http://purl.org/dc/terms/identifier',
+      'http://purl.org/spar/cito/documents',
+    ]
+    for p in preds:
+      self.assertTrue(p in expected_preds)
+
+  def test_160(self):
+    '''get_identifiers_referenced_by_package()'''
+    pids = self.parser.get_identifiers_referenced_by_package()
+    self.assertEqual(len(pids), 3)
+    self.assertTrue('def' in pids)
+    self.assertTrue('ghi' in pids)
+    self.assertTrue('jkl' in pids)
+
+  def test_170(self):
+    '''get_sci_meta_pids()'''
+    pids = self.parser.get_sci_meta_pids()
+    self.assertTrue('https://cn.dataone.org/cn/object/def' in pids)
+
+  def test_180(self):
+    '''get_sci_data_pids()'''
+    pids = self.parser.get_sci_data_pids()
+    self.assertTrue('https://cn.dataone.org/cn/object/ghi' in pids)
+    self.assertTrue('https://cn.dataone.org/cn/object/jkl' in pids)
+
+  def test_200(self):
+    '''generator_and_parser_1'''
+    # TODO: Ticket #4108.
+    doc = self.generator.simple_generate_resource_map('abc', 'def', ['ghi', 'jkl'])
+    #doc = open(make_absolute('./d1_testdocs/oai_ore.xml')).read()
+    #print doc
+    #return
+    p = d1_client.data_package.ResourceMapParser(doc)
+    triples = p.get_all_triples()
+    #print triples
 
   def check_triples(self, doc):
     self.assertTrue(

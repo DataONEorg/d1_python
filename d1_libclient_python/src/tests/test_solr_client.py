@@ -183,4 +183,5 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  print 'See ticket #4110'
+  #main()

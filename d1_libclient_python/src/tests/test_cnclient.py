@@ -44,13 +44,14 @@ import pyxb
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_instance_generator.accesspolicy
-import d1_instance_generator.identifier
-import d1_instance_generator.person
-import d1_instance_generator.random_data
-import d1_instance_generator.replicationpolicy
-import d1_instance_generator.subject
-import d1_instance_generator.systemmetadata
+
+import d1_test.instance_generator.accesspolicy
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator.person
+import d1_test.instance_generator.random_data
+import d1_test.instance_generator.replicationpolicy
+import d1_test.instance_generator.subject
+import d1_test.instance_generator.systemmetadata
 
 # App.
 from d1_client import cnclient
@@ -63,7 +64,7 @@ class TestCNClient(TestCaseWithURLCompare):
     #self.baseurl = 'http://daacmn-dev.dataone.org/mn'
     #self.baseurl = 'http://cn.dataone.org/cn'
     #self.baseurl = 'http://cn-dev.dataone.org/cn/'
-    self.baseurl = 'https://cn-dev.dataone.org/cn/'
+    #self.baseurl = 'https://cn-dev.dataone.org/cn/'
     #self.baseurl = 'http://localhost:8000/'
     #self.baseurl = 'http://cn-dev-2.dataone.org/cn/'
     #self.testpid = 'hdl:10255/dryad.105/mets.xml'
@@ -82,7 +83,10 @@ class TestCNClient(TestCaseWithURLCompare):
 
     # When setting the certificate, remember to use a https baseurl.
     self.cert_path = '/tmp/x509up_u1000'
-    self.client = cnclient.CoordinatingNodeClient(self.baseurl, cert_path=self.cert_path)
+    self.client = cnclient.CoordinatingNodeClient(self.options.cn_url)
+    self.authenticated_client = cnclient.CoordinatingNodeClient(
+      self.options.cn_url, cert_path=self.cert_path
+    )
 
   def tearDown(self):
     pass
@@ -91,24 +95,29 @@ class TestCNClient(TestCaseWithURLCompare):
   # Core API
   #=============================================================================
 
+  def test_1000(self):
+    '''Initialize CoordinatingNodeClient'''
+    pass
+    # Completion means that the client was successfully instantiated in setUp().
+
   def test_1010(self):
     '''CNCore.listFormats() returns a valid ObjectFormatList with at least 3 entries'''
     formats = self.client.listFormats()
     self.assertTrue(len(formats.objectFormat) >= 3)
     format = formats.objectFormat[0]
-    self.assertTrue(isinstance(format.formatId, dataoneTypes_v1_1.ObjectFormatIdentifier))
+    self.assertTrue(isinstance(format.formatId, dataoneTypes.ObjectFormatIdentifier))
 
   def test_1020(self):
     '''CNCore.getFormat() returns a valid ObjectFormat for known formatIds'''
     formats = self.client.listFormats()
     for format_ in formats.objectFormat:
       f = self.client.getFormat(format_.formatId)
-      self.assertTrue(isinstance(f.formatId, dataoneTypes_v1_1.ObjectFormatIdentifier))
+      self.assertTrue(isinstance(f.formatId, dataoneTypes.ObjectFormatIdentifier))
       self.assertEqual(format_.formatId, f.formatId)
 
-  def test_1040_A(self):
+  def TODO_NEEDS_SESSION_test_1040_A(self):
     '''CNCore.reserveIdentifier() returns a valid identifier on first call with new identifier'''
-    testing_context.test_pid = d1_instance_generator.identifier.generate_bare()
+    testing_context.test_pid = d1_test.instance_generator.identifier.generate_bare()
     identifier = self.client.reserveIdentifier(testing_context.test_pid)
 
   def TICKET_2360_test_1040_B(self):
@@ -118,7 +127,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def CURRENTLY_FAILING_SEE_TICKET_2361_test_1060(self):
     '''CNCore.listChecksumAlgorithms() returns a valid ChecksumAlgorithmList'''
     algorithms = self.client.listChecksumAlgorithms()
-    self.assertTrue(isinstance(algorithms, dataoneTypes_v1_1.ChecksumAlgorithmList))
+    self.assertTrue(isinstance(algorithms, dataoneTypes.ChecksumAlgorithmList))
 
   def CURRENTLY_FAILING_SEE_TICKET_2363_test_1061(self):
     '''CNCore.setObsoletedBy()'''
@@ -130,7 +139,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def CURRENTLY_FAILING_SEE_TICKET_2090_test_1065(self):
     '''CNCore.listNodes() returns a valid NodeList that contains at least 3 entries'''
     nodes = self.client.listNodes()
-    self.assertTrue(isinstance(nodes, dataoneTypes_v1_1.NodeList))
+    self.assertTrue(isinstance(nodes, dataoneTypes.NodeList))
     self.assertTrue(len(nodes.node) >= 1)
     entry = nodes.node[0]
 
@@ -158,7 +167,7 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNRead.resolve() returns a valid ObjectLocationList when called with an existing PID'''
     random_existing_pid = testing_utilities.get_random_pid(self.client)
     oll = self.client.resolve(random_existing_pid)
-    self.assertTrue(isinstance(oll, dataoneTypes_v1_1.ObjectLocationList))
+    self.assertTrue(isinstance(oll, dataoneTypes.ObjectLocationList))
 
   def WAITING_FOR_STABLE_CN_test_2010_B(self):
     '''CNRead.resolve() raises NotFound when called with an existing PID'''
@@ -169,7 +178,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_2020(self):
     '''CNRead.getChecksum() returns a valid Checksum when called with an existing PID'''
     checksum = self.client.getChecksum(testing_utilities.get_random_pid(self.client))
-    self.assertTrue(isinstance(checksum, dataoneTypes_v1_1.Checksum))
+    self.assertTrue(isinstance(checksum, dataoneTypes.Checksum))
 
   def WAITING_FOR_STABLE_CN_test_2030(self):
     '''CNRead.search() returns a valid search result'''
@@ -262,7 +271,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4120(self):
     '''CNIdentity.addGroupMembers()'''
     random_group_name = d1_instance_generator.subject.generate()
-    subject_list = dataoneTypes_v1_1.SubjectList()
+    subject_list = dataoneTypes.SubjectList()
     for i in range(10):
       subject_list.append(d1_instance_generator.subject.generate())
     self.client.addGroupMembers(random_group_name, subject_list)
@@ -270,7 +279,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4130(self):
     '''CNIdentity.removeGroupMembers()'''
     random_group_name = d1_instance_generator.subject.generate()
-    subject_list = dataoneTypes_v1_1.SubjectList()
+    subject_list = dataoneTypes.SubjectList()
     for i in range(10):
       subject_list.append(d1_instance_generator.subject.generate())
     self.client.removeGroupMembers(random_group_name, subject_list)
@@ -307,7 +316,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_6010(self):
     '''CNRegister.updateNodeCapabilities()'''
     test_node = 'test_node_' + d1_instance_generator.random_data.random_3_words()
-    node = dataoneTypes_v1_1.Node()
+    node = dataoneTypes.Node()
     node.identifier = test_node
     node.name = 'test_name'
     node.description = 'test_description'
@@ -318,7 +327,7 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_STABLE_CN_test_6020(self):
     '''CNRegister.register()'''
-    node = dataoneTypes_v1_1.Node()
+    node = dataoneTypes.Node()
     node.identifier = 'test_node_' + d1_instance_generator.random_data.random_3_words()
     node.name = 'test_name'
     node.description = 'test_description'
@@ -346,15 +355,27 @@ def main():
 
   # Command line opts.
   parser = optparse.OptionParser()
-  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
+  parser.add_option(
+    '--d1-root',
+    dest='d1_root',
+    action='store',
+    type='string',
+    default=d1_common.const.URL_DATAONE_ROOT
+  )
   parser.add_option(
     '--cn-url',
     dest='cn_url',
     action='store',
     type='string',
-    default='http://cn-dev.dataone.org/cn/'
+    default='https://cn.dataone.org/cn/'
   )
-  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
+  parser.add_option(
+    '--mn-url',
+    dest='mn_url',
+    action='store',
+    type='string',
+    default='https://oneshare.unm.edu/knb/d1/mn'
+  )
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
     '--test', action='store',

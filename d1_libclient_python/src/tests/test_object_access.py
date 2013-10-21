@@ -53,7 +53,7 @@ def readAll(f):
 
 
 def walkNode(target, start=0):
-  '''Given a DataOne node, retrieve each object and it's associated system 
+  '''Given a DataOne node, retrieve each object and it's associated system
   metadata.
   '''
   client = d1_client.mnclient.MemberNodeClient.DataOneClient(target=target)
