@@ -88,16 +88,16 @@ def main():
 
   # Use the client to get a data package as a string (Format ID
   # http://www.openarchives.org/ore/terms).
-  r = client.get(SCIENCE_OBJECT_PID).read()
+  resource_map_xml = client.get(SCIENCE_OBJECT_PID).read()
 
   # Create a resource map parser.
-  resource_map_parser = d1_client.data_package.ResourceMapParser()
+  resource_map_parser = d1_client.data_package.ResourceMapParser(resource_map_xml)
 
   # Use the resource map parser to parse the resource map. Then display it.
 
   print 'Triples:'
 
-  for s, p, o in resource_map_parser.get_triples_by_package(r):
+  for s, p, o in resource_map_parser.get_all_triples():
     print 'subject:   ', s
     print 'predicate: ', p
     print 'object:    ', o
@@ -105,7 +105,7 @@ def main():
 
   print 'Identifiers referenced by package: '
 
-  for pid in resource_map_parser.get_identifiers_referenced_by_package(r):
+  for pid in resource_map_parser.get_identifiers_referenced_by_package():
     print 'PID: ', pid
 
 
