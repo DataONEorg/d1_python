@@ -1,7 +1,12 @@
+# Std.
+import os
+
+# App.
 import fuse
 import callbacks
 
-def run(options):
+
+def run(options, root_resolver):
   # FUSE settings common to FUSE and MacFUSE.
   fuse_args = {
     'foreground': options.FUSE_FOREGROUND,
@@ -19,9 +24,6 @@ def run(options):
   # FUSE settings specific to regular FUSE.
   else:
     fuse_args['nonempty'] = options.FUSE_NONEMPTY
-
-  log_startup_parameters(options, arguments, fuse_args)
-  log_settings(options)
 
   # Mount the drive and handle callbacks forever.
   fuse.FUSE(callbacks.FUSECallbacks(options, root_resolver), options.MOUNTPOINT,

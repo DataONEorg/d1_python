@@ -148,8 +148,8 @@ class Resolver(resolver_abc.Resolver):
     raise path_exception.PathException(u'Invalid PID: {0}'.format(pid))
 
   def deserialize_resource_map(self, resource_map):
-    package = d1_client.data_package.ResourceMapParser()
-    return package.get_identifiers_referenced_by_package(resource_map)
+    package = d1_client.data_package.ResourceMapParser(resource_map)
+    return package.get_identifiers_referenced_by_package()
     #return sorted(package.scidata_dict.keys())
 
   def get_total_size_of_objects_in_resource_map(self, resource_map_pid):
