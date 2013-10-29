@@ -25,7 +25,7 @@
  - Top level module for ONEDrive.
  - Parse arguments.
  - Instantiate the Root resolver.
- - Mount FUSE.
+ - Mount FUSE / Dokan.
 :Author: DataONE (Dahl)
 '''
 
@@ -36,28 +36,29 @@ import os
 import sys
 import codecs
 import optparse
-
-# 3rd party.
-import fuse
+import platform
 
 # D1.
 import d1_common.const
 
 # App.
-#sys.path.append('impl')
-#sys.path.append('impl/drivers/fuse')
-#sys.path.append('impl/resolver')
-import settings
-from impl import check_dependencies
-from impl.drivers.fuse import callbacks
-import impl.resolver.root
+if not hasattr(sys, 'frozen'):
+  sys.path.append(os.path.abspath(os.path.join('__file__', '../..')))
 
-from impl import cache_memory as cache
-from impl import cache_disk
-import impl
+from d1_client_onedrive import settings
+from d1_client_onedrive.impl import check_dependencies
+from d1_client_onedrive.impl.resolver import root
+from d1_client_onedrive.impl import cache_memory as cache
+from d1_client_onedrive.impl import cache_disk
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
+# Set specific logging level for this module if specified.
+try:
+  log.setLevel(logging.getLevelName( \
+               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
+except KeyError:
+  pass
 
 
 def main():
@@ -79,7 +80,8 @@ def main():
     # Only allow overriding strings and ints.
     if not (isinstance(v, str) or isinstance(v, int)):
       continue
-    if k == k.upper():
+    if k.isupper():
+      #if k == k.upper():
       parser.add_option(
         '--{0}'.format(k.lower().replace('_', '-')),
         action='store',
@@ -90,6 +92,11 @@ def main():
       )
 
   (options, arguments) = parser.parse_args()
+
+  # Copy non-string/int settings into options.
+  for k, v in settings.__dict__.items():
+    if not (isinstance(v, str) or isinstance(v, int)) and k.isupper():
+      options.__dict__[k] = v
 
   if len(arguments) > 0:
     parser.print_help()
@@ -102,40 +109,15 @@ def main():
   # Setup logging
   # logging.config.dictConfig(self._options.LOGGING) # Needs 2.7
   log_setup(options)
-  log.setLevel(map_level_string_to_level(options.LOG_LEVEL))
-  #Set level specific for this module if specified
+
   try:
     log.setLevel(logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__]))
-  except:
+  except KeyError:
     pass
 
   if options.version:
     log_version()
     sys.exit()
-
-  # FUSE settings common to FUSE and MacFUSE.
-  fuse_args = {
-    'foreground': options.FUSE_FOREGROUND,
-    'fsname': options.FUSE_FILESYSTEM_NAME,
-    'nothreads': options.FUSE_NOTHREADS,
-    # Allow sharing the mount point with Samba / smb / smbd.
-    # Requires user_allow_other in /etc/fuse.conf
-    # 'allow_other': True,
-  }
-  # FUSE settings specific to MacFUSE.
-  if os.uname()[0] == 'Darwin':
-    fuse_args['volicon'] = options.MACFUSE_ICON
-    fuse_args['local'] = options.MACFUSE_LOCAL_DISK
-    fuse_args['volname'] = options.FUSE_FILESYSTEM_NAME
-  # FUSE settings specific to regular FUSE.
-  else:
-    fuse_args['nonempty'] = options.FUSE_NONEMPTY
-
-  log_startup_parameters(options, arguments, fuse_args)
-  log_settings(options)
-
-  log.info("Starting ONEDrive...")
-  log.info("Base URL = %s" % settings.BASE_URL)
 
   #create the caches here and add references to them in options.
   #enables child resolvers to invalidate entries so that
@@ -146,30 +128,38 @@ def main():
   options.directory_cache = cache.Cache(options.MAX_DIRECTORY_CACHE_SIZE)
 
   # Instantiate the Root resolver.
-  root_resolver = impl.resolver.root.RootResolver(options)
+  root_resolver = root.RootResolver(options)
 
-  # Mount the drive and handle callbacks forever.
-  fuse.FUSE(
-    callbacks.FUSECallbacks(
-      options, root_resolver
-    ), options.MOUNTPOINT, **fuse_args
-  )
-  log.info("Exiting ONEDrive.")
+  log.info("Starting ONEDrive...")
+  log.info("Base URL = %s" % settings.BASE_URL)
+
+  log_startup_parameters(options, arguments)
+  log_settings(options)
+
+  if platform.system() == 'Linux':
+    import d1_client_onedrive.impl.drivers.fuse.d1_fuse as filesystem_callbacks
+  elif platform.system() == 'Windows':
+    import d1_client_onedrive.impl.drivers.dokan.d1_dokan as filesystem_callbacks
+  else:
+    log.error('Unknown platform: {0}'.format(platform.system()))
+    exit()
+
+  filesystem_callbacks.run(options, root_resolver)
+  log.info("Exiting ONEDrive")
 
 
 def log_setup(options):
   # Set up logging.
-  # Log entries are written to both file and stdout.
-  logging.getLogger('').setLevel(logging.INFO)
+  log.setLevel(map_level_string_to_level(options.LOG_LEVEL))
   formatter = logging.Formatter(
     u'%(asctime)s %(levelname)-8s %(name)s'
-    u'(%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
+    u'(%(pathname)s/%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
   )
-  # Log to a file
-  if options.LOG_FILE_PATH is not None:
-    file_logger = logging.FileHandler(options.LOG_FILE_PATH, 'a', encoding='UTF-8')
-    file_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(file_logger)
+  ## Log to a file
+  #if options.LOG_FILE_PATH is not None:
+  #    file_logger = logging.FileHandler(options.LOG_FILE_PATH, 'a', encoding='UTF-8')
+  #    file_logger.setFormatter(formatter)
+  #    logging.getLogger('').addHandler(file_logger)
   # Also log to stdout
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
@@ -190,11 +180,10 @@ def log_version():
   log.info('ONEDrive version: {0}'.format(impl.__version__))
 
 
-def log_startup_parameters(options, arguments, fuse_args):
-  log.debug('Mounting ONEDrive (FUSE)')
+def log_startup_parameters(options, arguments):
+  log.debug('Mounting ONEDrive')
   log.debug('  Options: {0}'.format(str(options)))
   log.debug('  Arguments: {0}'.format(str(arguments)))
-  log.debug('  FUSE arguments: {0}'.format(str(fuse_args)))
 
 
 def log_settings(options):

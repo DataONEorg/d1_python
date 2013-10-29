@@ -73,10 +73,10 @@ MOUNTPOINT = make_absolute('one') # (default, relative path)
 
 # The username and encrypted password to use for accessing the ONEDrive
 # workspace.
-#WORKSPACE_USERNAME = 'dahl'
-#WORKSPACE_PASSWORD = '23af498ecc5732493671abbf'
+#WORKSPACE_USERNAME = ''
+#WORKSPACE_PASSWORD = ''
 #WORKSPACE_XML = make_absolute('workspace.xml')
-WORKSPACE_XML = make_absolute('workspace.xml')
+WORKSPACE_XML = './workspace.xml'
 
 # The maximum number of science objects to display for a search item. Increasing
 # this setting causes longer lists of science objects to to appear in the
@@ -208,6 +208,10 @@ IGNORE_SPECIAL = set(
     '.Trash',
     'BDMV',
     '.xdg-volume-info',
+    # Windows
+    'desktop.ini',
+    'folder.jpg',
+    'folder.gif',
   ]
 )
 
@@ -221,15 +225,13 @@ else:
   LOG_LEVEL = 'INFO'
 
 #Kind of a hack - add a module variable to logging that lists the modules that
-#will be set to logging at DEBUG level. Each module needs to check for presence
-#of its __name__ in the list.
-logging.DEBUG_MODULES = []
-
-#Kind of a hack - add a module variable to logging that lists the modules that
 #will be set to logging at a specific level. Each module needs to check for
 #presence of its __name__ in the list. If not present, then logging will
 #continue at the app global set level for logging.
-logging.ONEDRIVE_MODULES = {'__main__': 'INFO', }
+logging.ONEDRIVE_MODULES = {
+  '__main__': 'INFO',
+  'impl.drivers.dokan.d1_dokan': 'DEBUG',
+}
 
 # Needs Python 2.7
 
