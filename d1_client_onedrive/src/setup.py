@@ -27,19 +27,26 @@
 """
 
 from setuptools import setup, find_packages
-import py2exe
+
+# py2exe only needs to be present when building an executable on Windows.
+# When py2exe is not present, the py2exe specific options below are ignored.
+try:
+  import py2exe
+except ImportError:
+  pass
 
 import d1_client_onedrive
 
 # http://www.py2exe.org/index.cgi/WorkingWithVariousPackagesAndModules
+#
 # lxml
-# if missing _elementhpath, either pull whole lxml library in packages=..., or put "from lxml import _elementhpath as _dummy" somewhere in code; in both cases also pull gzip in packages=...
+#
+# if missing _elementhpath, either pull whole lxml library in packages=..., or
+# put "from lxml import _elementhpath as _dummy" somewhere in code; in both
+# cases also pull gzip in packages=...
 
 opts = {
   "py2exe": {
-    # if you import .py files from subfolders of your project, then those are
-    # submodules.  You'll want to declare those in the "includes"
-    #'includes':['d1_client_cli.impl.cli_util'],
     'packages': [
       'd1_client_onedrive',
       'd1_client_onedrive.impl',
@@ -54,6 +61,8 @@ opts = {
   }
 }
 
+# The setup() parameters are described here:
+# http://pythonhosted.org/setuptools/setuptools.html
 
 setup(
   options = opts,
@@ -73,8 +82,9 @@ setup(
   # Dependencies that are available through PYPI / easy_install.
   install_requires = [
     'dataone.common == 1.1.2RC1',
-    'dataone.libclient == 1.2.1',
-    #'fusepy',
+    'dataone.libclient == 1.2.2',
+    'dataone.workspace_client==0.0.1RC1',
+    'fusepy',
   ],
 
   package_data = {

@@ -62,21 +62,31 @@ BASE_URL = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
 # Bypass round-robin and go directly to a specific CN.
 #BASE_URL = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
-# Select the mountpoint for ONEDrive. The mountpoint is the folder in the local
-# filesystem in which the ONEDrive filesystem appears. The default is to mount
-# the drive in a folder named "one", in the same folder as the onedrive.py file.
+# Select the mountpoint on Linux and Mac OS X. The mountpoint is the folder in
+# the local filesystem in which the ONEDrive filesystem appears. The default is
+# to mount the drive in a folder named "one" in the user's home folder.
+#
+# This setting is not used on Windows. See MOUNT_DRIVE_LETTER below.
+#
 # If the mountpoint is set to a folder that already contains files and folders,
 # those files and folders become temporarily invisible while ONEDrive is
 # running.
-MOUNTPOINT = make_absolute('one') # (default, relative path)
+MOUNTPOINT = os.path.expanduser('~/one') # (default)
 #MOUNTPOINT = '/mnt/onedrive' # (example, absolute path)
+
+# Select the drive letter on Windows. The drive letter designates the drive in
+# which the ONEDrive filesystem appears. The drive letter must not already be in
+# use. Drive letters that are typically in use include C: and D:.
+#
+# This setting is not used on Linux and Mac OS X.
+MOUNT_DRIVE_LETTER = 'O:'
 
 # The username and encrypted password to use for accessing the ONEDrive
 # workspace.
 #WORKSPACE_USERNAME = ''
 #WORKSPACE_PASSWORD = ''
-#WORKSPACE_XML = make_absolute('workspace.xml')
-WORKSPACE_XML = './workspace.xml'
+WORKSPACE_XML = os.path.expanduser('~/workspace.xml') # (default, in user's home folder)
+# WORKSPACE_XML = './workspace.xml' # (in the current directory)
 
 # The maximum number of science objects to display for a search item. Increasing
 # this setting causes longer lists of science objects to to appear in the

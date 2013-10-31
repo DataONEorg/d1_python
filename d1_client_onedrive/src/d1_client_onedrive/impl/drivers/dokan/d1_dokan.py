@@ -25,7 +25,7 @@
 :Synopsis:
  - Create Dokan drive.
  - Handle callbacks from Dokan.
- 
+
  The callbacks are called by Dokan when actions are performed on the filesystem.
 
 :Author:
@@ -95,7 +95,6 @@ except KeyError:
 import dokan
 
 THREADS = 5
-MOUNT_POINT = 'F:'
 
 def run(options, root_resolver):
   #NOTE: mounts anywhere other than root level don't work
@@ -103,28 +102,29 @@ def run(options, root_resolver):
   # properties for a drive not a volume mounted to a mountpoint
   #mountpoint = args[0]
   #directory = args[0]
-        
+
   # set up Dokan
-  #NOTE: DriverOption should either contain DOKAN_OPTION_REMOVABLE or 
+  #NOTE: DriverOption should either contain DOKAN_OPTION_REMOVABLE or
   # DOKAN_OPTION_NETWORK.  This will make the drive appear as a mounted drive
-  # like it should.  There are a few problems with this though.  The network 
+  # like it should.  There are a few problems with this though.  The network
   # approach gives an ugly icon in Windows Explorer and says that the drive is
-  # disconnected.  The removable approach gives an error when I try to eject 
-  # the drive.  There may be solutions to both of these problems, but I 
+  # disconnected.  The removable approach gives an error when I try to eject
+  # the drive.  There may be solutions to both of these problems, but I
   # haven't figure it out yet.  I'm not sure what makes the most sense.
-  #UPDATE: I was able to get rid of the ugly disconnected network icon in 
+  #UPDATE: I was able to get rid of the ugly disconnected network icon in
   # a number of ways.  First, by editing the registry you can indicate an
   # icon that you want to be used for a particular drive letter.  Second,
-  # I was able to register the network drive so that it appears connected.  
+  # I was able to register the network drive so that it appears connected.
   # There is a bug in this code though.  When you try to access the drive using
   # Windows Explorer, the first time it will always crash Explorer.  After that
   # first crash it appears to be fine.  I need to figure out how to fix this.
   DriverOption = DOKAN_OPTION_KEEP_ALIVE #| DOKAN_OPTION_NETWORK
   #if (options.stderr):
-  #DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR 
+  #DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
   d1fs = dokan.Dokan(DataONEFS(options, root_resolver),
-                     MOUNT_POINT, DriverOption, 0x19831116L, THREADS)
-  
+                     options.MOUNT_DRIVE_LETTER, DriverOption, 0x19831116L,
+                     THREADS)
+
   #if options.unmount:
   #  # unmount the specified drive
   #  if not d1fs.dokanUnmount(mountpoint):
@@ -148,9 +148,9 @@ class DataONEFS(dokan.Operations):
     self.READ_ONLY_ACCESS_MODE = 3
     self.root_resolver = root_resolver
     self.start_time = time.time()
- 
+
     self.attribute_cache = options.attribute_cache
-    self.directory_cache = options.directory_cache      
+    self.directory_cache = options.directory_cache
 
 
   def getFileInformation(self, fileName):
@@ -184,14 +184,14 @@ class DataONEFS(dokan.Operations):
       attribute = self._get_attributes_through_cache(file_path)
       stat = self._stat_from_attributes(attribute)
       stat['name'] = file_name
-      files.append(stat)    
+      files.append(stat)
     return files
 
     # example:
       #result.append(dict(name='systemmetadata.xml',
       #                   attr=(FILE_ATTRIBUTE_NORMAL
       #                         |FILE_ATTRIBUTE_READONLY),
-      #                   ctime=ctime1, atime=now, wtime=mtime1, 
+      #                   ctime=ctime1, atime=now, wtime=mtime1,
       #                   size=len(xml)))
       # science metadata
 
@@ -227,12 +227,12 @@ class DataONEFS(dokan.Operations):
     return dict(freeBytesAvailable = 0x100000000L - 2048,
                 totalNumberOfBytes = 0x100000000L,
                 totalNumberOfFreeBytes = 0x100000000L - 2048)
-  
-  
+
+
   def getVolumeInformation(self):
     #logging.error('')
     fsFlags = (FILE_READ_ONLY_VOLUME
-               | FILE_CASE_SENSITIVE_SEARCH 
+               | FILE_CASE_SENSITIVE_SEARCH
                | FILE_CASE_PRESERVED_NAMES)
     return dict(volumeNameBuffer=u'DataONE Disk',
                 maximumComponentLength=260,
@@ -251,11 +251,11 @@ class DataONEFS(dokan.Operations):
 
   def _stat_from_attributes(self, attributes):
     #log.debug(u'_stat_from_attributes(): attributes={0}'.format(attributes))
-    
+
     date_time = d1_common.date_time.to_seconds_since_epoch(
       attributes.date()) if attributes.date() is not None else self.start_time
 
-    attrs = FILE_ATTRIBUTE_DIRECTORY if attributes.is_dir() else FILE_ATTRIBUTE_NORMAL 
+    attrs = FILE_ATTRIBUTE_DIRECTORY if attributes.is_dir() else FILE_ATTRIBUTE_NORMAL
     attrs |= FILE_ATTRIBUTE_READONLY
 
     stat = dict(
@@ -268,7 +268,7 @@ class DataONEFS(dokan.Operations):
       wtime = date_time,
     )
 
-    #log.debug(u'_stat_from_attributes(): stat={0}'.format(stat))    
+    #log.debug(u'_stat_from_attributes(): stat={0}'.format(stat))
     return stat
 
 
@@ -295,7 +295,7 @@ class DataONEFS(dokan.Operations):
 #    self.start_time = time.time()
 #    self.gid = os.getgid()
 #    self.uid = os.getuid()
-# 
+#
 #    self.attribute_cache = options.attribute_cache
 #    self.directory_cache = options.directory_cache
 #
