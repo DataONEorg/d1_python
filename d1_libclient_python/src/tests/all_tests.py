@@ -34,16 +34,18 @@ import sys
 import logging
 import unittest
 from d1_common import xmlrunner
-from test_d1baseclient import TestDataONEBaseClient
-
+# The DataONEBaseClient tests work, but I haven't looked into how to pass
+# options from here to the class.
+# from test_d1baseclient import TestDataONEBaseClient
 #from test_cnclient import TestCNClient
 #from test_d1client import TestDataONEClientTestD1Client
-#from test_data_package import TestDataPackage
+from test_data_package import TestDataPackage
 #test_logrecorditerator
 #test_mnclient
 #test_object_access
 #test_object_format_info
-#test_objectlistiterator
+from test_objectlistiterator import TestObjectListIterator
+
 #test_solr_client
 #test_systemmetadata.py
 
@@ -64,5 +66,5 @@ def main():
 
 
 if __name__ == '__main__':
-  print 'Not implemented. See ticket #4109.'
-  #main()
+  #print 'Not implemented. See ticket #4109.'
+  main()

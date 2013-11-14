@@ -117,7 +117,7 @@ class ObjectListIterator(object):
     :type max: integer
     '''
     self.log = logging.getLogger(self.__class__.__name__)
-    self._objectList = None
+    self._object_list = None
     self._czero = 0
     self._citem = 0
     self._pageoffs = 0
@@ -125,12 +125,12 @@ class ObjectListIterator(object):
     if max >= 0 and max < pagesize:
       pagesize = max
     self._pagesize = pagesize
-    self.fromDate = fromDate
+    self._fromDate = fromDate
     self._loadMore(start=start)
     if max > 0:
       self._maxitem = max
     else:
-      self._maxitem = self._objectList.total
+      self._maxitem = self._object_list.total
 
   def __iter__(self):
     return self
@@ -138,7 +138,7 @@ class ObjectListIterator(object):
   def totalObjectCount(self):
     '''Returns the total number of objects in the
     '''
-    return self._objectlist.total
+    return self._object_list.total
 
   def next(self):
     '''Implements the next() method for the iterator.  Returns the next
@@ -148,17 +148,17 @@ class ObjectListIterator(object):
     self.log.debug(
       "%d / %d (%d)" % (
         self._citem, self._maxitem, len(
-          self._objectList.objectInfo
+          self._object_list.objectInfo
         )
       )
     )
     if self._citem >= self._maxitem:
       raise StopIteration
-    if (self._pageoffs) >= len(self._objectList.objectInfo):
-      self._loadMore(start=self._czero + len(self._objectList.objectInfo))
-      if len(self._objectList.objectInfo) < 1:
+    if (self._pageoffs) >= len(self._object_list.objectInfo):
+      self._loadMore(start=self._czero + len(self._object_list.objectInfo))
+      if len(self._object_list.objectInfo) < 1:
         raise StopIteration
-    res = self._objectList.objectInfo[self._pageoffs]
+    res = self._object_list.objectInfo[self._pageoffs]
     self._citem += 1
     self._pageoffs += 1
     return res
@@ -171,9 +171,9 @@ class ObjectListIterator(object):
     self._pageoffs = 0
     try:
       pyxb.RequireValidWhenParsing(validation)
-      self._objectList = self._client.listObjects(
+      self._object_list = self._client.listObjects(
         start=start, count=self._pagesize,
-        fromDate=self.fromDate
+        fromDate=self._fromDate
       )
     except httplib.BadStatusLine as e:
       self.log.warn("Server responded with Bad Status Line. Retrying in 5sec")
@@ -194,71 +194,3 @@ class ObjectListIterator(object):
     '''Implements len(ObjectListIterator)
     '''
     return self._maxitem
-
-#===============================================================================
-
-if __name__ == "__main__":
-  '''A simple demonstration of the iterator.  Walks over the list of objects
-  available from a given node. Output is in YAML.
-  '''
-  parser = OptionParser()
-  default_base_url = 'https://cn.dataone.org/cn'
-  parser.add_option(
-    '-b',
-    '--base_url',
-    dest='base_url',
-    default=default_base_url,
-    help='ListObjects from BASEURL (default=%s)' % default_base_url
-  )
-  parser.add_option('-l', '--loglevel', dest='llevel', default=20, type='int',
-                 help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
-                     '40=Error, 50=Fatal')
-  parser.add_option(
-    '-s',
-    '--start',
-    dest='start',
-    default=0,
-    type='int',
-    help='Start retrieving objects from this position (default=0'
-  )
-  parser.add_option(
-    '-m',
-    '--max',
-    dest='max',
-    default=500,
-    type='int',
-    help='Maximum number of entries to retrieve (500)'
-  )
-  parser.add_option(
-    '-p',
-    '--page',
-    dest='pagesize',
-    default=100,
-    type='int',
-    help='Maximum number of entries to retrieve per call (100)'
-  )
-  (options, args) = parser.parse_args()
-  if options.llevel not in [10, 20, 30, 40, 50]:
-    options.llevel = 20
-  logging.basicConfig(level=int(options.llevel))
-
-  client = d1baseclient.DataONEBaseClient(options.base_url)
-  ol = ObjectListIterator(
-    client, start=options.start,
-    pagesize=options.pagesize,
-    max=options.max
-  )
-  counter = options.start
-  print "---"
-  print "total: %d" % len(ol)
-  print "---"
-  for o in ol:
-    print "-"
-    print "  item     : %d" % counter
-    print "  pid      : %s" % o.identifier.value()
-    print "  modified : %s" % o.dateSysMetadataModified
-    print "  format   : %s" % o.formatId
-    print "  size     : %s" % o.size
-    print "  checksum : %s" % o.checksum.value()
-    print "  algorithm: %s" % o.checksum.algorithm
-    counter += 1
