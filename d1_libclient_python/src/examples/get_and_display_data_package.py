@@ -95,18 +95,31 @@ def main():
 
   # Use the resource map parser to parse the resource map. Then display it.
 
-  print 'Triples:'
+  print '\nResource Map PID:'
+  print resource_map_parser.get_resource_map_pid()
+
+  print '\nTriples:'
 
   for s, p, o in resource_map_parser.get_all_triples():
-    print 'subject:   ', s
-    print 'predicate: ', p
-    print 'object:    ', o
+    print 'subject:   ' + s
+    print 'predicate: ' + p
+    print 'object:    ' + o
     print
 
-  print 'Identifiers referenced by package: '
+  print '\nAll PIDs in aggregation: '
 
-  for pid in resource_map_parser.get_identifiers_referenced_by_package():
-    print 'PID: ', pid
+  for pid in resource_map_parser.get_aggregated_pids():
+    print 'PID: ' + pid
+
+  print '\nSience Metadata PIDs in aggregation: '
+
+  for pid in resource_map_parser.get_aggregated_science_metadata_pids():
+    print 'PID: ' + pid
+
+  print '\nSience Data PIDs in aggregation: '
+
+  for pid in resource_map_parser.get_aggregated_science_data_pids():
+    print 'PID: ' + pid
 
 
 if __name__ == '__main__':

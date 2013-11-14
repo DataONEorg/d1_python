@@ -58,18 +58,18 @@ import d1_common.const
 import d1_client.solr_client
 import d1_client.mnclient
 
-# Config.
-
-# The identifier (PID) of the DataONE Data Package (Resource Map) to download
-# and display. Data packages have Format ID
-# http://www.openarchives.org/ore/terms.
-SOLR_QUERY_STRING = 'id:[* TO *]'
-
 
 def main():
+  # Connect to the DataONE Coordinating Nodes in the default (production) environment.
   c = d1_client.solr_client.SolrConnection()
 
-  search_result = c.search({'q': SOLR_QUERY_STRING, 'rows': 10, 'fl': 'formatId', })
+  search_result = c.search(
+    {
+      'q': 'id:[* TO *]', # Filter for search
+      'rows': 10, # Number of results to return
+      'fl': 'formatId', # List of fields to return for each result
+    }
+  )
 
   pprint.pprint(search_result)
 
