@@ -110,9 +110,8 @@ SYSMETA_RIGHTSHOLDER = 'CN=First Last,O=Google,C=US,DC=cilogon,DC=org'
 
 # BaseURL for the Member Node. If the script is run on the same server as the
 # Member Node, this can be localhost.
-MN_BASE_URL = 'https://localhost/mn'
-#MN_BASE_URL = 'http://localhost:8000'
-#MN_BASE_URL = 'https://gmn.test.dataone.org/mn'
+MN_BASE_URL = 'http://localhost:8000'
+#MN_BASE_URL = 'https://localhost/mn'
 
 # Paths to the certificate and key to use when creating the object. If the
 # certificate has the key embedded, the _KEY setting should be set to None. The
