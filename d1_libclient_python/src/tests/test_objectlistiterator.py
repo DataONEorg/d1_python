@@ -37,27 +37,41 @@ import d1_client.mnclient
 import d1_client.objectlistiterator
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
+import pyxb.binding
+
 
 class TestObjectListIterator(unittest.TestCase):
-  '''Utility class that check whether two URLs are equal.  Not really as simple
-  as it might seem at first.
+  '''
   '''
 
   def test_objectlistiterator(self):
     '''Walk over the list of log entries available from a given node.
     '''
-    target = "http://dev-dryad-mn.dataone.org/mn"
-    #target = "http://129.24.0.15/mn"
-    #target = "http://knb-mn.ecoinformatics.org/knb"
+    base_url = "https://cn.dataone.org/cn"
     if len(sys.argv) > 1:
       target = sys.argv[1]
-    client = d1_client.mnclient.MemberNodeClient(baseurl=target)
-    rl = d1_client.objectlistiterator.ObjectListIterator(client)
+    client = d1_client.mnclient.MemberNodeClient(base_url=base_url)
+    ol = d1_client.objectlistiterator.ObjectListIterator(client, max=200)
     counter = 0
-    for e in rl:
+    for o in ol:
       counter += 1
-      self.assertTrue(isinstance(e, dataoneTypes_v1_1.ObjectInfo))
-      # TODO: Check if ObjectInfo members are valid.
+      self.assertTrue(isinstance(o, dataoneTypes.ObjectInfo))
+      self.assertTrue(
+        isinstance(
+          o.identifier.value(
+          ), dataoneTypes.NonEmptyNoWhitespaceString800
+        )
+      )
+      self.assertTrue(
+        isinstance(
+          o.dateSysMetadataModified, pyxb.binding.datatypes.dateTime
+        )
+      )
+      self.assertTrue(isinstance(o.formatId, dataoneTypes.ObjectFormatIdentifier))
+      self.assertTrue(isinstance(o.size, pyxb.binding.datatypes.unsignedLong))
+      self.assertTrue(isinstance(o.checksum.value(), pyxb.binding.datatypes.string))
+      self.assertTrue(isinstance(o.checksum.algorithm, dataoneTypes.ChecksumAlgorithm))
+    self.assertEqual(counter, 200)
 
 
 if __name__ == "__main__":

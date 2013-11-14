@@ -519,7 +519,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     query = {
       'fromDate': fromDate,
       'toDate': toDate,
-      'objectFormat': objectFormat,
+      'formatId': objectFormat,
       'replicaStatus': replicaStatus,
       'start': int(start),
       'count': int(count)

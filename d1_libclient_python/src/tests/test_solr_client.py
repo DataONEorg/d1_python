@@ -147,7 +147,7 @@ def main():
     dest='query_base_url',
     action='store',
     type='string',
-    default='cn-dev-unm-1.test.dataone.org'
+    default='cn.dataone.org'
   )
   parser.add_option(
     '--query-base-url',
@@ -183,5 +183,4 @@ def main():
 
 
 if __name__ == '__main__':
-  print 'See ticket #4110'
-  #main()
+  main()

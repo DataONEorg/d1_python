@@ -69,7 +69,7 @@ class SolrConnection:
     debug=False
   ):
     self.logger = logging.getLogger('solr_client.SolrConnection')
-    ## Describes type conversion for fields.
+    # Describes type conversion for fields.
     self.fieldtypes = {
       't': 'text',
       's': 'string',
@@ -158,7 +158,9 @@ class SolrConnection:
   #    res = self.__errcheck(self.conn.getresponse())
   #  return res
 
-  ################################################## Testing with GET until POST is fixed on CN.
+  ##############################################################################
+  # Testing with GET until POST is fixed on CN.
+
   def doPost(self, url, body, headers):
     try:
       url = url + '?' + body

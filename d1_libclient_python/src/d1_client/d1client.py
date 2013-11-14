@@ -58,13 +58,13 @@ MAX_CACHE_AGE = 60
 
 class DataONEObject(object):
   def __init__(self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT):
-    self.pid = pid
+    self._pid = pid
     self._locations = []
     self._relations = None
     self._relations_t = 0
     self._systemmetadata = None
     self._content = None
-    self.__client = None
+    self._client = None
     self._cnBaseUrl = cnBaseUrl
 
   def getCredentials(self):
@@ -77,12 +77,12 @@ class DataONEObject(object):
     '''Internal method used to retrieve an instance of a DataONE client that
     can be used for interacting with the DataONE services.
     '''
-    if self.__client is None or forcenew:
-      self.__client = DataONEClient(
+    if self._client is None or forcenew:
+      self._client = DataONEClient(
         credentials=self.getCredentials(
         ), cnBaseUrl=self._cnBaseUrl
       )
-    return self.__client
+    return self._client
 
   def getLocations(self, forcenew=False):
     '''Retrieve a list of node base urls known to hold a copy of this object.
@@ -95,7 +95,7 @@ class DataONEObject(object):
     '''
     if len(self._locations) < 1 or forcenew:
       cli = self._getClient()
-      self._locations = cli.resolve(self.pid)
+      self._locations = cli.resolve(self._pid)
     return self._locations
 
   def getSystemMetadata(self, forcenew=False):
@@ -108,7 +108,7 @@ class DataONEObject(object):
     '''
     if self._systemmetadata is None or forcenew:
       cli = self._getClient()
-      self._systemmetadata = cli.getSystemMetadata(self.pid)
+      self._systemmetadata = cli.getSystemMetadata(self._pid)
     return self._systemmetadata
 
   def getRelatedObjects(self, forcenew=False):
@@ -117,7 +117,7 @@ class DataONEObject(object):
       forcenew = True
     if self._relations is None or forcenew:
       cli = self._getClient()
-      self._relations = cli.getRelatedObjects(self.pid)
+      self._relations = cli.getRelatedObjects(self._pid)
       self._relations_t = t
     return self._relations
 
@@ -130,7 +130,7 @@ class DataONEObject(object):
     :return type: NoneType
     '''
     cli = self._getClient()
-    instr = cli.get(self.pid)
+    instr = cli.get(self._pid)
     while True:
       data = instr.read(4096)
       if not data:
@@ -139,7 +139,7 @@ class DataONEObject(object):
 
   def get(self):
     cli = self._getClient()
-    return cli.get(self.pid)
+    return cli.get(self._pid)
 
 #===============================================================================
 
@@ -151,25 +151,25 @@ class DataONEClient(object):
     '''
     if credentials is None:
       credentials = {}
-    self.cnBaseUrl = cnBaseUrl
-    self.cn = None
-    self.mn = None
-    self.credentials = credentials
-    self.authToken = None
+    self._cnBaseUrl = cnBaseUrl
+    self._cn = None
+    self._mn = None
+    self._credentials = credentials
+    self._authToken = None
     self._sysmetacache = {}
-    self.logger = logging.getLogger('DataONEClient')
+    self._logger = logging.getLogger('DataONEClient')
 
   def _getCN(self, forcenew=False):
-    if self.cn is None or forcenew:
-      self.cn = cnclient.CoordinatingNodeClient(base_url=self.cnBaseUrl)
-    return self.cn
+    if self._cn is None or forcenew:
+      self._cn = cnclient.CoordinatingNodeClient(base_url=self._cnBaseUrl)
+    return self._cn
 
   def _getMN(self, base_url, forcenew=False):
-    if self.mn is None or forcenew:
-      self.mn = mnclient.MemberNodeClient(base_url=base_url)
-    elif self.mn.base_url != base_url:
-      self.mn = mnclient.MemberNodeClient(base_url=base_url)
-    return self.mn
+    if self._mn is None or forcenew:
+      self._mn = mnclient.MemberNodeClient(base_url=base_url)
+    elif self._mn.base_url != base_url:
+      self._mn = mnclient.MemberNodeClient(base_url=base_url)
+    return self._mn
 
   def getAuthToken(self, forcenew=False):
     '''Returns an authentication token using the credentials provided when
@@ -177,9 +177,9 @@ class DataONEClient(object):
 
     :return type: AuthToken
     '''
-    if self.authToken is None or forcenew:
-      self.authToken = None
-    return self.authToken
+    if self._authToken is None or forcenew:
+      self._authToken = None
+    return self._authToken
 
   @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
@@ -200,13 +200,13 @@ class DataONEClient(object):
     identified by PID.
     :return type: HTTPResponse
     '''
-    locations = self.resolve(pid)
+    locations = self._resolve(pid)
     for location in locations:
       mn = self._getMN(location)
       try:
         return mn.get(pid)
       except Exception, e:
-        self.logger.exception(e)
+        self._logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
 
   @d1_common.util.utf8_to_unicode
