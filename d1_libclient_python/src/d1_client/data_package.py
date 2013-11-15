@@ -22,10 +22,16 @@
 :mod:`data_package`
 ===================
 
-:Synopsis: Read and write DataONE data packages (OAI-ORE resource maps)
-:Created: 2012-03-29
-:Author: DataONE (Vieglais, Pippin, Dahl)
+:Synopsis:
+  Read and write DataONE data packages (OAI-ORE Resource Maps).
 
+  Includes convenience functions to perform the most common parsing and
+  generating tasks for Resource Maps.
+
+  See `Data Packaging <http://mule1.dataone.org/ArchitectureDocs-current/design/DataPackage.html>`_
+  for more information about how Resource Maps are used in DataONE.
+:Created: 2012-03-29
+:Author: DataONE (Vieglais, Dahl)
 :Requires:
   RDFLib ($ pip install rdflib)
   Google Foresite Toolkit ($ pip install google.foresite-toolkit)
@@ -267,7 +273,7 @@ class ResourceMapParser():
       SELECT ?pid
       WHERE {
         ?o dcterms:identifier ?pid .
-      }      
+      }
     '''
     return str([o[0] for o in g.query(q)][0])
 
@@ -302,7 +308,7 @@ class ResourceMapParser():
       SELECT DISTINCT ?p
       WHERE {
         ?s ?p ?o .
-      }      
+      }
     '''
     return map(str, [o[0] for o in g.query(q)])
 
@@ -316,7 +322,7 @@ class ResourceMapParser():
     #
     # PREFIX mebase: <http://rdf.myexperiment.org/ontologies/base/>
     # PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    # 
+    #
     # SELECT ?a ?text
     # WHERE {
     #   ?a rdf:type mebase:Announcement .
@@ -327,7 +333,7 @@ class ResourceMapParser():
     #
     # SELECT ?a ?text
     # WHERE {
-    #   ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
+    #   ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
     #   <http://rdf.myexperiment.org/ontologies/base/Announcement> .
     #   ?a <http://rdf.myexperiment.org/ontologies/base/text> ?text
     # }
@@ -360,7 +366,7 @@ class ResourceMapParser():
       WHERE {
         ?s ore:aggregates ?o .
         ?o dcterms:identifier ?pid .
-      }      
+      }
     '''
     return map(str, [o[0] for o in g.query(q)])
 

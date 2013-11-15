@@ -26,6 +26,9 @@
   This module implements the DataONE Coordinating Client v1.1 API methods. It
   extends CoordinatingNodeClient, which implements the 1.0 methods, making those
   methods available as well.
+
+  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
+  for details on how to use the methods in this class.
 :Created: 2012-10-15
 :Author: DataONE (Dahl)
 '''
@@ -100,4 +103,3 @@ class CoordinatingNodeClient(d1baseclient_1_1.DataONEBaseClient_1_1):
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
     self.capture_response_body = capture_response_body
-

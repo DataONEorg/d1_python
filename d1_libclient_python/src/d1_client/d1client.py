@@ -23,10 +23,16 @@
 
 :Synopsis:
   This module implements:
-  * DataONEClient, which uses CN- and MN clients to perform high level
-  operations against the DataONE infrastructure.
-  * DataONEObject, which wraps a single object and adds functionality such as
-  resolve and get.
+
+  :DataONEClient: Uses CN- and MN clients to perform high level operations
+    against the DataONE infrastructure.
+  :DataONEObject: Wraps a single object and adds functionality such as
+    resolve and get.
+
+  See the `Coordinating Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
+  and `Member Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
+  APIs for details on how to use the methods in this class.
+
 :Created: 2011-01-26
 :Author: DataONE (Vieglais, Dahl)
 '''
@@ -88,8 +94,8 @@ class DataONEObject(object):
     '''Retrieve a list of node base urls known to hold a copy of this object.
 
     :param forcenew: The locations are cached. This causes the cache to be
-    refreshed.
-    :type forcenew: bool
+      refreshed.
+    :type forcenew: boolean
     :returns: List of object locations.
     :return type: PyXB ObjectLocationList.
     '''
@@ -101,8 +107,8 @@ class DataONEObject(object):
   def getSystemMetadata(self, forcenew=False):
     '''
     :param forcenew: The System Metadata objects are cached. This causes the
-    cache to be refreshed.
-    :type forcenew: bool
+      cache to be refreshed.
+    :type forcenew: boolean
     :returns: List of object locations.
     :return type: PyXB ObjectLocationList.
     '''

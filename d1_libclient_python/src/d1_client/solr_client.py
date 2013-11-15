@@ -1,9 +1,5 @@
-'''
-:mod:`solr_client`
-==================
-
-:Synopsis:
-  Python SOLR Client Library
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +20,15 @@
 # This is prototype level code and subject to change, based on:
 # http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
 # Modifications by DataONE (Vieglais, Dahl)
+'''
+:mod:`solr_client`
+==================
+
+:Synopsis:
+  Python SOLR Client
+
+  This client code is based on:
+  http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
 '''
 
 import logging
@@ -294,7 +299,10 @@ class SolrConnection:
         return None
     elif ftype == 'date':
       try:
-        v = DateTime.DateTimeFrom(value)
+        v = datetime.datetime(
+          value['year'], value['month'], value['day'], value['hour'], value['minute'],
+          value['second']
+        )
         v = v.strftime('%Y-%m-%dT%H:%M:%S.0Z')
         return v
       except:
@@ -405,12 +413,16 @@ class SolrConnection:
 
   def getIds(self, query='*:*', fq=None, start=0, rows=1000):
     '''Returns a dictionary of:
-      matches: number of matches
-      failed: if true, then an exception was thrown
-      start: starting index
-      ids: [id, id, ...]
 
-    See also the SOLRSearchResponseIterator class
+    :param matches: number of matches
+    :param failed: True if an exception was thrown
+    :type failed: boolean
+    :param start: starting index
+    :type start: int
+    :param ids: [id, id, ...]
+    :type ids: list
+
+    See also the SOLRSearchResponseIterator class.
     '''
     params = {'q': query, 'start': str(start), 'rows': str(rows), 'wt': 'python', }
     if not fq is None:
@@ -499,16 +511,19 @@ class SolrConnection:
 #    return data
 
   def fieldValues(self, name, q="*:*", fq=None, maxvalues=-1, sort=True):
-    '''
-    Retrieve the unique values for a field, along with their usage counts.
-    http://localhost:8080/solr/select/?q=*:*&rows=0&facet=true&indent=on&wt=python&facet.field=genus_s&facet.limit=10&facet.zeros=false&facet.sort=false
+    '''Retrieve the unique values for a field, along with their usage counts.
 
-    @param name(string) Name of field to retrieve values for
-    @param q(string) Query identifying the records from which values will be retrieved
-    @param fq(string) Filter query restricting operation of query
-    @param maxvalues(int) Maximum number of values to retrieve.  Default is -1,
+    :param name: Name of field for which to retrieve values
+    :type name: string
+    :param q: Query identifying the records from which values will be retrieved
+    :type q: string
+    :param fq: Filter query restricting operation of query
+    :type fq: string
+    :param maxvalues: Maximum number of values to retrieve. Default is -1,
       which causes retrieval of all values.
-    @return dict of {fieldname: [[value, count], ... ], }
+    :type maxvalues: int
+
+    :returns: dict of {fieldname: [[value, count], ... ], }
     '''
     params = {
       'q': q,
@@ -593,12 +608,9 @@ class SolrConnection:
     return fld['type']
 
   def fieldAlphaHistogram(self, name, q='*:*', fq=None, nbins=10, includequeries=True):
-    '''
-    Generates a histogram of values from a string field.
-    Output is:
-      [[low, high, count, query],
-       ... ]
-    Bin edges is determined by equal division of the fields
+    '''Generates a histogram of values from a string field.
+    Output is: [[low, high, count, query], ... ]
+    Bin edges is determined by equal division of the fields.
     '''
     oldpersist = self.persistent
     self.persistent = True
@@ -800,19 +812,28 @@ class SolrConnection:
     Generates a 2d histogram of values.
     Expects the field to be integer or floating point.
 
-    @param name1(string) Name of field1 columns to compute
-    @param name2(string) Name of field2 rows to compute
-    @param q(string) The query identifying the set of records for the histogram
-    @param fq(string) Filter query to restrict application of query
-    @param nbins1(int) Number of columns in resulting histogram
-    @param nbins2(int) Number of rows in resulting histogram
+    :param name1: Name of field1 columns to compute
+    :type name1: string
+    :param name2: Name of field2 rows to compute
+    :type name2: string
+    :param q: The query identifying the set of records for the histogram
+    :type q: string
+    :param fq: Filter query to restrict application of query
+    :type fq: string
+    :param nbins1: Number of columns in resulting histogram
+    :type nbins1: int
+    :param nbins2: Number of rows in resulting histogram
+    :type nbins2: int
 
-    @return dict of {colname:  name of column index
-                     rowname:  name of row index
-                     cols: [] list of min values for each column bin
-                     rows: [] list of min values for each row bin
-                     z: [[],
-                         []]
+    :returns:
+
+    Dictionary of:
+
+    :colname: name of column index
+    :rowname: name of row index
+    :cols: [] list of min values for each column bin
+    :rows: [] list of min values for each row bin
+    :z: [[], []]
     '''
 
     def _mkQterm(name, minv, maxv, isint, isfirst, islast):

@@ -25,6 +25,9 @@
 :Synopsis:
   This module implements CoordinatingNodeClient, which extends DataONEBaseClient
   with functionality specific to Coordinating Nodes.
+
+  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
+  for details on how to use the methods in this class.
 :Created: 2011-01-22
 :Author: DataONE (Vieglais, Dahl)
 '''
@@ -47,7 +50,10 @@ except ImportError as e:
 import d1baseclient
 
 class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
-  '''Connect to a Coordinating Node and perform REST calls against the CN API
+  '''Connect to a Coordinating Node and perform REST calls against the CN API.
+
+  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
+  for details on how to use the methods in this class.
   '''
   def __init__(self,
                base_url=d1_common.const.URL_DATAONE_ROOT,
@@ -62,9 +68,9 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     '''Connect to a DataONE Coordinating Node.
 
     :param base_url: DataONE Node REST service BaseURL
-    :type host: string
+    :type base_url: string
     :param timeout: Time in seconds that requests will wait for a response.
-    :type timeout: integer
+    :type timeout: float
     :param defaultHeaders: headers that will be sent with all requests.
     :type defaultHeaders: dictionary
     :param cert_path: Path to a PEM formatted certificate file.
@@ -98,7 +104,6 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
     # Set this to True to preserve a copy of the last response.read() as the
     # body attribute of self.last_response_body
     self.capture_response_body = capture_response_body
-
 
   #=============================================================================
   # Core API

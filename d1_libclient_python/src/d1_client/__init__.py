@@ -25,12 +25,17 @@ __version__ = "1.2.2"
 
 __all__ = [
   'cnclient',
+  'cnclient_1_1',
   'd1baseclient',
+  'd1baseclient_1_1',
   'd1client',
+  'data_package',
   'logrecorditerator',
   'mnclient',
+  'mnclient_1_1',
+  'object_format_info',
   'objectlistiterator',
-  'solrclient',
+  'solr_client',
   'svnrevision',
   'systemmetadata',
 ]
