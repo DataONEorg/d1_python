@@ -1,11 +1,9 @@
 Updating the library
 ====================
 
-How to update your copy of the library.
+To update your copy of the library to the latest version available on PyPI,
+run ``pip install`` with the ``--upgrade`` option:
 
-Update your copy of the code with Subversion (modify the path if the library was
-not installed in the suggested location)::
+::
 
-  $ cd /var/local/dataone/d1_client_python
-  $ svn update
-
+  $ sudo pip install --upgrade dataone.libclient
