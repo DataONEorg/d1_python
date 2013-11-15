@@ -35,6 +35,11 @@
   CNRead/MNRead.listObjects()
   CNAuthorization/MNAuthorization.isAuthorized()
   CNCore/MNCore.ping()
+
+  See the `Coordinating Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
+  and `Member Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
+  APIs for details on how to use the methods in this class.
+
 :Created: 2011-01-20
 :Author: DataONE (Vieglais, Dahl)
 '''

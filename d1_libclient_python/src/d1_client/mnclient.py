@@ -25,6 +25,9 @@
 :Synopsis:
   This module implements MemberNodeClient, which extends DataONEBaseClient
   with functionality specific to Member Nodes.
+
+  See the `Member Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
+  details on how to use the methods in this class.
 :Created: 2011-01-21
 :Author: DataONE (Vieglais, Dahl)
 '''
@@ -60,7 +63,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
                version='v1',
                types=dataoneTypes):
     '''Connect to a DataONE Member Node.
-    
+
     :param base_url: DataONE Node REST service BaseURL
     :type host: string
     :param timeout: Time in seconds that requests will wait for a response.
@@ -71,7 +74,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     :type cert_path: string
     :param key_path: Path to a PEM formatted file that contains the private key
       for the certificate file. Only required if the certificate file does not
-      itself contain a private key. 
+      itself contain a private key.
     :type key_path: string
     :param strict: Raise BadStatusLine if the status line can’t be parsed
       as a valid HTTP/1.0 or 1.1 status line.
@@ -84,7 +87,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
     :param types: The PyXB bindings to use for XML serialization and
       deserialization.
     :type types: PyXB
-    :returns: None    
+    :returns: None
     '''
     d1baseclient.DataONEBaseClient.__init__(self, base_url=base_url,
       timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
