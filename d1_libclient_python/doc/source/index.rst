@@ -17,6 +17,7 @@ Index
 
   setup
   api
+  glossary
 
 
 Indices and tables

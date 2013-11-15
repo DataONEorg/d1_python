@@ -2,7 +2,8 @@ API and tests
 =============
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 20
+  :numbered:
+  :glob:
 
-  generated-general
-  generated-tests
+  generated/*
