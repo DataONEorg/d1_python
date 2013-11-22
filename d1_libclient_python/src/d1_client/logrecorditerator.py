@@ -25,11 +25,12 @@ Module d1_client.logrecorditerator
 Implements an iterator that iterates over the entire set of LogRecords
 for a DataONE node. Data is retrieved from the target only when required.
 :Created: 2010-07-24
-:Author: DataONE (Vieglais)
+:Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
 '''
 
+import datetime
 import logging
 
 
@@ -38,45 +39,51 @@ class LogRecordIterator(object):
   for a DataONE node.  Data is retrieved from the target only when required.
   '''
 
-  def __init__(self, client, fromDate=None):
+  def __init__(self, client, fromDate=None, toDate=None, start=0, pageSize=1000):
     '''Initializes the iterator.
 
-     TODO: Extend this with date range and other restrictions
-
-    :param DataOneClient client: The client instance for retrieving stuff.
-    :param integer start: The starting index value
+    :param client: The client that will be used for interacting with the CN or MN.
+    :type client: cnclient.CoordinatingNodeClient or mnclient.MemberNodeClient
+    :param fromDate: The earliest date for which to retrieve log records.
+    :type fromDate: datetime.datetime()
+    :param toDate: The latest date for which to retrieve log records.
+    :type toDate: datetime.datetime()
+    :param timeSlice: The time period for which to .
+    :type toDate: datetime.datetime()
     '''
-    self._logRecords = None
-    self._czero = 0
+    self._log_records = None
     self._client = client
-    self._pagesize = 500
-    self._loadMore(start=startTime)
+    self._from_date = fromDate
+    self._to_date = toDate
+    self._start = start
+    self._page_size = pageSize
+    self._log_records_idx = 0
+    self._n_log_records = 0
 
   def __iter__(self):
     return self
 
   def next(self):
-    '''Implements the next() method for the iterator.  Returns the next
+    '''Implements the next() method for the iterator. Returns the next
     logEntry instance.
     '''
-    if self._citem >= len(self._logRecords.logEntry):
-      try:
-        self._loadMore(start=self._czero + len(self._logRecords.logEntry))
-      except Exception, e:
-        logging.exception(e)
-        raise StopIteration
-      if len(self._logRecords.logEntry) < 1:
-        raise StopIteration
-    res = self._logRecords.logEntry[self._citem]
-    self._citem += 1
-    return res
+    if self._log_records_idx == self._n_log_records:
+      self._load_more()
+    log_entry = self._log_records.logEntry[self._log_records_idx]
+    self._log_records_idx += 1
+    return log_entry
 
-  def _loadMore(self, start=0):
-    '''Retrieves the next page of results
+  def _load_more(self):
+    '''Retrieves the next page of results.
     '''
-    self._czero = start
-    self._citem = 0
-    self._logRecords = self._client.getLogRecords(
-      start=start, count=self._pagesize,
-      fromDate=self.fromDate
+    self._log_records_idx = 0
+    self._log_records = self._client.getLogRecords(
+      start=self._start,
+      count=self._page_size,
+      fromDate=self._from_date,
+      toDate=self._to_date
     )
+    self._n_log_records = len(self._log_records.logEntry)
+    if not self._n_log_records:
+      raise StopIteration
+    self._start += self._n_log_records
