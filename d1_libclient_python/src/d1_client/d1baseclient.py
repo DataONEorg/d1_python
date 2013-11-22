@@ -428,10 +428,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     '''
     try:
       response = self.pingResponse(vendorSpecific=vendorSpecific)
-      if self._status_is_200_ok(response):
-        return True
-      else:
-        return False
+      return self._read_boolean_response(response)
     except:
       return False
 
