@@ -55,9 +55,10 @@ class TestSolrClient(TestCaseWithURLCompare):
     for row in rows:
       if row:
         return
-    self.assertTrue(False)
+    self.assertTrue(False, 'Expected at least one row in results')
 
   def test_100(self):
+    '''SOLRSearchResponseIterator()'''
     # Orig host, solrBase:
     #client = solr_client.SolrConnection(host="cn-dev-unm-1.test.dataone.org", solrBase="/solr/d1-cn-index")
 
@@ -78,6 +79,7 @@ class TestSolrClient(TestCaseWithURLCompare):
     self._assert_at_least_one_row_populated(rows)
 
   def test_110(self):
+    '''SOLRArrayResponseIterator()'''
     client = solr_client.SolrConnection(
       host=self.options.query_base_url,
       solrBase=self.options.query_endpoint
@@ -90,6 +92,7 @@ class TestSolrClient(TestCaseWithURLCompare):
     self._assert_at_least_one_row_populated(rows)
 
   def test_200(self):
+    '''SOLRValuesResponseIterator()'''
     client = solr_client.SolrConnection(
       host=self.options.query_base_url,
       solrBase=self.options.query_endpoint
@@ -104,7 +107,8 @@ class TestSolrClient(TestCaseWithURLCompare):
   # Disabled because listFields is based on the Solr Luke handler, which we
   # D1 doesn't expose. Instead, use CNRead.getQueryEngineDescription() D1 API to
   # get the list of fields.
-  def _test_300_listFields(self):
+  def _test_300(self):
+    '''listFields()'''
     client = solr_client.SolrConnection(
       host=self.options.query_base_url,
       solrBase=self.options.query_endpoint
@@ -114,14 +118,6 @@ class TestSolrClient(TestCaseWithURLCompare):
     for name in flds['fields'].keys():
       fld = flds['fields'][name]
       print "%s (%s) %d / %d" % (name, fld['type'], fld['distinct'], fld['docs'])
-
-  def test_400(self):
-    client = solr_client.SolrConnection(
-      host=self.options.query_base_url,
-      solrBase=self.options.query_endpoint
-    )
-    results = solr_client.SOLRSearchResponseIterator(client, 'id:[* TO *]')
-    self._assert_at_least_one_row_populated(results)
 
 #===============================================================================
 
@@ -154,7 +150,7 @@ def main():
     dest='query_endpoint',
     action='store',
     type='string',
-    default='/cn/v1/query/solr/?q=*:*'
+    default='/cn/v1/query/solr/'
   )
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
