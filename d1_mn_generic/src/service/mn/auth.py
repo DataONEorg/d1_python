@@ -37,7 +37,6 @@ import django.db
 import django.db.transaction
 
 # D1.
-import d1_client.systemmetadata
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -102,6 +101,14 @@ def level_to_action(level):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid action level: {0}'.format(level)
     )
+
+
+def get_trusted_subjects():
+  return settings.DATAONE_TRUSTED_SUBJECTS | node_registry.get_cn_subjects()
+
+
+def get_trusted_subjects_string():
+  return ', '.join(sorted(get_trusted_subjects()))
 
 #def action_implicit(action_requested, action_allowed):
 #  '''Check if requested action is allowed.
@@ -250,7 +257,7 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
 
 
 def is_trusted_subject(request):
-  return not request.subjects.isdisjoint(node_registry.get_cn_subjects())
+  return not request.subjects.isdisjoint(get_trusted_subjects())
 
 
 def is_internal_subject(request):
@@ -391,12 +398,26 @@ def assert_list_objects_access(f):
   return wrap
 
 
+def assert_get_log_records_access(f):
+  '''Access to getLogRecords() controlled by settings.PUBLIC_LOG_RECORDS.
+  '''
+
+  def wrap(request, *args, **kwargs):
+    if not settings.PUBLIC_LOG_RECORDS:
+      assert_trusted(request)
+    return f(request, *args, **kwargs)
+
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
 def assert_trusted(request):
   if not is_trusted_subject(request):
     raise d1_common.types.exceptions.NotAuthorized(
       0, 'Access allowed only for DataONE infrastructure. {0}. '
       'Trusted subjects: {1}'.format(
-        format_active_subjects(request), node_registry.get_cn_subjects_string())
+        format_active_subjects(request), get_trusted_subjects_string())
     )
 
 
@@ -499,7 +520,8 @@ def assert_read_permission(f):
 
 def format_active_subjects(request):
   '''Create a string listing active subjects for this connection, suitable
-  for appending to authentication error messages.'''
+  for appending to authentication error messages.
+  '''
   decorated_subjects = []
   for subject in request.subjects:
     if subject == request.primary_subject:

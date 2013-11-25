@@ -210,5 +210,9 @@ WSGIPythonHome /var/local/dataone/gmn
     Order deny,allow
     Allow from all
   </Directory>
+
+  # Prevent well-behaved web crawlers from harvesting public objects.
+  Alias /robots.txt /var/local/dataone/gmn/lib/python2.6/site-packages/service/robots.txt
+
 </VirtualHost>
 </IfModule>

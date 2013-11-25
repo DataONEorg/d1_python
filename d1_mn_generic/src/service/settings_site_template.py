@@ -93,7 +93,7 @@ ECHO_REQUEST_OBJECT = False
 # False (default):
 # * On startup, GMN attempts to connect to the root CN of the environment
 #   that has been configured in the DATAONE_ROOT setting. If the connection fails,
-#   GMN does not serve any requests. 
+#   GMN does not serve any requests.
 # * Use for production.
 STAND_ALONE = False
 
@@ -225,9 +225,9 @@ REPLICATION_ALLOWEDOBJECTFORMAT = ()
 # If GMN_DEBUG is True, the trusted subjects are not required, as the
 # authentication checks for them are skipped. Therefore, they are not retrieved.
 DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
-#DATAONE_ROOT = 'https://cn-dev.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
-#DATAONE_ROOT = 'https://cn-stage.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-dev.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
+# DATAONE_ROOT = 'https://cn-stage.dataone.org/cn'
 
 # Additional subjects for implicitly trusted DataONE infrastructure. Connections
 # containing client side certificates with these subjects bypass access control
@@ -253,12 +253,14 @@ INTERNAL_BASEURL = 'https://localhost/mn'
 ADMINS = (('My Name', 'my_address@my_email.tld'), )
 
 # Enable MNRead.listObjects() for public and regular authenticated users.
+#
 # False:
 # * MNRead.listObjects() can only be called by trusted infrastructure (CNs).
 # True:
 # * MNRead.listObjects() can be called by any level of user (trusted
 #   infrastructure, authenticated and public), and results are filtered
 #   to list only objects to which the user has access.
+#
 # The primary means for a user to discover objects is to use the search
 # facilities exposed by CNs. By enabling this option, regular users can also
 # discover objects directly on the node by iterating over the object list. This
@@ -266,7 +268,25 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 # filtered list of all objects on the node for each page that is returned).
 # These are also the reasons that DataONE specified implementation of access
 # control for public and regular users to be optional for this API.
-PUBLIC_OBJECT_LIST = True
+PUBLIC_OBJECT_LIST = True if GMN_DEBUG else False
+
+# Enable MNCore.getLogRecords() access for public and regular authenticated
+# users.
+#
+# False:
+# * MNCore.getLogRecords() can only be called by trusted infrastructure (CNs).
+# True:
+# * MNCore.getLogRecords() can be called by any level of user (trusted
+#   infrastructure, authenticated and public), and results are filtered
+#   to list only log records to which the user has access. In particular,
+#   this means that all users can retrieve log records for public objects.
+#
+# Regardless of this setting, the DataONE Coordinating Nodes provide access
+# controlled log records which are aggregated across all Member Nodes that hold
+# replicas of a given object. Setting this to True allows users to get log
+# records directly from this Member Node in addition to the aggregated logs
+# available from CNs.
+PUBLIC_LOG_RECORDS = True if GMN_DEBUG else False
 
 # Database connection.
 # GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is
@@ -278,12 +298,12 @@ DATABASES = {
     'NAME': 'gmn',
 
     # MySQL (currently not supported)
-    #'ENGINE': 'django.db.backends.mysql',
-    #'NAME': 'gmn',
+    # 'ENGINE': 'django.db.backends.mysql',
+    # 'NAME': 'gmn',
 
     # SQLite3
-    #'ENGINE': 'django.db.backends.sqlite3',
-    #'NAME': make_absolute('./gmn.sqlite'),
+    # 'ENGINE': 'django.db.backends.sqlite3',
+    # 'NAME': make_absolute('./gmn.sqlite'),
 
     # When using PostgreSQL, set these to match the username and password
     # specified for the gmn user during the PostgreSQL install. These are not
@@ -304,7 +324,7 @@ DATABASES = {
 # these are changed to use an area that is dedicated for storage, for instance
 # a separate filesystem / disk.
 MEDIA_ROOT = make_absolute('./stores') # relative location
-#MEDIA_ROOT = '/mnt/my_large_disk/dataone/' # example for absolute location
+# MEDIA_ROOT = '/mnt/my_large_disk/dataone/' # example for absolute location
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 

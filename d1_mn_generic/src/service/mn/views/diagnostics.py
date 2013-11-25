@@ -153,7 +153,8 @@ def echo_session(request):
 @mn.restrict_to_verb.get
 def trusted_subjects(request):
   return render_to_response('trusted_subjects.xhtml',
-    {'subjects': sorted(mn.node_registry.get_cn_subjects()) },
+    {'subjects': sorted(mn.node_registry.get_cn_subjects() |
+                        service.settings.DATAONE_TRUSTED_SUBJECTS) },
     mimetype=d1_common.const.MIMETYPE_XHTML)
 
 # ------------------------------------------------------------------------------

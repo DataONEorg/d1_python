@@ -26,20 +26,17 @@
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
-#import cgi
-#import collections
-#import csv
-from django.db.models import Sum
-from django.http import HttpResponse, HttpResponseNotAllowed
-import d1_client.cnclient
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import datetime
 import django.core.cache
 import httplib
 import logging
+import os
+import urlparse
+import uuid
+#import cgi
+#import collections
+#import csv
+
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -53,10 +50,7 @@ import mn.sysmeta_validate
 import mn.util
 import mn.view_asserts
 import mn.view_shared
-import os
 import service.settings
-import urlparse
-import uuid
 #import glob
 #import hashlib
 #import mimetypes
@@ -68,8 +62,16 @@ import uuid
 #import urllib
 
 # Django.
+from django.db.models import Sum
+from django.http import HttpResponse, HttpResponseNotAllowed
 
 # DataONE APIs.
+import d1_client.cnclient
+import d1_client.object_format_info
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 #import d1_common.types.generated.dataoneErrors as dataoneErrors
 
 # App.
@@ -122,6 +124,7 @@ def get_monitor_ping(request):
 # or higher are returned. No access control is applied if called by trusted D1
 # infrastructure.
 @mn.restrict_to_verb.get
+@mn.auth.assert_get_log_records_access
 def get_log(request):
   '''MNCore.getLogRecords(session[, fromDate][, toDate][, pidFilter][, event]
   [, start=0][, count=1000]) → Log
@@ -157,10 +160,22 @@ def get_node(request):
 # Public API: Tier 1: Read API  
 # ------------------------------------------------------------------------------
 
+# ObjectFormatInfo is expensive to create because it reads a csv file from
+# disk. So it is created here, since this is not a class.
+object_format_info = d1_client.object_format_info.ObjectFormatInfo()
+
+def _mimetype_from_format_id(format_id):
+  try:
+    return object_format_info.mimetype_from_format_id(format_id)
+  except KeyError:
+    return d1_common.const.MIMETYPE_OCTETSTREAM
+  
+  
 def _add_object_properties_to_response_header(response, sciobj):
-  response['DataONE-formatId'] = sciobj.format.format_id
   response['Content-Length'] = sciobj.size
+  response['Content-Type'] = _mimetype_from_format_id(sciobj.format.format_id)
   response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime)
+  response['DataONE-formatId'] = sciobj.format.format_id
   response['DataONE-Checksum'] = '{0},{1}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum)
   response['DataONE-SerialVersion'] = sciobj.serial_version
@@ -274,12 +289,13 @@ def get_checksum_pid(request, pid):
   '''MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
   '''
   mn.view_asserts.object_exists(pid)
-
+  # MNRead.getChecksum() requires that a new checksum be calculated. Cannot
+  # simply return the checksum from the sysmeta.
+  #
   # If the checksumAlgorithm argument was not provided, it defaults to
   # the system wide default checksum algorithm.
   algorithm = request.GET.get('checksumAlgorithm',
     d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
-
   try:
     h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
   except KeyError:
@@ -287,16 +303,13 @@ def get_checksum_pid(request, pid):
       'Invalid checksum algorithm, "{0}". Supported algorithms are: {1}'\
       .format(algorithm, ', '
         .join(d1_common.util.dataone_to_python_checksum_algorithm_map.keys())))
-
   # Calculate the checksum.
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   for bytes in _get_object_byte_stream(sciobj):
     h.update(bytes)
-
   # Log the access of this object.
   # TODO: look into log type other than 'read'
   mn.event_log.read(pid, request)
-
   # Return the checksum.
   checksum_serializer = dataoneTypes.checksum(h.hexdigest())
   #checksum_serializer.checksum = 

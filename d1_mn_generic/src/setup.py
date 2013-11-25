@@ -36,6 +36,9 @@ import service
 # 'service.mn.middleware', 'tests.unittest2.test',
 # 'service.mn.management.commands']
 
+# The setup() parameters are described here:
+# http://pythonhosted.org/setuptools/setuptools.html
+
 setup(
   name='dataone.generic_member_node',
   version=service.__version__,
@@ -44,29 +47,24 @@ setup(
   author_email='developers@dataone.org',
   url='http://dataone.org',
   license='Apache License, Version 2.0',
-
-  # Accept all data files and directories matched by MANIFEST.in or found in
-  # source control.
+  packages=find_packages(exclude=['tests']),
   include_package_data=True,
 
-  # Specify additional patterns to match files and directories that may or may
-  # not be matched by MANIFEST.in or found in source control.
-  package_data={
-    #'tests': ['tests/test_objects/*', ],
-    #'deployment': ['deployment/*'],
-  },
+  #package_data = {
+  #  'tests': ['tests/test_objects/*', ],
+  #  'deployment': ['deployment/*'],
+  #},
 
-  # Specify patterns for data files and directories that should not be included
-  # when a package is installed, even if they would otherwise have been included
-  # due to the use of the preceding options.
-  exclude_package_data={
-    '': ['*.log', '*.txt'],
-  },
+  #exclude_package_data = {
+  #  '': ['*.log', '*.txt'],
+  #},
 
   # Dependencies that are available through PYPI / easy_install.
   install_requires=[
-    'dataone.common == 1.1.2RC1',
-    'dataone.libclient == 1.2.1',
+    # GMN uses dataone.common directly but, to keep the versions consistent,
+    # let it be included by dataone.libclient.
+    #'dataone.common == 1.1.2RC1',
+    'dataone.libclient == 1.2.2',
     'dataone.certificate_extensions == 1.1.0',
     'django == 1.4.1',
     'pyxb == 1.2.1',
@@ -74,7 +72,7 @@ setup(
     'psycopg2 == 2.4.6',
     # GMN does not use the CLI programmatically -- it's just included because
     # the CLI is a convenient way to interact with a GMN instance. So the
-    # latest version is installed, instead of a specific version.
+    # latest version is installed instead of a specific version.
     'dataone.cli >= 1.0.0',
   ],
 )
