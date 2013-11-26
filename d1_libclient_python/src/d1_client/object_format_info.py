@@ -58,8 +58,15 @@ class Singleton(object):
 
 
 class ObjectFormatInfo(Singleton):
-  def __init__(self, csv_path=MIME_MAPPINGS_CSV_PATH):
-    self.csv_path = csv_path
+  def __init__(self, csv_path=MIME_MAPPINGS_CSV_PATH, csv_file=None):
+
+    if csv_file is None:
+      self.csv_path = csv_path
+      self.csv_file = csv_file
+    else:
+      self.csv_path = None
+      self.csv_file = csv_file
+
     self.reread_csv_file()
 
   def mimetype_from_format_id(self, format_id):
@@ -73,22 +80,40 @@ class ObjectFormatInfo(Singleton):
       self.csv_path = csv_path
     self.format_id_map = self._create_format_id_map_from_csv_file()
 
-  def _create_format_id_map_from_csv_file(self):
+  def _read_format_id_map_from_file(self, file):
+
+    csv_reader = csv.reader(file)
+
     try:
-      with open(self.csv_path) as f:
-        csv_reader = csv.reader(f)
-        try:
-          return dict((r[0], r[1:]) for r in csv_reader)
-        except (csv.Error, Exception) as e:
-          raise Exception(
-            'Error in CSV file. Path: {0}  Line: {1}  Error: {2}'
-            .format(self.csv_path, csv_reader.line_num, e)
-          )
-    except IOError as e:
+      return dict((r[0], r[1:]) for r in csv_reader)
+
+    except (csv.Error, Exception) as e:
       raise Exception(
-        'Unable to open CSV file: {0}. Error: {1}: {2}'
-        .format(self.csv_path, e.errno, e.strerror)
+        'Error in CSV file. Line: {1}  Error: {2}'.format(csv_reader.line_num, e)
       )
+
+  def _create_format_id_map_from_csv_file(self):
+
+    if self.csv_path is not None:
+      try:
+        with open(self.csv_path) as f:
+          return self._read_format_id_map_from_file(f)
+
+      except IOError as e:
+        raise Exception(
+          'Unable to open CSV file: {0}. Error: {1}: {2}'
+          .format(self.csv_path, e.errno, e.strerror)
+        )
+
+    else:
+      try:
+        self.csv_file.seek(0)
+        return self._read_format_id_map_from_file(self.csv_file)
+
+      except IOError as e:
+        raise Exception(
+          'Unable to read from file object: Error: {1}: {2}'.format(e.errno, e.strerror)
+        )
 
   def _get_format_id_entry(self, format_id):
     return self.format_id_map[format_id]
