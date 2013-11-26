@@ -58,11 +58,11 @@ class Singleton(object):
 
 
 class ObjectFormatInfo(Singleton):
-  def __init__(self, csv_path=MIME_MAPPINGS_CSV_PATH, csv_file=None):
+  def __init__(self, csv_file=None):
 
     if csv_file is None:
-      self.csv_path = csv_path
-      self.csv_file = csv_file
+      self.csv_path = MIME_MAPPINGS_CSV_PATH
+      self.csv_file = None
     else:
       self.csv_path = None
       self.csv_file = csv_file
