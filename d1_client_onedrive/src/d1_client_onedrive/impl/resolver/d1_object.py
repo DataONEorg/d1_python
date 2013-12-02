@@ -34,6 +34,7 @@ import logging
 import os
 import pprint
 import sys
+import pkg_resources
 
 # D1.
 import d1_client.data_package
@@ -67,7 +68,10 @@ class Resolver(resolver_abc.Resolver):
 
   def __init__(self, options, command_processor):
     super(Resolver, self).__init__(options, command_processor)
-    self.object_format_info = d1_client.object_format_info.ObjectFormatInfo()
+
+    self.object_format_info = d1_client.object_format_info.ObjectFormatInfo(
+      csv_file=pkg_resources.resource_stream(d1_client.__name__, 'mime_mappings.csv')
+    )
 
   def get_attributes(self, path, fs_path=''):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))

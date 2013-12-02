@@ -93,6 +93,9 @@ def main():
 
   (options, arguments) = parser.parse_args()
 
+  print(options, arguments)
+  #'modules=volicon,iconpath=mac_dataone.icns'
+  #options.__dict__['modules']='volicon,iconpath=/Users/brumgard/Documents/Work/Dataone/workspace/onedrive/src/dist/dataone.onedrive.app/Contents/Resources/mac_dataone.icns'
   # Copy non-string/int settings into options.
   for k, v in settings.__dict__.items():
     if not (isinstance(v, str) or isinstance(v, int)) and k.isupper():
@@ -136,7 +139,7 @@ def main():
   log_startup_parameters(options, arguments)
   log_settings(options)
 
-  if platform.system() == 'Linux':
+  if platform.system() == 'Linux' or platform.system() == 'Darwin':
     import d1_client_onedrive.impl.drivers.fuse.d1_fuse as filesystem_callbacks
   elif platform.system() == 'Windows':
     import d1_client_onedrive.impl.drivers.dokan.d1_dokan as filesystem_callbacks

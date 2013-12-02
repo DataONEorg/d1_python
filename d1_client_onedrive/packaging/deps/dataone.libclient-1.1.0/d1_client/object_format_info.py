@@ -39,10 +39,10 @@ import pkg_resources
 # App.
 import d1baseclient
 
-
 def make_absolute(p):
     return pkg_resources.resource_filename(__name__, p)
-
+    
+        
 #def make_absolute(p):
 #  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 

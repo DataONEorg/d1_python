@@ -27,6 +27,7 @@
 """
 
 from setuptools import setup, find_packages
+import sys
 
 # py2exe only needs to be present when building an executable on Windows.
 # When py2exe is not present, the py2exe specific options below are ignored.
@@ -45,21 +46,53 @@ import d1_client_onedrive
 # put "from lxml import _elementhpath as _dummy" somewhere in code; in both
 # cases also pull gzip in packages=...
 
-opts = {
-  "py2exe": {
-    'packages': [
-      'd1_client_onedrive',
-      'd1_client_onedrive.impl',
-      'd1_client_onedrive.impl.drivers',
-      'd1_client_onedrive.impl.drivers.dokan',
-      'd1_client_onedrive.impl.drivers.fuse',
-      'd1_client_onedrive.impl.resolver',
-      'rdflib.plugins',
-      'lxml'
-    ],
-    'skip_archive': True,
+# Windows executable setup
+if sys.platform == 'win32':
+
+  opts = {
+    "py2exe": {
+      'packages': [
+        'd1_client_onedrive',
+        'd1_client_onedrive.impl',
+        'd1_client_onedrive.impl.drivers',
+        'd1_client_onedrive.impl.drivers.dokan',
+        'd1_client_onedrive.impl.drivers.fuse',
+        'd1_client_onedrive.impl.resolver',
+        'rdflib.plugins',
+        'lxml'
+      ],
+      'skip_archive': True,
+    }
   }
-}
+
+  extra_opts = dict(console=['d1_client_onedrive/onedrive.py'], )
+
+  # Mac App setup
+elif sys.platform == 'darwin':
+
+  opts = dict(
+    py2app=dict(
+      argv_emulation=True,
+      iconfile='mac/mac_dataone.icns',
+      packages=['rdflib', 'lxml'],
+      site_packages=True,
+      resources=[
+        'd1_client_onedrive/impl/d1.icon'
+      ]
+      #resources = ['mime_mappings.csv',]
+    )
+  )
+
+  extra_opts = dict(
+    #app = ['d1_client_onedrive/onedrive.py'],
+    app=['mac/start_app.py'],
+    setup_requires=['py2app'],
+  )
+
+  # Normal setup
+else:
+  opts = dict()
+  extra_opts = dict()
 
 # The setup() parameters are described here:
 # http://pythonhosted.org/setuptools/setuptools.html
@@ -85,19 +118,20 @@ setup(
     'dataone.libclient == 1.2.2',
     'dataone.workspace_client==0.0.1RC1',
     'fusepy',
+    'rdflib',
   ],
 
   package_data = {
   },
 
-  entry_points = {
-    'console_scripts': ['onedrive = d1_client_onedrive.onedrive:main',]
-  },
+  #entry_points = {
+  #  'console_scripts': ['onedrive = d1_client_onedrive.onedrive:main',]
+  #},
 
-  # py2exe
-  console=['d1_client_onedrive/onedrive.py'],
   data_files = [
     ('d1_client', ['./mime_mappings.csv']),
     ('', ['./workspace.xml']),
-  ]
+  ],
+
+  **extra_opts
 )
