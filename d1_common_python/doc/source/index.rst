@@ -8,9 +8,8 @@ other products implemented in Python.
 
 .. include:: overview.rst
 
-
-Contents
-~~~~~~~~
+Index
+-----
 
 .. toctree::
   :numbered:
@@ -18,12 +17,11 @@ Contents
 
   setup
   generated
-  update
   implementation
 
 
 Indices and tables
-~~~~~~~~~~~~~~~~~~
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`
