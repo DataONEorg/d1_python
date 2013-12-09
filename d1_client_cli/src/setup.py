@@ -88,8 +88,9 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.common == 1.1.2RC1',
-      'dataone.libclient == 1.2.1',
+      # The CLI uses dataone.common directly but, to keep the versions
+      # consistent, let it be included by dataone.libclient.
+      'dataone.libclient == 1.2.3',
     ],
     entry_points={
       'console_scripts': ['dataone = d1_client_cli.dataone:main', ]
