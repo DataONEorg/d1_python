@@ -29,6 +29,7 @@ Module d1_common.types.exceptions
 
 # Stdlib.
 import inspect
+import string
 import sys
 import traceback
 import xml.sax
@@ -36,6 +37,7 @@ import StringIO
 
 # 3rd party.
 import pyxb
+import pyxb.utils.domutils
 
 # D1.
 import d1_common.types.generated.dataoneErrors as dataoneErrors
@@ -43,7 +45,7 @@ import d1_common.util
 '''
 Example of serialized DataONE Exception:
 
-<error detailCode="1020" errorCode="404" name="NotFound" pid="testpid">
+<error detailCode="1020" errorCode="404" name="NotFound" identifier="testpid">
 <description>Attempted to perform operation on non-existing object</description>
 <traceInformation>view_handler.py(128)
 views.py(102)
@@ -72,7 +74,7 @@ def deserialize(dataone_exception_xml):
   :param dataone_exception_xml: XML Serialized DataONE Exception in UTF-8.
   :type dataone_exception_xml: str
   :returns: Native DataONE Exception Object.
-  :return type: DataONEException subclass 
+  :return type: DataONEException subclass
   '''
   try:
     dataone_exception_pyxb = dataoneErrors.CreateFromDocument(dataone_exception_xml)
@@ -86,6 +88,46 @@ def deserialize(dataone_exception_xml):
     )
     raise DataONEExceptionException(msg.getvalue())
 
+  try:
+    trace = dataone_exception_pyxb.traceInformation.toxml(),
+  except AttributeError:
+    trace = ''
+
+  return _create_exception_by_name(
+    dataone_exception_pyxb.name, dataone_exception_pyxb.detailCode,
+    dataone_exception_pyxb.description, trace, dataone_exception_pyxb.identifier,
+    dataone_exception_pyxb.nodeId
+  )
+
+
+def deserialize_from_headers(headers):
+  '''Deserialize a DataONE Exception that is stored in a map of HTTP headers
+  (used in responses to HTTP HEAD requests).
+  '''
+  return _create_exception_by_name(
+    _get_header(headers, 'DataONE-Exception-Name'),
+    _get_header(headers, 'DataONE-Exception-DetailCode'),
+    _get_header(headers, 'DataONE-Exception-Description'),
+    _get_header(headers, 'DataONE-Exception-TraceInformation'),
+    _get_header(headers, 'DataONE-Exception-Identifier'),
+    _get_header(headers, 'DataONE-Exception-NodeId')
+  )
+
+
+def _get_header(headers, header):
+  lower_case_headers = dict(zip(map(string.lower, headers.keys()), headers.values()))
+  try:
+    header = lower_case_headers[header.lower()]
+  except LookupError:
+    return None
+  # As a header must be on a single line, the Python stack uses a
+  # convention of replacing newlines with " / ".
+  return header.replace(' / ', '\n')
+
+
+def _create_exception_by_name(
+  name, detailCode, description, traceInformation, identifier, nodeId
+):
   name_exception_map = {
     u'AuthenticationTimeout': AuthenticationTimeout,
     u'IdentifierNotUnique': IdentifierNotUnique,
@@ -103,27 +145,16 @@ def deserialize(dataone_exception_xml):
     u'SynchronizationFailed': SynchronizationFailed,
     u'VersionMismatch': VersionMismatch,
   }
-
   try:
-    dataone_exception = name_exception_map[dataone_exception_pyxb.name]
+    dataone_exception = name_exception_map[name]
   except LookupError:
-    # The dataone_exception_xml complied to the schema but the name did not
-    # match any known DataONE exception types. This can happen because the
-    # defined types are not enumerated in the schema.
+    # The defined types are not enumerated in the schema so it is possible to
+    # have a document that validates against the schema but is not a valid
+    # DataONE exception.
     raise DataONEExceptionException(
       'Attempted to deserialize unknown DataONE Exception: {0}'\
-      .format(dataone_exception_pyxb.name))
-
-  if dataone_exception_pyxb.pid is None:
-    return dataone_exception(
-      dataone_exception_pyxb.detailCode, dataone_exception_pyxb.description,
-      dataone_exception_pyxb.traceInformation
-    )
-  else:
-    return dataone_exception(
-      dataone_exception_pyxb.detailCode, dataone_exception_pyxb.description,
-      dataone_exception_pyxb.pid, dataone_exception_pyxb.traceInformation
-    )
+      .format(name))
+  return dataone_exception(detailCode, description, traceInformation, identifier, nodeId)
 
 
 class DataONEException(Exception):
@@ -131,24 +162,29 @@ class DataONEException(Exception):
   '''
 
   @d1_common.util.utf8_to_unicode
-  def __init__(self, errorCode, detailCode, description, traceInformation=None):
+  def __init__(
+    self, errorCode, detailCode, description, traceInformation, identifier, nodeId
+  ):
     self.errorCode = errorCode
-    self.detailCode = detailCode
+    self.detailCode = str(detailCode)
     self.description = description
     self.traceInformation = traceInformation
+    self.identifier = identifier
+    self.nodeId = nodeId
 
   def __str__(self):
     msg = StringIO.StringIO()
     msg.write(u'name: {0}\n'.format(self.name))
     msg.write(u'errorCode: {0}\n'.format(self.errorCode))
     msg.write(u'detailCode: {0}\n'.format(str(self.detailCode)))
-    msg.write(u'description: {0}\n'.format(self.description))
-    try:
-      msg.write(u'PID: {0}\n'.format(self.pid))
-    except AttributeError:
-      pass
+    if self.description is not None:
+      msg.write(u'description: {0}\n'.format(self.description))
     if self.traceInformation is not None:
       msg.write(u'traceInformation: {0}\n'.format(self.traceInformation))
+    if self.identifier is not None:
+      msg.write(u'PID: {0}\n'.format(self.identifier))
+    if self.nodeId is not None:
+      msg.write(u'NodeID: {0}\n'.format(self.nodeId))
     # The unit test framework that comes with Python 2.6 has a bug that has been
     # fixed in later versions. http://bugs.python.org/issue8313. The bug causes
     # stack traces containing Unicode to be shown as "unprintable". So, for now,
@@ -159,135 +195,262 @@ class DataONEException(Exception):
   def friendly_format(self):
     '''Serialize to a format more suitable for displaying to end users.
     '''
-    return '{0}: {1}'.format(self.name, self.description)
+    if self.description is not None:
+      return '{0}: {1}'.format(self.name, self.description)
+    else:
+      return '{0}: errorCode: {1} / detailCode: {2}'.format(
+        self.name, self.errorCode, self.detailCode
+      )
 
   def serialize(self):
     dataone_exception_pyxb = dataoneErrors.error()
     dataone_exception_pyxb.name = self.__class__.__name__
     dataone_exception_pyxb.errorCode = self.errorCode
     dataone_exception_pyxb.detailCode = self.detailCode
-    dataone_exception_pyxb.description = self.description
-    try:
-      dataone_exception_pyxb.pid = self.pid
-    except AttributeError:
-      pass
-    dataone_exception_pyxb.traceInformation = self.traceInformation
+    if self.description is not None:
+      dataone_exception_pyxb.description = self.description
+    if self.traceInformation is not None:
+      s = pyxb.utils.domutils.StringToDOM(
+        '<value>' + self.traceInformation + '</value>'
+      ).documentElement
+      dataone_exception_pyxb.traceInformation = s
+    if self.identifier is not None:
+      dataone_exception_pyxb.identifier = self.identifier
+    if self.nodeId is not None:
+      dataone_exception_pyxb.nodeId = self.nodeId
     return dataone_exception_pyxb.toxml()
 
   def serialize_to_headers(self):
     '''Serialize to a list of HTTP headers (used in responses to HTTP HEAD
     requests).
     '''
-    headers = [
-      ('DataONE-Exception-Name', self.__class__.__name__),
-      ('DataONE-Exception-DetailCode', str(self.detailCode)),
-      ('DataONE-Exception-Description', self.description.replace('\n', ' / ')),
-    ]
-    try:
-      headers.append(('DataONE-Exception-PID', self.pid.replace('\n', ' / ')))
-    except AttributeError:
-      pass
+    headers = []
+    self._append_header(headers, 'DataONE-Exception-Name', self.__class__.__name__)
+    self._append_header(headers, 'DataONE-Exception-ErrorCode', str(self.errorCode))
+    self._append_header(headers, 'DataONE-Exception-DetailCode', str(self.detailCode))
+    self._append_header(headers, 'DataONE-Exception-Description', self.description)
+    self._append_header(
+      headers, 'DataONE-Exception-TraceInformation', self.traceInformation
+    )
+    self._append_header(headers, 'DataONE-Exception-Identifier', self.identifier)
+    self._append_header(headers, 'DataONE-Exception-NodeID', self.nodeId)
     return headers
+
+  def _append_header(self, headers, k, v):
+    if v is not None:
+      headers.append((k, v.replace(u'\n', u' / ')))
 
   @property
   def name(self):
     return self.__class__.__name__
 
 
-class DataONEIdentifierException(DataONEException):
-  '''Base class for exceptions that include a PID in the constructor.
-  '''
-
-  def __init__(self, errorCode, detailCode, description, pid, traceInformation=None):
-    DataONEException.__init__(self, errorCode, detailCode, description, traceInformation)
-    self.pid = pid
-
-
 class AuthenticationTimeout(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 408, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 408, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
-class IdentifierNotUnique(DataONEIdentifierException):
-  '''Implements IdentifierNotUnique exception
-  '''
-
-  def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 409, detailCode, description, pid, traceInformation
+class IdentifierNotUnique(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 409, detailCode, description, traceInformation, identifier, nodeId
     )
 
 
 class InsufficientResources(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 413, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 413, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
 class InvalidCredentials(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 401, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 401, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
 class InvalidRequest(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 400, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
 class InvalidSystemMetadata(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 400, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
 class InvalidToken(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 401, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 401, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
 class NotAuthorized(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 401, detailCode, description, traceInformation)
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 401, detailCode, description, traceInformation, identifier, nodeId
+    )
 
 
-class NotFound(DataONEIdentifierException):
-  '''Implements NotFound exception
-  '''
-
-  def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 404, detailCode, description, pid, traceInformation
+class NotFound(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 404, detailCode, description, traceInformation, identifier, nodeId
     )
     #TODO: add link to resolve()
 
 
 class NotImplemented(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 501, detailCode, description, traceInformation)
-
-
-class ServiceFailure(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 500, detailCode, description, traceInformation)
-
-
-class UnsupportedMetadataType(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
-
-
-class UnsupportedType(DataONEException):
-  def __init__(self, detailCode, description, traceInformation=None):
-    DataONEException.__init__(self, 400, detailCode, description, traceInformation)
-
-
-class SynchronizationFailed(DataONEIdentifierException):
-  def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 0, detailCode, description, pid, traceInformation
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 501, detailCode, description, traceInformation, identifier, nodeId
     )
 
 
-class VersionMismatch(DataONEIdentifierException):
-  def __init__(self, detailCode, description, pid, traceInformation=None):
-    DataONEIdentifierException.__init__(
-      self, 409, detailCode, description, pid, traceInformation
+class ServiceFailure(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 500, detailCode, description, traceInformation, identifier, nodeId
+    )
+
+
+class UnsupportedMetadataType(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 400, detailCode, description, traceInformation, identifier, nodeId
+    )
+
+
+class UnsupportedType(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 400, detailCode, description, traceInformation, identifier, nodeId
+    )
+
+
+class SynchronizationFailed(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 0, detailCode, description, traceInformation, identifier, nodeId
+    )
+
+
+class VersionMismatch(DataONEException):
+  def __init__(
+    self,
+    detailCode,
+    description=None,
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
+  ):
+    DataONEException.__init__(
+      self, 409, detailCode, description, traceInformation, identifier, nodeId
     )

@@ -52,3 +52,4 @@ def deserialize_exception_and_check(doc, shouldfail=False):
       raise
   if shouldfail:
     raise Exception('Did not receive expected exception')
+  return obj

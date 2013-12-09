@@ -1,7 +1,7 @@
 # ./d1_common/types/generated/dataoneTypes.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:b5056e9f5bcbaa65eac428b50fd841172c48ddf9
-# Generated 2012-12-19 22:02:20.399031 by PyXB version 1.2.1
+# Generated 2013-12-03 09:06:37.547132 by PyXB version 1.2.1
 # Namespace http://ns.dataone.org/service/types/v1
 
 import pyxb
@@ -13,7 +13,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:6ed24386-4a62-11e2-b5d0-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:e3473eda-5c34-11e3-a6cd-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -174,11 +174,11 @@ class NonEmptyString (pyxb.binding.datatypes.string):
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 153, 2)
     _Documentation = u'A derived string type with at least length 1 and it\n      must contain non-whitespace.'
+NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
 NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
 NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_pattern,
-   NonEmptyString._CF_minLength)
+NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
+   NonEmptyString._CF_pattern)
 Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
 
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}Permission

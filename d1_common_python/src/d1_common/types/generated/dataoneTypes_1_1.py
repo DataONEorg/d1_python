@@ -1,7 +1,7 @@
 # ./d1_common/types/generated/dataoneTypes_1_1.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:360f646bcacd4796da7a71be6ffd7cac7a35ff8a
-# Generated 2012-12-19 22:02:21.251678 by PyXB version 1.2.1
+# Generated 2013-12-03 09:06:38.451185 by PyXB version 1.2.1
 # Namespace http://ns.dataone.org/service/types/v1.1
 
 import pyxb
@@ -13,7 +13,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:6f6b0788-4a62-11e2-8096-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:e3e8203e-5c34-11e3-b3bc-000c294230b4')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
