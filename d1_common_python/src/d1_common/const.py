@@ -72,6 +72,11 @@ MIMETYPE_OCTETSTREAM = 'application/octet-stream'
 
 DEFAULT_CHARSET = 'utf-8'
 
+# Designate characters which do not have to be percent-encoded in URLs. The
+# character set is different for various URL sections, which is why "/" and "?"
+# are listed as safe characters for URL query sections. DataONE uses a
+# convention with key=value pairs in queries, so "=" has been omitted as well.
+# More info in RFC3986.
 URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="
 URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 

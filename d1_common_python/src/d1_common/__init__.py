@@ -20,7 +20,7 @@
 '''Shared code for DataONE Python libraries
 '''
 
-__version__ = "1.1.2RC1"
+__version__ = "1.1.3"
 
 __all__ = [
   'const',
@@ -28,5 +28,6 @@ __all__ = [
   'upload',
   'xmlrunner',
   'types.generated.dataoneTypes',
+  'types.generated.dataoneErrors',
   'ext.mimeparser',
 ]
