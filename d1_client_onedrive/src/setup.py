@@ -116,9 +116,9 @@ else:
   extra_opts = dict()
 
 # Metadata.
-name = 'dataone.generic_member_node'
+name = ' dataone.onedrive'
 version = d1_client_onedrive.__version__
-description = 'DataONE Generic Member Node (GMN)'
+description = 'Filesystem access to the DataONE Workspace'
 author = 'DataONE Project'
 author_email = 'developers@dataone.org'
 url = 'http://dataone.org'
