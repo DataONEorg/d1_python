@@ -21,8 +21,6 @@
 '''
 '''
 
-__version__ = "1.0.0c7-SNAPSHOT"
-
 __all__ = [
   'accesspolicy',
   'checksum',
