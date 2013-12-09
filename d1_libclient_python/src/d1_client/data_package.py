@@ -74,7 +74,6 @@ import d1_client.data_package
 import d1_client.mnclient
 import d1_common.const
 import d1_common.util as util
-from d1_common.types.exceptions import DataONEException
 
 rdflib.plugin.register(
   'sparql', rdflib.query.Processor, 'rdfextras.sparql.processor', 'Processor'
