@@ -49,7 +49,6 @@ from django.http import HttpResponse
 from django.db.models import Avg, Max, Min, Count
 
 # DataONE APIs.
-import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.

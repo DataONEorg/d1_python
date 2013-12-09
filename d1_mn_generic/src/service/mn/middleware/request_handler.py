@@ -36,8 +36,11 @@ import urllib
 # Django.
 from django.http import HttpResponse
 
-# App.
+# D1.
 import d1_common
+import d1_common.types.exceptions
+
+# App.
 import settings
 
 
@@ -51,7 +54,7 @@ class request_handler():
     the URL are variables that may contain escaped slashes. However, the
     REQUEST_URI contains the unmodified request URL, so we recreate
     request.path_info from it.
-    
+
     When the service runs through the Django development server,
     request.path_info is still broken. Escaped slashes (%2f) are unescaped but,
     as opposed to when running through Apache, consecutive slashes are not

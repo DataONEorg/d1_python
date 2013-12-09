@@ -900,7 +900,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   # ----------------------------------------------------------------------------
 
   def test_1800(self):
-    '''synchronizationFailed returns 200 OK.
+    '''MNRead.synchronizationFailed() with valid error returns 200 OK.
     '''
     # This test does not test if GMN actually does anything with the message
     # passed to the synchronizationFailed() method. There is currently no way
@@ -914,13 +914,54 @@ class TestSequenceFunctions(unittest2.TestCase):
       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
-  # ============================================================================
-  # Misc.
-  # ============================================================================
+  def test_1810(self):
+    '''MNRead.synchronizationFailed() from untrusted subject raises NotAuthorized.
+    '''
+    pid = '12Cpaup.txt'
+    msg = 'TEST MESSAGE FROM GMN_INTEGRATION_TESTER'
+    exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    self.assertRaises(
+      d1_common.types.exceptions.NotAuthorized, client.synchronizationFailed, exception
+    )
 
-  # ----------------------------------------------------------------------------
-  # node
-  # ----------------------------------------------------------------------------
+# Disabled because, in v1, InvalidRequest is not a valid response for
+# MNRead.synchronizationFailed(). MNRead.synchronizationFailed() must return
+# a 200 OK even if there is an issue with the call.
+#   def test_1820(self):
+#     '''MNRead.synchronizationFailed() with invalid XML document raises InvalidRequest.
+#     '''
+#     class InvalidException():
+#       def serialize(self):
+#         return 'INVALID SERIALIZED DATAONE EXCEPTION'
+#
+#     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+#     self.assertRaises(d1_common.types.exceptions.InvalidRequest,
+#                       client.synchronizationFailed,
+#                       InvalidException(),
+#                       vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED))
+
+  def test_1830(self):
+    '''MNRead.synchronizationFailed() with invalid XML document returns 200 OK.
+    '''
+
+    class InvalidException():
+      def serialize(self):
+        return 'INVALID SERIALIZED DATAONE EXCEPTION'
+
+    client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
+    print client.synchronizationFailed(
+      InvalidException(),
+      vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+
+# ============================================================================
+# Misc.
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# node
+# ----------------------------------------------------------------------------
 
   def test_1850(self):
     '''MNCore.getCapabilities(): Returns a valid Node Registry document.
@@ -1093,9 +1134,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     pid_deleted = client.delete(pid)
     self.assertEqual(pid, pid_deleted.value())
     # Verify that the object no longer exists.
-    self.assertRaises(
-      d1_common.types.exceptions.DataONEIdentifierException, client.describe, pid
-    )
+    self.assertRaises(d1_common.types.exceptions.DataONEException, client.describe, pid)
 
   # ----------------------------------------------------------------------------
   # MNStorage.archive()
@@ -1115,9 +1154,7 @@ class TestSequenceFunctions(unittest2.TestCase):
     )
     self.assertEqual(pid, pid_archived.value())
     # Verify that the object no longer exists.
-    self.assertRaises(
-      d1_common.types.exceptions.DataONEIdentifierException, client.describe, pid
-    )
+    self.assertRaises(d1_common.types.exceptions.DataONEException, client.describe, pid)
 
   # ----------------------------------------------------------------------------
   # Unicode.

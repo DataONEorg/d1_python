@@ -59,8 +59,7 @@ def get_cn_subjects():
 
 
 def set_empty_cn_subjects_cache():
-  cn_subjects = set()
-  django.core.cache.cache.set('cn_subjects', cn_subjects)
+  django.core.cache.cache.set('cn_subjects', set())
   logging.info('CN Subjects set to empty list')
 
 

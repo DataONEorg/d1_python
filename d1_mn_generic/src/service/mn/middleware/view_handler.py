@@ -42,7 +42,6 @@ from django.http import HttpResponse
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.types.exceptions
 import d1_common.util
 import d1_common.date_time
 import d1_common.url
@@ -112,7 +111,7 @@ class view_handler():
           self.pem_in_http_header_to_pem_in_string(
             request.META['HTTP_VENDOR_INCLUDE_CERTIFICATE'])
 
-      # Always run regular certificate processing.
+    # Always run regular certificate processing.
     session.process_session(request)
 
     # Handle list of subjects in vendor specific extension:

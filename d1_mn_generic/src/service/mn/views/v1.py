@@ -355,11 +355,18 @@ def post_error(request):
     synchronization_failed = d1_common.types.exceptions.deserialize(
       synchronization_failed_xml.encode('utf-8'))
   except d1_common.types.exceptions.DataONEExceptionException as e:
-    raise d1_common.types.exceptions.InvalidSystemMetadata(0,
-      'Unable to deserialize the DataONE Exception')
-  logging.error('CN cannot complete Science Metadata synchronization. '
-               'CN returned message:\n{0}'
-               .format(synchronization_failed_xml.encode('utf-8')))
+    # In v1, MNRead.synchronizationFailed() cannot return an InvalidRequest
+    # to the CN. Can only log the issue and return a 200 OK.
+    logging.error(
+      'Received notification of synchronization error from CN but was unable '
+      'to deserialize the DataONE Exception passed by the CN.\n'
+      'Exception passed by CN: {0}\n'
+      'Exception when deserializing: {1}\n'
+      .format(synchronization_failed_xml.encode('utf-8'), str(e))
+    )
+  else:
+    logging.error('Received notification of synchronization error from CN:\n{0}'
+                  .format(str(synchronization_failed)))
   return mn.view_shared.http_response_with_boolean_true_type()
 
 

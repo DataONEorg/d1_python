@@ -1,1 +1,15 @@
-global-exclude settings_site.py
+exclude tests/unicode_test.py
+exclude tests/tweak_sysmeta.py
+exclude tests/test_simple_client.py
+exclude tests/rename_test.py
+exclude tests/populate_valid_eml_docs.py
+exclude tests/gmn_test_create_huge_file.py
+exclude tests/gmn_clear.py
+exclude tests/gen_sysmeta.py
+exclude tests/fixcrc.py
+exclude tests/add_random_access_policy.py
+exclude t.py
+exclude service/settings_site.py
+exclude service/mn/middleware/session-bak-before-recursive.py
+exclude push_to_gmn_s.py
+exclude fix_service_permissions.py

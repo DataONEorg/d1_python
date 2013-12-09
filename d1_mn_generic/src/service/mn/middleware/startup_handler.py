@@ -40,7 +40,6 @@ import sys
 
 # D1.
 import d1_client.cnclient
-import d1_common.types.exceptions
 
 # App.
 import settings

@@ -110,7 +110,6 @@ MIDDLEWARE_CLASSES = (
 CACHES = {
   'default': {
     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'LOCATION': 'trusted_subjects',
     'TIMEOUT': 60 * 60,
   }
 }
