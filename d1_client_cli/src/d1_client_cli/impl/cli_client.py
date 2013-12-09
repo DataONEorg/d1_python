@@ -37,14 +37,12 @@ import tempfile
 import urllib
 
 # DataONE
-import d1_common.types.exceptions
 import d1_client
 import d1_client.mnclient
 import d1_client.cnclient
 import d1_client.d1baseclient
 
 # Client_CLI
-import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
 

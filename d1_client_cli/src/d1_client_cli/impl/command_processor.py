@@ -302,6 +302,7 @@ class CommandProcessor():
     #
     # SOLR returns HTML instead of XML when there's a problem.  See:
     #   https://issues.apache.org/jira/browse/SOLR-141
+    # TODO: Use the exception members instead of parsing string.
     except d1_common.types.exceptions.ServiceFailure as e:
       e = "%".join(str(e).splitlines()) # Flatten line
       regexp = re.compile(
