@@ -305,19 +305,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     if self._status_is_200_ok(response):
       self._read_and_capture(response)
       return headers
-    self._raise_dataone_exception_from_header(response, headers)
+    raise d1_common.types.exceptions.deserialize_from_headers(headers)
 
-
-  def _raise_dataone_exception_from_header(self, response, headers):
-    error_code = response.status
-    detail_code = 0;
-    description = headers.get('dataone-exception-description',
-                              '<unknown error>')
-    trace_information = None
-    pid = headers.get('dataone-exception-pid', '<unknown pid>')
-
-    raise d1_common.types.exceptions.DataONEIdentifierException(error_code,
-      detail_code, description, trace_information, pid)
 
   # ----------------------------------------------------------------------------
   # Misc.
@@ -330,13 +319,13 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       if start < 0 or count < 0:
         raise ValueError
     except ValueError:
-      raise d1_common.types.exceptions.InvalidRequest(10002,
+      raise d1_common.types.exceptions.InvalidRequest(0,
         "'start' and 'count' must be 0 or a positive integer")
 
 
   def _date_span_sanity_check(self, fromDate, toDate):
     if toDate is not None and fromDate is not None and fromDate > toDate:
-      raise d1_common.types.exceptions.InvalidRequest(10002,
+      raise d1_common.types.exceptions.InvalidRequest(0,
         'Ending date is before starting date')
 
 
