@@ -59,6 +59,7 @@
 # Stdlib.
 import datetime
 import hashlib
+import logging
 import os
 import sys
 import StringIO
@@ -112,6 +113,9 @@ CERTIFICATE_FOR_CREATE_KEY = 'client.key'
 
 
 def main():
+  logging.basicConfig()
+  logging.getLogger('').setLevel(logging.DEBUG)
+
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient.MemberNodeClient(
