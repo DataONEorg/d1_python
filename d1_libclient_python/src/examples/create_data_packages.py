@@ -72,6 +72,7 @@
 import codecs
 import datetime
 import hashlib
+import logging
 import os
 import sys
 import StringIO
@@ -129,6 +130,9 @@ RESOURCE_MAP_FORMAT_ID = 'http://www.openarchives.org/ore/terms'
 
 
 def main():
+  logging.basicConfig()
+  logging.getLogger('').setLevel(logging.DEBUG)
+
   # Create a Member Node client that can be used for running commands against
   # a specific Member Node.
   client = d1_client.mnclient.MemberNodeClient(

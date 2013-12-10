@@ -124,6 +124,7 @@ MAX_FILE_SIZE_TO_DOWNLOAD = 1024**2
 
 
 def main():
+  logging.basicConfig()
   # Setting the default logger to level "DEBUG" causes the script to become
   # very verbose.
   logging.getLogger('').setLevel(logging.DEBUG)

@@ -45,6 +45,7 @@
 import codecs
 import datetime
 import hashlib
+import logging
 import os
 import sys
 import pprint
@@ -60,6 +61,9 @@ import d1_client.mnclient
 
 
 def main():
+  logging.basicConfig()
+  logging.getLogger('').setLevel(logging.DEBUG)
+
   # Connect to the DataONE Coordinating Nodes in the default (production) environment.
   c = d1_client.solr_client.SolrConnection()
 
