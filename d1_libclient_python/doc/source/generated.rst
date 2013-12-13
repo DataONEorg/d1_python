@@ -1,5 +1,5 @@
-API and tests
-=============
+Reference
+=========
 
 .. toctree::
   :maxdepth: 20
