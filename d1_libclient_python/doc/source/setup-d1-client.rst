@@ -1,5 +1,5 @@
-DataONE Client Library for Python
-=================================
+Installing DataONE Client Library for Python
+============================================
 
 :term:`DataONE Common Library for Python` is distributed via PyPI, the Python
 Package Index.

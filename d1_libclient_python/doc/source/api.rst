@@ -6,6 +6,10 @@ API
   :maxdepth: 2
 
   overview
-  api_overview
-  objectlistiterator
+  clients
+  iterators
+  solr_client
+  system_metadata
+  data_package
+  object_format_info
   generated
