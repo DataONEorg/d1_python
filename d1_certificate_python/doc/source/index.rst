@@ -9,23 +9,23 @@ other products implemented in Python.
 .. include:: overview.rst
 
 
-Index
------
+Contents
+~~~~~~~~
 
 .. toctree::
   :numbered:
   :maxdepth: 2
 
-  api
   setup
   setup-windows
+  api
   generated-tests
   local-ca
   impl
 
 
 Indices and tables
-==================
+~~~~~~~~~~~~~~~~~~
 
 * :ref:`genindex`
 * :ref:`modindex`
