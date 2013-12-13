@@ -225,6 +225,11 @@ class ResourceMapGenerator():
 
 
 class ResourceMapParser():
+  '''Parse a string containing a OAI-ORE document in RDF-XML and provide
+  convenient access to information required by many DataONE clients, such as
+  lists of aggregated science data and science metadata identifiers.
+  '''
+
   def __init__(self, rdf_xml_doc):
     ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
     format
@@ -337,8 +342,8 @@ class ResourceMapParser():
     #   ?a <http://rdf.myexperiment.org/ontologies/base/text> ?text
     # }
     #
-    # But I could not make a query on the second form work. It would just
-    # return zero results.
+    # But I could not make a query on the second form work. It just
+    # returned zero results.
     q = '''
       PREFIX dc: <http://purl.org/dc/elements/1.1/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
