@@ -16,13 +16,18 @@ Setting up Apache.
 
 
 The :term:`mod_ssl` module handles TLS/SSL connections for GMN and validates
-client side certificates. It is included in the apache2-common package.
+client side certificates. It is included in the apache2-common package,
+installed in the next step.
 
 The :term:`mod_wsgi` module enables Apache to communicate with Django and GMN.
 
   Install and enable required modules::
 
     $ sudo apt-get --yes install libapache2-mod-wsgi apache2.2-common
+
+  * You may receive a message saying that the apache2 configuration is broken.
+    If so, ignore it.
+
     $ sudo a2enmod wsgi ssl rewrite
 
   Enable the GMN virtual host::

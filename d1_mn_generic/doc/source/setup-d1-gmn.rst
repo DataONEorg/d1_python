@@ -19,6 +19,12 @@ GMN software stack
 
 GMN is distributed via PyPI, the Python Package Index.
 
+  Make sure the system is up to date::
+
+    $ sudo apt-get --yes update; sudo apt-get --yes dist-upgrade
+
+  * Reboot if necessary.
+
   Set up server packages:
 
   * The build environment for DataONE Python extensions and lxml

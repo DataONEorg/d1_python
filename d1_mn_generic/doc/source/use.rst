@@ -65,7 +65,7 @@ allowing comments. The remaining lines must each contain a separate subject.
 Then, add the entries in the whitelist text file to GMNs database with the
 following command::
 
-  $ python manage.py set_whitelist_for_create_update_delete whitelist.txt
+  $ python manage.py set_whitelist whitelist.txt
 
 Any existing subjects in the database are cleared before adding the subjects
 from the whitelist file. So subjects can be added or removed from the whitelist

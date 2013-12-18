@@ -13,6 +13,11 @@ certificate has already been obtained.
 Setup the server side certificate and private key
 -------------------------------------------------
 
+  .. Note:: If you are setting up a test instance of GMN, an automatically
+     generated, self signed server side certificate can be used if a regular
+     certificate is not available. See :ref:`snake_oil_cert` for details, and
+     skip the steps below.
+
   Create a folder to hold the certificate and key::
 
     $ sudo mkdir -p /var/local/dataone/certs/server

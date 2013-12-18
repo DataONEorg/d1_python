@@ -68,13 +68,15 @@ environment, perform the following steps:
    to the next step.
 
 
-Submitting a Node document
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Configure the Member Node information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Most of the values that are set up in this section are described in the `Node
+document section in the architecture documentation`_.
 
 The Node document is a set of values that describe a MN or CN, its internet
 location, and the services it supports.
 
-The values in the Node document are described in the `Node document section in the architecture documentation`_.
 
 .. _Node document section in the architecture documentation: http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
 
@@ -88,20 +90,15 @@ GMN generates the Node document automatically based on the settings in
 
 Django requires a unique, secret key to be set up for each application.
 
-  Generate a random string::
+  Set a random secret key in ``settings_site.py``::
 
-    $ openssl rand -base64 32
+    $ sudo sed -i 's/^SECRET_KEY.*/SECRET_KEY = '\'`openssl rand -hex 32`\''/' settings_site.py
 
-  * Copy the string to the clipboard.
-
-  * Edit ``settings_site.py``::
+  Edit ``settings_site.py``::
 
     $ sudo pico /var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py
 
   Modify the following settings:
-
-  * SECRET_KEY: Replace 'MySecretKey' with the string that was generated in
-    the previous step.
 
   * NODE_IDENTIFIER: A unique identifier for the node of the form
     \urn:node:NODEID where NODEID is the node specific identifier. This value
@@ -175,6 +172,13 @@ Django requires a unique, secret key to be set up for each application.
   * PASSWORD: Set the password that was selected for the gmn user in
     :doc:`setup-postgresql`.
 
+
+Submit Member Node information to DataONE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Member Node information is submitted to DataONE in a Node document. GMN
+automatically generates the Node document based on the settings configured in
+the previous step.
 
   After editing ``settings_site.py``, check if the Node document is successfully
   generated::
