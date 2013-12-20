@@ -132,7 +132,7 @@ variable_defaults_map = {
   VERBOSE_NAME: True,
   EDITOR_NAME: u'notepad' if platform.system() == 'Windows' else 'nano',
   CN_URL_NAME: d1_common.const.URL_DATAONE_ROOT,
-  MN_URL_NAME: d1_common.const.DEFAULT_MN_HOST,
+  MN_URL_NAME: d1_common.const.DEFAULT_MN_BASEURL,
   START_NAME: 0,
   COUNT_NAME: d1_common.const.MAX_LISTOBJECTS,
   ANONYMOUS_NAME: True,
