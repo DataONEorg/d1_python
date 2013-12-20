@@ -28,13 +28,10 @@
 '''
 
 # Stdlib.
-import hashlib
 import logging
 import os
-import re
 
 # D1.
-import d1_client.d1client
 import d1_common.date_time
 
 # App.
@@ -48,9 +45,8 @@ import path_exception
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
+  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
+except (KeyError, AttributeError):
   pass
 
 
@@ -102,8 +98,8 @@ class CommandProcessor():
       self._system_metadata_cache = cache_memory.Cache(\
                                  self._options.MAX_OBJECT_CACHE_SIZE)
 
-      #self.object_description_cache = cache.Cache(1000)
-      #self.object_description_cache2 = cache_memory.Cache(1000)
+    #self.object_description_cache = cache.Cache(1000)
+    #self.object_description_cache2 = cache_memory.Cache(1000)
     self._solr_client = onedrive_solr_client.SolrClient(options)
 
   def solr_query(self, query, filter_queries=None, fields=None):
@@ -173,32 +169,14 @@ class CommandProcessor():
   def _get_solr_record_from_cache(self, pid):
     return self._object_info_cache[pid]
 
-  #def get_all_field_names_good_for_faceting(self):
-  #  return self.fields_good_for_faceting
-
-  #def facet_matches_filter(self, facet_name):
-  #  return True
-
-  # DataONE APIs.
-
-  #def init_field_names_good_for_faceting(self):
-  #  d1_client = onedrive_d1_client.D1Client()
-  #  candidate_facet_names = \
-  #    d1_client.get_all_searchable_and_returnable_facet_names()
-  #  good = []
-  #  for f in candidate_facet_names:
-  #    if self.facet_matches_filter(f):
-  #      good.append(f)
-  #  return good
-
-  #  def get_solr_record(self, pid):
-  #    try:
-  #      return self.object_description_cache[pid]
-  #    except KeyError:
-  #      pass
-  #    description = self._get_description(pid)
-  #    self.object_description_cache[pid] = description
-  #    return description
+#  def get_solr_record(self, pid):
+#    try:
+#      return self.object_description_cache[pid]
+#    except KeyError:
+#      pass
+#    description = self._get_description(pid)
+#    self.object_description_cache[pid] = description
+#    return description
 
   def get_science_object_through_cache(self, pid):
     try:

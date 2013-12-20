@@ -33,6 +33,7 @@ import ssl
 # D1.
 import d1_common
 import d1_client.cnclient_1_1
+import d1_client.d1client
 import d1_client.mnclient
 
 # App.
@@ -43,9 +44,8 @@ import path_exception
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
+  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
+except (KeyError, AttributeError):
   pass
 
 
@@ -57,34 +57,6 @@ class D1Client(object):
     )
     self.query_engine_description = None
     self.all_facet_names = None
-
-  def get_all_searchable_and_returnable_facet_names(self):
-    if self.all_facet_names is not None:
-      return self.all_facet_names
-    if self.query_engine_description is None:
-      self.init_query_engine_description()
-    self.all_facet_names = []
-    for f in self.query_engine_description.queryField:
-      if f.searchable and f.returnable:
-        self.all_facet_names.append(f.name)
-    return self.all_facet_names
-
-  def get_unapplied_facet_names(self, applied_facets):
-    all_facet_names = set(self.get_all_searchable_facet_names())
-    applied_facets = self.facet_path_parser.undecorate_facets(path)
-    applied_facet_names = set(
-      [
-        self.facet_path_parser.undecorate_facet_name(
-          f[0]
-        ) for f in applied_facets
-      ]
-    )
-    #return [self.facet_path_parser.decorate_facet_name(n) for n in
-    #        all_facet_names - applied_facet_names]
-    return all_facet_names - applied_facet_names
-
-  def init_query_engine_description(self):
-    self.query_engine_description = self.client.getQueryEngineDescription('solr')
 
   def describe(self, pid):
     try:

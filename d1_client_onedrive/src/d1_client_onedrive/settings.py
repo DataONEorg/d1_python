@@ -30,7 +30,6 @@
 import d1_common.const
 import logging
 import os
-import sys
 
 # D1.
 
@@ -227,8 +226,8 @@ IGNORE_SPECIAL = set(
 
 # Set up logging.
 
-## Set the level of logging that should be performed. Choices are:
-## DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
+# Set the level of logging that should be performed. Choices are:
+# DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
 if DEBUG:
   LOG_LEVEL = 'DEBUG'
 else:

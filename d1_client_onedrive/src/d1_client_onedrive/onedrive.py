@@ -34,12 +34,8 @@ import logging
 #import logging.config # Needs 2.7.
 import os
 import sys
-import codecs
 import optparse
 import platform
-
-# D1.
-import d1_common.const
 
 # App.
 if not hasattr(sys, 'frozen'):
@@ -50,6 +46,7 @@ from d1_client_onedrive.impl import check_dependencies
 from d1_client_onedrive.impl.resolver import root
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import cache_disk
+import d1_client_onedrive
 
 # Set up logger for this module.
 log = logging.getLogger(__name__)
@@ -180,7 +177,7 @@ def map_level_string_to_level(level_string):
 
 
 def log_version():
-  log.info('ONEDrive version: {0}'.format(impl.__version__))
+  log.info('ONEDrive version: {0}'.format(d1_client_onedrive.__version__))
 
 
 def log_startup_parameters(options, arguments):

@@ -34,9 +34,8 @@ import platform
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
+  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
+except (KeyError, AttributeError):
   pass
 
 
@@ -48,7 +47,7 @@ def check_dependencies():
     import pyxb
   except ImportError as e:
     exceptions.append(e)
-    messages.append(u'PyXB: Try: easy_install PyXB\n')
+    messages.append(u'PyXB: Try "sudo pip install pyxb"\n')
 
   if platform.system() == 'Linux':
     try:

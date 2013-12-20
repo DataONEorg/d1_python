@@ -143,8 +143,8 @@ def main():
     license=license,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.common == 1.1.3',
-      'dataone.libclient == 1.2.3',
+      'dataone.common == 1.1.4',
+      'dataone.libclient == 1.2.4',
       'dataone.workspace_client == 0.0.2',
       'fusepy',
       'rdflib',

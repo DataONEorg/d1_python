@@ -27,22 +27,17 @@
 '''
 
 # Stdlib.
-import collections
 import logging
 import os
 import platform
 import pprint
 
-# App.
-import os_escape
-
 # Set up logger for this module.
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
+  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
+except (KeyError, AttributeError):
   pass
 
 #def log_dump(s):
