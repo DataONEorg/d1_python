@@ -30,12 +30,7 @@
 
 # Stdlib.
 import csv
-import logging
 import os
-import sys
-
-# App.
-import d1baseclient
 
 
 def make_absolute(p):
@@ -59,61 +54,34 @@ class Singleton(object):
 
 class ObjectFormatInfo(Singleton):
   def __init__(self, csv_file=None):
-
     if csv_file is None:
-      self.csv_path = MIME_MAPPINGS_CSV_PATH
-      self.csv_file = None
+      self.csv_file = open(MIME_MAPPINGS_CSV_PATH)
     else:
-      self.csv_path = None
       self.csv_file = csv_file
-
-    self.reread_csv_file()
+    self.read_csv_file()
 
   def mimetype_from_format_id(self, format_id):
-    return self._get_format_id_entry(format_id)[0]
+    return self.format_id_map[format_id][0]
 
   def filename_extension_from_format_id(self, format_id):
-    return self._get_format_id_entry(format_id)[1]
+    return self.format_id_map[format_id][1]
 
-  def reread_csv_file(self, csv_path=None):
-    if csv_path is not None:
-      self.csv_path = csv_path
-    self.format_id_map = self._create_format_id_map_from_csv_file()
+  def read_csv_file(self, csv_file=None):
+    '''Reinitialize the map from a csv file object'''
+    if csv_file is not None:
+      self.csv_file = csv_file
+    self._read_format_id_map_from_file()
 
-  def _read_format_id_map_from_file(self, file):
+  #
+  # Private.
+  #
 
-    csv_reader = csv.reader(file)
-
+  def _read_format_id_map_from_file(self):
+    self.csv_file.seek(0)
+    csv_reader = csv.reader(self.csv_file)
     try:
-      return dict((r[0], r[1:]) for r in csv_reader)
-
+      self.format_id_map = dict((r[0], r[1:]) for r in csv_reader)
     except (csv.Error, Exception) as e:
       raise Exception(
-        'Error in CSV file. Line: {1}  Error: {2}'.format(csv_reader.line_num, e)
+        'Error in csv file. Line: {1}  Error: {2}'.format(csv_reader.line_num, e)
       )
-
-  def _create_format_id_map_from_csv_file(self):
-
-    if self.csv_path is not None:
-      try:
-        with open(self.csv_path) as f:
-          return self._read_format_id_map_from_file(f)
-
-      except IOError as e:
-        raise Exception(
-          'Unable to open CSV file: {0}. Error: {1}: {2}'
-          .format(self.csv_path, e.errno, e.strerror)
-        )
-
-    else:
-      try:
-        self.csv_file.seek(0)
-        return self._read_format_id_map_from_file(self.csv_file)
-
-      except IOError as e:
-        raise Exception(
-          'Unable to read from file object: Error: {1}: {2}'.format(e.errno, e.strerror)
-        )
-
-  def _get_format_id_entry(self, format_id):
-    return self.format_id_map[format_id]

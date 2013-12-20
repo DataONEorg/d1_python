@@ -100,16 +100,6 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   # MNCore
   # ============================================================================
 
-  # MNCore.ping() → Boolean
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.ping
-
-  def ping(self, vendorSpecific=None):
-    if vendorSpecific is None:
-      vendorSpecific = {}
-    url = self._rest_url('monitor/ping')
-    response = self.GET(url, headers=vendorSpecific)
-    return self._read_boolean_response(response)
-
   # MNCore.getCapabilities() → Node
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getCapabilities
 

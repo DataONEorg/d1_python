@@ -30,9 +30,6 @@ for a DataONE node. Data is retrieved from the target only when required.
   - python 2.6
 '''
 
-import datetime
-import logging
-
 
 class LogRecordIterator(object):
   '''Implements an iterator that iterates over the entire set of LogRecords

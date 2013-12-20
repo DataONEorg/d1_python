@@ -29,7 +29,6 @@ and returns that value or the statically set value on failure.
 :Dependencies:
   - python 2.6
   - pysvn
-
 '''
 
 import os

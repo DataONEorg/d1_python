@@ -43,37 +43,22 @@
 # Stdlib.
 #import xml.dom.minidom.parse
 #import xml.dom.minidom
-import StringIO
-import codecs
 import datetime
-import hashlib
-import logging
-import optparse
-import os
-import pprint
-import sys
 
 # 3rd party.
-import pyxb
-import foresite
-#from foresite import *
-#from rdflib import URIRef, Namespace, Graph
-import rdflib.namespace
-import rdflib.term
 import foresite
 import foresite.utils
-
 import rdflib
+import rdflib.namespace
+import rdflib.term
 import rdflib.plugin
 import rdflib.graph
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.checksum
 import d1_common.const
-import d1_client.data_package
-import d1_client.mnclient
-import d1_common.const
-import d1_common.util as util
+import d1_common.util
 
 rdflib.plugin.register(
   'sparql', rdflib.query.Processor, 'rdfextras.sparql.processor', 'Processor'
@@ -125,7 +110,13 @@ class ResourceMapGenerator():
     serialized_resource_map = self._serialize_resource_map(resource_map)
     return serialized_resource_map
 
-  def generate_system_metadata_for_resource_map(self, resource_map, checksum_algorithm):
+  def generate_system_metadata_for_resource_map(
+    self,
+    resource_map_pid,
+    resource_map,
+    rights_holder,
+    checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
+  ):
     '''Generate a system metadata object for a resource map. The generated
     system metadata object is intended for use in DataONE API methods such as
     MNStorage.Create(). The object contains an access control rule allowing
@@ -133,14 +124,11 @@ class ResourceMapGenerator():
     often be used as is. For more complex use cases, the object can be modified
     programmatically before use.
     '''
-    size = len(science_object)
-    now = datetime.datetime.now()
-    sys_meta = generate_sys_meta(pid, format_id, size, md5, now)
-    return sys_meta
-
-    checksum = self._generate_checksum(resource_map)
     size = len(resource_map)
-    return self.session.create_system_metadata(pid, checksum, size, RDFXML_FORMATID)
+    checksum = d1_common.checksum.create_checksum_object(resource_map, checksum_algorithm)
+    return self._generate_sys_meta(
+      resource_map_pid, RDFXML_FORMATID, size, checksum, rights_holder
+    )
 
   #
   # Private.
@@ -150,7 +138,6 @@ class ResourceMapGenerator():
     '''Generate an OAI-ORE resource map.
     :relations: {metaid:[data id, data id, ...], ...}
     '''
-    uris = {}
     foresite.utils.namespaces['cito'] = rdflib.namespace.Namespace(CITO_NS)
     aggr = foresite.Aggregation(aggregation_id)
     for sci_id in relations.keys():
@@ -194,25 +181,25 @@ class ResourceMapGenerator():
       path += '/'
     return path
 
-  def generate_sys_meta(pid, format_id, size, md5, now):
+  def _generate_sys_meta(
+    self, pid, format_id,
+    size, checksum, rights_holder,
+    modified=None
+  ):
+    if modified is None:
+      modified = datetime.datetime.now()
     sys_meta = dataoneTypes.systemMetadata()
     sys_meta.identifier = pid
     sys_meta.formatId = format_id
     sys_meta.size = size
-    sys_meta.rightsHolder = SYSMETA_RIGHTSHOLDER
-    sys_meta.checksum = dataoneTypes.checksum(md5)
-    sys_meta.checksum.algorithm = 'MD5'
-    sys_meta.dateUploaded = now
-    sys_meta.dateSysMetadataModified = now
-    sys_meta.accessPolicy = generate_public_access_policy()
+    sys_meta.rightsHolder = rights_holder
+    sys_meta.checksum = checksum
+    sys_meta.dateUploaded = modified
+    sys_meta.dateSysMetadataModified = modified
+    sys_meta.accessPolicy = self.generate_public_access_policy()
     return sys_meta
 
-  def _generate_checksum(self, resource_map, algorithm='SHA-1'):
-    h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
-    h.update(resource_map)
-    return h.hexdigest()
-
-  def generate_public_access_policy():
+  def generate_public_access_policy(self):
     accessPolicy = dataoneTypes.accessPolicy()
     accessRule = dataoneTypes.AccessRule()
     accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)

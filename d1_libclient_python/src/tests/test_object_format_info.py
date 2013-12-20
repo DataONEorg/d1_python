@@ -30,6 +30,7 @@ Unit tests for ObjectFormatInfo.
 '''
 
 # Stdlib.
+import StringIO
 import logging
 import sys
 import unittest
@@ -43,42 +44,56 @@ import testing_utilities
 import testing_context
 
 # Typical mapping (format id, mimetype, extension):
+
 # netCDF-3,application/netcdf,.nc
+
+CSV_TEST_VALID = '''formatIdentifier,mimeType,extension
+abcd,efgh,ijkl
+'''
+
+CSV_TEST_INVALID = '''formatIdentifier,mimeType,extension
+
+Blank line above.
+'''
 
 
 class TestObjectFormatInfo(TestCaseWithURLCompare):
   def setUp(self):
     self.i = d1_client.object_format_info.ObjectFormatInfo()
 
-  def test_100_init(self):
+  def test_100(self):
+    '''init()'''
     pass # Successful setup of the test means that the class initialized ok.
 
-  def test_200_mimetype_from_format_id(self):
+  def test_200(self):
+    '''mimetype_from_format_id()'''
     self.assertEqual(self.i.mimetype_from_format_id('netCDF-3'), 'application/netcdf')
 
-  def test_300_filename_extension_from_format_id(self):
+  def test_300(self):
+    '''filename_extension_from_format_id()'''
     self.assertEqual(self.i.filename_extension_from_format_id('netCDF-3'), '.nc')
 
-  def test_400_reread_csv_file(self):
-    self.i.reread_csv_file()
+  def test_400(self):
+    '''read_csv_file()'''
+    self.i.read_csv_file()
     self.assertEqual(self.i.filename_extension_from_format_id('netCDF-3'), '.nc')
 
-  def test_500_reread_csv_file_new_csv(self):
-    self.i.reread_csv_file('csv_test.csv')
+  def test_500(self):
+    '''read_csv_file(new_csv)'''
+    self.i.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
     self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
-  def test_600_singleton(self):
+  def test_600(self):
+    '''singleton'''
     j = d1_client.object_format_info.ObjectFormatInfo()
-    j.reread_csv_file('csv_test.csv')
+    j.read_csv_file(StringIO.StringIO(CSV_TEST_VALID))
     self.assertEqual(self.i.filename_extension_from_format_id('abcd'), 'ijkl')
 
-  def test_700_bad_csv_file(self):
-    try:
-      self.i.reread_csv_file('csv_test_bad.csv')
-    except Exception as e:
-      self.assertTrue(str(e).startswith('Error in CSV file.'))
-    else:
-      self.assertTrue(False, "Expected exception")
+  def test_700(self):
+    '''bad_csv_file'''
+    self.assertRaises(
+      Exception, self.i.read_csv_file, StringIO.StringIO(CSV_TEST_INVALID)
+    )
 
 #===============================================================================
 

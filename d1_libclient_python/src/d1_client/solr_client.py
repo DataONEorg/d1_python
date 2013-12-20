@@ -167,6 +167,7 @@ class SolrConnection:
   # Testing with GET until POST is fixed on CN.
 
   def doPost(self, url, body, headers):
+    # TODO: headers are not used.
     try:
       url = url + '?' + body
       self.conn.request('GET', url)
@@ -584,28 +585,29 @@ class SolrConnection:
         self.conn.close()
     return minmax
 
-  def getftype(self, name):
-    '''
-    Returns the python type for the specified field name.  The field list is
-    cached so multiple calls do not invoke a getFields request each time.
-
-    @param name(string) The name of the SOLR field
-    @returns Python type of the field.
-    '''
-    fields = self.getFields()
-    try:
-      fld = fields['fields'][name]
-    except:
-      return unicode
-    if fld['type'] in ['string', 'text', 'stext', 'text_ws']:
-      return unicode
-    if fld['type'] in ['sint', 'integer', 'long', 'slong']:
-      return int
-    if fld['type'] in ['sdouble', 'double', 'sfloat', 'float']:
-      return float
-    if fld['type'] in ['boolean']:
-      return bool
-    return fld['type']
+  # Disabled because it's based on the Solr Luke handler, which D1 doesn't expose.
+  #def getftype(self, name):
+  #  '''
+  #  Returns the python type for the specified field name.  The field list is
+  #  cached so multiple calls do not invoke a getFields request each time.
+  #
+  #  @param name(string) The name of the SOLR field
+  #  @returns Python type of the field.
+  #  '''
+  #  fields = self.getFields()
+  #  try:
+  #    fld = fields['fields'][name]
+  #  except:
+  #    return unicode
+  #  if fld['type'] in ['string', 'text', 'stext', 'text_ws']:
+  #    return unicode
+  #  if fld['type'] in ['sint','integer','long','slong']:
+  #    return int
+  #  if fld['type'] in ['sdouble','double','sfloat','float']:
+  #    return float
+  #  if fld['type'] in ['boolean']:
+  #    return bool
+  #  return fld['type']
 
   def fieldAlphaHistogram(self, name, q='*:*', fq=None, nbins=10, includequeries=True):
     '''Generates a histogram of values from a string field.
@@ -708,233 +710,215 @@ class SolrConnection:
         self.conn.close()
     return bins
 
-  def fieldHistogram(
-    self, name, q="*:*",
-    fq=None, nbins=10,
-    minmax=None, includequeries=True
-  ):
-    '''
-    Generates a histogram of values.
-    Expects the field to be integer or floating point.
+  # Disabled because it's based on the Solr Luke handler, which D1 doesn't expose.
+  #def fieldHistogram(self, name, q="*:*", fq=None, nbins=10, minmax=None,
+  #                   includequeries=True):
+  #  '''
+  #  Generates a histogram of values.
+  #  Expects the field to be integer or floating point.
+  #
+  #  @param name(string) Name of the field to compute
+  #  @param q(string) The query identifying the set of records for the histogram
+  #  @param fq(string) Filter query to restrict application of query
+  #  @param nbins(int) Number of bins in resulting histogram
+  #
+  #  @return list of [binmin, binmax, n, binquery]
+  #  '''
+  #  oldpersist = self.persistent
+  #  self.persistent = True
+  #  ftype = self.getftype(name)
+  #  if ftype == unicode:
+  #    ##handle text histograms over here
+  #    bins = self.fieldAlphaHistogram(name, q=q, fq=fq, nbins=nbins,
+  #                                    includequeries=includequeries)
+  #    self.persistent = oldpersist
+  #    if not self.persistent:
+  #      self.conn.close()
+  #    return bins
+  #  bins = []
+  #  qbin = []
+  #  fvals = self.fieldValues(name, q, fq, maxvalues=nbins+1)
+  #  if len(fvals[name]) < 3:
+  #    return bins
+  #  nvalues = len(fvals[name])/2
+  #  if nvalues < nbins:
+  #    nbins = nvalues
+  #  minoffset = 1
+  #  if ftype == float:
+  #    minoffset = 0.00001
+  #  try:
+  #    if minmax is None:
+  #      minmax = self.fieldMinMax(name, q=q, fq=fq)
+  #      #logging.info("MINMAX = %s" % str(minmax))
+  #      minmax[0] = float(minmax[0])
+  #      minmax[1] = float(minmax[1])
+  #    delta = (minmax[1] - minmax[0]) / nbins
+  #    for i in xrange(0, nbins):
+  #      binmin = minmax[0] + (i*delta)
+  #      bin = [binmin, binmin+delta, 0]
+  #      if ftype == int:
+  #        bin[0] = int(bin[0])
+  #        bin[1] = int(bin[1])
+  #        if i == 0:
+  #          binq = '%s:[* TO %d]' % (name, bin[1])
+  #        elif i == nbins-1:
+  #          binq = '%s:[%d TO *]' % (name, bin[0]+minoffset)
+  #          bin[0] = bin[0] + minoffset
+  #          if bin[1] < bin[0]:
+  #            bin[1] = bin[0]
+  #        else:
+  #          binq = '%s:[%d TO %d]' % (name, bin[0]+minoffset, bin[1])
+  #          bin[0] = bin[0] + minoffset
+  #      else:
+  #        if i == 0:
+  #          binq = '%s:[* TO %f]' % (name, bin[1])
+  #        elif i == nbins-1:
+  #          binq = '%s:[%f TO *]' % (name, bin[0]+minoffset)
+  #        else:
+  #          binq = '%s:[%f TO %f]' % (name, bin[0]+minoffset, bin[1])
+  #      qbin.append(binq)
+  #      bins.append(bin)
+  #
+  #    #now execute the facet query request
+  #    params = {'q':q,
+  #              'rows':'0',
+  #              'facet':'true',
+  #              'facet.field':name,
+  #              'facet.limit':'1',
+  #              'facet.mincount':1,
+  #              'wt':'python'}
+  #    request = urllib.urlencode(params, doseq=True)
+  #    for sq in qbin:
+  #      request = request + '&%s' % urllib.urlencode({'facet.query': sq, })
+  #    rsp = self.doPost(self.solrBase, request, self.formheaders)
+  #    data = eval( rsp.read() )
+  #    for i in xrange(0, len(bins)):
+  #      v = data['facet_counts']['facet_queries'][qbin[i]]
+  #      bins[i][2] = v
+  #      if includequeries:
+  #        bins[i].append(qbin[i])
+  #  finally:
+  #    self.persistent = oldpersist
+  #    if not self.persistent:
+  #      self.conn.close()
+  #  return bins
 
-    @param name(string) Name of the field to compute
-    @param q(string) The query identifying the set of records for the histogram
-    @param fq(string) Filter query to restrict application of query
-    @param nbins(int) Number of bins in resulting histogram
+  # Disabled because it's based on the Solr Luke handler, which D1 doesn't expose.
+  #def fieldHistogram2d(self, colname, rowname, q="*:*", fq=None, ncols=10, nrows=10):
+  #  '''
+  #  Generates a 2d histogram of values.
+  #  Expects the field to be integer or floating point.
+  #
+  #  :param name1: Name of field1 columns to compute
+  #  :type name1: string
+  #  :param name2: Name of field2 rows to compute
+  #  :type name2: string
+  #  :param q: The query identifying the set of records for the histogram
+  #  :type q: string
+  #  :param fq: Filter query to restrict application of query
+  #  :type fq: string
+  #  :param nbins1: Number of columns in resulting histogram
+  #  :type nbins1: int
+  #  :param nbins2: Number of rows in resulting histogram
+  #  :type nbins2: int
+  #
+  #  :returns:
+  #
+  #  Dictionary of:
+  #
+  #  :colname: name of column index
+  #  :rowname: name of row index
+  #  :cols: [] list of min values for each column bin
+  #  :rows: [] list of min values for each row bin
+  #  :z: [[], []]
+  #  '''
+  #  def _mkQterm(name, minv, maxv, isint, isfirst, islast):
+  #    q = ''
+  #    if isint:
+  #      minv = int(minv)
+  #      maxv = int(maxv)
+  #      if isfirst:
+  #        q = '%s:[* TO %d]' % (name, maxv)
+  #      elif islast:
+  #        q = '%s:[%d TO *]' % (name, maxv)
+  #      else:
+  #        q = '%s:[%d TO %d]' % (name, minv, maxv)
+  #    else:
+  #      if isfirst:
+  #        q = '%s:[* TO %f]' % (name, maxv)
+  #      elif islast:
+  #        q = '%s:[%f TO *]' % (name, maxv)
+  #      else:
+  #        q = '%s:[%f TO %f]' % (name, minv, maxv)
+  #    return q
+  #
+  #  oldpersist = self.persistent
+  #  self.persistent = True
+  #  ftype_col = self.getftype(colname)
+  #  ftype_row = self.getftype(rowname)
+  #  result = {'colname': colname,
+  #            'rowname': rowname,
+  #            'cols':[],
+  #            'rows':[],
+  #            'z': []}
+  #  minoffsetcol = 1
+  #  minoffsetrow = 1
+  #  if ftype_col == float:
+  #    minoffsetcol = 0.00001
+  #  if ftype_row == float:
+  #    minoffsetrow = 0.00001
+  #  try:
+  #    rowminmax = self.fieldMinMax(rowname, q=q, fq=fq)
+  #    rowminmax[0] = float(rowminmax[0])
+  #    rowminmax[1] = float(rowminmax[1])
+  #    colminmax = self.fieldMinMax(colname, q=q, fq=fq)
+  #    colminmax[0] = float(colminmax[0])
+  #    colminmax[1] = float(colminmax[1])
+  #    rowdelta = (rowminmax[1] - rowminmax[0]) / nrows
+  #    coldelta = (colminmax[1] - colminmax[0]) / ncols
+  #
+  #    for rowidx in xrange(0, nrows):
+  #      rmin = rowminmax[0] + (rowidx*rowdelta)
+  #      result['rows'].append(rmin)
+  #      rmax = rmin + rowdelta
+  #      rowq = _mkQterm(rowname, rmin, rmax, (ftype_row==int), (rowidx==0), (rowidx==nrows-1))
+  #      qq = "%s AND %s" % (q, rowq)
+  #      logging.debug("row=%d, q= %s" % (rowidx, qq))
+  #      bins = []
+  #      cline = []
+  #      for colidx in xrange(0, ncols):
+  #        cmin = colminmax[0] + (colidx*coldelta)
+  #        result['cols'].append(cmin)
+  #        cmax = cmin + coldelta
+  #        colq = _mkQterm(colname, cmin, cmax, (ftype_col==int), (colidx==0), (colidx==ncols-1))
+  #        bin = [colidx, rowidx, cmin, rmin, cmax, rmax, 0, colq]
+  #        bins.append(bin)
+  #      #now execute the facet query request
+  #      params = {'q':qq,
+  #                'rows':'0',
+  #                'facet':'true',
+  #                'facet.field':colname,
+  #                'facet.limit':'1',
+  #                'facet.mincount':1,
+  #                'wt':'python'}
+  #      if not fq is None:
+  #        params['fq'] = fq
+  #      request = urllib.urlencode(params, doseq=True)
+  #      for bin in bins:
+  #        request = request + '&%s' % urllib.urlencode({'facet.query': bin[7], })
+  #      rsp = self.doPost(self.solrBase, request, self.formheaders)
+  #      data = eval( rsp.read() )
+  #      for bin in bins:
+  #        v = data['facet_counts']['facet_queries'][bin[7]]
+  #        cline.append(v)
+  #      result['z'].append(cline)
+  #  finally:
+  #    self.persistent = oldpersist
+  #    if not self.persistent:
+  #      self.conn.close()
+  #  return result
 
-    @return list of [binmin, binmax, n, binquery]
-    '''
-    oldpersist = self.persistent
-    self.persistent = True
-    ftype = self.getftype(name)
-    if ftype == unicode:
-      ##handle text histograms over here
-      bins = self.fieldAlphaHistogram(
-        name, q=q, fq=fq, nbins=nbins,
-        includequeries=includequeries
-      )
-      self.persistent = oldpersist
-      if not self.persistent:
-        self.conn.close()
-      return bins
-    bins = []
-    qbin = []
-    fvals = self.fieldValues(name, q, fq, maxvalues=nbins + 1)
-    if len(fvals[name]) < 3:
-      return bins
-    nvalues = len(fvals[name]) / 2
-    if nvalues < nbins:
-      nbins = nvalues
-    minoffset = 1
-    if ftype == float:
-      minoffset = 0.00001
-    try:
-      if minmax is None:
-        minmax = self.fieldMinMax(name, q=q, fq=fq)
-        #logging.info("MINMAX = %s" % str(minmax))
-        minmax[0] = float(minmax[0])
-        minmax[1] = float(minmax[1])
-      delta = (minmax[1] - minmax[0]) / nbins
-      for i in xrange(0, nbins):
-        binmin = minmax[0] + (i * delta)
-        bin = [binmin, binmin + delta, 0]
-        if ftype == int:
-          bin[0] = int(bin[0])
-          bin[1] = int(bin[1])
-          if i == 0:
-            binq = '%s:[* TO %d]' % (name, bin[1])
-          elif i == nbins - 1:
-            binq = '%s:[%d TO *]' % (name, bin[0] + minoffset)
-            bin[0] = bin[0] + minoffset
-            if bin[1] < bin[0]:
-              bin[1] = bin[0]
-          else:
-            binq = '%s:[%d TO %d]' % (name, bin[0] + minoffset, bin[1])
-            bin[0] = bin[0] + minoffset
-        else:
-          if i == 0:
-            binq = '%s:[* TO %f]' % (name, bin[1])
-          elif i == nbins - 1:
-            binq = '%s:[%f TO *]' % (name, bin[0] + minoffset)
-          else:
-            binq = '%s:[%f TO %f]' % (name, bin[0] + minoffset, bin[1])
-        qbin.append(binq)
-        bins.append(bin)
-
-      #now execute the facet query request
-      params = {
-        'q': q,
-        'rows': '0',
-        'facet': 'true',
-        'facet.field': name,
-        'facet.limit': '1',
-        'facet.mincount': 1,
-        'wt': 'python'
-      }
-      request = urllib.urlencode(params, doseq=True)
-      for sq in qbin:
-        request = request + '&%s' % urllib.urlencode({'facet.query': sq, })
-      rsp = self.doPost(self.solrBase, request, self.formheaders)
-      data = eval(rsp.read())
-      for i in xrange(0, len(bins)):
-        v = data['facet_counts']['facet_queries'][qbin[i]]
-        bins[i][2] = v
-        if includequeries:
-          bins[i].append(qbin[i])
-    finally:
-      self.persistent = oldpersist
-      if not self.persistent:
-        self.conn.close()
-    return bins
-
-  def fieldHistogram2d(self, colname, rowname, q="*:*", fq=None, ncols=10, nrows=10):
-    '''
-    Generates a 2d histogram of values.
-    Expects the field to be integer or floating point.
-
-    :param name1: Name of field1 columns to compute
-    :type name1: string
-    :param name2: Name of field2 rows to compute
-    :type name2: string
-    :param q: The query identifying the set of records for the histogram
-    :type q: string
-    :param fq: Filter query to restrict application of query
-    :type fq: string
-    :param nbins1: Number of columns in resulting histogram
-    :type nbins1: int
-    :param nbins2: Number of rows in resulting histogram
-    :type nbins2: int
-
-    :returns:
-
-    Dictionary of:
-
-    :colname: name of column index
-    :rowname: name of row index
-    :cols: [] list of min values for each column bin
-    :rows: [] list of min values for each row bin
-    :z: [[], []]
-    '''
-
-    def _mkQterm(name, minv, maxv, isint, isfirst, islast):
-      q = ''
-      if isint:
-        minv = int(minv)
-        maxv = int(maxv)
-        if isfirst:
-          q = '%s:[* TO %d]' % (name, maxv)
-        elif islast:
-          q = '%s:[%d TO *]' % (name, maxv)
-        else:
-          q = '%s:[%d TO %d]' % (name, minv, maxv)
-      else:
-        if isfirst:
-          q = '%s:[* TO %f]' % (name, maxv)
-        elif islast:
-          q = '%s:[%f TO *]' % (name, maxv)
-        else:
-          q = '%s:[%f TO %f]' % (name, minv, maxv)
-      return q
-
-    oldpersist = self.persistent
-    self.persistent = True
-    ftype_col = self.getftype(colname)
-    ftype_row = self.getftype(rowname)
-    result = {
-      'colname': colname,
-      'rowname': rowname,
-      'cols': [],
-      'rows': [],
-      'z': []
-    }
-    minoffsetcol = 1
-    minoffsetrow = 1
-    if ftype_col == float:
-      minoffsetcol = 0.00001
-    if ftype_row == float:
-      minoffsetrow = 0.00001
-    try:
-      rowminmax = self.fieldMinMax(rowname, q=q, fq=fq)
-      rowminmax[0] = float(rowminmax[0])
-      rowminmax[1] = float(rowminmax[1])
-      colminmax = self.fieldMinMax(colname, q=q, fq=fq)
-      colminmax[0] = float(colminmax[0])
-      colminmax[1] = float(colminmax[1])
-      rowdelta = (rowminmax[1] - rowminmax[0]) / nrows
-      coldelta = (colminmax[1] - colminmax[0]) / ncols
-
-      for rowidx in xrange(0, nrows):
-        rmin = rowminmax[0] + (rowidx * rowdelta)
-        result['rows'].append(rmin)
-        rmax = rmin + rowdelta
-        rowq = _mkQterm(
-          rowname, rmin, rmax, (ftype_row == int), (rowidx == 0), (
-            rowidx == nrows - 1
-          )
-        )
-        qq = "%s AND %s" % (q, rowq)
-        logging.debug("row=%d, q= %s" % (rowidx, qq))
-        bins = []
-        cline = []
-        for colidx in xrange(0, ncols):
-          cmin = colminmax[0] + (colidx * coldelta)
-          result['cols'].append(cmin)
-          cmax = cmin + coldelta
-          colq = _mkQterm(
-            colname, cmin, cmax, (ftype_col == int), (colidx == 0), (
-              colidx == ncols - 1
-            )
-          )
-          bin = [colidx, rowidx, cmin, rmin, cmax, rmax, 0, colq]
-          bins.append(bin)
-        #now execute the facet query request
-        params = {
-          'q': qq,
-          'rows': '0',
-          'facet': 'true',
-          'facet.field': colname,
-          'facet.limit': '1',
-          'facet.mincount': 1,
-          'wt': 'python'
-        }
-        if not fq is None:
-          params['fq'] = fq
-        request = urllib.urlencode(params, doseq=True)
-        for bin in bins:
-          request = request + '&%s' % urllib.urlencode({'facet.query': bin[7], })
-        rsp = self.doPost(self.solrBase, request, self.formheaders)
-        data = eval(rsp.read())
-        for bin in bins:
-          v = data['facet_counts']['facet_queries'][bin[7]]
-          cline.append(v)
-        result['z'].append(cline)
-    finally:
-      self.persistent = oldpersist
-      if not self.persistent:
-        self.conn.close()
-    return result
-
-#===============================================================================
+  #===============================================================================
 
 
 class SOLRRecordTransformer(object):

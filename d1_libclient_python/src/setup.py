@@ -88,7 +88,7 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.common == 1.1.3',
+      'dataone.common == 1.1.4',
       'rdflib == 4.0.1',
       'google.foresite-toolkit == 1.3',
       'python-dateutil == 2.1',
