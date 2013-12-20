@@ -54,7 +54,6 @@ except ImportError as e:
 # App
 import cnclient
 import mnclient
-import objectlistiterator
 
 # Config.
 

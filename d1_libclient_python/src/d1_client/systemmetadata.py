@@ -123,7 +123,7 @@ class SystemMetadata(object):
     #First try the inherited method
     try:
       return super(SystemMetadata, self).__getattr__(name)
-    except AttributeError, e:
+    except AttributeError:
       pass
     res = self._getValues(name)
     if res is None:

@@ -46,7 +46,6 @@
 '''
 
 # Stdlib.
-import logging
 import re
 import urlparse
 import StringIO

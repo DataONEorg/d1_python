@@ -29,75 +29,16 @@ DataONE node. Data is retrieved from the target only when required.
 :Author: DataONE (Vieglais)
 :Dependencies:
   - python 2.6
-
-Example::
-
-  $ python objectlistiterator.py -b "https://cn.dataone.org/cn" -m 5 -s 1000
-  ---
-  total: 5
-  ---
-  -
-    item     : 1
-    pid      : knb-lter-lno.9.1
-    modified : 2011-01-13 18:42:32.469000
-    format   : eml://ecoinformatics.org/eml-2.0.1
-    size     : 6751
-    checksum : 9039F0388DC76B1A13B0F139520A8D90
-    algorithm: MD5
-  -
-    item     : 2
-    pid      : LB30XX_030MTV2021R00_20080516.50.1
-    modified : 2011-01-12 22:51:00.774000
-    format   : eml://ecoinformatics.org/eml-2.0.1
-    size     : 14435
-    checksum : B2200FB7FAE18A3517AA9E2EA680EE09
-    algorithm: MD5
-  -
-    item     : 3
-    pid      : SHLX00_XXXITBDXLSR01_20080220.40.1
-    modified : 2011-01-14 00:07:57.851000
-    format   : application/octet-stream
-    size     : 108927
-    checksum : 023DAF91DCFDC5AD75BA09B25A7E1A9F
-    algorithm: MD5
-  -
-    item     : 4
-    pid      : knb-lter-arc.156.1
-    modified : 2011-01-13 18:30:07.686000
-    format   : eml://ecoinformatics.org/eml-2.0.1
-    size     : 6227
-    checksum : EFF4BE6A23EB5273FCE7F4E716519A46
-    algorithm: MD5
-  -
-    item     : 5
-    pid      : SH30XX_030MXTI009R00_20070917.40.1
-    modified : 2011-01-13 20:39:44.491000
-    format   : application/octet-stream
-    size     : 1519909
-    checksum : 0D2EA212DB6D60C53E456C145C331D65
-    algorithm: MD5
 '''
 import logging
-import sys
 import httplib
-import time
 import pyxb
 import d1_common.types.exceptions
-
-# D1
-try:
-  from d1_client import d1baseclient
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
-
-from optparse import OptionParser
 
 
 class ObjectListIterator(object):
   '''Implements an iterator that iterates over the entire ObjectList for a
-  DataONE node.  Data is retrieved from the target only when required.
+  DataONE node. Data is retrieved from the target only when required.
   '''
 
   def __init__(self, client, start=0, fromDate=None, pagesize=500, max=-1):
