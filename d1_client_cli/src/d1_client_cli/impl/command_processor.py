@@ -28,32 +28,25 @@
 '''
 
 # Stdlib.
-import cmd
 import htmlentitydefs
-import logging
-import optparse
 import os
 import re
-import shlex
 import StringIO
 from string import join
-import sys
 import xml.dom.minidom
 
 # D1
 import d1_common.util
 import d1_common.url
 import d1_common.const
+import d1_common.date_time
 import d1_common.types.exceptions
 
 # App.
 import cli_client
 import cli_exceptions
 import cli_util
-from const import * #@UnusedWildImport
-#import initialize #@UnusedImport
 import session
-import check_dependencies
 import operation_queue
 import operation_maker
 import nodes
@@ -110,9 +103,7 @@ class CommandProcessor():
     if self._session.get(session.QUERY_ENGINE_NAME) == u'solr':
       return self._search_solr(line)
     raise cli_exceptions.InvalidArguments(
-      'Unsupported query engine: {0}'.format(
-        QUERY_ENGINE_NAME
-      )
+      'Unsupported query engine: {0}'.format(self._session.get(session.QUERY_ENGINE_NAME))
     )
 
   def list_format_ids(self):
@@ -177,23 +168,20 @@ class CommandProcessor():
 
   def system_metadata_get(self, pid, path):
     metadata = None
-    foundOnCN = False
     try:
       client = cli_client.CLICNClient(**self._cn_client_connect_params_from_session())
       metadata = client.getSystemMetadata(pid)
-    except d1_common.types.exceptions.DataONEException as e:
+    except d1_common.types.exceptions.DataONEException:
       pass
-    if metadata is not None:
-      foundOnCN = True
-    else:
+    if metadata is None:
       try:
         client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
         metadata = client.getSystemMetadata(pid)
-      except d1_common.types.exceptions.DataONEException as e:
+      except d1_common.types.exceptions.DataONEException:
         pass
     if metadata is None:
       raise
-    self._system_metadata_print(metadata, path, foundOnCN)
+    self._system_metadata_print(metadata, path)
 
   def log(self, path):
     client = cli_client.CLIMNClient(**self._mn_client_connect_params_from_session())
@@ -270,7 +258,7 @@ class CommandProcessor():
     dom = xml.dom.minidom.parseString(xml_doc.encode('UTF-8'))
     return dom.toprettyxml(indent='  ')
 
-  def _system_metadata_print(self, metadata, path=None, foundOnCN=False):
+  def _system_metadata_print(self, metadata, path=None):
     sci_meta_xml = metadata.toxml()
     if path is not None:
       path = cli_util.os.path.expanduser(path)

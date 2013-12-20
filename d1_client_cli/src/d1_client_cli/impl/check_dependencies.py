@@ -47,12 +47,6 @@ def check_dependencies():
       u'DataONE Client Library for Python: Try: pip install dataone.libclient'
     )
 
-  #try:
-  #  import OpenSSL.crypto
-  #except ImportError as e:
-  #  exceptions.append(e)
-  #  messages.append(u'pyOpenSSL: install pyOpenSSL (The CLI has been tested with v0.13)')
-
   if len(exceptions):
     log.critical(u'Importing of the following dependencies failed.')
     for msg in messages:

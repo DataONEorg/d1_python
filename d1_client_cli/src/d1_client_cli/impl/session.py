@@ -70,15 +70,10 @@ import os
 import pickle
 import platform
 import types
-import urlparse
 
 # D1.
-try:
-  import d1_common.const
-except ImportError as e:
-  sys.stderr.write(u'Import error: {0}\n'.format(str(e)))
-  sys.stderr.write(u'Try: easy_install DataONE_Common\n')
-  raise
+import d1_common.const
+import d1_common.util
 
 # App.
 import access_control
@@ -86,7 +81,6 @@ import cli_exceptions
 import cli_util
 from const import * #@UnusedWildImport
 import replication_policy
-import system_metadata
 import operation_formatter
 
 # Names for variables.
@@ -195,14 +189,14 @@ class Session(object):
     except (ValueError, SyntaxError):
       v = value_string
     if v is None or v == u'none':
-      self._variables[variable] = value
+      self._variables[variable] = None
     else:
       try:
         type_converter = variable_type_map[variable]
         value_string = self._validate_variable_type(value_string, type_converter)
         value = type_converter(value_string)
         self._variables[variable] = value
-      except ValueError as e:
+      except ValueError:
         raise cli_exceptions.InvalidArguments(
           u'Invalid value for {0}: {1}'.format(variable, value_string)
         )

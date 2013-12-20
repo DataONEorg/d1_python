@@ -28,11 +28,9 @@
 '''
 
 # Stdlib.
-import pprint
 import os
 
 # App
-import const
 import operation_validator
 import session
 

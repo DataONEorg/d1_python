@@ -30,44 +30,34 @@ The logic was factored out of these and reimplemented in more natural locations.
 This is just a placeholder for now. May remove.
 '''
 
-# Stdlib.
-import os
-import sys
-import tempfile
-import urllib
-
 # DataONE
 import d1_client
 import d1_client.mnclient
 import d1_client.cnclient
 import d1_client.d1baseclient
 
-# Client_CLI
-import cli_util
-from const import * #@UnusedWildImport
-
 
 class CLIClient(object):
   def __init__(self, *args, **kwargs):
-    return super(CLIClient, self).__init__(*args, **kwargs)
+    super(CLIClient, self).__init__(*args, **kwargs)
 
 #===============================================================================
 
 
 class CLIMNClient(CLIClient, d1_client.mnclient.MemberNodeClient):
   def __init__(self, *args, **kwargs):
-    return super(CLIMNClient, self).__init__(*args, **kwargs)
+    super(CLIMNClient, self).__init__(*args, **kwargs)
 
 #===============================================================================
 
 
 class CLICNClient(CLIClient, d1_client.cnclient.CoordinatingNodeClient):
   def __init__(self, *args, **kwargs):
-    return super(CLICNClient, self).__init__(*args, **kwargs)
+    super(CLICNClient, self).__init__(*args, **kwargs)
 
 #===============================================================================
 
 
 class CLIBaseClient(d1_client.d1baseclient.DataONEBaseClient):
   def __init__(self, *args, **kwargs):
-    return super(CLIBaseClient, self).__init__(*args, **kwargs)
+    super(CLIBaseClient, self).__init__(*args, **kwargs)

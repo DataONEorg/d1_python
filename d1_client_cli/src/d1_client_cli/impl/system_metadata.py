@@ -30,12 +30,12 @@
 # Stdlib.
 import datetime
 import os
-import sys
 import StringIO
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
+import d1_common.util
 
 # 3rd party.
 
@@ -48,9 +48,6 @@ RESOURCE_MAP_FORMAT_ID = u'http://www.openarchives.org/ore/terms'
 class SystemMetadataCreator():
   def __init__(self):
     pass
-
-  def __repr__(self):
-    return self.to_xml()
 
   def create_system_metadata(self, operation):
     #import pyxb
@@ -91,6 +88,12 @@ class SystemMetadataCreator():
     return self._create_pyxb_object(
       create_package_operation, pid, RESOURCE_MAP_FORMAT_ID, file_size, checksum
     )
+
+  def create_access_policy(self, operation):
+    return self._create_access_policy_pyxb_object(operation)
+
+  def create_replication_policy(self, operation):
+    return self._create_replication_policy_pyxb_object(operation)
 
   #
   # Private.

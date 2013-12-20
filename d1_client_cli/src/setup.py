@@ -90,7 +90,7 @@ def main():
     install_requires=[
       # The CLI uses dataone.common directly but, to keep the versions
       # consistent, let it be included by dataone.libclient.
-      'dataone.libclient == 1.2.3',
+      'dataone.libclient == 1.2.4',
     ],
     entry_points={
       'console_scripts': ['dataone = d1_client_cli.dataone:main', ]

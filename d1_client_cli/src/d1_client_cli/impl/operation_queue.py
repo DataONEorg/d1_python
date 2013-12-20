@@ -30,7 +30,6 @@
 # Stdlib.
 import json
 import os
-import pprint
 import subprocess
 import tempfile
 
@@ -38,7 +37,6 @@ import tempfile
 import cli_exceptions
 import cli_util
 import operation_executer
-import system_metadata
 import operation_validator
 import operation_formatter
 import session

@@ -31,8 +31,6 @@
 
 # Stdlib.
 import cmd
-import hashlib
-import logging
 import os
 import platform
 import re
@@ -275,13 +273,7 @@ be lost if you exit.'''.format(n_remaining_operations)
     ).set_replication_allowed(
       False
     )
-    self._print_info_if_verbose(
-      'Set replication policy to deny replication'.format(
-        ', '.join(
-          mns
-        )
-      )
-    )
+    self._print_info_if_verbose('Set replication policy to deny replication')
 
   def do_preferrep(self, line):
     '''preferrep <member node> [member node ...]

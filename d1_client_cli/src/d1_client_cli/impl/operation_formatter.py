@@ -27,9 +27,6 @@
 :Author: DataONE (Dahl)
 '''
 
-# Stdlib.
-import pprint
-
 # App.
 import cli_util
 

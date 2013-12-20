@@ -28,17 +28,11 @@
 '''
 
 # Stdlib.
-import htmlentitydefs
 import logging
 import optparse
-import os
-import re
-import shlex
-import StringIO
 from string import join
 import sys
 import traceback
-import xml.dom.minidom
 
 # D1.
 import d1_common.types.exceptions
@@ -119,7 +113,7 @@ def main():
       handle_unexpected_exception()
 
   # If interactive mode has been turned off, exit without entering main loop.
-  if options.interactive == False:
+  if not options.interactive:
     return
 
   # Enter the main processing loop.

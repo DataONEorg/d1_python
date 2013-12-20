@@ -27,12 +27,8 @@
 :Author: DataONE (Dahl)
 '''
 
-# Stdlib.
-import sys
-
 # D1.
 import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
 import cli_exceptions
@@ -93,7 +89,6 @@ class ReplicationPolicy():
         raise cli_exceptions.InvalidArguments(
           u'"Invalid number: {0}'.format(number_of_replicas)
         )
-
     self.number_of_replicas = int(number_of_replicas)
 
   def print_replication_policy(self):

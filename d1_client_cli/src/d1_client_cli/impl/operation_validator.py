@@ -28,17 +28,16 @@
 '''
 
 # Stdlib.
-import pprint
 import types
 import urlparse
 
 # D1.
 import d1_common
+import d1_common.util
 
 # App.
 import cli_util
 import cli_exceptions
-import const
 
 
 class OperationValidator(object):
@@ -80,7 +79,7 @@ class OperationValidator(object):
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
-    self._assert_value_access_control(operation)
+    self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
   def assert_valid_update(self, operation):
@@ -94,7 +93,7 @@ class OperationValidator(object):
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
-    self._assert_value_access_control(operation)
+    self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
   def assert_valid_create_package(self, operation):
@@ -107,7 +106,7 @@ class OperationValidator(object):
     self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
-    self._assert_value_access_control(operation)
+    self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
   def assert_valid_archive(self, operation):
@@ -120,7 +119,7 @@ class OperationValidator(object):
     self._assert_authenticated_access(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
     self._assert_valid_coordinating_node(operation)
-    self._assert_value_access_control(operation)
+    self._assert_valid_access_control(operation)
 
   def assert_valid_update_replication_policy(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
@@ -232,9 +231,6 @@ class OperationValidator(object):
         'Invalid checksum algorithm: {0}'.format(algorithm)
       )
 
-  def _assert_valid_access_control(self, operation, *keys):
-    self._assert_value_type(operation, types.ListType, 'parameters', 'allow')
-
   def _assert_valid_path(self, operation, *keys):
     self._assert_value_type(operation, types.StringTypes, *keys)
     for key in keys:
@@ -263,7 +259,7 @@ class OperationValidator(object):
         'Invalid BaseURL. Must use HTTP or HTTPS protocol: {0}'.format(operation)
       )
 
-  def _assert_value_access_control(self, operation):
+  def _assert_valid_access_control(self, operation):
     self._assert_value_type(operation, types.ListType, 'parameters', 'allow')
     for allow in operation['parameters']['allow']:
       if len(allow) != 2:

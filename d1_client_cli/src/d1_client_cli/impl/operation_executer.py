@@ -31,7 +31,6 @@
 import StringIO
 
 # D1.
-import d1_common
 import d1_client.data_package
 
 # App.
@@ -117,26 +116,25 @@ class OperationExecuter(object):
 
   def _execute_update_access_policy(self, operation):
     pid = operation[u'parameters']['identifier']
+    policy = self._create_access_policy(operation)
     client = cli_client.CLICNClient(
       **self._cn_client_connect_params_from_operation(
         operation
       )
     )
     sys_meta = client.getSystemMetadata(pid)
-    client.setAccessPolicy(pid, access_policy, sys_meta.serialVersion)
+    client.setAccessPolicy(pid, policy, sys_meta.serialVersion)
 
-  def _execute_valid_update_replication_policy(self, operation):
+  def _execute_update_replication_policy(self, operation):
     pid = operation[u'parameters']['identifier']
-    sys_meta = self._create_system_metadata(operation)
-    client = cli_client.CLIMNClient(
-      **self._mn_client_connect_params_from_operation(
+    policy = self._create_replication_policy(operation)
+    client = cli_client.CLICNClient(
+      **self._cn_client_connect_params_from_operation(
         operation
       )
     )
-    client.setReplicationPolicy(
-      pid, policy=replication_policy,
-      serialVersion=metadata.serialVersion
-    )
+    sys_meta = client.getSystemMetadata(pid)
+    client.setReplicationPolicy(pid, policy, serialVersion=sys_meta.serialVersion)
 
   def _mn_client_connect_params_from_operation(self, operation):
     return {
@@ -171,3 +169,11 @@ class OperationExecuter(object):
   def _create_system_metadata_for_package(self, resource_map, operation):
     c = system_metadata.SystemMetadataCreator()
     return c.create_system_metadata_for_package(resource_map, operation)
+
+  def _create_access_policy(self, operation):
+    c = system_metadata.SystemMetadataCreator()
+    return c.create_access_policy(operation)
+
+  def _create_replication_policy(self, operation):
+    c = system_metadata.SystemMetadataCreator()
+    return c.create_replication_policy(operation)
