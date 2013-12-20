@@ -43,6 +43,7 @@ import pyxb
 from d1_common import xmlrunner
 import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.checksum
 
 # App
 import util
@@ -79,24 +80,19 @@ class TestChecksum(unittest.TestCase):
       self.assertEqual(obj.algorithm, doc[1])
       self.assertEqual(obj.value(), doc[2])
 
-  def test_serialization_gmn(self):
+  def test_100(self):
     '''Deserialize: XML -> Checksum (GMN)'''
     self.deserialize_checksum_and_check(EG_CHECKSUM_GMN)
 
-  def test_serialization_knb(self):
-    '''Deserialize: XML -> Checksum (KNB)'''
-    # TODO.
-    #self.doctest(EG_CHECKSUM_KNB)
-
-  def test_serialization_bad_1(self):
+  def test_110(self):
     '''Deserialize: XML -> Checksum (bad 1)'''
     self.deserialize_checksum_and_check(EG_BAD_CHECKSUM_1, shouldfail=True)
 
-  def test_serialization_bad_2(self):
+  def test_120(self):
     '''Deserialize: XML -> Checksum (bad 2)'''
     self.deserialize_checksum_and_check(EG_BAD_CHECKSUM_2, shouldfail=True)
 
-  def test_serialization_roundtrip(self):
+  def test_130(self):
     '''Serialization: Checksum -> XML -> Checksum.
     '''
     checksum_obj_in = dataoneTypes.checksum('1' * 32)
@@ -106,16 +102,95 @@ class TestChecksum(unittest.TestCase):
     self.assertEqual(checksum_obj_in.value(), checksum_obj_out.value())
     self.assertEqual(checksum_obj_in.algorithm, checksum_obj_out.algorithm)
 
-    #===============================================================================
+  def test_200(self):
+    '''checksums_are_equal(): Same checksum, same algorithm'''
+    c1 = dataoneTypes.Checksum('BAADF00D')
+    c1.algorithm = 'SHA-1'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'SHA-1'
+    self.assertTrue(d1_common.checksum.checksums_are_equal(c1, c2))
+
+  def test_210(self):
+    '''checksums_are_equal(): Same checksum, different algorithm'''
+    c1 = dataoneTypes.Checksum('BAADF00D')
+    c1.algorithm = 'SHA-1'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'MD5'
+    self.assertFalse(d1_common.checksum.checksums_are_equal(c1, c2))
+
+  def test_220(self):
+    '''checksums_are_equal(): Different checksum, same algorithm'''
+    c1 = dataoneTypes.Checksum('BAADF00DX')
+    c1.algorithm = 'MD5'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'MD5'
+    self.assertFalse(d1_common.checksum.checksums_are_equal(c1, c2))
+
+  def test_230(self):
+    '''checksums_are_equal(): Case insensitive checksum comparison'''
+    c1 = dataoneTypes.Checksum('baadf00d')
+    c1.algorithm = 'MD5'
+    c2 = dataoneTypes.Checksum('BAADF00D')
+    c2.algorithm = 'MD5'
+    self.assertTrue(d1_common.checksum.checksums_are_equal(c1, c2))
+
+  def test_240(self):
+    '''get_checksum_calculator_by_dataone_designator() returns a checksum calculator'''
+    calculator = d1_common.checksum.get_checksum_calculator_by_dataone_designator('SHA-1')
+    calculator.update('test')
+    self.assertTrue(calculator.hexdigest())
+
+  def test_250(self):
+    '''get_checksum_calculator_by_dataone_designator() raises on invalid algorithm'''
+    self.assertRaises(
+      Exception, d1_common.checksum.get_checksum_calculator_by_dataone_designator,
+      'SHA-224-bogus'
+    )
+
+#===============================================================================
 
 
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
   else:
-    unittest.main(argv=argv)
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestChecksum
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()

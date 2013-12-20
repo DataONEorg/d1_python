@@ -29,7 +29,7 @@ Module d1_common.xml_compare
 
 Compare two XML documents for functional equality.
 '''
-#There's changes in etree between 2.6 and 2.7 
+#There's changes in etree between 2.6 and 2.7
 import sys
 import logging
 import StringIO
@@ -44,10 +44,10 @@ class CompareError(Exception):
 
 
 class XmlCompare(object):
- 
+
   def __init__(self, xml_first, xml_second, encoding='UTF-8'):
     '''Constructor for Xml_compare.
-    
+
     :param xml_first: The XML document to use as basis for comparison.
     :type xml_first: string
     :param xml_second: The XML document to check for functional equality
@@ -71,13 +71,13 @@ class XmlCompare(object):
   def _compare_strings(self, s1, s2):
     '''Compare two strings, treating None as empty string and stripping
     leading and trailing whitespace.
-    
+
     :param s1: First string.
     :type s1: string
     :param s2: Second string.
     :type s2: string
     '''
-    return (s1.strip() if s1 else '') == (s2.strip() if s2 else '') 
+    return (s1.strip() if s1 else '') == (s2.strip() if s2 else '')
 
 
   def _get_path(self, tree, el):
@@ -102,18 +102,18 @@ class XmlCompare(object):
     if self.isGtPython26:
       return '.' + '/'.join(reversed(path[:-1]))
     return '/'.join(reversed(path[:-1]))
-    
+
 
   def _find_instance(self, tree, path, find_i):
     '''Find an element based by path and sibling index.
-    
+
     :param tree: The tree that the element is in.
     :type tree: ElementTree
     :param path: The path to the element.
     :type path: string
     :param find_i: The sibling index of the element.
     :type find_i: integer
-    
+
     :returns: The element or raises CompareError.
     :returns type: Element | Exception
     '''
@@ -121,7 +121,7 @@ class XmlCompare(object):
       if find_i == i:
         return el
     raise CompareError('path({0}): Too few elements with path'.format(path))
-    
+
 
   def _find_instance_idx(self, tree, find_el):
     '''Find sibling index of element.
@@ -145,24 +145,24 @@ class XmlCompare(object):
   def _find_corresponding_element(self, el_first):
     '''Given an element in tree_first, find the corresponding element in
     tree_second or raise.
-    
+
     :param el_first: Element in tree_first to find corresponding element for in
       tree_second.
     :type el_first: Element
     :returns: Element from tree_second or raises CompareError.
     :returns type: Element | Exception
-    '''    
+    '''
     # Find the instance index of this element.
     i_first = self._find_instance_idx(self.tree_first, el_first)
     # Find the corresponding element in the second doc.
     path = self._get_path(self.tree_first, el_first)
-    return self._find_instance(self.tree_second, path, i_first)    
+    return self._find_instance(self.tree_second, path, i_first)
 
 
   # Check if an element exists that has the given level, name and attribute.
   def _validate_element_attr(self, tree, el, attr_name_expected, attr_val_expected):
     '''Check that an element attribute exists and contains the expected value.
-    
+
     :param tree: The tree that the element is in.
     :type tree: ElementTree
     :param el: The element that contains the attribute to check.
@@ -189,7 +189,7 @@ class XmlCompare(object):
   def compare_attr(self):
     '''Compare the attributes of two XML files. Raise CompareError if comparison
     fails.
-    
+
     :returns: None or raises CompareError.
     :returns type: None | Exception
     '''
@@ -213,10 +213,10 @@ class XmlCompare(object):
     '''
     # Loop through all elements in the first doc.
     if self.isGtPython26:
-      iter = self.tree_first.iter()
+      itr = self.tree_first.iter()
     else:
-      iter = self.tree_first.getiterator()
-    for el_first in iter:
+      itr = self.tree_first.getiterator()
+    for el_first in itr:
       # Find the corresponding element in tree_second.
       el_second = self._find_corresponding_element(el_first)
       # Compare the text.
@@ -230,27 +230,27 @@ class XmlCompare(object):
 #
 def compare(xml_first, xml_second):
   '''Compare two XML files. Raise CompareError if comparison fails.
-  
+
   :param xml_first: Open file or filename of XML document that is known to be correct.
   :type xml_first: Open file object | string
   :param xml_second: Open file or filename of XML document to be checked against xml_first.
   :type xml_second: Open file object | string
   :returns: None or raises CompareError.
   :returns type: None | Exception
-  
+
   Using xml_first to determine the requirements for xml_second, this checks the
   following in xml_second:
-  
+
   - All elements are present.
   - All elements are in the same order.
   - All attributes are present.
   - All attributes contain the correct values.
   - All element text values are present.
   - All element text values are the same.
-  
+
   This does NOT check if there is any information present in xml_second that
   does not exist in xml_first.
-  
+
   TODO: Include test for tails. Skipped for now because tails are not used
   in any D1 types.
   '''
@@ -290,15 +290,15 @@ if __name__ == '__main__':
   <size>194945732</size>
 </ns1:systemMetadata>
   '''
-  
+
   class TestXmlCompare(unittest.TestCase):
-    
+
     def testSanity(self):
       d1 = StringIO.StringIO(EXAMPLE_1)
       d2 = StringIO.StringIO(EXAMPLE_1)
       cmp = XmlCompare(d1, d2)
       #cmp.compare_attr()
       cmp.compare_text()
-  
+
   logging.basicConfig(level=logging.DEBUG)
   unittest.main()

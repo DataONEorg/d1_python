@@ -32,20 +32,8 @@ import email.utils
 import hashlib
 import xml.dom.minidom
 
-# D1.
-
-# Checksums.
-
-dataone_to_python_checksum_algorithm_map = {'MD5': hashlib.md5, 'SHA-1': hashlib.sha1, }
-
-
-def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
-  return dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]()
-
-
-def checksums_are_equal(c1, c2):
-  return c1.value().lower() == c2.value().lower() \
-    and c1.algorithm == c2.algorithm
+# App.
+import const
 
 # XML.
 
