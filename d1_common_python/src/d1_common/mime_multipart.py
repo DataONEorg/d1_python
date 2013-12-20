@@ -75,10 +75,10 @@ class multipart(object):
     :returns: length
     :returns type: integer
     '''
-    m = multipart(self.fields, [(file[0], file[1], '') for file in self.files])
+    m = multipart(self.fields, [(f[0], f[1], '') for f in self.files])
     content_length = len(m.read())
-    for file in self.files:
-      content_length += self._get_len(file)
+    for f in self.files:
+      content_length += self._get_len(f)
     self.reset()
     return content_length
 
@@ -94,10 +94,10 @@ class multipart(object):
     self.state = 'form_fields'
     self.io = StringIO.StringIO()
 
-    for file in self.files:
+    for f in self.files:
       try:
-        file[2].seek(0)
-      except AttributeError, TypeError:
+        f[2].seek(0)
+      except (AttributeError, TypeError):
         pass
 
   def read(self, n=None):
