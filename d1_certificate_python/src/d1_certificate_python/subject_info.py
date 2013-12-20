@@ -98,7 +98,7 @@ def _find_primary_identity(primary_subject, equiv_list_sets):
       result = list(equiv_set)
       result.sort()
       return result
-  return ()
+  return []
 
 
 def _normalize_subject(subject):

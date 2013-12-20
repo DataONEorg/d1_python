@@ -102,8 +102,9 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.common == 1.1.2RC1',
+      'dataone.common == 1.1.4',
     ],
+    # Extensions.
     ext_modules=[
       x509v3_certificate_extractor,
       x509v3_certificate_generator,

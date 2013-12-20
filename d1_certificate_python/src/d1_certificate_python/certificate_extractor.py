@@ -19,59 +19,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`extract`
-==============
+:mod:`certificate_extractor`
+============================
 
 :Synopsis: Extract the subject and subject_info from a certificate.
 :Created: 2012-05-01
-:Author: DataONE (Dahl, Pippin)
+:Author: DataONE (Dahl)
 '''
-
-# This dance is required for Macintoshes.
-import sys
-try:
-  orig = sys.getdlopenflags()
-except AttributeError:
-  from OpenSSL import crypto
-else:
-  try:
-    import DLFCN
-  except ImportError:
-    try:
-      import dl
-    except ImportError:
-      try:
-        import ctypes
-      except ImportError:
-        flags = 2 | 256
-      else:
-        flags = 2 | ctypes.RTLD_GLOBAL
-        del ctypes
-    else:
-      flags = dl.RTLD_NOW | dl.RTLD_GLOBAL
-      del dl
-  else:
-    flags = DLFCN.RTLD_NOW | DLFCN.RTLD_GLOBAL
-    del DLFCN
-
-  sys.setdlopenflags(flags)
-  from OpenSSL import crypto
-  sys.setdlopenflags(orig)
-  del orig, flags
 
 import d1_x509v3_certificate_extractor
 
 
 def extract_from_file(path):
-  if os.path.exists(path):
-    f = open(path, 'rb')
-    read_buffer = f.read()
-    f.close()
-    return extract_from_buffer(read_buffer)
-  else:
-    return None
+  '''Returns the tuple: (subject, subject_info)'''
+  with open(path, 'rb') as f:
+    return extract_from_buffer(f.read())
 
 
 def extract_from_buffer(certificate_buffer):
-  ''' Returns the tuple: (subject, subject_info) '''
+  '''Returns the tuple: (subject, subject_info)'''
   return d1_x509v3_certificate_extractor.extract(certificate_buffer)
