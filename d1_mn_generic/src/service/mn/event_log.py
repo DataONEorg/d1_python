@@ -26,23 +26,11 @@
 :Author: DataONE (Dahl)
 '''
 
-# Stdlib.
-
-# Django.
-from django.http import HttpResponse
-from django.http import Http404
-from django.template import Context, loader
-from django.shortcuts import render_to_response
-from django.utils.html import escape
-
 # D1
 import d1_common.types.exceptions
 
 # App.
-import auth
 import models
-import settings
-import util
 
 
 def _log(pid, request, event, timestamp=None):

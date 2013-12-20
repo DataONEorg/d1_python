@@ -28,45 +28,17 @@
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
-import cgi
-import collections
-import csv
-import datetime
-import glob
-import hashlib
 import httplib
-import mimetypes
-import os
-import pprint
-import re
-import stat
-import sys
-import time
-import urllib
 import urlparse
-import uuid
-
-# Django.
-from django.http import HttpResponse
-from django.http import HttpResponseNotAllowed
-from django.http import HttpResponseBadRequest
-from django.http import Http404
-from django.template import Context, loader
-from django.shortcuts import render_to_response
-from django.db.models import Avg, Max, Min, Count
-from django.core.exceptions import ObjectDoesNotExist
 
 # DataONE APIs.
 import d1_common.const
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneErrors as dataoneErrors
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
 import mn.db_filter
 import mn.event_log
 import mn.lock_pid
-import mn.models
 import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta_store
@@ -79,7 +51,7 @@ def post_has_mime_parts(request, parts):
   '''Validate that a MMP POST contains all required sections.
   :param parts: [(part_type, part_name), ...]
   :return: None or raises exception.
-  
+
   Where information is stored in the request:
   part_type header: request.META['HTTP_<UPPER CASE NAME>']
   part_type file: request.FILES['<name>']

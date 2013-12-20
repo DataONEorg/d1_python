@@ -28,37 +28,12 @@
 
 # Stdlib.
 import base64
-import datetime
-import exceptions
-import glob
-import hashlib
-import htmlentitydefs
-import inspect
 import logging
 import os
 import re
-import stat
 import sys
-import time
 import traceback
-import urllib
-import uuid
-import inspect
-import json
 import zlib
-
-# Django.
-from django.core.exceptions import ImproperlyConfigured
-from django.core.management.base import BaseCommand
-from django.core.management.base import NoArgsCommand
-from django.core.management.base import CommandError
-from django.http import HttpResponse
-from django.http import HttpResponseForbidden
-from django.http import Http404
-from django.template import Context
-from django.template import loader
-from django.shortcuts import render_to_response
-from django.utils.html import escape
 
 # D1.
 import d1_common.date_time
@@ -69,11 +44,8 @@ import d1_common.date_time
 import d1_common.url
 
 # App.
-import event_log
-import auth
 import models
 import settings
-import util
 
 
 def update_db_status(status):
@@ -232,7 +204,7 @@ def coerce_put_post(request):
   In case we send data over PUT, Django won't
   actually look at the data and load it. We need
   to twist its arm here.
-  
+
   The try/except abominiation here is due to a bug
   in mod_python. This should fix it.
   '''
@@ -240,11 +212,11 @@ def coerce_put_post(request):
     # Bug fix: if _load_post_and_files has already been called, for
     # example by middleware accessing request.POST, the below code to
     # pretend the request is a POST instead of a PUT will be too late
-    # to make a difference. Also calling _load_post_and_files will result 
+    # to make a difference. Also calling _load_post_and_files will result
     # in the following exception:
     #   AttributeError: You cannot set the upload handlers after the upload has been processed.
-    # The fix is to check for the presence of the _post field which is set 
-    # the first time _load_post_and_files is called (both by wsgi.py and 
+    # The fix is to check for the presence of the _post field which is set
+    # the first time _load_post_and_files is called (both by wsgi.py and
     # modpython.py). If it's set, the request has to be 'reset' to redo
     # the query value parsing in POST mode.
     if hasattr(request, '_post'):

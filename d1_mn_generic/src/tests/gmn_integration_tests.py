@@ -265,6 +265,7 @@ class TestSequenceFunctions(unittest2.TestCase):
 
   def test_1010_C(self):
     '''Populate MN with set of test objects.
+    Uses the internal diagnostics create() and does not test create permissions.
     '''
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for sysmeta_path in sorted(
@@ -1131,7 +1132,12 @@ class TestSequenceFunctions(unittest2.TestCase):
     # Find the PID for a random object that exists on the server.
     pid = self.find_valid_pid(client)
     # Delete the object on GMN.
-    pid_deleted = client.delete(pid)
+    pid_deleted = client.delete(
+      pid,
+      vendorSpecific=self.include_subjects(
+        gmn_test_client.GMN_TEST_SUBJECT_TRUSTED
+      )
+    )
     self.assertEqual(pid, pid_deleted.value())
     # Verify that the object no longer exists.
     self.assertRaises(d1_common.types.exceptions.DataONEException, client.describe, pid)

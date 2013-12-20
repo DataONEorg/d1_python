@@ -25,15 +25,7 @@
 :Synopsis: Database models.
 :Author: DataONE (Dahl)
 '''
-# Stdlib.
-import logging
-
-# App.
-import settings
-import util
-
 from django.db import models
-from django.db.models import Q
 
 # D1
 import d1_common.types.exceptions

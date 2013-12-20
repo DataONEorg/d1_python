@@ -33,9 +33,6 @@ import logging
 import os
 import urlparse
 import uuid
-#import cgi
-#import collections
-#import csv
 
 import mn.auth
 import mn.db_filter
@@ -51,15 +48,6 @@ import mn.util
 import mn.view_asserts
 import mn.view_shared
 import service.settings
-#import glob
-#import hashlib
-#import mimetypes
-#import pprint
-#import re
-#import stat
-#import sys
-#import time
-#import urllib
 
 # Django.
 from django.db.models import Sum
@@ -106,7 +94,7 @@ def dispatch_object(request):
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Public API: Tier 1: Core API  
+# Public API: Tier 1: Core API
 # ------------------------------------------------------------------------------
 
 
@@ -157,7 +145,7 @@ def get_node(request):
   return HttpResponse(n.get().toxml(), d1_common.const.MIMETYPE_XML)
 
 # ------------------------------------------------------------------------------
-# Public API: Tier 1: Read API  
+# Public API: Tier 1: Read API
 # ------------------------------------------------------------------------------
 
 # ObjectFormatInfo is expensive to create because it reads a csv file from
@@ -169,8 +157,8 @@ def _mimetype_from_format_id(format_id):
     return object_format_info.mimetype_from_format_id(format_id)
   except KeyError:
     return d1_common.const.MIMETYPE_OCTETSTREAM
-  
-  
+
+
 def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
   response['Content-Type'] = _mimetype_from_format_id(sciobj.format.format_id)
@@ -213,7 +201,7 @@ def _get_object_byte_stream(sciobj):
 
 
 def _get_object_byte_stream_remote(url, url_split):
-  # Handle 302 Found.  
+  # Handle 302 Found.
   try:
     conn = httplib.HTTPConnection(url_split.netloc, timeout=10)
     conn.connect()
@@ -312,7 +300,7 @@ def get_checksum_pid(request, pid):
   mn.event_log.read(pid, request)
   # Return the checksum.
   checksum_serializer = dataoneTypes.checksum(h.hexdigest())
-  #checksum_serializer.checksum = 
+  #checksum_serializer.checksum =
   checksum_serializer.algorithm = algorithm
   checksum_xml = checksum_serializer.toxml()
   return HttpResponse(checksum_xml, d1_common.const.MIMETYPE_XML)
@@ -324,7 +312,7 @@ def get_object(request):
   '''MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   '''
-  # The ObjectList is returned ordered by mtime ascending. The order has 
+  # The ObjectList is returned ordered by mtime ascending. The order has
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
   query = mn.models.ScienceObject.objects.order_by('mtime').select_related()
@@ -375,7 +363,7 @@ def post_error(request):
 # Access control is performed within function.
 def get_replica_pid(request, pid):
   '''MNReplication.getReplica(session, pid) → OctetStream
-  '''  
+  '''
   mn.view_asserts.object_exists(pid)
   _assert_node_is_authorized(request, pid)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
@@ -397,9 +385,9 @@ def _assert_node_is_authorized(request, pid):
       'authorized the target MN, "{0}" to create a replica of "{1}". Error: {2}'
       .format(request.primary_subject, pid, str(e)))
 
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 # Public API: Tier 2: Authorization API
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 
 # Unrestricted.
 @mn.restrict_to_verb.get
@@ -440,7 +428,7 @@ def post_dirty_system_metadata(request):
   return mn.view_shared.http_response_with_boolean_true_type()
 
 
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 # Public API: Tier 3: Storage API
 # ------------------------------------------------------------------------------
 
@@ -457,9 +445,9 @@ def post_dirty_system_metadata(request):
 # - Check that the NEW pid does not already exist
 # - Check that the caller has the right to create NEW objects on the MN
 # - Check that the submitted SysMeta does NOT include obsoletes or obsoletedBy
-# 
+#
 # update()
-# - If settings.REQUIRE_WHITELIST_FOR_UPDATE is True: 
+# - If settings.REQUIRE_WHITELIST_FOR_UPDATE is True:
 #   - Check if subject is in whitelist for creating NEW objects on MN.
 # - Obtain a write lock on the NEW pid
 # - Check that the OLD pid exists
@@ -620,9 +608,9 @@ def _remove_all_permissions_except_rights_holder(pid):
   mn.auth.set_access_policy(pid)
 
 
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 # Public API: Tier 4: Replication API.
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 
 @mn.restrict_to_verb.post
 @mn.auth.assert_trusted_permission
@@ -679,7 +667,7 @@ def _get_total_size_of_replicated_objects():
 
   if total is None:
     total = 0
-  
+
   django.core.cache.cache.set('replicated_objects_total', total)
   return total
 
@@ -690,5 +678,3 @@ def _create_replication_work_item(request, sysmeta):
   replication_item.set_source_node(request.POST['sourceNode'])
   replication_item.pid = sysmeta.identifier.value()
   replication_item.save()
-
-

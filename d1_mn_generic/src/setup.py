@@ -96,8 +96,8 @@ def main():
       # GMN uses dataone.common directly but, to keep the versions consistent,
       # let it be included by dataone.libclient.
       #'dataone.common',
-      'dataone.libclient == 1.2.3',
-      'dataone.certificate_extensions == 1.1.1',
+      'dataone.libclient == 1.2.4',
+      'dataone.certificate_extensions == 1.1.2',
       'django == 1.4.1',
       'pyxb == 1.2.1',
       'iso8601 == 0.1.4',

@@ -31,7 +31,6 @@ import cgi
 import logging
 import pprint
 import re
-import urllib
 
 # Django.
 from django.http import HttpResponse

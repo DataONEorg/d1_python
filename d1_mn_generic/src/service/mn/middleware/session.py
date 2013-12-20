@@ -36,7 +36,10 @@ session). This limits the user's access to data that is publicly available.
 A user can connect with a certificate that does not contain a list of
 equivalent identities and group memberships (no SubjectInfo). This limits the
 user's access to data that is publicly available and that is available directly
-to that user (as designated in the Subject DN). 
+to that user (as designated in the Subject DN).
+
+If a certificate was provided, it has been validated by Apache before being
+passed to GMN. So it is known to signed by a trusted CA and to be unexpired.
 
 The list of subjects to use for access control is created with the following
 algorithm:
@@ -45,9 +48,9 @@ algorithm:
 - Add the symbolic subject, "public"
 - If the connection was not made with a certificate:
   - Stop.
+- Add the symbolic subject, "authenticatedUser"
 - Get the DN from the Subject and serialize it to a standardized string. This
   string is called Subject below.
-- Add the symbolic subject, "authenticatedUser"
 - If the certificate does not have a SubjectInfo extension:
   - Add Subject
   - Stop.
@@ -68,32 +71,13 @@ algorithm:
 '''
 
 # Stdlib.
-import csv
 import logging
-import os
-import StringIO
-import sys
-import types
-import urllib
-import inspect
-import json
-
-import d1_common.ext.mimeparser
-
-# Django.
-from django.http import HttpResponse
 
 # D1.
+import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
-import d1_common.const
 import d1_x509v3_certificate_extractor
-
-# App.
-import settings
 
 
 class process_session(object):

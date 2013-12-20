@@ -29,38 +29,21 @@
 '''
 # Stdlib.
 import cgi
-import collections
 import csv
-import datetime
-import glob
-import hashlib
-import httplib
-import mimetypes
 import os
 import pprint
-import re
-import stat
-import sys
 import time
-import urllib
 import urlparse
-import uuid
 
 # Django.
 from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
-from django.http import Http404
-from django.template import Context, loader
 from django.shortcuts import render_to_response
-from django.db.models import Avg, Max, Min, Count
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
 # D1.
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
@@ -217,7 +200,6 @@ def get_setting(request, setting):
 
 #@mn.restrict_to_verb.post
 def echo_raw_post_data(request):
-  pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse(request.raw_post_data)
 
 
@@ -303,7 +285,7 @@ def inject_fictional_event_log(request):
     user_agent = row[3]
     subject = row[4]
     timestamp = d1_common.date_time.from_iso8601((row[5]))
-    member_node = row[6]
+    #member_node = row[6]
 
     # Create fake request object.
     request.META = {

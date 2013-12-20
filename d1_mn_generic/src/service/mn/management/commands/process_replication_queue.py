@@ -22,7 +22,7 @@
 :mod:`process_replication_queue`
 ================================
 
-:Synopsis: 
+:Synopsis:
   Iterate over queue of objects registered for replication and attempt to
   replicate them.
 :Created: 2011-01-01
@@ -31,37 +31,15 @@
 
 # Stdlib.
 import StringIO
-import datetime
 import fcntl
-import glob
-import hashlib
-import httplib
 import logging
-import optparse
 import os
-import re
 import shutil
-import stat
 import sys
 import tempfile
-import time
-import urllib
-import urlparse
-import uuid
 
 # Django.
-from django.core.exceptions import ImproperlyConfigured
-from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand
-from django.core.management.base import CommandError
-#from django.http import HttpResponse
-#from django.http import Http404
-#from django.template import Context
-#from django.template import loader
-#from django.shortcuts import render_to_response
-#from django.utils.html import escape
-import django.utils.log
-import django.db.models
 
 # D1.
 import d1_client.cnclient
@@ -70,7 +48,6 @@ import d1_client.mnclient
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.url
 import d1_common.util
 
@@ -81,7 +58,6 @@ sys.path.append(_here('../types/generated'))
 
 # App.
 import gmn_types
-import mn.models
 import settings
 
 # TODO: Currently copies the objects to temporary files. Everything is in place
@@ -136,7 +112,7 @@ class Command(NoArgsCommand):
       self.logger.info('Aborted: Another instance is still running')
       exit(0)
 
-  #===============================================================================
+#===============================================================================
 
 
 class ProcessReplicationQueue(object):

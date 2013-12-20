@@ -23,36 +23,27 @@
 ========================
 
 :Synopsis:
-  Catch, log and serialize DataONE exceptions.
-  
+  Catch, log and serialize exceptions that are raised when processing a request.
+
   Implements the system for returning information about exceptional conditions
   (errors) as described in Raised by MN and CN APIs
   http://mule1.dataone.org/ArchitectureDocs/html
 
-  Exceptions:
-  
-  AuthenticationTimeout
-  IdentifierNotUnique
-  InsufficientResources
-  InvalidCredentials
-  InvalidRequest
-  InvalidSystemMetadata
-  InvalidToken
-  NotAuthorized
-  NotFound
-  NotImplemented
-  ServiceFailure
-  UnsupportedMetadataType
-  UnsupportedType
-  
-  These are not related to Python's exception system.
-:Author: DataONE (Dahl)
+  An MN is required to always return a DataONE exception on errors. When running
+  in production mode (settings.DEBUG = False and settings.GMN_DEBUG = False),
+  GMN complies with this by wrapping any non-DataONE exception in a DataONE
+  exception.
+
+  When running in Django debug mode (settings.DEBUG = True), non-DataONE
+  exceptions are returned as Django HTML exception pages.
+
+  Responses to HEAD requests can not contain a body, so the exception is
+  serialized to a set of HTTP headers for HEAD requests.
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
-import inspect
-import os
-import sys
 import traceback
 
 # 3rd party.
@@ -63,24 +54,11 @@ from django.http import HttpResponse
 
 # D1
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneErrors as dataoneErrors
 
 # App.
 import mn.util as util
 import detail_codes
 import settings
-'''Handle exceptions that are raised when processing a request.
-
-An MN is required to always return a DataONE exception on errors. When running
-in production mode (settings.DEBUG = False and settings.GMN_DEBUG = False), GMN
-complies with this by wrapping any non-DataONE exception in a DataONE exception.
-
-When running in Django debug mode (settings.DEBUG = True), non-DataONE
-exceptions are returned as Django HTML exception pages.
-
-Responses to HEAD requests can not contain a body, so the exception is
-serialized to a set of HTTP headers for HEAD requests.
-'''
 
 
 class exception_handler():

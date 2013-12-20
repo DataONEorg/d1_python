@@ -40,7 +40,6 @@ from django.db.models import Avg, Count, Sum
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
@@ -63,7 +62,7 @@ import service.types.generated.gmn_types
 # Internal API
 # ==============================================================================
 
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 # Internal API: General.
 # ------------------------------------------------------------------------------
 
@@ -82,7 +81,7 @@ def get_setting(request, setting_name):
       ), d1_common.const.MIMETYPE_XML
     )
 
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 # Internal API: Replication.
 # ------------------------------------------------------------------------------
 
@@ -132,7 +131,7 @@ def replicate_remove_completed_tasks_from_queue(request):
   q.delete()
   return mn.view_shared.http_response_with_boolean_true_type()
 
-# ------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------
 # Internal API: Refresh System Metadata (MNStorage.systemMetadataChanged()).
 # ------------------------------------------------------------------------------
 
@@ -170,19 +169,19 @@ def update_sysmeta(request, pid):
 
   # If an access policy was provided in the System Metadata, set it.
   if sysmeta.accessPolicy:
-    auth.set_access_policy(pid, sysmeta.accessPolicy)
+    mn.auth.set_access_policy(pid, sysmeta.accessPolicy)
   else:
-    auth.set_access_policy(pid)
+    mn.auth.set_access_policy(pid)
 
   sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
 
   # Log this System Metadata update.
-  event_log.update(pid, request)
+  mn.event_log.update(pid, request)
 
   return mn.view_shared.http_response_with_boolean_true_type()
 
-# ------------------------------------------------------------------------------  
-# Internal: Public. 
+# ------------------------------------------------------------------------------
+# Internal: Public.
 # ------------------------------------------------------------------------------
 
 

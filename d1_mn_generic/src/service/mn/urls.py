@@ -26,8 +26,8 @@
 :Author: DataONE (Dahl)
 '''
 
-from django.conf.urls.defaults import *
-
+#from django.conf.urls.defaults import *
+import django.conf.urls.defaults
 # Django does not have a location that is designated for setting up global
 # objects. For testing, we need a global dictionary and the top level urls.py
 # file is suggested as a good location for this.
@@ -42,7 +42,7 @@ import settings
 #sys.path.append(_here('./views'))
 #print sys.path
 
-urlpatterns = patterns(
+urlpatterns = django.conf.urls.defaults.patterns(
   'service.mn.views.v1',
   # Django's URL dispatcher does not take HTTP verb into account, so in the
   # cases where the DataONE REST API specifies different methods as different
@@ -61,7 +61,7 @@ urlpatterns = patterns(
   # Tier 1: Read API (MNRead)
   # MNRead.get() - GET /object/{pid}
   (r'^v1/object/(.+)$', 'dispatch_object_pid'),
-  # MNRead.getSystemMetadata() - GET /meta/{pid} 
+  # MNRead.getSystemMetadata() - GET /meta/{pid}
   (r'^v1/meta/(.+)$', 'get_meta_pid'),
   # MNRead.describe() - HEAD /object/{pid}
   # (handled by object_pid dispatcher)
@@ -93,11 +93,11 @@ urlpatterns = patterns(
   (r'^v1/archive/(.+)/?$', 'put_archive_pid'),
 
   # Tier 4: Replication API (MNReplication)
-  # MNReplication.replicate() - POST /replicate  
+  # MNReplication.replicate() - POST /replicate
   (r'^v1/replicate/?$', 'post_replicate'),
 )
 
-urlpatterns += patterns(
+urlpatterns += django.conf.urls.defaults.patterns(
   'service.mn.views.internal',
   (r'^internal/get_setting/(.+)$', 'get_setting'),
   (r'^internal/replicate/task_get$', 'replicate_task_get'),
@@ -112,7 +112,7 @@ urlpatterns += patterns(
 )
 
 if settings.GMN_DEBUG or settings.MONITOR:
-  urlpatterns += patterns(
+  urlpatterns += django.conf.urls.defaults.patterns(
     'service.mn.views.diagnostics',
     # Replication.
     (r'^test/get_replication_queue/?$', 'get_replication_queue'),
@@ -125,14 +125,14 @@ if settings.GMN_DEBUG or settings.MONITOR:
 
 # Block access to the GMN diagnostic functions if not in debug mode.
 if settings.GMN_DEBUG:
-  urlpatterns += patterns(
+  urlpatterns += django.conf.urls.defaults.patterns(
     'service.mn.views.diagnostics',
     # Diagnostics portal.
     (r'^test/?$', 'diagnostics'),
     # Replication.
     (r'^test/get_replication_queue/?$', 'get_replication_queue'),
     (r'^test/clear_replication_queue/?$', 'clear_replication_queue'),
-    # Access Policy
+    # Access Policy.
     (r'^test/set_access_policy/(.+?)/?$', 'set_access_policy'),
     (r'^test/delete_all_access_policies/?$', 'delete_all_access_policies'),
     # Misc.

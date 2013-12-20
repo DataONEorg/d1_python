@@ -22,7 +22,7 @@
 :mod:`process_system_metadata_dirty_queue`
 ==========================================
 
-:Synopsis: 
+:Synopsis:
   Iterate over queue of objects registered to have their System Metadata
   refreshed and refresh them by pulling the latest version from a CN.
 :Created: 2011-11-8
@@ -30,28 +30,20 @@
 """
 
 # Stdlib.
+import fcntl
 import logging
 import os
 import sys
+import tempfile
 import urlparse
 
 # Django.
-from django.core.exceptions import ImproperlyConfigured
-from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand
-from django.core.management.base import CommandError
-#from django.http import HttpResponse
-#from django.http import Http404
-#from django.template import Context
-#from django.template import loader
-#from django.shortcuts import render_to_response
-#from django.utils.html import escape
 import django.utils.log
 import django.db.models
 
 # D1.
 import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.date_time

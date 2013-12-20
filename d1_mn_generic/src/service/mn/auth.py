@@ -25,13 +25,7 @@
 :Author: DataONE (Dahl)
 '''
 
-# Stdlib.
-import os
-import urllib
-
 # Django.
-from django.http import Http404
-from django.http import HttpResponse
 import django.core.cache
 import django.db
 import django.db.transaction
@@ -47,7 +41,6 @@ import models
 import node_registry
 import settings
 import sysmeta_store
-import util
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -149,7 +142,7 @@ def set_access_policy(pid, access_policy=None):
   # retrieve it.
   try:
     sci_obj = models.ScienceObject.objects.get(pid=pid)
-  except DoesNotExist:
+  except models.ScienceObject.DoesNotExist:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Attempted to set access for non-existing object', pid
     )

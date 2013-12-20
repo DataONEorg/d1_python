@@ -29,24 +29,15 @@
 '''
 
 # Stdlib.
-import csv
 import datetime
-import os
-import StringIO
-import sys
-import types
-import urllib
 import wsgiref.handlers
 import time
-import json
 
 import d1_common.ext.mimeparser
 
 # Django.
 import django.db
-from django.db import models
 from django.http import HttpResponse
-from django.db.models import Avg, Max, Min, Count
 
 # DataONE APIs.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -54,7 +45,6 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 # App.
 import gmn_types
 import mn.models as models
-import mn.util as util
 import settings
 
 
@@ -137,9 +127,6 @@ def db_to_replication_task(view_result):
 
 
 def serialize_object(request, view_result):
-  # The "pretty" parameter generates pretty response.
-  pretty = 'pretty' in request.REQUEST
-
   # Serialize.
   response = HttpResponse()
 

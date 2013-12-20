@@ -54,19 +54,12 @@
 # App.
 import settings
 
-# 3rd party.
-try:
-  import pyxb
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install PyXB\n')
-  raise
-
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # For debugging the population of PyXB objects, it can be convenient to turn off
 # PyXB's validation.
+#import pyxb
 #pyxb.RequireValidWhenGenerating(False)
 
 

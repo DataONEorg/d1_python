@@ -30,9 +30,6 @@ import logging
 import optparse
 import sys
 
-# 3rd party.
-import pyxb.utils.domutils
-
 # D1.
 import d1_client.cnclient
 

@@ -19,12 +19,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.http import HttpResponse
-import hotshot, hotshot.stats
+# Stdlib.
 import sys
 import StringIO
 import os
 import settings
+
+# Django.
+from django.http import HttpResponse
+import django.core.exceptions
+
+# 3rd party.
+import hotshot
+import hotshot.stats
 
 
 class profiling_handler():

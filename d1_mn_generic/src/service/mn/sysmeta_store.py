@@ -24,7 +24,7 @@
 
 :Synopsis:
   Utilities for manipulating System Metadata documents.
-  
+
 :Created: 2011-04-20
 :Author: DataONE (Dahl)
 :Dependencies:
@@ -34,12 +34,6 @@
 # Stdlib.
 import datetime
 import os
-import sys
-import StringIO
-import urllib
-
-import xml.sax._exceptions
-import pyxb.exceptions_
 
 # D1.
 import d1_common.date_time
@@ -81,7 +75,7 @@ def delete_sysmeta_from_store(pid, serial_version):
 
 class sysmeta():
   '''Manipulate SysMeta files in the SysMeta store.
-  
+
   When a SysMeta file is updated, the old file is left untouched and a new
   file is created. The new file is written with a serial version that has been
   increased by one, as compared to the old serial version.

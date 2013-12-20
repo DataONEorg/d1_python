@@ -19,10 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-:mod:`set_whitelist_for_create_update_delete`
+:mod:`set_whitelist`
 =============================================
 
-:Synopsis: 
+:Synopsis:
   When running in production, GMN requires that subjects that wish to create,
   update or delete science objects are registered in a whitelist. This
   management command manages the whitelist.
@@ -32,35 +32,11 @@
 
 # Stdlib.
 import logging
-import os
-import sys
-import urlparse
 
 # Django.
-from django.core.exceptions import ImproperlyConfigured
-from django.core.management.base import BaseCommand
 from django.core.management.base import NoArgsCommand
-from django.core.management.base import CommandError
-#from django.http import HttpResponse
-#from django.http import Http404
-#from django.template import Context
-#from django.template import loader
-#from django.shortcuts import render_to_response
-#from django.utils.html import escape
-import django.utils.log
-import django.db.models
-
-# D1.
-import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
-import d1_client.d1client
 
 # App.
-import settings
 import mn.models
 
 

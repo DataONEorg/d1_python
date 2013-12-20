@@ -29,20 +29,7 @@
 '''
 
 # Django.
-import django.conf
 import django.core.exceptions
-
-# Stdlib.
-import logging
-import os
-import StringIO
-import sys
-
-# D1.
-import d1_client.cnclient
-
-# App.
-import settings
 
 
 class startup_handler():
