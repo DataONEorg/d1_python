@@ -74,10 +74,14 @@ class exception_handler():
       return self.handle_internal_exception()
 
   def handle_dataone_exception(self):
+    self.set_node_id()
     if self.request.method != 'HEAD':
       return self.serialize_dataone_exception_for_regular_request()
     else:
       return self.serialize_dataone_exception_for_head_request()
+
+  def set_node_id(self):
+    self.exception.nodeId = settings.NODE_IDENTIFIER
 
   def serialize_dataone_exception_for_regular_request(self):
     exception_serialized = self.exception.serialize()

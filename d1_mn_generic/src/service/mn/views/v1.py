@@ -56,6 +56,7 @@ from django.http import HttpResponse, HttpResponseNotAllowed
 # DataONE APIs.
 import d1_client.cnclient
 import d1_client.object_format_info
+import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -285,12 +286,12 @@ def get_checksum_pid(request, pid):
   algorithm = request.GET.get('checksumAlgorithm',
     d1_common.const.DEFAULT_CHECKSUM_ALGORITHM)
   try:
-    h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+    h = d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
   except KeyError:
     raise d1_common.types.exceptions.InvalidRequest(0,
       'Invalid checksum algorithm, "{0}". Supported algorithms are: {1}'\
       .format(algorithm, ', '
-        .join(d1_common.util.dataone_to_python_checksum_algorithm_map.keys())))
+        .join(d1_common.checksum.dataone_to_python_checksum_algorithm_map.keys())))
   # Calculate the checksum.
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   for bytes in _get_object_byte_stream(sciobj):

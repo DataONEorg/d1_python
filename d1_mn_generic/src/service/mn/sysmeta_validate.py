@@ -31,6 +31,7 @@
 import datetime
 
 # D1.
+import d1_common.checksum
 import d1_common.types.exceptions
 
 # App.
@@ -70,10 +71,10 @@ def _validate_sysmeta_checksum(request, sysmeta):
 
 def _get_checksum_calculator(sysmeta):
   try:
-    return d1_common.util.get_checksum_calculator_by_dataone_designator(
+    return d1_common.checksum.get_checksum_calculator_by_dataone_designator(
       sysmeta.checksum.algorithm
     )
-  except TypeError:
+  except LookupError:
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0, 'Checksum algorithm is unsupported: {0}'.format(sysmeta.checksum.algorithm)
     )
