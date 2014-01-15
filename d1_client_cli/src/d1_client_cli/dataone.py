@@ -128,6 +128,9 @@ def main():
       cli_util.print_error(e)
       #raise
     except d1_common.types.exceptions.DataONEException as e:
+      # Suppress trace information in DataONEExceptions if not in debug mode.
+      if not options.debug:
+        e.traceInformation = None
       cli_util.print_error('DataONE Node returned error:')
       cli_util.print_error(e)
     except:
@@ -353,16 +356,10 @@ option_list = [
     help='Name of the host to use for the Member Node'
   ),
   optparse.make_option(
-    '-i',
-    '--interactive',
-    action='store_true',
-    dest='interactive',
-    help='Allow interactive commands'
-  ),
-  optparse.make_option(
     '--no-interactive',
     action='store_false',
     dest='interactive',
+    default=True,
     help='Don\'t allow interactive commands'
   ),
   optparse.make_option(

@@ -32,8 +32,7 @@ import types
 import urlparse
 
 # D1.
-import d1_common
-import d1_common.util
+import d1_common.checksum
 
 # App.
 import cli_util
@@ -225,7 +224,7 @@ class OperationValidator(object):
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'algorithm')
     algorithm = operation['parameters']['algorithm']
     try:
-      d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+      d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
     except LookupError:
       raise cli_exceptions.InvalidArguments(
         'Invalid checksum algorithm: {0}'.format(algorithm)

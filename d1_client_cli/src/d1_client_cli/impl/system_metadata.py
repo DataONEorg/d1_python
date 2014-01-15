@@ -33,9 +33,9 @@ import os
 import StringIO
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.checksum
 import d1_common.const
-import d1_common.util
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # 3rd party.
 
@@ -158,7 +158,7 @@ class SystemMetadataCreator():
     return self._get_flo_checksum(StringIO.StringIO(string), algorithm, block_size)
 
   def _get_flo_checksum(self, flo, algorithm=u'SHA-1', block_size=1024 * 1024):
-    h = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+    h = d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
     while True:
       data = flo.read(block_size)
       if not data:

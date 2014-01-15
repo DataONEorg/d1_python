@@ -57,10 +57,10 @@ class CLI(cmd.Cmd):
   # Command processing.
   #-----------------------------------------------------------------------------
 
-  ## Override methods in Cmd object ##
+  # Override methods in Cmd object.
   def preloop(self):
     '''Initialization before prompting user for commands.
-       Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
+    Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
     '''
     # Set up command completion.
     cmd.Cmd.preloop(self)
@@ -68,15 +68,15 @@ class CLI(cmd.Cmd):
 
   def postloop(self):
     '''Take care of any unfinished business.
-       Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
+    Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
     '''
     cmd.Cmd.postloop(self) ## Clean up command completion
     cli_util.print_info(u'Exiting...')
 
   def precmd(self, line):
     ''' This method is called after the line has been input but before
-      it has been interpreted. If you want to modify the input line
-      before execution (for example, variable substitution) do it here.
+    it has been interpreted. If you want to modify the input line
+    before execution (for example, variable substitution) do it here.
     '''
     line = self.prefix + line
     self._history += [line.strip()]
@@ -84,7 +84,7 @@ class CLI(cmd.Cmd):
 
   def postcmd(self, stop, line):
     '''If you want to stop the console, return something that evaluates to true.
-       If you want to do some post command processing, do it here.
+    If you want to do some post command processing, do it here.
     '''
     return stop
 

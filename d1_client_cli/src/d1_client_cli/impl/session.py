@@ -72,8 +72,8 @@ import platform
 import types
 
 # D1.
+import d1_common.checksum
 import d1_common.const
-import d1_common.util
 
 # App.
 import access_control
@@ -301,7 +301,7 @@ class Session(object):
   def _assert_valid_variable_value(self, variable, value):
     if variable == CHECKSUM_NAME:
       try:
-        d1_common.util.get_checksum_calculator_by_dataone_designator(value)
+        d1_common.checksum.get_checksum_calculator_by_dataone_designator(value)
       except LookupError:
         raise cli_exceptions.InvalidArguments(
           u'Invalid checksum algorithm: {0}'.format(value)
