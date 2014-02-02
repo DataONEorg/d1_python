@@ -89,7 +89,9 @@ def main():
     # Dependencies that are available through PyPI.
     install_requires=[
       'iso8601 == 0.1.4',
-      'pyxb == 1.2.1',
+      # Installing PyXB automatically is broken as of pip 1.5.2.
+      # For now, this must be done as a manual step.
+      #'pyxb == 1.2.3',
     ],
   )
 
