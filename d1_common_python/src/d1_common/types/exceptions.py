@@ -49,7 +49,6 @@ Example of serialized DataONE Exception:
 <description>Attempted to perform operation on non-existing object</description>
 <traceInformation>view_handler.py(128)
 views.py(102)
-lock_pid.py(110)
 auth.py(392)
 auth.py(315)
 </traceInformation>

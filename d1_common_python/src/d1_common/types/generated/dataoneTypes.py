@@ -1,33 +1,42 @@
 # ./d1_common/types/generated/dataoneTypes.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:b5056e9f5bcbaa65eac428b50fd841172c48ddf9
-# Generated 2013-12-03 09:06:37.547132 by PyXB version 1.2.1
+# Generated 2014-01-31 08:03:19.562380 by PyXB version 1.2.3
 # Namespace http://ns.dataone.org/service/types/v1
 
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
-import StringIO
+import io
 import pyxb.utils.utility
 import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:e3473eda-5c34-11e3-a6cd-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:d1da144c-8a88-11e3-95ed-000c294230b4')
+
+# Version of PyXB used to generate the bindings
+_PyXBVersion = '1.2.3'
+# Generated bindings are not compatible across PyXB versions
+if pyxb.__version__ != _PyXBVersion:
+    raise pyxb.PyXBVersionError(_PyXBVersion)
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 
+# NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.NamespaceForURI(u'http://ns.dataone.org/service/types/v1', create_if_missing=True)
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
-ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
-ModuleRecord._setModule(sys.modules[__name__])
 
 def CreateFromDocument (xml_text, default_namespace=None, location_base=None):
     """Parse the given XML and use the document element to create a
     Python instance.
-    
-    @kw default_namespace The L{pyxb.Namespace} instance to use as the
+
+    @param xml_text An XML document.  This should be data (Python 2
+    str or Python 3 bytes), or a text (Python 2 unicode or Python 3
+    str) in the L{pyxb._InputEncoding} encoding.
+
+    @keyword default_namespace The L{pyxb.Namespace} instance to use as the
     default namespace where there is no default namespace in scope.
     If unspecified or C{None}, the namespace of the module containing
     this function will be used.
@@ -45,7 +54,10 @@ def CreateFromDocument (xml_text, default_namespace=None, location_base=None):
         default_namespace = Namespace.fallbackNamespace()
     saxer = pyxb.binding.saxer.make_parser(fallback_namespace=default_namespace, location_base=location_base)
     handler = saxer.getContentHandler()
-    saxer.parse(StringIO.StringIO(xml_text))
+    xmld = xml_text
+    if isinstance(xmld, unicode):
+        xmld = xmld.encode(pyxb._InputEncoding)
+    saxer.parse(io.BytesIO(xmld))
     instance = handler.rootObject()
     return instance
 
@@ -174,11 +186,11 @@ class NonEmptyString (pyxb.binding.datatypes.string):
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 153, 2)
     _Documentation = u'A derived string type with at least length 1 and it\n      must contain non-whitespace.'
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
 NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
 NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
-   NonEmptyString._CF_pattern)
+NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
+NonEmptyString._InitializeFacetMap(NonEmptyString._CF_pattern,
+   NonEmptyString._CF_minLength)
 Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
 
 # Atomic simple type: {http://ns.dataone.org/service/types/v1}Permission
@@ -314,6 +326,8 @@ class AccessPolicy (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'AccessPolicy')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 275, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element allow uses Python identifier allow
@@ -322,13 +336,12 @@ class AccessPolicy (pyxb.binding.basis.complexTypeDefinition):
     
     allow = property(__allow.value, __allow.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __allow.name() : __allow
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'AccessPolicy', AccessPolicy)
 
 
@@ -352,6 +365,8 @@ class AccessRule (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'AccessRule')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 291, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element subject uses Python identifier subject
@@ -367,14 +382,13 @@ class AccessRule (pyxb.binding.basis.complexTypeDefinition):
     
     permission = property(__permission.value, __permission.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __subject.name() : __subject,
         __permission.name() : __permission
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'AccessRule', AccessRule)
 
 
@@ -387,6 +401,8 @@ class ChecksumAlgorithmList (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ChecksumAlgorithmList')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 337, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element algorithm uses Python identifier algorithm
@@ -395,13 +411,12 @@ class ChecksumAlgorithmList (pyxb.binding.basis.complexTypeDefinition):
     
     algorithm = property(__algorithm.value, __algorithm.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __algorithm.name() : __algorithm
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'ChecksumAlgorithmList', ChecksumAlgorithmList)
 
 
@@ -417,6 +432,8 @@ class Group (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Group')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 349, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element subject uses Python identifier subject
@@ -446,16 +463,15 @@ class Group (pyxb.binding.basis.complexTypeDefinition):
     
     rightsHolder = property(__rightsHolder.value, __rightsHolder.set, None, u'Represents the list of owners of this :term:`group`.\n        All groups are readable by anyone in the DataONE system, but can only\n        be modified by subjects listed in *rightsHolder* fields. Designation\n        as a :term:`rightsHolder` allows the subject, or their equivalent\n        identities, to make changes to the mutable properties of the group,\n        including its name, membership list and rights holder list. The\n        subject of the group itself is immutable. ')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __subject.name() : __subject,
         __groupName.name() : __groupName,
         __hasMember.name() : __hasMember,
         __rightsHolder.name() : __rightsHolder
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Group', Group)
 
 
@@ -469,6 +485,8 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'LogEntry')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 437, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element entryId uses Python identifier entryId
@@ -526,8 +544,7 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     
     nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, u'The unique identifier for the node where the log\n          message was generated.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __entryId.name() : __entryId,
         __identifier.name() : __identifier,
         __ipAddress.name() : __ipAddress,
@@ -536,10 +553,10 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
         __event.name() : __event,
         __dateLogged.name() : __dateLogged,
         __nodeIdentifier.name() : __nodeIdentifier
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'LogEntry', LogEntry)
 
 
@@ -556,6 +573,8 @@ class NodeReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeReplicationPolicy')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 645, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element maxObjectSize uses Python identifier maxObjectSize
@@ -585,16 +604,15 @@ class NodeReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
     
     allowedObjectFormat = property(__allowedObjectFormat.value, __allowedObjectFormat.set, None, u'An optional, repeatable statement of an object\n          format that this node is willing to replicate, expressed as a\n          :class:`Types.ObjectFormatIdentifier`.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __maxObjectSize.name() : __maxObjectSize,
         __spaceAllocated.name() : __spaceAllocated,
         __allowedNode.name() : __allowedNode,
         __allowedObjectFormat.name() : __allowedObjectFormat
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'NodeReplicationPolicy', NodeReplicationPolicy)
 
 
@@ -608,6 +626,8 @@ class NodeList (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeList')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 691, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element node uses Python identifier node
@@ -616,13 +636,12 @@ class NodeList (pyxb.binding.basis.complexTypeDefinition):
     
     node = property(__node.value, __node.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __node.name() : __node
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'NodeList', NodeList)
 
 
@@ -639,6 +658,8 @@ class ObjectFormat (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormat')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 719, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element formatId uses Python identifier formatId
@@ -661,15 +682,14 @@ class ObjectFormat (pyxb.binding.basis.complexTypeDefinition):
     
     formatType = property(__formatType.value, __formatType.set, None, u'A string field indicating whether or not this\n          format is :term:`science data` (*DATA*), :term:`science metadata`\n          (*METADATA*) or a :term:`resource map` (*RESOURCE*). If the format\n          is a self-describing data format that includes science metadata,\n          then the field should also be set to science metadata.\n          ')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __formatId.name() : __formatId,
         __formatName.name() : __formatName,
         __formatType.name() : __formatType
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'ObjectFormat', ObjectFormat)
 
 
@@ -682,6 +702,8 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectInfo')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 784, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element identifier uses Python identifier identifier
@@ -718,17 +740,16 @@ class ObjectInfo (pyxb.binding.basis.complexTypeDefinition):
     
     size = property(__size.value, __size.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __identifier.name() : __identifier,
         __formatId.name() : __formatId,
         __checksum.name() : __checksum,
         __dateSysMetadataModified.name() : __dateSysMetadataModified,
         __size.name() : __size
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'ObjectInfo', ObjectInfo)
 
 
@@ -745,6 +766,8 @@ class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectLocation')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 817, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element nodeIdentifier uses Python identifier nodeIdentifier
@@ -781,17 +804,16 @@ class ObjectLocation (pyxb.binding.basis.complexTypeDefinition):
     
     preference = property(__preference.value, __preference.set, None, u'A weighting parameter that provides a hint to the\n          caller for the relative preference for nodes from which the content\n          should be retrieved. Higher values have higher preference.\n          ')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __nodeIdentifier.name() : __nodeIdentifier,
         __baseURL.name() : __baseURL,
         __version.name() : __version,
         __url.name() : __url,
         __preference.name() : __preference
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'ObjectLocation', ObjectLocation)
 
 
@@ -806,6 +828,8 @@ class ObjectLocationList (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectLocationList')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 878, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element identifier uses Python identifier identifier
@@ -821,14 +845,13 @@ class ObjectLocationList (pyxb.binding.basis.complexTypeDefinition):
     
     objectLocation = property(__objectLocation.value, __objectLocation.set, None, u'List of nodes from which the object can be\n        retrieved')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __identifier.name() : __identifier,
         __objectLocation.name() : __objectLocation
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'ObjectLocationList', ObjectLocationList)
 
 
@@ -846,6 +869,8 @@ class Person (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Person')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 904, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element subject uses Python identifier subject
@@ -896,8 +921,7 @@ class Person (pyxb.binding.basis.complexTypeDefinition):
     
     verified = property(__verified.value, __verified.set, None, u"*true* if the name and email address of the\n          *Person* have been :term:`verified` to ensure that the *givenName*\n          and *familyName* represent the real person's legal name, and that\n          the email address is correct for that person and is in the control\n          of the indicated individual. Verification occurs through an\n          established procedure within DataONE as part of the Identity\n          Management system. A Person can not change their own *verified*\n          field, but rather must be verified and changed through this DataONE\n          established process. ")
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __subject.name() : __subject,
         __givenName.name() : __givenName,
         __familyName.name() : __familyName,
@@ -905,10 +929,10 @@ class Person (pyxb.binding.basis.complexTypeDefinition):
         __isMemberOf.name() : __isMemberOf,
         __equivalentIdentity.name() : __equivalentIdentity,
         __verified.name() : __verified
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Person', Person)
 
 
@@ -921,6 +945,8 @@ class Ping (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Ping')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 986, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Attribute success uses Python identifier success
@@ -938,14 +964,13 @@ class Ping (pyxb.binding.basis.complexTypeDefinition):
     
     lastSuccess = property(__lastSuccess.value, __lastSuccess.set, None, u'The date time value (UTC) of the last time a\n        successful ping was performed.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __success.name() : __success,
         __lastSuccess.name() : __lastSuccess
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Ping', Ping)
 
 
@@ -959,6 +984,8 @@ class Replica (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Replica')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1007, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element replicaMemberNode uses Python identifier replicaMemberNode
@@ -981,15 +1008,14 @@ class Replica (pyxb.binding.basis.complexTypeDefinition):
     
     replicaVerified = property(__replicaVerified.value, __replicaVerified.set, None, u' The last date and time on which the integrity of\n          a replica was verified by the coordinating node. Verification occurs\n          by checking that the checksum of the stored object matches the\n          checksum recorded for the object in the system\n          metadata.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __replicaMemberNode.name() : __replicaMemberNode,
         __replicationStatus.name() : __replicationStatus,
         __replicaVerified.name() : __replicaVerified
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Replica', Replica)
 
 
@@ -1005,6 +1031,8 @@ class ReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ReplicationPolicy')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1042, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element preferredMemberNode uses Python identifier preferredMemberNode
@@ -1036,15 +1064,14 @@ class ReplicationPolicy (pyxb.binding.basis.complexTypeDefinition):
     
     numberReplicas = property(__numberReplicas.value, __numberReplicas.set, None, u'An integer indicating the number of replicas\n        targeted for this object. Defaults to 3.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __preferredMemberNode.name() : __preferredMemberNode,
         __blockedMemberNode.name() : __blockedMemberNode
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __replicationAllowed.name() : __replicationAllowed,
         __numberReplicas.name() : __numberReplicas
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'ReplicationPolicy', ReplicationPolicy)
 
 
@@ -1058,6 +1085,8 @@ class Services (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Services')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1153, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element service uses Python identifier service
@@ -1066,13 +1095,12 @@ class Services (pyxb.binding.basis.complexTypeDefinition):
     
     service = property(__service.value, __service.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __service.name() : __service
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Services', Services)
 
 
@@ -1092,6 +1120,8 @@ class Session (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Session')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1166, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element subject uses Python identifier subject
@@ -1107,14 +1137,13 @@ class Session (pyxb.binding.basis.complexTypeDefinition):
     
     subjectInfo = property(__subjectInfo.value, __subjectInfo.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __subject.name() : __subject,
         __subjectInfo.name() : __subjectInfo
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Session', Session)
 
 
@@ -1130,6 +1159,8 @@ class Slice (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Slice')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1205, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Attribute count uses Python identifier count
@@ -1155,15 +1186,14 @@ class Slice (pyxb.binding.basis.complexTypeDefinition):
     
     total = property(__total.value, __total.set, None, u'The total number of entries in the source list from\n        which the slice was extracted.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __count.name() : __count,
         __start.name() : __start,
         __total.name() : __total
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Slice', Slice)
 
 
@@ -1181,6 +1211,8 @@ class Synchronization (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Synchronization')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1235, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element schedule uses Python identifier schedule
@@ -1203,15 +1235,14 @@ class Synchronization (pyxb.binding.basis.complexTypeDefinition):
     
     lastCompleteHarvest = property(__lastCompleteHarvest.value, __lastCompleteHarvest.set, None, u'The last time (UTC) all the data from a node was\n          pulled from a member node during a complete synchronization\n          process.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __schedule.name() : __schedule,
         __lastHarvested.name() : __lastHarvested,
         __lastCompleteHarvest.name() : __lastCompleteHarvest
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Synchronization', Synchronization)
 
 
@@ -1226,6 +1257,8 @@ class SubjectInfo (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SubjectInfo')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1297, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element person uses Python identifier person
@@ -1241,14 +1274,13 @@ class SubjectInfo (pyxb.binding.basis.complexTypeDefinition):
     
     group = property(__group.value, __group.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __person.name() : __person,
         __group.name() : __group
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'SubjectInfo', SubjectInfo)
 
 
@@ -1261,6 +1293,8 @@ class SubjectList (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SubjectList')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1311, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element subject uses Python identifier subject
@@ -1269,13 +1303,12 @@ class SubjectList (pyxb.binding.basis.complexTypeDefinition):
     
     subject = property(__subject.value, __subject.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __subject.name() : __subject
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'SubjectList', SubjectList)
 
 
@@ -1309,6 +1342,8 @@ class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SystemMetadata')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1323, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element serialVersion uses Python identifier serialVersion
@@ -1429,8 +1464,7 @@ class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
     
     replica = property(__replica.value, __replica.set, None, u' A container field used to repeatedly provide\n          several metadata fields about each replica that exists in the\n          system, or is being replicated. Note that a *replica* field exists\n          even for the Authoritative/Origin Member Nodes so that the status of\n          those objects can be tracked. ')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __serialVersion.name() : __serialVersion,
         __identifier.name() : __identifier,
         __formatId.name() : __formatId,
@@ -1448,10 +1482,10 @@ class SystemMetadata (pyxb.binding.basis.complexTypeDefinition):
         __originMemberNode.name() : __originMemberNode,
         __authoritativeMemberNode.name() : __authoritativeMemberNode,
         __replica.name() : __replica
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
 
 
@@ -1470,6 +1504,8 @@ class Checksum (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Checksum')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 317, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.string
     
     # Attribute algorithm uses Python identifier algorithm
@@ -1479,13 +1515,12 @@ class Checksum (pyxb.binding.basis.complexTypeDefinition):
     
     algorithm = property(__algorithm.value, __algorithm.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __algorithm.name() : __algorithm
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Checksum', Checksum)
 
 
@@ -1499,6 +1534,8 @@ class Log (Slice):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Log')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 420, 2)
+    _ElementMap = Slice._ElementMap.copy()
+    _AttributeMap = Slice._AttributeMap.copy()
     # Base type is Slice
     
     # Element logEntry uses Python identifier logEntry
@@ -1513,12 +1550,9 @@ class Log (Slice):
     # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
     
     # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
-
-    _ElementMap = Slice._ElementMap.copy()
     _ElementMap.update({
         __logEntry.name() : __logEntry
     })
-    _AttributeMap = Slice._AttributeMap.copy()
     _AttributeMap.update({
         
     })
@@ -1535,6 +1569,8 @@ class Node (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Node')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 509, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element identifier uses Python identifier identifier
@@ -1638,8 +1674,7 @@ class Node (pyxb.binding.basis.complexTypeDefinition):
     
     state = property(__state.value, __state.set, None, u'The state of the node (*up*, *down*), chosen from\n        the :class:`Types.NodeState` type.')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __identifier.name() : __identifier,
         __name.name() : __name,
         __description.name() : __description,
@@ -1650,13 +1685,13 @@ class Node (pyxb.binding.basis.complexTypeDefinition):
         __ping.name() : __ping,
         __subject.name() : __subject,
         __contactSubject.name() : __contactSubject
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __replicate.name() : __replicate,
         __synchronize.name() : __synchronize,
         __type.name() : __type,
         __state.name() : __state
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Node', Node)
 
 
@@ -1671,14 +1706,15 @@ class NodeReference (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeReference')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 705, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is NonEmptyString
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'NodeReference', NodeReference)
 
 
@@ -1696,6 +1732,8 @@ class ObjectFormatList (Slice):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormatList')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 763, 2)
+    _ElementMap = Slice._ElementMap.copy()
+    _AttributeMap = Slice._AttributeMap.copy()
     # Base type is Slice
     
     # Element objectFormat uses Python identifier objectFormat
@@ -1710,12 +1748,9 @@ class ObjectFormatList (Slice):
     # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
     
     # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
-
-    _ElementMap = Slice._ElementMap.copy()
     _ElementMap.update({
         __objectFormat.name() : __objectFormat
     })
-    _AttributeMap = Slice._AttributeMap.copy()
     _AttributeMap.update({
         
     })
@@ -1731,6 +1766,8 @@ class ObjectList (Slice):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectList')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 801, 2)
+    _ElementMap = Slice._ElementMap.copy()
+    _AttributeMap = Slice._AttributeMap.copy()
     # Base type is Slice
     
     # Element objectInfo uses Python identifier objectInfo
@@ -1745,12 +1782,9 @@ class ObjectList (Slice):
     # Attribute start inherited from {http://ns.dataone.org/service/types/v1}Slice
     
     # Attribute total inherited from {http://ns.dataone.org/service/types/v1}Slice
-
-    _ElementMap = Slice._ElementMap.copy()
     _ElementMap.update({
         __objectInfo.name() : __objectInfo
     })
-    _AttributeMap = Slice._AttributeMap.copy()
     _AttributeMap.update({
         
     })
@@ -1769,6 +1803,8 @@ class ServiceMethodRestriction (SubjectList):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ServiceMethodRestriction')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1132, 2)
+    _ElementMap = SubjectList._ElementMap.copy()
+    _AttributeMap = SubjectList._AttributeMap.copy()
     # Base type is SubjectList
     
     # Element subject (subject) inherited from {http://ns.dataone.org/service/types/v1}SubjectList
@@ -1780,12 +1816,9 @@ class ServiceMethodRestriction (SubjectList):
     
     methodName = property(__methodName.value, __methodName.set, None, u'The formal name of the method in this *Service*\n          which is to be restricted.')
 
-
-    _ElementMap = SubjectList._ElementMap.copy()
     _ElementMap.update({
         
     })
-    _AttributeMap = SubjectList._AttributeMap.copy()
     _AttributeMap.update({
         __methodName.name() : __methodName
     })
@@ -1804,6 +1837,8 @@ class Schedule (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Schedule')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1187, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Attribute hour uses Python identifier hour
@@ -1861,11 +1896,10 @@ class Schedule (pyxb.binding.basis.complexTypeDefinition):
     
     year = property(__year.value, __year.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __hour.name() : __hour,
         __mday.name() : __mday,
         __min.name() : __min,
@@ -1873,7 +1907,7 @@ class Schedule (pyxb.binding.basis.complexTypeDefinition):
         __sec.name() : __sec,
         __wday.name() : __wday,
         __year.name() : __year
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Schedule', Schedule)
 
 
@@ -1891,14 +1925,15 @@ class Subject (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Subject')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1275, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is NonEmptyString
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Subject', Subject)
 
 
@@ -1915,6 +1950,8 @@ class Service (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Service')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1087, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element restriction uses Python identifier restriction
@@ -1947,15 +1984,14 @@ class Service (pyxb.binding.basis.complexTypeDefinition):
     
     available = property(__available.value, __available.set, None, u'A boolean flag indicating if the service is\n        available (*true*, default) or otherwise (*false*).\n        ')
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __restriction.name() : __restriction
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __name.name() : __name,
         __version.name() : __version,
         __available.name() : __available
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Service', Service)
 
 
@@ -1978,14 +2014,15 @@ class Identifier (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Identifier')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 396, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is NonEmptyNoWhitespaceString800
-
-    _ElementMap = {
+    _ElementMap.update({
         
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Identifier', Identifier)
 
 
@@ -2084,7 +2121,7 @@ Namespace.addCategoryObject('elementBinding', identifier.name().localName(), ide
 AccessPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'allow'), AccessRule, scope=AccessPolicy, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 285, 6)))
 
 def _BuildAutomaton ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton
     del _BuildAutomaton
     import pyxb.utils.fac as fac
@@ -2110,7 +2147,7 @@ AccessRule._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(No
 AccessRule._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'permission'), Permission, scope=AccessRule, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 311, 6)))
 
 def _BuildAutomaton_ ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_
     del _BuildAutomaton_
     import pyxb.utils.fac as fac
@@ -2144,7 +2181,7 @@ AccessRule._Automaton = _BuildAutomaton_()
 ChecksumAlgorithmList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'algorithm'), ChecksumAlgorithm, scope=ChecksumAlgorithmList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 343, 6)))
 
 def _BuildAutomaton_2 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_2
     del _BuildAutomaton_2
     import pyxb.utils.fac as fac
@@ -2174,7 +2211,7 @@ Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u
 Group._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'rightsHolder'), Subject, scope=Group, documentation=u'Represents the list of owners of this :term:`group`.\n        All groups are readable by anyone in the DataONE system, but can only\n        be modified by subjects listed in *rightsHolder* fields. Designation\n        as a :term:`rightsHolder` allows the subject, or their equivalent\n        identities, to make changes to the mutable properties of the group,\n        including its name, membership list and rights holder list. The\n        subject of the group itself is immutable. ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 380, 4)))
 
 def _BuildAutomaton_3 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_3
     del _BuildAutomaton_3
     import pyxb.utils.fac as fac
@@ -2242,7 +2279,7 @@ LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None
 LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'nodeIdentifier'), NodeReference, scope=LogEntry, documentation=u'The unique identifier for the node where the log\n          message was generated.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 498, 6)))
 
 def _BuildAutomaton_4 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_4
     del _BuildAutomaton_4
     import pyxb.utils.fac as fac
@@ -2326,7 +2363,7 @@ NodeReplicationPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.Expa
 NodeReplicationPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'allowedObjectFormat'), ObjectFormatIdentifier, scope=NodeReplicationPolicy, documentation=u'An optional, repeatable statement of an object\n          format that this node is willing to replicate, expressed as a\n          :class:`Types.ObjectFormatIdentifier`.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 679, 6)))
 
 def _BuildAutomaton_5 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_5
     del _BuildAutomaton_5
     import pyxb.utils.fac as fac
@@ -2398,7 +2435,7 @@ NodeReplicationPolicy._Automaton = _BuildAutomaton_5()
 NodeList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'node'), Node, scope=NodeList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 699, 6)))
 
 def _BuildAutomaton_6 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_6
     del _BuildAutomaton_6
     import pyxb.utils.fac as fac
@@ -2426,7 +2463,7 @@ ObjectFormat._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(
 ObjectFormat._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'formatType'), pyxb.binding.datatypes.string, scope=ObjectFormat, documentation=u'A string field indicating whether or not this\n          format is :term:`science data` (*DATA*), :term:`science metadata`\n          (*METADATA*) or a :term:`resource map` (*RESOURCE*). If the format\n          is a self-describing data format that includes science metadata,\n          then the field should also be set to science metadata.\n          ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 748, 6)))
 
 def _BuildAutomaton_7 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_7
     del _BuildAutomaton_7
     import pyxb.utils.fac as fac
@@ -2472,7 +2509,7 @@ ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(No
 ObjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'size'), pyxb.binding.datatypes.unsignedLong, scope=ObjectInfo, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 796, 8)))
 
 def _BuildAutomaton_8 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_8
     del _BuildAutomaton_8
     import pyxb.utils.fac as fac
@@ -2534,7 +2571,7 @@ ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedNam
 ObjectLocation._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'preference'), pyxb.binding.datatypes.int, scope=ObjectLocation, documentation=u'A weighting parameter that provides a hint to the\n          caller for the relative preference for nodes from which the content\n          should be retrieved. Higher values have higher preference.\n          ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 866, 6)))
 
 def _BuildAutomaton_9 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_9
     del _BuildAutomaton_9
     import pyxb.utils.fac as fac
@@ -2597,7 +2634,7 @@ ObjectLocationList._AddElement(pyxb.binding.basis.element(pyxb.namespace.Expande
 ObjectLocationList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectLocation'), ObjectLocation, scope=ObjectLocationList, documentation=u'List of nodes from which the object can be\n        retrieved', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 893, 4)))
 
 def _BuildAutomaton_10 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_10
     del _BuildAutomaton_10
     import pyxb.utils.fac as fac
@@ -2644,7 +2681,7 @@ Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 
 Person._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'verified'), pyxb.binding.datatypes.boolean, scope=Person, documentation=u"*true* if the name and email address of the\n          *Person* have been :term:`verified` to ensure that the *givenName*\n          and *familyName* represent the real person's legal name, and that\n          the email address is correct for that person and is in the control\n          of the indicated individual. Verification occurs through an\n          established procedure within DataONE as part of the Identity\n          Management system. A Person can not change their own *verified*\n          field, but rather must be verified and changed through this DataONE\n          established process. ", location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 960, 6)))
 
 def _BuildAutomaton_11 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_11
     del _BuildAutomaton_11
     import pyxb.utils.fac as fac
@@ -2752,7 +2789,7 @@ Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None,
 Replica._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replicaVerified'), pyxb.binding.datatypes.dateTime, scope=Replica, documentation=u' The last date and time on which the integrity of\n          a replica was verified by the coordinating node. Verification occurs\n          by checking that the checksum of the stored object matches the\n          checksum recorded for the object in the system\n          metadata.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1029, 6)))
 
 def _BuildAutomaton_12 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_12
     del _BuildAutomaton_12
     import pyxb.utils.fac as fac
@@ -2792,7 +2829,7 @@ ReplicationPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.Expanded
 ReplicationPolicy._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'blockedMemberNode'), NodeReference, scope=ReplicationPolicy, documentation=u'The object MUST never be replicated to nodes\n          listed as *blockedMemberNodes*. Where there is a conflict between a\n          *preferredMemberNode* and a *blockedMemberNode* entry, the\n          *blockedMemberNode* entry prevails. ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1062, 6)))
 
 def _BuildAutomaton_13 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_13
     del _BuildAutomaton_13
     import pyxb.utils.fac as fac
@@ -2832,7 +2869,7 @@ ReplicationPolicy._Automaton = _BuildAutomaton_13()
 Services._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'service'), Service, scope=Services, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1160, 6)))
 
 def _BuildAutomaton_14 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_14
     del _BuildAutomaton_14
     import pyxb.utils.fac as fac
@@ -2858,7 +2895,7 @@ Session._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None,
 Session._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subjectInfo'), SubjectInfo, scope=Session, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1181, 6)))
 
 def _BuildAutomaton_15 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_15
     del _BuildAutomaton_15
     import pyxb.utils.fac as fac
@@ -2897,7 +2934,7 @@ Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedNa
 Synchronization._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastCompleteHarvest'), pyxb.binding.datatypes.dateTime, scope=Synchronization, documentation=u'The last time (UTC) all the data from a node was\n          pulled from a member node during a complete synchronization\n          process.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1263, 6)))
 
 def _BuildAutomaton_16 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_16
     del _BuildAutomaton_16
     import pyxb.utils.fac as fac
@@ -2949,7 +2986,7 @@ SubjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(N
 SubjectInfo._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'group'), Group, scope=SubjectInfo, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1306, 6)))
 
 def _BuildAutomaton_17 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_17
     del _BuildAutomaton_17
     import pyxb.utils.fac as fac
@@ -2989,7 +3026,7 @@ SubjectInfo._Automaton = _BuildAutomaton_17()
 SubjectList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'subject'), Subject, scope=SubjectList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1317, 6)))
 
 def _BuildAutomaton_18 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_18
     del _BuildAutomaton_18
     import pyxb.utils.fac as fac
@@ -3048,7 +3085,7 @@ SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedNam
 SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'replica'), Replica, scope=SystemMetadata, documentation=u' A container field used to repeatedly provide\n          several metadata fields about each replica that exists in the\n          system, or is being replicated. Note that a *replica* field exists\n          even for the Authoritative/Origin Member Nodes so that the status of\n          those objects can be tracked. ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1554, 6)))
 
 def _BuildAutomaton_19 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_19
     del _BuildAutomaton_19
     import pyxb.utils.fac as fac
@@ -3348,7 +3385,7 @@ SystemMetadata._Automaton = _BuildAutomaton_19()
 Log._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'logEntry'), LogEntry, scope=Log, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 429, 10)))
 
 def _BuildAutomaton_20 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_20
     del _BuildAutomaton_20
     import pyxb.utils.fac as fac
@@ -3393,7 +3430,7 @@ Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'
 Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'contactSubject'), Subject, scope=Node, documentation=u'The appropriate person or group to contact\n          regarding the disposition, management, and status of this Member\n          Node. The *Node.contactSubject* is an :term:`X.509 Distinguished\n          Name` for a person or group that can be used to look up current\n          contact details (e.g., name, email address) for the contact in the\n          DataONE Identity service. DataONE uses the *contactSubject* to\n          provide notices of interest to DataONE nodes, including information\n          such as policy changes, maintenance updates, node outage\n          notifications, among other information useful for administering a\n          node. Each node that is registered with DataONE must provide at\n          least one *contactSubject* that has been :term:`verified` with\n          DataONE. ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 599, 6)))
 
 def _BuildAutomaton_21 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_21
     del _BuildAutomaton_21
     import pyxb.utils.fac as fac
@@ -3539,7 +3576,7 @@ Node._Automaton = _BuildAutomaton_21()
 ObjectFormatList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectFormat'), ObjectFormat, scope=ObjectFormatList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 776, 10)))
 
 def _BuildAutomaton_22 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_22
     del _BuildAutomaton_22
     import pyxb.utils.fac as fac
@@ -3563,7 +3600,7 @@ ObjectFormatList._Automaton = _BuildAutomaton_22()
 ObjectList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'objectInfo'), ObjectInfo, scope=ObjectList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 809, 10)))
 
 def _BuildAutomaton_23 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_23
     del _BuildAutomaton_23
     import pyxb.utils.fac as fac
@@ -3588,7 +3625,7 @@ ObjectList._Automaton = _BuildAutomaton_23()
 
 
 def _BuildAutomaton_24 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_24
     del _BuildAutomaton_24
     import pyxb.utils.fac as fac
@@ -3615,7 +3652,7 @@ ServiceMethodRestriction._Automaton = _BuildAutomaton_24()
 Service._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'restriction'), ServiceMethodRestriction, scope=Service, documentation=u'A list of method names and :term:`Subjects` with\n          permission to invoke those methods.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneTypes.xsd', 1097, 6)))
 
 def _BuildAutomaton_25 ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton_25
     del _BuildAutomaton_25
     import pyxb.utils.fac as fac

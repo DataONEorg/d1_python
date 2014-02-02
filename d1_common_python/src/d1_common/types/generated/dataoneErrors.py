@@ -1,33 +1,42 @@
 # ./d1_common/types/generated/dataoneErrors.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2013-12-03 09:06:38.936683 by PyXB version 1.2.1
+# Generated 2014-01-31 08:03:21.156402 by PyXB version 1.2.3
 # Namespace AbsentNamespace0
 
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
-import StringIO
+import io
 import pyxb.utils.utility
 import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:e4456c94-5c34-11e3-b227-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:d2fccd60-8a88-11e3-a368-000c294230b4')
+
+# Version of PyXB used to generate the bindings
+_PyXBVersion = '1.2.3'
+# Generated bindings are not compatible across PyXB versions
+if pyxb.__version__ != _PyXBVersion:
+    raise pyxb.PyXBVersionError(_PyXBVersion)
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 
+# NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.CreateAbsentNamespace()
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
-ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
-ModuleRecord._setModule(sys.modules[__name__])
 
 def CreateFromDocument (xml_text, default_namespace=None, location_base=None):
     """Parse the given XML and use the document element to create a
     Python instance.
-    
-    @kw default_namespace The L{pyxb.Namespace} instance to use as the
+
+    @param xml_text An XML document.  This should be data (Python 2
+    str or Python 3 bytes), or a text (Python 2 unicode or Python 3
+    str) in the L{pyxb._InputEncoding} encoding.
+
+    @keyword default_namespace The L{pyxb.Namespace} instance to use as the
     default namespace where there is no default namespace in scope.
     If unspecified or C{None}, the namespace of the module containing
     this function will be used.
@@ -45,7 +54,10 @@ def CreateFromDocument (xml_text, default_namespace=None, location_base=None):
         default_namespace = Namespace.fallbackNamespace()
     saxer = pyxb.binding.saxer.make_parser(fallback_namespace=default_namespace, location_base=location_base)
     handler = saxer.getContentHandler()
-    saxer.parse(StringIO.StringIO(xml_text))
+    xmld = xml_text
+    if isinstance(xmld, unicode):
+        xmld = xmld.encode(pyxb._InputEncoding)
+    saxer.parse(io.BytesIO(xmld))
     instance = handler.rootObject()
     return instance
 
@@ -67,11 +79,11 @@ class NonEmptyString (pyxb.binding.datatypes.string):
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 45, 2)
     _Documentation = None
+NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
 NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
 NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_pattern,
-   NonEmptyString._CF_minLength)
+NonEmptyString._InitializeFacetMap(NonEmptyString._CF_minLength,
+   NonEmptyString._CF_pattern)
 Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
 
 # Complex type DataONEException with content type ELEMENT_ONLY
@@ -83,6 +95,8 @@ class DataONEException (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'DataONEException')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 53, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element description uses Python identifier description
@@ -138,18 +152,17 @@ class DataONEException (pyxb.binding.basis.complexTypeDefinition):
     
     nodeId = property(__nodeId.value, __nodeId.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __description.name() : __description,
         __traceInformation.name() : __traceInformation
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __name.name() : __name,
         __errorCode.name() : __errorCode,
         __detailCode.name() : __detailCode,
         __identifier.name() : __identifier,
         __nodeId.name() : __nodeId
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'DataONEException', DataONEException)
 
 
@@ -163,7 +176,7 @@ DataONEException._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedN
 DataONEException._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'traceInformation'), pyxb.binding.datatypes.anyType, scope=DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 60, 6)))
 
 def _BuildAutomaton ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton
     del _BuildAutomaton
     import pyxb.utils.fac as fac
