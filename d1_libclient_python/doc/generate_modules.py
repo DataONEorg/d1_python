@@ -63,6 +63,9 @@ def write_file(name, text, opts):
         f.write(text)
         f.close()
 
+def format_label(package, module):
+    return '.. _%s_%s:\n' % (package, module)
+
 def format_heading(level, text):
     """Create a heading of <level> [1, 2 or 3 supported]."""
     underlining = ['=', '-', '~', ][level-1] * len(text)
@@ -97,6 +100,7 @@ def create_package_file(root, master_package, subroot, py_files, opts, subs):
             heading = ':mod:`%s` Package' % package
         else:
             heading = ':mod:`%s` Module' % py_file
+        text += format_label(package, py_file) + '\n'
         text += format_heading(2, heading)
         text += format_directive(is_package and subroot or py_path, master_package)
         text += '\n'
