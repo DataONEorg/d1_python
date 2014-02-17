@@ -84,9 +84,7 @@ class Command(NoArgsCommand):
   def process_queue_item(self, queue_item):
     self.update_queue_item_status(queue_item, 'processing')
     try:
-      response = self.get_sysmeta_from_cn_and_post_to_gmn(queue_item)
-      if response.status != 200:
-        raise Exception('Bad response: {0}'.format(response.status))
+      self.get_sysmeta_from_cn_and_post_to_gmn(queue_item)
     except d1_common.types.exceptions.DataONEException as e:
       logging.error(str(e))
       self.update_queue_item_status(queue_item, 'failed')
@@ -97,29 +95,67 @@ class Command(NoArgsCommand):
     else:
       self.update_queue_item_status(queue_item, 'completed')
 
+  def get_sysmeta_from_cn_and_post_to_gmn(self, queue_item):
+    pid = queue_item.object.pid
+    sysmeta = self.get_sysmeta_from_cn(pid)
+    self.generate_mime_multipart_document_and_post_to_gmn(pid, sysmeta)
+
   def generate_mime_multipart_document_and_post_to_gmn(self, pid, sysmeta):
     sysmeta_xml = sysmeta.toxml()
     files = [('sysmeta', 'sysmeta', sysmeta_xml.encode('utf-8')), ]
     client = d1_client.mnclient.MemberNodeClient(settings.LOCAL_BASE_URL)
     response = client.POST(self.get_internal_update_sysmeta_url(pid), files=files)
+    if response.status != 200:
+      raise Exception('Bad response: {0}'.format(response.status))
     return response
 
-  def get_sysmeta_from_cn_and_post_to_gmn(self, queue_item):
-    pid = queue_item.object.pid
-    sysmeta = self.get_sysmeta_from_cn(pid)
-    response = self.generate_mime_multipart_document_and_post_to_gmn(pid, sysmeta)
-    return response
+
+def update_sysmeta(request, pid):
+  '''Updates the System Metadata for an existing Science Object. Does not
+  update the replica status on the object.
+  '''
+  mn.view_asserts.object_exists(pid)
+
+  # Check that a valid MIME multipart document has been provided and that it
+  # contains the required System Metadata section.
+  mn.view_asserts.post_has_mime_parts(request, (('file', 'sysmeta'), ))
+  mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
+
+  # Deserialize metadata (implicit validation).
+  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
+  sysmeta = dataoneTypes.CreateFromDocument(sysmeta_xml)
+
+  # No sanity checking is done on the provided System Metadata. It comes
+  # from a CN and is implicitly trusted.
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
+  sciobj.set_format(sysmeta.formatId)
+  sciobj.checksum = sysmeta.checksum.value()
+  sciobj.set_checksum_algorithm(sysmeta.checksum.algorithm)
+  sciobj.mtime = d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
+  sciobj.size = sysmeta.size
+  sciobj.serial_version = sysmeta.serialVersion
+  sciobj.archived = False
+  sciobj.save()
+
+  mn.util.update_db_status('update successful')
+
+  # If an access policy was provided in the System Metadata, set it.
+  if sysmeta.accessPolicy:
+    mn.auth.set_access_policy(pid, sysmeta.accessPolicy)
+  else:
+    mn.auth.set_access_policy(pid)
+
+  sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
+
+  # Log this System Metadata update.
+  mn.event_log.update(pid, request)
+
+  return mn.view_shared.http_response_with_boolean_true_type()
 
   def get_sysmeta_from_cn(self, pid):
     client = d1_client.d1client.DataONEClient(settings.DATAONE_ROOT)
     sysmeta = client.getSystemMetadata(pid)
     return sysmeta
-
-  def get_internal_update_sysmeta_url(self, pid):
-    return urlparse.urljoin(
-      settings.LOCAL_BASE_URL,
-      'internal_update_sysmeta/{0}'.format(d1_common.url.encodePathElement(pid))
-    )
 
   def update_queue_item_status(self, queue_item, status):
     queue_item.set_status(status)

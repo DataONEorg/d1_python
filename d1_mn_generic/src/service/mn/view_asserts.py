@@ -38,7 +38,6 @@ import d1_common.types.exceptions
 # App.
 import mn.db_filter
 import mn.event_log
-import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta_store

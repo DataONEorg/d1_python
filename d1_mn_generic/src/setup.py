@@ -46,7 +46,7 @@
 import locale
 import os
 import re
-import setuptools
+from setuptools import setup, find_packages
 
 try:
   import pysvn
@@ -79,7 +79,7 @@ def main():
   if has_svn:
     create_manifest_in()
 
-  setuptools.setup(
+  setup(
     # Metadata
     name=name,
     version=version,
@@ -89,7 +89,7 @@ def main():
     url=url,
     license=license,
     # Contents (modified by MANIFEST.in)
-    packages=setuptools.find_packages(),
+    packages=find_packages(),
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
@@ -98,7 +98,7 @@ def main():
       #'dataone.common',
       'dataone.libclient == 1.2.4',
       'dataone.certificate_extensions == 1.1.2',
-      'django == 1.4.1',
+      'django == 1.6.1',
       'pyxb == 1.2.1',
       'iso8601 == 0.1.4',
       'psycopg2 == 2.4.6',

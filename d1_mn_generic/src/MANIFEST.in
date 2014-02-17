@@ -9,6 +9,5 @@ exclude tests/gen_sysmeta.py
 exclude tests/fixcrc.py
 exclude tests/add_random_access_policy.py
 exclude service/settings_site.py
-exclude service/mn/middleware/session-bak-before-recursive.py
 exclude push_to_gmn_s.py
 exclude fix_service_permissions.py

@@ -21,7 +21,10 @@
 ''':mod:`views.internal`
 ========================
 
-:Synopsis: REST call handlers for GMN internal APIs used by async processes.
+:Synopsis:
+  Functionality that is not part of the DataONE Member Node API yet is designed
+  to be available when the MN is in production.
+
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
@@ -46,7 +49,6 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 import mn.auth
 import mn.db_filter
 import mn.event_log
-import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta_store
@@ -56,133 +58,6 @@ import mn.view_asserts
 import mn.view_shared
 import service
 import service.settings
-import service.types.generated.gmn_types
-
-# ==============================================================================
-# Internal API
-# ==============================================================================
-
-# ------------------------------------------------------------------------------
-# Internal API: General.
-# ------------------------------------------------------------------------------
-
-
-@mn.auth.assert_internal_permission
-def get_setting(request, setting_name):
-  try:
-    v = getattr(service.settings, setting_name)
-  except AttributeError:
-    raise d1_common.types.exceptions.NotFound(
-      0, 'Unknown setting: {0}'.format(setting_name)
-    )
-  else:
-    return HttpResponse(
-      service.types.generated.gmn_types.setting(v).toxml(
-      ), d1_common.const.MIMETYPE_XML
-    )
-
-# ------------------------------------------------------------------------------
-# Internal API: Replication.
-# ------------------------------------------------------------------------------
-
-
-@mn.auth.assert_internal_permission
-def replicate_task_get(request):
-  '''Get next replication task.'''
-
-  if not mn.models.ReplicationQueue.objects.filter(status__status='new')\
-    .exists():
-    raise d1_common.types.exceptions.NotFound(0, 'No pending replication requests', 'n/a')
-
-  query = mn.models.ReplicationQueue.objects.filter(status__status='new')[0]
-
-  # Return query data for further processing in middleware layer.
-  return {'query': query, 'type': 'replication_task'}
-
-
-@mn.auth.assert_internal_permission
-def replicate_task_update(request, task_id, status):
-  '''Update the status of a replication task.'''
-  try:
-    task = mn.models.ReplicationQueue.objects.get(id=task_id)
-  except mn.models.ReplicationQueue.DoesNotExist:
-    raise d1_common.types.exceptions.NotFound(
-      0, 'Replication task not found', str(task_id)
-    )
-  else:
-    task.set_status(status)
-    task.save()
-  return mn.view_shared.http_response_with_boolean_true_type()
-
-
-@mn.lock_pid.for_write
-@mn.auth.assert_internal_permission
-def replicate_create(request, pid):
-  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
-  sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
-  mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, pid, sysmeta)
-  mn.view_shared.create(request, pid, sysmeta)
-  return mn.view_shared.http_response_with_boolean_true_type()
-
-
-@mn.auth.assert_internal_permission
-def replicate_remove_completed_tasks_from_queue(request):
-  q = mn.models.ReplicationQueue.objects.filter(status__status='completed')
-  q.delete()
-  return mn.view_shared.http_response_with_boolean_true_type()
-
-# ------------------------------------------------------------------------------
-# Internal API: Refresh System Metadata (MNStorage.systemMetadataChanged()).
-# ------------------------------------------------------------------------------
-
-
-@mn.lock_pid.for_write
-@mn.auth.assert_internal_permission
-def update_sysmeta(request, pid):
-  '''Updates the System Metadata for an existing Science Object. Does not
-  update the replica status on the object.
-  '''
-  mn.view_asserts.object_exists(pid)
-
-  # Check that a valid MIME multipart document has been provided and that it
-  # contains the required System Metadata section.
-  mn.view_asserts.post_has_mime_parts(request, (('file', 'sysmeta'), ))
-  mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
-
-  # Deserialize metadata (implicit validation).
-  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
-  sysmeta = dataoneTypes.CreateFromDocument(sysmeta_xml)
-
-  # No sanity checking is done on the provided System Metadata. It comes
-  # from a CN and is implicitly trusted.
-  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-  sciobj.set_format(sysmeta.formatId)
-  sciobj.checksum = sysmeta.checksum.value()
-  sciobj.set_checksum_algorithm(sysmeta.checksum.algorithm)
-  sciobj.mtime = d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
-  sciobj.size = sysmeta.size
-  sciobj.serial_version = sysmeta.serialVersion
-  sciobj.archived = False
-  sciobj.save()
-
-  mn.util.update_db_status('update successful')
-
-  # If an access policy was provided in the System Metadata, set it.
-  if sysmeta.accessPolicy:
-    mn.auth.set_access_policy(pid, sysmeta.accessPolicy)
-  else:
-    mn.auth.set_access_policy(pid)
-
-  sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
-
-  # Log this System Metadata update.
-  mn.event_log.update(pid, request)
-
-  return mn.view_shared.http_response_with_boolean_true_type()
-
-# ------------------------------------------------------------------------------
-# Internal: Public.
-# ------------------------------------------------------------------------------
 
 
 def home(request):

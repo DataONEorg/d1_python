@@ -51,7 +51,6 @@ import mn.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
-import mn.lock_pid
 import mn.models
 import mn.node_registry
 import mn.psycopg_adapter
@@ -195,7 +194,11 @@ def permissions_for_object(request, pid):
 @mn.restrict_to_verb.get
 def get_setting(request, setting):
   '''Get a value from settings.py or settings_site.py'''
-  return HttpResponse(getattr(service.settings, setting, '<NOT SET>'))
+  return HttpResponse(
+    getattr(
+      service.settings, setting, '<UNKNOWN SETTING>'
+    ), d1_common.const.MIMETYPE_TEXT
+  )
 
 
 #@mn.restrict_to_verb.post
@@ -299,41 +302,3 @@ def inject_fictional_event_log(request):
     mn.event_log._log(pid, request, event, d1_common.date_time.strip_timezone(timestamp))
 
   return mn.view_shared.http_response_with_boolean_true_type()
-
-# ------------------------------------------------------------------------------
-# Concurrency.
-# ------------------------------------------------------------------------------
-
-#test_shared_dict = collections.defaultdict(lambda: '<undef>')
-
-test_shared_dict = mn.urls.test_shared_dict
-
-
-def concurrency_clear(request):
-  test_shared_dict.clear()
-  return mn.view_shared.http_response_with_boolean_true_type()
-
-
-@mn.lock_pid.for_read
-def concurrency_read_lock(request, key, sleep_before, sleep_after):
-  time.sleep(float(sleep_before))
-  #ret = test_shared_dict
-  ret = test_shared_dict[key]
-  time.sleep(float(sleep_after))
-  return HttpResponse('{0}'.format(ret))
-
-
-@mn.lock_pid.for_write
-def concurrency_write_lock(request, key, val, sleep_before, sleep_after):
-  time.sleep(float(sleep_before))
-  test_shared_dict[key] = val
-  time.sleep(float(sleep_after))
-  return mn.view_shared.http_response_with_boolean_true_type()
-
-
-# No locking.
-def concurrency_get_dictionary_id(request):
-  time.sleep(3)
-  ret = id(test_shared_dict)
-  time.sleep(3)
-  return HttpResponse('{0}'.format(ret))

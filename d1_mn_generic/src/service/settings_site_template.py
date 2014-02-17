@@ -225,9 +225,9 @@ REPLICATION_ALLOWEDOBJECTFORMAT = ()
 # If GMN_DEBUG is True, the trusted subjects are not required, as the
 # authentication checks for them are skipped. Therefore, they are not retrieved.
 DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
-# DATAONE_ROOT = 'https://cn-dev.dataone.org/cn'
-# DATAONE_ROOT = 'https://cn-sandbox.dataone.org/cn'
-# DATAONE_ROOT = 'https://cn-stage.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
+#DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 
 # Additional subjects for implicitly trusted DataONE infrastructure. Connections
 # containing client side certificates with these subjects bypass access control
@@ -316,6 +316,20 @@ DATABASES = {
 
     # Set PORT to empty string for default.
     'PORT': '',
+
+    # Wrap each HTTP request in an implicit transaction. The transaction is
+    # rolled back if the view does not return successfully. Upon a successful
+    # return, the transaction is committed, thus making all modifications that
+    # the view made to the database visible simultaneously, bringing the
+    # database directly from one valid state to the next.
+    #
+    # Transactions are also important for views that run only select queries and
+    # run more than a single query, as they hide any transitions between valid
+    # states that may happen between queries.
+    #
+    # Do not change this value from "True", as implicit transactions form the
+    # basis of concurrency control in GMN.
+    'ATOMIC_REQUESTS': True,
   }
 }
 

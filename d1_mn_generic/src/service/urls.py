@@ -26,9 +26,9 @@
 :Author: DataONE (Dahl)
 '''
 
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url, include
 
 # When Django encounters include(), it strips off the part of the URL that
 # matched and sends the remaining string to the included module for further
 # processing.
-urlpatterns = patterns('', (r'^', include('service.mn.urls')), )
+urlpatterns = patterns('', url(r'^', include('service.mn.urls')), )

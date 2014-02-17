@@ -28,6 +28,8 @@ The :term:`mod_wsgi` module enables Apache to communicate with Django and GMN.
   * You may receive a message saying that the apache2 configuration is broken.
     If so, ignore it.
 
+  ::
+  
     $ sudo a2enmod wsgi ssl rewrite
 
   Enable the GMN virtual host::

@@ -11,7 +11,7 @@ WSGIPythonHome /var/local/dataone/gmn
   # These settings are required for GMN to correctly handle the DataONE REST
   # calls. See for more information:
   # http://mule1.dataone.org/ArchitectureDocs-current/notes/ApacheConfiguration.html#configuration
-  AllowEncodedSlashes On
+  AllowEncodedSlashes NoDecode
   AcceptPathInfo On
 
   DocumentRoot /var/www

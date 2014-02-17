@@ -43,7 +43,6 @@ from django.http import HttpResponse
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import gmn_types
 import mn.models as models
 import settings
 

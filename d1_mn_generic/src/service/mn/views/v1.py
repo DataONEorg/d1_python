@@ -27,17 +27,16 @@
 '''
 # Stdlib.
 import datetime
-import django.core.cache
 import httplib
 import logging
 import os
+import socket
 import urlparse
 import uuid
 
 import mn.auth
 import mn.db_filter
 import mn.event_log
-import mn.lock_pid
 import mn.models
 import mn.node
 import mn.psycopg_adapter
@@ -50,8 +49,9 @@ import mn.view_shared
 import service.settings
 
 # Django.
+import django.core.cache
 from django.db.models import Sum
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
 
 # DataONE APIs.
 import d1_client.cnclient
@@ -171,26 +171,22 @@ def _add_object_properties_to_response_header(response, sciobj):
   mn.view_shared.add_http_date_to_response_header(response, datetime.datetime.utcnow())
 
 
-@mn.lock_pid.for_read
 @mn.auth.assert_read_permission
 def get_object_pid(request, pid):
   '''MNRead.get(session, pid) → OctetStream
   '''
   mn.view_asserts.object_exists(pid)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-
-  response = HttpResponse()
+  response = StreamingHttpResponse(_get_object_byte_stream(sciobj),
+    _mimetype_from_format_id(sciobj.format.format_id))
   _add_object_properties_to_response_header(response, sciobj)
-  # The HttpResponse object supports streaming with an iterator, but only
-  # when instantiated with the iterator. That behavior is not convenient here,
-  # so we set up the iterator by writing directly to the internal methods of an
-  # instantiated HttpResponse object.
-  response._container = _get_object_byte_stream(sciobj)
-  response._is_str = False
-
   # Log the access of this object.
   mn.event_log.read(pid, request)
-
+  # Since the iterator that generates data for StreamingHttpResponse runs
+  # after the view has returned, it is not protected by the implicit transaction
+  # around a request. However, in the unlikely event that a request is made to
+  # delete the object on disk that is being returned, Linux will only hide
+  # the file this request releases its file handle.   
   return response
 
 
@@ -245,7 +241,6 @@ def _get_object_byte_stream_local(pid):
 
 
 @mn.restrict_to_verb.get
-@mn.lock_pid.for_read
 @mn.auth.assert_read_permission
 def get_meta_pid(request, pid):
   '''MNRead.getSystemMetadata(session, pid) → SystemMetadata
@@ -257,7 +252,6 @@ def get_meta_pid(request, pid):
     sciobj.serial_version), mimetype=d1_common.const.MIMETYPE_XML)
 
 
-@mn.lock_pid.for_read
 @mn.auth.assert_read_permission
 def head_object_pid(request, pid):
   '''MNRead.describe(session, pid) → DescribeResponse
@@ -272,7 +266,6 @@ def head_object_pid(request, pid):
 
 
 @mn.restrict_to_verb.get
-@mn.lock_pid.for_read
 @mn.auth.assert_read_permission
 def get_checksum_pid(request, pid):
   '''MNRead.getChecksum(session, pid[, checksumAlgorithm]) → Checksum
@@ -360,7 +353,6 @@ def post_error(request):
 
 
 @mn.restrict_to_verb.get
-@mn.lock_pid.for_read
 # Access control is performed within function.
 def get_replica_pid(request, pid):
   '''MNReplication.getReplica(session, pid) → OctetStream
@@ -381,6 +373,9 @@ def _assert_node_is_authorized(request, pid):
   try:
     client = d1_client.cnclient.CoordinatingNodeClient(service.settings.DATAONE_ROOT)
     client.isNodeAuthorized(request.primary_subject, pid)
+  except socket.gaierror:
+    raise d1_common.types.exceptions.ServiceFailure(0,
+      'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))    
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(0, 'A CN has not '
       'authorized the target MN, "{0}" to create a replica of "{1}". Error: {2}'
@@ -397,14 +392,11 @@ def get_is_authorized_pid(request, pid):
   '''
   if 'action' not in request.GET:
     raise d1_common.types.exceptions.InvalidRequest(0,
-      'Missing required argument: "action"')
-
+      'Missing required parameter: "action"')
   # Convert action string to action level. Raises InvalidRequest if the
   # action string is not valid.
   level = mn.auth.action_to_level(request.GET['action'])
-
   mn.auth.assert_allowed(request, level, pid)
-
   return mn.view_shared.http_response_with_boolean_true_type()
 
 
@@ -490,7 +482,6 @@ def object_post(request):
   return mn.view_shared.http_response_with_identifier_type(new_pid)
 
 
-@mn.lock_pid.for_write # OLD object
 @mn.auth.assert_write_permission # OLD object
 def put_object_pid(request, old_pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
@@ -515,7 +506,6 @@ def put_object_pid(request, old_pid):
   return mn.view_shared.http_response_with_identifier_type(new_pid)
 
 
-@mn.lock_pid.for_write # NEW object
 def _create(request, pid, sysmeta):
   mn.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
   mn.view_asserts.obsoleted_by_not_specified(sysmeta)
@@ -549,7 +539,6 @@ def post_generate_identifier(request):
       return mn.view_shared.http_response_with_identifier_type(pid)
 
 
-@mn.lock_pid.for_write
 @mn.auth.decorator_assert_create_update_delete_permission
 def delete_object_pid(request, pid):
   '''MNStorage.delete(session, pid) → Identifier
@@ -584,7 +573,6 @@ def _delete_object_from_database(sciobj):
 
 
 @mn.restrict_to_verb.put
-@mn.lock_pid.for_write
 @mn.auth.assert_write_permission
 def put_archive_pid(request, pid):
   '''MNStorage.archive(session, pid) → Identifier
@@ -620,7 +608,6 @@ def post_replicate(request):
   '''
   mn.view_asserts.post_has_mime_parts(request, (('field', 'sourceNode'),
                                       ('file', 'sysmeta')))
-
   sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
   _assert_request_complies_with_replication_policy(sysmeta)

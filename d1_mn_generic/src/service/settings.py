@@ -83,27 +83,6 @@ MIDDLEWARE_CLASSES = (
   #'service.mn.middleware.profiling_handler.profiling_handler',
   'service.mn.middleware.view_handler.view_handler',
   'service.mn.middleware.startup_handler.startup_handler',
-  # GMN requires that TransactionMiddleware is enabled. TransactionMiddleware
-  # causes each view to be wrapped in an implicit transaction. The transaction
-  # is rolled back if the view does not return successfully. Upon a successful
-  # return, the transaction is committed, thus making all modifications that the
-  # view made to the database visible simultaneously.
-  # 
-  # The Django docs state that the TransactionMiddleware applies to all views
-  # but only to middleware classes that come after it in this list. However, in
-  # GMN, the TransactionMiddleware only works when it is after GMN's custom
-  # view_handler.
-  #
-  # There is currently (7/10/12 / Django 1.4) ongoing discussions on how to
-  # handle transaction isolation levels in Django. The current situation is that
-  # Django assumes the "read committed" isolation level but does not
-  # specifically set that level. Changing the level to anything else may break
-  # Django. Because of this, GMN attempts to handle errors caused by commits
-  # from concurrent database operations becoming visible in the middle of some
-  # series of database updates by using transaction savepoints, and retries.
-  #
-  # https://code.djangoproject.com/ticket/18130
-  'django.middleware.transaction.TransactionMiddleware',
 )
 
 

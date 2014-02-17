@@ -27,7 +27,6 @@
 '''
 
 # Stdlib.
-import cgi
 import logging
 import pprint
 import re
@@ -37,6 +36,7 @@ from django.http import HttpResponse
 
 # D1.
 import d1_common
+import d1_common.const
 import d1_common.types.exceptions
 
 # App.
@@ -54,8 +54,8 @@ class request_handler():
     REQUEST_URI contains the unmodified request URL, so we recreate
     request.path_info from it.
 
-    When the service runs through the Django development server,
-    request.path_info is still broken. Escaped slashes (%2f) are unescaped but,
+    request.path_info is also broken when the service runs through the Django
+    development server. Escaped slashes (%2f) are unescaped but,
     as opposed to when running through Apache, consecutive slashes are not
     collapsed to a single slash. However, when running through a standard
     version of the Django development server, there is no REQUEST_URI that can
@@ -64,26 +64,26 @@ class request_handler():
     repaired both when the service is run through Apache and when it's run
     through the Django development server.
     '''
-    try:
-      request_uri = request.environ['REQUEST_URI']
-    except KeyError:
-      patch_msg = 'Django must be patched for debugging GMN with the Django '
-      patch_msg += 'development server\n'
-      patch_msg += 'In basehttp.py, line 150 in Django 1.4, line 573 in '
-      patch_msg += 'Django 1.3, add:\n'
-      patch_msg += 'env[\'REQUEST_URI\'] = path'
-      raise d1_common.types.exceptions.ServiceFailure(0, patch_msg)
-
-    # Strip parent path from path_info.
-    parent_path_len = len(request.META['SCRIPT_NAME'])
-    request.path_info = request.environ['REQUEST_URI'][parent_path_len:]
-    # Strip any arguments from path_info.
-    request.path_info = re.sub(r'\?.*', '', request.path_info)
+    #     try:
+    #       request_uri = request.environ['REQUEST_URI']
+    #     except KeyError:
+    #       patch_msg = 'Django must be patched for debugging GMN with the Django '
+    #       patch_msg += 'development server\n'
+    #       patch_msg += 'In basehttp.py, line 150 in Django 1.4, line 573 in '
+    #       patch_msg += 'Django 1.3, add:\n'
+    #       patch_msg += 'env[\'REQUEST_URI\'] = path'
+    #       raise d1_common.types.exceptions.ServiceFailure(0, patch_msg)
+    # 
+    #     # Strip parent path from path_info.
+    #     parent_path_len = len(request.META['SCRIPT_NAME'])
+    #     request.path_info = request.environ['REQUEST_URI'][parent_path_len:]
+    #     # Strip any arguments from path_info.
+    #     request.path_info = re.sub(r'\?.*', '', request.path_info)
 
     if settings.GMN_DEBUG == True and settings.ECHO_REQUEST_OBJECT:
       pp = pprint.PrettyPrinter(indent=2)
-      return HttpResponse(cgi.escape('<pre>{0}</pre>'.format(pp.pformat(request))))
+      return HttpResponse(pp.pformat(request), d1_common.const.MIMETYPE_TEXT)
 
-    logging.info('REQUEST: {0}'.format(request_uri))
+#    logging.info('REQUEST: {0}'.format(request_uri))
 
     return None

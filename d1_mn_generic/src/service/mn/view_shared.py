@@ -65,7 +65,6 @@ import mn.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
-import mn.lock_pid
 import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta_store

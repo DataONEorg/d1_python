@@ -15,63 +15,84 @@ No background information is provided in these instructions, as such information
 is readily available on the web. See for instance,
 `SSL Certificates HOWTO <http://www.tldp.org/HOWTO/SSL-Certificates-HOWTO/x120.html>`_.
 
-Prepare for setting up a local CA::
+Set up the local CA:
 
-  $ cd /usr/lib/ssl/misc/
-  $ sudo pico CA.pl
+  Modify the CA script::
 
-* Comment out the existing line starting with ``$SSLEAY_CONFIG`` by putting a
-  hash mark ("#") in front of it. Then, add this line::
+    $ cd /usr/lib/ssl/misc/
+    $ sudo pico CA.pl
 
-  $SSLEAY_CONFIG="-config /etc/ssl/local_ca/openssl.cnf";
+  * Comment out the existing line starting with ``$SSLEAY_CONFIG`` by putting a
+    hash mark ("#") in front of it. Then, add this line::
 
-* Change ``$CATOP`` to ``"/etc/ssl/local_ca";``
-* Optionally, change ``$DAYS`` to ``3650`` (signed certs are valid for 10 years)
-* Optionally, change ``$CADAYS`` to ``10950`` (the CA is valid for 30 years)
+    $SSLEAY_CONFIG="-config /etc/ssl/local_ca/openssl.cnf";
 
+  * Change ``$CATOP`` to ``"/etc/ssl/local_ca";``
+  * Optionally, change ``$DAYS`` to ``3650`` (signed certs are valid for 10 years)
+  * Optionally, change ``$CADAYS`` to ``10950`` (the CA is valid for 30 years)
 
-Set up work area for local CA::
+  Set up work area for local CA::
 
-  $ sudo mkdir /etc/ssl/local_ca
-  $ cd /etc/ssl/local_ca
+    $ sudo mkdir /etc/ssl/local_ca
+    $ cd /etc/ssl/local_ca
 
-Set up a new openssl.cnf file for the local CA::
+  Set up a new openssl.cnf file for the local CA::
 
-  $ sudo cp ../openssl.cnf .
+    $ sudo cp ../openssl.cnf .
 
-Modify openssl.cnf to use the local_ca work area::
+  Modify openssl.cnf to use the local_ca work area::
 
-  $ sudo pico openssl.cnf
+    $ sudo pico openssl.cnf
 
-* Change ``dir`` (under ``CA_default``) to ``/etc/ssl/local_ca``.
+  * Change ``dir`` (under ``CA_default``) to ``/etc/ssl/local_ca``.
 
-Make the CA utilities more easily accessible::
+  Make the CA utilities more easily accessible::
 
-  $ sudo ln -s /usr/lib/ssl/misc/* /usr/local/bin/
+    $ sudo ln -s /usr/lib/ssl/misc/* /usr/local/bin/
 
-Create the local CA::
+Create the local CA root certificate:
 
-  $ sudo echo 01 | sudo tee serial > /dev/null
-  $ sudo CA.pl -newca
+  Prepare the certificate serial number::
 
-  * Provide passwords as requested.
-  * Except for Common Name (CN), providing information on the prompts is optional.
+    $ sudo echo 01 | sudo tee serial > /dev/null
+
+  Create the certificate::
+
+    $ sudo CA.pl -newca
+
+  * Press Enter when asked for a certificate filename.
+  * For the PEM pass phrase, create a new CA password (required).
+  * Except for Common Name (CN), providing information at the prompts is optional.
     Just press enter to use the defaults.
-  * For the Common Name (CN) use something like "Local CA root".
+  * For the Common Name (CN), use something like "Local CA root".
+  * For the cakey.pem pass phrase, use the previously created CA password.
+  * To start this procedure again, first delete ``./private/cakey.pem``.
 
-Create a client side certificate signed by the local CA::
+Create a client side certificate signed by the local CA:
 
-  $ sudo CA.pl -newreq
-  $ sudo CA.pl -signreq
+  Create the certificate request::
 
-  * For the Common Name (CN) use something like "Local client side certificate".
+    $ sudo CA.pl -newreq
+
+  * For the PEM pass phrase, create a new client side certificate password.
+  * For the Common Name (CN), use something like "Local client side certificate".
+
+  Sign the certificate request with the local CA::
+
+    $ sudo CA.pl -signreq
+
+  * For the cakey.pem pass phrase, use the previously created CA password.
 
 The new client side certificate is password protected, causing a prompt for the
 password every time the certificate is used. If the certificate will be used in
 an automated process or in a stand-alone test instance (see below), the password
-should be removed::
+should be removed.
 
-  $ sudo openssl rsa -in newkey.pem -out newkey.nopassword.pem
+  Remove pass phrase from client side certificate::
+
+    $ sudo openssl rsa -in newkey.pem -out newkey.nopassword.pem
+
+  * For the newkey.pem pass phrase, type the client side certificate password.
 
 You now have a local CA root certificate and a certificate signed by that root:
 
@@ -81,22 +102,23 @@ You now have a local CA root certificate and a certificate signed by that root:
 | ``newkey.pem``: The local client side certificate private key
 | ``newkey.nopassword.pem``: The local client side certificate private key without password
 
-Create folder for the CA::
+Set GMN up to trust the local CA root certificate:
 
-  $ sudo mkdir -p /var/local/dataone/certs/ca
+  Create folder for the CA::
 
-Create ``cilogon_dataone_ca_chain.crt`` if it doesn't exist::
+    $ sudo mkdir -p /var/local/dataone/certs/ca
 
-  $ sudo touch /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt
+  Create ``cilogon_dataone_ca_chain.crt`` if it doesn't exist::
 
-Ensure that the GMN certificate chain ends with a linefeed:
+    $ sudo touch /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt
 
-  $ sudo sed -i -e '$a\' /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt
+  Ensure that the GMN certificate chain ends with a linefeed::
 
-Add the local CA to the CAs trusted by GMN::
+    $ sudo sed -i -e '$a\' /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt
 
-  $ sudo sh -c "cat cacert.pem >> /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt"
+  Add the local CA to the CAs trusted by GMN::
 
+    $ sudo sh -c "cat cacert.pem >> /var/local/dataone/certs/ca/cilogon_dataone_ca_chain.crt"
 
 
 Extra steps for a stand-alone test instance
@@ -107,11 +129,12 @@ If you are setting up a stand-alone test instance of GMN (see
 DataONE. Instead, the local client side certificates that were just generated
 serve that role.
 
-Copy the local client side certificates to the GMN standard locations::
+  Copy the local client side certificates to the GMN standard locations::
 
-  $ sudo mkdir -p /var/local/dataone/certs/client
-  $ sudo cp newcert.pem /var/local/dataone/certs/client/client.crt
-  $ sudo cp newkey.nopassword.pem /var/local/dataone/certs/client/client.key
+    $ sudo mkdir -p /var/local/dataone/certs/client
+    $ sudo cp newcert.pem /var/local/dataone/certs/client/client.crt
+    $ sudo cp newkey.nopassword.pem /var/local/dataone/certs/client/client.key
+
 
 .. _snake_oil_cert:
 
@@ -122,22 +145,22 @@ For test instances of GMN, a server side certificate may not exist. If so a self
 signed "snakeoil" certificate that is automatically generated by Ubuntu can be
 used (though it is not trusted by browsers):
 
-The snakeoil server side certificate is automatically generated when the ``ssl-cert``
-package is installed::
+  The snakeoil server side certificate is automatically generated when the ``ssl-cert``
+  package is installed::
 
-  $ sudo apt-get install --yes ssl-cert
+    $ sudo apt-get install --yes ssl-cert
 
-Copy the certificate and key to the GMN standard locations::
+  Copy the certificate and key to the GMN standard locations::
 
-  $ sudo mkdir -p /var/local/dataone/certs/server
-  $ sudo cp /etc/ssl/certs/ssl-cert-snakeoil.pem /var/local/dataone/certs/server/server.crt
-  $ sudo cp /etc/ssl/private/ssl-cert-snakeoil.key /var/local/dataone/certs/server/server.nopassword.key
+    $ sudo mkdir -p /var/local/dataone/certs/server
+    $ sudo cp /etc/ssl/certs/ssl-cert-snakeoil.pem /var/local/dataone/certs/server/server.crt
+    $ sudo cp /etc/ssl/private/ssl-cert-snakeoil.key /var/local/dataone/certs/server/server.nopassword.key
 
-The snakeoil certificate matches the IP address of the server. If the IP
-adddress of the server is changed some time in the future, the snakeoil
-certificate can be regenerated with::
+  The snakeoil certificate matches the IP address of the server. If the IP
+  adddress of the server is changed some time in the future, the snakeoil
+  certificate can be regenerated with::
 
-  $ sudo make-ssl-cert generate-default-snakeoil --force-overwrite
+    $ sudo make-ssl-cert generate-default-snakeoil --force-overwrite
 
-* Then, copy the new versions to the GMN standard locations as described
-  above.
+  * Then, copy the new versions to the GMN standard locations as described
+    above.

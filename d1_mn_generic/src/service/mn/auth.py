@@ -164,9 +164,6 @@ def set_access_policy(pid, access_policy=None):
   # Add an implicit allow rule with all permissions for the rights holder.
   allow_rights_holder = dataoneTypes.AccessRule()
 
-  #with sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
-  #  allow_rights_holder.subject.append(s.rightsHolder)
-
   with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as sysmeta:
     allow_rights_holder.subject.append(sysmeta.rightsHolder)
     sysmeta.accessPolicy = access_policy
@@ -412,23 +409,6 @@ def assert_trusted(request):
       'Trusted subjects: {1}'.format(
         format_active_subjects(request), get_trusted_subjects_string())
     )
-
-
-def assert_internal_permission(f):
-  '''Access only by GMN async process.
-  '''
-
-  def wrap(request, *args, **kwargs):
-    if not is_internal_subject(request):
-      raise d1_common.types.exceptions.NotAuthorized(
-        0, 'Access allowed only for GMN asynchronous processes. {0}'
-        .format(format_active_subjects(request))
-      )
-    return f(request, *args, **kwargs)
-
-  wrap.__doc__ = f.__doc__
-  wrap.__name__ = f.__name__
-  return wrap
 
 
 def decorator_assert_create_update_delete_permission(f):
