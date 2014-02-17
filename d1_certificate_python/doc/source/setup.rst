@@ -11,6 +11,10 @@ Prepare the build environment::
   $ sudo apt-get --yes install build-essential python-dev libssl-dev \
   python-pip; sudo pip install pip --upgrade;
 
-Install::
+Install PyXB::
+
+  $ sudo pip install pyxb==1.2.3
+
+Install the Certificate Extensions::
 
   $ sudo pip install dataone.certificate_extensions

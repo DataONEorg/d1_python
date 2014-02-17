@@ -102,7 +102,7 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.common == 1.1.4',
+      'dataone.common == 1.1.5',
     ],
     # Extensions.
     ext_modules=[
