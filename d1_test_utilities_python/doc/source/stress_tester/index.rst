@@ -11,7 +11,7 @@ Contents
   :numbered:
   :maxdepth: 2
 
-  setup
+  configuration
   certificates
   tests
 

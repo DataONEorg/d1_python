@@ -24,8 +24,6 @@
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Std.
@@ -36,11 +34,7 @@ import sys
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-
-import d1_instance_generator
-import d1_instance_generator.random_data
-import d1_instance_generator.systemmetadata
-import d1_instance_generator.accesspolicy
+from d1_test.instance_generator import random_data, systemmetadata
 
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -55,7 +49,10 @@ import transaction
 N_SCI_OBJ_BYTES = 1024
 
 # The number of subjects to allow access to each created test object.
-N_ALLOW_ACCESS = 10
+N_SUBJECTS = 10
+
+# Chance, in percent, that an object is created with public access.
+PUBLIC_ACCESS_PERCENT = 25.0
 
 
 class Transaction(transaction.Transaction):
@@ -65,7 +62,7 @@ class Transaction(transaction.Transaction):
   def d1_mn_api_call(self):
     '''MNStorage.create()'''
     sci_obj = self.create_science_object()
-    subjects = self.create_list_of_random_subjects(N_ALLOW_ACCESS)
+    subjects = self.get_random_subjects(PUBLIC_ACCESS_PERCENT, N_SUBJECTS)
     access_policy = self.create_access_policy(subjects)
     sys_meta = self.create_system_metadata(sci_obj, access_policy)
     client = self.create_client_for_subject(settings.SUBJECT_WITH_CREATE_PERMISSIONS)
@@ -73,10 +70,10 @@ class Transaction(transaction.Transaction):
     self.check_response(response)
 
   def create_science_object(self):
-    return d1_instance_generator.random_data.random_bytes_flo(N_SCI_OBJ_BYTES)
+    return random_data.random_bytes_flo(N_SCI_OBJ_BYTES)
 
   def create_system_metadata(self, sci_obj, access_policy):
-    return d1_instance_generator.systemmetadata.generate_from_flo(
+    return systemmetadata.generate_from_flo(
       sci_obj, {
         'identifier': self.generate_random_ascii_pid(),
         'accessPolicy': access_policy,

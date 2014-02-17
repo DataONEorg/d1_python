@@ -1,3 +1,5 @@
+.. _certificates:
+
 Certificates
 ============
 
@@ -59,7 +61,7 @@ that will be used for signing the test certificates.
   of the fields, that the CA is for testing only. As the DN of the signing
   CA is included in all signed certificates, it helps with marking those
   certificates as being for testing only as well.
-  
+
   ::
 
     $ openssl req -new -x509 -days 3650 -key local_test_ca.nopassword.key -out local_test_ca.crt
@@ -92,9 +94,9 @@ The MN proves its identity by returning a server side certificate when a client
 connects.
 
   Enter the `./generated/certificates` folder::
-  
+
     $ cd ./generated/certificates
-    
+
   Generate the private key::
 
     $ openssl genrsa -des3 -out local_test_server_cert.key 1024
@@ -106,12 +108,14 @@ connects.
   Create a certificate request. Only the Common Name (CN) field is important for
   the tester. It must match the name of your server, as seen from the tester.
   For instance, if the Base URL for your server is `https://my-mn.org/mn`, the
-  Common Name should be `my-mn`. An IP address can also be used.
+  Common Name should be `my-mn.org`. An IP address can also be used.
+
+  ::
 
     $ openssl req -new -key local_test_server_cert.nopassword.key -out local_test_server_cert.csr
-    
-  Sign the CSR with the CA:
-  
+
+  Sign the CSR with the CA::
+
     $ openssl x509 -req -days 36500 -in local_test_server_cert.csr -CA local_test_ca.crt -CAkey local_test_ca.nopassword.key -set_serial 01 -out local_test_server_cert.crt
 
 
@@ -119,9 +123,8 @@ Setting up the shared key pair
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The normal procedure for setting up a new certificate involves creating a
-private key and a certificate request. The certificate request is then signed by
-the public key (which is implicitly contained by the private key) and sent to
-the signing entity.
+private key and a certificate request. The certificate request is then signed
+with the private key and sent to the signing entity.
 
 Generating a private key is computationally expensive because it requires
 gathering entropy. When generating a set of certificates for testing, it is
@@ -178,4 +181,3 @@ the certificates.
 
 Before the certificates can be used by the stress tester, the MN must be set
 up to allow the subjects to create science objects.
-

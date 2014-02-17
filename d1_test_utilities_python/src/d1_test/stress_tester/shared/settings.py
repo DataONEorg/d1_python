@@ -28,13 +28,13 @@
 import os
 
 # The MN to stress test.
-BASEURL = 'https://localhost/mn'
+#BASEURL = 'https://localhost/mn'
 #BASEURL = 'http://localhost/mn'
 #BASEURL = 'http://localhost:8000'
 #BASEURL = 'https://stress-1-unm.test.dataone.org/mn'
 #BASEURL = 'https://stress-2-unm.test.dataone.org'
 #BASEURL = 'https://gmn-dev.test.dataone.org/mn'
-
+BASEURL = 'https://192.168.1.135/mn'
 # Number of objects to retrieve with listObjects.
 PAGE_SIZE = 1000
 
@@ -43,10 +43,10 @@ PAGE_SIZE = 1000
 SHARED_ROOT = './shared'
 GENERATED_ROOT = './generated'
 
+PUBLIC_OBJECTS_PATH = os.path.join(GENERATED_ROOT, 'public_objects.txt')
+PRIVATE_OBJECTS_PATH = os.path.join(GENERATED_ROOT, 'private_objects.txt')
 SUBJECTS_PATH = os.path.join(GENERATED_ROOT, 'subjects.txt')
-SUBJECTS_AND_OBJECTS_PATH = os.path.join(GENERATED_ROOT, 'subjects_and_objects.txt')
-ERROR_PATH = '/tmp/stress_test_error.html'
-GMN_CONNECTION_STRING = "host='localhost' dbname='gmn' user='gmn' password='gmn'"
+ERROR_PATH = './stress_test_error.html'
 
 # Certificates.
 

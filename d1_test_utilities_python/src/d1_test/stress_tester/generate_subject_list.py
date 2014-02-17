@@ -33,7 +33,7 @@ import sys
 import unittest
 
 # D1.
-import d1_instance_generator.random_data
+from d1_test.instance_generator import random_data
 
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -61,11 +61,13 @@ def main():
 
   create_subject_list(n_subjects)
 
+  print '{0} test subjects written to {1}'.format(n_subjects, settings.SUBJECTS_PATH)
+
 
 def create_subject_list(n_subjects):
   with open(settings.SUBJECTS_PATH, 'w') as f:
     for i in range(n_subjects):
-      cn = d1_instance_generator.random_data.random_3_words()
+      cn = random_data.random_3_words()
       f.write(subject_dn.get_dataone_compliant_dn_serialization_by_subject(cn))
       f.write('\n')
 

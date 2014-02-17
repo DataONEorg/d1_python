@@ -44,23 +44,13 @@ import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
-import d1_client.mnclient
-
-import d1_instance_generator
-import d1_instance_generator.random_data
-import d1_instance_generator.systemmetadata
-import d1_instance_generator.accesspolicy
-
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
-import certificate
-import settings
-import pem_in_http_header
+#import certificate
+#import settings
+#import pem_in_http_header
 import transaction
-
-# Config
-page_size = 1000
 
 
 class Transaction(transaction.Transaction):
@@ -69,9 +59,9 @@ class Transaction(transaction.Transaction):
 
   def d1_mn_api_call(self):
     '''MNRead.get() called by regular user'''
-    obj, subject = self.select_random_subject_object()
-    client = self.create_client_for_subject(subject)
-    response = client.getResponse(obj)
+    pid = self.select_random_public_object()
+    client = self.create_public_client()
+    response = client.getResponse(pid)
     self.check_response(response)
     response.read()
 

@@ -84,14 +84,14 @@ def main():
     url=url,
     license=license,
     # Contents (modified by MANIFEST.in)
-    packages=setuptools.find_packages(
-    ),
+    packages=setuptools.find_packages(),
     include_package_data=True,
-    # Many of the tests have DataONE dependencies but, since those are also the
-    # modules being tested, it is best to manage them manually, and not have
-    # them be automatically installed.
-    #install_requires = [
-    #],
+    # Dependencies that are available through PyPI.
+    install_requires=[
+      'multi-mechanize',
+      'dataone.libclient == 1.2.5',
+      'dataone.certificate_extensions == 1.1.1',
+    ],
   )
 
 

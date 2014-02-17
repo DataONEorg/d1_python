@@ -33,6 +33,7 @@ import hashlib
 import StringIO
 import logging
 # D1.
+import d1_common.checksum
 import d1_common.const
 import d1_common.util
 from d1_common.types.generated import dataoneTypes
@@ -42,14 +43,14 @@ import random_data
 
 
 def random_checksum_algorithm():
-  return random.choice(d1_common.util.dataone_to_python_checksum_algorithm_map.keys())
+  return random.choice(d1_common.checksum.dataone_to_python_checksum_algorithm_map.keys())
 
 
 def calculate_checksum_of_flo(
   flo, algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
   block_size=1024 * 1024
 ):
-  c = d1_common.util.get_checksum_calculator_by_dataone_designator(algorithm)
+  c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(algorithm)
   while True:
     data = flo.read(block_size)
     if not data:

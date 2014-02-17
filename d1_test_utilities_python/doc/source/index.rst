@@ -10,6 +10,7 @@ Contents
   :numbered:
   :maxdepth: 2
 
+  setup
   instance_generator/index
   stress_tester/index
   utilities/index

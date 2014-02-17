@@ -37,11 +37,11 @@ import uuid
 import StringIO
 
 # D1.
+import d1_common.checksum
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
-import d1_common.util
 import d1_common.xmlrunner
 
 # App.
@@ -78,7 +78,7 @@ class TestChecksum(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       flo = StringIO.StringIO('ateststring')
       c1 = checksum.generate_from_flo(flo)
       c2 = dataoneTypes.CreateFromDocument(c1.toxml())
-      c = d1_common.util.get_checksum_calculator_by_dataone_designator(c2.algorithm)
+      c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(c2.algorithm)
       c.update('ateststring')
       self.assertEquals(c.hexdigest(), c2.value())
 
@@ -87,7 +87,7 @@ class TestChecksum(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     for i in range(10):
       c1 = checksum.generate_from_string('ateststring')
       c2 = dataoneTypes.CreateFromDocument(c1.toxml())
-      c = d1_common.util.get_checksum_calculator_by_dataone_designator(c2.algorithm)
+      c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(c2.algorithm)
       c.update('ateststring')
       self.assertEquals(c.hexdigest(), c2.value())
 

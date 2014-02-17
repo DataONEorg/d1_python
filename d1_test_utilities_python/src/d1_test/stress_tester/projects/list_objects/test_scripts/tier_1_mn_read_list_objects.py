@@ -24,8 +24,6 @@
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Std.
@@ -38,23 +36,9 @@ import uuid
 import xml.sax.saxutils
 import StringIO
 
-# D1.
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-
-import d1_client.mnclient
-
-import d1_instance_generator
-import d1_instance_generator.random_data
-import d1_instance_generator.systemmetadata
-import d1_instance_generator.accesspolicy
-
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../../../shared/'))
-import settings
-import pem_in_http_header
 import transaction
 
 # Config
@@ -93,6 +77,7 @@ class Transaction(transaction.Transaction):
       count = self.total - start
     response = client.listObjectsResponse(start=start, count=count)
     self.check_response(response)
+    #print response.read()
 
 
 if __name__ == '__main__':

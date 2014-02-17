@@ -18,11 +18,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`generate_certificates_for_create`
-==========================================
+''':mod:`generate_certificates`
+===============================
 
-:Synopsis: Create set of test certificates signed by the local test CA, for
-use by the stress tester for MNStorage.create().
+:Synopsis:
+  Create set of test certificates signed by the local test CA, for
+  use by the stress tester. A certificate is created for each subject in the
+  subject list and two certificates are created for test subjects with special
+  permissions.
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
@@ -38,8 +41,7 @@ import xml.sax.saxutils
 # D1.
 import d1_x509v3_certificate_generator
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_instance_generator.subject
-import d1_instance_generator.random_data
+from d1_test.instance_generator import random_data
 
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -85,18 +87,18 @@ def create_certificates():
   subjects.append(settings.SUBJECT_WITH_CREATE_PERMISSIONS)
   subjects.append(settings.SUBJECT_WITH_CN_PERMISSIONS)
   for subject in subjects:
-    print subject
     subject_dn_tuple = subject_dn.dataone_compliant_dn_serialization_to_dn_tuple(subject)
     subject_info = create_subject_info(subject)
     create_certificate(subject, subject_dn_tuple, subject_info)
+  print 'Created {0} client side certificates in {1}'.format(
+    len(
+      subjects
+    ), settings.CLIENT_CERT_DIR
+  )
 
 
 def get_subject_list():
   return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf8').read().splitlines()
-
-
-def create_list_of_random_groups(n_groups):
-  return d1_instance_generator.random_data.random_word_unique_list(n_groups)
 
 
 def create_certificate(subject, subject_dn_tuple, subject_info):

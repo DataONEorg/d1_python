@@ -24,13 +24,10 @@
 
 :Created: 2011-04-22
 :Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
 '''
 
 # Std.
 import os
-import random
 import sys
 
 # D1.
@@ -48,10 +45,11 @@ class Transaction(transaction.Transaction):
 
   def d1_mn_api_call(self):
     '''MNRead.getLogRecords() for specific object called by regular subject'''
-    obj, subject = self.select_random_subject_object()
+    obj, subject = self.select_random_private_object()
     client = self.create_client_for_subject(subject)
     response = client.getLogRecordsResponse(pidFilter=obj)
     self.check_response(response)
+    #print response.read()
 
 
 if __name__ == '__main__':

@@ -38,6 +38,7 @@ import time
 
 # D1.
 import d1_client.mnclient
+import d1_common.const
 
 # App.
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
@@ -51,7 +52,14 @@ class Transaction(object):
   def __init__(self):
     self.custom_timers = {}
     self.subject_list = self.get_subject_list()
-    self.subject_object_list = self.get_subject_object_list()
+    try:
+      self.private_object_list = self.get_private_object_list()
+    except IOError:
+      self.private_object_list = None
+    try:
+      self.public_object_list = self.get_public_object_list()
+    except IOError:
+      self.public_object_list = None
 
   def run(self):
     start_timer = time.time()
@@ -62,6 +70,9 @@ class Transaction(object):
 
   def d1_mn_api_call(self):
     raise Exception('Override to make a DataONE API call')
+
+  def create_public_client(self):
+    return d1_client.mnclient.MemberNodeClient(base_url=settings.BASEURL)
 
   def create_client_for_cert(self, cert_path):
     certificate.check_path(cert_path)
@@ -108,15 +119,27 @@ class Transaction(object):
   def get_subject_list(self):
     return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf8').read().splitlines()
 
-  def get_subject_object_list(self):
-    return codecs.open(settings.SUBJECTS_AND_OBJECTS_PATH, 'r', 'utf8')\
-      .read().splitlines()
+  def get_public_object_list(self):
+    return codecs.open(settings.PUBLIC_OBJECTS_PATH, 'r', 'utf8').read().splitlines()
 
-  def create_list_of_random_subjects(self, n_subjects):
+  def get_private_object_list(self):
+    return [
+      l.split('\t')
+      for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, 'r', 'utf8').read(
+      ).splitlines(
+      )
+    ]
+
+  def get_random_subjects(self, public_access_percent, n_subjects):
+    if random.random() * 100.0 < public_access_percent:
+      return [d1_common.const.SUBJECT_PUBLIC]
     return random.sample(self.subject_list, n_subjects)
 
   def select_random_subject(self):
     return random.choice(self.subject_list)
 
-  def select_random_subject_object(self):
-    return random.choice(self.subject_object_list).split('\t')
+  def select_random_public_object(self):
+    return random.choice(self.public_object_list)
+
+  def select_random_private_object(self):
+    return random.choice(self.private_object_list)
