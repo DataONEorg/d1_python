@@ -6,10 +6,12 @@ as a regular application, independent of any existing Python environment on the
 computer. These instructions detail how to create the installer and is intended
 as a reference for DataONE and 3rd party developers.
 
+The regular distribution channel for DataONE's Python products is PyPI, but the
+PyPI distribution does not include various files needed for building the
+installer.
+
 To create the ONEDrive installer for Windows, ONEDrive is first installed from
-the DataONE Subversion repository into a regular Python environment. The regular
-distribution for DataONE's Python products is PyPI, but the PyPI distribution
-does not include various files needed for building the installer.
+the DataONE Subversion repository into a regular Python environment.
 
 Then, a stand-alone, executable version of ONEDrive is created with py2exe.
 

@@ -4,7 +4,8 @@ Installation
 Microsoft Windows
 ~~~~~~~~~~~~~~~~~
 
-1. Download the `latest ONEDrive for Windows setup <https://repository.dataone.org/software/cicore/trunk/itk/d1_client_onedrive/src/onedrive-setup-2.0.0RC1.exe>`_.
+1. Download the `latest ONEDrive for Windows setup
+<https://repository.dataone.org/software/cicore/trunk/itk/d1_client_onedrive/src/onedrive-setup-2.0.0RC1.exe>`_.
 
 #. Start the setup and follow the prompts.
 
@@ -51,14 +52,62 @@ downloading to a local folder::
 * Make sure option 'user_allow_other' is set in /etc/fuse.conf.
 
 
-Linux
-~~~~~
-
-TODO::
-  Detail steps for setting up on linux, which will be the same as OS X
-  except with the regular FUSE distro instead.
-
-
 .. _`Fuse for OS X`: http://osxfuse.github.com/
 
 .. _fusepy: https://github.com/terencehonles/fusepy
+
+
+Linux
+~~~~~
+
+Make sure the system is up to date::
+
+  $ sudo apt-get --yes update; sudo apt-get --yes dist-upgrade
+
+* Reboot if necessary.
+
+Set up server packages:
+
+* The build environment for DataONE Python extensions and lxml
+* Commands used in the install
+
+::
+
+  $ sudo apt-get --yes install build-essential python-dev libxml2-dev \
+  libxslt-dev
+
+Install pip::
+
+  $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
+
+Install PyXB::
+
+  $ sudo pip install pyxb==1.2.3
+
+Install ONEDrive, and its dependencies from PyPI, into a Python virtual
+environment. The virtual environment is set up under onedrive_bin in the user's
+home folder.
+
+::
+
+  $ sudo pip install virtualenv;
+  $ cd; mkdir onedrive_bin; virtualenv --distribute onedrive_bin;
+  cd onedrive_bin; . bin/activate; pip install dataone.onedrive
+
+* Press ctrl-d to exit the virtualenv.
+
+ONEDrive expects to find a workspace.xml file in your home folder. Copy one
+of the example workspaces there::
+
+  $ cp onedrive_bin/workspace.xml ~
+
+By default, ONEDrive uses a folder named "one" in your home folder as the
+mount point. Create it::
+
+  $ mkdir ~/one
+
+Start ONEDrive::
+
+  $ ~/onedrive_bin/bin/onedrive
+
+Open ~/one to access your DataONE objects.
