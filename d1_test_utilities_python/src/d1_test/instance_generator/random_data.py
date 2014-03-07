@@ -52,7 +52,7 @@ unicode_characters_no_whitespace = re.sub(r'\s', '', unicode_characters)
 
 def random_bytes(n_bytes):
   '''Return a string containing random bytes'''
-  return os.urandom(n_bytes)
+  return ''.join(chr(random.randint(0, 255)) for x in range(n_bytes))
 
 
 def random_bytes_flo(n_bytes):
