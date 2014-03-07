@@ -93,7 +93,7 @@ class TestExceptions(unittest.TestCase):
   def test_150(self):
     '''deserialize() of bad document raises DataONEExceptionException'''
     self.assertRaises(
-      exceptions.DataONEExceptionException, exceptions.deserialize, INVALID_ERROR_DOC
+      exceptions.DataONEExceptionException, exceptions.deserialize, INVALID_ERROR_DOC[0]
     )
 
   def test_200(self):
