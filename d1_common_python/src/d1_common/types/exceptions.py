@@ -76,6 +76,10 @@ def deserialize(dataone_exception_xml):
   :return type: DataONEException subclass
   '''
   try:
+    # PyXB will print the following warning here:
+    # WARNING:pyxb.binding.basis:Unable to convert DOM node value at <unknown>[1:209] to binding
+    # This is because traceInformation is an xs:anyType, which can hold any XML
+    # structure so no bindings can be generated.
     dataone_exception_pyxb = dataoneErrors.CreateFromDocument(dataone_exception_xml)
   except (pyxb.PyXBException, xml.sax.SAXParseException):
     msg = StringIO.StringIO()
@@ -173,33 +177,42 @@ class DataONEException(Exception):
 
   def __str__(self):
     msg = StringIO.StringIO()
-    msg.write(u'name: {0}\n'.format(self.name))
-    msg.write(u'errorCode: {0}\n'.format(self.errorCode))
-    msg.write(u'detailCode: {0}\n'.format(str(self.detailCode)))
-    if self.description is not None:
-      msg.write(u'description: {0}\n'.format(self.description))
-    if self.traceInformation is not None:
-      msg.write(u'traceInformation: {0}\n'.format(self.traceInformation))
-    if self.identifier is not None:
-      msg.write(u'PID: {0}\n'.format(self.identifier))
-    if self.nodeId is not None:
-      msg.write(u'NodeID: {0}\n'.format(self.nodeId))
-    # The unit test framework that comes with Python 2.6 has a bug that has been
-    # fixed in later versions. http://bugs.python.org/issue8313. The bug causes
-    # stack traces containing Unicode to be shown as "unprintable". So, for now,
-    # string representations of exceptions are forced to ascii, where non-ascii
-    # characters are replaced with a box.
-    return unicode(msg.getvalue()).encode("utf-8")
+    msg.write(self.format_message(u'name', self.name))
+    msg.write(self.format_message(u'errorCode', self.errorCode))
+    msg.write(self.format_message(u'detailCode', self.detailCode))
+    msg.write(self.format_message(u'description', self.description))
+    msg.write(self.format_message(u'traceInformation', self.traceInformation))
+    msg.write(self.format_message(u'identifier', self.identifier))
+    msg.write(self.format_message(u'nodeId', self.nodeId))
+    return msg.getvalue()
 
   def friendly_format(self):
     '''Serialize to a format more suitable for displaying to end users.
     '''
     if self.description is not None:
-      return '{0}: {1}'.format(self.name, self.description)
+      msg = self.description
     else:
-      return '{0}: errorCode: {1} / detailCode: {2}'.format(
-        self.name, self.errorCode, self.detailCode
-      )
+      msg = 'errorCode: {0} / detailCode: {1}'.format(self.errorCode, self.detailCode)
+    return self.format_message(self.name, msg)
+
+  def format_message(self, tag, msg):
+    '''If msg is None, print nothing.
+    If msg has a single line, print:
+    tag: msg
+    If msg has multiple lines, print:
+    tag:
+      line 1
+      line 2
+    '''
+    if msg is None:
+      return
+    msg = str(msg).strip()
+    if msg == '':
+      return
+    elif msg.count('\n') <= 1:
+      return '{0}: {1}\n'.format(tag, msg.strip())
+    else:
+      return '{0}:\n  {1}\n'.format(tag, msg.replace('\n', '\n  ').strip())
 
   def serialize(self):
     dataone_exception_pyxb = dataoneErrors.error()

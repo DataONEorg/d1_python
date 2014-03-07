@@ -23,8 +23,9 @@ Module d1_common.mime_multipart
 ===============================
 
 :Synopsis:
-  Wrap files and return the file data wrapped in a mime multipart structure when
-  iterated, without buffering.
+  MIME Multipart document generator. The multipart object is instantiated with
+  any number of fields and files, after which the object can be iterated to
+  yield the contents as a MIME Multipart document without buffering.
 :Created: 2010-09-07
 :Author: DataONE (Dahl, Vieglais)
 '''
@@ -228,14 +229,15 @@ class multipart(object):
     return 'multipart/form-data; boundary={0}'.format(self.BOUNDARY)
 
   def _guess_mime_type(self, filename):
-    '''Internal method that attempts to map a filename extension to a mimetype.
+    '''Internal method that attempts to map a filename extension to a
+    Content-Type.
 
     :param filename: The name of a file, including extension.
     :type filename: string
     :returns: Mimetype.
     :returns type: string
     '''
-    return mimetypes.guess_type(filename)[0] or d1_common.const.MIMETYPE_OCTETSTREAM
+    return mimetypes.guess_type(filename)[0] or d1_common.const.CONTENT_TYPE_OCTETSTREAM
 
   def _form_fields(self):
     '''Generate the MIME Multipart form fields.
