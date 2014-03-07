@@ -22,7 +22,7 @@
 ============================
 
 :Synopsis:
-  Map DataONE ObjectFormatIDs to mimetype and filename extension.
+  Map DataONE ObjectFormatIDs to Content-Type and filename extension.
   The mappings are provided in a CSV file.
 :Created: 2012-10-25
 :Author: DataONE (Dahl)
@@ -60,7 +60,7 @@ class ObjectFormatInfo(Singleton):
       self.csv_file = csv_file
     self.read_csv_file()
 
-  def mimetype_from_format_id(self, format_id):
+  def content_type_from_format_id(self, format_id):
     return self.format_id_map[format_id][0]
 
   def filename_extension_from_format_id(self, format_id):

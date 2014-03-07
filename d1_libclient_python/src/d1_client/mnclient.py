@@ -94,6 +94,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
       key_path=key_path, strict=strict,
       capture_response_body=capture_response_body, version=version, types=types)
     self.logger = logging.getLogger('MemberNodeClient')
+    self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
 
 
   # ============================================================================
