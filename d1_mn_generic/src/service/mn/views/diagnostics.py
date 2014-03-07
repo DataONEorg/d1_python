@@ -72,7 +72,7 @@ def diagnostics(request):
     _delete_all_objects()
     _clear_replication_queue()
     _delete_subjects_and_permissions()
-  return render_to_response('test.html', d1_common.const.MIMETYPE_XHTML)
+  return render_to_response('test.html', d1_common.const.CONTENT_TYPE_XHTML)
 
 # ------------------------------------------------------------------------------
 # Replication.
@@ -86,7 +86,7 @@ def get_replication_queue(request):
     q = mn.models.ReplicationQueue.objects.filter(~Q(status__status='completed'))
   return render_to_response(
     'replicate_get_queue.xml', {'replication_queue': q},
-    mimetype=d1_common.const.MIMETYPE_XML
+    content_type=d1_common.const.CONTENT_TYPE_XML
   )
 
 
@@ -129,7 +129,7 @@ def delete_all_access_policies(request):
 def echo_session(request):
   return render_to_response('echo_session.xhtml',
                             {'subjects': sorted(request.subjects) },
-                            mimetype=d1_common.const.MIMETYPE_XHTML)
+                            content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 
 @mn.restrict_to_verb.get
@@ -137,7 +137,7 @@ def trusted_subjects(request):
   return render_to_response('trusted_subjects.xhtml',
     {'subjects': sorted(mn.node_registry.get_cn_subjects() |
                         service.settings.DATAONE_TRUSTED_SUBJECTS) },
-    mimetype=d1_common.const.MIMETYPE_XHTML)
+    content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 # ------------------------------------------------------------------------------
 # Misc.
@@ -187,7 +187,8 @@ def permissions_for_object(request, pid):
   return render_to_response(
     'permissions_for_object.xhtml',
     locals(
-    ), mimetype=d1_common.const.MIMETYPE_XHTML
+    ),
+    content_type=d1_common.const.CONTENT_TYPE_XHTML
   )
 
 
@@ -197,7 +198,7 @@ def get_setting(request, setting):
   return HttpResponse(
     getattr(
       service.settings, setting, '<UNKNOWN SETTING>'
-    ), d1_common.const.MIMETYPE_TEXT
+    ), d1_common.const.CONTENT_TYPE_TEXT
   )
 
 

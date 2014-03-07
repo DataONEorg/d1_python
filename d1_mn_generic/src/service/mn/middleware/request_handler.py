@@ -82,7 +82,7 @@ class request_handler():
 
     if settings.GMN_DEBUG == True and settings.ECHO_REQUEST_OBJECT:
       pp = pprint.PrettyPrinter(indent=2)
-      return HttpResponse(pp.pformat(request), d1_common.const.MIMETYPE_TEXT)
+      return HttpResponse(pp.pformat(request), d1_common.const.CONTENT_TYPE_TEXT)
 
 #    logging.info('REQUEST: {0}'.format(request_uri))
 

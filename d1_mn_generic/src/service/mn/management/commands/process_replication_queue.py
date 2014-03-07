@@ -18,8 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 '''
 :mod:`process_replication_queue`
 ================================
@@ -32,16 +30,17 @@
 '''
 
 # Stdlib.
-import StringIO
 import fcntl
 import logging
 import os
 import shutil
 import sys
 import tempfile
+import StringIO
 
 # Django.
 from django.core.management.base import NoArgsCommand
+from django.db import transaction
 
 # D1.
 import d1_client.cnclient
@@ -54,60 +53,46 @@ import d1_common.url
 import d1_common.util
 
 # Add some GMN paths to include path.
-_here = lambda * x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../'))
 sys.path.append(_here('../types/generated'))
 
 # App.
 import settings
-
-# TODO: Currently copies the objects to temporary files. Everything is in place
-# for streaming the objects instead.
+import mn.models
+import mn.sysmeta_store
+import mn.view_shared
 
 
 class Command(NoArgsCommand):
-  help = 'Process the replication queue.'
+  help = 'Process the queue of replication requests'
 
   def handle_noargs(self, **options):
-    self.log_setup()
-
-    self.abort_if_other_instance_is_running()
-
-    logging.info('Running management command: '
-                 'process_replication_queue')
-
     verbosity = int(options.get('verbosity', 1))
-
-    if verbosity <= 1:
-      logging.getLogger('').setLevel(logging.ERROR)
-
-#    logging.getLogger('').setLevel(logging.DEBUG if settings.GMN_DEBUG
-#                                   else logging.WARNING)
-
-#    print settings.NODE_BASEURL
-#    print settings.DATAONE_ROOT
-#    print settings.CLIENT_CERT_PATH
-#    print settings.CLIENT_CERT_PRIVATE_KEY_PATH
-
-    p = ProcessReplicationQueue()
+    self.log_setup(verbosity)
+    logging.debug('Running management command: process_replication_queue')
+    self.abort_if_other_instance_is_running()
+    p = ReplicationQueueProcessor()
     p.process_replication_queue()
 
-
-  def log_setup(self):
+  def log_setup(self, verbosity):
     # Set up logging. We output only to stdout. Instead of also writing to a log
     # file, redirect stdout to a log file when the script is executed from cron.
-    logging.getLogger('').setLevel(logging.DEBUG)
     formatter = logging.Formatter(
-      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
-      '%Y-%m-%d %H:%M:%S')
+      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
+    )
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
     logging.getLogger('').addHandler(console_logger)
-
+    if verbosity >= 1:
+      logging.getLogger('').setLevel(logging.DEBUG)
+    else:
+      logging.getLogger('').setLevel(logging.INFO)
 
   def abort_if_other_instance_is_running(self):
-    single_path = os.path.join(tempfile.gettempdir(),
-                               os.path.splitext(__file__)[0] + '.single')
+    single_path = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
     f = open(single_path, 'w')
     try:
       fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -117,25 +102,23 @@ class Command(NoArgsCommand):
 
 #===============================================================================
 
-class ProcessReplicationQueue(object):
+
+class ReplicationQueueProcessor(object):
   def __init__(self):
     self.logger = logging.getLogger(self.__class__.__name__)
-    self.gmn_client = GMNReplicationClient(settings.INTERNAL_BASEURL,
-                                           timeout=60*60)
     self.cn_client = self._create_cn_client()
 
-
   def process_replication_queue(self):
-    while self._process_replication_task():
-      pass
-    self.gmn_client.remove_completed_tasks_from_queue()
+    q = mn.models.ReplicationQueue.objects.exclude(status__status='completed')
+    if not len(q):
+      self.logger.debug('No replication requests to process')
+      return
+    for task in q:
+      self._process_replication_task(task)
+    self._remove_completed_tasks_from_queue()
 
-
-  def _process_replication_task(self):
-    task = self._get_next_replication_task()
-    if not task:
-      return False
-    self.logger.info('-' * 40)
+  def _process_replication_task(self, task):
+    self.logger.info('-' * 79)
     self.logger.info('Processing PID: {0}'.format(task.pid))
     try:
       self._replicate(task)
@@ -149,107 +132,55 @@ class ProcessReplicationQueue(object):
       self._gmn_replicate_task_update(task, str(e))
     return True
 
-
-  def _get_next_replication_task(self):
-    try:
-      return self.gmn_client.internal_replicate_task_get()
-    except d1_common.types.exceptions.NotFound:
-      return None
-if not mn.models.ReplicationQueue.objects.filter(status__status='new')\
-  .exists():
-    raise d1_common.types.exceptions.NotFound(0,
-      'No pending replication requests', 'n/a')
-
-query = mn.models.ReplicationQueue.objects.filter(
-  status__status='new')[0]
-
-# Return query data for further processing in middleware layer.
-return {'query': query, 'type': 'replication_task' }
-
-
   def _replicate(self, task):
-    self._gmn_replicate_task_update(task, 'in progress')
-    sysmeta_tmp_file = self._get_system_metadata(task)
-    science_data_tmp_file = self._get_science_data(task)
-    self._gmn_replicate_create(task, science_data_tmp_file, sysmeta_tmp_file)
+    sys_meta = self._get_system_metadata(task)
+    sci_obj_stream = self._get_sci_obj_stream(task)
+    self._create_replica(sys_meta, sci_obj_stream)
     self._gmn_replicate_task_update(task, 'completed')
     self._cn_replicate_task_update(task, 'completed')
 
-
   def _cn_replicate_task_update(self, task, replication_status, e=None):
     try:
-      self.cn_client.setReplicationStatus(task.pid, settings.NODE_IDENTIFIER,
-                                          replication_status, e)
+      self.cn_client.setReplicationStatus(
+        task.pid, settings.NODE_IDENTIFIER, replication_status, e
+      )
     except Exception as e:
-      self.logger.exception('CNReplication.setReplicationStatus() failed with '
-                            'the following exception:')
+      self.logger.exception(
+        'CNReplication.setReplicationStatus() failed with '
+        'the following exception:'
+      )
 
-
-  # Allow any exception in _gmn_replicate_task_update() to remain unhandled
-  # so that the script exits. This causes a delay until the next time this
-  # script is run by cron, before the task is retried. Without this, this
-  # script would not exit and a continuous series of retries would happen as
-  # fast as the system could manage.
   def _gmn_replicate_task_update(self, task, status=None):
     if status is None or status == '':
       status = 'Unknown error. See replication log.'
-    return self.gmn_client.update_replicate_task_status(task.taskId,
-                                                        status[:1024])
-def replicate_task_update(request, task_id, status):
-  '''Update the status of a replication task.'''
-  try:
-    task = mn.models.ReplicationQueue.objects.get(id=task_id)
-  except mn.models.ReplicationQueue.DoesNotExist:
-      raise d1_common.types.exceptions.NotFound(0,
-        'Replication task not found', str(task_id))
-  else:
     task.set_status(status)
     task.save()
-  return mn.view_shared.http_response_with_boolean_true_type()
-def replicate_remove_completed_tasks_from_queue(request):
-  q = mn.models.ReplicationQueue.objects.filter(status__status='completed')
-  q.delete()
-  return mn.view_shared.http_response_with_boolean_true_type()
 
+  def _remove_completed_tasks_from_queue(self):
+    q = mn.models.ReplicationQueue.objects.filter(status__status='completed')
+    q.delete()
 
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH)
-
+      base_url=settings.DATAONE_ROOT,
+      cert_path=settings.CLIENT_CERT_PATH,
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    )
 
   def _get_system_metadata(self, task):
-    sysmeta = self._open_sysmeta_stream_on_coordinating_node(task.pid)
-    return self._copy_string_to_tmp_file(sysmeta.toxml())
+    self.logger.debug('Calling CNRead.getSystemMetadata(pid={0})'.format(task.pid))
+    return self.cn_client.getSystemMetadata(task.pid)
 
-
-  def _open_sysmeta_stream_on_coordinating_node(self, pid):
-    return self.cn_client.getSystemMetadata(pid)
-
-
-  def _get_science_data(self, task):
+  def _get_sci_obj_stream(self, task):
     source_node_base_url = self._resolve_source_node_id_to_base_url(
-      task.sourceNode)
+      task.source_node.source_node
+    )
     mn_client = d1_client.mnclient.MemberNodeClient(
-      base_url=source_node_base_url, cert_path=settings.CLIENT_CERT_PATH,
-      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH)
-    sci_data_stream = self._open_sci_obj_stream_on_member_node(mn_client,
-                                                               task.pid)
-    return self._copy_stream_to_tmp_file(sci_data_stream)
-
-
-  def _copy_string_to_tmp_file(self, s):
-    return self._copy_stream_to_tmp_file(StringIO.StringIO(s))
-
-
-  def _copy_stream_to_tmp_file(self, stream):
-    f = tempfile.TemporaryFile() # for production
-    #f = tempfile.NamedTemporaryFile(delete=False) # for debugging
-    self.logger.debug(f.name)
-    shutil.copyfileobj(stream, f)
-    f.seek(0)
-    return f
-
+      base_url=source_node_base_url,
+      cert_path=settings.CLIENT_CERT_PATH,
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    )
+    return self._open_sci_obj_stream_on_member_node(mn_client, task.pid)
 
   def _resolve_source_node_id_to_base_url(self, source_node):
     node_list = self._get_node_list()
@@ -258,41 +189,88 @@ def replicate_remove_completed_tasks_from_queue(request):
       discovered_node_id = node.identifier.value()
       discovered_nodes.append(discovered_node_id)
       if discovered_node_id == source_node:
-        return node.baseURL;
-    raise ReplicateError('Unable to resolve Source Node ID: {0}. '
-                         'Discovered nodes: {1}'
-                         .format(source_node, ', '.join(discovered_nodes)))
-
+        return node.baseURL
+    raise ReplicateError(
+      'Unable to resolve Source Node ID: {0}. '
+      'Discovered nodes: {1}'.format(source_node, ', '.join(discovered_nodes))
+    )
 
   def _get_node_list(self):
     return self.cn_client.listNodes()
 
-
   def _open_sci_obj_stream_on_member_node(self, mn_client, pid):
     return mn_client.getReplica(pid)
 
+  def _create_replica(self, sys_meta, sci_obj):
+    with transaction.atomic():
+      pid = sys_meta.identifier.value()
+      self._assert_pid_does_not_exist(pid)
+      self._store_sys_meta(pid, sys_meta)
+      self._store_science_object_bytes(pid, sci_obj)
+      sci_obj_row = self._create_database_entry_for_science_object(pid, sci_obj, sys_meta)
+      self._create_database_entry_for_object_create_event(sci_obj_row)
+      self._set_sys_meta_access_policy(pid, sys_meta)
 
-  def _gmn_replicate_create(self, task, sci_obj, sysmeta):
-    return self.gmn_client.internal_replicate_create(task.pid, sci_obj, sysmeta)
-def replicate_create(request, pid):
-  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
-  sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
-  mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, pid, sysmeta)
-  mn.view_shared.create(request, pid, sysmeta)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  def _store_sys_meta(self, pid, sys_meta):
+    if not sys_meta.serialVersion:
+      sys_meta.serialVersion = 0
+    mn.sysmeta_store.write_sysmeta_to_store(sys_meta)
+
+  def _store_science_object_bytes(self, pid, sci_obj):
+    object_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
+    mn.util.create_missing_directories(object_path)
+    with open(object_path, 'wb') as f:
+      shutil.copyfileobj(sci_obj, f)
+
+  def _assert_pid_does_not_exist(self, pid):
+    if mn.models.ScienceObject.objects.filter(pid=pid).exists():
+      raise ReplicateError(
+        'Another object with the identifier has already been created. GMN '
+        'attempts to prevent this from happening by rejecting regular '
+        'MNStorage.create() for objects with pids for which there are accepted '
+        'replication requests that have not yet been processed.', pid
+      )
+
+  def _create_database_entry_for_science_object(self, pid, sci_obj, sys_meta):
+    sci_obj = mn.models.ScienceObject()
+    sci_obj.pid = sys_meta.identifier.value()
+    sci_obj.url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
+    sci_obj.set_format(sys_meta.formatId)
+    sci_obj.checksum = sys_meta.checksum.value()
+    sci_obj.set_checksum_algorithm(sys_meta.checksum.algorithm)
+    sci_obj.mtime = sys_meta.dateSysMetadataModified
+    sci_obj.size = sys_meta.size
+    sci_obj.replica = True
+    sci_obj.serial_version = sys_meta.serialVersion
+    sci_obj.archived = False
+    sci_obj.save()
+    return sci_obj
+
+  def _create_database_entry_for_object_create_event(self, sci_obj_row):
+    event_log_row = mn.models.EventLog()
+    event_log_row.object = sci_obj_row
+    event_log_row.set_event('create')
+    event_log_row.set_ip_address('[replica]')
+    event_log_row.set_user_agent('[replica]')
+    event_log_row.set_subject('[replica]')
+    event_log_row.save()
+
+  def _set_sys_meta_access_policy(self, pid, sys_meta):
+    if sys_meta.accessPolicy:
+      mn.auth.set_access_policy(pid, sys_meta.accessPolicy)
+    else:
+      mn.auth.set_access_policy(pid)
 
 # ==============================================================================
 
+
 class ReplicateError(Exception):
-  def __init__(self, value):
-    self.value = value
+  def __init__(self, error_msg, pid=None):
+    self.error_msg = error_msg
+    self.pid = pid
+
   def __str__(self):
-    return str(self.value)
-
-
-
-
-
-
-
-
+    msg = str(self.error_msg)
+    if self.pid is not None:
+      msg += '\nIdentifier: {0}'.format(self.pid)
+    return msg

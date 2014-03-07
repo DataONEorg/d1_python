@@ -139,8 +139,16 @@ def obsoletes_matches_pid_if_specified(sysmeta, old_pid):
 def pid_does_not_exist(pid):
   if mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(
-      0, 'Please try '
-      'again with another identifier', pid
+      0, 'An object with the identifier already exists. Please try again with '
+      'another identifier', pid
+    )
+
+
+def pid_has_not_been_accepted_for_replication(pid):
+  if mn.models.ReplicationQueue.objects.filter(pid=pid).exists():
+    raise d1_common.types.exceptions.IdentifierNotUnique(
+      0, 'An object with the identifier has already been accepted for replication '
+      'Please try again with another identifier', pid
     )
 
 

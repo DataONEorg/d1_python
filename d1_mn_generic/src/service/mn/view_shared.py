@@ -21,43 +21,18 @@
 ''':mod:`views.create`
 ======================
 
-:Synopsis: Create a new science object.
+:Synopsis: Functions that are shared between the views.
 :Author: DataONE (Dahl)
 '''
 # Stdlib.
-import cgi
-import collections
-import csv
-import datetime
-import glob
-import hashlib
-import httplib
-import logging
-import mimetypes
-import os
-import pprint
-import re
-import stat
-import sys
-import time
-import urllib
-import urlparse
-import uuid
 
 # Django.
 from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
-from django.http import Http404
-from django.template import Context, loader
-from django.shortcuts import render_to_response
-from django.db.models import Avg, Max, Min, Count
-from django.core.exceptions import ObjectDoesNotExist
 
 # DataONE APIs.
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneErrors as dataoneErrors
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
@@ -87,15 +62,18 @@ def deserialize_system_metadata(sysmeta_xml):
     # exception (which would show what the actual issue was).
     #e.__unicode__ = lambda x: x.decode('utf8')
     raise d1_common.types.exceptions.InvalidSystemMetadata(
-      0, u'System Metadata validation failed for document:\n{0}'.format(
+      0,
+      u'System Metadata validation failed for document:\n{0}'.format(
         sysmeta_xml.decode('utf8')
-      )
+      ),
+      traceInformation=str(e)
     )
 
 
 def create(request, pid, sysmeta, replica=False):
   mn.view_asserts.pid_does_not_exist(pid)
-  mn.sysmeta_store.write_sysmeta_to_store(pid, sysmeta)
+  mn.view_asserts.pid_has_not_been_accepted_for_replication(pid)
+  mn.sysmeta_store.write_sysmeta_to_store(sysmeta)
 
   # "wrapped mode" vendor specific extension.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
@@ -121,8 +99,6 @@ def create(request, pid, sysmeta, replica=False):
   sci_obj.archived = False
   sci_obj.save()
 
-  mn.util.update_db_status('update successful')
-
   # If an access policy was provided for this object, set it. Until the access
   # policy is set, the object is unavailable to everyone, even the uploader and
   # rights holder.
@@ -137,7 +113,7 @@ def create(request, pid, sysmeta, replica=False):
 
 def _object_pid_post_store_local(request, pid):
   object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
-  mn.util.ensure_directories_exists(object_path)
+  mn.util.create_missing_directories(object_path)
   with open(object_path, 'wb') as file:
     for chunk in request.FILES['object'].chunks():
       file.write(chunk)
@@ -146,11 +122,11 @@ def _object_pid_post_store_local(request, pid):
 def http_response_with_identifier_type(pid):
   pid_pyxb = dataoneTypes.identifier(pid)
   pid_xml = pid_pyxb.toxml()
-  return HttpResponse(pid_xml, d1_common.const.MIMETYPE_XML)
+  return HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
 
 def http_response_with_boolean_true_type():
-  return HttpResponse('OK', d1_common.const.MIMETYPE_TEXT)
+  return HttpResponse('OK', d1_common.const.CONTENT_TYPE_TEXT)
 
 
 def add_http_date_to_response_header(response, date_time):

@@ -102,7 +102,7 @@ def home(request):
 
   return render_to_response(
     'home.html', locals(
-    ), mimetype=d1_common.const.MIMETYPE_XHTML
+    ), content_type=d1_common.const.CONTENT_TYPE_XHTML
   )
 
 # Util.

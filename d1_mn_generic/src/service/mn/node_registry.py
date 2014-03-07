@@ -21,6 +21,7 @@
 
 # Stdlib.
 import logging
+import socket
 
 # Django.
 import django.core.cache
@@ -68,11 +69,12 @@ def set_cn_subjects_for_environment():
   # environment of which this MN is a member.
   try:
     cn_subjects = get_cn_subjects_from_dataone_root()
-  except d1_common.types.exceptions.DataONEException as e:
+  except (d1_common.types.exceptions.DataONEException, socket.error) as e:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Unable to get CN Subjects from the DataONE environment. '
       'If this server is being used for testing, see the STAND_ALONE setting. '
-      'Error: {0}'.format(str(e))
+      '\nError: {0}\nEnvironment: {1}'.format(
+        str(e), settings.DATAONE_ROOT)
     )
   django.core.cache.cache.set('cn_subjects', set(cn_subjects))
   logging.info('CN Subjects set: {0}'.format(', '.join(cn_subjects)))

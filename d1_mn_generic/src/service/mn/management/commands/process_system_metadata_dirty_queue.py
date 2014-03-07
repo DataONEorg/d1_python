@@ -137,15 +137,13 @@ def update_sysmeta(request, pid):
   sciobj.archived = False
   sciobj.save()
 
-  mn.util.update_db_status('update successful')
-
   # If an access policy was provided in the System Metadata, set it.
   if sysmeta.accessPolicy:
     mn.auth.set_access_policy(pid, sysmeta.accessPolicy)
   else:
     mn.auth.set_access_policy(pid)
 
-  sysmeta.write_sysmeta_to_store(pid, sysmeta_xml)
+  sysmeta.write_sysmeta_to_store(sysmeta)
 
   # Log this System Metadata update.
   mn.event_log.update(pid, request)

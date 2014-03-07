@@ -47,55 +47,78 @@ def make_absolute(p):
 
 # Enable Django debug mode.
 # True:
-# * Use only for debugging and testing on non-production instances.
-# * May expose sensitive information.
-# * GMN returns a HTML Django exception page with extensive debug information
+# - Use only for debugging and testing on non-production instances.
+# - May expose sensitive information.
+# - GMN returns a HTML Django exception page with extensive debug information
 #   for internal errors.
-# * GMN returns a HTML Django 404 page that lists all valid URL patterns for
+# - GMN returns a HTML Django 404 page that lists all valid URL patterns for
 #   invalid URLs.
-# * The profiling subsystem can be accessed.
+# - The profiling subsystem can be accessed.
 # False (default):
-# * Use for production.
-# * GMN returns a stack trace in a DataONE ServiceFailure exception for
+# - Use for production.
+# - GMN returns a stack trace in a DataONE ServiceFailure exception for
 #   internal errors.
-# * GMN returns a regular 404 page for invalid URLs. The page contains a link
+# - GMN returns a regular 404 page for invalid URLs. The page contains a link
 #   to the GMN home page.
 DEBUG = False
 
 # Enable GMN debug mode.
 # True:
-# * Enables GMN functionality that should be accessible only during testing and
+# - Enables GMN functionality that should be accessible only during testing and
 #   debugging. Use only when there is no sensitive information on the MN.
-# * Clients can override all access control rules and retrieve, delete or
-#   replace any object on the MN.
-# * Skips authentication check for trusted subjects, async processes and
-#   create/update/delete.
+# - Clients can override all access control rules and authentication checks, and
+#   retrieve, delete or replace any object on the MN.
+# - Required for running the integration tests (gmn_integration_tests.py). Also
+#   see ALLOW_INTEGRATION_TESTS.
 # False (default):
-# * Use for production.
+# - Use for production.
 GMN_DEBUG = False
 
 # Enable request echo.
 # True:
-# * GMN will not process any requests. Instead, it will echo the requests
+# - GMN will not process any requests. Instead, it will echo the requests
 #   back to the client. The requests are formatted to be human readable. This
 #   enables a client to see exactly what GMN receives after processing by
 #   Apache, mod_wsgi and Django. It is useful for debugging both clients and
 #   GMN.
-# * Only available in debug mode.
 # False (default):
-# * GMN processes all requests as normal.
-# * Use for production.
+# - GMN processes all requests as normal.
+# Only available when GMN_DEBUG is set to True.
 ECHO_REQUEST_OBJECT = False
+
+# Allow integration tests.
+# True:
+# - Destructive integration tests will be allowed to run.
+# False (default):
+# - Destructive integration tests will not run.
+# GMN comes with a set of integration tests, in gmn_integration_tests.py. These
+# are destructive. They put the MN into a known state by erasing all objects and
+# populating the MN with a specific set of test objects. The integration tests
+# check that both GMN_DEBUG and this setting are set to True before running.
+# This helps prevent accidental deletion of objects on a MN that is in the
+# process of being deployed, and still has GMN_DEBUG set to True while also
+# holding objects that are intended to be used in production.
+ALLOW_INTEGRATION_TESTS = True
 
 # Enable stand-alone mode.
 # True:
-# * GMN will not attempt to connect to the root CN on startup.
+# - GMN will not attempt to connect to the root CN on startup.
 # False (default):
-# * On startup, GMN attempts to connect to the root CN of the environment
-#   that has been configured in the DATAONE_ROOT setting. If the connection fails,
-#   GMN does not serve any requests.
-# * Use for production.
-STAND_ALONE = False
+# - On startup, GMN attempts to connect to the root CN of the environment
+#   that has been configured in the DATAONE_ROOT setting. If the connection
+#   fails, GMN does not serve any requests. 
+# - Use for production.
+STAND_ALONE = True
+
+# Enable monitoring.
+# True (default):
+# - Aspects of internal GMN operations can be monitored by public subjects.
+# False:
+# - Prevent public subjects from accessing monitoring functions.
+# This function does not expose any sensitive information and should
+# be safe to keep enabled in production.
+# When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
+MONITOR = True
 
 # ==============================================================================
 # Node parameters
@@ -120,10 +143,10 @@ NODE_BASEURL = 'https://localhost/mn'
 
 # Enable synchronization.
 # True (default):
-# * Enable the DataONE Coordinating Nodes to synchronize (discover new
+# - Enable the DataONE Coordinating Nodes to synchronize (discover new
 #   content and other changes) on this node.
 # False:
-# * Prevent the DataONE Coordinating Nodes from synchronizing.
+# - Prevent the DataONE Coordinating Nodes from synchronizing.
 NODE_SYNCHRONIZE = True
 
 # The schedule on which synchronization should run for this node. The schedule
@@ -171,13 +194,6 @@ NODE_STATE = 'up'
 # E.g.: 4
 TIER = 4
 
-# Enable monitoring.
-# * Enables aspects of internal GMN operations to be monitored by public
-#   subjects. This function does not expose any sensitive information and should
-#   be safe to keep enabled in production.
-# * When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
-MONITOR = True
-
 # Create a unique string for this node and do not share it.
 SECRET_KEY = 'MySecretKey'
 
@@ -191,11 +207,16 @@ CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.crt'
 # key. Otherwise, set it to None.
 CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client.key'
 
-# Set to True to enable this node to be used as a replication target. DataONE
-# uses replication targets to store replicas of science objects. This setting is
-# ignored if TIER is set less than 4. It is intended for temporarily disabling
-# replication. For permanently disabling replication, set TIER lower than 4 as
-# well as this setting to False.
+# Enable this node to be used as a replication target.
+# True:
+# - DataONE can use this node to store replicas of science objects.
+# False:
+# - This node will advertise that it is not available as a replication target
+#   in the Replication Policy section of the Node document. It will also enforce
+#   this setting by refusing calls to MNReplication.replicate().
+# This setting is ignored if TIER is set to less than 4. It is intended for
+# temporarily disabling replication. For permanently disabling replication, set
+# the TIER lower than 4 in the setting below.
 NODE_REPLICATE = True
 
 # The maximum size, in octets (8-bit bytes), of each object this node is willing to
@@ -218,35 +239,36 @@ REPLICATION_ALLOWEDNODE = ()
 # E.g.: ('eml://ecoinformatics.org/eml-2.0.0', 'CF-1.0')
 REPLICATION_ALLOWEDOBJECTFORMAT = ()
 
-# On startup, GMN connects to the DataONE root CN to discover details about the
-# DataONE environment. For a production instance of GMN, this should be set to
-# the default DataONE root for production systems. For test instances of GMN,
-# this should be set to the root of the environment in which GMN is to run.
-# If GMN_DEBUG is True, the trusted subjects are not required, as the
-# authentication checks for them are skipped. Therefore, they are not retrieved.
+# On startup, GMN connects to the DataONE root CN to get the subject strings of
+# the CNs in the environment. For a production instance of GMN, this should be
+# set to the default DataONE root for production systems. For a test instance,
+# this should be set to the root of the test environment in which GMN is to run.
+# The CN subjects are used for controlling access to MN API methods for which
+# only CNs should have access. See also the STAND_ALONE setting.
 DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 #DATAONE_ROOT = 'https://cn-stage.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
 #DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 
-# Additional subjects for implicitly trusted DataONE infrastructure. Connections
-# containing client side certificates with these subjects bypass access control
-# rules and have access to REST interfaces meant only for use by CNs. The
-# subjects in this list are added to the list of subjects that GMN creates on
-# startup by reading the NodeList on the root CN of the environment configured
-# in the DATAONE_ROOT setting.
-DATAONE_TRUSTED_SUBJECTS = set([])
-
-# Additional subjects for internal GMN processes. Connections containing client
-# side certificates with these subjects are allowed to connect to REST services
-# internal to GMN. The internal REST interfaces provide functionality required
-# by the asynchronous processes. The subjects in this list is added to the
-# subject of the client side certificate issued by DataONE, configured in the
-# CLIENT_CERT_PATH setting.
-GMN_INTERNAL_SUBJECTS = set([])
-
-# Local processes use this URL to connect to GMN.
-INTERNAL_BASEURL = 'https://localhost/mn'
+# Subjects for implicitly trusted DataONE infrastructure. Connections containing
+# client side certificates with these subjects bypass access control rules and
+# have access to REST interfaces meant only for use by CNs. These subjects are
+# added to the ones discovered by connecting to the DataONE root CN. See the
+# DATAONE_ROOT setting. If the STAND_ALONE setting is set to True, these become
+# the only trusted subjects.
+DATAONE_TRUSTED_SUBJECTS = set(
+  [
+    # For testing and debugging, it's possible to add the public subject here.
+    # This circumvents all access control, allowing any method to be called
+    # from an unauthenticated connection.
+    #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
+    # As with the public subject, it's possible to add the authenticatedUser
+    # subject here, to let any authenticated user access any method.
+    #d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
+    # Specific authenticated users can also be added.
+    #'any-authenticated-user-subject',
+  ]
+)
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
@@ -255,9 +277,9 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 # Enable MNRead.listObjects() for public and regular authenticated users.
 #
 # False:
-# * MNRead.listObjects() can only be called by trusted infrastructure (CNs).
+# - MNRead.listObjects() can only be called by trusted infrastructure (CNs).
 # True:
-# * MNRead.listObjects() can be called by any level of user (trusted
+# - MNRead.listObjects() can be called by any level of user (trusted
 #   infrastructure, authenticated and public), and results are filtered
 #   to list only objects to which the user has access.
 #
@@ -274,9 +296,9 @@ PUBLIC_OBJECT_LIST = True if GMN_DEBUG else False
 # users.
 #
 # False:
-# * MNCore.getLogRecords() can only be called by trusted infrastructure (CNs).
+# - MNCore.getLogRecords() can only be called by trusted infrastructure (CNs).
 # True:
-# * MNCore.getLogRecords() can be called by any level of user (trusted
+# - MNCore.getLogRecords() can be called by any level of user (trusted
 #   infrastructure, authenticated and public), and results are filtered
 #   to list only log records to which the user has access. In particular,
 #   this means that all users can retrieve log records for public objects.

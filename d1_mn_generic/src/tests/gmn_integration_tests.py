@@ -27,7 +27,9 @@
 
 :Warning:
   This test deletes any existing objects and event log records on the
-  destination GMN instance.
+  destination GMN instance. For the tests to be able to run, ALLOW_UNIT_TESTS
+  must be set to True in the settings_site.py file of the GMN instance being
+  tested.
 
 :Details:
   This test works by first putting the target GMN into a known state by deleting
@@ -236,26 +238,27 @@ class TestSequenceFunctions(unittest2.TestCase):
     return eval(client.get_setting('PUBLIC_OBJECT_LIST'))
 
   # ============================================================================
-  # Setup.
+  # Preparation.
   # ============================================================================
 
-  def test_1000(self):
-    '''GMN must be in debug mode when running unit tests'''
+  def test_1000_A(self):
+    '''GMN must be in debug mode when running unit tests.'''
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     self.assertEqual(client.get_setting('GMN_DEBUG'), 'True')
 
-  # ----------------------------------------------------------------------------
-  # Set up test objects. Also checks create()
-  # ----------------------------------------------------------------------------
+  def test_1000_B(self):
+    '''GMN must be set to allow running destructive integration tests.'''
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    self.assertEqual(client.get_setting('ALLOW_INTEGRATION_TESTS'), 'True')
 
-  def test_1010_A(self):
+  def test_1020_A(self):
     '''Delete all objects.'''
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.delete_all_objects(
       headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
 
-  def test_1010_B(self):
+  def test_1020_B(self):
     '''Object collection is empty.'''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     object_list = client.listObjects(
@@ -263,7 +266,18 @@ class TestSequenceFunctions(unittest2.TestCase):
     )
     self.assert_object_list_slice(object_list, 0, 0, 0)
 
-  def test_1010_C(self):
+  def test_1020_C(self):
+    '''Delete all replication requests.'''
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    client.clear_replication_queue(
+      headers=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+
+  # ----------------------------------------------------------------------------
+  # Set up test objects. Also checks create()
+  # ----------------------------------------------------------------------------
+
+  def test_1050_A(self):
     '''Populate MN with set of test objects.
     Uses the internal diagnostics create() and does not test create permissions.
     '''
@@ -304,7 +318,7 @@ class TestSequenceFunctions(unittest2.TestCase):
         vendorSpecific=headers
       )
 
-  def test_1010_D(self):
+  def test_1050_B(self):
     '''Object collection is populated.
     '''
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
@@ -1003,7 +1017,7 @@ class TestSequenceFunctions(unittest2.TestCase):
   # ----------------------------------------------------------------------------
 
   def test_1900(self):
-    '''MNReplication.replicate(): Request to replicate new object raises returns 200 OK.
+    '''MNReplication.replicate(): Request to replicate new object returns 200 OK.
     Does NOT check if GMN acts on the request and actually performs the replication.
     '''
     known_pid = 'new_pid'
@@ -1178,10 +1192,11 @@ class TestSequenceFunctions(unittest2.TestCase):
   def test_2300(self):
     '''Unicode: GMN and libraries handle Unicode correctly.
     '''
-    # Many of these do not work due to a bug in the Django development server
-    # Disabled until I add logic to detect development server and skip the
-    # identifiers that the development server cannot handle.
-    print 'Unicode tests currently disabled. See code. for details'
+    # Many of these do not work when running against the Django development
+    # server. This is due to a bug in the development server. Disabled until I
+    # add logic to detect development server and skip the identifiers that the
+    # development server cannot handle.
+    print 'Unicode tests currently disabled. See code for details'
     return
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url)
     #    test_doc_path = os.path.join(self.options.int_path,

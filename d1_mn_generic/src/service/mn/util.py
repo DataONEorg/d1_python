@@ -48,16 +48,7 @@ import models
 import settings
 
 
-def update_db_status(status):
-  # Put the current datetime in status.mtime together with the current status.
-  # This should store the status.mtime in UTC and for that to work, Django must
-  # be running with service.settings.TIME_ZONE = 'UTC'.
-  db_update_status = models.DB_update_status()
-  db_update_status.status = status
-  db_update_status.save()
-
-
-def ensure_directories_exists(file_path):
+def create_missing_directories(file_path):
   try:
     os.makedirs(os.path.dirname(file_path))
   except OSError:
@@ -140,7 +131,6 @@ def traceback_to_text():
 def clear_db():
   '''Clear the database. Used for testing and debugging.
   '''
-  models.DB_update_status.objects.all().delete()
   models.EventLog.objects.all().delete()
   models.EventLogEvent.objects.all().delete()
   models.EventLogIPAddress.objects.all().delete()

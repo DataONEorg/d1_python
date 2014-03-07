@@ -143,7 +143,7 @@ def get_node(request):
   '''MNCore.getCapabilities() → Node
   '''
   n = mn.node.Node()
-  return HttpResponse(n.get().toxml(), d1_common.const.MIMETYPE_XML)
+  return HttpResponse(n.get().toxml(), d1_common.const.CONTENT_TYPE_XML)
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 1: Read API
@@ -153,16 +153,16 @@ def get_node(request):
 # disk. So it is created here, since this is not a class.
 object_format_info = d1_client.object_format_info.ObjectFormatInfo()
 
-def _mimetype_from_format_id(format_id):
+def _content_type_from_format_id(format_id):
   try:
-    return object_format_info.mimetype_from_format_id(format_id)
+    return object_format_info.content_type_from_format_id(format_id)
   except KeyError:
-    return d1_common.const.MIMETYPE_OCTETSTREAM
+    return d1_common.const.CONTENT_TYPE_OCTETSTREAM
 
 
 def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
-  response['Content-Type'] = _mimetype_from_format_id(sciobj.format.format_id)
+  response['Content-Type'] = _content_type_from_format_id(sciobj.format.format_id)
   response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime)
   response['DataONE-formatId'] = sciobj.format.format_id
   response['DataONE-Checksum'] = '{0},{1}'.format(
@@ -178,7 +178,7 @@ def get_object_pid(request, pid):
   mn.view_asserts.object_exists(pid)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   response = StreamingHttpResponse(_get_object_byte_stream(sciobj),
-    _mimetype_from_format_id(sciobj.format.format_id))
+    _content_type_from_format_id(sciobj.format.format_id))
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
   mn.event_log.read(pid, request)
@@ -249,7 +249,7 @@ def get_meta_pid(request, pid):
   mn.event_log.read(pid, request)
   sciobj = mn.models.ScienceObject.objects.get(pid=pid)
   return HttpResponse(mn.sysmeta_store.read_sysmeta_from_store(pid,
-    sciobj.serial_version), mimetype=d1_common.const.MIMETYPE_XML)
+    sciobj.serial_version), content_type=d1_common.const.CONTENT_TYPE_XML)
 
 
 @mn.auth.assert_read_permission
@@ -297,7 +297,7 @@ def get_checksum_pid(request, pid):
   #checksum_serializer.checksum =
   checksum_serializer.algorithm = algorithm
   checksum_xml = checksum_serializer.toxml()
-  return HttpResponse(checksum_xml, d1_common.const.MIMETYPE_XML)
+  return HttpResponse(checksum_xml, d1_common.const.CONTENT_TYPE_XML)
 
 
 @mn.restrict_to_verb.get
@@ -377,8 +377,9 @@ def _assert_node_is_authorized(request, pid):
     raise d1_common.types.exceptions.ServiceFailure(0,
       'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))    
   except d1_common.types.exceptions.DataONEException as e:
-    raise d1_common.types.exceptions.NotAuthorized(0, 'A CN has not '
-      'authorized the target MN, "{0}" to create a replica of "{1}". Error: {2}'
+    raise d1_common.types.exceptions.NotAuthorized(0,
+      'A CN has not authorized the target MN, "{0}" to create a replica of "{1}".\n'
+      'Exception received from the CN:\n{2}'
       .format(request.primary_subject, pid, str(e)))
 
 # ------------------------------------------------------------------------------
@@ -612,6 +613,7 @@ def post_replicate(request):
   sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
   _assert_request_complies_with_replication_policy(sysmeta)
   mn.view_asserts.pid_does_not_exist(sysmeta.identifier.value())
+  mn.view_asserts.pid_has_not_been_accepted_for_replication(sysmeta.identifier.value())
   _create_replication_work_item(request, sysmeta)
   return mn.view_shared.http_response_with_boolean_true_type()
 
@@ -649,13 +651,10 @@ def _get_total_size_of_replicated_objects():
   total = django.core.cache.cache.get('replicated_objects_total')
   if total is not None:
     return total
-
   total = mn.models.ScienceObject.objects.filter(replica=True)\
     .aggregate(Sum('size'))['size__sum']
-
   if total is None:
     total = 0
-
   django.core.cache.cache.set('replicated_objects_total', total)
   return total
 

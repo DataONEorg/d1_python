@@ -88,14 +88,15 @@ class exception_handler():
     return HttpResponse(
       exception_serialized,
       status=self.exception.errorCode,
-      mimetype=d1_common.const.MIMETYPE_XML
+      content_type=d1_common.const.CONTENT_TYPE_XML
     )
 
   def serialize_dataone_exception_for_head_request(self):
     exception_headers = self.exception.serialize_to_headers()
     http_response = HttpResponse(
-      '', status=self.exception.errorCode,
-      mimetype=d1_common.const.MIMETYPE_XML
+      '',
+      status=self.exception.errorCode,
+      content_type=d1_common.const.CONTENT_TYPE_XML
     )
     for k, v in exception_headers:
       http_response[k] = v.encode('utf8')

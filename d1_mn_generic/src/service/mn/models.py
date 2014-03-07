@@ -33,13 +33,6 @@ import d1_common.types.exceptions
 # Django creates automatically:
 # "id" serial NOT NULL PRIMARY KEY
 
-
-# Status of the most recent database update attempt.
-# This table holds only one row.
-class DB_update_status(models.Model):
-  mtime = models.DateTimeField(auto_now=True)
-  status = models.CharField(max_length=128)
-
 # ------------------------------------------------------------------------------
 # Registered MN objects.
 # ------------------------------------------------------------------------------
