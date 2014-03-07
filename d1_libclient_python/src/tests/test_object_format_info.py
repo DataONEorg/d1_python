@@ -66,8 +66,8 @@ class TestObjectFormatInfo(TestCaseWithURLCompare):
     pass # Successful setup of the test means that the class initialized ok.
 
   def test_200(self):
-    '''mimetype_from_format_id()'''
-    self.assertEqual(self.i.mimetype_from_format_id('netCDF-3'), 'application/netcdf')
+    '''content_type_from_format_id()'''
+    self.assertEqual(self.i.content_type_from_format_id('netCDF-3'), 'application/netcdf')
 
   def test_300(self):
     '''filename_extension_from_format_id()'''

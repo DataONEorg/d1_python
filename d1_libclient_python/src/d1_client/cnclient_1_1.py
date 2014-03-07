@@ -92,6 +92,7 @@ class CoordinatingNodeClient(d1baseclient_1_1.DataONEBaseClient_1_1):
     :returns: None
     '''
     self.logger = logging.getLogger('CoordinatingNodeClient')
+    self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
     if defaultHeaders is None:
       defaultHeaders = {}
     # Init the DataONEBaseClient base class.

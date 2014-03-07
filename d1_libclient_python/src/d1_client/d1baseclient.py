@@ -127,12 +127,11 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     :returns: None
     '''
     self.logger = logging.getLogger('DataONEBaseClient')
-    self.logger.debug('baseURL: {0}'.format(base_url))
     # Set default headers.
     if defaultHeaders is None:
       defaultHeaders = {}
     if 'Accept' not in defaultHeaders:
-      defaultHeaders['Accept'] = d1_common.const.MIMETYPE_XML
+      defaultHeaders['Accept'] = d1_common.const.CONTENT_TYPE_XML
     if 'User-Agent' not in defaultHeaders:
       defaultHeaders['User-Agent'] = d1_common.const.USER_AGENT
     if 'Charset' not in defaultHeaders:
@@ -170,18 +169,18 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
   # When expecting boolean response:
   #   If status is 200:
-  #     -> Ignore mimetype and return True
+  #     -> Ignore content_type and return True
   #
   #   If status is NOT 200:
   #     -> ERROR
   #
   # When expecting DataONE type with regular non-redirect method:
-  #   If status is 200 and mimetype is "text/xml":
+  #   If status is 200 and content_type is "text/xml":
   #     -> Attempt to deserialize to DataONE type.
   #     If deserialize fails:
   #       -> SERVICEFAILURE
   #
-  #   if status is 200 and mimetype is NOT "text/xml":
+  #   if status is 200 and content_type is NOT "text/xml":
   #     -> SERVICEFAILURE
   #
   #   If status is NOT 200:
@@ -191,12 +190,12 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   #   -> Substitute 303 for 200 above.
   #
   # ERROR:
-  #   If mimetype is "text/xml":
+  #   If content_type is "text/xml":
   #     -> Attempt to deserialize to DataONEError.
   #     If deserialize fails:
   #       -> SERVICEFAILURE
   #
-  #   If mimetype is NOT "text/xml":
+  #   If content_type is NOT "text/xml":
   #     -> SERVICEFAILURE
   #
   # SERVICEFAILURE:
@@ -213,7 +212,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     raise d1_common.types.exceptions.ServiceFailure(0, description, trace)
 
 
-  def _raise_service_failure_invalid_mimetype(self, response):
+  def _raise_service_failure_invalid_content_type(self, response):
     msg = StringIO.StringIO()
     msg.write('Node responded with a valid status code but failed to '
       'include the expected Content-Type\n')
@@ -244,10 +243,10 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       self._raise_service_failure('Node returned an invalid response', str(e))
 
 
-  def _mimetype_is_xml(self, response):
+  def _content_type_is_xml(self, response):
     return d1_common.util.get_content_type(
       response.getheader('Content-Type')) \
-        in d1_common.const.MIMETYPE_XML_MEDIA_TYPES
+        in d1_common.const.CONTENT_TYPE_XML_MEDIA_TYPES
 
 
   def _status_is_200_ok(self, response):
@@ -264,9 +263,9 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
 
 
   def _error(self, response):
-    if self._mimetype_is_xml(response):
+    if self._content_type_is_xml(response):
       self._raise_dataone_exception(response)
-    self._raise_service_failure_invalid_mimetype(response)
+    self._raise_service_failure_invalid_content_type(response)
 
 
   def _read_and_deserialize_dataone_type(self, response):
@@ -288,8 +287,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def _read_dataone_type_response(self, response,
                                   response_contains_303_redirect=False):
     if self._status_is_ok(response, response_contains_303_redirect):
-      if not self._mimetype_is_xml(response):
-        self._raise_service_failure_invalid_mimetype(response)
+      if not self._content_type_is_xml(response):
+        self._raise_service_failure_invalid_content_type(response)
       return self._read_and_deserialize_dataone_type(response)
     self._error(response)
 
