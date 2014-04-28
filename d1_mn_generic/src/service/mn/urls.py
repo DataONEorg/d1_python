@@ -88,61 +88,45 @@ urlpatterns = patterns(
   url(r'^v1/replicate/?$', 'post_replicate'),
 )
 
-urlpatterns += patterns(
-  'service.mn.views.internal',
-  url(r'^internal/get_setting/(.+)$', 'get_setting'),
-  url(r'^internal/replicate/task_get$', 'replicate_task_get'),
-  url(r'^internal/replicate/task_update/(.+?)/(.+?)/?$', 'replicate_task_update'),
-  url(r'^internal/replicate/create/(.+)$', 'replicate_create'),
-  url(
-    r'^internal/replicate/remove_completed_tasks_from_queue/?$',
-    'replicate_remove_completed_tasks_from_queue'
-  ),
-  url(r'^internal/update_sysmeta/(.+)$', 'update_sysmeta'),
-  url(r'^internal/home/?$', 'home'),
-)
+urlpatterns += patterns('service.mn.views.internal', url(r'^home/?$', 'home'), )
+
+# Diagnostic APIs that can be made available in production.
 
 if settings.GMN_DEBUG or settings.MONITOR:
   urlpatterns += patterns(
     'service.mn.views.diagnostics',
     # Replication.
-    url(r'^test/get_replication_queue/?$', 'get_replication_queue'),
+    url(r'^diag/get_replication_queue/?$', 'get_replication_queue'),
     # Authentication.
-    url(r'^test/echo_session/?$', 'echo_session'),
+    url(r'^diag/echo_session/?$', 'echo_session'),
     # Misc.
-    url(r'^test/echo_request_object/?$', 'echo_request_object'),
-    url(r'^test/echo_raw_post_data/?$', 'echo_raw_post_data'),
+    url(r'^diag/echo_request_object/?$', 'echo_request_object'),
+    url(r'^diag/echo_raw_post_data/?$', 'echo_raw_post_data'),
   )
 
-# Block access to the GMN diagnostic functions if not in debug mode.
+# Diagnostic APIs that should only be available in debug mode.
+
 if settings.GMN_DEBUG:
   urlpatterns += patterns(
     'service.mn.views.diagnostics',
     # Diagnostics portal.
-    url(r'^test/?$', 'diagnostics'),
+    url(r'^diag/?$', 'diagnostics'),
     # Replication.
-    url(r'^test/get_replication_queue/?$', 'get_replication_queue'),
-    url(r'^test/clear_replication_queue/?$', 'clear_replication_queue'),
+    url(r'^diag/get_replication_queue/?$', 'get_replication_queue'),
+    url(r'^diag/clear_replication_queue/?$', 'clear_replication_queue'),
     # Access Policy.
-    url(r'^test/set_access_policy/(.+?)/?$', 'set_access_policy'),
-    url(r'^test/delete_all_access_policies/?$', 'delete_all_access_policies'),
+    url(r'^diag/set_access_policy/(.+?)/?$', 'set_access_policy'),
+    url(r'^diag/delete_all_access_policies/?$', 'delete_all_access_policies'),
     # Misc.
-    url(r'^test/create/(.+)$', 'create'),
-    url(r'^test/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
-    url(r'^test/exception/(.+?)/?$', 'exception'),
-    url(r'^test/delete_all_objects/?$', 'delete_all_objects'),
-    url(r'^test/delete_single_object/(.+?)/?$', 'delete_single_object'),
-    url(r'^test/trusted_subjects/?$', 'trusted_subjects'),
-    url(r'^test/permissions_for_object/(.+?)/?$', 'permissions_for_object'),
-    url(r'^test/get_setting/(.+)$', 'get_setting'),
+    url(r'^diag/create/(.+)$', 'create'),
+    url(r'^diag/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
+    url(r'^diag/exception/(.+?)/?$', 'exception'),
+    url(r'^diag/delete_all_objects/?$', 'delete_all_objects'),
+    url(r'^diag/delete_single_object/(.+?)/?$', 'delete_single_object'),
+    url(r'^diag/trusted_subjects/?$', 'trusted_subjects'),
+    url(r'^diag/permissions_for_object/(.+?)/?$', 'permissions_for_object'),
+    url(r'^diag/get_setting/(.+)$', 'get_setting'),
     # Event Log.
-    url(r'^test/delete_event_log/?$', 'delete_event_log'),
-    url(r'^test/inject_fictional_event_log/?$', 'inject_fictional_event_log'),
-    # Concurrency.
-    url(r'^test/concurrency_clear/?$', 'concurrency_clear'),
-    url(r'^test/concurrency_read_lock/(.+?)/(.+?)/(.+?)/?$', 'concurrency_read_lock'),
-    url(
-      r'^test/concurrency_write_lock/(.+?)/(.+?)/(.+?)/(.+?)/?$', 'concurrency_write_lock'
-    ),
-    url(r'^test/concurrency_get_dictionary_id/?$', 'concurrency_get_dictionary_id'),
+    url(r'^diag/delete_event_log/?$', 'delete_event_log'),
+    url(r'^diag/inject_fictional_event_log/?$', 'inject_fictional_event_log'),
   )

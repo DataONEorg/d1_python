@@ -97,7 +97,8 @@ def level_to_action(level):
 
 
 def get_trusted_subjects():
-  return settings.DATAONE_TRUSTED_SUBJECTS | node_registry.get_cn_subjects()
+  return settings.DATAONE_TRUSTED_SUBJECTS | node_registry.get_cn_subjects() \
+    | set([_get_client_side_certificate_subject()])
 
 
 def get_trusted_subjects_string():
@@ -153,9 +154,8 @@ def set_access_policy(pid, access_policy=None):
   else:
     allow = access_policy.allow
 
-  # Remove any existing permissions for this object. Because
-  # TransactionMiddleware is enabled, the temporary absence of permissions is
-  # hidden in a transaction.
+  # Remove any existing permissions for this object. The temporary absence of
+  # permissions is hidden in an implicit transaction.
   #
   # The deletes are cascaded so any subjects that are no longer referenced in
   # any permissions are deleted as well.
@@ -248,12 +248,6 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
 
 def is_trusted_subject(request):
   return not request.subjects.isdisjoint(get_trusted_subjects())
-
-
-def is_internal_subject(request):
-  return not request.subjects.isdisjoint(
-    settings.GMN_INTERNAL_SUBJECTS | set([_get_client_side_certificate_subject()])
-  )
 
 
 def _get_client_side_certificate_subject():

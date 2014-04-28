@@ -61,7 +61,7 @@ import service.settings
 
 
 def home(request):
-  '''Home page. Root of web server redirects here.'''
+  '''Home page. Root of web server should redirect to here.'''
   gmn_version = service.__version__
   django_version = ', '.join(map(str, django.VERSION))
 

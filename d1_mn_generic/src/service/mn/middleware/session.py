@@ -46,7 +46,7 @@ algorithm:
 
 - Start with empty list of subjects
 - Add the symbolic subject, "public"
-- If the connection was not made with a certificate:
+- If the connection was made without a certificate:
   - Stop.
 - Add the symbolic subject, "authenticatedUser"
 - Get the DN from the Subject and serialize it to a standardized string. This

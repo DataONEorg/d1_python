@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2014 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,14 +18,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''
+:mod:`get_certificate_primary_subject`
+======================================
 
-import os
+:Synopsis: Get DataONE compliant serialization of DN in PEM encoded X.509 certificate.
+:Created: 2014-04-23
+:Author: DataONE (Dahl)
+'''
+
 import sys
-os.environ['SERVER_NAME'] = 'gmn'
 
-if __name__ == "__main__":
-  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "service.settings")
+import d1_x509v3_certificate_extractor
 
-  from django.core.management import execute_from_command_line
 
-  execute_from_command_line(sys.argv)
+def main():
+  if len(sys.argv) != 2:
+    print 'Usage: {0} <PEM encoded X.509 certificate file>'.format(sys.argv[0])
+    exit(1)
+
+  list_subjects(sys.argv[1])
+
+
+def list_subjects(certificate_path):
+  try:
+    with open(certificate_path, 'rb') as f:
+      subject, subject_info = d1_x509v3_certificate_extractor.extract(f.read())
+  except IOError:
+    print 'Error: Could not open file'
+  print subject
+
+
+if __name__ == '__main__':
+  main()

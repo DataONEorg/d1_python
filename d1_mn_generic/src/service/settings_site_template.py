@@ -101,12 +101,12 @@ ECHO_REQUEST_OBJECT = False
 ALLOW_INTEGRATION_TESTS = True
 
 # Enable stand-alone mode.
-# True:
+# True (default):
 # - GMN will not attempt to connect to the root CN on startup.
-# False (default):
+# False:
 # - On startup, GMN attempts to connect to the root CN of the environment
 #   that has been configured in the DATAONE_ROOT setting. If the connection
-#   fails, GMN does not serve any requests. 
+#   fails, GMN does not serve any requests.
 # - Use for production.
 STAND_ALONE = True
 
@@ -119,6 +119,15 @@ STAND_ALONE = True
 # be safe to keep enabled in production.
 # When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
 MONITOR = True
+
+# Hosts/domain names that are valid for this site.
+# Ignored if DEBUG is True. Required if DEBUG is False.
+ALLOWED_HOSTS = [
+  'localhost',
+  '127.0.0.1', # Allow local connections.
+  #'my.server.name.com', # Add to allow GMN to be accessed by name from remote server.
+  #'my.external.ip.address', # Add to allow GMN to be accessed by ip from remote server.
+]
 
 # ==============================================================================
 # Node parameters
@@ -199,13 +208,13 @@ SECRET_KEY = 'MySecretKey'
 
 # Path to the client side certificate that GMN uses when initiating TLS/SSL
 # connections to Coordinating Nodes. The certificate must be in PEM format.
-CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client.crt'
+CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
 
 # Path to the private key for the client side certificate set in
 # CLIENT_CERT_PATH. The private key must be in PEM format. This is only
 # required to be set if the certificate does not contain an embedded private
 # key. Otherwise, set it to None.
-CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client.key'
+CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopassword.pem'
 
 # Enable this node to be used as a replication target.
 # True:
@@ -309,6 +318,14 @@ PUBLIC_OBJECT_LIST = True if GMN_DEBUG else False
 # records directly from this Member Node in addition to the aggregated logs
 # available from CNs.
 PUBLIC_LOG_RECORDS = True if GMN_DEBUG else False
+
+# Set permissions required for calling the MNStorage.update() API method.
+# True (default):
+# - A user must both have write permission on an object and be in the
+#   whitelist for Create, Update and Delete in order to update the object.
+# False:
+# - Any user that has write permission on an object can update it.
+REQUIRE_WHITELIST_FOR_UPDATE = False
 
 # Database connection.
 # GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is

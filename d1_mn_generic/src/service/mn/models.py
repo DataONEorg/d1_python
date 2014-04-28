@@ -54,10 +54,10 @@ class ScienceObject(models.Model):
   checksum = models.CharField(max_length=128, db_index=True)
   checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm, db_index=True)
   mtime = models.DateTimeField(db_index=True)
-  size = models.PositiveIntegerField(db_index=True)
+  size = models.BigIntegerField(db_index=True)
   replica = models.BooleanField(db_index=True)
   system_metadata_refreshed = models.DateTimeField(null=True)
-  serial_version = models.BigIntegerField()
+  serial_version = models.PositiveIntegerField()
   archived = models.BooleanField()
 
   def set_format(self, format_id):
@@ -183,7 +183,7 @@ class SystemMetadataDirtyQueueStatus(models.Model):
 class SystemMetadataDirtyQueue(models.Model):
   object = models.ForeignKey(ScienceObject)
   timestamp = models.DateTimeField(auto_now=True)
-  serial_version = models.BigIntegerField()
+  serial_version = models.PositiveIntegerField()
   last_modified = models.DateTimeField()
   status = models.ForeignKey(SystemMetadataDirtyQueueStatus)
 
