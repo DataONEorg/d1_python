@@ -71,13 +71,19 @@ x509v3_certificate_extractor = setuptools.Extension(
   'd1_x509v3_certificate_extractor',
   sources=[
     'extensions/d1_x509v3_certificate_extractor.c'
-  ]
+  ],
+  libraries=[
+    'ssl'
+  ],
 )
 x509v3_certificate_generator = setuptools.Extension(
   'd1_x509v3_certificate_generator',
   sources=[
     'extensions/d1_x509v3_certificate_generator.c'
-  ]
+  ],
+  libraries=[
+    'ssl'
+  ],
 )
 
 
@@ -102,7 +108,7 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.common == 1.1.5',
+      'dataone.common == 1.1.6',
     ],
     # Extensions.
     ext_modules=[
