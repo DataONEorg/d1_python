@@ -1,20 +1,25 @@
-Setting up a stand-alone test instance
-======================================
+Local installation
+==================
 
-GMN can set up as a stand-alone test instance in which no interaction with any
-of the DataONE infrastructure environments are established. Such a setup is
-useful for various testing scenarios, such as when creating scripts for
-populating GMN and running performance testing.
+This section describes the initial steps in setting up :term:`GMN`. If only this
+section is completed, the resulting installation is a stand-alone test instance
+of GMN. The stand-alone instance can be used for performance testing, developing
+scripts for populating the MN and for learning about MNs in general.
 
-When setting up a stand-alone instance of GMN, the :doc:`setup-env`,
-:doc:`setup-tier` and :doc:`setup-async` sections do NOT have to be performed.
+By completing :doc:`setup-env`, the stand-alone test instance can then be
+joined to DataONE as an official Member Node.
 
-A modified version of the :doc:`setup-authn-server` and
-:doc:`setup-authn-client` sections must be performed. See :doc:`setup-local-ca`
-for details.
+.. toctree::
+  :maxdepth: 2
 
-In the :doc:`setup-registration` section, only the steps under *Submitting a
-Node document* must be performed. It should be verified that the Node document
-is rendered correctly, though submitting it will not work (as CNs will not
-accept a submitted Node document without a matching DataONE issued certificate).
-
+  setup-local-hardware
+  setup-local-d1-stack
+  setup-local-apache
+  setup-local-postgresql
+  setup-local-async
+  setup-local-authn-ca
+  setup-local-authn-client
+  setup-local-authn-server
+  setup-local-basic-config
+  setup-local-final
+  setup-local-testing

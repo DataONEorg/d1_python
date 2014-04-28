@@ -25,4 +25,4 @@ Another option is to try to install Psycopg2 via easy_install::
 
 To remove a version of Psycopg2 that was installed with easy_install::
 
-  $ sudo rm -rf /usr/lib/python2.6/dist-packages/psycopg2
+  $ sudo rm -rf /usr/lib/python2.7/dist-packages/psycopg2

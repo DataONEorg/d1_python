@@ -4,14 +4,16 @@ Register the new Member Node with DataONE
 A Member Node (MN) integrates itself into DataONE through a process called Node
 Registration. Registering the MN allows the Coordinating Nodes (CNs) to
 synchronize content, index the metadata and resource maps, and replicate its
-content to other MNs. Typically, a test instance of a new MN is registered into
-one of the testing environments and tested before registering the
-production-ready MN into the production DataONE environment.
+content to other MNs.
 
-Registering the MN involves the following steps:
+MNs go through a testing phase before being registered in the DataONE production
+environment used by the public. This document describes how to register the
+new MN in a test environment. When the MN is ready to be registered in the
+production environment, the same procedure is used.
 
-#. Creating a DataONE identity in the environment that was selected in the
-   :doc:`setup-env` step.
+Registering the MN in a testing environment involves the following steps:
+
+#. Creating a DataONE identity in the environment.
 
 #. Submitting a Node document. The Node document describes the MN and
    the level at which it will participate in the DataONE infrastructure.
@@ -32,7 +34,7 @@ Each DataONE environment has a web-based Identity Manager where DataONE
 identities are created and maintained. To create a DataONE identity, you will
 use the Identity Manager to authenticate with a :term:`CILogon`-recognized
 identity, and then attach your name and contact email. At this point, DataONE
-will validate this information manually.
+will validate the information manually.
 
 To register the administrative contact's DataONE identity in the target
 environment, perform the following steps:
@@ -68,35 +70,17 @@ environment, perform the following steps:
    to the next step.
 
 
+.. _configure_the_member_node_information:
+
 Configure the Member Node information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Most of the values that are set up in this section are described in the `Node
-document section in the architecture documentation`_.
+document section in the architecture documentation
+<http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node>`_.
 
 The Node document is a set of values that describe a MN or CN, its internet
 location, and the services it supports.
-
-
-.. _Node document section in the architecture documentation: http://mule1.dataone.org/ArchitectureDocs-current/apis/Types.html#Types.Node
-
-GMN generates the Node document automatically based on the settings in
-``settings_site.py``.
-
-  Create a copy of the GMN settings template and edit the settings::
-
-    $ cd /var/local/dataone/gmn/lib/python2.6/site-packages/service
-    $ sudo cp settings_site_template.py settings_site.py
-
-Django requires a unique, secret key to be set up for each application.
-
-  Set a random secret key in ``settings_site.py``::
-
-    $ sudo sed -i 's/^SECRET_KEY.*/SECRET_KEY = '\'`openssl rand -hex 32`\''/' settings_site.py
-
-  Edit ``settings_site.py``::
-
-    $ sudo pico /var/local/dataone/gmn/lib/python2.6/site-packages/service/settings_site.py
 
   Modify the following settings:
 
@@ -184,7 +168,7 @@ the previous step.
   generated::
 
     $ su gmn
-    $ python /var/local/dataone/gmn/lib/python2.6/site-packages/service/manage.py register_node_with_dataone --view
+    $ python /var/local/dataone/gmn/lib/python2.7/site-packages/service/manage.py register_node_with_dataone --view
 
   If the Node document is successfully generated, an XML document will be
   displayed. For more information about this document, refer to
@@ -197,7 +181,7 @@ the previous step.
 
   ::
 
-    $ python lib/python2.6/site-packages/service/manage.py register_node_with_dataone
+    $ python lib/python2.7/site-packages/service/manage.py register_node_with_dataone
 
   * Check for a message saying that the registration was successful.
 

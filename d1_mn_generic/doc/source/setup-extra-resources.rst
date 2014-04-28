@@ -79,7 +79,7 @@ Sign the :term:`CSR` with the :term:`CA signing key`:
   $ sudo openssl x509 -req -days 36500 -in test_valid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_valid.crt
   $ sudo openssl x509 -req -days 36500 -in test_invalid.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out test_invalid.crt
 
-Remove pass phrases from the private keys:
+Remove passwords from the private keys:
 
 ::
 

@@ -1,5 +1,5 @@
-Setting up testing and debugging environment for GMN
-====================================================
+Testing and debugging
+=====================
 
 In production, GMN is always served over SSL with an optional :term:`client side
 certificate`. For testing and debugging, GMN must be served over HTTP because

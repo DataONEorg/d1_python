@@ -22,9 +22,9 @@ Install required packages (some of these may already be installed)::
 Python
 ------
 
-CentOS requires Python 2.4 while Django and GMN requires Python 2.6. These
+CentOS requires Python 2.4 while Django and GMN requires Python 2.7. These
 requirements are met by installing the two versions of Python side by side and
-making sure that Python 2.6 is used by Django and the GMN scripts.
+making sure that Python 2.7 is used by Django and the GMN scripts.
 
   Install :term:`python-setuptools`::
 
@@ -65,7 +65,7 @@ GMN
 ---
 
 Install GMN as described in the instructions for Ubuntu. Then modify GMN to
-explicitly use Python 2.6. This is needed because CentOS includes Python 2.4
+explicitly use Python 2.7. This is needed because CentOS includes Python 2.4
 and used that version by default.
 
 Files that must be modified::
@@ -83,6 +83,6 @@ CentOS stores mod_wsgi.so in a different location than Ubuntu. Modify configurat
 
 Modified other \*.py files that execute other scripts to call python26.
 
-Run the GMN install script under Python 2.6::
+Run the GMN install script under Python 2.7::
 
   $ sudo python26 ../install/config.py

@@ -15,9 +15,10 @@ Contents
   :maxdepth: 2
 
   setup
-  testing
+  use-authn-and-authz
   use
   maintenance
+  testing
   troubleshooting
   performance
   impl
