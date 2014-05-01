@@ -106,13 +106,11 @@ class SystemMetadataCreator():
     sys_meta.identifier = pid
     sys_meta.formatId = format_id
     sys_meta.size = file_size
-    sys_meta.submitter = operation['parameters']['submitter']
     sys_meta.rightsHolder = operation['parameters']['rights-holder']
     sys_meta.checksum = checksum
     sys_meta.checksum.algorithm = operation['parameters']['algorithm']
     sys_meta.dateUploaded = now
     sys_meta.dateSysMetadataModified = now
-    sys_meta.originmn = operation['parameters']['origin-mn']
     sys_meta.authoritativemn = operation['parameters']['authoritative-mn']
     sys_meta.accessPolicy = self._create_access_policy_pyxb_object(operation)
     sys_meta.replicationPolicy = self._create_replication_policy_pyxb_object(operation)
@@ -197,7 +195,7 @@ class SystemMetadataCreator():
   #        necessary to create the sys_meta data
   #        can be determined from other values
   #      are there.
-  #      * authoritative-mn, origin-mn, rights-holder
+  #      * authoritative-mn, rights-holder
   #  '''
   #  save_data = False
   #  if self.get(AUTH_MN_NAME) is None:
@@ -207,23 +205,6 @@ class SystemMetadataCreator():
   #      self.set(AUTH_MN_NAME, mn_host)
   #      cli_util.print_info(u'Setting %s to "%s"' % (AUTH_MN_NAME, mn_host))
   #      save_data = True;
-  #
-  #  if self.get(ORIG_MN_NAME) is None:
-  #    mn = self.get(MN_URL_NAME)
-  #    mn_host = self._get_host_from_url(mn)
-  #    if mn_host is not None:
-  #      self.set(ORIG_MN_NAME, mn_host)
-  #      cli_util.print_info(u'Setting %s to "%s"' % (ORIG_MN_NAME, mn_host))
-  #      save_data = True;
-  #
-  #  if self.get(OWNER_NAME) is None:
-  #    submitter = self.get(SUBMITTER_NAME)
-  #    if submitter is not None:
-  #      self.set(OWNER_NAME, submitter)
-  #      cli_util.print_info(u'Setting %s to "%s"' % (OWNER_NAME, submitter))
-  #      save_data = True;
-  #  if save_data:
-  #    cli_util.print_info(u'  *  Session values were changed, please "save" them!\n')
 
   #def _get_host_from_url(self, url):
   #  if url is not None:
@@ -279,13 +260,11 @@ class SystemMetadataCreator():
   #  sys_meta.identifier = pid
   #  sys_meta.formatId = _formatId
   #  sys_meta.size = size
-  #  sys_meta.submitter = session.get(SUBMITTER_NAME)
   #  sys_meta.rightsHolder = session.get(OWNER_NAME)
   #  sys_meta.checksum = dataoneTypes.checksum(checksum)
   #  sys_meta.checksum.algorithm = _algorithm
   #  sys_meta.dateUploaded = datetime.datetime.utcnow()
   #  sys_meta.dateSysMetadataModified = datetime.datetime.utcnow()
-  #  sys_meta.originmn = session.get(ORIG_MN_NAME)
   #  sys_meta.authoritativemn = session.get(AUTH_MN_NAME)
   #  sys_meta.accessPolicy = access_policy
   #  sys_meta.replicationPolicy = replication_policy

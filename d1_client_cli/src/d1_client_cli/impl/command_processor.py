@@ -310,7 +310,7 @@ class CommandProcessor():
         cli_util.print_error(u'Unexpected error:\n%s' % str(e))
 
   def _create_solr_query(self, line):
-    '''  Actual search - easier to test. '''
+    '''Actual search - easier to test. '''
     p0 = u''
     if line:
       p0 = line.strip()

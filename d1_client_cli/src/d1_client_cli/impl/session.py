@@ -51,9 +51,7 @@
 #           algorithm                     SHA-1
 #           authoritative-mn              None
 #           format-id                     text/xml
-#           origin-mn                     None
 #           rights-holder                 public
-#           submitter                     public
 #         access:
 #           read                          "s1", "s2", "usera", "userb", "userc"
 #         replication:
@@ -94,9 +92,7 @@ ANONYMOUS_NAME = u'anonymous'
 CERT_FILENAME_NAME = u'cert-file'
 KEY_FILENAME_NAME = u'key-file'
 FORMAT_NAME = u'format-id'
-SUBMITTER_NAME = u'submitter'
 OWNER_NAME = u'rights-holder'
-ORIG_MN_NAME = u'origin-mn'
 AUTH_MN_NAME = u'authoritative-mn'
 CHECKSUM_NAME = u'algorithm'
 FROM_DATE_NAME = u'from-date'
@@ -116,9 +112,7 @@ variable_type_map = {
   CERT_FILENAME_NAME: unicode,
   KEY_FILENAME_NAME: unicode,
   FORMAT_NAME: unicode,
-  SUBMITTER_NAME: unicode,
   OWNER_NAME: unicode,
-  ORIG_MN_NAME: unicode,
   AUTH_MN_NAME: unicode,
   CHECKSUM_NAME: unicode,
   FROM_DATE_NAME: unicode,
@@ -139,9 +133,7 @@ variable_defaults_map = {
   CERT_FILENAME_NAME: None,
   KEY_FILENAME_NAME: None,
   FORMAT_NAME: None,
-  SUBMITTER_NAME: None,
   OWNER_NAME: None,
-  ORIG_MN_NAME: None,
   AUTH_MN_NAME: None,
   CHECKSUM_NAME: d1_common.const.DEFAULT_CHECKSUM_ALGORITHM,
   FROM_DATE_NAME: None,

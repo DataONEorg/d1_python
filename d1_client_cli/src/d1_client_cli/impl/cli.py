@@ -549,7 +549,7 @@ be lost if you exit.'''.format(n_remaining_operations)
     self._split_args(line, 0, 0)
     self._command_processor.get_operation_queue().execute()
     self._print_info_if_verbose(
-      'All operations in the write queue were successfully issued'
+      'All operations in the write queue were successfully executed'
     )
 
   def do_edit(self, line):

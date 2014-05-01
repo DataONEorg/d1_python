@@ -86,14 +86,9 @@ class OperationQueue(object):
       default='yes'
     ):
       raise cli_exceptions.InvalidArguments(u'Cancelled')
-    while True:
-      if not len(self._operations):
-        break
-      if not self._execute_operation(self._operations[0]):
-        return
+    while len(self._operations):
+      self._execute_operation(self._operations[0])
       self._operations = self._operations[1:]
-    cli_util.print_info('All operations in the queue were executed successfully')
-    self._clear()
 
   def clear(self):
     self._assert_queue_not_empty()

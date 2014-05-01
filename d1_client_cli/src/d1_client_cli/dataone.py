@@ -233,13 +233,6 @@ option_list = [
     help='ID for the Object Format to use when generating System Metadata'
   ),
   optparse.make_option(
-    '--' + session.ORIG_MN_NAME,
-    action='store',
-    dest='origin_mn',
-    metavar='MN-URI',
-    help='Originating Member Node to use when generating System Metadata'
-  ),
-  optparse.make_option(
     '--' + session.QUERY_STRING_NAME,
     action='store',
     dest='query_string',
@@ -266,13 +259,6 @@ option_list = [
     dest='start',
     type='int',
     help='First item to display for operations that display a list_objects of items'
-  ),
-  optparse.make_option(
-    '--' + session.SUBMITTER_NAME,
-    action='store',
-    dest='submitter',
-    metavar='SUBJECT',
-    help='Subject of the submitter to use when generating System Metadata'
   ),
   optparse.make_option(
     '--' + session.TO_DATE_NAME,
@@ -417,8 +403,6 @@ def handle_options(cli, options):
       cli.d1.session_set_parameter(session.MN_URL_NAME, url)
     if options.object_format:
       cli.d1.session_set_parameter(session.FORMAT_NAME, options.object_format)
-    if options.origin_mn:
-      cli.d1.session_set_parameter(session.ORIG_MN_NAME, options.origin_mn)
     if options.query_string:
       cli.d1.session_set_parameter(session.QUERY_STRING_NAME, options.query_string)
     if options.rights_holder:
@@ -432,8 +416,6 @@ def handle_options(cli, options):
         cli_util.print_error(e.args[0])
     if options.start:
       cli.d1.session_set_parameter(session.START_NAME, options.start)
-    if options.submitter:
-      cli.d1.session_set_parameter(session.SUBMITTER_NAME, options.submitter)
     if options.to_date:
       cli.d1.session_set_parameter(session.TO_DATE_NAME, options.to_date)
     if options.verbose:

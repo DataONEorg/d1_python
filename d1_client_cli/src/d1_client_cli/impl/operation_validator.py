@@ -72,12 +72,11 @@ class OperationValidator(object):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
     self._assert_valid_path(operation, 'parameters', 'science-file')
-    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
+    self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
-    self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
+    self._assert_valid_member_node_urn(operation, 'parameters', 'authoritative-mn')
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -86,12 +85,11 @@ class OperationValidator(object):
     self._assert_valid_identifier(operation, 'parameters', 'identifier-new')
     self._assert_valid_identifier(operation, 'parameters', 'identifier-old')
     self._assert_valid_path(operation, 'parameters', 'science-file')
-    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
+    self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
-    self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
+    self._assert_valid_member_node_urn(operation, 'parameters', 'authoritative-mn')
     self._assert_valid_format_id(operation, 'parameters', 'format-id')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
@@ -100,31 +98,30 @@ class OperationValidator(object):
     self._assert_valid_identifier(operation, 'parameters', 'identifier-package')
     self._assert_valid_identifier(operation, 'parameters', 'identifier-science-meta')
     self._assert_valid_identifiers(operation, 'parameters', 'identifier-science-data')
-    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
+    self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
     self._assert_valid_checksum_algorithm(operation)
-    self._assert_valid_member_node(operation, 'parameters', 'authoritative-mn')
+    self._assert_valid_member_node_urn(operation, 'parameters', 'authoritative-mn')
     self._assert_value_type(operation, types.StringTypes, 'parameters', 'rights-holder')
-    self._assert_value_type(operation, types.StringTypes, 'parameters', 'submitter')
     self._assert_valid_access_control(operation)
     self._assert_valid_replication_policy(operation)
 
   def assert_valid_archive(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
-    self._assert_valid_member_node(operation, 'parameters', 'mn-url')
+    self._assert_valid_member_node_url(operation, 'parameters', 'mn-url')
 
   def assert_valid_update_access_policy(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_authenticated_access(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
-    self._assert_valid_coordinating_node(operation)
+    self._assert_valid_coordinating_node_url(operation)
     self._assert_valid_access_control(operation)
 
   def assert_valid_update_replication_policy(self, operation):
     self._assert_valid_auth_parameter_combination(operation)
     self._assert_authenticated_access(operation)
     self._assert_valid_identifier(operation, 'parameters', 'identifier')
-    self._assert_valid_coordinating_node(operation)
+    self._assert_valid_coordinating_node_url(operation)
     self._assert_valid_replication_policy(operation)
 
   #
@@ -240,11 +237,22 @@ class OperationValidator(object):
     self._assert_value_type(operation, types.StringTypes, *keys)
     #TODO: Validate against list from CN.
 
-  def _assert_valid_member_node(self, operation, *keys):
+  def _assert_valid_member_node_url(self, operation, *keys):
     self._assert_valid_base_url(operation, *keys)
     #TODO: Validate against member node list from CN.
 
-  def _assert_valid_coordinating_node(self, operation):
+  def _assert_valid_member_node_urn(self, operation, *keys):
+    self._assert_value_type(operation, types.StringTypes, *keys)
+    for key in keys:
+      operation = operation[key]
+    if not operation.startswith('urn:node'):
+      raise cli_exceptions.InvalidArguments(
+        'Invalid Member Node ID. Must start with "urn:node". parameter={0}, value={1}'.format(
+          key, operation
+        )
+      )
+
+  def _assert_valid_coordinating_node_url(self, operation):
     self._assert_valid_base_url(operation, 'parameters', 'cn-url')
     #TODO: Validate against member node list from CN.
 
@@ -255,7 +263,9 @@ class OperationValidator(object):
     o = urlparse.urlparse(operation)
     if o.scheme not in ('http', 'https'):
       raise cli_exceptions.InvalidArguments(
-        'Invalid BaseURL. Must use HTTP or HTTPS protocol: {0}'.format(operation)
+        'Invalid BaseURL. Must use HTTP or HTTPS protocol. parameter={0}, value={1}'.format(
+          key, operation
+        )
       )
 
   def _assert_valid_access_control(self, operation):

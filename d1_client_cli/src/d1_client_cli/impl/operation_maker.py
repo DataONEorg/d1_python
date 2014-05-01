@@ -55,9 +55,7 @@ class OperationMaker(object):
         u'algorithm': self._session.get(session.CHECKSUM_NAME),
         u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
         u'format-id': format_id if format_id is not None else self._session.get(session.FORMAT_NAME),
-        u'origin-mn': self._session.get(session.ORIG_MN_NAME),
         u'rights-holder': self._session.get(session.OWNER_NAME),
-        u'submitter': self._session.get(session.SUBMITTER_NAME),
         u'allow': self._session.get_access_control().get_list(),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
@@ -86,9 +84,7 @@ class OperationMaker(object):
         u'algorithm': self._session.get(session.CHECKSUM_NAME),
         u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
         u'format-id': format_id if format_id is not None else self._session.get(session.FORMAT_NAME),
-        u'origin-mn': self._session.get(session.ORIG_MN_NAME),
         u'rights-holder': self._session.get(session.OWNER_NAME),
-        u'submitter': self._session.get(session.SUBMITTER_NAME),
         u'allow': self._session.get_access_control().get_list(),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
@@ -116,9 +112,7 @@ class OperationMaker(object):
         u'mn-url': self._session.get(session.MN_URL_NAME),
         u'algorithm': self._session.get(session.CHECKSUM_NAME),
         u'authoritative-mn': self._session.get(session.AUTH_MN_NAME),
-        u'origin-mn': self._session.get(session.ORIG_MN_NAME),
         u'rights-holder': self._session.get(session.OWNER_NAME),
-        u'submitter': self._session.get(session.SUBMITTER_NAME),
         u'allow': self._session.get_access_control().get_list(),
         u'replication': {
           u'replication-allowed': self._session.get_replication_policy().get_replication_allowed(),
