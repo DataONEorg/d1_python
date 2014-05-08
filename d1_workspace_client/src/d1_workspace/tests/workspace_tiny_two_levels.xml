@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
+
+  <folder name="folder_level_1">
+
+    <folder name="folder_level_2">
+      <identifier>10.5066/F7028PJS.0</identifier>
+    </folder>
+
+    <identifier>10.5066/F73R0QWG.0</identifier>
+  </folder>
+
+</folder>

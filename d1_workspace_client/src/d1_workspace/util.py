@@ -18,9 +18,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+''':mod:`util`
+==============
+
+:Synopsis:
+ - Misc utilities that don't fit anywhere else.
+:Author: DataONE (Dahl)
 '''
 
-__version__ = "0.0.3"
+# Stdlib.
+import errno
+import logging
+import os
+import platform
+import pprint
 
-__all__ = []
+
+def log_dump(s):
+  log.debug(pprint.pformat(s))
+
+
+def ensure_dir_exists(path):
+  try:
+    os.makedirs(path)
+  except OSError as e:
+    if e.errno != errno.EEXIST:
+      raise

@@ -18,9 +18,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+''':mod:`test_query_engine_description`
+=======================================
+
+:Synopsis:
+ - Test the QueryEngineDescription class.
+:Author: DataONE (Dahl)
 '''
 
-__version__ = "0.0.3"
+# Stdlib.
+import sys
+import unittest
 
-__all__ = []
+# D1.
+sys.path.append('..')
+sys.path.append('../..')
+import query_engine_description
+
+
+class TestQueryEngineDescription(unittest.TestCase):
+  def setUp(self):
+    self.q = query_engine_description.QueryEngineDescription()
+    self.q.load('test_index/query_engine_description.xml')
+
+  def test_100_init(self):
+    pass
+
+  def test_110_get_query_engine_version(self):
+    self.assertEqual(self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53')
+
+
+if __name__ == "__main__":
+  unittest.main()

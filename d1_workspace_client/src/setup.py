@@ -88,7 +88,7 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'dataone.libclient == 1.2.3',
+      'dataone.libclient == 1.2.6',
     ],
   )
 

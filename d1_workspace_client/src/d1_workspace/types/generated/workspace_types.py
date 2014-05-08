@@ -1,33 +1,42 @@
 # ./generated/workspace_types.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2013-06-27 10:01:02.305269 by PyXB version 1.2.1
+# Generated 2014-04-10 20:42:24.948495 by PyXB version 1.2.3
 # Namespace AbsentNamespace0
 
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
-import StringIO
+import io
 import pyxb.utils.utility
 import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:c3f167c8-df42-11e2-85b9-000c294230b4')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:e9f12ebe-c122-11e3-95ce-000c294230b4')
+
+# Version of PyXB used to generate the bindings
+_PyXBVersion = '1.2.3'
+# Generated bindings are not compatible across PyXB versions
+if pyxb.__version__ != _PyXBVersion:
+    raise pyxb.PyXBVersionError(_PyXBVersion)
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
 
+# NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.CreateAbsentNamespace()
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
-ModuleRecord = Namespace.lookupModuleRecordByUID(_GenerationUID, create_if_missing=True)
-ModuleRecord._setModule(sys.modules[__name__])
 
 def CreateFromDocument (xml_text, default_namespace=None, location_base=None):
     """Parse the given XML and use the document element to create a
     Python instance.
-    
-    @kw default_namespace The L{pyxb.Namespace} instance to use as the
+
+    @param xml_text An XML document.  This should be data (Python 2
+    str or Python 3 bytes), or a text (Python 2 unicode or Python 3
+    str) in the L{pyxb._InputEncoding} encoding.
+
+    @keyword default_namespace The L{pyxb.Namespace} instance to use as the
     default namespace where there is no default namespace in scope.
     If unspecified or C{None}, the namespace of the module containing
     this function will be used.
@@ -45,7 +54,10 @@ def CreateFromDocument (xml_text, default_namespace=None, location_base=None):
         default_namespace = Namespace.fallbackNamespace()
     saxer = pyxb.binding.saxer.make_parser(fallback_namespace=default_namespace, location_base=location_base)
     handler = saxer.getContentHandler()
-    saxer.parse(StringIO.StringIO(xml_text))
+    xmld = xml_text
+    if isinstance(xmld, unicode):
+        xmld = xmld.encode(pyxb._InputEncoding)
+    saxer.parse(io.BytesIO(xmld))
     instance = handler.rootObject()
     return instance
 
@@ -67,6 +79,8 @@ class Folder (pyxb.binding.basis.complexTypeDefinition):
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Folder')
     _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_workspace_client/src/d1_workspace/types/workspace_types.xsd', 7, 2)
+    _ElementMap = {}
+    _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element folder uses Python identifier folder
@@ -97,15 +111,14 @@ class Folder (pyxb.binding.basis.complexTypeDefinition):
     
     name = property(__name.value, __name.set, None, None)
 
-
-    _ElementMap = {
+    _ElementMap.update({
         __folder.name() : __folder,
         __identifier.name() : __identifier,
         __query.name() : __query
-    }
-    _AttributeMap = {
+    })
+    _AttributeMap.update({
         __name.name() : __name
-    }
+    })
 Namespace.addCategoryObject('typeBinding', u'Folder', Folder)
 
 
@@ -121,7 +134,7 @@ Folder._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 
 Folder._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'query'), pyxb.binding.datatypes.string, scope=Folder, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_workspace_client/src/d1_workspace/types/workspace_types.xsd', 11, 6)))
 
 def _BuildAutomaton ():
-    # Remove this helper function from the namespace after it's invoked
+    # Remove this helper function from the namespace after it is invoked
     global _BuildAutomaton
     del _BuildAutomaton
     import pyxb.utils.fac as fac

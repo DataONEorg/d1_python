@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
+
+  <folder name="coastal">
+    <query>abstract:*coastal* AND resourceMap:* and -obsoletedBy:*</query>
+    <!-- <query>id:doi*</query>
+     -->
+  </folder>
+
+  <folder name="folder_1">
+    <identifier>resourceMap_AKCRRAB.8.3</identifier>
+    <identifier>1860_1993_2050_NITROGEN_830.zip</identifier>
+    <identifier>FlowExp.6.3</identifier>
+  </folder>
+
+  <folder name="folder_2">
+
+    <folder name="folder_3">
+      <identifier>Akasha.10.1</identifier>
+      <identifier>Akasha.8.1</identifier>
+      <identifier>AKCRRAB.31.1</identifier>
+      <identifier>ark\:/13030/m50000t4/1/cadwsap-s1610004-004-main.csv</identifier>
+      <identifier>alejonico.3.4</identifier>
+      <query>id:C*</query>
+      <query>id:D*</query>
+    </folder>
+
+    <identifier>doi\:10.5063/AA/seahoob.279.1</identifier>
+    <identifier>doi\:10.5063/AA/tao.8679.1</identifier>
+    <identifier>doi\:10.5063/AA/tao.8766.1</identifier>
+    <identifier>doi\:10.5063/AA/test.200493113618.1</identifier>
+    <query>id:E*</query>
+    <query>id:F*</query>
+
+  </folder>
+<!--
+  <identifier>doi\:10.6073/AA/knb-lter-mcr.32.9</identifier>
+  <identifier>doi\:10.6073/AA/knb-lter-hfr.41.12</identifier>
+  <identifier>doi\:10.6085/AA/LB30XX_030MXTI004R00_20050722.50.</identifier>
+  <identifier>doi\:10.6085/AA/CUYXXX_015MTBD014R00_20100811.50.1</identifier>
+  <identifier>resourceMap_SCPXXX_015MTBD014R00_20030612.50.4</identifier>
+  <identifier>resourceMap_SH15XX_015MHP2014R00_20110412.50.1</identifier>
+  <identifier>resourceMap_SH15XX_015MXTI004R00_20050420.50.6</identifier>
+
+  <identifier>resourceMap_AKCRRAB.36.1</identifier>
+
+  <query>kingdom:['' TO *]</query>
+  <query>phylum:['' TO *]</query>
+  <query>class:['' TO *]</query>
+  <query>order:['' TO *]</query>
+  <query>family:['' TO *]</query>
+  <query>genus:['' TO *]</query>
+  <query>species:['' TO *]</query>
+  <query>scientificName:['' TO *]</query>
+  <query>author:['' TO *]</query>
+  <query>site:['' TO *]</query>
+  <query>beginDate:*</query>
+  <query>endDate:*</query>
+  <query>id:G*</query>
+  <query>id:H*</query>
+ -->
+
+ <folder name="RegionTest">
+    <query>eastBoundCoord:[1 TO 100]</query>
+ </folder>
+
+</folder>

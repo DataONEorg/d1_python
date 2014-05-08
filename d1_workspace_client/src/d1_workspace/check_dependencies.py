@@ -18,9 +18,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+''':mod:`check_dependencies`
+============================
+
+:Synopsis:
+ - Check the dependencies by attempting to import them.
+:Author: DataONE (Dahl)
 '''
 
-__version__ = "0.0.3"
+# Stdlib.
+import logging
+import platform
 
-__all__ = []
+
+def check_dependencies():
+  exceptions = []
+  messages = []
+
+  try:
+    import pyxb
+  except ImportError as e:
+    exceptions.append(e)
+    messages.append(u'PyXB: Try "sudo pip install pyxb"\n')
+
+  if len(exceptions):
+    log.critical(u'Importing of the following dependencies failed.')
+    for msg in messages:
+      log.critical(msg)
+    log.critical(u'Import errors:')
+    for e in exceptions:
+      log.critical(str(e))
+
+    return False
+
+  return True
