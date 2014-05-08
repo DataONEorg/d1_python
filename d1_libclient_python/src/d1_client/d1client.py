@@ -205,7 +205,7 @@ class DataONEClient(object):
     identified by PID.
     :return type: HTTPResponse
     '''
-    locations = self._resolve(pid)
+    locations = self.resolve(pid)
     for location in locations:
       mn = self._getMN(location)
       try:
