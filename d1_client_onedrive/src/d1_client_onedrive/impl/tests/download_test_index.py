@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Download XML files for searches on each of the searchable facets.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.

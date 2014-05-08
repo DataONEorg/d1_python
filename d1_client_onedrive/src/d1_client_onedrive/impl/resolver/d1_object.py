@@ -24,8 +24,8 @@
 :Synopsis:
  - Determine what type of DataONE object a given PID references and branch out
    to a resolver that is specialized for that type.
-
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -43,50 +43,39 @@ import d1_client.object_format_info
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import command_processor
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
-import resolver_abc
+import resolver_base
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+log.setLevel(logging.DEBUG)
 
 log.setLevel(logging.DEBUG)
 
 
-class Resolver(resolver_abc.Resolver):
-
-  SYSTEM_XML = u"system.xml"
-
-  def __init__(self, options, command_processor):
-    super(Resolver, self).__init__(options, command_processor)
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options, workspace):
+    super(Resolver, self).__init__(options, workspace)
 
     self.object_format_info = d1_client.object_format_info.ObjectFormatInfo(
       csv_file=pkg_resources.resource_stream(d1_client.__name__, 'mime_mappings.csv')
     )
 
-  def get_attributes(self, path, fs_path=''):
+  def get_attributes(self, workspace_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-    try:
-      return super(Resolver, self).get_attributes(path, fs_path)
-    except path_exception.NoResultException:
-      pass
 
-    return self._get_attribute(path)
+    if self._is_readme_file(path):
+      return self._get_readme_file_attributes()
 
-  def get_directory(self, path, fs_path=''):
+    return self._get_attribute(workspace_root, path)
+
+  def get_directory(self, workspace_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
-    return self._get_directory(path)
+    return self._get_directory(workspace_root, path)
 
-  def read_file(self, path, size, offset, fs_path=''):
+  def read_file(self, workspace_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -94,15 +83,13 @@ class Resolver(resolver_abc.Resolver):
         ), size, offset
       )
     )
-    try:
-      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
-    except path_exception.NoResultException:
-      pass
-    return self._read_file(path, size, offset)
+    if self._is_readme_file(path):
+      return self._get_readme_text(size, offset)
+    return self._read_file(workspace_root, path, size, offset)
 
   # Private.
 
-  def _get_attribute(self, path):
+  def _get_attribute(self, workspace_root, path):
     # d1_object handles two levels:
     # /pid
     # /pid/pid.ext
@@ -113,7 +100,7 @@ class Resolver(resolver_abc.Resolver):
 
     pid = path[0]
 
-    record = self.command_processor.get_solr_record(pid)
+    record = self._workspace.get_object_record(pid)
 
     # This resolver does not call out to any other resolves. Any path that
     # is deeper than two levels, and any path that is one level, but does
@@ -129,20 +116,21 @@ class Resolver(resolver_abc.Resolver):
       if path[1] == self._get_pid_filename(pid, record):
         return attributes.Attributes(size=record['size'], date=record['dateUploaded'])
 
-      if path[1] == Resolver.SYSTEM_XML:
-        sys_meta_xml = self.command_processor.get_system_metadata_through_cache(pid)[1]
+      if path[1] == u"system.xml":
+        sys_meta_xml = self._workspace.get_system_metadata(pid)
         return attributes.Attributes(size=len(sys_meta_xml), date=record['dateUploaded'])
+
     self._raise_invalid_path()
 
-  def _get_directory(self, path):
+  def _get_directory(self, workspace_root, path):
     pid = path[0]
-    record = self.command_processor.get_solr_record(pid)
+    record = self._workspace.get_object_record(pid)
     res = [
       self._make_directory_item_for_solr_record(record),
-      directory_item.DirectoryItem(Resolver.SYSTEM_XML),
+      directory_item.DirectoryItem(u"system.xml"),
     ]
-    if self.hasHelpEntry(path):
-      res.append(self.getHelpDirectoryItem())
+    #if self._has_readme_entry(path):
+    #  res.append(self.get_readme_directory_item())
     return res
 
   def _make_directory_item_for_solr_record(self, record):
@@ -150,18 +138,18 @@ class Resolver(resolver_abc.Resolver):
       self._get_pid_filename(record['id'], record), record['size']
     )
 
-  def _read_file(self, path, size, offset):
+  def _read_file(self, workspace_root, path, size, offset):
     pid = path[0]
     filename = path[1]
 
-    if filename == Resolver.SYSTEM_XML:
-      sys_meta_xml = self.command_processor.get_system_metadata_through_cache(pid)[1]
+    if filename == u"system.xml":
+      sys_meta_xml = self._workspace.get_system_metadata(pid)
       return sys_meta_xml[offset:offset + size]
 
-    record = self.command_processor.get_solr_record(pid)
+    record = self._workspace.get_object_record(pid)
 
     if filename == self._get_pid_filename(pid, record):
-      sci_obj = self.command_processor.get_science_object_through_cache(pid)
+      sci_obj = self._workspace.get_science_object(pid)
       return sci_obj[offset:offset + size]
 
     self._raise_invalid_path()

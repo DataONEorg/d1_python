@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright ${year}
+#   Copyright 2009-2014 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ Module all_tests
 Run all Unit tests.
 
 :Created: 2012-10-05
-:Author: DataONE (Dahl)
-:Dependencies:
-  - python 2.6
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -37,7 +36,6 @@ import unittest
 
 # D1.
 import d1_common.xmlrunner
-import d1_common.svnrevision
 
 # App
 from test_attributes import TestAttributes
@@ -50,7 +48,7 @@ from test_cache_memory import TestCache
 from test_cache_disk import TestDiskCache
 from test_util import TestUtil
 
-from test_command_processor import TestCommandProcessor
+from test_workspace import TestCommandProcessor
 from test_d1_client import TestD1Client
 
 #from test_root_resolver import TestRootResolver

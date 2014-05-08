@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Interact with the DataONE infrastructure.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.

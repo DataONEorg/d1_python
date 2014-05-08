@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Test the ResourceMapResolver class.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.

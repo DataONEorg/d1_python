@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Test the WorkspaceResolver class.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -40,37 +41,8 @@ import directory
 import directory_item
 import solr_query_simulator
 import resolver.workspace
-import command_processor
+import workspace
 import path_exception
-
-# Example Workspace XML doc.
-#
-#<?xml version="1.0" encoding="UTF-8"?>
-#<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-# xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
-#  <folder name="folder_1">
-#    <identifier>dataone_identifier_1a</identifier>
-#    <identifier>dataone_identifier_1b</identifier>
-#    <query>solr_query_1a</query>
-#    <query>solr_query_1b</query>
-#  </folder>
-#  <folder name="folder_2">
-#    <folder name="folder_3">
-#      <identifier>dataone_identifier_23a</identifier>
-#      <identifier>dataone_identifier_23b</identifier>
-#      <query>solr_query_23a</query>
-#      <query>solr_query_23b</query>
-#    </folder>
-#    <identifier>dataone_identifier_2a</identifier>
-#    <identifier>dataone_identifier_2b</identifier>
-#    <query>solr_query_2a</query>
-#    <query>solr_query_2b</query>
-#  </folder>
-#  <identifier>dataone_identifier_a</identifier>
-#  <identifier>dataone_identifier_b</identifier>
-#  <query>solr_query_a</query>
-#  <query>solr_query_b</query>
-#</folder>
 
 
 class O():
@@ -85,8 +57,8 @@ class TestWorkspaceResolver(unittest.TestCase):
     options.WORKSPACE_XML = './test_workspace.xml'
     options.MAX_ERROR_PATH_CACHE_SIZE = 1000
     options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.command_processor = command_processor.CommandProcessor(options)
-    self.w = resolver.workspace.Resolver(options, self.command_processor)
+    self.workspace = workspace.CommandProcessor(options)
+    self.w = resolver.workspace.Resolver(options, self.workspace)
 
   def test_050_path_root(self):
     f = self.w._get_workspace_folder([])

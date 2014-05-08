@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Test the ResourceMapResolver class.
-:Region: DataONE (Dahl)
+:Region:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -77,38 +78,26 @@ class TestRegionResolver(unittest.TestCase):
 
   def test_230_merge_complex_to_complex(self):
     dst = {'f1': None, 'd1': {'d11': {}, 'd12': {'f121': None}}, 'd2': {'d21': {}, 'd22': {'d31': {}}}}
-    #print
-    #pprint.pprint(dst)
     src = {'d1': {'f11': None}, 'd2': {}, 'd3': {'d31': {'d311': {'f3111': None}}, 'd32': {}}}
-    #print
-    #pprint.pprint(src)
     self._resolver._merge_region_trees(dst, src, 'x')
     self.assertEqual(dst, {'f1': None, 'd2': {'d21': {}, 'x': None, 'd22': {'d31': {}}}, 'd3': {'x': None, 'd32': {'x': None}, 'd31': {'x': None, 'd311': {'x': None, 'f3111': {'x': None}}}}, 'd1': {'x': None, 'f11': {'x': None}, 'd11': {}, 'd12': {'f121': None}}})
-    #print
-    #pprint.pprint(dst)
 
   def test_240_merge_conflict_1(self):
     dst = {'x1': {}}
     src = {'x1': None}
     self._resolver._merge_region_trees(dst, src, 'x')
-    #print
-    #pprint.pprint(dst)
     self.assertEqual(dst, {'x1': {'x': None}})
 
   def test_250_merge_conflict_2(self):
     dst = {'x1': {'x': None}}
     src = {'x1': {'x': {}}}
     self._resolver._merge_region_trees(dst, src, 'x')
-    #print
-    #pprint.pprint(dst)
     self.assertEqual(dst, {'x1': {'x': {'x': None}}})
 
   def test_260_merge_build(self):
     dst = {}
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'x')
     self._resolver._merge_region_trees(dst, {'d1': {}}, 'y')
-    #print
-    #pprint.pprint(dst)
     self.assertEqual(dst, {'d1': {'x': None, 'y': None}})
 
 #===============================================================================
@@ -132,10 +121,11 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
-    '--test', action='store',
+    '--test',
+    action='store',
     default='',
     dest='test',
-    help='run a single test'
+    readme='run a single test'
   )
 
   (options, arguments) = parser.parse_args()

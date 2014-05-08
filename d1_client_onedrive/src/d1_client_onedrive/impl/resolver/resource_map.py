@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Resolve a filesystem path pointing to a resource map.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -35,69 +36,65 @@ import sys
 
 # D1.
 import d1_client.data_package
+from d1_workspace.workspace_exception import WorkspaceException
 
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import command_processor
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
 import d1_object
-import resolver_abc
+import resolver_base
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+log.setLevel(logging.DEBUG)
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self, options, command_processor):
-    super(Resolver, self).__init__(options, command_processor)
-    self.d1_object_resolver = d1_object.Resolver(options, command_processor)
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options, workspace):
+    super(Resolver, self).__init__(options, workspace)
+    self.d1_object_resolver = d1_object.Resolver(options, workspace)
+
   # The resource map resolver handles only one hierarchy level, so anything
   # that has more levels is handed to the d1_object resolver.
   # If the object is not a resource map, control is handed to the d1_object
   # resolver.
 
-  def get_attributes(self, path, fs_path=''):
+  def get_attributes(self, workspace_root, path):
+    #log.debug(workspace_root)
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-    try:
-      return super(Resolver, self).get_attributes(path, fs_path)
-    except path_exception.NoResultException:
-      pass
+
+    if self._is_readme_file(path):
+      return self._get_readme_file_attributes()
 
     # The resource map resolver handles only one hierarchy level, so anything
     # that has more levels is handed to the d1_object resolver.
     is_resource_map = self._is_resource_map(path[0])
+    log.debug('is_resource_map={0}'.format(is_resource_map))
     if not is_resource_map:
-      return self.d1_object_resolver.get_attributes(path)
+      return self.d1_object_resolver.get_attributes(workspace_root, path)
     if len(path) > 1:
       if is_resource_map:
-        return self.d1_object_resolver.get_attributes(path[1:])
+        return self.d1_object_resolver.get_attributes(workspace_root, path[1:])
       else:
-        return self.d1_object_resolver.get_attributes(path)
-    return self._get_attribute(path)
+        return self.d1_object_resolver.get_attributes(workspace_root, path)
+    return self._get_attribute(workspace_root, path)
 
-  def get_directory(self, path, fs_path=''):
+  def get_directory(self, workspace_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
-      return self.d1_object_resolver.get_directory(path)
+      return self.d1_object_resolver.get_directory(workspace_root, path)
     if len(path) > 1:
       if is_resource_map:
-        return self.d1_object_resolver.get_directory(path[1:])
+        return self.d1_object_resolver.get_directory(workspace_root, path[1:])
       else:
-        return self.d1_object_resolver.get_directory(path)
-    return self._get_directory(path)
+        return self.d1_object_resolver.get_directory(workspace_root, path)
+    return self._get_directory(workspace_root, path)
 
-  def read_file(self, path, size, offset, fs_path=''):
+  def read_file(self, workspace_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -105,22 +102,19 @@ class Resolver(resolver_abc.Resolver):
         ), size, offset
       )
     )
-    try:
-      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
-    except path_exception.NoResultException:
-      pass
-
+    if self._is_readme_file(path):
+      return self._get_readme_text(size, offset)
     if len(path) > 1 and self._is_resource_map(path[0]):
-      return self.d1_object_resolver.read_file(path[1:], size, offset)
-    return self.d1_object_resolver.read_file(path, size, offset)
+      return self.d1_object_resolver.read_file(workspace_root, path[1:], size, offset)
+    return self.d1_object_resolver.read_file(workspace_root, path, size, offset)
 
   # Private.
 
-  def _get_attribute(self, path):
+  def _get_attribute(self, workspace_root, path):
     return attributes.Attributes(self._get_resource_map_size(path[0]), is_dir=True)
 
-  def _get_directory(self, path):
-    resource_map = self.command_processor.get_science_object_through_cache(path[0])
+  def _get_directory(self, workspace_root, path):
+    resource_map = self._workspace.get_science_object(path[0])
     pids = self.deserialize_resource_map(resource_map)
     return [directory_item.DirectoryItem(pid) for pid in pids]
 
@@ -132,207 +126,32 @@ class Resolver(resolver_abc.Resolver):
     }[self._options.FOLDER_SIZE_FOR_RESOURCE_MAPS](pid)
 
   def _is_resource_map(self, pid):
-    #try:
-    description = self.command_processor.get_solr_record(pid)
-    #except:
-    #self._raise_invalid_pid(pid)
-    return description['formatId'] == d1_client.data_package.RDFXML_FORMATID
-
-  def _get_description(self, pid):
-    #try:
-    return self.command_processor.get_solr_record(pid)
-    #except:
-    #self._raise_invalid_pid(pid)
-
-  def _raise_invalid_pid(self, pid):
-    raise path_exception.PathException(u'Invalid PID: {0}'.format(pid))
+    try:
+      record = self._workspace.get_object_record(pid)
+    except WorkspaceException:
+      self._raise_invalid_pid(pid)
+    return record['formatId'] == d1_client.data_package.RDFXML_FORMATID
 
   def deserialize_resource_map(self, resource_map):
     package = d1_client.data_package.ResourceMapParser(resource_map)
-    return package.get_identifiers_referenced_by_package()
-    #return sorted(package.scidata_dict.keys())
+    return package.get_aggregated_pids()
 
   def get_total_size_of_objects_in_resource_map(self, resource_map_pid):
-    resource_map = self.command_processor.get_science_object_through_cache(
-      resource_map_pid
-    )
+    resource_map = self.workspace.get_science_object_through_cache(resource_map_pid)
     pids = self.deserialize_resource_map(resource_map)
     total = 0
     for pid in pids:
-      o = self.command_processor.get_solr_record(pid)
+      o = self.workspace.get_solr_record(pid)
       total += o['size']
     return total
 
   def get_number_of_objects_in_resource_map(self, resource_map_pid):
-    resource_map = self.command_processor.get_science_object_through_cache(
-      resource_map_pid
-    )
+    resource_map = self.workspace.get_science_object_through_cache(resource_map_pid)
     return len(self.deserialize_resource_map(resource_map))
 
   def get_zero(self, pid):
     return 0
 
-#    for sci_obj_pid, sci_obj in package.scidata_dict.items():
-#      print sci_obj_pid
-#      print sci_obj.meta
-
-#    {
-#     'original_pid': None,
-#     'pid': None,
-#     'scidata_dict':
-#      {u'r_test3.scidata.1.2012111515031353017039':
-#        <d1_client.data_package.DataObject object at 0x32edf90>,
-#        u'r_test3.scidata.2.2012111515031353017039':
-#        <d1_client.data_package.DataObject object at 0x32f5890>
-#      },
-#      'sysmeta': None,
-#      'resmap': None,
-#      'scimeta':
-#        <d1_client.data_package.DataObject object at 0x3300110>
-#    }
-
-# Private.
-
-  def ___docs___():
-    # Documentation of the foresite Python library
-    # As far as I can tell, this is it, in its entirety!
-
-    # Import everything
-
-    #from foresite import *
-    #from rdflib import URIRef, Namespace
-
-    # Create an aggregation
-
-    a = Aggregation('my-aggregation-uri')
-
-    # Set properties on the aggregation. The first defaults to dc:title, the
-    # second explicitly sets it as dcterms:created.
-
-    a.title = "My Aggregation"
-    a._dcterms.created = "2008-07-10T12:00:00"
-
-    # And retrieve properties:
-
-    print a._dc.title
-    # [rdflib.Literal('My Aggregation', ...
-    print a.created
-    # [rdflib.Literal('2008-07-10T12:00:00', ...
-
-    # Note that they become lists as any property can be added multiple times.
-
-    # Create and Aggregate two resources
-
-    res = AggregatedResource('my-photo-1-uri')
-    res.title = "My first photo"
-    res2 = AggregatedResource('my-photo-2-uri')
-    res2.title = "My second photo"
-    a.add_resource(res)
-    a.add_resource(res2)
-
-    # Create and associate an agent (without a URI) with the aggregation
-
-    me = Agent()
-    me.name = "Rob Sanderson"
-    a.add_agent(me, 'creator')
-
-    # If no URI assigned, then it will be a blank node:
-
-    print me.uri
-    #rdflib.BNode(...
-
-    # Create an agent with a URI:
-
-    you = Agent('uri-someone-else')
-
-    # Register an Atom serializer with the aggregation. The registration creates
-    # a new ResourceMap, which needs a URI.
-
-    serializer = AtomSerializer()
-    rem = a.register_serialization(serializer, 'my-atom-rem-uri')
-
-    # And fetch the serialisation.
-
-    remdoc = a.get_serialization()
-    print remdoc.data
-    #<feed ...
-
-    # Or, equivalently:
-
-    remdoc = rem.get_serialization()
-    print remdoc.data
-    #<feed ...
-
-    # Resource Maps can be created by hand:
-
-    rem2 = ResourceMap('my-rdfa-rem-uri')
-    rem2.set_aggregation(a)
-
-    # And have their own serializers:
-
-    rdfa = RdfLibSerializer('rdfa')
-    rem2.register_serialization(rdfa)
-    remdoc2 = rem2.get_serialization()
-    print remdoc2.data
-    #<div id="ore:ResourceMap" xmlns...
-
-    # Possible values for RdfLibSerializer: rdf (rdf/xml), pretty-xml (pretty
-    # rdf/xml), nt (n triples), turtle, n3, rdfa (Invisible RDFa XHTML snippet)
-
-    # Parsing existing Resource Maps. The argument to ReMDocument can be a
-    # filename or a URL.
-
-    remdoc = ReMDocument(
-      "http://www.openarchives.org/ore/0.9/atom-examples/atom_dlib_maxi.atom"
-    )
-    ap = AtomParser()
-    rem = ap.parse(remdoc)
-    aggr = rem.aggregation
-
-    # Or an RDF Parser, which requires format to be set on the rem document:
-
-    rdfp = RdfLibParser()
-    remdoc2.format = 'rdfa' # done by the serializer by default
-    print rdfp.parse(remdoc2)
-    # <foresite.ore.ResourceMap object ...
-
-    # Possible values for format: xml, trix, n3, nt, rdfa
-
-    # And then re-serialise in a different form:
-
-    rdfxml = RdfLibSerializer('xml')
-    rem2 = aggr.register_serialization(rdfxml, 'my-rdf-rem-uri')
-    remdoc3 = rem2.get_serialization()
-
-    # Creating arbitrary triples:
-
-    something = ArbitraryResource('uri-random')
-    a.add_triple(something)
-
-    # And then treat them like any object
-
-    something.title = "Random Title"
-    something._rdf.type = URIRef('http://somewhere.org/class/something')
-
-    #To add in additional namespaces:
-
-    utils.namespaces['nss'] = Namespace('http://nss.com/namespace/ns')
-    utils.namespaceSearchOrder.append('nss')
-    utils.elements['nss'] = ['element1', 'element2', 'element3']
-
-    # And finally, some options that can be set to change the behaviour of the
-    # library:
-
-    utils.assignAgentUri = True # instead of blank node, assign UUID URI
-    utils.proxyType = 'UUID' # instead of oreproxy.org, assign UUID proxy
-
-    # If you try to serialize an unconnected graph, there are several
-    # possibilities:
-
-    utils.unconnectedAction = 'ignore' # serialize anyway
-    utils.unconnectedAction = 'drop' # drop unconnected parts of graph
-    utils.unconnectedAction = 'warn' # print a warning to stdout
-    utils.unconnectedAction = 'raise' # raise exception
 
 if __name__ == '__main__':
   r = Resolver()

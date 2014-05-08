@@ -36,7 +36,8 @@
    error files, as it is possible that the cache fills up so the root
    resolver forgets about earlier exceptions, and forwards get_attribute()
    requests for error files to the resolvers.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -54,54 +55,38 @@ from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
 import flat_space
-import resolver_abc
+import resolver_base
 import workspace
-from d1_client_onedrive.impl import command_processor
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+log.setLevel(logging.DEBUG)
 
 
-class RootResolver(resolver_abc.Resolver):
-
-  FLDR_WORKSPACE = u"Workspace"
-  FLDR_FLATSPACE = u"FlatSpace"
-
-  def __init__(self, options):
+class RootResolver(resolver_base.Resolver):
+  def __init__(self, options, workspace_client):
     # The command processor is shared between all resolvers. It holds db and
     # REST connections and caches items that may be shared between resolvers.
-    self._command_processor = command_processor.CommandProcessor(options)
-    super(RootResolver, self).__init__(options, self._command_processor)
-
+    super(RootResolver, self).__init__(options, workspace_client)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
-    options._root_cache_delete_callback = self.cbClearCacheItem
     self.resolvers = {
-      RootResolver.FLDR_WORKSPACE: workspace.Resolver(options, self._command_processor),
-      RootResolver.FLDR_FLATSPACE: flat_space.Resolver(options, self._command_processor),
+      u"Workspace": workspace.Resolver(options, workspace_client),
+      u"FlatSpace": flat_space.Resolver(options, workspace_client),
     }
     self.error_file_cache = cache.Cache(self._options.MAX_ERROR_PATH_CACHE_SIZE)
 
-  def get_attributes(self, path, fs_path=''):
+  def get_attributes(self, path):
     log.debug(u'get_attributes: {0}'.format(path))
     p = self._split_and_unescape_path(path)
-    try:
-      return super(RootResolver, self).get_attributes(path, fs_path)
-    except path_exception.NoResultException:
-      pass
+    if self._is_readme_file(path):
+      return self._get_readme_file_attributes()
     try:
       return self._get_attributes(p)
     except path_exception.PathException as e:
       self._cache_error_file_path(p, e)
       return attributes.Attributes(is_dir=True)
 
-  def get_directory(self, path, fs_path=''):
+  def get_directory(self, path):
     log.debug(u'get_directory: {0}'.format(path))
     p = self._split_and_unescape_path(path)
 
@@ -118,21 +103,12 @@ class RootResolver(resolver_abc.Resolver):
       self._cache_error_file_path(p, e)
       return self._render_path_exception_as_file(e)
 
-  def read_file(self, path, size, offset, fs_path=''):
+  def read_file(self, path, size, offset):
     log.debug(u'read_file: {0}, {1}, {2}'.format(path, size, offset))
     p = self._split_and_unescape_path(path)
-    try:
-      return super(RootResolver, self).read_file(path, size, offset, fs_path=fs_path)
-    except path_exception.NoResultException:
-      pass
+    if self._is_readme_file(path):
+      return self._get_readme_text(size, offset)
     return self._read_file(p, size, offset)
-
-  def cbClearCacheItem(self, path):
-    '''Callback method that can be used to remove an entry from the 
-    _cache_error_file_path cache. USed for example, if a child folder
-    has changed content.
-    '''
-    return
 
   # Private.
 
@@ -170,8 +146,6 @@ class RootResolver(resolver_abc.Resolver):
     return c
 
   def _is_cached_error_file_path(self, path):
-    #print repr(self.error_file_cache)
-    #error_file_path_key = util.string_from_path_elements(path)
     c = tuple(path[:-1]) in self.error_file_cache.keys()
     log.debug(u'Check error file cache: {0}: {1}'.format(path[:-1], c))
     return c
@@ -196,13 +170,16 @@ class RootResolver(resolver_abc.Resolver):
     return dir
 
   def _dispatch_get_attributes(self, path):
-    return self._resolver_lookup(path).get_attributes(path[1:])
+    workspace_folder = self._workspace.get_folder([])
+    return self._resolver_lookup(path).get_attributes(workspace_folder, path[1:])
 
   def _dispatch_get_directory(self, path):
-    return self._resolver_lookup(path).get_directory(path[1:])
+    workspace_folder = self._workspace.get_folder([])
+    return self._resolver_lookup(path).get_directory(workspace_folder, path[1:])
 
   def _dispatch_read_file(self, path, size, offset):
-    return self._resolver_lookup(path).read_file(path[1:], size, offset)
+    workspace_folder = self._workspace.get_folder([])
+    return self._resolver_lookup(path).read_file(workspace_folder, path[1:], size, offset)
 
 #  def _get_directory(self, path):
 #    if not os.path.isabs(path):

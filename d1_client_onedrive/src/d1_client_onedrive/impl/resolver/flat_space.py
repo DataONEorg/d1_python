@@ -24,12 +24,8 @@
 :Synopsis:
  - Resolve a filesystem path that points to a directory to the contents
    of the directory by querying the query engine.
-:Author: DataONE (Dahl)
-
-directory entries:
-  filename / directory name
-  filename / directory boolean. False = filename, True = directory
-  size in bytes
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -45,65 +41,53 @@ from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
-import resolver_abc
+import resolver_base
 import resource_map
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+log.setLevel(logging.DEBUG)
 
-README_TXT = '''Use FlatSpace to go directly to any DataONE object by typing 
+README_TXT = '''Use FlatSpace to go directly to any DataONE object by typing
 the PID in the path.
+
+E.g.,
+
+Linux: ~/one/FlatSpace/MyObjectIdentifier
+
+Windows: O:\FlatSpace\MyObjectIdentifier
 '''
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self, options, command_processor):
-    super(Resolver, self).__init__(options, command_processor)
-    self.modified()
-    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
-    self._manual_pid_list = {}
-    self.helpText = util.os_format(README_TXT)
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options, workspace):
+    super(Resolver, self).__init__(options, workspace)
+    self.resource_map_resolver = resource_map.Resolver(options, workspace)
+    self._readme_txt = util.os_format(README_TXT)
 
-  def get_attributes(self, path, fs_path=''):
+  def get_attributes(self, workspace_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-    try:
-      return super(Resolver, self).get_attributes(path, fs_path)
-    except path_exception.NoResultException:
-      pass
+    if not path:
+      return attributes.Attributes(is_dir=True)
+    if self._is_readme_file(path):
+      return self._get_readme_file_attributes()
+    return self.resource_map_resolver.get_attributes(workspace_root, path)
 
-    if not len(path):
-      return attributes.Attributes(is_dir=True, date=self._modified)
-
-    res = self.resource_map_resolver.get_attributes(path)
-    if not self._manual_pid_list.has_key(path[0]):
-      #try:
-      #  k = os.path.join(*path[:-1])
-      #  del self._options.directory_cache[k]
-      #except KeyError:
-      #  log.debug("No cache entry for %s" % os.path.join(*path))
-      self.modified()
-      self._manual_pid_list[path[0]] = res
-    return res
-
-  def get_directory(self, path, fs_path=''):
+  def get_directory(self, workspace_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
-    res = []
-    if self.helpSize() > 0:
-      res.append(self.getHelpDirectoryItem())
-
-    if len(path) == 0:
-      for k in self._manual_pid_list.keys():
-        res.append(directory_item.DirectoryItem(k))
+    if not path:
+      res = []
+      res.append(self._get_readme_directory_item())
+      res.extend(
+        [
+          directory_item.DirectoryItem(d) for d in self._workspace.get_unassociated_pids(
+          )
+        ]
+      )
       return res
-    return self.resource_map_resolver.get_directory(path)
+    else:
+      return self.resource_map_resolver.get_directory(workspace_root, path)
 
-  def read_file(self, path, size, offset, fs_path=''):
+  def read_file(self, workspace_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -111,22 +95,6 @@ class Resolver(resolver_abc.Resolver):
         ), size, offset
       )
     )
-    try:
-      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
-    except path_exception.NoResultException:
-      pass
-    return self.resource_map_resolver.read_file(path, size, offset)
-
-  def modified(self):
-    # This is a bit of a hack. 
-    # Need to find a better way of notifying the OS that
-    # there's new content in here.
-    self._modified = datetime.utcnow()
-    try:
-      del self._options.attribute_cache['/FlatSpace']
-    except KeyError:
-      pass
-    try:
-      del self._options.directory_cache['/FlatSpace']
-    except KeyError:
-      pass
+    if self._is_readme_file(path):
+      return self._get_readme_text(size, offset)
+    return self.resource_map_resolver.read_file(workspace_root, path, size, offset)

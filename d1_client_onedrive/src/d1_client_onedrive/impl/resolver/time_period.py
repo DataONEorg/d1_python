@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Resolve a filesystem path pointing into a TimePeriod controlled hierarchy.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -38,31 +39,25 @@ import sys
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import command_processor
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
-import resolver_abc
+import resolver_base
 import resource_map
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+
+#log.setLevel(logging.DEBUG)
 
 # Any open ranges have been closed by the command processor, so don't have to
 # deal with those here.
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self, options, command_processor):
-    super(Resolver, self).__init__(options, command_processor)
-    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options, workspace):
+    super(Resolver, self).__init__(options, workspace)
+    self.resource_map_resolver = resource_map.Resolver(options, workspace)
     #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
 
     # The time_period resolver handles hierarchy levels:
@@ -70,67 +65,64 @@ class Resolver(resolver_abc.Resolver):
     # /decade = all variations for group
     # All longer paths are handled by d1_object resolver.
 
-  def get_attributes(self, path, workspace_folder_objects, fs_path=''):
+  def get_attributes(self, workspace_folder, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-    try:
-      return super(Resolver, self).get_attributes(path, fs_path)
-    except path_exception.NoResultException:
-      pass
+    if self._is_readme_file(path):
+      return self._get_readme_file_attributes()
 
-    if len(path) >= 3:
-      return self.resource_map_resolver.get_attributes(path[2:])
+    if len(path) <= 2:
+      return self._get_attribute(path)
 
-    return self._get_attribute(path)
+    return self.resource_map_resolver.get_attributes(workspace_folder, path[2:])
 
-  def get_directory(self, path, workspace_folder_objects, fs_path=''):
+  def get_directory(self, workspace_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) >= 3:
-      return self.resource_map_resolver.get_directory(path[2:])
+    if len(path) <= 2:
+      return self._get_directory(workspace_folder, path)
 
-    return self._get_directory(path, workspace_folder_objects)
+    return self.resource_map_resolver.get_directory(workspace_folder, path[2:])
 
-  def read_file(self, path, workspace_folder_objects, size, offset, fs_path=''):
+  def read_file(self, workspace_folder, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
-    try:
-      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
-    except path_exception.NoResultException:
-      pass
-
-    if len(path) >= 3:
-      return self.resource_map_resolver.read_file(path[2:], size, offset)
-
-    raise path_exception.PathException(u'Invalid file')
+    if self._is_readme_file(path):
+      return self._get_readme_text(size, offset)
+    if len(path) <= 2:
+      raise path_exception.PathException(u'Invalid file')
+    return self.resource_map_resolver.read_file(workspace_folder, path[2:], size, offset)
 
   # Private.
 
   def _get_attribute(self, path):
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, path, workspace_folder_objects):
+  def _get_directory(self, workspace_folder, path):
     if len(path) == 0:
-      return self._resolve_decades(workspace_folder_objects)
+      return self._resolve_decades(workspace_folder)
     elif len(path) == 1:
       decade_range_str = path[0]
-      return self._resolve_years_in_decade(decade_range_str, workspace_folder_objects)
+      return self._resolve_years_in_decade(decade_range_str, workspace_folder)
     else:
       try:
         year = int(path[1])
       except ValueError:
         raise path_exception.PathException(u'Expected year element in path')
       else:
-        return self._resolve_objects_in_year(year, workspace_folder_objects)
+        return self._resolve_objects_in_year(year, workspace_folder)
 
-  def _resolve_decades(self, workspace_folder_objects):
+  def _resolve_decades(self, workspace_folder):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     sites = set()
-    for o in workspace_folder_objects.get_records():
-      if 'beginDate' in o and 'endDate' in o:
-        for decade in self._decade_ranges_in_date_range(o['beginDate'], o['endDate']):
+    for pid in workspace_folder['items']:
+      record = self._workspace.get_object_record(pid)
+      if 'beginDate' in record and 'endDate' in record:
+        for decade in self._decade_ranges_in_date_range(
+          record['beginDate'], record['endDate']
+        ):
           sites.add(decade)
     dir.extend([directory_item.DirectoryItem(a) for a in sites])
     return dir
@@ -147,32 +139,34 @@ class Resolver(resolver_abc.Resolver):
   #  decade = d.year / 10 * 10
   #  return '{0}-{1}'.format(decade, decade + 9)
 
-  def _resolve_years_in_decade(self, decade, workspace_folder_objects):
+  def _resolve_years_in_decade(self, decade, workspace_folder):
     first_year_in_decade = self._validate_and_split_decade_range(decade)[0]
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
     sites = set()
-    for o in workspace_folder_objects.get_records():
-      if 'beginDate' in o and 'endDate' in o:
+    for pid in workspace_folder['items']:
+      record = self._workspace.get_object_record(pid)
+      if 'beginDate' in record and 'endDate' in record:
         for year in self._years_in_date_range_within_decade(
-          first_year_in_decade, o['beginDate'], o['endDate']
+          first_year_in_decade, record['beginDate'], record['endDate']
         ):
           sites.add(str(year))
     dir.extend([directory_item.DirectoryItem(a) for a in sites])
     self._raise_exception_if_empty_directory(dir)
     return dir
 
-  def _resolve_objects_in_year(self, year, workspace_folder_objects):
+  def _resolve_objects_in_year(self, year, workspace_folder):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    for o in workspace_folder_objects.get_records():
-      if 'beginDate' in o and 'endDate' in o:
-        if self._is_year_in_date_range(year, o['beginDate'], o['endDate']):
-          if o.has_key("resourceMap"):
-            for rmap_id in o['resourceMap']:
+    for pid in workspace_folder['items']:
+      record = self._workspace.get_object_record(pid)
+      if 'beginDate' in record and 'endDate' in record:
+        if self._is_year_in_date_range(year, record['beginDate'], record['endDate']):
+          if record.has_key("resourceMap"):
+            for rmap_id in record['resourceMap']:
               dir.append(directory_item.DirectoryItem(rmap_id))
           else:
-            dir.append(directory_item.DirectoryItem(o['id']))
+            dir.append(directory_item.DirectoryItem(record['id']))
           #dir.append(directory_item.DirectoryItem(o['id']))
     self._raise_exception_if_empty_directory(dir)
     return dir

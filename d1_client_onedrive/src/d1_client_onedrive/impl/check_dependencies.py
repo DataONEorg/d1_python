@@ -23,20 +23,17 @@
 
 :Synopsis:
  - Check the dependencies by attempting to import them.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
 import logging
 import platform
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
-except (KeyError, AttributeError):
-  pass
+
+#log.setLevel(logging.DEBUG)
 
 
 def check_dependencies():

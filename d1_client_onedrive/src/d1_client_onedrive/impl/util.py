@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Misc utilities that don't fit anywhere else.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -32,13 +33,9 @@ import os
 import platform
 import pprint
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
-except (KeyError, AttributeError):
-  pass
+
+#log.setLevel(logging.DEBUG)
 
 #def log_dump(s):
 #  log.debug('{0}: {1}'.format(s, pprint.pformat(eval(s))))

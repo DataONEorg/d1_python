@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Test the FlatSpaceResolver class.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -40,7 +41,7 @@ import directory
 import directory_item
 import solr_query_simulator
 import resolver.flat_space
-import command_processor
+import workspace
 import path_exception
 
 
@@ -56,8 +57,8 @@ class TestFlatSpaceResolver(unittest.TestCase):
     options.WORKSPACE_XML = './test_flat_space.xml'
     options.MAX_ERROR_PATH_CACHE_SIZE = 1000
     options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
-    self.command_processor = command_processor.CommandProcessor(options)
-    self.w = resolver.flat_space.Resolver(options, self.command_processor)
+    self.workspace = workspace.CommandProcessor(options)
+    self.w = resolver.flat_space.Resolver(options, self.workspace)
 
   def test_100(self):
     pass

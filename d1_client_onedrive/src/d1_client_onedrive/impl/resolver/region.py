@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Resolve a filesystem path pointing into a Region controlled hierarchy.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -41,24 +42,14 @@ import sys
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_disk
-from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import command_processor
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
-import resolver_abc
+import resolver_base
 import resource_map
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
-
 log.setLevel(logging.DEBUG)
 
 #GAZETTEER_HOST = '192.168.1.116'
@@ -66,7 +57,7 @@ GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
 README_TXT = '''Region Folder
 
-The Region folder provides a geographically ordered view of science data objects
+This folder provides a geographically ordered view of science data objects
 for which the geographical area being covered is known to DataONE. Objects with
 unknown geographical coverage do not appear in this folder.
 
@@ -90,60 +81,59 @@ under New Mexico.
 '''
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self, options, command_processor):
-    self._options = options
-    self.command_processor = command_processor
-    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options, workspace):
+    super(Resolver, self).__init__(options, workspace)
+    self.resource_map_resolver = resource_map.Resolver(options, workspace)
     self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
-    self.helpText = util.os_format(README_TXT)
+    self._readme_txt = util.os_format(README_TXT)
 
-  def get_attributes(self, path, workspace_folder_objects):
+  def get_attributes(self, workspace_folder, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    return self._get_attribute(path, workspace_folder_objects)
+    return self._get_attribute(workspace_folder, path)
 
-  def get_directory(self, path, workspace_folder_objects):
+  def get_directory(self, workspace_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    return self._get_directory(path, workspace_folder_objects)
+    return self._get_directory(workspace_folder, path)
 
-  def read_file(self, path, workspace_folder_objects, size, offset):
+  def read_file(self, workspace_folder, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
 
-    return self._read_file(path, workspace_folder_objects, size, offset)
+    return self._read_file(workspace_folder, path, size, offset)
 
   #
   # Private.
   #
 
-  def _get_attribute(self, path, workspace_folder_objects, fs_path=''):
+  def _get_attribute(self, workspace_folder, path):
     if path == ['readme.txt']:
-      return attributes.Attributes(len(self.helpText))
+      return attributes.Attributes(len(self._readme_txt))
 
-    merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+    merged_region_tree = self._get_merged_region_tree(workspace_folder)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
     )
     if self._region_tree_item_is_pid(region_tree_item):
       try:
         return self.resource_map_resolver.get_attributes(
-          [
+          workspace_folder, [
             region_tree_item
-          ] + unconsumed_path, fs_path
+          ] + unconsumed_path
         )
       except path_exception.NoResultException:
         pass
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, path, workspace_folder_objects):
+  def _get_directory(self, workspace_folder, path):
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
 
-    merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+    merged_region_tree = self._get_merged_region_tree(workspace_folder)
 
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
@@ -153,7 +143,7 @@ class Resolver(resolver_abc.Resolver):
       # PID (any other exit would have raised an exception).
       #if len(unconsumed_path):
       return self.resource_map_resolver.get_directory(
-        [
+        workspace_folder, [
           region_tree_item
         ] + unconsumed_path
       )
@@ -164,42 +154,42 @@ class Resolver(resolver_abc.Resolver):
       # The whole path was consumed and a folder within the tree was returned.
     dir = directory.Directory()
     self.append_parent_and_self_references(dir)
-    #if self.hasHelpEntry(path):
-    #  dir.append(self.getHelpDirectoryItem())
+    #if self.has_readme_entry(path):
+    #  dir.append(self.get_readme_directory_item())
 
     for r in region_tree_item:
       dir.append(directory_item.DirectoryItem(r))
 
     # Add readme.txt to root.
-    if not len(path):
+    if not path:
       dir.append(directory_item.DirectoryItem('readme.txt'))
 
     return dir
 
-  def _read_file(self, path, workspace_folder_objects, size, offset):
+  def _read_file(self, workspace_folder, path, size, offset):
     if path == ['readme.txt']:
-      return self.helpText[offset:size]
+      return self._readme_txt[offset:size]
 
-    merged_region_tree = self._get_merged_region_tree(workspace_folder_objects)
+    merged_region_tree = self._get_merged_region_tree(workspace_folder)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
     )
 
     if self._region_tree_item_is_pid(region_tree_item):
       return self.resource_map_resolver.read_file(
-        [
+        workspace_folder, [
           region_tree_item
         ] + unconsumed_path, size, offset
       )
 
-  def _get_merged_region_tree(self, workspace_folder_objects):
-    k = self._get_unique_dictionary_key(workspace_folder_objects)
+  def _get_merged_region_tree(self, workspace_folder):
+    k = self._get_unique_dictionary_key(workspace_folder)
     try:
       return self._region_tree_cache[k]
     except KeyError:
       pass
 
-    geo_records = self._get_records_with_geo_bounding_box(workspace_folder_objects)
+    geo_records = self._get_records_with_geo_bounding_box(workspace_folder)
 
     merged_region_tree = {}
     for g in geo_records:
@@ -209,10 +199,10 @@ class Resolver(resolver_abc.Resolver):
     self._region_tree_cache[k] = merged_region_tree
     return merged_region_tree
 
-  def _get_unique_dictionary_key(self, workspace_folder_objects):
+  def _get_unique_dictionary_key(self, workspace_folder):
     m = hashlib.sha1()
-    for r in workspace_folder_objects.get_records():
-      m.update(r['id'])
+    for pid in workspace_folder['items']:
+      m.update(pid)
     return m.hexdigest()
 
   def _get_region_tree_for_geo_record(self, geo_record):
@@ -223,18 +213,19 @@ class Resolver(resolver_abc.Resolver):
     except (httplib.HTTPException, socket.error):
       return {'Reverse geocoding failed': {}}
 
-  def _get_records_with_geo_bounding_box(self, workspace_folder_objects):
+  def _get_records_with_geo_bounding_box(self, workspace_folder):
     geo_records = []
-    for o in workspace_folder_objects.get_records():
+    for pid in workspace_folder['items']:
+      record = self._workspace.get_object_record(pid)
       try:
-        w = o['westBoundCoord']
-        s = o['southBoundCoord']
-        e = o['eastBoundCoord']
-        n = o['northBoundCoord']
+        w = record['westBoundCoord']
+        s = record['southBoundCoord']
+        e = record['eastBoundCoord']
+        n = record['northBoundCoord']
       except KeyError:
         pass
       else:
-        geo_records.append((o['id'], w, s, e, n))
+        geo_records.append((pid, w, s, e, n))
     return geo_records
 
   def _merge_region_trees(self, dst_tree, src_tree, pid):
@@ -275,7 +266,7 @@ class Resolver(resolver_abc.Resolver):
       "invalid path" PathException is raised.
     '''
     # Handle valid item within region tree.
-    if not len(path):
+    if not path:
       if region_tree is None:
         return parent_key, []
       else:

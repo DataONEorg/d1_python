@@ -25,7 +25,8 @@
 :Synopsis:
  - Handle callbacks from FUSE. The callbacks are called by FUSE when actions
    are performed on the filesystem.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Std.
@@ -51,14 +52,8 @@ from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+#log.setLevel(logging.DEBUG)
 
 
 class FUSECallbacks(fuse.Operations):

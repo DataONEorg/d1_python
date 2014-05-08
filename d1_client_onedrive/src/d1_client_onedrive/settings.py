@@ -23,7 +23,8 @@
 
 :Synopsis:
  - User configurable settings for ONEDrive.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -40,7 +41,7 @@ def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
 
 ################################################################################
-# User configurable self._options.
+# User configurable settings.
 ################################################################################
 
 # In addition to the default production environment, DataONE maintains several
@@ -84,14 +85,6 @@ MOUNT_DRIVE_LETTER = 'O:'
 # workspace.
 #WORKSPACE_USERNAME = ''
 #WORKSPACE_PASSWORD = ''
-WORKSPACE_XML = os.path.expanduser('~/workspace.xml') # (default, in user's home folder)
-# WORKSPACE_XML = './workspace.xml' # (in the current directory)
-
-# The maximum number of science objects to display for a search item. Increasing
-# this setting causes longer lists of science objects to to appear in the
-# filesystem, increases memory footprint for the application and causes longer
-# response times when opening folders. Default value: 50.
-MAX_OBJECTS_FOR_SEARCH = 50
 
 # The maximum number of objects to show in a flat list. ONEDrive can display
 # science objects in a flat list or in a hierarchy. This settings determines the
@@ -130,19 +123,6 @@ MAX_OBJECT_CACHE_SIZE = 1000
 # not to be displayed correctly in the ONEDrive filesystem. Default value: 1000.
 MAX_ERROR_PATH_CACHE_SIZE = 1000
 
-# The maximum number of Solr query results to cache.
-MAX_SOLR_QUERY_CACHE_SIZE = 1000
-
-# Specify the type of cache to use. Can be MEMORY or DISK
-CACHE_TYPE = "DISK"
-
-# Set to True if the cache should be cleared on startup. Has no effect on
-# memory cache.
-CACHE_STARTUP_CLEAN = True
-
-# Location of the disk caches if used
-CACHE_DISK_ROOT = "/tmp/onedrive"
-
 # In the ONEDrive filesystem, resource maps (data packages) are represented as
 # folders which can be opened to access the mapped science objects. This setting
 # controls how the size is displayed for the resource map folders. To display
@@ -156,20 +136,6 @@ CACHE_DISK_ROOT = "/tmp/onedrive"
 # 'number': Show number of objects in resource maps (less slow)
 # 'zero': Show zero size for all resource maps (fast, default)
 FOLDER_SIZE_FOR_RESOURCE_MAPS = 'zero'
-
-# Type of connection to use when connecting to the Solr server.
-# True: A persistent connection is maintained (default)
-# False: A new connection is created each time a query is sent
-#SOLR_PERSIST_CONNECTION = True
-
-# The path that is appended to the DataONE root URL to reach the endpoint for
-# the DataONE CNRead.query() API.
-SOLR_QUERY_PATH = '/v1/query/solr/'
-
-# Setting this value to 1 causes the Solr client to output debug information.
-# True: Turn on debug output in the Solr Client (for debugging)
-# False: Turn off debug output (for normal use)
-SOLR_DEBUG = True if DEBUG else False # (enabled when running in debug mode)
 
 # The name that will be displayed for the ONEDrive filesystem.
 FUSE_FILESYSTEM_NAME = 'ONEDrive'
@@ -232,15 +198,6 @@ if DEBUG:
   LOG_LEVEL = 'DEBUG'
 else:
   LOG_LEVEL = 'INFO'
-
-#Kind of a hack - add a module variable to logging that lists the modules that
-#will be set to logging at a specific level. Each module needs to check for
-#presence of its __name__ in the list. If not present, then logging will
-#continue at the app global set level for logging.
-logging.ONEDRIVE_MODULES = {
-  '__main__': 'INFO',
-  'impl.drivers.dokan.d1_dokan': 'DEBUG',
-}
 
 # Needs Python 2.7
 

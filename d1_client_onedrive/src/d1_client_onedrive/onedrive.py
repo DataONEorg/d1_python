@@ -26,7 +26,8 @@
  - Parse arguments.
  - Instantiate the Root resolver.
  - Mount FUSE / Dokan.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Std.
@@ -37,6 +38,10 @@ import sys
 import optparse
 import platform
 
+# D1
+sys.path.append('/home/dahl/d1/d1_python/d1_workspace_client/src/d1_workspace')
+import d1_workspace.workspace
+
 # App.
 if not hasattr(sys, 'frozen'):
   sys.path.append(os.path.abspath(os.path.join('__file__', '../..')))
@@ -45,17 +50,11 @@ from d1_client_onedrive import settings
 from d1_client_onedrive.impl import check_dependencies
 from d1_client_onedrive.impl.resolver import root
 from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import cache_disk
 import d1_client_onedrive
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+
+#log.setLevel(logging.DEBUG)
 
 
 def main():
@@ -90,9 +89,6 @@ def main():
 
   (options, arguments) = parser.parse_args()
 
-  print(options, arguments)
-  #'modules=volicon,iconpath=mac_dataone.icns'
-  #options.__dict__['modules']='volicon,iconpath=/Users/brumgard/Documents/Work/Dataone/workspace/onedrive/src/dist/dataone.onedrive.app/Contents/Resources/mac_dataone.icns'
   # Copy non-string/int settings into options.
   for k, v in settings.__dict__.items():
     if not (isinstance(v, str) or isinstance(v, int)) and k.isupper():
@@ -110,11 +106,6 @@ def main():
   # logging.config.dictConfig(self._options.LOGGING) # Needs 2.7
   log_setup(options)
 
-  try:
-    log.setLevel(logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__]))
-  except KeyError:
-    pass
-
   if options.version:
     log_version()
     sys.exit()
@@ -127,12 +118,7 @@ def main():
   options.attribute_cache = cache.Cache(options.MAX_ATTRIBUTE_CACHE_SIZE)
   options.directory_cache = cache.Cache(options.MAX_DIRECTORY_CACHE_SIZE)
 
-  # Instantiate the Root resolver.
-  root_resolver = root.RootResolver(options)
-
   log.info("Starting ONEDrive...")
-  log.info("Base URL = %s" % settings.BASE_URL)
-
   log_startup_parameters(options, arguments)
   log_settings(options)
 
@@ -144,7 +130,11 @@ def main():
     log.error('Unknown platform: {0}'.format(platform.system()))
     exit()
 
-  filesystem_callbacks.run(options, root_resolver)
+  # Instantiate the Root resolver.
+  with d1_workspace.workspace.Workspace() as workspace:
+    root_resolver = root.RootResolver(options, workspace)
+    filesystem_callbacks.run(options, root_resolver)
+
   log.info("Exiting ONEDrive")
 
 
@@ -153,7 +143,7 @@ def log_setup(options):
   log.setLevel(map_level_string_to_level(options.LOG_LEVEL))
   formatter = logging.Formatter(
     u'%(asctime)s %(levelname)-8s %(name)s'
-    u'(%(pathname)s/%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
+    u'(%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
   )
   ## Log to a file
   #if options.LOG_FILE_PATH is not None:

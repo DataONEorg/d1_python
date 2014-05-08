@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Test the TestD1SystemMetadataResolver class.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.

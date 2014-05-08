@@ -22,12 +22,13 @@
 ======================
 
 :Synopsis:
-  - Cache Python objects with a limit on how many objects can be cached. When
-    the cache reaches a configured size, adding a new object causes the oldest
-    object to be removed. The oldest object is the object that was added first
-    of the objects still in the cache.
-  - The cache is stored in memory.
-:Author: DataONE (Dahl)
+ - Cache Python objects with a limit on how many objects can be cached. When
+   the cache reaches a configured size, adding a new object causes the oldest
+   object to be removed. The oldest object is the object that was added first
+   of the objects still in the cache.
+ - The cache is stored in memory.
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -36,13 +37,9 @@ import logging
 # App.
 import util
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
-except (KeyError, AttributeError):
-  pass
+
+#log.setLevel(logging.DEBUG)
 
 
 class Cache(dict):

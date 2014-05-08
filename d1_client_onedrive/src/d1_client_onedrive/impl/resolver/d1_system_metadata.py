@@ -23,7 +23,8 @@
 
 :Synopsis:
  - Resolve DataONE System Metadata.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -36,24 +37,19 @@ import os
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
-from d1_client_onedrive.impl import resolver_abc
+from d1_client_onedrive.impl import resolver_base
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+
+#log.setLevel(logging.DEBUG)
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self, options, command_processor):
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options):
     self._options = options
-    self.command_processor = command_processor
+    self.workspace = workspace
 
-  def get_attributes(self, path):
+  def get_attributes(self, workspace, path):
     raise path_exception.PathException('<not implemented>')
 
   def get_directory(self, path):

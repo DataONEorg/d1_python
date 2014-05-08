@@ -26,7 +26,8 @@
    and restrictions for valid file- and folder names on a given OS.
  - Unescape the escaped file- and folder names to arrive at the original DataONE
   identifiers.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 
 DataONE supports identifiers containing characters that cannot (or should not)
 be represented directly within the file- and folder names in a filesystem, such

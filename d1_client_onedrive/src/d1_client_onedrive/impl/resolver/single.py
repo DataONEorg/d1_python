@@ -23,7 +23,8 @@
 
 :Synopsis:
  - This resolver simply renders all objects into a single folder.
-:Author: DataONE (Dahl)
+:Author:
+  DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -38,74 +39,79 @@ import sys
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
-from d1_client_onedrive.impl import command_processor
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
-import resolver_abc
+import resolver_base
 import resource_map
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName( \
-               getattr(logging, 'ONEDRIVE_MODULES')[__name__]) )
-except KeyError:
-  pass
+log.setLevel(logging.DEBUG)
+
+README_TXT = '''All Folder
+
+This folder contains all the items of the workspace folder (the parent
+of this folder) combined into a single folder.
+'''
 
 
-class Resolver(resolver_abc.Resolver):
-  def __init__(self, options, command_processor):
-    super(Resolver, self).__init__(options, command_processor)
-    self.resource_map_resolver = resource_map.Resolver(options, command_processor)
+class Resolver(resolver_base.Resolver):
+  def __init__(self, options, workspace):
+    super(Resolver, self).__init__(options, workspace)
+    self.resource_map_resolver = resource_map.Resolver(options, workspace)
+    self._readme_txt = util.os_format(README_TXT)
 
-  def get_attributes(self, path, workspace_folder_objects, fs_path=''):
+  def get_attributes(self, workspace_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-    try:
-      return super(Resolver, self).get_attributes(path, fs_path)
-    except path_exception.NoResultException:
-      pass
 
-    if len(path) >= 1:
-      return self.resource_map_resolver.get_attributes(path[0:])
+    if not path:
+      return attributes.Attributes(is_dir=True)
 
-    return self._get_attribute(path)
+    if self._is_readme_file(path):
+      return self._get_readme_file_attributes()
 
-  def get_directory(self, path, workspace_folder_objects, fs_path=''):
+    return self.resource_map_resolver.get_attributes(workspace_root, path)
+
+  def get_directory(self, workspace_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    if len(path) >= 1:
-      return self.resource_map_resolver.get_directory(path[0:])
+    if not path:
+      return self._get_directory(workspace_root, path)
+      res = []
+      res.extend(
+        [
+          directory_item.DirectoryItem(d) for d in self._workspace.get_unassociated_pids(
+          )
+        ]
+      )
+      return res
 
-    return self._get_directory(path, workspace_folder_objects)
+    return self.resource_map_resolver.get_directory(workspace_root, path)
 
-  def read_file(self, path, workspace_folder_objects, size, offset, fs_path=''):
+  def read_file(self, workspace_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
-    try:
-      return super(Resolver, self).read_file(path, size, offset, fs_path=fs_path)
-    except path_exception.NoResultException:
-      pass
 
-    if len(path) >= 1:
-      return self.resource_map_resolver.read_file(path[0:], size, offset)
+    if not path:
+      raise path_exception.PathException(u'Invalid file')
 
-    raise path_exception.PathException(u'Invalid file')
+    if self._is_readme_file(path):
+      return self._get_readme_text(size, offset)
+
+    return self.resource_map_resolver.read_file(workspace_root, path, size, offset)
 
   # Private.
 
-  def _get_attribute(self, path):
+  def _get_attribute(self, workspace_root, path):
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, path, workspace_folder_objects):
-    dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
-    if self.hasHelpEntry(path):
-      dir.append(self.getHelpDirectoryItem())
-    for r in workspace_folder_objects.get_records():
-      dir.append(directory_item.DirectoryItem(r['id']))
-    return dir
+  def _get_directory(self, workspace_root, path):
+    d = directory.Directory()
+    self.append_parent_and_self_references(d)
+    d.append(self._get_readme_directory_item())
+    for item in workspace_root['items']:
+      d.append(directory_item.DirectoryItem(item))
+    return d
