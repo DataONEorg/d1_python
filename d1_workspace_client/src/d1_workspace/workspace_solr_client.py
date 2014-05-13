@@ -136,7 +136,6 @@ class SolrClient(object):
     if filter_queries is not None:
       query_params.extend(self._make_query_param_tuples('fl', filter_queries))
 
-    #print query_params
     query_url = urllib.urlencode(query_params, doseq=True)
     return self._solr_connection.get(query_url)
 

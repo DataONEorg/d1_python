@@ -40,7 +40,6 @@ class WorkspaceDefinition(object):
   def wdef(self):
     return self._wdef
 
-  @log_func()
   def load_and_parse_xml(self, path):
     with open(path, 'rb') as f:
       return workspace_types.CreateFromDocument(f.read())
