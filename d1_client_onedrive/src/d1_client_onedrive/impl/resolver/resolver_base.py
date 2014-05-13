@@ -81,7 +81,7 @@ class Resolver(object):
     return path and path[0] == README_FILENAME
 
   def _get_readme_text(self, size=None, offset=0):
-    return self._readme_txt[offset:size]
+    return self._readme_txt[offset:offset + size]
 
   def _get_readme_file_attributes(self):
     return attributes.Attributes(size=len(self._readme_txt), is_dir=False)

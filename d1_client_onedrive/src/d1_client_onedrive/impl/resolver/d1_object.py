@@ -39,6 +39,7 @@ import pkg_resources
 # D1.
 import d1_client.data_package
 import d1_client.object_format_info
+import d1_workspace.workspace_exception
 
 # App.
 from d1_client_onedrive.impl import attributes
@@ -50,9 +51,8 @@ from d1_client_onedrive.impl import util
 import resolver_base
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 
 class Resolver(resolver_base.Resolver):
@@ -65,11 +65,7 @@ class Resolver(resolver_base.Resolver):
 
   def get_attributes(self, workspace_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-
-    if self._is_readme_file(path):
-      return self._get_readme_file_attributes()
-
-    return self._get_attribute(workspace_root, path)
+    return self._get_attributes(workspace_root, path)
 
   def get_directory(self, workspace_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
@@ -83,55 +79,67 @@ class Resolver(resolver_base.Resolver):
         ), size, offset
       )
     )
-    if self._is_readme_file(path):
-      return self._get_readme_text(size, offset)
     return self._read_file(workspace_root, path, size, offset)
 
   # Private.
 
-  def _get_attribute(self, workspace_root, path):
+  def _get_attributes(self, workspace_root, path):
     # d1_object handles two levels:
     # /pid
     # /pid/pid.ext
     # /pid/system.xml
+    # /pid/search_fields.txt
 
     # The parent resolver must not strip the PID off the path.
     assert (len(path))
 
     pid = path[0]
 
-    record = self._workspace.get_object_record(pid)
+    try:
+      record = self._workspace.get_object_record(pid)
+    except d1_workspace.workspace_exception.WorkspaceException:
+      self._raise_invalid_path()
 
-    # This resolver does not call out to any other resolves. Any path that
-    # is deeper than two levels, and any path that is one level, but does
-    # not reference "pid.ext" or "system.xml" is invalid.
+    # This resolver does not call out to any other resolvers.
 
+    # Any path that is deeper than two levels, and any path that is one level,
+    # but does not reference one of the fixed filenames is invalid.
+
+    # Any path that is 1 level is a pid folder. We return the size of the
+    # science object as the size of this folder. This is only indicative of the
+    # actual size of the folder since the folder contains other objects as well.
+    # But the filesystem drivers and clients do not seem to mind. On Linux, the
+    # size of a folder is rarely taken into account since it indicates the
+    # amount of disk space used for storing the folder record (an entirely
+    # filesystem dependent size).
     if len(path) == 1:
       return attributes.Attributes(
         is_dir=True, size=record['size'],
         date=record['dateUploaded']
       )
-
-    if len(path) == 2:
-      if path[1] == self._get_pid_filename(pid, record):
+    elif len(path) == 2:
+      filename = path[1]
+      if filename == self._get_search_fields_filename():
+        return self._get_search_fields_file_attributes(record)
+      elif filename == self._get_pid_filename(pid, record):
         return attributes.Attributes(size=record['size'], date=record['dateUploaded'])
-
-      if path[1] == u"system.xml":
+      elif filename == u"system.xml":
         sys_meta_xml = self._workspace.get_system_metadata(pid)
         return attributes.Attributes(size=len(sys_meta_xml), date=record['dateUploaded'])
 
     self._raise_invalid_path()
 
   def _get_directory(self, workspace_root, path):
+    #if len(path) > 1:
+    #  self._raise_invalid_path()
     pid = path[0]
     record = self._workspace.get_object_record(pid)
-    res = [
+    return [
       self._make_directory_item_for_solr_record(record),
       directory_item.DirectoryItem(u"system.xml"),
+      directory_item.DirectoryItem(self._get_search_fields_filename(),
+                                   is_dir=False)
     ]
-    #if self._has_readme_entry(path):
-    #  res.append(self.get_readme_directory_item())
-    return res
 
   def _make_directory_item_for_solr_record(self, record):
     return directory_item.DirectoryItem(
@@ -139,8 +147,7 @@ class Resolver(resolver_base.Resolver):
     )
 
   def _read_file(self, workspace_root, path, size, offset):
-    pid = path[0]
-    filename = path[1]
+    pid, filename = path[0:2]
 
     if filename == u"system.xml":
       sys_meta_xml = self._workspace.get_system_metadata(pid)
@@ -152,6 +159,9 @@ class Resolver(resolver_base.Resolver):
       sci_obj = self._workspace.get_science_object(pid)
       return sci_obj[offset:offset + size]
 
+    elif filename == self._get_search_fields_filename():
+      return self._generate_search_fields_text(record)[offset:offset + size]
+
     self._raise_invalid_path()
 
   def _raise_invalid_pid(self, pid):
@@ -161,18 +171,29 @@ class Resolver(resolver_base.Resolver):
     raise path_exception.PathException(u'Invalid path')
 
   def _get_pid_filename(self, pid, record):
-    lcpid = pid.lower()
-    ENDINGS = {
-      'DATA': ['.zip', '.csv', '.xls', '.xslx', '.xml', '.pdf'],
-      'METADATA': ['.xml', ],
-      'RESOURCE': ['.rdf', '.xml']
-    }
     try:
-      for ending in ENDINGS[record['formatType']]:
-        if lcpid.endswith(ending):
-          return pid
+      ext = self.object_format_info.filename_extension_from_format_id(record['formatId'])
     except KeyError:
-      pass
-    return pid + self.object_format_info.filename_extension_from_format_id(
-      record['formatId']
+      return pid
+    if ext == os.path.splitext(pid)[1]:
+      return pid
+    else:
+      return pid + ext
+
+  # Search fields.
+
+  def _get_search_fields_filename(self):
+    return 'search_fields.txt'
+
+  def _get_search_fields_file_attributes(self, record):
+    return attributes.Attributes(
+      size=len(self._generate_search_fields_text(record)),
+      is_dir=False
+    )
+
+  def _generate_search_fields_text(self, record):
+    return util.os_format(
+      '\n'.join(
+        sorted(['{0}: {1}'.format(k, v) for k, v in record.items()])
+      )
     )

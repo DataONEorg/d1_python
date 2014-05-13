@@ -98,7 +98,7 @@ MOUNT_DRIVE_LETTER = 'O:'
 # Debug mode.
 # True: Turn on verbose logging and various other debugging facilities.
 # False: Log only error messages (for normal use, default)
-DEBUG = True
+DEBUG = False
 
 # Set the default file to log to or None for logging to stdout
 LOG_FILE_PATH = make_absolute('onedrive.log')

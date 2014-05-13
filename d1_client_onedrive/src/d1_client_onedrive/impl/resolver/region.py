@@ -50,7 +50,7 @@ import resolver_base
 import resource_map
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 #GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
@@ -168,7 +168,7 @@ class Resolver(resolver_base.Resolver):
 
   def _read_file(self, workspace_folder, path, size, offset):
     if path == ['readme.txt']:
-      return self._readme_txt[offset:size]
+      return self._readme_txt[offset:offset + size]
 
     merged_region_tree = self._get_merged_region_tree(workspace_folder)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(

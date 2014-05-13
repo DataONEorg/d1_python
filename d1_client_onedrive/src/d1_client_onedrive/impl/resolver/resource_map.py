@@ -49,7 +49,8 @@ import d1_object
 import resolver_base
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+
+#log.setLevel(logging.DEBUG)
 
 
 class Resolver(resolver_base.Resolver):

@@ -73,19 +73,35 @@ def main():
 
   # Add options to override defaults in settings.py.
   for k, v in settings.__dict__.items():
-    # Only allow overriding strings and ints.
-    if not (isinstance(v, str) or isinstance(v, int)):
-      continue
+    # Only allow overriding strings, ints and bools.
     if k.isupper():
-      #if k == k.upper():
-      parser.add_option(
-        '--{0}'.format(k.lower().replace('_', '-')),
-        action='store',
-        type='str',
-        dest=k.upper(),
-        default=v,
-        metavar=v
-      )
+      param_name = '--{0}'.format(k.lower().replace('_', '-'))
+      if type(v) is str or type(v) is int:
+        parser.add_option(
+          param_name,
+          action='store',
+          type=str(type(v).__name__),
+          dest=k.upper(),
+          default=v,
+          metavar=v
+        )
+      elif type(v) is bool:
+        if v:
+          parser.add_option(
+            '--disable-{0}'.format(k.lower().replace('_', '-')),
+            action='store_false',
+            default=True,
+            dest=k.upper(),
+            metavar=v
+          )
+        else:
+          parser.add_option(
+            param_name,
+            action='store_true',
+            default=False,
+            dest=k.upper(),
+            metavar=v
+          )
 
   (options, arguments) = parser.parse_args()
 
@@ -140,7 +156,6 @@ def main():
 
 def log_setup(options):
   # Set up logging.
-  log.setLevel(map_level_string_to_level(options.LOG_LEVEL))
   formatter = logging.Formatter(
     u'%(asctime)s %(levelname)-8s %(name)s'
     u'(%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
@@ -153,7 +168,9 @@ def log_setup(options):
   # Also log to stdout
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
+  logging.getLogger().addHandler(console_logger)
+  print options.LOG_LEVEL
+  logging.getLogger().setLevel(getattr(logging, options.LOG_LEVEL.upper()))
 
 
 def map_level_string_to_level(level_string):

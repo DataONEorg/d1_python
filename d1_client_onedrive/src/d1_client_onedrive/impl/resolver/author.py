@@ -47,7 +47,7 @@ import resolver_base
 import resource_map
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 README_TXT = '''Author Folder
 

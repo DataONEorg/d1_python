@@ -54,7 +54,8 @@ import resolver_base
 import resource_map
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+
+#log.setLevel(logging.DEBUG)
 
 
 class Resolver(resolver_base.Resolver):
@@ -187,7 +188,7 @@ class Resolver(resolver_base.Resolver):
       raise path_exception.PathException(u'Invalid folder')
 
     if self._is_readme_file([root_name]):
-      return self._generate_readme_text(workspace_path)[offset:size]
+      return self._generate_readme_text(workspace_path)[offset:offset + size]
 
     return self.resolvers[root_name].read_file(
       workspace_folder, controlled_path, size, offset
@@ -221,7 +222,7 @@ class Resolver(resolver_base.Resolver):
   #    test = folder._helpText
   #  except AttributeError:
   #    folder._helpText = util.os_format(generate_help_text(folder))
-  #  res = folder._helpText[offset:size]
+  #  res = folder._helpText[offset:offset + size]
   #  return res
 
   #

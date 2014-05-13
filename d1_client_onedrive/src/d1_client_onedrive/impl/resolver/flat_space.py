@@ -45,7 +45,7 @@ import resolver_base
 import resource_map
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 README_TXT = '''Use FlatSpace to go directly to any DataONE object by typing
 the PID in the path.

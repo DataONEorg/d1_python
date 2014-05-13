@@ -49,13 +49,8 @@ encoding of the Unicode strings.
 import os
 import logging
 
-# Set up logger for this module.
 log = logging.getLogger(__name__)
-# Set specific logging level for this module if specified.
-try:
-  log.setLevel(logging.getLevelName(logging.ONEDRIVE_MODULES[__name__]))
-except (KeyError, AttributeError):
-  pass
+#log.setLevel(logging.DEBUG)
 '''Quote and unquote are somewhat borrowed from python urllib standard
 library.
 '''
