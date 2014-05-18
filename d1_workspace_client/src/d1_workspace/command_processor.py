@@ -50,10 +50,10 @@ class CommandProcessor():
   def __init__(self, options):
     self._options = options
     self._science_object_cache = cache_disk.DiskCache(
-      options['max_object_cache_size'], options['science_data_cache_path']
+      options['sci_obj_max_cache_items'], options['sci_obj_cache_path']
     )
     self._system_metadata_cache = cache_disk.DiskCache(
-      options['max_object_cache_size'], options['sys_meta_cache_path']
+      options['sys_meta_max_cache_items'], options['sys_meta_cache_path']
     )
     self._science_object_cache._delete_oldest_file_if_full()
     self._system_metadata_cache._delete_oldest_file_if_full()

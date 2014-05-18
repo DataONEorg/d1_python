@@ -89,7 +89,7 @@ class Workspace(object):
   def __init__(self, **options):
     '''options: Override any of the defaults in settings.py by passing in
     key/value pairs where the key is in lower case. For instance:
-    workspace_def_path=/tmp/my_file.xml will override the WORKSPACE_DEF_PATH
+    workspace_def_path=/tmp/my_file.xml will override the workspace_def_path
     default.
     '''
     check_dependencies.check_dependencies()
@@ -110,8 +110,8 @@ class Workspace(object):
     return options
 
   def __enter__(self):
-    self._create_wcache()
     self._create_wdef()
+    self._create_wcache()
     return self
 
   def __exit__(self, type, value, traceback):
@@ -132,6 +132,9 @@ class Workspace(object):
     }
     self.sync_wcache_with_wdef()
 
+  def get_unassociated_pids(self):
+    return []
+
   def get_folder(self, path, root=None):
     '''Get the contents of a cached workspace folder'''
     return self._get_wcache_folder_recursive(path, root)
@@ -141,13 +144,15 @@ class Workspace(object):
 
   def get_object_record(self, pid):
     try:
-      return self._get_object_record(pid)
-    except workspace_exception.WorkspaceException:
-      self._create_wcache_item_for_unassociated_pid(pid)
-      return self._get_object_record(pid)
+      return self._wcache['records']['associated'][pid]
+    except KeyError:
+      raise workspace_exception.WorkspaceException('Invalid pid')
 
-  def get_unassociated_pids(self):
-    return self._wcache['records']['unassociated'].keys()
+  def get_unassociated_object_record(self, pid):
+    try:
+      return self._wcache['records']['unassociated'][pid]
+    except KeyError:
+      raise workspace_exception.WorkspaceException('Invalid pid')
 
   def get_science_object(self, pid):
     return self._command_processor.get_science_object(pid)
@@ -269,7 +274,7 @@ class Workspace(object):
 
   @log_func()
   def _create_wcache_item_for_unassociated_pid(self, pid):
-    log.debug('pid={0}'.format(pid))
+    logging.debug('pid={0}'.format(pid))
     '''An unassociated pid is not in any workspace folder. This function allows
     the workspace caching system to be used for identifiers not in the
     workspace. ONEDrive uses this function for the FlatSpace folder.'''
@@ -289,12 +294,3 @@ class Workspace(object):
       return self._get_wcache_folder_recursive(path[1:], folder['dirs'][path[0]])
     except KeyError:
       raise workspace_exception.WorkspaceException('Invalid path')
-
-  def _get_object_record(self, pid):
-    try:
-      return self._wcache['records']['associated'][pid]
-    except KeyError:
-      try:
-        return self._wcache['records']['unassociated'][pid]
-      except KeyError:
-        raise workspace_exception.WorkspaceException('Invalid pid')

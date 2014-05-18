@@ -78,17 +78,22 @@ WORKSPACE_DEF_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'workspace.xml')
 WORKSPACE_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'wcache')
 
 # Location of the local cache of Science Data objects.
-SCIENCE_DATA_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'science_data')
+SCI_OBJ_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'science_data')
 
 # Location of the local cache of System Metadata.
 SYS_META_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'sys_meta')
 
-# The maximum number of Science Object records to retrieve for a query item.
-# Increasing this setting causes longer lists of Science Objects to to appear in
-# Workspace client applications, such as ONEDrive, increases memory footprint
-# for the application and causes longer response times when refreshing Workspace
-# folders. Default value: 50.
-MAX_OBJECTS_FOR_QUERY = 50
+# Cache sizes
+
+# The maximum number of science objects to cache. Increasing this number may
+# give better performance, but also a larger memory footprint. Default value:
+# 10000.
+SCI_OBJ_MAX_CACHE_ITEMS = 10000
+
+# The maximum number of system metadata objects to cache. Increasing this number
+# may give better performance, but also a larger memory footprint. Default
+# value: 10000.
+SYS_META_MAX_CACHE_ITEMS = 10000
 
 # Resource maps (data packages) can be considered to be containers that contain
 # science data and metadata objects. The fastest way to process resource maps
@@ -111,10 +116,12 @@ RESOURCE_MAP_SIZE = 'size'
 # created by a client.
 AUTOMATIC_REFRESH = False
 
-# The maximum number of science objects to cache. Increasing this number may
-# give better performance, but also a larger disk footprint. Default value:
-# 1000.
-MAX_OBJECT_CACHE_SIZE = 100
+# The maximum number of Science Object records to retrieve for a query item.
+# Increasing this setting causes longer lists of Science Objects to to appear in
+# Workspace client applications, such as ONEDrive, increases memory footprint
+# for the application and causes longer response times when refreshing Workspace
+# folders. Default value: 50.
+MAX_OBJECTS_FOR_QUERY = 50
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
