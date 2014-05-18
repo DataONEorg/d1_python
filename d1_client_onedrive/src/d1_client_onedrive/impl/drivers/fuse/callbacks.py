@@ -64,8 +64,8 @@ class FUSECallbacks(fuse.Operations):
     self.start_time = time.time()
     self.gid = os.getgid()
     self.uid = os.getuid()
-    #self.attribute_cache = cache.Cache(self._options.MAX_ATTRIBUTE_CACHE_SIZE)
-    #self.directory_cache = cache.Cache(self._options.MAX_DIRECTORY_CACHE_SIZE)
+    #self.attribute_cache = cache.Cache(self._options.attribute_max_cache_items)
+    #self.directory_cache = cache.Cache(self._options.directory_max_cache_items)
     self.attribute_cache = options.attribute_cache
     self.directory_cache = options.directory_cache
 
@@ -169,7 +169,7 @@ class FUSECallbacks(fuse.Operations):
 
 
   def _raise_error_for_os_special_file(self, path):
-    if len(set(path.split(os.path.sep)) & self._options.IGNORE_SPECIAL):
+    if len(set(path.split(os.path.sep)) & self._options.ignore_special):
       self._raise_error_no_such_file_or_directory(path)
 
 

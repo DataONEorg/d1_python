@@ -52,15 +52,15 @@ def make_absolute(p):
 # connects.
 
 # Round-robin CN endpoints
-BASE_URL = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-#BASE_URL = 'https://cn-dev.test.dataone.org/cn'
-#BASE_URL = 'https://cn-stage.test.dataone.org/cn'
-#BASE_URL = 'https://cn-sandbox.dataone.org/cn'
-#BASE_URL = 'https://cn-stage.dataone.org/cn/'
-#BASE_URL = 'https://cn-stage.test.dataone.org/cn'
+base_url = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
+#base_url = 'https://cn-dev.test.dataone.org/cn'
+#base_url = 'https://cn-stage.test.dataone.org/cn'
+#base_url = 'https://cn-sandbox.dataone.org/cn'
+#base_url = 'https://cn-stage.dataone.org/cn/'
+#base_url = 'https://cn-stage.test.dataone.org/cn'
 
 # Bypass round-robin and go directly to a specific CN.
-#BASE_URL = 'https://cn-dev-unm-1.test.dataone.org/cn'
+#base_url = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
 # Select the mountpoint on Linux and Mac OS X. The mountpoint is the folder in
 # the local filesystem in which the ONEDrive filesystem appears. The default is
@@ -91,6 +91,9 @@ MOUNT_DRIVE_LETTER = 'O:'
 # threshold at which ONEDrive switches from a flat to a hierarchical display.
 #MAX_OBJECTS_FOR_FLAT_LIST = 10
 
+# Automatically refresh the workspace cache when ONEDrive is started.
+AUTO_REFRESH = False
+
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
 ################################################################################
@@ -103,25 +106,55 @@ DEBUG = False
 # Set the default file to log to or None for logging to stdout
 LOG_FILE_PATH = make_absolute('onedrive.log')
 
+# Cache paths
+
+# Passed to Workspace.
+
+# By default, the workspace is cached in the user's home folder.
+WORKSPACE_CACHE_ROOT = os.path.expanduser('~/.dataone/workspace') # (default)
+
+WORKSPACE_DEF_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'workspace.xml')
+# WORKSPACE_DEF = './workspace.xml' # (in the current directory)
+
+# Location of the local cache of the online workspace.
+WORKSPACE_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'wcache')
+
+# Location of the local cache of Science Data objects.
+SCI_OBJ_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'science_data')
+
+# Location of the local cache of System Metadata.
+SYS_META_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'sys_meta')
+
+# Cache sizes
+
+# Passed to Workspace
+
+# The maximum number of science objects to cache. Increasing this number may
+# give better performance, but also a larger memory footprint. Default value:
+# 10000.
+SCI_OBJ_MAX_CACHE_ITEMS = 10000
+
+# The maximum number of system metadata objects to cache. Increasing this number
+# may give better performance, but also a larger memory footprint. Default
+# value: 10000.
+SYS_META_MAX_CACHE_ITEMS = 10000
+
+# ONEDrive specific
+
 # The maximum number of path attributes to cache. Increasing this number may
 # give better performance, but also a larger memory footprint. A value below 100
-# is not recommended. Default value: 1000.
-MAX_ATTRIBUTE_CACHE_SIZE = 1000
+# is not recommended. Default value: 10000.
+ATTRIBUTE_MAX_CACHE_ITEMS = 10000
 
 # The maximum number of folders to cache. Increasing this number may give better
 # performance, but also a larger memory footprint. A value below 10 is not
 # recommended. Default value: 100.
-MAX_DIRECTORY_CACHE_SIZE = 1000
-
-# The maximum number of science objects to cache. Increasing this number may
-# give better performance, but also a larger memory footprint. Default value:
-# 1000.
-MAX_OBJECT_CACHE_SIZE = 1000
+DIRECTORY_MAX_CACHE_ITEMS = 10000
 
 # The maximum number of error message file paths to cache. Decreasing this
 # number below the default is not recommended, as it may cause error messages
-# not to be displayed correctly in the ONEDrive filesystem. Default value: 1000.
-MAX_ERROR_PATH_CACHE_SIZE = 1000
+# not to be displayed correctly in the ONEDrive filesystem. Default value: 10000.
+ERROR_PATH_MAX_CACHE_ITEMS = 10000
 
 # In the ONEDrive filesystem, resource maps (data packages) are represented as
 # folders which can be opened to access the mapped science objects. This setting

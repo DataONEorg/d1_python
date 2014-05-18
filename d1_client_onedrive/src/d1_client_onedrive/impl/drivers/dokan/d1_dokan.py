@@ -122,7 +122,7 @@ def run(options, root_resolver):
   #if (options.stderr):
   #DriverOption |= DOKAN_OPTION_DEBUG | DOKAN_OPTION_STDERR
   d1fs = dokan.Dokan(DataONEFS(options, root_resolver),
-                     options.MOUNT_DRIVE_LETTER, DriverOption, 0x19831116L,
+                     options.mount_drive_letter, DriverOption, 0x19831116L,
                      THREADS)
 
   #if options.unmount:
@@ -273,7 +273,7 @@ class DataONEFS(dokan.Operations):
 
 
   def _is_os_special_file(self, path):
-    return len(set(path.split(os.path.sep)) & self._options.IGNORE_SPECIAL)
+    return len(set(path.split(os.path.sep)) & self._options.ignore_special)
 
 
   def _raise_error_no_such_file_or_directory(self, path):

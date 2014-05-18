@@ -74,7 +74,7 @@ class RootResolver(resolver_base.Resolver):
       u"Workspace": workspace.Resolver(options, workspace_client),
       u"FlatSpace": flat_space.Resolver(options, workspace_client),
     }
-    self.error_file_cache = cache.Cache(self._options.MAX_ERROR_PATH_CACHE_SIZE)
+    self.error_file_cache = cache.Cache(self._options.error_path_max_cache_items)
 
   def get_attributes(self, path):
     log.debug(u'get_attributes: {0}'.format(path))

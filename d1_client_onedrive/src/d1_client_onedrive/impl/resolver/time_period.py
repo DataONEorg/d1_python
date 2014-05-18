@@ -58,7 +58,7 @@ class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
     self.resource_map_resolver = resource_map.Resolver(options, workspace)
-    #self.facet_value_cache = cache.Cache(self._options.MAX_FACET_NAME_CACHE_SIZE)
+    #self.facet_value_cache = cache.Cache(self._options.max_facet_name_cache_size)
 
     # The time_period resolver handles hierarchy levels:
     # / = Decades

@@ -146,8 +146,8 @@ def main():
       # ONEDrive uses dataone.common directly but it is also a dependency of
       # libclient, so we let it be installed by libclient, to avoid the chance
       # of mismatched versions.
-      'dataone.libclient == 1.2.5',
-      'dataone.workspace_client == 0.0.2',
+      #'dataone.libclient == 1.2.5',
+      #'dataone.workspace_client == 0.0.2',
       'fusepy',
       'rdflib',
     ],

@@ -48,10 +48,10 @@ class O():
 class TestRootResolver(unittest.TestCase):
   def setUp(self):
     options = O()
-    options.BASE_URL = 'https://localhost/'
-    options.WORKSPACE_XML = './test_workspace.xml'
-    options.MAX_ERROR_PATH_CACHE_SIZE = 1000
-    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
+    options.base_url = 'https://localhost/'
+    options.workspace_xml = './test_workspace.xml'
+    options.max_error_path_cache_size = 1000
+    options.max_solr_query_cache_size = 1000
     self.r = resolver.root.RootResolver(options)
 
   def test_100_get_directory(self):

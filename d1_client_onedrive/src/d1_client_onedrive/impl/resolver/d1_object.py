@@ -194,6 +194,6 @@ class Resolver(resolver_base.Resolver):
   def _generate_search_fields_text(self, record):
     return util.os_format(
       '\n'.join(
-        sorted(['{0}: {1}'.format(k, v) for k, v in record.items()])
+        sorted([u'{0}: {1}'.format(k, v) for k, v in record.items()])
       )
     )

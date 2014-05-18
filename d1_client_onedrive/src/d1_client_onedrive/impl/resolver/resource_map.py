@@ -58,22 +58,15 @@ class Resolver(resolver_base.Resolver):
     super(Resolver, self).__init__(options, workspace)
     self.d1_object_resolver = d1_object.Resolver(options, workspace)
 
-  # The resource map resolver handles only one hierarchy level, so anything
-  # that has more levels is handed to the d1_object resolver.
-  # If the object is not a resource map, control is handed to the d1_object
-  # resolver.
+  # The resource map resolver handles only one hierarchy level, so anything that
+  # has more levels is handed to the d1_object resolver. If the object is not a
+  # resource map, control is also handed to the d1_object resolver.
 
   def get_attributes(self, workspace_root, path):
-    #log.debug(workspace_root)
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
-
-    # The resource map resolver handles only one hierarchy level, so anything
-    # that has more levels is handed to the d1_object resolver.
     is_resource_map = self._is_resource_map(path[0])
-    log.debug('is_resource_map={0}'.format(is_resource_map))
     if not is_resource_map:
       return self.d1_object_resolver.get_attributes(workspace_root, path)
     if len(path) > 1:
@@ -124,7 +117,7 @@ class Resolver(resolver_base.Resolver):
       'total': self.get_total_size_of_objects_in_resource_map,
       'number': self.get_number_of_objects_in_resource_map,
       'zero': self.get_zero,
-    }[self._options.FOLDER_SIZE_FOR_RESOURCE_MAPS](pid)
+    }[self._options.folder_size_for_resource_maps](pid)
 
   def _is_resource_map(self, pid):
     try:
