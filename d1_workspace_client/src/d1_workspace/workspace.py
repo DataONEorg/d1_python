@@ -121,19 +121,8 @@ class Workspace(object):
     '''Synchronize the local cache of the workspace with the workspace
     definition then add any missing Solr records and query results.
     '''
-    self._wcache = {
-      'tree': {
-        'name': self._wdef.name,
-      },
-      'records': {
-        'associated': {},
-        'unassociated': {},
-      },
-    }
+    self._wcache = {'tree': {'name': self._wdef.name, }, 'records': {}, }
     self.sync_wcache_with_wdef()
-
-  def get_unassociated_pids(self):
-    return []
 
   def get_folder(self, path, root=None):
     '''Get the contents of a cached workspace folder'''
@@ -143,16 +132,18 @@ class Workspace(object):
     return workspace_folder['name']
 
   def get_object_record(self, pid):
+    '''This function is normally used for retriving records for objects cached
+    in the workspace. Caching happens when the workspace is refreshed. The
+    function can also be used for retriving records for objects that are
+    currently not in the workspace. In that case, an attempt is made to retrieve
+    the record from a CN on the fly. This allows the workspace caching system to
+    be used for objects that are not in the workspace. ONEDrive uses this
+    functionality for the FlatSpace folder.
+    '''
     try:
-      return self._wcache['records']['associated'][pid]
+      return self._wcache['records'][pid]
     except KeyError:
-      raise workspace_exception.WorkspaceException('Invalid pid')
-
-  def get_unassociated_object_record(self, pid):
-    try:
-      return self._wcache['records']['unassociated'][pid]
-    except KeyError:
-      raise workspace_exception.WorkspaceException('Invalid pid')
+      return self._get_uncached_object_record(pid)
 
   def get_science_object(self, pid):
     return self._command_processor.get_science_object(pid)
@@ -166,6 +157,13 @@ class Workspace(object):
   #
   # Private.
   #
+
+  def _get_uncached_object_record(self, pid):
+    self._create_wcache_item_for_pid(None, pid)
+    try:
+      return self._wcache['records'][pid]
+    except KeyError:
+      raise workspace_exception.WorkspaceException('Unknown PID')
 
   def _create_wcache(self):
     self._unpickle_wcache_from_disk()
@@ -269,17 +267,9 @@ class Workspace(object):
       self._create_wcache_item(wcache_folder, record)
 
   def _create_wcache_item(self, wcache_folder, record):
-    wcache_folder[record['id']] = True
-    self._wcache['records']['associated'][record['id']] = record
-
-  @log_func()
-  def _create_wcache_item_for_unassociated_pid(self, pid):
-    logging.debug('pid={0}'.format(pid))
-    '''An unassociated pid is not in any workspace folder. This function allows
-    the workspace caching system to be used for identifiers not in the
-    workspace. ONEDrive uses this function for the FlatSpace folder.'''
-    record = self._command_processor.get_solr_record(pid)
-    self._wcache['records']['unassociated'][record['id']] = record
+    if wcache_folder is not None:
+      wcache_folder[record['id']] = True
+    self._wcache['records'][record['id']] = record
 
   def _get_missing_solr_records(self):
     pass

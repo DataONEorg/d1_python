@@ -80,6 +80,7 @@ class D1Client(object):
       raise workspace_exception.WorkspaceException(str(e))
 
   def get_system_metadata(self, pid):
+    '''This method causes an implicit validation of the retrieved System Metadata'''
     try:
       return self.client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
