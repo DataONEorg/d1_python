@@ -49,26 +49,26 @@ log = logging.getLogger(__name__)
 
 class DownloadFacetValues(object):
   def __init__(self):
-    self.doc = None
+    self._doc = None
 
   def load(self, xml_path):
-    self.doc = dataoneTypes.CreateFromDocument(open(xml_path, 'rb').read())
+    self._doc = dataoneTypes.CreateFromDocument(open(xml_path, 'rb').read())
 
   def get_searchable_facet_names(self):
-    self.assert_initialized()
+    self._assert_initialized()
     query_field_names = []
-    for qf in self.doc.queryField:
+    for qf in self._doc.queryField:
       if qf.searchable == True:
         query_field_names.append(qf.name)
     return query_field_names
 
   def assert_initialized(self):
-    assert (self.doc is not None)
+    assert (self._doc is not None)
 
   def download_facet_values(self):
     '''Download facet values for testing.'''
-    self.load('query_engine_description.xml')
-    fields = self.get_searchable_facet_names()
+    self._load('query_engine_description.xml')
+    fields = self._get_searchable_facet_names()
     for field in fields:
       print field
       url = 'https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*%3A*&rows=0&facet=on&facet.field={0}'.format(

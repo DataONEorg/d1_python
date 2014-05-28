@@ -35,7 +35,6 @@ import os
 
 # App.
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import resolver_base
 
@@ -47,7 +46,7 @@ log = logging.getLogger(__name__)
 class Resolver(resolver_base.Resolver):
   def __init__(self, options):
     self._options = options
-    self.workspace = workspace
+    self._workspace = workspace
 
   def get_attributes(self, workspace, path):
     raise path_exception.PathException('<not implemented>')
@@ -56,7 +55,7 @@ class Resolver(resolver_base.Resolver):
     raise path_exception.PathException('<not implemented>')
 
     ##reading the system metadata
-    #obj = self.get_system_metadata(pid)
+    #obj = self._get_system_metadata(pid)
     #xml = obj.toxml()
     #if offset + size > len(xml):
     #  size = len(xml) - offset
@@ -64,33 +63,33 @@ class Resolver(resolver_base.Resolver):
     #
     ## describes...
     #dfname = urllib.unquote(parts[4]).decode('utf-8')
-    #dpid = self.get_object_pid(dfname)
-    #sysm = self.get_system_metadata(dpid)
+    #dpid = self._get_object_pid(dfname)
+    #sysm = self._get_system_metadata(dpid)
     #if offset + size > sysm.size:
     #  size = sysm.size - offset
-    #self.get(dpid)
-    #return self.datacache[dpid][offset:offset + size]
+    #self._get(dpid)
+    #return self._datacache[dpid][offset:offset + size]
 
     #  related = obj.getRelatedObjects()
     #  if len(related['describes']) > 0:
     #    res.append('describes')
-    #  abstxt = self.getAbstract(pid)
+    #  abstxt = self._getAbstract(pid)
     #  if len(abstxt) > 0:
     #    res.append('abstract.txt')
     #  return res
 
     #    relations = obj.getRelatedObjects()
     #    for rel in relations['describes']:
-    #      fname = self.getObjectFileName(rel)
+    #      fname = self._getObjectFileName(rel)
     #      res.append(encode_path_element(fname))
     #    return res
 
     #  if parts[3] == 'systemmetadata.xml':
-    #    #self.logger.debug('getattr systemmetadata.xml')
+    #    #self._logger.debug('getattr systemmetadata.xml')
     #    #get system metadata
-    #    #obj = d1_client.d1client.DataONEObject(parts[3], cnbase_url=self.base_url)
+    #    #obj = d1_client.d1client.DataONEObject(parts[3], cnbase_url=self._base_url)
     #    #sysm = obj.getSystemMetadata()
-    #    sysm = self.getSystemMetadata(pid)
+    #    sysm = self._getSystemMetadata(pid)
     #    ctime = time.mktime(sysm.dateUploaded.timetuple())
     #    mtime = time.mktime(sysm.dateSysMetadataModified.timetuple())
     #    xml = sysm.toxml()
@@ -101,8 +100,8 @@ class Resolver(resolver_base.Resolver):
 
     #  if mfid == pid:
     #    #get object
-    #    #self.logger.debug('getattr object')
-    #    sysm = self.getSystemMetadata(pid)
+    #    #self._logger.debug('getattr object')
+    #    sysm = self._getSystemMetadata(pid)
     #    ctime = time.mktime(sysm.dateUploaded.timetuple())
     #    mtime = time.mktime(sysm.dateSysMetadataModified.timetuple())
     #    return dict(st_mode=(stat.S_IFREG | 0444), st_size=sysm.size,
@@ -111,16 +110,16 @@ class Resolver(resolver_base.Resolver):
     #                                        st_atime=now, st_nlink=1)
     #  if parts[3] == 'describes':
     #    #get list of objects described by this entry
-    #    #self.logger.debug('getattr describes')
-    #    obj = self.getObject(pid)
+    #    #self._logger.debug('getattr describes')
+    #    obj = self._getObject(pid)
     #    relations = obj.getRelatedObjects()
     #    st_nlink = len(relations['describes'])
     #    return dict(st_mode=(stat.S_IFDIR | 0755),
     #                st_ctime=now, st_mtime=now, st_atime=now, st_nlink=st_nlink)
     #
     #  if parts[3] == 'abstract.txt':
-    #    #self.logger.debug('getattr abstract')
-    #    abstxt = self.getAbstract(pid)
+    #    #self._logger.debug('getattr abstract')
+    #    abstxt = self._getAbstract(pid)
     #    return dict(st_mode=(stat.S_IFREG | 0444), st_size=len(abstxt),
     #                                        st_ctime=now,
     #                                        st_mtime=now,
@@ -128,11 +127,11 @@ class Resolver(resolver_base.Resolver):
 
     #  #should only be describes/<identifier>
     #  fname = urllib.unquote(parts[4]).decode('utf-8')
-    #  pid = self.getObjectPid(fname)
+    #  pid = self._getObjectPid(fname)
     #  if parts[3] == 'describes':
-    #    #self.logger.debug('getattr describes/{0}'.format(pid))
+    #    #self._logger.debug('getattr describes/{0}'.format(pid))
     #    try:
-    #      sysm = self.getSystemMetadata(pid)
+    #      sysm = self._getSystemMetadata(pid)
     #      ctime = time.mktime(sysm.dateUploaded.timetuple())
     #      mtime = time.mktime(sysm.dateSysMetadataModified.timetuple())
     #      return dict(st_mode=(stat.S_IFREG | 0444), st_size=sysm.size,

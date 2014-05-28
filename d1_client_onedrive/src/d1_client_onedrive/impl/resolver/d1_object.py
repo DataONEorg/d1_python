@@ -45,7 +45,6 @@ import d1_workspace.workspace_exception
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
 import resolver_base
@@ -59,7 +58,7 @@ class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
 
-    self.object_format_info = d1_client.object_format_info.ObjectFormatInfo(
+    self._object_format_info = d1_client.object_format_info.ObjectFormatInfo(
       csv_file=pkg_resources.resource_stream(d1_client.__name__, 'mime_mappings.csv')
     )
 
@@ -135,16 +134,10 @@ class Resolver(resolver_base.Resolver):
     pid = path[0]
     record = self._workspace.get_object_record(pid)
     return [
-      self._make_directory_item_for_solr_record(record),
-      directory_item.DirectoryItem(u"system.xml"),
-      directory_item.DirectoryItem(self._get_search_fields_filename(),
-                                   is_dir=False)
+      self._get_pid_filename(record['id'], record),
+      u'system.xml',
+      self._get_search_fields_filename(),
     ]
-
-  def _make_directory_item_for_solr_record(self, record):
-    return directory_item.DirectoryItem(
-      self._get_pid_filename(record['id'], record), record['size']
-    )
 
   def _read_file(self, workspace_root, path, size, offset):
     pid, filename = path[0:2]
@@ -172,7 +165,7 @@ class Resolver(resolver_base.Resolver):
 
   def _get_pid_filename(self, pid, record):
     try:
-      ext = self.object_format_info.filename_extension_from_format_id(record['formatId'])
+      ext = self._object_format_info.filename_extension_from_format_id(record['formatId'])
     except KeyError:
       return pid
     if ext == os.path.splitext(pid)[1]:

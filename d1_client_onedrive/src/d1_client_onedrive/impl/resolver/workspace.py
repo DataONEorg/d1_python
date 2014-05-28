@@ -42,7 +42,6 @@ from d1_workspace.workspace_exception import WorkspaceException
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl.resolver import author
 from d1_client_onedrive.impl.resolver import taxa
@@ -61,8 +60,8 @@ log = logging.getLogger(__name__)
 class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
-    self.resource_map_resolver = resource_map.Resolver(options, workspace)
-    self.resolvers = {
+    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+    self._resolvers = {
       u'All': single.Resolver(options, workspace),
       u'Authors': author.Resolver(options, workspace),
       u'Regions': region.Resolver(options, workspace),
@@ -89,8 +88,8 @@ class Resolver(resolver_base.Resolver):
       return attributes.Attributes(is_dir=True)
 
       #if len(path) > 0:
-      #  if path[-1] == self.get_help_name():
-      #    return attributes.Attributes(size=self.folderHelpSize(workspace_folder),
+      #  if path[-1] == self._get_help_name():
+      #    return attributes.Attributes(size=self._folderHelpSize(workspace_folder),
       #                                 is_dir=False)
 
       # If the path is not to a workspace folder root, a valid path must go to a
@@ -114,8 +113,8 @@ class Resolver(resolver_base.Resolver):
     # Now have all information required for gathering information about all the
     # objects in the workspace folder and dispatching to a controlled hierarchy
     # resolver.
-    #workspace_folder = WorkspaceFolderObjects(self.workspace, workspace_folder)
-    return self.resolvers[root_name].get_attributes(workspace_folder, controlled_path)
+    #workspace_folder = WorkspaceFolderObjects(self._workspace, workspace_folder)
+    return self._resolvers[root_name].get_attributes(workspace_folder, controlled_path)
 
   def get_directory(self, workspace_root, path, preconfigured_query=None):
     # the directory will typically be in the cache. already retrieved by
@@ -135,7 +134,7 @@ class Resolver(resolver_base.Resolver):
     else:
       res = self._resolve_workspace_folder(workspace_folder)
       # All workspace folders have a readme.
-      res.append(self._get_readme_directory_item())
+      res.append(self._get_readme_filename())
       return res
 
     # If the path is not to a workspace folder root, a valid path must go to a
@@ -158,7 +157,7 @@ class Resolver(resolver_base.Resolver):
     # Now have all information required for gathering information about all the
     # objects in the workspace folder and dispatching to a controlled hierarchy
     # resolver.
-    return self.resolvers[root_name].get_directory(workspace_folder, controlled_path)
+    return self._resolvers[root_name].get_directory(workspace_folder, controlled_path)
 
   def read_file(self, workspace_root, path, size, offset):
     log.debug(
@@ -176,7 +175,7 @@ class Resolver(resolver_base.Resolver):
     else:
       if len(path) > 0:
         if path[-1] == workspace_folder.get_help_name():
-          return self.getFolderHelp(workspace_folder, size, offset)
+          return self._getFolderHelp(workspace_folder, size, offset)
           #return workspace_folder.get_help_text(size, offset)
       raise path_exception.PathException(u'Invalid file')
 
@@ -190,7 +189,7 @@ class Resolver(resolver_base.Resolver):
     if self._is_readme_file([root_name]):
       return self._generate_readme_text(workspace_path)[offset:offset + size]
 
-    return self.resolvers[root_name].read_file(
+    return self._resolvers[root_name].read_file(
       workspace_folder, controlled_path, size, offset
     )
 
@@ -207,7 +206,7 @@ class Resolver(resolver_base.Resolver):
   #    return len(folder._helpText)
   #  except AttributeError:
   #    #Generate help text for folder
-  #    self.getFolderHelp(folder)
+  #    self._getFolderHelp(folder)
   #    return len(folder._helpText)
   #  pass
   #
@@ -237,22 +236,19 @@ class Resolver(resolver_base.Resolver):
     '''Return: workspace_path, resolver, controlled_path
     '''
     for i, e in enumerate(path):
-      if e in self.resolvers or e == self._get_readme_filename():
+      if e in self._resolvers or e == self._get_readme_filename():
         return path[:i], path[i], path[i + 1:]
     raise path_exception.PathException(u'Invalid folder: %s' % str(path))
 
   def _resolve_workspace_folder(self, workspace_folder):
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
-    self.append_folders(dir, workspace_folder)
-    #if self.get_help_size() > 0:
-    #  dir.append(self.get_help_directory_item())
-    dir.extend([directory_item.DirectoryItem(name) for name in sorted(self.resolvers)])
+    self._append_folders(dir, workspace_folder)
+    dir.extend(self._resolvers.keys())
     return dir
 
-  def append_folders(self, d, workspace_folder):
+  def _append_folders(self, d, workspace_folder):
     for k in workspace_folder['dirs']:
-      d.append(directory_item.DirectoryItem(k))
+      d.append(k)
     return d
 
   # Readme

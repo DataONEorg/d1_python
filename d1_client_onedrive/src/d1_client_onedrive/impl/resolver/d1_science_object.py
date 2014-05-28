@@ -35,7 +35,6 @@ import os
 
 # App.
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 import resolver_base
 
@@ -47,7 +46,7 @@ log = logging.getLogger(__name__)
 class Resolver(resolver_base.Resolver):
   def __init__(self, options):
     self._options = options
-    self.workspace = workspace
+    self._workspace = workspace
 
   def get_attributes(self, workspace, path):
     raise path_exception.PathException('<not implemented>')
@@ -56,9 +55,9 @@ class Resolver(resolver_base.Resolver):
     raise path_exception.PathException('<not implemented>')
 
     #reading the object bytes
-    sysm = self.get_system_metadata(pid)
+    sysm = self._get_system_metadata(pid)
     if offset + size > sysm.size:
       size = sysm.size - offset
     #trigger loading of the data if necessary
-    self.get(pid)
-    return self.datacache[pid][offset:offset + size]
+    self._get(pid)
+    return self._datacache[pid][offset:offset + size]

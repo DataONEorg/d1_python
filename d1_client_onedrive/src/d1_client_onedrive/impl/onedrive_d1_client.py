@@ -49,15 +49,15 @@ log = logging.getLogger(__name__)
 class D1Client(object):
   def __init__(self, options):
     self._options = options
-    self.client = d1_client.cnclient_1_1.CoordinatingNodeClient(
+    self._client = d1_client.cnclient_1_1.CoordinatingNodeClient(
       base_url=self._options.base_url
     )
-    self.query_engine_description = None
-    self.all_facet_names = None
+    self._query_engine_description = None
+    self._all_facet_names = None
 
   def describe(self, pid):
     try:
-      return self.client.describe(pid)
+      return self._client.describe(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise path_exception.PathException(e.description)
     except (ssl.SSLError, Exception) as e:
@@ -74,7 +74,7 @@ class D1Client(object):
 
   def get_system_metadata(self, pid):
     try:
-      return self.client.getSystemMetadata(pid)
+      return self._client.getSystemMetadata(pid)
     except d1_common.types.exceptions.DataONEException as e:
       raise path_exception.PathException(e.description)
     except (ssl.SSLError, Exception) as e:

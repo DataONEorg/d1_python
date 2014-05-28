@@ -43,7 +43,6 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_disk
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
 import resolver_base
@@ -55,7 +54,7 @@ log = logging.getLogger(__name__)
 #GAZETTEER_HOST = '192.168.1.116'
 GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
 
-README_TXT = '''Region Folder
+README_TXT = u'''Region Folder
 
 This folder provides a geographically ordered view of science data objects
 for which the geographical area being covered is known to DataONE. Objects with
@@ -84,14 +83,14 @@ under New Mexico.
 class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
-    self.resource_map_resolver = resource_map.Resolver(options, workspace)
+    self._resource_map_resolver = resource_map.Resolver(options, workspace)
     self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, workspace_folder, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    return self._get_attribute(workspace_folder, path)
+    return self._get_attributes(workspace_folder, path)
 
   def get_directory(self, workspace_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
@@ -110,7 +109,7 @@ class Resolver(resolver_base.Resolver):
   # Private.
   #
 
-  def _get_attribute(self, workspace_folder, path):
+  def _get_attributes(self, workspace_folder, path):
     if path == ['readme.txt']:
       return attributes.Attributes(len(self._readme_txt))
 
@@ -120,7 +119,7 @@ class Resolver(resolver_base.Resolver):
     )
     if self._region_tree_item_is_pid(region_tree_item):
       try:
-        return self.resource_map_resolver.get_attributes(
+        return self._resource_map_resolver.get_attributes(
           workspace_folder, [
             region_tree_item
           ] + unconsumed_path
@@ -131,7 +130,6 @@ class Resolver(resolver_base.Resolver):
 
   def _get_directory(self, workspace_folder, path):
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
 
     merged_region_tree = self._get_merged_region_tree(workspace_folder)
 
@@ -142,7 +140,7 @@ class Resolver(resolver_base.Resolver):
       # If there is an unconsumed path section, the path exits through a valid
       # PID (any other exit would have raised an exception).
       #if len(unconsumed_path):
-      return self.resource_map_resolver.get_directory(
+      return self._resource_map_resolver.get_directory(
         workspace_folder, [
           region_tree_item
         ] + unconsumed_path
@@ -153,16 +151,15 @@ class Resolver(resolver_base.Resolver):
 
       # The whole path was consumed and a folder within the tree was returned.
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
-    #if self.has_readme_entry(path):
-    #  dir.append(self.get_readme_directory_item())
+    #if self._has_readme_entry(path):
+    #  dir.append(self._get_readme_filename())
 
     for r in region_tree_item:
-      dir.append(directory_item.DirectoryItem(r))
+      dir.append(r)
 
     # Add readme.txt to root.
     if not path:
-      dir.append(directory_item.DirectoryItem('readme.txt'))
+      dir.append('readme.txt')
 
     return dir
 
@@ -176,7 +173,7 @@ class Resolver(resolver_base.Resolver):
     )
 
     if self._region_tree_item_is_pid(region_tree_item):
-      return self.resource_map_resolver.read_file(
+      return self._resource_map_resolver.read_file(
         workspace_folder, [
           region_tree_item
         ] + unconsumed_path, size, offset

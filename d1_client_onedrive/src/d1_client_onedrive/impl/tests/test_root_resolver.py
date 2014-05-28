@@ -52,33 +52,33 @@ class TestRootResolver(unittest.TestCase):
     options.workspace_xml = './test_workspace.xml'
     options.max_error_path_cache_size = 1000
     options.max_solr_query_cache_size = 1000
-    self.r = resolver.root.RootResolver(options)
+    self._r = resolver.root.RootResolver(options)
 
   def test_100_get_directory(self):
-    d = self.r.get_directory('relative/path')
-    self.assertTrue('<non-existing directory>' in [f[0] for f in d])
+    d = self._r.get_directory('relative/path')
+    self._assertTrue('<non-existing directory>' in [f[0] for f in d])
 
   def test_110_resolve(self):
-    d = self.r.get_directory('/absolute/path/invalid')
-    self.assertTrue('<non-existing directory>' in [f[0] for f in d])
+    d = self._r.get_directory('/absolute/path/invalid')
+    self._assertTrue('<non-existing directory>' in [f[0] for f in d])
 
   def test_120_resolve(self):
-    d = self.r.get_directory('/')
-    self.assertFalse('<non-existing directory>' in [f[0] for f in d])
-    self.assertTrue('FacetedSearch' in [f[0] for f in d])
-    self.assertTrue('PreconfiguredSearch' in [f[0] for f in d])
+    d = self._r.get_directory('/')
+    self._assertFalse('<non-existing directory>' in [f[0] for f in d])
+    self._assertTrue('FacetedSearch' in [f[0] for f in d])
+    self._assertTrue('PreconfiguredSearch' in [f[0] for f in d])
 
   def test_130_resolve(self):
-    d = self.r.get_directory('/TestResolver')
-    self.assertTrue('##/##' in [f[0] for f in d])
+    d = self._r.get_directory('/TestResolver')
+    self._assertTrue('##/##' in [f[0] for f in d])
 
   def test_140_resolve(self):
-    d = self.r.get_directory('/TestResolver/')
-    self.assertTrue('##/##' in [f[0] for f in d])
+    d = self._r.get_directory('/TestResolver/')
+    self._assertTrue('##/##' in [f[0] for f in d])
 
   def _test_150_resolve(self):
-    d = self.r.get_directory('/TestResolver/abc/def')
-    self.assertTrue('/abc/def' in [f[0] for f in d])
+    d = self._r.get_directory('/TestResolver/abc/def')
+    self._assertTrue('/abc/def' in [f[0] for f in d])
 
 #===============================================================================
 

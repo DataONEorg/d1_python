@@ -40,7 +40,6 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
 import resolver_base
@@ -49,7 +48,7 @@ import resource_map
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
 
-README_TXT = '''Taxa Folder
+README_TXT = u'''Taxa Folder
 
 This folder contains the items of the workspace folder (the parent
 of this folder) grouped by their taxonomic classications.
@@ -75,10 +74,10 @@ folders.
 class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
-    self.resource_map_resolver = resource_map.Resolver(options, workspace)
+    self._resource_map_resolver = resource_map.Resolver(options, workspace)
     self._readme_txt = util.os_format(README_TXT)
 
-    self.classifications = [
+    self._classifications = [
       'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species',
       'scientificName'
     ]
@@ -96,9 +95,9 @@ class Resolver(resolver_base.Resolver):
       return self._get_readme_file_attributes()
 
     if len(path) <= 2:
-      return self._get_attribute(path)
+      return self._get_attributes(path)
 
-    return self.resource_map_resolver.get_attributes(workspace_folder, path[2:])
+    return self._resource_map_resolver.get_attributes(workspace_folder, path[2:])
 
   def get_directory(self, workspace_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
@@ -106,7 +105,7 @@ class Resolver(resolver_base.Resolver):
     if len(path) <= 2:
       return self._get_directory(workspace_folder, path)
 
-    return self.resource_map_resolver.get_directory(path[2:])
+    return self._resource_map_resolver.get_directory(path[2:])
 
   def read_file(self, workspace_folder, path, size, offset):
     log.debug(
@@ -117,11 +116,11 @@ class Resolver(resolver_base.Resolver):
       return self._get_readme_text(size, offset)
     if len(path) <= 2:
       raise path_exception.PathException(u'Invalid file')
-    return self.resource_map_resolver.read_file(path[2:], size, offset)
+    return self._resource_map_resolver.read_file(path[2:], size, offset)
 
   # Private.
 
-  def _get_attribute(self, path):
+  def _get_attributes(self, path):
     return attributes.Attributes(0, is_dir=True)
 
   def _get_directory(self, workspace_folder, path):
@@ -130,7 +129,7 @@ class Resolver(resolver_base.Resolver):
 
     classification = path[0]
 
-    if len(path) == 1 and classification in self.classifications:
+    if len(path) == 1 and classification in self._classifications:
       return self._resolve_taxa_classification(classification, workspace_folder)
 
     classification_value = path[1]
@@ -141,18 +140,14 @@ class Resolver(resolver_base.Resolver):
 
   def _resolve_taxa_root(self, workspace_folder):
     d = directory.Directory()
-    self.append_parent_and_self_references(d)
-    for g in self.classifications:
+    for g in self._classifications:
       if g in workspace_folder['items']:
-        d.append(directory_item.DirectoryItem(g))
+        d.append(g)
         break
     return d
 
   def _resolve_taxa_classification(self, classification, workspace_folder):
-    d = directory.Directory()
-    self.append_parent_and_self_references(d)
-    u = self._get_unique_values_for_classification(classification, workspace_folder)
-    return [directory_item.DirectoryItem(v) for v in u]
+    return self._get_unique_values_for_classification(classification, workspace_folder)
 
   def _resolve_taxa_classification_value(self, classification, value, workspace_folder):
     d = directory.Directory()
@@ -160,18 +155,13 @@ class Resolver(resolver_base.Resolver):
       record = self._workspace.get_object_record(pid)
       try:
         if value in record[classification]:
-          if record.has_key("resourceMap"):
-            for rmap_id in record['resourceMap']:
-              d.append(directory_item.DirectoryItem(rmap_id))
-          else:
-            d.append(directory_item.DirectoryItem(record['id']))
+          d.append(record['id'])
       except KeyError:
         pass
     # As empty folders in the taxa tree are pruned in the root and first level,
     # an empty folder here can only be due to an invalid path.
     if not len(d):
       raise path_exception.PathException(u'Invalid taxonomic classification value')
-    self.append_parent_and_self_references(d)
     return d
 
   def _get_unique_values_for_classification(self, classification, workspace_folder):

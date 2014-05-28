@@ -36,25 +36,26 @@ log = logging.getLogger(__name__)
 
 
 class Directory(collections.MutableSequence):
-  def __init__(self, init_list=None):
-    self.list = list()
+  def __init__(self, init_list=None, disable_cache=False):
+    self._list = []
     if init_list is not None:
-      self.list.extend(init_list)
+      self._list.extend(init_list)
+    self.disable_cache = disable_cache
 
   def __len__(self):
-    return len(self.list)
+    return len(self._list)
 
   def __getitem__(self, i):
-    return self.list[i]
+    return self._list[i]
 
   def __delitem__(self, i):
-    del self.list[i]
+    del self._list[i]
 
   def __setitem__(self, i, v):
-    self.list[i] = v
+    self._list[i] = v
 
   def __unicode__(self):
-    return unicode(self.list)
+    return unicode(self._list)
 
   def __str__(self):
     return unicode(self).encode('utf-8')
@@ -63,7 +64,4 @@ class Directory(collections.MutableSequence):
     return str(self)
 
   def insert(self, i, v):
-    self.list.insert(i, v)
-
-  def names(self):
-    return [d.name() for d in self.list]
+    self._list.insert(i, v)

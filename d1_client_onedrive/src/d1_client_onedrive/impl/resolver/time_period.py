@@ -40,7 +40,6 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import util
 import resolver_base
@@ -57,8 +56,8 @@ log = logging.getLogger(__name__)
 class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
-    self.resource_map_resolver = resource_map.Resolver(options, workspace)
-    #self.facet_value_cache = cache.Cache(self._options.max_facet_name_cache_size)
+    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+    #self._facet_value_cache = cache.Cache(self._options.max_facet_name_cache_size)
 
     # The time_period resolver handles hierarchy levels:
     # / = Decades
@@ -71,9 +70,9 @@ class Resolver(resolver_base.Resolver):
       return self._get_readme_file_attributes()
 
     if len(path) <= 2:
-      return self._get_attribute(path)
+      return self._get_attributes(path)
 
-    return self.resource_map_resolver.get_attributes(workspace_folder, path[2:])
+    return self._resource_map_resolver.get_attributes(workspace_folder, path[2:])
 
   def get_directory(self, workspace_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
@@ -81,7 +80,7 @@ class Resolver(resolver_base.Resolver):
     if len(path) <= 2:
       return self._get_directory(workspace_folder, path)
 
-    return self.resource_map_resolver.get_directory(workspace_folder, path[2:])
+    return self._resource_map_resolver.get_directory(workspace_folder, path[2:])
 
   def read_file(self, workspace_folder, path, size, offset):
     log.debug(
@@ -92,11 +91,11 @@ class Resolver(resolver_base.Resolver):
       return self._get_readme_text(size, offset)
     if len(path) <= 2:
       raise path_exception.PathException(u'Invalid file')
-    return self.resource_map_resolver.read_file(workspace_folder, path[2:], size, offset)
+    return self._resource_map_resolver.read_file(workspace_folder, path[2:], size, offset)
 
   # Private.
 
-  def _get_attribute(self, path):
+  def _get_attributes(self, path):
     return attributes.Attributes(0, is_dir=True)
 
   def _get_directory(self, workspace_folder, path):
@@ -115,7 +114,6 @@ class Resolver(resolver_base.Resolver):
 
   def _resolve_decades(self, workspace_folder):
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
     sites = set()
     for pid in workspace_folder['items']:
       record = self._workspace.get_object_record(pid)
@@ -124,7 +122,7 @@ class Resolver(resolver_base.Resolver):
           record['beginDate'], record['endDate']
         ):
           sites.add(decade)
-    dir.extend([directory_item.DirectoryItem(a) for a in sites])
+    dir.extend(sites)
     return dir
 
   #def _add_decade_if_date_is_populated(self, sites, record, date_field):
@@ -142,7 +140,6 @@ class Resolver(resolver_base.Resolver):
   def _resolve_years_in_decade(self, decade, workspace_folder):
     first_year_in_decade = self._validate_and_split_decade_range(decade)[0]
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
     sites = set()
     for pid in workspace_folder['items']:
       record = self._workspace.get_object_record(pid)
@@ -151,23 +148,17 @@ class Resolver(resolver_base.Resolver):
           first_year_in_decade, record['beginDate'], record['endDate']
         ):
           sites.add(str(year))
-    dir.extend([directory_item.DirectoryItem(a) for a in sites])
+    dir.extend(sites)
     self._raise_exception_if_empty_directory(dir)
     return dir
 
   def _resolve_objects_in_year(self, year, workspace_folder):
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
     for pid in workspace_folder['items']:
       record = self._workspace.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         if self._is_year_in_date_range(year, record['beginDate'], record['endDate']):
-          if record.has_key("resourceMap"):
-            for rmap_id in record['resourceMap']:
-              dir.append(directory_item.DirectoryItem(rmap_id))
-          else:
-            dir.append(directory_item.DirectoryItem(record['id']))
-          #dir.append(directory_item.DirectoryItem(o['id']))
+          dir.append(record['id'])
     self._raise_exception_if_empty_directory(dir)
     return dir
 

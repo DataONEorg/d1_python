@@ -55,6 +55,6 @@ def is_root(path):
 
 def os_format(txt):
   if platform.system() == "Windows":
-    return txt.replace('\n', '\r\n')
+    return txt.replace('\n', '\r\n').encode('utf16')
   else:
-    return txt
+    return txt.encode('utf8')

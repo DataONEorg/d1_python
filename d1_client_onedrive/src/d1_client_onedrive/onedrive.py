@@ -173,7 +173,6 @@ def log_setup(options):
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
   logging.getLogger().addHandler(console_logger)
-  print options.log_level
   logging.getLogger().setLevel(getattr(logging, options.log_level.upper()))
 
 

@@ -38,7 +38,6 @@ from StringIO import StringIO
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 
 log = logging.getLogger(__name__)
@@ -54,10 +53,6 @@ class Resolver(object):
     self._options = options
     self._workspace = workspace
     self._readme_txt = ''
-
-  def append_parent_and_self_references(self, directory):
-    directory.append(directory_item.DirectoryItem('.'))
-    directory.append(directory_item.DirectoryItem('..'))
 
   def is_root(self, path):
     return path == ['', '']
@@ -85,13 +80,6 @@ class Resolver(object):
 
   def _get_readme_file_attributes(self):
     return attributes.Attributes(size=len(self._readme_txt), is_dir=False)
-
-  def _get_readme_directory_item(self):
-    return directory_item.DirectoryItem(
-      README_FILENAME, size=len(
-        self._readme_txt
-      ), is_dir=True
-    )
 
   def _get_readme_filename(self):
     return README_FILENAME

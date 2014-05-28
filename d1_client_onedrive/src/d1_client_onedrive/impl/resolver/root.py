@@ -26,16 +26,8 @@
    interactions which can be performed with the DataONE infrastructure. The root
    resolver renders the folders and transfers control to the appropriate path
    resolver, based on the path which is entered.
- - The path resolvers may raise a PathException, which contains a single line
-   error message that is suitable for display in a filename in the filesystem.
-   The RootResolver renders the file in the requested directory.
  - The root resolver unescapes path entries before they are passed into the
    resolver hierarchy and escapes entries that are received.
- - The root resolver caches exceptions from the other resolvers and resolves
-   error messages as files. The resolvers should still be prepared to recognize
-   error files, as it is possible that the cache fills up so the root
-   resolver forgets about earlier exceptions, and forwards get_attribute()
-   requests for error files to the resolvers.
 :Author:
   DataONE (Dahl)
 '''
@@ -49,7 +41,6 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import os_escape
 from d1_client_onedrive.impl import path_exception
 from d1_client_onedrive.impl import path_exception
@@ -70,22 +61,17 @@ class RootResolver(resolver_base.Resolver):
     super(RootResolver, self).__init__(options, workspace_client)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
-    self.resolvers = {
+    self._resolvers = {
       u"Workspace": workspace.Resolver(options, workspace_client),
       u"FlatSpace": flat_space.Resolver(options, workspace_client),
     }
-    self.error_file_cache = cache.Cache(self._options.error_path_max_cache_items)
 
   def get_attributes(self, path):
     log.debug(u'get_attributes: {0}'.format(path))
     p = self._split_and_unescape_path(path)
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
-    try:
-      return self._get_attributes(p)
-    except path_exception.PathException as e:
-      self._cache_error_file_path(p, e)
-      return attributes.Attributes(is_dir=True)
+    return self._get_attributes(p)
 
   def get_directory(self, path):
     log.debug(u'get_directory: {0}'.format(path))
@@ -98,11 +84,7 @@ class RootResolver(resolver_base.Resolver):
     # If this call raises a PathException, it is because an earlier
     # get_attributes() call erroneously designated the path which caused the
     # exception to be raised as a valid path to a folder in an earlier call.
-    try:
-      return self._get_directory(p)
-    except path_exception.PathException as e:
-      self._cache_error_file_path(p, e)
-      return self._render_path_exception_as_file(e)
+    return self._get_directory(p)
 
   def read_file(self, path, size, offset):
     log.debug(u'read_file: {0}, {1}, {2}'.format(path, size, offset))
@@ -116,58 +98,22 @@ class RootResolver(resolver_base.Resolver):
   def _get_attributes(self, path):
     if self._is_root(path):
       return attributes.Attributes(is_dir=True)
-    if self._is_cached_error_folder_path(path):
-      return attributes.Attributes(size=1, is_dir=1)
-    if self._is_cached_error_file_path(path):
-      return attributes.Attributes()
-#    if self._is_error_file(path):
-#      return attributes.Attributes()
     return self._dispatch_get_attributes(path)
 
   def _get_directory(self, path):
     if self._is_root(path):
       return self._resolve_root()
-    if self._is_cached_error_folder_path(path):
-      error_message = self._get_cached_error_message(path)
-      return self._render_error_message_as_file(error_message)
     dir = self._dispatch_get_directory(path)
     return self._escape_directory_entries(dir)
 
   def _read_file(self, path, size, offset):
     if self._is_root(path):
       return self._resolve_root()
-    if self._is_cached_error_folder_path(path):
-      error_message = self._get_cached_error_message(path)
-      return self._render_error_message_as_file(error_message)
     return self._dispatch_read_file(path, size, offset)
-
-  def _is_cached_error_folder_path(self, path):
-    c = tuple(path) in self.error_file_cache.keys()
-    log.debug(u'Check error file cache: {0}: {1}'.format(path, c))
-    return c
-
-  def _is_cached_error_file_path(self, path):
-    c = tuple(path[:-1]) in self.error_file_cache.keys()
-    log.debug(u'Check error file cache: {0}: {1}'.format(path[:-1], c))
-    return c
-
-  def _cache_error_file_path(self, path, e):
-    #error_file_path = path + [self.error_message_from_path_exception(e)]
-    #error_file_path_key = util.string_from_path_elements(error_file_path)
-    log.debug(u'Add to error file cache: {0}: {1}'.format(path, e))
-    self.error_file_cache[tuple(path)] = self.error_message_from_path_exception(e)
-
-  def _get_cached_error_message(self, path):
-    return self.error_file_cache[tuple(path)]
 
   def _resolve_root(self):
     dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
-    dir.extend(
-      [
-        directory_item.DirectoryItem(name) for name in sorted(self.resolvers.keys())
-      ]
-    )
+    dir.extend(self._resolvers.keys())
     return dir
 
   def _dispatch_get_attributes(self, path):
@@ -182,61 +128,18 @@ class RootResolver(resolver_base.Resolver):
     workspace_folder = self._workspace.get_folder([])
     return self._resolver_lookup(path).read_file(workspace_folder, path[1:], size, offset)
 
-#  def _get_directory(self, path):
-#    if not os.path.isabs(path):
-#      return self.invalid_directory_error()
-#    path = self._split_and_unescape_path(path)
-#    if self.is_root(path):
-#      return self._resolve_root()
-#    dir = self._dispatch(path)
-#    return self._escape_directory_entries(dir)
-
-#  def _dispatch(self, path):
-#    try:
-#      return self._resolver_lookup(path).resolve(path[2:])
-#    except path_exception.PathException as e:
-#      return self._render_path_exception_as_file(e.message)
-
   def _split_and_unescape_path(self, path):
     assert (os.path.isabs(path))
     return [os_escape.identifier_from_filename(p) for p in path.split(os.path.sep)][1:]
 
   def _escape_directory_entries(self, dir):
-    return directory.Directory(
-      directory_item.DirectoryItem(
-        os_escape.filename_from_identifier(d.name())
-      ) for d in dir
-    )
+    return directory.Directory(os_escape.filename_from_identifier(d) for d in dir)
 
   def _resolver_lookup(self, path):
     try:
-      return self.resolvers[path[0]]
+      return self._resolvers[path[0]]
     except KeyError:
       raise path_exception.PathException(u'Invalid root directory')
-
-  def _render_path_exception_as_file(self, path_exception):
-    dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
-    dir.append(
-      directory_item.DirectoryItem(
-        self.error_message_from_path_exception(path_exception)
-      )
-    )
-    return dir
-
-  def _render_error_message_as_file(self, error_message):
-    # Windows
-    #error_message = error_message.replace(':', ';')
-    log.error(error_message)
-    dir = directory.Directory()
-    self.append_parent_and_self_references(dir)
-    dir.append(directory_item.DirectoryItem(error_message))
-    return dir
-
-  def error_message_from_path_exception(self, path_exception):
-    # Windows. TODO: Implement platform agnostic solution
-    #return 'Error; ' + str(path_exception)
-    return u'Error: ' + unicode(path_exception)
 
   def _is_root(self, path):
     return path == ['']

@@ -48,7 +48,6 @@ import d1_common.date_time
 # App.
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import directory_item
 from d1_client_onedrive.impl import path_exception
 
 
@@ -59,15 +58,13 @@ log = logging.getLogger(__name__)
 class FUSECallbacks(fuse.Operations):
   def __init__(self, options, root_resolver):
     self._options = options
-    self.READ_ONLY_ACCESS_MODE = 3
-    self.root_resolver = root_resolver
-    self.start_time = time.time()
-    self.gid = os.getgid()
-    self.uid = os.getuid()
-    #self.attribute_cache = cache.Cache(self._options.attribute_max_cache_items)
-    #self.directory_cache = cache.Cache(self._options.directory_max_cache_items)
-    self.attribute_cache = options.attribute_cache
-    self.directory_cache = options.directory_cache
+    self._READ_ONLY_ACCESS_MODE = 3
+    self._root_resolver = root_resolver
+    self._start_time = time.time()
+    self._gid = os.getgid()
+    self._uid = os.getuid()
+    self._attribute_cache = cache.Cache(self._options.attribute_max_cache_items)
+    self._directory_cache = cache.Cache(self._options.directory_max_cache_items)
 
 
   def getattr(self, path, fh):
@@ -81,7 +78,7 @@ class FUSECallbacks(fuse.Operations):
 
     This method gets very heavy traffic.
     '''
-    self._raise_error_for_os_special_file(path)
+    self._raise_error_if_os_special_file(path)
     #log.debug(u'getattr(): {0}'.format(path))
     attribute = self._get_attributes_through_cache(path)
     #log.debug('getattr() returned attribute: {0}'.format(attribute))
@@ -94,11 +91,11 @@ class FUSECallbacks(fuse.Operations):
     '''
     log.debug(u'readdir(): {0}'.format(path))
     try:
-      dir = self.directory_cache[path]
+      dir = self._directory_cache[path]
     except KeyError:
-      dir = self.root_resolver.get_directory(path)
-      self.directory_cache[path] = dir
-    return dir.names()
+      dir = self._get_directory(path)
+      self._directory_cache[path] = dir
+    return dir
 
 
   def open(self, path, flags):
@@ -107,7 +104,7 @@ class FUSECallbacks(fuse.Operations):
     '''
     log.debug(u'open(): {0}'.format(path))
     # ONEDrive is currently read only. Anything but read access is denied.
-    if (flags & self.READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
+    if (flags & self._READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
       self._raise_error_permission_denied(path)
     # Any file in the filesystem can be opened.
     attribute = self._get_attributes_through_cache(path)
@@ -117,50 +114,49 @@ class FUSECallbacks(fuse.Operations):
   def read(self, path, size, offset, fh):
     log.debug(u'read(): {0}'.format(path))
     try:
-      return self.root_resolver.read_file(path, size, offset)
+      return self._root_resolver.read_file(path, size, offset)
     except path_exception.PathException as e:
-      raise OSError(errno.ENOENT, e)
-
-
-#  def _get_and_cache_directory(self, path):
-#    #self.directory_cache.log_dump()
-#    try:
-#      directory, file_to_attributes_map = self.directory_cache[path]
-#      log.debug('Found in cache: {0}'.format(path))
-#    except KeyError:
-#      log.debug('Not found in cache. {0}'.format(path))
-#      directory = self.root_resolver.resolve(path)
-#      file_to_attributes_map = self._create_file_to_attributes_map(directory)
-#      self.directory_cache[path] = directory, file_to_attributes_map
-#    return directory, file_to_attributes_map
-
-
-#  def _create_file_to_attributes_map(self, directory):
-#    return dict((d.name(), (d.size(), d.is_dir())) for d in directory)
+      self._raise_error_no_such_file_or_directory(path)
 
 
   # Private.
 
+  def _get_directory(self, path):
+    try:
+      d = self._root_resolver.get_directory(path)
+      d.append('.')
+      d.append('..')
+      return d
+    except path_exception.PathException as e:
+      self._raise_error_no_such_file_or_directory(path)
+
+
   def _get_attributes_through_cache(self, path):
     try:
-      return self.attribute_cache[path]
+      return self._attribute_cache[path]
     except KeyError:
-      attribute = self.root_resolver.get_attributes(path)
-      self.attribute_cache[path] = attribute
-      return attribute
+      attributes = self._get_attributes(path)
+      self._attribute_cache[path] = attributes
+      return attributes
+
+
+  def _get_attributes(self, path):
+    try:
+      return self._root_resolver.get_attributes(path)
+    except path_exception.PathException as e:
+      self._raise_error_no_such_file_or_directory(path)
 
 
   def _stat_from_attributes(self, attributes):
     date_time = d1_common.date_time.to_seconds_since_epoch(
-      attributes.date()) if attributes.date() is not None else self.start_time
+      attributes.date()) if attributes.date() is not None else self._start_time
     return dict(
-      st_mode = stat.S_IFDIR | 0555 if attributes.is_dir() else \
-        stat.S_IFREG | 0444,
+      st_mode = stat.S_IFDIR | 0555 if attributes.is_dir() else stat.S_IFREG | 0444,
       st_ino = 0,
       st_dev = 0,
       st_nlink = 2, # TODO
-      st_uid = self.uid,
-      st_gid = self.gid,
+      st_uid = self._uid,
+      st_gid = self._gid,
       st_size = attributes.size(),
       st_atime = date_time,
       st_mtime = date_time,
@@ -168,16 +164,16 @@ class FUSECallbacks(fuse.Operations):
     )
 
 
-  def _raise_error_for_os_special_file(self, path):
+  def _raise_error_if_os_special_file(self, path):
     if len(set(path.split(os.path.sep)) & self._options.ignore_special):
       self._raise_error_no_such_file_or_directory(path)
 
 
   def _raise_error_no_such_file_or_directory(self, path):
     log.debug(u'Error: No such file or directory: {0}'.format(path))
-    raise OSError(errno.ENOENT, '')
+    raise fuse.FuseOSError(errno.ENOENT)
 
 
-#  def _raise_error_permission_denied(self, path):
-#    log.debug('Error: Permission denied: {0}'.format(path))
-#    raise OSError(errno.EACCES, '')
+  def _raise_error_permission_denied(self, path):
+    log.debug('Error: Permission denied: {0}'.format(path))
+    raise fuse.FuseOSError(errno.EACCES)

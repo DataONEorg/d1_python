@@ -57,8 +57,8 @@ class TestFlatSpaceResolver(unittest.TestCase):
     options.workspace_xml = './test_flat_space.xml'
     options.max_error_path_cache_size = 1000
     options.max_solr_query_cache_size = 1000
-    self.workspace = workspace.CommandProcessor(options)
-    self.w = resolver.flat_space.Resolver(options, self.workspace)
+    self._workspace = workspace.CommandProcessor(options)
+    self._w = resolver.flat_space.Resolver(options, self._workspace)
 
   def test_100(self):
     pass
