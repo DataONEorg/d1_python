@@ -53,7 +53,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     key_path=None,
     strict=True,
     capture_response_body=False,
-    version='test'
+    version='diag'
   ):
 
     d1_client.mnclient.MemberNodeClient.__init__(

@@ -78,7 +78,7 @@ import unittest2
 #from xml.sax.saxutils import escape
 
 # D1.
-#mport d1_client
+#import d1_client
 import d1_client.mnclient
 #import d1_client.systemmetadata
 import d1_common.const

@@ -68,8 +68,8 @@ urlpatterns = patterns(
   # Tier 2: Authorization API  (MNAuthorization)
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{pid}
   url(r'^v1/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
-  # MNStorage.systemMetadataChanged() - POST /dirtySystemMetadata/{pid}
-  url(r'^v1/dirtySystemMetadata/?$', 'post_dirty_system_metadata'),
+  # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{pid}
+  url(r'^v1/refreshSystemMetadata/?$', 'post_refresh_system_metadata'),
 
   # Tier 3: Storage API (MNStorage)
   # MNStorage.create() - POST /object

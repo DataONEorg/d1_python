@@ -117,7 +117,8 @@ STAND_ALONE = True
 # - Prevent public subjects from accessing monitoring functions.
 # This function does not expose any sensitive information and should
 # be safe to keep enabled in production.
-# When GMN_DEBUG is True, this setting is ignored and monitoring is enabled.
+# When GMN_DEBUG is True, this setting is ignored and monitoring is always
+# enabled.
 MONITOR = True
 
 # Hosts/domain names that are valid for this site.
@@ -194,7 +195,7 @@ NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
 NODE_STATE = 'up'
 
 # Set the Tier for this node.
-# For information on selecting a tier, see https://repository.dataone.org/software/cicore/trunk/mn/d1_mn_generic/doc/build/html/setup-tier.html
+# For information on selecting a tier, see http://pythonhosted.org/dataone.generic_member_node/setup-env-tier.html
 # Tier 1: Read, public objects
 # Tier 2: Access controlled objects (authentication and authorization)
 # Tier 3: Write (create, update and delete objects)
@@ -335,27 +336,17 @@ DATABASES = {
     # PostgreSQL
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'gmn',
-
-    # MySQL (currently not supported)
-    # 'ENGINE': 'django.db.backends.mysql',
-    # 'NAME': 'gmn',
-
     # SQLite3
     # 'ENGINE': 'django.db.backends.sqlite3',
     # 'NAME': make_absolute('./gmn.sqlite'),
-
-    # When using PostgreSQL, set these to match the username and password
-    # specified for the gmn user during the PostgreSQL install. These are not
-    # used for SQLite3.
-    'USER': 'gmn',
-    'PASSWORD': 'gmn',
-
+    # By default, GMN uses PostgreSQL Peer authentication, which does not
+    # require a username and password. These are not used for SQLite3.
+    'USER': '',
+    'PASSWORD': '',
     # Set HOST to empty string for localhost.
     'HOST': '',
-
     # Set PORT to empty string for default.
     'PORT': '',
-
     # Wrap each HTTP request in an implicit transaction. The transaction is
     # rolled back if the view does not return successfully. Upon a successful
     # return, the transaction is committed, thus making all modifications that
@@ -381,14 +372,14 @@ MEDIA_ROOT = make_absolute('./stores') # relative location
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
 
-# GMN implements a vendor specific extension for create(). Instead of providing
-# an object for GMN to manage, the object can be left empty and the URL of the
-# object on a 3rd party server be provided instead. In that case, GMN will
-# stream the object bytes from the remote server while handling all other object
-# related operations like usual. An object that is created using this extension
-# is said to be "wrapped" while an object for which GMN also stores the data
-# bytes (the most common usage) is referred to as "managed". GMN can stream
-# wrapped objects from HTTP and HTTPS.
+# GMN implements a vendor specific extension for MNStorage.create(). Instead of
+# providing an object for GMN to manage, the object can be left empty and the
+# URL of the object on a 3rd party server be provided instead. In that case, GMN
+# will stream the object bytes from the remote server while handling all other
+# object related operations like usual. An object that is created using this
+# extension is said to be "wrapped" while an object for which GMN also stores
+# the data bytes (the most common usage) is referred to as "managed". GMN can
+# stream wrapped objects from HTTP and HTTPS.
 #
 # GMN provides limited support for streaming objects that are access controlled
 # on the remote server. GMN has the ability to supply credentials to the remote

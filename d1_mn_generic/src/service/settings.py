@@ -72,6 +72,9 @@ USE_I18N = True
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
 
+# Static files (served directly by Apache).
+STATIC_URL = '/static/'
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader', )
 
@@ -97,7 +100,7 @@ ROOT_URLCONF = 'service.urls'
 
 TEMPLATE_DIRS = (make_absolute('./mn/templates'), )
 
-INSTALLED_APPS = ('service.mn', )
+INSTALLED_APPS = ('django.contrib.staticfiles', 'service.mn', )
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.

@@ -69,13 +69,14 @@ class Command(NoArgsCommand):
 
   def handle_noargs(self, **options):
     verbosity = int(options.get('verbosity', 1))
-    self.log_setup(verbosity)
+    self._log_setup(verbosity)
     logging.debug('Running management command: process_replication_queue')
-    self.abort_if_other_instance_is_running()
+    self._abort_if_other_instance_is_running()
+    self._abort_if_stand_alone_instance()
     p = ReplicationQueueProcessor()
     p.process_replication_queue()
 
-  def log_setup(self, verbosity):
+  def _log_setup(self, verbosity):
     # Set up logging. We output only to stdout. Instead of also writing to a log
     # file, redirect stdout to a log file when the script is executed from cron.
     formatter = logging.Formatter(
@@ -89,7 +90,7 @@ class Command(NoArgsCommand):
     else:
       logging.getLogger('').setLevel(logging.INFO)
 
-  def abort_if_other_instance_is_running(self):
+  def _abort_if_other_instance_is_running(self):
     single_path = os.path.join(
       tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
     )
@@ -97,7 +98,14 @@ class Command(NoArgsCommand):
     try:
       fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
-      self.logger.info('Aborted: Another instance is still running')
+      logging.info('Aborted: Another instance is still running')
+      exit(0)
+
+  def _abort_if_stand_alone_instance(self):
+    if settings.STAND_ALONE:
+      logging.info(
+        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
+      )
       exit(0)
 
 #===============================================================================

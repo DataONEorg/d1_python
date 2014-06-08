@@ -104,7 +104,7 @@ class EventLogUserAgent(models.Model):
 
 class EventLogSubject(models.Model):
   # TODO: Reference Subject table instead.
-  subject = models.CharField(max_length=128, unique=True, db_index=True)
+  subject = models.CharField(max_length=1024, unique=True, db_index=True)
 
 
 class EventLogMemberNode(models.Model):
@@ -172,29 +172,29 @@ class ReplicationQueue(models.Model):
     )[0]
 
 # ------------------------------------------------------------------------------
-# System Metadata dirty queue
+# System Metadata refresh queue
 # ------------------------------------------------------------------------------
 
 
-class SystemMetadataDirtyQueueStatus(models.Model):
+class SystemMetadataRefreshQueueStatus(models.Model):
   status = models.CharField(max_length=1024, unique=True)
 
 
-class SystemMetadataDirtyQueue(models.Model):
+class SystemMetadataRefreshQueue(models.Model):
   object = models.ForeignKey(ScienceObject)
   timestamp = models.DateTimeField(auto_now=True)
   serial_version = models.PositiveIntegerField()
   last_modified = models.DateTimeField()
-  status = models.ForeignKey(SystemMetadataDirtyQueueStatus)
+  status = models.ForeignKey(SystemMetadataRefreshQueueStatus)
 
   def set_status(self, status):
-    self.status = SystemMetadataDirtyQueueStatus.objects.\
+    self.status = SystemMetadataRefreshQueueStatus.objects.\
       get_or_create(status=status)[0]
 
   def save_unique(self):
     try:
-      me = SystemMetadataDirtyQueue.objects.get(object=self.object)
-    except SystemMetadataDirtyQueue.DoesNotExist:
+      me = SystemMetadataRefreshQueue.objects.get(object=self.object)
+    except SystemMetadataRefreshQueue.DoesNotExist:
       self.save()
     else:
       me.delete()

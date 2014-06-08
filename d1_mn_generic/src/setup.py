@@ -43,7 +43,6 @@
   will be generated, as the MANIFEST.in file will contain exclude directives for
   files that would not have been included
 """
-import locale
 import os
 import re
 from setuptools import setup, find_packages
@@ -68,9 +67,6 @@ license = 'Apache License, Version 2.0'
 
 
 def main():
-  # Enable SVN to work with filenames containing Unicode.
-  locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-
   # This overwrites MANIFEST.in and automatically excludes any unversioned
   # python modules if pysvn is installed. This will include settings_site.py.
   # However, even if pysvn is not installed, it's important to exclude any

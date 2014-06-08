@@ -31,19 +31,18 @@ import d1_common.types.exceptions
 
 # App.
 import models
+import auth
 
 
 def _log(pid, request, event, timestamp=None):
   '''Log an object access.
   :return:
   '''
-
-  # Gather info from request object.
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  subject = request.META['REMOTE_ADDR']
+  subject = auth.get_trusted_subjects_string()
 
-  # We support logging events that are not associated with an object.
+  # Support logging events that are not associated with an object.
   object_row = None
   if pid is not None:
     try:
@@ -54,13 +53,11 @@ def _log(pid, request, event, timestamp=None):
 
   # Create log entry.
   event_log_row = models.EventLog()
-
   event_log_row.object = object_row
   event_log_row.set_event(event)
   event_log_row.set_ip_address(ip_address)
   event_log_row.set_user_agent(user_agent)
   event_log_row.set_subject(subject)
-
   event_log_row.save()
 
   # The datetime is an optional parameter. If it is not provided, a

@@ -403,7 +403,7 @@ def get_is_authorized_pid(request, pid):
 
 @mn.restrict_to_verb.post
 @mn.auth.assert_trusted_permission
-def post_dirty_system_metadata(request):
+def post_refresh_system_metadata(request):
   '''MNStorage.systemMetadataChanged(session, pid, serialVersion,
                                      dateSysMetaLastModified) → boolean
   '''
@@ -412,13 +412,13 @@ def post_dirty_system_metadata(request):
                                           ('field', 'dateSysMetaLastModified'),
                                           ))
   mn.view_asserts.object_exists(request.POST['pid'])
-  dirty_queue = mn.models.SystemMetadataDirtyQueue()
-  dirty_queue.object = mn.models.ScienceObject.objects.get(pid=request.POST['pid'])
-  dirty_queue.serial_version = request.POST['serialVersion']
-  dirty_queue.last_modified = d1_common.date_time.from_iso8601(
+  refresh_queue = mn.models.SystemMetadataRefreshQueue()
+  refresh_queue.object = mn.models.ScienceObject.objects.get(pid=request.POST['pid'])
+  refresh_queue.serial_version = request.POST['serialVersion']
+  refresh_queue.last_modified = d1_common.date_time.from_iso8601(
     request.POST['dateSysMetaLastModified'])
-  dirty_queue.set_status('new')
-  dirty_queue.save_unique()
+  refresh_queue.set_status('new')
+  refresh_queue.save_unique()
   return mn.view_shared.http_response_with_boolean_true_type()
 
 
