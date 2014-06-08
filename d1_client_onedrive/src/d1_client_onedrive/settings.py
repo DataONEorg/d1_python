@@ -125,6 +125,12 @@ SCI_OBJ_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'science_data')
 # Location of the local cache of System Metadata.
 SYS_META_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'sys_meta')
 
+# ONEDrive specific
+
+ONEDRIVE_CACHE_ROOT = os.path.expanduser('~/.dataone/onedrive') # (default)
+
+REGION_TREE_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'cache_region_tree')
+
 # Cache sizes
 
 # Passed to Workspace
@@ -148,13 +154,12 @@ ATTRIBUTE_MAX_CACHE_ITEMS = 10000
 
 # The maximum number of folders to cache. Increasing this number may give better
 # performance, but also a larger memory footprint. A value below 10 is not
-# recommended. Default value: 100.
+# recommended. Default value: 10000.
 DIRECTORY_MAX_CACHE_ITEMS = 10000
 
-# The maximum number of error message file paths to cache. Decreasing this
-# number below the default is not recommended, as it may cause error messages
-# not to be displayed correctly in the ONEDrive filesystem. Default value: 10000.
-ERROR_PATH_MAX_CACHE_ITEMS = 10000
+# The maximum number of region trees to cache. A region tree describes to which
+# geographical regions a set of Science Objects belong. Default value: 1000
+REGION_TREE_MAX_CACHE_ITEMS = 1000
 
 # In the ONEDrive filesystem, resource maps (data packages) are represented as
 # folders which can be opened to access the mapped science objects. This setting

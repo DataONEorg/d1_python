@@ -84,7 +84,9 @@ class Resolver(resolver_base.Resolver):
   def __init__(self, options, workspace):
     super(Resolver, self).__init__(options, workspace)
     self._resource_map_resolver = resource_map.Resolver(options, workspace)
-    self._region_tree_cache = cache_disk.DiskCache(1000, 'cache_region_tree')
+    self._region_tree_cache = cache_disk.DiskCache(
+      options.region_tree_max_cache_items, options.region_tree_cache_path
+    )
     self._readme_txt = util.os_format(README_TXT)
 
   def get_attributes(self, workspace_folder, path):
