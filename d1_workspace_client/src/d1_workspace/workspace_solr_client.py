@@ -105,7 +105,9 @@ class SolrConnection(object):
 
   def _create_connection(self):
     #logging.debug('Creating new connection to Solr')
-    return httplib.HTTPSConnection(self._solr_host)
+    return httplib.HTTPSConnection(
+      self._solr_host, timeout=self._options['solr_query_timeout']
+    )
 
   def _get_hostname(self, base_url):
     return urlparse.urlsplit(base_url).netloc

@@ -147,6 +147,10 @@ MAX_SOLR_QUERY_CACHE_SIZE = 1000
 # the DataONE CNRead.query() API.
 SOLR_QUERY_PATH = '/v1/query/solr/'
 
+# The amount of time to wait for the result of a Solr query result before
+# considering the query as failed.
+SOLR_QUERY_TIMEOUT = 30.0
+
 # Setting this value to 1 causes the Solr client to output debug information.
 # True: Turn on debug output in the Solr Client (for debugging)
 # False: Turn off debug output (for normal use)
