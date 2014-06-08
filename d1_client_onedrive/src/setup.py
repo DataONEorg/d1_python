@@ -43,7 +43,6 @@
   will be generated, as the MANIFEST.in file will contain exclude directives for
   files that would not have been included
 """
-import locale
 import os
 import re
 import setuptools
@@ -126,9 +125,6 @@ license = 'Apache License, Version 2.0'
 
 
 def main():
-  # Enable SVN to work with filenames containing Unicode.
-  locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-
   if has_svn:
     create_manifest_in()
 

@@ -80,10 +80,6 @@ Install pip::
 
   $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
 
-Install PyXB::
-
-  $ sudo pip install pyxb==1.2.3
-
 Install ONEDrive, and its dependencies from PyPI, into a Python virtual
 environment. The virtual environment is set up under onedrive_bin in the user's
 home folder.
