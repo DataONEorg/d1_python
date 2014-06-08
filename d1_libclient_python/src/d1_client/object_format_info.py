@@ -22,8 +22,8 @@
 ============================
 
 :Synopsis:
-  Map DataONE ObjectFormatIDs to Content-Type and filename extension.
-  The mappings are provided in a CSV file.
+  Map DataONE ObjectFormatIDs to Content-Type and filename extension. The
+  mappings are provided in a CSV file. Raises KeyError for unknown values.
 :Created: 2012-10-25
 :Author: DataONE (Dahl)
 '''
