@@ -21,10 +21,6 @@ The CLI is distributed via PyPI, the Python Package Index.
 
     $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade
 
-  Install PyXB::
-
-    $ sudo pip install pyxb==1.2.3
-
   Install the CLI from PyPI::
 
     $ sudo pip install dataone.cli
