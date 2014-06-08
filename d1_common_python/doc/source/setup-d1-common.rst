@@ -21,10 +21,6 @@ Windows
 
 #. Open a Command Prompt.
 
-#. Install PyXB::
-
-   $ sudo pip install pyxb==1.2.3
-
 #. Install the DataONE Common Library for Python and dependencies::
 
    > pip install dataone.common
@@ -36,10 +32,6 @@ Linux
 1. Install pip (Python package installer)::
 
    $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
-
-#. Install PyXB::
-
-   $ sudo pip install pyxb==1.2.3
 
 #. Install the DataONE Common Library for Python and dependencies::
 

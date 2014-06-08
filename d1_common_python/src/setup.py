@@ -43,7 +43,6 @@
   will be generated, as the MANIFEST.in file will contain exclude directives for
   files that would not have been included
 """
-import locale
 import os
 import re
 import setuptools
@@ -68,9 +67,6 @@ license = 'Apache License, Version 2.0'
 
 
 def main():
-  # Enable SVN to work with filenames containing Unicode.
-  locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-
   if has_svn:
     create_manifest_in()
 
@@ -89,9 +85,7 @@ def main():
     # Dependencies that are available through PyPI.
     install_requires=[
       'iso8601 == 0.1.4',
-      # Installing PyXB automatically is broken as of pip 1.5.2.
-      # For now, this must be done as a manual step.
-      #'pyxb == 1.2.3',
+      'pyxb == 1.2.3',
     ],
   )
 
