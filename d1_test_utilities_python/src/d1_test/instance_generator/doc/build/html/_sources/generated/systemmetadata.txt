@@ -1,0 +1,25 @@
+systemmetadata
+==============
+
+.. automodule:: systemmetadata
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    generate
+    generate_from_file
+    generate_from_flo
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

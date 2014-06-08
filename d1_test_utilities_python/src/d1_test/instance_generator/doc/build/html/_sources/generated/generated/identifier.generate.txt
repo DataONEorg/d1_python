@@ -1,0 +1,6 @@
+identifier.generate
+===================
+
+.. currentmodule:: identifier
+
+.. autofunction:: generate

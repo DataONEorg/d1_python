@@ -1,0 +1,6 @@
+checksum.generate
+=================
+
+.. currentmodule:: checksum
+
+.. autofunction:: generate

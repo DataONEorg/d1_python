@@ -1,0 +1,6 @@
+dates.generate
+==============
+
+.. currentmodule:: dates
+
+.. autofunction:: generate

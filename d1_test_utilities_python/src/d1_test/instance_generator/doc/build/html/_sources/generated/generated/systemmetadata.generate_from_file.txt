@@ -1,0 +1,6 @@
+systemmetadata.generate_from_file
+=================================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: generate_from_file

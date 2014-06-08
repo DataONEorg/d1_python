@@ -1,0 +1,53 @@
+test_person.TestPerson
+======================
+
+.. currentmodule:: test_person
+
+.. autoclass:: TestPerson
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TestPerson.__init__
+      ~TestPerson.assertAlmostEqual
+      ~TestPerson.assertAlmostEquals
+      ~TestPerson.assertEqual
+      ~TestPerson.assertEquals
+      ~TestPerson.assertFalse
+      ~TestPerson.assertNotAlmostEqual
+      ~TestPerson.assertNotAlmostEquals
+      ~TestPerson.assertNotEqual
+      ~TestPerson.assertNotEquals
+      ~TestPerson.assertRaises
+      ~TestPerson.assertTrue
+      ~TestPerson.assertUrlEqual
+      ~TestPerson.assert_
+      ~TestPerson.countTestCases
+      ~TestPerson.debug
+      ~TestPerson.defaultTestResult
+      ~TestPerson.fail
+      ~TestPerson.failIf
+      ~TestPerson.failIfAlmostEqual
+      ~TestPerson.failIfEqual
+      ~TestPerson.failUnless
+      ~TestPerson.failUnlessAlmostEqual
+      ~TestPerson.failUnlessEqual
+      ~TestPerson.failUnlessRaises
+      ~TestPerson.id
+      ~TestPerson.run
+      ~TestPerson.setUp
+      ~TestPerson.shortDescription
+      ~TestPerson.tearDown
+      ~TestPerson.test_010
+   
+   
+
+   
+   
+   
+/

@@ -1,0 +1,6 @@
+systemmetadata.generate
+=======================
+
+.. currentmodule:: systemmetadata
+
+.. autofunction:: generate
