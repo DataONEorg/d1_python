@@ -18,10 +18,6 @@ Python Package Index.
 
     $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade;
 
-  Install PyXB::
-
-    $ sudo pip install pyxb==1.2.3
-
   Install the Test Utilities and their dependencies, including
   `Multi-Mechanize`_. This will also automatically build several Python C
   extensions::
