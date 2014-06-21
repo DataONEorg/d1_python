@@ -29,6 +29,36 @@ Finally, an installer is built for the executable and all dependencies.
    > python -c "import urllib2; exec(urllib2.urlopen('https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py').read())"
    > easy_install pip
 
+
+
+
+Download the latest Python 2.7 installer:
+https://www.python.org/download/releases/2.7.6/
+Windows x86 MSI Installer (2.7.6)
+
+Run the installer and leave all settings at their defaults.
+
+Download get-pip.py:
+https://pip.pypa.io/en/latest/installing.html
+
+Open a command prompt:
+
+> setx path "%path%;C:\Python27;C:\Python27\Scripts"
+
+Close then reopen the command prompt.
+
+Go to the download location of get-pip.py.
+
+E.g., cd \Users\Myself\Downloads
+
+Install and update pip::
+
+> python get-pip.py
+> python -m pip install -U pip
+
+
+
+
 #. Download and install the 32-bit Python 2.7 lxml Windows installer from
    http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml.
 

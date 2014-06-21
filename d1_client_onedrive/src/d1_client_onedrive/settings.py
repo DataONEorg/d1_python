@@ -91,9 +91,6 @@ MOUNT_DRIVE_LETTER = 'O:'
 # threshold at which ONEDrive switches from a flat to a hierarchical display.
 #MAX_OBJECTS_FOR_FLAT_LIST = 10
 
-# Automatically refresh the workspace cache when ONEDrive is started.
-AUTO_REFRESH = False
-
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
 ################################################################################
@@ -103,8 +100,10 @@ AUTO_REFRESH = False
 # False: Log only error messages (for normal use, default)
 DEBUG = False
 
-# Set the default file to log to or None for logging to stdout
-LOG_FILE_PATH = make_absolute('onedrive.log')
+# Set the default file to log to or None for logging only to stdout
+#LOG_FILE_PATH = make_absolute('onedrive.log')
+#LOG_FILE_PATH = None
+LOG_FILE_PATH = '/Users/traveluser/onedrive/onedrive.log'
 
 # Cache paths
 
@@ -186,16 +185,16 @@ FUSE_NONEMPTY = True
 # causes the driver to remain in the foreground.
 # True: Run driver in foreground (for debugging)
 # False: Run driver in background (for normal use)
-FUSE_FOREGROUND = True if DEBUG else False # (enabled when running in debug mode)
-FUSE_FOREGROUND = True
+FUSE_FOREGROUND = DEBUG # (enabled when running in debug mode)
+#FUSE_FOREGROUND = True
 
 # During normal use, the FUSE drive will use multiple threads to improve
 # performance. Settings this value to True causes the driver to run everything
 # in a single thread.
 # True: Do not create multiple threads (for debugging)
 # False: Create multiple threads (for normal use)
-FUSE_NOTHREADS = True if DEBUG else False # (enabled when running in debug mode)
-FUSE_NOTHREADS = True
+FUSE_NOTHREADS = DEBUG # (enabled when running in debug mode)
+#FUSE_NOTHREADS = True
 
 # The following settings are specific for MacFUSE.
 # http://code.google.com/p/macfuse/wiki/OPTIONS
@@ -216,6 +215,11 @@ IGNORE_SPECIAL = set(
     '.DS_Store',
     'Backups.backupdb',
     '.Trashes',
+    '.fseventsd',
+    'MobileBackups.trash',
+    'Backups.backupdb',
+    '.hidden',
+    'Contents',
     # KDE / Krusader
     '.directory',
     '.Trash',

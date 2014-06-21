@@ -39,7 +39,7 @@ import optparse
 import platform
 
 # D1
-sys.path.append('/home/dahl/d1/d1_python/d1_workspace_client/src/d1_workspace')
+sys.path.append('..')
 import d1_workspace.workspace
 
 # App.
@@ -136,7 +136,6 @@ def main():
 
   log.info("Starting ONEDrive...")
   log_startup_parameters(options, arguments)
-  log_settings(options)
 
   if platform.system() == 'Linux' or platform.system() == 'Darwin':
     import d1_client_onedrive.impl.drivers.fuse.d1_fuse as filesystem_callbacks
@@ -148,10 +147,6 @@ def main():
 
   # Instantiate the Root resolver.
   with d1_workspace.workspace.Workspace(**options.__dict__) as workspace:
-    if options.auto_refresh:
-      log.info('Refreshing workspace...')
-      workspace.refresh()
-      log.info('done')
     root_resolver = root.RootResolver(options, workspace)
     filesystem_callbacks.run(options, root_resolver)
 
@@ -164,15 +159,16 @@ def log_setup(options):
     u'%(asctime)s %(levelname)-8s %(name)s'
     u'(%(lineno)d): %(message)s', u'%Y-%m-%d %H:%M:%S'
   )
-  ## Log to a file
-  #if options.log_file_path is not None:
-  #    file_logger = logging.FileHandler(options.log_file_path, 'a', encoding='UTF-8')
-  #    file_logger.setFormatter(formatter)
-  #    logging.getLogger('').addHandler(file_logger)
+  # Log to a file
+  if options.log_file_path is not None:
+    file_logger = logging.FileHandler(options.log_file_path, 'a', encoding='UTF-8')
+    file_logger.setFormatter(formatter)
+    logging.getLogger('').addHandler(file_logger)
   # Also log to stdout
   console_logger = logging.StreamHandler(sys.stdout)
   console_logger.setFormatter(formatter)
   logging.getLogger().addHandler(console_logger)
+  # Shared log level for all loggers.
   logging.getLogger().setLevel(getattr(logging, options.log_level.upper()))
 
 
@@ -181,16 +177,8 @@ def log_version():
 
 
 def log_startup_parameters(options, arguments):
-  log.debug('Mounting ONEDrive')
-  log.debug('  Options: {0}'.format(str(options)))
-  log.debug('  Arguments: {0}'.format(str(arguments)))
-
-
-def log_settings(options):
-  log.debug('Settings:')
-  for k, v in sorted(options.__dict__.items()):
-    if k == k.upper():
-      log.debug('  {0}: {1}'.format(k, v))
+  log.debug('Options: {0}'.format(str(options)))
+  log.debug('Arguments: {0}'.format(str(arguments)))
 
 
 if __name__ == '__main__':

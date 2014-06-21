@@ -69,6 +69,7 @@ class RootResolver(resolver_base.Resolver):
   def get_attributes(self, path):
     log.debug(u'get_attributes: {0}'.format(path))
     p = self._split_and_unescape_path(path)
+    self._raise_if_os_special_file(p)
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
     return self._get_attributes(p)
@@ -76,10 +77,10 @@ class RootResolver(resolver_base.Resolver):
   def get_directory(self, path):
     log.debug(u'get_directory: {0}'.format(path))
     p = self._split_and_unescape_path(path)
+    self._raise_if_os_special_file(p)
 
-    # Exception handling removed because I don't think FUSE would ever call
-    # get_directory() for a folder (except for the root), without that folder
-    # first having been designated as a valid folder by get_attributes().
+    # FUSE only calls get_directory() for a folder (except for the root)
+    # when the folder has been designated as a valid folder by get_attributes().
 
     # If this call raises a PathException, it is because an earlier
     # get_attributes() call erroneously designated the path which caused the
@@ -89,6 +90,7 @@ class RootResolver(resolver_base.Resolver):
   def read_file(self, path, size, offset):
     log.debug(u'read_file: {0}, {1}, {2}'.format(path, size, offset))
     p = self._split_and_unescape_path(path)
+    self._raise_if_os_special_file(p)
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     return self._read_file(p, size, offset)
@@ -140,6 +142,15 @@ class RootResolver(resolver_base.Resolver):
       return self._resolvers[path[0]]
     except KeyError:
       raise path_exception.PathException(u'Invalid root directory')
+
+  def _raise_if_os_special_file(self, path):
+    # For each file of "name", Finder on Mac OS X attempts to access ".name".
+    # That currently causes Workspace to run Solr queries to check if there
+    # are new objects after last refresh. Must change that behavior. In the
+    # meantime, ignore all . files.
+    if path[-1] in self._options.ignore_special or path[-1].startswith('.'):
+      log.debug('Ignored file: {0}'.format(path[-1]))
+      raise path_exception.PathException(u'Ignored OS special file')
 
   def _is_root(self, path):
     return path == ['']
