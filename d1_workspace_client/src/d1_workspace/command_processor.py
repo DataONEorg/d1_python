@@ -57,7 +57,12 @@ class CommandProcessor():
     )
     self._science_object_cache._delete_oldest_file_if_full()
     self._system_metadata_cache._delete_oldest_file_if_full()
-    self._solr_client = workspace_solr_client.SolrClient(options)
+    self._solr_client = workspace_solr_client.SolrClient(
+      base_url=options['base_url'],
+      solr_selector=options['solr_query_path'],
+      timeout=options['solr_query_timeout'],
+      max_objects_for_query=options['max_objects_for_query']
+    )
 
   def run_solr_query(self, query, filter_queries=None, fields=None):
     response = self._solr_client.query(

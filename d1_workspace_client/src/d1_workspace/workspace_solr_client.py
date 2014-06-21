@@ -35,6 +35,9 @@ import socket
 import urllib
 import urlparse
 
+# 3rd party.
+import requests
+
 # D1.
 import d1_common.const
 import d1_common.date_time
@@ -43,103 +46,117 @@ import d1_common.url
 # App.
 import workspace_exception
 
+# Replaced with the python.requests library.
 
-# SolrConnection is a thin layer on top of HTTPSConnection that automatically
-# retries queries and connection attempts.
-class SolrConnection(object):
-  def __init__(self, options, solr_selector='/v1/query/solr/', n_tries=3):
-    self._options = options
-    self._base_url = options['base_url']
-    self._solr_host = self._get_hostname(options['base_url'])
-    self._solr_selector = self._get_solr_selector(options['base_url'], solr_selector)
-    self._connection = self._create_connection()
-    self._n_tries = n_tries
-
-  def get(self, query_url, headers=None):
-    if headers is None:
-      headers = {}
-    abs_query_url = self._solr_selector + '?' + query_url
-    for i in range(self._n_tries):
-      logging.debug(u'get({0}{1})'.format(self._solr_host, abs_query_url))
-      try:
-        self._connection.request('GET', abs_query_url, headers=headers)
-        response = self._connection.getresponse()
-      except (
-        httplib.BadStatusLine, httplib.CannotSendRequest, socket.error,
-        httplib.HTTPException
-      ):
-        logging.exception(
-          u'Solr query failed (attempt {0}: {1}: Exception:'.format(
-            str(
-              i
-            ), query_url
-          )
-        )
-        self._connection.close()
-        self._connection = self._create_connection()
-      else:
-        self._assert_response_is_ok(response)
-        return eval(response.read())
-      logging.warn(u"Retrying get after connection failed (ntries = %s)" % str(i + 1))
-
-    raise workspace_exception.WorkspaceException(
-      u'Giving up Solr query after {0} tries: {1}'.format(self._n_tries, query_url)
-    )
-
-  def _assert_response_is_ok(self, response):
-    if response.status not in (200, ):
-      try:
-        html_doc = response.read()
-      except:
-        html_doc = ''
-      #s = SimpleHTMLToText()
-      #txt_doc = s.get_text(html_doc)
-      logging.error(
-        u'Error in Solr response: {0}\n{1}\n{2}'
-        .format(response.status, response.reason, html_doc)
-      )
-      raise workspace_exception.WorkspaceException(
-        u'Error in Solr response: {0}'.format(response.reason)
-      )
-      #raise Exception(msg)
-
-  def _create_connection(self):
-    #logging.debug('Creating new connection to Solr')
-    return httplib.HTTPSConnection(
-      self._solr_host, timeout=self._options['solr_query_timeout']
-    )
-
-  def _get_hostname(self, base_url):
-    return urlparse.urlsplit(base_url).netloc
-
-  def _get_solr_selector(self, base_url, solr_selector):
-    base_selector = urlparse.urlsplit(base_url).path
-    return d1_common.url.joinPathElementsNoStrip(base_selector, solr_selector)
-
-#===============================================================================
+## SolrConnection is a thin layer on top of HTTPSConnection that automatically
+## retries queries and connection attempts.
+#class SolrConnection(object):
+#  def __init__(self, options,
+#               solr_selector='/v1/query/solr/', n_tries=3):
+#    self._options = options
+#    self._base_url = options['base_url']
+#    self._solr_host = self._get_hostname(options['base_url'])
+#    self._solr_selector = self._get_solr_selector(options['base_url'], solr_selector)
+#    self._connection = self._create_connection()
+#    self._n_tries = n_tries
+#
+#
+#  def get(self, query_url, headers=None):
+#    if headers is None:
+#      headers = {}
+#    abs_query_url = self._solr_selector + '?' + query_url
+#    for i in range(self._n_tries):
+#      logging.debug(u'get({0}{1})'.format(self._solr_host, abs_query_url))
+#      try:
+#        self._connection.request('GET', abs_query_url, headers=headers)
+#        response = self._connection.getresponse()
+#      except (httplib.BadStatusLine,httplib.CannotSendRequest, socket.error,
+#              httplib.HTTPException):
+#        logging.exception(u'Solr query failed (attempt {0}: {1}: Exception:'.format(str(i), query_url))
+#        self._connection.close()
+#        self._connection = self._create_connection()
+#      else:
+#        self._assert_response_is_ok(response)
+#        return eval(response.read())
+#      logging.warn(u"Retrying get after connection failed (ntries = %s)" % str(i+1))
+#
+#    raise workspace_exception.WorkspaceException(u'Giving up Solr query after {0} tries: {1}'
+#                                       .format(self._n_tries, query_url))
+#
+#
+#  def _assert_response_is_ok(self, response):
+#    if response.status not in (200, ):
+#      try:
+#        html_doc = response.read()
+#      except:
+#        html_doc = ''
+#      #s = SimpleHTMLToText()
+#      #txt_doc = s.get_text(html_doc)
+#      logging.error(u'Error in Solr response: {0}\n{1}\n{2}'
+#                .format(response.status, response.reason, html_doc))
+#      raise workspace_exception.WorkspaceException(
+#        u'Error in Solr response: {0}'.format(response.reason))
+#      #raise Exception(msg)
+#
+#
+#  def _create_connection(self):
+#    #logging.debug('Creating new connection to Solr')
+#    return httplib.HTTPSConnection(self._solr_host, timeout=self._options['solr_query_timeout'])
+#
+#
+#  def _get_hostname(self, base_url):
+#    return urlparse.urlsplit(base_url).netloc;
+#
+#
+#  def _get_solr_selector(self, base_url, solr_selector):
+#    base_selector = urlparse.urlsplit(base_url).path;
+#    return d1_common.url.joinPathElementsNoStrip(base_selector, solr_selector)
+#
+##===============================================================================
 
 
 class SolrClient(object):
-  def __init__(self, options):
-    self._options = options
-    self._solr_connection = SolrConnection(options)
+  def __init__(
+    self,
+    base_url,
+    solr_selector='/v1/query/solr/',
+    max_retries=3,
+    timeout=30,
+    max_objects_for_query=50
+  ):
+    self._solr_endpoint = base_url + solr_selector
+    self._session = requests.Session()
+    self._session.mount('http://', requests.adapters.HTTPAdapter(max_retries=max_retries))
+    self._session.mount(
+      'https://', requests.adapters.HTTPAdapter(
+        max_retries=max_retries
+      )
+    )
+    self._timeout = timeout
+    self._max_objects_for_query = max_objects_for_query
 
   def query(self, query, filter_queries=None, fields=None):
     if fields is None:
       fields = ['*']
 
-    query_params = [
-      ('q', query),
-      ('fl', ','.join(fields)),
-      ('rows', self._options['max_objects_for_query']),
-      ('indent', 'on'),
-      ('wt', 'python'),
-    ]
+    query_params = {
+      'q': query,
+      'fl': ','.join(fields),
+      'rows': self._max_objects_for_query,
+      'indent': 'on',
+      'wt': 'json'
+    }
+
     if filter_queries is not None:
       query_params.extend(self._make_query_param_tuples('fl', filter_queries))
 
-    query_url = urllib.urlencode(query_params, doseq=True)
-    return self._solr_connection.get(query_url)
+    r = requests.get(
+      self._solr_endpoint,
+      timeout=self._timeout,
+      params=query_params,
+      verify=False
+    )
+    return r.json()
 
   def escape_query_term_string(self, term):
     '''Escape a query term string and wrap it in quotes.

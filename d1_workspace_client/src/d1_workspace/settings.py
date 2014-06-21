@@ -112,10 +112,6 @@ SYS_META_MAX_CACHE_ITEMS = 10000
 # 'total': Show total size of all objects in resource maps (slow)
 RESOURCE_MAP_SIZE = 'size'
 
-# Automatically refresh the workspace cache each time the Workspace object is
-# created by a client.
-AUTOMATIC_REFRESH = False
-
 # The maximum number of Science Object records to retrieve for a query item.
 # Increasing this setting causes longer lists of Science Objects to to appear in
 # Workspace client applications, such as ONEDrive, increases memory footprint

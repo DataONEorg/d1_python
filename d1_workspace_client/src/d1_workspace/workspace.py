@@ -73,6 +73,7 @@ try:
   import cPickle as pickle
 except ImportError:
   import pickle
+import os
 import pprint
 
 # App.
@@ -121,8 +122,10 @@ class Workspace(object):
     '''Synchronize the local cache of the workspace with the workspace
     definition then add any missing Solr records and query results.
     '''
-    self._wcache = {'tree': {'name': self._wdef.name, }, 'records': {}, }
+    logging.info('Refreshing workspace')
+    self._init_wcache()
     self.sync_wcache_with_wdef()
+    self._wcache['workspace_timestamp'] = self._workspace_modified_timestamp()
 
   def get_folder(self, path, root=None):
     '''Get the contents of a cached workspace folder'''
@@ -158,6 +161,25 @@ class Workspace(object):
   # Private.
   #
 
+  def _create_wcache(self):
+    self._init_wcache()
+    self._unpickle_wcache_from_disk()
+    if self._wcache_is_stale():
+      self.refresh()
+
+  def _init_wcache(self):
+    self._wcache = {
+      'tree': {
+        'name': self._wdef.name,
+      },
+      'records': {
+      },
+      'workspace_timestamp': None,
+    }
+
+  def _workspace_modified_timestamp(self):
+    return os.path.getmtime(self._options['workspace_def_path'])
+
   def _get_uncached_object_record(self, pid):
     self._create_wcache_item_for_pid(None, pid)
     try:
@@ -165,10 +187,9 @@ class Workspace(object):
     except KeyError:
       raise workspace_exception.WorkspaceException('Unknown PID')
 
-  def _create_wcache(self):
-    self._unpickle_wcache_from_disk()
-    if not self._wcache or self._options['automatic_refresh']:
-      self.refresh()
+  def _wcache_is_stale(self):
+    return self._wcache['workspace_timestamp'] is None or \
+     self._wcache['workspace_timestamp'] < self._workspace_modified_timestamp()
 
   def _flush_wcache(self):
     self._pickle_wcache_to_disk()
@@ -183,7 +204,7 @@ class Workspace(object):
       with open(self._options['workspace_cache_path'], 'rb') as f:
         self._wcache = pickle.load(f)
     except (IOError, pickle.PickleError):
-      self._wcache = {}
+      pass
 
   def _pickle_wcache_to_disk(self):
     with open(self._options['workspace_cache_path'], 'wb') as f:

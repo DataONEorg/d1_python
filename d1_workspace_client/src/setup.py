@@ -85,6 +85,7 @@ def main():
     # Dependencies that are available through PyPI.
     install_requires=[
       'dataone.libclient == 1.2.6',
+      'requests == 2.2.1',
     ],
   )
 

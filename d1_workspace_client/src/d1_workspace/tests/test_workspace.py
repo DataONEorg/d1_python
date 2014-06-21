@@ -37,7 +37,7 @@ import tempfile
 import unittest
 
 # D1.
-sys.path.append('../d1_workspace')
+sys.path.append('..')
 import workspace
 
 
