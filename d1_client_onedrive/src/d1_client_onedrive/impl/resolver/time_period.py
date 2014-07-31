@@ -40,7 +40,7 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 import resource_map
@@ -54,9 +54,9 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
-    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
+    self._resource_map_resolver = resource_map.Resolver(options, object_tree)
     #self._facet_value_cache = cache.Cache(self._options.max_facet_name_cache_size)
 
     # The time_period resolver handles hierarchy levels:
@@ -64,7 +64,7 @@ class Resolver(resolver_base.Resolver):
     # /decade = all variations for group
     # All longer paths are handled by d1_object resolver.
 
-  def get_attributes(self, workspace_folder, path):
+  def get_attributes(self, object_tree_folder, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
@@ -72,17 +72,17 @@ class Resolver(resolver_base.Resolver):
     if len(path) <= 2:
       return self._get_attributes(path)
 
-    return self._resource_map_resolver.get_attributes(workspace_folder, path[2:])
+    return self._resource_map_resolver.get_attributes(object_tree_folder, path[2:])
 
-  def get_directory(self, workspace_folder, path):
+  def get_directory(self, object_tree_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) <= 2:
-      return self._get_directory(workspace_folder, path)
+      return self._get_directory(object_tree_folder, path)
 
-    return self._resource_map_resolver.get_directory(workspace_folder, path[2:])
+    return self._resource_map_resolver.get_directory(object_tree_folder, path[2:])
 
-  def read_file(self, workspace_folder, path, size, offset):
+  def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
@@ -90,33 +90,35 @@ class Resolver(resolver_base.Resolver):
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     if len(path) <= 2:
-      raise path_exception.PathException(u'Invalid file')
-    return self._resource_map_resolver.read_file(workspace_folder, path[2:], size, offset)
+      raise onedrive_exceptions.PathException(u'Invalid file')
+    return self._resource_map_resolver.read_file(
+      object_tree_folder, path[2:], size, offset
+    )
 
   # Private.
 
   def _get_attributes(self, path):
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, workspace_folder, path):
+  def _get_directory(self, object_tree_folder, path):
     if len(path) == 0:
-      return self._resolve_decades(workspace_folder)
+      return self._resolve_decades(object_tree_folder)
     elif len(path) == 1:
       decade_range_str = path[0]
-      return self._resolve_years_in_decade(decade_range_str, workspace_folder)
+      return self._resolve_years_in_decade(decade_range_str, object_tree_folder)
     else:
       try:
         year = int(path[1])
       except ValueError:
-        raise path_exception.PathException(u'Expected year element in path')
+        raise onedrive_exceptions.PathException(u'Expected year element in path')
       else:
-        return self._resolve_objects_in_year(year, workspace_folder)
+        return self._resolve_objects_in_year(year, object_tree_folder)
 
-  def _resolve_decades(self, workspace_folder):
+  def _resolve_decades(self, object_tree_folder):
     dir = directory.Directory()
     sites = set()
-    for pid in workspace_folder['items']:
-      record = self._workspace.get_object_record(pid)
+    for pid in object_tree_folder['items']:
+      record = self._object_tree.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         for decade in self._decade_ranges_in_date_range(
           record['beginDate'], record['endDate']
@@ -137,12 +139,12 @@ class Resolver(resolver_base.Resolver):
   #  decade = d.year / 10 * 10
   #  return '{0}-{1}'.format(decade, decade + 9)
 
-  def _resolve_years_in_decade(self, decade, workspace_folder):
+  def _resolve_years_in_decade(self, decade, object_tree_folder):
     first_year_in_decade = self._validate_and_split_decade_range(decade)[0]
     dir = directory.Directory()
     sites = set()
-    for pid in workspace_folder['items']:
-      record = self._workspace.get_object_record(pid)
+    for pid in object_tree_folder['items']:
+      record = self._object_tree.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         for year in self._years_in_date_range_within_decade(
           first_year_in_decade, record['beginDate'], record['endDate']
@@ -152,10 +154,10 @@ class Resolver(resolver_base.Resolver):
     self._raise_exception_if_empty_directory(dir)
     return dir
 
-  def _resolve_objects_in_year(self, year, workspace_folder):
+  def _resolve_objects_in_year(self, year, object_tree_folder):
     dir = directory.Directory()
-    for pid in workspace_folder['items']:
-      record = self._workspace.get_object_record(pid)
+    for pid in object_tree_folder['items']:
+      record = self._object_tree.get_object_record(pid)
       if 'beginDate' in record and 'endDate' in record:
         if self._is_year_in_date_range(year, record['beginDate'], record['endDate']):
           dir.append(record['id'])
@@ -193,6 +195,6 @@ class Resolver(resolver_base.Resolver):
       if first_year > last_year:
         raise ValueError
     except ValueError:
-      raise path_exception.PathException(u'Expected decade range on form yyyy-yyyy')
+      raise onedrive_exceptions.PathException(u'Expected decade range on form yyyy-yyyy')
     else:
       return first_year, last_year

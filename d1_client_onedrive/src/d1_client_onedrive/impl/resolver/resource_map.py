@@ -36,13 +36,13 @@ import sys
 
 # D1.
 import d1_client.data_package
-from d1_workspace.workspace_exception import WorkspaceException
+from ..onedrive_exceptions import ONEDriveException
 
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import d1_object
 import resolver_base
@@ -53,41 +53,41 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
-    self._d1_object_resolver = d1_object.Resolver(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
+    self._d1_object_resolver = d1_object.Resolver(options, object_tree)
 
   # The resource map resolver handles only one hierarchy level, so anything that
   # has more levels is handed to the d1_object resolver. If the object is not a
   # resource map, control is also handed to the d1_object resolver.
 
-  def get_attributes(self, workspace_root, path):
+  def get_attributes(self, object_tree_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
-      return self._d1_object_resolver.get_attributes(workspace_root, path)
+      return self._d1_object_resolver.get_attributes(object_tree_root, path)
     if len(path) > 1:
       if is_resource_map:
-        return self._d1_object_resolver.get_attributes(workspace_root, path[1:])
+        return self._d1_object_resolver.get_attributes(object_tree_root, path[1:])
       else:
-        return self._d1_object_resolver.get_attributes(workspace_root, path)
-    return self._get_attributes(workspace_root, path)
+        return self._d1_object_resolver.get_attributes(object_tree_root, path)
+    return self._get_attributes(object_tree_root, path)
 
-  def get_directory(self, workspace_root, path):
+  def get_directory(self, object_tree_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
     is_resource_map = self._is_resource_map(path[0])
     if not is_resource_map:
-      return self._d1_object_resolver.get_directory(workspace_root, path)
+      return self._d1_object_resolver.get_directory(object_tree_root, path)
     if len(path) > 1:
       if is_resource_map:
-        return self._d1_object_resolver.get_directory(workspace_root, path[1:])
+        return self._d1_object_resolver.get_directory(object_tree_root, path[1:])
       else:
-        return self._d1_object_resolver.get_directory(workspace_root, path)
-    return self._get_directory(workspace_root, path)
+        return self._d1_object_resolver.get_directory(object_tree_root, path)
+    return self._get_directory(object_tree_root, path)
 
-  def read_file(self, workspace_root, path, size, offset):
+  def read_file(self, object_tree_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -98,16 +98,16 @@ class Resolver(resolver_base.Resolver):
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
     if len(path) > 1 and self._is_resource_map(path[0]):
-      return self._d1_object_resolver.read_file(workspace_root, path[1:], size, offset)
-    return self._d1_object_resolver.read_file(workspace_root, path, size, offset)
+      return self._d1_object_resolver.read_file(object_tree_root, path[1:], size, offset)
+    return self._d1_object_resolver.read_file(object_tree_root, path, size, offset)
 
   # Private.
 
-  def _get_attributes(self, workspace_root, path):
+  def _get_attributes(self, object_tree_root, path):
     return attributes.Attributes(self._get_resource_map_size(path[0]), is_dir=True)
 
-  def _get_directory(self, workspace_root, path):
-    resource_map = self._workspace.get_science_object(path[0])
+  def _get_directory(self, object_tree_root, path):
+    resource_map = self._object_tree.get_science_object(path[0])
     pids = self._deserialize_resource_map(resource_map)
     return pids
 
@@ -120,8 +120,8 @@ class Resolver(resolver_base.Resolver):
 
   def _is_resource_map(self, pid):
     try:
-      record = self._workspace.get_object_record(pid)
-    except WorkspaceException:
+      record = self._object_tree.get_object_record(pid)
+    except ONEDriveException:
       self._raise_invalid_pid(pid)
     return record['formatId'] == d1_client.data_package.RDFXML_FORMATID
 
@@ -130,16 +130,16 @@ class Resolver(resolver_base.Resolver):
     return package.get_aggregated_pids()
 
   def _get_total_size_of_objects_in_resource_map(self, resource_map_pid):
-    resource_map = self._workspace.get_science_object_through_cache(resource_map_pid)
+    resource_map = self._object_tree.get_science_object_through_cache(resource_map_pid)
     pids = self._deserialize_resource_map(resource_map)
     total = 0
     for pid in pids:
-      o = self._workspace.get_solr_record(pid)
+      o = self._object_tree.get_solr_record(pid)
       total += o['size']
     return total
 
   def _get_number_of_objects_in_resource_map(self, resource_map_pid):
-    resource_map = self._workspace.get_science_object_through_cache(resource_map_pid)
+    resource_map = self._object_tree.get_science_object_through_cache(resource_map_pid)
     return len(self._deserialize_resource_map(resource_map))
 
   def _get_zero(self, pid):

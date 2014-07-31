@@ -39,13 +39,13 @@ import pkg_resources
 # D1.
 import d1_client.data_package
 import d1_client.object_format_info
-import d1_workspace.workspace_exception
+from .. import onedrive_exceptions
 
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 
@@ -55,22 +55,22 @@ log = logging.getLogger(__name__)
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
 
     self._object_format_info = d1_client.object_format_info.ObjectFormatInfo(
       csv_file=pkg_resources.resource_stream(d1_client.__name__, 'mime_mappings.csv')
     )
 
-  def get_attributes(self, workspace_root, path):
+  def get_attributes(self, object_tree_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
-    return self._get_attributes(workspace_root, path)
+    return self._get_attributes(object_tree_root, path)
 
-  def get_directory(self, workspace_root, path):
+  def get_directory(self, object_tree_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
-    return self._get_directory(workspace_root, path)
+    return self._get_directory(object_tree_root, path)
 
-  def read_file(self, workspace_root, path, size, offset):
+  def read_file(self, object_tree_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -78,11 +78,11 @@ class Resolver(resolver_base.Resolver):
         ), size, offset
       )
     )
-    return self._read_file(workspace_root, path, size, offset)
+    return self._read_file(object_tree_root, path, size, offset)
 
   # Private.
 
-  def _get_attributes(self, workspace_root, path):
+  def _get_attributes(self, object_tree_root, path):
     # d1_object handles two levels:
     # /pid
     # /pid/pid.ext
@@ -95,8 +95,8 @@ class Resolver(resolver_base.Resolver):
     pid = path[0]
 
     try:
-      record = self._workspace.get_object_record(pid)
-    except d1_workspace.workspace_exception.WorkspaceException:
+      record = self._object_tree.get_object_record(pid)
+    except onedrive_exceptions.ONEDriveException:
       self._raise_invalid_path()
 
     # This resolver does not call out to any other resolvers.
@@ -123,33 +123,33 @@ class Resolver(resolver_base.Resolver):
       elif filename == self._get_pid_filename(pid, record):
         return attributes.Attributes(size=record['size'], date=record['dateUploaded'])
       elif filename == u"system.xml":
-        sys_meta_xml = self._workspace.get_system_metadata(pid)
+        sys_meta_xml = self._object_tree.get_system_metadata(pid)
         return attributes.Attributes(size=len(sys_meta_xml), date=record['dateUploaded'])
 
     self._raise_invalid_path()
 
-  def _get_directory(self, workspace_root, path):
+  def _get_directory(self, object_tree_root, path):
     #if len(path) > 1:
     #  self._raise_invalid_path()
     pid = path[0]
-    record = self._workspace.get_object_record(pid)
+    record = self._object_tree.get_object_record(pid)
     return [
       self._get_pid_filename(record['id'], record),
       u'system.xml',
       self._get_search_fields_filename(),
     ]
 
-  def _read_file(self, workspace_root, path, size, offset):
+  def _read_file(self, object_tree_root, path, size, offset):
     pid, filename = path[0:2]
 
     if filename == u"system.xml":
-      sys_meta_xml = self._workspace.get_system_metadata(pid)
+      sys_meta_xml = self._object_tree.get_system_metadata(pid)
       return sys_meta_xml[offset:offset + size]
 
-    record = self._workspace.get_object_record(pid)
+    record = self._object_tree.get_object_record(pid)
 
     if filename == self._get_pid_filename(pid, record):
-      sci_obj = self._workspace.get_science_object(pid)
+      sci_obj = self._object_tree.get_science_object(pid)
       return sci_obj[offset:offset + size]
 
     elif filename == self._get_search_fields_filename():
@@ -158,17 +158,17 @@ class Resolver(resolver_base.Resolver):
     self._raise_invalid_path()
 
   def _raise_invalid_pid(self, pid):
-    raise path_exception.PathException(u'Invalid PID: {0}'.format(pid))
+    raise onedrive_exceptions.PathException(u'Invalid PID: {0}'.format(pid))
 
   def _raise_invalid_path(self):
-    raise path_exception.PathException(u'Invalid path')
+    raise onedrive_exceptions.PathException(u'Invalid path')
 
   def _get_pid_filename(self, pid, record):
     try:
       ext = self._object_format_info.filename_extension_from_format_id(record['formatId'])
     except KeyError:
       return pid
-    if ext == os.path.splitext(pid)[1]:
+    if ext in (os.path.splitext(pid)[1], 'data'):
       return pid
     else:
       return pid + ext

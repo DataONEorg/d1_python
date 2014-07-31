@@ -18,46 +18,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`resolver.d1_science_object`
-====================================
+''':mod:`onedrive_exceptions`
+========================
 
 :Synopsis:
- - Resolve a DataONE Science Object.
+ - Type that gets raised as exception for invalid paths.
 :Author:
   DataONE (Dahl)
 '''
 
-# Stdlib.
+import inspect
 import logging
-import os
-
-# D1.
-
-# App.
-from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import onedrive_exceptions
-import resolver_base
 
 log = logging.getLogger(__name__)
 
 #log.setLevel(logging.DEBUG)
 
 
-class Resolver(resolver_base.Resolver):
-  def __init__(self, options):
-    self._options = options
-    self._object_tree = object_tree
+class PathException(Exception):
+  def __init__(self, message):
+    Exception.__init__(self, message)
+    trace = u', '.join([u'{0}({1})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+    log.debug(u'PathException("{0}"): {1}'.format(message, trace))
 
-  def get_attributes(self, object_tree, path):
-    raise onedrive_exceptions.PathException('<not implemented>')
 
-  def get_directory(self, path):
-    raise onedrive_exceptions.PathException('<not implemented>')
+class ONEDriveException(Exception):
+  def __init__(self, message):
+    Exception.__init__(self, message)
+    trace = u', '.join([u'{0}({1})'.format(s[1], s[2]) for s in inspect.stack()[1:5]])
+    log.debug(u'ONEDriveException("{0}"): {1}'.format(message, trace))
 
-    #reading the object bytes
-    sysm = self._get_system_metadata(pid)
-    if offset + size > sysm.size:
-      size = sysm.size - offset
-    #trigger loading of the data if necessary
-    self._get(pid)
-    return self._datacache[pid][offset:offset + size]
+
+class NoResultException(Exception):
+  def __init__(self, message=""):
+    Exception.__init__(self, message)

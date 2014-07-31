@@ -43,7 +43,7 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_disk
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 import resource_map
@@ -72,7 +72,7 @@ folders do not contain more science objects. They simply contain the same
 science objects as in the current level, only arranged into smaller
 administrative areas.
 
-For instance, if the current workspace folder contains two objects, one that has
+For instance, if the current object_tree folder contains two objects, one that has
 data for California and Arizona and another that has data for Arizona and New
 Mexico, both objects will appear under United States and under Arizona. But only
 the first object will appear under California and only the second will appear
@@ -81,59 +81,59 @@ under New Mexico.
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
-    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
+    self._resource_map_resolver = resource_map.Resolver(options, object_tree)
     self._region_tree_cache = cache_disk.DiskCache(
       options.region_tree_max_cache_items, options.region_tree_cache_path
     )
     self._readme_txt = util.os_format(README_TXT)
 
-  def get_attributes(self, workspace_folder, path):
+  def get_attributes(self, object_tree_folder, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
-    return self._get_attributes(workspace_folder, path)
+    return self._get_attributes(object_tree_folder, path)
 
-  def get_directory(self, workspace_folder, path):
+  def get_directory(self, object_tree_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
-    return self._get_directory(workspace_folder, path)
+    return self._get_directory(object_tree_folder, path)
 
-  def read_file(self, workspace_folder, path, size, offset):
+  def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
 
-    return self._read_file(workspace_folder, path, size, offset)
+    return self._read_file(object_tree_folder, path, size, offset)
 
   #
   # Private.
   #
 
-  def _get_attributes(self, workspace_folder, path):
+  def _get_attributes(self, object_tree_folder, path):
     if path == ['readme.txt']:
       return attributes.Attributes(len(self._readme_txt))
 
-    merged_region_tree = self._get_merged_region_tree(workspace_folder)
+    merged_region_tree = self._get_merged_region_tree(object_tree_folder)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
     )
     if self._region_tree_item_is_pid(region_tree_item):
       try:
         return self._resource_map_resolver.get_attributes(
-          workspace_folder, [
+          object_tree_folder, [
             region_tree_item
           ] + unconsumed_path
         )
-      except path_exception.NoResultException:
+      except onedrive_exceptions.NoResultException:
         pass
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, workspace_folder, path):
+  def _get_directory(self, object_tree_folder, path):
     dir = directory.Directory()
 
-    merged_region_tree = self._get_merged_region_tree(workspace_folder)
+    merged_region_tree = self._get_merged_region_tree(object_tree_folder)
 
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
@@ -143,13 +143,13 @@ class Resolver(resolver_base.Resolver):
       # PID (any other exit would have raised an exception).
       #if len(unconsumed_path):
       return self._resource_map_resolver.get_directory(
-        workspace_folder, [
+        object_tree_folder, [
           region_tree_item
         ] + unconsumed_path
       )
       #else:
       #  # The user has attempted to "dir" a PID.
-      #  raise path_exception.PathException('not a directory')
+      #  raise onedrive_exceptions.PathException('not a directory')
 
       # The whole path was consumed and a folder within the tree was returned.
     dir = directory.Directory()
@@ -165,30 +165,30 @@ class Resolver(resolver_base.Resolver):
 
     return dir
 
-  def _read_file(self, workspace_folder, path, size, offset):
+  def _read_file(self, object_tree_folder, path, size, offset):
     if path == ['readme.txt']:
       return self._readme_txt[offset:offset + size]
 
-    merged_region_tree = self._get_merged_region_tree(workspace_folder)
+    merged_region_tree = self._get_merged_region_tree(object_tree_folder)
     region_tree_item, unconsumed_path = self._get_region_tree_item_and_unconsumed_path(
       merged_region_tree, path
     )
 
     if self._region_tree_item_is_pid(region_tree_item):
       return self._resource_map_resolver.read_file(
-        workspace_folder, [
+        object_tree_folder, [
           region_tree_item
         ] + unconsumed_path, size, offset
       )
 
-  def _get_merged_region_tree(self, workspace_folder):
-    k = self._get_unique_dictionary_key(workspace_folder)
+  def _get_merged_region_tree(self, object_tree_folder):
+    k = self._get_unique_dictionary_key(object_tree_folder)
     try:
       return self._region_tree_cache[k]
     except KeyError:
       pass
 
-    geo_records = self._get_records_with_geo_bounding_box(workspace_folder)
+    geo_records = self._get_records_with_geo_bounding_box(object_tree_folder)
 
     merged_region_tree = {}
     for g in geo_records:
@@ -198,9 +198,9 @@ class Resolver(resolver_base.Resolver):
     self._region_tree_cache[k] = merged_region_tree
     return merged_region_tree
 
-  def _get_unique_dictionary_key(self, workspace_folder):
+  def _get_unique_dictionary_key(self, object_tree_folder):
     m = hashlib.sha1()
-    for pid in workspace_folder['items']:
+    for pid in object_tree_folder['items']:
       m.update(pid)
     return m.hexdigest()
 
@@ -212,10 +212,10 @@ class Resolver(resolver_base.Resolver):
     except (httplib.HTTPException, socket.error):
       return {'Reverse geocoding failed': {}}
 
-  def _get_records_with_geo_bounding_box(self, workspace_folder):
+  def _get_records_with_geo_bounding_box(self, object_tree_folder):
     geo_records = []
-    for pid in workspace_folder['items']:
-      record = self._workspace.get_object_record(pid)
+    for pid in object_tree_folder['items']:
+      record = self._object_tree.get_object_record(pid)
       try:
         w = record['westBoundCoord']
         s = record['southBoundCoord']
@@ -279,7 +279,7 @@ class Resolver(resolver_base.Resolver):
         region_tree[path[0]], path[1:], path[0]
       )
     else:
-      raise path_exception.PathException('Invalid path')
+      raise onedrive_exceptions.PathException('Invalid path')
 
     #if path[0] in region_tree.keys():
     #  if region_tree[path[0]] is None:

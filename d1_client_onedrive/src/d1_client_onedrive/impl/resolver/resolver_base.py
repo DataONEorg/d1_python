@@ -38,7 +38,7 @@ from StringIO import StringIO
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
@@ -49,9 +49,9 @@ README_FILENAME = u'readme.txt'
 class Resolver(object):
   #__metaclass__ = abc.ABCMeta
 
-  def __init__(self, options, workspace):
+  def __init__(self, options, object_tree):
     self._options = options
-    self._workspace = workspace
+    self._object_tree = object_tree
     self._readme_txt = ''
 
   def is_root(self, path):
@@ -65,10 +65,10 @@ class Resolver(object):
     having determined that there are contents for them, an empty directory
     means that the path is invalid.'''
     if len(directory) <= 2:
-      raise path_exception.PathException(msg)
+      raise onedrive_exceptions.PathException(msg)
 
   def _raise_invalid_pid(self, pid):
-    raise path_exception.PathException(u'Invalid PID: {0}'.format(pid))
+    raise onedrive_exceptions.PathException(u'Invalid PID: {0}'.format(pid))
 
   # Readme file.
 

@@ -52,15 +52,15 @@ def make_absolute(p):
 # connects.
 
 # Round-robin CN endpoints
-base_url = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
-#base_url = 'https://cn-dev.test.dataone.org/cn'
-#base_url = 'https://cn-stage.test.dataone.org/cn'
-#base_url = 'https://cn-sandbox.dataone.org/cn'
-#base_url = 'https://cn-stage.dataone.org/cn/'
-#base_url = 'https://cn-stage.test.dataone.org/cn'
+BASE_URL = d1_common.const.URL_DATAONE_ROOT # (recommended, production)
+#BASE_URL = 'https://cn-dev.test.dataone.org/cn'
+#BASE_URL = 'https://cn-stage.test.dataone.org/cn'
+#BASE_URL = 'https://cn-sandbox.dataone.org/cn'
+#BASE_URL = 'https://cn-stage.dataone.org/cn/'
+#BASE_URL = 'https://cn-stage.test.dataone.org/cn'
 
 # Bypass round-robin and go directly to a specific CN.
-#base_url = 'https://cn-dev-unm-1.test.dataone.org/cn'
+#BASE_URL = 'https://cn-dev-unm-1.test.dataone.org/cn'
 
 # Select the mountpoint on Linux and Mac OS X. The mountpoint is the folder in
 # the local filesystem in which the ONEDrive filesystem appears. The default is
@@ -81,15 +81,39 @@ MOUNTPOINT = os.path.expanduser('~/one') # (default)
 # This setting is not used on Linux and Mac OS X.
 MOUNT_DRIVE_LETTER = 'O:'
 
-# The username and encrypted password to use for accessing the ONEDrive
-# workspace.
-#WORKSPACE_USERNAME = ''
-#WORKSPACE_PASSWORD = ''
+# Zotero authentication.
+# If these settings are not specified, the settings will be retrieved from
+# environment variables with corresponding names.
+#ZOTERO_USER = 123
+#ZOTERO_API_ACCESS_KEY = '123'
 
 # The maximum number of objects to show in a flat list. ONEDrive can display
 # science objects in a flat list or in a hierarchy. This settings determines the
 # threshold at which ONEDrive switches from a flat to a hierarchical display.
 #MAX_OBJECTS_FOR_FLAT_LIST = 10
+
+# Resource maps (data packages) can be considered to be containers that contain
+# science data and metadata objects. The fastest way to process resource maps
+# is to simply return the size of the resource map itself because that information
+# is directly available in the SOLR index. However, depending on the
+# object_tree client, it may make more sense to return the total size of the objects
+# contained by the resource map. This is a much slower operation because the
+# resource map must be retrieved and parsed. Then, the system metadata for each
+# object in the resource map must be retrieved via the DataONE API and parsed.
+# As an alternative, the returned size can be the number of objects in the
+# resource map, which only requires retrieving the resource map, not the
+# contained objects.
+
+# 'size': Show the size of the resource map itself (fast)
+# 'objects': Show number of objects in resource map (medium fast)
+# 'total': Show total size of all objects in resource maps (slow)
+RESOURCE_MAP_SIZE = 'size'
+
+# The maximum number of Science Object records to retrieve for a query item.
+# Increasing this setting causes longer lists of Science Objects to to appear in
+# ONEDrive, increases memory footprint for the application and causes longer
+# response times when refreshing folders. Default value: 50.
+MAX_OBJECTS_FOR_QUERY = 50
 
 ################################################################################
 # Settings below this line are not intended to be modified by the user.
@@ -98,41 +122,34 @@ MOUNT_DRIVE_LETTER = 'O:'
 # Debug mode.
 # True: Turn on verbose logging and various other debugging facilities.
 # False: Log only error messages (for normal use, default)
-DEBUG = False
+DEBUG = True
+
+# Cache paths
+
+# By default, the object_tree is cached in the user's home folder.
+ONEDRIVE_CACHE_ROOT = os.path.expanduser('~/.dataone/onedrive') # (default)
+
+# Location of the local cache of the online object_tree.
+OBJECT_TREE_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'object_tree')
+
+# Location of the local cache of Science Data objects.
+SCI_OBJ_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'sci_obj')
+
+# Location of the local cache of System Metadata.
+SYS_META_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'sys_meta')
+
+# Location of the local cache of the Zotero Library.
+ZOTERO_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'zotero_library')
+
+# Location of the local cache of gazetteer results.
+REGION_TREE_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'region_tree')
 
 # Set the default file to log to or None for logging only to stdout
 #LOG_FILE_PATH = make_absolute('onedrive.log')
 #LOG_FILE_PATH = None
-LOG_FILE_PATH = '/Users/traveluser/onedrive/onedrive.log'
-
-# Cache paths
-
-# Passed to Workspace.
-
-# By default, the workspace is cached in the user's home folder.
-WORKSPACE_CACHE_ROOT = os.path.expanduser('~/.dataone/workspace') # (default)
-
-WORKSPACE_DEF_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'workspace.xml')
-# WORKSPACE_DEF = './workspace.xml' # (in the current directory)
-
-# Location of the local cache of the online workspace.
-WORKSPACE_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'wcache')
-
-# Location of the local cache of Science Data objects.
-SCI_OBJ_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'science_data')
-
-# Location of the local cache of System Metadata.
-SYS_META_CACHE_PATH = os.path.join(WORKSPACE_CACHE_ROOT, 'sys_meta')
-
-# ONEDrive specific
-
-ONEDRIVE_CACHE_ROOT = os.path.expanduser('~/.dataone/onedrive') # (default)
-
-REGION_TREE_CACHE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'cache_region_tree')
+LOG_FILE_PATH = os.path.join(ONEDRIVE_CACHE_ROOT, 'onedrive.log')
 
 # Cache sizes
-
-# Passed to Workspace
 
 # The maximum number of science objects to cache. Increasing this number may
 # give better performance, but also a larger memory footprint. Default value:
@@ -143,8 +160,6 @@ SCI_OBJ_MAX_CACHE_ITEMS = 10000
 # may give better performance, but also a larger memory footprint. Default
 # value: 10000.
 SYS_META_MAX_CACHE_ITEMS = 10000
-
-# ONEDrive specific
 
 # The maximum number of path attributes to cache. Increasing this number may
 # give better performance, but also a larger memory footprint. A value below 100
@@ -231,6 +246,29 @@ IGNORE_SPECIAL = set(
     'folder.gif',
   ]
 )
+
+# Solr
+
+# The maximum number of Solr query results to cache.
+MAX_SOLR_QUERY_CACHE_SIZE = 1000
+
+# Type of connection to use when connecting to the Solr server.
+# True: A persistent connection is maintained (default)
+# False: A new connection is created each time a query is sent
+#SOLR_PERSIST_CONNECTION = True
+
+# The path that is appended to the DataONE root URL to reach the endpoint for
+# the DataONE CNRead.query() API.
+SOLR_QUERY_PATH = '/v1/query/solr/'
+
+# The amount of time to wait for the result of a Solr query result before
+# considering the query as failed.
+SOLR_QUERY_TIMEOUT = 30.0
+
+# Setting this value to 1 causes the Solr client to output debug information.
+# True: Turn on debug output in the Solr Client (for debugging)
+# False: Turn off debug output (for normal use)
+SOLR_DEBUG = True if DEBUG else False # (enabled when running in debug mode)
 
 # Set up logging.
 

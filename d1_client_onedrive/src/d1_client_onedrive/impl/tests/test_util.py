@@ -18,13 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_flat_space`
-=========================
+''':mod:`test_util`
+===================
 
 :Synopsis:
- - Test the FlatSpaceResolver class.
-:Author:
-  DataONE (Dahl)
+ - Test the Util module.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
@@ -36,29 +35,12 @@ import unittest
 
 # D1.
 sys.path.append('..')
-sys.path.append('../..')
-import directory
-import directory_item
-import solr_query_simulator
-import resolver.flat_space
-import object_tree
-import onedrive_exceptions
+import util
 
 
-class O():
-  def flat_space(self):
-    pass
-
-
-class TestFlatSpaceResolver(unittest.TestCase):
+class TestUtil(unittest.TestCase):
   def setUp(self):
-    options = O()
-    options.base_url = 'https://localhost/'
-    options.object_tree_xml = './test_flat_space.xml'
-    options.max_error_path_cache_size = 1000
-    options.max_solr_query_cache_size = 1000
-    self._object_tree = object_tree.CommandProcessor(options)
-    self._w = resolver.flat_space.Resolver(options, self._object_tree)
+    pass
 
   def test_100(self):
     pass
@@ -97,7 +79,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestFlatSpaceResolver
+  s = TestUtil
   s.options = options
 
   if options.test != '':

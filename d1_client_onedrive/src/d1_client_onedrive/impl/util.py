@@ -23,26 +23,29 @@
 
 :Synopsis:
  - Misc utilities that don't fit anywhere else.
-:Author:
-  DataONE (Dahl)
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
+import HTMLParser
+import errno
 import logging
 import os
 import platform
 import pprint
 
-log = logging.getLogger(__name__)
-
-#log.setLevel(logging.DEBUG)
-
-#def log_dump(s):
-#  log.debug('{0}: {1}'.format(s, pprint.pformat(eval(s))))
-
 
 def log_dump(s):
-  log.debug(pprint.pformat(s))
+  logging.debug('-' * 79)
+  logging.debug('{0}: {1}'.format(s, pprint.pformat(s)))
+
+
+def ensure_dir_exists(path):
+  try:
+    os.makedirs(path)
+  except OSError as e:
+    if e.errno != errno.EEXIST:
+      raise
 
 
 def string_from_path_elements(path):
@@ -58,3 +61,20 @@ def os_format(txt):
     return txt.replace('\n', '\r\n').encode('utf16')
   else:
     return txt.encode('utf8')
+
+
+class SimpleHTMLToText(HTMLParser.HTMLParser):
+  def __init__(self):
+    self.reset()
+    self.fed = []
+    super(SimpleHTMLToText, self).__init__()
+
+  def get_text(self, html):
+    self.feed(html)
+    return self.get_data()
+
+  def handle_data(self, d):
+    self.fed.append(d)
+
+  def get_data(self):
+    return ''.join(self.fed)

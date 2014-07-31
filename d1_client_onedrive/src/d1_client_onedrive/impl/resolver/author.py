@@ -40,7 +40,7 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 import resource_map
@@ -50,15 +50,15 @@ log = logging.getLogger(__name__)
 
 README_TXT = u'''Author Folder
 
-This folder contains the items of the workspace folder (the parent of this
+This folder contains the items of the object_tree folder (the parent of this
 folder) sorted by author. Any items with unknown author are not included.
 '''
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
-    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
+    self._resource_map_resolver = resource_map.Resolver(options, object_tree)
     self._readme_txt = util.os_format(README_TXT)
 
   # The author resolver handles hierarchy levels:
@@ -66,23 +66,23 @@ class Resolver(resolver_base.Resolver):
   # /author_names = List of objects for author
   # All longer paths are handled by d1_object resolver.
 
-  def get_attributes(self, workspace_folder, path):
+  def get_attributes(self, object_tree_folder, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) <= 2:
       return self._get_attributes(path)
 
-    return self._resource_map_resolver.get_attributes(workspace_folder, path[1:])
+    return self._resource_map_resolver.get_attributes(object_tree_folder, path[1:])
 
-  def get_directory(self, workspace_folder, path):
+  def get_directory(self, object_tree_folder, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
 
     if len(path) <= 1:
-      return self._get_directory(workspace_folder, path)
+      return self._get_directory(object_tree_folder, path)
 
-    return self._resource_map_resolver.get_directory(workspace_folder, path[1:])
+    return self._resource_map_resolver.get_directory(object_tree_folder, path[1:])
 
-  def read_file(self, workspace_folder, path, size, offset):
+  def read_file(self, object_tree_folder, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
@@ -91,9 +91,9 @@ class Resolver(resolver_base.Resolver):
       return self._get_readme_text(size, offset)
     if len(path) >= 2:
       return self._resource_map_resolver.read_file(
-        workspace_folder, path[1:], size, offset
+        object_tree_folder, path[1:], size, offset
       )
-    raise path_exception.PathException(u'Invalid file')
+    raise onedrive_exceptions.PathException(u'Invalid file')
 
   # Private.
 
@@ -102,31 +102,31 @@ class Resolver(resolver_base.Resolver):
       return self._get_readme_file_attributes()
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, workspace_folder, path):
+  def _get_directory(self, object_tree_folder, path):
     if not path:
-      d = self._resolve_author_root(workspace_folder)
+      d = self._resolve_author_root(object_tree_folder)
       d.append(self._get_readme_filename())
       return d
 
     author = path[0]
-    return self._resolve_author(author, workspace_folder)
+    return self._resolve_author(author, object_tree_folder)
 
-  def _resolve_author_root(self, workspace_folder):
+  def _resolve_author_root(self, object_tree_folder):
     d = directory.Directory()
     authors = set()
-    for pid in workspace_folder['items']:
+    for pid in object_tree_folder['items']:
       try:
-        authors.add(self._workspace.get_object_record(pid)[u'author'])
+        authors.add(self._object_tree.get_object_record(pid)[u'author'])
       except KeyError:
         pass
     d.extend(authors)
     return d
 
-  def _resolve_author(self, author, workspace_folder):
+  def _resolve_author(self, author, object_tree_folder):
     d = directory.Directory()
-    for pid in workspace_folder['items']:
+    for pid in object_tree_folder['items']:
       try:
-        record = self._workspace.get_object_record(pid)
+        record = self._object_tree.get_object_record(pid)
         if record['author'] == author:
           d.append(record['id'])
       except KeyError:
@@ -134,5 +134,5 @@ class Resolver(resolver_base.Resolver):
     # As each author folder in the root has at least one object, an empty folder
     # here can only be due to an invalid path.
     if not d:
-      raise path_exception.PathException(u'Invalid author')
+      raise onedrive_exceptions.PathException(u'Invalid author')
     return d

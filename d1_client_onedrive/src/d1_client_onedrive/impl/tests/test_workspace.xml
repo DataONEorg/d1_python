@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_object_tree_client/types/object_tree_types.xsd" name="root">
   <folder name="folder_1">
     <identifier>dataone_identifier_1a</identifier>
     <identifier>dataone_identifier_1b</identifier>

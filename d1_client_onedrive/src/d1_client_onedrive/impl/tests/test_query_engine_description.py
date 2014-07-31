@@ -18,46 +18,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`check_dependencies`
-============================
+''':mod:`test_query_engine_description`
+=======================================
 
 :Synopsis:
- - Check the dependencies by attempting to import them.
+ - Test the QueryEngineDescription class.
 :Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-import logging
-import platform
+import sys
+import unittest
+
+# D1.
+sys.path.append('..')
+sys.path.append('../..')
+import query_engine_description
 
 
-def check_dependencies():
-  exceptions = []
-  messages = []
+class TestQueryEngineDescription(unittest.TestCase):
+  def setUp(self):
+    self.q = query_engine_description.QueryEngineDescription()
+    self.q.load('test_index/query_engine_description.xml')
 
-  try:
-    import pyxb
-  except ImportError as e:
-    exceptions.append(e)
-    messages.append(u'PyXB: Try "sudo pip install pyxb"\n')
+  def test_100_init(self):
+    pass
 
-  if platform.system() == 'Linux':
-    try:
-      import fuse
-    except ImportError as e:
-      exceptions.append(e)
-      messages.append(
-        u'FUSE: Read the documentation for instructions on how to install fusepy'
-      )
+  def test_110_get_query_engine_version(self):
+    self.assertEqual(self.q.get_query_engine_version(), '3.4.0.2011.09.20.17.19.53')
 
-  if len(exceptions):
-    log.critical(u'Importing of the following dependencies failed.')
-    for msg in messages:
-      log.critical(msg)
-    log.critical(u'Import errors:')
-    for e in exceptions:
-      log.critical(str(e))
 
-    return False
-
-  return True
+if __name__ == "__main__":
+  unittest.main()

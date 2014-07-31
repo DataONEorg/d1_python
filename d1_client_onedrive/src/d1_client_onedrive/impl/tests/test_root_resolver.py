@@ -49,7 +49,7 @@ class TestRootResolver(unittest.TestCase):
   def setUp(self):
     options = O()
     options.base_url = 'https://localhost/'
-    options.workspace_xml = './test_workspace.xml'
+    options.object_tree_xml = './test_object_tree.xml'
     options.max_error_path_cache_size = 1000
     options.max_solr_query_cache_size = 1000
     self._r = resolver.root.RootResolver(options)

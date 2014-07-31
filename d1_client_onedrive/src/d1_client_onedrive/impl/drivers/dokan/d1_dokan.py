@@ -78,7 +78,7 @@ import d1_common.date_time
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import directory_item
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 #from d1_client_onedrive.impl.drivers import fs_util D1FS
 
 
@@ -200,7 +200,7 @@ class DataONEFS(dokan.Operations):
     log.debug(u'read(): {0}'.format(path))
     try:
       return self.root_resolver.read_file(path, size, offset)
-    except path_exception.PathException as e:
+    except onedrive_exceptions.PathException as e:
       #raise OSError(errno.ENOENT, e) FUSE
       raise IOError('Could not read specified file: %s', fileName)
 
@@ -348,7 +348,7 @@ class DataONEFS(dokan.Operations):
 #    log.debug(u'read(): {0}'.format(path))
 #    try:
 #      return self.root_resolver.read_file(path, size, offset)
-#    except path_exception.PathException as e:
+#    except onedrive_exceptions.PathException as e:
 #      raise OSError(errno.ENOENT, e)
 #
 #  # Private.

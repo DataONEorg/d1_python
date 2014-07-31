@@ -48,7 +48,7 @@ import d1_common.date_time
 # App.
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 
 
 log = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ class FUSECallbacks(fuse.Operations):
     log.debug(u'read(): {0}'.format(path))
     try:
       return self._root_resolver.read_file(path, size, offset)
-    except path_exception.PathException as e:
+    except onedrive_exceptions.PathException as e:
       self._raise_error_no_such_file_or_directory(path)
 
 
@@ -127,7 +127,7 @@ class FUSECallbacks(fuse.Operations):
       d.append('.')
       d.append('..')
       return d
-    except path_exception.PathException as e:
+    except onedrive_exceptions.PathException as e:
       self._raise_error_no_such_file_or_directory(path)
 
 
@@ -143,7 +143,7 @@ class FUSECallbacks(fuse.Operations):
   def _get_attributes(self, path):
     try:
       return self._root_resolver.get_attributes(path)
-    except path_exception.PathException as e:
+    except onedrive_exceptions.PathException as e:
       self._raise_error_no_such_file_or_directory(path)
 
 

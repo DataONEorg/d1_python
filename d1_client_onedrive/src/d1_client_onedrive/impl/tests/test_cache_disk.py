@@ -18,50 +18,70 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_flat_space`
+''':mod:`test_disk_cache`
 =========================
 
 :Synopsis:
- - Test the FlatSpaceResolver class.
-:Author:
-  DataONE (Dahl)
+ - Test the DiskCache class.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-import logging
 #import os
-import pprint
+import logging
+import os
 import sys
+import time
 import unittest
 
 # D1.
 sys.path.append('..')
-sys.path.append('../..')
-import directory
-import directory_item
-import solr_query_simulator
-import resolver.flat_space
-import object_tree
-import onedrive_exceptions
+import cache_disk
+
+# Set up logger for this module.
+log = logging.getLogger(__name__)
+
+TEST_CACHE_PATH = './test_cache'
 
 
-class O():
-  def flat_space(self):
-    pass
-
-
-class TestFlatSpaceResolver(unittest.TestCase):
+class TestDiskCache(unittest.TestCase):
   def setUp(self):
-    options = O()
-    options.base_url = 'https://localhost/'
-    options.object_tree_xml = './test_flat_space.xml'
-    options.max_error_path_cache_size = 1000
-    options.max_solr_query_cache_size = 1000
-    self._object_tree = object_tree.CommandProcessor(options)
-    self._w = resolver.flat_space.Resolver(options, self._object_tree)
+    try:
+      os.mkdir(TEST_CACHE_PATH)
+    except OSError:
+      pass
+    for f in os.listdir(TEST_CACHE_PATH):
+      os.unlink(os.path.join(TEST_CACHE_PATH, f))
 
-  def test_100(self):
-    pass
+  def test_100_cache(self):
+    c = cache_disk.DiskCache(10, TEST_CACHE_PATH)
+    c['a'] = 1
+    self.assertEqual(len(c), 1)
+    self.assertEqual(c['a'], 1)
+    self.assertEqual(len(c), 1)
+
+  def test_110_cache(self):
+    c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
+    c['a'] = 1
+    time.sleep(1.1) # see comment in _delete_oldest_file()
+    c['b'] = 2
+    time.sleep(1.1)
+    c['c'] = 3
+    self.assertEqual(len(c), 2)
+    self.assertRaises(KeyError, c.__getitem__, 'a')
+    self.assertEqual(c['b'], 2)
+    self.assertEqual(c['c'], 3)
+
+  def test_120_cache(self):
+    c = cache_disk.DiskCache(2, TEST_CACHE_PATH)
+    c['a'] = 1
+    c['b'] = 2
+    c['c'] = 3
+    c['a'] = 4
+    self.assertEqual(len(c), 2)
+    self.assertRaises(KeyError, c.__getitem__, 'b')
+    self.assertEqual(c['a'], 4)
+    self.assertEqual(c['c'], 3)
 
 #===============================================================================
 
@@ -97,7 +117,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestFlatSpaceResolver
+  s = TestDiskCache
   s.options = options
 
   if options.test != '':

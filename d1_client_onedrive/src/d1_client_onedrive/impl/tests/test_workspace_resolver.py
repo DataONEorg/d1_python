@@ -18,11 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_workspace`
+''':mod:`test_object_tree`
 ========================
 
 :Synopsis:
- - Test the WorkspaceResolver class.
+ - Test the ObjectTreeResolver class.
 :Author:
   DataONE (Dahl)
 '''
@@ -40,61 +40,61 @@ sys.path.append('../..')
 import directory
 import directory_item
 import solr_query_simulator
-import resolver.workspace
-import workspace
-import path_exception
+import resolver.object_tree
+import object_tree
+import onedrive_exceptions
 
 
 class O():
-  def workspace(self):
+  def object_tree(self):
     pass
 
 
-class TestWorkspaceResolver(unittest.TestCase):
+class TestObjectTreeResolver(unittest.TestCase):
   def setUp(self):
     options = O()
     options.base_url = 'https://localhost/'
-    options.workspace_xml = './test_workspace.xml'
+    options.object_tree_xml = './test_object_tree.xml'
     options.max_error_path_cache_size = 1000
     options.max_solr_query_cache_size = 1000
-    self._workspace = workspace.CommandProcessor(options)
-    self._w = resolver.workspace.Resolver(options, self._workspace)
+    self._object_tree = object_tree.CommandProcessor(options)
+    self._w = resolver.object_tree.Resolver(options, self._object_tree)
 
   def test_050_path_root(self):
-    f = self._w._get_workspace_folder([])
+    f = self._w._get_object_tree_folder([])
     self._assertEqual(f.name, 'root')
 
   def test_100_path_root_first(self):
-    f = self._w._get_workspace_folder(['folder_1'])
+    f = self._w._get_object_tree_folder(['folder_1'])
     self._assertEqual(f.name, 'folder_1')
 
   def test_110_path_root_second(self):
-    f = self._w._get_workspace_folder(['folder_2'])
+    f = self._w._get_object_tree_folder(['folder_2'])
     self._assertEqual(f.name, 'folder_2')
 
   def test_120_path_root_level_2(self):
-    f = self._w._get_workspace_folder(['folder_2', 'folder_3'])
+    f = self._w._get_object_tree_folder(['folder_2', 'folder_3'])
     self._assertEqual(f.name, 'folder_3')
 
   def test_130_path_does_not_find_level_2_in_level_1(self):
-    self._assertTrue(self._w._get_workspace_folder(['folder_3']) is None)
+    self._assertTrue(self._w._get_object_tree_folder(['folder_3']) is None)
 
   def test_140_path_does_not_find_level_2_in_level_1(self):
-    self._assertTrue(self._w._get_workspace_folder(['folder_3']) is None)
+    self._assertTrue(self._w._get_object_tree_folder(['folder_3']) is None)
 
   def test_150_folder_contents(self):
-    f = self._w._get_workspace_folder(['folder_2'])
+    f = self._w._get_object_tree_folder(['folder_2'])
     self._assertTrue('dataone_identifier_2b' in f.identifier)
     self._assertTrue('solr_query_2a' in f.query)
     self._assertTrue(f.folder[0].name == 'folder_3')
 
   def test_200_split_path_by_reserved_name_1(self):
-    # Exception should be path_exception.PathException but then the test doesn't
+    # Exception should be onedrive_exceptions.PathException but then the test doesn't
     # work. Why?
     self._assertRaises(Exception, self._w._split_path_by_reserved_name, [])
 
   def test_210_split_path_by_reserved_name_2(self):
-    # Exception should be path_exception.PathException but then the test doesn't
+    # Exception should be onedrive_exceptions.PathException but then the test doesn't
     # work. Why?
     self._assertRaises(Exception, self._w._split_path_by_reserved_name, ['a', 'b', 'c'])
 
@@ -144,7 +144,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestWorkspaceResolver
+  s = TestObjectTreeResolver
   s.options = options
 
   if options.test != '':

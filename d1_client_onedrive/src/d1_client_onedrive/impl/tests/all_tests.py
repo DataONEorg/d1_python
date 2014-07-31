@@ -48,12 +48,12 @@ from test_cache_memory import TestCache
 from test_cache_disk import TestDiskCache
 from test_util import TestUtil
 
-from test_workspace import TestCommandProcessor
+from test_object_tree import TestCommandProcessor
 from test_d1_client import TestD1Client
 
 #from test_root_resolver import TestRootResolver
 from test_flat_space_resolver import TestFlatSpaceResolver
-from test_workspace_resolver import TestWorkspaceResolver
+from test_object_tree_resolver import TestObjectTreeResolver
 from test_author_resolver import TestAuthorResolver
 from test_taxa_resolver import TestTaxaResolver
 from test_region_resolver import TestRegionResolver

@@ -40,7 +40,7 @@ import sys
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 import resource_map
@@ -50,49 +50,49 @@ log = logging.getLogger(__name__)
 
 README_TXT = u'''All Folder
 
-This folder contains all the items of the workspace folder (the parent
+This folder contains all the items of the object_tree folder (the parent
 of this folder) combined into a single folder.
 '''
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
-    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
+    self._resource_map_resolver = resource_map.Resolver(options, object_tree)
     self._readme_txt = util.os_format(README_TXT)
 
-  def get_attributes(self, workspace_root, path):
+  def get_attributes(self, object_tree_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     if not path:
       return attributes.Attributes(is_dir=True)
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
-    return self._resource_map_resolver.get_attributes(workspace_root, path)
+    return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
-  def get_directory(self, workspace_root, path):
+  def get_directory(self, object_tree_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
     if not path:
-      return self._get_directory(workspace_root, path)
-    return self._resource_map_resolver.get_directory(workspace_root, path)
+      return self._get_directory(object_tree_root, path)
+    return self._resource_map_resolver.get_directory(object_tree_root, path)
 
-  def read_file(self, workspace_root, path, size, offset):
+  def read_file(self, object_tree_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(path), size, offset)
     )
     if not path:
-      raise path_exception.PathException(u'Invalid file')
+      raise onedrive_exceptions.PathException(u'Invalid file')
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
-    return self._resource_map_resolver.read_file(workspace_root, path, size, offset)
+    return self._resource_map_resolver.read_file(object_tree_root, path, size, offset)
 
   # Private.
 
-  def _get_attributes(self, workspace_root, path):
+  def _get_attributes(self, object_tree_root, path):
     return attributes.Attributes(0, is_dir=True)
 
-  def _get_directory(self, workspace_root, path):
+  def _get_directory(self, object_tree_root, path):
     d = directory.Directory()
     d.append(self._get_readme_filename())
-    d.extend(workspace_root['items'])
+    d.extend(object_tree_root['items'])
     return d

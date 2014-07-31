@@ -38,10 +38,6 @@ import sys
 import optparse
 import platform
 
-# D1
-sys.path.append('..')
-import d1_workspace.workspace
-
 # App.
 if not hasattr(sys, 'frozen'):
   sys.path.append(os.path.abspath(os.path.join('__file__', '../..')))
@@ -50,6 +46,9 @@ from d1_client_onedrive import settings
 from d1_client_onedrive.impl import check_dependencies
 from d1_client_onedrive.impl.resolver import root
 from d1_client_onedrive.impl import cache_memory as cache
+from d1_client_onedrive.impl import object_tree
+from d1_client_onedrive.impl import util
+from d1_client_onedrive.impl.clients import onedrive_zotero_client
 import d1_client_onedrive
 
 log = logging.getLogger(__name__)
@@ -114,9 +113,7 @@ def main():
     parser.print_help()
     sys.exit()
 
-  ## Handles the logfile option
-  #if options.logfile is not None:
-  #    self._options.log_file = options.logfile
+  util.ensure_dir_exists(options.onedrive_cache_root)
 
   # Setup logging
   # logging.config.dictConfig(self._options.logging) # Needs 2.7
@@ -146,9 +143,11 @@ def main():
     exit()
 
   # Instantiate the Root resolver.
-  with d1_workspace.workspace.Workspace(**options.__dict__) as workspace:
-    root_resolver = root.RootResolver(options, workspace)
-    filesystem_callbacks.run(options, root_resolver)
+  with onedrive_zotero_client.ZoteroClient(options) as z:
+    with object_tree.ObjectTree(options, z) as o:
+      #with d1_object_tree.object_tree.ObjectTree(**options.__dict__) as object_tree:
+      root_resolver = root.RootResolver(options, o)
+      filesystem_callbacks.run(options, root_resolver)
 
   log.info("Exiting ONEDrive")
 

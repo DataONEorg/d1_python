@@ -42,12 +42,12 @@ from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import cache_memory as cache
 from d1_client_onedrive.impl import directory
 from d1_client_onedrive.impl import os_escape
-from d1_client_onedrive.impl import path_exception
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import flat_space
 import resolver_base
-import workspace
+import object_tree_resolver
 
 log = logging.getLogger(__name__)
 
@@ -55,15 +55,15 @@ log = logging.getLogger(__name__)
 
 
 class RootResolver(resolver_base.Resolver):
-  def __init__(self, options, workspace_client):
+  def __init__(self, options, object_tree_client):
     # The command processor is shared between all resolvers. It holds db and
     # REST connections and caches items that may be shared between resolvers.
-    super(RootResolver, self).__init__(options, workspace_client)
+    super(RootResolver, self).__init__(options, object_tree_client)
     # Instantiate the first layer of resolvers and map them to the root folder
     # names.
     self._resolvers = {
-      u"Workspace": workspace.Resolver(options, workspace_client),
-      u"FlatSpace": flat_space.Resolver(options, workspace_client),
+      u"ObjectTree": object_tree_resolver.Resolver(options, object_tree_client),
+      u"FlatSpace": flat_space.Resolver(options, object_tree_client),
     }
 
   def get_attributes(self, path):
@@ -119,16 +119,18 @@ class RootResolver(resolver_base.Resolver):
     return dir
 
   def _dispatch_get_attributes(self, path):
-    workspace_folder = self._workspace.get_folder([])
-    return self._resolver_lookup(path).get_attributes(workspace_folder, path[1:])
+    object_tree_folder = self._object_tree.get_folder([])
+    return self._resolver_lookup(path).get_attributes(object_tree_folder, path[1:])
 
   def _dispatch_get_directory(self, path):
-    workspace_folder = self._workspace.get_folder([])
-    return self._resolver_lookup(path).get_directory(workspace_folder, path[1:])
+    object_tree_folder = self._object_tree.get_folder([])
+    return self._resolver_lookup(path).get_directory(object_tree_folder, path[1:])
 
   def _dispatch_read_file(self, path, size, offset):
-    workspace_folder = self._workspace.get_folder([])
-    return self._resolver_lookup(path).read_file(workspace_folder, path[1:], size, offset)
+    object_tree_folder = self._object_tree.get_folder([])
+    return self._resolver_lookup(path).read_file(
+      object_tree_folder, path[1:], size, offset
+    )
 
   def _split_and_unescape_path(self, path):
     assert (os.path.isabs(path))
@@ -141,16 +143,13 @@ class RootResolver(resolver_base.Resolver):
     try:
       return self._resolvers[path[0]]
     except KeyError:
-      raise path_exception.PathException(u'Invalid root directory')
+      raise onedrive_exceptions.PathException(u'Invalid root directory')
 
   def _raise_if_os_special_file(self, path):
     # For each file of "name", Finder on Mac OS X attempts to access ".name".
-    # That currently causes Workspace to run Solr queries to check if there
-    # are new objects after last refresh. Must change that behavior. In the
-    # meantime, ignore all . files.
-    if path[-1] in self._options.ignore_special or path[-1].startswith('.'):
+    if path[-1] in self._options.ignore_special:
       log.debug('Ignored file: {0}'.format(path[-1]))
-      raise path_exception.PathException(u'Ignored OS special file')
+      raise onedrive_exceptions.PathException(u'Ignored OS special file')
 
   def _is_root(self, path):
     return path == ['']

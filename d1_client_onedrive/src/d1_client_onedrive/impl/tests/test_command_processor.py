@@ -18,49 +18,40 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`test_flat_space`
-=========================
+''':mod:`test_command_processor`
+================================
 
 :Synopsis:
- - Test the FlatSpaceResolver class.
-:Author:
-  DataONE (Dahl)
+ - Test the CommandProcessor class.
+:Author: DataONE (Dahl)
 '''
 
 # Stdlib.
-import logging
 #import os
-import pprint
+import logging
 import sys
 import unittest
 
 # D1.
+
+# App.
 sys.path.append('..')
-sys.path.append('../..')
-import directory
-import directory_item
-import solr_query_simulator
-import resolver.flat_space
-import object_tree
-import onedrive_exceptions
+import command_processor
 
 
 class O():
-  def flat_space(self):
-    pass
+  pass
 
 
-class TestFlatSpaceResolver(unittest.TestCase):
+class TestCommandProcessor(unittest.TestCase):
   def setUp(self):
     options = O()
-    options.base_url = 'https://localhost/'
-    options.object_tree_xml = './test_flat_space.xml'
-    options.max_error_path_cache_size = 1000
-    options.max_solr_query_cache_size = 1000
-    self._object_tree = object_tree.CommandProcessor(options)
-    self._w = resolver.flat_space.Resolver(options, self._object_tree)
+    options.BASE_URL = 'https://localhost/'
+    options.MAX_SOLR_QUERY_CACHE_SIZE = 1000
+    self.c = command_processor.CommandProcessor(options)
 
-  def test_100(self):
+  def test_100_init(self):
+    # Test class instantiation (done in setUp())
     pass
 
 #===============================================================================
@@ -97,7 +88,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestFlatSpaceResolver
+  s = TestCommandProcessor
   s.options = options
 
   if options.test != '':

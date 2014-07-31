@@ -38,7 +38,7 @@ from datetime import datetime
 # App.
 from d1_client_onedrive.impl import attributes
 from d1_client_onedrive.impl import directory
-from d1_client_onedrive.impl import path_exception
+from d1_client_onedrive.impl import onedrive_exceptions
 from d1_client_onedrive.impl import util
 import resolver_base
 import resource_map
@@ -58,27 +58,31 @@ Windows: O:\FlatSpace\MyObjectIdentifier
 
 
 class Resolver(resolver_base.Resolver):
-  def __init__(self, options, workspace):
-    super(Resolver, self).__init__(options, workspace)
-    self._resource_map_resolver = resource_map.Resolver(options, workspace)
+  def __init__(self, options, object_tree):
+    super(Resolver, self).__init__(options, object_tree)
+    self._object_tree = object_tree
+    self._resource_map_resolver = resource_map.Resolver(options, object_tree)
     self._readme_txt = util.os_format(README_TXT)
 
-  def get_attributes(self, workspace_root, path):
+  def get_attributes(self, object_tree_root, path):
     log.debug(u'get_attributes: {0}'.format(util.string_from_path_elements(path)))
     if not path:
       return attributes.Attributes(is_dir=True)
     if self._is_readme_file(path):
       return self._get_readme_file_attributes()
-    return self._resource_map_resolver.get_attributes(workspace_root, path)
+    self._object_tree.add_object_to_cache(path[-1])
+    return self._resource_map_resolver.get_attributes(object_tree_root, path)
 
-  def get_directory(self, workspace_root, path):
+  def get_directory(self, object_tree_root, path):
     log.debug(u'get_directory: {0}'.format(util.string_from_path_elements(path)))
     if not path:
-      return [self._get_readme_filename()]
+      return [self._get_readme_filename()] \
+        + self._object_tree._get_individually_synced_object_pids()
     else:
-      return self._resource_map_resolver.get_directory(workspace_root, path)
+      self._object_tree.add_object_to_cache(path[-1])
+      return self._resource_map_resolver.get_directory(object_tree_root, path)
 
-  def read_file(self, workspace_root, path, size, offset):
+  def read_file(self, object_tree_root, path, size, offset):
     log.debug(
       u'read_file: {0}, {1}, {2}'.format(
         util.string_from_path_elements(
@@ -88,4 +92,9 @@ class Resolver(resolver_base.Resolver):
     )
     if self._is_readme_file(path):
       return self._get_readme_text(size, offset)
-    return self._resource_map_resolver.read_file(workspace_root, path, size, offset)
+    self._object_tree.add_object_to_cache(path[-1])
+    return self._resource_map_resolver.read_file(object_tree_root, path, size, offset)
+
+  #
+  # Private.
+  #
