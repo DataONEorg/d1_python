@@ -159,6 +159,8 @@ def _create_exception_by_name(
       .format(name))
   return dataone_exception(detailCode, description, traceInformation, identifier, nodeId)
 
+#===============================================================================
+
 
 class DataONEException(Exception):
   '''Base class for exceptions raised by DataONE.
