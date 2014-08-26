@@ -63,7 +63,7 @@ dn = (
 )
 
 
-class TestX509v3Extractor(unittest.TestCase):
+class TestX509v3Generator(unittest.TestCase):
   def test_010(self):
     '''Test PEM formatted X.509 v3 certificate generation'''
     subject_info = open(subject_info_path).read()

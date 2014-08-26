@@ -72,7 +72,8 @@ x509v3_certificate_extractor = setuptools.Extension(
     'extensions/d1_x509v3_certificate_extractor.c'
   ],
   libraries=[
-    'ssl'
+    #'ssl',
+    'crypto'
   ],
 )
 x509v3_certificate_generator = setuptools.Extension(
@@ -81,7 +82,8 @@ x509v3_certificate_generator = setuptools.Extension(
     'extensions/d1_x509v3_certificate_generator.c'
   ],
   libraries=[
-    'ssl'
+    #'ssl'
+    'crypto'
   ],
 )
 

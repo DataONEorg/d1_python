@@ -19,10 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_client_cli.tests.all_tests
-====================================
+Module d1_certificate_python.tests.all_tests
+============================================
 
-:Synopsis: Run all Unit tests.
+:Synopsis: Run all unit tests.
 :Created: 2011-11-10
 :Author: DataONE (Dahl)
 '''
@@ -33,30 +33,13 @@ import logging
 import os
 import unittest
 
-try:
-  # D1.
-  from d1_common import xmlrunner, svnrevision #@UnusedImport
+sys.path.append('..')
 
-  # App.
-  sys.path.append(
-    os.path.abspath(
-      os.path.join(
-        os.path.dirname(
-          __file__
-        ), '..', 'd1_client_cli'
-      )
-    )
-  )
+# D1.
+from d1_common import xmlrunner, svnrevision
 
-  from test_replication_policy import TESTCLIReplicationPolicy #@UnusedImport
-  from test_access_control import TESTCLIAccessControl #@UnusedImport
-  from test_system_metadata import TESTCLISystemMetadata #@UnusedImport
-  from test_session import TESTCLISession #@UnusedImport
-  from test_cli_util import TESTCLIUtil #@UnusedImport
-  from test_cli_client import TESTCLIClient #@UnusedImport
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  raise
+from test_x509v3_extractor import TestX509v3Extractor
+from test_x509v3_generator import TestX509v3Generator
 
 #===============================================================================
 
