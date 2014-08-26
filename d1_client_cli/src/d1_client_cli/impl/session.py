@@ -156,6 +156,7 @@ class Session(object):
     self._replication_policy = replication_policy.ReplicationPolicy()
 
   def get(self, variable):
+    self._assert_valid_variable(variable)
     return self._variables[variable]
 
   def get_access_control(self):
