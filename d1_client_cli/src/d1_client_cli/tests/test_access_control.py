@@ -32,33 +32,30 @@ import unittest
 import logging
 import sys
 
-try:
-  # D1.
-  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+# D1.
+from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
-  # App.
-  sys.path.append('../d1_client_cli/')
-  import access_control
-  import cli_exceptions
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  raise
+# App.
+sys.path.append('../')
+sys.path.append('../impl')
+import access_control
+import cli_exceptions
 
 #===============================================================================
 
 
-class TESTAccessControl(TestCaseWithURLCompare):
+class TestAccessControl(TestCaseWithURLCompare):
   def setUp(self):
     pass
 
   def test_010(self):
     '''The access_control object can be instantiated'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     self.assertEqual(len(a.allow), 0)
 
   def test_015(self):
     '''clear() removes all allowed subjects'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', None)
     a.add_allowed_subject('subject_3', None)
@@ -67,7 +64,7 @@ class TESTAccessControl(TestCaseWithURLCompare):
 
   def test_020(self):
     '''Single subject added without specified permission is retained and defaults to read'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     self.assertEqual(len(a.allow), 1)
     self.assertTrue('subject_1' in a.allow)
@@ -75,7 +72,7 @@ class TESTAccessControl(TestCaseWithURLCompare):
 
   def test_030(self):
     '''Adding subject that already exists updates its permission'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     self.assertEqual(len(a.allow), 1)
     self.assertTrue('subject_1' in a.allow)
@@ -87,7 +84,7 @@ class TESTAccessControl(TestCaseWithURLCompare):
 
   def test_040(self):
     '''Subject added with invalid permission raises exception InvalidArguments'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     self.assertRaises(
       cli_exceptions.InvalidArguments, a.add_allowed_subject, 'subject_1',
       'invalid_permission'
@@ -96,7 +93,7 @@ class TESTAccessControl(TestCaseWithURLCompare):
 
   def test_050(self):
     '''Multiple subjects with different permissions are correctly retained'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
@@ -110,36 +107,61 @@ class TESTAccessControl(TestCaseWithURLCompare):
 
   def test_200(self):
     '''str() returns formatted string representation'''
-    a = access_control.access_control()
+    a = access_control.AccessControl()
     a.add_allowed_subject('subject_1', None)
     a.add_allowed_subject('subject_2', 'write')
     a.add_allowed_subject('subject_3', 'changePermission')
     actual = []
     for s in str(a).split('\n'):
       actual.append(s.strip())
-    self.assertEquals(actual[1], 'read                          "public", "subject_1"')
+    self.assertEquals(actual[1], 'read                          "subject_1"')
     self.assertEquals(actual[2], 'write                         "subject_2"')
     self.assertEquals(actual[3], 'changePermission              "subject_3"')
 
-  def test_400(self):
-    '''XML serialization / deserialization round trip'''
-    a = access_control.access_control()
-    a.add_allowed_subject('subject_1', None)
-    a.add_allowed_subject('subject_2', 'write')
-    a.add_allowed_subject('subject_3', 'changePermission')
-    xml = a.to_xml()
-    b = access_control.access_control()
-    b.from_xml(xml)
-    self.assertEqual(len(b.allow), 4) # default is 3, plus original.
-    self.assertTrue('subject_1' in b.allow)
-    self.assertEqual(b.allow['subject_1'], 'read')
-    self.assertTrue('subject_2' in b.allow)
-    self.assertEqual(b.allow['subject_2'], 'write')
-    self.assertTrue('subject_3' in b.allow)
-    self.assertEqual(b.allow['subject_3'], 'changePermission')
+#===============================================================================
 
 
-if __name__ == "__main__":
-  #  sys.argv = ['', 'TESTAccessControl.test_010']
-  logging.basicConfig(level=logging.INFO)
-  unittest.main()
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestAccessControl
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()

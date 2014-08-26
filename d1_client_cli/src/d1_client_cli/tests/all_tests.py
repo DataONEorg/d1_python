@@ -33,34 +33,16 @@ import logging
 import os
 import unittest
 
-try:
-  # D1.
-  from d1_common import xmlrunner, svnrevision #@UnusedImport
+# D1.
+from d1_common import xmlrunner, svnrevision
 
-  # App.
-  sys.path.append(
-    os.path.abspath(
-      os.path.join(
-        os.path.dirname(
-          __file__
-        ), '..', 'd1_client_cli'
-      )
-    )
-  )
+# App.
 
-  from test_access_control import TESTAccessControl #@UnusedImport
-  from test_cli_client import TESTCLIClient #@UnusedImport
-  from test_cli_util import TESTCLIUtil #@UnusedImport
-  from test_data_package import TESTDataPackage #@UnusedImport
-  from test_dataone import TESTDataONE #@UnusedImport
-  from test_initialize import TESTInitialize #@UnusedImport
-  from test_replication_policy import TESTReplicationPolicy #@UnusedImport
-  from test_session import TESTSession #@UnusedImport
-  from test_subject_info import TESTSubjectInfo #@UnusedImport
-  from test_system_metadata import TESTSystemMetadata #@UnusedImport
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  raise
+from test_access_control import TestAccessControl
+from test_cli_util import TestCLIUtil
+from test_dataone import TestDataONE
+from test_replication_policy import TestReplicationPolicy
+from test_session import TestSession
 
 #===============================================================================
 

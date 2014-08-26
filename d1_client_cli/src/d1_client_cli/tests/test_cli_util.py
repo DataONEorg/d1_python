@@ -32,50 +32,63 @@ import unittest
 import logging
 import sys
 
-try:
-  # D1.
-  from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+# D1.
+from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
-  # App.
-  sys.path.append('../d1_client_cli/')
-  import cli_util
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  raise
+# App.
+sys.path.append('..')
+sys.path.append('../impl')
+import cli_util
+
+
+class TestCLIUtil(TestCaseWithURLCompare):
+  def setUp(self):
+    pass
 
 #===============================================================================
 
 
-class TESTCLIUtil(TestCaseWithURLCompare):
-  def setUp(self):
-    pass
-
-  def test_010(self):
-    '''Create a complex path from "string".'''
-    complex_path = cli_util.create_complex_path("string")
-    self.assertEquals("string", complex_path.path)
-    self.assertEquals(None, complex_path.formatId)
-
-  def test_011(self):
-    '''Create a complex path from "string;format=text/csv".'''
-    complex_path = cli_util.create_complex_path("string;format=text/csv")
-    self.assertEquals("string", complex_path.path)
-    self.assertEquals("text/csv", complex_path.formatId)
-
-  def test_012(self):
-    '''Create a complex path from ";format=text/csv".'''
-    complex_path = cli_util.create_complex_path(";format=text/csv")
-    self.assertEquals(None, complex_path.path)
-    self.assertEquals("text/csv", complex_path.formatId)
-
-  def test_013(self):
-    '''Create a complex path from "".'''
-    complex_path = cli_util.create_complex_path("")
-    self.assertEquals(None, complex_path.path)
-    self.assertEquals(None, complex_path.formatId)
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
 
 
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  #  sys.argv = ['', 'TESTCLIUtil.testName']
-  unittest.main()
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestCLIUtil
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()

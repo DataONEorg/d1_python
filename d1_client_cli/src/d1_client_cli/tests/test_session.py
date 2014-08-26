@@ -35,100 +35,123 @@ import sys
 import uuid
 import StringIO
 
-try:
-  # D1.
-  import d1_common.const
-  import d1_common.testcasewithurlcompare
+# D1.
+import d1_common.const
+import d1_common.testcasewithurlcompare
 
-  # App.
-  sys.path.append('../d1_client_cli/')
-  import session
-  import cli_exceptions
-except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  raise
+# App.
+sys.path.append('..')
+sys.path.append('../impl')
+import session
+import nodes
+import format_ids
+import cli_exceptions
+
+nodes = nodes.Nodes()
+#  'node_a',
+#  'node_b',
+#  'node_c',
+#]
+
+format_ids = format_ids.FormatIDs()
+
+#  'format_id_a',
+#  'format_id_b',
+#  'format_id_c',
+#]
 
 #===============================================================================
 
 
-class TESTSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     pass
 
   def test_010(self):
     '''The session object can be instantiated'''
-    s = session.session()
+    s = session.Session(nodes, format_ids)
     self.assertNotEquals(None, s, 'Could not instantiate session.')
 
   def test_020(self):
     '''After instatiation, the default session parameters are available via get()'''
-    s = session.session()
-    self.assertEqual(s.get('cli', 'pretty'), True)
-    self.assertEqual(s.get('node', 'dataone-url'), d1_common.const.URL_DATAONE_ROOT)
+    s = session.Session(nodes, format_ids)
+    #self.assertEqual(s.get('pretty'), True)
+    self.assertEqual(s.get('cn-url'), d1_common.const.URL_DATAONE_ROOT)
+
+  def test_025(self):
+    '''Session parameters can be updated with set()'''
+    s = session.Session(nodes, format_ids)
+    s.set('verbose', False),
+    s.set('rights-holder', 'test')
+    self.assertEqual(s.get('verbose'), False)
+    self.assertEqual(s.get('rights-holder'), 'test')
 
   def test_030(self):
-    '''Session parameters can be updated with set()'''
-    s = session.session()
-    s.set('cli', 'pretty', False),
-    s.set('node', 'dataone-url', 'test')
-    self.assertEqual(s.get('cli', 'pretty'), False)
-    self.assertEqual(s.get('node', 'dataone-url'), 'test')
+    '''Setting invalid CN fails'''
+    s = session.Session(nodes, format_ids)
+    print 'Hit Enter on "Use anyway?" prompt'
+    self.assertRaises(cli_exceptions.InvalidArguments, s.set, 'cn-url', 'test')
+
+  def test_035(self):
+    '''Setting valid CN is successful'''
+    s = session.Session(nodes, format_ids)
+    valid_cn = 'https://cn-unm-1.dataone.org/cn'
+    s.set('cn-url', valid_cn)
+    self.assertEqual(s.get('cn-url'), valid_cn)
 
   def test_040(self):
     '''Session parameters can be brought back to their defaults with reset()'''
-    s = session.session()
-    s.set('search', 'query', 'testquery'),
-    self.assertEqual(s.get('search', 'query'), 'testquery')
+    s = session.Session(nodes, format_ids)
+    s.set('query', 'testquery'),
+    self.assertEqual(s.get('query'), 'testquery')
     s.reset()
-    self.assertEqual(s.get('search', 'query'), '*:*')
+    self.assertEqual(s.get('query'), '*:*')
 
   def test_050(self):
     '''Getting an non-existing session parameter raises InvalidArguments'''
-    s = session.session()
-    self.assertRaises(cli_exceptions.InvalidArguments, s.get, 'search', 'query-bogus')
-    self.assertRaises(cli_exceptions.InvalidArguments, s.get, 'search-bogus', 'query')
+    s = session.Session(nodes, format_ids)
+    self.assertRaises(cli_exceptions.InvalidArguments, s.get, 'bogus-value')
 
   def test_100(self):
     '''set_with_conversion() handles None'''
-    s = session.session()
-    self.assertEqual(s.get('cli', 'pretty'), True)
-    s.set_with_conversion('cli', 'pretty', 'None')
-    self.assertEqual(s.get('cli', 'pretty'), None)
+    s = session.Session(nodes, format_ids)
+    self.assertEqual(s.get('verbose'), True)
+    s.set_with_conversion('verbose', 'None')
+    self.assertEqual(s.get('verbose'), None)
 
   def test_110(self):
     '''set_with_conversion() handles integer conversions'''
-    s = session.session()
-    self.assertEqual(s.get('cli', 'pretty'), True)
-    s.set_with_conversion('cli', 'pretty', '1')
-    self.assertEqual(s.get('cli', 'pretty'), 1)
+    s = session.Session(nodes, format_ids)
+    self.assertEqual(s.get('verbose'), True)
+    s.set_with_conversion('verbose', '1')
+    self.assertEqual(s.get('verbose'), 1)
 
   def test_120(self):
     '''set_with_conversion() raises InvalidArguments on non-existing session parameter'''
-    s = session.session()
+    s = session.Session(nodes, format_ids)
     self.assertRaises(
-      cli_exceptions.InvalidArguments, s.set_with_conversion, 'search-bogus', 'query', '1'
+      cli_exceptions.InvalidArguments, s.set_with_conversion, 'bogus-value', '1'
     )
 
   def test_130(self):
     '''Session object exposes access control'''
-    s = session.session()
-    s.access_control_add_allowed_subject('newsubject', 'write')
+    s = session.Session(nodes, format_ids)
+    s.get_access_control().add_allowed_subject('newsubject', 'write')
 
   def test_140(self):
-    '''print_session() is available and appears to work'''
+    '''print_all_variables() is available and appears to work'''
     # capture stdout
     old = sys.stdout
     sys.stdout = StringIO.StringIO()
     # run print
-    s = session.session()
-    s.print_parameter('')
+    s = session.Session(nodes, format_ids)
+    s.print_all_variables()
     # release stdout
     out = sys.stdout.getvalue()
     sys.stdout = old
     # validate
     self.assertTrue(len(out) > 100)
-    self.assertTrue('sysmeta' in out)
-    self.assertTrue('None' in out)
+    self.assertTrue(type(out) is str)
 
   def test_200(self):
     '''Session is successfully saved and then loaded (pickled and unpickled)'''
@@ -137,30 +160,58 @@ class TESTSession(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
       os.unlink(tmp_pickle)
     except OSError:
       pass
-    s1 = session.session()
+    s1 = session.Session(nodes, format_ids)
     u = str(uuid.uuid1())
-    s1.set('sysmeta', 'rights-holder', u)
+    s1.set('rights-holder', u)
     s1.save(tmp_pickle)
-    s2 = session.session()
-    s2.load(False, tmp_pickle)
-    self.assertEqual(s2.get('sysmeta', 'rights-holder'), u)
+    s2 = session.Session(nodes, format_ids)
+    s2.load(tmp_pickle)
+    self.assertEqual(s2.get('rights-holder'), u)
 
-  def test_300(self):
-    '''assert_required_parameters_present() returns successfully on no missing parameters'''
-    s = session.session()
-    s.assert_required_parameters_present(('dataone-url', 'count', 'algorithm'))
-
-  def test_310(self):
-    '''assert_required_parameters_present() raises exception on missing parameters'''
-    s = session.session()
-    s.set('node', 'dataone-url', None)
-    self.assertRaises(
-      cli_exceptions.InvalidArguments, s.assert_required_parameters_present,
-      ('dataone-url', 'count', 'algorithm')
-    )
+#===============================================================================
 
 
-if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
-  #  sys.argv = ['', 'TESTSession.testName']
-  unittest.main()
+def log_setup():
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
+  console_logger = logging.StreamHandler(sys.stdout)
+  console_logger.setFormatter(formatter)
+  logging.getLogger('').addHandler(console_logger)
+
+
+def main():
+  import optparse
+
+  log_setup()
+
+  # Command line opts.
+  parser = optparse.OptionParser()
+  parser.add_option('--debug', action='store_true', default=False, dest='debug')
+  parser.add_option(
+    '--test', action='store',
+    default='',
+    dest='test',
+    help='run a single test'
+  )
+
+  (options, arguments) = parser.parse_args()
+
+  if options.debug:
+    logging.getLogger('').setLevel(logging.DEBUG)
+  else:
+    logging.getLogger('').setLevel(logging.ERROR)
+
+  s = TestSession
+  s.options = options
+
+  if options.test != '':
+    suite = unittest.TestSuite(map(s, [options.test]))
+  else:
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
+
+  unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+if __name__ == '__main__':
+  main()
