@@ -70,33 +70,45 @@ def main():
 
   g = GenerateBindings(options.schema_dir, options.binding_dir)
 
-  # Generate bindings for 1.0. Also create a types archive for use by the the
-  # 1.1 bindings.
-  g.generate_bindings(
-    [
-      '--schema-location=dataoneTypes.xsd',
-      '--module=dataoneTypes',
-      '--archive-to-file dataoneTypes.wxs',
-    ]
-  )
+  ## Generate bindings for 1.0. Also create a types archive for use by the the
+  ## 1.1 bindings.
+  #g.generate_bindings([
+  #  '--schema-location=dataoneTypes.xsd',
+  #  '--module=dataoneTypes',
+  #  '--archive-to-file dataoneTypes.wxs',
+  ##  '--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
+  #])
+  #
+  ## Generate additional bindings for 1.1. Pull 1.0 dependencies from archive.
+  #g.generate_bindings([
+  #  '--schema-location=dataoneTypes_v1.1.xsd',
+  #  '--module=dataoneTypes_1_1',
+  #  '--archive-path .:+',
+  ##  '--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
+  #])
 
-  # Generate additional bindings for 1.1. Pull 1.0 dependencies from archive.
+  # Generate additional bindings for 2.0. Pull 1.1 dependencies from archive.
   g.generate_bindings(
     [
-      '--schema-location=dataoneTypes_v1.1.xsd',
-      '--module=dataoneTypes_1_1',
+      '--schema-location=dataoneTypes_v2.0.xsd',
+      '--module=dataoneTypes_2_0',
       '--archive-path .:+',
+      #'--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/trunk/d1_schemas/\'',
     ]
   )
 
-  # Generate bindings for the exception types.
-  g.generate_bindings(['--schema-location=dataoneErrors.xsd', '--module=dataoneErrors', ])
+  ## Generate bindings for the exception types.
+  #g.generate_bindings([
+  #  '--schema-location=dataoneErrors.xsd',
+  #  '--module=dataoneErrors',
+  #])
 
   # Generate version text files for the bindings, using the Subversion
   # revision numbers from the schema files.
   g = GenerateVersionFile(options.schema_dir, options.binding_dir)
   g.generate_version_file('dataoneTypes.xsd', 'dataoneTypes')
   g.generate_version_file('dataoneTypes_v1.1.xsd', 'dataoneTypes_1_1')
+  g.generate_version_file('dataoneTypes_v2.0.xsd', 'dataoneTypes_2_0')
   g.generate_version_file('dataoneErrors.xsd', 'dataoneErrors')
 
 #===============================================================================

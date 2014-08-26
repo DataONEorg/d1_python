@@ -33,6 +33,8 @@ import hashlib
 import const
 from .types.generated import dataoneTypes
 
+DEFAULT_CHUNK_SIZE = 1024 * 1024
+
 dataone_to_python_checksum_algorithm_map = {'MD5': hashlib.md5, 'SHA-1': hashlib.sha1, }
 
 
@@ -49,8 +51,25 @@ def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
   return h.hexdigest()
 
 
+def calculate_checksum_on_stream(
+  f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
+  chunk_size=DEFAULT_CHUNK_SIZE
+):
+  h = get_checksum_calculator_by_dataone_designator(algorithm)
+  while True:
+    chunk = f.read(chunk_size)
+    if not chunk:
+      break
+    h.update(chunk)
+  return h.hexdigest()
+
+
 def get_checksum_calculator_by_dataone_designator(dataone_algorithm_name):
   return dataone_to_python_checksum_algorithm_map[dataone_algorithm_name]()
+
+
+def get_default_checksum_algorithm():
+  return const.DEFAULT_CHECKSUM_ALGORITHM
 
 
 def checksums_are_equal(c1, c2):
