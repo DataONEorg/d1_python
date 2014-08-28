@@ -41,8 +41,6 @@ import d1_common.xmlrunner
 from test_author_resolver import TestAuthorResolver
 from test_cache_disk import TestDiskCache
 from test_d1_object_resolver import TestD1ObjectResolver
-from test_d1_science_object_resolver import TestD1ScienceObjectResolver
-from test_d1_system_metadata_resolver import TestD1SystemMetadataResolver
 from test_flat_space_resolver import TestFlatSpaceResolver
 from test_query_engine_description import TestQueryEngineDescription
 from test_region_resolver import TestRegionResolver
