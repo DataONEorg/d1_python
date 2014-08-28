@@ -34,15 +34,17 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import resolver.time_period
 import command_echoer
+import impl.resolver.time_period as time_period
+from object_tree_test_sample import object_tree
+
+options = {}
 
 
 class TestTimePeriodResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = resolver.time_period.Resolver(command_echoer.CommandEchoer())
+    self._resolver = time_period.Resolver(options, object_tree)
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())

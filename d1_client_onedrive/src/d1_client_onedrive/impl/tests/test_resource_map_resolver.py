@@ -22,7 +22,7 @@
 ====================================
 
 :Synopsis:
- - Test the ResourceMapResolver class.
+ - Test the resource_map.Resolver() class.
 :Author:
   DataONE (Dahl)
 '''
@@ -35,15 +35,17 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import resolver.resource_map
+import impl.resolver.resource_map as resource_map
 import command_echoer
+from object_tree_test_sample import object_tree
+
+options = {}
 
 
 class TestResourceMapResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = resolver.resource_map.Resolver(None, command_echoer.CommandEchoer())
+    self._resolver = resource_map.Resolver(options, object_tree)
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())

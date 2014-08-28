@@ -35,19 +35,32 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import resolver.author
-import command_echoer
+#sys.path.append('../resolver')
+import impl.resolver.author as author
+import impl.tests.command_echoer as command_echoer
+from object_tree_test_sample import object_tree
+
+options = {}
+
+# TODO: Flesh out the tests for the resolvers. Just need mock objects that
+# supply the information that would normally come from a CN.
 
 
 class TestAuthorResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = resolver.author.Resolver(command_echoer.CommandEchoer())
+    self._resolver = author.Resolver(options, object_tree)
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())
     pass
+
+  def test_200(self):
+    '''get_attributes([])'''
+    a = self._resolver.get_attributes([], [])
+    self.assertEqual(a.date(), None)
+    self.assertEqual(a.size(), 0)
+    self.assertEqual(a.is_dir(), True)
 
 #===============================================================================
 

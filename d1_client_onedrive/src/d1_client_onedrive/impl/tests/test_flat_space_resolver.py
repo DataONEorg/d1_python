@@ -35,14 +35,12 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import directory
-import directory_item
-import solr_query_simulator
-import resolver.flat_space
-import object_tree
-import onedrive_exceptions
+import impl.directory
+import impl.resolver.flat_space as flat_space
+from object_tree_test_sample import object_tree
+
+options = {}
 
 
 class O():
@@ -57,8 +55,7 @@ class TestFlatSpaceResolver(unittest.TestCase):
     options.object_tree_xml = './test_flat_space.xml'
     options.max_error_path_cache_size = 1000
     options.max_solr_query_cache_size = 1000
-    self._object_tree = object_tree.CommandProcessor(options)
-    self._w = resolver.flat_space.Resolver(options, self._object_tree)
+    self._w = flat_space.Resolver(options, object_tree)
 
   def test_100(self):
     pass

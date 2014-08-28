@@ -35,15 +35,17 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import resolver.d1_science_object
+import impl.resolver.d1_science_object as d1_science_object
 import command_echoer
+from object_tree_test_sample import object_tree
+
+options = {}
 
 
 class TestD1ScienceObjectResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = resolver.d1_science_object.Resolver(command_echoer.CommandEchoer())
+    self._resolver = d1_science_object.Resolver(options, object_tree)
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())

@@ -31,9 +31,12 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import query_engine_description
+import impl.clients.query_engine_description as query_engine_description
+import command_echoer
+from object_tree_test_sample import object_tree
+
+options = {}
 
 
 class TestQueryEngineDescription(unittest.TestCase):

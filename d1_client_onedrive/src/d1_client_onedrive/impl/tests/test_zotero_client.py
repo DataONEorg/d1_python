@@ -11,10 +11,13 @@ import unittest
 # 3rd party.
 from pyzotero import zotero
 
-# App
-sys.path.append('..')
-sys.path.append('../clients')
-import onedrive_zotero_client
+# D1.
+sys.path.append('../..')
+import command_echoer
+import impl.clients.onedrive_zotero_client as onedrive_zotero_client
+from object_tree_test_sample import object_tree
+
+options = {}
 
 # Zotero authentication. Set environment variables ZOTERO_USER and
 # ZOTERO_API_ACCESS_KEY.
@@ -102,53 +105,59 @@ class TestZoteroClient(unittest.TestCase):
         print i['title'].encode('utf8')
         zotero_client.delete_item(i)
 
-  def test_100(self):
-    '''Create Zotero Cache with defaults, non-existing pickle'''
-    try:
-      os.unlink(self.pickle_path)
-    except OSError as e:
-      if e.errno == 2: # [Errno 2] No such file or directory
-        pass
-    with onedrive_zotero_client.ZoteroClient(self.options) as z:
-      pass
+  #def test_100(self):
+  #  '''Create Zotero Cache with defaults, non-existing pickle'''
+  #  try:
+  #    os.unlink(self.pickle_path)
+  #  except OSError as e:
+  #    if e.errno == 2: # [Errno 2] No such file or directory
+  #      pass
+  #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
+  #    pass
+  #
+  #
+  #def test_110(self):
+  #  '''Check that pickle was written to disk'''
+  #  self.assertTrue(os.path.exists(self.pickle_path))
+  #
+  #
+  #def test_120(self):
+  #  '''Check that empty pickle object is unpickled correctly'''
+  #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
+  #    self.assertEqual(z._cache['filtered_tree'], {})
+  #    self.assertEqual(z._cache['collections'], None)
+  #    self.assertEqual(z._cache['library_version'], 0)
+  #
+  #
+  #def test_130(self):
+  #  '''refresh()'''
+  #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
+  #    self.assertEqual(z._cache['library_version'], 0)
+  #    z.refresh()
+  #    self.assertTrue(z._cache['library_version'] > 0)
+  #
+  #
+  #def test_140(self):
+  #  '''get_filtered_sub_tree([])'''
+  #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
+  #    z.get_filtered_sub_tree([])
+  #
+  #
+  #def test_150(self):
+  #  '''get_filtered_sub_tree(['c1', 'c3'])'''
+  #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
+  #    z.get_filtered_sub_tree(['c1', 'c3'])
+  #
+  #
+  #def test_160(self):
+  #  '''iterate_collection_trees()'''
+  #  with onedrive_zotero_client.ZoteroClient(self.options) as z:
+  #    z.refresh()
+  #    for a, b in z.iterate_collection_trees():
+  #      self.assertTrue(type(a) is dict)
+  #      self.assertTrue(type(b) is list)
 
-  def test_110(self):
-    '''Check that pickle was written to disk'''
-    self.assertTrue(os.path.exists(self.pickle_path))
-
-  def test_120(self):
-    '''Check that empty pickle object is unpickled correctly'''
-    with onedrive_zotero_client.ZoteroClient(self.options) as z:
-      self.assertEqual(z._cache['filtered_tree'], {})
-      self.assertEqual(z._cache['collections'], None)
-      self.assertEqual(z._cache['library_version'], 0)
-
-  def test_130(self):
-    '''refresh()'''
-    with onedrive_zotero_client.ZoteroClient(self.options) as z:
-      self.assertEqual(z._cache['library_version'], 0)
-      z.refresh()
-      self.assertTrue(z._cache['library_version'] > 0)
-
-  def test_140(self):
-    '''get_filtered_sub_tree([])'''
-    with onedrive_zotero_client.ZoteroClient(self.options) as z:
-      z.get_filtered_sub_tree([])
-
-  def test_150(self):
-    '''get_filtered_sub_tree(['c1', 'c3'])'''
-    with onedrive_zotero_client.ZoteroClient(self.options) as z:
-      z.get_filtered_sub_tree(['c1', 'c3'])
-
-  def test_160(self):
-    '''iterate_collection_trees()'''
-    with onedrive_zotero_client.ZoteroClient(self.options) as z:
-      z.refresh()
-      for a, b in z.iterate_collection_trees():
-        self.assertTrue(type(a) is dict)
-        self.assertTrue(type(b) is list)
-
-#===============================================================================
+  #===============================================================================
 
 
 def log_setup():

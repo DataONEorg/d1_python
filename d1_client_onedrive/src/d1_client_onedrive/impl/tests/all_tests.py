@@ -38,31 +38,21 @@ import unittest
 import d1_common.xmlrunner
 
 # App
-from test_attributes import TestAttributes
-from test_directory import TestDirectory
-from test_directory_item import TestDirectoryItem
-from test_query_engine_description import TestQueryEngineDescription
-from test_solr_client import TestSolrClient
-
-from test_cache_memory import TestCache
-from test_cache_disk import TestDiskCache
-from test_util import TestUtil
-
-from test_object_tree import TestCommandProcessor
-from test_d1_client import TestD1Client
-
-#from test_root_resolver import TestRootResolver
-from test_flat_space_resolver import TestFlatSpaceResolver
-from test_object_tree_resolver import TestObjectTreeResolver
 from test_author_resolver import TestAuthorResolver
-from test_taxa_resolver import TestTaxaResolver
-from test_region_resolver import TestRegionResolver
-from test_time_period_resolver import TestTimePeriodResolver
+from test_cache_disk import TestDiskCache
 from test_d1_object_resolver import TestD1ObjectResolver
-from test_d1_package_resolver import TestD1PackageResolver
-from test_resource_map_resolver import TestResourceMapResolver
 from test_d1_science_object_resolver import TestD1ScienceObjectResolver
 from test_d1_system_metadata_resolver import TestD1SystemMetadataResolver
+from test_flat_space_resolver import TestFlatSpaceResolver
+from test_query_engine_description import TestQueryEngineDescription
+from test_region_resolver import TestRegionResolver
+from test_resource_map_resolver import TestResourceMapResolver
+from test_root_resolver import TestRootResolver
+from test_solr_client import TestSolrClient
+from test_taxa_resolver import TestTaxaResolver
+from test_time_period_resolver import TestTimePeriodResolver
+from test_util import TestUtil
+from test_zotero_client import TestZoteroClient
 
 
 def log_setup():

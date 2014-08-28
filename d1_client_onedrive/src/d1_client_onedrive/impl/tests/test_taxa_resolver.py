@@ -35,15 +35,18 @@ import sys
 import unittest
 
 # D1.
-sys.path.append('..')
 sys.path.append('../..')
-import resolver.taxa
 import command_echoer
+import impl.resolver.taxa as taxa
+import command_echoer
+from object_tree_test_sample import object_tree
+
+options = {}
 
 
 class TestTaxaResolver(unittest.TestCase):
   def setUp(self):
-    self._resolver = resolver.taxa.Resolver(command_echoer.CommandEchoer())
+    self._resolver = taxa.Resolver(options, object_tree)
 
   def test_100_init(self):
     # Test class instantiation (done in setUp())
