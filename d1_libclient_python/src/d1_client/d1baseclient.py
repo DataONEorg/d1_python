@@ -208,7 +208,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return response_body
 
 
-  def _raise_service_failure(self, description, trace):
+  def _raise_service_failure(self, description, trace=None):
     raise d1_common.types.exceptions.ServiceFailure(0, description, trace)
 
 
@@ -233,6 +233,21 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     trace = StringIO.StringIO()
     trace.write('Deserialize exception:\n{0}\n'.format(deserialize_exception))
     self._raise_service_failure(msg.getvalue(), trace.getvalue())
+
+
+  def _assert_correct_dataone_type(self, pyxb_obj, major, minor, d1_type_name):
+    v = '1' if (major, minor) == (1, 0) else '{}.{}'.format(major, minor)
+    expected = '{{http://ns.dataone.org/service/types/v{}}}{}'\
+               .format(v, d1_type_name)
+    if str(pyxb_obj._ExpandedName) != expected:
+      self._raise_service_failure_incorrect_dataone_type(expected, pyxb_obj)
+
+
+  def _raise_service_failure_incorrect_dataone_type(self, expected_name,
+                                                    received_pyxb_obj):
+    self._raise_service_failure(
+      'Received unexpected DataONE type. Expected: {}. Received: {}'\
+      .format(expected_name, received_pyxb_obj._ExpandedName))
 
 
   def _raise_dataone_exception(self, response):
@@ -284,12 +299,14 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     self._error(response)
 
 
-  def _read_dataone_type_response(self, response,
+  def _read_dataone_type_response(self, response, major, minor, d1_type_name,
                                   response_contains_303_redirect=False):
     if self._status_is_ok(response, response_contains_303_redirect):
       if not self._content_type_is_xml(response):
         self._raise_service_failure_invalid_content_type(response)
-      return self._read_and_deserialize_dataone_type(response)
+      d1_pyxb_obj = self._read_and_deserialize_dataone_type(response)
+      self._assert_correct_dataone_type(d1_pyxb_obj, major, minor, d1_type_name)
+      return d1_pyxb_obj
     self._error(response)
 
 
@@ -325,7 +342,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def _date_span_sanity_check(self, fromDate, toDate):
     if toDate is not None and fromDate is not None and fromDate > toDate:
       raise d1_common.types.exceptions.InvalidRequest(0,
-        'Ending date is before starting date')
+        'Ending date must be later than starting date')
 
 
   def _rest_url(self, path_format, **args):
@@ -391,7 +408,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                                           event=event, pidFilter=pidFilter,
                                           start=start, count=count,
                                           vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Log')
 
 
 
@@ -466,7 +483,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   def getSystemMetadata(self, pid, vendorSpecific=None):
     response = self.getSystemMetadataResponse(pid,
                                               vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'SystemMetadata')
 
   # CNRead.describe(session, pid) → DescribeResponse
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.describe
@@ -527,7 +544,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                                         replicaStatus=replicaStatus,
                                         start=start, count=count,
                                         vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'ObjectList')
 
 
   # ----------------------------------------------------------------------------
@@ -552,7 +569,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   @d1_common.util.utf8_to_unicode
   def generateIdentifier(self, scheme, fragment=None):
     response = self.generateIdentifierResponse(scheme, fragment)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Identifier')
 
   # CNStorage.delete(session, pid) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNStorage.archive
@@ -571,7 +588,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
   @d1_common.util.utf8_to_unicode
   def archive(self, pid, vendorSpecific=None):
     response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Identifier')
 
 
   # ----------------------------------------------------------------------------

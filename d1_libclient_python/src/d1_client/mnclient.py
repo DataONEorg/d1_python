@@ -113,7 +113,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
 
   def getCapabilities(self, vendorSpecific=None):
     response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Node')
 
   # ============================================================================
   # MNRead
@@ -137,7 +137,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def getChecksum(self, pid, checksumAlgorithm=None, vendorSpecific=None):
     response = self.getChecksumResponse(pid, checksumAlgorithm, vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Checksum')
 
   # MNRead.synchronizationFailed(session, message) → Boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.synchronizationFailed
@@ -185,7 +185,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def create(self, pid, obj, sysmeta, vendorSpecific=None):
     response = self.createResponse(pid, obj, sysmeta,
                                    vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Identifier')
 
   # MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.update
@@ -210,7 +210,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   def update(self, pid, obj, newPid, sysmeta, vendorSpecific=None):
     response = self.updateResponse(pid, obj, newPid, sysmeta,
                                    vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Identifier')
 
   # MNStorage.delete(session, pid) → Identifier
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.delete
@@ -227,7 +227,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def delete(self, pid, vendorSpecific=None):
     response = self.deleteResponse(pid, vendorSpecific=vendorSpecific)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Identifier')
 
   # MNStorage.systemMetadataChanged(session, pid, serialVersion, dateSysMetaLastModified) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.systemMetadataChanged
