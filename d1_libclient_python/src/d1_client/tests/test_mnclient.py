@@ -116,15 +116,6 @@ def main():
 
   # Command line opts.
   parser = optparse.OptionParser()
-  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
-  parser.add_option(
-    '--cn-url',
-    dest='cn_url',
-    action='store',
-    type='string',
-    default='http://cn-dev.dataone.org/cn/'
-  )
-  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
     '--test', action='store',
@@ -140,7 +131,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestMNClient
+  s = TestDataPackage
   s.options = options
 
   if options.test != '':

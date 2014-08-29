@@ -38,6 +38,7 @@ import unittest
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 # App.
+sys.path.append('..')
 import d1_client.systemmetadata
 import testing_utilities
 import testing_context

@@ -41,6 +41,7 @@ import d1_common.url
 import d1_common.xmlrunner
 
 # App.
+sys.path.append('..')
 import d1_client.d1client
 import testing_utilities
 import testing_context
@@ -79,15 +80,6 @@ def main():
 
   # Command line opts.
   parser = optparse.OptionParser()
-  #parser.add_option('--d1-root', dest='d1_root', action='store', type='string', default='http://0.0.0.0:8000/cn/') # default=d1_common.const.URL_DATAONE_ROOT
-  parser.add_option(
-    '--cn-url',
-    dest='cn_url',
-    action='store',
-    type='string',
-    default='http://cn-dev.dataone.org/cn/'
-  )
-  #parser.add_option('--gmn-url', dest='gmn_url', action='store', type='string', default='http://0.0.0.0:8000/')
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
     '--test', action='store',

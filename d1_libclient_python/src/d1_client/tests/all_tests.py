@@ -37,17 +37,16 @@ from d1_common import xmlrunner
 # The DataONEBaseClient tests work, but I haven't looked into how to pass
 # options from here to the class.
 # from test_d1baseclient import TestDataONEBaseClient
-#from test_cnclient import TestCNClient
-#from test_d1client import TestDataONEClientTestD1Client
+from test_cnclient import TestCNClient
+from test_d1baseclient import TestDataONEBaseClient
+from test_d1client import TestDataONEClient
 from test_data_package import TestDataPackage
-#test_logrecorditerator
-#test_mnclient
-#test_object_access
-#test_object_format_info
+from test_logrecorditerator import TestLogRecordIterator
+from test_mnclient import TestMNClient
+from test_object_format_info import TestObjectFormatInfo
 from test_objectlistiterator import TestObjectListIterator
-
-#test_solr_client
-#test_systemmetadata.py
+from test_solr_client import TestSolrClient
+from test_systemmetadata import TestSystemMetadata
 
 #===============================================================================
 
