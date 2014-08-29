@@ -1,14 +1,15 @@
-`DataONE ONEDrive`_ enables the DataONE :term:`Workspace` to be accessed like a
-regular filesystem on Windows, Mac OS X and Linux systems. This allows users to
-open remote DataONE objects locally and work with them as if they reside on the
-user's computer. For instance, a spread sheet that is stored on a Member Node
-can be opened directly in Excel.
+`DataONE ONEDrive`_ enables DataONE objects stored in `Zotero citation manager`_
+libraries to be accessed like regular files on Windows, Mac OS X and Linux
+systems. This allows users to open remote DataONE objects locally and work with
+them as if they reside on the user's computer. For instance, a spread sheet that
+is stored on a Member Node can be opened directly in Excel.
 
-.. note:: The DataONE Workspace is currently under development and is not yet
-  available as a service. Because of this, ONEDrive 2.0 works with a local
-  representation of the Workspace, stored in a file called ``workspace.xml``.
-  ONEDrive comes with an example ``workspace.xml`` file. To select the DataONE
-  objects which should be available in ONEDrive, it is necessary to manually
-  edit this file.
+DataONE objects can be added to a Zotero library via the ONEMercury search tool.
+Objects can also be added in all the other ways that Zotero supports. ONEDrive
+connects to a Zotero library and makes all DataONE objects within the library
+accessible as regular files. Zotero collections are represented as folders in
+the ONEDrive filesystem.
 
 .. _`DataONE ONEDrive`: http://pythonhosted.org/dataone.onedrive/
+
+.. _`Zotero citation manager`: https://www.zotero.org/

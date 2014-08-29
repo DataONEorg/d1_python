@@ -13,6 +13,8 @@ Microsoft Windows
 
 #. See :doc:`run` for notes on how to customize and access ONEDrive.
 
+By default, ONEDrive uses the drive letter "O:". If this drive letter is already
+in use, it can be changed in the ``settings.py`` file.
 
 
 Mac OS X
@@ -50,6 +52,16 @@ downloading to a local folder::
 * On OS X, set DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH
 
 * Make sure option 'user_allow_other' is set in /etc/fuse.conf.
+
+If the library search path is incomplete, an exception such as the following
+may occur::
+
+  OSError: dlopen(/opt/local/lib/libfuse.dylib, 6): Symbol not found: _iconv
+    Referenced from: /opt/local/lib/libfuse.dylib
+
+To work around this, run ``onedrive.py`` with::
+
+  export DYLD_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH
 
 
 .. _`Fuse for OS X`: http://osxfuse.github.com/

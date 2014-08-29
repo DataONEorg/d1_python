@@ -11,86 +11,8 @@ Architecture
     "DataONE Client Library\n(Python)" -> "ONEDrive";
     "DataONE Common\n(Python)" -> "ONEDrive";
     "SolR Client\n(Python)" -> "ONEDrive";
+    libzotero -> ONEDrive;
   }
-
-
-Production
-----------
-
-The main components of ONEDrive when in regular operation.
-
-.. graphviz::
-
-  digraph G {
-    ranksep = .75;
-    size = "7,20";
-    dpi = 72;
-    node [shape = box];
-    "ONEDrive" -> "FUSE Callbacks"
-    "ONEDrive" -> "Dependency Checker"
-    "FUSE Driver" -> "FUSE Callbacks"
-    "FUSE Callbacks" -> Cache
-    "FUSE Callbacks" -> Resolvers
-    "Utility Classes" -> Resolvers
-    "Resolvers" -> "Command Processor"
-    "Command Processor" -> "Solr Client"
-    "Command Processor" -> "DataONE Client"
-  }
-
-  /*
-      subgraph cluster0 {
-        node [style=filled, color=white];
-        style=filled;
-        color=lightgrey;
-        label = "Utility Classes";
-        "Directory"
-        "FacetPathParser"
-        "Filename Extensions"
-        "PathException"
-        "QueryEngineDescription"
-        "Resolver ABC"
-        "Settings"
-      }
-  */
-
-The utility classes include ``Directory``, ``FacetPathParser``,
-``PathException``, ``Filename Extensions``, ``QueryEngineDescription``,
-``ResolverABC``, ``Settings``.
-
-
-
-Testing and Debugging
----------------------
-
-The main components of ONEDrive when testing and debugging.
-
-.. graphviz::
-
-  digraph G {
-    ranksep = .75;
-    size = "7,20";
-    dpi = 72;
-    node [shape = box];
-    "Unit Tests" -> Resolvers
-    "Unit Tests" -> "Utility Classes"
-    "Resolvers" -> "Command Echoer"
-  }
-
-When testing and debugging, the FUSE specific classes are replaced by the unit
-testing framework. Also, `Command Processor`_ is replaced with ``Command
-Echoer``, a component that simply echoes the commands back instead of returning
-actual results. The unit tests for the resolvers compare the echoed commands
-with the commands that were expected to be issued for a given path.
-
-One consequence of this is that the FUSE related classes and the ``Command
-Processor`` are not tested. There is almost no code in the FUSE related classes
-and what is there is linear in nature and is fully tested for each time the
-drive is mounted and a path is opened. The ``Command Processor`` contains more
-logic but is hard to test reliably since it interacts with databases that change
-over time.
-
-This layout facilitates TDD, as the unit tests can be run quickly, with
-reproducible results.
 
 
 Resolvers
@@ -98,9 +20,8 @@ Resolvers
 
 The resolvers are classes that "resolve" filesystem paths to lists of files and
 folders for those paths. The resolvers are arranged into a hierarchy. Each
-resolver examines the path and may resolve the path itself and/or pass control
-to another resolver. If a resolver does both, its list of files and folders
-appears above the ones provided by resolvers deeper in the hierarchy.
+resolver examines the path and may resolve the path itself or pass control
+to another resolver.
 
 Resolvers deeper in the hierarchy corresponds to sections that are further to
 the right in the path. If a resolver passes control to another resolver, it
@@ -111,10 +32,7 @@ several places in the filesystem. For instance, the resolver for the object
 package level can be reached though each of the root level search types.
 
 If a resolver determines that the path that it has received is invalid, it can
-abort processing of the path by raising a PathException. The resolver stores a
-brief error message in the exception. The exception is caught by the Root
-resolver, which renders it as a file in the ONEDrive filesystem, using the
-error message as the filename.
+abort processing of the path by raising a PathException.
 
 
 The hierarchy of resolvers
@@ -133,64 +51,53 @@ The hierarchy of resolvers
     }
     {
       rank = same;
-      "Preconfigured Search";
+      "FlatSpace";
+      "ObjectTree";
     }
     {
       rank = same;
-      "Faceted Search Selector";
-      "Flat Space";
-      Status;
+      "Author";
+      "Region";
+      "Single";
+      "Taxa";
+      "Time Period";
     }
     {
       rank = same;
-      "Faceted Search";
+      "Resource Map";
     }
     {
       rank = same;
       "DataONE Object";
     }
-    {
-      rank = same;
-      Package;
-    }
-    {
-      rank = same;
-      "Science Object";
-    }
 
-    Root -> "Faceted Search Selector";
-    Root -> "Preconfigured Search";
-    Root -> "Flat Space";
-    Root -> Status
+    Root -> "FlatSpace";
+    Root -> "ObjectTree";
 
-    "Faceted Search Selector" -> "DataONE Object";
-    "Faceted Search Selector" -> "Faceted Search";
-    "Preconfigured Search" -> "Faceted Search Selector"
-    "Flat Space" -> "DataONE Object";
-    Status -> "Coordinating Nodes";
-    Status -> "Member Nodes";
+    "ObjectTree" -> "Author";
+    "ObjectTree" -> "Region";
+    "ObjectTree" -> "Single";
+    "ObjectTree" -> "Taxa";
+    "ObjectTree" -> "Time Period";
 
-    "Faceted Search" -> "DataONE Object";
+    "FlatSpace" -> "Resource Map";
 
-    "DataONE Object" -> Package
-    "DataONE Object" -> "Science Object"
+    "Author" -> "Resource Map";
+    "Region" -> "Resource Map";
+    "Single" -> "Resource Map";
+    "Taxa" -> "Resource Map";
+    "Time Period" -> "Resource Map";
 
-    Package -> "Science Object"
-    Package -> "System Metadata"
-
-    "Science Object" -> "System Metadata"
-    "Science Object" -> "Science Metadata"
-    "Science Object" -> "Science Data"
+    "Resource Map" -> "DataONE Object"
   }
 
-Notes
-`````
+- The resolvers are all derived from the ``Resolver`` class, not from each
+  other.
 
-- The resolvers are all derived from ``ResolverABC``, not from each other.
-
-- Each resolver has two public methods, ``get_attributes()`` and
-  ``get_directory()``. ``get_attributes()`` returns the attributes for a file or
-  folder. ``get_directory()`` returns the directory contents for a folder.
+- Each resolver has three public methods, ``get_attributes()``,
+  ``get_directory()`` and ``read_file()``. ``get_attributes()`` returns the
+  attributes for a file or folder. ``get_directory()`` returns the directory
+  contents for a folder. ``read_file()`` returns sections of a DataONE object.
 
 - The ``Root`` resolver renders the root directory, which contains a set of
   directories designating different types of interactions which can be performed
@@ -203,34 +110,18 @@ Notes
   allows the path segments to contain DataONE identifiers that include the path
   separator and simplifies path handling in the resolvers.
 
-- The ``Faceted Search Selector`` exists so that faceted search can be turned
-  off once a specific object has been selected. In other words, the path::
+- ``ObjectTree`` ObjectTree renders a filesystem folder structure that
+  corresponds with the hierarchy of collections in the Zotero library. It takes
+  a source tree generator as input and that generator is currently the Zotero
+  client. This abstraction makes it easy to support additional online libraries,
+  sky drives and reference managers in the future.
 
-    /FacetedSearch/@facet1/#value1/@facet2/#value2/mydataonepid/science_object.jpg
-
-  does not cause a faceted search to be performed even though one is included.
-  The user has already found and selected an object, so the ``Faceted Search
-  Selector`` just strips the faceted search section off the path and passes
-  control to ``Package``. This eliminates superfluous searches. It also causes
-  the path to remain valid even if the specified object stops matching the
-  facets in the future.
-
-- ``Faceted Search`` also appears under ``Preconfigured Search``. This enables
-  the user to specify preconfigured searches for various classes of objects of
-  interest while still enabling the user to use faceted search to further narrow
-  down the results from the preconfigured searches.
-
-- ``Flat Space`` enables direct access to objects and enables users to share
+- ``FlatSpace`` enables direct access to objects and enables users to share
   short ONEDrive paths to directly access specific objects.
 
-- ``DataONE Object`` determines what type of object has been selected and calls
-  a resolver that is appropriate for the type. Currently, regular science
-  objects and packages are supported.
+- ``Resource Map`` renders the contents of a OAI-ORE Resource Map.
 
-- ``Package`` renders the contents of a OAI-ORE Resource Map.
-
-- The ``Status`` hierarchy is not implemented. It's just an indication of how
-  other DataONE related information can be exposed in the filesystem.
+- ``DataONE Object`` renders the folder view of a single DataONE object.
 
 
 The Root resolver
@@ -243,46 +134,29 @@ folder is handled by the Root resolver.
 
 ``get_attributes("/")``: Return the attributes for ``/`` (0 size, directory).
 
-``get_attributes("/FacetedSearch")``: Not handled by the Root resolver. The Root
-resolver strips off ``/FacetedSearch``, and passes the remaining path, ``/`` to
-the FacetedSearch resolver. So, even though ``/FacetedSearch`` is returned by
+``get_attributes("/ObjectTree")``: Not handled by the Root resolver. The Root
+resolver strips off ``/ObjectTree``, and passes the remaining path, ``/`` to the
+ObjectTree resolver. So, even though ``/ObjectTree`` is returned by
 ``get_directory("/")`` (see below) of the Root resolver, that same path is not
 handled by the Root resolver.
 
-``get_attributes("/FacetedSearch/some/other/path")``: Same as
-``get_attributes("/FacetedSearch")``, except that the path passed to the
-FacetedSearch resolver is now ``/some/other/path``.
+``get_attributes("/ObjectTree/some/other/path")``: Same as
+``get_attributes("/ObjectTree")``, except that the path passed to the
+ObjectTree resolver is now ``/some/other/path``.
 
 ``get_attributes("/invalid")``: This invalid path is handled by the Root
-resolver, which returns the attributes for a folder, that
-``get_directory("/invalid")`` will populate with an error message.
+resolver, which raises an InvalidPath exception.
 
 ``get_directory("/")``: Return directories for all of the valid 1st level
-resolvers, such as FacetedSearch.
+resolvers, such as ObjectTree.
 
-``get_directory("/FacetedSearch")``: Not handled by the Root resolver. As with
+``get_directory("/ObjectTree")``: Not handled by the Root resolver. As with
 the equivalent ``get_attributes()`` call, the path is actually the root for the
-FacetedSearch resolver.
+ObjectTree resolver.
 
-``get_directory("/FacetedSearch/some/other/path")``: Same as
-``get_directory("/FacetedSearch")``, except that the path passed to the
-FacetedSearch is now ``/some/other/path``.
-
-``get_directory("/invalid")``: Because the corresponding ``get_attributes()``
-call returned this as a valid folder, the Root resolver now has the chance to
-handle the folder and will use it for returning an error message as a folder
-that contains a single file, where the name of the file is the error message.
-
-
-Command processor
------------------
-
-To retrieve lists of files and folders for display in the filesystem, the
-resolvers issue commands to the Command processor. The Command processor
-transforms the commands into one or more queries against the DataONE Solr index
-and the DataONE infrastructure and wraps up the results.
-
-TODO: Describe normalization. Like self._close_open_date_ranges(record).
+``get_directory("/ObjectTree/some/other/path")``: Same as
+``get_directory("/ObjectTree")``, except that the path passed to the
+ObjectTree is now ``/some/other/path``.
 
 
 Path representation
@@ -302,21 +176,6 @@ empty strings. The first empty string shows that the path is absolute (starting
 at root), and the second that there is nothing after root. In ONEDrive, all
 paths represented as lists of path segments are assumed to be rooted, so the
 first, empty, element is removed.
-
-
-Searching in the ONEDrive filesystem
-------------------------------------
-
-Currently, a recursive search in the ONEDrive filesystem, such as with the
-"find" command in Unix, will cause Solr queries to be performed against the CN
-for each possible permutation of facet names and values. There is an "infinite"
-number of permutations, so this process will never finish.
-
-If a recursive search that also examines file contents is performed, ONEDrive
-will in addition attempt to download all objects in DataONE.
-
-It may be necessary to add a system to detect this type of search in ONEDrive
-and abort the process.
 
 
 Callbacks
@@ -339,9 +198,7 @@ ONEDrive handles ``getattr()`` calls as follows:
    match is found, the attributes for the file or folder are returned.
 
 #. If the path was not found in the cache, ``get_attributes()`` is called in the
-   root resolver. The resolver hierarchy will always return valid attributes due
-   to :ref:`the way error messages are returned by ONEDrive
-   <returning_error_messages>`.
+   root resolver.
 
 #. ``getattr()`` caches the result, then returns it.
 
@@ -371,48 +228,8 @@ ONEDrive handles ``readdir()`` calls as follows:
    to the path. If a match is found, the names of the contents for the folder
    are returned.
 
-#. ``get_directory()`` in the root resolver is called. Because
-   ``get_attributes()`` will designate invalid paths as folders,
-   ``get_directory()`` will also be called with those invalid paths. This is for
-   the purpose of :ref:`returning error messages <returning_error_messages>`.
-   So, ``get_directory()`` will never return a filesystem error. It may,
-   however, return folders containing error information. The error information
-   will be one of two types. The first type is in response to an invalid path
-   and the second is for internal errors, such as a failure in querying Solr.
-
 #. ``readdir()`` caches the result in the directory cache and returns it to
    FUSE.
-
-
-.. _returning_error_messages:
-
-Returning error messages
-------------------------
-
-Because ONEDrive applies semantics to sections of paths, it is useful to be able
-to provide error messages that are more descriptive than the errors usually
-provided by filesystems, such as "No such file or directory". The infrastructure
-that the operating system provides for filesystems does not include a way to
-return free text error messages, as errors are returned as predefined error
-codes. To work around this, ONEDrive renders an error as a folder which contains
-a single file, where the name of the file is the error message. This works as
-follows:
-
-For all paths except the root, discovery of the filesystem structure that is
-provided by ONEDrive starts by a call to `getattr()`_. In a normal filesystem,
-without semantics in the path, the initial call to ``getattr()`` would directly
-return an error code if the path was not valid. The error code would be resolved
-to an error message and displayed to the user, for instance as a popup message.
-In ONEDrive, the error message is not returned as an error code. Instead,
-``getattr()`` returns a stat structure telling FUSE and the OS that the requested
-(invalid) path is a valid folder. FUSE will then call back into ONEDrive via the
-``readdir()`` callback to get the contents of the directory. ONEDrive then
-returns, as the contents of that directory, a single file, which filename is the
-error message.
-
-In a later version of ONEDrive, this mechanism can be expanded so that the error
-message file can be opened to provide further details about the error and
-suggestions on how to proceed.
 
 
 Debugging
@@ -424,6 +241,17 @@ when debugging. On Ubuntu, the automated requests can be disabled temporarily by
 killing the gvfs processes::
 
   $ sudo pkill -9 -f gvfs
+
+
+Future improvements
+-------------------
+
+There's a lot more that can be done with Zotero integration if desired. For
+instance, ONEDrive could enable access to other information that can be stored
+in Zotero libraries, such as tags, notes and attached objects.
+
+ONEDrive could detect updates in Zotoro while it is running and dynamically
+update itself. Currently, ONEDrive only refreshes its caches during startup.
 
 
 Index
