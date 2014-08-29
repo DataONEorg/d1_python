@@ -229,7 +229,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def hasReservation(self, pid, subject):
     response = self.hasReservationResponse(pid, subject)
-    return self._read_boolean_response(response)
+    return self._read_boolean_404_response(response)
 
   #=============================================================================
   # Read API
@@ -356,7 +356,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def isAuthorized(self, pid, action):
     response = self.isAuthorizedResponse(pid, action)
-    return self._read_boolean_response(response)
+    return self._read_boolean_401_response(response)
 
   # CNAuthorization.setAccessPolicy(session, pid, accessPolicy, serialVersion) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNAuthorization.setAccessPolicy
@@ -677,7 +677,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def isNodeAuthorized(self, targetNodeSubject, pid):
     response = self.isNodeAuthorizedResponse(targetNodeSubject, pid)
-    return self._read_boolean_response(response)
+    return self._read_boolean_401_response(response)
 
 
   # CNReplication.deleteReplicationMetadata(session, pid, policy, serialVersion) → boolean

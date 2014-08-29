@@ -268,6 +268,14 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     return response.status == 200
 
 
+  def _status_is_404_not_found(self, response):
+    return response.status == 404
+
+
+  def _status_is_401_not_authorized(self, response):
+    return response.status == 401
+
+
   def _status_is_303_redirect(self, response):
     return response.status == 303
 
@@ -296,6 +304,20 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     if self._status_is_200_ok(response):
       self._read_and_capture(response)
       return True
+    self._error(response)
+
+
+  def _read_boolean_404_response(self, response):
+    if self._status_is_200_ok(response) or self._status_is_404_not_found(response):
+      self._read_and_capture(response)
+      return self._status_is_200_ok(response)
+    self._error(response)
+
+
+  def _read_boolean_401_response(self, response):
+    if self._status_is_200_ok(response) or self._status_is_401_not_authorized(response):
+      self._read_and_capture(response)
+      return self._status_is_200_ok(response)
     self._error(response)
 
 
