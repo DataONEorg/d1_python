@@ -128,7 +128,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   def listFormats(self):
     response = self.listFormatsResponse()
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'ObjectFormatList')
 
   # CNCore.getFormat(formatId) → ObjectFormat
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getFormat
@@ -142,7 +142,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def getFormat(self, formatId):
     response = self.getFormatResponse(formatId)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'ObjectFormat')
 
   # CNCore.getLogRecords(session[, fromDate][, toDate][, event][, start][, count]) → Log
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.getLogRecords
@@ -163,7 +163,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def reserveIdentifier(self, pid):
     response = self.reserveIdentifierResponse(pid)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Identifier')
 
 
   # CNCore.listChecksumAlgorithms() → ChecksumAlgorithmList
@@ -178,7 +178,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def listChecksumAlgorithms(self):
     response = self.listChecksumAlgorithmsResponse()
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'ChecksumAlgorithmList')
 
   # CNCore.setObsoletedBy(session, pid, obsoletedByPid, serialVersion) → boolean
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.setObsoletedBy
@@ -209,7 +209,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
   def listNodes(self):
     response = self.listNodesResponse()
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'NodeList')
 
 
   # CNCore.registerSystemMetadata(session, pid, sysmeta) → Identifier
@@ -229,7 +229,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def hasReservation(self, pid, subject):
     response = self.hasReservationResponse(pid, subject)
-    return self._read_dataone_type_response(response)
+    return self._read_boolean_response(response)
 
   #=============================================================================
   # Read API
@@ -254,7 +254,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def resolve(self, pid):
     response = self.resolveResponse(pid)
-    return self._read_dataone_type_response(response,
+    return self._read_dataone_type_response(response, 1, 0, 'ObjectLocationList',
       response_contains_303_redirect=True)
 
 
@@ -270,7 +270,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def getChecksum(self, pid):
     response = self.getChecksumResponse(pid)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'Checksum')
 
 
   # CNRead.search(session, queryType, query) → ObjectList
@@ -288,7 +288,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   #@d1_common.util.utf8_to_unicode
   def search(self, queryType, query=None, **kwargs):
     response = self.searchResponse(queryType, query, **kwargs)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'ObjectList')
 
 
   # CNRead.query(session, queryEngine, query) → OctetStream
@@ -319,7 +319,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(self, queryEngine, **kwargs):
     response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'QueryEngineDescription')
 
   #=============================================================================
   # Authorization API
@@ -446,7 +446,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def getSubjectInfo(self, subject):
     response = self.getSubjectInfoResponse(subject)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'SubjectInfo')
 
 
   # CNIdentity.listSubjects(session, query, status, start, count) → SubjectList
@@ -466,7 +466,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def listSubjects(self, query, status=None, start=None, count=None):
     response = self.listSubjectsResponse(query, status, start, count)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 0, 'SubjectInfo')
 
 
   # CNIdentity.mapIdentity(session, subject) → boolean
@@ -500,7 +500,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def removeMapIdentity(self, subject):
     response = self.denyMapIdentityResponse(subject)
-    return self._read_dataone_type_response(response)
+    return self._read_boolean_response(response)
 
 
   # CNIdentity.denyMapIdentity(session, subject) → boolean
@@ -515,7 +515,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   @d1_common.util.utf8_to_unicode
   def denyMapIdentity(self, subject):
     response = self.denyMapIdentityResponse(subject)
-    return self._read_dataone_type_response(response)
+    return self._read_boolean_response(response)
 
 
   # CNIdentity.requestMapIdentity(session, subject) → boolean

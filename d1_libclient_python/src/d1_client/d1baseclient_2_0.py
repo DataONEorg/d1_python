@@ -19,12 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Module d1_client.d1baseclient_1_1
+'''Module d1_client.d1baseclient_2_0
 ====================================
 
 :Synopsis:
-  This module implements DataONEBaseClient_1_1, which extends DataONEBaseClient
-  with functionality defined in v1.1 of the DataONE service specifications.
+  This module implements DataONEBaseClient_2_0, which extends DataONEBaseClient
+  with functionality defined in v2.0 of the DataONE service specifications.
 
   Methods that are common for CN and MN:
 
@@ -41,7 +41,7 @@
   See the `Coordinating Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
   and `Member Node <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
   APIs for details on how to use the methods in this class.
-:Created: 2011-01-20
+:Created: 2014-08-18
 :Author: DataONE (Vieglais, Dahl)
 '''
 
@@ -63,7 +63,7 @@ except ImportError as e:
 try:
   import d1_common.const
   import d1_common.restclient
-  import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes_1_1
+  import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
   import d1_common.util
   import d1_common.url
 except ImportError as e:
@@ -75,7 +75,7 @@ import d1_client.d1baseclient
 
 #=============================================================================
 
-class DataONEBaseClient_1_1(d1_client.d1baseclient.DataONEBaseClient):
+class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
   '''Implements DataONE client functionality common between Member and
   Coordinating nodes by extending the RESTClient.
 
@@ -121,36 +121,5 @@ class DataONEBaseClient_1_1(d1_client.d1baseclient.DataONEBaseClient):
 
 
   #=============================================================================
-  # v1.1 APIs shared between CNs and MNs.
+  # v2.0 APIs shared between CNs and MNs.
   #=============================================================================
-
-
-  # CNRead.query(session, queryEngine, query) → OctetStream
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.query
-
-  #@d1_common.util.utf8_to_unicode
-  def queryResponse(self, queryEngine, query=None, **kwargs):
-    url = self._rest_url('query/%(queryEngine)s/%(query)s', queryEngine=queryEngine,
-                         query=query if query is not None else '')
-    return self.GET(url, query=kwargs)
-
-
-  #@d1_common.util.utf8_to_unicode
-  def query(self, queryEngine, query=None, **kwargs):
-    response = self.queryResponse(queryEngine, query, **kwargs)
-    return self._read_stream_response(response)
-
-
-  # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
-  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getQueryEngineDescription
-
-  #@d1_common.util.utf8_to_unicode
-  def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
-    url = self._rest_url('query/%(queryEngine)s', queryEngine=queryEngine)
-    return self.GET(url, query=kwargs)
-
-
-  #@d1_common.util.utf8_to_unicode
-  def getQueryEngineDescription(self, queryEngine, **kwargs):
-    response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
-    return self._read_dataone_type_response(response, 1, 1, 'QueryEngineDescription')

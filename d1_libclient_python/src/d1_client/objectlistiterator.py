@@ -76,11 +76,6 @@ class ObjectListIterator(object):
   def __iter__(self):
     return self
 
-  def totalObjectCount(self):
-    '''Returns the total number of objects in the
-    '''
-    return self._object_list.total
-
   def next(self):
     '''Implements the next() method for the iterator.  Returns the next
     ObjectInfo instance. Loads more if at the end of the page and there's more
