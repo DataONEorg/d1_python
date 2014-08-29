@@ -41,7 +41,9 @@ import StringIO
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 # App.
+sys.path.append('..')
 from d1_client import solr_client
+from settings import *
 
 
 class TestSolrClient(TestCaseWithURLCompare):
@@ -65,10 +67,7 @@ class TestSolrClient(TestCaseWithURLCompare):
     # Working in browser, now.
     # https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*
 
-    client = solr_client.SolrConnection(
-      host=self.options.query_base_url,
-      solrBase=self.options.query_endpoint
-    )
+    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
     q = '*:*'
     fq = None
     fields = 'abstract,author,date'
@@ -80,10 +79,7 @@ class TestSolrClient(TestCaseWithURLCompare):
 
   def test_110(self):
     '''SOLRArrayResponseIterator()'''
-    client = solr_client.SolrConnection(
-      host=self.options.query_base_url,
-      solrBase=self.options.query_endpoint
-    )
+    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
     q = '*:*'
     fq = None
     fields = 'lat,lng'
@@ -93,10 +89,7 @@ class TestSolrClient(TestCaseWithURLCompare):
 
   def test_200(self):
     '''SOLRValuesResponseIterator()'''
-    client = solr_client.SolrConnection(
-      host=self.options.query_base_url,
-      solrBase=self.options.query_endpoint
-    )
+    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
     q = '*:*'
     fq = None
     field = 'size'
@@ -109,10 +102,7 @@ class TestSolrClient(TestCaseWithURLCompare):
   # get the list of fields.
   def _test_300(self):
     '''listFields()'''
-    client = solr_client.SolrConnection(
-      host=self.options.query_base_url,
-      solrBase=self.options.query_endpoint
-    )
+    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
     flds = client.getFields()
     print "%d fields indexed\n" % len(flds['fields'].keys())
     for name in flds['fields'].keys():
@@ -138,20 +128,6 @@ def main():
 
   # Command line opts.
   parser = optparse.OptionParser()
-  parser.add_option(
-    '--query-host-url',
-    dest='query_base_url',
-    action='store',
-    type='string',
-    default='cn.dataone.org'
-  )
-  parser.add_option(
-    '--query-base-url',
-    dest='query_endpoint',
-    action='store',
-    type='string',
-    default='/cn/v1/query/solr/'
-  )
   parser.add_option('--debug', action='store_true', default=False, dest='debug')
   parser.add_option(
     '--test', action='store',

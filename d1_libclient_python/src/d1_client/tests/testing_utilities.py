@@ -30,12 +30,12 @@
 import random
 
 # D1.
-import x509_extract_session
+import d1_x509v3_certificate_extractor
 
 
 def get_x509_subject(cert_path):
   cert_pem = open(cert_path).read()
-  return x509_extract_session.extract(cert_pem)[0]
+  return d1_x509v3_certificate_extractor.so.extract(cert_pem)[0]
 
 
 def get_total_number_of_objects(client):
@@ -53,7 +53,7 @@ def get_pid_by_index(client, idx):
     raise Exception('No objects')
 
 
-def get_random_pid(client):
+def get_random_valid_pid(client):
   total = get_total_number_of_objects(client)
   return get_pid_by_index(client, random.randint(0, total - 1))
 

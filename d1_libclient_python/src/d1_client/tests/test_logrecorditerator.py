@@ -35,9 +35,13 @@ import unittest
 import urlparse
 import sys
 
+sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+
+# These tests are disabled because they require a MN that permits access to
+# log records.
 
 
 class TestLogRecordIterator(unittest.TestCase):
@@ -47,19 +51,19 @@ class TestLogRecordIterator(unittest.TestCase):
   def setUp(self):
     self.base_url = "http://127.0.0.1:8000"
 
-  def test_100(self):
+  def _test_100(self):
     '''PageSize=20, start=0'''
     self._log_record_iterator_test(20, 0)
 
-  def test_110(self):
+  def _test_110(self):
     '''PageSize=1, start=63'''
     self._log_record_iterator_test(1, 63)
 
-  def test_120(self):
+  def _test_120(self):
     '''PageSize=2000, start=0'''
     self._log_record_iterator_test(2000, 0)
 
-  def test_130(self):
+  def _test_130(self):
     '''PageSize=20, start=20, fromDate=2005-01-01'''
     self._log_record_iterator_test(2000, 0, from_date=datetime.datetime(2005, 1, 1))
 
