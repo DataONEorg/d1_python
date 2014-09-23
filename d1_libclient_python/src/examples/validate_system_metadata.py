@@ -36,7 +36,7 @@
     the actual size and checksum of the object.
 
 :Author:
-  DataONE (Dahl)
+  DataONE (Dahl, Servilla)
 
 :Created:
   2014-08-14
@@ -48,11 +48,15 @@
   - A client side certificate that is trusted by the target Member Node.
 '''
 
+# Future
+from __future__ import print_function
+
 # Stdlib.
 import StringIO
 import csv
 import hashlib
 import re
+import sys
 
 # 3rd party.
 import pyxb
@@ -65,7 +69,7 @@ import d1_common.types.generated.dataoneTypes as dataone_types
 import d1_common.types.exceptions
 
 CSV_FILE_PATH = './validation_results.csv'
-BASE_URL = 'https://my_node.com/service_endpoint'
+BASE_URL = None # e.g., https://tropical.lternet.edu/knb/d1/mn/
 CERTIFICATE_PATH = None
 CERTIFICATE_KEY_PATH = None
 
@@ -76,10 +80,10 @@ def main():
     key_path=CERTIFICATE_KEY_PATH
   )
   with DataONENodeObjectValidator(mn_client, CSV_FILE_PATH) as mn_validator:
-    # Validate all PIDs that are accesible with certificate on MN or CN.
+    # Validate all PIDs that are accessible with certificate on MN or CN.
     mn_validator.validate()
     # Validating a single PID.
-    #mn_validator.validate_pid('doi:10.6073/AA/cce.155.1')
+    # mn_validator.validate_pid('doi:10.6073/AA/cce.155.1')
 
 
 class DataONENodeObjectValidator(object):
@@ -104,7 +108,6 @@ class DataONENodeObjectValidator(object):
     for o in d1_client.objectlistiterator.ObjectListIterator(self._src_client):
       pid = o.identifier.value()
       self.validate_pid(pid)
-      break
 
   def validate_pid(self, pid):
     try:
@@ -140,7 +143,7 @@ class DataONENodeObjectValidator(object):
   def _read_obj(self, pid):
     try:
       return self._src_client.get(pid).read()
-    except d1_common.types.exceptions.DataONEException as e:
+    except d1_common.types.exceptions.DataONEException:
       self._inc_count('Science Object Read errors')
       self._write_csv_row(pid, 'sci_obj_read_error')
       raise ValidationError()
@@ -148,6 +151,10 @@ class DataONENodeObjectValidator(object):
   def _read_sys_meta(self, pid):
     try:
       return self._src_client.getSystemMetadata(pid)
+    except (d1_common.types.exceptions.NotAuthorized):
+      self._inc_count('System Metadata Not Authorized error')
+      self._write_csv_row(pid, 'sys_meta_not_authorized_error')
+      raise NotAuthorized()
     except (
       d1_common.types.exceptions.DataONEException, pyxb.UnrecognizedDOMRootNodeError
     ):
@@ -157,16 +164,20 @@ class DataONENodeObjectValidator(object):
   def _read_sys_meta_with_correction(self, pid):
     try:
       return self._read_sys_meta(pid)
+    except NotAuthorized:
+      raise ValidationError()
     except ValidationError:
       sys_meta_str = self._src_client.getSystemMetadataResponse(pid).read()
+      sys_meta_str = sys_meta_str.replace('<preferredMemberNode/>', '')
+      sys_meta_str = sys_meta_str.replace(
+        '<preferredMemberNode></preferredMemberNode>', ''
+      )
       sys_meta_str = sys_meta_str.replace('<accessPolicy/>', '')
       sys_meta_str = sys_meta_str.replace('<blockedMemberNode/>', '')
       sys_meta_str = sys_meta_str.replace('<blockedMemberNode></blockedMemberNode>', '')
       try:
         return dataone_types.CreateFromDocument(sys_meta_str)
-      except (
-        d1_common.types.exceptions.DataONEException, pyxb.UnrecognizedDOMRootNodeError
-      ):
+      except (d1_common.types.exceptions.DataONEException, pyxb.PyXBException):
         self._inc_count('System Metadata Read errors (after correction)')
         self._write_csv_row(pid, 'sys_meta_read_error')
         raise ValidationError()
@@ -194,10 +205,14 @@ class DataONENodeObjectValidator(object):
 
   def _print_status(self):
     for c in sorted(self._counts):
-      print '{}: {}'.format(c, self._counts[c])
+      print('{}: {}'.format(c, self._counts[c]), file=sys.stderr)
 
 
 class ValidationError(Exception):
+  pass
+
+
+class NotAuthorized(Exception):
   pass
 
 
