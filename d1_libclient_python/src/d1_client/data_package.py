@@ -58,6 +58,7 @@ import rdflib.graph
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.checksum
 import d1_common.const
+import d1_common.url
 import d1_common.util
 
 rdflib.plugin.register(
@@ -169,11 +170,14 @@ class ResourceMapGenerator():
     assert (serialization_format in ALLOWABLE_PACKAGE_SERIALIZATIONS)
 
   def _resolvable_uri_from_pid(self, pid):
-    return rdflib.term.URIRef(self.dataone_root + D1_API_RESOLVE_REST_PATH + pid)
+    return rdflib.term.URIRef(
+      self.dataone_root + D1_API_RESOLVE_REST_PATH + d1_common.url.encodePathElement(pid)
+    )
 
   def _aggregation_uri_from_pid(self, pid):
     return rdflib.term.URIRef(
-      self.dataone_root + D1_API_RESOLVE_REST_PATH + pid + '#aggregation'
+      self.dataone_root + D1_API_RESOLVE_REST_PATH + d1_common.url.encodePathElement(
+        pid) + '#aggregation'
     )
 
   def _append_slash(self, path):
