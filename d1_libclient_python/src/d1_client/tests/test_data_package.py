@@ -58,14 +58,14 @@ def make_absolute(p):
 
 class TestDataPackage(TestCaseWithURLCompare):
   def setUp(self):
-    # The oai_ore.xml contains one resource map that describes one aggregation.
-    # The pid for the resource map is "abc". The aggregation doesn't have a
-    # a pid. Its subject is "...abc#aggregation". The aggregation lists the
-    # aggregated resources, "def", "ghi" and "jkl". Entries for each of the
-    # aggregated resources describe their relationships. "def" documents "ghi",
-    # and "jkl". The reverse relationship, "isDocumentedBy" is recorded in
-    # the "ghi" and "jkl" entries.
-    self.ore_doc = open(make_absolute('./d1_testdocs/oai_ore.xml')).read()
+    # The example_oai_ore.xml contains one resource map that describes one
+    # aggregation. The pid for the resource map is "abc". The aggregation
+    # doesn't have a a pid. Its subject is "...abc#aggregation". The aggregation
+    # lists the aggregated resources, "def", "ghi" and "jkl". Entries for each
+    # of the aggregated resources describe their relationships. "def" documents
+    # "ghi", and "jkl". The reverse relationship, "isDocumentedBy" is recorded
+    # in the "ghi" and "jkl" entries.
+    self.ore_doc = open(make_absolute('./example_oai_ore.xml')).read()
     self.generator = d1_client.data_package.ResourceMapGenerator()
     self.parser = d1_client.data_package.ResourceMapParser(self.ore_doc)
 
