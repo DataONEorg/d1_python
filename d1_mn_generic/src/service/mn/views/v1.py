@@ -186,7 +186,7 @@ def get_object_pid(request, pid):
   # after the view has returned, it is not protected by the implicit transaction
   # around a request. However, in the unlikely event that a request is made to
   # delete the object on disk that is being returned, Linux will only hide
-  # the file this request releases its file handle.   
+  # the file this request releases its file handle.
   return response
 
 
@@ -375,7 +375,7 @@ def _assert_node_is_authorized(request, pid):
     client.isNodeAuthorized(request.primary_subject, pid)
   except socket.gaierror:
     raise d1_common.types.exceptions.ServiceFailure(0,
-      'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))    
+      'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(0,
       'A CN has not authorized the target MN, "{0}" to create a replica of "{1}".\n'
@@ -619,11 +619,25 @@ def post_replicate(request):
 
 
 def _assert_request_complies_with_replication_policy(sysmeta):
+  if not service.settings.NODE_REPLICATE:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'This node does not currently accept replicas. Note that the replicate '
+      'attribute in the node element of the Node document is set to false. '
+      'To change, see NODE_REPLICATE in settings_site.py')
+
+  if service.settings.TIER < 4:
+    raise d1_common.types.exceptions.InvalidRequest(0,
+      'This node has been set up as a tier {0} Node and so cannot accept '
+      'replicas. Note that MNReplication is not included in the services '
+      'list in the Node document. To change, see TIER in settings_site.py'
+      .format(service.settings.TIER))
+
   if service.settings.REPLICATION_MAXOBJECTSIZE != -1:
     if sysmeta.size > service.settings.REPLICATION_MAXOBJECTSIZE:
       raise d1_common.types.exceptions.InvalidRequest(0,
         'This node does not allow objects of size larger than {0}. '
-        'The size of this object is {1}'
+        'The size of this object is {1}. '
+        'To change, see REPLICATION_MAXOBJECTSIZE in settings_site.py'
         .format(service.settings.REPLICATION_MAXOBJECTSIZE, sysmeta.size))
 
   if service.settings.REPLICATION_SPACEALLOCATED != -1:
@@ -631,19 +645,22 @@ def _assert_request_complies_with_replication_policy(sysmeta):
     if total > service.settings.REPLICATION_SPACEALLOCATED:
       raise d1_common.types.exceptions.InvalidRequest(0,
         'The total size allowed for replicas on this node has been exceeded. '
-        'Used: {0}. Allowed: {1}'
+        'Used: {0}. Allowed: {1}. '
+        'To change, see REPLICATION_SPACEALLOCATED in settings_site.py'
         .format(total, service.settings.REPLICATION_MAXOBJECTSIZE))
 
   if len(service.settings.REPLICATION_ALLOWEDNODE):
     if sysmeta.originMemberNode.value() not in service.settings.REPLICATION_ALLOWEDNODE:
       raise d1_common.types.exceptions.InvalidRequest(0,
-        'This node does not allow replicas from {0}'
+        'This node does not allow replicas from {0}. '
+        'To change, see REPLICATION_ALLOWEDNODE in settings_site.py'
         .format(sysmeta.originMemberNode.value()))
 
   if len(service.settings.REPLICATION_ALLOWEDOBJECTFORMAT):
     if sysmeta.formatId.value() not in service.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       raise d1_common.types.exceptions.InvalidRequest(0,
-        'This node does not allow objects of format {0}'
+        'This node does not allow objects of format {0}. '
+        'To change, see REPLICATION_ALLOWEDOBJECTFORMAT in settings_site.py'
         .format(sysmeta.formatId.value()))
 
 

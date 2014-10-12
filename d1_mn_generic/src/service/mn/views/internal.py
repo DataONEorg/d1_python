@@ -35,7 +35,7 @@ import platform
 
 # Django.
 import django
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.db.models import Avg, Count, Sum
 
@@ -62,6 +62,9 @@ import service.settings
 
 def home(request):
   '''Home page. Root of web server should redirect to here.'''
+  if request.path.endswith('/'):
+    return HttpResponseRedirect(request.path[:-1])
+
   gmn_version = service.__version__
   django_version = ', '.join(map(str, django.VERSION))
 

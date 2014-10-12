@@ -36,7 +36,7 @@ import time
 import urlparse
 
 # Django.
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.db.models import Q
 
@@ -72,7 +72,9 @@ def diagnostics(request):
     _delete_all_objects()
     _clear_replication_queue()
     _delete_subjects_and_permissions()
-  return render_to_response('test.html', d1_common.const.CONTENT_TYPE_XHTML)
+  if request.path.endswith('/'):
+    return HttpResponseRedirect(request.path[:-1])
+  return render_to_response('diag.html', d1_common.const.CONTENT_TYPE_XHTML)
 
 # ------------------------------------------------------------------------------
 # Replication.

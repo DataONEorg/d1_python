@@ -39,17 +39,17 @@ import d1_common.types.exceptions
 
 
 class ScienceObjectChecksumAlgorithm(models.Model):
-  checksum_algorithm = models.CharField(max_length=32, unique=True, db_index=True)
+  checksum_algorithm = models.CharField(max_length=32, unique=True)
 
 
 # Format = The format of the object.
 class ScienceObjectFormat(models.Model):
-  format_id = models.CharField(max_length=128, unique=True, db_index=True)
+  format_id = models.CharField(max_length=128, unique=True)
 
 
 class ScienceObject(models.Model):
-  pid = models.CharField(max_length=800, unique=True, db_index=True)
-  url = models.CharField(max_length=1024, unique=True, db_index=True)
+  pid = models.CharField(max_length=800, unique=True)
+  url = models.CharField(max_length=1024, unique=True)
   format = models.ForeignKey(ScienceObjectFormat, db_index=True)
   checksum = models.CharField(max_length=128, db_index=True)
   checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm, db_index=True)
@@ -91,24 +91,24 @@ class ScienceObject(models.Model):
 
 
 class EventLogEvent(models.Model):
-  event = models.CharField(max_length=128, unique=True, db_index=True)
+  event = models.CharField(max_length=128, unique=True)
 
 
 class EventLogIPAddress(models.Model):
-  ip_address = models.CharField(max_length=32, unique=True, db_index=True)
+  ip_address = models.CharField(max_length=32, unique=True)
 
 
 class EventLogUserAgent(models.Model):
-  user_agent = models.CharField(max_length=1024, unique=True, db_index=True)
+  user_agent = models.CharField(max_length=1024, unique=True)
 
 
 class EventLogSubject(models.Model):
   # TODO: Reference Subject table instead.
-  subject = models.CharField(max_length=1024, unique=True, db_index=True)
+  subject = models.CharField(max_length=1024, unique=True)
 
 
 class EventLogMemberNode(models.Model):
-  member_node = models.CharField(max_length=128, unique=True, db_index=True)
+  member_node = models.CharField(max_length=128, unique=True)
 
 
 class EventLog(models.Model):
@@ -206,7 +206,7 @@ class SystemMetadataRefreshQueue(models.Model):
 
 
 class PermissionSubject(models.Model):
-  subject = models.CharField(max_length=1024, unique=True, db_index=True)
+  subject = models.CharField(max_length=1024, unique=True)
 
 
 class Permission(models.Model):
