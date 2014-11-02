@@ -23,6 +23,6 @@ to upgrade it later.
   Copy the previously created locally signed client side certificate for
   outgoing connections::
 
-    $ cd /var/local/dataone/certs/ca
+    $ cd /var/local/dataone/certs/local_ca
     $ sudo mkdir -p ../client
     $ sudo cp client_cert.pem private/client_key_nopassword.pem ../client

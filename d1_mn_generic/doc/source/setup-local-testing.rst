@@ -23,7 +23,7 @@ require you to create a security exception. ``curl`` will need to be started
 with the ``--insecure`` switch. For example, ``curl --insecure <url>``.
 
 After the stand-alone GMN instance passes the tests, it can be joined to
-DataONE by performing the :ref:`registration <setup_env>` section of the
+DataONE by performing the :doc:`setup-env` section of the
 installation, in which the non-trusted certificate is replaced with a publicly
 trusted certificate from a 3rd party CA.
 
@@ -65,7 +65,7 @@ You should see an XML document such as this:
 
 This is your Node document. It exposes information about your Node to the
 DataONE infrastructure. It currently contains only default values. The
-:ref:`registration <setup_env>` section of the installation includes information
+:doc:`setup-env` section of the installation includes information
 on how to customize this document for your node.
 
 
@@ -112,6 +112,10 @@ Basic CLI usage
 
     > set
 
+  Save the settings::
+
+    > save
+
 
 Test anonymous connection
 -------------------------
@@ -126,43 +130,10 @@ Test anonymous connection
 
     > set anonymous true
 
-  Perform a MNRead.listObjects() call, which (by default) requires an
-  authenticated connection and should fail since the CLI is set to use anonymous
-  connections::
+  Perform a MNRead.listObjects() call, which will return a short XML document
+  representing an empty list of objects::
 
     > list
-
-  Verify that GMN returns a ``NotAuthorized`` exception.
-
-  Save the settings::
-
-    > save
-
-
-Test authenticated connection
------------------------------
-
-Using GMN's client side certificate for local connections is a convenient way of
-creating an authenticated connection. It works because GMN automatically trusts
-its own client side certificate.
-
-  If necessary, start the CLI as described above.
-
-  Switch to an authenticated connection::
-
-    > set anonymous false
-
-  Use GMN's client side certificate for authentication::
-
-    > set cert-file /var/local/dataone/certs/client/client_cert.pem
-    > set key-file /var/local/dataone/certs/client/client_key_nopassword.pem
-
-  Perform a MNRead.listObjects() call::
-
-    > list
-
-  Verify that GMN now accepted the call and returned a short XML document
-  representing an empty list.
 
   Save the settings::
 
@@ -173,7 +144,9 @@ Create and retrieve a test object
 ---------------------------------
 
 GMN automatically assigns create, update and delete permissions to its own
-client side certificate, so object creation can now be tested.
+client side certificate, so using GMN's client side certificate is a convenient
+way of creating an authenticated connection that can be used for creating
+objects on the node.
 
   If necessary, exit the CLI::
 
@@ -187,19 +160,21 @@ client side certificate, so object creation can now be tested.
 
     $ dataone
 
-  Verify that ``anonymous`` is still ``false`` and that ``cert-file`` and
-  ``key-file`` point to GMN's client side certificate in the session variables::
+  Switch to an authenticated connection::
 
-    > set
+    > set anonymous false
+
+  Use GMN's client side certificate for authentication::
+
+    > set cert-file /var/local/dataone/certs/client/client_cert.pem
+    > set key-file /var/local/dataone/certs/client/client_key_nopassword.pem
 
   Set the session variables that are required for creating the System Metadata
   for the new object::
 
     > set format-id text/plain
-    > set authoritative-mn TestMN
-    > set origin-mn TestMN
+    > set authoritative-mn urn:node:MyMemberNode
     > set rights-holder testSubject
-    > set submitter testSubject
 
   Queue the object create operation::
 
@@ -218,9 +193,10 @@ client side certificate, so object creation can now be tested.
 
     > list
 
-  Observe that the list now contains an entry for the newly created object.
+  Observe that the object list now contains an entry for the newly created
+  object.
 
-  Get the object::
+  Download the object::
 
     > get test /tmp/test2
 
@@ -240,3 +216,20 @@ client side certificate, so object creation can now be tested.
 See the `DataONE Command Line Interface (CLI) documentation
 <http://pythonhosted.org/dataone.cli>`_ for more information about how to use
 the CLI.
+
+After successful completion of the tests above, the new GMN instance is ready
+for stand-alone use. Usage scenarios for a stand-alone instance of GMN include
+development and testing of DataONE clients and other DataONE infrastructure
+components, evaluating performance and usability for some specific purpose and
+learning about the infrastructure. Significant effort has been made in keeping
+the implementation easy to read and extend as well.
+
+As a DataONE MN, GMN also brings a unique mix of features that may make it
+usable for object storage independent of DataONE. These features include X.509
+certificate based authentication and authorization, SSL/TLS encryption, fine
+grained ACL based access control for individual objects, basic tracking of
+provenance and associated metadata such as Content-Type and checksum and a REST
+API with libraries available for Java and Python.
+
+Continue with the next installation section if the node is to be registered with
+DataONE.

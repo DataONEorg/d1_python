@@ -10,8 +10,8 @@ Filesystem permissions
     $ sudo chmod -R g+w /var/local/dataone/
 
 Unlike the certificates, the contents of the private keys are sensitive. Set
-them to be readable only by root and follow best practices for security to keep
-root from being compromised.
+them to be readable only by gmn and follow best practices for security to keep
+root or gmn from being compromised.
 
   Set the private keys to be readable only by the gmn user::
 
@@ -25,7 +25,7 @@ Initialize the database
 
     $ sudo su gmn
     $ python /var/local/dataone/gmn/lib/python2.7/site-packages/service/manage.py syncdb
-    $ <ctrl-d>
+    $ exit
 
 
 Set server to UTC timezone (recommended)
@@ -60,3 +60,5 @@ GMN should now be ready to start. Simply restart Apache::
 
 Check the Apache logs for error messages. In case of any issues, refer to
 :doc:`troubleshooting`
+
+Continue to the next section to test your new node.

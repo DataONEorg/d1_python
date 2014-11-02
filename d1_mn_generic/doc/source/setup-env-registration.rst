@@ -23,6 +23,7 @@ Registering the MN in a testing environment involves the following steps:
 
 Perform the steps in order, as each step depends on earlier steps.
 
+.. _create_dataone_identity:
 
 Create a DataONE identity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -153,10 +154,6 @@ location, and the services it supports.
     E.g.: https://cn-stage.dataone.org/cn
 
 
-  * PASSWORD: Set the password that was selected for the gmn user in
-    :doc:`setup-postgresql`.
-
-
 Submit Member Node information to DataONE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -177,7 +174,8 @@ the previous step.
   When the Node document is successfully generated and displayed, register the
   MN by submitting the Node document to DataONE. The Node document is
   automatically submitted to DataONE over a TLS/SSL connection that has been
-  authenticated with the certificate obtained in :doc:`setup-authn-client`.
+  authenticated with the client side certificate configured in
+  :doc:`setup-env-authn-client`.
 
   ::
 

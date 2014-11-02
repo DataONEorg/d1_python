@@ -18,7 +18,6 @@ Contents
   use-authn-and-authz
   use
   maintenance
-  testing
   troubleshooting
   performance
   impl

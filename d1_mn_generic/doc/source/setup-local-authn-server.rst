@@ -16,9 +16,8 @@ trusted certificate from a 3rd party :term:`CA` such as VeriSign or Thawte until
 the stand-alone instance is registered with DataONE.
 
 A stand-alone instance that is not going to be registered with DataONE can use
-the non-trusted certificate indefinitely and it is important to note that such a
-scertificate is just as secure as a publicly trusted certificate when used
-locally.
+the non-trusted certificate indefinitely. Such a certificate is as secure as a
+publicly trusted certificate when used locally.
 
 If you already have a publicly trusted certificate that you intend to use, you
 can still install the snakeoil certificate here and just follow the instructions

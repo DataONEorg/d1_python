@@ -17,12 +17,13 @@ procedure below assumes that a valid certificate has already been obtained.
 Setup the server side certificate and private key
 -------------------------------------------------
 
-  Create a folder to hold the certificate and key::
+  Delete the previously installed non-trusted "snakeoil" certificate::
 
-    $ sudo mkdir -p /var/local/dataone/certs/server
+    $ rm /var/local/dataone/certs/server/{server_cert.pem,server_key_nopassword.pem}
 
-  Move the certificate and key to the ``/var/local/dataone/certs/server``
-  directory and rename them to ``server_cert.pem`` and ``server_key.pem``.
+  Move the trusted certificate and key to the
+  ``/var/local/dataone/certs/server`` directory and rename them to
+  ``server_cert.pem`` and ``server_key.pem``.
 
   If the key is password protected, Apache will prompt for the password each
   time it's started. As an optional step, the password can be removed::
@@ -48,4 +49,3 @@ Setup the server side certificate and private key
   ``SSLCertificateChainFile`` setting for GMN in the ``gmn-ssl.conf`` Virtual
   Host file. As with the server side certificate and key, the path in
   ``gmn-ssl.conf`` can be adjusted if necessary.
-

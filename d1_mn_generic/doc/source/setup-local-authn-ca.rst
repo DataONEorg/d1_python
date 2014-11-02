@@ -11,14 +11,15 @@ can then be used for creating authenticated connections to GMN.
 MNs that are registered with DataONE must trust the :term:`CILogon` CAs. But,
 for security, CILogon issues certificates that are only valid for 18 hours, and
 stand-alone nodes do not need to trust CILogon. So both stand-alone and
-registered instances of GMN are set up to also trust a locally generated CA.
-This allows the administrator of the MN to generate long lived certificates that
-can be used for creating authenticated connections to the MN. Common uses for
-these certificates on both stand-alone and registered GMN instances include
-enabling automated connections to the MN for performing tasks such as populating
-the Node with Science Objects. In addition, these certificates are used for
-regular user oriented tasks such as accessing the node via the the DataONE
-Command Line Client on stand-alone nodes.
+registered instances of GMN are set up to trust a locally generated CA. For
+stand-alone instances, this is typically the only trusted CA. Registered
+instances also trust CILogon and DataONE. The local CA enables the administrator
+of the MN to generate long lived certificates that can be used for creating
+authenticated connections to the MN. Common uses for these certificates on both
+stand-alone and registered GMN instances include enabling automated connections
+to the MN for performing tasks such as populating the Node with Science Objects.
+In addition, these certificates are used for regular user oriented tasks such as
+accessing the node via the the DataONE Command Line Client on stand-alone nodes.
 
 
 Setting up the local CA

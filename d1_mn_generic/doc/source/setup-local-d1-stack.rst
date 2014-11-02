@@ -34,9 +34,10 @@ The GMN stack contains binary components that are built automatically during
 the install. This sets up the build environment and other dependencies that
 are distributed as software packages from Ubuntu's repositories.
 
-The ``postgresql-server-dev-*`` package is used when building the Psycopg2
-PostgreSQL database adapter for Python. The ``libssl-dev`` package is used when
-building the DataONE certificate extensions.
+``postgresql-server-dev-*`` is used when building the Psycopg2 PostgreSQL
+database adapter for Python. ``libssl-dev`` is used when building the DataONE
+certificate extensions. ``libxml2-dev`` and ``libxslt1-dev`` are dependencies of
+the Foresite Toolkit, which handles parsing of OAI-ORE Resource Maps.
 
   Set up packages::
 
@@ -47,14 +48,11 @@ building the DataONE certificate extensions.
 
     $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade; \
     sudo pip install virtualenv; sudo mkdir -p /var/local/dataone/gmn; \
-    cd /var/local/dataone; sudo chown gmn:www-data gmn; su gmn;
-
-  Type the password for the gmn user when prompted.
-
-  ::
+    cd /var/local/dataone; sudo chown gmn:www-data gmn; sudo su gmn;
 
     $ virtualenv --distribute gmn; cd gmn; . bin/activate; \
     pip install dataone.generic_member_node
+
     $ exit
 
 
