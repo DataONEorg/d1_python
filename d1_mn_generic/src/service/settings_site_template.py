@@ -286,12 +286,12 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 
 # Enable MNRead.listObjects() for public and regular authenticated users.
 #
-# False:
-# - MNRead.listObjects() can only be called by trusted infrastructure (CNs).
-# True:
+# True (default):
 # - MNRead.listObjects() can be called by any level of user (trusted
 #   infrastructure, authenticated and public), and results are filtered
 #   to list only objects to which the user has access.
+# False:
+# - MNRead.listObjects() can only be called by trusted infrastructure (CNs).
 #
 # The primary means for a user to discover objects is to use the search
 # facilities exposed by CNs. By enabling this option, regular users can also
@@ -300,25 +300,25 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 # filtered list of all objects on the node for each page that is returned).
 # These are also the reasons that DataONE specified implementation of access
 # control for public and regular users to be optional for this API.
-PUBLIC_OBJECT_LIST = True if GMN_DEBUG else False
+PUBLIC_OBJECT_LIST = True
 
 # Enable MNCore.getLogRecords() access for public and regular authenticated
 # users.
 #
-# False:
-# - MNCore.getLogRecords() can only be called by trusted infrastructure (CNs).
-# True:
+# True (default):
 # - MNCore.getLogRecords() can be called by any level of user (trusted
 #   infrastructure, authenticated and public), and results are filtered
 #   to list only log records to which the user has access. In particular,
 #   this means that all users can retrieve log records for public objects.
+# False:
+# - MNCore.getLogRecords() can only be called by trusted infrastructure (CNs).
 #
 # Regardless of this setting, the DataONE Coordinating Nodes provide access
 # controlled log records which are aggregated across all Member Nodes that hold
 # replicas of a given object. Setting this to True allows users to get log
 # records directly from this Member Node in addition to the aggregated logs
 # available from CNs.
-PUBLIC_LOG_RECORDS = True if GMN_DEBUG else False
+PUBLIC_LOG_RECORDS = True
 
 # Set permissions required for calling the MNStorage.update() API method.
 # True (default):
@@ -326,7 +326,7 @@ PUBLIC_LOG_RECORDS = True if GMN_DEBUG else False
 #   whitelist for Create, Update and Delete in order to update the object.
 # False:
 # - Any user that has write permission on an object can update it.
-REQUIRE_WHITELIST_FOR_UPDATE = False
+REQUIRE_WHITELIST_FOR_UPDATE = True
 
 # Database connection.
 # GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is

@@ -31,12 +31,19 @@
   http://pythonhosted.org/setuptools/setuptools.html
   http://docs.python.org/2/distutils/setupscript.html
 
-  This uses an explicit MANIFEST file. Remember to update it when files are
-  added or removed.
+  Notes:
+
+  - This script automatically includes all files (.py and others) that are in
+    Subversion in the package and installs those same files.
+
+  - We don't use MANIFEST or MANIFEST.in because they imply a fixed set of
+    files, and we want to automatically include only versioned files.
 """
+import locale
 import os
 import re
-from setuptools import setup, find_packages
+import setuptools
+import sys
 
 import service
 
@@ -51,7 +58,20 @@ license = 'Apache License, Version 2.0'
 
 
 def main():
-  setup(
+  # Enable SVN to work with filenames containing Unicode.
+  #locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+
+  # Without a list of packages specified with the packages parameter, nothing
+  # gets installed. While, with a list of packages specified, unversioned files
+  # are included in the package and are also installed. The solution is to
+  # specify packages only at install time, not at build time.
+
+  if 'install' in sys.argv:
+    packages = setuptools.find_packages()
+  else:
+    packages = None
+
+  setuptools.setup(
     # Metadata
     name=name,
     version=version,
@@ -60,9 +80,18 @@ def main():
     author_email=author_email,
     url=url,
     license=license,
-    # Contents (modified by MANIFEST.in)
-    packages=find_packages(),
+
+    # Selection of files to include in package and to later install.
+    packages=packages,
+    # include_package_data = True does not affect which files get included in
+    # the package, only which files that are installed. Without
+    # include_package_data = True, data files that are included in the package
+    # because they are versioned are not installed.
     include_package_data=True,
+    # package_data is only used when building binary packages (bdist). It is not
+    # relevant for source packages (sdist).
+    # package_data,
+
     # Dependencies that are available through PyPI.
     install_requires=[
       # GMN uses dataone.common directly but, to keep the versions consistent,
