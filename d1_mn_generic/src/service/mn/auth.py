@@ -25,6 +25,9 @@
 :Author: DataONE (Dahl)
 '''
 
+# Stdlib.
+import logging
+
 # Django.
 import django.core.cache
 import django.db
@@ -254,11 +257,12 @@ def _get_client_side_certificate_subject():
   subject = django.core.cache.cache.get('client_side_certificate_subject')
   if subject is not None:
     return subject
-
   cert_pem = _get_client_side_certificate_pem()
   subject = _extract_subject_from_pem(cert_pem)
-
   django.core.cache.cache.set('client_side_certificate_subject', subject)
+  logging.info(
+    'Added own client side certificate to trusted subjects: {0}'.format(subject)
+  )
   return subject
 
 

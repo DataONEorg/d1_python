@@ -49,23 +49,23 @@ function clear_replication_queue_confirmation() {
 		<li>MNRead.listObjects()</li>
 		<ul>
 		  	<li>
-		  		<a href="../v1/object">
+		  		<a href="v1/object">
 			  		Unfiltered
 		      	</a>
 		  	</li>
 		  	<li>
-		  		<a href="../v1/object?fromDate=2005-01-01T12:00:00Z&toDate=2012-01-01T12:00:00Z">
+		  		<a href="v1/object?fromDate=2005-01-01T12:00:00Z&toDate=2012-01-01T12:00:00Z">
 			  		Filter by date range (modify)
 		      	</a>
 		  	</li>
 		  	<li>
-				<a href="../v1/object?formatId=my_format_id">
+				<a href="v1/object?formatId=my_format_id">
 		      		Filtered by Format ID (modify)
 		      	</a>
 		  	</li>
 
 		  	<li>
-      			<a href="../v1/object?fromDate={fromDate}&toDate={toDate}&formatId={formatId}&replicaStatus={replicaStatus}&start={start}&count={count}]">
+      			<a href="v1/object?fromDate={fromDate}&toDate={toDate}&formatId={formatId}&replicaStatus={replicaStatus}&start={start}&count={count}]">
       				Complete (modify)
 		      	</a>
 		  	</li>
@@ -76,17 +76,17 @@ function clear_replication_queue_confirmation() {
 		<li>MNCore.getLogRecords()</li>
 		<ul>
 		  	<li>
-		  		<a href="../v1/log">
+		  		<a href="v1/log">
 			  		Unfiltered
 		      	</a>
 		  	</li>
 		  	<li>
-		  		<a href="../v1/log?pidFilter=my_pid">
+		  		<a href="v1/log?pidFilter=my_pid">
 			  		Filter by object (modify)
 		      	</a>
 		  	</li>
       		<li>
-      			<a href="../v1/log?[fromdate={fromDate}][&todate={toDate}][&event={event}][&pidFilter={pidFilter}][&start={start}][&count={count}]">
+      			<a href="v1/log?[fromdate={fromDate}][&todate={toDate}][&event={event}][&pidFilter={pidFilter}][&start={start}][&count={count}]">
       				Complete (modify)
       			</a>
 			</li>
@@ -95,7 +95,7 @@ function clear_replication_queue_confirmation() {
 		<li>MNRead.get()</li>
 		<ul>
 			<li>
-				<a href="../v1/object/my_pid">
+				<a href="v1/object/my_pid">
 					Get object (modify)
 				</a>
 			</li>
@@ -104,7 +104,7 @@ function clear_replication_queue_confirmation() {
 		<li>MNRead.getSystemMetadata()</li>
 		<ul>
 			<li>
-				<a href="../v1/meta/my_pid">
+				<a href="v1/meta/my_pid">
 					Get System Metadata for object (modify)
 				</a>
 			</li>
@@ -113,7 +113,7 @@ function clear_replication_queue_confirmation() {
 		<li>MNCore.getCapabilities()</li>
 		<ul>
 			<li>
-				<a href="../v1/node">
+				<a href="v1/node">
 					Get capabilities of this Member Node
 				</a>
 			</li>
@@ -122,7 +122,7 @@ function clear_replication_queue_confirmation() {
 		<li>MNRead.getChecksum()</li>
 		<ul>
 			<li>
-				<a href="../v1/checksum/my_pid">
+				<a href="v1/checksum/my_pid">
 					Get checksum of object (modify)
 				</a>
 			</li>
@@ -131,17 +131,17 @@ function clear_replication_queue_confirmation() {
 		<li>MNAuthorization.isAuthorized()</li>
 		<ul>
 		  	<li>
-		  		<a href="../v1/isAuthorized/my_pid?action=read">
+		  		<a href="v1/isAuthorized/my_pid?action=read">
 			  		Check for read permission (modify)
 		      	</a>
 		  	</li>
 		  	<li>
-		  		<a href="../v1/isAuthorized/my_pid?action=write">
+		  		<a href="v1/isAuthorized/my_pid?action=write">
 			  		Check for write permission (modify)
 		      	</a>
 		  	</li>
 		  	<li>
-				<a href="../v1/isAuthorized/my_pid?action=changePermission">
+				<a href="v1/isAuthorized/my_pid?action=changePermission">
 		      		Check for permission to change permissions (modify)
 		      	</a>
 		  	</li>

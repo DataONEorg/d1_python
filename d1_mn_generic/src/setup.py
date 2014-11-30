@@ -65,7 +65,6 @@ def main():
   # gets installed. While, with a list of packages specified, unversioned files
   # are included in the package and are also installed. The solution is to
   # specify packages only at install time, not at build time.
-
   if 'install' in sys.argv:
     packages = setuptools.find_packages()
   else:
@@ -104,7 +103,7 @@ def main():
       'iso8601 == 0.1.4',
       'psycopg2 == 2.5.2',
       # GMN does not use the CLI programmatically -- it's just included because
-      # the CLI is a convenient way to interact with GMN . So the latest version
+      # the CLI is a convenient way to interact with GMN. So the latest version
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
     ],
