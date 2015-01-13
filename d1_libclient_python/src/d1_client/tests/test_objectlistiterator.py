@@ -44,11 +44,11 @@ import pyxb.binding
 
 class TestObjectListIterator(unittest.TestCase):
   '''
-  '''
+    '''
 
   def test_objectlistiterator(self):
     '''Walk over the list of log entries available from a given node.
-    '''
+        '''
     base_url = "https://cn.dataone.org/cn"
     if len(sys.argv) > 1:
       target = sys.argv[1]
@@ -60,14 +60,11 @@ class TestObjectListIterator(unittest.TestCase):
       self.assertTrue(isinstance(o, dataoneTypes.ObjectInfo))
       self.assertTrue(
         isinstance(
-          o.identifier.value(
-          ), dataoneTypes.NonEmptyNoWhitespaceString800
+          o.identifier.value(), dataoneTypes.NonEmptyNoWhitespaceString800
         )
       )
       self.assertTrue(
-        isinstance(
-          o.dateSysMetadataModified, pyxb.binding.datatypes.dateTime
-        )
+        isinstance(o.dateSysMetadataModified, pyxb.binding.datatypes.dateTime)
       )
       self.assertTrue(isinstance(o.formatId, dataoneTypes.ObjectFormatIdentifier))
       self.assertTrue(isinstance(o.size, pyxb.binding.datatypes.unsignedLong))
@@ -75,7 +72,7 @@ class TestObjectListIterator(unittest.TestCase):
       self.assertTrue(isinstance(o.checksum.algorithm, dataoneTypes.ChecksumAlgorithm))
     self.assertEqual(counter, 200)
 
-#===============================================================================
+#=========================================================================
 
 
 def log_setup():

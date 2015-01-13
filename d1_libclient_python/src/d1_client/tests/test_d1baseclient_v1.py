@@ -44,8 +44,8 @@ import d1_client.d1baseclient
 from settings import *
 
 
-class TestDataONEBaseClient(TestCaseWithURLCompare):
-  def test_010(self):
+class TestDataONEBaseClientV1(TestCaseWithURLCompare):
+  def test_010_v1(self):
     '''_slice_sanity_check()'''
     client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
     self.assertRaises(
@@ -59,7 +59,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
       'invalid_int'
     )
 
-  def test_020(self):
+  def test_020_v1(self):
     '''_date_span_sanity_check()'''
     client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
     old_date = d1_common.date_time.create_utc_datetime(1970, 4, 3)
@@ -70,7 +70,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     )
     self.assertEqual(None, client._date_span_sanity_check(old_date, new_date))
 
-  def test_030(self):
+  def test_030_v1(self):
     '''_rest_url()'''
     client = d1_client.d1baseclient.DataONEBaseClient(
       "http://bogus.target/mn", version='v1'
@@ -89,7 +89,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     )
     self.assertEqual('/mn/v1/log', client._rest_url('log'))
 
-  def test_040(self):
+  def test_040_v1(self):
     '''get_schema_version()'''
     client = d1_client.d1baseclient.DataONEBaseClient(CN_URL)
     version = client.get_schema_version()
@@ -98,43 +98,43 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
   # CNCore.getLogRecords()
   # MNCore.getLogRecords()
 
-  def _getLogRecords(self, base_url):
+  def _getLogRecords_v1(self, base_url):
     '''getLogRecords() returns a valid Log. CNs will return an empty log for public connections'''
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
     log = client.getLogRecords()
     self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
     return log
 
-  def test_110(self):
+  def test_110_v1(self):
     '''CNCore.getLogRecords()'''
     # 10/17/13: Currently broken. Add back in, in 1/2 year.
-    # self._getLogRecords(CN_URL)
+    # self._getLogRecords_v1(CN_URL)
 
-  def test_120(self):
+  def test_120_v1(self):
     '''MNRead.getLogRecords()'''
-    log = self._getLogRecords(MN_URL)
+    log = self._getLogRecords_v1(MN_URL)
     self.assertTrue(len(log.logEntry) >= 2)
 
   # CNCore.ping()
   # MNCore.ping()
 
-  def _ping(self, base_url):
+  def _ping_v1(self, base_url):
     '''ping()'''
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
     self.assertTrue(client.ping())
 
-  def test_200(self):
+  def test_200_v1(self):
     '''ping() CN'''
-    self._ping(CN_URL)
+    self._ping_v1(CN_URL)
 
-  def test_210(self):
+  def test_210_v1(self):
     '''ping() MN'''
-    self._ping(MN_URL)
+    self._ping_v1(MN_URL)
 
   # CNRead.get()
   # MNRead.get()
 
-  def _get(self, base_url, invalid_pid=False):
+  def _get_v1(self, base_url, invalid_pid=False):
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
@@ -365,7 +365,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestDataONEBaseClient
+  s = TestDataONEBaseClientV1
   s.options = options
 
   if options.test != '':

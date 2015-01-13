@@ -97,8 +97,7 @@ class TestDataPackage(TestCaseWithURLCompare):
       'test_pid', 'test_object', 'rights_holder'
     )
     self.assertEqual(
-      sys_meta.checksum.value(
-      ), 'fc20ab0360ba35c4e29401c286d995b761a3cfc0'
+      sys_meta.checksum.value(), 'fc20ab0360ba35c4e29401c286d995b761a3cfc0'
     )
     self.assertEqual(sys_meta.checksum.algorithm, 'SHA-1')
 
@@ -328,7 +327,7 @@ class TestDataPackage(TestCaseWithURLCompare):
       ) in doc
     )
 
-#===============================================================================
+#=========================================================================
 
 
 def log_setup():

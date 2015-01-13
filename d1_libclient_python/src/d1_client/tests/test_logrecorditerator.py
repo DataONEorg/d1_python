@@ -46,7 +46,7 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 class TestLogRecordIterator(unittest.TestCase):
   '''
-  '''
+    '''
 
   def setUp(self):
     self.base_url = "http://127.0.0.1:8000"
@@ -79,13 +79,13 @@ class TestLogRecordIterator(unittest.TestCase):
     cnt = 0
     for event in log_record_iterator:
       self.assertTrue(isinstance(event.event, dataoneTypes.Event))
-      #print "Event    = %s" % event.event
-      #print "Timestamp  = %s" % event.dateLogged.isoformat()
-      #print "IP Addres  = %s" % event.ipAddress
-      #print "Identifier = %s" % event.identifier.value()
-      #print "User agent = %s" % event.userAgent
-      #print "Subject  = %s" % event.subject.value()
-      #print '-' * 79
+      # print "Event    = %s" % event.event
+      # print "Timestamp  = %s" % event.dateLogged.isoformat()
+      # print "IP Addres  = %s" % event.ipAddress
+      # print "Identifier = %s" % event.identifier.value()
+      # print "User agent = %s" % event.userAgent
+      # print "Subject  = %s" % event.subject.value()
+      # print '-' * 79
       cnt += 1
     self.assertEqual(cnt, total - start)
 
@@ -96,6 +96,6 @@ class TestLogRecordIterator(unittest.TestCase):
     ).total
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   logging.getLogger("").setLevel(logging.DEBUG)
   unittest.main()

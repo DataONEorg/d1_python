@@ -54,14 +54,14 @@ MEMBER_NODES = {
 
 COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn', }
 
-#===============================================================================
+#=========================================================================
 
 
 class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
     self.target = MEMBER_NODES['dryad']
 
-#===============================================================================
+#=========================================================================
 
 
 def log_setup():

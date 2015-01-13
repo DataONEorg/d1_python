@@ -50,76 +50,83 @@ import re
 import urlparse
 import StringIO
 import sys
+import d1client
 
 # 3rd party.
 try:
-  import pyxb
+    import pyxb
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install PyXB\n')
-  raise
+    sys.stderr.write('Import error: {0}\n'.format(str(e)))
+    sys.stderr.write('Try: easy_install PyXB\n')
+    raise
 
 # D1.
 try:
-  import d1_common.const
-  import d1_common.restclient
-  import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
-  import d1_common.util
-  import d1_common.url
+    import d1_common.const
+    import d1_common.restclient
+    import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
+    import d1_common.util
+    import d1_common.url
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+    sys.stderr.write('Import error: {0}\n'.format(str(e)))
+    sys.stderr.write('Try: easy_install DataONE_Common\n')
+    raise
 
 import d1_client.d1baseclient
 
 #=============================================================================
 
+
 class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
-  '''Implements DataONE client functionality common between Member and
-  Coordinating nodes by extending the RESTClient.
 
-  Wraps REST methods that have the same signatures on Member Nodes and
-  Coordinating Nodes.
+    '''Implements DataONE client functionality common between Member and
+    Coordinating nodes by extending the RESTClient.
 
-  On error response, an attempt to raise a DataONE exception is made.
+    Wraps REST methods that have the same signatures on Member Nodes and
+    Coordinating Nodes.
 
-  Unless otherwise indicated, methods with names that end in "Response" return
-  the HTTPResponse object, otherwise the deserialized object is returned.
-  '''
-  def __init__(self, *args, **kwargs):
-    '''Connect to a DataONE Coordinating Node or Member Node.
+    On error response, an attempt to raise a DataONE exception is made.
 
-    :param base_url: DataONE Node REST service BaseURL
-    :type host: string
-    :param timeout: Time in seconds that requests will wait for a response.
-    :type timeout: integer
-    :param defaultHeaders: headers that will be sent with all requests.
-    :type defaultHeaders: dictionary
-    :param cert_path: Path to a PEM formatted certificate file.
-    :type cert_path: string
-    :param key_path: Path to a PEM formatted file that contains the private key
-      for the certificate file. Only required if the certificate file does not
-      itself contain a private key.
-    :type key_path: string
-    :param strict: Raise BadStatusLine if the status line can’t be parsed
-      as a valid HTTP/1.0 or 1.1 status line.
-    :type strict: boolean
-    :param capture_response_body: Capture the response body from the last
-      operation and make it available in last_response_body.
-    :type capture_response_body: boolean
-    :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
-    :type response_contains_303_redirect: boolean
-    :param version: Value to insert in the URL version section.
-    :type version: string
-    :param types: The PyXB bindings to use for XML serialization and
-      deserialization.
-    :type types: PyXB
-    :returns: None
+    Unless otherwise indicated, methods with names that end in "Response" return
+    the HTTPResponse object, otherwise the deserialized object is returned.
     '''
-    d1_client.d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
 
+    def __init__(self, *args, **kwargs):
+        '''Connect to a DataONE Coordinating Node or Member Node.
 
-  #=============================================================================
-  # v2.0 APIs shared between CNs and MNs.
-  #=============================================================================
+        :param base_url: DataONE Node REST service BaseURL
+        :type host: string
+        :param timeout: Time in seconds that requests will wait for a response.
+        :type timeout: integer
+        :param defaultHeaders: headers that will be sent with all requests.
+        :type defaultHeaders: dictionary
+        :param cert_path: Path to a PEM formatted certificate file.
+        :type cert_path: string
+        :param key_path: Path to a PEM formatted file that contains the private key
+          for the certificate file. Only required if the certificate file does not
+          itself contain a private key.
+        :type key_path: string
+        :param strict: Raise BadStatusLine if the status line can’t be parsed
+          as a valid HTTP/1.0 or 1.1 status line.
+        :type strict: boolean
+        :param capture_response_body: Capture the response body from the last
+          operation and make it available in last_response_body.
+        :type capture_response_body: boolean
+        :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
+        :type response_contains_303_redirect: boolean
+        :param version: Value to insert in the URL version section.
+        :type version: string
+        :param types: The PyXB bindings to use for XML serialization and
+          deserialization.
+        :type types: PyXB
+        :returns: None
+        '''
+        d1_client.d1baseclient.DataONEBaseClient.__init__(
+            self,
+            *
+            args,
+            **kwargs)
+
+    #=========================================================================
+    # v2.0 APIs shared between CNs and MNs.
+    #=========================================================================
