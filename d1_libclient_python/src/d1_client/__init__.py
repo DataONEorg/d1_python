@@ -26,6 +26,7 @@ __all__ = [
   'cnclient_1_1',
   'd1baseclient',
   'd1baseclient_1_1',
+  'd1baseclient_2_0',
   'd1client',
   'data_package',
   'logrecorditerator',

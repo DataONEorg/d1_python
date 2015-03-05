@@ -155,7 +155,9 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
         # Other.
         self.response_contains_303_redirect = False
 
-    def _parse_url(self, url):
+    def _parse_url(self, url,clear_cache = False):
+        if clear_cache:
+            urlparse.clear_cache()
         parts = urlparse.urlsplit(url)
         if parts.port is None:
             port = 443 if parts.scheme == 'https' else 80

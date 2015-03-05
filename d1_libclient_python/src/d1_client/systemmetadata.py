@@ -45,7 +45,7 @@ import xml.etree.ElementTree
 # 3rd party.
 try:
   from dateutil.parser import parse as parseDateString
-except ImportError, e:
+except ImportError as e:
   sys.stderr.write('Import error: %s\n' % str(e))
   sys.stderr.write('Try: sudo easy_install python-dateutil\n')
   sys.stderr.write('Home: http://labix.org/python-dateutil\n')
@@ -62,22 +62,22 @@ except ImportError as e:
 
 class SystemMetadata(object):
   '''Wrapper around a System Metadata entry.  Provides convenience properties
-  for accessing the parsed content of the document.
-  '''
+    for accessing the parsed content of the document.
+    '''
 
   def __init__(self, xmldoc):
     ''':param xmldoc: (Unicode) The XML document to parse as System Metadata.
-    '''
+        '''
     self.etree = None
     self.xmldoc = xmldoc
     self._parse(xmldoc)
 
   def _parse(self, xmldoc):
     '''Parse the content and generate the internal "etree" which is the
-    element tree instance that results from parsing.
+        element tree instance that results from parsing.
 
-    :param xmldoc: (Unicode) The System Metadata document to parse.
-    '''
+        :param xmldoc: (Unicode) The System Metadata document to parse.
+        '''
     if not isinstance(xmldoc, basestring):
       xmldoc = xmldoc.read()
     self.xmldoc = xmldoc
@@ -89,9 +89,9 @@ class SystemMetadata(object):
   def toXml(self, encoding='utf-8', pretty=True):
     '''Spits out representation of the parsed xml.
 
-    :param pretty: Output is a bit easier for human digestion if True
-    :rtype: (string) UTF-8 encoded string
-    '''
+        :param pretty: Output is a bit easier for human digestion if True
+        :rtype: (string) UTF-8 encoded string
+        '''
     xml_doc = xml.etree.ElementTree.tostring(self.etree, encoding)
     if pretty:
       return d1_common.util.pretty_xml(xml_doc)
@@ -114,13 +114,13 @@ class SystemMetadata(object):
 
   def __getattr__(self, name):
     '''Try and automate getting the simple properties of the schema. This works
-    for elements that are simple string values.  Multiple values or things that
-    require type casting need their own accessor method.
+        for elements that are simple string values.  Multiple values or things that
+        require type casting need their own accessor method.
 
-    TODO: Go through the propterties for simple string values below and see
-    if they can be removed.
-    '''
-    #First try the inherited method
+        TODO: Go through the propterties for simple string values below and see
+        if they can be removed.
+        '''
+    # First try the inherited method
     try:
       return super(SystemMetadata, self).__getattr__(name)
     except AttributeError:
@@ -133,38 +133,38 @@ class SystemMetadata(object):
   @property
   def pid(self):
     '''
-    '''
+        '''
     return self._getValues(u'identifier')
 
   @property
   def objectFormat(self):
     '''
-    '''
+        '''
     return self._getValues(u'objectFormat')
 
   @property
   def submitter(self):
     '''
-    '''
+        '''
     return self._getValues(u'submitter')
 
   @property
   def rightsHolder(self):
     '''
-    '''
+        '''
     return self._getValues(u'rightsHolder')
 
   # <checksum algorithm="MD5">4a8565eddcef66b2147d3aa313f3ebbb</checksum>
   @property
   def checksum(self):
     '''
-    '''
+        '''
     return self._getValues(u'checksum')
 
   @property
   def checksumAlgorithm(self):
     '''
-    '''
+        '''
     try:
       checksumNode = self.etree.findall(u'checksum')[0]
       return checksumNode.attrib['algorithm']
@@ -174,13 +174,13 @@ class SystemMetadata(object):
   @property
   def dateUploaded(self):
     ''':rtype: (DateTime)
-    '''
+        '''
     return parseDateString(self._getValues(u'dateUploaded'))
 
   @property
   def dateSysMetadataModified(self):
     ''':rtype: (DateTime or None)
-    '''
+        '''
     try:
       return parseDateString(self._getValues(u'dateSysMetadataModified'))
     except:
@@ -190,44 +190,44 @@ class SystemMetadata(object):
   @property
   def size(self):
     ''':rtype: (integer) The reported size of the object from the sysmeta
-    '''
+        '''
     return int(self._getValues(sys._getframe().f_code.co_name))
 
   @property
   def obsoletes(self):
     ''':rtype: (list of unicode)
-    '''
+        '''
     return self._getValues(u'obsoletes', multiple=True)
 
   @property
   def obsoletedBy(self):
     ''':rtype: (list of unicode)
-    '''
+        '''
     return self._getValues(u'obsoletedBy', multiple=True)
 
   @property
   def derivedFrom(self):
     ''':rtype: (list of unicode)
-    '''
+        '''
     return self._getValues(u'derivedFrom', multiple=True)
 
   @property
   def describes(self):
     ''':rtype: (list of unicode)
-    '''
+        '''
     return self._getValues(u'describes', multiple=True)
 
   @property
   def describedBy(self):
     ''':rtype: (lsit of unicode)
-    '''
+        '''
     return self._getValues(u'describedBy', multiple=True)
 
-  ## Replication properties
+  # Replication properties
   @property
   def replica(self):
     ''':rtype: (list of dictionaries)  Each entry contains replica details
-    '''
+        '''
     result = []
     replicas = self.etree.findall(u'replica')
     for replica in replicas:
@@ -239,11 +239,11 @@ class SystemMetadata(object):
       result.append(entry)
     return result
 
-  ## Access control properties
+  # Access control properties
   @property
   def embargoExpires(self):
     ''':rtype: (DateTime or None)
-    '''
+        '''
     try:
       return parseDateString(self._getValues(u'embargoExpires'))
     except:
@@ -253,7 +253,7 @@ class SystemMetadata(object):
   @property
   def accessRule(self):
     ''':rtype: (list of 3-tuple) [(type, service, subject), ... ]
-    '''
+        '''
     entries = self._getValues(u'accessRule', multiple=True)
     results = []
     for entry in entries:

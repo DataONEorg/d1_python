@@ -484,7 +484,7 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
 
     @d1_common.util.utf8_to_unicode
     def removeMapIdentity(self, subject):
-        response = self.denyMapIdentityResponse(subject)
+        response = self.removeMapIdentityResponse(subject)
         return self._read_boolean_response(response)
 
     # CNIdentity.denyMapIdentity(session, subject) → boolean

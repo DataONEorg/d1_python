@@ -31,22 +31,66 @@
 
 # Stdlib.
 import logging
+import os
 import sys
 import unittest
+from mock import Mock, patch
+import urlparse
+import imp
 
-sys.path.append('..')
-import d1_client.d1baseclient_2_0
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+d1baseclient_2_0 = imp.load_source(
+  'd1baseclient_2_0', os.path.join(
+    os.path.dirname(
+      os.getcwd(
+      )
+    ), 'd1baseclient_2_0.py'
+  )
+)
+import d1baseclient_2_0
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
+import testing_utilities
 from settings import *
 
 
 class TestDataONEBaseClientV2(TestCaseWithURLCompare):
+  def setUp(self):
+    self.base_url = 'www.example.com'
+
+  def test_parse_url(self):
+    url = "http://bogus.target/mn?test_query#test_frag"
+    port = 80
+    scheme = 'http'
+    path = '/mn'
+    host = 'bogus.target'
+    fragment = 'test_frag'
+    query = 'test_query'
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(url, version='v2')
+    return_scheme, return_host, return_port, return_path, return_query, return_frag = client._parse_url(
+      url
+    )
+    self.assertEqual(port, return_port)
+    self.assertEqual(scheme, return_scheme)
+    self.assertEqual(host, return_host)
+    self.assertEqual(path, return_path)
+    self.assertEqual(query, return_query)
+    self.assertEqual(fragment, return_frag)
+
+  #     def test_clear_cache(self):
+  #         url = "http://bogus.target/mn?test_query#test_frag"
+  #         mock_d1baseclient = Mock(spec=d1baseclient_2_0.DataONEBaseClient_2_0) 
+  #         client = d1baseclient_2_0.DataONEBaseClient_2_0(
+  #             url,version = 'v2')
+  #         return_scheme,return_host,return_port,return_path,return_query,return_frag = mock_d1baseclient._parse_url(url,clear_cache=True)
+
   def test_010_v2(self):
     '''_slice_sanity_check()'''
-    client = d1_client.d1baseclient_2_0.DataONEBaseClient_2_0("http://bogus.target/mn")
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(
+      "http://bogus.target/mn", version='v2'
+    )
     self.assertRaises(
       d1_common.types.exceptions.InvalidRequest, client._slice_sanity_check, -1, 0
     )
@@ -60,7 +104,9 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
 
   def test_020_v2(self):
     '''_date_span_sanity_check()'''
-    client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(
+      "http://bogus.target/mn", version='v2'
+    )
     old_date = d1_common.date_time.create_utc_datetime(1970, 4, 3)
     new_date = d1_common.date_time.create_utc_datetime(2010, 10, 11)
     self.assertRaises(
@@ -71,35 +117,39 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
 
   def test_030_v2(self):
     '''_rest_url()'''
-    client = d1_client.d1baseclient.DataONEBaseClient(
-      "http://bogus.target/mn", version='v1'
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(
+      "http://bogus.target/mn", version='v2'
     )
     self.assertEqual(
-      '/mn/v1/object/1234xyz',
+      '/mn/v2/object/1234xyz',
       client._rest_url('object/%(pid)s', pid='1234xyz')
     )
     self.assertEqual(
-      '/mn/v1/object/1234%2Fxyz',
+      '/mn/v2/object/1234%2Fxyz',
       client._rest_url('object/%(pid)s', pid='1234/xyz')
     )
     self.assertEqual(
-      '/mn/v1/meta/1234xyz',
+      '/mn/v2/meta/1234xyz',
       client._rest_url('meta/%(pid)s', pid='1234xyz')
     )
-    self.assertEqual('/mn/v1/log', client._rest_url('log'))
+    self.assertEqual('/mn/v2/log', client._rest_url('log'))
 
-  def test_040_v2(self):
-    '''get_schema_version()'''
-    client = d1_client.d1baseclient.DataONEBaseClient(CN_URL)
-    version = client.get_schema_version()
-    self.assertTrue(version in ('v1', 'v2', 'v3'))
+#     @patch('d1baseclient_2_0.DataONEBaseClient_2_0')
+#     def test_040_v2(self):
+#         '''get_schema_version()'''
+#         client = d1baseclient_2_0.DataONEBaseClient_2_0(CN_URL,version='v1')
+#         version = client.get_schema_version()
+#         self.assertTrue(version in ('v1', 'v2', 'v3'))
 
-  # CNCore.getLogRecords()
-  # MNCore.getLogRecords()
+# CNCore.getLogRecords()
+# MNCore.getLogRecords()
 
   def _getLogRecords_v2(self, base_url):
     '''getLogRecords() returns a valid Log. CNs will return an empty log for public connections'''
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(
+      base_url, types=d1_common.types.generated.dataoneTypes,
+      version='v1'
+    )
     log = client.getLogRecords()
     self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
     return log
@@ -119,7 +169,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
 
   def _ping_v2(self, base_url):
     '''ping()'''
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(base_url, version='v1')
     self.assertTrue(client.ping())
 
   def test_200_v2(self):
@@ -134,7 +184,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
   # MNRead.get()
 
   def _get_v2(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
@@ -156,7 +206,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
   # MNRead.getSystemMetadata()
 
   def _get_sysmeta_v2(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
@@ -164,7 +214,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
     sysmeta = client.getSystemMetadata(pid)
     self.assertTrue(
       isinstance(
-        sysmeta, d1_common.types.generated.dataoneTypes_v1_1.SystemMetadata
+        sysmeta, d1_common.types.generated.dataoneTypes_2_0.SystemMetadata
       )
     )
 
@@ -185,12 +235,12 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
   # CNRead.describe()
   # MNRead.describe()
 
-  def _describe_v2(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
-    if invalid_pid:
-      pid = '_bogus_pid_4589734958791283794565'
-    else:
-      pid = testing_utilities.get_random_valid_pid(client)
+  def _describe_v2(self, invalid_pid=False):
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(self.base_url, version='v2')
+    #         if invalid_pid:
+    pid = '_bogus_pid_4589734958791283794565'
+    #         else:
+    #             pid = testing_utilities.get_random_valid_pid(client)
     headers = client.describe(pid)
 
   def WAITING_FOR_TEST_ENV_test_610(self):
@@ -217,7 +267,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
   # MNRead.getChecksum()
 
   def _get_checksum_v2(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:
@@ -248,7 +298,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
 
   def _listObjects_v2(self, baseURL):
     '''listObjects() returns a valid ObjectList that contains at least 3 entries'''
-    client = d1_client.d1baseclient.DataONEBaseClient(baseURL)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(baseURL)
     list = client.listObjects(start=0, count=10, fromDate=None, toDate=None)
     self.assertTrue(
       isinstance(
@@ -283,7 +333,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
     '''generateIdentifier(): Returns a valid identifier that matches scheme and fragment'''
     testing_context.test_fragment = 'test_reserve_identifier_' + \
         d1_instance_generator.random_data.random_3_words()
-    client = d1_client.d1baseclient.DataONEBaseClient(self.options.gmn_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(self.options.gmn_url)
     identifier = client.generateIdentifier('UUID', testing_context.test_fragment)
     testing_context.generated_identifier = identifier.value()
 
@@ -298,7 +348,7 @@ class TestDataONEBaseClientV2(TestCaseWithURLCompare):
   # MNAuthorization.isAuthorized()
 
   def _is_authorized_v2(self, base_url, invalid_pid=False):
-    client = d1_client.d1baseclient.DataONEBaseClient(base_url)
+    client = d1baseclient_2_0.DataONEBaseClient_2_0(base_url)
     if invalid_pid:
       pid = '_bogus_pid_845434598734598374534958'
     else:

@@ -44,7 +44,7 @@ import foresite.ore
 import rdflib
 
 # App.
-sys.path.append('..')
+sys.path.append(os.pardir)
 import d1_client.data_package
 import testing_utilities
 import testing_context

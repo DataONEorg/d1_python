@@ -33,6 +33,7 @@ import sys
 import unittest
 import uuid
 import StringIO
+from mock import patch
 
 # 3rd party.
 import pyxb
@@ -50,7 +51,8 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-from d1_client import mnclient
+import src.d1_client.mnclient as mnclient
+from src.d1_client.systemmetadata import SystemMetadata
 import testing_utilities
 import testing_context
 
@@ -60,6 +62,12 @@ class TestMNClient(TestCaseWithURLCompare):
     #self.baseurl = 'https://localhost/mn/'
     self.baseurl = 'http://127.0.0.1:8000'
     self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
+    self.sysmeta_doc = open(
+      './d1_testdocs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+    ).read()
+    self.sysmeta = SystemMetadata(self.sysmeta_doc)
+    self.obj = 'test'
+    self.pid = '1234'
 
   def tearDown(self):
     pass
@@ -67,6 +75,31 @@ class TestMNClient(TestCaseWithURLCompare):
   #=========================================================================
   # MNCore
   #=========================================================================
+
+  def test_createResponse(self):
+    with patch.object(mnclient.MemberNodeClient, 'createResponse') as mocked_method:
+      mocked_method.return_value = 200
+      response = self.client.createResponse(
+        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
+      )
+      self.assertEqual(200, response)
+
+  def test_create(self):
+    with patch.object(mnclient.MemberNodeClient, 'create') as mocked_method:
+      mocked_method.return_value = 200
+      response = self.client.create(
+        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
+      )
+      self.assertEqual(200, response)
+
+  def test_getCapabilities(self):
+    with patch.object(mnclient.MemberNodeClient, 'getCapabilities') as mocked_method:
+      mocked_method.return_value = 200
+      response = self.client.getCapabilities()
+      self.assertEqual(200, response)
+
+  def test_create_ft(self):
+    response = self.client.create(self.pid, self.obj, self.sysmeta)
 
   def WAITING_FOR_STABLE_MN_test_1010(self):
     '''MNCore.ping() returns True'''

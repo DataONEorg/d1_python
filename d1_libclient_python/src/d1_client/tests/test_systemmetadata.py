@@ -48,12 +48,12 @@ class TestSystemMetadata(TestCaseWithURLCompare):
   def setUp(self):
     self.sysmeta_doc = open(
       './d1_testdocs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
-    ).read(
-    )
+    ).read()
     self.sysmeta = d1_client.systemmetadata.SystemMetadata(self.sysmeta_doc)
 
   def test_100_init(self):
-    pass # Successful setup of the test means that the SystemMetadata object
+    # Successful setup of the test means that the SystemMetadata object
+    pass
     # initialized successfully.
 
   def test_200(self):
@@ -66,35 +66,35 @@ class TestSystemMetadata(TestCaseWithURLCompare):
     self.assertEqual(self.sysmeta.size, 34543)
 
   #  doc = self.generator.simple_generate_resource_map('abc', 'def', ['ghi', 'jkl'])
-  #  # There are many possible variations in the resource map that doesn't change
-  #  # the information, so only a few basic checks are performed on the returned
-  #  # map in this test. A thorough test is performed below, after the parser
-  #  # has been tested.
+  # There are many possible variations in the resource map that doesn't change
+  # the information, so only a few basic checks are performed on the returned
+  # map in this test. A thorough test is performed below, after the parser
+  # has been tested.
   #  self.assertTrue('http://www.openarchives.org/ore/terms/' in doc)
   #  self.assertTrue('https://cn.dataone.org/cn/object/ghi' in doc)
   #  self.assertTrue('<dcterms:identifier>def</dcterms:identifier>' in doc)
   #  self.assertTrue('<ore:describes rdf:resource="abc"/>' in doc)
   #
   #
-  #def test_300_parser(self):
+  # def test_300_parser(self):
   #  doc = self.parser.get_identifiers_referenced_by_package(self.ore_doc)
   #  self.assertTrue('ghi' in doc)
   #  self.assertTrue('jkl' in doc)
   #  self.assertTrue('def' in doc)
   #
   #
-  #def test_310_parser(self):
+  # def test_310_parser(self):
   #  doc = self.parser.get_triples_by_package(self.ore_doc)
   #  self.check_triples(doc)
   #
   #
-  #def test_400_generator_and_parser_1(self):
+  # def test_400_generator_and_parser_1(self):
   #  doc = self.generator.simple_generate_resource_map('abc', 'def', ['ghi', 'jkl'])
   #  triples = self.parser.get_triples_by_package(doc)
   #  self.check_triples(triples)
   #
   #
-  #def check_triples(self, doc):
+  # def check_triples(self, doc):
   #  self.assertTrue(('https://cn.dataone.org/cn/object/ghi', 'http://purl.org/spar/cito/isDocumentedBy', 'https://cn.dataone.org/cn/object/def') in doc)
   #  self.assertTrue(('https://cn.dataone.org/cn/object/ghi', 'http://purl.org/dc/terms/identifier', 'ghi') in doc)
   #  self.assertTrue(('https://cn.dataone.org/cn/object/jkl', 'http://purl.org/dc/terms/identifier', 'jkl') in doc)
@@ -104,7 +104,7 @@ class TestSystemMetadata(TestCaseWithURLCompare):
   #  self.assertTrue(('https://cn.dataone.org/cn/object/def', 'http://purl.org/spar/cito/documents', 'https://cn.dataone.org/cn/object/jkl') in doc)
   #
 
-  #===============================================================================
+  #=========================================================================
 
 
 def log_setup():

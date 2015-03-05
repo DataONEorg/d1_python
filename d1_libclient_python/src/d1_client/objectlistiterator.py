@@ -38,25 +38,25 @@ import d1_common.types.exceptions
 
 class ObjectListIterator(object):
   '''Implements an iterator that iterates over the entire ObjectList for a
-  DataONE node. Data is retrieved from the target only when required.
-  '''
+    DataONE node. Data is retrieved from the target only when required.
+    '''
 
   def __init__(self, client, start=0, fromDate=None, pagesize=500, max=-1):
     '''Initializes the iterator.
 
-     TODO: Extend this with date range and other restrictions
+         TODO: Extend this with date range and other restrictions
 
-    :param client: The client instance for retrieving stuff.
-    :type client: DataONEBaseClient or derivative
-    :param start: The zero based starting index value (0)
-    :type start: integer
-    :param fromDate:
-    :type fromDate: DateTime
-    :param pagesize: Number of items to retrieve in a single request (page, 500)
-    :type pagesize: integer
-    :param max: Maximum number of items to retrieve (all)
-    :type max: integer
-    '''
+        :param client: The client instance for retrieving stuff.
+        :type client: DataONEBaseClient or derivative
+        :param start: The zero based starting index value (0)
+        :type start: integer
+        :param fromDate:
+        :type fromDate: DateTime
+        :param pagesize: Number of items to retrieve in a single request (page, 500)
+        :type pagesize: integer
+        :param max: Maximum number of items to retrieve (all)
+        :type max: integer
+        '''
     self.log = logging.getLogger(self.__class__.__name__)
     self._object_list = None
     self._czero = 0
@@ -78,15 +78,11 @@ class ObjectListIterator(object):
 
   def next(self):
     '''Implements the next() method for the iterator.  Returns the next
-    ObjectInfo instance. Loads more if at the end of the page and there's more
-    pages to load.
-    '''
+        ObjectInfo instance. Loads more if at the end of the page and there's more
+        pages to load.
+        '''
     self.log.debug(
-      "%d / %d (%d)" % (
-        self._citem, self._maxitem, len(
-          self._object_list.objectInfo
-        )
-      )
+      "%d / %d (%d)" % (self._citem, self._maxitem, len(self._object_list.objectInfo))
     )
     if self._citem >= self._maxitem:
       raise StopIteration
@@ -101,7 +97,7 @@ class ObjectListIterator(object):
 
   def _loadMore(self, start=0, trys=0, validation=True):
     '''Retrieves the next page of results
-    '''
+        '''
     self.log.debug("Loading page starting from %d" % start)
     self._czero = start
     self._pageoffs = 0
@@ -128,5 +124,5 @@ class ObjectListIterator(object):
 
   def __len__(self):
     '''Implements len(ObjectListIterator)
-    '''
+        '''
     return self._maxitem

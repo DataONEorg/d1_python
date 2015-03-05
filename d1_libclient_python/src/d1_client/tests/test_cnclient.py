@@ -55,7 +55,7 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-from d1_client import cnclient
+from src.d1_client import cnclient
 import testing_utilities
 import testing_context
 from settings import *

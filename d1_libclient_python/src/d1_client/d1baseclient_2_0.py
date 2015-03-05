@@ -72,12 +72,12 @@ except ImportError as e:
     sys.stderr.write('Try: easy_install DataONE_Common\n')
     raise
 
-import d1_client.d1baseclient
+import d1baseclient
 
 #=============================================================================
 
 
-class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
+class DataONEBaseClient_2_0(d1baseclient.DataONEBaseClient):
 
     '''Implements DataONE client functionality common between Member and
     Coordinating nodes by extending the RESTClient.
@@ -121,7 +121,7 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
         :type types: PyXB
         :returns: None
         '''
-        d1_client.d1baseclient.DataONEBaseClient.__init__(
+        d1baseclient.DataONEBaseClient.__init__(
             self,
             *
             args,

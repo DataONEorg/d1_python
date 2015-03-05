@@ -70,7 +70,7 @@ def showHelp():
 
 
 class DataONEObject(object):
-  def __init__(self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT):
+  def __init__(self, pid, cnBaseUrl=d1_common.const.URL_DATAONE_ROOT, forcenew=False):
     self._pid = pid
     self._locations = []
     self._relations = None
@@ -79,6 +79,11 @@ class DataONEObject(object):
     self._content = None
     self._client = None
     self._cnBaseUrl = cnBaseUrl
+    if forcenew:
+      self._client = DataONEClient(
+        credentials=self.getCredentials(
+        ), cnBaseUrl=self._cnBaseUrl
+      )
 
   def getCredentials(self):
     '''Override this method to retrieve credentials that can be used to
@@ -107,8 +112,8 @@ class DataONEObject(object):
         :return type: PyXB ObjectLocationList.
         '''
     if len(self._locations) < 1 or forcenew:
-      cli = self._getClient()
-      self._locations = cli.resolve(self._pid)
+      #             cli = self._getClient()
+      self._locations = self._client.resolve(self._pid)
     return self._locations
 
   def getSystemMetadata(self, forcenew=False):
@@ -120,8 +125,8 @@ class DataONEObject(object):
         :return type: PyXB ObjectLocationList.
         '''
     if self._systemmetadata is None or forcenew:
-      cli = self._getClient()
-      self._systemmetadata = cli.getSystemMetadata(self._pid)
+      #             cli = self._getClient()
+      self._systemmetadata = self._client.getSystemMetadata(self._pid)
     return self._systemmetadata
 
   def getRelatedObjects(self, forcenew=False):
@@ -129,8 +134,8 @@ class DataONEObject(object):
     if t - self._relations_t > MAX_CACHE_AGE:
       forcenew = True
     if self._relations is None or forcenew:
-      cli = self._getClient()
-      self._relations = cli.getRelatedObjects(self._pid)
+      #             cli = self._getClient()
+      self._relations = self._client.getRelatedObjects(self._pid)
       self._relations_t = t
     return self._relations
 
@@ -142,8 +147,8 @@ class DataONEObject(object):
         :returns: None
         :return type: NoneType
         '''
-    cli = self._getClient()
-    instr = cli.get(self._pid)
+    #         cli = self._getClient()
+    instr = self._client.get(self._pid)
     while True:
       data = instr.read(4096)
       if not data:
@@ -151,8 +156,8 @@ class DataONEObject(object):
       outstr.write(data)
 
   def get(self):
-    cli = self._getClient()
-    return cli.get(self._pid)
+    #         cli = self._getClient()
+    return self._client.get(self._pid)
 
 #=========================================================================
 
@@ -315,12 +320,12 @@ class DataONEClient(object):
         '''
     pass
 
-    @d1_common.util.utf8_to_unicode
-    def listObjects(self, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS):
-      '''
-            '''
-      cli = self._getCN()
-      return objectlistiterator.ObjectListIterator(cli, start=start, max=count)
+  @d1_common.util.utf8_to_unicode
+  def listObjects(self, start=0, count=d1_common.const.DEFAULT_LISTOBJECTS):
+    '''
+        '''
+    cli = self._getCN()
+    return objectlistiterator.ObjectListIterator(cli, start=start, max=count)
 
   #=========================================================================
 
