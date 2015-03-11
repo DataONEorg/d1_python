@@ -40,8 +40,12 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 # 3rd party.
 import foresite
-import foresite.ore
+import foresite.utils
 import rdflib
+import rdflib.namespace
+import rdflib.term
+import rdflib.plugin
+import rdflib.graph
 
 # App.
 sys.path.append(os.pardir)
@@ -54,6 +58,21 @@ import testing_context
 # the function is called.
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
+
+rdflib.plugin.register(
+  'sparql', rdflib.query.Processor, 'rdfextras.sparql.processor', 'Processor'
+)
+rdflib.plugin.register(
+  'sparql', rdflib.query.Result, 'rdfextras.sparql.query', 'SPARQLQueryResult'
+)
+
+ALLOWABLE_PACKAGE_SERIALIZATIONS = (
+  'xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'
+)
+RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
+CITO_NS = 'http://purl.org/spar/cito/'
+D1_API_RESOLVE_REST_PATH = 'v1/resolve/'
 
 
 class TestDataPackage(TestCaseWithURLCompare):

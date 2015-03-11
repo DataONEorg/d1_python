@@ -34,14 +34,25 @@ import logging
 import unittest
 import urlparse
 import sys
+from mock import patch, PropertyMock
 
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+import src.d1_client
+
 
 # These tests are disabled because they require a MN that permits access to
-# log records.
+# log records.\
+class client():
+  def __init__(self):
+    return
+
+
+class logentry():
+  def __init__(self):
+    return
 
 
 class TestLogRecordIterator(unittest.TestCase):
@@ -50,8 +61,33 @@ class TestLogRecordIterator(unittest.TestCase):
 
   def setUp(self):
     self.base_url = "http://127.0.0.1:8000"
+    self.client = d1_client.d1baseclient.DataONEBaseClient(self.base_url)
+    from_date = datetime.date(2015, 3, 1)
+    to_date = datetime.date(2015, 3, 2)
+    self.iterator = d1_client.logrecorditerator.LogRecordIterator(
+      self.client, from_date, to_date,
+      start=100, pageSize=2000
+    )
 
-  def test_100(self):
+  def test__iter__(self):
+    log_iter = self.iterator.__iter__()
+    self.assertIsNone(log_iter._log_records, None)
+    self.assertEqual(log_iter._from_date, datetime.date(2015, 3, 1))
+    self.assertEqual(log_iter._to_date, datetime.date(2015, 3, 2))
+    self.assertEqual(log_iter._start, 100)
+    self.assertEqual(log_iter._page_size, 2000)
+    self.assertEqual(log_iter._log_records_idx, 0)
+    self.assertEqual(log_iter._n_log_records, 0)
+
+  @patch('d1_client.d1baseclient.DataONEBaseClient.getLogRecords')
+  @patch('d1_client.d1baseclient.DataONEBaseClient.getLogRecords.logEntry')
+  def test_load_more(self, mock_logentry, mock_log):
+    mock_log.return_value = '1'
+    mock_logentry.return_value = logentry()
+    output = self.iterator._load_more()
+    self.assertEqual(output, 10)
+
+  def _test_100(self):
     '''PageSize=20, start=0'''
     self._log_record_iterator_test(20, 0)
 

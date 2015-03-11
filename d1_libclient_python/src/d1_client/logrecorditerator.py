@@ -33,21 +33,21 @@ for a DataONE node. Data is retrieved from the target only when required.
 
 class LogRecordIterator(object):
   '''Implements an iterator that iterates over the entire set of LogRecords
-  for a DataONE node.  Data is retrieved from the target only when required.
-  '''
+    for a DataONE node.  Data is retrieved from the target only when required.
+    '''
 
   def __init__(self, client, fromDate=None, toDate=None, start=0, pageSize=1000):
     '''Initializes the iterator.
 
-    :param client: The client that will be used for interacting with the CN or MN.
-    :type client: cnclient.CoordinatingNodeClient or mnclient.MemberNodeClient
-    :param fromDate: The earliest date for which to retrieve log records.
-    :type fromDate: datetime.datetime()
-    :param toDate: The latest date for which to retrieve log records.
-    :type toDate: datetime.datetime()
-    :param timeSlice: The time period for which to .
-    :type toDate: datetime.datetime()
-    '''
+        :param client: The client that will be used for interacting with the CN or MN.
+        :type client: cnclient.CoordinatingNodeClient or mnclient.MemberNodeClient
+        :param fromDate: The earliest date for which to retrieve log records.
+        :type fromDate: datetime.datetime()
+        :param toDate: The latest date for which to retrieve log records.
+        :type toDate: datetime.datetime()
+        :param timeSlice: The time period for which to .
+        :type toDate: datetime.datetime()
+        '''
     self._log_records = None
     self._client = client
     self._from_date = fromDate
@@ -62,8 +62,8 @@ class LogRecordIterator(object):
 
   def next(self):
     '''Implements the next() method for the iterator. Returns the next
-    logEntry instance.
-    '''
+        logEntry instance.
+        '''
     if self._log_records_idx == self._n_log_records:
       self._load_more()
     log_entry = self._log_records.logEntry[self._log_records_idx]
@@ -72,7 +72,7 @@ class LogRecordIterator(object):
 
   def _load_more(self):
     '''Retrieves the next page of results.
-    '''
+        '''
     self._log_records_idx = 0
     self._log_records = self._client.getLogRecords(
       start=self._start,
