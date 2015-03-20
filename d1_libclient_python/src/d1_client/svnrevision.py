@@ -44,33 +44,34 @@ except ImportError as e:
   sys.stderr.write('See:  http://pysvn.tigris.org/project_downloads.html\n')
   raise
 
-_default_revision = "10035" ##TAG
+_default_revision = "10035" # TAG
 
 
 def getSvnRevision(update_static=False):
   '''If update_static then attempt to modify this source file with the current
-  svn revision number.
-  '''
+    svn revision number.
+    '''
   rev = _default_revision
   try:
     here = os.path.abspath(os.path.dirname(__file__))
     cli = pysvn.Client()
     rev = str(cli.info(here).revision.number)
     if update_static and rev != _default_revision:
-      #Try to update the static revision number - requires file write permission
+      # Try to update the static revision number - requires file write
+      # permission
       try:
         tf = codecs.open(os.path.abspath(__file__), 'r', 'utf-8')
         content = tf.read()
         tf.close()
-        content = content.replace(u'_default_revision="%s" ##TAG' % \
-                                    _default_revision,
-                                  u'_default_revision="%s" ##TAG' % rev, 1 )
-        logging.info("Setting revision in %s to %s" % \
-                       (os.path.abspath(__file__), rev) )
+        content = content.replace(
+          u'_default_revision="%s" ##TAG' % _default_revision,
+          u'_default_revision="%s" ##TAG' % rev, 1
+        )
+        logging.info("Setting revision in %s to %s" % (os.path.abspath(__file__), rev))
         tf = codecs.open(os.path.abspath(__file__), 'w', 'utf-8')
         tf.write(content)
         tf.close()
-      except Exception, e:
+      except Exception as e:
         logging.exception(e)
   except:
     logging.error("pysvn not available for revision information.")

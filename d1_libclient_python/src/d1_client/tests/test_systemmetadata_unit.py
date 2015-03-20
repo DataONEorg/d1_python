@@ -35,7 +35,7 @@ Unit tests for SystemMetadata
 import logging
 import sys
 import unittest
-from mock import patch
+from mock import patch, PropertyMock
 
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
@@ -115,8 +115,14 @@ class TestSystemMetadata(TestCaseWithURLCompare):
       self.sysmeta._getValues('test')
       mocked_method.assert_called_once_with('test')
 
-  def test__getattr__(self):
-    output = self.sysmeta.__getattr__('xmldoc')
+  def DO_NOT_test_pid(self, ):
+    with patch(
+      'd1_client.systemmetadata.SystemMetadata',
+      new_callable=PropertyMock
+    ) as mock_get:
+      mock_get.return_value = self.sysmeta.__getattr__('pid')
+      pid = self.sysmeta.pid()
+      self.assertTrue('system_pid', pid)
 #=========================================================================
 
 

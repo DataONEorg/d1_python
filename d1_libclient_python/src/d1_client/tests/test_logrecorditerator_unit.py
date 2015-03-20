@@ -50,9 +50,14 @@ class client():
     return
 
 
-class logentry():
+class logrecords(object):
   def __init__(self):
-    return
+    self.logEntry = 'test'
+
+
+class logentry(logrecords):
+  def __init__(self):
+    self.le = 10
 
 
 class TestLogRecordIterator(unittest.TestCase):
@@ -80,56 +85,19 @@ class TestLogRecordIterator(unittest.TestCase):
     self.assertEqual(log_iter._n_log_records, 0)
 
   @patch('d1_client.d1baseclient.DataONEBaseClient.getLogRecords')
-  @patch('d1_client.d1baseclient.DataONEBaseClient.getLogRecords.logEntry')
-  def test_load_more(self, mock_logentry, mock_log):
-    mock_log.return_value = '1'
-    mock_logentry.return_value = logentry()
-    output = self.iterator._load_more()
-    self.assertEqual(output, 10)
+  def test_load_more(self, mock_logentry):
+    mock_logentry.return_value = logrecords()
+    self.iterator._load_more()
+    self.assertEqual(self.iterator._start, 104)
 
-  def _test_100(self):
-    '''PageSize=20, start=0'''
-    self._log_record_iterator_test(20, 0)
-
-  def _test_110(self):
-    '''PageSize=1, start=63'''
-    self._log_record_iterator_test(1, 63)
-
-  def _test_120(self):
-    '''PageSize=2000, start=0'''
-    self._log_record_iterator_test(2000, 0)
-
-  def _test_130(self):
-    '''PageSize=20, start=20, fromDate=2005-01-01'''
-    self._log_record_iterator_test(2000, 0, from_date=datetime.datetime(2005, 1, 1))
-
-  def _log_record_iterator_test(self, page_size, start, from_date=None, to_date=None):
-    client = d1_client.mnclient.MemberNodeClient(base_url=self.base_url)
-    total = self._get_log_total_count(client, from_date, to_date)
-    log_record_iterator = d1_client.logrecorditerator.LogRecordIterator(
-      client, pageSize=page_size,
-      start=start,
-      fromDate=from_date,
-      toDate=to_date
-    )
-    cnt = 0
-    for event in log_record_iterator:
-      self.assertTrue(isinstance(event.event, dataoneTypes.Event))
-      # print "Event    = %s" % event.event
-      # print "Timestamp  = %s" % event.dateLogged.isoformat()
-      # print "IP Addres  = %s" % event.ipAddress
-      # print "Identifier = %s" % event.identifier.value()
-      # print "User agent = %s" % event.userAgent
-      # print "Subject  = %s" % event.subject.value()
-      # print '-' * 79
-      cnt += 1
-    self.assertEqual(cnt, total - start)
-
-  def _get_log_total_count(self, client, from_date, to_date):
-    return client.getLogRecords(
-      start=0, count=0, fromDate=from_date,
-      toDate=to_date
-    ).total
+  @patch.object(d1_client.logrecorditerator, 'LogRecordIterator')
+  @patch('d1_client.logrecorditerator.LogRecordIterator._load_more')
+  def DO_NOT_test_next(self, mock_load, mock_iter):
+    self.iterator._n_log_records = 1
+    self.iterator._log_records_idx = 1
+    mock_iter._log_records.return_value = logrecords()
+    log_entry = self.iterator.next()
+    self.assertEqual(log_entry, 2)
 
 
 if __name__ == '__main__':
