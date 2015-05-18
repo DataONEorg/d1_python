@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,28 +42,28 @@ urlpatterns = patterns(
 
   # Tier 1: Core API (MNCore)
   # MNCore.ping() - GET /monitor/ping
-  url(r'^v1/monitor/ping/?$', 'get_monitor_ping'),
+  url(r'^v[12]/monitor/ping/?$', 'get_monitor_ping'),
   # MNCore.getLogRecords() - GET /log
-  url(r'^v1/log/?$', 'get_log'),
+  url(r'^v[12]/log/?$', 'get_log'),
   # MNCore.getCapabilities() - GET / and GET /node
-  url(r'^v1/?$', 'get_node'),
-  url(r'^v1/node/?$', 'get_node'),
+  url(r'^v[12]/?$', 'get_node'),
+  url(r'^v[12]/node/?$', 'get_node'),
 
   # Tier 1: Read API (MNRead)
   # MNRead.get() - GET /object/{pid}
-  url(r'^v1/object/(.+)$', 'dispatch_object_pid'),
+  url(r'^v[12]/object/(.+)$', 'dispatch_object_pid'),
   # MNRead.getSystemMetadata() - GET /meta/{pid}
-  url(r'^v1/meta/(.+)$', 'get_meta_pid'),
+  url(r'^v[12]/meta/(.+)$', 'get_meta_pid'),
   # MNRead.describe() - HEAD /object/{pid}
   # (handled by object_pid dispatcher)
   # MNRead.getChecksum() - GET /checksum/{pid}
-  url(r'^v1/checksum/(.+)$', 'get_checksum_pid'),
+  url(r'^v[12]/checksum/(.+)$', 'get_checksum_pid'),
   # MNRead.listObjects() - GET /object
-  url(r'^v1/object/?$', 'dispatch_object'),
+  url(r'^v[12]/object/?$', 'dispatch_object'),
   # MNRead.synchronizationFailed() - POST /error
-  url(r'^v1/error/?$', 'post_error'),
+  url(r'^v[12]/error/?$', 'post_error'),
   # MNRead.getReplica() - GET /replica/{pid}
-  url(r'^v1/replica/(.+)/?$', 'get_replica_pid'),
+  url(r'^v[12]/replica/(.+)/?$', 'get_replica_pid'),
 
   # Tier 2: Authorization API  (MNAuthorization)
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{pid}
@@ -96,7 +96,9 @@ if settings.GMN_DEBUG or settings.MONITOR:
   urlpatterns += patterns(
     'service.mn.views.diagnostics',
     # Replication.
-    url(r'^diag/get_replication_queue/?$', 'get_replication_queue'),
+    url(
+      r'^diag/get_replication_queue/?$', 'get_replication_queue'
+    ),
     # Authentication.
     url(r'^diag/echo_session/?$', 'echo_session'),
     # Misc.
@@ -112,21 +114,33 @@ if settings.GMN_DEBUG:
     # Diagnostics portal.
     url(r'^diag/?$', 'diagnostics'),
     # Replication.
-    url(r'^diag/get_replication_queue/?$', 'get_replication_queue'),
-    url(r'^diag/clear_replication_queue/?$', 'clear_replication_queue'),
+    url(
+      r'^diag/get_replication_queue/?$', 'get_replication_queue'
+    ),
+    url(
+      r'^diag/clear_replication_queue/?$', 'clear_replication_queue'
+    ),
     # Access Policy.
     url(r'^diag/set_access_policy/(.+?)/?$', 'set_access_policy'),
-    url(r'^diag/delete_all_access_policies/?$', 'delete_all_access_policies'),
+    url(
+      r'^diag/delete_all_access_policies/?$', 'delete_all_access_policies'
+    ),
     # Misc.
     url(r'^diag/create/(.+)$', 'create'),
     url(r'^diag/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
     url(r'^diag/exception/(.+?)/?$', 'exception'),
     url(r'^diag/delete_all_objects/?$', 'delete_all_objects'),
-    url(r'^diag/delete_single_object/(.+?)/?$', 'delete_single_object'),
+    url(
+      r'^diag/delete_single_object/(.+?)/?$', 'delete_single_object'
+    ),
     url(r'^diag/trusted_subjects/?$', 'trusted_subjects'),
-    url(r'^diag/permissions_for_object/(.+?)/?$', 'permissions_for_object'),
+    url(
+      r'^diag/permissions_for_object/(.+?)/?$', 'permissions_for_object'
+    ),
     url(r'^diag/get_setting/(.+)$', 'get_setting'),
     # Event Log.
     url(r'^diag/delete_event_log/?$', 'delete_event_log'),
-    url(r'^diag/inject_fictional_event_log/?$', 'inject_fictional_event_log'),
+    url(
+      r'^diag/inject_fictional_event_log/?$', 'inject_fictional_event_log'
+    ),
   )
