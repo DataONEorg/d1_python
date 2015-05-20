@@ -35,7 +35,7 @@ import inspect
 import d1_common.url
 
 # App.
-import settings
+import service.settings as settings
 import session
 
 

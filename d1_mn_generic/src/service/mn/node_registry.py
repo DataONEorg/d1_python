@@ -31,7 +31,7 @@ import django.core.cache
 import d1_client.cnclient
 
 # App.
-import settings
+import service.settings as settings
 import d1_common.types.exceptions
 '''
 :mod:`node_registry`

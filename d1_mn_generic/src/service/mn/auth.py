@@ -5,13 +5,13 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,12 +37,12 @@ import django.db.transaction
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_x509v3_certificate_extractor
+import service.d1_x509v3_certificate_extractor as d1_x509v3_certificate_extractor
 
 # App.
 import models
 import node_registry
-import settings
+import service.settings as settings
 import sysmeta_store
 
 # ------------------------------------------------------------------------------
@@ -84,7 +84,9 @@ def action_to_level(action):
     return action_level_map[action]
   except LookupError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid action: {0}'.format(action)
+      0, 'Invalid action: {0}'.format(
+        action
+      )
     )
 
 
@@ -95,19 +97,21 @@ def level_to_action(level):
     return level_action_map[level]
   except LookupError:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid action level: {0}'.format(level)
+      0, 'Invalid action level: {0}'.format(
+        level
+      )
     )
 
 
 def get_trusted_subjects():
   return settings.DATAONE_TRUSTED_SUBJECTS | node_registry.get_cn_subjects() \
-    | set([_get_client_side_certificate_subject()])
+         | set([_get_client_side_certificate_subject()])
 
 
 def get_trusted_subjects_string():
   return ', '.join(sorted(get_trusted_subjects()))
 
-#def action_implicit(action_requested, action_allowed):
+# def action_implicit(action_requested, action_allowed):
 #  '''Check if requested action is allowed.
 #  '''
 #  return action_to_id(action_requsted) <= action_to_id(action_allowed)
@@ -185,12 +189,12 @@ def set_access_policy(pid, access_policy=None):
     top_level = get_highest_level_action_for_rule(allow_rule)
     insert_permission_rows(sci_obj, allow_rule, top_level)
 
-  # Update the SysMeta object with the new access policy. Because
-  # TransactionMiddleware is enabled, the database modifications made above will
-  # be rolled back if the SysMeta update fails.
-  #with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
-  #  s.accessPolicy = access_policy
-  #  sci_obj.serial_version = s.serialVersion
+    # Update the SysMeta object with the new access policy. Because
+    # TransactionMiddleware is enabled, the database modifications made above will
+    # be rolled back if the SysMeta update fails.
+    #with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
+    #  s.accessPolicy = access_policy
+    #  sci_obj.serial_version = s.serialVersion
 
 
 def get_highest_level_action_for_rule(allow_rule):
@@ -271,8 +275,11 @@ def _get_client_side_certificate_pem():
     return open(settings.CLIENT_CERT_PATH, 'rb').read()
   except EnvironmentError as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, 'Error reading client side certificate. File: {0}. Error: {1}'
-      .format(settings.CLIENT_CERT_PATH, str(e))
+      0, 'Error reading client side certificate. File: {0}. Error: {1}'.format(
+        settings.CLIENT_CERT_PATH, str(
+          e
+        )
+      )
     )
 
 
@@ -281,7 +288,11 @@ def _extract_subject_from_pem(cert_pem):
     return d1_x509v3_certificate_extractor.extract(cert_pem)[0]
   except Exception as e:
     raise d1_common.types.exceptions.InvalidToken(
-      0, 'Error extracting session from certificate: {0}'.format(str(e))
+      0, 'Error extracting session from certificate: {0}'.format(
+        str(
+          e
+        )
+      )
     )
 
 
@@ -314,8 +325,8 @@ def is_allowed(request, level, pid):
 
 def has_create_update_delete_permission(request):
   return models.WhitelistForCreateUpdateDelete.objects.filter(
-    subject__subject__in=request.subjects).exists() \
-      or is_trusted_subject(request)
+      subject__subject__in=request.subjects).exists() \
+         or is_trusted_subject(request)
 
 
 def assert_create_update_delete_permission(request):
@@ -325,7 +336,11 @@ def assert_create_update_delete_permission(request):
   if not has_create_update_delete_permission(request):
     raise d1_common.types.exceptions.NotAuthorized(
       0, 'Access allowed only for subjects with Create/Update/Delete '
-      'permission. {0}'.format(format_active_subjects(request))
+      'permission. {0}'.format(
+        format_active_subjects(
+          request
+        )
+      )
     )
 
 
@@ -342,7 +357,9 @@ def assert_allowed(request, level, pid):
   if not is_allowed(request, level, pid):
     raise d1_common.types.exceptions.NotAuthorized(
       0, u'{0} on "{1}" denied. {2}'.format(
-        level_to_action(level), pid, format_active_subjects(request)
+        level_to_action(level), pid, format_active_subjects(
+          request
+        )
       )
     )
 
@@ -405,7 +422,11 @@ def assert_trusted(request):
     raise d1_common.types.exceptions.NotAuthorized(
       0, 'Access allowed only for DataONE infrastructure. {0}. '
       'Trusted subjects: {1}'.format(
-        format_active_subjects(request), get_trusted_subjects_string())
+        format_active_subjects(
+          request
+        ), get_trusted_subjects_string(
+        )
+      )
     )
 
 
@@ -431,7 +452,11 @@ def assert_authenticated(f):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.subjects:
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for authenticated subjects. Please reconnect with '
-        'a valid DataONE session certificate. {0}'.format(format_active_subjects(request))
+        'a valid DataONE session certificate. {0}'.format(
+          format_active_subjects(
+            request
+          )
+        )
       )
     return f(request, *args, **kwargs)
 
@@ -449,7 +474,11 @@ def assert_verified(f):
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for verified accounts. Please reconnect with a '
         'valid DataONE session certificate in which the identity of the '
-        'primary subject has been verified. {0}'.format(format_active_subjects(request))
+        'primary subject has been verified. {0}'.format(
+          format_active_subjects(
+            request
+          )
+        )
       )
     return f(request, *args, **kwargs)
 

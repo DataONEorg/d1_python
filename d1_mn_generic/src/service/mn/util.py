@@ -45,7 +45,7 @@ import d1_common.url
 
 # App.
 import models
-import settings
+import service.settings as settings
 
 
 def create_missing_directories(file_path):

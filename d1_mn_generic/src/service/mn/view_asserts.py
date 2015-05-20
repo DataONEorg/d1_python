@@ -36,13 +36,14 @@ import d1_common.const
 import d1_common.types.exceptions
 
 # App.
-import mn.db_filter
-import mn.event_log
-import mn.models
-import mn.psycopg_adapter
-import mn.sysmeta_store
-import mn.urls
-import mn.util
+
+# import mn.db_filter
+# import mn.event_log
+import service.mn.models as models
+# import mn.psycopg_adapter
+import service.mn.sysmeta_store as sysmeta_store
+# import service.mn.urls
+import service.mn.util as util
 import service.settings
 
 
@@ -80,7 +81,7 @@ def post_has_mime_parts(request, parts):
 
 
 def object_exists(pid):
-  if not mn.models.ScienceObject.objects.filter(pid=pid, archived=False)\
+  if not models.ScienceObject.objects.filter(pid=pid, archived=False)\
     .exists():
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing Science Object', pid
@@ -137,7 +138,7 @@ def obsoletes_matches_pid_if_specified(sysmeta, old_pid):
 
 
 def pid_does_not_exist(pid):
-  if mn.models.ScienceObject.objects.filter(pid=pid).exists():
+  if models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, 'An object with the identifier already exists. Please try again with '
       'another identifier', pid
@@ -145,7 +146,7 @@ def pid_does_not_exist(pid):
 
 
 def pid_has_not_been_accepted_for_replication(pid):
-  if mn.models.ReplicationQueue.objects.filter(pid=pid).exists():
+  if models.ReplicationQueue.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, 'An object with the identifier has already been accepted for replication '
       'Please try again with another identifier', pid
@@ -153,7 +154,7 @@ def pid_has_not_been_accepted_for_replication(pid):
 
 
 def pid_exists(pid):
-  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
+  if not models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Identifier '
       'does not exist', pid
@@ -161,8 +162,8 @@ def pid_exists(pid):
 
 
 def pid_not_obsoleted(pid):
-  sci_obj = mn.models.ScienceObject.objects.get(pid=pid)
-  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
+  sci_obj = models.ScienceObject.objects.get(pid=pid)
+  with sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
     if s.obsoletedBy is not None:
       raise d1_common.types.exceptions.InvalidRequest(
         0, 'Object has already '
@@ -186,7 +187,7 @@ def url_references_retrievable(url):
   else:
     conn = httplib.HTTPSConnection(url_split.netloc)
   headers = {}
-  mn.util.add_basic_auth_header_if_enabled(headers)
+  util.add_basic_auth_header_if_enabled(headers)
   conn.request('HEAD', url_split.path, headers=headers)
   res = conn.getresponse()
   if res.status != 200:
@@ -197,7 +198,7 @@ def url_references_retrievable(url):
 
 
 def sci_obj_is_not_replica(pid):
-  sci_obj = mn.models.ScienceObject.objects.filter(pid=pid).get()
+  sci_obj = models.ScienceObject.objects.filter(pid=pid).get()
   if sci_obj.replica:
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Attempted to perform '

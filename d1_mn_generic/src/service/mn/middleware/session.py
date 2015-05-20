@@ -77,7 +77,7 @@ import logging
 import d1_common.const
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
-import d1_x509v3_certificate_extractor
+import service.d1_x509v3_certificate_extractor as d1_x509v3_certificate_extractor
 
 
 class process_session(object):

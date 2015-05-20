@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,14 +36,14 @@ import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import mn.view_asserts
-import mn.auth
-import mn.db_filter
-import mn.event_log
-import mn.models
-import mn.psycopg_adapter
-import mn.sysmeta_store
-import mn.util
+import service.mn.view_asserts as view_asserts
+import service.mn.auth as auth
+# import mn.db_filter
+import service.mn.event_log as event_log
+import service.mn.models as models
+# import mn.psycopg_adapter
+import service.mn.sysmeta_store as sysmeta_store
+import service.mn.util as util
 import service.settings
 
 
@@ -64,29 +64,33 @@ def deserialize_system_metadata(sysmeta_xml):
     raise d1_common.types.exceptions.InvalidSystemMetadata(
       0,
       u'System Metadata validation failed for document:\n{0}'.format(
-        sysmeta_xml.decode('utf8')
+        sysmeta_xml.decode(
+          'utf8'
+        )
       ),
-      traceInformation=str(e)
+      traceInformation=str(
+        e
+      )
     )
 
 
 def create(request, pid, sysmeta, replica=False):
-  mn.view_asserts.pid_does_not_exist(pid)
-  mn.view_asserts.pid_has_not_been_accepted_for_replication(pid)
-  mn.sysmeta_store.write_sysmeta_to_store(sysmeta)
+  view_asserts.pid_does_not_exist(pid)
+  view_asserts.pid_has_not_been_accepted_for_replication(pid)
+  sysmeta_store.write_sysmeta_to_store(sysmeta)
 
   # "wrapped mode" vendor specific extension.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
-    mn.view_asserts.url_is_http_or_https(url)
-    mn.view_asserts.url_references_retrievable(url)
+    view_asserts.url_is_http_or_https(url)
+    view_asserts.url_references_retrievable(url)
   else:
     # http://en.wikipedia.org/wiki/File_URI_scheme
     url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
     _object_pid_post_store_local(request, pid)
 
   # Create database entry for object.
-  sci_obj = mn.models.ScienceObject()
+  sci_obj = models.ScienceObject()
   sci_obj.pid = pid
   sci_obj.url = url
   sci_obj.set_format(sysmeta.formatId)
@@ -103,17 +107,17 @@ def create(request, pid, sysmeta, replica=False):
   # policy is set, the object is unavailable to everyone, even the uploader and
   # rights holder.
   if sysmeta.accessPolicy:
-    mn.auth.set_access_policy(pid, sysmeta.accessPolicy)
+    auth.set_access_policy(pid, sysmeta.accessPolicy)
   else:
-    mn.auth.set_access_policy(pid)
+    auth.set_access_policy(pid)
 
   # Log this object creation.
-  mn.event_log.create(pid, request)
+  event_log.create(pid, request)
 
 
 def _object_pid_post_store_local(request, pid):
-  object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
-  mn.util.create_missing_directories(object_path)
+  object_path = util.store_path(service.settings.OBJECT_STORE_PATH, pid)
+  util.create_missing_directories(object_path)
   with open(object_path, 'wb') as file:
     for chunk in request.FILES['object'].chunks():
       file.write(chunk)

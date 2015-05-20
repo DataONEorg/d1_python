@@ -31,7 +31,7 @@
 
 from django.conf.urls import patterns, url
 
-import settings
+import service.settings as settings
 
 urlpatterns = patterns(
   'service.mn.views.v1',
@@ -67,9 +67,11 @@ urlpatterns = patterns(
 
   # Tier 2: Authorization API  (MNAuthorization)
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{pid}
-  url(r'^v1/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
+  url(r'^v[12]/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
   # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{pid}
-  url(r'^v1/dirtySystemMetadata/?$', 'post_refresh_system_metadata'),
+  url(
+    r'^v[12]/dirtySystemMetadata/?$', 'post_refresh_system_metadata'
+  ),
 
   # Tier 3: Storage API (MNStorage)
   # MNStorage.create() - POST /object
@@ -77,15 +79,15 @@ urlpatterns = patterns(
   # MNStorage.update() - PUT /object/{pid}
   # (handled by object dispatcher)
   # MNStorage.generateIdentifier()
-  url(r'^v1/generate/?$', 'post_generate_identifier'),
+  url(r'^v[12]/generate/?$', 'post_generate_identifier'),
   # MNStorage.delete() - DELETE /object/{pid}
   # (handled by object dispatcher)
   # MNStorage.archive() - PUT /archive/{pid}
-  url(r'^v1/archive/(.+)/?$', 'put_archive_pid'),
+  url(r'^v[12]/archive/(.+)/?$', 'put_archive_pid'),
 
   # Tier 4: Replication API (MNReplication)
   # MNReplication.replicate() - POST /replicate
-  url(r'^v1/replicate/?$', 'post_replicate'),
+  url(r'^v[12]/replicate/?$', 'post_replicate'),
 )
 
 urlpatterns += patterns('service.mn.views.internal', url(r'^home/?$', 'home'), )
