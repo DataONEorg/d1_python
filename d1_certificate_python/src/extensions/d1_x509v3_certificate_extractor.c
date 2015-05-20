@@ -207,7 +207,7 @@ static PyMethodDef d1_x509v3_certificate_extractor_methods[] = {
 
 PyMODINIT_FUNC initd1_x509v3_certificate_extractor(void) {
   // Initialize OpenSSL.
-  SSL_load_error_strings();
+//  SSL_load_error_strings();
   ERR_load_BIO_strings();
   OpenSSL_add_all_algorithms();
   // Initialize Python module.
