@@ -100,7 +100,7 @@ ROOT_URLCONF = 'service.urls'
 
 TEMPLATE_DIRS = (make_absolute('./mn/templates'), )
 
-INSTALLED_APPS = ('django.contrib.staticfiles', 'service.mn', )
+INSTALLED_APPS = ('django.contrib.staticfiles', 'service.mn', 'south')
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.

@@ -11,7 +11,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +51,7 @@ urlpatterns = patterns(
 
   # Tier 1: Read API (MNRead)
   # MNRead.get() - GET /object/{pid}
-  url(r'^v[12]/object/(.+)$', 'dispatch_object_pid'),
+  url(r'^v1/object/(.+)$', 'dispatch_object_pid'),
   # MNRead.getSystemMetadata() - GET /meta/{pid}
   url(r'^v[12]/meta/(.+)$', 'get_meta_pid'),
   # MNRead.describe() - HEAD /object/{pid}
@@ -59,7 +59,7 @@ urlpatterns = patterns(
   # MNRead.getChecksum() - GET /checksum/{pid}
   url(r'^v[12]/checksum/(.+)$', 'get_checksum_pid'),
   # MNRead.listObjects() - GET /object
-  url(r'^v[12]/object/?$', 'dispatch_object'),
+  url(r'^v1/object/?$', 'dispatch_object'),
   # MNRead.synchronizationFailed() - POST /error
   url(r'^v[12]/error/?$', 'post_error'),
   # MNRead.getReplica() - GET /replica/{pid}
@@ -91,7 +91,12 @@ urlpatterns = patterns(
 )
 
 urlpatterns += patterns('service.mn.views.internal', url(r'^home/?$', 'home'), )
-
+urlpatterns += patterns(
+  'service.mn.views.v2',
+  url(r'^v2/object/(.+)$', 'dispatch_object_sid'),
+  # MNRead.listObjects() - GET /object
+  url(r'^v2/object/?$', 'dispatch_object'),
+)
 # Diagnostic APIs that can be made available in production.
 
 if settings.GMN_DEBUG or settings.MONITOR:

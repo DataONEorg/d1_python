@@ -74,7 +74,14 @@ def deserialize_system_metadata(sysmeta_xml):
     )
 
 
-def create(request, pid, sysmeta, replica=False):
+def create(
+  request,
+  pid, sysmeta,
+  sid=None,
+  obsoletes=None,
+  obsoletedby=None,
+  replica=False
+):
   view_asserts.pid_does_not_exist(pid)
   view_asserts.pid_has_not_been_accepted_for_replication(pid)
   sysmeta_store.write_sysmeta_to_store(sysmeta)
@@ -91,6 +98,7 @@ def create(request, pid, sysmeta, replica=False):
 
   # Create database entry for object.
   sci_obj = models.ScienceObject()
+  sci_obj.sid = sid
   sci_obj.pid = pid
   sci_obj.url = url
   sci_obj.set_format(sysmeta.formatId)
@@ -101,6 +109,8 @@ def create(request, pid, sysmeta, replica=False):
   sci_obj.replica = replica
   sci_obj.serial_version = sysmeta.serialVersion
   sci_obj.archived = False
+  sci_obj.obsoletes = obsoletes
+  sci_obj.obsoletedBy = obsoletedby
   sci_obj.save()
 
   # If an access policy was provided for this object, set it. Until the access

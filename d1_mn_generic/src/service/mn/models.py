@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ class ScienceObjectFormat(models.Model):
 
 
 class ScienceObject(models.Model):
+  sid = models.CharField(max_length=800, unique=False, null=True)
   pid = models.CharField(max_length=800, unique=True)
   url = models.CharField(max_length=1024, unique=True)
   format = models.ForeignKey(ScienceObjectFormat, db_index=True)
@@ -59,6 +60,8 @@ class ScienceObject(models.Model):
   system_metadata_refreshed = models.DateTimeField(null=True)
   serial_version = models.PositiveIntegerField()
   archived = models.BooleanField()
+  obsoletes = models.CharField(max_length=800, null=True)
+  obsoletedBy = models.CharField(max_length=800, null=True)
 
   def set_format(self, format_id):
     self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
@@ -122,7 +125,9 @@ class EventLog(models.Model):
   def set_event(self, event_string):
     if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Attempted to create invalid type of event: {0}'.format(event_string)
+        0, 'Attempted to create invalid type of event: {0}'.format(
+          event_string
+        )
       )
     self.event = EventLogEvent.objects.get_or_create(event=event_string)[0]
 
@@ -188,8 +193,8 @@ class SystemMetadataRefreshQueue(models.Model):
   status = models.ForeignKey(SystemMetadataRefreshQueueStatus)
 
   def set_status(self, status):
-    self.status = SystemMetadataRefreshQueueStatus.objects.\
-      get_or_create(status=status)[0]
+    self.status = SystemMetadataRefreshQueueStatus.objects. \
+        get_or_create(status=status)[0]
 
   def save_unique(self):
     try:
