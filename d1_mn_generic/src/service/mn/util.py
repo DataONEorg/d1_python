@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -221,8 +221,7 @@ def coerce_put_post(request):
       request.META['REQUEST_METHOD'] = 'POST'
       request._load_post_and_files()
       request.META['REQUEST_METHOD'] = 'PUT'
-
-    request.PUT = request.POST
+    request.PUT = dict(request.POST.iterlists())
 
 
 def add_basic_auth_header_if_enabled(headers):

@@ -11,7 +11,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,6 +56,7 @@ from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllo
 # DataONE APIs.
 import d1_client.cnclient
 import d1_client.object_format_info
+import d1_client.d1baseclient
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
@@ -301,7 +302,7 @@ def get_checksum_pid(request, pid):
     #checksum_serializer.checksum =
     checksum_serializer.algorithm = algorithm
     checksum_xml = checksum_serializer.toxml()
-    return HttpResponse(checksum_xml, d1_common.const.CONTENT_TYPE_XML)
+    return HttpResponse(checksum_xml, content_type=d1_common.const.CONTENT_TYPE_XML)
 
 
 @restrict_to_verb.get
@@ -414,9 +415,9 @@ def post_refresh_system_metadata(request):
                                      dateSysMetaLastModified) → boolean
   '''
     view_asserts.post_has_mime_parts(request, (('field', 'pid'),
-                                                  ('field', 'serialVersion'),
-                                                  ('field', 'dateSysMetaLastModified'),
-                                                  ))
+                                               ('field', 'serialVersion'),
+                                               ('field', 'dateSysMetaLastModified'),
+                                               ))
     view_asserts.object_exists(request.POST['pid'])
     refresh_queue = models.SystemMetadataRefreshQueue()
     refresh_queue.object = models.ScienceObject.objects.get(pid=request.POST['pid'])
@@ -477,8 +478,8 @@ def object_post(request):
     '''MNStorage.create(session, pid, object, sysmeta) → Identifier
   '''
     view_asserts.post_has_mime_parts(request, (('field', 'pid'),
-                                                  ('file', 'object'),
-                                                  ('file', 'sysmeta')))
+                                               ('file', 'object'),
+                                               ('file', 'sysmeta')))
     sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
     sysmeta = view_shared.deserialize_system_metadata(
         sysmeta_xml.encode('utf-8'))
@@ -497,8 +498,8 @@ def put_object_pid(request, old_pid):
         auth.assert_create_update_delete_permission(request)
     util.coerce_put_post(request)
     view_asserts.post_has_mime_parts(request, (('field', 'newPid'),
-                                                  ('file', 'object'),
-                                                  ('file', 'sysmeta')))
+                                               ('file', 'object'),
+                                               ('file', 'sysmeta')))
     view_asserts.pid_exists(old_pid)
     view_asserts.pid_not_obsoleted(old_pid)
     view_asserts.sci_obj_is_not_replica(old_pid)
@@ -527,6 +528,7 @@ def _set_obsoleted_by(obsoleted_pid, obsoleted_by_pid):
     with sysmeta_store.sysmeta(obsoleted_pid, sciobj.serial_version) as m:
         m.obsoletedBy = obsoleted_by_pid
         sciobj.serial_version = m.serialVersion
+        sciobj.obsoletedBy = obsoleted_by_pid
     sciobj.save()
 
 
@@ -614,7 +616,7 @@ def post_replicate(request):
     '''MNReplication.replicate(session, sysmeta, sourceNode) → boolean
   '''
     view_asserts.post_has_mime_parts(request, (('field', 'sourceNode'),
-                                                  ('file', 'sysmeta')))
+                                               ('file', 'sysmeta')))
     sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
     sysmeta = view_shared.deserialize_system_metadata(sysmeta_xml)
     _assert_request_complies_with_replication_policy(sysmeta)

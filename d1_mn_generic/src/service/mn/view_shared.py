@@ -74,14 +74,7 @@ def deserialize_system_metadata(sysmeta_xml):
     )
 
 
-def create(
-  request,
-  pid, sysmeta,
-  sid=None,
-  obsoletes=None,
-  obsoletedby=None,
-  replica=False
-):
+def create(request, pid, sysmeta, sid=None, replica=False):
   view_asserts.pid_does_not_exist(pid)
   view_asserts.pid_has_not_been_accepted_for_replication(pid)
   sysmeta_store.write_sysmeta_to_store(sysmeta)
@@ -109,8 +102,6 @@ def create(
   sci_obj.replica = replica
   sci_obj.serial_version = sysmeta.serialVersion
   sci_obj.archived = False
-  sci_obj.obsoletes = obsoletes
-  sci_obj.obsoletedBy = obsoletedby
   sci_obj.save()
 
   # If an access policy was provided for this object, set it. Until the access
@@ -145,3 +136,11 @@ def http_response_with_boolean_true_type():
 
 def add_http_date_to_response_header(response, date_time):
   response['Date'] = d1_common.date_time.to_http_datetime(date_time)
+
+
+def test_object_exists(pid):
+  if models.ScienceObject.objects.filter(pid=pid, archived=False) \
+          .exists():
+    return True
+  else:
+    return False

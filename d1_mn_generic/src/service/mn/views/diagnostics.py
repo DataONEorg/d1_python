@@ -5,13 +5,13 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,18 +47,19 @@ import d1_common.types.exceptions
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import mn.view_asserts
-import mn.auth
-import mn.db_filter
-import mn.event_log
-import mn.models
-import mn.node_registry
-import mn.psycopg_adapter
-import mn.restrict_to_verb
-import mn.sysmeta_store
-import mn.urls
-import mn.util
-import mn.view_shared
+import service.mn.view_asserts as view_asserts
+import service.mn.auth as auth
+# import mn.db_filter
+import service.mn.event_log as event_log
+import service.mn.models as models
+import service.mn.node_registry as node_registry
+# import mn.psycopg_adapter
+import service.mn.restrict_to_verb as restrict_to_verb
+# import mn.sysmeta_store
+# import mn.urls
+import service.mn.util as util
+import service.mn.view_shared as view_shared
+import service.mn.sysmeta_store as sysmeta_store
 import service.settings
 
 # ------------------------------------------------------------------------------
@@ -66,7 +67,7 @@ import service.settings
 # ------------------------------------------------------------------------------
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def diagnostics(request):
   if 'clear_db' in request.GET:
     _delete_all_objects()
@@ -81,65 +82,64 @@ def diagnostics(request):
 # ------------------------------------------------------------------------------
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def get_replication_queue(request):
-  q = mn.models.ReplicationQueue.objects.all()
+  q = models.ReplicationQueue.objects.all()
   if 'excludecompleted' in request.GET:
-    q = mn.models.ReplicationQueue.objects.filter(~Q(status__status='completed'))
-  return render_to_response(
-    'replicate_get_queue.xml', {'replication_queue': q},
-    content_type=d1_common.const.CONTENT_TYPE_XML
-  )
+    q = models.ReplicationQueue.objects.filter(~Q(status__status='completed'))
+  return render_to_response('replicate_get_queue.xml',
+                            {'replication_queue': q},
+                            content_type=d1_common.const.CONTENT_TYPE_XML)
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def clear_replication_queue(request):
   _clear_replication_queue()
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return view_shared.http_response_with_boolean_true_type()
 
 
 def _clear_replication_queue():
-  mn.models.ReplicationQueue.objects.all().delete()
+  models.ReplicationQueue.objects.all().delete()
 
 # ------------------------------------------------------------------------------
 # Access Policy.
 # ------------------------------------------------------------------------------
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def set_access_policy(request, pid):
   mn.view_asserts.object_exists(pid)
   mn.view_asserts.post_has_mime_parts(request, (('file', 'access_policy'), ))
   access_policy_xml = request.FILES['access_policy'].read()
   access_policy = dataoneTypes.CreateFromDocument(access_policy_xml)
-  mn.auth.set_access_policy(pid, access_policy)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  auth.set_access_policy(pid, access_policy)
+  return view_shared.http_response_with_boolean_true_type()
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def delete_all_access_policies(request):
   # The deletes are cascaded so all subjects are also deleted.
-  mn.models.Permission.objects.all().delete()
-  return mn.view_shared.http_response_with_boolean_true_type()
+  models.Permission.objects.all().delete()
+  return view_shared.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
 # Authentication.
 # ------------------------------------------------------------------------------
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def echo_session(request):
   return render_to_response('echo_session.xhtml',
-                            {'subjects': sorted(request.subjects) },
+                            {'subjects': sorted(request.subjects)},
                             content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def trusted_subjects(request):
   return render_to_response('trusted_subjects.xhtml',
-    {'subjects': sorted(mn.node_registry.get_cn_subjects() |
-                        service.settings.DATAONE_TRUSTED_SUBJECTS) },
-    content_type=d1_common.const.CONTENT_TYPE_XHTML)
+                            {'subjects': sorted(node_registry.get_cn_subjects() |
+                                                service.settings.DATAONE_TRUSTED_SUBJECTS)},
+                            content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 # ------------------------------------------------------------------------------
 # Misc.
@@ -148,20 +148,60 @@ def trusted_subjects(request):
 
 def create(request, pid):
   '''Version of create() that performs no locking, testing or validation.
-  Used for inserting test objects.'''
+    Used for inserting test objects.'''
   sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
-  sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
-  mn.view_shared.create(request, pid, sysmeta)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  sysmeta = view_shared.deserialize_system_metadata(sysmeta_xml)
+  view_shared.create(request, pid, sysmeta)
+  return view_shared.http_response_with_boolean_true_type()
 
 
-@mn.restrict_to_verb.get
+def create_v2_object(request):
+
+  pid = request.POST.get('pid')
+  # "wrapped mode" vendor specific extension.
+  if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
+    url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
+    view_asserts.url_is_http_or_https(url)
+    view_asserts.url_references_retrievable(url)
+  else:
+    # http://en.wikipedia.org/wiki/File_URI_scheme
+    url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
+    # _object_pid_post_store_local(request, pid)
+
+  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
+  sysmeta = view_shared.deserialize_system_metadata(sysmeta_xml.encode('utf-8'))
+  sysmeta_store.write_sysmeta_to_store(sysmeta)
+  view_shared._object_pid_post_store_local(request, pid)
+  sid = request.POST['sid']
+  obsoletes = request.POST.get('obsoletes')
+  obsoletedBy = request.POST.get('obsoletedBy')
+  # Create database entry for object.
+  sci_obj = models.ScienceObject()
+  sci_obj.sid = sid
+  sci_obj.pid = pid
+  sci_obj.url = url
+  sci_obj.set_format(sysmeta.formatId)
+  sci_obj.checksum = sysmeta.checksum.value()
+  sci_obj.set_checksum_algorithm(sysmeta.checksum.algorithm)
+  sci_obj.mtime = sysmeta.dateSysMetadataModified
+  sci_obj.size = sysmeta.size
+  sci_obj.replica = False
+  sci_obj.serial_version = sysmeta.serialVersion
+  sci_obj.archived = False
+  sci_obj.obsoletes = obsoletes
+  sci_obj.obsoletedBy = obsoletedBy
+  sci_obj.save()
+
+  return view_shared.http_response_with_identifier_type(pid)
+
+
+@restrict_to_verb.get
 def slash(request, p1, p2, p3):
   '''Test that GMN correctly handles three arguments separated by slashes'''
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def exception(request, exception_type):
   '''Test that GMN correctly catches and serializes exceptions raised by views'''
   if exception_type == 'python':
@@ -169,22 +209,22 @@ def exception(request, exception_type):
   elif exception_type == 'dataone':
     raise d1_common.types.exceptions.InvalidRequest(0, 'Test DataONE Exception')
 
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return view_shared.http_response_with_boolean_true_type()
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def echo_request_object(request):
   pp = pprint.PrettyPrinter(indent=2)
   return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def permissions_for_object(request, pid):
   mn.view_asserts.object_exists(pid)
   subjects = []
-  permissions = mn.models.Permission.objects.filter(object__pid=pid)
+  permissions = models.Permission.objects.filter(object__pid=pid)
   for permission in permissions:
-    action = mn.auth.level_action_map[permission.level]
+    action = auth.level_action_map[permission.level]
     subjects.append((permission.subject.subject, action))
   return render_to_response(
     'permissions_for_object.xhtml',
@@ -194,7 +234,7 @@ def permissions_for_object(request, pid):
   )
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def get_setting(request, setting):
   '''Get a value from settings.py or settings_site.py'''
   return HttpResponse(
@@ -204,46 +244,46 @@ def get_setting(request, setting):
   )
 
 
-#@mn.restrict_to_verb.post
+#@restrict_to_verb.post
 def echo_raw_post_data(request):
   return HttpResponse(request.raw_post_data)
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def delete_all_objects(request):
   _delete_all_objects()
   delete_event_log(request)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return view_shared.http_response_with_boolean_true_type()
 
 
 def _delete_all_objects():
-  for object_ in mn.models.ScienceObject.objects.all():
+  for object_ in models.ScienceObject.objects.all():
     _delete_object(object_.pid)
 
 
 def _delete_subjects_and_permissions():
-  mn.models.Permission.objects.all().delete()
-  mn.models.PermissionSubject.objects.all().delete()
+  models.Permission.objects.all().delete()
+  models.PermissionSubject.objects.all().delete()
 
 
-@mn.restrict_to_verb.get
+@restrict_to_verb.get
 def delete_single_object(request, pid):
   '''Note: The semantics for this method are different than for the production
   method that deletes an object. This method removes all traces that the object
   ever existed.
   '''
   _delete_object(pid)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return view_shared.http_response_with_boolean_true_type()
 
 
 def _delete_object(pid):
   #mn.view_asserts.object_exists(pid)
-  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
+  sciobj = models.ScienceObject.objects.get(pid=pid)
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.
   url_split = urlparse.urlparse(sciobj.url)
   if url_split.scheme == 'file':
-    sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
+    sciobj_path = util.store_path(service.settings.OBJECT_STORE_PATH, pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:
@@ -271,13 +311,13 @@ def _delete_object(pid):
 
 
 def delete_event_log(request):
-  mn.models.EventLog.objects.all().delete()
-  mn.models.EventLogIPAddress.objects.all().delete()
-  mn.models.EventLogEvent.objects.all().delete()
-  return mn.view_shared.http_response_with_boolean_true_type()
+  models.EventLog.objects.all().delete()
+  models.EventLogIPAddress.objects.all().delete()
+  models.EventLogEvent.objects.all().delete()
+  return view_shared.http_response_with_boolean_true_type()
 
 
-@mn.restrict_to_verb.post
+@restrict_to_verb.post
 def inject_fictional_event_log(request):
   mn.view_asserts.post_has_mime_parts(request, (('file', 'csv'), ))
 
@@ -302,6 +342,6 @@ def inject_fictional_event_log(request):
       'SERVER_PORT': '80',
     }
 
-    mn.event_log._log(pid, request, event, d1_common.date_time.strip_timezone(timestamp))
+    event_log._log(pid, request, event, d1_common.date_time.strip_timezone(timestamp))
 
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return view_shared.http_response_with_boolean_true_type()

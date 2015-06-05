@@ -44,7 +44,7 @@ urlpatterns = patterns(
   # MNCore.ping() - GET /monitor/ping
   url(r'^v[12]/monitor/ping/?$', 'get_monitor_ping'),
   # MNCore.getLogRecords() - GET /log
-  url(r'^v[12]/log/?$', 'get_log'),
+  url(r'^v1/log/(.+)$', 'get_log'),
   # MNCore.getCapabilities() - GET / and GET /node
   url(r'^v[12]/?$', 'get_node'),
   url(r'^v[12]/node/?$', 'get_node'),
@@ -53,25 +53,23 @@ urlpatterns = patterns(
   # MNRead.get() - GET /object/{pid}
   url(r'^v1/object/(.+)$', 'dispatch_object_pid'),
   # MNRead.getSystemMetadata() - GET /meta/{pid}
-  url(r'^v[12]/meta/(.+)$', 'get_meta_pid'),
+  url(r'^v1/meta/(.+)$', 'get_meta_pid'),
   # MNRead.describe() - HEAD /object/{pid}
   # (handled by object_pid dispatcher)
   # MNRead.getChecksum() - GET /checksum/{pid}
-  url(r'^v[12]/checksum/(.+)$', 'get_checksum_pid'),
+  url(r'^v1/checksum/(.+)$', 'get_checksum_pid'),
   # MNRead.listObjects() - GET /object
   url(r'^v1/object/?$', 'dispatch_object'),
   # MNRead.synchronizationFailed() - POST /error
   url(r'^v[12]/error/?$', 'post_error'),
   # MNRead.getReplica() - GET /replica/{pid}
-  url(r'^v[12]/replica/(.+)/?$', 'get_replica_pid'),
+  url(r'^v1/replica/(.+)/?$', 'get_replica_pid'),
 
   # Tier 2: Authorization API  (MNAuthorization)
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{pid}
-  url(r'^v[12]/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
+  url(r'^v1/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
   # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{pid}
-  url(
-    r'^v[12]/dirtySystemMetadata/?$', 'post_refresh_system_metadata'
-  ),
+  url(r'^v1/dirtySystemMetadata/?$', 'post_refresh_system_metadata'),
 
   # Tier 3: Storage API (MNStorage)
   # MNStorage.create() - POST /object
@@ -79,24 +77,35 @@ urlpatterns = patterns(
   # MNStorage.update() - PUT /object/{pid}
   # (handled by object dispatcher)
   # MNStorage.generateIdentifier()
-  url(r'^v[12]/generate/?$', 'post_generate_identifier'),
+  url(r'^v1/generate/?$', 'post_generate_identifier'),
   # MNStorage.delete() - DELETE /object/{pid}
   # (handled by object dispatcher)
   # MNStorage.archive() - PUT /archive/{pid}
-  url(r'^v[12]/archive/(.+)/?$', 'put_archive_pid'),
+  url(r'^v1/archive/(.+)/?$', 'put_archive_pid'),
 
   # Tier 4: Replication API (MNReplication)
   # MNReplication.replicate() - POST /replicate
   url(r'^v[12]/replicate/?$', 'post_replicate'),
 )
-
-urlpatterns += patterns('service.mn.views.internal', url(r'^home/?$', 'home'), )
 urlpatterns += patterns(
   'service.mn.views.v2',
   url(r'^v2/object/(.+)$', 'dispatch_object_sid'),
   # MNRead.listObjects() - GET /object
   url(r'^v2/object/?$', 'dispatch_object'),
+  url(r'^v2/meta/(.+)$', 'get_meta_sid'),
+  url(r'^v2/checksum/(.+)$', 'get_checksum_sid'),
+  url(r'^v2/replica/(.+)/?$', 'get_replica_sid'),
+  url(r'^v2/isAuthorized/(.+)/?$', 'get_is_authorized_sid'),
+  url(
+    r'^v2/dirtySystemMetadata/?$', 'post_refresh_sid_system_metadata'
+  ),
+  url(r'^v2/archive/(.+)/?$', 'put_archive_sid'),
+  # MNCore.getLogRecords() - GET /log
+  url(r'^v2/log/?$', 'get_log_sid'),
+  url(r'^v2/generate/?$', 'generate_sid')
 )
+
+urlpatterns += patterns('service.mn.views.internal', url(r'^home/?$', 'home'), )
 # Diagnostic APIs that can be made available in production.
 
 if settings.GMN_DEBUG or settings.MONITOR:
@@ -150,4 +159,5 @@ if settings.GMN_DEBUG:
     url(
       r'^diag/inject_fictional_event_log/?$', 'inject_fictional_event_log'
     ),
+    url(r'^diag/object/?$', 'create_v2_object'),
   )

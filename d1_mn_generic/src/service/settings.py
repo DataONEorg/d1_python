@@ -86,6 +86,9 @@ MIDDLEWARE_CLASSES = (
   #'service.mn.middleware.profiling_handler.profiling_handler',
   'service.mn.middleware.view_handler.view_handler',
   'service.mn.middleware.startup_handler.startup_handler',
+  # 'respite.middleware.HttpPutMiddleware',
+  # 'respite.middleware.HttpPatchMiddleware',
+  # 'respite.middleware.JsonMiddleware',
 )
 
 
@@ -100,7 +103,11 @@ ROOT_URLCONF = 'service.urls'
 
 TEMPLATE_DIRS = (make_absolute('./mn/templates'), )
 
-INSTALLED_APPS = ('django.contrib.staticfiles', 'service.mn', 'south')
+INSTALLED_APPS = ('django.contrib.staticfiles',
+                  'service.mn',
+                  # 'south',
+                  # 'respite',
+                  )
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.

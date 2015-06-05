@@ -5,13 +5,13 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+# Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,7 +71,9 @@ def post_has_mime_parts(request, parts):
         missing.append('{0}: {1}'.format(part_type, part_name))
     else:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Invalid part_type: {0}'.format(part_type)
+        0, 'Invalid part_type: {0}'.format(
+          part_type
+        )
       )
 
   if len(missing) > 0:
@@ -80,9 +82,16 @@ def post_has_mime_parts(request, parts):
     )
 
 
+def request_has_pid_or_sid(request):
+  for key in request.POST.keys():
+    if key == 'sid' or key == 'pid' or key == 'newPid':
+      return True
+  raise d1_common.types.exceptions.InvalidRequest(0, 'No pid or sid specified')
+
+
 def object_exists(pid):
-  if not models.ScienceObject.objects.filter(pid=pid, archived=False)\
-    .exists():
+  if not models.ScienceObject.objects.filter(pid=pid, archived=False) \
+          .exists():
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing Science Object', pid
     )
@@ -99,7 +108,9 @@ def xml_document_not_too_large(flo):
 def date_is_utc(date_time):
   if not d1_common.date_time.is_utc(date_time):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Date-time must be specified in UTC: {0}'.format(date_time)
+      0, 'Date-time must be specified in UTC: {0}'.format(
+        date_time
+      )
     )
 
 
@@ -176,7 +187,9 @@ def url_is_http_or_https(url):
   if url_split.scheme not in ('http', 'https'):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid URL specified for remote storage: {0}. '
-      'Must be HTTP or HTTPS'.format(url)
+      'Must be HTTP or HTTPS'.format(
+        url
+      )
     )
 
 
