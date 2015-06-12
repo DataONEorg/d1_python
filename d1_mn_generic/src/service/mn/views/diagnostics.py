@@ -59,6 +59,7 @@ import service.mn.restrict_to_verb as restrict_to_verb
 # import mn.urls
 import service.mn.util as util
 import service.mn.view_shared as view_shared
+import service.mn.view_asserts as view_asserts
 import service.mn.sysmeta_store as sysmeta_store
 import service.settings
 
@@ -108,8 +109,8 @@ def _clear_replication_queue():
 
 @restrict_to_verb.get
 def set_access_policy(request, pid):
-  mn.view_asserts.object_exists(pid)
-  mn.view_asserts.post_has_mime_parts(request, (('file', 'access_policy'), ))
+  view_asserts.object_exists(pid)
+  view_asserts.post_has_mime_parts(request, (('file', 'access_policy'), ))
   access_policy_xml = request.FILES['access_policy'].read()
   access_policy = dataoneTypes.CreateFromDocument(access_policy_xml)
   auth.set_access_policy(pid, access_policy)
@@ -220,7 +221,7 @@ def echo_request_object(request):
 
 @restrict_to_verb.get
 def permissions_for_object(request, pid):
-  mn.view_asserts.object_exists(pid)
+  view_asserts.object_exists(pid)
   subjects = []
   permissions = models.Permission.objects.filter(object__pid=pid)
   for permission in permissions:
@@ -277,7 +278,7 @@ def delete_single_object(request, pid):
 
 
 def _delete_object(pid):
-  #mn.view_asserts.object_exists(pid)
+  #view_asserts.object_exists(pid)
   sciobj = models.ScienceObject.objects.get(pid=pid)
   # If the object is wrapped, only delete the reference. If it's managed, delete
   # both the object and the reference.
@@ -319,7 +320,7 @@ def delete_event_log(request):
 
 @restrict_to_verb.post
 def inject_fictional_event_log(request):
-  mn.view_asserts.post_has_mime_parts(request, (('file', 'csv'), ))
+  view_asserts.post_has_mime_parts(request, (('file', 'csv'), ))
 
   # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
