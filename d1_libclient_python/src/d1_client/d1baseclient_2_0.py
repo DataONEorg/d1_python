@@ -53,11 +53,11 @@ import sys
 
 # 3rd party.
 try:
-    import pyxb
+  import pyxb
 except ImportError as e:
-    sys.stderr.write('Import error: {0}\n'.format(str(e)))
-    sys.stderr.write('Try: easy_install PyXB\n')
-    raise
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install PyXB\n')
+  raise
 
 # D1.
 try:
@@ -69,16 +69,16 @@ try:
     import d1_common.url
     import service.mn.views.v2 as v2
 except ImportError as e:
-    sys.stderr.write('Import error: {0}\n'.format(str(e)))
-    sys.stderr.write('Try: easy_install DataONE_Common\n')
-    raise
+  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Try: easy_install DataONE_Common\n')
+  raise
 
 import d1_client.d1baseclient
 
 #=============================================================================
 
 class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
-    '''Implements DataONE client functionality common between Member and
+  '''Implements DataONE client functionality common between Member and
   Coordinating nodes by extending the RESTClient.
 
   Wraps REST methods that have the same signatures on Member Nodes and
@@ -89,6 +89,8 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
   Unless otherwise indicated, methods with names that end in "Response" return
   the HTTPResponse object, otherwise the deserialized object is returned.
   '''
+  def __init__(self, *args, **kwargs):
+    '''Connect to a DataONE Coordinating Node or Member Node.
 
     def __init__(self, *args, **kwargs):
         '''Connect to a DataONE Coordinating Node or Member Node.
@@ -121,6 +123,8 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
     :returns: None
     '''
         d1_client.d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
+        self.version = 'v2'
+        self.types = dataoneTypes_2_0
 
 
     #=============================================================================
@@ -177,3 +181,6 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
                                          vendorSpecific=vendorSpecific)
         return self._read_boolean_response(response)
 
+        #=============================================================================
+        # v2.0 APIs shared between CNs and MNs.
+        #=============================================================================
