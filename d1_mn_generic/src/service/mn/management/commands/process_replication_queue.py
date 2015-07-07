@@ -64,17 +64,37 @@ import mn.sysmeta_store
 import mn.view_shared
 
 
+class Lock:
+  def __init__(self, filename):
+    self.filename = filename
+    # This will create it if it does not exist already
+    self.handle = open(filename, 'w')
+
+  # Bitwise OR fcntl.LOCK_NB if you need a non-blocking lock
+  def acquire(self):
+    fcntl.flock(self.handle, fcntl.LOCK_EX)
+
+  def release(self):
+    fcntl.flock(self.handle, fcntl.LOCK_UN)
+
+  def __del__(self):
+    self.handle.close()
+
+
 class Command(NoArgsCommand):
   help = 'Process the queue of replication requests'
 
   def handle_noargs(self, **options):
-    verbosity = int(options.get('verbosity', 1))
-    self._log_setup(verbosity)
-    logging.debug('Running management command: process_replication_queue')
-    self._abort_if_other_instance_is_running()
-    self._abort_if_stand_alone_instance()
-    p = ReplicationQueueProcessor()
-    p.process_replication_queue()
+    try:
+      verbosity = int(options.get('verbosity', 1))
+      self._log_setup(verbosity)
+      logging.debug('Running management command: process_replication_queue')
+      lock = self._abort_if_other_instance_is_running()
+      self._abort_if_stand_alone_instance()
+      p = ReplicationQueueProcessor()
+      p.process_replication_queue()
+    finally:
+      lock.release()
 
   def _log_setup(self, verbosity):
     # Set up logging. We output only to stdout. Instead of also writing to a log
@@ -94,12 +114,14 @@ class Command(NoArgsCommand):
     single_path = os.path.join(
       tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
     )
-    f = open(single_path, 'w')
     try:
-      fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+      lock = Lock(single_path)
+      lock.acquire()
+      # fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
       logging.info('Aborted: Another instance is still running')
       exit(0)
+    return lock
 
   def _abort_if_stand_alone_instance(self):
     if settings.STAND_ALONE:
@@ -108,7 +130,7 @@ class Command(NoArgsCommand):
       )
       exit(0)
 
-#===============================================================================
+# ===============================================================================
 
 
 class ReplicationQueueProcessor(object):

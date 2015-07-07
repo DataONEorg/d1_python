@@ -42,8 +42,8 @@ import time
 try:
   #import d1_common.mime_multipart
   import d1_common.types.exceptions
-  import d1_common.types.checksum_serialization
-  import d1_common.types.objectlist_serialization
+  # import d1_common.types.checksum_serialization
+  # import d1_common.types.objectlist_serialization
   import d1_common.util
   import d1_common.date_time
   import d1_common.url
