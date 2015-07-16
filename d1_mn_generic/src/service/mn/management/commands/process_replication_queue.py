@@ -39,7 +39,7 @@ import tempfile
 import StringIO
 
 # Django.
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.db import transaction
 
 # D1.
@@ -59,42 +59,44 @@ sys.path.append(_here('../types/generated'))
 
 # App.
 import settings
-import mn.models
-import mn.sysmeta_store
-import mn.view_shared
+import service.mn.models as models
+import service.mn.sysmeta_store as sysmeta_store
+import service.mn.view_shared as view_shared
 
 
-class Lock:
-  def __init__(self, filename):
-    self.filename = filename
+class Command(BaseCommand):
+  def __init__(self):
+    self.filename = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
     # This will create it if it does not exist already
-    self.handle = open(filename, 'w')
+    self.handle = open(self.filename, 'w')
+    self.locked = False
 
   # Bitwise OR fcntl.LOCK_NB if you need a non-blocking lock
-  def acquire(self):
-    fcntl.flock(self.handle, fcntl.LOCK_EX)
+  def _acquire(self):
+    fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    self.locked = True
 
-  def release(self):
+  def _release(self):
     fcntl.flock(self.handle, fcntl.LOCK_UN)
+    self.locked = False
 
   def __del__(self):
     self.handle.close()
 
+  def process_queue(self, **options):
 
-class Command(NoArgsCommand):
-  help = 'Process the queue of replication requests'
-
-  def handle_noargs(self, **options):
+    verbosity = int(options.get('verbosity', 1))
+    self._log_setup(verbosity)
+    logging.debug('Running management command: process_replication_queue')
+    self._abort_if_stand_alone_instance()
     try:
-      verbosity = int(options.get('verbosity', 1))
-      self._log_setup(verbosity)
-      logging.debug('Running management command: process_replication_queue')
-      lock = self._abort_if_other_instance_is_running()
-      self._abort_if_stand_alone_instance()
+      self._get_lock()
       p = ReplicationQueueProcessor()
       p.process_replication_queue()
     finally:
-      lock.release()
+      self._release()
 
   def _log_setup(self, verbosity):
     # Set up logging. We output only to stdout. Instead of also writing to a log
@@ -110,25 +112,81 @@ class Command(NoArgsCommand):
     else:
       logging.getLogger('').setLevel(logging.INFO)
 
-  def _abort_if_other_instance_is_running(self):
-    single_path = os.path.join(
-      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
-    )
+  def _get_lock(self):
     try:
-      lock = Lock(single_path)
-      lock.acquire()
-      # fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
-      logging.info('Aborted: Another instance is still running')
-      exit(0)
-    return lock
+      self._acquire()
+      self.locked = True
+    except IOError, e:
+      print e
+      sys.exit(0)
 
   def _abort_if_stand_alone_instance(self):
     if settings.STAND_ALONE:
       logging.info(
         'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
       )
-      exit(0)
+      sys.exit(0)
+
+# class Command(NoArgsCommand):
+#     def __init__(self):
+#         self.single_path = os.path.join(tempfile.gettempdir(),
+#                                         os.path.splitext(__file__)[0] + '.single')
+#         self.handle = open(self.single_path, 'w')
+#
+#     help = 'Process the queue of replication requests'
+#
+#     # Bitwise OR fcntl.LOCK_NB if you need a non-blocking lock
+#     def acquire(self):
+#         fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+#         self.locked = True
+#
+#     def release(self):
+#         fcntl.flock(self.handle, fcntl.LOCK_UN)
+#         self.locked = False
+#
+#     def __del__(self):
+#         self.handle.close()
+#
+#     def handle_noargs(self, **options):
+#         try:
+#
+#             verbosity = int(options.get('verbosity', 1))
+#             self._log_setup(verbosity)
+#             logging.debug('Running management command: process_replication_queue')
+#             self._abort_if_other_instance_is_running()
+#             self._abort_if_stand_alone_instance()
+#             p = ReplicationQueueProcessor()
+#             p.process_replication_queue()
+#         finally:
+#             self.release()
+#
+#     def _log_setup(self, verbosity):
+#         # Set up logging. We output only to stdout. Instead of also writing to a log
+#         # file, redirect stdout to a log file when the script is executed from cron.
+#         formatter = logging.Formatter(
+#             '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s',
+#             '%Y-%m-%d %H:%M:%S')
+#         console_logger = logging.StreamHandler(sys.stdout)
+#         console_logger.setFormatter(formatter)
+#         logging.getLogger('').addHandler(console_logger)
+#         if verbosity >= 1:
+#             logging.getLogger('').setLevel(logging.DEBUG)
+#         else:
+#             logging.getLogger('').setLevel(logging.INFO)
+#
+#     def _abort_if_other_instance_is_running(self):
+#
+#         try:
+#             self.acquire()
+#             # fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+#         except IOError:
+#             logging.info('Aborted: Another instance is still running')
+#             sys.exit(0)
+#
+#     def _abort_if_stand_alone_instance(self):
+#         if settings.STAND_ALONE:
+#             logging.info('Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.')
+#             sys.exit(0)
 
 # ===============================================================================
 
@@ -139,7 +197,7 @@ class ReplicationQueueProcessor(object):
     self.cn_client = self._create_cn_client()
 
   def process_replication_queue(self):
-    q = mn.models.ReplicationQueue.objects.exclude(status__status='completed')
+    q = models.ReplicationQueue.objects.exclude(status__status='completed')
     if not len(q):
       self.logger.debug('No replication requests to process')
       return
@@ -187,7 +245,7 @@ class ReplicationQueueProcessor(object):
     task.save()
 
   def _remove_completed_tasks_from_queue(self):
-    q = mn.models.ReplicationQueue.objects.filter(status__status='completed')
+    q = models.ReplicationQueue.objects.filter(status__status='completed')
     q.delete()
 
   def _create_cn_client(self):
@@ -244,7 +302,7 @@ class ReplicationQueueProcessor(object):
   def _store_sys_meta(self, pid, sys_meta):
     if not sys_meta.serialVersion:
       sys_meta.serialVersion = 0
-    mn.sysmeta_store.write_sysmeta_to_store(sys_meta)
+    sysmeta_store.write_sysmeta_to_store(sys_meta)
 
   def _store_science_object_bytes(self, pid, sci_obj):
     object_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
@@ -253,7 +311,7 @@ class ReplicationQueueProcessor(object):
       shutil.copyfileobj(sci_obj, f)
 
   def _assert_pid_does_not_exist(self, pid):
-    if mn.models.ScienceObject.objects.filter(pid=pid).exists():
+    if models.ScienceObject.objects.filter(pid=pid).exists():
       raise ReplicateError(
         'Another object with the identifier has already been created. GMN '
         'attempts to prevent this from happening by rejecting regular '
@@ -262,7 +320,7 @@ class ReplicationQueueProcessor(object):
       )
 
   def _create_database_entry_for_science_object(self, pid, sci_obj, sys_meta):
-    sci_obj = mn.models.ScienceObject()
+    sci_obj = models.ScienceObject()
     sci_obj.pid = sys_meta.identifier.value()
     sci_obj.url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
     sci_obj.set_format(sys_meta.formatId)
@@ -277,7 +335,7 @@ class ReplicationQueueProcessor(object):
     return sci_obj
 
   def _create_database_entry_for_object_create_event(self, sci_obj_row):
-    event_log_row = mn.models.EventLog()
+    event_log_row = models.EventLog()
     event_log_row.object = sci_obj_row
     event_log_row.set_event('create')
     event_log_row.set_ip_address('[replica]')
