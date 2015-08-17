@@ -19,4 +19,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "1.2.6.2"
+import os
+import sys
+from unittest2.loader import defaultTestLoader
+
+
+def collector():
+  # import __main__ triggers code re-execution
+  __main__ = sys.modules['__main__']
+  setupDir = os.path.abspath(os.path.dirname(__main__.__file__))
+  return defaultTestLoader.discover(setupDir)

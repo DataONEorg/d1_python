@@ -22,8 +22,7 @@ class ReplicationQueueProcessor():
 
 
 class TestFileLockUnit(unittest.TestCase):
-  django.setup()
-
+  # django.setup()
   def setUp(self):
     self.lock_file = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_file_lock_unit.single'
 

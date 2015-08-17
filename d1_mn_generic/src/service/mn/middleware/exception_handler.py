@@ -56,9 +56,9 @@ from django.http import HttpResponse
 import d1_common.types.exceptions
 
 # App.
-import service.mn.util as util
+import mn.util as util
 import detail_codes
-import service.settings as settings
+import settings
 
 
 class exception_handler():

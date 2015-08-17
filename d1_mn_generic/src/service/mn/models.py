@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-# Copyright 2009-2012 DataONE
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,18 +39,17 @@ import d1_common.types.exceptions
 
 
 class ScienceObjectChecksumAlgorithm(models.Model):
-  checksum_algorithm = models.CharField(max_length=32, unique=True)
+  checksum_algorithm = models.CharField(max_length=32, unique=True, db_index=True)
 
 
 # Format = The format of the object.
 class ScienceObjectFormat(models.Model):
-  format_id = models.CharField(max_length=128, unique=True)
+  format_id = models.CharField(max_length=128, unique=True, db_index=True)
 
 
 class ScienceObject(models.Model):
-  sid = models.CharField(max_length=800, unique=False, null=True)
-  pid = models.CharField(max_length=800, unique=True)
-  url = models.CharField(max_length=1024, unique=True)
+  pid = models.CharField(max_length=800, unique=True, db_index=True)
+  url = models.CharField(max_length=1024, unique=True, db_index=True)
   format = models.ForeignKey(ScienceObjectFormat, db_index=True)
   checksum = models.CharField(max_length=128, db_index=True)
   checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm, db_index=True)
@@ -60,8 +59,6 @@ class ScienceObject(models.Model):
   system_metadata_refreshed = models.DateTimeField(null=True)
   serial_version = models.PositiveIntegerField()
   archived = models.BooleanField()
-  obsoletes = models.CharField(max_length=800, null=True)
-  obsoletedBy = models.CharField(max_length=800, null=True)
 
   def set_format(self, format_id):
     self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
@@ -94,24 +91,24 @@ class ScienceObject(models.Model):
 
 
 class EventLogEvent(models.Model):
-  event = models.CharField(max_length=128, unique=True)
+  event = models.CharField(max_length=128, unique=True, db_index=True)
 
 
 class EventLogIPAddress(models.Model):
-  ip_address = models.CharField(max_length=32, unique=True)
+  ip_address = models.CharField(max_length=32, unique=True, db_index=True)
 
 
 class EventLogUserAgent(models.Model):
-  user_agent = models.CharField(max_length=1024, unique=True)
+  user_agent = models.CharField(max_length=1024, unique=True, db_index=True)
 
 
 class EventLogSubject(models.Model):
   # TODO: Reference Subject table instead.
-  subject = models.CharField(max_length=1024, unique=True)
+  subject = models.CharField(max_length=1024, unique=True, db_index=True)
 
 
 class EventLogMemberNode(models.Model):
-  member_node = models.CharField(max_length=128, unique=True)
+  member_node = models.CharField(max_length=128, unique=True, db_index=True)
 
 
 class EventLog(models.Model):
@@ -125,9 +122,7 @@ class EventLog(models.Model):
   def set_event(self, event_string):
     if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Attempted to create invalid type of event: {0}'.format(
-          event_string
-        )
+        0, 'Attempted to create invalid type of event: {0}'.format(event_string)
       )
     self.event = EventLogEvent.objects.get_or_create(event=event_string)[0]
 
@@ -193,8 +188,8 @@ class SystemMetadataRefreshQueue(models.Model):
   status = models.ForeignKey(SystemMetadataRefreshQueueStatus)
 
   def set_status(self, status):
-    self.status = SystemMetadataRefreshQueueStatus.objects. \
-        get_or_create(status=status)[0]
+    self.status = SystemMetadataRefreshQueueStatus.objects.\
+      get_or_create(status=status)[0]
 
   def save_unique(self):
     try:
@@ -211,7 +206,7 @@ class SystemMetadataRefreshQueue(models.Model):
 
 
 class PermissionSubject(models.Model):
-  subject = models.CharField(max_length=1024, unique=True)
+  subject = models.CharField(max_length=1024, unique=True, db_index=True)
 
 
 class Permission(models.Model):

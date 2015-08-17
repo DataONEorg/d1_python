@@ -98,7 +98,7 @@ class Command(NoArgsCommand):
     node = self.generate_node_doc()
     logging.info('{0}'.format(node.toDOM().toprettyxml(indent='  ')))
 
-  def generate_node_doc(self):
+  def generate_node_doc(node_xml_path):
     n = mn.node.Node()
     return n.get()
 

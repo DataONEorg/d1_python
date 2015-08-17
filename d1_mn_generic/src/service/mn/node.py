@@ -52,7 +52,7 @@
 # </ns1:node>
 
 # App.
-import service.settings as settings
+import settings
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes

@@ -5,13 +5,13 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-# Copyright 2009-2012 DataONE
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import inspect
 import d1_common.url
 
 # App.
-import service.settings as settings
+import settings
 import session
 
 
@@ -67,8 +67,8 @@ class view_handler():
       # If the view raised an exception, run it through exception middleware,
       # and if the exception middleware returns a response, use that. Otherwise,
       # reraise the exception.
-      for middleware_method in inspect.currentframe().f_back.f_locals['self'] \
-              ._exception_middleware:
+      for middleware_method in inspect.currentframe().f_back.f_locals['self']\
+          ._exception_middleware:
         response = middleware_method(request, e)
         if response:
           return response
@@ -94,8 +94,8 @@ class view_handler():
     if settings.GMN_DEBUG == True:
       if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
         request.META['SSL_CLIENT_CERT'] = \
-            self.pem_in_http_header_to_pem_in_string(
-                request.META['HTTP_VENDOR_INCLUDE_CERTIFICATE'])
+          self.pem_in_http_header_to_pem_in_string(
+            request.META['HTTP_VENDOR_INCLUDE_CERTIFICATE'])
 
     # Always run regular certificate processing.
     session.process_session(request)

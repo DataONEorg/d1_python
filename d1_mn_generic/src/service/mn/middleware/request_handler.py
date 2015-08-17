@@ -40,7 +40,7 @@ import d1_common.const
 import d1_common.types.exceptions
 
 # App.
-import service.settings as settings
+import settings
 
 
 class request_handler():

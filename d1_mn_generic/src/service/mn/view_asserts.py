@@ -5,13 +5,13 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-# Copyright 2009-2012 DataONE
+#   Copyright 2009-2012 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,14 +36,13 @@ import d1_common.const
 import d1_common.types.exceptions
 
 # App.
-
-# import mn.db_filter
-# import mn.event_log
-import service.mn.models as models
-# import mn.psycopg_adapter
-import service.mn.sysmeta_store as sysmeta_store
-# import service.mn.urls
-import service.mn.util as util
+import mn.db_filter
+import mn.event_log
+import mn.models
+import mn.psycopg_adapter
+import mn.sysmeta_store
+import mn.urls
+import mn.util
 import service.settings
 
 
@@ -71,9 +70,7 @@ def post_has_mime_parts(request, parts):
         missing.append('{0}: {1}'.format(part_type, part_name))
     else:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Invalid part_type: {0}'.format(
-          part_type
-        )
+        0, 'Invalid part_type: {0}'.format(part_type)
       )
 
   if len(missing) > 0:
@@ -82,16 +79,9 @@ def post_has_mime_parts(request, parts):
     )
 
 
-def request_has_pid_or_sid(request):
-  for key in request.POST.keys():
-    if key == 'sid' or key == 'pid' or key == 'newPid':
-      return True
-  raise d1_common.types.exceptions.InvalidRequest(0, 'No pid or sid specified')
-
-
 def object_exists(pid):
-  if not models.ScienceObject.objects.filter(pid=pid, archived=False) \
-          .exists():
+  if not mn.models.ScienceObject.objects.filter(pid=pid, archived=False)\
+    .exists():
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing Science Object', pid
     )
@@ -108,9 +98,7 @@ def xml_document_not_too_large(flo):
 def date_is_utc(date_time):
   if not d1_common.date_time.is_utc(date_time):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Date-time must be specified in UTC: {0}'.format(
-        date_time
-      )
+      0, 'Date-time must be specified in UTC: {0}'.format(date_time)
     )
 
 
@@ -149,7 +137,7 @@ def obsoletes_matches_pid_if_specified(sysmeta, old_pid):
 
 
 def pid_does_not_exist(pid):
-  if models.ScienceObject.objects.filter(pid=pid).exists():
+  if mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, 'An object with the identifier already exists. Please try again with '
       'another identifier', pid
@@ -157,7 +145,7 @@ def pid_does_not_exist(pid):
 
 
 def pid_has_not_been_accepted_for_replication(pid):
-  if models.ReplicationQueue.objects.filter(pid=pid).exists():
+  if mn.models.ReplicationQueue.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0, 'An object with the identifier has already been accepted for replication '
       'Please try again with another identifier', pid
@@ -165,7 +153,7 @@ def pid_has_not_been_accepted_for_replication(pid):
 
 
 def pid_exists(pid):
-  if not models.ScienceObject.objects.filter(pid=pid).exists():
+  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Identifier '
       'does not exist', pid
@@ -173,8 +161,8 @@ def pid_exists(pid):
 
 
 def pid_not_obsoleted(pid):
-  sci_obj = models.ScienceObject.objects.get(pid=pid)
-  with sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
+  sci_obj = mn.models.ScienceObject.objects.get(pid=pid)
+  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as s:
     if s.obsoletedBy is not None:
       raise d1_common.types.exceptions.InvalidRequest(
         0, 'Object has already '
@@ -187,9 +175,7 @@ def url_is_http_or_https(url):
   if url_split.scheme not in ('http', 'https'):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid URL specified for remote storage: {0}. '
-      'Must be HTTP or HTTPS'.format(
-        url
-      )
+      'Must be HTTP or HTTPS'.format(url)
     )
 
 
@@ -200,7 +186,7 @@ def url_references_retrievable(url):
   else:
     conn = httplib.HTTPSConnection(url_split.netloc)
   headers = {}
-  util.add_basic_auth_header_if_enabled(headers)
+  mn.util.add_basic_auth_header_if_enabled(headers)
   conn.request('HEAD', url_split.path, headers=headers)
   res = conn.getresponse()
   if res.status != 200:
@@ -211,7 +197,7 @@ def url_references_retrievable(url):
 
 
 def sci_obj_is_not_replica(pid):
-  sci_obj = models.ScienceObject.objects.filter(pid=pid).get()
+  sci_obj = mn.models.ScienceObject.objects.filter(pid=pid).get()
   if sci_obj.replica:
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Attempted to perform '

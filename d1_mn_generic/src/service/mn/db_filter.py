@@ -35,8 +35,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 # App.
-import service.mn.view_asserts as view_asserts
-import service.mn.models as models
+import mn.view_asserts
 
 # 3/27/12: Wildcard filter removed. Available in SVN.
 
@@ -52,7 +51,7 @@ def add_access_policy_filter(query, request, column_name):
   :return: Filtered query.
   :return type: QuerySet
   '''
-  q = models.PermissionSubject.objects.filter(subject__in=request.subjects)\
+  q = mn.models.PermissionSubject.objects.filter(subject__in=request.subjects)\
     .values('permission__object')
   filter_arg = '{0}__in'.format(column_name)
   return query.filter(**{filter_arg: q})
@@ -97,7 +96,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     raise d1_common.types.exceptions.InvalidRequest(
       0, 'Invalid date format, "{0}": {1}'.format(date_str, str(e))
     )
-  view_asserts.date_is_utc(date)
+  mn.view_asserts.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
   filter_arg = '{0}__{1}'.format(column_name, operator)
   return query.filter(**{filter_arg: date})

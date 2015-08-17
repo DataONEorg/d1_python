@@ -44,8 +44,8 @@ from django.db.models import Max
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
-import service.mn.models as models
-import service.settings as settings
+import mn.models as models
+import settings
 
 
 class response_handler():
