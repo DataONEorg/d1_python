@@ -90,7 +90,7 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
   the HTTPResponse object, otherwise the deserialized object is returned.
   '''
   def __init__(self, *args, **kwargs):
-    '''Connect to a DataONE Coordinating Node or Member Node.
+    '''Connect to a DataONE Coordinating Node or Member Node.'''
 
     def __init__(self, *args, **kwargs):
         '''Connect to a DataONE Coordinating Node or Member Node.
