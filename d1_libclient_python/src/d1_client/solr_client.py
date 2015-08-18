@@ -1000,8 +1000,8 @@ class SOLRSearchResponseIterator(object):
     self.res = None
     self.done = False
     self.transformer = transformer
-    self._nextPage(self.crecord)
     self._numhits = 0
+    self._nextPage(self.crecord)
     self.logger.debug("Iterator hits=%s" % str(self.res['response']['numFound']))
 
   def _nextPage(self, offset):
