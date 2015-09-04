@@ -120,6 +120,18 @@ def delete_all_access_policies(request):
   mn.models.Permission.objects.all().delete()
   return mn.view_shared.http_response_with_boolean_true_type()
 
+
+@mn.restrict_to_verb.get
+def get_access_policy(request, pid):
+  mn.view_asserts.object_exists(pid)
+  mn.event_log.read(pid, request)
+  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
+  sysmeta = mn.sysmeta_store.sysmeta(pid, sciobj.serial_version, read_only=True)
+  return HttpResponse(
+    sysmeta.sysmeta_pyxb.accessPolicy.toxml(
+    ), d1_common.const.CONTENT_TYPE_XML
+  )
+
 # ------------------------------------------------------------------------------
 # Authentication.
 # ------------------------------------------------------------------------------
