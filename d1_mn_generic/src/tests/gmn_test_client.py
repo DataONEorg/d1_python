@@ -121,6 +121,11 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     response = self.GET(url, headers=headers)
     return self._read_boolean_response(response)
 
+  def get_access_policy(self, pid, headers=None):
+    url = self._rest_url('get_access_policy/%(pid)s', pid=pid)
+    response = self.GET(url, headers=headers)
+    return response.read()
+
   # ----------------------------------------------------------------------------
   # Authentication.
   # ----------------------------------------------------------------------------
