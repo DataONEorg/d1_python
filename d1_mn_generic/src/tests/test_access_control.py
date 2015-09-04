@@ -58,17 +58,25 @@ except ImportError, e:
   )
   raise
 
-#from d1_client import cnclient
-#import d1_common.types.exceptions
+# from d1_client import cnclient
+# import d1_common.types.exceptions
 
 # App.
 import test_context as context
 import gmn_test_client
 
 
+class options():
+  def __init__(self):
+    self.gmn_url = 'http://127.0.0.1:8000'
+    self.obj_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
+    self.wrapped = False
+    self.obj_url = 'http://127.0.0.1:8000'
+
+
 class TestAccessControl(unittest2.TestCase):
   def setUp(self):
-    pass
+    self.options = options()
 
   def tearDown(self):
     pass
@@ -115,22 +123,31 @@ class TestAccessControl(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.delete_all_access_policies()
 
-#  def _test(self):
-#    # Delete the test object.
-#    client.test_delete_single_object(context.pid)
-#
-#    # Verify that the test object no longer exists.
-#    self.assertRaises(xml.parsers.expat.ExpatError, client.describe, context.pid)
-#
-#    # Create object containing random bytes.
-#    context.obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
-#
-#    # Create sysmeta.
-#    context.sysmeta = self.gen_sysmeta(
-#      context.pid, 1024,
-#      hashlib.md5(context.obj_str).hexdigest(),
-#      datetime.datetime.now(),
-#      owner=context.test_owner_1)
+  def test_get_access_policy(self):
+    pid = 'AnserMatrix.htm'
+    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+    response = client.get_access_policy(pid)
+    self.assertEqual(
+      response,
+      '''<?xml version="1.0" ?><accessPolicy><allow><subject>8920_skye_fondled</subject><subject>public</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy>'''
+    )
+
+  #  def _test(self):
+  #    # Delete the test object.
+  #    client.test_delete_single_object(context.pid)
+  #
+  #    # Verify that the test object no longer exists.
+  #    self.assertRaises(xml.parsers.expat.ExpatError, client.describe, context.pid)
+  #
+  #    # Create object containing random bytes.
+  #    context.obj_str = "".join(chr(random.randrange(0, 255)) for i in xrange(1024))
+  #
+  #    # Create sysmeta.
+  #    context.sysmeta = self.gen_sysmeta(
+  #      context.pid, 1024,
+  #      hashlib.md5(context.obj_str).hexdigest(),
+  #      datetime.datetime.now(),
+  #      owner=context.test_owner_1)
 
   def test_020(self):
     '''Set access policy'''
@@ -141,18 +158,18 @@ class TestAccessControl(unittest2.TestCase):
     )
     self._set_access_policy(context.pid, rules)
 
-#  def ___test_020(self):
-#    '''Create object with access policy.
-#    '''
-#    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
-#
-#    # Add the access policy to the SysMeta.
-#    context.sysmeta.accessPolicy = context.access_policy
-#
-#    # POST the new object to MN.
-#    response = client.createResponse(pid=context.pid,
-#      obj=context.obj_str, sysmeta=context.sysmeta,
-#      vendorSpecific=self.session(context.test_owner_1))
+  #  def ___test_020(self):
+  #    '''Create object with access policy.
+  #    '''
+  #    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
+  #
+  #    # Add the access policy to the SysMeta.
+  #    context.sysmeta.accessPolicy = context.access_policy
+  #
+  #    # POST the new object to MN.
+  #    response = client.createResponse(pid=context.pid,
+  #      obj=context.obj_str, sysmeta=context.sysmeta,
+  #      vendorSpecific=self.session(context.test_owner_1))
 
   def test_030(self):
     '''Access is allowed for owner.'''
@@ -230,7 +247,9 @@ class TestAccessControl(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
 
     sysmeta = client.getSystemMetadata(
-      context.pid, vendorSpecific=self.session(context.test_owner_1)
+      context.pid, vendorSpecific=self.session(
+        context.test_owner_1
+      )
     )
 
     self.assertEqual(sysmeta.accessPolicy.allow[0].subject[0].value(), 'test_perm_7')
@@ -293,7 +312,7 @@ class TestAccessControl(unittest2.TestCase):
         vendorSpecific=self.session(subject)
       )
 
-#===============================================================================
+# ===============================================================================
 
 
 def log_setup():
@@ -338,14 +357,15 @@ def main():
 
   if options.test != '':
     suite = unittest2.TestSuite(map(s, [options.test]))
-    #suite.debug()
+    # suite.debug()
   else:
     suite = unittest2.TestLoader().loadTestsFromTestCase(s)
 
-#  if options.debug == True:    
-#    unittest2.TextTestRunner(verbosity=2).debug(suite)
-#  else:
+  #  if options.debug == True:
+  #    unittest2.TextTestRunner(verbosity=2).debug(suite)
+  #  else:
   unittest2.TextTestRunner(verbosity=2, failfast=True).run(suite)
+
 
 if __name__ == '__main__':
   main()
