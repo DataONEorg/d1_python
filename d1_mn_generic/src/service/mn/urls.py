@@ -31,7 +31,7 @@
 
 from django.conf.urls import patterns, url
 
-import settings
+import service.settings as settings
 
 urlpatterns = patterns(
   'service.mn.views.v1',
@@ -69,7 +69,7 @@ urlpatterns = patterns(
   # MNAuthorization.isAuthorized() - GET /isAuthorized/{pid}
   url(r'^v1/isAuthorized/(.+)/?$', 'get_is_authorized_pid'),
   # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{pid}
-  url(r'^v1/refreshSystemMetadata/?$', 'post_refresh_system_metadata'),
+  url(r'^v1/dirtySystemMetadata/?$', 'post_refresh_system_metadata'),
 
   # Tier 3: Storage API (MNStorage)
   # MNStorage.create() - POST /object
@@ -117,6 +117,7 @@ if settings.GMN_DEBUG:
     # Access Policy.
     url(r'^diag/set_access_policy/(.+?)/?$', 'set_access_policy'),
     url(r'^diag/delete_all_access_policies/?$', 'delete_all_access_policies'),
+    url(r'^diag/get_access_policy/(.+?)/?$', 'get_access_policy'),
     # Misc.
     url(r'^diag/create/(.+)$', 'create'),
     url(r'^diag/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),
