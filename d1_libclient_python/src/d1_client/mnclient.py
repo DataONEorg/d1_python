@@ -249,10 +249,18 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
         return self.POST(url, fields=mime_multipart_fields, headers=vendorSpecific)
 
 
+    # @d1_common.util.utf8_to_unicode
+    # def systemMetadataChanged(self, pid, sysmeta,
+    #                           vendorSpecific=None):
+    #     response = self.systemMetadataChangedResponse(pid, sysmeta,vendorSpecific)
+    #     return self._read_boolean_response(response)
+
     @d1_common.util.utf8_to_unicode
-    def systemMetadataChanged(self, pid, sysmeta,
-                              vendorSpecific=None):
-        response = self.systemMetadataChangedResponse(pid, sysmeta,vendorSpecific)
+    def systemMetadataChanged(self, pid, serialVersion, dateSysMetaLastModified,
+                            vendorSpecific=None):
+        response = self.systemMetadataChangedResponse(pid, serialVersion,
+                                                      dateSysMetaLastModified,
+                                                      vendorSpecific)
         return self._read_boolean_response(response)
 
     # ============================================================================
