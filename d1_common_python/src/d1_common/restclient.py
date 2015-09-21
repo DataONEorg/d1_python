@@ -237,6 +237,8 @@ class RESTClient(object):
     self.logger.debug('operation: {0} {1}://{2}'.format(method, self.scheme,
       d1_common.url.joinPathElements(self.connection.host, url)))
     self.logger.debug('headers: {0}'.format(str(headers)))
+    self.logger.debug('cert-path: {0}'.format(self.connection.cert_file))
+    self.logger.debug('key-path: {0}'.format(self.connection.key_file))
     if dump_path is not None:
       self._dump_request_to_file(dump_path, method, url, body, headers)
     self.connection.request(n_tries, method, url, body, headers)
