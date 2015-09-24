@@ -3,6 +3,7 @@ import os
 import glob
 import re
 import shutil
+import argparse
 
 
 def add_replication_policy(indir):
@@ -48,5 +49,8 @@ def remove_replication_policy(indir):
 
 
 if __name__ == '__main__':
-  indir = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
-  add_replication_policy(indir)
+  # indir = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
+  parser = argparse.ArgumentParser()
+  parser.add_argument("indir", help="directory of sysmeta test objects")
+  args = parser.parse_args()
+  add_replication_policy(args.indir)
