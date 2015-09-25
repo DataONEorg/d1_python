@@ -230,9 +230,9 @@ CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopas
 NODE_REPLICATE = True
 
 # The maximum size, in octets (8-bit bytes), of each object this node is willing to
-# accept for replication. Set to -1 to allow objects of any size.
+# accept for replication. 
 # E.g. for a maximum object size of 1GiB: 1024**3
-REPLICATION_MAXOBJECTSIZE = -1
+REPLICATION_MAXOBJECTSIZE = 1024**3
 
 # The total space, in octets (8-bit bytes), that this node is providing for
 # replication. Set to -1 to provide unlimited space (not recommended).
