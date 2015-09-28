@@ -39,7 +39,7 @@ import tempfile
 import StringIO
 
 # Django.
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import NoArgsCommand, BaseCommand
 from django.db import transaction
 
 # D1.
@@ -56,7 +56,20 @@ import d1_common.util
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 sys.path.append(_here('../'))
 sys.path.append(_here('../types/generated'))
-
+sys.path.append(
+  os.path.dirname(
+    os.path.dirname(
+      os.path.dirname(
+        os.path.dirname(
+          os.path.abspath(
+            __file__
+          )
+        )
+      )
+    )
+  )
+)
+sys.path.append('/home/mark/d1/d1_python/d1_certificate_python/src')
 # App.
 import settings
 import mn.models
@@ -64,7 +77,7 @@ import mn.sysmeta_store
 import mn.view_shared
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
   help = 'Process the queue of replication requests'
 
   def __init__(self):
@@ -75,19 +88,40 @@ class Command(NoArgsCommand):
     self.handle = open(self.filename, 'w')
     self.locked = False
 
-  # Bitwise OR fcntl.LOCK_NB if you need a non-blocking lock
   def _acquire(self):
     fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    self.locked = True
 
   def _release(self):
     fcntl.flock(self.handle, fcntl.LOCK_UN)
-    self.locked = False
-
-  def __del__(self):
     self.handle.close()
+    # self.__del__()
 
-  def process_queue(self, **options):
+  def _get_lock(self):
+    try:
+      if self.locked:
+        return
+      self._acquire()
+      self.locked = True
+    except IOError, e:
+      print e
+      sys.exit(0)
+
+  def _remove_lock(self):
+    try:
+      self._release()
+      self.locked = False
+    except IOError, e:
+      print e
+      sys.exit(0)
+
+  def _abort_if_stand_alone_instance(self):
+    if settings.STAND_ALONE:
+      logging.info(
+        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
+      )
+      sys.exit(0)
+
+  def handle_noargs(self, **options):
 
     verbosity = int(options.get('verbosity', 1))
     self._log_setup(verbosity)
@@ -98,16 +132,7 @@ class Command(NoArgsCommand):
       p = ReplicationQueueProcessor()
       p.process_replication_queue()
     finally:
-      self._release()
-
-  def handle_noargs(self, **options):
-    verbosity = int(options.get('verbosity', 1))
-    self._log_setup(verbosity)
-    logging.debug('Running management command: process_replication_queue')
-    self._abort_if_other_instance_is_running()
-    self._abort_if_stand_alone_instance()
-    p = ReplicationQueueProcessor()
-    p.process_replication_queue()
+      self._remove_lock()
 
   def _log_setup(self, verbosity):
     # Set up logging. We output only to stdout. Instead of also writing to a log
@@ -122,24 +147,6 @@ class Command(NoArgsCommand):
       logging.getLogger('').setLevel(logging.DEBUG)
     else:
       logging.getLogger('').setLevel(logging.INFO)
-
-  def _abort_if_other_instance_is_running(self):
-    single_path = os.path.join(
-      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
-    )
-    f = open(single_path, 'w')
-    try:
-      fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
-      logging.info('Aborted: Another instance is still running')
-      exit(0)
-
-  def _abort_if_stand_alone_instance(self):
-    if settings.STAND_ALONE:
-      logging.info(
-        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
-      )
-      exit(0)
 
 # ===============================================================================
 

@@ -13,6 +13,8 @@ exclude service/settings_site.py
 exclude push_to_gmn_s.py
 exclude push_to_gmn1.py
 exclude fix_service_permissions.py
+include README.txt
+include create_manifest.py
 include deployment/__init__.py
 include deployment/forward_http_to_https.conf
 include deployment/gmn-ssl.conf
@@ -228,6 +230,7 @@ include service/mn/sysmeta_validate.py
 include service/mn/templates/404.html
 include service/mn/templates/500.html
 include service/mn/templates/__init__.py
+include service/mn/templates/diag.html
 include service/mn/templates/echo_session.xhtml
 include service/mn/templates/home.html
 include service/mn/templates/permissions_for_object.xhtml
@@ -253,14 +256,19 @@ include service/urls.py
 include setup.cfg
 include setup.py
 include tests/__init__.py
+include tests/acquire_file_lock.py
+include tests/acquire_release_file_lock.py
 include tests/gmn_integration_tests.py
 include tests/gmn_test_client.py
+include tests/gmn_test_create_huge_file.py
 include tests/integration_tests.py
 include tests/mk_test_log.py
 include tests/testUnicodeStrings.utf8.txt
 include tests/test_access_control.py
 include tests/test_concurrency.py
 include tests/test_context.py
+include tests/test_file_lock.py
+include tests/test_file_lock_unit.py
 include tests/test_log.csv
 include tests/test_objectlist.xml
 include tests/test_objects/10Dappend1.txt
@@ -360,6 +368,7 @@ include tests/test_objects/mets.xml
 include tests/test_objects/mets.xml.sysmeta
 include tests/test_replication.py
 include tests/tests.py
+include tests/tmp/test1.txt
 include tests/tricky_identifiers_unicode.txt
 include tests/tricky_identifiers_unicode_supplementary.txt
 include tests/unittest2/__init__.py
