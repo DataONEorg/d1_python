@@ -107,6 +107,19 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     response = self.GET(url, headers=headers)
     return self._read_boolean_response(response)
 
+  def create_replication_queue(self, pid, sysmeta, vendorSpecific=None):
+    url = self._rest_url('replicate/%(pid)s', pid=pid)
+    mime_multipart_fields = [
+      ('pid', pid.encode('utf-8')), ('sourceNode', 'http://127.0.0.1:8000')
+    ]
+    mime_multipart_files = [('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')), ]
+    response = self.POST(
+      url,
+      fields=mime_multipart_fields,
+      files=mime_multipart_files,
+      headers=vendorSpecific
+    )
+    return self._read_boolean_response(response)
   # ----------------------------------------------------------------------------
   # Access Policy.
   # ----------------------------------------------------------------------------

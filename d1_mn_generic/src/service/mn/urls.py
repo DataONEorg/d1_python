@@ -97,6 +97,7 @@ if settings.GMN_DEBUG or settings.MONITOR:
     'service.mn.views.diagnostics',
     # Replication.
     url(r'^diag/get_replication_queue/?$', 'get_replication_queue'),
+    url(r'^diag/replicate/(.+)$', 'post_replicate'),
     # Authentication.
     url(r'^diag/echo_session/?$', 'echo_session'),
     # Misc.

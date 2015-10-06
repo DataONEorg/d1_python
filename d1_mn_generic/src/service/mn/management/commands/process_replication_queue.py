@@ -77,23 +77,30 @@ import mn.sysmeta_store
 import mn.view_shared
 
 
-class Command(BaseCommand):
+class Command(NoArgsCommand):
   help = 'Process the queue of replication requests'
 
   def __init__(self):
+    super(Command, self).__init__()
     self.filename = os.path.join(
       tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
     )
     # This will create it if it does not exist already
-    self.handle = open(self.filename, 'w')
+    self.file_handle = open(self.filename, 'w')
     self.locked = False
 
   def _acquire(self):
-    fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    self.filename = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
+    # This will create it if it does not exist already
+    self.file_handle = open(self.filename, 'w')
+    self.locked = False
+    fcntl.flock(self.file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
   def _release(self):
-    fcntl.flock(self.handle, fcntl.LOCK_UN)
-    self.handle.close()
+    fcntl.flock(self.file_handle, fcntl.LOCK_UN)
+    self.file_handle.close()
     # self.__del__()
 
   def _get_lock(self):

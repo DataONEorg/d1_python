@@ -2,6 +2,7 @@ __author__ = 'mark'
 
 import unittest
 import service.mn.management.commands.process_replication_queue as rep_queue
+import service.mn.management.commands.process_system_metadata_refresh_queue as sysmeta_rep_queue
 import os
 import subprocess
 import fcntl
@@ -77,7 +78,7 @@ class TestFileLockUnit(unittest.TestCase):
       lock_name = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_file_lock_unit.single'
       sng = rep_queue.Command()
       sng._acquire()
-      mocked_method.assert_called_with(sng.handle, 6)
+      mocked_method.assert_called_with(sng.file_handle, 6)
 
   @patch(
     'service.mn.management.commands.process_replication_queue.ReplicationQueueProcessor.process_replication_queue'
@@ -94,20 +95,10 @@ class TestFileLockUnit(unittest.TestCase):
       sng._acquire()
       new_sng = rep_queue.Command()
       try:
-        new_sng.process_queue()
+        new_sng.handle_noargs()
       except IOError, e:
         print e.errno
       self.assertFalse(new_sng.locked)
-
-  def test_second_acquire_called_flock(self):
-    with patch(
-      'service.mn.management.commands.process_replication_queue.fcntl.flock'
-    ) as mocked_method:
-      lock_name = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_file_lock_unit.single'
-      sng = rep_queue.Command()
-      sng._acquire()
-      sng._acquire()
-      self.assertEqual(mocked_method.mock_calls[0], mocked_method.mock_calls[1])
 
   @patch(
     'service.mn.management.commands.process_replication_queue.ReplicationQueueProcessor.process_replication_queue'
@@ -128,7 +119,7 @@ class TestFileLockUnit(unittest.TestCase):
     ) as mocked_method:
       cmd = rep_queue.Command()
       mock_init.return_value = ReplicationQueueProcessor()
-      cmd.process_queue()
+      cmd.handle_noargs()
       mocked_method.assert_called_with()
 
   @patch(
@@ -148,7 +139,7 @@ class TestFileLockUnit(unittest.TestCase):
     ) as mocked_method:
       cmd = rep_queue.Command()
       mock_init.return_value = ReplicationQueueProcessor()
-      cmd.process_queue()
+      cmd.handle_noargs()
       mocked_method.assert_called_with()
 
   @patch(
@@ -166,7 +157,7 @@ class TestFileLockUnit(unittest.TestCase):
   ):
     cmd = rep_queue.Command()
     mock_init.return_value = ReplicationQueueProcessor()
-    cmd.process_queue()
+    cmd.handle_noargs()
     self.assertEqual(
       cmd.filename,
       '/home/mark/d1/d1_python/d1_mn_generic/src/service/mn/management/commands/process_replication_queue.single'

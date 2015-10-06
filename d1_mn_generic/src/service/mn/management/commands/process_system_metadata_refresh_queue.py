@@ -51,6 +51,24 @@ import d1_common.util
 import d1_common.date_time
 import d1_common.url
 
+# Add some GMN paths to include path.
+_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+sys.path.append(_here('../'))
+sys.path.append(_here('../types/generated'))
+sys.path.append(
+  os.path.dirname(
+    os.path.dirname(
+      os.path.dirname(
+        os.path.dirname(
+          os.path.abspath(
+            __file__
+          )
+        )
+      )
+    )
+  )
+)
+sys.path.append('/home/mark/d1/d1_python/d1_certificate_python/src')
 # App.
 import settings
 import mn.models
@@ -62,14 +80,66 @@ import mn.sysmeta_store
 class Command(NoArgsCommand):
   help = 'Process the System Metadata refresh queue.'
 
+  def __init__(self):
+    super(Command, self).__init__()
+    self.filename = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
+    # This will create it if it does not exist already
+    self.file_handle = open(self.filename, 'w')
+    self.locked = False
+
+  def _acquire(self):
+    self.filename = os.path.join(
+      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
+    )
+    # This will create it if it does not exist already
+    self.file_handle = open(self.filename, 'w')
+    self.locked = False
+    fcntl.flock(self.file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+  def _release(self):
+    fcntl.flock(self.file_handle, fcntl.LOCK_UN)
+    self.file_handle.close()
+    # self.__del__()
+
+  def _get_lock(self):
+    try:
+      if self.locked:
+        return
+      self._acquire()
+      self.locked = True
+    except IOError, e:
+      print e
+      sys.exit(0)
+
+  def _remove_lock(self):
+    try:
+      self._release()
+      self.locked = False
+    except IOError, e:
+      print e
+      sys.exit(0)
+
+  def _abort_if_stand_alone_instance(self):
+    if settings.STAND_ALONE:
+      logging.info(
+        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
+      )
+      sys.exit(0)
+
   def handle_noargs(self, **options):
+
     verbosity = int(options.get('verbosity', 1))
     self._log_setup(verbosity)
     logging.debug('Running management command: process_system_metadata_refresh_queue')
-    self._abort_if_other_instance_is_running()
     self._abort_if_stand_alone_instance()
-    p = SysMetaRefresher()
-    p.process_refresh_queue()
+    try:
+      self._get_lock()
+      p = SysMetaRefresher()
+      p.process_refresh_queue()
+    finally:
+      self._remove_lock()
 
   def _log_setup(self, verbosity):
     # Set up logging. We output only to stdout. Instead of also writing to a log
@@ -84,24 +154,6 @@ class Command(NoArgsCommand):
       logging.getLogger('').setLevel(logging.DEBUG)
     else:
       logging.getLogger('').setLevel(logging.INFO)
-
-  def _abort_if_other_instance_is_running(self):
-    single_path = os.path.join(
-      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
-    )
-    f = open(single_path, 'w')
-    try:
-      fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
-      logging.info('Aborted: Another instance is still running')
-      exit(0)
-
-  def _abort_if_stand_alone_instance(self):
-    if settings.STAND_ALONE:
-      logging.info(
-        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
-      )
-      exit(0)
 
 #===============================================================================
 

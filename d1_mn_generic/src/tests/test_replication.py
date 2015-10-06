@@ -37,13 +37,16 @@ import urlparse
 import urllib
 import StringIO
 import time
+import sys
 
+import d1_common.types.generated.dataoneTypes as dataoneTypes
+sys.path.append('/home/mark/d1/d1_python/d1_mn_generic/src/service')
 # D1
 try:
   #import d1_common.mime_multipart
   import d1_common.types.exceptions
-  import d1_common.types.checksum_serialization
-  import d1_common.types.objectlist_serialization
+  # import d1_common.types.checksum_serialization
+  # import d1_common.types.objectlist_serialization
   import d1_common.util
   import d1_common.date_time
   import d1_common.url
@@ -55,14 +58,27 @@ except ImportError, e:
   raise
 try:
   import d1_client
-  import d1_client.client
+  # import d1_client.client
+  import d1_client.mnclient
   import d1_client.systemmetadata
+  import mn.sysmeta_store
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
   raise
+
+# App.
+import gmn_test_client
+
+
+class options():
+  def __init__(self):
+    self.gmn_url = 'http://127.0.0.1:8000'
+    self.obj_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
+    self.wrapped = False
+    self.obj_url = 'http://127.0.0.1:8000'
 
 
 def log_setup():
@@ -71,7 +87,7 @@ def log_setup():
   logging.getLogger('').setLevel(logging.DEBUG)
   formatter = logging.Formatter('%(levelname)-8s %(message)s')
   console_logger = logging.StreamHandler(sys.stdout)
-  console_logging.setFormatter(formatter)
+  console_logger.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
 
@@ -100,74 +116,91 @@ def replicate(opts, args):
 
   logging.debug('src_ref({0}) dst_ref({1}) pid({2})'.format(src_ref, dst_ref, pid))
 
-  # Create connections to src and dst.
-  dst_base = baseurl_by_noderef(opts, dst_ref)
-  client_dst = d1_client.client.DataOneClient(dst_base)
-  src_base = baseurl_by_noderef(opts, src_ref)
-  client_src = d1_client.client.DataOneClient(src_base)
+  # # Create connections to src and dst.
+  # dst_base = baseurl_by_noderef(opts, dst_ref)
+  # client_dst = d1_client.client.DataOneClient(dst_base)
+  # src_base = baseurl_by_noderef(opts, src_ref)
+  # client_src = d1_client.client.DataOneClient(src_base)
+  client_dst = d1_client.mnclient.MemberNodeClient(dst_ref)
+  client_src = d1_client.mnclient.MemberNodeClient(src_ref)
 
   # For easy testing, delete the object on the destination node if it exists
   # there, so that we can test on the same object each time.
-  try:
-    pid_deleted = client_dst.delete(pid)
-    assert (pid == pid_deleted.value())
-  except d1_common.types.exceptions.NotFound:
-    pass
+  # try:
+  #   pid_deleted = client_dst.delete(pid)
+  #   assert(pid == pid_deleted.value())
+  # except d1_common.types.exceptions.NotFound:
+  #   pass
 
   # Check that the object does not already exist on dst.
   #   We check for SyntaxError raised by the XML deserializer when it attempts
   #   to deserialize a DataONEException. The exception is caused by the body
   #   being empty since describe() uses a HEAD request.
-  try:
-    client_dst.describe(pid)
-  except SyntaxError:
-    pass
-  else:
-    logging.error('pid({0}): Object already exists on destination'.format(pid))
-    exit()
+  # try:
+  #   client_dst.describe(pid)
+  # except SyntaxError:
+  #   pass
+  # else:
+  #   logging.error('pid({0}): Object already exists on destination'.format(pid))
+  #   exit()
 
   # Download the SysMeta doc from the source.
-  sysmeta_obj = client_src.getSystemMetadata(pid)
-  sysmeta_doc = sysmeta_obj.toxml()
+  # sysmeta_obj = client_src.getSystemMetadata(pid)
 
+  sysmeta_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects/15Jmatrix2.txt.sysmeta'
+  with open(sysmeta_path, 'rb') as f:
+    sysmeta_xml = f.read()
+  # SysMeta is stored in UTF-8 and CreateFromDocument() does not handle
+  # native Unicode objects, so the SysMeta is passed to CreateFromDocument()
+  # as UTF-8.
+  sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+  # sysmeta_doc = sysmeta_obj.toxml()
+  opts = options()
+  # opts.gmn_url = src_ref
+  client = gmn_test_client.GMNTestClient(
+    'https://flynn-gmn-2.test.dataone.org',
+    cert_path='/tmp/x509up_u1000'
+  )
+  client.clear_replication_queue()
+  client.create_replication_queue(pid, sysmeta_obj)
+  # Poll for completed replication.
+  # test_replicate_get_xml = urlparse.urljoin(client_dst.client.target,
+  #                                                 '/test_replicate_get_xml')
   # Add replication task to the destination GMN work queue.
   #   Create the MMP document that is submitted to dst to request a replication.
-  files = []
-  files.append(('sysmeta', 'sysmeta', sysmeta_doc))
-  fields = []
-  fields.append(('sourceNode', src_ref))
-  multipart = d1_common.mime_multipart.multipart(fields, files)
-  #   Post the MMP doc to /replicate on GMN.
-  replicate_url = urlparse.urljoin(client_dst.client.target, '/replicate')
-  multipart.post(replicate_url)
-
-  # Poll for completed replication.
-  test_replicate_get_xml = urlparse.urljoin(
-    client_dst.client.target, '/test_replicate_get_xml'
-  )
-  replication_completed = False
-  while not replication_completed:
-    status_xml_str = client_dst.client.GET(test_replicate_get_xml).read()
-    status_xml_obj = lxml.etree.fromstring(status_xml_str)
-
-    for work_item in status_xml_obj.xpath('/replication_queue/replication_item'):
-      if  work_item.xpath('pid')[0].text == pid and \
-          work_item.xpath('source_node')[0].text == src_ref and \
-          work_item.xpath('status')[0].text == 'completed':
-        replication_completed = True
-        break
-
-    if not replication_completed:
-      time.sleep(1)
-
-  # Get checksum of the object on the destination server and compare it to
-  # the checksum retrieved from the source server.
-  dst_checksum_obj = client_dst.checksum(pid)
-  dst_checksum = dst_checksum_obj.value()
-  src_checksum_obj = client_src.checksum(pid)
-  src_checksum = src_checksum_obj.value()
-  if src_checksum != dst_checksum:
-    raise Exception('Replication failed: Source and destination checksums do not match')
+  # files = []
+  # files.append(('sysmeta', 'sysmeta', sysmeta_doc))
+  # fields = []
+  # fields.append(('sourceNode', src_ref))
+  # multipart = d1_common.mime_multipart.multipart(fields, files)
+  # #   Post the MMP doc to /replicate on GMN.
+  # replicate_url = urlparse.urljoin(client_dst.base_url, '/replicate')
+  # multipart.post(replicate_url)
+  #
+  #
+  # replication_completed = False
+  # while not replication_completed:
+  #   status_xml_str = client_dst.client.GET(test_replicate_get_xml).read()
+  #   status_xml_obj = lxml.etree.fromstring(status_xml_str)
+  #
+  #   for work_item in status_xml_obj.xpath('/replication_queue/replication_item'):
+  #     if  work_item.xpath('pid')[0].text == pid and \
+  #         work_item.xpath('source_node')[0].text == src_ref and \
+  #         work_item.xpath('status')[0].text == 'completed':
+  #       replication_completed = True
+  #       break
+  #
+  #   if not replication_completed:
+  #     time.sleep(1)
+  #
+  # # Get checksum of the object on the destination server and compare it to
+  # # the checksum retrieved from the source server.
+  # dst_checksum_obj = client_dst.checksum(pid)
+  # dst_checksum = dst_checksum_obj.value()
+  # src_checksum_obj = client_src.checksum(pid)
+  # src_checksum = src_checksum_obj.value()
+  # if src_checksum != dst_checksum:
+  #   raise Exception('Replication failed: Source and destination checksums do not match')
 
 
 def main():
