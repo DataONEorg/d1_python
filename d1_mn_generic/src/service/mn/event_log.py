@@ -30,8 +30,8 @@
 import d1_common.types.exceptions
 
 # App.
-import models
-import auth
+import mn.models
+import mn.auth
 
 
 def _log(pid, request, event, timestamp=None):
@@ -40,19 +40,19 @@ def _log(pid, request, event, timestamp=None):
   '''
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
-  subject = auth.get_trusted_subjects_string()
+  subject = mn.auth.get_trusted_subjects_string()
 
   # Support logging events that are not associated with an object.
   object_row = None
   if pid is not None:
     try:
-      object_row = models.ScienceObject.objects.filter(pid=pid)[0]
+      object_row = mn.models.ScienceObject.objects.filter(pid=pid)[0]
     except IndexError:
       err_msg = 'Attempted to create event log for non-existing object: {0}'.format((pid))
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Create log entry.
-  event_log_row = models.EventLog()
+  event_log_row = mn.models.EventLog()
   event_log_row.object = object_row
   event_log_row.set_event(event)
   event_log_row.set_ip_address(ip_address)

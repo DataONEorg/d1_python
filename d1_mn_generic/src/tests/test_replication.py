@@ -38,8 +38,13 @@ import urllib
 import StringIO
 import time
 import sys
+import os
+import glob
+import re
+import subprocess
 
 import d1_common.types.generated.dataoneTypes as dataoneTypes
+from django.test.utils import override_settings
 sys.path.append('/home/mark/d1/d1_python/d1_mn_generic/src/service')
 # D1
 try:
@@ -147,37 +152,43 @@ def replicate(opts, args):
   # Download the SysMeta doc from the source.
   # sysmeta_obj = client_src.getSystemMetadata(pid)
 
-  sysmeta_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects/15Jmatrix2.txt.sysmeta'
-  with open(sysmeta_path, 'rb') as f:
-    sysmeta_xml = f.read()
-  # SysMeta is stored in UTF-8 and CreateFromDocument() does not handle
-  # native Unicode objects, so the SysMeta is passed to CreateFromDocument()
-  # as UTF-8.
-  sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
   # sysmeta_doc = sysmeta_obj.toxml()
   opts = options()
   # opts.gmn_url = src_ref
-  client = gmn_test_client.GMNTestClient(
-    'https://flynn-gmn-2.test.dataone.org',
-    cert_path='/tmp/x509up_u1000'
-  )
+  client = gmn_test_client.GMNTestClient(opts.gmn_url)
   client.clear_replication_queue()
-  client.create_replication_queue(pid, sysmeta_obj)
-  # Poll for completed replication.
-  # test_replicate_get_xml = urlparse.urljoin(client_dst.client.target,
-  #                                                 '/test_replicate_get_xml')
-  # Add replication task to the destination GMN work queue.
-  #   Create the MMP document that is submitted to dst to request a replication.
-  # files = []
-  # files.append(('sysmeta', 'sysmeta', sysmeta_doc))
-  # fields = []
-  # fields.append(('sourceNode', src_ref))
-  # multipart = d1_common.mime_multipart.multipart(fields, files)
-  # #   Post the MMP doc to /replicate on GMN.
-  # replicate_url = urlparse.urljoin(client_dst.base_url, '/replicate')
-  # multipart.post(replicate_url)
-  #
-  #
+  for sysmeta_path in sorted(glob.glob(os.path.join(opts.obj_path, '*.sysmeta'))):
+    # Get name of corresponding object and open it.
+    object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+    object_file = open(object_path, 'r')
+
+    # The pid is stored in the sysmeta.
+    sysmeta_file = open(sysmeta_path, 'r')
+    sysmeta_xml = sysmeta_file.read()
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+    # sysmeta_obj.rightsHolder = 'test_user_1'
+    #
+    # # headers = self.include_subjects('test_user_1')
+    # # headers.update({'VENDOR_TEST_OBJECT': 1})
+    # #
+    # # if self.options.wrapped:
+    # #   vendor_specific = {
+    # #     'VENDOR_GMN_REMOTE_URL': self.options.obj_url + '/' + \
+    # #     d1_common.url.encodePathElement(
+    # #       d1_common.url.encodePathElement(sysmeta_obj.identifier.value()))
+    # #   }
+    # #   headers.update(vendor_specific)
+    #
+    # sysmeta_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects/15Jmatrix2.txt.sysmeta'
+    # with open(sysmeta_path, 'rb') as f:
+    #     sysmeta_xml = f.read()
+    #   # SysMeta is stored in UTF-8 and CreateFromDocument() does not handle
+    #   # native Unicode objects, so the SysMeta is passed to CreateFromDocument()
+    #   # as UTF-8.
+    # sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+    client.create_replication_queue(pid, sysmeta_obj)
+  os.chdir('../service')
+  subprocess.call(['python manage.py process_replication_queue'], shell=True)
   # replication_completed = False
   # while not replication_completed:
   #   status_xml_str = client_dst.client.GET(test_replicate_get_xml).read()

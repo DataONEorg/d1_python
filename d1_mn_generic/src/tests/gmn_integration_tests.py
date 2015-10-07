@@ -70,7 +70,7 @@ import re
 import StringIO
 import sys
 #import time
-import unittest2
+import unittest
 #import urllib
 #import urlparse
 #import uuid
@@ -139,9 +139,18 @@ class GMNException(Exception):
   pass
 
 
-class TestSequenceFunctions(unittest2.TestCase):
+class options():
+  def __init__(self):
+    self.gmn_url = 'http://127.0.0.1:8000'
+    self.obj_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
+    self.wrapped = False
+    self.obj_url = 'http://127.0.0.1:8000'
+
+
+class TestSequenceFunctions(unittest.TestCase):
   def __init__(self, methodName='runTest'):
-    unittest2.TestCase.__init__(self, methodName)
+    unittest.TestCase.__init__(self, methodName)
+    self.options = options()
 
   def setUp(self):
     pass
@@ -1325,15 +1334,15 @@ def main():
   s.options = options
 
   if options.test != '':
-    suite = unittest2.TestSuite(map(s, [options.test]))
+    suite = unittest.TestSuite(map(s, [options.test]))
     #suite.debug()
   else:
-    suite = unittest2.TestLoader().loadTestsFromTestCase(s)
+    suite = unittest.TestLoader().loadTestsFromTestCase(s)
 
 #  if options.debug == True:
 #    unittest2.TextTestRunner(verbosity=2).debug(suite)
 #  else:
-  unittest2.TextTestRunner(verbosity=2, failfast=True).run(suite)
+  unittest.TextTestRunner(verbosity=2, failfast=True).run(suite)
 
 if __name__ == '__main__':
   main()

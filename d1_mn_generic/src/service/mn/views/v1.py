@@ -375,7 +375,7 @@ def _assert_node_is_authorized(request, pid):
     client.isNodeAuthorized(request.primary_subject, pid)
   except socket.gaierror:
     raise d1_common.types.exceptions.ServiceFailure(0,
-      'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))    
+      'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(0,
       'A CN has not authorized the target MN, "{0}" to create a replica of "{1}".\n'

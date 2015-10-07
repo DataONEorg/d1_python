@@ -35,7 +35,7 @@ import d1_common.checksum
 import d1_common.types.exceptions
 
 # App.
-import service.settings
+import settings
 
 
 def validate_sysmeta_against_uploaded(request, pid, sysmeta):
@@ -88,10 +88,10 @@ def _calculate_object_checksum(request, checksum_calculator):
 
 def update_sysmeta_with_mn_values(request, sysmeta):
   sysmeta.submitter = request.primary_subject
-  sysmeta.originMemberNode = service.settings.NODE_IDENTIFIER
+  sysmeta.originMemberNode = settings.NODE_IDENTIFIER
   # If authoritativeMemberNode is not specified, set it to this MN.
   if sysmeta.authoritativeMemberNode is None:
-    sysmeta.authoritativeMemberNode = service.settings.NODE_IDENTIFIER
+    sysmeta.authoritativeMemberNode = settings.NODE_IDENTIFIER
   now = datetime.datetime.utcnow()
   sysmeta.dateUploaded = now
   sysmeta.dateSysMetadataModified = now

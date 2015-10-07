@@ -44,7 +44,7 @@ import d1_common.date_time
 import d1_common.url
 
 # App.
-import models
+import mn.models
 import settings
 
 
@@ -131,12 +131,12 @@ def traceback_to_text():
 def clear_db():
   '''Clear the database. Used for testing and debugging.
   '''
-  models.EventLog.objects.all().delete()
-  models.EventLogEvent.objects.all().delete()
-  models.EventLogIPAddress.objects.all().delete()
-  models.ScienceObject.objects.all().delete()
-  models.ScienceObjectChecksumAlgorithm.objects.all().delete()
-  models.ScienceObjectFormat.objects.all().delete()
+  mn.models.EventLog.objects.all().delete()
+  mn.models.EventLogEvent.objects.all().delete()
+  mn.models.EventLogIPAddress.objects.all().delete()
+  mn.models.ScienceObject.objects.all().delete()
+  mn.models.ScienceObjectChecksumAlgorithm.objects.all().delete()
+  mn.models.ScienceObjectFormat.objects.all().delete()
 
 
 class fixed_chunk_size_iterator(object):

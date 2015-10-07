@@ -37,10 +37,10 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_x509v3_certificate_extractor
 
 # App.
-import models
-import node_registry
+import mn.models
+import mn.node_registry
+import mn.sysmeta_store
 import settings
-import sysmeta_store
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -97,7 +97,7 @@ def level_to_action(level):
 
 
 def get_trusted_subjects():
-  return settings.DATAONE_TRUSTED_SUBJECTS | node_registry.get_cn_subjects() \
+  return settings.DATAONE_TRUSTED_SUBJECTS | mn.node_registry.get_cn_subjects() \
     | set([_get_client_side_certificate_subject()])
 
 
@@ -142,8 +142,8 @@ def set_access_policy(pid, access_policy=None):
   # Verify that the object for which access policy is being set exists, and
   # retrieve it.
   try:
-    sci_obj = models.ScienceObject.objects.get(pid=pid)
-  except models.ScienceObject.DoesNotExist:
+    sci_obj = mn.models.ScienceObject.objects.get(pid=pid)
+  except mn.models.ScienceObject.DoesNotExist:
     raise d1_common.types.exceptions.ServiceFailure(
       0, 'Attempted to set access for non-existing object', pid
     )
@@ -159,12 +159,12 @@ def set_access_policy(pid, access_policy=None):
   #
   # The deletes are cascaded so any subjects that are no longer referenced in
   # any permissions are deleted as well.
-  models.Permission.objects.filter(object__pid=pid).delete()
+  mn.models.Permission.objects.filter(object__pid=pid).delete()
 
   # Add an implicit allow rule with all permissions for the rights holder.
   allow_rights_holder = dataoneTypes.AccessRule()
 
-  with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as sysmeta:
+  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version) as sysmeta:
     allow_rights_holder.subject.append(sysmeta.rightsHolder)
     sysmeta.accessPolicy = access_policy
     sci_obj.serial_version = sysmeta.serialVersion
@@ -216,12 +216,12 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
   subjects_required = set([s.value() for s in allow_rule.subject])
   permission_create_rows = []
   subjects_existing = set()
-  for subject_existing_row in models.PermissionSubject.objects.filter(
+  for subject_existing_row in mn.models.PermissionSubject.objects.filter(
     subject__in=subjects_required
   ):
     subjects_existing.add(subject_existing_row.subject)
     permission_create_rows.append(
-      models.Permission(
+      mn.models.Permission(
         object=sci_obj, subject=subject_existing_row,
         level=top_level
       )
@@ -230,16 +230,16 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
   subjects_missing = subjects_required - subjects_existing
 
   for s in subjects_missing:
-    subject_row = models.PermissionSubject(subject=s)
+    subject_row = mn.models.PermissionSubject(subject=s)
     subject_row.save()
     permission_create_rows.append(
-      models.Permission(
+      mn.models.Permission(
         object=sci_obj, subject=subject_row,
         level=top_level
       )
     )
 
-  models.Permission.objects.bulk_create(permission_create_rows)
+  mn.models.Permission.objects.bulk_create(permission_create_rows)
 
 # ------------------------------------------------------------------------------
 # Check permissions.
@@ -301,7 +301,7 @@ def is_allowed(request, level, pid):
   # and when the ACL is updated.
   # - The permission must be for an action level that is the same or higher than
   # the requested action level.
-  return models.Permission.objects.filter(
+  return mn.models.Permission.objects.filter(
     object__pid=pid,
     subject__subject__in=request.subjects,
     level__gte=level
@@ -309,7 +309,7 @@ def is_allowed(request, level, pid):
 
 
 def has_create_update_delete_permission(request):
-  return models.WhitelistForCreateUpdateDelete.objects.filter(
+  return mn.models.WhitelistForCreateUpdateDelete.objects.filter(
     subject__subject__in=request.subjects).exists() \
       or is_trusted_subject(request)
 
@@ -331,7 +331,7 @@ def assert_allowed(request, level, pid):
   Raise NotFound if object does not exist.
   Return NoneType if subject is allowed.
   '''
-  if not models.ScienceObject.objects.filter(pid=pid).exists():
+  if not mn.models.ScienceObject.objects.filter(pid=pid).exists():
     raise d1_common.types.exceptions.NotFound(
       0, 'Attempted to perform operation on non-existing object', pid
     )
