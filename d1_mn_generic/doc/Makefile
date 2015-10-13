@@ -36,7 +36,7 @@ clean:
 html:
 	@echo "PYTHONPATH: ${PYTHONPATH}"
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	chmod +w -R $(BUILDDIR)/html
+	chmod -R +w $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
