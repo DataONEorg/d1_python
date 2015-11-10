@@ -34,9 +34,13 @@ these methods.
 
 # Stdlib.
 import logging
+import re
+import os
+import glob
 
 import d1_client.mnclient
 import d1_common.types.exceptions
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # Constants.
 GMN_TEST_SUBJECT_PUBLIC = 'public'
@@ -107,11 +111,10 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     response = self.GET(url, headers=headers)
     return self._read_boolean_response(response)
 
-  def create_replication_queue(self, pid, sysmeta, vendorSpecific=None):
+  def create_replication_queue(self, pid, sysmeta, sourceNode, vendorSpecific=None):
     url = self._rest_url('replicate/%(pid)s', pid=pid)
-    mime_multipart_fields = [
-      ('pid', pid.encode('utf-8')), ('sourceNode', 'http://127.0.0.1:8000')
-    ]
+
+    mime_multipart_fields = [('pid', pid.encode('utf-8')), ('sourceNode', sourceNode)]
     mime_multipart_files = [('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')), ]
     response = self.POST(
       url,
@@ -267,6 +270,35 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self.GET(url, headers=headers)
 
 # ==============================================================================
+
+
+def include_subjects(subjects):
+  if isinstance(subjects, basestring):
+    subjects = [subjects]
+  return {'VENDOR_INCLUDE_SUBJECTS': '\t'.join(subjects)}
+
+
+def populate_mn(client, filedir):
+  for sysmeta_path in sorted(glob.glob(os.path.join(filedir, '*.sysmeta'))):
+    # Get name of corresponding object and open it.
+    object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
+    object_file = open(object_path, 'r')
+
+    # The pid is stored in the sysmeta.
+    sysmeta_file = open(sysmeta_path, 'r')
+    sysmeta_xml = sysmeta_file.read()
+    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+    sysmeta_obj.rightsHolder = 'test_user_1'
+
+    headers = include_subjects('test_user_1')
+    headers.update({'VENDOR_TEST_OBJECT': 1})
+
+    client.create(
+      sysmeta_obj.identifier.value(
+      ), object_file,
+      sysmeta_obj,
+      vendorSpecific=headers
+    )
 
 
 def rest_call(self, func, python_profile=False, sql_profile=False, *args, **kwargs):

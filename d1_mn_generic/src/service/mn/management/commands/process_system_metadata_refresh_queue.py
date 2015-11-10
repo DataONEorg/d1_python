@@ -90,12 +90,6 @@ class Command(NoArgsCommand):
     self.locked = False
 
   def _acquire(self):
-    self.filename = os.path.join(
-      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
-    )
-    # This will create it if it does not exist already
-    self.file_handle = open(self.filename, 'w')
-    self.locked = False
     fcntl.flock(self.file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
   def _release(self):

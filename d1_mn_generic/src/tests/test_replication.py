@@ -63,7 +63,7 @@ except ImportError, e:
   raise
 try:
   import d1_client
-  # import d1_client.client
+  import d1_client.d1client
   import d1_client.mnclient
   import d1_client.systemmetadata
   import mn.sysmeta_store
@@ -79,9 +79,12 @@ import gmn_test_client
 
 
 class options():
-  def __init__(self):
-    self.gmn_url = 'http://127.0.0.1:8000'
-    self.obj_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
+  def __init__(self, host=None):
+    if not host:
+      self.gmn_url = 'http://127.0.0.1:8000'
+    else:
+      self.gmn_url = host
+    self.obj_path = '/home/mark/d1/d1_client_bash/test_objects'
     self.wrapped = False
     self.obj_url = 'http://127.0.0.1:8000'
 
@@ -99,14 +102,18 @@ def log_setup():
 def baseurl_by_noderef(opts, node_ref):
   # Resolve dst_ref to URL.
   # Call to /cn/test_baseurl_by_noderef/<dst_node_ref>
-  baseurl_by_noderef_url = urlparse.urljoin(
-    opts.d1_root,
-    'test_baseurl_by_noderef/{0}'.format(d1_common.url.encodePathElement(node_ref))
-  )
-
-  client_root = d1_client.client.DataOneClient(opts.d1_root)
-  response = client_root.client.GET(baseurl_by_noderef_url)
-  return response.read()
+  cn_client = d1_client.cnclient.CoordinatingNodeClient(base_url=opts.d1_root)
+  cn_nodes = cn_client.listNodes()
+  for node in cn_nodes.node:
+    if node.identifier.value() == node_ref:
+      return node.baseURL
+  # baseurl_by_noderef_url = urlparse.urljoin(opts.d1_root,
+  #   'test_baseurl_by_noderef/{0}'.format(
+  #     d1_common.url.encodePathElement(node_ref)))
+  #
+  # client_root = d1_client.d1client.DataONEClient(opts.d1_root)
+  # response = client_root.GET(baseurl_by_noderef_url)
+  # return response.read()
 
 
 def replicate(opts, args):
@@ -124,10 +131,13 @@ def replicate(opts, args):
   # # Create connections to src and dst.
   # dst_base = baseurl_by_noderef(opts, dst_ref)
   # client_dst = d1_client.client.DataOneClient(dst_base)
-  # src_base = baseurl_by_noderef(opts, src_ref)
+  src_base = baseurl_by_noderef(opts, src_ref)
+
+  opts = options()
+  dst_base = opts.gmn_url
   # client_src = d1_client.client.DataOneClient(src_base)
-  client_dst = d1_client.mnclient.MemberNodeClient(dst_ref)
-  client_src = d1_client.mnclient.MemberNodeClient(src_ref)
+  client_dst = d1_client.mnclient.MemberNodeClient(dst_base)
+  client_src = d1_client.mnclient.MemberNodeClient(src_base)
 
   # For easy testing, delete the object on the destination node if it exists
   # there, so that we can test on the same object each time.
@@ -153,12 +163,24 @@ def replicate(opts, args):
   # sysmeta_obj = client_src.getSystemMetadata(pid)
 
   # sysmeta_doc = sysmeta_obj.toxml()
-  opts = options()
+  opts = options(host=src_ref)
+  # client = gmn_test_client.GMNTestClient(src_ref)
+  # client.delete_all_objects()
   # opts.gmn_url = src_ref
-  client = gmn_test_client.GMNTestClient(opts.gmn_url)
+  client = gmn_test_client.GMNTestClient(client_dst.base_url)
   client.clear_replication_queue()
-  for sysmeta_path in sorted(glob.glob(os.path.join(opts.obj_path, '*.sysmeta'))):
+  # gmn_test_client.populate_mn(client,'/home/mark/d1/d1_client_bash/test_objects')
+  for obj in glob.glob(os.path.join(opts.obj_path, 'test1005*.sysmeta')):
     # Get name of corresponding object and open it.
+    pid = obj.split('/')[-1].split('.')[0]
+    try:
+      client.test_delete_single_object(pid)
+    except:
+      pass
+
+    sysmeta_path = os.path.join(
+      '/home/mark/d1/d1_client_bash/test_objects', pid + ".sysmeta"
+    )
     object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
     object_file = open(object_path, 'r')
 
@@ -186,9 +208,9 @@ def replicate(opts, args):
     #   # native Unicode objects, so the SysMeta is passed to CreateFromDocument()
     #   # as UTF-8.
     # sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
-    client.create_replication_queue(pid, sysmeta_obj)
-  os.chdir('../service')
-  subprocess.call(['python manage.py process_replication_queue'], shell=True)
+    client.create_replication_queue(pid, sysmeta_obj, src_ref)
+  # os.chdir('../service')
+  # subprocess.call(['python manage.py process_replication_queue'], shell=True)
   # replication_completed = False
   # while not replication_completed:
   #   status_xml_str = client_dst.client.GET(test_replicate_get_xml).read()

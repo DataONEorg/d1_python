@@ -154,8 +154,14 @@ class TestFileLockUnit(unittest.TestCase):
     mock_init.return_value = SysMetaRefresher()
     cmd.handle_noargs()
     self.assertEqual(
-      cmd.filename,
-      '/home/mark/d1/d1_python/d1_mn_generic/src/service/mn/management/commands/process_system_metadata_refresh_queue.single'
+      cmd.filename, os.path.join(
+        os.path.dirname(
+          os.path.dirname(
+            __file__
+          )
+        ), 'service', 'mn', 'management', 'commands',
+        'process_system_metadata_refresh_queue.single'
+      )
     )
 
 
