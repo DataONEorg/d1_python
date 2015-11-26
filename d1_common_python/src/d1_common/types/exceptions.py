@@ -40,7 +40,7 @@ import pyxb
 import pyxb.utils.domutils
 
 # D1.
-import d1_common.types.generated.dataoneErrors as dataoneErrors
+import d1_common.types.dataoneErrors as dataoneErrors
 import d1_common.util
 '''
 Example of serialized DataONE Exception:
