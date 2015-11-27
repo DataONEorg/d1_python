@@ -42,7 +42,7 @@ import pyxb
 # D1.
 from d1_common import xmlrunner
 import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.checksum
 
 # App
@@ -98,6 +98,7 @@ class TestChecksum(unittest.TestCase):
     checksum_obj_in = dataoneTypes.checksum('1' * 32)
     checksum_obj_in.algorithm = 'MD5'
     checksum_xml = checksum_obj_in.toxml()
+    print(checksum_xml)
     checksum_obj_out = dataoneTypes.CreateFromDocument(checksum_xml)
     self.assertEqual(checksum_obj_in.value(), checksum_obj_out.value())
     self.assertEqual(checksum_obj_in.algorithm, checksum_obj_out.algorithm)

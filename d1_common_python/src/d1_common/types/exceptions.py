@@ -93,6 +93,8 @@ def deserialize(dataone_exception_xml):
 
   try:
     trace = dataone_exception_pyxb.traceInformation.toxml(),
+    #trace = str(dataone_exception_pyxb.traceInformation),
+    #trace = ""
   except AttributeError:
     trace = ''
 
@@ -224,15 +226,24 @@ class DataONEException(Exception):
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
     if self.traceInformation is not None:
+
+      print("TRACE=" + str(self.traceInformation))
+
       s = pyxb.utils.domutils.StringToDOM(
         '<value>' + self.traceInformation + '</value>'
       ).documentElement
+      s = pyxb.utils.domutils.StringToDOM(self.traceInformation).documentElement
       dataone_exception_pyxb.traceInformation = s
+
+      #dataone_exception_pyxb.traceInformation = self.traceInformation
     if self.identifier is not None:
       dataone_exception_pyxb.identifier = self.identifier
     if self.nodeId is not None:
       dataone_exception_pyxb.nodeId = self.nodeId
     return dataone_exception_pyxb.toxml()
+
+  def toxml(self):
+    return self.serialize()
 
   def serialize_to_headers(self):
     '''Serialize to a list of HTTP headers (used in responses to HTTP HEAD

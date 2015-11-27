@@ -43,22 +43,29 @@ import pyxb
 from d1_common.types import exceptions
 from d1_common import const
 from d1_common import xmlrunner
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.types.generated.dataoneErrors as dataoneErrors
 
 # App
 import util
 
-VALID_ERROR_DOC = """<?xml version="1.0" encoding="UTF-8"?>
-  <error
-    detailCode="123.456.789"
-    errorCode="456"
-    name="IdentifierNotUnique"
-    identifier="SomeDataONEPID"
-    nodeId="urn:node:SomeNode">
+VALID_ERROR_DOC = '''<?xml version="1.0" encoding="UTF-8"?>
+<error  detailCode="123.456.789"
+        errorCode="456"
+        identifier="SomeDataONEPID"
+        name="IdentifierNotUnique"
+        nodeId="urn:node:SomeNode">
   <description>description0</description>
-  <traceInformation><value>traceInformation0</value></traceInformation>
-  </error>"""
+  <traceInformation>
+    <value>traceInformation0</value>
+    <value>traceInformation2</value>
+  </traceInformation>
+</error>
+'''
+
+VALID_ERROR_DOC_NOTFOUND = '''<?xml version="1.0" encoding="UTF-8"?>
+<error detailCode="1800" errorCode="404" name="NotFound">
+    <description>No system metadata could be found for given PID: something_bogus/</description>
+</error>
+'''
 
 #  'SHA-1',
 #  '3f56de593b6ffc536253b799b429453e3673fc19'
@@ -90,6 +97,20 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(d1_exception.description, 'description0')
     #self.assertEqual(d1_exception.traceInformation, '<?xml version="1.0" ?><traceInformation>traceInformation0</traceInformation>')
 
+  def test_110(self):
+    '''deserialize, serialize, deserialize'''
+    x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
+    sxml = x1.serialize()
+    x2 = exceptions.deserialize(sxml)
+    self.assertTrue(isinstance(x2, exceptions.NotFound))
+    self.assertEqual(x1.errorCode, x2.errorCode)
+    self.assertEqual(x1.detailCode, x2.detailCode)
+    self.assertEqual(x1.name, x2.name)
+    self.assertEqual(x1.description, x2.description)
+    self.assertEqual(x1.nodeId, x2.nodeId)
+    self.assertEqual(x1.identifier, x2.identifier)
+    self.assertEqual(x1.traceInformation, x2.traceInformation)
+
   def test_150(self):
     '''deserialize() of bad document raises DataONEExceptionException'''
     self.assertRaises(
@@ -99,6 +120,7 @@ class TestExceptions(unittest.TestCase):
   def test_200(self):
     '''String representation'''
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
+    print(str(d1_exception))
     self.assertTrue('name: IdentifierNotUnique' in str(d1_exception))
     self.assertTrue('errorCode: 409' in str(d1_exception))
     self.assertTrue('detailCode: 123.456.789' in str(d1_exception))
@@ -106,11 +128,9 @@ class TestExceptions(unittest.TestCase):
   def test_250(self):
     '''create with only detailCode then serialize()'''
     e = exceptions.ServiceFailure(123)
-    self.assertEqual(
-      e.serialize(
-      ),
-      '<?xml version="1.0" ?><error detailCode="123" errorCode="500" name="ServiceFailure"/>'
-    )
+    expected = u'''<?xml version="1.0" ?><error detailCode="123" errorCode="500" name="ServiceFailure"/>
+    '''
+    self.assertEqual(e.serialize(), expected.strip())
 
   def test_260(self):
     '''create with string detailCode and description, then serialize()'''
@@ -176,7 +196,6 @@ class TestExceptions(unittest.TestCase):
     3) Deserialize XML to object.
     4) Verify that the object contains the same information as in (1).
     '''
-
     # Create a native DataONE IdentifierNotUnique Exception object.
     exc = exceptions.IdentifierNotUnique(
       1010, 'description_test', 'test trace information', 'test_pid', 'node_id'

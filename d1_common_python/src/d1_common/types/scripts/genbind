@@ -39,7 +39,12 @@ pyxbgen \
  --write-for-customization \
  --archive-to-file=${ARCHIVE_DIR}/dataone_types.wxs \
  --schema-root=${SCHEMA_DIR} \
- -u dataoneTypes.xsd -m dataoneTypes \
+ -u dataoneTypes.xsd -m dataoneTypes_v1 \
  -u dataoneTypes_v1.1.xsd -m dataoneTypes_v1_1 \
- -u dataoneTypes_v2.0.xsd -m dataoneTypes_v2_0 \
- -u dataoneErrors.xsd -m dataoneErrors
+ -u dataoneTypes_v2.0.xsd -m dataoneTypes_v2_0
+
+ pyxbgen \
+  --module-prefix=${MODULE_PREFIX} \
+  --write-for-customization \
+  --schema-root=${SCHEMA_DIR} \
+  -u dataoneErrors.xsd -m dataoneErrors

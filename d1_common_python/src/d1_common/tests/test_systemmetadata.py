@@ -41,7 +41,7 @@ import pyxb
 # D1.
 from d1_common import xmlrunner
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
 import util

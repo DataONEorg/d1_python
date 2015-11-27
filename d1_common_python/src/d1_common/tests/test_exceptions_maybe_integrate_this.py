@@ -22,14 +22,22 @@
 import d1_common.types.exceptions as exceptions
 
 ex = """<?xml version="1.0" encoding="UTF-8"?>
-<d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://ns.dataone.org/service/types/exceptions file:/home/dahl/eclipse_workspace_d1/d1_common_python/src/d1_schemas/dataoneErrors.xsd"
-    detailCode="0" errorCode="0" name="IdentifierNotUnique" pid="somedataonepid">
+<error detailCode="test" errorCode="409" name="IdentifierNotUnique" identifier="somedataonepid">
     <description>description0</description>
     <traceInformation>traceInformation0</traceInformation>
-</d1:error>"""
+</error>"""
 
-exobj = exceptions.deserialize_exception(ex)
+ex2 = '''<?xml version="1.0" encoding="UTF-8"?>
+<error  detailCode="123.456.789"
+        errorCode="456"
+        identifier="SomeDataONEPID"
+        name="IdentifierNotUnique"
+        nodeId="urn:node:SomeNode">
+  <description>description0</description>
+  <traceInformation><value>traceInformation0</value></traceInformation>
+</error>
+'''
 
-print exobj.toxml()
+exobj = exceptions.deserialize(ex)
+
+print exobj.serialize()

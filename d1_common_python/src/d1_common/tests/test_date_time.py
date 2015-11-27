@@ -216,7 +216,7 @@ def main():
   else:
     logging.getLogger('').setLevel(logging.ERROR)
 
-  s = TestUtils
+  s = TestDateTime
   s.options = options
 
   if options.test != '':

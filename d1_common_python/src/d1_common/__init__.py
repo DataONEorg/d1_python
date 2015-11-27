@@ -29,7 +29,7 @@ __all__ = [
   'upload',
   'xmlrunner',
   'types.exceptions',
-  'types.generated.dataoneTypes',
-  'types.generated.dataoneErrors',
+  'types.dataoneTypes',
+  'types.dataoneErrors',
   'ext.mimeparser',
 ]

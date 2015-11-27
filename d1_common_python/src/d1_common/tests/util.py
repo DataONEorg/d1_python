@@ -26,8 +26,9 @@ import xml
 import pyxb
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import d1_common.types.generated.dataoneErrors as dataoneErrors
+#import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneErrors as dataoneErrors
 
 
 def deserialize_and_check(doc, shouldfail=False):

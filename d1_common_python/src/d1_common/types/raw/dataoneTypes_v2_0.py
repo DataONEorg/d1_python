@@ -1,7 +1,7 @@
 # ./d1_common/types/raw/dataoneTypes_v2_0.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:cdd9555a55a103332598275a87c4a7c1422c46ed
-# Generated 2015-11-26 11:06:16.274330 by PyXB version 1.2.3
+# Generated 2015-11-26 12:55:58.088244 by PyXB version 1.2.3
 # Namespace http://ns.dataone.org/service/types/v2.0
 
 import pyxb
@@ -14,7 +14,7 @@ import sys
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier(
-  'urn:uuid:9f545691-9457-11e5-b567-3c15c2ceea1e'
+  'urn:uuid:f2650733-9466-11e5-9744-3c15c2ceea1e'
 )
 
 # Version of PyXB used to generate the bindings
@@ -24,7 +24,7 @@ if pyxb.__version__ != _PyXBVersion:
   raise pyxb.PyXBVersionError(_PyXBVersion)
 
 # Import bindings for namespaces imported into schema
-import d1_common.types.dataoneTypes as _ImportedBinding_d1_common_types_dataoneTypes
+import d1_common.types.dataoneTypes_v1 as _ImportedBinding_d1_common_types_dataoneTypes_v1
 import pyxb.binding.datatypes
 
 # NOTE: All namespace declarations are reserved within the binding
@@ -598,7 +598,7 @@ Namespace.addCategoryObject('typeBinding', u'OptionList', OptionList)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}SystemMetadata with content type ELEMENT_ONLY
-class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes.SystemMetadata):
+class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata):
   """System metadata in DataONE APIs version 2.0 extends
         the :class:`types.SystemMetadata` definition of version 1.x by adding 
         :term:`seriesId`, :term:`mediaType`, and :term:`fileName` elements. Each 
@@ -613,11 +613,11 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes.SystemMetadat
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     121, 2
   )
-  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes.SystemMetadata._ElementMap.copy(
+  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata._ElementMap.copy(
   )
-  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes.SystemMetadata._AttributeMap.copy(
+  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata._AttributeMap.copy(
   )
-  # Base type is _ImportedBinding_d1_common_types_dataoneTypes.SystemMetadata
+  # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata
 
   # Element serialVersion (serialVersion) inherited from {http://ns.dataone.org/service/types/v1}SystemMetadata
 
@@ -724,7 +724,7 @@ Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}ObjectFormat with content type ELEMENT_ONLY
-class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes.ObjectFormat):
+class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat):
   """Extends Version 1.x :class:`Types.ObjectFormat` by 
         adding :term:`mediaType` and :term:`extension` elements.
        """
@@ -736,11 +736,11 @@ class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes.ObjectFormat):
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     264, 2
   )
-  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes.ObjectFormat._ElementMap.copy(
+  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat._ElementMap.copy(
   )
-  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes.ObjectFormat._AttributeMap.copy(
+  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat._AttributeMap.copy(
   )
-  # Base type is _ImportedBinding_d1_common_types_dataoneTypes.ObjectFormat
+  # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat
 
   # Element formatId (formatId) inherited from {http://ns.dataone.org/service/types/v1}ObjectFormat
 
@@ -794,7 +794,7 @@ Namespace.addCategoryObject('typeBinding', u'ObjectFormat', ObjectFormat)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}ObjectFormatList with content type ELEMENT_ONLY
-class ObjectFormatList(_ImportedBinding_d1_common_types_dataoneTypes.Slice):
+class ObjectFormatList(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   """Extends :class:`Types.ObjectFormatList` to provide a 
         list of :class:`v2_0.Types.ObjectFormat`.
       """
@@ -806,9 +806,10 @@ class ObjectFormatList(_ImportedBinding_d1_common_types_dataoneTypes.Slice):
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     292, 2
   )
-  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes.Slice._ElementMap.copy()
-  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes.Slice._AttributeMap.copy()
-  # Base type is _ImportedBinding_d1_common_types_dataoneTypes.Slice
+  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._ElementMap.copy()
+  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._AttributeMap.copy(
+  )
+  # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice
 
   # Element objectFormat uses Python identifier objectFormat
   __objectFormat = pyxb.binding.content.ElementDeclaration(
@@ -839,7 +840,7 @@ Namespace.addCategoryObject('typeBinding', u'ObjectFormatList', ObjectFormatList
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Log with content type ELEMENT_ONLY
-class Log(_ImportedBinding_d1_common_types_dataoneTypes.Slice):
+class Log(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   """Extends :class:`Types.Log` to represent a collection of 
         :class:`v2_0.Types.LogEntry` elements, used to transfer log information 
         between DataONE components."""
@@ -851,9 +852,10 @@ class Log(_ImportedBinding_d1_common_types_dataoneTypes.Slice):
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     311, 2
   )
-  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes.Slice._ElementMap.copy()
-  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes.Slice._AttributeMap.copy()
-  # Base type is _ImportedBinding_d1_common_types_dataoneTypes.Slice
+  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._ElementMap.copy()
+  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._AttributeMap.copy(
+  )
+  # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice
 
   # Element logEntry uses Python identifier logEntry
   __logEntry = pyxb.binding.content.ElementDeclaration(
@@ -884,7 +886,7 @@ Namespace.addCategoryObject('typeBinding', u'Log', Log)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Node with content type ELEMENT_ONLY
-class Node(_ImportedBinding_d1_common_types_dataoneTypes.Node):
+class Node(_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
   """Extends the Version 1.x :class:`Types.Node` by adding 
         an optional unbounded parameter entry providing additional simple 
         metadata relevant to a Node. """
@@ -896,9 +898,10 @@ class Node(_ImportedBinding_d1_common_types_dataoneTypes.Node):
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     211, 2
   )
-  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes.Node._ElementMap.copy()
-  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes.Node._AttributeMap.copy()
-  # Base type is _ImportedBinding_d1_common_types_dataoneTypes.Node
+  _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Node._ElementMap.copy()
+  _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Node._AttributeMap.copy(
+  )
+  # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.Node
 
   # Element identifier (identifier) inherited from {http://ns.dataone.org/service/types/v1}Node
 
@@ -1183,7 +1186,7 @@ LogEntry._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'entryId'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=LogEntry,
     documentation=u'A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.',
     location=pyxb.utils.utility.Location(
@@ -1198,7 +1201,7 @@ LogEntry._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'identifier'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.Identifier,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier,
     scope=LogEntry,
     documentation=u'The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.',
     location=pyxb.utils.utility.Location(
@@ -1243,7 +1246,7 @@ LogEntry._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'subject'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.Subject,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.Subject,
     scope=LogEntry,
     documentation=u'The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.',
     location=pyxb.utils.utility.Location(
@@ -1258,7 +1261,7 @@ LogEntry._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'event'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=LogEntry,
     documentation=u'A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          ',
     location=pyxb.utils.utility.Location(
@@ -1288,7 +1291,7 @@ LogEntry._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'nodeIdentifier'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.NodeReference,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.NodeReference,
     scope=LogEntry,
     documentation=u'The unique identifier for the node where the log\n          message was generated.',
     location=pyxb.utils.utility.Location(
@@ -1484,7 +1487,7 @@ OptionList._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'option'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=OptionList,
     documentation=u"The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped.",
     location=pyxb.utils.utility.Location(
@@ -1544,7 +1547,7 @@ SystemMetadata._AddElement(
     pyxb.namespace.ExpandedName(
       None, u'seriesId'
     ),
-    _ImportedBinding_d1_common_types_dataoneTypes.Identifier,
+    _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier,
     scope=SystemMetadata,
     documentation=u'The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.',
     location=pyxb.utils.utility.Location(

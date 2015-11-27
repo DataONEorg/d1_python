@@ -1,8 +1,8 @@
 # ./d1_common/types/raw/dataoneErrors.py
 # -*- coding: utf-8 -*-
-# PyXB bindings for NM:da56d40946167dd879a27d36548aaf5a439d59eb
-# Generated 2015-11-26 11:06:16.273064 by PyXB version 1.2.3
-# Namespace http://ns.dataone.org/service/errors/v1
+# PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
+# Generated 2015-11-26 12:55:58.563217 by PyXB version 1.2.3
+# Namespace AbsentNamespace0
 
 import pyxb
 import pyxb.binding
@@ -14,7 +14,7 @@ import sys
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier(
-  'urn:uuid:9f545691-9457-11e5-b567-3c15c2ceea1e'
+  'urn:uuid:f2c811c2-9466-11e5-ac43-3c15c2ceea1e'
 )
 
 # Version of PyXB used to generate the bindings
@@ -24,14 +24,10 @@ if pyxb.__version__ != _PyXBVersion:
   raise pyxb.PyXBVersionError(_PyXBVersion)
 
 # Import bindings for namespaces imported into schema
-import d1_common.types.dataoneTypes as _ImportedBinding_d1_common_types_dataoneTypes
 import pyxb.binding.datatypes
 
 # NOTE: All namespace declarations are reserved within the binding
-Namespace = pyxb.namespace.NamespaceForURI(
-  u'http://ns.dataone.org/service/errors/v1',
-  create_if_missing=True
-)
+Namespace = pyxb.namespace.CreateAbsentNamespace()
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
 
 
@@ -82,7 +78,7 @@ def CreateFromDOM(node, default_namespace=None):
   return pyxb.binding.basis.element.AnyCreateFromDOM(node, default_namespace)
 
 
-# Complex type {http://ns.dataone.org/service/errors/v1}DataONEException with content type ELEMENT_ONLY
+# Complex type DataONEException with content type ELEMENT_ONLY
 class DataONEException(pyxb.binding.basis.complexTypeDefinition):
   """Defines a structure for serializing DataONE
         Exceptions."""
@@ -92,7 +88,7 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
   _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'DataONEException')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    59, 2
+    52, 2
   )
   _ElementMap = {}
   _AttributeMap = {}
@@ -104,11 +100,11 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
       None, u'description'
     ),
     'description',
-    '__httpns_dataone_orgserviceerrorsv1_DataONEException_description',
+    '__AbsentNamespace0_DataONEException_description',
     False,
     pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      65, 6
+      58, 6
     ),
   )
 
@@ -120,11 +116,11 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
       None, u'traceInformation'
     ),
     'traceInformation',
-    '__httpns_dataone_orgserviceerrorsv1_DataONEException_traceInformation',
+    '__AbsentNamespace0_DataONEException_traceInformation',
     False,
     pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      66, 6
+      59, 6
     ),
   )
 
@@ -138,17 +134,17 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
       None, u'name'
     ),
     'name',
-    '__httpns_dataone_orgserviceerrorsv1_DataONEException_name',
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString,
+    '__AbsentNamespace0_DataONEException_name',
+    pyxb.binding.datatypes.string,
     required=True
   )
   __name._DeclarationLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    68, 4
+    61, 4
   )
   __name._UseLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    68, 4
+    61, 4
   )
 
   name = property(__name.value, __name.set, None, None)
@@ -159,17 +155,17 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
       None, u'errorCode'
     ),
     'errorCode',
-    '__httpns_dataone_orgserviceerrorsv1_DataONEException_errorCode',
+    '__AbsentNamespace0_DataONEException_errorCode',
     pyxb.binding.datatypes.integer,
     required=True
   )
   __errorCode._DeclarationLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    69, 4
+    62, 4
   )
   __errorCode._UseLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    69, 4
+    62, 4
   )
 
   errorCode = property(__errorCode.value, __errorCode.set, None, None)
@@ -180,17 +176,17 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
       None, u'detailCode'
     ),
     'detailCode',
-    '__httpns_dataone_orgserviceerrorsv1_DataONEException_detailCode',
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString,
+    '__AbsentNamespace0_DataONEException_detailCode',
+    pyxb.binding.datatypes.string,
     required=True
   )
   __detailCode._DeclarationLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    70, 4
+    63, 4
   )
   __detailCode._UseLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    70, 4
+    63, 4
   )
 
   detailCode = property(__detailCode.value, __detailCode.set, None, None)
@@ -199,16 +195,16 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
   __identifier = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
       None, u'identifier'
-    ), 'identifier', '__httpns_dataone_orgserviceerrorsv1_DataONEException_identifier',
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString
+    ), 'identifier', '__AbsentNamespace0_DataONEException_identifier',
+    pyxb.binding.datatypes.string
   )
   __identifier._DeclarationLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    71, 4
+    64, 4
   )
   __identifier._UseLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    71, 4
+    64, 4
   )
 
   identifier = property(__identifier.value, __identifier.set, None, None)
@@ -217,16 +213,16 @@ class DataONEException(pyxb.binding.basis.complexTypeDefinition):
   __nodeId = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
       None, u'nodeId'
-    ), 'nodeId', '__httpns_dataone_orgserviceerrorsv1_DataONEException_nodeId',
-    _ImportedBinding_d1_common_types_dataoneTypes.NonEmptyString
+    ), 'nodeId', '__AbsentNamespace0_DataONEException_nodeId',
+    pyxb.binding.datatypes.string
   )
   __nodeId._DeclarationLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    72, 4
+    65, 4
   )
   __nodeId._UseLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    72, 4
+    65, 4
   )
 
   nodeId = property(__nodeId.value, __nodeId.set, None, None)
@@ -255,7 +251,7 @@ error = pyxb.binding.basis.element(
   DataONEException,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-    75, 2
+    68, 2
   )
 )
 Namespace.addCategoryObject('elementBinding', error.name().localName(), error)
@@ -269,7 +265,7 @@ DataONEException._AddElement(
     scope=DataONEException,
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      65, 6
+      58, 6
     )
   )
 )
@@ -283,7 +279,7 @@ DataONEException._AddElement(
     scope=DataONEException,
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      66, 6
+      59, 6
     )
   )
 )
@@ -301,7 +297,7 @@ def _BuildAutomaton():
     max=1L,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      65, 6
+      58, 6
     )
   )
   counters.add(cc_0)
@@ -310,7 +306,7 @@ def _BuildAutomaton():
     max=1L,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      66, 6
+      59, 6
     )
   )
   counters.add(cc_1)
@@ -324,7 +320,7 @@ def _BuildAutomaton():
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      65, 6
+      58, 6
     )
   )
   st_0 = fac.State(
@@ -343,7 +339,7 @@ def _BuildAutomaton():
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneErrors.xsd',
-      66, 6
+      59, 6
     )
   )
   st_1 = fac.State(

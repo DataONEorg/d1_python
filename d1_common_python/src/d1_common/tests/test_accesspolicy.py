@@ -42,7 +42,7 @@ import pyxb
 
 # D1.
 from d1_common import xmlrunner
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # App
 import util
@@ -53,6 +53,26 @@ u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1">
+    <allow>
+        <subject>subject0</subject>
+        <subject>subject1</subject>
+        <permission>read</permission>
+        <permission>read</permission>
+    </allow>
+    <allow>
+        <subject>subject2</subject>
+        <subject>subject3</subject>
+        <permission>read</permission>
+        <permission>read</permission>
+    </allow>
+</d1:accessPolicy>
+"""
+
+EG_ACCESSPOLICY_GMN_2 = \
+u"""<?xml version="1.0" encoding="UTF-8"?>
+<d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v2"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v2">
     <allow>
         <subject>subject0</subject>
         <subject>subject1</subject>
@@ -102,13 +122,13 @@ class TestAccessPolicy(unittest.TestCase):
   def test_serialization_gmn(self):
     '''Deserialize: XML -> AccessPolicy (GMN)'''
     util.deserialize_and_check(EG_ACCESSPOLICY_GMN)
+    #util.deserialize_and_check(EG_ACCESSPOLICY_GMN_2)
 
   def test_serialization_bad_1(self):
     '''Deserialize: XML -> AccessPolicy (bad)'''
     util.deserialize_and_check(EG_ACCESSPOLICY_BAD, shouldfail=True)
 
-    #===============================================================================
-
+#===============================================================================
 
 if __name__ == "__main__":
   argv = sys.argv
