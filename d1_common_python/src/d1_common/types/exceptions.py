@@ -38,6 +38,7 @@ import StringIO
 # 3rd party.
 import pyxb
 import pyxb.utils.domutils
+import pyxb.binding.datatypes as XS
 
 # D1.
 import d1_common.types.dataoneErrors as dataoneErrors
@@ -92,9 +93,7 @@ def deserialize(dataone_exception_xml):
     raise DataONEExceptionException(msg.getvalue())
 
   try:
-    trace = dataone_exception_pyxb.traceInformation.toxml(),
-    #trace = str(dataone_exception_pyxb.traceInformation),
-    #trace = ""
+    trace = dataone_exception_pyxb.traceInformation
   except AttributeError:
     trace = ''
 
@@ -170,11 +169,18 @@ class DataONEException(Exception):
 
   @d1_common.util.utf8_to_unicode
   def __init__(
-    self, errorCode, detailCode, description, traceInformation, identifier, nodeId
+    self,
+    errorCode,
+    detailCode="0",
+    description='',
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
   ):
     self.errorCode = errorCode
     self.detailCode = str(detailCode)
     self.description = description
+    self._traceInformation = None
     self.traceInformation = traceInformation
     self.identifier = identifier
     self.nodeId = nodeId
@@ -225,22 +231,14 @@ class DataONEException(Exception):
     dataone_exception_pyxb.detailCode = self.detailCode
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
-    if self.traceInformation is not None:
-
-      print("TRACE=" + str(self.traceInformation))
-
-      s = pyxb.utils.domutils.StringToDOM(
-        '<value>' + self.traceInformation + '</value>'
-      ).documentElement
-      s = pyxb.utils.domutils.StringToDOM(self.traceInformation).documentElement
-      dataone_exception_pyxb.traceInformation = s
-
-      #dataone_exception_pyxb.traceInformation = self.traceInformation
+    if self._traceInformation is not None:
+      elem = pyxb.utils.domutils.StringToDOM("<x>" + self.traceInformation + "</x>")
+      dataone_exception_pyxb.traceInformation = elem.documentElement.firstChild
     if self.identifier is not None:
       dataone_exception_pyxb.identifier = self.identifier
     if self.nodeId is not None:
       dataone_exception_pyxb.nodeId = self.nodeId
-    return dataone_exception_pyxb.toxml()
+    return dataone_exception_pyxb.toxml(encoding='utf-8')
 
   def toxml(self):
     return self.serialize()
@@ -268,6 +266,20 @@ class DataONEException(Exception):
   @property
   def name(self):
     return self.__class__.__name__
+
+  @property
+  def traceInformation(self):
+    if self._traceInformation is None:
+      return None
+    return self._traceInformation
+
+  @traceInformation.setter
+  def traceInformation(self, traceInformation):
+    if isinstance(traceInformation, XS.anyType):
+      traceInformation = traceInformation.toxml()
+    self._traceInformation = traceInformation
+
+#===============================================================================
 
 
 class AuthenticationTimeout(DataONEException):

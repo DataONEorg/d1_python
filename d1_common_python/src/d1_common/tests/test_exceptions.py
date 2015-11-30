@@ -47,17 +47,18 @@ from d1_common import xmlrunner
 # App
 import util
 
+TRACE_SECTION = '''  <traceInformation>
+    <value>traceInformation0</value>
+    <value>traceInformation2</value>
+  </traceInformation>'''
+
 VALID_ERROR_DOC = '''<?xml version="1.0" encoding="UTF-8"?>
 <error  detailCode="123.456.789"
         errorCode="456"
         identifier="SomeDataONEPID"
         name="IdentifierNotUnique"
         nodeId="urn:node:SomeNode">
-  <description>description0</description>
-  <traceInformation>
-    <value>traceInformation0</value>
-    <value>traceInformation2</value>
-  </traceInformation>
+  <description>description0</description>''' + TRACE_SECTION + '''
 </error>
 '''
 
@@ -95,7 +96,8 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(d1_exception.identifier, 'SomeDataONEPID')
     self.assertEqual(d1_exception.nodeId, 'urn:node:SomeNode')
     self.assertEqual(d1_exception.description, 'description0')
-    #self.assertEqual(d1_exception.traceInformation, '<?xml version="1.0" ?><traceInformation>traceInformation0</traceInformation>')
+    expectedTi = TRACE_SECTION.strip()
+    self.assertEqual(d1_exception.traceInformation, '<?xml version="1.0" ?>' + expectedTi)
 
   def test_110(self):
     '''deserialize, serialize, deserialize'''
@@ -120,7 +122,6 @@ class TestExceptions(unittest.TestCase):
   def test_200(self):
     '''String representation'''
     d1_exception = exceptions.deserialize(VALID_ERROR_DOC)
-    print(str(d1_exception))
     self.assertTrue('name: IdentifierNotUnique' in str(d1_exception))
     self.assertTrue('errorCode: 409' in str(d1_exception))
     self.assertTrue('detailCode: 123.456.789' in str(d1_exception))
@@ -128,28 +129,30 @@ class TestExceptions(unittest.TestCase):
   def test_250(self):
     '''create with only detailCode then serialize()'''
     e = exceptions.ServiceFailure(123)
-    expected = u'''<?xml version="1.0" ?><error detailCode="123" errorCode="500" name="ServiceFailure"/>
+    expected = u'''<?xml version="1.0" encoding="utf-8"?><error detailCode="123" errorCode="500" name="ServiceFailure"/>
     '''
     self.assertEqual(e.serialize(), expected.strip())
 
   def test_260(self):
     '''create with string detailCode and description, then serialize()'''
     e = exceptions.ServiceFailure('123.456.789', 'test description')
+    se = e.serialize()
     self.assertEqual(
-      e.serialize(
-      ),
-      u'<?xml version="1.0" ?><error detailCode="123.456.789" errorCode="500" name="ServiceFailure"><description>test description</description></error>'
+      se,
+      u'<?xml version="1.0" encoding="utf-8"?><error detailCode="123.456.789" errorCode="500" name="ServiceFailure"><description>test description</description></error>'
     )
 
   def test_270(self):
     '''create with detailCode, description and traceInformation, then serialize()'''
     e = exceptions.ServiceFailure(
-      '123.456.789', 'test description', 'test traceInformation'
+      '123.456.789',
+      description='test description',
+      traceInformation='test traceInformation'
     )
+    se = e.serialize()
     self.assertEqual(
-      e.serialize(
-      ),
-      u'<?xml version="1.0" ?><error detailCode="123.456.789" errorCode="500" name="ServiceFailure"><description>test description</description><traceInformation><value>test traceInformation</value></traceInformation></error>'
+      se,
+      u'<?xml version="1.0" encoding="utf-8"?><error detailCode="123.456.789" errorCode="500" name="ServiceFailure"><description>test description</description><traceInformation>test traceInformation</traceInformation></error>'
     )
 
   def test_280(self):
