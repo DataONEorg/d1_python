@@ -41,7 +41,7 @@ import pyxb
 
 # D1.
 from d1_common import xmlrunner
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+from d1_common.types import dataoneTypes
 
 # App
 import util

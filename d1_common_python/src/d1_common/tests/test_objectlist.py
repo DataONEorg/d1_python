@@ -43,7 +43,7 @@ import pyxb
 # D1.
 import d1_common
 from d1_common import xmlrunner
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+from d1_common.types import dataoneTypes
 
 # App
 import util
@@ -65,7 +65,7 @@ EG_OBJECTLIST_GMN = """<?xml version="1.0" ?>
     </objectInfo>
     <objectInfo>
         <identifier>__invalid_test_object__81ef3846-bf2d-11e0-92e1-8122f1474081</identifier>
-        <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>        
+        <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
         <!-- <objectFormat>
             <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
             <formatName>eml://ecoinformatics.org/eml-2.0.0</formatName>
@@ -205,8 +205,8 @@ class TestObjectList(unittest.TestCase):
   def test_deserialize_xml_gmn(self):
     util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
-    #  def test_deserialize_xml_knb(self):
-    #    util.deserialize_and_check(EG_OBJECTLIST_KNB)
+#  def test_deserialize_xml_knb(self):
+#    util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
   def test_deserialize_xml_bad(self):
     util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)

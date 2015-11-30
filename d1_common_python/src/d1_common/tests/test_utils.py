@@ -33,7 +33,7 @@ import sys
 import unittest
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+from d1_common.types import dataoneTypes
 from d1_common import xmlrunner
 import d1_common.util
 import d1_common.date_time
