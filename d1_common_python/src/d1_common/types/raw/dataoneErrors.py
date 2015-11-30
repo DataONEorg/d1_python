@@ -1,7 +1,7 @@
 # ./d1_common/types/raw/dataoneErrors.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2015-11-26 12:55:58.563217 by PyXB version 1.2.3
+# Generated 2015-11-30 10:43:22.804951 by PyXB version 1.2.3
 # Namespace AbsentNamespace0
 
 import pyxb
@@ -14,7 +14,7 @@ import sys
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier(
-  'urn:uuid:f2c811c2-9466-11e5-ac43-3c15c2ceea1e'
+  'urn:uuid:166df3e1-9779-11e5-80fd-3c15c2ceea1e'
 )
 
 # Version of PyXB used to generate the bindings

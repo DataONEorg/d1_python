@@ -39,6 +39,7 @@ pyxbgen \
  --write-for-customization \
  --archive-to-file=${ARCHIVE_DIR}/dataone_types.wxs \
  --schema-root=${SCHEMA_DIR} \
+ --import-augmentable-namespace "http://ns.dataone.org/service/errors/v1" \
  -u dataoneTypes.xsd -m dataoneTypes_v1 \
  -u dataoneTypes_v1.1.xsd -m dataoneTypes_v1_1 \
  -u dataoneTypes_v2.0.xsd -m dataoneTypes_v2_0

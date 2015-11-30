@@ -1,7 +1,7 @@
 # ./d1_common/types/raw/dataoneTypes_v1_1.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:360f646bcacd4796da7a71be6ffd7cac7a35ff8a
-# Generated 2015-11-26 12:55:58.087978 by PyXB version 1.2.3
+# Generated 2015-11-30 10:43:22.366087 by PyXB version 1.2.3
 # Namespace http://ns.dataone.org/service/types/v1.1 [xmlns:d1_v1.1]
 
 import pyxb
@@ -14,7 +14,7 @@ import sys
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier(
-  'urn:uuid:f2650733-9466-11e5-9744-3c15c2ceea1e'
+  'urn:uuid:160f3b7a-9779-11e5-ad39-3c15c2ceea1e'
 )
 
 # Version of PyXB used to generate the bindings
@@ -24,8 +24,8 @@ if pyxb.__version__ != _PyXBVersion:
   raise pyxb.PyXBVersionError(_PyXBVersion)
 
 # Import bindings for namespaces imported into schema
-import d1_common.types.dataoneTypes_v1 as _ImportedBinding_d1_common_types_dataoneTypes_v1
 import pyxb.binding.datatypes
+import d1_common.types.dataoneTypes_v1 as _ImportedBinding_d1_common_types_dataoneTypes_v1
 
 # NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.NamespaceForURI(
