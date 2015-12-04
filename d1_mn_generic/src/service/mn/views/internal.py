@@ -57,7 +57,7 @@ import mn.util
 import mn.view_asserts
 import mn.view_shared
 import service
-import service.settings
+import settings
 
 
 def home(request):
@@ -87,7 +87,7 @@ def home(request):
 
   n_storage_used = mn.models.ScienceObject.objects\
     .aggregate(Sum('size'))['size__sum'] or 0
-  n_storage_free = get_free_space(service.settings.MEDIA_ROOT)
+  n_storage_free = get_free_space(settings.MEDIA_ROOT)
   storage_space = '{0} GiB / {1} GiB'.format(
     n_storage_used / 1024**3, n_storage_free / 1024**3
   )
@@ -96,9 +96,9 @@ def home(request):
 
   server_time = datetime.datetime.utcnow()
 
-  node_identifier = service.settings.NODE_IDENTIFIER
-  node_name = service.settings.NODE_NAME
-  node_description = service.settings.NODE_DESCRIPTION
+  node_identifier = settings.NODE_IDENTIFIER
+  node_name = settings.NODE_NAME
+  node_description = settings.NODE_DESCRIPTION
 
   return render_to_response(
     'home.html', locals(

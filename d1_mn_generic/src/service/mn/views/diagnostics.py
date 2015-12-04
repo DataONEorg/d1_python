@@ -60,7 +60,7 @@ import mn.sysmeta_store
 import mn.urls
 import mn.util
 import mn.view_shared
-import service.settings
+import settings
 
 
 # ------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ def echo_session(request):
 def trusted_subjects(request):
   return render_to_response('trusted_subjects.xhtml',
     {'subjects': sorted(mn.node_registry.get_cn_subjects() |
-                        service.settings.DATAONE_TRUSTED_SUBJECTS) },
+                        settings.DATAONE_TRUSTED_SUBJECTS) },
     content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 # ------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ def permissions_for_object(request, pid):
 @mn.restrict_to_verb.get
 def get_setting(request, setting):
   '''Get a value from settings.py or settings_site.py'''
-  return HttpResponse(getattr(service.settings, setting, '<UNKNOWN SETTING>'),
+  return HttpResponse(getattr(settings, setting, '<UNKNOWN SETTING>'),
                       d1_common.const.CONTENT_TYPE_TEXT)
 
 #@mn.restrict_to_verb.post
@@ -258,7 +258,7 @@ def _delete_object(pid):
   # both the object and the reference.
   url_split = urlparse.urlparse(sciobj.url)
   if url_split.scheme == 'file':
-    sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
+    sciobj_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:

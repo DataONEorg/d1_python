@@ -34,31 +34,37 @@
 import logging
 
 # Django.
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
 # App.
 import mn.models
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
   help = 'Set the whitelist for create, update and delete operations'
 
+  def add_arguments(self, parser):
+
+    parser.add_argument('whitelist_path')
+
   def handle(self, *args, **options):
-    if len(args) != 1:
-      print(
-        'Must specify the path to a file that contains a list of subjects '
-        'to whitelist'
-      )
-      exit()
+    # if len(options['whitelist_path']) != 1:
+    #   print('Must specify the path to a file that contains a list of subjects '
+    #   'to whitelist')
+    #   exit()
+    whitelist_path = options['whitelist_path']
 
     verbosity = int(options.get('verbosity', 1))
 
     if verbosity <= 1:
       logging.getLogger('').setLevel(logging.ERROR)
 
-    n_subjects = self.set_whitelist(args[0])
+    n_subjects = self.set_whitelist(whitelist_path)
 
-    print 'Successfully whitelisted {0} subjects'.format(n_subjects)
+    if n_subjects == 1:
+      print 'Successfully whitelisted {0} subject'.format(n_subjects)
+    else:
+      print 'Successfully whitelisted {0} subjects'.format(n_subjects)
 
   def set_whitelist(self, whitelist_path):
     with open(whitelist_path) as f:
