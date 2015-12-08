@@ -46,7 +46,7 @@ import mn.sysmeta_validate
 import mn.util
 import mn.view_asserts
 import mn.view_shared
-import settings
+import service.settings
 
 # Django.
 import django.core.cache
@@ -233,7 +233,7 @@ def _get_object_byte_stream_remote(url, url_split):
 
 
 def _get_object_byte_stream_local(pid):
-  file_in_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
+  file_in_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
   # Can't use "with".
   file = open(file_in_path, 'rb')
   # Return an iterator that iterates over the raw bytes of the object in chunks.
@@ -371,11 +371,11 @@ def get_replica_pid(request, pid):
 
 def _assert_node_is_authorized(request, pid):
   try:
-    client = d1_client.cnclient.CoordinatingNodeClient(settings.DATAONE_ROOT)
+    client = d1_client.cnclient.CoordinatingNodeClient(service.settings.DATAONE_ROOT)
     client.isNodeAuthorized(request.primary_subject, pid)
   except socket.gaierror:
     raise d1_common.types.exceptions.ServiceFailure(0,
-      'getaddrinfo() failed for "{0}"'.format(settings.DATAONE_ROOT))
+      'getaddrinfo() failed for "{0}"'.format(service.settings.DATAONE_ROOT))
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(0,
       'A CN has not authorized the target MN, "{0}" to create a replica of "{1}".\n'
@@ -487,7 +487,7 @@ def object_post(request):
 def put_object_pid(request, old_pid):
   '''MNStorage.update(session, pid, object, newPid, sysmeta) → Identifier
   '''
-  if settings.REQUIRE_WHITELIST_FOR_UPDATE:
+  if service.settings.REQUIRE_WHITELIST_FOR_UPDATE:
     mn.auth.assert_create_update_delete_permission(request)
   mn.util.coerce_put_post(request)
   mn.view_asserts.post_has_mime_parts(request, (('field', 'newPid'),
@@ -555,7 +555,7 @@ def delete_object_pid(request, pid):
 
 def _delete_object_from_filesystem(url_split, pid):
   if url_split.scheme == 'file':
-    sciobj_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
+    sciobj_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:
@@ -619,29 +619,29 @@ def post_replicate(request):
 
 
 def _assert_request_complies_with_replication_policy(sysmeta):
-  if settings.REPLICATION_MAXOBJECTSIZE != -1:
-    if sysmeta.size > settings.REPLICATION_MAXOBJECTSIZE:
+  if service.settings.REPLICATION_MAXOBJECTSIZE != -1:
+    if sysmeta.size > service.settings.REPLICATION_MAXOBJECTSIZE:
       raise d1_common.types.exceptions.InvalidRequest(0,
         'This node does not allow objects of size larger than {0}. '
         'The size of this object is {1}'
-        .format(settings.REPLICATION_MAXOBJECTSIZE, sysmeta.size))
+        .format(service.settings.REPLICATION_MAXOBJECTSIZE, sysmeta.size))
 
-  if settings.REPLICATION_SPACEALLOCATED != -1:
+  if service.settings.REPLICATION_SPACEALLOCATED != -1:
     total = _get_total_size_of_replicated_objects()
-    if total > settings.REPLICATION_SPACEALLOCATED:
+    if total > service.settings.REPLICATION_SPACEALLOCATED:
       raise d1_common.types.exceptions.InvalidRequest(0,
         'The total size allowed for replicas on this node has been exceeded. '
         'Used: {0}. Allowed: {1}'
-        .format(total, settings.REPLICATION_MAXOBJECTSIZE))
+        .format(total, service.settings.REPLICATION_MAXOBJECTSIZE))
 
-  if len(settings.REPLICATION_ALLOWEDNODE):
-    if sysmeta.originMemberNode.value() not in settings.REPLICATION_ALLOWEDNODE:
+  if len(service.settings.REPLICATION_ALLOWEDNODE):
+    if sysmeta.originMemberNode.value() not in service.settings.REPLICATION_ALLOWEDNODE:
       raise d1_common.types.exceptions.InvalidRequest(0,
         'This node does not allow replicas from {0}'
         .format(sysmeta.originMemberNode.value()))
 
-  if len(settings.REPLICATION_ALLOWEDOBJECTFORMAT):
-    if sysmeta.formatId.value() not in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
+  if len(service.settings.REPLICATION_ALLOWEDOBJECTFORMAT):
+    if sysmeta.formatId.value() not in service.settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       raise d1_common.types.exceptions.InvalidRequest(0,
         'This node does not allow objects of format {0}'
         .format(sysmeta.formatId.value()))

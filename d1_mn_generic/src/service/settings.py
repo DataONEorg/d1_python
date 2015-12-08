@@ -80,12 +80,12 @@ TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader', )
 
 MIDDLEWARE_CLASSES = (
   # Custom GMN middleware.
-  'mn.middleware.request_handler.request_handler',
-  'mn.middleware.exception_handler.exception_handler',
-  'mn.middleware.response_handler.response_handler',
-  #'mn.middleware.profiling_handler.profiling_handler',
-  'mn.middleware.view_handler.view_handler',
-  'mn.middleware.startup_handler.startup_handler',
+  'service.mn.middleware.request_handler.request_handler',
+  'service.mn.middleware.exception_handler.exception_handler',
+  'service.mn.middleware.response_handler.response_handler',
+  #'service.mn.middleware.profiling_handler.profiling_handler',
+  'service.mn.middleware.view_handler.view_handler',
+  'service.mn.middleware.startup_handler.startup_handler',
 )
 
 
@@ -100,7 +100,7 @@ ROOT_URLCONF = 'service.urls'
 
 TEMPLATE_DIRS = (make_absolute('./mn/templates'), )
 
-INSTALLED_APPS = ('django.contrib.staticfiles', 'mn', )
+INSTALLED_APPS = ('django.contrib.staticfiles', 'service.mn', )
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.
