@@ -94,7 +94,7 @@ def main():
       #'dataone.common',
       'dataone.libclient == 1.2.21',
       'dataone.certificate_extensions == 1.1.3',
-      'django == 1.8.2',
+      'django == 1.6.1',
       'pyxb == 1.2.3',
       'iso8601 == 0.1.4',
       'psycopg2 == 2.5.2',
