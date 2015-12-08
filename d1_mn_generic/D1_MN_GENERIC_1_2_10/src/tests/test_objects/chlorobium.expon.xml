@@ -1,0 +1,328 @@
+<beast>
+	
+	<!-- The list of taxa analyse (can also include dates/ages).                 -->
+	<!-- ntax=16                                                                 -->
+	<taxa id="taxa">
+		<taxon id="AF298537_124000">
+			<date value="124000.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AF298536_124000">
+			<date value="124000.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AF298535_206000">
+			<date value="206000.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AF298532_8000">
+			<date value="8000.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AF298531_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="Y10645_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="Y10644_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="Y10643_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="Y10642_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="Y10641_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="Y10640_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AJ290824_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AM050126_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AM050125_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AJ299414_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+		<taxon id="AB054671_0">
+			<date value="0.0" direction="backwards" units="years"/>
+		</taxon>
+	</taxa>
+	
+	<!-- The sequence alignment (each sequence refers to a taxon above).         -->
+	<!-- ntax=16 nchar=478                                                       -->
+	<alignment id="alignment" dataType="nucleotide">
+		<sequence>
+			<taxon idref="AF298537_124000"/>
+			GCAGCAGTGAGGAATATTGCGCAATGG-CGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGGCTCATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCATGGCTTCCGATACTGTGAGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGAACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AF298536_124000"/>
+			GCAGCAGTGAGGAATATTGCGCAATGG-CGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAGGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AF298535_206000"/>
+			GCAGCAGTGAGGAATATTGCGCAATGG-CGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAGGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AF298532_8000"/>
+			GCAGCAGTGAGGAATATTGCGCAATGG-CGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAGGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGC-GTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AF298531_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGG-CGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAGGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGC-GTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="Y10645_0"/>
+			GCAGNATTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCTGGGGAAGAATATGTCGGCTTGCCGACTCTGACGGTACCCAGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTGATAAGTCGGGGGTTAAATCCATGTGCTCAACACATGCACGGCTTCCGATACTGTCAGTCTTGAATCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTACATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="Y10644_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAWATCCTTTTGCAGGGGACGAATAKGTCGGCTTGCCGGCTGTGACGGTACCCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGATCAATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCACGGCTTCCGATACTGTTGATCTAGAGTCTCGAAGAGGAAGGTGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGCCTTCTGGTCGAGTACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="Y10643_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGGGGACGAATAGGTCGGCTTGCCGGCTGTGACGGTACCCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGATCAATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCACGGCTTCCGATACTGTTGATCTAGAGTCTCGAAGAGGAAGGTGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAACCTTCTGGTCGAGTACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="Y10642_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAANTTCTTCGGAATGTAAAATCCTTTTGCAGGGGACGAATAGGTCGGCTTGCCGGCTGTGACGGTACCCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGATCAATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCACGGCTTCCGATACTGTTGATCTAGAGTCTCGAAGAGGAAGGTGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGCCTTCTGGTCGAGTACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="Y10641_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCAGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGGGGACGAATAGGTCGGCTTGCCGGCTGTGACGGTACCCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGATCAATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCACGGCTTCCGATACTGTTGATCTAGAGTCTCGAAGAGGAAGGTGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGCCTTCTGGTCGAGTACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="Y10640_0"/>
+			GCTGCNGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGGGGACGAATAGGTCGGCTTGCCGGCTGTGACGGTACCCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGATCAATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCACKGCTTCCGATACTGTTGATCTAGAGTCTCGAAGAGGAAGGTGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAACCTTCTGGTCNAGTACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACNCCGTAAACGATGAATACTANATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AJ290824_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAGGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGAACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AM050126_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAGGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AM050125_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGGGGACGAATCGGTCGGCTTGCCGACTCTGACGGTACCCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACCGATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCACGGCTTCCGATACTGTCGGTCTTGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGAGAACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AJ299414_0"/>
+			GCAGCATTGAGGAATATTGCGCAATGGGNGANAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGAGGAAGAAAATGCTGGTTTACCGGCACTGACGGTACTCTGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACTTATAAGTCGGGGGTTAAATCCATGTGCTTAACACATGCAAKGCTTCCGATACTGTAGGTCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGTCTTCTGGTCGANTACTGACGCTCAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+		<sequence>
+			<taxon idref="AB054671_0"/>
+			GCAGCAGTGAGGAATATTGCGCAATGGGCGAAAGCCTGACGCAGCAACGCCGCGTGGATGATGAAGTTCTTCGGAATGTAAAATCCTTTTGCAGGGGACGAATAGGTCGGCTTGCCGACTCTGACGGTACCCAGCGAATAAGCCACGGCTAACTCTGTGCCAGCAGCCGCGGTGATACAGGGGTGGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGTGCGCAGGCGGACCAATAAGTCGGGGGTTAAATCCATGTGCTCAACACATGCACGGCTTCCGATACTGTCAATCTAGAGTCTCGAAGAGGAAGATGGAATTTCCGGTGTAACGGTGGAATGTGTAGATATCGGAAAGAACACCAGTGGCGAAGGCAGCCTTCTGGTCGAGTACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAATACTAGATGTTGG
+		</sequence>
+	</alignment>
+	
+	<!-- The unique patterns for all positions                                   -->
+	<!-- npatterns=46                                                            -->
+	<patterns id="patterns" from="1">
+		<alignment idref="alignment"/>
+	</patterns>
+	
+	<!-- A prior assumption that the population size has remained constant       -->
+	<!-- throughout the time spanned by the genealogy.                           -->
+	<constantSize id="constant" units="years">
+		<populationSize>
+			<parameter id="constant.popSize" value="2060000.0" lower="0.0" upper="2.1E8"/>
+		</populationSize>
+	</constantSize>
+	
+	<!-- A prior assumption that the population size has grown exponentially     -->
+	<!-- throughout the time spanned by the genealogy.                           -->
+	<exponentialGrowth id="exponential" units="years">
+		<populationSize>
+			<parameter id="exponential.popSize" value="2060000.0" lower="0.0" upper="2.1E8"/>
+		</populationSize>
+		<growthRate>
+			<parameter id="exponential.growthRate" value="0.0" lower="-1000000.0" upper="1000000.0"/>
+		</growthRate>
+	</exponentialGrowth>
+	
+	<!-- Generate a random starting tree under the coalescent process            -->
+	<coalescentTree id="startingTree">
+		<taxa idref="taxa"/>
+		<exponentialGrowth idref="exponential"/>
+	</coalescentTree>
+	
+	<treeModel id="treeModel">
+		<coalescentTree idref="startingTree"/>
+		<rootHeight>
+			<parameter id="treeModel.rootHeight"/>
+		</rootHeight>
+		<nodeHeights internalNodes="true">
+			<parameter id="treeModel.internalNodeHeights"/>
+		</nodeHeights>
+		<nodeHeights internalNodes="true" rootNode="true">
+			<parameter id="treeModel.allInternalNodeHeights"/>
+		</nodeHeights>
+	</treeModel>
+	
+	<coalescentLikelihood id="coalescent">
+		<model>
+			<exponentialGrowth idref="exponential"/>
+		</model>
+		<populationTree>
+			<treeModel idref="treeModel"/>
+		</populationTree>
+	</coalescentLikelihood>
+	
+	<!-- The strict clock (Uniform rates across branches)                        -->
+	<strictClockBranchRates id="branchRates">
+		<rate>
+			<parameter id="clock.rate" value="2.9E-9" lower="0.0" upper="100.0"/>
+		</rate>
+	</strictClockBranchRates>
+	
+	<!-- The TVM substitution model                                              -->
+	<gtrModel id="tvm">
+		<frequencies>
+			<frequencyModel dataType="nucleotide">
+				<alignment idref="alignment"/>
+				<frequencies>
+					<parameter id="tvm.frequencies" dimension="4"/>
+				</frequencies>
+			</frequencyModel>
+		</frequencies>
+		<rateAC>
+			<parameter id="tvm.ac" value="1.0" lower="0.0" upper="100.0"/>
+		</rateAC>
+		<rateAG>
+			<parameter id="tvm.ag" value="1.0" lower="0.0" upper="100.0"/>
+		</rateAG>
+		<rateAT>
+			<parameter id="tvm.at" value="1.0" lower="0.0" upper="100.0"/>
+		</rateAT>
+		<rateCG>
+			<parameter id="tvm.cg" value="1.0" lower="0.0" upper="100.0"/>
+		</rateCG>
+		<rateCT>
+			<parameter idref="tvm.ag"/>
+		</rateCT>
+	</gtrModel>
+	
+	<!-- site model                                                              -->
+	<siteModel id="siteModel">
+		<substitutionModel>
+			<gtrModel idref="tvm"/>
+		</substitutionModel>
+		<proportionInvariant>
+			<parameter id="siteModel.pInv" value="0.1" lower="0.0" upper="1"/>
+		</proportionInvariant>
+	</siteModel>
+	
+	<treeLikelihood id="treeLikelihood">
+		<patterns idref="patterns"/>
+		<treeModel idref="treeModel"/>
+		<siteModel idref="siteModel"/>
+		<strictClockBranchRates idref="branchRates"/>
+	</treeLikelihood>
+	
+	<operators id="operators">
+		<scaleOperator scaleFactor="0.75" weight="1">
+			<parameter idref="tvm.ac"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.75" weight="1">
+			<parameter idref="tvm.ag"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.75" weight="1">
+			<parameter idref="tvm.at"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.75" weight="1">
+			<parameter idref="tvm.cg"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.75" weight="1">
+			<parameter idref="siteModel.pInv"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.75" weight="3">
+			<parameter idref="clock.rate"/>
+		</scaleOperator>
+		<upDownOperator scaleFactor="0.75" weight="3">
+			<up>
+				<parameter idref="clock.rate"/>
+			</up>
+			<down>
+				<parameter idref="treeModel.allInternalNodeHeights"/>
+			</down>
+		</upDownOperator>
+		<scaleOperator scaleFactor="0.75" weight="3">
+			<parameter idref="exponential.popSize"/>
+		</scaleOperator>
+		<randomWalkOperator windowSize="1.0" weight="3">
+			<parameter idref="exponential.growthRate"/>
+		</randomWalkOperator>
+		<scaleOperator scaleFactor="0.75" weight="3">
+			<parameter idref="treeModel.rootHeight"/>
+		</scaleOperator>
+		<uniformOperator weight="30">
+			<parameter idref="treeModel.internalNodeHeights"/>
+		</uniformOperator>
+		<subtreeSlide size="1.0" gaussian="true" weight="15">
+			<treeModel idref="treeModel"/>
+		</subtreeSlide>
+		<narrowExchange weight="15">
+			<treeModel idref="treeModel"/>
+		</narrowExchange>
+		<wideExchange weight="3">
+			<treeModel idref="treeModel"/>
+		</wideExchange>
+		<wilsonBalding weight="3">
+			<treeModel idref="treeModel"/>
+		</wilsonBalding>
+	</operators>
+	
+	<mcmc id="mcmc" chainLength="20000000" autoOptimize="true">
+		<posterior id="posterior">
+			<prior id="prior">
+				<coalescentLikelihood idref="coalescent"/>
+			</prior>
+			<likelihood id="likelihood">
+				<treeLikelihood idref="treeLikelihood"/>
+			</likelihood>
+		</posterior>
+		<operators idref="operators"/>
+		<log id="screenLog" logEvery="20000">
+			<column label="Posterior" dp="4" width="12">
+				<posterior idref="posterior"/>
+			</column>
+			<column label="Root Height" sf="6" width="12">
+				<parameter idref="treeModel.rootHeight"/>
+			</column>
+			<column label="Rate" sf="4" width="12">
+				<parameter idref="clock.rate"/>
+			</column>
+		</log>
+		<log id="fileLog" logEvery="20000" fileName="chlorobium.expon.log">
+			<posterior idref="posterior"/>
+			<parameter idref="siteModel.pInv"/>
+			<parameter idref="clock.rate"/>
+			<parameter idref="exponential.popSize"/>
+			<parameter idref="exponential.growthRate"/>
+			<parameter idref="tvm.ac"/>
+			<parameter idref="tvm.ag"/>
+			<parameter idref="tvm.at"/>
+			<parameter idref="tvm.cg"/>
+			<parameter idref="treeModel.rootHeight"/>
+			<treeLikelihood idref="treeLikelihood"/>
+			<coalescentLikelihood idref="coalescent"/>
+		</log>
+		<logTree id="treeFileLog" logEvery="20000" nexusFormat="true" fileName="chlorobium.expon.trees">
+			<treeModel idref="treeModel"/>
+		</logTree>
+	</mcmc>
+	
+	<report>
+		<property name="timer">
+			<object idref="mcmc"/>
+		</property>
+	</report>
+	
+</beast>

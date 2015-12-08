@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>figure5-reconstruction.jpeg</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>224991</size>
+  <checksum algorithm="MD5">d7b54b355d9afee70498d3d2d3b17e09</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>artfully/3822</rightsHolder>
+  <dateUploaded>2010-04-26T07:23:45.773474</dateUploaded>
+  <dateSysMetadataModified>1997-02-19T20:03:45</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

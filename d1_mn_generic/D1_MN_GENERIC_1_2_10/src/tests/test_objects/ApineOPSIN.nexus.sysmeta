@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>ApineOPSIN.nexus</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>11529</size>
+  <checksum algorithm="MD5">0c539d940f2f72a76ca081f5c8780f5e</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>3934~senators</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>authenticators-733</subject>
+      <subject>blocking_687</subject>
+      <subject>santa=purposefully=3775</subject>
+      <subject>stalled/squawk/5912</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:47.769066</dateUploaded>
+  <dateSysMetadataModified>1984-12-09T19:26:33</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

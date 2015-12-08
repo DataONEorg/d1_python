@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>hdl:10255/dryad.135/mets.xml</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>2925</size>
+  <checksum algorithm="MD5">5e4f2ce6b976cb00cbf7fdf915244daf</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>melanie~1855</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>9810_paranormal</subject>
+      <subject>8335_flick_cogitate</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:25:20.019212</dateUploaded>
+  <dateSysMetadataModified>1981-07-19T04:14:51</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

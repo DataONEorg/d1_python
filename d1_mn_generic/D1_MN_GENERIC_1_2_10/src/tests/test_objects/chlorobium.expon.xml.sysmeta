@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>chlorobium.expon.xml</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>17138</size>
+  <checksum algorithm="MD5">52541e517b0743217363e2aa612c7aa8</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>authenticators-733</rightsHolder>
+  <dateUploaded>2010-04-26T07:23:46.814708</dateUploaded>
+  <dateSysMetadataModified>1982-08-17T07:14:04</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

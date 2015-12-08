@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>abundances-SCalifornia2003.xls</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>72192</size>
+  <checksum algorithm="MD5">1eb823294154c8ca26762170d591724a</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>3934~senators</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>4782@rigorously@seekers</subject>
+      <subject>artfully/3822</subject>
+      <subject>public</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:25:18.857457</dateUploaded>
+  <dateSysMetadataModified>1996-05-17T22:28:51</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

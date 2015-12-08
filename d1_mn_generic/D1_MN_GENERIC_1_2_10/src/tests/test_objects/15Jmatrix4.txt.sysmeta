@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>15Jmatrix4.txt</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>7531</size>
+  <checksum algorithm="MD5">1e6cf124aed03d07e28348b306529b30</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>4782@rigorously@seekers</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>public</subject>
+      <subject>folding_5087</subject>
+      <subject>3934~senators</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:25:18.078435</dateUploaded>
+  <dateSysMetadataModified>1996-04-13T08:01:47</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

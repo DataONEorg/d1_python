@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>Fishbein.nexus</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>609007</size>
+  <checksum algorithm="MD5">6dae7eaa63d4af54e908b695f81e1150</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>5227@manuscript@objectively</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>7408@outskirts@absorbency</subject>
+      <subject>artfully/3822</subject>
+      <subject>6011~recoiled~apologist</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:45.965733</dateUploaded>
+  <dateSysMetadataModified>1989-04-27T11:30:45</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

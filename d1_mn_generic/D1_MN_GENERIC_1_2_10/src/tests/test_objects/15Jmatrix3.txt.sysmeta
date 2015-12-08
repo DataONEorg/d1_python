@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>15Jmatrix3.txt</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>5289</size>
+  <checksum algorithm="MD5">774887c5f54ef71827c63d7fd45d0d3a</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>9810_paranormal</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>4782@rigorously@seekers</subject>
+      <subject>melanie~1855</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:25:18.376377</dateUploaded>
+  <dateSysMetadataModified>1975-12-21T23:07:25</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

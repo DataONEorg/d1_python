@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.1035" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=1187" ID="hdl:10255/dryad.1035" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Passador-Gurgel, Gisele</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Hsieh, Wen-Ping</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Hunt, Priscilla</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Deighton, Nigel</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Gibson, Greg</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2009-10-28T19:40:31Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2009-10-28T19:40:31Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">2009-10-28T19:40:31Z</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.1035</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="en">http://hdl.handle.net/10255/dryad.1030</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="en">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="title" mdschema="dc" language="en">Drug Effects</dim:field>
+<dim:field element="type" mdschema="dc" language="en">Dataset</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_900" SIZE="2668544" CHECKSUM="8d99a60bd4a905e8ee750f97fbe947b6" MIMETYPE="application/vnd.ms-excel" CHECKSUMTYPE="MD5" ID="file_900">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.1035/Drug%20effect.xls?sequence=1" xlink:title="Drug effect.xls" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_900"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

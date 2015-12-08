@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>fitch2.mc</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>5748</size>
+  <checksum algorithm="MD5">eb1076e9dc788cb830a0bc6ecb0049a6</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>9810_paranormal</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>975@shadily</subject>
+      <subject>folding_5087</subject>
+      <subject>3934~senators</subject>
+      <subject>6011~recoiled~apologist</subject>
+      <subject>public</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:46.163222</dateUploaded>
+  <dateSysMetadataModified>1982-08-17T12:53:11</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>co2.nex</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>55803</size>
+  <checksum algorithm="MD5">f18e255c8c93394f6039770e8c20803d</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>6011~recoiled~apologist</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>975@shadily</subject>
+      <subject>sparingly~renault~9208</subject>
+      <subject>5227@manuscript@objectively</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:42.427862</dateUploaded>
+  <dateSysMetadataModified>1985-06-01T20:32:49</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>baker.HD_matrix</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>48600</size>
+  <checksum algorithm="MD5">d5e3bc26f3f83f4d95000edb075c9e20</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>6011~recoiled~apologist</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>folding_5087</subject>
+      <subject>santa=purposefully=3775</subject>
+      <subject>3934~senators</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:43.336754</dateUploaded>
+  <dateSysMetadataModified>1984-10-27T00:00:53</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

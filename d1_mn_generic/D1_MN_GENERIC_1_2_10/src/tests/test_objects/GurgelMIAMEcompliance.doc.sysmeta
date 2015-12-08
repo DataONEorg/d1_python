@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>GurgelMIAMEcompliance.doc</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>31232</size>
+  <checksum algorithm="MD5">910daaef7219d197cc2a891b64380c6f</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>sparingly~renault~9208</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>profiteers=7446</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:45.193396</dateUploaded>
+  <dateSysMetadataModified>1993-03-13T15:06:43</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

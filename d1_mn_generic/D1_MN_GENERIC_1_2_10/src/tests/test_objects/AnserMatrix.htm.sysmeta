@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>AnserMatrix.htm</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>11048</size>
+  <checksum algorithm="MD5">0e25cf59d7bd4d57154cc83e0aa32b34</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>5227@manuscript@objectively</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>8920_skye_fondled</subject>
+      <subject>public</subject>
+      <subject>folding_5087</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:46.064887</dateUploaded>
+  <dateSysMetadataModified>1970-05-27T06:12:49</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>
