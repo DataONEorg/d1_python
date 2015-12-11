@@ -55,7 +55,7 @@ MAX_LISTOBJECTS = 1000
 DEFAULT_LISTOBJECTS = 100
 
 # HTTP Response timeout in seconds, float.
-RESPONSE_TIMEOUT = 30.0
+RESPONSE_TIMEOUT = 300000000000000000000.0
 
 # HTTP User Agent that this software is known as.
 USER_AGENT = 'pyd1/%s +http://dataone.org/' % VERSION

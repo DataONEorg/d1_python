@@ -31,11 +31,11 @@ import optparse
 import os
 import xml.etree.ElementTree
 
-try:
-  import pysvn
-except ImportError:
-  print 'Try: sudo apt-get install python-svn'
-  raise
+#try:
+#  import pysvn
+#except ImportError:
+#  print 'Try: sudo apt-get install python-svn'
+#  raise
 
 
 def main():
@@ -76,9 +76,9 @@ def main():
   #  '--schema-location=dataoneTypes.xsd',
   #  '--module=dataoneTypes',
   #  '--archive-to-file dataoneTypes.wxs',
-  ##  '--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
+  #  '--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/\'',
   #])
-  #
+
   ## Generate additional bindings for 1.1. Pull 1.0 dependencies from archive.
   #g.generate_bindings([
   #  '--schema-location=dataoneTypes_v1.1.xsd',
@@ -91,25 +91,26 @@ def main():
   g.generate_bindings(
     [
       '--schema-location=dataoneTypes_v2.0.xsd',
-      '--module=dataoneTypes_2_0',
-      '--archive-path .:+',
-      #'--schema-stripped-prefix=\'https://repository.dataone.org/software/cicore/trunk/d1_schemas/\'',
+      '--module=dataoneTypes',
+      '--archive-to-file dataoneTypes.wxs',
+      #'--archive-path .:+',
+      '--schema-stripped-prefix=\'http://ns.dataone.org/service/types/\'',
     ]
   )
 
-  ## Generate bindings for the exception types.
-  #g.generate_bindings([
-  #  '--schema-location=dataoneErrors.xsd',
-  #  '--module=dataoneErrors',
-  #])
+## Generate bindings for the exception types.
+#g.generate_bindings([
+#  '--schema-location=dataoneErrors.xsd',
+#  '--module=dataoneErrors',
+#])
 
-  # Generate version text files for the bindings, using the Subversion
-  # revision numbers from the schema files.
-  g = GenerateVersionFile(options.schema_dir, options.binding_dir)
-  g.generate_version_file('dataoneTypes.xsd', 'dataoneTypes')
-  g.generate_version_file('dataoneTypes_v1.1.xsd', 'dataoneTypes_1_1')
-  g.generate_version_file('dataoneTypes_v2.0.xsd', 'dataoneTypes_2_0')
-  g.generate_version_file('dataoneErrors.xsd', 'dataoneErrors')
+# Generate version text files for the bindings, using the Subversion
+# revision numbers from the schema files.
+#g = GenerateVersionFile(options.schema_dir, options.binding_dir)
+#g.generate_version_file('dataoneTypes.xsd', 'dataoneTypes')
+#g.generate_version_file('dataoneTypes_v1.1.xsd', 'dataoneTypes_1_1')
+#g.generate_version_file('dataoneTypes_v2.0.xsd', 'dataoneTypes_2_0')
+#g.generate_version_file('dataoneErrors.xsd', 'dataoneErrors')
 
 #===============================================================================
 
