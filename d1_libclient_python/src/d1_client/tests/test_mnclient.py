@@ -40,7 +40,7 @@ import pyxb
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes as dataoneTypes
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.person

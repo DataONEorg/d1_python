@@ -37,7 +37,7 @@ import sys
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.objectlistiterator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes as dataoneTypes
 
 import pyxb.binding
 

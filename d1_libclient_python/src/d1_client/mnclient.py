@@ -39,7 +39,7 @@ import sys
 # D1.
 try:
     import d1_common.const
-    import d1_common.types.generated.dataoneTypes as dataoneTypes
+    import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
     import d1_common.util
     import d1_common.date_time
 except ImportError as e:
@@ -61,7 +61,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
                  strict=True,
                  capture_response_body=False,
                  version='v1',
-                 types=dataoneTypes):
+                 types=dataoneTypes_v1):
         '''Connect to a DataONE Member Node.
 
     :param base_url: DataONE Node REST service BaseURL

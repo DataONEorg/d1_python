@@ -38,7 +38,7 @@ import sys
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes as dataoneTypes
 
 # These tests are disabled because they require a MN that permits access to
 # log records.

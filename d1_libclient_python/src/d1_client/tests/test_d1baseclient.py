@@ -39,7 +39,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes as dataoneTypes
 import d1_client.d1baseclient
 from settings import *
 
@@ -108,7 +108,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''getLogRecords() returns a valid Log. CNs will return an empty log for public connections'''
     client = d1_client.d1baseclient.DataONEBaseClient(base_url)
     log = client.getLogRecords()
-    self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
+    self.assertTrue(isinstance(log, d1_common.types.raw.dataoneTypes.Log))
     return log
 
   def test_110(self):
@@ -171,7 +171,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     sysmeta = client.getSystemMetadata(pid)
     self.assertTrue(
       isinstance(
-        sysmeta, d1_common.types.generated.dataoneTypes_v1_1.SystemMetadata
+        sysmeta, d1_common.types.raw.dataoneTypes_v1_1.SystemMetadata
       )
     )
 
@@ -230,11 +230,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     else:
       pid = testing_utilities.get_random_valid_pid(client)
     checksum = client.getChecksum(pid)
-    self.assertTrue(
-      isinstance(
-        checksum, d1_common.types.generated.dataoneTypes_v1_1.Checksum
-      )
-    )
+    self.assertTrue(isinstance(checksum, d1_common.types.raw.dataoneTypes_v1_1.Checksum))
 
   def WAITING_FOR_TEST_ENV_test_710(self):
     '''CNRead.getChecksum()'''
@@ -257,21 +253,17 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''listObjects() returns a valid ObjectList that contains at least 3 entries'''
     client = d1_client.d1baseclient.DataONEBaseClient(baseURL)
     list = client.listObjects(start=0, count=10, fromDate=None, toDate=None)
-    self.assertTrue(
-      isinstance(
-        list, d1_common.types.generated.dataoneTypes_v1_1.ObjectList
-      )
-    )
+    self.assertTrue(isinstance(list, d1_common.types.raw.dataoneTypes_v1_1.ObjectList))
     self.assertEqual(list.count, len(list.objectInfo))
     entry = list.objectInfo[0]
     self.assertTrue(
       isinstance(
-        entry.identifier, d1_common.types.generated.dataoneTypes_v1_1.Identifier
+        entry.identifier, d1_common.types.raw.dataoneTypes_v1_1.Identifier
       )
     )
     self.assertTrue(
       isinstance(
-        entry.formatId, d1_common.types.generated.dataoneTypes_v1_1.ObjectFormatIdentifier
+        entry.formatId, d1_common.types.raw.dataoneTypes_v1_1.ObjectFormatIdentifier
       )
     )
 
@@ -292,14 +284,14 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
       d1_instance_generator.random_data.random_3_words()
     client = d1_client.d1baseclient.DataONEBaseClient(self.options.gmn_url)
     identifier = client.generateIdentifier('UUID', testing_context.test_fragment)
-    testing_context.generated_identifier = identifier.value()
+    testing_context.raw_identifier = identifier.value()
 
   def _test_1050_B(self):
     '''generateIdentifier(): Returns a different, valid identifier when called second time'''
     testing_context.test_fragment = 'test_reserve_identifier_' + \
       d1_instance_generator.random_data.random_3_words()
     identifier = self.client.generateIdentifier('UUID', testing_context.test_fragment)
-    self.assertNotEqual(testing_context.generated_identifier, identifier.value())
+    self.assertNotEqual(testing_context.raw_identifier, identifier.value())
 
   # CNAuthorization.isAuthorized()
   # MNAuthorization.isAuthorized()

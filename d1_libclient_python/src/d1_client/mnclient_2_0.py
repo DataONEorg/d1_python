@@ -42,7 +42,7 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
+  import d1_common.types.raw.dataoneTypes_v2_0 as dataoneTypes_v2_0
   import d1_common.util
   import d1_common.date_time
   import mnclient
@@ -65,7 +65,7 @@ class MemberNodeClient_2_0(mnclient.MemberNodeClient):
                strict=True,
                capture_response_body=False,
                version='v2',
-               types=dataoneTypes_2_0):
+               types=dataoneTypes_v2_0):
         '''Connect to a DataONE Member Node.
 
         :param base_url: DataONE Node REST service BaseURL
@@ -101,7 +101,7 @@ class MemberNodeClient_2_0(mnclient.MemberNodeClient):
                      strict=True,
                      capture_response_body=False,
                      version='v2',
-                     types=dataoneTypes_2_0)
+                     types=dataoneTypes_v2_0)
         self.logger = logging.getLogger('MemberNodeClient')
         self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
 
