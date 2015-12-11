@@ -40,7 +40,7 @@ import StringIO
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.xmlrunner
 
 # App.
@@ -57,13 +57,13 @@ class TestSystemMetadata(d1_common.testcasewithurlcompare.TestCaseWithURLCompare
   def test_010(self):
     '''generate()'''
     s = systemmetadata.generate()
-    self.assertTrue(isinstance(s, dataoneTypes.SystemMetadata))
+    self.assertTrue(isinstance(s, dataoneTypes_v1.SystemMetadata))
     self.assertTrue(s.toxml())
 
   def ztest_020(self):
     '''generate_from_file()'''
     s = systemmetadata.generate_from_file(__file__)
-    self.assertTrue(isinstance(s, dataoneTypes.SystemMetadata))
+    self.assertTrue(isinstance(s, dataoneTypes_v1.SystemMetadata))
     self.assertTrue(s.toxml())
     checksum_calculator = hashlib.sha1()
     with open(__file__, 'rb') as f:

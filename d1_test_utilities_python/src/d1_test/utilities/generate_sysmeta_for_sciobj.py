@@ -18,7 +18,7 @@ import urllib2
 import sys
 from lxml import etree
 import datetime
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 from d1_instance_generator import systemmetadata
 
 
@@ -27,7 +27,7 @@ def getObjectFormatFromID(fmtid, default='application/octet-stream'):
   '''
   formatlistURL = "https://repository.dataone.org/software/cicore/trunk/d1_common_java/src/main/resources/org/dataone/service/resources/config/v1/objectFormatList.xml"
   doc = urllib2.urlopen(formatlistURL).read()
-  formats = dataoneTypes.CreateFromDocument(doc)
+  formats = dataoneTypes_v1.CreateFromDocument(doc)
   for format in formats.objectFormat:
     if format.formatId == fmtid:
       logging.info("Found format for %s" % fmtid)

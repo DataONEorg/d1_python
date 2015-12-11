@@ -38,7 +38,7 @@ import StringIO
 
 # D1.
 import d1_common.checksum
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
@@ -77,7 +77,7 @@ class TestChecksum(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     for i in range(10):
       flo = StringIO.StringIO('ateststring')
       c1 = checksum.generate_from_flo(flo)
-      c2 = dataoneTypes.CreateFromDocument(c1.toxml())
+      c2 = dataoneTypes_v1.CreateFromDocument(c1.toxml())
       c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(c2.algorithm)
       c.update('ateststring')
       self.assertEquals(c.hexdigest(), c2.value())
@@ -86,7 +86,7 @@ class TestChecksum(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''generate_from_string(), XML serialization roundtrip'''
     for i in range(10):
       c1 = checksum.generate_from_string('ateststring')
-      c2 = dataoneTypes.CreateFromDocument(c1.toxml())
+      c2 = dataoneTypes_v1.CreateFromDocument(c1.toxml())
       c = d1_common.checksum.get_checksum_calculator_by_dataone_designator(c2.algorithm)
       c.update('ateststring')
       self.assertEquals(c.hexdigest(), c2.value())
@@ -95,7 +95,7 @@ class TestChecksum(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''generate()'''
     for i in range(10):
       c = checksum.generate()
-      self.assertTrue(isinstance(c, dataoneTypes.Checksum))
+      self.assertTrue(isinstance(c, dataoneTypes_v1.Checksum))
       self.assertTrue(c.toxml())
 
 

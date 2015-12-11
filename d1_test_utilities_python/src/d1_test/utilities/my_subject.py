@@ -10,7 +10,6 @@ from OpenSSL import crypto
 from pyasn1.error import PyAsn1Error
 from pyasn1.codec.ber import decoder
 from lxml import etree
-from d1_common.types.generated import dataoneTypes
 
 
 def getSubjectFromName(xName):

@@ -37,7 +37,7 @@ import re
 import sys
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.date_time
@@ -124,7 +124,7 @@ class get_subjects_from_certificate(object):
 
   def _deserialize_subject_info(self, subject_info_xml):
     try:
-      return dataoneTypes.CreateFromDocument(subject_info_xml)
+      return dataoneTypes_v1.CreateFromDocument(subject_info_xml)
     except Exception as e:
       print 'Error deserializing SubjectInfo: {0}'.format(str(e))
       exit()

@@ -38,7 +38,7 @@ except ImportError:
   raise
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 
 # Get an instance of a logger.
 logger = logging.getLogger()
@@ -213,19 +213,19 @@ def create_session_extension(subject, persons, groups):
   :return type: X509Extension
   '''
 
-  subject_list = dataoneTypes.SubjectList()
+  subject_list = dataoneTypes_v1.SubjectList()
   for person in persons:
-    person_pyxb = dataoneTypes.Person()
+    person_pyxb = dataoneTypes_v1.Person()
     person_pyxb.subject = person
     person_pyxb.givenName = ['given']
     person_pyxb.familyName = 'family'
     person_pyxb.email = ['email@email.com']
     subject_list.person.append(person_pyxb)
   for group in groups:
-    group_pyxb = dataoneTypes.Group()
+    group_pyxb = dataoneTypes_v1.Group()
     group_pyxb.subject = group
     group_pyxb.groupName = 'groupname'
-  session = dataoneTypes.Session()
+  session = dataoneTypes_v1.Session()
   session.subject = subject
   session.subjectList = subject_list
 

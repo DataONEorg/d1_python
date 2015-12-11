@@ -37,7 +37,7 @@ import uuid
 import StringIO
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
@@ -57,7 +57,7 @@ class TestSubject(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def test_010(self):
     '''generate()'''
     subject_obj = subject.generate()
-    self.assertTrue(isinstance(subject_obj, dataoneTypes.Subject))
+    self.assertTrue(isinstance(subject_obj, dataoneTypes_v1.Subject))
     self.assertTrue(subject_obj.toxml())
 
 

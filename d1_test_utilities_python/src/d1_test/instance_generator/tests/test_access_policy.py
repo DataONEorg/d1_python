@@ -36,7 +36,7 @@ import uuid
 import StringIO
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.const
 import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
@@ -83,7 +83,7 @@ class TestAccessPolicy(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''generate()'''
     for i in range(10):
       access_policy = accesspolicy.generate()
-      self.assertTrue(isinstance(access_policy, dataoneTypes.AccessPolicy))
+      self.assertTrue(isinstance(access_policy, dataoneTypes_v1.AccessPolicy))
       self.assertTrue(access_policy.toxml())
 
 

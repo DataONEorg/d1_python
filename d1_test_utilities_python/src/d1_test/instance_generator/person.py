@@ -31,7 +31,7 @@ Module d1_instance_generator.person
 import random
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+from d1_common.types.raw import dataoneTypes_v1
 
 # App.
 import dates
@@ -40,7 +40,7 @@ import subject
 
 
 def generate():
-  person = dataoneTypes.Person()
+  person = dataoneTypes_v1.Person()
   person.subject = subject.generate()
   for i in range(random.randint(1, 3)):
     person.givenName.append('givenName_' + random_data.random_word())
