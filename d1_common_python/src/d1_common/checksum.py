@@ -31,7 +31,7 @@ import hashlib
 
 # App.
 import const
-from .types.raw import dataoneTypes_v1
+from .types.generated import dataoneTypes
 
 DEFAULT_CHUNK_SIZE = 1024 * 1024
 
@@ -40,7 +40,7 @@ dataone_to_python_checksum_algorithm_map = {'MD5': hashlib.md5, 'SHA-1': hashlib
 
 def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
   c = calculate_checksum(o, algorithm)
-  c_pyxb = dataoneTypes_v1.checksum(c)
+  c_pyxb = dataoneTypes.checksum(c)
   c_pyxb.algorithm = algorithm
   return c_pyxb
 
