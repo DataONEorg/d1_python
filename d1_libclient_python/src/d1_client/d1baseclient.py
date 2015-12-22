@@ -64,7 +64,7 @@ try:
   import d1_common.const
   import d1_common.restclient
   import d1_common.types.exceptions
-  import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
+  import d1_common.types.generated.dataoneTypes as dataoneTypes
   import d1_common.util
   import d1_common.url
 except ImportError as e:
@@ -96,7 +96,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
                strict=True,
                capture_response_body=False,
                version='v1',
-               types=dataoneTypes_v1):
+               types=dataoneTypes):
     '''Connect to a DataONE Coordinating Node or Member Node.
 
     :param base_url: DataONE Node REST service BaseURL

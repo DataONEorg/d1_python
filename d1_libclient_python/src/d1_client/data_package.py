@@ -55,7 +55,7 @@ import rdflib.plugin
 import rdflib.graph
 
 # D1.
-import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.checksum
 import d1_common.const
 import d1_common.url
@@ -89,7 +89,7 @@ class ResourceMapGenerator():
     resource map describes an aggregation containing a single Science Metadata
     object and one or more Science Data objects described by that object.
 
-    The resource map is raw in RDF:XML format, currently the only format
+    The resource map is generated in RDF:XML format, currently the only format
     supported by DataONE.
 
     :resource_map_pid: The PID for the resource map itself.
@@ -118,7 +118,7 @@ class ResourceMapGenerator():
     rights_holder,
     checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
   ):
-    '''Generate a system metadata object for a resource map. The raw
+    '''Generate a system metadata object for a resource map. The generated
     system metadata object is intended for use in DataONE API methods such as
     MNStorage.Create(). The object contains an access control rule allowing
     public access. For simple use cases with public access, the object can
@@ -192,7 +192,7 @@ class ResourceMapGenerator():
   ):
     if modified is None:
       modified = datetime.datetime.now()
-    sys_meta = dataoneTypes_v1.systemMetadata()
+    sys_meta = dataoneTypes.systemMetadata()
     sys_meta.identifier = pid
     sys_meta.formatId = format_id
     sys_meta.size = size
@@ -204,10 +204,10 @@ class ResourceMapGenerator():
     return sys_meta
 
   def generate_public_access_policy(self):
-    accessPolicy = dataoneTypes_v1.accessPolicy()
-    accessRule = dataoneTypes_v1.AccessRule()
+    accessPolicy = dataoneTypes.accessPolicy()
+    accessRule = dataoneTypes.AccessRule()
     accessRule.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission = dataoneTypes_v1.Permission('read')
+    permission = dataoneTypes.Permission('read')
     accessRule.permission.append(permission)
     accessPolicy.append(accessRule)
     return accessPolicy

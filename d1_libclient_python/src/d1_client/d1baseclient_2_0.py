@@ -63,7 +63,7 @@ except ImportError as e:
 try:
     import d1_common.const
     import d1_common.restclient
-    import d1_common.types.raw.dataoneTypes_v2_0 as dataoneTypes_v2_0
+    import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
     import d1_client.d1baseclient_2_0 as d1baseclient_2_0
     import d1_common.util
     import d1_common.url
@@ -124,7 +124,7 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
     '''
         d1_client.d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
         self.version = 'v2'
-        self.types = dataoneTypes_v2_0
+        self.types = dataoneTypes_2_0
 
 
     #=============================================================================
