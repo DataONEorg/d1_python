@@ -142,7 +142,13 @@ class GMNException(Exception):
 class options():
   def __init__(self):
     self.gmn_url = 'http://127.0.0.1:8000'
-    self.obj_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
+    self.obj_path = os.path.join(
+      os.path.abspath(
+        os.path.dirname(
+          __file__
+        )
+      ), 'test_objects'
+    ) #'/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
     self.wrapped = False
     self.obj_url = 'http://127.0.0.1:8000'
 
