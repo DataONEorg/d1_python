@@ -64,21 +64,20 @@ except ImportError as e:
 try:
     import d1_common.const
     import d1_common.restclient
-    import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
+    import d1_common.types.dataoneTypes_2_0 as dataoneTypes_v2_0
     import d1_common.util
     import d1_common.url
+    import service.mn.views.v2 as v2
 except ImportError as e:
     sys.stderr.write('Import error: {0}\n'.format(str(e)))
     sys.stderr.write('Try: easy_install DataONE_Common\n')
     raise
 
-import d1baseclient
+import d1_client.d1baseclient
 
 #=============================================================================
 
-
-class DataONEBaseClient_2_0(d1baseclient.DataONEBaseClient):
-
+class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
     '''Implements DataONE client functionality common between Member and
     Coordinating nodes by extending the RESTClient.
 
@@ -121,12 +120,13 @@ class DataONEBaseClient_2_0(d1baseclient.DataONEBaseClient):
         :type types: PyXB
         :returns: None
         '''
-        d1baseclient.DataONEBaseClient.__init__(
-            self,
-            *
-            args,
-            **kwargs)
+        d1_client.d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
+        self.version = 'v2'
+        self.types = dataoneTypes_v2_0
 
-    #=========================================================================
+
+    #=============================================================================
     # v2.0 APIs shared between CNs and MNs.
-    #=========================================================================
+    #=============================================================================
+
+

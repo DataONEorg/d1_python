@@ -39,7 +39,7 @@ import sys
 # D1.
 try:
     import d1_common.const
-    import d1_common.types.generated.dataoneTypes as dataoneTypes
+    import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
     import d1_common.util
 except ImportError as e:
     sys.stderr.write('Import error: {0}\n'.format(str(e)))

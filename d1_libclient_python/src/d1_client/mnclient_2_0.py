@@ -42,7 +42,7 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
+  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
   import d1_common.util
   import d1_common.date_time
 except ImportError as e:
@@ -64,7 +64,7 @@ class MemberNodeClient(d1baseclient_2_0.DataONEBaseClient_2_0):
                strict=True,
                capture_response_body=False,
                version='v2',
-               types=dataoneTypes_2_0):
+               types=dataoneTypes):
     '''Connect to a DataONE Member Node.
 
     :param base_url: DataONE Node REST service BaseURL
@@ -98,3 +98,28 @@ class MemberNodeClient(d1baseclient_2_0.DataONEBaseClient_2_0):
       capture_response_body=capture_response_body, version=version, types=types)
     self.logger = logging.getLogger('MemberNodeClient')
     self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
+
+    # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
+    # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
+
+    @d1_common.util.utf8_to_unicode
+    def updateSystemMetadataResponse(self, pid, sysmeta, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+
+        url = self._rest_url('meta')
+        mime_multipart_fields = [
+            ('pid', pid.encode('utf-8')),
+        ]
+        mime_multipart_files = [
+            ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
+        ]
+        return self.PUT(url, fields=mime_multipart_fields, files=mime_multipart_files,headers=vendorSpecific)
+
+
+    @d1_common.util.utf8_to_unicode
+    def updateSystemMetadata(self, pid, sysmeta):
+        response = self.updateSystemMetadataResponse(pid, sysmeta)
+        #cn_client =
+        return self._read_boolean_response(response)
+

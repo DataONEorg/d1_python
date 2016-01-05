@@ -39,7 +39,7 @@ import sys
 # D1.
 try:
     import d1_common.const
-    import d1_common.types.generated.dataoneTypes as dataoneTypes
+    import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
     import d1_common.util
     import d1_common.date_time
 except ImportError as e:
@@ -93,7 +93,8 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
         d1baseclient.DataONEBaseClient.__init__(self, base_url=base_url,
                                                 timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
                                                 key_path=key_path, strict=strict,
-                                                capture_response_body=capture_response_body, version=version, types=types)
+                                                capture_response_body=capture_response_body, version=version,
+                                                types=types)
         self.logger = logging.getLogger('MemberNodeClient')
         self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
 
@@ -112,7 +113,7 @@ class MemberNodeClient(d1baseclient.DataONEBaseClient):
 
     def getCapabilities(self, vendorSpecific=None):
         response = self.getCapabilitiesResponse(vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 1, 0, 'Node')
+        return self._read_dataone_type_response(response, 2, 0, 'Node')
 
     # ============================================================================
     # MNRead

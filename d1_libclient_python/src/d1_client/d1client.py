@@ -112,7 +112,7 @@ class DataONEObject(object):
         :return type: PyXB ObjectLocationList.
         '''
     if len(self._locations) < 1 or forcenew:
-      #             cli = self._getClient()
+      cli = self._getClient()
       self._locations = self._client.resolve(self._pid)
     return self._locations
 
@@ -125,7 +125,7 @@ class DataONEObject(object):
         :return type: PyXB ObjectLocationList.
         '''
     if self._systemmetadata is None or forcenew:
-      #             cli = self._getClient()
+      cli = self._getClient()
       self._systemmetadata = self._client.getSystemMetadata(self._pid)
     return self._systemmetadata
 
@@ -134,9 +134,9 @@ class DataONEObject(object):
     if t - self._relations_t > MAX_CACHE_AGE:
       forcenew = True
     if self._relations is None or forcenew:
-      #             cli = self._getClient()
-      self._relations = self._client.getRelatedObjects(self._pid)
-      self._relations_t = t
+      cli = self._getClient()
+    self._relations = cli.getRelatedObjects(self._pid)
+    self._relations_t = t
     return self._relations
 
   def save(self, outstr):
@@ -147,7 +147,7 @@ class DataONEObject(object):
         :returns: None
         :return type: NoneType
         '''
-    #         cli = self._getClient()
+    cli = self._getClient()
     instr = self._client.get(self._pid)
     while True:
       data = instr.read(4096)
@@ -156,7 +156,7 @@ class DataONEObject(object):
       outstr.write(data)
 
   def get(self):
-    #         cli = self._getClient()
+    cli = self._getClient()
     return self._client.get(self._pid)
 
 #=========================================================================
@@ -223,7 +223,7 @@ class DataONEClient(object):
       mn = self._getMN(location)
       try:
         return mn.get(pid)
-      except Exception as e:
+      except Exception, e:
         self._logger.exception(e)
     raise Exception('Object could not be retrieved from any resolved targets')
 
@@ -237,7 +237,7 @@ class DataONEClient(object):
   def getSystemMetadata(self, pid):
     '''
         '''
-    if pid in self._sysmetacache:
+    if self._sysmetacache.has_key(pid):
       return self._sysmetacache[pid]
     cn = self._getCN()
     self._sysmetacache[pid] = cn.getSystemMetadata(pid)

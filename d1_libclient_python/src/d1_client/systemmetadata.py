@@ -45,7 +45,7 @@ import xml.etree.ElementTree
 # 3rd party.
 try:
   from dateutil.parser import parse as parseDateString
-except ImportError as e:
+except ImportError, e:
   sys.stderr.write('Import error: %s\n' % str(e))
   sys.stderr.write('Try: sudo easy_install python-dateutil\n')
   sys.stderr.write('Home: http://labix.org/python-dateutil\n')

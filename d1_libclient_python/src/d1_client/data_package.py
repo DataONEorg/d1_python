@@ -55,7 +55,7 @@ import rdflib.plugin
 import rdflib.graph
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 import d1_common.checksum
 import d1_common.const
 import d1_common.url
