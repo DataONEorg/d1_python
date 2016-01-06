@@ -63,7 +63,7 @@ except ImportError as e:
 try:
   import d1_common.const
   import d1_common.restclient
-  import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes_1_1
+  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes_v1_1
   import d1_common.util
   import d1_common.url
 except ImportError as e:
@@ -153,4 +153,4 @@ class DataONEBaseClient_1_1(d1_client.d1baseclient.DataONEBaseClient):
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(self, queryEngine, **kwargs):
     response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
-    return self._read_dataone_type_response(response)
+    return self._read_dataone_type_response(response, 1, 1, 'QueryEngineDescription')

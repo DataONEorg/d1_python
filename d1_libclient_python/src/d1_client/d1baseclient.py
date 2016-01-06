@@ -335,92 +335,92 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
           pyxb.RequireValidWhenParsing(validation_setting)
 
 
-        def _read_boolean_response(self, response):
-            if self._status_is_200_ok(response):
-                self._read_and_capture(response)
-                return True
-            self._error(response)
+    def _read_boolean_response(self, response):
+        if self._status_is_200_ok(response):
+            self._read_and_capture(response)
+            return True
+        self._error(response)
 
-        def _read_boolean_404_response(self, response):
-            if self._status_is_200_ok(
-                    response) or self._status_is_404_not_found(response):
-                self._read_and_capture(response)
-                return self._status_is_200_ok(response)
-            self._error(response)
+    def _read_boolean_404_response(self, response):
+        if self._status_is_200_ok(
+                response) or self._status_is_404_not_found(response):
+            self._read_and_capture(response)
+            return self._status_is_200_ok(response)
+        self._error(response)
 
-        def _read_boolean_401_response(self, response):
-            if self._status_is_200_ok(
-                    response) or self._status_is_401_not_authorized(response):
-                self._read_and_capture(response)
-                return self._status_is_200_ok(response)
-            self._error(response)
+    def _read_boolean_401_response(self, response):
+        if self._status_is_200_ok(
+                response) or self._status_is_401_not_authorized(response):
+            self._read_and_capture(response)
+            return self._status_is_200_ok(response)
+        self._error(response)
 
-        def _read_dataone_type_response(self, response, major, minor, d1_type_name,
-                                        response_contains_303_redirect=False):
-            if self._status_is_ok(response, response_contains_303_redirect):
-                if not self._content_type_is_xml(response):
-                    self._raise_service_failure_invalid_content_type(response)
-                d1_pyxb_obj = self._read_and_deserialize_dataone_type(response)
-                self._assert_correct_dataone_type(
-                    d1_pyxb_obj,
-                    major,
-                    minor,
-                    d1_type_name)
-                return d1_pyxb_obj
-            self._error(response)
+    def _read_dataone_type_response(self, response, major, minor, d1_type_name,
+                                    response_contains_303_redirect=False):
+        if self._status_is_ok(response, response_contains_303_redirect):
+            if not self._content_type_is_xml(response):
+                self._raise_service_failure_invalid_content_type(response)
+            d1_pyxb_obj = self._read_and_deserialize_dataone_type(response)
+            self._assert_correct_dataone_type(
+                d1_pyxb_obj,
+                major,
+                minor,
+                d1_type_name)
+            return d1_pyxb_obj
+        self._error(response)
 
-        def _read_stream_response(self, response):
-            if self._status_is_200_ok(response):
-                return response
-            self._error(response)
+    def _read_stream_response(self, response):
+        if self._status_is_200_ok(response):
+            return response
+        self._error(response)
 
-        def _read_header_response(self, response):
-            headers = dict(response.getheaders())
-            if self._status_is_200_ok(response):
-                self._read_and_capture(response)
-                return headers
-            raise d1_common.types.exceptions.deserialize_from_headers(headers)
+    def _read_header_response(self, response):
+        headers = dict(response.getheaders())
+        if self._status_is_200_ok(response):
+            self._read_and_capture(response)
+            return headers
+        raise d1_common.types.exceptions.deserialize_from_headers(headers)
 
-        # ----------------------------------------------------------------------------
-        # Misc.
-        # ----------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------
+    # Misc.
+    # ----------------------------------------------------------------------------
 
-        def _slice_sanity_check(self, start, count):
-            try:
-                start = int(start)
-                count = int(count)
-                if start < 0 or count < 0:
-                    raise ValueError
-            except ValueError:
-                raise d1_common.types.exceptions.InvalidRequest(0,
-                                                                "'start' and 'count' must be 0 or a positive integer")
+    def _slice_sanity_check(self, start, count):
+        try:
+            start = int(start)
+            count = int(count)
+            if start < 0 or count < 0:
+                raise ValueError
+        except ValueError:
+            raise d1_common.types.exceptions.InvalidRequest(0,
+                                                            "'start' and 'count' must be 0 or a positive integer")
 
-        def _date_span_sanity_check(self, fromDate, toDate):
-            if toDate is not None and fromDate is not None and fromDate > toDate:
-                raise d1_common.types.exceptions.InvalidRequest(0,
-                                                                'Ending date must be later than starting date')
+    def _date_span_sanity_check(self, fromDate, toDate):
+        if toDate is not None and fromDate is not None and fromDate > toDate:
+            raise d1_common.types.exceptions.InvalidRequest(0,
+                                                            'Ending date must be later than starting date')
 
-        def _rest_url(self, path_format, **args):
-            for k in args.keys():
-                args[k] = d1_common.url.encodePathElement(args[k])
-            path = path_format % args
-            url = '/' + d1_common.url.joinPathElements(self.selector, self.version,
-                                                       path)
-            return url
+    def _rest_url(self, path_format, **args):
+        for k in args.keys():
+            args[k] = d1_common.url.encodePathElement(args[k])
+        path = path_format % args
+        url = '/' + d1_common.url.joinPathElements(self.selector, self.version,
+                                                   path)
+        return url
 
-        def get_schema_version(self, method_signature='node'):
-            '''Find which schema version Node returns for a given REST API endpoint. The
-            method must be a valid query against the Node. For instance: "node".
-            '''
-            rest_url = self._rest_url(method_signature)
-            response = self.GET(rest_url)
-            doc = response.read()
-            m = re.search(r'http://ns.dataone.org/service/types/(v\d)', doc)
-            if not m:
-                msg = 'Unable to detect schema version. rest_url({0}) method({1})'\
-                    .format(rest_url, method_signature)
-                raise d1_common.types.exceptions.ServiceFailure(0, msg)
-            return m.group(1)
+    def get_schema_version(self, method_signature='node'):
+        '''Find which schema version Node returns for a given REST API endpoint. The
+        method must be a valid query against the Node. For instance: "node".
+        '''
+        rest_url = self._rest_url(method_signature)
+        response = self.GET(rest_url)
+        doc = response.read()
+        m = re.search(r'http://ns.dataone.org/service/types/(v\d)', doc)
+        if not m:
+            msg = 'Unable to detect schema version. rest_url({0}) method({1})'\
+                .format(rest_url, method_signature)
+            raise d1_common.types.exceptions.ServiceFailure(0, msg)
+        return m.group(1)
 
         # ----------------------------------------------------------------------------
         # CNCore / MNCore
@@ -431,222 +431,222 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
         # MNCore.getLogRecords(session[, fromDate][, toDate][, event][, start=0][, count=1000]) → Log
         # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.getLogRecords
 
-        @d1_common.util.utf8_to_unicode
-        def getLogRecordsResponse(self, fromDate=None, toDate=None, event=None,
-                                  pidFilter=None, start=0,
-                                  count=d1_common.const.DEFAULT_LISTOBJECTS,
-                                  vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            self._slice_sanity_check(start, count)
-            self._date_span_sanity_check(fromDate, toDate)
-            url = self._rest_url('log')
-            query = {
-                'fromDate': fromDate,
-                'toDate': toDate,
-                'event': event,
-                'pidFilter': pidFilter,
-                'start': int(start),
-                'count': int(count)
-            }
-            return self.GET(url, query=query, headers=vendorSpecific)
+    @d1_common.util.utf8_to_unicode
+    def getLogRecordsResponse(self, fromDate=None, toDate=None, event=None,
+                              pidFilter=None, start=0,
+                              count=d1_common.const.DEFAULT_LISTOBJECTS,
+                              vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        self._slice_sanity_check(start, count)
+        self._date_span_sanity_check(fromDate, toDate)
+        url = self._rest_url('log')
+        query = {
+            'fromDate': fromDate,
+            'toDate': toDate,
+            'event': event,
+            'pidFilter': pidFilter,
+            'start': int(start),
+            'count': int(count)
+        }
+        return self.GET(url, query=query, headers=vendorSpecific)
 
-        @d1_common.util.utf8_to_unicode
-        def getLogRecords(self, fromDate=None, toDate=None, event=None,
-                          pidFilter=None, start=0,
-                          count=d1_common.const.DEFAULT_LISTOBJECTS,
-                          vendorSpecific=None):
-            response = self.getLogRecordsResponse(fromDate=fromDate, toDate=toDate,
-                                                  event=event, pidFilter=pidFilter,
-                                                  start=start, count=count,
-                                                  vendorSpecific=vendorSpecific)
-            return self._read_dataone_type_response(response, 1, 0, 'Log')
+    @d1_common.util.utf8_to_unicode
+    def getLogRecords(self, fromDate=None, toDate=None, event=None,
+                      pidFilter=None, start=0,
+                      count=d1_common.const.DEFAULT_LISTOBJECTS,
+                      vendorSpecific=None):
+        response = self.getLogRecordsResponse(fromDate=fromDate, toDate=toDate,
+                                              event=event, pidFilter=pidFilter,
+                                              start=start, count=count,
+                                              vendorSpecific=vendorSpecific)
+        return self._read_dataone_type_response(response, 1, 0, 'Log')
 
-        # CNCore.ping() → null
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
-        # MNRead.ping() → null
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.ping
+    # CNCore.ping() → null
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.ping
+    # MNRead.ping() → null
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNCore.ping
 
-        @d1_common.util.utf8_to_unicode
-        def pingResponse(self, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            url = self._rest_url('/monitor/ping')
-            response = self.GET(url, headers=vendorSpecific)
-            return response
+    @d1_common.util.utf8_to_unicode
+    def pingResponse(self, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        url = self._rest_url('/monitor/ping')
+        response = self.GET(url, headers=vendorSpecific)
+        return response
 
-        @d1_common.util.utf8_to_unicode
-        def ping(self, vendorSpecific=None):
-            '''Note: If the server returns a status code other than '200 OK',
-                the ping failed.
-            '''
-            try:
-                response = self.pingResponse(vendorSpecific=vendorSpecific)
-                return self._read_boolean_response(response)
-            except:
-                return False
-
-        # ----------------------------------------------------------------------------
-        # CNRead / MNRead
-        # ----------------------------------------------------------------------------
-
-        # CNRead.get(session, pid) → OctetStream
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.get
-        # MNRead.get(session, pid) → OctetStream
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.get
-
-        @d1_common.util.utf8_to_unicode
-        def getResponse(self, pid, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            url = self._rest_url('object/%(pid)s', pid=pid)
-            return self.GET(url, headers=vendorSpecific)
-
-        def get(self, pid, vendorSpecific=None):
-            response = self.getResponse(pid, vendorSpecific)
-            return self._read_stream_response(response)
-
-        def get_url(self, url, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            response = self.GET(url, headers=vendorSpecific)
-            return self._read_stream_response(response)
-
-        # CNRead.getSystemMetadata(session, pid) → SystemMetadata
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getSystemMetadata
-        # MNRead.getSystemMetadata(session, pid) → SystemMetadata
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getSystemMetadata
-
-        @d1_common.util.utf8_to_unicode
-        def getSystemMetadataResponse(self, pid, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            url = self._rest_url('meta/%(pid)s', pid=pid)
-            return self.GET(url, headers=vendorSpecific)
-
-        @d1_common.util.utf8_to_unicode
-        def getSystemMetadata(self, pid, vendorSpecific=None):
-            response = self.getSystemMetadataResponse(pid,
-                                                      vendorSpecific=vendorSpecific)
-            return self._read_dataone_type_response(
-                response, 1, 0, 'SystemMetadata')
-
-        # CNRead.describe(session, pid) → DescribeResponse
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.describe
-        # MNRead.describe(session, pid) → DescribeResponse
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.describe
-
-        @d1_common.util.utf8_to_unicode
-        def describeResponse(self, pid, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            url = self._rest_url('/object/%(pid)s', pid=pid)
-            response = self.HEAD(url, headers=vendorSpecific)
-            return response
-
-        @d1_common.util.utf8_to_unicode
-        def describe(self, pid, vendorSpecific=None):
-            '''Note: If the server returns a status code other than 200 OK, a
-            ServiceFailure will be raised, as this method is based on a HEAD request,
-            which cannot carry exception information.
-            '''
-            response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
-            return self._read_header_response(response)
-
-        # CNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
-        # MNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
-
-        @d1_common.util.utf8_to_unicode
-        def listObjectsResponse(self, fromDate=None, toDate=None,
-                                objectFormat=None, replicaStatus=None,
-                                start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
-                                vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            self._slice_sanity_check(start, count)
-            self._date_span_sanity_check(fromDate, toDate)
-            url = self._rest_url('object')
-            query = {
-                'fromDate': fromDate,
-                'toDate': toDate,
-                'formatId': objectFormat,
-                'replicaStatus': replicaStatus,
-                'start': int(start),
-                'count': int(count)
-            }
-            return self.GET(url, query=query, headers=vendorSpecific)
-
-        @d1_common.util.utf8_to_unicode
-        def listObjects(self, fromDate=None, toDate=None, objectFormat=None,
-                        replicaStatus=None, start=0,
-                        count=d1_common.const.DEFAULT_LISTOBJECTS,
-                        vendorSpecific=None):
-            response = self.listObjectsResponse(fromDate=fromDate, toDate=toDate,
-                                                objectFormat=objectFormat,
-                                                replicaStatus=replicaStatus,
-                                                start=start, count=count,
-                                                vendorSpecific=vendorSpecific)
-            return self._read_dataone_type_response(response, 1, 0, 'ObjectList')
-
-        # ----------------------------------------------------------------------------
-        # CNCore / MNStorage
-        # ----------------------------------------------------------------------------
-
-        # CNCore.generateIdentifier(session, scheme[, fragment]) → Identifier
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.generateIdentifier
-        # MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.generateIdentifier
-
-        @d1_common.util.utf8_to_unicode
-        def generateIdentifierResponse(self, scheme, fragment=None):
-            url = self._rest_url('generate')
-            mime_multipart_fields = [
-                ('scheme', scheme.encode('utf-8')),
-                ('fragment', fragment.encode('utf-8')),
-            ]
-            return self.POST(url, fields=mime_multipart_fields)
-
-        @d1_common.util.utf8_to_unicode
-        def generateIdentifier(self, scheme, fragment=None):
-            response = self.generateIdentifierResponse(scheme, fragment)
-            return self._read_dataone_type_response(response, 1, 0, 'Identifier')
-
-        # CNStorage.delete(session, pid) → Identifier
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNStorage.archive
-        # MNStorage.delete(session, pid) → Identifier
-        # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.archive
-
-        @d1_common.util.utf8_to_unicode
-        def archiveResponse(self, pid, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            url = self._rest_url('archive/%(pid)s', pid=pid)
-            response = self.PUT(url, headers=vendorSpecific)
-            return response
-
-        @d1_common.util.utf8_to_unicode
-        def archive(self, pid, vendorSpecific=None):
-            response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
-            return self._read_dataone_type_response(response, 1, 0, 'Identifier')
-
-        # ----------------------------------------------------------------------------
-        # CNAuthorization / MNAuthorization
-        # ----------------------------------------------------------------------------
-
-        @d1_common.util.utf8_to_unicode
-        def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
-            if vendorSpecific is None:
-                vendorSpecific = {}
-            url = self._rest_url('isAuthorized/%(pid)s', pid=pid, action=action)
-            query = {
-                'action': action,
-            }
-            return self.GET(url, query=query, headers=vendorSpecific)
-
-        @d1_common.util.utf8_to_unicode
-        def isAuthorized(self, pid, access, vendorSpecific=None):
-            response = self.isAuthorizedResponse(pid, access,
-                                                 vendorSpecific=vendorSpecific)
+    @d1_common.util.utf8_to_unicode
+    def ping(self, vendorSpecific=None):
+        '''Note: If the server returns a status code other than '200 OK',
+            the ping failed.
+        '''
+        try:
+            response = self.pingResponse(vendorSpecific=vendorSpecific)
             return self._read_boolean_response(response)
+        except:
+            return False
+
+    # ----------------------------------------------------------------------------
+    # CNRead / MNRead
+    # ----------------------------------------------------------------------------
+
+    # CNRead.get(session, pid) → OctetStream
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.get
+    # MNRead.get(session, pid) → OctetStream
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.get
+
+    @d1_common.util.utf8_to_unicode
+    def getResponse(self, pid, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        url = self._rest_url('object/%(pid)s', pid=pid)
+        return self.GET(url, headers=vendorSpecific)
+
+    def get(self, pid, vendorSpecific=None):
+        response = self.getResponse(pid, vendorSpecific)
+        return self._read_stream_response(response)
+
+    def get_url(self, url, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        response = self.GET(url, headers=vendorSpecific)
+        return self._read_stream_response(response)
+
+    # CNRead.getSystemMetadata(session, pid) → SystemMetadata
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getSystemMetadata
+    # MNRead.getSystemMetadata(session, pid) → SystemMetadata
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.getSystemMetadata
+
+    @d1_common.util.utf8_to_unicode
+    def getSystemMetadataResponse(self, pid, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        url = self._rest_url('meta/%(pid)s', pid=pid)
+        return self.GET(url, headers=vendorSpecific)
+
+    @d1_common.util.utf8_to_unicode
+    def getSystemMetadata(self, pid, vendorSpecific=None):
+        response = self.getSystemMetadataResponse(pid,
+                                                  vendorSpecific=vendorSpecific)
+        return self._read_dataone_type_response(
+            response, 1, 0, 'SystemMetadata')
+
+    # CNRead.describe(session, pid) → DescribeResponse
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.describe
+    # MNRead.describe(session, pid) → DescribeResponse
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.describe
+
+    @d1_common.util.utf8_to_unicode
+    def describeResponse(self, pid, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        url = self._rest_url('/object/%(pid)s', pid=pid)
+        response = self.HEAD(url, headers=vendorSpecific)
+        return response
+
+    @d1_common.util.utf8_to_unicode
+    def describe(self, pid, vendorSpecific=None):
+        '''Note: If the server returns a status code other than 200 OK, a
+        ServiceFailure will be raised, as this method is based on a HEAD request,
+        which cannot carry exception information.
+        '''
+        response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
+        return self._read_header_response(response)
+
+    # CNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.listObjects
+    # MNRead.listObjects(session[, fromDate][, toDate][, formatId][, replicaStatus][, start=0][, count=1000]) → ObjectList
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNRead.listObjects
+
+    @d1_common.util.utf8_to_unicode
+    def listObjectsResponse(self, fromDate=None, toDate=None,
+                            objectFormat=None, replicaStatus=None,
+                            start=0, count=d1_common.const.DEFAULT_LISTOBJECTS,
+                            vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        self._slice_sanity_check(start, count)
+        self._date_span_sanity_check(fromDate, toDate)
+        url = self._rest_url('object')
+        query = {
+            'fromDate': fromDate,
+            'toDate': toDate,
+            'formatId': objectFormat,
+            'replicaStatus': replicaStatus,
+            'start': int(start),
+            'count': int(count)
+        }
+        return self.GET(url, query=query, headers=vendorSpecific)
+
+    @d1_common.util.utf8_to_unicode
+    def listObjects(self, fromDate=None, toDate=None, objectFormat=None,
+                    replicaStatus=None, start=0,
+                    count=d1_common.const.DEFAULT_LISTOBJECTS,
+                    vendorSpecific=None):
+        response = self.listObjectsResponse(fromDate=fromDate, toDate=toDate,
+                                            objectFormat=objectFormat,
+                                            replicaStatus=replicaStatus,
+                                            start=start, count=count,
+                                            vendorSpecific=vendorSpecific)
+        return self._read_dataone_type_response(response, 1, 0, 'ObjectList')
+
+    # ----------------------------------------------------------------------------
+    # CNCore / MNStorage
+    # ----------------------------------------------------------------------------
+
+    # CNCore.generateIdentifier(session, scheme[, fragment]) → Identifier
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.generateIdentifier
+    # MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.generateIdentifier
+
+    @d1_common.util.utf8_to_unicode
+    def generateIdentifierResponse(self, scheme, fragment=None):
+        url = self._rest_url('generate')
+        mime_multipart_fields = [
+            ('scheme', scheme.encode('utf-8')),
+            ('fragment', fragment.encode('utf-8')),
+        ]
+        return self.POST(url, fields=mime_multipart_fields)
+
+    @d1_common.util.utf8_to_unicode
+    def generateIdentifier(self, scheme, fragment=None):
+        response = self.generateIdentifierResponse(scheme, fragment)
+        return self._read_dataone_type_response(response, 1, 0, 'Identifier')
+
+    # CNStorage.delete(session, pid) → Identifier
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNStorage.archive
+    # MNStorage.delete(session, pid) → Identifier
+    # http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html#MNStorage.archive
+
+    @d1_common.util.utf8_to_unicode
+    def archiveResponse(self, pid, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        url = self._rest_url('archive/%(pid)s', pid=pid)
+        response = self.PUT(url, headers=vendorSpecific)
+        return response
+
+    @d1_common.util.utf8_to_unicode
+    def archive(self, pid, vendorSpecific=None):
+        response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
+        return self._read_dataone_type_response(response, 1, 0, 'Identifier')
+
+    # ----------------------------------------------------------------------------
+    # CNAuthorization / MNAuthorization
+    # ----------------------------------------------------------------------------
+
+    @d1_common.util.utf8_to_unicode
+    def isAuthorizedResponse(self, pid, action, vendorSpecific=None):
+        if vendorSpecific is None:
+            vendorSpecific = {}
+        url = self._rest_url('isAuthorized/%(pid)s', pid=pid, action=action)
+        query = {
+            'action': action,
+        }
+        return self.GET(url, query=query, headers=vendorSpecific)
+
+    @d1_common.util.utf8_to_unicode
+    def isAuthorized(self, pid, access, vendorSpecific=None):
+        response = self.isAuthorizedResponse(pid, access,
+                                             vendorSpecific=vendorSpecific)
+        return self._read_boolean_response(response)
