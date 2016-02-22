@@ -41,7 +41,7 @@ import pyxb
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.person
@@ -51,8 +51,8 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-import src.d1_client.mnclient as mnclient
-from src.d1_client.systemmetadata import SystemMetadata
+import d1_client.mnclient_2_0 as mnclient_2_0
+from d1_client.systemmetadata import SystemMetadata
 import testing_utilities
 import testing_context
 
@@ -61,7 +61,9 @@ class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'https://localhost/mn/'
     self.baseurl = 'http://127.0.0.1:8000'
-    self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
+    self.client = mnclient_2_0.MemberNodeClient_2_0(
+      self.baseurl, cert_path='./x509up_u1000'
+    )
     self.sysmeta_doc = open(
       './d1_testdocs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     ).read()
@@ -77,7 +79,9 @@ class TestMNClient(TestCaseWithURLCompare):
   #=========================================================================
 
   def test_createResponse(self):
-    with patch.object(mnclient.MemberNodeClient, 'createResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'createResponse'
+    ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.createResponse(
         '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
@@ -85,7 +89,7 @@ class TestMNClient(TestCaseWithURLCompare):
       self.assertEqual(200, response)
 
   def test_create(self):
-    with patch.object(mnclient.MemberNodeClient, 'create') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'create') as mocked_method:
       mocked_method.return_value = 200
       response = self.client.create(
         '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
@@ -93,7 +97,9 @@ class TestMNClient(TestCaseWithURLCompare):
       self.assertEqual(200, response)
 
   def test_getCapabilities(self):
-    with patch.object(mnclient.MemberNodeClient, 'getCapabilities') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'getCapabilities'
+    ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.getCapabilities()
       self.assertEqual(200, response)

@@ -63,7 +63,7 @@ except ImportError as e:
 try:
   import d1_common.const
   import d1_common.restclient
-  import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes_1_1
+  import d1_common.types.dataoneTypes_1_1 as dataoneTypes_1_1
   import d1_common.util
   import d1_common.url
 except ImportError as e:

@@ -75,7 +75,7 @@ CERTIFICATE_KEY_PATH = None
 
 
 def main():
-  mn_client = d1_client.mnclient.MemberNodeClient(
+  mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
     BASE_URL, cert_path=CERTIFICATE_PATH,
     key_path=CERTIFICATE_KEY_PATH
   )

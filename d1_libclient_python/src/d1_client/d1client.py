@@ -53,8 +53,8 @@ except ImportError as e:
   raise
 
 # App
-import cnclient
-import mnclient
+import cnclient_2_0
+import mnclient_2_0
 
 # Config.
 
@@ -135,8 +135,8 @@ class DataONEObject(object):
       forcenew = True
     if self._relations is None or forcenew:
       cli = self._getClient()
-    self._relations = cli.getRelatedObjects(self._pid)
-    self._relations_t = t
+      self._relations = cli.getRelatedObjects(self._pid)
+      self._relations_t = t
     return self._relations
 
   def save(self, outstr):
@@ -179,14 +179,14 @@ class DataONEClient(object):
 
   def _getCN(self, forcenew=False):
     if self._cn is None or forcenew:
-      self._cn = cnclient.CoordinatingNodeClient(base_url=self._cnBaseUrl)
+      self._cn = cnclient_2_0.CoordinatingNodeClient_2_0(base_url=self._cnBaseUrl)
     return self._cn
 
   def _getMN(self, base_url, forcenew=False):
     if self._mn is None or forcenew:
-      self._mn = mnclient.MemberNodeClient(base_url=base_url)
+      self._mn = mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
     elif self._mn.base_url != base_url:
-      self._mn = mnclient.MemberNodeClient(base_url=base_url)
+      self._mn = mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
     return self._mn
 
   def getAuthToken(self, forcenew=False):

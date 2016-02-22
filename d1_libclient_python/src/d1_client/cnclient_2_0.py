@@ -50,10 +50,11 @@ except ImportError as e:
   raise
 
 # App.
-import d1baseclient_2_0
+# import d1baseclient_2_0
+import cnclient
 
 
-class CoordinatingNodeClient(d1baseclient_2_0.DataONEBaseClient_2_0):
+class CoordinatingNodeClient_2_0(cnclient.CoordinatingNodeClient):
   '''Connect to a Coordinating Node and perform REST calls against the CN API
   '''
   def __init__(self,
@@ -98,7 +99,7 @@ class CoordinatingNodeClient(d1baseclient_2_0.DataONEBaseClient_2_0):
     if defaultHeaders is None:
       defaultHeaders = {}
     # Init the DataONEBaseClient base class.
-    d1baseclient_2_0.DataONEBaseClient_2_0.__init__(self, base_url,
+    cnclient.CoordinatingNodeClient.__init__(self, base_url,
       timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
       key_path=key_path, strict=strict,
       capture_response_body=capture_response_body, version=version, types=types)

@@ -48,7 +48,11 @@ class OrderTest(unittest.TestCase):
     self.fooSource.getInventory.return_value = 5
 
   def test_resolve_return(self):
-    self.mock_cn = Mock(spec=cnclient.CoordinatingNodeClient(base_url='www.example.com'))
+    self.mock_cn = Mock(
+      spec=cnclient_2_0.CoordinatingNodeClient_2_0(
+        base_url='www.example.com'
+      )
+    )
 
     # ending the test
   def tearDown(self):

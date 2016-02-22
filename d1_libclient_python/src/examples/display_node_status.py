@@ -126,7 +126,7 @@ def get_cn_metrics(cn):
 
 
 def get_mn_metrics(mn):
-  client = d1_client.mnclient.MemberNodeClient(base_url=mn.baseURL)
+  client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=mn.baseURL)
   get_gen_metrics(client, mn)
   print_capabilities(client)
 

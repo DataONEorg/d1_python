@@ -53,7 +53,7 @@ import testing_context
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.person
@@ -348,7 +348,7 @@ class Test_ResourceMapGenerator(TestCaseWithURLCompare):
         
     
     @patch.object(data_package.ResourceMapGenerator,'generate_public_access_policy')
-    @patch('d1_common.types.generated.dataoneTypes.systemMetadata')
+    @patch('d1_common.types.dataoneTypes.systemMetadata')
     def test_generate_sys_meta(self,mock_types,mock_generate):
 #         mock_time.return_value = '2015-03-06 12:56:54.323738'
         with patch('data_package.datetime.datetime') as mock_datetime:
@@ -363,15 +363,15 @@ class Test_ResourceMapGenerator(TestCaseWithURLCompare):
             self.assertEqual(str(output.dateUploaded),mock_datetime.now.return_value)
             self.assertEqual(str(output.dateSysMetadataModified),mock_datetime.now.return_value)
     
-    @patch('d1_common.types.generated.dataoneTypes.systemMetadata')
+    @patch('d1_common.types.dataoneTypes.systemMetadata')
     def test_generate_sys_meta_assert_called_generate_public_access_policy(self,mock_types):  
         with patch.object(data_package.ResourceMapGenerator,'generate_public_access_policy') as mocked_method:
             mock_types.return_value = sysmeta('SYSPID','1234',100,'user','test','2015-03-06 12:56:54.323738')
             self.generator._generate_sys_meta('_bogus_pid_459837453495884543459873', 'http://www.openarchives.org/ore/terms', 10, 'checksum', 'rights_holder')
             mocked_method.assert_called_with()   
     
-    @patch('d1_common.types.generated.dataoneTypes.AccessRule')         
-    @patch('d1_common.types.generated.dataoneTypes.accessPolicy')
+    @patch('d1_common.types.dataoneTypes.AccessRule')         
+    @patch('d1_common.types.dataoneTypes.accessPolicy')
     def test_generate_public_access_policy(self,mock_policy,mock_rule):
         mock_policy.return_value = dataonetypes()
         mock_rule.return_value = dataonetypes()

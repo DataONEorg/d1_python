@@ -41,7 +41,7 @@ import pyxb
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.person
@@ -51,8 +51,8 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-import src.d1_client.mnclient as mnclient
-from src.d1_client.systemmetadata import SystemMetadata
+import d1_client.mnclient_2_0 as mnclient_2_0
+from d1_client.systemmetadata import SystemMetadata
 import testing_utilities
 import testing_context
 
@@ -81,7 +81,9 @@ class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'https://localhost/mn/'
     self.baseurl = 'http://127.0.0.1:8000'
-    self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
+    self.client = mnclient_2_0.MemberNodeClient_2_0(
+      self.baseurl, cert_path='./x509up_u1000'
+    )
     self.sysmeta_doc = open(
       './d1_testdocs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     ).read()
@@ -95,74 +97,74 @@ class TestMNClient(TestCaseWithURLCompare):
   #=========================================================================
   # MNCore
   #=========================================================================
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'GET')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET')
   def test_getCapabilitiesResponse(self, mock_get, mock_rest):
     mock_get.return_value = 'test'
     response = self.client.getCapabilitiesResponse()
     self.assertEqual('test', response)
 
   def test_getCapabilitiesResponse_assert_called_GET(self):
-    with patch.object(mnclient.MemberNodeClient, 'GET') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET') as mocked_method:
       self.client.getCapabilitiesResponse()
-      mocked_method.assert_called_with('/v1/node', headers={})
+      mocked_method.assert_called_with('/v2/node', headers={})
 
-  @patch.object(mnclient.MemberNodeClient, 'GET')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET')
   def test_getCapabilitiesResponse_assert_called_rest_url(self, mock_GET):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       self.client.getCapabilitiesResponse()
       mocked_method.assert_called_with('node')
 
-  @patch.object(mnclient.MemberNodeClient, 'getCapabilitiesResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'getCapabilitiesResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_getCapabilities(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     response = self.client.getCapabilities()
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_getCapabilities_assert_called_getCapabilitiesResponse(self, mock_read):
     with patch.object(
-      mnclient.MemberNodeClient, 'getCapabilitiesResponse'
+      mnclient_2_0.MemberNodeClient_2_0, 'getCapabilitiesResponse'
     ) as mocked_method:
       self.client.getCapabilities()
       mocked_method.assert_called_with(vendorSpecific=None)
 #
 
-  @patch.object(mnclient.MemberNodeClient, 'getCapabilitiesResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'getCapabilitiesResponse')
   def test_getCapabilities_assert_called_read_dataone_type_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_dataone_type_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response'
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.getCapabilities()
-      mocked_method.assert_called_with('test', 1, 0, 'Node')
+      mocked_method.assert_called_with('test', 2, 0, 'Node')
   # ============================================================================
   # MNRead
   # ============================================================================
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'GET')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET')
   def test_getChecksumResponse(self, mock_get, mock_rest):
     mock_get.return_value = 'test'
     response = self.client.getChecksumResponse('_bogus_pid_845434598734598374534958')
     self.assertEqual('test', response)
 
   def test_getChecksumResponse_assert_called_GET(self):
-    with patch.object(mnclient.MemberNodeClient, 'GET') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET') as mocked_method:
       self.client.getChecksumResponse('_bogus_pid_845434598734598374534958')
-      mocked_method.assert_called_with('/v1/checksum/_bogus_pid_845434598734598374534958', headers={}, query={'checksumAlgorithm': None})
+      mocked_method.assert_called_with('/v2/checksum/_bogus_pid_845434598734598374534958', headers={}, query={'checksumAlgorithm': None})
 
-  @patch.object(mnclient.MemberNodeClient, 'GET')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET')
   def test_getChecksumResponse_assert_called_rest_url(self, mock_GET):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       self.client.getChecksumResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
         'checksum/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'getChecksumResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'getChecksumResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_getChecksum(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     response = self.client.getChecksum(
@@ -172,9 +174,11 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_getChecksum_assert_called_getChecksumResponse(self, mock_read):
-    with patch.object(mnclient.MemberNodeClient, 'getChecksumResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'getChecksumResponse'
+    ) as mocked_method:
       self.client.getChecksum(
         '_bogus_pid_845434598734598374534958',
         checksumAlgorithm='sha1'
@@ -184,10 +188,10 @@ class TestMNClient(TestCaseWithURLCompare):
       )
 #
 
-  @patch.object(mnclient.MemberNodeClient, 'getChecksumResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'getChecksumResponse')
   def test_getChecksum_assert_called_read_dataone_type_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_dataone_type_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response'
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.getChecksum(
@@ -196,8 +200,8 @@ class TestMNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test', 1, 0, 'Checksum')
 
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_synchronizationFailedResponse(self, mock_post, mock_rest):
     mock_post.return_value = 'test'
     message = Message()
@@ -205,20 +209,20 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 
   def test_synchronizationFailedResponse_assert_called_POST(self):
-    with patch.object(mnclient.MemberNodeClient, 'POST') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST') as mocked_method:
       message = Message()
       self.client.synchronizationFailedResponse(message)
-      mocked_method.assert_called_with('/v1/error', files=[('message', 'message', 'update')], headers={})
+      mocked_method.assert_called_with('/v2/error', files=[('message', 'message', 'update')], headers={})
 
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_synchronizationFailedResponse_assert_called_rest_url(self, mock_post):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       message = Message()
       self.client.synchronizationFailedResponse(message)
       mocked_method.assert_called_with('error')
 
-  @patch.object(mnclient.MemberNodeClient, 'synchronizationFailedResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_boolean_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'synchronizationFailedResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response')
   def test_synchronizationFailed(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     message = Message()
@@ -226,24 +230,24 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_boolean_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response')
   def test_synchronizationFailed_assert_called_synchronizationFailedResponse(
     self, mock_read
   ):
     with patch.object(
-      mnclient.MemberNodeClient, 'synchronizationFailedResponse'
+      mnclient_2_0.MemberNodeClient_2_0, 'synchronizationFailedResponse'
     ) as mocked_method:
       message = Message()
       self.client.synchronizationFailed(message.serialize())
       mocked_method.assert_called_with(u'update', None)
 # #
 
-  @patch.object(mnclient.MemberNodeClient, 'synchronizationFailedResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'synchronizationFailedResponse')
   def test_synchronizationFailed_assert_called_read_dataone_type_response(
     self, mock_list
   ):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_boolean_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response'
     ) as mocked_method:
       message = Message()
       mock_list.return_value = 'test'
@@ -254,8 +258,8 @@ class TestMNClient(TestCaseWithURLCompare):
   # MNStorage
   #=========================================================================
 
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_createResponse(self, mock_post, mock_rest):
     mock_post.return_value = 'test'
     sysmeta = Message()
@@ -265,20 +269,20 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 
   def test_createResponse_assert_called_GET(self):
-    with patch.object(mnclient.MemberNodeClient, 'POST') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST') as mocked_method:
       sysmeta = Message()
       self.client.createResponse('_bogus_pid_845434598734598374534958', 'obj', sysmeta)
-      mocked_method.assert_called_with('/v1/object', files=[('object', 'content.bin', u'obj'), ('sysmeta', 'sysmeta.xml', 'update')], headers={}, fields=[('pid', '_bogus_pid_845434598734598374534958')])
+      mocked_method.assert_called_with('/v2/object', files=[('object', 'content.bin', u'obj'), ('sysmeta', 'sysmeta.xml', 'update')], headers={}, fields=[('pid', '_bogus_pid_845434598734598374534958')])
 
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_createResponse_assert_called_rest_url(self, mock_post):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       sysmeta = Message()
       self.client.createResponse('_bogus_pid_845434598734598374534958', 'obj', sysmeta)
       mocked_method.assert_called_with('object')
 
-  @patch.object(mnclient.MemberNodeClient, 'createResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'createResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_create(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     message = Message()
@@ -286,9 +290,11 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_create_assert_called_createResponse(self, mock_read):
-    with patch.object(mnclient.MemberNodeClient, 'createResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'createResponse'
+    ) as mocked_method:
       message = Message()
       self.client.create('_bogus_pid_845434598734598374534958', 'obj', 'sysmeta')
       mocked_method.assert_called_with(
@@ -299,18 +305,18 @@ class TestMNClient(TestCaseWithURLCompare):
       )
 # #
 
-  @patch.object(mnclient.MemberNodeClient, 'createResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'createResponse')
   def test_create_assert_called_read_dataone_type_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_dataone_type_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response'
     ) as mocked_method:
       message = Message()
       mock_list.return_value = 'test'
       self.client.create('_bogus_pid_845434598734598374534958', 'obj', 'sysmeta')
       mocked_method.assert_called_with('test', 1, 0, 'Identifier')
 
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'PUT')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'PUT')
   def test_updateResponse(self, mock_put, mock_rest):
     mock_put.return_value = 'test'
     newPid = Message()
@@ -321,17 +327,17 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 
   def test_updateResponse_assert_called_PUT(self):
-    with patch.object(mnclient.MemberNodeClient, 'PUT') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'PUT') as mocked_method:
       newPid = Message()
       sysMeta = Message()
       self.client.updateResponse(
         '_bogus_pid_845434598734598374534958', 'obj', newPid, sysMeta
       )
-      mocked_method.assert_called_with('/v1/object/_bogus_pid_845434598734598374534958', files=[('object', 'content.bin', u'obj'), ('sysmeta', 'sysmeta.xml', 'update')], headers={}, fields=[('newPid', 'update')])
+      mocked_method.assert_called_with('/v2/object/_bogus_pid_845434598734598374534958', files=[('object', 'content.bin', u'obj'), ('sysmeta', 'sysmeta.xml', 'update')], headers={}, fields=[('newPid', 'update')])
 
-  @patch.object(mnclient.MemberNodeClient, 'PUT')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'PUT')
   def test_updateResponse_assert_called_rest_url(self, mock_put):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       newPid = Message()
       sysMeta = Message()
       self.client.updateResponse(
@@ -341,8 +347,8 @@ class TestMNClient(TestCaseWithURLCompare):
         'object/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'updateResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'updateResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_update(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     message = Message()
@@ -353,9 +359,11 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_update_assert_called_updateResponse(self, mock_read):
-    with patch.object(mnclient.MemberNodeClient, 'updateResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'updateResponse'
+    ) as mocked_method:
       message = Message()
       self.client.update(
         '_bogus_pid_845434598734598374534958', 'obj',
@@ -369,10 +377,10 @@ class TestMNClient(TestCaseWithURLCompare):
         vendorSpecific=None
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'updateResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'updateResponse')
   def test_update_assert_called_read_dataone_type_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_dataone_type_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response'
     ) as mocked_method:
       message = Message()
       mock_list.return_value = 'test'
@@ -382,28 +390,28 @@ class TestMNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test', 1, 0, 'Identifier')
 
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'DELETE')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'DELETE')
   def test_deleteResponse(self, mock_delete, mock_rest):
     mock_delete.return_value = 'test'
     response = self.client.deleteResponse('_bogus_pid_845434598734598374534958')
     self.assertEqual('test', response)
 
   def test_deleteResponse_assert_called_PUT(self):
-    with patch.object(mnclient.MemberNodeClient, 'DELETE') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'DELETE') as mocked_method:
       self.client.deleteResponse('_bogus_pid_845434598734598374534958')
-      mocked_method.assert_called_with('/v1/object/_bogus_pid_845434598734598374534958', headers={})
+      mocked_method.assert_called_with('/v2/object/_bogus_pid_845434598734598374534958', headers={})
 
-  @patch.object(mnclient.MemberNodeClient, 'DELETE')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'DELETE')
   def test_deleteResponse_assert_called_rest_url(self, mock_delete):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       self.client.deleteResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
         'object/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'deleteResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'deleteResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_delete(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     message = Message()
@@ -411,9 +419,11 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_dataone_type_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response')
   def test_delete_assert_called_updateResponse(self, mock_read):
-    with patch.object(mnclient.MemberNodeClient, 'deleteResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'deleteResponse'
+    ) as mocked_method:
       message = Message()
       self.client.delete('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
@@ -421,10 +431,10 @@ class TestMNClient(TestCaseWithURLCompare):
         vendorSpecific=None
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'deleteResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'deleteResponse')
   def test_delete_assert_called_read_dataone_type_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_dataone_type_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_dataone_type_response'
     ) as mocked_method:
       message = Message()
       mock_list.return_value = 'test'
@@ -432,8 +442,8 @@ class TestMNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test', 1, 0, 'Identifier')
 
   @patch.object(d1_common.date_time, 'to_xsd_datetime')
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_systemMetadataChangedResponse(self, mock_post, mock_rest, mock_time):
     mock_post.return_value = 'test'
     pid = Message()
@@ -444,12 +454,12 @@ class TestMNClient(TestCaseWithURLCompare):
 
   @patch.object(d1_common.date_time, 'to_xsd_datetime')
   def test_systemMetadataChangedResponse_assert_called_POST(self, mock_time):
-    with patch.object(mnclient.MemberNodeClient, 'POST') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST') as mocked_method:
       pid = Message()
       mock_time.return_value = '2015-03-05'
       self.client.systemMetadataChangedResponse(pid, 'obj', mock_time)
       mocked_method.assert_called_with(
-        '/v1/dirtySystemMetadata',
+        '/v2/dirtySystemMetadata',
         headers={},
         fields=[
           (
@@ -463,18 +473,18 @@ class TestMNClient(TestCaseWithURLCompare):
       )
 
   @patch.object(d1_common.date_time, 'to_xsd_datetime')
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_systemMetadataChangedResponse_assert_called_rest_url(
     self, mock_post, mock_time
   ):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       pid = Message()
       mock_time.return_value = '2015-03-05'
       self.client.systemMetadataChangedResponse(pid, 'obj', mock_time)
       mocked_method.assert_called_with('dirtySystemMetadata')
 
-  @patch.object(mnclient.MemberNodeClient, 'systemMetadataChangedResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_boolean_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'systemMetadataChangedResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response')
   def test_systemMetadataChanged(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     response = self.client.systemMetadataChanged(
@@ -483,12 +493,12 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_boolean_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response')
   def test_systemMetadataChanged_assert_called_systemMetadataChangedResponse(
     self, mock_read
   ):
     with patch.object(
-      mnclient.MemberNodeClient, 'systemMetadataChangedResponse'
+      mnclient_2_0.MemberNodeClient_2_0, 'systemMetadataChangedResponse'
     ) as mocked_method:
       self.client.systemMetadataChanged(
         '_bogus_pid_845434598734598374534958', 'v2', '2015-03-05'
@@ -497,10 +507,10 @@ class TestMNClient(TestCaseWithURLCompare):
         u'_bogus_pid_845434598734598374534958', u'v2', u'2015-03-05', None
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'systemMetadataChangedResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'systemMetadataChangedResponse')
   def test_systemMetadataChanged_assert_called__read_boolean_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_boolean_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response'
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.systemMetadataChanged(
@@ -512,8 +522,8 @@ class TestMNClient(TestCaseWithURLCompare):
     # MNReplication
     #=========================================================================
 
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_replicateResponse(self, mock_post, mock_rest):
     mock_post.return_value = 'test'
     sysmeta = Message()
@@ -522,81 +532,85 @@ class TestMNClient(TestCaseWithURLCompare):
     self.assertEqual('test', response)
 
   def test_replicateResponse_assert_called_GET(self):
-    with patch.object(mnclient.MemberNodeClient, 'POST') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST') as mocked_method:
       sysmeta = Message()
       sourceNode = Message()
       self.client.replicateResponse(sysmeta, sourceNode)
-      mocked_method.assert_called_with('/v1/replicate', files=[('sysmeta', 'sysmeta.xml', 'update')], headers={}, fields=[('sourceNode', 'update')])
+      mocked_method.assert_called_with('/v2/replicate', files=[('sysmeta', 'sysmeta.xml', 'update')], headers={}, fields=[('sourceNode', 'update')])
 
-  @patch.object(mnclient.MemberNodeClient, 'POST')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'POST')
   def test_replicateResponse_assert_called_rest_url(self, mock_post):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       sysmeta = Message()
       sourceNode = Message()
       self.client.replicateResponse(sysmeta, sourceNode)
       mocked_method.assert_called_with('replicate')
 
-  @patch.object(mnclient.MemberNodeClient, 'replicateResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_boolean_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'replicateResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response')
   def test_replicate(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     response = self.client.replicate('sysmeta', 'sourceNode')
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_boolean_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response')
   def test_replicate_assert_called_replicateResponse(self, mock_read):
-    with patch.object(mnclient.MemberNodeClient, 'replicateResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'replicateResponse'
+    ) as mocked_method:
       self.client.replicate('sysmeta', 'sourceNode')
       mocked_method.assert_called_with(u'sysmeta', u'sourceNode', None)
 
-  @patch.object(mnclient.MemberNodeClient, 'replicateResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'replicateResponse')
   def test_replicate_assert_called__read_boolean_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_boolean_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_boolean_response'
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.replicate('sysmeta', 'sourceNode')
       mocked_method.assert_called_with('test')
 
-  @patch.object(mnclient.MemberNodeClient, '_rest_url')
-  @patch.object(mnclient.MemberNodeClient, 'GET')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET')
   def test_getReplicaResponse(self, mock_get, mock_rest):
     mock_get.return_value = 'test'
     response = self.client.getReplicaResponse('_bogus_pid_845434598734598374534958')
     self.assertEqual('test', response)
 
   def test_getReplicaResponse_assert_called_GET(self):
-    with patch.object(mnclient.MemberNodeClient, 'GET') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET') as mocked_method:
       self.client.getReplicaResponse('_bogus_pid_845434598734598374534958')
-      mocked_method.assert_called_with('/v1/replica/_bogus_pid_845434598734598374534958', headers={})
+      mocked_method.assert_called_with('/v2/replica/_bogus_pid_845434598734598374534958', headers={})
 
-  @patch.object(mnclient.MemberNodeClient, 'GET')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'GET')
   def test_getReplicaResponse_assert_called_rest_url(self, mock_GET):
-    with patch.object(mnclient.MemberNodeClient, '_rest_url') as mocked_method:
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, '_rest_url') as mocked_method:
       self.client.getReplicaResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
         'replica/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
 
-  @patch.object(mnclient.MemberNodeClient, 'getReplicaResponse')
-  @patch.object(mnclient.MemberNodeClient, '_read_stream_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'getReplicaResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_stream_response')
   def test_getReplica(self, mock_read, mock_list):
     mock_read.return_value = 'test'
     response = self.client.getReplica('_bogus_pid_845434598734598374534958')
     self.assertEqual('test', response)
 #
 
-  @patch.object(mnclient.MemberNodeClient, '_read_stream_response')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, '_read_stream_response')
   def test_getReplica_assert_called_replicateResponse(self, mock_read):
-    with patch.object(mnclient.MemberNodeClient, 'getReplicaResponse') as mocked_method:
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'getReplicaResponse'
+    ) as mocked_method:
       self.client.getReplica('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('_bogus_pid_845434598734598374534958', None)
 
-  @patch.object(mnclient.MemberNodeClient, 'getReplicaResponse')
+  @patch.object(mnclient_2_0.MemberNodeClient_2_0, 'getReplicaResponse')
   def test_getReplica_assert_called__read_boolean_response(self, mock_list):
     with patch.object(
-      mnclient.MemberNodeClient, '_read_stream_response'
+      mnclient_2_0.MemberNodeClient_2_0, '_read_stream_response'
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.getReplica('_bogus_pid_845434598734598374534958')

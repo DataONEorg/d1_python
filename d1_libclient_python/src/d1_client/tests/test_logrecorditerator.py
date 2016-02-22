@@ -38,7 +38,7 @@ import sys
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -68,7 +68,7 @@ class TestLogRecordIterator(unittest.TestCase):
     self._log_record_iterator_test(2000, 0, from_date=datetime.datetime(2005, 1, 1))
 
   def _log_record_iterator_test(self, page_size, start, from_date=None, to_date=None):
-    client = d1_client.mnclient.MemberNodeClient(base_url=self.base_url)
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=self.base_url)
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.logrecorditerator.LogRecordIterator(
       client, pageSize=page_size,

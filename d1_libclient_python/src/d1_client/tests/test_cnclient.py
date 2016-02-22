@@ -44,7 +44,7 @@ import pyxb
 sys.path.append('..')
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
@@ -55,7 +55,7 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-from src.d1_client import cnclient
+from d1_client import cnclient_2_0
 import testing_utilities
 import testing_context
 from settings import *
@@ -66,8 +66,8 @@ class TestCNClient(TestCaseWithURLCompare):
 
     # When setting the certificate, remember to use a https baseurl.
     self.cert_path = '/tmp/x509up_u1000'
-    self.client = cnclient.CoordinatingNodeClient(CN_URL)
-    self.authenticated_client = cnclient.CoordinatingNodeClient(
+    self.client = cnclient_2_0.CoordinatingNodeClient_2_0(CN_URL)
+    self.authenticated_client = cnclient_2_0.CoordinatingNodeClient_2_0(
       CN_URL, cert_path=self.cert_path
     )
 

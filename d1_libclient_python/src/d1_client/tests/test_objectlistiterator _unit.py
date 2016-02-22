@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from d1_client_SAVE.objectlistiterator import ObjectListIterator
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
@@ -38,7 +37,7 @@ import sys
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.objectlistiterator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 from mock import patch, PropertyMock
 
 import pyxb.binding

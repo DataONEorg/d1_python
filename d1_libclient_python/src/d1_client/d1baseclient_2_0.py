@@ -64,7 +64,7 @@ except ImportError as e:
 try:
     import d1_common.const
     import d1_common.restclient
-    import d1_common.types.dataoneTypes_2_0 as dataoneTypes_v2_0
+    import d1_common.types.dataoneTypes_v2_0 as dataoneTypes_v2_0
     import d1_common.util
     import d1_common.url
     import service.mn.views.v2 as v2

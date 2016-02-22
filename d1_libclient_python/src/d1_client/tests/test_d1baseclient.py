@@ -42,7 +42,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import src.d1_client.d1baseclient as d1baseclient
 from settings import *
 import src.d1_client.tests.testing_utilities as testing_utilities
@@ -82,7 +82,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
   #     @patch.object(d1baseclient.DataONEBaseClient,'_read_and_deserialize_dataone_type')
   #     @patch.object(d1baseclient.DataONEBaseClient,'_assert_correct_dataone_type')
   #     @patch('d1baseclient.DataONEBaseClient._read_and_capture')
-  #     @patch('d1_common.types.generated.dataoneTypes.CreateFromDocument')
+  #     @patch('d1_common.types.dataoneTypes.CreateFromDocument')
   #     @patch.object(d1baseclient.DataONEBaseClient,'_status_is_200_ok')
   #     @patch.object(d1baseclient.DataONEBaseClient,'_content_type_is_xml')
   #     @patch('httplib.HTTPResponse')
@@ -95,11 +95,11 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
   #         self.assertTrue(
   #             isinstance(
   #                 log,
-  #                 d1_common.types.generated.dataoneTypes.Log))
+  #                 d1_common.types.dataoneTypes.Log))
 
   @patch.object(d1baseclient.DataONEBaseClient, '_read_and_deserialize_dataone_type')
   @patch.object(d1baseclient.DataONEBaseClient, '_assert_correct_dataone_type')
-  @patch('d1_common.types.generated.dataoneTypes.CreateFromDocument')
+  @patch('d1_common.types.dataoneTypes.CreateFromDocument')
   @patch.object(d1baseclient.DataONEBaseClient, '_status_is_200_ok')
   @patch.object(d1baseclient.DataONEBaseClient, '_content_type_is_xml')
   @patch('httplib.HTTPResponse')
@@ -119,7 +119,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
 
   @patch.object(d1baseclient.DataONEBaseClient, '_read_and_deserialize_dataone_type')
   @patch.object(d1baseclient.DataONEBaseClient, '_assert_correct_dataone_type')
-  @patch('d1_common.types.generated.dataoneTypes.CreateFromDocument')
+  @patch('d1_common.types.dataoneTypes.CreateFromDocument')
   @patch.object(d1baseclient.DataONEBaseClient, '_status_is_200_ok')
   @patch.object(d1baseclient.DataONEBaseClient, '_content_type_is_xml')
   @patch('httplib.HTTPResponse')
@@ -396,7 +396,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''getLogRecords() returns a valid Log. CNs will return an empty log for public connections'''
     client = d1baseclient.DataONEBaseClient(base_url)
     log = client.getLogRecords()
-    self.assertTrue(isinstance(log, d1_common.types.generated.dataoneTypes.Log))
+    self.assertTrue(isinstance(log, d1_common.types.dataoneTypes.Log))
     return log
 
   def test_110(self):
@@ -457,11 +457,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     else:
       pid = testing_utilities.get_random_valid_pid(client)
     sysmeta = client.getSystemMetadata(pid)
-    self.assertTrue(
-      isinstance(
-        sysmeta, d1_common.types.generated.dataoneTypes_v1_1.SystemMetadata
-      )
-    )
+    self.assertTrue(isinstance(sysmeta, d1_common.types.dataoneTypes_v1_1.SystemMetadata))
 
   def WAITING_FOR_TEST_ENV_test_510(self):
     '''CNRead.getSystemMetadata()'''
@@ -518,11 +514,7 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     else:
       pid = testing_utilities.get_random_valid_pid(client)
     checksum = client.getChecksum(pid)
-    self.assertTrue(
-      isinstance(
-        checksum, d1_common.types.generated.dataoneTypes_v1_1.Checksum
-      )
-    )
+    self.assertTrue(isinstance(checksum, d1_common.types.dataoneTypes_v1_1.Checksum))
 
   def WAITING_FOR_TEST_ENV_test_710(self):
     '''CNRead.getChecksum()'''
@@ -545,21 +537,17 @@ class TestDataONEBaseClient(TestCaseWithURLCompare):
     '''listObjects() returns a valid ObjectList that contains at least 3 entries'''
     client = d1baseclient.DataONEBaseClient(baseURL)
     list = client.listObjects(start=0, count=10, fromDate=None, toDate=None)
-    self.assertTrue(
-      isinstance(
-        list, d1_common.types.generated.dataoneTypes_v1_1.ObjectList
-      )
-    )
+    self.assertTrue(isinstance(list, d1_common.types.dataoneTypes_v1_1.ObjectList))
     self.assertEqual(list.count, len(list.objectInfo))
     entry = list.objectInfo[0]
     self.assertTrue(
       isinstance(
-        entry.identifier, d1_common.types.generated.dataoneTypes_v1_1.Identifier
+        entry.identifier, d1_common.types.dataoneTypes_v1_1.Identifier
       )
     )
     self.assertTrue(
       isinstance(
-        entry.formatId, d1_common.types.generated.dataoneTypes_v1_1.ObjectFormatIdentifier
+        entry.formatId, d1_common.types.dataoneTypes_v1_1.ObjectFormatIdentifier
       )
     )
 

@@ -36,11 +36,11 @@ import urlparse
 import sys
 from mock import patch, PropertyMock
 
-sys.path.append('..')
-import d1_client.mnclient
+# sys.path.append('..')
+import d1_client.mnclient_2_0
 import d1_client.logrecorditerator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
-import src.d1_client
+# import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+import d1_client
 
 
 # These tests are disabled because they require a MN that permits access to

@@ -44,8 +44,10 @@ import d1_common.xmlrunner
 
 # App.
 sys.path.append('..')
-import src.d1_client.d1client as d1client
-import src.d1_client.d1baseclient as d1baseclient
+import d1_client.d1client as d1client
+import d1_client.d1baseclient as d1baseclient
+import d1_client.cnclient_2_0 as cnclient_2_0
+import d1_client.mnclient_2_0 as mnclient_2_0
 import testing_utilities
 import testing_context
 
@@ -191,36 +193,36 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
   def setUp(self):
     self.client = d1client.DataONEClient()
 
-  @patch.object(d1client.cnclient, 'CoordinatingNodeClient')
+  @patch.object(cnclient_2_0, 'CoordinatingNodeClient_2_0')
   def test_get_CN_return_value(self, mock_cn):
     mock_cn.return_value = 'test'
     self.client._getCN(forcenew=True)
     self.assertEqual('test', self.client._cn)
 
-  def test_get_CN_assert_called_cnclient_CoordinatingNodeClient(self):
-    with patch.object(d1client.cnclient, 'CoordinatingNodeClient') as mocked_method:
+  def test_get_CN_assert_called_cnclient_2_0_CoordinatingNodeClient_2_0(self):
+    with patch.object(cnclient_2_0, 'CoordinatingNodeClient_2_0') as mocked_method:
       self.client._getCN(forcenew=True)
       mocked_method.assert_called_with(base_url='https://cn.dataone.org/cn')
 
-  def test_get_CN_assert_not_called_cnclient_CoordinatingNodeClient(self):
-    with patch.object(d1client.cnclient, 'CoordinatingNodeClient') as mocked_method:
+  def test_get_CN_assert_not_called_cnclient_2_0_CoordinatingNodeClient_2_0(self):
+    with patch.object(cnclient_2_0, 'CoordinatingNodeClient_2_0') as mocked_method:
       self.client._cn = 'test'
       self.client._getCN(forcenew=False)
       self.assertFalse(mocked_method.called)
 
-  @patch.object(d1client.mnclient, 'MemberNodeClient')
+  @patch.object(mnclient_2_0, 'MemberNodeClient_2_0')
   def test_get_MN_return_value(self, mock_mn):
     mock_mn.return_value = 'test'
     self.client._getMN(base_url='www.example.com', forcenew=True)
     self.assertEqual('test', self.client._mn)
 
-  def test_get_MN_assert_called_mnclient_MemberNodeClient(self):
-    with patch.object(d1client.mnclient, 'MemberNodeClient') as mocked_method:
+  def test_get_MN_assert_called_mnclient_2_0_MemberNodeClient_2_0(self):
+    with patch.object(mnclient_2_0, 'MemberNodeClient_2_0') as mocked_method:
       self.client._getMN('www.example.com', forcenew=True)
       mocked_method.assert_called_with(base_url='www.example.com')
 
-  def test_get_MN_assert_not_called_mnclient_MemberNodeClient(self):
-    with patch.object(d1client.mnclient, 'MemberNodeClient') as mocked_method:
+  def test_get_MN_assert_not_called_mnclient_2_0_MemberNodeClient_2_0(self):
+    with patch.object(mnclient_2_0, 'MemberNodeClient_2_0') as mocked_method:
       with patch('d1client.DataONEClient', new_callable=PropertyMock) as mocked_d1:
         mocked_d1._mn = 'tst'
         mocked_d1._getMN('www.example.com', forcenew=False)
@@ -236,7 +238,7 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
     self.assertIsNotNone(self.client._authToken)
 #
 
-  @patch.object(d1client.cnclient.CoordinatingNodeClient, 'resolve')
+  @patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'resolve')
   def test_resolve_return_value(self, mock_resolve):
     mock_resolve.return_value = objectLocation()
     output = self.client.resolve('_bogus_pid_845434598734598374534958')
@@ -248,15 +250,13 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
       mocked_method.assert_called_with()
 
   def test_resolve_assert_called_cn_resolve(self):
-    with patch.object(
-      d1client.cnclient.CoordinatingNodeClient, 'resolve'
-    ) as mocked_method:
+    with patch.object(d1client.DataONEClient, 'resolve') as mocked_method:
       self.client.resolve('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('_bogus_pid_845434598734598374534958')
 
   @patch.object(d1client.DataONEClient, '_getMN')
-  @patch.object(d1client.mnclient.MemberNodeClient, 'get')
-  @patch('d1client.mnclient.MemberNodeClient')
+  @patch.object(d1client.mnclient_2_0.MemberNodeClient_2_0, 'get')
+  @patch('d1client.mnclient_2_0.MemberNodeClient_2_0')
   @patch.object(d1client.DataONEClient, 'resolve')
   def test_get_return_value(self, mock_resolve, mock_mnclient, mock_get, mock_mn):
     mock_mn.return_value = MN()
@@ -280,7 +280,7 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
 
   @patch.object(d1client.DataONEClient, 'resolve')
   def test_resolve_assert_called_mn_get(self, mock_resolve):
-    with patch.object(d1client.mnclient.MemberNodeClient, 'get') as mocked_method:
+    with patch.object(d1client.mnclient_2_0.MemberNodeClient_2_0, 'get') as mocked_method:
       mock_resolve.return_value = ['www.example.com']
       self.client.get('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('_bogus_pid_845434598734598374534958')
@@ -304,7 +304,7 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
       mocked_method.assertNotCalled()
 
   @patch.object(d1client.DataONEClient, 'resolve')
-  @patch.object(d1client.cnclient.CoordinatingNodeClient, 'getSystemMetadata')
+  @patch.object(d1client.DataONEClient, 'getSystemMetadata')
   def test_getSystemMetadata_return_value(self, mock_sysmetadata, mock_resolve):
     mock_sysmetadata.return_value = 'test'
     mock_resolve.return_value = ['www.example.com']
@@ -312,9 +312,7 @@ class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare)
     self.assertEqual('test', output)
 
   def test_getSystemMetadata_assert_called_get_CN(self):
-    with patch.object(
-      d1client.cnclient.CoordinatingNodeClient, 'getSystemMetadata'
-    ) as mocked_method:
+    with patch.object(d1client.DataONEClient, 'getSystemMetadata') as mocked_method:
       self.client.getSystemMetadata('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('_bogus_pid_845434598734598374534958')
 

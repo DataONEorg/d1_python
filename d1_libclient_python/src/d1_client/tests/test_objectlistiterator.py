@@ -37,7 +37,7 @@ import sys
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.objectlistiterator
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 import pyxb.binding
 
@@ -52,7 +52,7 @@ class TestObjectListIterator(unittest.TestCase):
     base_url = "https://cn.dataone.org/cn"
     if len(sys.argv) > 1:
       target = sys.argv[1]
-    client = d1_client.mnclient.MemberNodeClient(base_url=base_url)
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
     ol = d1_client.objectlistiterator.ObjectListIterator(client, max=200)
     counter = 0
     for o in ol:

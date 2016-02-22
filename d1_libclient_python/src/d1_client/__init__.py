@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "1.2.8"
+__version__ = "2.0.dev8"
 
 __all__ = [
   'cnclient',

@@ -42,9 +42,9 @@ import d1_common.xmlrunner
 
 # App.
 sys.path.append('..')
-import d1_client.d1client
-import testing_utilities
-import testing_context
+# import d1_client.d1client
+# import testing_utilities
+# import testing_context
 
 MEMBER_NODES = {
   'dryad': 'http://dev-dryad-mn.dataone.org/mn',
