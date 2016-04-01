@@ -36,7 +36,56 @@ Generate an OAI-ORE document by:
 cat pids.txt | pids2ore
 </pre>
 
-The rdf-xml ORE document will be sent to stdout. Different formats (e.g. n3, turtle, json-ld) may be specified with the --format parameter.
+The rdf-xml ORE document will be sent to stdout. Different formats (e.g. n3, turtle, json-ld) may be specified with the --format parameter. 
+
+RDF-xml output from the above example:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:cito="http://purl.org/spar/cito/"
+   xmlns:dcterms="http://purl.org/dc/terms/"
+   xmlns:ore="http://www.openarchives.org/ore/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value">
+    <dcterms:identifier>ore_pid_value</dcterms:identifier>
+    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
+    <dcterms:creator>d1_pyore DataONE Python library</dcterms:creator>
+    <ore:describes rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_3">
+    <dcterms:identifier>data_pid_3</dcterms:identifier>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation">
+    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_1">
+    <dcterms:identifier>data_pid_1</dcterms:identifier>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value">
+    <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+    <dcterms:identifier>sci_meta_pid_value</dcterms:identifier>
+    <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
+    <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_2">
+    <dcterms:identifier>data_pid_2</dcterms:identifier>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.openarchives.org/ore/terms/Aggregation">
+    <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    <rdfs:label>Aggregation</rdfs:label>
+  </rdf:Description>
+</rdf:RDF>
+```
 
 ### B. Text dump of an OAI-ORE document
 
