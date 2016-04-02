@@ -49,31 +49,32 @@ $ cat pids.txt | pids2ore
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 >
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/a">
-    <dcterms:creator>d1_pyore DataONE Python library</dcterms:creator>
-    <dcterms:identifier>a</dcterms:identifier>
-    <ore:describes rdf:resource="https://cn.dataone.org/cn/v2/resolve/a#aggregation"/>
-    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/a#aggregation">
-    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
-    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/c"/>
-    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/b"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/c">
-    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/c"/>
-    <dcterms:identifier>c</dcterms:identifier>
-  </rdf:Description>
   <rdf:Description rdf:about="http://www.openarchives.org/ore/terms/Aggregation">
     <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
     <rdfs:label>Aggregation</rdfs:label>
   </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/c">
+    <dcterms:identifier>c</dcterms:identifier>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/a#aggregation"/>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/c"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/a">
+    <ore:describes rdf:resource="https://cn.dataone.org/cn/v2/resolve/a#aggregation"/>
+    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
+    <dcterms:identifier>a</dcterms:identifier>
+    <dcterms:creator>d1_pyore DataONE Python library</dcterms:creator>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/a#aggregation">
+    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/b"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/c"/>
+  </rdf:Description>
   <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/b">
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/a#aggregation"/>
     <dcterms:identifier>b</dcterms:identifier>
     <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/c"/>
   </rdf:Description>
 </rdf:RDF>
-
 
 Different serializations are supported with the -f or --format parameter. e.g.:
 
@@ -97,15 +98,17 @@ $ cat pids.txt | pids2ore --format n3
 ore:Aggregation rdfs:label "Aggregation" ;
     rdfs:isDefinedBy ore: .
 
+<https://cn.dataone.org/cn/v2/resolve/b> dcterms:identifier "b" ;
+    cito:documents <https://cn.dataone.org/cn/v2/resolve/c> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/a#aggregation> .
+
 <https://cn.dataone.org/cn/v2/resolve/a#aggregation> a ore:Aggregation ;
     ore:aggregates <https://cn.dataone.org/cn/v2/resolve/b>,
         <https://cn.dataone.org/cn/v2/resolve/c> .
 
-<https://cn.dataone.org/cn/v2/resolve/b> dcterms:identifier "b" ;
-    cito:documents <https://cn.dataone.org/cn/v2/resolve/c> .
-
 <https://cn.dataone.org/cn/v2/resolve/c> dcterms:identifier "c" ;
-    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/c> .
+    cito:isDocumentedBy <https://cn.dataone.org/cn/v2/resolve/c> ;
+    ore:isAggregatedBy <https://cn.dataone.org/cn/v2/resolve/a#aggregation> .
 
 '''
 
