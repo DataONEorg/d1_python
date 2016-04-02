@@ -92,7 +92,7 @@ RDF-xml output from the above example:
 
 ### B. Text dump of an OAI-ORE document
 
-Given the rdf-xml OAI-ORE document from above saves as "test.xml", parse and dump out the contents in slightly more intelligable plain text:
+Given the rdf-xml OAI-ORE document from above saved as "test.xml", parse and dump out the contents in slightly more intelligable plain text:
 
 <pre>
 ore2txt test.xml
