@@ -144,6 +144,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     obj = URIRef( oid )
     ag = self.getAggregation()
     self.add( (ag, ORE.aggregates, obj) )
+    self.add( (obj, ORE.isAggregatedBy, ag) )
     self.add( (obj, DCTERMS.identifier, rdflib.term.Literal(pid)) )
   
 
