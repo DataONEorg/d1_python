@@ -41,7 +41,6 @@ The rdf-xml ORE document will be sent to stdout. Different formats (e.g. n3, tur
 RDF-xml output from the above example:
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF
    xmlns:cito="http://purl.org/spar/cito/"
    xmlns:dcterms="http://purl.org/dc/terms/"
@@ -49,35 +48,39 @@ RDF-xml output from the above example:
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 >
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value">
-    <dcterms:identifier>ore_pid_value</dcterms:identifier>
-    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
-    <dcterms:creator>d1_pyore DataONE Python library</dcterms:creator>
-    <ore:describes rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_3">
-    <dcterms:identifier>data_pid_3</dcterms:identifier>
-    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation">
-    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
-    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
-    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
-    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
-    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_1">
-    <dcterms:identifier>data_pid_1</dcterms:identifier>
-    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
-  </rdf:Description>
   <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value">
-    <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
     <dcterms:identifier>sci_meta_pid_value</dcterms:identifier>
     <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
     <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
+    <cito:documents rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value">
+    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
+    <ore:describes rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+    <dcterms:identifier>ore_pid_value</dcterms:identifier>
+    <dcterms:creator>d1_pyore DataONE Python library</dcterms:creator>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_1">
+    <dcterms:identifier>data_pid_1</dcterms:identifier>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation">
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_1"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value"/>
+    <ore:aggregates rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
+    <rdf:type rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_3">
+    <dcterms:identifier>data_pid_3</dcterms:identifier>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
+    <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_3"/>
   </rdf:Description>
   <rdf:Description rdf:about="https://cn.dataone.org/cn/v2/resolve/data_pid_2">
     <dcterms:identifier>data_pid_2</dcterms:identifier>
+    <ore:isAggregatedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation"/>
     <cito:isDocumentedBy rdf:resource="https://cn.dataone.org/cn/v2/resolve/data_pid_2"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://www.openarchives.org/ore/terms/Aggregation">
@@ -89,10 +92,69 @@ RDF-xml output from the above example:
 
 ### B. Text dump of an OAI-ORE document
 
-Given the rdf-xml OAI-ORE document "eg1.xml", parse and dump out the contents in slightly more intelligable plain text:
+Given the rdf-xml OAI-ORE document from above saves as "test.xml", parse and dump out the contents in slightly more intelligable plain text:
 
 <pre>
-ore2txt ../examples/eg1.xml
+ore2txt test.xml
+</pre>
+
+<pre>
+OAI-ORE Description
+
+Resource Map Document PID: ore_pid_value
+                       ID: https://cn.dataone.org/cn/v2/resolve/ore_pid_value
+
+Aggregations
+
+1: https://cn.dataone.org/cn/v2/resolve/ore_pid_value#aggregation
+   Contents:
+    1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_1
+       pid: data_pid_1
+    2:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_3
+       pid: data_pid_3
+    3:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_2
+       pid: data_pid_2
+    4:  id: https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value
+       pid: sci_meta_pid_value
+
+CITO:documents
+
+The document:
+1:  id: https://cn.dataone.org/cn/v2/resolve/sci_meta_pid_value   pid: sci_meta_pid_value
+
+   describes:
+    1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_1
+       pid: data_pid_1
+    2:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_2
+       pid: data_pid_2
+    3:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_3
+       pid: data_pid_3
+
+CITO:isDocumentedBy
+
+The data:
+1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_1
+   pid: data_pid_1
+
+   is described by:
+    1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_1
+       pid: data_pid_1
+
+The data:
+2:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_3
+   pid: data_pid_3
+
+   is described by:
+    1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_3
+       pid: data_pid_3
+
+The data:
+3:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_2
+   pid: data_pid_2
+
+   is described by:
+    1:  id: https://cn.dataone.org/cn/v2/resolve/data_pid_2
+       pid: data_pid_2
 </pre>
 
 
