@@ -34,6 +34,7 @@ import sys
 import traceback
 import xml.sax
 import StringIO
+import re
 
 # 3rd party.
 import pyxb
@@ -41,7 +42,7 @@ import pyxb.utils.domutils
 import pyxb.binding.datatypes as XS
 
 # D1.
-import d1_common.types.dataoneErrors as dataoneErrors
+from d1_common.types import dataoneErrors
 import d1_common.util
 '''
 Example of serialized DataONE Exception:
@@ -95,7 +96,7 @@ def deserialize(dataone_exception_xml):
   try:
     trace = dataone_exception_pyxb.traceInformation
   except AttributeError:
-    trace = ''
+    trace = None
 
   return _create_exception_by_name(
     dataone_exception_pyxb.name, dataone_exception_pyxb.detailCode,
@@ -180,6 +181,10 @@ class DataONEException(Exception):
     self.errorCode = errorCode
     self.detailCode = str(detailCode)
     self.description = description
+    # trace information is stored internally as a unicode string that may or 
+    # may not be XML. Serialization will use the XML structure if it is valid,
+    # otherwise it adds the content to the serialized structure as basically a 
+    # a blob of text.
     self._traceInformation = None
     self.traceInformation = traceInformation
     self.identifier = identifier
@@ -232,7 +237,11 @@ class DataONEException(Exception):
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
     if self._traceInformation is not None:
-      elem = pyxb.utils.domutils.StringToDOM("<x>" + self.traceInformation + "</x>")
+      elem = None
+      try:
+        elem = pyxb.utils.domutils.StringToDOM(self.traceInformation)
+      except:
+        elem = pyxb.utils.domutils.StringToDOM("<x>" + self.traceInformation + "</x>")
       dataone_exception_pyxb.traceInformation = elem.documentElement.firstChild
     if self.identifier is not None:
       dataone_exception_pyxb.identifier = self.identifier
@@ -276,7 +285,10 @@ class DataONEException(Exception):
   @traceInformation.setter
   def traceInformation(self, traceInformation):
     if isinstance(traceInformation, XS.anyType):
-      traceInformation = traceInformation.toxml()
+      tmp = traceInformation.toxml(encoding='utf-8')
+      #remove the XML prolog from the start of the resulting string.
+      traceInformation = re.sub(r'^<\?(.*)\?>', '', tmp)
+      traceInformation = traceInformation.strip()
     self._traceInformation = traceInformation
 
 #===============================================================================

@@ -1,9 +1,10 @@
 # ./d1_common/types/raw/dataoneTypes_v2_0.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:cdd9555a55a103332598275a87c4a7c1422c46ed
-# Generated 2015-11-30 10:43:22.365570 by PyXB version 1.2.3
+# Generated 2016-04-11 11:25:45.541097 by PyXB version 1.2.4 using Python 2.7.10.final.0
 # Namespace http://ns.dataone.org/service/types/v2.0
 
+from __future__ import unicode_literals
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,14 +12,15 @@ import io
 import pyxb.utils.utility
 import pyxb.utils.domutils
 import sys
+import pyxb.utils.six as _six
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier(
-  'urn:uuid:160f3b7a-9779-11e5-ad39-3c15c2ceea1e'
+  'urn:uuid:a9148982-fff9-11e5-864a-3c15c2ceea1e'
 )
 
 # Version of PyXB used to generate the bindings
-_PyXBVersion = '1.2.3'
+_PyXBVersion = '1.2.4'
 # Generated bindings are not compatible across PyXB versions
 if pyxb.__version__ != _PyXBVersion:
   raise pyxb.PyXBVersionError(_PyXBVersion)
@@ -29,7 +31,7 @@ import d1_common.types.dataoneTypes_v1 as _ImportedBinding_d1_common_types_datao
 
 # NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.NamespaceForURI(
-  u'http://ns.dataone.org/service/types/v2.0',
+  'http://ns.dataone.org/service/types/v2.0',
   create_if_missing=True
 )
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
@@ -56,7 +58,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
 
   if pyxb.XMLStyle_saxer != pyxb._XMLStyle:
     dom = pyxb.utils.domutils.StringToDOM(xml_text)
-    return CreateFromDOM(dom.documentElement)
+    return CreateFromDOM(dom.documentElement, default_namespace=default_namespace)
   if default_namespace is None:
     default_namespace = Namespace.fallbackNamespace()
   saxer = pyxb.binding.saxer.make_parser(
@@ -65,7 +67,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
   )
   handler = saxer.getContentHandler()
   xmld = xml_text
-  if isinstance(xmld, unicode):
+  if isinstance(xmld, _six.text_type):
     xmld = xmld.encode(pyxb._InputEncoding)
   saxer.parse(io.BytesIO(xmld))
   instance = handler.rootObject()
@@ -89,7 +91,7 @@ class MediaTypeProperty(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = pyxb.binding.datatypes.string
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'MediaTypeProperty')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'MediaTypeProperty')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     65, 2
@@ -101,7 +103,7 @@ class MediaTypeProperty(pyxb.binding.basis.complexTypeDefinition):
   # Attribute name uses Python identifier name
   __name = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
-      None, u'name'
+      None, 'name'
     ),
     'name',
     '__httpns_dataone_orgservicetypesv2_0_MediaTypeProperty_name',
@@ -118,15 +120,14 @@ class MediaTypeProperty(pyxb.binding.basis.complexTypeDefinition):
   )
 
   name = property(
-    __name.value, __name.set, None,
-    u'The property name for this entry. \n                '
+    __name.value, __name.set, None, 'The property name for this entry. \n                '
   )
 
   _ElementMap.update({})
   _AttributeMap.update({__name.name(): __name})
 
 
-Namespace.addCategoryObject('typeBinding', u'MediaTypeProperty', MediaTypeProperty)
+Namespace.addCategoryObject('typeBinding', 'MediaTypeProperty', MediaTypeProperty)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}MediaType with content type ELEMENT_ONLY
@@ -145,7 +146,7 @@ class MediaType(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'MediaType')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'MediaType')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     83, 2
@@ -157,7 +158,7 @@ class MediaType(pyxb.binding.basis.complexTypeDefinition):
   # Element property uses Python identifier property_
   __property = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'property'
+      None, 'property'
     ),
     'property_',
     '__httpns_dataone_orgservicetypesv2_0_MediaType_property',
@@ -170,13 +171,13 @@ class MediaType(pyxb.binding.basis.complexTypeDefinition):
 
   property_ = property(
     __property.value, __property.set, None,
-    u'Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          '
+    'Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          '
   )
 
   # Attribute name uses Python identifier name
   __name = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
-      None, u'name'
+      None, 'name'
     ),
     'name',
     '__httpns_dataone_orgservicetypesv2_0_MediaType_name',
@@ -194,14 +195,14 @@ class MediaType(pyxb.binding.basis.complexTypeDefinition):
 
   name = property(
     __name.value, __name.set, None,
-    u"The value of the media-type specified as a \n          required 'name' attribute of the mediaType element.\n        "
+    "The value of the media-type specified as a \n          required 'name' attribute of the mediaType element.\n        "
   )
 
   _ElementMap.update({__property.name(): __property})
   _AttributeMap.update({__name.name(): __name})
 
 
-Namespace.addCategoryObject('typeBinding', u'MediaType', MediaType)
+Namespace.addCategoryObject('typeBinding', 'MediaType', MediaType)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}NodeList with content type ELEMENT_ONLY
@@ -213,7 +214,7 @@ class NodeList(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NodeList')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'NodeList')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     193, 2
@@ -225,7 +226,7 @@ class NodeList(pyxb.binding.basis.complexTypeDefinition):
   # Element node uses Python identifier node
   __node = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'node'
+      None, 'node'
     ),
     'node',
     '__httpns_dataone_orgservicetypesv2_0_NodeList_node',
@@ -242,7 +243,7 @@ class NodeList(pyxb.binding.basis.complexTypeDefinition):
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'NodeList', NodeList)
+Namespace.addCategoryObject('typeBinding', 'NodeList', NodeList)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Property with content type SIMPLE
@@ -254,7 +255,7 @@ class Property(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = pyxb.binding.datatypes.string
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Property')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Property')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     236, 2
@@ -266,7 +267,7 @@ class Property(pyxb.binding.basis.complexTypeDefinition):
   # Attribute key uses Python identifier key
   __key = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
-      None, u'key'
+      None, 'key'
     ),
     'key',
     '__httpns_dataone_orgservicetypesv2_0_Property_key',
@@ -284,13 +285,13 @@ class Property(pyxb.binding.basis.complexTypeDefinition):
 
   key = property(
     __key.value, __key.set, None,
-    u'The property key for this entry. Should be \n                  unique within the Node element.'
+    'The property key for this entry. Should be \n                  unique within the Node element.'
   )
 
   # Attribute type uses Python identifier type
   __type = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
-      None, u'type'
+      None, 'type'
     ), 'type', '__httpns_dataone_orgservicetypesv2_0_Property_type',
     pyxb.binding.datatypes.string
   )
@@ -305,14 +306,14 @@ class Property(pyxb.binding.basis.complexTypeDefinition):
 
   type = property(
     __type.value, __type.set, None,
-    u'The optional type for the property. Can be \n                  used to indicate if a controlled vocabulary is used for the\n                  property key to better facilitate machine interpretation.\n                '
+    'The optional type for the property. Can be \n                  used to indicate if a controlled vocabulary is used for the\n                  property key to better facilitate machine interpretation.\n                '
   )
 
   _ElementMap.update({})
   _AttributeMap.update({__key.name(): __key, __type.name(): __type})
 
 
-Namespace.addCategoryObject('typeBinding', u'Property', Property)
+Namespace.addCategoryObject('typeBinding', 'Property', Property)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}LogEntry with content type ELEMENT_ONLY
@@ -322,7 +323,7 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'LogEntry')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'LogEntry')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     328, 2
@@ -334,7 +335,7 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
   # Element entryId uses Python identifier entryId
   __entryId = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'entryId'
+      None, 'entryId'
     ),
     'entryId',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_entryId',
@@ -347,13 +348,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   entryId = property(
     __entryId.value, __entryId.set, None,
-    u'A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.'
+    'A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.'
   )
 
   # Element identifier uses Python identifier identifier
   __identifier = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'identifier'
+      None, 'identifier'
     ),
     'identifier',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_identifier',
@@ -366,13 +367,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   identifier = property(
     __identifier.value, __identifier.set, None,
-    u'The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.'
+    'The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.'
   )
 
   # Element ipAddress uses Python identifier ipAddress
   __ipAddress = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'ipAddress'
+      None, 'ipAddress'
     ),
     'ipAddress',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_ipAddress',
@@ -385,13 +386,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   ipAddress = property(
     __ipAddress.value, __ipAddress.set, None,
-    u'The IP address, as reported by the service receiving\n          the request, of the request origin.'
+    'The IP address, as reported by the service receiving\n          the request, of the request origin.'
   )
 
   # Element userAgent uses Python identifier userAgent
   __userAgent = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'userAgent'
+      None, 'userAgent'
     ),
     'userAgent',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_userAgent',
@@ -404,13 +405,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   userAgent = property(
     __userAgent.value, __userAgent.set, None,
-    u'The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.'
+    'The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.'
   )
 
   # Element subject uses Python identifier subject
   __subject = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'subject'
+      None, 'subject'
     ),
     'subject',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_subject',
@@ -423,13 +424,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   subject = property(
     __subject.value, __subject.set, None,
-    u'The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.'
+    'The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.'
   )
 
   # Element event uses Python identifier event
   __event = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'event'
+      None, 'event'
     ),
     'event',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_event',
@@ -442,13 +443,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   event = property(
     __event.value, __event.set, None,
-    u'A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          '
+    'A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          '
   )
 
   # Element dateLogged uses Python identifier dateLogged
   __dateLogged = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'dateLogged'
+      None, 'dateLogged'
     ),
     'dateLogged',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_dateLogged',
@@ -461,13 +462,13 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   dateLogged = property(
     __dateLogged.value, __dateLogged.set, None,
-    u'A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.'
+    'A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.'
   )
 
   # Element nodeIdentifier uses Python identifier nodeIdentifier
   __nodeIdentifier = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'nodeIdentifier'
+      None, 'nodeIdentifier'
     ),
     'nodeIdentifier',
     '__httpns_dataone_orgservicetypesv2_0_LogEntry_nodeIdentifier',
@@ -480,7 +481,7 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
 
   nodeIdentifier = property(
     __nodeIdentifier.value, __nodeIdentifier.set, None,
-    u'The unique identifier for the node where the log\n          message was generated.'
+    'The unique identifier for the node where the log\n          message was generated.'
   )
 
   _ElementMap.update(
@@ -498,7 +499,7 @@ class LogEntry(pyxb.binding.basis.complexTypeDefinition):
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'LogEntry', LogEntry)
+Namespace.addCategoryObject('typeBinding', 'LogEntry', LogEntry)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}OptionList with content type ELEMENT_ONLY
@@ -514,7 +515,7 @@ class OptionList(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'OptionList')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'OptionList')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     401, 2
@@ -526,7 +527,7 @@ class OptionList(pyxb.binding.basis.complexTypeDefinition):
   # Element option uses Python identifier option
   __option = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'option'
+      None, 'option'
     ),
     'option',
     '__httpns_dataone_orgservicetypesv2_0_OptionList_option',
@@ -539,13 +540,13 @@ class OptionList(pyxb.binding.basis.complexTypeDefinition):
 
   option = property(
     __option.value, __option.set, None,
-    u"The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped."
+    "The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped."
   )
 
   # Attribute key uses Python identifier key
   __key = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
-      None, u'key'
+      None, 'key'
     ),
     'key',
     '__httpns_dataone_orgservicetypesv2_0_OptionList_key',
@@ -563,13 +564,13 @@ class OptionList(pyxb.binding.basis.complexTypeDefinition):
 
   key = property(
     __key.value, __key.set, None,
-    u'A value that can be used with a DataONE service. Key\n        values must not contain any characters that need to be URL escaped, and\n        should be short and informative. \n        '
+    'A value that can be used with a DataONE service. Key\n        values must not contain any characters that need to be URL escaped, and\n        should be short and informative. \n        '
   )
 
   # Attribute description uses Python identifier description
   __description = pyxb.binding.content.AttributeUse(
     pyxb.namespace.ExpandedName(
-      None, u'description'
+      None, 'description'
     ),
     'description',
     '__httpns_dataone_orgservicetypesv2_0_OptionList_description',
@@ -587,14 +588,14 @@ class OptionList(pyxb.binding.basis.complexTypeDefinition):
 
   description = property(
     __description.value, __description.set, None,
-    u'The description of an option, indicating its intended \n          use and impact on a DataONE service invocation.'
+    'The description of an option, indicating its intended \n          use and impact on a DataONE service invocation.'
   )
 
   _ElementMap.update({__option.name(): __option})
   _AttributeMap.update({__key.name(): __key, __description.name(): __description})
 
 
-Namespace.addCategoryObject('typeBinding', u'OptionList', OptionList)
+Namespace.addCategoryObject('typeBinding', 'OptionList', OptionList)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}SystemMetadata with content type ELEMENT_ONLY
@@ -608,7 +609,7 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMeta
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'SystemMetadata')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'SystemMetadata')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     121, 2
@@ -656,7 +657,7 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMeta
   # Element seriesId uses Python identifier seriesId
   __seriesId = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'seriesId'
+      None, 'seriesId'
     ),
     'seriesId',
     '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_seriesId',
@@ -669,13 +670,13 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMeta
 
   seriesId = property(
     __seriesId.value, __seriesId.set, None,
-    u'The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.'
+    'The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.'
   )
 
   # Element mediaType uses Python identifier mediaType
   __mediaType = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'mediaType'
+      None, 'mediaType'
     ),
     'mediaType',
     '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_mediaType',
@@ -688,13 +689,13 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMeta
 
   mediaType = property(
     __mediaType.value, __mediaType.set, None,
-    u'When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.'
+    'When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.'
   )
 
   # Element fileName uses Python identifier fileName
   __fileName = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'fileName'
+      None, 'fileName'
     ),
     'fileName',
     '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_fileName',
@@ -707,7 +708,7 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMeta
 
   fileName = property(
     __fileName.value, __fileName.set, None,
-    u'Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  '
+    'Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  '
   )
 
   _ElementMap.update(
@@ -720,7 +721,7 @@ class SystemMetadata(_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMeta
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'SystemMetadata', SystemMetadata)
+Namespace.addCategoryObject('typeBinding', 'SystemMetadata', SystemMetadata)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}ObjectFormat with content type ELEMENT_ONLY
@@ -731,7 +732,7 @@ class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormat')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ObjectFormat')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     264, 2
@@ -751,7 +752,7 @@ class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat
   # Element mediaType uses Python identifier mediaType
   __mediaType = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'mediaType'
+      None, 'mediaType'
     ),
     'mediaType',
     '__httpns_dataone_orgservicetypesv2_0_ObjectFormat_mediaType',
@@ -764,13 +765,13 @@ class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat
 
   mediaType = property(
     __mediaType.value, __mediaType.set, None,
-    u'The IANA Media Type for this object format.\n                '
+    'The IANA Media Type for this object format.\n                '
   )
 
   # Element extension uses Python identifier extension
   __extension = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'extension'
+      None, 'extension'
     ),
     'extension',
     '__httpns_dataone_orgservicetypesv2_0_ObjectFormat_extension',
@@ -783,14 +784,14 @@ class ObjectFormat(_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat
 
   extension = property(
     __extension.value, __extension.set, None,
-    u'Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).'
+    'Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).'
   )
 
   _ElementMap.update({__mediaType.name(): __mediaType, __extension.name(): __extension})
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'ObjectFormat', ObjectFormat)
+Namespace.addCategoryObject('typeBinding', 'ObjectFormat', ObjectFormat)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}ObjectFormatList with content type ELEMENT_ONLY
@@ -801,7 +802,7 @@ class ObjectFormatList(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'ObjectFormatList')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ObjectFormatList')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     292, 2
@@ -814,7 +815,7 @@ class ObjectFormatList(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   # Element objectFormat uses Python identifier objectFormat
   __objectFormat = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'objectFormat'
+      None, 'objectFormat'
     ),
     'objectFormat',
     '__httpns_dataone_orgservicetypesv2_0_ObjectFormatList_objectFormat',
@@ -836,7 +837,7 @@ class ObjectFormatList(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'ObjectFormatList', ObjectFormatList)
+Namespace.addCategoryObject('typeBinding', 'ObjectFormatList', ObjectFormatList)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Log with content type ELEMENT_ONLY
@@ -847,7 +848,7 @@ class Log(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Log')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Log')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     311, 2
@@ -860,7 +861,7 @@ class Log(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   # Element logEntry uses Python identifier logEntry
   __logEntry = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'logEntry'
+      None, 'logEntry'
     ),
     'logEntry',
     '__httpns_dataone_orgservicetypesv2_0_Log_logEntry',
@@ -882,7 +883,7 @@ class Log(_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'Log', Log)
+Namespace.addCategoryObject('typeBinding', 'Log', Log)
 
 
 # Complex type {http://ns.dataone.org/service/types/v2.0}Node with content type ELEMENT_ONLY
@@ -893,7 +894,7 @@ class Node(_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'Node')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Node')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
     211, 2
@@ -926,7 +927,7 @@ class Node(_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
   # Element property uses Python identifier property_
   __property = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'property'
+      None, 'property'
     ),
     'property_',
     '__httpns_dataone_orgservicetypesv2_0_Node_property',
@@ -939,7 +940,7 @@ class Node(_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
 
   property_ = property(
     __property.value, __property.set, None,
-    u'Allows additional attributes be added to the \n                Node document as needed.'
+    'Allows additional attributes be added to the \n                Node document as needed.'
   )
 
   # Attribute replicate inherited from {http://ns.dataone.org/service/types/v1}Node
@@ -953,11 +954,11 @@ class Node(_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'Node', Node)
+Namespace.addCategoryObject('typeBinding', 'Node', Node)
 
 optionList = pyxb.binding.basis.element(
   pyxb.namespace.ExpandedName(
-    Namespace, u'optionList'
+    Namespace, 'optionList'
   ),
   OptionList,
   location=pyxb.utils.utility.Location(
@@ -968,7 +969,7 @@ optionList = pyxb.binding.basis.element(
 Namespace.addCategoryObject('elementBinding', optionList.name().localName(), optionList)
 
 property = pyxb.binding.basis.element(
-  pyxb.namespace.ExpandedName(Namespace, u'property'),
+  pyxb.namespace.ExpandedName(Namespace, 'property'),
   Property,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -978,7 +979,7 @@ property = pyxb.binding.basis.element(
 Namespace.addCategoryObject('elementBinding', property.name().localName(), property)
 
 nodeList = pyxb.binding.basis.element(
-  pyxb.namespace.ExpandedName(Namespace, u'nodeList'),
+  pyxb.namespace.ExpandedName(Namespace, 'nodeList'),
   NodeList,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -988,7 +989,7 @@ nodeList = pyxb.binding.basis.element(
 Namespace.addCategoryObject('elementBinding', nodeList.name().localName(), nodeList)
 
 logEntry = pyxb.binding.basis.element(
-  pyxb.namespace.ExpandedName(Namespace, u'logEntry'),
+  pyxb.namespace.ExpandedName(Namespace, 'logEntry'),
   LogEntry,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -998,9 +999,7 @@ logEntry = pyxb.binding.basis.element(
 Namespace.addCategoryObject('elementBinding', logEntry.name().localName(), logEntry)
 
 mediaType = pyxb.binding.basis.element(
-  pyxb.namespace.ExpandedName(
-    Namespace, u'mediaType'
-  ),
+  pyxb.namespace.ExpandedName(Namespace, 'mediaType'),
   MediaType,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1011,7 +1010,7 @@ Namespace.addCategoryObject('elementBinding', mediaType.name().localName(), medi
 
 systemMetadata = pyxb.binding.basis.element(
   pyxb.namespace.ExpandedName(
-    Namespace, u'systemMetadata'
+    Namespace, 'systemMetadata'
   ),
   SystemMetadata,
   location=pyxb.utils.utility.Location(
@@ -1026,7 +1025,7 @@ Namespace.addCategoryObject(
 
 objectFormat = pyxb.binding.basis.element(
   pyxb.namespace.ExpandedName(
-    Namespace, u'objectFormat'
+    Namespace, 'objectFormat'
   ),
   ObjectFormat,
   location=pyxb.utils.utility.Location(
@@ -1041,7 +1040,7 @@ Namespace.addCategoryObject(
 
 objectFormatList = pyxb.binding.basis.element(
   pyxb.namespace.ExpandedName(
-    Namespace, u'objectFormatList'
+    Namespace, 'objectFormatList'
   ),
   ObjectFormatList,
   location=pyxb.utils.utility.Location(
@@ -1055,7 +1054,7 @@ Namespace.addCategoryObject(
 )
 
 log = pyxb.binding.basis.element(
-  pyxb.namespace.ExpandedName(Namespace, u'log'),
+  pyxb.namespace.ExpandedName(Namespace, 'log'),
   Log,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1065,7 +1064,7 @@ log = pyxb.binding.basis.element(
 Namespace.addCategoryObject('elementBinding', log.name().localName(), log)
 
 node = pyxb.binding.basis.element(
-  pyxb.namespace.ExpandedName(Namespace, u'node'),
+  pyxb.namespace.ExpandedName(Namespace, 'node'),
   Node,
   location=pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1077,11 +1076,11 @@ Namespace.addCategoryObject('elementBinding', node.name().localName(), node)
 MediaType._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'property'
+      None, 'property'
     ),
     MediaTypeProperty,
     scope=MediaType,
-    documentation=u'Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          ',
+    documentation='Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          ',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       99, 6
@@ -1098,7 +1097,7 @@ def _BuildAutomaton():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1112,7 +1111,7 @@ def _BuildAutomaton():
   symbol = pyxb.binding.content.ElementUse(
     MediaType._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'property'
+        None, 'property'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1136,7 +1135,7 @@ MediaType._Automaton = _BuildAutomaton()
 
 NodeList._AddElement(
   pyxb.binding.basis.element(
-    pyxb.namespace.ExpandedName(None, u'node'),
+    pyxb.namespace.ExpandedName(None, 'node'),
     Node,
     scope=NodeList,
     location=pyxb.utils.utility.Location(
@@ -1159,7 +1158,7 @@ def _BuildAutomaton_():
   symbol = pyxb.binding.content.ElementUse(
     NodeList._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'node'
+        None, 'node'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1184,11 +1183,11 @@ NodeList._Automaton = _BuildAutomaton_()
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'entryId'
+      None, 'entryId'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=LogEntry,
-    documentation=u'A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.',
+    documentation='A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       334, 6
@@ -1199,11 +1198,11 @@ LogEntry._AddElement(
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'identifier'
+      None, 'identifier'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier,
     scope=LogEntry,
-    documentation=u'The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.',
+    documentation='The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       343, 6
@@ -1214,11 +1213,11 @@ LogEntry._AddElement(
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'ipAddress'
+      None, 'ipAddress'
     ),
     pyxb.binding.datatypes.string,
     scope=LogEntry,
-    documentation=u'The IP address, as reported by the service receiving\n          the request, of the request origin.',
+    documentation='The IP address, as reported by the service receiving\n          the request, of the request origin.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       350, 6
@@ -1229,11 +1228,11 @@ LogEntry._AddElement(
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'userAgent'
+      None, 'userAgent'
     ),
     pyxb.binding.datatypes.string,
     scope=LogEntry,
-    documentation=u'The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.',
+    documentation='The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       357, 6
@@ -1244,11 +1243,11 @@ LogEntry._AddElement(
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'subject'
+      None, 'subject'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.Subject,
     scope=LogEntry,
-    documentation=u'The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.',
+    documentation='The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       364, 6
@@ -1258,12 +1257,10 @@ LogEntry._AddElement(
 
 LogEntry._AddElement(
   pyxb.binding.basis.element(
-    pyxb.namespace.ExpandedName(
-      None, u'event'
-    ),
+    pyxb.namespace.ExpandedName(None, 'event'),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=LogEntry,
-    documentation=u'A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          ',
+    documentation='A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          ',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       373, 6
@@ -1274,11 +1271,11 @@ LogEntry._AddElement(
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'dateLogged'
+      None, 'dateLogged'
     ),
     pyxb.binding.datatypes.dateTime,
     scope=LogEntry,
-    documentation=u'A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.',
+    documentation='A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       382, 6
@@ -1289,11 +1286,11 @@ LogEntry._AddElement(
 LogEntry._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'nodeIdentifier'
+      None, 'nodeIdentifier'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NodeReference,
     scope=LogEntry,
-    documentation=u'The unique identifier for the node where the log\n          message was generated.',
+    documentation='The unique identifier for the node where the log\n          message was generated.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       390, 6
@@ -1314,7 +1311,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'entryId'
+        None, 'entryId'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1332,7 +1329,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'identifier'
+        None, 'identifier'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1350,7 +1347,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'ipAddress'
+        None, 'ipAddress'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1368,7 +1365,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'userAgent'
+        None, 'userAgent'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1386,7 +1383,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'subject'
+        None, 'subject'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1404,7 +1401,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'event'
+        None, 'event'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1422,7 +1419,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'dateLogged'
+        None, 'dateLogged'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1440,7 +1437,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     LogEntry._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'nodeIdentifier'
+        None, 'nodeIdentifier'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1485,11 +1482,11 @@ LogEntry._Automaton = _BuildAutomaton_2()
 OptionList._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'option'
+      None, 'option'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=OptionList,
-    documentation=u"The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped.",
+    documentation="The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped.",
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       413, 6
@@ -1506,7 +1503,7 @@ def _BuildAutomaton_3():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1520,7 +1517,7 @@ def _BuildAutomaton_3():
   symbol = pyxb.binding.content.ElementUse(
     OptionList._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'option'
+        None, 'option'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1545,11 +1542,11 @@ OptionList._Automaton = _BuildAutomaton_3()
 SystemMetadata._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'seriesId'
+      None, 'seriesId'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier,
     scope=SystemMetadata,
-    documentation=u'The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.',
+    documentation='The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       133, 12
@@ -1560,11 +1557,11 @@ SystemMetadata._AddElement(
 SystemMetadata._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'mediaType'
+      None, 'mediaType'
     ),
     MediaType,
     scope=SystemMetadata,
-    documentation=u'When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.',
+    documentation='When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       146, 14
@@ -1575,11 +1572,11 @@ SystemMetadata._AddElement(
 SystemMetadata._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'fileName'
+      None, 'fileName'
     ),
     pyxb.binding.datatypes.string,
     scope=SystemMetadata,
-    documentation=u'Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  ',
+    documentation='Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  ',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       173, 14
@@ -1596,8 +1593,8 @@ def _BuildAutomaton_4():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1354, 6
@@ -1605,8 +1602,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_0)
   cc_1 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1422, 6
@@ -1614,8 +1611,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_1)
   cc_2 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1451, 6
@@ -1623,8 +1620,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_2)
   cc_3 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1466, 6
@@ -1632,8 +1629,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_3)
   cc_4 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1478, 6
@@ -1641,8 +1638,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_4)
   cc_5 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1488, 6
@@ -1650,8 +1647,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_5)
   cc_6 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1499, 6
@@ -1659,8 +1656,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_6)
   cc_7 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1510, 6
@@ -1668,8 +1665,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_7)
   cc_8 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1522, 6
@@ -1677,8 +1674,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_8)
   cc_9 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1533, 6
@@ -1686,8 +1683,8 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_9)
   cc_10 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       1541, 6
@@ -1695,7 +1692,7 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_10)
   cc_11 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1704,7 +1701,7 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_11)
   cc_12 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1713,7 +1710,7 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_12)
   cc_13 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1722,7 +1719,7 @@ def _BuildAutomaton_4():
   )
   counters.add(cc_13)
   cc_14 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -1735,7 +1732,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'serialVersion'
+        None, 'serialVersion'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1753,7 +1750,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'identifier'
+        None, 'identifier'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1771,7 +1768,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'formatId'
+        None, 'formatId'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1789,7 +1786,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'size'
+        None, 'size'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1807,7 +1804,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'checksum'
+        None, 'checksum'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1825,7 +1822,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'submitter'
+        None, 'submitter'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1843,7 +1840,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'rightsHolder'
+        None, 'rightsHolder'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1862,7 +1859,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'accessPolicy'
+        None, 'accessPolicy'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1881,7 +1878,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'replicationPolicy'
+        None, 'replicationPolicy'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1900,7 +1897,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'obsoletes'
+        None, 'obsoletes'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1919,7 +1916,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'obsoletedBy'
+        None, 'obsoletedBy'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1938,7 +1935,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'archived'
+        None, 'archived'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1957,7 +1954,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'dateUploaded'
+        None, 'dateUploaded'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1976,7 +1973,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'dateSysMetadataModified'
+        None, 'dateSysMetadataModified'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -1995,7 +1992,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'originMemberNode'
+        None, 'originMemberNode'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2014,7 +2011,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'authoritativeMemberNode'
+        None, 'authoritativeMemberNode'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2033,7 +2030,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'replica'
+        None, 'replica'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2052,7 +2049,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'seriesId'
+        None, 'seriesId'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2071,7 +2068,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'mediaType'
+        None, 'mediaType'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2090,7 +2087,7 @@ def _BuildAutomaton_4():
   symbol = pyxb.binding.content.ElementUse(
     SystemMetadata._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'fileName'
+        None, 'fileName'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2265,11 +2262,11 @@ SystemMetadata._Automaton = _BuildAutomaton_4()
 ObjectFormat._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'mediaType'
+      None, 'mediaType'
     ),
     MediaType,
     scope=ObjectFormat,
-    documentation=u'The IANA Media Type for this object format.\n                ',
+    documentation='The IANA Media Type for this object format.\n                ',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       273, 10
@@ -2280,11 +2277,11 @@ ObjectFormat._AddElement(
 ObjectFormat._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'extension'
+      None, 'extension'
     ),
     pyxb.binding.datatypes.string,
     scope=ObjectFormat,
-    documentation=u'Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).',
+    documentation='Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       279, 8
@@ -2301,7 +2298,7 @@ def _BuildAutomaton_5():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2310,7 +2307,7 @@ def _BuildAutomaton_5():
   )
   counters.add(cc_0)
   cc_1 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2323,7 +2320,7 @@ def _BuildAutomaton_5():
   symbol = pyxb.binding.content.ElementUse(
     ObjectFormat._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'formatId'
+        None, 'formatId'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2341,7 +2338,7 @@ def _BuildAutomaton_5():
   symbol = pyxb.binding.content.ElementUse(
     ObjectFormat._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'formatName'
+        None, 'formatName'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2359,7 +2356,7 @@ def _BuildAutomaton_5():
   symbol = pyxb.binding.content.ElementUse(
     ObjectFormat._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'formatType'
+        None, 'formatType'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2378,7 +2375,7 @@ def _BuildAutomaton_5():
   symbol = pyxb.binding.content.ElementUse(
     ObjectFormat._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'mediaType'
+        None, 'mediaType'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2397,7 +2394,7 @@ def _BuildAutomaton_5():
   symbol = pyxb.binding.content.ElementUse(
     ObjectFormat._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'extension'
+        None, 'extension'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2436,7 +2433,7 @@ ObjectFormat._Automaton = _BuildAutomaton_5()
 ObjectFormatList._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'objectFormat'
+      None, 'objectFormat'
     ),
     ObjectFormat,
     scope=ObjectFormatList,
@@ -2460,7 +2457,7 @@ def _BuildAutomaton_6():
   symbol = pyxb.binding.content.ElementUse(
     ObjectFormatList._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'objectFormat'
+        None, 'objectFormat'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2484,7 +2481,7 @@ ObjectFormatList._Automaton = _BuildAutomaton_6()
 
 Log._AddElement(
   pyxb.binding.basis.element(
-    pyxb.namespace.ExpandedName(None, u'logEntry'),
+    pyxb.namespace.ExpandedName(None, 'logEntry'),
     LogEntry,
     scope=Log,
     location=pyxb.utils.utility.Location(
@@ -2503,7 +2500,7 @@ def _BuildAutomaton_7():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2517,7 +2514,7 @@ def _BuildAutomaton_7():
   symbol = pyxb.binding.content.ElementUse(
     Log._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'logEntry'
+        None, 'logEntry'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2541,10 +2538,10 @@ Log._Automaton = _BuildAutomaton_7()
 
 Node._AddElement(
   pyxb.binding.basis.element(
-    pyxb.namespace.ExpandedName(None, u'property'),
+    pyxb.namespace.ExpandedName(None, 'property'),
     Property,
     scope=Node,
-    documentation=u'Allows additional attributes be added to the \n                Node document as needed.',
+    documentation='Allows additional attributes be added to the \n                Node document as needed.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
       220, 10
@@ -2561,8 +2558,8 @@ def _BuildAutomaton_8():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       551, 6
@@ -2570,8 +2567,8 @@ def _BuildAutomaton_8():
   )
   counters.add(cc_0)
   cc_1 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       558, 6
@@ -2579,8 +2576,8 @@ def _BuildAutomaton_8():
   )
   counters.add(cc_1)
   cc_2 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       568, 6
@@ -2588,8 +2585,8 @@ def _BuildAutomaton_8():
   )
   counters.add(cc_2)
   cc_3 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
       579, 6
@@ -2597,7 +2594,7 @@ def _BuildAutomaton_8():
   )
   counters.add(cc_3)
   cc_4 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2606,7 +2603,7 @@ def _BuildAutomaton_8():
   )
   counters.add(cc_4)
   cc_5 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',
@@ -2619,7 +2616,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'identifier'
+        None, 'identifier'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2637,7 +2634,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'name'
+        None, 'name'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2655,7 +2652,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'description'
+        None, 'description'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2673,7 +2670,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'baseURL'
+        None, 'baseURL'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2691,7 +2688,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'services'
+        None, 'services'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2709,7 +2706,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'synchronization'
+        None, 'synchronization'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2727,7 +2724,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'nodeReplicationPolicy'
+        None, 'nodeReplicationPolicy'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2745,7 +2742,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'ping'
+        None, 'ping'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2763,7 +2760,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'subject'
+        None, 'subject'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2781,7 +2778,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'contactSubject'
+        None, 'contactSubject'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes.xsd',
@@ -2800,7 +2797,7 @@ def _BuildAutomaton_8():
   symbol = pyxb.binding.content.ElementUse(
     Node._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'property'
+        None, 'property'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd',

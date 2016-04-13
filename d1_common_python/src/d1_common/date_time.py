@@ -37,15 +37,11 @@ try:
   import iso8601
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: sudo apt-get install python-setuptools\n')
-  sys.stderr.write(
-    '     sudo easy_install http://pypi.python.org/packages/2.5/i/iso8601/iso8601-0.1.4-py2.5.egg\n'
-  )
+  sys.stderr.write('pip install iso8601\n')
   raise
 
+
 # D1.
-
-
 class UTC(datetime.tzinfo):
   '''Date-times in DataONE are required to have timezone information that is
   fixed to UTC. A naive Python datetime can be fixed to UTC by attaching it

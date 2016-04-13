@@ -30,24 +30,7 @@ License:
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-Formatting:
-
-  - This document should be saved as a UTF-8 encoded file.
-
-  - Indent using spaces, not tabs, with two spaces per indent level.
-
-  - Line wrapping should be set to 80 chars, adjusted as necessary
-
-    -->
-  <!-- A derived string type with at least length 1 and it must contain non-whitespace -->
-<!--  <xs:simpleType name="d1:NonEmptyString">
-    <xs:restriction base="xs:string">
-      <xs:minLength value="1" />
-      <xs:pattern value="[\s]*[\S][\s\S]*" />
-    </xs:restriction>
-  </xs:simpleType>
--->
+  -->
   <!-- Exception type for error serialization in DataONE -->
   <xs:complexType name="DataONEException">
     <xs:annotation>

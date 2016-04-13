@@ -1,9 +1,10 @@
 # ./d1_common/types/raw/dataoneTypes_v1_1.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:360f646bcacd4796da7a71be6ffd7cac7a35ff8a
-# Generated 2015-11-30 10:43:22.366087 by PyXB version 1.2.3
+# Generated 2016-04-11 11:25:45.540767 by PyXB version 1.2.4 using Python 2.7.10.final.0
 # Namespace http://ns.dataone.org/service/types/v1.1 [xmlns:d1_v1.1]
 
+from __future__ import unicode_literals
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -11,14 +12,15 @@ import io
 import pyxb.utils.utility
 import pyxb.utils.domutils
 import sys
+import pyxb.utils.six as _six
 
 # Unique identifier for bindings created at the same time
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier(
-  'urn:uuid:160f3b7a-9779-11e5-ad39-3c15c2ceea1e'
+  'urn:uuid:a9148982-fff9-11e5-864a-3c15c2ceea1e'
 )
 
 # Version of PyXB used to generate the bindings
-_PyXBVersion = '1.2.3'
+_PyXBVersion = '1.2.4'
 # Generated bindings are not compatible across PyXB versions
 if pyxb.__version__ != _PyXBVersion:
   raise pyxb.PyXBVersionError(_PyXBVersion)
@@ -29,7 +31,7 @@ import d1_common.types.dataoneTypes_v1 as _ImportedBinding_d1_common_types_datao
 
 # NOTE: All namespace declarations are reserved within the binding
 Namespace = pyxb.namespace.NamespaceForURI(
-  u'http://ns.dataone.org/service/types/v1.1',
+  'http://ns.dataone.org/service/types/v1.1',
   create_if_missing=True
 )
 Namespace.configureCategories(['typeBinding', 'elementBinding'])
@@ -56,7 +58,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
 
   if pyxb.XMLStyle_saxer != pyxb._XMLStyle:
     dom = pyxb.utils.domutils.StringToDOM(xml_text)
-    return CreateFromDOM(dom.documentElement)
+    return CreateFromDOM(dom.documentElement, default_namespace=default_namespace)
   if default_namespace is None:
     default_namespace = Namespace.fallbackNamespace()
   saxer = pyxb.binding.saxer.make_parser(
@@ -65,7 +67,7 @@ def CreateFromDocument(xml_text, default_namespace=None, location_base=None):
   )
   handler = saxer.getContentHandler()
   xmld = xml_text
-  if isinstance(xmld, unicode):
+  if isinstance(xmld, _six.text_type):
     xmld = xmld.encode(pyxb._InputEncoding)
   saxer.parse(io.BytesIO(xmld))
   instance = handler.rootObject()
@@ -89,7 +91,7 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'QueryEngineDescription')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'QueryEngineDescription')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
     72, 2
@@ -101,7 +103,7 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
   # Element queryEngineVersion uses Python identifier queryEngineVersion
   __queryEngineVersion = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'queryEngineVersion'
+      None, 'queryEngineVersion'
     ),
     'queryEngineVersion',
     '__httpns_dataone_orgservicetypesv1_1_QueryEngineDescription_queryEngineVersion',
@@ -114,13 +116,13 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
 
   queryEngineVersion = property(
     __queryEngineVersion.value, __queryEngineVersion.set, None,
-    u'The version of the underlying query engine. Used by clients to determine possible\n          compatibility concerns or features available.'
+    'The version of the underlying query engine. Used by clients to determine possible\n          compatibility concerns or features available.'
   )
 
   # Element querySchemaVersion uses Python identifier querySchemaVersion
   __querySchemaVersion = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'querySchemaVersion'
+      None, 'querySchemaVersion'
     ),
     'querySchemaVersion',
     '__httpns_dataone_orgservicetypesv1_1_QueryEngineDescription_querySchemaVersion',
@@ -133,13 +135,13 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
 
   querySchemaVersion = property(
     __querySchemaVersion.value, __querySchemaVersion.set, None,
-    u'Version of the schema in use by the query engine, e.g. "1.0.1"'
+    'Version of the schema in use by the query engine, e.g. "1.0.1"'
   )
 
   # Element name uses Python identifier name
   __name = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'name'
+      None, 'name'
     ),
     'name',
     '__httpns_dataone_orgservicetypesv1_1_QueryEngineDescription_name',
@@ -152,13 +154,13 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
 
   name = property(
     __name.value, __name.set, None,
-    u'The full, human readable name of the query engine. For example: \n            "Apache SOLR"'
+    'The full, human readable name of the query engine. For example: \n            "Apache SOLR"'
   )
 
   # Element additionalInfo uses Python identifier additionalInfo
   __additionalInfo = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'additionalInfo'
+      None, 'additionalInfo'
     ),
     'additionalInfo',
     '__httpns_dataone_orgservicetypesv1_1_QueryEngineDescription_additionalInfo',
@@ -171,13 +173,13 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
 
   additionalInfo = property(
     __additionalInfo.value, __additionalInfo.set, None,
-    u'An optional human readable description of the query engine. This can be \n            used to describe any special capabilities or intended uses for the query engine. For example, \n            a query engine may be tuned to suit a particular audience or domain as opposed to providing \n            a general purpose discovery mechanism.This field may also contain links to additional information about the query engine, \n          such as documentation for the search syntax provided by the query engine implemntors.'
+    'An optional human readable description of the query engine. This can be \n            used to describe any special capabilities or intended uses for the query engine. For example, \n            a query engine may be tuned to suit a particular audience or domain as opposed to providing \n            a general purpose discovery mechanism.This field may also contain links to additional information about the query engine, \n          such as documentation for the search syntax provided by the query engine implemntors.'
   )
 
   # Element queryField uses Python identifier queryField
   __queryField = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'queryField'
+      None, 'queryField'
     ),
     'queryField',
     '__httpns_dataone_orgservicetypesv1_1_QueryEngineDescription_queryField',
@@ -190,7 +192,7 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
 
   queryField = property(
     __queryField.value, __queryField.set, None,
-    u'A list of query fields supported by the query engine.'
+    'A list of query fields supported by the query engine.'
   )
 
   _ElementMap.update(
@@ -206,7 +208,7 @@ class QueryEngineDescription(pyxb.binding.basis.complexTypeDefinition):
 
 
 Namespace.addCategoryObject(
-  'typeBinding', u'QueryEngineDescription', QueryEngineDescription
+  'typeBinding', 'QueryEngineDescription', QueryEngineDescription
 )
 
 
@@ -217,7 +219,7 @@ class QueryEngineList(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'QueryEngineList')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'QueryEngineList')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
     114, 2
@@ -229,7 +231,7 @@ class QueryEngineList(pyxb.binding.basis.complexTypeDefinition):
   # Element queryEngine uses Python identifier queryEngine
   __queryEngine = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'queryEngine'
+      None, 'queryEngine'
     ),
     'queryEngine',
     '__httpns_dataone_orgservicetypesv1_1_QueryEngineList_queryEngine',
@@ -242,14 +244,14 @@ class QueryEngineList(pyxb.binding.basis.complexTypeDefinition):
 
   queryEngine = property(
     __queryEngine.value, __queryEngine.set, None,
-    u'The name of a queryEngine. This value will be used as a path element in \n            REST API calls and so should not contain characters that will need to be escaped.'
+    'The name of a queryEngine. This value will be used as a path element in \n            REST API calls and so should not contain characters that will need to be escaped.'
   )
 
   _ElementMap.update({__queryEngine.name(): __queryEngine})
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'QueryEngineList', QueryEngineList)
+Namespace.addCategoryObject('typeBinding', 'QueryEngineList', QueryEngineList)
 
 
 # Complex type {http://ns.dataone.org/service/types/v1.1}QueryField with content type ELEMENT_ONLY
@@ -258,7 +260,7 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
   _TypeDefinition = None
   _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
   _Abstract = False
-  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'QueryField')
+  _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'QueryField')
   _XSDLocation = pyxb.utils.utility.Location(
     '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
     131, 2
@@ -270,7 +272,7 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
   # Element name uses Python identifier name
   __name = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'name'
+      None, 'name'
     ),
     'name',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_name',
@@ -283,13 +285,13 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   name = property(
     __name.value, __name.set, None,
-    u'The name of the field as used programmatically when \n            constructing queries or other rferences to the field.'
+    'The name of the field as used programmatically when \n            constructing queries or other rferences to the field.'
   )
 
   # Element description uses Python identifier description
   __description = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'description'
+      None, 'description'
     ),
     'description',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_description',
@@ -302,13 +304,13 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   description = property(
     __description.value, __description.set, None,
-    u'An optional, repeatable, brief description of the field that can be\n          used to help guide developers or end users in appropriate use of the field. May for \n          example, contain a links to additional documentation.'
+    'An optional, repeatable, brief description of the field that can be\n          used to help guide developers or end users in appropriate use of the field. May for \n          example, contain a links to additional documentation.'
   )
 
   # Element type uses Python identifier type
   __type = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'type'
+      None, 'type'
     ),
     'type',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_type',
@@ -321,13 +323,13 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   type = property(
     __type.value, __type.set, None,
-    u'The type of the field, expressed in the language peculiar to the \n          query engine being described.'
+    'The type of the field, expressed in the language peculiar to the \n          query engine being described.'
   )
 
   # Element searchable uses Python identifier searchable
   __searchable = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'searchable'
+      None, 'searchable'
     ),
     'searchable',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_searchable',
@@ -340,13 +342,13 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   searchable = property(
     __searchable.value, __searchable.set, None,
-    u'Indicates if the field may be used in constructing queries (as opposed \n            to only appearing in results)'
+    'Indicates if the field may be used in constructing queries (as opposed \n            to only appearing in results)'
   )
 
   # Element returnable uses Python identifier returnable
   __returnable = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'returnable'
+      None, 'returnable'
     ),
     'returnable',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_returnable',
@@ -359,13 +361,13 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   returnable = property(
     __returnable.value, __returnable.set, None,
-    u'Indicates if the field values may be returned in search results.'
+    'Indicates if the field values may be returned in search results.'
   )
 
   # Element sortable uses Python identifier sortable
   __sortable = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'sortable'
+      None, 'sortable'
     ),
     'sortable',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_sortable',
@@ -378,13 +380,13 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   sortable = property(
     __sortable.value, __sortable.set, None,
-    u'Indicates if the field can be used for sorting results.'
+    'Indicates if the field can be used for sorting results.'
   )
 
   # Element multivalued uses Python identifier multivalued
   __multivalued = pyxb.binding.content.ElementDeclaration(
     pyxb.namespace.ExpandedName(
-      None, u'multivalued'
+      None, 'multivalued'
     ),
     'multivalued',
     '__httpns_dataone_orgservicetypesv1_1_QueryField_multivalued',
@@ -397,7 +399,7 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
 
   multivalued = property(
     __multivalued.value, __multivalued.set, None,
-    u'Indicates if the field may contain multiple values. Some query engines\n          such as SOLR support this capability.'
+    'Indicates if the field may contain multiple values. Some query engines\n          such as SOLR support this capability.'
   )
 
   _ElementMap.update(
@@ -414,11 +416,11 @@ class QueryField(pyxb.binding.basis.complexTypeDefinition):
   _AttributeMap.update({})
 
 
-Namespace.addCategoryObject('typeBinding', u'QueryField', QueryField)
+Namespace.addCategoryObject('typeBinding', 'QueryField', QueryField)
 
 queryEngineList = pyxb.binding.basis.element(
   pyxb.namespace.ExpandedName(
-    Namespace, u'queryEngineList'
+    Namespace, 'queryEngineList'
   ),
   QueryEngineList,
   location=pyxb.utils.utility.Location(
@@ -433,7 +435,7 @@ Namespace.addCategoryObject(
 
 queryEngineDescription = pyxb.binding.basis.element(
   pyxb.namespace.ExpandedName(
-    Namespace, u'queryEngineDescription'
+    Namespace, 'queryEngineDescription'
   ),
   QueryEngineDescription,
   location=pyxb.utils.utility.Location(
@@ -449,11 +451,11 @@ Namespace.addCategoryObject(
 QueryEngineDescription._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'queryEngineVersion'
+      None, 'queryEngineVersion'
     ),
     pyxb.binding.datatypes.string,
     scope=QueryEngineDescription,
-    documentation=u'The version of the underlying query engine. Used by clients to determine possible\n          compatibility concerns or features available.',
+    documentation='The version of the underlying query engine. Used by clients to determine possible\n          compatibility concerns or features available.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       78, 6
@@ -464,11 +466,11 @@ QueryEngineDescription._AddElement(
 QueryEngineDescription._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'querySchemaVersion'
+      None, 'querySchemaVersion'
     ),
     pyxb.binding.datatypes.string,
     scope=QueryEngineDescription,
-    documentation=u'Version of the schema in use by the query engine, e.g. "1.0.1"',
+    documentation='Version of the schema in use by the query engine, e.g. "1.0.1"',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       84, 6
@@ -479,11 +481,11 @@ QueryEngineDescription._AddElement(
 QueryEngineDescription._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'name'
+      None, 'name'
     ),
     pyxb.binding.datatypes.string,
     scope=QueryEngineDescription,
-    documentation=u'The full, human readable name of the query engine. For example: \n            "Apache SOLR"',
+    documentation='The full, human readable name of the query engine. For example: \n            "Apache SOLR"',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       89, 6
@@ -494,11 +496,11 @@ QueryEngineDescription._AddElement(
 QueryEngineDescription._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'additionalInfo'
+      None, 'additionalInfo'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=QueryEngineDescription,
-    documentation=u'An optional human readable description of the query engine. This can be \n            used to describe any special capabilities or intended uses for the query engine. For example, \n            a query engine may be tuned to suit a particular audience or domain as opposed to providing \n            a general purpose discovery mechanism.This field may also contain links to additional information about the query engine, \n          such as documentation for the search syntax provided by the query engine implemntors.',
+    documentation='An optional human readable description of the query engine. This can be \n            used to describe any special capabilities or intended uses for the query engine. For example, \n            a query engine may be tuned to suit a particular audience or domain as opposed to providing \n            a general purpose discovery mechanism.This field may also contain links to additional information about the query engine, \n          such as documentation for the search syntax provided by the query engine implemntors.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       95, 6
@@ -509,11 +511,11 @@ QueryEngineDescription._AddElement(
 QueryEngineDescription._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'queryField'
+      None, 'queryField'
     ),
     QueryField,
     scope=QueryEngineDescription,
-    documentation=u'A list of query fields supported by the query engine.',
+    documentation='A list of query fields supported by the query engine.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       105, 6
@@ -530,8 +532,8 @@ def _BuildAutomaton():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       84, 6
@@ -539,7 +541,7 @@ def _BuildAutomaton():
   )
   counters.add(cc_0)
   cc_1 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -548,7 +550,7 @@ def _BuildAutomaton():
   )
   counters.add(cc_1)
   cc_2 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -561,7 +563,7 @@ def _BuildAutomaton():
   symbol = pyxb.binding.content.ElementUse(
     QueryEngineDescription._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'queryEngineVersion'
+        None, 'queryEngineVersion'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -579,7 +581,7 @@ def _BuildAutomaton():
   symbol = pyxb.binding.content.ElementUse(
     QueryEngineDescription._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'querySchemaVersion'
+        None, 'querySchemaVersion'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -597,7 +599,7 @@ def _BuildAutomaton():
   symbol = pyxb.binding.content.ElementUse(
     QueryEngineDescription._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'name'
+        None, 'name'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -616,7 +618,7 @@ def _BuildAutomaton():
   symbol = pyxb.binding.content.ElementUse(
     QueryEngineDescription._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'additionalInfo'
+        None, 'additionalInfo'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -635,7 +637,7 @@ def _BuildAutomaton():
   symbol = pyxb.binding.content.ElementUse(
     QueryEngineDescription._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'queryField'
+        None, 'queryField'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -676,11 +678,11 @@ QueryEngineDescription._Automaton = _BuildAutomaton()
 QueryEngineList._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'queryEngine'
+      None, 'queryEngine'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=QueryEngineList,
-    documentation=u'The name of a queryEngine. This value will be used as a path element in \n            REST API calls and so should not contain characters that will need to be escaped.',
+    documentation='The name of a queryEngine. This value will be used as a path element in \n            REST API calls and so should not contain characters that will need to be escaped.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       120, 6
@@ -697,7 +699,7 @@ def _BuildAutomaton_():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -711,7 +713,7 @@ def _BuildAutomaton_():
   symbol = pyxb.binding.content.ElementUse(
     QueryEngineList._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'queryEngine'
+        None, 'queryEngine'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -736,11 +738,11 @@ QueryEngineList._Automaton = _BuildAutomaton_()
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'name'
+      None, 'name'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=QueryField,
-    documentation=u'The name of the field as used programmatically when \n            constructing queries or other rferences to the field.',
+    documentation='The name of the field as used programmatically when \n            constructing queries or other rferences to the field.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       136, 6
@@ -751,11 +753,11 @@ QueryField._AddElement(
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'description'
+      None, 'description'
     ),
     pyxb.binding.datatypes.string,
     scope=QueryField,
-    documentation=u'An optional, repeatable, brief description of the field that can be\n          used to help guide developers or end users in appropriate use of the field. May for \n          example, contain a links to additional documentation.',
+    documentation='An optional, repeatable, brief description of the field that can be\n          used to help guide developers or end users in appropriate use of the field. May for \n          example, contain a links to additional documentation.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       142, 6
@@ -766,11 +768,11 @@ QueryField._AddElement(
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'type'
+      None, 'type'
     ),
     _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString,
     scope=QueryField,
-    documentation=u'The type of the field, expressed in the language peculiar to the \n          query engine being described.',
+    documentation='The type of the field, expressed in the language peculiar to the \n          query engine being described.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       149, 6
@@ -781,11 +783,11 @@ QueryField._AddElement(
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'searchable'
+      None, 'searchable'
     ),
     pyxb.binding.datatypes.boolean,
     scope=QueryField,
-    documentation=u'Indicates if the field may be used in constructing queries (as opposed \n            to only appearing in results)',
+    documentation='Indicates if the field may be used in constructing queries (as opposed \n            to only appearing in results)',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       155, 6
@@ -796,11 +798,11 @@ QueryField._AddElement(
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'returnable'
+      None, 'returnable'
     ),
     pyxb.binding.datatypes.boolean,
     scope=QueryField,
-    documentation=u'Indicates if the field values may be returned in search results.',
+    documentation='Indicates if the field values may be returned in search results.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       161, 6
@@ -811,11 +813,11 @@ QueryField._AddElement(
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'sortable'
+      None, 'sortable'
     ),
     pyxb.binding.datatypes.boolean,
     scope=QueryField,
-    documentation=u'Indicates if the field can be used for sorting results.',
+    documentation='Indicates if the field can be used for sorting results.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       166, 6
@@ -826,11 +828,11 @@ QueryField._AddElement(
 QueryField._AddElement(
   pyxb.binding.basis.element(
     pyxb.namespace.ExpandedName(
-      None, u'multivalued'
+      None, 'multivalued'
     ),
     pyxb.binding.datatypes.boolean,
     scope=QueryField,
-    documentation=u'Indicates if the field may contain multiple values. Some query engines\n          such as SOLR support this capability.',
+    documentation='Indicates if the field may contain multiple values. Some query engines\n          such as SOLR support this capability.',
     location=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       171, 6
@@ -847,7 +849,7 @@ def _BuildAutomaton_2():
 
   counters = set()
   cc_0 = fac.CounterCondition(
-    min=0L,
+    min=0,
     max=None,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -856,8 +858,8 @@ def _BuildAutomaton_2():
   )
   counters.add(cc_0)
   cc_1 = fac.CounterCondition(
-    min=0L,
-    max=1L,
+    min=0,
+    max=1,
     metadata=pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
       171, 6
@@ -869,7 +871,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'name'
+        None, 'name'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -887,7 +889,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'description'
+        None, 'description'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -905,7 +907,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'type'
+        None, 'type'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -923,7 +925,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'searchable'
+        None, 'searchable'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -941,7 +943,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'returnable'
+        None, 'returnable'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -959,7 +961,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'sortable'
+        None, 'sortable'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
@@ -978,7 +980,7 @@ def _BuildAutomaton_2():
   symbol = pyxb.binding.content.ElementUse(
     QueryField._UseForTag(
       pyxb.namespace.ExpandedName(
-        None, u'multivalued'
+        None, 'multivalued'
       )
     ), pyxb.utils.utility.Location(
       '/Users/vieglais/Documents/Projects/DataONE_PhaseII/Projects/d1_common_python_v2_vieglais/src/d1_common/types/schemas/dataoneTypes_v1.1.xsd',
