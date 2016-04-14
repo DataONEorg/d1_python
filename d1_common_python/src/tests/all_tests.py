@@ -44,7 +44,6 @@ from test_checksum import TestChecksum
 from test_date_time import TestDateTime
 from test_exceptions import TestExceptions
 from test_logrecords import TestObjectList
-from test_mime_multipart import TestMimeMultipart
 from test_nodelist import TestNodeList
 from test_objectlist import TestObjectList
 from test_objectlocationlist import TestObjectLocationList
