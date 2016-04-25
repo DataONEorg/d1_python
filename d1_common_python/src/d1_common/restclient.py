@@ -91,6 +91,7 @@ class RESTClient(object):
   def __init__(self,
                host=None,
                scheme="https",
+               port=443,
                timeout=d1_common.const.RESPONSE_TIMEOUT,
                n_tries=DEFAULT_NUMBER_OF_TRIES,
                defaultHeaders=None,
@@ -131,6 +132,7 @@ class RESTClient(object):
     '''
     self.logger = logging.getLogger(__file__)
     self._host = host
+    self._port = port
     if self._host is not None:
       self.logger.warn("Use of 'host' parameter is deprecated.")
     self._scheme = scheme
@@ -296,7 +298,7 @@ class RESTClient(object):
       #Support old style implementation that take host and scheme in 
       #constructor
       if not url.lower().startswith('http'):
-        url = "{0}://{1}{2}".format(self._scheme, self._host, url)
+        url = "{0}://{1}:{2}{3}".format(self._scheme, self._host, self._port, url)
     return url
     
 
