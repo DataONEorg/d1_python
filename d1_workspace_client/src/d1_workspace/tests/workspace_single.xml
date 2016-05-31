@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
+
+  <folder name="single">
+    <identifier>Akasha.10.1</identifier>
+    <identifier>Akasha.8.1</identifier>
+    <identifier>AKCRRAB.31.1</identifier>
+    <identifier>ark\:/13030/m50000t4/1/cadwsap-s1610004-004-main.csv</identifier>
+    <identifier>alejonico.3.4</identifier>
+    <query>id:C*</query>
+    <query>id:D*</query>
+  </folder>
+
+</folder>
