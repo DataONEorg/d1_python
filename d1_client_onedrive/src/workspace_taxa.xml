@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_workspace_client/types/workspace_types.xsd" name="root">
+  <query>kingdom:['' TO *] AND -obsoletedBy:*</query>
+  <query>phylum:['' TO *] AND -obsoletedBy:*</query>
+  <query>class:['' TO *] AND -obsoletedBy:*</query>
+  <query>order:['' TO *] AND -obsoletedBy:*</query>
+  <query>family:['' TO *] AND -obsoletedBy:*</query>
+  <query>genus:['' TO *] AND -obsoletedBy:*</query>
+  <query>species:['' TO *] AND -obsoletedBy:*</query>
+  <query>scientificName:['' TO *] AND -obsoletedBy:*</query>
+  <query>author:['' TO *] AND -obsoletedBy:*</query>
+  <query>site:['' TO *] AND -obsoletedBy:*</query>
+  <query>beginDate:* AND -obsoletedBy:*</query>
+  <query>endDate:* AND -obsoletedBy:*</query>
+</folder>

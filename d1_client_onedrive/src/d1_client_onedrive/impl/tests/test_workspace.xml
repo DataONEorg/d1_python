@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/home/dahl/d1/d1_python/d1_object_tree_client/types/object_tree_types.xsd" name="root">
+  <folder name="folder_1">
+    <identifier>dataone_identifier_1a</identifier>
+    <identifier>dataone_identifier_1b</identifier>
+    <query>solr_query_1a</query>
+    <query>solr_query_1b</query>
+  </folder>
+  <folder name="folder_2">
+    <folder name="folder_3">
+      <identifier>dataone_identifier_23a</identifier>
+      <identifier>dataone_identifier_23b</identifier>
+      <query>solr_query_23a</query>
+      <query>solr_query_23b</query>
+    </folder>
+    <identifier>dataone_identifier_2a</identifier>
+    <identifier>dataone_identifier_2b</identifier>
+    <query>solr_query_2a</query>
+    <query>solr_query_2b</query>
+  </folder>
+  <identifier>dataone_identifier_a</identifier>
+  <identifier>dataone_identifier_b</identifier>
+  <query>solr_query_a</query>
+  <query>solr_query_b</query>
+</folder>

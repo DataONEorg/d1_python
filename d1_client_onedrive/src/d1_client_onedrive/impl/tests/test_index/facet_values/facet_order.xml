@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+<lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int><lst name="params"><str name="facet">on</str><str name="q">*:*</str><str name="facet.field">order</str><str name="rows">0</str></lst></lst><result name="response" numFound="1357" start="0"/><lst name="facet_counts"><lst name="facet_queries"/><lst name="facet_fields"><lst name="order"/></lst><lst name="facet_dates"/><lst name="facet_ranges"/></lst>
+</response>
