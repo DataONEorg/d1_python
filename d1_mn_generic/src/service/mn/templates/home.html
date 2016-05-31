@@ -1,0 +1,131 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link type="text/css" rel="Stylesheet" href="/static/jquery-ui-1.10.4.custom/css/start/jquery-ui-1.10.4.custom.min.css" />
+    <script type="text/javascript" src="/static/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="/static/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script type="text/javascript">
+
+      $(function() {
+        $("#tabs").tabs();
+      });
+
+    </script>
+
+    <style type="text/css">
+      table {
+      }
+      td {
+        vertical-align:top;
+        padding-right:10px;
+      }
+
+      div.description {
+        font-size: medium;
+      }
+
+      div.logoheader {
+        background: transparent url("/static/images/preface-wrapper-bg.png") repeat-x top left;
+        height: 101px;
+      }
+      div.logoheader h1 {
+        background: transparent url("/static/images/d1_logo.png") no-repeat top left;
+        margin: 10px 9px;
+        width: 333px;
+        height: 77px;
+        float: left;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+    <div class="logoheader"><h1></h1></div>
+
+    <div id="tabs">
+
+      <ul>
+        <li><a href="#memberNode">Member Node Details</a></li>
+        <li><a href="#description">Description</a></li>
+      </ul>
+
+      <div id="memberNode">
+        <table>
+          <tbody>
+            <tr>
+              <td>Node ID:</td>
+              <td>{{ node_identifier }}</td>
+            </tr>
+            <tr>
+              <td>Name:</td>
+              <td>{{ node_name }}</td>
+            </tr>
+            <tr>
+              <td>GMN version:</td>
+              <td>{{ gmn_version }}</td>
+            </tr>
+            <tr>
+              <td>Django version:</td>
+              <td>{{ django_version }}</td>
+            </tr>
+            <tr>
+              <td>Average size of Science objects:</td>
+              <td>{{ avg_sci_data_size }} bytes</td>
+            </tr>
+            <tr>
+              <td>Objects:</td>
+              <td>{{ n_science_objects }}</td>
+            </tr>
+            <tr>
+              <td>Operations, total:</td>
+              <td>{{ n_connections_total }}</td>
+            </tr>
+            <tr>
+              <td>Operations, last hour:</td>
+              <td>{{ n_connections_in_last_hour }}</td>
+            </tr>
+            <tr>
+              <td>Subjects:</td>
+              <td>{{ n_unique_subjects }}</td>
+            </tr>
+            <tr>
+              <td>Permissions:</td>
+              <td>{{ n_permissions }}</td>
+            </tr>
+            <tr>
+              <td>Server time:</td>
+              <td>{{ server_time }}</td>
+            </tr>
+            <tr>
+              <td>Storage used / remaining:</td>
+              <td>{{ storage_space }}</td>
+            </tr>
+            <tr>
+              <td>Science objects by Format:</td>
+              <td>
+              <table>
+                <tbody>
+                  {% for o in n_objects_by_format_id %}
+                  <tr>
+                    <td>{{ o.format__format_id }}</td>
+                    <td>{{ o.dcount }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="description" class="description">
+        {{ node_description }}
+      </div>
+
+    </div>
+  </body>
+</html>

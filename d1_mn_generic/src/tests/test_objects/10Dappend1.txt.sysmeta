@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>10Dappend1.txt</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>2522</size>
+  <checksum algorithm="SHA-1">404c9ed764c10493ddb0367505d3a03f03080a59</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>975@shadily</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>4782@rigorously@seekers</subject>
+      <subject>sparingly~renault~9208</subject>
+      <subject>5227@manuscript@objectively</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:42.494977</dateUploaded>
+  <dateSysMetadataModified>1995-08-25T06:59:00</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

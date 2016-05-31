@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.1228" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=1400" ID="hdl:10255/dryad.1228" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Tomasovych, Adam</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Kidwell, Susan M.</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">southern California</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="temporal" language="en">Holocene</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2010-02-04T06:06:00Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2010-02-04T06:06:00Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">2010-02-04T06:06:00Z</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.1228</dim:field>
+<dim:field element="description" mdschema="dc" language="en">Sample sizes of living and death assemblages and sedimentologic, geographic and bathymetric information about the position of individual stations sampled in 1975 and 2003 in the southern California Bight. Stations with muddy sand and sandy mud were analyzed in this study (four habitats in total).</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="en">http://hdl.handle.net/10255/dryad.1225</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="en">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">paleoecology</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">taphonomy</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">metacommunity</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">diversity</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">temporal scale</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">rank abundance</dim:field>
+<dim:field element="title" mdschema="dc" language="en">Station information.xls</dim:field>
+<dim:field element="type" mdschema="dc" language="en">Dataset</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="en">Mollusca</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="en">Bivalvia</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_995" SIZE="20480" CHECKSUM="58625de3dcd3c520ea0ee374c21827f3" MIMETYPE="application/vnd.ms-excel" CHECKSUMTYPE="MD5" ID="file_995">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.1228/Station%20information.xls?sequence=1" xlink:title="Station information.xls" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_995"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

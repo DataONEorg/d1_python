@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>CaseTDT.xls</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>98816</size>
+  <checksum algorithm="MD5">4a8565eddcef66b2147d3aa313f3ebbb</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>profiteers=7446</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>authenticators-733</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:47.217929</dateUploaded>
+  <dateSysMetadataModified>1992-01-29T07:54:57</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

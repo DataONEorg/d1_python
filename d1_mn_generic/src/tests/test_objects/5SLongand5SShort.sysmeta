@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>5SLongand5SShort</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>16549</size>
+  <checksum algorithm="MD5">9d2f0782e36c2089e7e4dd85033a9efc</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>artfully/3822</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>singing.3369</subject>
+      <subject>sparingly~renault~9208</subject>
+      <subject>melanie~1855</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:45.696762</dateUploaded>
+  <dateSysMetadataModified>1984-03-25T10:02:00</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

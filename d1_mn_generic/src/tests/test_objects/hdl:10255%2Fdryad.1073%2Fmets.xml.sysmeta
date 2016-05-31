@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>hdl:10255/dryad.1073/mets.xml</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>3635</size>
+  <checksum algorithm="MD5">c8e2772d39fb3eb94f876ca4a45d344b</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>8335_flick_cogitate</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>7408@outskirts@absorbency</subject>
+      <subject>profiteers=7446</subject>
+      <subject>melanie~1855</subject>
+      <subject>blocking_687</subject>
+      <subject>santa=purposefully=3775</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:42.762203</dateUploaded>
+  <dateSysMetadataModified>1970-02-06T18:11:22</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

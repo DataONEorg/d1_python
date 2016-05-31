@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.1102" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=1261" ID="hdl:10255/dryad.1102" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Roberts, Trina E.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Davenport, Tim R. B.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Hildebrandt, Kyndall B. P.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Jones, Trevor</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Stanley, William T.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Sargis, Eric J.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Olson, Link E.</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Africa</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Tanzania</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Udzungwa Mountains</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2009-11-20T22:12:11Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2009-11-20T22:12:11Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">2009-11-20T22:12:11Z</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.1102</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="en">http://hdl.handle.net/10255/dryad.1096</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="en">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">baboons</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">hybridization</dim:field>
+<dim:field element="title" mdschema="dc" language="en">MrBayes Consensus Trees</dim:field>
+<dim:field element="type" mdschema="dc" language="en">Dataset</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="">Rungwecebus</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="">Kipunji</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="">Papio</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_941" SIZE="10338" CHECKSUM="894e543ef3db79a4c96bdc1ae05dabca" MIMETYPE="application/octet-stream" CHECKSUMTYPE="MD5" ID="file_941">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.1102/consensus_trees.zip?sequence=1" xlink:title="consensus_trees.zip" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_941"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

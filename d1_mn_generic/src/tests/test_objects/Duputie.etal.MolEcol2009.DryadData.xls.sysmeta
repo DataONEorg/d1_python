@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>Duputie.etal.MolEcol2009.DryadData.xls</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>203264</size>
+  <checksum algorithm="MD5">8f5374a51d3bd90609e6e16e3d239cf4</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>slugs@6367</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>4782@rigorously@seekers</subject>
+      <subject>9810_paranormal</subject>
+      <subject>authenticators-733</subject>
+      <subject>blocking_687</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:43.764227</dateUploaded>
+  <dateSysMetadataModified>1983-03-17T06:20:40</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

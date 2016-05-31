@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>baum.append.txt</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>45517</size>
+  <checksum algorithm="MD5">2fdf70a13c2c9bc819bde4f85788026e</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>6011~recoiled~apologist</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>singing.3369</subject>
+      <subject>9810_paranormal</subject>
+      <subject>6011~recoiled~apologist</subject>
+      <subject>stalled/squawk/5912</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:43.233699</dateUploaded>
+  <dateSysMetadataModified>1999-02-15T08:42:12</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

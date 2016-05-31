@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.212" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=235" ID="hdl:10255/dryad.212" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Jin, Wei</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Riley, Rebecca M.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Wolfinger, Russel D.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">White, Kevin P.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Passador-Gurgel, Gisele</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Gibson, Greg</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2008-10-16T17:50:36Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2008-10-16T17:50:36Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">2001-12</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.212</dim:field>
+<dim:field element="description" mdschema="dc" language="en_US">This is a pdf showing the location of the 48 12x8 grids used to collect the data. Note that there are only 8 clones in the last grid of each sector [12, 24, 36, and 28]</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="">http://hdl.handle.net/1025/dryad.120</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="title" mdschema="dc" language="en_US">Template Data Set</dim:field>
+<dim:field element="type" mdschema="dc" language="en_US">Dataset</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_430" SIZE="1684619" CHECKSUM="e014d731af46e6832b21fcb1e9f12c94" MIMETYPE="application/pdf" CHECKSUMTYPE="MD5" ID="file_430">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.212/Template.pdf?sequence=1" xlink:title="Template.pdf" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_430"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

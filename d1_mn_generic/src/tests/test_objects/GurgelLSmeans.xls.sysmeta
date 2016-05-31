@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>GurgelLSmeans.xls</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>1048576</size>
+  <checksum algorithm="MD5">a8ce1bbf6ad919b6e26d6d08e2f6a42e</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>blocking_687</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>9810_paranormal</subject>
+      <subject>8335_flick_cogitate</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:44.863014</dateUploaded>
+  <dateSysMetadataModified>1971-06-06T11:25:26</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

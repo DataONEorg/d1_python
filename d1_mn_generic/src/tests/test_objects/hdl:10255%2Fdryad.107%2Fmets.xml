@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.107" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=114" ID="hdl:10255/dryad.107" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Chombard, Catherine</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Boury-Esnault, Nicole</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="">Tillier, Simon</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2008-03-21T14:09:11Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2008-03-21T14:09:11Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">1998-09-01</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.107</dim:field>
+<dim:field element="publisher" mdschema="dc" language="en_US">Taylor &amp; Francis</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="">http://hdl.handle.net/10255/dryad.106</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="subject" mdschema="dc" language="">phylogeny</dim:field>
+<dim:field element="subject" mdschema="dc" language="">ribosomal DNA</dim:field>
+<dim:field element="subject" mdschema="dc" language="">molecular systematics</dim:field>
+<dim:field element="subject" mdschema="dc" language="">skeleton</dim:field>
+<dim:field element="subject" mdschema="dc" language="">homology</dim:field>
+<dim:field element="subject" mdschema="dc" language="">spicule</dim:field>
+<dim:field element="title" mdschema="dc" language="en_US">Chombard et al Data Matrix</dim:field>
+<dim:field element="type" mdschema="dc" language="en_US">Dataset</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="">Tetractinellida</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="">Demospongiae</dim:field>
+<dim:field element="ScientificName" mdschema="dwc" language="">Astrophorida</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_211" SIZE="22274" CHECKSUM="f0f7b7dd090540313da908395d747834" MIMETYPE="text/plain" CHECKSUMTYPE="MD5" ID="file_211">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.107/9HNEXUS.txt?sequence=1" xlink:title="9HNEXUS.txt" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_211"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>

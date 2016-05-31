@@ -1,0 +1,452 @@
+10Dappend1.txt,create,21.22.23.24,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",25.26.27.28,1970-01-03T10:42:45,MN3
+10Dappend2.txt,create,1.2.3.4,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",21.22.23.24,1970-01-05T08:49:18,MN3
+12Cpaup.txt,create,25.26.27.28,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),9.10.11.12,1970-01-04T23:51:20,MN3
+12Cpaup.txt,read,5.6.7.8,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1990-12-16T19:58:07,MN3
+12Cpaup.txt,delete,21.22.23.24,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1975-05-04T11:14:47,MN3
+12Cpaup.txt,replicate,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1989-03-05T02:52:46,MN4
+12Cpaup.txt,replicate,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1984-07-30T10:50:43,MN1
+12Cpaup.txt,read,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1994-07-24T01:48:29,MN1
+12Cpaup.txt,read,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1999-10-05T01:34:37,MN4
+12Cpaup.txt,replicate,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],13.14.15.16,1986-02-17T07:58:40,MN2
+15Jmatrix1.txt,create,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],5.6.7.8,1970-01-02T16:58:38,MN4
+15Jmatrix1.txt,update,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1984-08-16T05:38:09,MN3
+15Jmatrix1.txt,delete,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1993-09-08T12:29:23,MN4
+15Jmatrix1.txt,replicate,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),1.2.3.4,1976-01-03T15:46:22,MN4
+15Jmatrix1.txt,read,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1998-07-20T05:36:12,MN2
+15Jmatrix1.txt,delete,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1984-04-24T15:57:18,MN1
+15Jmatrix1.txt,read,17.18.19.20,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1979-10-22T01:06:47,MN2
+15Jmatrix1.txt,update,5.6.7.8,"Oper,a/9.20 (Windows NT 6.0; U; en)",13.14.15.16,1987-02-03T15:46:28,MN4
+15Jmatrix2.txt,create,17.18.19.20,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1970-01-06T18:49:46,MN1
+15Jmatrix2.txt,update,25.26.27.28,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1997-06-08T02:24:56,MN2
+15Jmatrix3.txt,create,21.22.23.24,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1970-01-03T13:58:29,MN4
+15Jmatrix3.txt,read,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),1.2.3.4,1970-04-26T08:56:32,MN4
+15Jmatrix3.txt,replicate,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1995-10-27T12:17:57,MN1
+15Jmatrix3.txt,replicate,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1998-10-29T22:24:59,MN2
+15Jmatrix3.txt,update,9.10.11.12,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1979-05-22T12:53:52,MN1
+15Jmatrix3.txt,delete,21.22.23.24,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1996-03-12T03:06:46,MN4
+15Jmatrix4.txt,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),17.18.19.20,1970-01-06T07:34:31,MN1
+15Jmatrix4.txt,replicate,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1986-03-24T11:28:10,MN1
+15Jmatrix4.txt,replicate,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1999-09-17T01:59:18,MN1
+15Jmatrix4.txt,replicate,5.6.7.8,"Oper,a/9.20 (Windows NT 6.0; U; en)",9.10.11.12,1977-01-09T00:55:11,MN4
+15Jmatrix4.txt,read,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1981-02-25T00:38:04,MN2
+15Jmatrix4.txt,delete,25.26.27.28,Googlebot/2.1 ( http://www.googlebot.com/bot.html),13.14.15.16,1998-09-12T08:10:12,MN3
+15Jmatrix4.txt,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,21.22.23.24,1992-12-21T20:21:21,MN4
+15Jmatrix4.txt,update,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),9.10.11.12,1998-06-16T16:35:54,MN2
+15Jmatrix4.txt,read,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1970-12-23T10:59:07,MN3
+26S.nexus,create,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1970-01-04T17:53:39,MN3
+26S.nexus,read,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),5.6.7.8,1979-11-16T08:26:16,MN1
+26S.nexus,update,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1991-02-17T06:16:11,MN1
+26S.nexus,delete,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",25.26.27.28,1980-01-19T17:18:31,MN2
+26S.nexus,delete,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1978-02-25T17:11:53,MN4
+26S.nexus,delete,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1970-01-08T04:37:46,MN1
+26S.nexus,delete,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1974-02-10T17:54:29,MN4
+26S.revised.nexus,create,17.18.19.20,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1970-01-02T08:50:34,MN2
+26S.revised.nexus,replicate,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),17.18.19.20,1979-10-01T00:11:40,MN1
+26S.revised.nexus,replicate,1.2.3.4,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),25.26.27.28,1986-06-19T00:55:47,MN1
+26S.revised.nexus,replicate,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),21.22.23.24,1991-05-05T10:19:40,MN1
+26S.revised.nexus,read,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1986-11-26T11:44:22,MN2
+26S.revised.nexus,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,9.10.11.12,1998-10-11T04:20:09,MN2
+26S.revised.nexus,replicate,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1987-10-25T12:27:14,MN1
+26S.revised.nexus,replicate,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1979-05-23T01:03:56,MN1
+5SLong(for5SShort),create,21.22.23.24,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1970-01-01T03:04:21,MN2
+5SLong(for5SShort),delete,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1992-10-27T10:59:12,MN4
+5SLong(for5SShort),delete,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1988-08-11T05:10:13,MN3
+5SLong(for5SShort),read,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1974-10-28T07:47:54,MN4
+5SLongand5SShort,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1970-01-05T03:35:37,MN3
+5SLongand5SShort,delete,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1971-06-06T07:20:20,MN3
+5SLongand5SShort,read,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1981-09-07T12:53:03,MN3
+5SLongand5SShort,delete,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1972-01-06T02:39:45,MN3
+5SLongand5SShort,delete,5.6.7.8,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1984-03-09T20:21:09,MN2
+5SLongand5SShort,delete,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1972-08-12T19:46:21,MN4
+5SLongand5SShort,read,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1991-01-31T15:16:00,MN2
+5SLongand5SShort,update,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1996-01-29T23:50:26,MN4
+5SLongand5SShort,update,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1980-08-29T11:29:39,MN1
+5sShortandcpDNA,create,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1970-01-05T00:12:56,MN1
+5sShortandcpDNA,read,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",5.6.7.8,1971-10-19T13:10:22,MN3
+5sShortandcpDNA,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1985-07-09T09:33:18,MN1
+5sShortandcpDNA,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1988-01-14T03:16:35,MN2
+5sShortandcpDNA,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1972-07-01T23:34:02,MN1
+5sShortandcpDNA,update,17.18.19.20,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1994-05-02T08:33:29,MN1
+5sShortandcpDNA,replicate,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1975-03-02T16:35:34,MN3
+9HNEXUS.txt,create,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",5.6.7.8,1970-01-06T15:41:49,MN3
+9HNEXUS.txt,delete,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1986-01-22T21:22:12,MN2
+9HNEXUS.txt,delete,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1998-08-29T20:17:51,MN2
+AnserMatrix.htm,create,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),5.6.7.8,1970-01-01T23:34:00,MN4
+AnserMatrix.htm,replicate,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1978-05-07T11:45:51,MN3
+AnserMatrix.htm,replicate,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",9.10.11.12,1991-08-31T19:02:50,MN4
+AnserMatrix.htm,replicate,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],5.6.7.8,1970-08-21T19:18:33,MN1
+AnserMatrix.htm,update,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1976-01-24T23:31:04,MN1
+AnserMatrix.htm,update,25.26.27.28,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1976-01-16T23:27:51,MN4
+Apine28S.nexus,create,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1970-01-06T14:41:42,MN4
+ApineOPSIN.nexus,create,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,1.2.3.4,1970-01-03T20:20:06,MN2
+ApineOPSIN.nexus,read,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),17.18.19.20,1998-09-02T03:26:21,MN2
+ApineOPSIN.nexus,read,25.26.27.28,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1975-06-07T08:20:19,MN4
+ApineOPSIN.nexus,update,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),25.26.27.28,1986-08-26T09:17:22,MN2
+ApineOPSIN.nexus,read,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1975-01-31T12:05:57,MN4
+Appendicesfinal.doc,create,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1969-12-31T19:25:59,MN4
+Appendicesfinal.doc,read,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1971-02-05T11:03:33,MN3
+Appendicesfinal.doc,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1989-04-05T10:37:10,MN2
+Appendicesfinal.doc,update,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1972-08-13T18:36:29,MN4
+Appendicesfinal.doc,replicate,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,17.18.19.20,1990-12-23T00:00:17,MN3
+Appendicesfinal.doc,read,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1977-06-25T07:48:14,MN3
+CaseTDT.xls,create,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1970-01-01T21:16:01,MN1
+CaseTDT.xls,read,1.2.3.4,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1970-08-19T05:07:36,MN1
+CaseTDT.xls,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],5.6.7.8,1993-10-22T02:05:56,MN2
+CaseTDT.xls,update,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1990-09-21T23:55:38,MN3
+CaseTDT.xls,update,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1979-08-10T16:03:37,MN1
+CodemlResults.zip,create,25.26.27.28,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1970-01-03T08:34:39,MN2
+Combined_Morocco.xls,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1970-01-02T06:01:58,MN4
+Combined_Morocco.xls,update,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1993-11-30T11:34:28,MN1
+Combined_Morocco.xls,delete,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1972-09-16T01:02:46,MN4
+Combined_Morocco.xls,update,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1980-11-22T20:18:23,MN4
+DPBG_EnhMethods.pdf,create,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,1.2.3.4,1970-01-05T17:59:02,MN3
+DPBG_EnhMethods.pdf,update,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],5.6.7.8,1988-01-03T12:56:20,MN4
+DPBG_EnhMethods.pdf,replicate,13.14.15.16,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,9.10.11.12,1971-07-04T16:02:36,MN4
+DPBG_EnhMethods.pdf,read,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1997-09-04T01:37:27,MN4
+DPBG_EnhMethods.pdf,replicate,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",13.14.15.16,1987-05-10T15:17:24,MN3
+DPBG_SupplTables.pdf,create,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1970-01-05T11:31:32,MN1
+DPBG_SupplTables.pdf,replicate,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",25.26.27.28,1970-12-31T13:06:51,MN1
+Drugeffect.xls,create,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1970-01-04T11:35:55,MN2
+Drugeffect.xls,update,13.14.15.16,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1977-12-07T05:42:13,MN2
+Drugeffect.xls,update,5.6.7.8,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1984-01-09T06:58:19,MN3
+Drugeffect.xls,update,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1998-06-23T18:18:30,MN1
+Drugeffect.xls,delete,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1973-09-01T17:03:05,MN1
+Drugeffect.xls,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1987-01-04T19:20:38,MN4
+Drugeffect.xls,delete,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1990-06-30T05:13:35,MN3
+Drugeffect.xls,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1989-11-11T04:13:13,MN2
+Duputie.etal.MolEcol2009.DryadData.xls,create,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,5.6.7.8,1970-01-02T15:30:17,MN3
+Duputie.etal.MolEcol2009.DryadData.xls,delete,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",9.10.11.12,1999-08-29T12:58:50,MN3
+Duputie.etal.MolEcol2009.DryadData.xls,replicate,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1994-10-13T08:43:51,MN1
+Duputie.etal.MolEcol2009.DryadData.xls,replicate,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1989-04-06T05:08:26,MN2
+Duputie.etal.MolEcol2009.DryadData.xls,delete,9.10.11.12,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1986-02-09T17:07:33,MN1
+Duputie.etal.MolEcol2009.DryadData.xls,read,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",9.10.11.12,1973-06-16T20:39:31,MN1
+EGFRalleles.zip,create,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1970-01-05T01:17:36,MN4
+EGFRalleles.zip,replicate,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1985-07-11T22:03:24,MN1
+EGFRalleles.zip,read,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1973-10-29T16:40:33,MN3
+EGFRalleles.zip,read,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",25.26.27.28,1985-01-17T23:43:16,MN1
+ExpressiononMetabolite.xls,create,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1970-01-04T05:33:48,MN3
+FigS2_Hsieh.pdf,create,13.14.15.16,Googlebot/2.1 ( http://www.googlebot.com/bot.html),1.2.3.4,1970-01-04T16:15:10,MN2
+FigS2_Hsieh.pdf,update,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1971-05-11T07:28:56,MN4
+FigS2_Hsieh.pdf,read,25.26.27.28,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1989-08-03T11:55:14,MN4
+FigS2_Hsieh.pdf,read,17.18.19.20,Mozilla/2.0 (compatible; Ask Jeeves),1.2.3.4,1973-12-04T11:22:44,MN3
+FigS2_Hsieh.pdf,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],5.6.7.8,1994-02-18T20:11:17,MN1
+FigS4_Hsieh.pdf,create,9.10.11.12,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1970-01-04T06:06:58,MN3
+FigS4_Hsieh.pdf,delete,5.6.7.8,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),17.18.19.20,1983-12-17T18:45:26,MN3
+FigS4_Hsieh.pdf,update,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1983-06-04T20:06:21,MN1
+FigS4_Hsieh.pdf,update,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],9.10.11.12,1993-01-22T10:56:50,MN2
+FigS4_Hsieh.pdf,delete,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1983-07-10T15:03:27,MN3
+FigS4_Hsieh.pdf,delete,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1999-03-08T13:46:12,MN2
+Fishbein.nexus,create,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),25.26.27.28,1970-01-06T15:05:07,MN2
+Fishbein.nexus,read,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],21.22.23.24,1996-06-01T09:50:26,MN2
+GurgelLSmeans.xls,create,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1970-01-02T00:22:47,MN1
+GurgelMIAMEcompliance.doc,create,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,17.18.19.20,1970-01-03T18:26:13,MN4
+GurgelMIAMEcompliance.doc,update,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1985-11-11T00:53:19,MN1
+abundances-SCalifornia2003.xls,create,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1970-01-06T16:07:59,MN2
+abundances-SCalifornia2003.xls,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1997-02-12T08:30:20,MN1
+abundances-SCalifornia2003.xls,replicate,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1980-11-22T20:36:42,MN4
+abundances-SCalifornia2003.xls,read,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),5.6.7.8,1995-02-25T03:54:25,MN2
+anterior1.jpg,create,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1970-01-02T13:10:47,MN2
+anterior2.jpg,create,17.18.19.20,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1970-01-04T12:12:32,MN3
+anterior2.jpg,delete,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1989-07-24T22:35:07,MN4
+anterior2.jpg,read,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",1.2.3.4,1972-10-06T03:46:48,MN3
+anterior2.jpg,replicate,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),21.22.23.24,1983-03-14T17:16:38,MN3
+baker.HD_matrix,create,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",17.18.19.20,1970-01-02T04:46:36,MN2
+baker.HD_matrix,read,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",13.14.15.16,1978-06-07T06:13:42,MN3
+baker.HD_matrix,read,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",17.18.19.20,1977-04-30T00:31:57,MN2
+baker.HD_matrix,update,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1974-05-12T21:18:28,MN4
+baum.append.txt,create,25.26.27.28,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,9.10.11.12,1970-01-05T17:34:12,MN3
+baum.append.txt,delete,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,9.10.11.12,1979-10-09T12:49:59,MN3
+baum.append.txt,read,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",5.6.7.8,1977-06-26T03:34:30,MN3
+baum.append.txt,delete,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],25.26.27.28,1975-03-19T00:43:55,MN2
+baum.append.txt,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],25.26.27.28,1993-07-27T17:24:20,MN3
+baum.append.txt,update,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",5.6.7.8,1987-03-25T20:39:26,MN4
+baum.append.txt,update,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",13.14.15.16,1995-12-20T22:37:57,MN3
+brochu.mc,create,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),17.18.19.20,1970-01-03T15:31:16,MN2
+brochu.mc,read,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",5.6.7.8,1976-10-12T19:12:49,MN2
+brochu.mc,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1974-12-22T04:43:59,MN2
+brochu.mc,update,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),1.2.3.4,1994-07-27T02:55:26,MN1
+brochu.mc,replicate,21.22.23.24,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",9.10.11.12,1989-08-22T19:46:25,MN3
+brownbear.const.xml,create,1.2.3.4,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",17.18.19.20,1970-01-01T13:00:08,MN1
+brownbear.const.xml,delete,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),5.6.7.8,1980-09-08T11:42:03,MN4
+brownbear.const.xml,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1995-11-17T18:50:09,MN2
+brownbear.const.xml,update,25.26.27.28,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1991-11-09T18:05:44,MN1
+brownbear.const.xml,update,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",21.22.23.24,1994-02-26T04:33:22,MN4
+brownbear.const.xml,replicate,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),5.6.7.8,1990-06-28T18:33:47,MN1
+brownbear.const.xml,read,25.26.27.28,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1994-01-10T21:44:28,MN4
+chlorobium.expon.xml,create,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1970-01-01T18:42:27,MN2
+chlorobium.expon.xml,read,17.18.19.20,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),5.6.7.8,1998-12-07T15:39:04,MN4
+chlorobium.expon.xml,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,9.10.11.12,1977-12-07T23:30:01,MN2
+chlorobium.expon.xml,update,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1983-11-13T22:00:06,MN2
+chlorobium.expon.xml,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1990-03-25T23:33:00,MN2
+chlorobium.expon.xml,replicate,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),13.14.15.16,1987-09-27T20:10:32,MN3
+chlorobium.expon.xml,delete,5.6.7.8,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1971-08-25T11:09:05,MN3
+co2.nex,create,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1970-01-03T20:27:25,MN1
+co2.nex,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1995-10-17T06:39:58,MN2
+co2.nex,update,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1980-05-06T08:14:34,MN2
+combined.nex,create,17.18.19.20,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),9.10.11.12,1970-01-05T14:27:58,MN1
+combined.nex,read,1.2.3.4,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),17.18.19.20,1988-11-12T21:14:10,MN2
+combined.nex,update,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1972-12-20T22:35:53,MN4
+combined.nex,replicate,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1979-11-13T05:31:16,MN2
+combined.nex,delete,17.18.19.20,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1977-06-27T03:21:05,MN3
+combined.nex,delete,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1998-12-04T16:07:58,MN3
+command_files.zip,create,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1970-01-06T15:14:43,MN1
+command_files.zip,read,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1973-11-05T06:30:43,MN1
+command_files.zip,read,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1983-03-03T03:10:54,MN1
+command_files.zip,delete,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1986-11-29T07:54:25,MN1
+command_files.zip,delete,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1981-11-06T17:02:07,MN2
+consensus_trees.zip,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",5.6.7.8,1970-01-01T22:18:28,MN1
+consensus_trees.zip,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1987-06-24T19:40:40,MN4
+consensus_trees.zip,update,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),21.22.23.24,1998-08-11T03:32:04,MN3
+consensus_trees.zip,delete,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1979-05-05T11:02:12,MN1
+consensus_trees.zip,update,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1989-05-02T08:18:27,MN2
+consensus_trees.zip,read,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1983-05-07T04:40:39,MN1
+emerson.app,create,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1970-01-02T18:49:21,MN3
+emerson.app,replicate,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1986-04-10T04:36:14,MN2
+emerson.app,delete,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1991-05-09T07:23:12,MN1
+emerson.app,delete,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,21.22.23.24,1986-09-28T17:04:38,MN1
+emerson.app,replicate,5.6.7.8,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),5.6.7.8,1996-01-15T18:04:56,MN1
+emerson.app,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1995-03-08T00:11:34,MN4
+emerson.app,read,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1998-12-10T17:53:56,MN3
+emerson.app,delete,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1995-01-08T06:37:39,MN3
+figure5-reconstruction.jpeg,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),9.10.11.12,1970-01-03T12:40:29,MN4
+figure5-reconstruction.jpeg,delete,17.18.19.20,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1993-03-09T14:01:49,MN4
+figure5-reconstruction.jpeg,update,17.18.19.20,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,17.18.19.20,1991-11-29T13:43:52,MN4
+figure5-reconstruction.jpeg,read,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1982-09-05T01:57:50,MN4
+figure5-reconstruction.jpeg,update,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",25.26.27.28,1993-11-12T21:54:19,MN2
+figure5-reconstruction.jpeg,update,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",1.2.3.4,1992-02-22T18:23:22,MN4
+figure5-reconstruction.jpeg,replicate,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1986-03-31T20:51:35,MN3
+figure5-reconstruction.jpeg,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],9.10.11.12,1995-06-12T11:45:31,MN2
+figure5-reconstruction.jpeg,delete,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),9.10.11.12,1983-12-20T08:06:40,MN1
+fitch2.mc,create,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),5.6.7.8,1970-01-01T12:40:56,MN3
+hdl:10255/dryad.1031/mets.xml,create,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],21.22.23.24,1970-01-02T08:13:27,MN1
+hdl:10255/dryad.1031/mets.xml,update,5.6.7.8,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),5.6.7.8,1979-04-25T13:36:44,MN3
+hdl:10255/dryad.1031/mets.xml,delete,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1976-05-02T04:03:02,MN2
+hdl:10255/dryad.1031/mets.xml,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,17.18.19.20,1986-09-24T20:45:06,MN3
+hdl:10255/dryad.1031/mets.xml,read,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",13.14.15.16,1975-09-13T11:13:13,MN4
+hdl:10255/dryad.1031/mets.xml,delete,25.26.27.28,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1998-02-16T04:41:03,MN4
+hdl:10255/dryad.1032/mets.xml,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),17.18.19.20,1970-01-02T23:32:05,MN1
+hdl:10255/dryad.1033/mets.xml,create,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],9.10.11.12,1970-01-02T04:49:22,MN1
+hdl:10255/dryad.1034/mets.xml,create,5.6.7.8,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),5.6.7.8,1969-12-31T17:45:25,MN3
+hdl:10255/dryad.1034/mets.xml,replicate,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1992-04-27T03:44:41,MN2
+hdl:10255/dryad.1034/mets.xml,replicate,9.10.11.12,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1987-10-15T03:33:03,MN4
+hdl:10255/dryad.1034/mets.xml,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",1.2.3.4,1982-07-25T20:53:44,MN4
+hdl:10255/dryad.1034/mets.xml,read,9.10.11.12,Opera/9.00 (Windows NT 5.1; U; en),21.22.23.24,1976-06-22T09:44:55,MN4
+hdl:10255/dryad.1034/mets.xml,replicate,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",1.2.3.4,1971-12-05T07:23:45,MN4
+hdl:10255/dryad.1035/mets.xml,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1970-01-06T10:46:28,MN2
+hdl:10255/dryad.1035/mets.xml,delete,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1972-07-18T21:32:10,MN1
+hdl:10255/dryad.1035/mets.xml,delete,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",5.6.7.8,1982-06-27T23:22:35,MN4
+hdl:10255/dryad.1035/mets.xml,replicate,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1982-04-16T22:52:59,MN2
+hdl:10255/dryad.1035/mets.xml,update,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1989-07-16T16:29:26,MN4
+hdl:10255/dryad.1035/mets.xml,update,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1992-09-21T20:24:57,MN1
+hdl:10255/dryad.1035/mets.xml,delete,13.14.15.16,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1998-11-19T06:17:24,MN2
+hdl:10255/dryad.1037/mets.xml,create,13.14.15.16,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1970-01-07T04:50:10,MN3
+hdl:10255/dryad.1037/mets.xml,read,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",13.14.15.16,1994-01-22T04:01:09,MN4
+hdl:10255/dryad.1037/mets.xml,replicate,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1992-10-14T02:22:28,MN4
+hdl:10255/dryad.1037/mets.xml,read,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],13.14.15.16,1993-07-07T22:37:35,MN2
+hdl:10255/dryad.1037/mets.xml,update,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",5.6.7.8,1994-07-24T09:30:33,MN3
+hdl:10255/dryad.1037/mets.xml,read,13.14.15.16,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1999-08-16T06:12:06,MN1
+hdl:10255/dryad.1042/mets.xml,create,21.22.23.24,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,5.6.7.8,1970-01-02T06:34:31,MN4
+hdl:10255/dryad.1042/mets.xml,delete,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),1.2.3.4,1977-11-16T06:36:22,MN1
+hdl:10255/dryad.1042/mets.xml,replicate,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,1.2.3.4,1980-03-22T05:05:02,MN1
+hdl:10255/dryad.1042/mets.xml,read,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1972-07-19T11:07:25,MN4
+hdl:10255/dryad.1042/mets.xml,replicate,1.2.3.4,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1984-05-04T10:00:14,MN1
+hdl:10255/dryad.1042/mets.xml,read,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1986-06-06T02:54:58,MN4
+hdl:10255/dryad.105/mets.xml,create,9.10.11.12,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,1.2.3.4,1970-01-04T15:36:27,MN4
+hdl:10255/dryad.105/mets.xml,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1975-02-15T12:12:23,MN4
+hdl:10255/dryad.105/mets.xml,update,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,9.10.11.12,1973-05-18T19:27:24,MN2
+hdl:10255/dryad.105/mets.xml,read,9.10.11.12,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1986-02-22T12:36:35,MN2
+hdl:10255/dryad.107/mets.xml,create,25.26.27.28,Opera/9.00 (Windows NT 5.1; U; en),5.6.7.8,1970-01-05T15:38:54,MN3
+hdl:10255/dryad.1071/mets.xml,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",25.26.27.28,1970-01-03T22:17:47,MN2
+hdl:10255/dryad.1071/mets.xml,update,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1976-08-12T00:57:10,MN2
+hdl:10255/dryad.1071/mets.xml,update,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),13.14.15.16,1994-06-16T11:56:28,MN2
+hdl:10255/dryad.1071/mets.xml,delete,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,1.2.3.4,1983-11-02T03:17:10,MN1
+hdl:10255/dryad.1071/mets.xml,read,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),1.2.3.4,1987-11-05T04:36:03,MN4
+hdl:10255/dryad.1071/mets.xml,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1981-10-22T06:43:35,MN2
+hdl:10255/dryad.1072/mets.xml,create,17.18.19.20,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),13.14.15.16,1970-01-01T19:19:30,MN4
+hdl:10255/dryad.1072/mets.xml,delete,9.10.11.12,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1992-12-30T08:51:28,MN1
+hdl:10255/dryad.1072/mets.xml,read,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1975-10-09T15:59:34,MN1
+hdl:10255/dryad.1072/mets.xml,update,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",1.2.3.4,1989-05-24T17:19:53,MN2
+hdl:10255/dryad.1072/mets.xml,update,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1974-01-23T09:04:12,MN1
+hdl:10255/dryad.1073/mets.xml,create,17.18.19.20,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),5.6.7.8,1970-01-06T17:08:00,MN2
+hdl:10255/dryad.1074/mets.xml,create,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],9.10.11.12,1970-01-05T10:31:00,MN3
+hdl:10255/dryad.1074/mets.xml,read,17.18.19.20,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",17.18.19.20,1974-02-24T04:44:35,MN4
+hdl:10255/dryad.1074/mets.xml,update,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),17.18.19.20,1975-10-15T11:23:21,MN4
+hdl:10255/dryad.1074/mets.xml,delete,1.2.3.4,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,9.10.11.12,1974-10-05T08:25:43,MN3
+hdl:10255/dryad.1074/mets.xml,replicate,25.26.27.28,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),9.10.11.12,1990-05-13T16:06:04,MN4
+hdl:10255/dryad.1074/mets.xml,update,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1989-05-10T07:53:11,MN3
+hdl:10255/dryad.1074/mets.xml,replicate,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",21.22.23.24,1988-02-14T19:46:52,MN4
+hdl:10255/dryad.1074/mets.xml,delete,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],9.10.11.12,1987-10-25T09:11:17,MN3
+hdl:10255/dryad.1075/mets.xml,create,17.18.19.20,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1970-01-02T19:31:33,MN1
+hdl:10255/dryad.1076/mets.xml,create,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,1.2.3.4,1970-01-01T18:11:46,MN1
+hdl:10255/dryad.1076/mets.xml,update,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1984-02-27T12:08:05,MN4
+hdl:10255/dryad.1076/mets.xml,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",25.26.27.28,1995-01-31T01:52:44,MN2
+hdl:10255/dryad.1076/mets.xml,delete,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),9.10.11.12,1975-03-28T22:47:23,MN4
+hdl:10255/dryad.1076/mets.xml,update,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1992-11-18T19:52:27,MN3
+hdl:10255/dryad.1076/mets.xml,replicate,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),1.2.3.4,1972-03-15T08:00:21,MN1
+hdl:10255/dryad.1076/mets.xml,read,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1988-07-24T10:31:38,MN2
+hdl:10255/dryad.1076/mets.xml,read,5.6.7.8,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1989-03-20T06:53:27,MN4
+hdl:10255/dryad.1088/mets.xml,create,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),9.10.11.12,1970-01-03T18:31:32,MN1
+hdl:10255/dryad.1088/mets.xml,delete,25.26.27.28,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1970-12-30T08:40:28,MN4
+hdl:10255/dryad.1088/mets.xml,delete,21.22.23.24,Googlebot/2.1 ( http://www.googlebot.com/bot.html),1.2.3.4,1992-01-31T00:18:23,MN1
+hdl:10255/dryad.1088/mets.xml,read,25.26.27.28,Googlebot/2.1 ( http://www.googlebot.com/bot.html),17.18.19.20,1971-12-06T01:28:02,MN4
+hdl:10255/dryad.109/mets.xml,create,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1970-01-01T12:20:45,MN4
+hdl:10255/dryad.109/mets.xml,delete,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",5.6.7.8,1971-04-03T12:06:14,MN4
+hdl:10255/dryad.109/mets.xml,delete,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],17.18.19.20,1974-10-10T07:43:48,MN1
+hdl:10255/dryad.109/mets.xml,read,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1999-06-06T18:00:54,MN3
+hdl:10255/dryad.109/mets.xml,read,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1986-06-21T12:44:29,MN4
+hdl:10255/dryad.109/mets.xml,update,21.22.23.24,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1977-02-03T03:05:44,MN1
+hdl:10255/dryad.109/mets.xml,delete,21.22.23.24,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1972-01-30T18:46:14,MN1
+hdl:10255/dryad.109/mets.xml,read,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),17.18.19.20,1989-03-23T15:19:31,MN4
+hdl:10255/dryad.1099/mets.xml,create,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1970-01-05T15:31:44,MN2
+hdl:10255/dryad.1099/mets.xml,read,17.18.19.20,Opera/9.00 (Windows NT 5.1; U; en),25.26.27.28,1972-11-09T13:03:16,MN4
+hdl:10255/dryad.1099/mets.xml,update,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),25.26.27.28,1996-08-13T06:39:51,MN3
+hdl:10255/dryad.1099/mets.xml,replicate,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1981-08-22T09:36:23,MN4
+hdl:10255/dryad.1099/mets.xml,read,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,25.26.27.28,1994-03-10T04:12:05,MN2
+hdl:10255/dryad.1099/mets.xml,read,21.22.23.24,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),17.18.19.20,1970-07-16T00:33:47,MN3
+hdl:10255/dryad.1099/mets.xml,read,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",13.14.15.16,1974-04-05T06:12:54,MN4
+hdl:10255/dryad.1099/mets.xml,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1992-08-03T14:17:52,MN3
+hdl:10255/dryad.1099/mets.xml,delete,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),9.10.11.12,1997-02-10T11:20:43,MN2
+hdl:10255/dryad.110/mets.xml,create,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",17.18.19.20,1969-12-31T17:48:56,MN4
+hdl:10255/dryad.110/mets.xml,update,5.6.7.8,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1970-07-03T08:47:12,MN1
+hdl:10255/dryad.110/mets.xml,replicate,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1980-02-08T13:15:54,MN1
+hdl:10255/dryad.110/mets.xml,update,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1971-10-07T19:08:25,MN1
+hdl:10255/dryad.110/mets.xml,update,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1980-09-09T05:11:30,MN1
+hdl:10255/dryad.110/mets.xml,replicate,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",5.6.7.8,1997-07-28T14:26:10,MN3
+hdl:10255/dryad.110/mets.xml,read,1.2.3.4,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",5.6.7.8,1989-04-12T05:59:40,MN2
+hdl:10255/dryad.1100/mets.xml,create,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1970-01-07T01:14:51,MN3
+hdl:10255/dryad.1100/mets.xml,delete,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1984-04-04T21:54:35,MN2
+hdl:10255/dryad.1100/mets.xml,update,13.14.15.16,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",13.14.15.16,1992-09-17T14:28:04,MN2
+hdl:10255/dryad.1100/mets.xml,update,1.2.3.4,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),17.18.19.20,1971-06-29T16:30:55,MN2
+hdl:10255/dryad.1100/mets.xml,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],13.14.15.16,1997-08-12T16:39:44,MN3
+hdl:10255/dryad.1101/mets.xml,create,5.6.7.8,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,17.18.19.20,1970-01-03T00:57:16,MN4
+hdl:10255/dryad.1101/mets.xml,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1971-10-07T23:45:09,MN4
+hdl:10255/dryad.1101/mets.xml,update,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1974-05-10T22:04:18,MN3
+hdl:10255/dryad.1101/mets.xml,delete,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1983-05-02T09:21:17,MN4
+hdl:10255/dryad.1101/mets.xml,delete,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1995-06-20T07:56:07,MN3
+hdl:10255/dryad.1101/mets.xml,delete,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),13.14.15.16,1979-10-02T02:38:50,MN4
+hdl:10255/dryad.1102/mets.xml,create,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,1.2.3.4,1970-01-01T06:05:15,MN3
+hdl:10255/dryad.1102/mets.xml,replicate,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1977-05-12T23:26:27,MN1
+hdl:10255/dryad.1102/mets.xml,replicate,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",17.18.19.20,1994-09-08T08:39:45,MN1
+hdl:10255/dryad.1102/mets.xml,replicate,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),25.26.27.28,1974-07-23T11:26:09,MN3
+hdl:10255/dryad.1103/mets.xml,create,5.6.7.8,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1970-01-04T17:56:40,MN2
+hdl:10255/dryad.1103/mets.xml,update,21.22.23.24,Opera/9.00 (Windows NT 5.1; U; en),1.2.3.4,1992-03-09T01:59:47,MN3
+hdl:10255/dryad.1103/mets.xml,delete,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1978-02-02T20:02:23,MN3
+hdl:10255/dryad.1103/mets.xml,replicate,1.2.3.4,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),9.10.11.12,1976-04-10T21:20:47,MN2
+hdl:10255/dryad.1103/mets.xml,delete,13.14.15.16,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",13.14.15.16,1986-02-22T11:03:23,MN3
+hdl:10255/dryad.1103/mets.xml,update,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1994-10-09T01:01:43,MN4
+hdl:10255/dryad.1103/mets.xml,read,13.14.15.16,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",25.26.27.28,1982-12-10T22:07:03,MN1
+hdl:10255/dryad.1103/mets.xml,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1978-06-23T08:39:53,MN3
+hdl:10255/dryad.1103/mets.xml,replicate,1.2.3.4,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,25.26.27.28,1997-09-13T02:27:43,MN2
+hdl:10255/dryad.112/mets.xml,create,25.26.27.28,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",9.10.11.12,1970-01-02T19:59:29,MN2
+hdl:10255/dryad.112/mets.xml,update,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),21.22.23.24,1973-12-29T12:52:32,MN2
+hdl:10255/dryad.112/mets.xml,replicate,21.22.23.24,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1973-11-06T10:02:54,MN4
+hdl:10255/dryad.112/mets.xml,update,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1990-09-28T09:16:39,MN4
+hdl:10255/dryad.112/mets.xml,update,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1996-12-25T09:31:26,MN4
+hdl:10255/dryad.112/mets.xml,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],13.14.15.16,1981-04-27T12:24:02,MN4
+hdl:10255/dryad.112/mets.xml,delete,21.22.23.24,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),17.18.19.20,1972-09-29T04:19:59,MN4
+hdl:10255/dryad.112/mets.xml,delete,21.22.23.24,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1997-09-09T22:33:12,MN3
+hdl:10255/dryad.113/mets.xml,create,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),1.2.3.4,1970-01-03T03:08:50,MN4
+hdl:10255/dryad.113/mets.xml,update,5.6.7.8,Opera/9.00 (Windows NT 5.1; U; en),1.2.3.4,1985-10-19T03:25:52,MN4
+hdl:10255/dryad.113/mets.xml,replicate,1.2.3.4,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",5.6.7.8,1998-11-10T23:37:11,MN2
+hdl:10255/dryad.113/mets.xml,read,13.14.15.16,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),9.10.11.12,1993-12-03T23:07:11,MN3
+hdl:10255/dryad.113/mets.xml,replicate,9.10.11.12,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),5.6.7.8,1986-11-26T10:10:06,MN1
+hdl:10255/dryad.113/mets.xml,replicate,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1989-11-29T08:06:07,MN4
+hdl:10255/dryad.114/mets.xml,create,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1970-01-07T09:55:04,MN3
+hdl:10255/dryad.114/mets.xml,delete,21.22.23.24,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),13.14.15.16,1986-12-24T17:08:02,MN4
+hdl:10255/dryad.114/mets.xml,replicate,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1977-04-08T03:11:46,MN3
+hdl:10255/dryad.114/mets.xml,update,25.26.27.28,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,21.22.23.24,1979-11-21T12:12:17,MN2
+hdl:10255/dryad.115/mets.xml,create,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1970-01-04T08:01:56,MN2
+hdl:10255/dryad.115/mets.xml,read,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1989-11-26T14:53:32,MN1
+hdl:10255/dryad.1160/mets.xml,create,13.14.15.16,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),21.22.23.24,1970-01-02T00:25:24,MN1
+hdl:10255/dryad.1160/mets.xml,replicate,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),21.22.23.24,1970-03-06T08:48:03,MN1
+hdl:10255/dryad.1160/mets.xml,replicate,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,25.26.27.28,1994-04-23T20:03:34,MN3
+hdl:10255/dryad.1160/mets.xml,read,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],1.2.3.4,1981-07-24T06:51:43,MN4
+hdl:10255/dryad.1160/mets.xml,read,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",1.2.3.4,1977-05-12T09:16:23,MN4
+hdl:10255/dryad.1160/mets.xml,read,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",5.6.7.8,1994-03-14T10:03:06,MN3
+hdl:10255/dryad.1160/mets.xml,delete,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,17.18.19.20,1972-07-08T09:37:05,MN1
+hdl:10255/dryad.1227/mets.xml,create,21.22.23.24,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1970-01-06T11:25:12,MN3
+hdl:10255/dryad.1227/mets.xml,replicate,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,17.18.19.20,1999-12-19T16:03:22,MN4
+hdl:10255/dryad.1228/mets.xml,create,25.26.27.28,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",5.6.7.8,1970-01-02T16:47:13,MN4
+hdl:10255/dryad.1228/mets.xml,read,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1988-09-04T10:50:03,MN4
+hdl:10255/dryad.1228/mets.xml,update,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),17.18.19.20,1998-03-24T09:25:57,MN1
+hdl:10255/dryad.1228/mets.xml,update,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],21.22.23.24,1981-03-21T06:47:41,MN1
+hdl:10255/dryad.1232/mets.xml,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1970-01-06T15:28:08,MN2
+hdl:10255/dryad.1232/mets.xml,read,5.6.7.8,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),5.6.7.8,1982-11-13T16:26:47,MN3
+hdl:10255/dryad.1232/mets.xml,read,21.22.23.24,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1981-08-28T04:06:00,MN2
+hdl:10255/dryad.1232/mets.xml,update,17.18.19.20,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,5.6.7.8,1975-11-15T03:31:15,MN1
+hdl:10255/dryad.1232/mets.xml,delete,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1986-02-23T20:40:39,MN1
+hdl:10255/dryad.1235/mets.xml,create,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",25.26.27.28,1970-01-06T10:20:51,MN2
+hdl:10255/dryad.1235/mets.xml,replicate,13.14.15.16,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,13.14.15.16,1999-02-15T11:01:03,MN2
+hdl:10255/dryad.1235/mets.xml,read,9.10.11.12,Opera/9.00 (Windows NT 5.1; U; en),9.10.11.12,1997-07-05T09:40:15,MN2
+hdl:10255/dryad.1235/mets.xml,read,21.22.23.24,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1984-11-26T07:40:33,MN2
+hdl:10255/dryad.1235/mets.xml,delete,25.26.27.28,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),25.26.27.28,1970-06-19T09:57:58,MN4
+hdl:10255/dryad.1235/mets.xml,read,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),21.22.23.24,1974-09-13T17:39:55,MN4
+hdl:10255/dryad.1253/mets.xml,create,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),5.6.7.8,1970-01-02T18:26:36,MN2
+hdl:10255/dryad.1253/mets.xml,delete,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",13.14.15.16,1989-05-17T12:33:38,MN2
+hdl:10255/dryad.1253/mets.xml,read,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",9.10.11.12,1973-03-04T17:36:52,MN3
+hdl:10255/dryad.1253/mets.xml,replicate,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,9.10.11.12,1998-12-14T01:55:57,MN2
+hdl:10255/dryad.1253/mets.xml,update,17.18.19.20,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1988-03-10T06:19:22,MN4
+hdl:10255/dryad.1253/mets.xml,update,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,25.26.27.28,1993-12-16T16:52:30,MN2
+hdl:10255/dryad.1253/mets.xml,replicate,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1982-05-14T06:23:25,MN2
+hdl:10255/dryad.1253/mets.xml,update,5.6.7.8,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),25.26.27.28,1987-05-22T12:06:04,MN1
+hdl:10255/dryad.1253/mets.xml,read,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),9.10.11.12,1991-10-26T21:07:40,MN2
+hdl:10255/dryad.1254/mets.xml,create,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,13.14.15.16,1970-01-06T18:30:23,MN4
+hdl:10255/dryad.1254/mets.xml,delete,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",1.2.3.4,1984-04-20T07:06:38,MN4
+hdl:10255/dryad.1254/mets.xml,read,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",1.2.3.4,1973-04-19T06:01:32,MN4
+hdl:10255/dryad.1254/mets.xml,update,5.6.7.8,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",17.18.19.20,1999-03-21T00:07:55,MN2
+hdl:10255/dryad.1254/mets.xml,read,1.2.3.4,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",21.22.23.24,1992-06-16T19:48:24,MN4
+hdl:10255/dryad.1254/mets.xml,replicate,1.2.3.4,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),5.6.7.8,1982-10-08T03:05:47,MN4
+hdl:10255/dryad.135/mets.xml,create,25.26.27.28,Mozilla/2.0 (compatible; Ask Jeeves),17.18.19.20,1970-01-06T13:37:36,MN1
+hdl:10255/dryad.139/mets.xml,create,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",9.10.11.12,1970-01-01T13:12:13,MN1
+hdl:10255/dryad.141/mets.xml,create,13.14.15.16,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",21.22.23.24,1970-01-07T05:05:22,MN1
+hdl:10255/dryad.141/mets.xml,read,5.6.7.8,Googlebot/2.1 ( http://www.googlebot.com/bot.html),25.26.27.28,1972-08-21T17:41:52,MN2
+hdl:10255/dryad.142/mets.xml,create,17.18.19.20,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",17.18.19.20,1970-01-05T17:14:55,MN3
+hdl:10255/dryad.142/mets.xml,delete,5.6.7.8,Opera/9.00 (Windows NT 5.1; U; en),9.10.11.12,1975-07-18T00:27:50,MN4
+hdl:10255/dryad.142/mets.xml,update,25.26.27.28,msnbot-Products/1.0 (+http://search.msn.com/msnbot.htm),17.18.19.20,1997-11-02T04:08:16,MN1
+hdl:10255/dryad.167/mets.xml,create,9.10.11.12,Googlebot/2.1 ( http://www.googlebot.com/bot.html),9.10.11.12,1970-01-04T04:40:12,MN3
+hdl:10255/dryad.174/mets.xml,create,5.6.7.8,Opera/9.00 (Windows NT 5.1; U; en),13.14.15.16,1970-01-07T03:48:51,MN1
+hdl:10255/dryad.174/mets.xml,update,17.18.19.20,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1999-11-17T04:15:23,MN2
+hdl:10255/dryad.174/mets.xml,delete,17.18.19.20,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",9.10.11.12,1989-03-20T01:04:06,MN1
+hdl:10255/dryad.174/mets.xml,read,21.22.23.24,Opera/9.00 (Windows NT 5.1; U; en),21.22.23.24,1994-09-17T12:51:28,MN2
+hdl:10255/dryad.208/mets.xml,create,1.2.3.4,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1970-01-06T18:32:37,MN4
+hdl:10255/dryad.208/mets.xml,delete,1.2.3.4,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1992-07-27T11:54:55,MN3
+hdl:10255/dryad.209/mets.xml,create,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,13.14.15.16,1970-01-06T18:31:09,MN3
+hdl:10255/dryad.209/mets.xml,replicate,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],21.22.23.24,1993-02-16T20:11:17,MN2
+hdl:10255/dryad.209/mets.xml,replicate,13.14.15.16,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",21.22.23.24,1996-03-19T18:51:00,MN1
+hdl:10255/dryad.210/mets.xml,create,5.6.7.8,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",25.26.27.28,1970-01-03T23:57:05,MN3
+hdl:10255/dryad.210/mets.xml,replicate,9.10.11.12,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1997-02-11T08:10:33,MN4
+hdl:10255/dryad.212/mets.xml,create,21.22.23.24,Googlebot/2.1 ( http://www.googlebot.com/bot.html),1.2.3.4,1970-01-05T13:40:56,MN2
+hdl:10255/dryad.212/mets.xml,update,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,17.18.19.20,1995-10-14T14:22:11,MN3
+hdl:10255/dryad.212/mets.xml,replicate,9.10.11.12,Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.1) Opera 7.02 [en],21.22.23.24,1980-04-20T11:54:01,MN1
+hdl:10255/dryad.215/mets.xml,create,25.26.27.28,Googlebot-Image/1.0 ( http://www.googlebot.com/bot.html),17.18.19.20,1970-01-03T11:33:21,MN1
+hdl:10255/dryad.216/mets.xml,create,25.26.27.28,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",5.6.7.8,1970-01-05T12:01:19,MN4
+hdl:10255/dryad.218/mets.xml,create,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",5.6.7.8,1970-01-03T02:01:29,MN2
+hdl:10255/dryad.31/mets.xml,create,9.10.11.12,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",9.10.11.12,1970-01-04T18:30:36,MN2
+hdl:10255/dryad.31/mets.xml,replicate,21.22.23.24,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1971-02-13T00:50:48,MN2
+hdl:10255/dryad.31/mets.xml,read,17.18.19.20,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1975-12-09T04:45:03,MN2
+hdl:10255/dryad.34/mets.xml,create,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",9.10.11.12,1970-01-06T16:28:16,MN1
+hdl:10255/dryad.34/mets.xml,read,9.10.11.12,Mozilla/2.0 (compatible; Ask Jeeves),5.6.7.8,1993-05-14T16:56:47,MN1
+hdl:10255/dryad.34/mets.xml,replicate,13.14.15.16,Googlebot/2.1 ( http://www.googlebot.com/bot.html),25.26.27.28,1971-08-30T16:08:21,MN4
+hdl:10255/dryad.34/mets.xml,delete,25.26.27.28,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",21.22.23.24,1984-07-07T22:04:52,MN3
+hdl:10255/dryad.34/mets.xml,update,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",13.14.15.16,1990-10-04T23:48:14,MN2
+hdl:10255/dryad.34/mets.xml,delete,13.14.15.16,"Oper,a/9.20 (Windows NT 6.0; U; en)",21.22.23.24,1971-04-27T04:35:10,MN2
+hdl:10255/dryad.35/mets.xml,create,13.14.15.16,"Mozi,lla/""4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1970-01-02T08:33:57,MN2
+hdl:10255/dryad.35/mets.xml,replicate,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",13.14.15.16,1976-02-19T07:58:29,MN3
+hdl:10255/dryad.35/mets.xml,read,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,5.6.7.8,1998-05-29T02:06:15,MN4
+hdl:10255/dryad.35/mets.xml,delete,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",21.22.23.24,1984-12-03T23:38:37,MN1
+hdl:10255/dryad.35/mets.xml,read,21.22.23.24,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",25.26.27.28,1979-09-07T13:12:32,MN1
+hdl:10255/dryad.632/mets.xml,create,1.2.3.4,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1970-01-01T07:15:30,MN1
+hdl:10255/dryad.632/mets.xml,read,13.14.15.16,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1984-03-07T05:53:49,MN4
+hdl:10255/dryad.635/mets.xml,create,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",13.14.15.16,1970-01-06T10:26:23,MN3
+hdl:10255/dryad.635/mets.xml,read,5.6.7.8,"Mozi,lla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6",1.2.3.4,1982-09-05T14:03:21,MN2
+hdl:10255/dryad.635/mets.xml,replicate,25.26.27.28,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",9.10.11.12,1985-12-16T12:22:38,MN1
+hdl:10255/dryad.635/mets.xml,read,1.2.3.4,Googlebot/2.1 ( http://www.googlebot.com/bot.html),13.14.15.16,1999-01-15T15:32:01,MN4
+hdl:10255/dryad.654/mets.xml,create,13.14.15.16,Opera/9.00 (Windows NT 5.1; U; en),1.2.3.4,1970-01-02T11:19:22,MN2
+hdl:10255/dryad.654/mets.xml,update,9.10.11.12,"Mozi,lla/4.0 (compatible; MSIE 5.0; Windows NT 5.1; .NET CLR 1.1.4322)",17.18.19.20,1979-08-13T16:37:47,MN1
+hdl:10255/dryad.654/mets.xml,replicate,13.14.15.16,Mozilla/2.0 (compatible; Ask Jeeves),13.14.15.16,1989-01-13T19:24:16,MN3
+hdl:10255/dryad.654/mets.xml,read,5.6.7.8,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,17.18.19.20,1984-03-16T23:56:48,MN4
+hdl:10255/dryad.654/mets.xml,delete,1.2.3.4,Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20060127 Netscape/8.1,9.10.11.12,1972-07-27T11:06:14,MN1
+hdl:10255/dryad.654/mets.xml,replicate,13.14.15.16,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,21.22.23.24,1978-04-03T21:54:28,MN1
+hdl:10255/dryad.654/mets.xml,update,25.26.27.28,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.0,17.18.19.20,1989-09-23T23:39:15,MN4
+hdl:10255/dryad.654/mets.xml,delete,1.2.3.4,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; en) Opera 8.50,5.6.7.8,1984-07-16T20:27:47,MN1
+hdl:10255/dryad.669/mets.xml,create,5.6.7.8,"Oper,a/9.20 (Windows NT 6.0; U; en)",25.26.27.28,1970-01-04T17:35:59,MN4

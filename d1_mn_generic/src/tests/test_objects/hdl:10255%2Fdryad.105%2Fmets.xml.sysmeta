@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>hdl:10255/dryad.105/mets.xml</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>2978</size>
+  <checksum algorithm="MD5">fcaf7bf551423eb9d43908ac0b3057b6</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>3934~senators</rightsHolder>
+  <dateUploaded>2010-04-26T07:23:46.614571</dateUploaded>
+  <dateSysMetadataModified>1985-05-24T21:00:02</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

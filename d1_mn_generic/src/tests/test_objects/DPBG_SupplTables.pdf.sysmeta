@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>DPBG_SupplTables.pdf</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>12561</size>
+  <checksum algorithm="MD5">9b5b215581d0d43890e6c4e360175c86</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>975@shadily</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>profiteers=7446</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:46.353908</dateUploaded>
+  <dateSysMetadataModified>1979-12-01T08:26:06</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

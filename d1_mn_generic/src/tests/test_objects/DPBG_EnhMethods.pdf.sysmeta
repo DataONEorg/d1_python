@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>DPBG_EnhMethods.pdf</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>16331</size>
+  <checksum algorithm="MD5">1873fe82afc55504c0904f8be651b726</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>9810_paranormal</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>8335_flick_cogitate</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:45.041213</dateUploaded>
+  <dateSysMetadataModified>1976-09-28T20:10:32</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

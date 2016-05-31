@@ -1,0 +1,3 @@
+Add to Python stack test set when support for supplementary characters is fixed.
+
+common-unicode-supplementary-escaped-𐌔𐌕𐌖𐌗	common-unicode-supplementary-escaped-%F0%90%8C%94%F0%90%8C%95%F0%90%8C%96%F0%90%8C%97

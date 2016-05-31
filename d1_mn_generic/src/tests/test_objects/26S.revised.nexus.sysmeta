@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>26S.revised.nexus</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>136286</size>
+  <checksum algorithm="MD5">cffc15568adbf1e3415ea967b5e5e76b</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>singing.3369</rightsHolder>
+  <dateUploaded>2010-04-26T07:25:19.406168</dateUploaded>
+  <dateSysMetadataModified>1981-12-15T07:16:10</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

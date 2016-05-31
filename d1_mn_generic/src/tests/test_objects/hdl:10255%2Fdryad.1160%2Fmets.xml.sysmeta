@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <serialVersion>1</serialVersion>
+  <identifier>hdl:10255/dryad.1160/mets.xml</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>4605</size>
+  <checksum algorithm="MD5">f1f770b06994deef4ebf0a94735db4ca</checksum>
+  <submitter>test</submitter>
+  <rightsHolder>blocking_687</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>sparingly~renault~9208</subject>
+      <subject>authenticators-733</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <dateUploaded>2010-04-26T07:23:43.001</dateUploaded>
+  <dateSysMetadataModified>1974-09-01T08:30:56</dateSysMetadataModified>
+  <originMemberNode>MN1</originMemberNode>
+  <authoritativeMemberNode>MN1</authoritativeMemberNode>
+</ns1:systemMetadata>

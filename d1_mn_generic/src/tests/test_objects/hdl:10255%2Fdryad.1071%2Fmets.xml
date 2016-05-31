@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS LABEL="DSpace Item" OBJID="/repo/handle/10255/dryad.1071" PROFILE="DSPACE METS SIP Profile 1.0" OBJEDIT="/repo/admin/item?itemID=1228" ID="hdl:10255/dryad.1071" xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap OTHERMDTYPE="DIM" MDTYPE="OTHER">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Idaghdour, Youssef</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Storey, John D.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Jadallah, Sami J.</dim:field>
+<dim:field element="contributor" mdschema="dc" qualifier="author" language="en">Gibson, Greg</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Morocco</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Agadir</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Sebt-Nabor</dim:field>
+<dim:field element="coverage" mdschema="dc" qualifier="spatial" language="en">Errachidia</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="accessioned" language="">2009-11-14T02:49:48Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="available" language="">2009-11-14T02:49:48Z</dim:field>
+<dim:field element="date" mdschema="dc" qualifier="issued" language="">2009-11-14T02:49:48Z</dim:field>
+<dim:field element="identifier" mdschema="dc" qualifier="uri" language="">http://hdl.handle.net/10255/dryad.1071</dim:field>
+<dim:field element="relation" mdschema="dc" qualifier="ispartof" language="">http://hdl.handle.net/10255/dryad.481</dim:field>
+<dim:field element="rights" mdschema="dc" qualifier="uri" language="en">http://creativecommons.org/publicdomain/zero/1.0/</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">Moroccan Amazighs</dim:field>
+<dim:field element="subject" mdschema="dc" language="en">leukocyte</dim:field>
+<dim:field element="title" mdschema="dc" language="en">Supplementary Tables</dim:field>
+<dim:field element="type" mdschema="dc" language="en">Dataset</dim:field>
+<dim:field element="status" mdschema="dryad" language="">scanned</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file GROUPID="group_file_920" SIZE="46493" CHECKSUM="440bd4a6521176c540f3785e2dd8ba84" MIMETYPE="application/pdf" CHECKSUMTYPE="MD5" ID="file_920">
+<mets:FLocat LOCTYPE="URL" xlink:href="/repo/bitstream/handle/10255/dryad.1071/MoroccoSuppTables.pdf?sequence=1" xlink:title="MoroccoSuppTables.pdf" xlink:type="locator"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap TYPE="LOGICAL" LABEL="DSpace">
+<mets:div TYPE="DSpace Item" DMDID="dmd_1">
+<mets:div TYPE="DSpace Content Bitstream" ID="div_2">
+<mets:fptr FILEID="file_920"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>
