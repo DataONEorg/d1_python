@@ -1,0 +1,6 @@
+accesspolicy.permissions_to_tag_string
+======================================
+
+.. currentmodule:: accesspolicy
+
+.. autofunction:: permissions_to_tag_string

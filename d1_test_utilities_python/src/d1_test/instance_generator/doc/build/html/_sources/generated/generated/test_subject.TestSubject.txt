@@ -1,0 +1,53 @@
+test_subject.TestSubject
+========================
+
+.. currentmodule:: test_subject
+
+.. autoclass:: TestSubject
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TestSubject.__init__
+      ~TestSubject.assertAlmostEqual
+      ~TestSubject.assertAlmostEquals
+      ~TestSubject.assertEqual
+      ~TestSubject.assertEquals
+      ~TestSubject.assertFalse
+      ~TestSubject.assertNotAlmostEqual
+      ~TestSubject.assertNotAlmostEquals
+      ~TestSubject.assertNotEqual
+      ~TestSubject.assertNotEquals
+      ~TestSubject.assertRaises
+      ~TestSubject.assertTrue
+      ~TestSubject.assertUrlEqual
+      ~TestSubject.assert_
+      ~TestSubject.countTestCases
+      ~TestSubject.debug
+      ~TestSubject.defaultTestResult
+      ~TestSubject.fail
+      ~TestSubject.failIf
+      ~TestSubject.failIfAlmostEqual
+      ~TestSubject.failIfEqual
+      ~TestSubject.failUnless
+      ~TestSubject.failUnlessAlmostEqual
+      ~TestSubject.failUnlessEqual
+      ~TestSubject.failUnlessRaises
+      ~TestSubject.id
+      ~TestSubject.run
+      ~TestSubject.setUp
+      ~TestSubject.shortDescription
+      ~TestSubject.tearDown
+      ~TestSubject.test_010
+   
+   
+
+   
+   
+   
+/

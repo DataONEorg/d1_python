@@ -1,0 +1,6 @@
+person.generate
+===============
+
+.. currentmodule:: person
+
+.. autofunction:: generate

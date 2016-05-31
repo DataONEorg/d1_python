@@ -1,0 +1,23 @@
+test_subject
+============
+
+.. automodule:: test_subject
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestSubject
+  
+  
+  
+  
+  
+  

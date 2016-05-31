@@ -1,0 +1,23 @@
+test_person
+===========
+
+.. automodule:: test_person
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestPerson
+  
+  
+  
+  
+  
+  

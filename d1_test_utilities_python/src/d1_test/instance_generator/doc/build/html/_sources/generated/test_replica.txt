@@ -1,0 +1,23 @@
+test_replica
+============
+
+.. automodule:: test_replica
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestReplica
+  
+  
+  
+  
+  
+  

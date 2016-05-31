@@ -1,0 +1,24 @@
+words
+=====
+
+.. automodule:: words
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    countlines
+    randomWords
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

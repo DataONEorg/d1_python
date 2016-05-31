@@ -1,0 +1,6 @@
+replica.generate
+================
+
+.. currentmodule:: replica
+
+.. autofunction:: generate

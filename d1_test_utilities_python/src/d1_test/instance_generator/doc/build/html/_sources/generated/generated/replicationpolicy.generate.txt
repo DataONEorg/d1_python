@@ -1,0 +1,6 @@
+replicationpolicy.generate
+==========================
+
+.. currentmodule:: replicationpolicy
+
+.. autofunction:: generate

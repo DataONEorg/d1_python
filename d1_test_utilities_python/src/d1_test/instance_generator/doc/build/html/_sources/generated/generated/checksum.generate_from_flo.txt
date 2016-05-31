@@ -1,0 +1,6 @@
+checksum.generate_from_flo
+==========================
+
+.. currentmodule:: checksum
+
+.. autofunction:: generate_from_flo

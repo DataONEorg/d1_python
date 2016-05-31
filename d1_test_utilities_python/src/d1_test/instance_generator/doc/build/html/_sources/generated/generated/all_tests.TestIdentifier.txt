@@ -1,0 +1,53 @@
+all_tests.TestIdentifier
+========================
+
+.. currentmodule:: all_tests
+
+.. autoclass:: TestIdentifier
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TestIdentifier.__init__
+      ~TestIdentifier.assertAlmostEqual
+      ~TestIdentifier.assertAlmostEquals
+      ~TestIdentifier.assertEqual
+      ~TestIdentifier.assertEquals
+      ~TestIdentifier.assertFalse
+      ~TestIdentifier.assertNotAlmostEqual
+      ~TestIdentifier.assertNotAlmostEquals
+      ~TestIdentifier.assertNotEqual
+      ~TestIdentifier.assertNotEquals
+      ~TestIdentifier.assertRaises
+      ~TestIdentifier.assertTrue
+      ~TestIdentifier.assertUrlEqual
+      ~TestIdentifier.assert_
+      ~TestIdentifier.countTestCases
+      ~TestIdentifier.debug
+      ~TestIdentifier.defaultTestResult
+      ~TestIdentifier.fail
+      ~TestIdentifier.failIf
+      ~TestIdentifier.failIfAlmostEqual
+      ~TestIdentifier.failIfEqual
+      ~TestIdentifier.failUnless
+      ~TestIdentifier.failUnlessAlmostEqual
+      ~TestIdentifier.failUnlessEqual
+      ~TestIdentifier.failUnlessRaises
+      ~TestIdentifier.id
+      ~TestIdentifier.run
+      ~TestIdentifier.setUp
+      ~TestIdentifier.shortDescription
+      ~TestIdentifier.tearDown
+      ~TestIdentifier.test_010
+   
+   
+
+   
+   
+   
+/

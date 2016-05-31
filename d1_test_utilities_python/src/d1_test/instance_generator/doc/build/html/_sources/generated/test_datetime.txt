@@ -1,0 +1,23 @@
+test_datetime
+=============
+
+.. automodule:: test_datetime
+
+  
+  
+  
+  
+  
+  
+  .. rubric:: Classes
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    TestDateTime
+  
+  
+  
+  
+  
+  

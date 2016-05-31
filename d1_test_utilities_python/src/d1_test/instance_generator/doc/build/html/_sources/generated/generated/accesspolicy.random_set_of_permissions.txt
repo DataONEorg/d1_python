@@ -1,0 +1,6 @@
+accesspolicy.random_set_of_permissions
+======================================
+
+.. currentmodule:: accesspolicy
+
+.. autofunction:: random_set_of_permissions

@@ -1,0 +1,24 @@
+replica
+=======
+
+.. automodule:: replica
+
+  
+  
+  .. rubric:: Functions
+  
+  .. autosummary::
+    :toctree: generated/
+  
+    generate
+    generate_list
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,6 @@
+dates.now
+=========
+
+.. currentmodule:: dates
+
+.. autofunction:: now
