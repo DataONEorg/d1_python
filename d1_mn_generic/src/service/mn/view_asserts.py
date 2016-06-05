@@ -31,6 +31,9 @@
 import httplib
 import urlparse
 
+# Django.
+from django.conf import settings
+
 # DataONE APIs.
 import d1_common.const
 import d1_common.types.exceptions
@@ -43,7 +46,6 @@ import mn.psycopg_adapter
 import mn.sysmeta_store
 import mn.urls
 import mn.util
-import service.settings
 
 
 def post_has_mime_parts(request, parts):
@@ -91,7 +93,7 @@ def xml_document_not_too_large(flo):
   '''Because the entire XML document must be in memory while being deserialized
   (and probably in several copies at that), limit the size that can be
   handled.'''
-  if flo.size > service.settings.MAX_XML_DOCUMENT_SIZE:
+  if flo.size > settings.MAX_XML_DOCUMENT_SIZE:
     raise d1_common.types.exceptions.InvalidSystemMetadata(0, 'Size restriction exceeded')
 
 

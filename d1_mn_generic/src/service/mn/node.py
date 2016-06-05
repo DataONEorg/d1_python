@@ -51,8 +51,8 @@
 #   <contactSubject>CN=MyName,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
 # </ns1:node>
 
-# App.
-import settings
+# Django.
+from django.conf import settings
 
 # D1.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
@@ -110,9 +110,7 @@ class Node():
     #if len(settings.REPLICATION_ALLOWEDOBJECTFORMAT):
     for allowed_object in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       replication.allowedObjectFormat.append(
-        dataoneTypes.ObjectFormatIdentifier(
-          allowed_object
-        )
+        dataoneTypes.ObjectFormatIdentifier(allowed_object)
       )
 
     return replication
@@ -132,37 +130,37 @@ class Node():
   def _append_tier_1_services(self, services):
     # <service name="MNCore" version="v1" available="true"/>
     service = dataoneTypes.Service()
-    service.name = dataoneTypes.ServiceName('MNCore')
-    service.version = dataoneTypes.ServiceVersion('v1')
-    service.available = True
+    mn.name = dataoneTypes.ServiceName('MNCore')
+    mn.version = dataoneTypes.ServiceVersion('v1')
+    mn.available = True
     services.append(service)
     # <service name="MNRead" version="v1" available="true"/>
     service = dataoneTypes.Service()
-    service.name = dataoneTypes.ServiceName('MNRead')
-    service.version = dataoneTypes.ServiceVersion('v1')
-    service.available = True
+    mn.name = dataoneTypes.ServiceName('MNRead')
+    mn.version = dataoneTypes.ServiceVersion('v1')
+    mn.available = True
     services.append(service)
 
   def _append_tier_2_services(self, services):
     # <service name="MNAuthorization" version="v1" available="true"/>
     service = dataoneTypes.Service()
-    service.name = dataoneTypes.ServiceName('MNAuthorization')
-    service.version = dataoneTypes.ServiceVersion('v1')
-    service.available = True
+    mn.name = dataoneTypes.ServiceName('MNAuthorization')
+    mn.version = dataoneTypes.ServiceVersion('v1')
+    mn.available = True
     services.append(service)
 
   def _append_tier_3_services(self, services):
     # <service name="MNStorage" version="v1" available="true"/>
     service = dataoneTypes.Service()
-    service.name = dataoneTypes.ServiceName('MNStorage')
-    service.version = dataoneTypes.ServiceVersion('v1')
-    service.available = True
+    mn.name = dataoneTypes.ServiceName('MNStorage')
+    mn.version = dataoneTypes.ServiceVersion('v1')
+    mn.available = True
     services.append(service)
 
   def _append_tier_4_services(self, services):
     # <service name="MNReplication" version="v1" available="true"/>
     service = dataoneTypes.Service()
-    service.name = dataoneTypes.ServiceName('MNReplication')
-    service.version = dataoneTypes.ServiceVersion('v1')
-    service.available = True
+    mn.name = dataoneTypes.ServiceName('MNReplication')
+    mn.version = dataoneTypes.ServiceVersion('v1')
+    mn.available = True
     services.append(service)

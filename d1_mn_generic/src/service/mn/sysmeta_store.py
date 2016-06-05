@@ -35,13 +35,15 @@
 import datetime
 import os
 
+# Django.
+from django.conf import settings
+
 # D1.
 import d1_common.date_time
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 import d1_common.types.exceptions
 
 # App.
-import settings
 import mn.util
 
 
@@ -49,8 +51,8 @@ def write_sysmeta_to_store(sysmeta_pyxb):
   '''Write a PyXB System Metadata object to the System Metadata store.
   '''
   sysmeta_path = mn.util.store_path(
-    settings.SYSMETA_STORE_PATH, sysmeta_pyxb.identifier.value(),
-    sysmeta_pyxb.serialVersion
+    settings.SYSMETA_STORE_PATH, sysmeta_pyxb.identifier.value(
+    ), sysmeta_pyxb.serialVersion
   )
   mn.util.create_missing_directories(sysmeta_path)
   sysmeta_xml = sysmeta_pyxb.toxml().encode('utf-8')

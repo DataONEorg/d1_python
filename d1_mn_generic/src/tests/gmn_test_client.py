@@ -90,10 +90,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     '''Get path to test resources.'''
     resource_path = os.path.abspath(
       os.path.join(
-        os.path.dirname(
-          __file__
-        ), '../../../../resources/'
-      )
+        os.path.dirname(__file__), '../../../../resources/')
     )
     return os.path.join(resource_path, path)
 
@@ -294,8 +291,8 @@ def populate_mn(client, filedir):
     headers.update({'VENDOR_TEST_OBJECT': 1})
 
     client.create(
-      sysmeta_obj.identifier.value(
-      ), object_file,
+      sysmeta_obj.identifier.value(),
+      object_file,
       sysmeta_obj,
       vendorSpecific=headers
     )

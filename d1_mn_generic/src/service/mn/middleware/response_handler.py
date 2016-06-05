@@ -39,13 +39,13 @@ import d1_common.ext.mimeparser
 import django.db
 from django.http import HttpResponse
 from django.db.models import Max
+from django.conf import settings
 
 # DataONE APIs.
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 # App.
 import mn.models as models
-import settings
 
 
 class response_handler():
@@ -65,7 +65,7 @@ class response_handler():
     if settings.GMN_DEBUG == True:
       # If pretty printed output was requested, force the content type to text.
       # This causes the browser to not try to format the output in any way.
-      if 'pretty' in request.REQUEST:
+      if 'pretty' in request.GET:
         response['Content-Type'] = d1_common.const.CONTENT_TYPE_TEXT
       # If SQL profiling is turned on, return a page with SQL query timing
       # information instead of the actual response.
@@ -74,9 +74,7 @@ class response_handler():
         for query in django.db.connection.queries:
           response_list.append('{0}\n{1}'.format(query['time'], query['sql']))
           response = HttpResponse(
-            '\n\n'.join(
-              response_list
-            ), d1_common.const.CONTENT_TYPE_TEXT
+            '\n\n'.join(response_list), d1_common.const.CONTENT_TYPE_TEXT
           )
 
   def serialize_object(self, request, view_result):

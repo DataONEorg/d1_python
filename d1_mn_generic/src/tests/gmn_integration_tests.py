@@ -298,11 +298,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for sysmeta_path in sorted(
-      glob.glob(
-        os.path.join(
-          self.options.obj_path, '*.sysmeta'
-        )
-      )
+      glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))
     ):
       # Get name of corresponding object and open it.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -326,8 +322,7 @@ class TestSequenceFunctions(unittest.TestCase):
         headers.update(vendor_specific)
 
       client.create(
-        sysmeta_obj.identifier.value(
-        ),
+        sysmeta_obj.identifier.value(),
         object_file,
         sysmeta_obj,
         vendorSpecific=headers
@@ -412,9 +407,7 @@ class TestSequenceFunctions(unittest.TestCase):
     headers = response.getheaders()
     self.assertTrue(('content-length', '1982') in headers)
     self.assertTrue(
-      (
-        'dataone-checksum', 'MD5,ed387674851ba80bd2d3c6c42f335cf7'
-      ) in headers
+      ('dataone-checksum', 'MD5,ed387674851ba80bd2d3c6c42f335cf7') in headers
     )
     self.assertTrue(('dataone-formatid', 'eml://ecoinformatics.org/eml-2.0.0') in headers)
     self.assertTrue(('last-modified', '1977-03-09T00:12:05') in headers)
@@ -432,11 +425,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.mnclient.MemberNodeClient(self.options.gmn_url, timeout=60)
 
     for sysmeta_path in sorted(
-      glob.glob(
-        os.path.join(
-          self.options.obj_path, '*.sysmeta'
-        )
-      )
+      glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))
     ):
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
       pid = d1_common.url.decodePathElement(os.path.basename(object_path))
@@ -509,11 +498,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # Loop through our local test objects.
     for sysmeta_path in sorted(
-      glob.glob(
-        os.path.join(
-          self.options.obj_path, '*.sysmeta'
-        )
-      )
+      glob.glob(os.path.join(self.options.obj_path, '*.sysmeta'))
     ):
       # Get name of corresponding object and check that it exists on disk.
       object_path = re.match(r'(.*)\.sysmeta', sysmeta_path).group(1)
@@ -1172,9 +1157,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # Delete the object on GMN.
     pid_deleted = client.delete(
       pid,
-      vendorSpecific=self.include_subjects(
-        gmn_test_client.GMN_TEST_SUBJECT_TRUSTED
-      )
+      vendorSpecific=self.include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self.assertEqual(pid, pid_deleted.value())
     # Verify that the object no longer exists.
@@ -1192,9 +1175,7 @@ class TestSequenceFunctions(unittest.TestCase):
     pid = self.find_valid_pid(client)
     # Archive the object on GMN.
     pid_archived = client.archive(
-      pid, vendorSpecific=self.include_subjects(
-        'test_user_1'
-      )
+      pid, vendorSpecific=self.include_subjects('test_user_1')
     )
     self.assertEqual(pid, pid_archived.value())
     # Verify that the object no longer exists.

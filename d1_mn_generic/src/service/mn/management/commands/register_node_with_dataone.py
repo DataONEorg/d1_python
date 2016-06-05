@@ -35,9 +35,9 @@ import d1_client.cnclient
 
 # Django.
 from django.core.management.base import NoArgsCommand
+from django.conf import settings
 
 # App.
-import settings
 import mn.models
 import mn.node
 
@@ -98,7 +98,7 @@ class Command(NoArgsCommand):
     node = self.generate_node_doc()
     logging.info('{0}'.format(node.toDOM().toprettyxml(indent='  ')))
 
-  def generate_node_doc(node_xml_path):
+  def generate_node_doc(self):
     n = mn.node.Node()
     return n.get()
 

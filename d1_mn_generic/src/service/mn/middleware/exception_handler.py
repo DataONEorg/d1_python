@@ -51,6 +51,7 @@ import d1_common.ext.mimeparser
 
 # Django.
 from django.http import HttpResponse
+from django.conf import settings
 
 # D1
 import d1_common.types.exceptions
@@ -58,7 +59,6 @@ import d1_common.types.exceptions
 # App.
 import mn.util as util
 import detail_codes
-import settings
 
 
 class exception_handler():

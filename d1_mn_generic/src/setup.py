@@ -58,7 +58,7 @@ import service
 
 # Metadata.
 name = 'dataone.generic_member_node'
-version = service.__version__
+version = service.mn.__version__
 description = 'DataONE Generic Member Node (GMN)'
 author = 'DataONE Project'
 author_email = 'developers@dataone.org'

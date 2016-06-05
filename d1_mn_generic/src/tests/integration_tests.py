@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''
 :mod:`integration_tests`
 ========================
@@ -48,7 +47,6 @@ import urllib
 import urlparse
 import uuid
 
-
 # D1
 try:
   import d1_common.mime_multipart
@@ -59,7 +57,9 @@ try:
   import d1_common.types.generated.dataoneTypes as dataoneTypes
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n')
+  sys.stderr.write(
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
+  )
   raise
 try:
   import d1_client
@@ -67,7 +67,9 @@ try:
   import d1_client.systemmetadata
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n')
+  sys.stderr.write(
+    'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
+  )
   raise
 
 # Constants.
@@ -97,11 +99,14 @@ except ImportError, e:
 #log_entries_associated_with_objects_pid_and_checksum_endswith_2 = 5
 #log_entries_associated_with_objects_last_modified_in_1980s = 27
 
+
 def log_setup():
   # Set up logging.
   # We output everything to both file and stdout.
   logging.getLogger('').setLevel(logging.DEBUG)
-  formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S')
+  formatter = logging.Formatter(
+    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
+  )
   file_logger = logging.FileHandler(os.path.splitext(__file__)[0] + '.log', 'a')
   file_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(file_logger)
@@ -109,8 +114,10 @@ def log_setup():
   console_logging.setFormatter(formatter)
   logging.getLogger('').addHandler(console_logger)
 
+
 class MNException(Exception):
   pass
+
 
 class TestSequenceFunctions(unittest.TestCase):
   def setUp(self):
@@ -142,14 +149,18 @@ class TestSequenceFunctions(unittest.TestCase):
     str_a_orig = str_a
     str_b_orig = str_b
 
-    msg = 'Strings are equal to the point where one is longer than the other: "{0}" != "{1}"'.format(str_a_orig, str_b_orig)
+    msg = 'Strings are equal to the point where one is longer than the other: "{0}" != "{1}"'.format(
+      str_a_orig, str_b_orig
+    )
     if str_a != str_b:
       if len(str_a) > len(str_b):
         str_a, str_b = str_b, str_a
       i = 0
       for c in str_a:
         if c != str_b[i]:
-          msg = 'Difference at offset {0} ({1} != {2}): "{3}" != "{4}"'.format(i, c, str_b[i], str_a_orig, str_b_orig)
+          msg = 'Difference at offset {0} ({1} != {2}): "{3}" != "{4}"'.format(
+            i, c, str_b[i], str_a_orig, str_b_orig
+          )
           break
         i += 1
 
@@ -211,7 +222,9 @@ class TestSequenceFunctions(unittest.TestCase):
   def assert_mn_compare_byte_by_byte(self):
     '''MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies
     '''
-    logging.info('MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies')
+    logging.info(
+      'MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
@@ -282,7 +295,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # Compare SciObject with local.
 
-
   def mn_get_sci_object_info_by_identifer(self, pid):
     '''MN: Get SciObject information by pid
     '''
@@ -310,7 +322,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # Compare SciObject with local.
 
-  # MN specific functions.
+    # MN specific functions.
 
   def mn_delete_all_sci_objects(self):
     '''MN: Delete all SciObjects
@@ -363,10 +375,11 @@ class TestSequenceFunctions(unittest.TestCase):
     inject_log_url = urlparse.urljoin(self.opts.mn_url, 'inject_log')
     status, reason, page = multipart.post(inject_log_url)
 
-    self.assertEqual(status, 200, 'Log injection failed. Returned: {0} {1}'.format(reason, page))
+    self.assertEqual(
+      status, 200, 'Log injection failed. Returned: {0} {1}'.format(reason, page)
+    )
 
   # MN functions.
-
 
   def mn_populate_with_test_sci_objects(self, register=False):
     '''MN: Populate with set of test SciObjects.
@@ -381,7 +394,9 @@ class TestSequenceFunctions(unittest.TestCase):
 
     for sysmeta_path in sorted(glob.glob(os.path.join(self.opts.obj_path, 'sysmeta/*'))):
       # Get name of corresponding SciObject and open it.
-      sci_object_path = os.path.join(self.opts.obj_path, 'scimeta', os.path.split(sysmeta_path)[1])
+      sci_object_path = os.path.join(
+        self.opts.obj_path, 'scimeta', os.path.split(sysmeta_path)[1]
+      )
       sci_object_file = open(sci_object_path, 'rb')
 
       # The pid is stored in the sysmeta.
@@ -394,7 +409,10 @@ class TestSequenceFunctions(unittest.TestCase):
         # To create a valid URL, we must quote the pid twice. First, so
         # that the URL will match what's on disk and then again so that the
         # quoting survives being passed to the web server.
-        obj_url = urlparse.urljoin(self.opts.obj_url, urllib.quote(urllib.quote(pid, ''), ''))
+        obj_url = urlparse.urljoin(
+          self.opts.obj_url, urllib.quote(
+            urllib.quote(pid, ''), '')
+        )
       else:
         # To test the MIME Multipart poster, we provide the Sci SciObject as a file
         # and the SysMeta as a string.
@@ -403,7 +421,9 @@ class TestSequenceFunctions(unittest.TestCase):
   def mn_sci_object_properties(self):
     '''MN: Read complete SciObject collection and compare with values stored in local SysMeta files
     '''
-    logging.info('MN: Read complete SciObject collection and compare with values stored in local SysMeta files')
+    logging.info(
+      'MN: Read complete SciObject collection and compare with values stored in local SysMeta files'
+    )
 
     # Get SciObject collection.
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -425,13 +445,17 @@ class TestSequenceFunctions(unittest.TestCase):
       for sci_object_info in sci_objects.objectInfo:
         if sci_object_info.pid == sysmeta_obj.pid:
           found = True
-          break;
+          break
 
-      self.assertTrue(found, 'Couldn\'t find SciObject with pid "{0}"'.format(sysmeta_obj.pid))
+      self.assertTrue(
+        found, 'Couldn\'t find SciObject with pid "{0}"'.format(sysmeta_obj.pid)
+      )
 
       self.assertEqual(object_info.pid, sysmeta_obj.pid)
       self.assertEqual(sci_object_info.objectFormat, sysmeta_obj.objectFormat)
-      self.assertEqual(sci_object_info.datesci_objectadataModified, sysmeta_obj.dateSysMetadataModified)
+      self.assertEqual(
+        sci_object_info.datesci_objectadataModified, sysmeta_obj.dateSysMetadataModified
+      )
       self.assertEqual(sci_object_info.size, sysmeta_obj.size)
       self.assertEqual(sci_object_info.checksum.value(), sysmeta_obj.checksum)
       self.assertEqual(sci_object_info.checksum.algorithm, sysmeta_obj.checksumAlgorithm)
@@ -439,7 +463,9 @@ class TestSequenceFunctions(unittest.TestCase):
   def assert_mn_sci_object_slicing_1(self):
     '''MN: Verify slicing: Starting at 0 and getting half of the available SciObjects
     '''
-    logging.info('MN: Verify slicing: Starting at 0 and getting half of the available SciObjects')
+    logging.info(
+      'MN: Verify slicing: Starting at 0 and getting half of the available SciObjects'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
@@ -453,7 +479,9 @@ class TestSequenceFunctions(unittest.TestCase):
   def assert_mn_sci_object_slicing_2(self):
     '''MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are
     '''
-    logging.info('MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are')
+    logging.info(
+      'MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
@@ -461,8 +489,13 @@ class TestSequenceFunctions(unittest.TestCase):
     sci_object_cnt_first = 8
     sci_object_cnt_second = 9
 
-    sci_objects = client.listObjects(start=sci_object_cnt_first, count=d1_common.const.MAX_LISTOBJECTS)
-    self.assert_counts(sci_objects, sci_object_cnt_first, sci_object_cnt_second, sci_object_cnt)
+    sci_objects = client.listObjects(
+      start=sci_object_cnt_first,
+      count=d1_common.const.MAX_LISTOBJECTS
+    )
+    self.assert_counts(
+      sci_objects, sci_object_cnt_first, sci_object_cnt_second, sci_object_cnt
+    )
 
   def assert_mn_sci_object_slicing_3(self):
     '''MN: Verify slicing: Starting above number of SciObjects that we have
@@ -504,9 +537,8 @@ class TestSequenceFunctions(unittest.TestCase):
     sci_objects = client.listObjects(
       fromDate=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
       toDate=d1_common.date_time.from_iso8601('2010-06-22T07:13:51')
-      )
+    )
     self.assert_counts(sci_objects, 0, 4, 4)
-
 
   def assert_mn_sci_object_date_range_2(self):
     '''MN: Verify date range query: Get last 2 SciObjects from range
@@ -520,39 +552,47 @@ class TestSequenceFunctions(unittest.TestCase):
       toDate=d1_common.date_time.from_iso8601('2010-06-22T07:13:51'),
       start=2,
       count=10
-      )
+    )
     self.assert_counts(sci_objects, 2, 2, 4)
 
   def assert_mn_sci_object_date_range_3(self):
     '''MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat
     '''
-    logging.info('MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat')
+    logging.info(
+      'MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(
       fromDate=d1_common.date_time.from_iso8601('2010-06-22T01:13:51'),
-      toDate=d1_common.date_time.from_iso8601('2010-06-22T07:13:51'),
+      toDate=d1_common.date_time.from_iso8601(
+        '2010-06-22T07:13:51'
+      ),
       start=0,
       count=10,
       objectFormat='eml://ecoinformatics.org/eml-2.0.1'
-      )
+    )
     self.assert_counts(sci_objects, 0, 1, 1)
 
   def assert_mn_sci_object_date_range_4(self):
     '''MN: Verify date range query: Get 10 first SciObjects from non-existing date range
     '''
-    logging.info('MN: Verify date range query: Get 10 first SciObjects from non-existing date range')
+    logging.info(
+      'MN: Verify date range query: Get 10 first SciObjects from non-existing date range'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(
       fromDate=datetime.datetime(2500, 1, 1),
-      toDate=datetime.datetime(2500, 12, 31),
+      toDate=datetime.datetime(
+        2500, 12, 31
+      ),
       start=0,
       count=10,
       objectFormat='eml://ecoinformatics.org/eml-2.0.0'
-      )
+    )
     self.assert_counts(sci_objects, 0, 0, 0)
 
   def assert_mn_sci_object_count(self):
@@ -560,10 +600,7 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
-    sci_objects = client.listObjects(
-      start=0,
-      count=0,
-      )
+    sci_objects = client.listObjects(start=0, count=0, )
     self.assert_counts(sci_objects, 0, 0, 17)
 
   def assert_mn_sci_object_by_invalid_pid(self):
@@ -571,7 +608,9 @@ class TestSequenceFunctions(unittest.TestCase):
     '''
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
-    logging.info('MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_pid_')
+    logging.info(
+      'MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_pid_'
+    )
 
     try:
       response = client.get('_invalid_pid_')
@@ -602,7 +641,9 @@ class TestSequenceFunctions(unittest.TestCase):
   def mn_get_sci_object_by_invalid_pid(self):
     '''MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_
     '''
-    logging.info('MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_')
+    logging.info(
+      'MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
@@ -626,7 +667,9 @@ class TestSequenceFunctions(unittest.TestCase):
   def mn_xml_validation(self):
     '''MN: Verify that returned XML document validates against the ObjectList schema
     '''
-    logging.info('MN: Verify that returned XML document validates against the ObjectList schema')
+    logging.info(
+      'MN: Verify that returned XML document validates against the ObjectList schema'
+    )
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
     response = client.client.GET(client.getObjectListUrl() + '?pretty&count=1', {'Accept': 'text/xml'})
@@ -648,7 +691,6 @@ class TestSequenceFunctions(unittest.TestCase):
     xml_doc_out, content_type = sci_objects_2.serialize('text/xml')
 
     self.assert_xml_equals(xml_doc, xml_doc_out)
-
 
   def mn_orderby_size(self):
     '''MN: Verify ObjectList orderby: size
@@ -672,7 +714,6 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(doc['objectInfo'][0]['size'], 17897472)
     self.assertEqual(doc['objectInfo'][9]['size'], 717851)
 
-
   def cn_pxby_nodelist_xml(self):
     '''CN: NodeList validation
     '''
@@ -681,7 +722,18 @@ class TestSequenceFunctions(unittest.TestCase):
     client = d1_client.client.DataOneClient(self.opts.cn_url)
     NodeList = client.node({'Accept': 'text/xml'})
     for node in NodeList.nodes.node:
-      self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
+      self.assertTrue(
+        str(node.name) in (
+          'DataONESamples',
+          'dryad',
+          'daac',
+          'knb',
+          'cn-unm-1',
+          'cn-ucsb-1',
+          'cn-orc-1',
+          'ok',
+        )
+      )
 
 #-------------------------------------------------------------------------------
 
@@ -693,7 +745,7 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('Use Case 36')
     # TODO: Remove buffering.
 
-    #self.init_to_known_state()        
+    #self.init_to_known_state()
 
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
@@ -702,7 +754,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # Get SciObject collection.
     sci_objects = client_mn.listObjects()
-    # Loop through first 3 pids. 
+    # Loop through first 3 pids.
     for sci_object in sci_objects.objectInfo[:3]:
       # Resolve the object.
       resolve = client_cn.resolve(sci_object.pid)
@@ -718,7 +770,10 @@ class TestSequenceFunctions(unittest.TestCase):
             resolve_node = node
             break
         # Fail if we couldn't look up the node.
-        self.assertTrue('resolve_node' in locals(), 'Unable to find pid({0}) in the Node Registry'.format(location.nodeIdentifier))
+        self.assertTrue(
+          'resolve_node' in locals(),
+          'Unable to find pid({0}) in the Node Registry'.format(location.nodeIdentifier)
+        )
         # Check if we can retrieve the object from the3 given location.
         self.assert_cn_sci_object_str(sci_object.pid, resolve_node.baseURL)
 
@@ -764,7 +819,7 @@ class TestSequenceFunctions(unittest.TestCase):
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
     # Test successful retrieval of known good pid.    
-    #self.assert_cn_sci_object_str('nceas9318', self.opts.cn_url)      
+    #self.assert_cn_sci_object_str('nceas9318', self.opts.cn_url)
 
     # Test unsuccessful retrieval of known bad pid.
     try:
@@ -801,26 +856,26 @@ class TestSequenceFunctions(unittest.TestCase):
     # MN
     client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
 
-#    try:
-#      result = client_mn.get('\'')
-#    except d1_common.types.exceptions.NotFound:
-#      pass
-#    else:
-#      self.assertTrue(False, 'Expected 404 Not Found')
-#    
-#    try:
-#      result = client_mn.getSystemMetadataResponse('\'')
-#    except d1_common.types.exceptions.NotFound:
-#      pass
-#    else:
-#      self.assertTrue(False, 'Expected 404 Not Found')
-#    
-#    try:
-#      result = client_mn.getSystemMetadata('\'')
-#    except d1_common.types.exceptions.NotFound:
-#      pass
-#    else:
-#      self.assertTrue(False, 'Expected 404 Not Found')
+    #    try:
+    #      result = client_mn.get('\'')
+    #    except d1_common.types.exceptions.NotFound:
+    #      pass
+    #    else:
+    #      self.assertTrue(False, 'Expected 404 Not Found')
+    #    
+    #    try:
+    #      result = client_mn.getSystemMetadataResponse('\'')
+    #    except d1_common.types.exceptions.NotFound:
+    #      pass
+    #    else:
+    #      self.assertTrue(False, 'Expected 404 Not Found')
+    #    
+    #    try:
+    #      result = client_mn.getSystemMetadata('\'')
+    #    except d1_common.types.exceptions.NotFound:
+    #      pass
+    #    else:
+    #      self.assertTrue(False, 'Expected 404 Not Found')
 
     # listObjects, direct
 
@@ -904,116 +959,110 @@ class TestSequenceFunctions(unittest.TestCase):
     #  self.assertEqual(result.count, 0, 'Unexpected records returned')
     # TODO: Add this part after /log/ return format has been defined.
 
-
     # CN
 
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
 # Grabbed from test_client (should be here instead)
+
   def test_32_pxby_resolve_xml(self):
     client = d1_client.client.DataOneClient(self.options.cn_url)
     resolve = client.resolve('AnserMatrix.htm', {'Accept': 'text/xml'})
     #for node in NodeList.node_list.node:
     #  self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
 
-#
-#  def test_33_pxby_nodelist_xml(self):
-#    client = d1_client.client.DataOneClient(self.options.cn_url)
-#    NodeList = client.node({'Accept': 'text/xml'})
-#    for node in NodeList.node_list.node:
-#      self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
+    #
+    #  def test_33_pxby_nodelist_xml(self):
+    #    client = d1_client.client.DataOneClient(self.options.cn_url)
+    #    NodeList = client.node({'Accept': 'text/xml'})
+    #    for node in NodeList.node_list.node:
+    #      self.assertTrue(str(node.name) in ('DataONESamples', 'dryad', 'daac', 'knb', 'cn-unm-1', 'cn-ucsb-1', 'cn-orc-1', 'ok',))
 
+    #  ##def test_rest_call_sysmeta_by_object_pid_get(self):
+    #  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
+    #    
+    #  ##def test_rest_call_sysmeta_by_object_pid_404_get(self):
+    #  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid pid>/meta
+    #
+    #  #def test_rest_call_object_header_by_pid_head(self):
+    #  #  curl -I http://127.0.0.1:8000/mn/object/<valid pid>
+    #  
+    #  #def test_rest_call_last_modified_head(self):
+    #  #  curl -I http://mn1.dataone.org/object/
+    #  # Authentication.
+    #  
+    #  #def test_rest_call_cn_auth(self):
+    #  #  Check that CN is successfully authenticated if matching an IP in the CN_IP
+    #  #  list.
+    #  #  
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0
+    #  
+    #  #Check that client is blocked if not matching an IP in the CN_IP list.
+    #
+    #  # Not in spec.
+    #  
+    #  #def test_rest_call_collection_of_objects_pid_filter_get(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*
+    #
+    #  #def test_rest_call_collection_of_objects_checksum_filter_get(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?checksum=1*
+    #
+    #  #def test_rest_call_collection_of_objects_pid_and_checksum_filter_startswith_get(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*&checksum=1*
+    #  #
+    #  
+    #  #def test_rest_call_collection_of_objects_pid_and_checksum_filter_endswith_get(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*1&checksum=*1
+    #
+    #  #def test_rest_call_collection_of_objects_with_requestor_1_1_1_1(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
+    #
+    #  #def test_rest_call_collection_of_objects_with_operation_get_str(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_str
+    #
+    #  #def test_rest_call_collection_of_objects_with_unicode_pid(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
+    #  #  ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
+    #
+    #  # Not in spec: No filtering except for date range and event is in spec.
+    #  
+    #  #def test_rest_call_log_get_log_operation_get_str(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_str
+    #
+    #  #def test_rest_call_log_get_log_requestor_1_1_1_1(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1
+    #
+    #  #def test_rest_call_log_get_log_requestor_1_1_1_1_and_operation_get_str(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_str
+    #
+    #  #def test_rest_call_log_get_log_last_modified_in_1990s(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastModified_gt=1990-01-01T00:00:00&lastModified_lt=2000-01-01T00:00:00
+    #
+    #  #def test_rest_call_log_get_log_last_accessed_in_1970s(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastAccessed_gt=1970-01-01T00:00:00&lastAccessed_lt=1980-01-01T00:00:00
+    #
+    #  #def test_rest_call_log_get_log_entries_associated_with_objects_type_class_data(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?oclass=data
+    #
+    #  #def test_rest_call_log_get_log_entries_associated_with_objects_pid_and_checksum_endswith_2(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pid=*2&checksum=*2
+    #
+    #  #def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
+    #  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastModified_gt=1980-01-01T00:00:00&lastModified_lt=1990-01-01T00:00:00
 
-
-#  ##def test_rest_call_sysmeta_by_object_pid_get(self):
-#  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
-#    
-#  ##def test_rest_call_sysmeta_by_object_pid_404_get(self):
-#  ##  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<invalid pid>/meta
-#
-#  #def test_rest_call_object_header_by_pid_head(self):
-#  #  curl -I http://127.0.0.1:8000/mn/object/<valid pid>
-#  
-#  #def test_rest_call_last_modified_head(self):
-#  #  curl -I http://mn1.dataone.org/object/
-#  # Authentication.
-#  
-#  #def test_rest_call_cn_auth(self):
-#  #  Check that CN is successfully authenticated if matching an IP in the CN_IP
-#  #  list.
-#  #  
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?start=0&count=0
-#  
-#  #Check that client is blocked if not matching an IP in the CN_IP list.
-#
-#  # Not in spec.
-#  
-#  #def test_rest_call_collection_of_objects_pid_filter_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*
-#
-#  #def test_rest_call_collection_of_objects_checksum_filter_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?checksum=1*
-#
-#  #def test_rest_call_collection_of_objects_pid_and_checksum_filter_startswith_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=1*&checksum=1*
-#  #
-#  
-#  #def test_rest_call_collection_of_objects_pid_and_checksum_filter_endswith_get(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*1&checksum=*1
-#
-#  #def test_rest_call_collection_of_objects_with_requestor_1_1_1_1(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?requestor=1.1.1.1
-#
-#  #def test_rest_call_collection_of_objects_with_operation_get_str(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?operationType=get_str
-#
-#  #def test_rest_call_collection_of_objects_with_unicode_pid(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/object/?pid=*%C7%8E%C7%8F%C7%90%C7%91%C7%92%C7%94%C7%95%C7%96%C7%97%C7%98%C7%99%C7%9A%C7%9B
-#  #  ?pid=*ǎǏǐǑǒǔǕǖǗǘǙǚǛ
-#
-#  # Not in spec: No filtering except for date range and event is in spec.
-#  
-#  #def test_rest_call_log_get_log_operation_get_str(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?operation_type=get_str
-#
-#  #def test_rest_call_log_get_log_requestor_1_1_1_1(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1
-#
-#  #def test_rest_call_log_get_log_requestor_1_1_1_1_and_operation_get_str(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?requestor=1.1.1.1&operation_type=get_str
-#
-#  #def test_rest_call_log_get_log_last_modified_in_1990s(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastModified_gt=1990-01-01T00:00:00&lastModified_lt=2000-01-01T00:00:00
-#
-#  #def test_rest_call_log_get_log_last_accessed_in_1970s(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastAccessed_gt=1970-01-01T00:00:00&lastAccessed_lt=1980-01-01T00:00:00
-#
-#  #def test_rest_call_log_get_log_entries_associated_with_objects_type_class_data(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?oclass=data
-#
-#  #def test_rest_call_log_get_log_entries_associated_with_objects_pid_and_checksum_endswith_2(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?pid=*2&checksum=*2
-#
-#  #def test_rest_call_log_get_log_entries_associated_with_objects_last_modified_in_1980s(self):
-#  #  curl -X GET -H "Accept: application/json" http://127.0.0.1:8000/mn/log/?lastModified_gt=1980-01-01T00:00:00&lastModified_lt=1990-01-01T00:00:00
-
-
-
-####################
+    ####################
 
     # getSystemMetadataSchema:
     # enumerateObjectFormats
 
-#    try:
-#      result = client_cn.resolve('\'')
-#    except d1_common.types.exceptions.NotFound:
-#      pass
-#    else:
-#      self.assertTrue(False, 'Expected 404 Not Found')
+    #    try:
+    #      result = client_cn.resolve('\'')
+    #    except d1_common.types.exceptions.NotFound:
+    #      pass
+    #    else:
+    #      self.assertTrue(False, 'Expected 404 Not Found')
 
     # client.node: No need to check because it takes not parameters.
-
-
 
   def _test_zz_uc_03(self):
     '''Use Case 03 - Register MN
@@ -1311,16 +1360,52 @@ class TestSequenceFunctions(unittest.TestCase):
     client_mn = d1_client.client.DataOneClient(self.opts.mn_url)
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
+
 def main():
   log_setup()
 
   # Command line opts.
   parser = optparse.OptionParser()
-  parser.add_option('-g', '--mn-url', dest='mn_url', action='store', type='string', default='http://127.0.0.1:8000/')
-  parser.add_option('-c', '--cn-url', dest='cn_url', action='store', type='string', default='http://cn-dev.dataone.org/cn/')
-  parser.add_option('-x', '--xsd-path', dest='xsd_url', action='store', type='string', default='http://129.24.0.11/systemmetadata.xsd')
-  parser.add_option('-p', '--obj-path', dest='obj_path', action='store', type='string', default='./test_objects')
-  parser.add_option('-w', '--obj-url', dest='obj_url', action='store', type='string', default='http://localhost/test_client_objects/')
+  parser.add_option(
+    '-g',
+    '--mn-url',
+    dest='mn_url',
+    action='store',
+    type='string',
+    default='http://127.0.0.1:8000/'
+  )
+  parser.add_option(
+    '-c',
+    '--cn-url',
+    dest='cn_url',
+    action='store',
+    type='string',
+    default='http://cn-dev.dataone.org/cn/'
+  )
+  parser.add_option(
+    '-x',
+    '--xsd-path',
+    dest='xsd_url',
+    action='store',
+    type='string',
+    default='http://129.24.0.11/systemmetadata.xsd'
+  )
+  parser.add_option(
+    '-p',
+    '--obj-path',
+    dest='obj_path',
+    action='store',
+    type='string',
+    default='./test_objects'
+  )
+  parser.add_option(
+    '-w',
+    '--obj-url',
+    dest='obj_url',
+    action='store',
+    type='string',
+    default='http://localhost/test_client_objects/'
+  )
   parser.add_option('-v', '--verbose', action='store_true', default=False, dest='verbose')
   parser.add_option('-u', '--quick', action='store_true', default=False, dest='quick')
 
@@ -1334,6 +1419,6 @@ def main():
   suite = unittest.TestLoader().loadTestsFromTestCase(s)
   unittest.TextTestRunner(verbosity=2).run(suite)
 
+
 if __name__ == '__main__':
   main()
-

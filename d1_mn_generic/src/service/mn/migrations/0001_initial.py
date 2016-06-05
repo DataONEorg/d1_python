@@ -8,201 +8,366 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    initial = True
+  initial = True
 
-    dependencies = [
-    ]
+  dependencies = []
 
-    operations = [
-        migrations.CreateModel(
-            name='EventLog',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_logged', models.DateTimeField(auto_now_add=True, db_index=True)),
-            ],
+  operations = [
+    migrations.CreateModel(
+      name='EventLog',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='EventLogEvent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('event', models.CharField(max_length=128, unique=True)),
-            ],
+        ('date_logged', models.DateTimeField(auto_now_add=True,
+                                             db_index=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='EventLogEvent',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='EventLogIPAddress',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ip_address', models.CharField(max_length=32, unique=True)),
-            ],
+        ('event', models.CharField(max_length=128, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='EventLogIPAddress',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='EventLogMemberNode',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('member_node', models.CharField(max_length=128, unique=True)),
-            ],
+        ('ip_address', models.CharField(max_length=32, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='EventLogMemberNode',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='EventLogSubject',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subject', models.CharField(max_length=1024, unique=True)),
-            ],
+        ('member_node', models.CharField(max_length=128, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='EventLogSubject',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='EventLogUserAgent',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user_agent', models.CharField(max_length=1024, unique=True)),
-            ],
+        ('subject', models.CharField(max_length=1024, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='EventLogUserAgent',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='Permission',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('level', models.PositiveSmallIntegerField()),
-            ],
+        ('user_agent', models.CharField(max_length=1024, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='Permission',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='PermissionSubject',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subject', models.CharField(max_length=1024, unique=True)),
-            ],
+        ('level', models.PositiveSmallIntegerField()),
+      ],
+    ),
+    migrations.CreateModel(
+      name='PermissionSubject',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='ReplicationQueue',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pid', models.CharField(max_length=800)),
-                ('timestamp', models.DateTimeField(auto_now=True)),
-            ],
+        ('subject', models.CharField(max_length=1024, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='ReplicationQueue',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='ReplicationQueueSourceNode',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source_node', models.CharField(max_length=32, unique=True)),
-            ],
+        ('pid', models.CharField(max_length=800)),
+        ('timestamp', models.DateTimeField(auto_now=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='ReplicationQueueSourceNode',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='ReplicationQueueStatus',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(max_length=1024, unique=True)),
-            ],
+        ('source_node', models.CharField(max_length=32, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='ReplicationQueueStatus',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='ScienceObject',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pid', models.CharField(max_length=800, unique=True)),
-                ('url', models.CharField(max_length=1024, unique=True)),
-                ('checksum', models.CharField(db_index=True, max_length=128)),
-                ('mtime', models.DateTimeField(db_index=True)),
-                ('size', models.BigIntegerField(db_index=True)),
-                ('replica', models.BooleanField(db_index=True)),
-                ('system_metadata_refreshed', models.DateTimeField(null=True)),
-                ('serial_version', models.PositiveIntegerField()),
-                ('archived', models.BooleanField()),
-            ],
+        ('status', models.CharField(max_length=1024, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='ScienceObject',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='ScienceObjectChecksumAlgorithm',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('checksum_algorithm', models.CharField(max_length=32, unique=True)),
-            ],
+        ('pid', models.CharField(max_length=800, unique=True)),
+        ('url', models.CharField(max_length=1024, unique=True)),
+        ('checksum', models.CharField(db_index=True, max_length=128)),
+        ('mtime', models.DateTimeField(db_index=True)),
+        ('size', models.BigIntegerField(db_index=True)),
+        ('replica', models.BooleanField(db_index=True)),
+        ('system_metadata_refreshed', models.DateTimeField(null=True)),
+        ('serial_version', models.PositiveIntegerField()),
+        ('archived', models.BooleanField()),
+      ],
+    ),
+    migrations.CreateModel(
+      name='ScienceObjectChecksumAlgorithm',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='ScienceObjectFormat',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('format_id', models.CharField(max_length=128, unique=True)),
-            ],
+        ('checksum_algorithm', models.CharField(max_length=32, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='ScienceObjectFormat',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='SystemMetadataRefreshQueue',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField(auto_now=True)),
-                ('serial_version', models.PositiveIntegerField()),
-                ('last_modified', models.DateTimeField()),
-                ('object', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ScienceObject')),
-            ],
+        ('format_id', models.CharField(max_length=128, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='SystemMetadataRefreshQueue',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.CreateModel(
-            name='SystemMetadataRefreshQueueStatus',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(max_length=1024, unique=True)),
-            ],
+        ('timestamp', models.DateTimeField(auto_now=True)),
+        ('serial_version', models.PositiveIntegerField()),
+        ('last_modified', models.DateTimeField()),
+        (
+          'object', models.ForeignKey(
+            on_delete=django.db.models.deletion.CASCADE,
+            to='mn.ScienceObject'
+          )
         ),
-        migrations.CreateModel(
-            name='WhitelistForCreateUpdateDelete',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.PermissionSubject')),
-            ],
+      ],
+    ),
+    migrations.CreateModel(
+      name='SystemMetadataRefreshQueueStatus',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.AddField(
-            model_name='systemmetadatarefreshqueue',
-            name='status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.SystemMetadataRefreshQueueStatus'),
+        ('status', models.CharField(max_length=1024, unique=True)),
+      ],
+    ),
+    migrations.CreateModel(
+      name='WhitelistForCreateUpdateDelete',
+      fields=[
+        (
+          'id', models.AutoField(
+            auto_created=True,
+            primary_key=True,
+            serialize=False,
+            verbose_name='ID'
+          )
         ),
-        migrations.AddField(
-            model_name='scienceobject',
-            name='checksum_algorithm',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ScienceObjectChecksumAlgorithm'),
+        (
+          'subject', models.ForeignKey(
+            on_delete=django.db.models.deletion.CASCADE,
+            to='mn.PermissionSubject'
+          )
         ),
-        migrations.AddField(
-            model_name='scienceobject',
-            name='format',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ScienceObjectFormat'),
-        ),
-        migrations.AddField(
-            model_name='replicationqueue',
-            name='source_node',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ReplicationQueueSourceNode'),
-        ),
-        migrations.AddField(
-            model_name='replicationqueue',
-            name='status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ReplicationQueueStatus'),
-        ),
-        migrations.AddField(
-            model_name='permission',
-            name='object',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ScienceObject'),
-        ),
-        migrations.AddField(
-            model_name='permission',
-            name='subject',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.PermissionSubject'),
-        ),
-        migrations.AddField(
-            model_name='eventlog',
-            name='event',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.EventLogEvent'),
-        ),
-        migrations.AddField(
-            model_name='eventlog',
-            name='ip_address',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.EventLogIPAddress'),
-        ),
-        migrations.AddField(
-            model_name='eventlog',
-            name='object',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.ScienceObject'),
-        ),
-        migrations.AddField(
-            model_name='eventlog',
-            name='subject',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.EventLogSubject'),
-        ),
-        migrations.AddField(
-            model_name='eventlog',
-            name='user_agent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service.EventLogUserAgent'),
-        ),
-    ]
+      ],
+    ),
+    migrations.AddField(
+      model_name='systemmetadatarefreshqueue',
+      name='status',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.SystemMetadataRefreshQueueStatus'
+      ),
+    ),
+    migrations.AddField(
+      model_name='scienceobject',
+      name='checksum_algorithm',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.ScienceObjectChecksumAlgorithm'
+      ),
+    ),
+    migrations.AddField(
+      model_name='scienceobject',
+      name='format',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.ScienceObjectFormat'
+      ),
+    ),
+    migrations.AddField(
+      model_name='replicationqueue',
+      name='source_node',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.ReplicationQueueSourceNode'
+      ),
+    ),
+    migrations.AddField(
+      model_name='replicationqueue',
+      name='status',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.ReplicationQueueStatus'
+      ),
+    ),
+    migrations.AddField(
+      model_name='permission',
+      name='object',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.ScienceObject'
+      ),
+    ),
+    migrations.AddField(
+      model_name='permission',
+      name='subject',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.PermissionSubject'
+      ),
+    ),
+    migrations.AddField(
+      model_name='eventlog',
+      name='event',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.EventLogEvent'
+      ),
+    ),
+    migrations.AddField(
+      model_name='eventlog',
+      name='ip_address',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.EventLogIPAddress'
+      ),
+    ),
+    migrations.AddField(
+      model_name='eventlog',
+      name='object',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.ScienceObject'
+      ),
+    ),
+    migrations.AddField(
+      model_name='eventlog',
+      name='subject',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.EventLogSubject'
+      ),
+    ),
+    migrations.AddField(
+      model_name='eventlog',
+      name='user_agent',
+      field=models.ForeignKey(
+        on_delete=django.db.models.deletion.CASCADE,
+        to='mn.EventLogUserAgent'
+      ),
+    ),
+  ]

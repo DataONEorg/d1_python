@@ -29,6 +29,7 @@
 import django.core.cache
 import django.db
 import django.db.transaction
+from django.conf import settings
 
 # D1.
 import d1_common.const
@@ -40,7 +41,6 @@ import d1_x509v3_certificate_extractor
 import mn.models
 import mn.node_registry
 import mn.sysmeta_store
-import settings
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -139,55 +139,55 @@ def set_access_policy(pid, access_policy=None):
       level.
 
   '''
-  # Verify that the object for which access policy is being set exists, and
-  # retrieve it.
-  try:
-    sci_obj = mn.models.ScienceObject.objects.get(pid=pid)
-  except mn.models.ScienceObject.DoesNotExist:
-    raise d1_common.types.exceptions.ServiceFailure(
-      0, 'Attempted to set access for non-existing object', pid
-    )
+  # Verify that the object for which access policy is being set exists.
+  sci_obj = get_sci_obj(pid)
 
-  # Handle call without access policy.
-  if access_policy is None:
-    allow = []
-  else:
-    allow = access_policy.allow
-
-  # Remove any existing permissions for this object. The temporary absence of
-  # permissions is hidden in an implicit transaction.
-  #
-  # The deletes are cascaded so any subjects that are no longer referenced in
-  # any permissions are deleted as well.
-  mn.models.Permission.objects.filter(object__pid=pid).delete()
-
-  # Add an implicit allow rule with all permissions for the rights holder.
-  allow_rights_holder = dataoneTypes.AccessRule()
-
-  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version) as sysmeta:
-    allow_rights_holder.subject.append(sysmeta.rightsHolder)
+  # Open the sysmeta file on disk for read-write. This causes a new file with a new serial version to be automatically
+  # written to disk when the sysmeta context manager goes out of scope.
+  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=False) as sysmeta:
     sysmeta.accessPolicy = access_policy
     sci_obj.serial_version = sysmeta.serialVersion
     sci_obj.save()
 
-  permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
-  allow_rights_holder.permission.append(permission)
+  update_db_access_policy(pid)
 
-  # Create db entry for rights holder.
-  top_level = get_highest_level_action_for_rule(allow_rights_holder)
-  insert_permission_rows(sci_obj, allow_rights_holder, top_level)
 
-  # Create db entries for all subjects for which permissions have been granted.
-  for allow_rule in allow:
-    top_level = get_highest_level_action_for_rule(allow_rule)
-    insert_permission_rows(sci_obj, allow_rule, top_level)
+def update_db_access_policy(pid):
+  '''Given the PID of an existing object, create or update the database representation of the object's access policy.'''
+  sci_obj = get_sci_obj(pid)
 
-  # Update the SysMeta object with the new access policy. Because
-  # TransactionMiddleware is enabled, the database modifications made above will
-  # be rolled back if the SysMeta update fails.
-  #with sysmeta_store.sysmeta(pid, sci_obj.serial_version) as s:
-  #  s.accessPolicy = access_policy
-  #  sci_obj.serial_version = s.serialVersion
+  # Open the sysmeta file on disk for read only and get the access policy. Since the sysmeta is opened for read-only,
+  # a new document is *not* created when the sysmeta context manager goes out of scope.
+  with mn.sysmeta_store.sysmeta(pid, sci_obj.serial_version, read_only=True) as sysmeta:
+    # Add an implicit allow rule with all permissions for the rights holder.
+    allow_rights_holder = dataoneTypes.AccessRule()
+    permission = dataoneTypes.Permission(CHANGEPERMISSION_STR)
+    allow_rights_holder.permission.append(permission)
+    allow_rights_holder.subject.append(sysmeta.rightsHolder)
+
+    # Remove any existing permissions for this object. The temporary absence of
+    # permissions is hidden in an implicit transaction.
+    #
+    # The deletes are cascaded so any subjects that are no longer referenced in
+    # any permissions are deleted as well.
+    mn.models.Permission.objects.filter(object__pid=pid).delete()
+
+    # Create db entry for rights holder.
+    top_level = get_highest_level_action_for_rule(allow_rights_holder)
+    insert_permission_rows(sci_obj, allow_rights_holder, top_level)
+
+    # Create db entries for all subjects for which permissions have been granted.
+    if sysmeta.accessPolicy:
+      for allow_rule in sysmeta.accessPolicy.allow:
+        top_level = get_highest_level_action_for_rule(allow_rule)
+        insert_permission_rows(sci_obj, allow_rule, top_level)
+
+
+def get_sci_obj(pid):
+  try:
+    return mn.models.ScienceObject.objects.get(pid=pid)
+  except mn.models.ScienceObject.DoesNotExist:
+    raise d1_common.types.exceptions.ServiceFailure(0, 'Object does not exist', pid)
 
 
 def get_highest_level_action_for_rule(allow_rule):
@@ -221,10 +221,9 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
   ):
     subjects_existing.add(subject_existing_row.subject)
     permission_create_rows.append(
-      mn.models.Permission(
-        object=sci_obj, subject=subject_existing_row,
-        level=top_level
-      )
+      mn.models.Permission(object=sci_obj,
+                           subject=subject_existing_row,
+                           level=top_level)
     )
 
   subjects_missing = subjects_required - subjects_existing
@@ -233,10 +232,9 @@ def insert_permission_rows_transaction(sci_obj, allow_rule, top_level):
     subject_row = mn.models.PermissionSubject(subject=s)
     subject_row.save()
     permission_create_rows.append(
-      mn.models.Permission(
-        object=sci_obj, subject=subject_row,
-        level=top_level
-      )
+      mn.models.Permission(object=sci_obj,
+                           subject=subject_row,
+                           level=top_level)
     )
 
   mn.models.Permission.objects.bulk_create(permission_create_rows)
@@ -401,7 +399,8 @@ def assert_trusted(request):
     raise d1_common.types.exceptions.NotAuthorized(
       0, 'Access allowed only for DataONE infrastructure. {0}. '
       'Trusted subjects: {1}'.format(
-        format_active_subjects(request), get_trusted_subjects_string())
+        format_active_subjects(request), get_trusted_subjects_string()
+      )
     )
 
 
@@ -427,7 +426,11 @@ def assert_authenticated(f):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.subjects:
       raise d1_common.types.exceptions.NotAuthorized(
         0, 'Access allowed only for authenticated subjects. Please reconnect with '
-        'a valid DataONE session certificate. {0}'.format(format_active_subjects(request))
+        'a valid DataONE session certificate. {0}'.format(
+          format_active_subjects(
+            request
+          )
+        )
       )
     return f(request, *args, **kwargs)
 

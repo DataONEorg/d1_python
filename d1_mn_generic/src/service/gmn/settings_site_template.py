@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''
 :mod:`settings_site`
 ====================
@@ -125,7 +124,8 @@ MONITOR = True
 # Hosts/domain names that are valid for this site.
 # Ignored if DEBUG is True. Required if DEBUG is False.
 ALLOWED_HOSTS = [
-  'localhost', '127.0.0.1', # Allow local connections.
+  'localhost',
+  '127.0.0.1', # Allow local connections.
   #'my.server.name.com', # Add to allow GMN to be accessed by name from remote server.
   #'my.external.ip.address', # Add to allow GMN to be accessed by ip from remote server.
 ]
@@ -237,19 +237,17 @@ REPLICATION_MAXOBJECTSIZE = -1
 # The total space, in octets (8-bit bytes), that this node is providing for
 # replication. Set to -1 to provide unlimited space (not recommended).
 # E.g. for a total space of 10 TiB: 10 * 1024**4
-REPLICATION_SPACEALLOCATED = 10 * 1024 ** 4
+REPLICATION_SPACEALLOCATED = 10 * 1024**4
 
 # A list of nodes for which this node is willing to replicate content. To allow
 # objects from any node to be replicated, set to an empty list.
 # E.g.: ('urn:node:MemberNodeA','urn:node:MemberNodeB','urn:node:MemberNodeC')
-REPLICATION_ALLOWEDNODE = (
-)
+REPLICATION_ALLOWEDNODE = ()
 
 # A list of object formats for objects which this node is willing replicate.
 # To allow any object type to be replicated, set to an empty list.
 # E.g.: ('eml://ecoinformatics.org/eml-2.0.0', 'CF-1.0')
-REPLICATION_ALLOWEDOBJECTFORMAT = (
-)
+REPLICATION_ALLOWEDOBJECTFORMAT = ()
 
 # On startup, GMN connects to the DataONE root CN to get the subject strings of
 # the CNs in the environment. For a production instance of GMN, this should be
@@ -268,23 +266,23 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 # added to the ones discovered by connecting to the DataONE root CN. See the
 # DATAONE_ROOT setting. If the STAND_ALONE setting is set to True, these become
 # the only trusted subjects.
-DATAONE_TRUSTED_SUBJECTS = set([
-  # For testing and debugging, it's possible to add the public subject here.
-  # This circumvents all access control, allowing any method to be called
-  # from an unauthenticated connection.
-  #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
-  # As with the public subject, it's possible to add the authenticatedUser
-  # subject here, to let any authenticated user access any method.
-  #d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
-  # Specific authenticated users can also be added.
-  #'any-authenticated-user-subject',
-])
+DATAONE_TRUSTED_SUBJECTS = set(
+  [
+    # For testing and debugging, it's possible to add the public subject here.
+    # This circumvents all access control, allowing any method to be called
+    # from an unauthenticated connection.
+    #d1_common.const.SUBJECT_PUBLIC, # Only use for testing and debugging
+    # As with the public subject, it's possible to add the authenticatedUser
+    # subject here, to let any authenticated user access any method.
+    #d1_common.const.SUBJECT_AUTHENTICATED, # Only use for testing and debugging
+    # Specific authenticated users can also be added.
+    #'any-authenticated-user-subject',
+  ]
+)
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
-ADMINS = (
-  ('My Name', 'my_address@my_email.tld'),
-)
+ADMINS = (('My Name', 'my_address@my_email.tld'), )
 
 # Enable MNRead.listObjects() for public and regular authenticated users.
 #
@@ -369,7 +367,7 @@ DATABASES = {
 # stored here. By default, these are below the service folder. Typically,
 # these are changed to use an area that is dedicated for storage, for instance
 # a separate filesystem / disk.
-MEDIA_ROOT = make_absolute('./stores')  # relative location
+MEDIA_ROOT = make_absolute('./stores') # relative location
 # MEDIA_ROOT = '/mnt/my_large_disk/dataone/' # example for absolute location
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
@@ -464,6 +462,7 @@ LOGGING = {
 # ==============================================================================
 # Validation of settings.
 
+
 def check_path(path):
   if path is None:
     return
@@ -473,7 +472,6 @@ def check_path(path):
 
 check_path(CLIENT_CERT_PATH)
 check_path(CLIENT_CERT_PRIVATE_KEY_PATH)
-
 
 if SECRET_KEY == 'MySecretKey':
   raise Exception('SECRET_KEY is unset. See install documentation.')

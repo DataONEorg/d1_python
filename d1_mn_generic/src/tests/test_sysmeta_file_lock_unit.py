@@ -60,7 +60,7 @@ class TestFileLockUnit(unittest.TestCase):
 
   def test_acquire_assert_called_flock(self):
     with patch(
-      'service.mn.management.commands.process_system_metadata_refresh_queue.fcntl.flock'
+      'mn.management.commands.process_system_metadata_refresh_queue.fcntl.flock'
     ) as mocked_method:
       lock_name = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_file_lock_unit.single'
       sng = sysmeta_rep_queue.Command()
@@ -68,14 +68,12 @@ class TestFileLockUnit(unittest.TestCase):
       mocked_method.assert_called_with(sng.file_handle, 6)
 
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
+    'mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
   )
-  @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher'
-  )
+  @patch('mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher')
   def test_process_queue(self, mock_proc, mock_queue):
     with patch(
-      'service.mn.management.commands.process_system_metadata_refresh_queue.sys.exit'
+      'mn.management.commands.process_system_metadata_refresh_queue.sys.exit'
     ) as mock_exit:
       lock_name = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_file_lock_unit.single'
       sng = sysmeta_rep_queue.Command()
@@ -88,22 +86,20 @@ class TestFileLockUnit(unittest.TestCase):
       self.assertFalse(new_sng.locked)
 
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
+    'mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
+  )
+  @patch('mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher')
+  @patch(
+    'mn.management.commands.process_system_metadata_refresh_queue.Command._abort_if_stand_alone_instance'
   )
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher'
-  )
-  @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.Command._abort_if_stand_alone_instance'
-  )
-  @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.Command._log_setup'
+    'mn.management.commands.process_system_metadata_refresh_queue.Command._log_setup'
   )
   def test_handle_noargs_called_abort(
     self, mock_log, mock_abort, mock_init, mock_process
   ):
     with patch(
-      'service.mn.management.commands.process_system_metadata_refresh_queue.Command._get_lock',
+      'mn.management.commands.process_system_metadata_refresh_queue.Command._get_lock',
       new_callable=PropertyMock
     ) as mocked_method:
       cmd = sysmeta_rep_queue.Command()
@@ -112,22 +108,18 @@ class TestFileLockUnit(unittest.TestCase):
       mocked_method.assert_called_with()
 
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
+    'mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
   )
+  @patch('mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher')
+  @patch('mn.management.commands.process_system_metadata_refresh_queue.Command._get_lock')
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher'
-  )
-  @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.Command._get_lock'
-  )
-  @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.Command._log_setup'
+    'mn.management.commands.process_system_metadata_refresh_queue.Command._log_setup'
   )
   def test_handle_noargs_called_abort_if_stand_alone_instance(
     self, mock_log, mock_abort, mock_init, mock_process
   ):
     with patch(
-      'service.mn.management.commands.process_system_metadata_refresh_queue.Command._abort_if_stand_alone_instance',
+      'mn.management.commands.process_system_metadata_refresh_queue.Command._abort_if_stand_alone_instance',
       new_callable=PropertyMock
     ) as mocked_method:
       cmd = sysmeta_rep_queue.Command()
@@ -136,16 +128,14 @@ class TestFileLockUnit(unittest.TestCase):
       mocked_method.assert_called_with()
 
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.Command._abort_if_stand_alone_instance'
+    'mn.management.commands.process_system_metadata_refresh_queue.Command._abort_if_stand_alone_instance'
   )
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
+    'mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher.process_system_metadata_refresh_queue'
   )
+  @patch('mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher')
   @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.SysMetaRefresher'
-  )
-  @patch(
-    'service.mn.management.commands.process_system_metadata_refresh_queue.Command._log_setup'
+    'mn.management.commands.process_system_metadata_refresh_queue.Command._log_setup'
   )
   def test_handle_noargs_lock_acquired(
     self, mock_log, mock_init, mock_process, mock_abort

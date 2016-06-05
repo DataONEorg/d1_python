@@ -231,9 +231,7 @@ class TestAccessControl(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
 
     access_policy = self.gen_access_policy(
-      (
-        (('test_perm_7', 'test_perm_8'), ('changePermission', )),
-      )
+      ((('test_perm_7', 'test_perm_8'), ('changePermission', )), )
     )
 
     client.setAccessPolicy(
@@ -247,9 +245,7 @@ class TestAccessControl(unittest2.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
 
     sysmeta = client.getSystemMetadata(
-      context.pid, vendorSpecific=self.session(
-        context.test_owner_1
-      )
+      context.pid, vendorSpecific=self.session(context.test_owner_1)
     )
 
     self.assertEqual(sysmeta.accessPolicy.allow[0].subject[0].value(), 'test_perm_7')

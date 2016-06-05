@@ -66,7 +66,7 @@ try:
   import d1_client.d1client
   import d1_client.mnclient
   import d1_client.systemmetadata
-  import mn.sysmeta_store
+  import service.mn.sysmeta_store
 except ImportError, e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write(

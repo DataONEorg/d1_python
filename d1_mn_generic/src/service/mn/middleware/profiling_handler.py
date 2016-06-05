@@ -23,11 +23,11 @@
 import sys
 import StringIO
 import os
-import settings
 
 # Django.
 from django.http import HttpResponse
 import django.core.exceptions
+from django.conf import settings
 
 # 3rd party.
 import hotshot

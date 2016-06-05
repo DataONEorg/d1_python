@@ -35,6 +35,9 @@ import sys
 import traceback
 import zlib
 
+# Django.
+from django.conf import settings
+
 # D1.
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -44,8 +47,7 @@ import d1_common.date_time
 import d1_common.url
 
 # App.
-import mn.models
-import settings
+import models
 
 
 def create_missing_directories(file_path):
@@ -71,9 +73,7 @@ def store_path(root, pid, serial_version=None):
   serial_version_append = '.' + str(serial_version) if serial_version else ''
   return os.path.join(
     root, '{0:03}'.format(a), '{0:03}'.format(b), '{0}{1}'.format(
-      d1_common.url.encodePathElement(
-        pid
-      ), serial_version_append
+      d1_common.url.encodePathElement(pid), serial_version_append
     )
   )
 
@@ -111,9 +111,7 @@ def traceback_to_trace_info():
     tb.append(
       '{0}({1})'.format(
         str(os.path.basename(co.co_filename)), str(
-          traceback.tb_lineno(
-            exception_traceback
-          )
+          traceback.tb_lineno(exception_traceback)
         )
       )
     )
@@ -131,12 +129,12 @@ def traceback_to_text():
 def clear_db():
   '''Clear the database. Used for testing and debugging.
   '''
-  mn.models.EventLog.objects.all().delete()
-  mn.models.EventLogEvent.objects.all().delete()
-  mn.models.EventLogIPAddress.objects.all().delete()
-  mn.models.ScienceObject.objects.all().delete()
-  mn.models.ScienceObjectChecksumAlgorithm.objects.all().delete()
-  mn.models.ScienceObjectFormat.objects.all().delete()
+  models.EventLog.objects.all().delete()
+  models.EventLogEvent.objects.all().delete()
+  models.EventLogIPAddress.objects.all().delete()
+  models.ScienceObject.objects.all().delete()
+  models.ScienceObjectChecksumAlgorithm.objects.all().delete()
+  models.ScienceObjectFormat.objects.all().delete()
 
 
 class fixed_chunk_size_iterator(object):

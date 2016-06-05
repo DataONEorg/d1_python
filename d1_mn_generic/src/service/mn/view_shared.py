@@ -28,6 +28,7 @@
 
 # Django.
 from django.http import HttpResponse
+from django.conf import settings
 
 # DataONE APIs.
 import d1_common.const
@@ -44,7 +45,6 @@ import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta_store
 import mn.util
-import service.settings
 
 
 def deserialize_system_metadata(sysmeta_xml):
@@ -112,7 +112,7 @@ def create(request, pid, sysmeta, replica=False):
 
 
 def _object_pid_post_store_local(request, pid):
-  object_path = mn.util.store_path(service.settings.OBJECT_STORE_PATH, pid)
+  object_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
   mn.util.create_missing_directories(object_path)
   with open(object_path, 'wb') as file:
     for chunk in request.FILES['object'].chunks():

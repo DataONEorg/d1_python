@@ -33,14 +33,12 @@ import re
 
 # Django.
 from django.http import HttpResponse
+from django.conf import settings
 
 # D1.
 import d1_common
 import d1_common.const
 import d1_common.types.exceptions
-
-# App.
-import settings
 
 
 class request_handler():

@@ -188,11 +188,8 @@ def main():
           pick_random(user_agents),
           pick_random(subjects),
           datetime.datetime.fromtimestamp(
-            random.randint(
-              60 * 60 * 24 * 7, 60 * 60 * 24 * 365 * 30
-            )
-          ).isoformat(
-          ),
+            random.randint(60 * 60 * 24 * 7, 60 * 60 * 24 * 365 * 30)
+          ).isoformat(),
           pick_random(member_nodes),
         ]
       )

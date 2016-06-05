@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''
 :mod:`settings`
 ===============
@@ -77,18 +76,16 @@ MEDIA_URL = ''
 STATIC_URL = '/static/'
 
 # List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-  'django.template.loaders.filesystem.Loader',
-)
+TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader', )
 
 MIDDLEWARE_CLASSES = (
   # Custom GMN middleware.
-  'service.middleware.request_handler.request_handler',
-  'service.middleware.exception_handler.exception_handler',
-  'service.middleware.response_handler.response_handler',
-  #'service.middleware.profiling_handler.profiling_handler',
-  'service.middleware.view_handler.view_handler',
-  'service.middleware.startup_handler.startup_handler',
+  'mn.middleware.request_handler.request_handler',
+  'mn.middleware.exception_handler.exception_handler',
+  'mn.middleware.response_handler.response_handler',
+  #'mn.middleware.profiling_handler.profiling_handler',
+  'mn.middleware.view_handler.view_handler',
+  'mn.middleware.startup_handler.startup_handler',
 )
 
 
@@ -99,18 +96,12 @@ CACHES = {
   }
 }
 
+ROOT_URLCONF = 'mn.urls'
 
-ROOT_URLCONF = 'service.urls'
+TEMPLATE_DIRS = (make_absolute('../mn/templates'), )
 
-TEMPLATE_DIRS = (
-  make_absolute('../service/templates'),
-)
-
-INSTALLED_APPS = (
-  'django.contrib.staticfiles',
-  'service',
-)
+INSTALLED_APPS = ('django.contrib.staticfiles', 'mn', )
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.
-MAX_XML_DOCUMENT_SIZE = 1024 ** 2
+MAX_XML_DOCUMENT_SIZE = 1024**2

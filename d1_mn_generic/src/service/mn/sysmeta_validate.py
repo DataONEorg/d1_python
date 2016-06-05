@@ -30,12 +30,12 @@
 # Stdlib.
 import datetime
 
+# Django.
+from django.conf import settings
+
 # D1.
 import d1_common.checksum
 import d1_common.types.exceptions
-
-# App.
-import settings
 
 
 def validate_sysmeta_against_uploaded(request, pid, sysmeta):

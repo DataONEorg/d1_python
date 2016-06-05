@@ -30,11 +30,10 @@
 #import django.conf.urls.defaults
 
 from django.conf.urls import patterns, url
-
-import service.settings as settings
+from django.conf import settings
 
 urlpatterns = patterns(
-  'service.mn.views.v1',
+  'mn.views.v1',
   # Django's URL dispatcher does not take HTTP verb into account, so in the
   # cases where the DataONE REST API specifies different methods as different
   # verbs against the same URL, the methods are dispatched to the same view
@@ -88,16 +87,15 @@ urlpatterns = patterns(
   url(r'^v1/replicate/?$', 'post_replicate'),
 )
 
-urlpatterns += patterns('service.mn.views.internal', url(r'^home/?$', 'home'), )
+urlpatterns += patterns('mn.views.internal', url(r'^home/?$', 'home'), )
 
 # Diagnostic APIs that can be made available in production.
 
 if settings.GMN_DEBUG or settings.MONITOR:
   urlpatterns += patterns(
-    'service.mn.views.diagnostics',
+    'mn.views.diagnostics',
     # Replication.
     url(r'^diag/get_replication_queue/?$', 'get_replication_queue'),
-    url(r'^diag/replicate/(.+)$', 'post_replicate'),
     # Authentication.
     url(r'^diag/echo_session/?$', 'echo_session'),
     # Misc.
@@ -109,7 +107,7 @@ if settings.GMN_DEBUG or settings.MONITOR:
 
 if settings.GMN_DEBUG:
   urlpatterns += patterns(
-    'service.mn.views.diagnostics',
+    'mn.views.diagnostics',
     # Diagnostics portal.
     url(r'^diag/?$', 'diagnostics'),
     # Replication.
@@ -118,7 +116,6 @@ if settings.GMN_DEBUG:
     # Access Policy.
     url(r'^diag/set_access_policy/(.+?)/?$', 'set_access_policy'),
     url(r'^diag/delete_all_access_policies/?$', 'delete_all_access_policies'),
-    url(r'^diag/get_access_policy/(.+?)/?$', 'get_access_policy'),
     # Misc.
     url(r'^diag/create/(.+)$', 'create'),
     url(r'^diag/slash/(.+?)/(.+?)/(.+?)/?$', 'slash'),

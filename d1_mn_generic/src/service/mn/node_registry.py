@@ -20,17 +20,18 @@
 # limitations under the License.
 
 # Stdlib.
+import httplib
 import logging
 import socket
 
 # Django.
 import django.core.cache
+from django.conf import settings
 
 # D1.
 import d1_client.cnclient
 
 # App.
-import settings
 import d1_common.types.exceptions
 '''
 :mod:`node_registry`
@@ -69,15 +70,22 @@ def set_cn_subjects_for_environment():
   # environment of which this MN is a member.
   try:
     cn_subjects = get_cn_subjects_from_dataone_root()
-  except (d1_common.types.exceptions.DataONEException, socket.error) as e:
-    raise d1_common.types.exceptions.ServiceFailure(
-      0, 'Unable to get CN Subjects from the DataONE environment. '
+  except (
+    d1_common.types.exceptions.DataONEException, httplib.HTTPException, socket.error
+  ) as e:
+    logging.warn(
+      'Unable to get CN Subjects from the DataONE environment. '
       'If this server is being used for testing, see the STAND_ALONE setting. '
       '\nError: {0}\nEnvironment: {1}'.format(
         str(e), settings.DATAONE_ROOT)
     )
+    cn_subjects = []
+  else:
+    logging.info(
+      'CN Subjects successfully retrieved from the DataONE environment: {0}'
+      .format(', '.join(cn_subjects))
+    )
   django.core.cache.cache.set('cn_subjects', set(cn_subjects))
-  logging.info('CN Subjects set: {0}'.format(', '.join(cn_subjects)))
 
 
 def get_cn_subjects_string():
@@ -94,7 +102,7 @@ def get_cn_subjects_from_dataone_root():
       pass
     else:
       for service in services:
-        if service.name == 'CNCore':
+        if mn.name == 'CNCore':
           for subject in node.subject:
             cn_subjects.add(subject.value())
           break

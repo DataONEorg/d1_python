@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''
 :mod:`urls`
 ===========
@@ -32,6 +31,4 @@ from django.conf.urls import patterns, url, include
 # When Django encounters include(), it strips off the part of the URL that
 # matched and sends the remaining string to the included module for further
 # processing.
-urlpatterns = patterns('',
-  url(r'^', include('service.urls')),
-)
+urlpatterns = patterns('', url(r'^', include('mn.urls')), )
