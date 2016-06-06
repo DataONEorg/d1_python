@@ -159,7 +159,7 @@ def is_member_node(node):
 class MemberNodeObjectDownloader(object):
   def __init__(self, node):
     self._node = node
-    self._mn_client = d1_client.mnclient.MemberNodeClient(node.baseURL)
+    self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(node.baseURL)
 
   def download_objects_from_member_node(self):
     logging.info('Retrieving objects for Member Node: {0}'.format(self._node.name))

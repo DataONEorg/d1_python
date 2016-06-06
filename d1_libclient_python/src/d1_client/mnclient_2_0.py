@@ -42,17 +42,16 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
+  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
   import d1_common.util
   import d1_common.date_time
-  import mnclient
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: easy_install DataONE_Common\n')
   raise
 
 # App.
-import d1baseclient_2_0
+import mnclient
 
 
 class MemberNodeClient_2_0(mnclient.MemberNodeClient):
@@ -65,7 +64,7 @@ class MemberNodeClient_2_0(mnclient.MemberNodeClient):
                strict=True,
                capture_response_body=False,
                version='v2',
-               types=dataoneTypes_2_0):
+               types=dataoneTypes):
         '''Connect to a DataONE Member Node.
 
         :param base_url: DataONE Node REST service BaseURL
@@ -93,15 +92,10 @@ class MemberNodeClient_2_0(mnclient.MemberNodeClient):
         :type types: PyXB
         :returns: None
         '''
-        mnclient.MemberNodeClient.__init__(self, base_url,
-                     timeout=d1_common.const.RESPONSE_TIMEOUT,
-                     defaultHeaders=None,
-                     cert_path=None,
-                     key_path=None,
-                     strict=True,
-                     capture_response_body=False,
-                     version='v2',
-                     types=dataoneTypes_2_0)
+        mnclient.MemberNodeClient.__init__(self, base_url=base_url,
+          timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
+          key_path=key_path, strict=strict,
+          capture_response_body=capture_response_body, version=version, types=types)
         self.logger = logging.getLogger('MemberNodeClient')
         self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
 
@@ -126,5 +120,6 @@ class MemberNodeClient_2_0(mnclient.MemberNodeClient):
     @d1_common.util.utf8_to_unicode
     def updateSystemMetadata(self, pid, sysmeta):
         response = self.updateSystemMetadataResponse(pid, sysmeta)
+        #cn_client =
         return self._read_boolean_response(response)
 

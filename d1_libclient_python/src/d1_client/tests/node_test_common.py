@@ -34,42 +34,42 @@ import logging
 entries for baseurl, existingpid, and boguspid.
 '''
 TEST_INFO = {
-  'schema_version': 'http://ns.dataone.org/service/types/v1',
+    'schema_version': 'http://ns.dataone.org/service/types/v1',
 
-  'MN': [
-    {'baseurl': 'http://localhost:8000',
-    'existingpid': 'hdl:10255/dryad.1073/mets.xml',
-    'existingpid_ck': 'aac6cca196fb6330d1013a10cce6a4604ca180d3',
-    'boguspid': 'some bogus id'
-    },
-    #    {'baseurl': 'http: //dev-dryad-mn.dataone.org/mn',
-    #    'existingpid': 'hdl: 10255/dryad.105/mets.xml',
-    #    'existingpid_ck': 'e494ca7b15404f41006356a5a87dbf44b9a415e7',
-    #    'boguspid': 'some bogus id'
-    #    },
-    #     {'baseurl': 'http: //daacmn.dataone.utk.edu/mn',
-    #      'existingpid': 'MD_ORNLDAAC_787_03032010095920',
-    #      'existingpid_ck': '49fd46daad283f0cbd411e0297e0d68d56d001a4',
-    #      'boguspid': 'some bogus id'},
-    #    {'baseurl': 'http: //knb-mn.ecoinformatics.org/knb/d1',
-    #     'existingpid': 'knb-lter-sev.4892.1',
-    #     'existingpid_ck': '08B1F55E0C214E15621B5334D84A1D2B',
-    #     'boguspid': 'some bogus id'
-    #    },
-    #    {'baseurl': 'http: //sandbox08.uwrl.usu.edu/gmn_cuahsi/mn.svc',
-    #     'existingpid': '56e2c6c3-03ff-46a4-9f08-96a5beb66183',
-    #     'existingpid_ck': '???',
-    #     'boguspid': 'some bogus pid'
-    #    }
-  ],
+    'MN': [
+        {'baseurl': 'http://localhost:8000',
+         'existingpid': 'hdl:10255/dryad.1073/mets.xml',
+         'existingpid_ck': 'aac6cca196fb6330d1013a10cce6a4604ca180d3',
+         'boguspid': 'some bogus id'
+         },
+        #    {'baseurl': 'http: //dev-dryad-mn.dataone.org/mn',
+        #    'existingpid': 'hdl: 10255/dryad.105/mets.xml',
+        #    'existingpid_ck': 'e494ca7b15404f41006356a5a87dbf44b9a415e7',
+        #    'boguspid': 'some bogus id'
+        #    },
+        #     {'baseurl': 'http: //daacmn.dataone.utk.edu/mn',
+        #      'existingpid': 'MD_ORNLDAAC_787_03032010095920',
+        #      'existingpid_ck': '49fd46daad283f0cbd411e0297e0d68d56d001a4',
+        #      'boguspid': 'some bogus id'},
+        #    {'baseurl': 'http: //knb-mn.ecoinformatics.org/knb/d1',
+        #     'existingpid': 'knb-lter-sev.4892.1',
+        #     'existingpid_ck': '08B1F55E0C214E15621B5334D84A1D2B',
+        #     'boguspid': 'some bogus id'
+        #    },
+        #    {'baseurl': 'http: //sandbox08.uwrl.usu.edu/gmn_cuahsi/mn.svc',
+        #     'existingpid': '56e2c6c3-03ff-46a4-9f08-96a5beb66183',
+        #     'existingpid_ck': '???',
+        #     'boguspid': 'some bogus pid'
+        #    }
+    ],
 
-  'CN': [
-    #    {'baseurl': 'http: //cn.dataone.org/cn',
-    #     'existingpid': 'knb-lter-arc.1248.1',
-    #     'existingpid_ck': '',
-    #     'boguspid': 'some bogus pid'
-    #     }
-  ]
+    'CN': [
+        #    {'baseurl': 'http: //cn.dataone.org/cn',
+        #     'existingpid': 'knb-lter-arc.1248.1',
+        #     'existingpid_ck': '',
+        #     'boguspid': 'some bogus pid'
+        #     }
+    ]
 }
 
 
@@ -81,14 +81,14 @@ def loadTestInfo(
   boguspid='some bogus pid'
 ):
   '''Populate TEST_INFO dynamically
-  '''
+    '''
   if baseurl is None:
     return TEST_INFO
   test = {'schema_version': schemaversion,
           'MN': [{'baseurl': baseurl,
-                 'existingpid': pid,
-                 'existingpid_ck': checksum,
-                 'boguspid': boguspid}],
+                  'existingpid': pid,
+                  'existingpid_ck': checksum,
+                  'boguspid': boguspid}],
           'CN': []}
   return test
 
@@ -116,13 +116,15 @@ def initMain():
     default=None,
     help='CHECKSUM for specified PID.'
   )
-  parser.add_option('-l', '--loglevel', dest='llevel', default=None,
-                help='Reporting level: 10=debug, 20=Info, 30=Warning, ' +\
-                     '40=Error, 50=Fatal')
-  parser.add_option('-v', '--verbose', dest='verbose', action='store_true', \
-                    default=False)
-  parser.add_option('-q', '--quiet', dest='quiet', action='store_true', \
-                    default=False)
+  parser.add_option(
+    '-l',
+    '--loglevel',
+    dest='llevel',
+    default=None,
+    help='Reporting level: 10=debug, 20=Info, 30=Warning, ' + '40=Error, 50=Fatal'
+  )
+  parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False)
+  parser.add_option('-q', '--quiet', dest='quiet', action='store_true', default=False)
   (options, args) = parser.parse_args()
   if options.llevel not in ['10', '20', '30', '40', '50']:
     options.llevel = 20

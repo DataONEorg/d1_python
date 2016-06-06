@@ -44,7 +44,7 @@ import pyxb
 sys.path.append('..')
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.dataoneTypes as dataoneTypes
 
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
@@ -55,7 +55,7 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-from d1_client import cnclient
+from d1_client import cnclient_2_0
 import testing_utilities
 import testing_context
 from settings import *
@@ -66,21 +66,22 @@ class TestCNClient(TestCaseWithURLCompare):
 
     # When setting the certificate, remember to use a https baseurl.
     self.cert_path = '/tmp/x509up_u1000'
-    self.client = cnclient.CoordinatingNodeClient(CN_URL)
-    self.authenticated_client = cnclient.CoordinatingNodeClient(
+    self.client = cnclient_2_0.CoordinatingNodeClient_2_0(CN_URL)
+    self.authenticated_client = cnclient_2_0.CoordinatingNodeClient_2_0(
       CN_URL, cert_path=self.cert_path
     )
 
   def tearDown(self):
     pass
 
-  #=============================================================================
+  #=========================================================================
   # Core API
-  #=============================================================================
+  #=========================================================================
 
   def test_1000(self):
     '''Initialize CoordinatingNodeClient'''
-    # Completion means that the client was successfully instantiated in setUp().
+    # Completion means that the client was successfully instantiated in
+    # setUp().
     pass
 
   def test_1010(self):
@@ -88,14 +89,14 @@ class TestCNClient(TestCaseWithURLCompare):
     formats = self.client.listFormats()
     self.assertTrue(len(formats.objectFormat) >= 3)
     format = formats.objectFormat[0]
-    self.assertTrue(isinstance(format.formatId, dataoneTypes_v1.ObjectFormatIdentifier))
+    self.assertTrue(isinstance(format.formatId, dataoneTypes.ObjectFormatIdentifier))
 
   def test_1020(self):
     '''CNCore.getFormat() returns a valid ObjectFormat for known formatIds'''
     formats = self.client.listFormats()
     for format_ in formats.objectFormat:
       f = self.client.getFormat(format_.formatId)
-      self.assertTrue(isinstance(f.formatId, dataoneTypes_v1.ObjectFormatIdentifier))
+      self.assertTrue(isinstance(f.formatId, dataoneTypes.ObjectFormatIdentifier))
       self.assertEqual(format_.formatId, f.formatId)
 
   def test_1040(self):
@@ -118,7 +119,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def test_1060(self):
     '''CNCore.listChecksumAlgorithms() returns a valid ChecksumAlgorithmList'''
     algorithms = self.client.listChecksumAlgorithms()
-    self.assertTrue(isinstance(algorithms, dataoneTypes_v1.ChecksumAlgorithmList))
+    self.assertTrue(isinstance(algorithms, dataoneTypes.ChecksumAlgorithmList))
 
   def CURRENTLY_FAILING_SEE_TICKET_2363_test_1061(self):
     '''CNCore.setObsoletedBy() fails when called without cert'''
@@ -133,19 +134,19 @@ class TestCNClient(TestCaseWithURLCompare):
   def test_1065(self):
     '''CNCore.listNodes() returns a valid NodeList that contains at least 3 entries'''
     nodes = self.client.listNodes()
-    self.assertTrue(isinstance(nodes, dataoneTypes_v1.NodeList))
+    self.assertTrue(isinstance(nodes, dataoneTypes.NodeList))
     self.assertTrue(len(nodes.node) >= 1)
     entry = nodes.node[0]
 
-  #=============================================================================
+  #=========================================================================
   # Read API
-  #=============================================================================
+  #=========================================================================
 
   def test_2010_A(self):
     '''CNRead.resolve() returns a valid ObjectLocationList when called with an existing PID'''
     random_existing_pid = testing_utilities.get_random_valid_pid(self.client)
     oll = self.client.resolve(random_existing_pid)
-    self.assertTrue(isinstance(oll, dataoneTypes_v1.ObjectLocationList))
+    self.assertTrue(isinstance(oll, dataoneTypes.ObjectLocationList))
 
   def test_2010_B(self):
     '''CNRead.resolve() raises NotFound when called with a non-existing PID'''
@@ -156,19 +157,17 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_TICKET_6166_test_2020(self):
     '''CNRead.getChecksum() returns a valid Checksum when called with an existing PID'''
     checksum = self.client.getChecksum(
-      testing_utilities.get_random_valid_pid(
-        self.client
-      )
+      testing_utilities.get_random_valid_pid(self.client)
     )
-    self.assertTrue(isinstance(checksum, dataoneTypes_v1.Checksum))
+    self.assertTrue(isinstance(checksum, dataoneTypes.Checksum))
 
   def test_2030(self):
     '''CNRead.search() returns a valid search result'''
     search_result = self.client.search('solr', '*:*')
 
-  #=============================================================================
+  #=========================================================================
   # Authorization API
-  #=============================================================================
+  #=========================================================================
 
   def WAITING_FOR_TICKET_6168_test_3010(self):
     '''CNAuthorization.setRightsHolder() returns a valid result'''
@@ -185,9 +184,9 @@ class TestCNClient(TestCaseWithURLCompare):
     a = self.client.isAuthorized(random_existing_pid, 'read')
     self.assertTrue(isinstance(a, bool))
 
-  #=============================================================================
+  #=========================================================================
   # Identity API
-  #=============================================================================
+  #=========================================================================
 
   def WAITING_FOR_STABLE_CN_test_4010(self):
     '''CNIdentity.registerAccount()'''
@@ -248,7 +247,7 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4120(self):
     '''CNIdentity.addGroupMembers()'''
     random_person = d1_test.instance_generator.person.generate()
-    subject_list = dataoneTypes_v1.SubjectList()
+    subject_list = dataoneTypes.SubjectList()
     for i in range(10):
       subject_list.append(d1_instance_generator.subject.generate())
     self.client.addGroupMembers(random_group_name, subject_list)
@@ -256,14 +255,14 @@ class TestCNClient(TestCaseWithURLCompare):
   def WAITING_FOR_STABLE_CN_test_4130(self):
     '''CNIdentity.removeGroupMembers()'''
     random_person = d1_test.instance_generator.person.generate()
-    subject_list = dataoneTypes_v1.SubjectList()
+    subject_list = dataoneTypes.SubjectList()
     for i in range(10):
       subject_list.append(d1_instance_generator.subject.generate())
     self.client.removeGroupMembers(random_group_name, subject_list)
 
-  #=============================================================================
+  #=========================================================================
   # Replication API
-  #=============================================================================
+  #=========================================================================
 
   def WAITING_FOR_STABLE_CN_test_5010(self):
     '''CNReplication.setReplicationStatus()'''
@@ -286,14 +285,15 @@ class TestCNClient(TestCaseWithURLCompare):
     '''CNReplication.isNodeAuthorized()'''
     # TODO. Spec unclear.
 
-    #=============================================================================
+    #=========================================================================
     # Register API
-    #=============================================================================
+    #=========================================================================
 
   def WAITING_FOR_STABLE_CN_test_6010(self):
     '''CNRegister.updateNodeCapabilities()'''
-    test_node = 'test_node_' + d1_instance_generator.random_data.random_3_words()
-    node = dataoneTypes_v1.Node()
+    test_node = 'test_node_' + \
+        d1_instance_generator.random_data.random_3_words()
+    node = dataoneTypes.Node()
     node.identifier = test_node
     node.name = 'test_name'
     node.description = 'test_description'
@@ -304,8 +304,9 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def WAITING_FOR_STABLE_CN_test_6020(self):
     '''CNRegister.register()'''
-    node = dataoneTypes_v1.Node()
-    node.identifier = 'test_node_' + d1_instance_generator.random_data.random_3_words()
+    node = dataoneTypes.Node()
+    node.identifier = 'test_node_' + \
+        d1_instance_generator.random_data.random_3_words()
     node.name = 'test_name'
     node.description = 'test_description'
     node.baseURL = 'https://baseURL.dataone.org'
@@ -313,7 +314,7 @@ class TestCNClient(TestCaseWithURLCompare):
     node.contactSubject.append('test_subject_2')
     self.client.register(node)
 
-#===============================================================================
+#=========================================================================
 
 
 def log_setup():

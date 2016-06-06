@@ -40,11 +40,15 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 # 3rd party.
 import foresite
-import foresite.ore
+import foresite.utils
 import rdflib
+import rdflib.namespace
+import rdflib.term
+import rdflib.plugin
+import rdflib.graph
 
 # App.
-sys.path.append('..')
+sys.path.append(os.pardir)
 import d1_client.data_package
 import testing_utilities
 import testing_context
@@ -54,6 +58,21 @@ import testing_context
 # the function is called.
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
+
+rdflib.plugin.register(
+  'sparql', rdflib.query.Processor, 'rdfextras.sparql.processor', 'Processor'
+)
+rdflib.plugin.register(
+  'sparql', rdflib.query.Result, 'rdfextras.sparql.query', 'SPARQLQueryResult'
+)
+
+ALLOWABLE_PACKAGE_SERIALIZATIONS = (
+  'xml', 'pretty-xml', 'n3', 'rdfa', 'json', 'pretty-json', 'turtle', 'nt', 'trix'
+)
+RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
+CITO_NS = 'http://purl.org/spar/cito/'
+D1_API_RESOLVE_REST_PATH = 'v1/resolve/'
 
 
 class TestDataPackage(TestCaseWithURLCompare):
@@ -97,8 +116,7 @@ class TestDataPackage(TestCaseWithURLCompare):
       'test_pid', 'test_object', 'rights_holder'
     )
     self.assertEqual(
-      sys_meta.checksum.value(
-      ), 'fc20ab0360ba35c4e29401c286d995b761a3cfc0'
+      sys_meta.checksum.value(), 'fc20ab0360ba35c4e29401c286d995b761a3cfc0'
     )
     self.assertEqual(sys_meta.checksum.algorithm, 'SHA-1')
 
@@ -328,7 +346,7 @@ class TestDataPackage(TestCaseWithURLCompare):
       ) in doc
     )
 
-#===============================================================================
+#=========================================================================
 
 
 def log_setup():

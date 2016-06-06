@@ -38,7 +38,7 @@ import sys
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
-import d1_common.types.raw.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -46,12 +46,12 @@ import d1_common.types.raw.dataoneTypes as dataoneTypes
 
 class TestLogRecordIterator(unittest.TestCase):
   '''
-  '''
+    '''
 
   def setUp(self):
     self.base_url = "http://127.0.0.1:8000"
 
-  def _test_100(self):
+  def test_100(self):
     '''PageSize=20, start=0'''
     self._log_record_iterator_test(20, 0)
 
@@ -68,7 +68,7 @@ class TestLogRecordIterator(unittest.TestCase):
     self._log_record_iterator_test(2000, 0, from_date=datetime.datetime(2005, 1, 1))
 
   def _log_record_iterator_test(self, page_size, start, from_date=None, to_date=None):
-    client = d1_client.mnclient.MemberNodeClient(base_url=self.base_url)
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=self.base_url)
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.logrecorditerator.LogRecordIterator(
       client, pageSize=page_size,
@@ -79,13 +79,13 @@ class TestLogRecordIterator(unittest.TestCase):
     cnt = 0
     for event in log_record_iterator:
       self.assertTrue(isinstance(event.event, dataoneTypes.Event))
-      #print "Event    = %s" % event.event
-      #print "Timestamp  = %s" % event.dateLogged.isoformat()
-      #print "IP Addres  = %s" % event.ipAddress
-      #print "Identifier = %s" % event.identifier.value()
-      #print "User agent = %s" % event.userAgent
-      #print "Subject  = %s" % event.subject.value()
-      #print '-' * 79
+      # print "Event    = %s" % event.event
+      # print "Timestamp  = %s" % event.dateLogged.isoformat()
+      # print "IP Addres  = %s" % event.ipAddress
+      # print "Identifier = %s" % event.identifier.value()
+      # print "User agent = %s" % event.userAgent
+      # print "Subject  = %s" % event.subject.value()
+      # print '-' * 79
       cnt += 1
     self.assertEqual(cnt, total - start)
 
@@ -96,6 +96,6 @@ class TestLogRecordIterator(unittest.TestCase):
     ).total
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   logging.getLogger("").setLevel(logging.DEBUG)
   unittest.main()

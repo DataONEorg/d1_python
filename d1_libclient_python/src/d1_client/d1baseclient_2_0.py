@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-# Copyright 2009-2014 DataONE
+#   Copyright 2009-2014 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,81 +50,79 @@ import re
 import urlparse
 import StringIO
 import sys
+import d1client
 
 # 3rd party.
 try:
-  import pyxb
+    import pyxb
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install PyXB\n')
-  raise
+    sys.stderr.write('Import error: {0}\n'.format(str(e)))
+    sys.stderr.write('Try: easy_install PyXB\n')
+    raise
 
 # D1.
 try:
     import d1_common.const
     import d1_common.restclient
-    import d1_common.types.generated.dataoneTypes_2_0 as dataoneTypes_2_0
-    import d1_client.d1baseclient_2_0 as d1baseclient_2_0
+    import d1_common.types.dataoneTypes_v2_0 as dataoneTypes_v2_0
     import d1_common.util
     import d1_common.url
     import service.mn.views.v2 as v2
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
-  sys.stderr.write('Try: easy_install DataONE_Common\n')
-  raise
+    sys.stderr.write('Import error: {0}\n'.format(str(e)))
+    sys.stderr.write('Try: easy_install DataONE_Common\n')
+    raise
 
 import d1_client.d1baseclient
 
 #=============================================================================
 
 class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
-  '''Implements DataONE client functionality common between Member and
-  Coordinating nodes by extending the RESTClient.
+    '''Implements DataONE client functionality common between Member and
+    Coordinating nodes by extending the RESTClient.
 
-  Wraps REST methods that have the same signatures on Member Nodes and
-  Coordinating Nodes.
+    Wraps REST methods that have the same signatures on Member Nodes and
+    Coordinating Nodes.
 
-  On error response, an attempt to raise a DataONE exception is made.
+    On error response, an attempt to raise a DataONE exception is made.
 
-  Unless otherwise indicated, methods with names that end in "Response" return
-  the HTTPResponse object, otherwise the deserialized object is returned.
-  '''
-  def __init__(self, *args, **kwargs):
-    '''Connect to a DataONE Coordinating Node or Member Node.'''
+    Unless otherwise indicated, methods with names that end in "Response" return
+    the HTTPResponse object, otherwise the deserialized object is returned.
+    '''
 
     def __init__(self, *args, **kwargs):
         '''Connect to a DataONE Coordinating Node or Member Node.
 
-    :param base_url: DataONE Node REST service BaseURL
-    :type host: string
-    :param timeout: Time in seconds that requests will wait for a response.
-    :type timeout: integer
-    :param defaultHeaders: headers that will be sent with all requests.
-    :type defaultHeaders: dictionary
-    :param cert_path: Path to a PEM formatted certificate file.
-    :type cert_path: string
-    :param key_path: Path to a PEM formatted file that contains the private key
-      for the certificate file. Only required if the certificate file does not
-      itself contain a private key.
-    :type key_path: string
-    :param strict: Raise BadStatusLine if the status line can’t be parsed
-      as a valid HTTP/1.0 or 1.1 status line.
-    :type strict: boolean
-    :param capture_response_body: Capture the response body from the last
-      operation and make it available in last_response_body.
-    :type capture_response_body: boolean
-    :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
-    :type response_contains_303_redirect: boolean
-    :param version: Value to insert in the URL version section.
-    :type version: string
-    :param types: The PyXB bindings to use for XML serialization and
-      deserialization.
-    :type types: PyXB
-    :returns: None
-    '''
+        :param base_url: DataONE Node REST service BaseURL
+        :type host: string
+        :param timeout: Time in seconds that requests will wait for a response.
+        :type timeout: integer
+        :param defaultHeaders: headers that will be sent with all requests.
+        :type defaultHeaders: dictionary
+        :param cert_path: Path to a PEM formatted certificate file.
+        :type cert_path: string
+        :param key_path: Path to a PEM formatted file that contains the private key
+          for the certificate file. Only required if the certificate file does not
+          itself contain a private key.
+        :type key_path: string
+        :param strict: Raise BadStatusLine if the status line can’t be parsed
+          as a valid HTTP/1.0 or 1.1 status line.
+        :type strict: boolean
+        :param capture_response_body: Capture the response body from the last
+          operation and make it available in last_response_body.
+        :type capture_response_body: boolean
+        :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
+        :type response_contains_303_redirect: boolean
+        :param version: Value to insert in the URL version section.
+        :type version: string
+        :param types: The PyXB bindings to use for XML serialization and
+          deserialization.
+        :type types: PyXB
+        :returns: None
+        '''
         d1_client.d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
         self.version = 'v2'
-        self.types = dataoneTypes_2_0
+        self.types = dataoneTypes_v2_0
 
 
     #=============================================================================
@@ -132,55 +130,3 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
     #=============================================================================
 
 
-    @d1_common.util.utf8_to_unicode
-    def getLogRecords(self, fromDate=None, toDate=None, event=None,
-                    sidFilter=None, start=0,
-                    count=d1_common.const.DEFAULT_LISTOBJECTS,
-                    vendorSpecific=None):
-        if sidFilter:
-            pidFilter = v2.convert_sid_to_pid(sidFilter)
-        response = self.getLogRecordsResponse(fromDate=fromDate, toDate=toDate,
-                                          event=event, pidFilter=pidFilter,
-                                          start=start, count=count,
-                                          vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 1, 0, 'Log')
-
-    def get(self, sid, vendorSpecific=None):
-        pid = v2.convert_sid_to_pid(sid)
-        response = self.getResponse(pid, vendorSpecific)
-        return self._read_stream_response(response)
-
-
-    @d1_common.util.utf8_to_unicode
-    def getSystemMetadata(self, sid, vendorSpecific=None):
-        pid = v2.convert_sid_to_pid(sid)
-        response = self.getSystemMetadataResponse(pid,
-                                                  vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 1, 0, 'SystemMetadata')
-
-    @d1_common.util.utf8_to_unicode
-    def describe(self, sid, vendorSpecific=None):
-        '''Note: If the server returns a status code other than 200 OK, a
-        ServiceFailure will be raised, as this method is based on a HEAD request,
-        which cannot carry exception information.
-        '''
-        pid = v2.convert_sid_to_pid(sid)
-        response = self.describeResponse(pid, vendorSpecific=vendorSpecific)
-        return self._read_header_response(response)
-
-    @d1_common.util.utf8_to_unicode
-    def archive(self, sid, vendorSpecific=None):
-        pid = v2.convert_sid_to_pid(sid)
-        response = self.archiveResponse(pid, vendorSpecific=vendorSpecific)
-        return self._read_dataone_type_response(response, 1, 0, 'Identifier')
-
-    @d1_common.util.utf8_to_unicode
-    def isAuthorized(self, sid, access, vendorSpecific=None):
-        pid = v2.convert_sid_to_pid(sid)
-        response = self.isAuthorizedResponse(pid, access,
-                                         vendorSpecific=vendorSpecific)
-        return self._read_boolean_response(response)
-
-        #=============================================================================
-        # v2.0 APIs shared between CNs and MNs.
-        #=============================================================================

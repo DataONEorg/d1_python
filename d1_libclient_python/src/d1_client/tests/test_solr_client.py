@@ -109,7 +109,7 @@ class TestSolrClient(TestCaseWithURLCompare):
       fld = flds['fields'][name]
       print "%s (%s) %d / %d" % (name, fld['type'], fld['distinct'], fld['docs'])
 
-#===============================================================================
+#=========================================================================
 
 
 def log_setup():

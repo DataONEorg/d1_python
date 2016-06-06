@@ -37,8 +37,8 @@
   Google Foresite Toolkit ($ pip install google.foresite-toolkit)
 '''
 
-#https://groups.google.com/forum/#!msg/foresite/3vS3_ZZ8Aj0/8tr_SgjbTAUJ
-#http://code.google.com/p/foresite-toolkit/source/browse/foresite-python/trunk/foresite/README.txt?r=85
+# https://groups.google.com/forum/#!msg/foresite/3vS3_ZZ8Aj0/8tr_SgjbTAUJ
+# http://code.google.com/p/foresite-toolkit/source/browse/foresite-python/trunk/foresite/README.txt?r=85
 
 # Stdlib.
 #import xml.dom.minidom.parse
@@ -55,7 +55,7 @@ import rdflib.plugin
 import rdflib.graph
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
 import d1_common.checksum
 import d1_common.const
 import d1_common.url
@@ -75,7 +75,7 @@ RDFXML_FORMATID = 'http://www.openarchives.org/ore/terms'
 CITO_NS = 'http://purl.org/spar/cito/'
 D1_API_RESOLVE_REST_PATH = 'v1/resolve/'
 
-#===============================================================================
+#=========================================================================
 
 
 class ResourceMapGenerator():
@@ -86,17 +86,17 @@ class ResourceMapGenerator():
     self, resource_map_pid, science_metadata_pid, science_data_pids
   ):
     '''Generate an OAI-ORE resource map for the common scenario where one
-    resource map describes an aggregation containing a single Science Metadata
-    object and one or more Science Data objects described by that object.
+        resource map describes an aggregation containing a single Science Metadata
+        object and one or more Science Data objects described by that object.
 
-    The resource map is generated in RDF:XML format, currently the only format
-    supported by DataONE.
+        The resource map is generated in RDF:XML format, currently the only format
+        supported by DataONE.
 
-    :resource_map_pid: The PID for the resource map itself.
-    :science_metadata_pid: The PID for a single Science Metadata object.
-    :science_data_pids: A list of one or more Science Data objects described by
-      the Science Metadata object.
-    '''
+        :resource_map_pid: The PID for the resource map itself.
+        :science_metadata_pid: The PID for a single Science Metadata object.
+        :science_data_pids: A list of one or more Science Data objects described by
+          the Science Metadata object.
+        '''
     # Foresite for Python generates an Aggregation section with isDefinedBy
     # on this form:
     # <rdfs1:isDefinedBy>http://www.openarchives.org/ore/terms/</rdfs1:isDefinedBy>
@@ -119,26 +119,25 @@ class ResourceMapGenerator():
     checksum_algorithm=d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
   ):
     '''Generate a system metadata object for a resource map. The generated
-    system metadata object is intended for use in DataONE API methods such as
-    MNStorage.Create(). The object contains an access control rule allowing
-    public access. For simple use cases with public access, the object can
-    often be used as is. For more complex use cases, the object can be modified
-    programmatically before use.
-    '''
+        system metadata object is intended for use in DataONE API methods such as
+        MNStorage.Create(). The object contains an access control rule allowing
+        public access. For simple use cases with public access, the object can
+        often be used as is. For more complex use cases, the object can be modified
+        programmatically before use.
+        '''
     size = len(resource_map)
     checksum = d1_common.checksum.create_checksum_object(resource_map, checksum_algorithm)
     return self._generate_sys_meta(
       resource_map_pid, RDFXML_FORMATID, size, checksum, rights_holder
     )
 
-  #
   # Private.
   #
 
   def _generate_resource_map(self, aggregation_id, resource_map_id, relations):
     '''Generate an OAI-ORE resource map.
-    :relations: {metaid:[data id, data id, ...], ...}
-    '''
+        :relations: {metaid:[data id, data id, ...], ...}
+        '''
     foresite.utils.namespaces['cito'] = rdflib.namespace.Namespace(CITO_NS)
     aggr = foresite.Aggregation(aggregation_id)
     for sci_id in relations.keys():
@@ -150,7 +149,7 @@ class ResourceMapGenerator():
         data_res = foresite.AggregatedResource(data_uri)
         data_res._dcterms.identifier = data_id
         data_res._cito.isDocumentedBy = sci_uri
-        #TODO: multiple entries for documents?
+        # TODO: multiple entries for documents?
         meta_res._cito.documents = data_uri
         aggr.add_resource(data_res)
       aggr.add_resource(meta_res)
@@ -212,25 +211,25 @@ class ResourceMapGenerator():
     accessPolicy.append(accessRule)
     return accessPolicy
 
-#===============================================================================
+#=========================================================================
 
 
 class ResourceMapParser():
   '''Parse a string containing a OAI-ORE document in RDF-XML and provide
-  convenient access to information required by many DataONE clients, such as
-  lists of aggregated science data and science metadata identifiers.
-  '''
+    convenient access to information required by many DataONE clients, such as
+    lists of aggregated science data and science metadata identifiers.
+    '''
 
   def __init__(self, rdf_xml_doc):
     ''':rdf_xml_doc: A string containing a OAI-ORE document in RDF-XML
-    format
-    '''
+        format
+        '''
     self._resource_map = self._parse(rdf_xml_doc)
 
   def _parse(self, rdf_xml_doc):
     '''Parse a string containing a OAI-ORE document in RDF-XML
-    format to a Foresite ResourceMap object
-    '''
+        format to a Foresite ResourceMap object
+        '''
     foresite_doc = foresite.ReMDocument('file:data', data=rdf_xml_doc)
     # Possible values for format: xml, trix, n3, nt, rdfa
     foresite_doc.format = 'xml'
@@ -243,24 +242,24 @@ class ResourceMapParser():
 
   def get_resource_map_graph(self):
     '''Return the main Foresite ResourceMap graph. This graph contains all
-    the triples in the ResourceMap section of the OAI-ORE document
-    '''
+        the triples in the ResourceMap section of the OAI-ORE document
+        '''
     return self.get_resource_map().graph
 
   def get_aggregation(self):
     '''Return the main Foresite Aggregation object
-    '''
+        '''
     return self.get_resource_map().aggregation
 
   def get_aggregation_graph(self):
     '''Return the main Foresite Aggregation graph. This graph contains all the
-    triples in the Aggregation section of the OAI-ORE document
-    '''
+        triples in the Aggregation section of the OAI-ORE document
+        '''
     return self.get_aggregation().graph
 
   def get_resource_map_pid(self):
     '''Return the DataONE Persistent Identifier for the resource map
-    '''
+        '''
     g = self.get_resource_map_graph()
     q = '''
       PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -274,8 +273,8 @@ class ResourceMapParser():
 
   def get_merged_graph(self):
     '''Return a rdflib.graph.Graph object that contains all the triples in the
-    OAI-ORE document
-    '''
+        OAI-ORE document
+        '''
     graph = rdflib.graph.Graph()
     for s, p, o in self._resource_map.graph:
       graph.add((s, p, o))
@@ -290,14 +289,14 @@ class ResourceMapParser():
 
   def get_all_triples(self):
     '''Return a list of tuples that contain all the triples in the OAI-ORE
-    document
-    '''
+        document
+        '''
     g = self.get_merged_graph()
     return [(str(s), str(p), str(o)) for s, p, o in g]
 
   def get_all_predicates(self):
     '''Return a list of all unique predicates in the OAI-ORE document
-    '''
+        '''
     g = self.get_merged_graph()
     q = '''
       SELECT DISTINCT ?p
@@ -309,7 +308,7 @@ class ResourceMapParser():
 
   def get_subject_objects_by_predicate(self, predicate):
     '''Return all subject/objects in the OAI-ORE document with a given predicate
-    '''
+        '''
     g = self.get_merged_graph()
     # I tried allowing passing the predicate directly, but I could not get it
     # working. According to http://rdf.myexperiment.org/howtosparql?page=PREFIX,
@@ -328,7 +327,7 @@ class ResourceMapParser():
     #
     # SELECT ?a ?text
     # WHERE {
-    #   ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+    # ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
     #   <http://rdf.myexperiment.org/ontologies/base/Announcement> .
     #   ?a <http://rdf.myexperiment.org/ontologies/base/text> ?text
     # }

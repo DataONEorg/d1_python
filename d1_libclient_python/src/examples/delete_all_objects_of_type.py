@@ -125,7 +125,7 @@ def main():
 class MemberNodeObjectDeleter(object):
   def __init__(self, base_url):
     self._base_url = base_url
-    self._mn_client = d1_client.mnclient.MemberNodeClient(
+    self._mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
       self._base_url, cert_path=CERTIFICATE,
       key_path=CERTIFICATE_KEY
     )

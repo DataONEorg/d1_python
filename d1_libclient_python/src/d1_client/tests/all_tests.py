@@ -48,7 +48,7 @@ from test_objectlistiterator import TestObjectListIterator
 from test_solr_client import TestSolrClient
 from test_systemmetadata import TestSystemMetadata
 
-#===============================================================================
+#=========================================================================
 
 
 def main():
@@ -65,5 +65,5 @@ def main():
 
 
 if __name__ == '__main__':
-  #print 'Not implemented. See ticket #4109.'
+  # print 'Not implemented. See ticket #4109.'
   main()

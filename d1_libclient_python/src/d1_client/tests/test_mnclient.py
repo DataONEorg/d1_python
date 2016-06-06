@@ -33,6 +33,7 @@ import sys
 import unittest
 import uuid
 import StringIO
+from mock import patch
 
 # 3rd party.
 import pyxb
@@ -40,7 +41,7 @@ import pyxb
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
-import d1_common.types.raw.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes as dataoneTypes
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.person
@@ -50,7 +51,8 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-from d1_client import mnclient
+import d1_client.mnclient_2_0 as mnclient_2_0
+from d1_client.systemmetadata import SystemMetadata
 import testing_utilities
 import testing_context
 
@@ -59,14 +61,51 @@ class TestMNClient(TestCaseWithURLCompare):
   def setUp(self):
     #self.baseurl = 'https://localhost/mn/'
     self.baseurl = 'http://127.0.0.1:8000'
-    self.client = mnclient.MemberNodeClient(self.baseurl, cert_path='./x509up_u1000')
+    self.client = mnclient_2_0.MemberNodeClient_2_0(
+      self.baseurl, cert_path='./x509up_u1000'
+    )
+    self.sysmeta_doc = open(
+      './d1_testdocs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+    ).read()
+    self.sysmeta = SystemMetadata(self.sysmeta_doc)
+    self.obj = 'test'
+    self.pid = '1234'
 
   def tearDown(self):
     pass
 
-  #=============================================================================
+  #=========================================================================
   # MNCore
-  #=============================================================================
+  #=========================================================================
+
+  def test_createResponse(self):
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'createResponse'
+    ) as mocked_method:
+      mocked_method.return_value = 200
+      response = self.client.createResponse(
+        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
+      )
+      self.assertEqual(200, response)
+
+  def test_create(self):
+    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'create') as mocked_method:
+      mocked_method.return_value = 200
+      response = self.client.create(
+        '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
+      )
+      self.assertEqual(200, response)
+
+  def test_getCapabilities(self):
+    with patch.object(
+      mnclient_2_0.MemberNodeClient_2_0, 'getCapabilities'
+    ) as mocked_method:
+      mocked_method.return_value = 200
+      response = self.client.getCapabilities()
+      self.assertEqual(200, response)
+
+  def test_create_ft(self):
+    response = self.client.create(self.pid, self.obj, self.sysmeta)
 
   def WAITING_FOR_STABLE_MN_test_1010(self):
     '''MNCore.ping() returns True'''
@@ -85,19 +124,19 @@ class TestMNClient(TestCaseWithURLCompare):
 
   # Only tested through GMN integration tests for now.
 
-  #=============================================================================
+  #=========================================================================
   # MNStorage
-  #=============================================================================
+  #=========================================================================
 
   # Only tested through GMN integration tests for now.
 
-  #=============================================================================
+  #=========================================================================
   # MNReplication
-  #=============================================================================
+  #=========================================================================
 
   # Only tested through GMN integration tests for now.
 
-  #===============================================================================
+  #=========================================================================
 
 
 def log_setup():

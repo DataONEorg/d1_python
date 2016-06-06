@@ -30,7 +30,7 @@
 import random
 
 # D1.
-import service.d1_x509v3_certificate_extractor
+import d1_x509v3_certificate_extractor
 
 
 def get_x509_subject(cert_path):
