@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -17,19 +18,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''d1_common
-Shared code for DataONE Python libraries
+
+import d1_common.types.exceptions as exceptions
+
+ex = """<?xml version="1.0" encoding="UTF-8"?>
+<error detailCode="test" errorCode="409" name="IdentifierNotUnique" identifier="somedataonepid">
+    <description>description0</description>
+    <traceInformation>traceInformation0</traceInformation>
+</error>"""
+
+ex2 = '''<?xml version="1.0" encoding="UTF-8"?>
+<error  detailCode="123.456.789"
+        errorCode="456"
+        identifier="SomeDataONEPID"
+        name="IdentifierNotUnique"
+        nodeId="urn:node:SomeNode">
+  <description>description0</description>
+  <traceInformation><value>traceInformation0</value></traceInformation>
+</error>
 '''
 
-__version__ = "2.0.0"
+exobj = exceptions.deserialize(ex)
 
-__all__ = [
-  'const',
-  'exceptions',
-  'upload',
-  'xmlrunner',
-  'types.exceptions',
-  'types.dataoneTypes',
-  'types.dataoneErrors',
-  'ext.mimeparser',
-]
+print exobj.serialize()

@@ -84,8 +84,10 @@ def main():
     include_package_data=True,
     # Dependencies that are available through PyPI.
     install_requires=[
-      'iso8601 == 0.1.4',
-      'pyxb == 1.2.3',
+      'iso8601 >= 0.1.4',
+      'pyxb >= 1.2.3',
+      'requests >= 2.7',
+      'cachecontrol >= 0.10',
     ],
   )
 

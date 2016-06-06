@@ -31,7 +31,7 @@ import hashlib
 
 # App.
 import const
-from .types.generated import dataoneTypes
+from .types import dataoneTypes
 
 DEFAULT_CHUNK_SIZE = 1024 * 1024
 

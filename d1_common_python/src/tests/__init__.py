@@ -17,19 +17,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''d1_common
-Shared code for DataONE Python libraries
-'''
-
-__version__ = "2.0.0"
-
-__all__ = [
-  'const',
-  'exceptions',
-  'upload',
-  'xmlrunner',
-  'types.exceptions',
-  'types.dataoneTypes',
-  'types.dataoneErrors',
-  'ext.mimeparser',
-]

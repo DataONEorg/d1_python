@@ -34,13 +34,15 @@ import sys
 import traceback
 import xml.sax
 import StringIO
+import re
 
 # 3rd party.
 import pyxb
 import pyxb.utils.domutils
+import pyxb.binding.datatypes as XS
 
 # D1.
-import d1_common.types.generated.dataoneErrors as dataoneErrors
+from d1_common.types import dataoneErrors
 import d1_common.util
 '''
 Example of serialized DataONE Exception:
@@ -92,9 +94,9 @@ def deserialize(dataone_exception_xml):
     raise DataONEExceptionException(msg.getvalue())
 
   try:
-    trace = dataone_exception_pyxb.traceInformation.toxml(),
+    trace = dataone_exception_pyxb.traceInformation
   except AttributeError:
-    trace = ''
+    trace = None
 
   return _create_exception_by_name(
     dataone_exception_pyxb.name, dataone_exception_pyxb.detailCode,
@@ -168,11 +170,22 @@ class DataONEException(Exception):
 
   @d1_common.util.utf8_to_unicode
   def __init__(
-    self, errorCode, detailCode, description, traceInformation, identifier, nodeId
+    self,
+    errorCode,
+    detailCode="0",
+    description='',
+    traceInformation=None,
+    identifier=None,
+    nodeId=None
   ):
     self.errorCode = errorCode
     self.detailCode = str(detailCode)
     self.description = description
+    # trace information is stored internally as a unicode string that may or 
+    # may not be XML. Serialization will use the XML structure if it is valid,
+    # otherwise it adds the content to the serialized structure as basically a 
+    # a blob of text.
+    self._traceInformation = None
     self.traceInformation = traceInformation
     self.identifier = identifier
     self.nodeId = nodeId
@@ -223,16 +236,21 @@ class DataONEException(Exception):
     dataone_exception_pyxb.detailCode = self.detailCode
     if self.description is not None:
       dataone_exception_pyxb.description = self.description
-    if self.traceInformation is not None:
-      s = pyxb.utils.domutils.StringToDOM(
-        '<value>' + self.traceInformation + '</value>'
-      ).documentElement
-      dataone_exception_pyxb.traceInformation = s
+    if self._traceInformation is not None:
+      elem = None
+      try:
+        elem = pyxb.utils.domutils.StringToDOM(self.traceInformation)
+      except:
+        elem = pyxb.utils.domutils.StringToDOM("<x>" + self.traceInformation + "</x>")
+      dataone_exception_pyxb.traceInformation = elem.documentElement.firstChild
     if self.identifier is not None:
       dataone_exception_pyxb.identifier = self.identifier
     if self.nodeId is not None:
       dataone_exception_pyxb.nodeId = self.nodeId
-    return dataone_exception_pyxb.toxml()
+    return dataone_exception_pyxb.toxml(encoding='utf-8')
+
+  def toxml(self):
+    return self.serialize()
 
   def serialize_to_headers(self):
     '''Serialize to a list of HTTP headers (used in responses to HTTP HEAD
@@ -257,6 +275,23 @@ class DataONEException(Exception):
   @property
   def name(self):
     return self.__class__.__name__
+
+  @property
+  def traceInformation(self):
+    if self._traceInformation is None:
+      return None
+    return self._traceInformation
+
+  @traceInformation.setter
+  def traceInformation(self, traceInformation):
+    if isinstance(traceInformation, XS.anyType):
+      tmp = traceInformation.toxml(encoding='utf-8')
+      #remove the XML prolog from the start of the resulting string.
+      traceInformation = re.sub(r'^<\?(.*)\?>', '', tmp)
+      traceInformation = traceInformation.strip()
+    self._traceInformation = traceInformation
+
+#===============================================================================
 
 
 class AuthenticationTimeout(DataONEException):
