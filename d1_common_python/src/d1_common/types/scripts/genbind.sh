@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Adapted from PyXB distribution for dc bindings
 # To use:
 #   1. checkout d1_common_python
