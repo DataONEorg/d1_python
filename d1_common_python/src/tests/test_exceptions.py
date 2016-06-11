@@ -22,7 +22,7 @@
 Module d1_common.tests.test_exceptions
 ======================================
 
-Unit tests for serializaton and de-serialization of the DataONEException type.
+Unit tests for serialization and de-serialization of the DataONEException type.
 
 :Created: 2010-04-12
 :Author: DataONE (Vieglais, Dahl)
