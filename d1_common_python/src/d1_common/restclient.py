@@ -17,8 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-'''Module d1_common.restclient
+"""Module d1_common.restclient
 
 HTTP client that supports core REST operations using MIME multipart mixed
 encoding.
@@ -26,14 +25,14 @@ encoding.
 Created: 2010-03-09
 Author: DataONE (Vieglais, Dahl)
 Refactored: 2016-04-04 by Vieglais
-'''
+"""
 
 # Stdlib.
 from __future__ import absolute_import
 import logging
 import types
-import requests      #pip install requests, or apt-get install python-requests
-import cachecontrol  #pip install cachecontrol 
+import requests #pip install requests, or apt-get install python-requests
+import cachecontrol #pip install cachecontrol
 import d1_common.const
 import d1_common.url
 
@@ -43,27 +42,27 @@ try:
 except ImportError:
   logging.info("Install requests_toolbelt to enable dump of HTTP requests.")
   _HAS_DUMP_CAPABILITY = False
-  
 
 DEFAULT_NUMBER_OF_TRIES = 3
 
+
 def responseRead(self, nbytes=None):
-  '''For backwards compatibility with old RESTClient
+  """For backwards compatibility with old RESTClient
 
   Added to the response instance returned from various requests to provide
   method compatibility with the old httplib version of RESTClient
-  '''
+  """
   if not self.raw is None:
     return self.raw.read(nbytes)
   chunk = self.text[self.__fp:nbytes]
   self.__fp += len(chunk)
   return chunk
 
-
 #===============================================================================
 
+
 class RESTClient(object):
-  '''REST HTTP client that encodes POST and PUT using MIME multipart encoding.
+  """REST HTTP client that encodes POST and PUT using MIME multipart encoding.
   
   RESTClient may be reused across multiple targets, supports keep-alive 
   connections, and if enabled, will use a cache if cache control information is
@@ -86,7 +85,7 @@ class RESTClient(object):
     <d1:objectList xmlns:d1="http://ns.dataone.org/service/types/v1" 
       count="0" start="0" total="1011042"/>
       
-  '''
+  """
 
   def __init__(self,
                host=None,
@@ -100,7 +99,7 @@ class RESTClient(object):
                strict=True,
                use_cache=True,
                user_agent=d1_common.const.USER_AGENT):
-    '''Initialize the RESTClient
+    """Initialize the RESTClient
 
     Args:
       host (string): If specified, then identifies the host portion of the URL. 
@@ -129,7 +128,7 @@ class RESTClient(object):
 
       use_cache (bool): Use cachecontrol library to support request caching. 
         This is strongly recommended.
-    '''
+    """
     self.logger = logging.getLogger(__file__)
     self._host = host
     self._port = port
@@ -151,12 +150,8 @@ class RESTClient(object):
     self._n_tries = n_tries
 
 
-  def GET(self, url, 
-          query=None, 
-          headers=None, 
-          n_tries=None,
-          dump_path=None):
-    ''' Perform an HTTP request and return the response. 
+  def GET(self, url, query=None, headers=None, n_tries=None, dump_path=None):
+    """Perform an HTTP request and return the response. 
     
     Important: Any Unicode values must be UTF-8 encoded.
 
@@ -171,50 +166,51 @@ class RESTClient(object):
   
     Returns:
       requests.Response: The server response to the HTTP request
-    '''
-    return self._send_request( 'GET', url, 
-                               query=query, 
-                               headers=headers, 
-                               n_tries=n_tries,
-                               dump_path=dump_path )
+    """
+    return self._send_request(
+      'GET',
+      url,
+      query=query,
+      headers=headers,
+      n_tries=n_tries,
+      dump_path=dump_path
+    )
 
+  def HEAD(self, url, query=None, headers=None, n_tries=None, dump_path=None):
+    """Perform a HTTP HEAD request.
+    """
+    return self._send_request(
+      'HEAD',
+      url,
+      query=query,
+      headers=headers,
+      n_tries=n_tries,
+      dump_path=dump_path
+    )
 
-  def HEAD(self, url, 
-           query=None, 
-           headers=None, 
-           n_tries=None,
-           dump_path=None):
-    '''Perform a HTTP HEAD request.
-    '''
-    return self._send_request( 'HEAD', url, 
-                               query=query, 
-                               headers=headers, 
-                               n_tries=n_tries,
-                               dump_path=dump_path )
+  def DELETE(self, url, query=None, headers=None, n_tries=None, dump_path=None):
+    """Perform a HTTP DELETE request
+    """
+    return self._send_request(
+      'DELETE',
+      url,
+      query=query,
+      headers=headers,
+      n_tries=n_tries,
+      dump_path=dump_path
+    )
 
-
-  def DELETE(self, url, 
-             query=None, 
-             headers=None, 
-             n_tries=None,
-             dump_path=None):
-    '''Perform a HTTP DELETE request
-    '''
-    return self._send_request( 'DELETE', url, 
-                               query=query, 
-                               headers=headers, 
-                               n_tries=n_tries,
-                               dump_path=dump_path )
-
-
-  def POST(self, url, 
-           query=None, 
-           headers=None, 
-           fields=None, 
-           files=None,
-           n_tries=None, 
-           dump_path=None):
-    '''Perform a POST request using multipart encoding.
+  def POST(
+    self,
+    url,
+    query=None,
+    headers=None,
+    fields=None,
+    files=None,
+    n_tries=None,
+    dump_path=None
+  ):
+    """Perform a POST request using multipart encoding.
     
     POST and PUT accepts the same parameters as GET, HEAD and DELETE.
     In addition, they accept paramters that are encoded into a MIME
@@ -234,39 +230,46 @@ class RESTClient(object):
 
       dump_path (string): For debugging, the generated HTTP request can be 
         written to the specified file.
-    '''
-    return self._send_request( 'POST', url, 
-                               query=query, 
-                               headers=headers, 
-                               files=files, 
-                               fields=fields, 
-                               n_tries=n_tries, 
-                               dump_path=dump_path )
-    
+    """
+    return self._send_request(
+      'POST',
+      url,
+      query=query,
+      headers=headers,
+      files=files,
+      fields=fields,
+      n_tries=n_tries,
+      dump_path=dump_path
+    )
 
-  def PUT(self, url, 
-          query=None, 
-          headers=None, 
-          fields=None, 
-          files=None,
-          n_tries=None, 
-          dump_path=None):
-    '''Perform a HTTP PUT request.
-    '''
-    return self._send_request( 'PUT', url, 
-                               query=query, 
-                               headers=headers,
-                               fields=fields, 
-                               files=files, 
-                               n_tries=n_tries,
-                               dump_path=dump_path )
-
+  def PUT(
+    self,
+    url,
+    query=None,
+    headers=None,
+    fields=None,
+    files=None,
+    n_tries=None,
+    dump_path=None
+  ):
+    """Perform a HTTP PUT request.
+    """
+    return self._send_request(
+      'PUT',
+      url,
+      query=query,
+      headers=headers,
+      fields=fields,
+      files=files,
+      n_tries=n_tries,
+      dump_path=dump_path
+    )
 
   ##########################################
   # Private Methods: For internal use and subject to change.
   #
   def _connect(self, n_tries=DEFAULT_NUMBER_OF_TRIES):
-    '''Create cached session object for managing connections.
+    """Create cached session object for managing connections.
     
     Returned in a CachedSession instance which provides automated thread safe 
     caching support for the requests library. 
@@ -277,40 +280,51 @@ class RESTClient(object):
     
     Params:
       n_tries (int): Retry connections this many times before bailing.
-    '''
+    """
     session = requests.Session()
     session.stream = True
     if n_tries is not None:
       self._n_tries = n_tries
-      session.mount( 'http://', 
-                     requests.adapters.HTTPAdapter(max_retries=n_tries) )
-      session.mount( 'https://', 
-                     requests.adapters.HTTPAdapter(max_retries=n_tries) )
-    
+      session.mount(
+        'http://', requests.adapters.HTTPAdapter(
+          max_retries=n_tries
+        )
+      )
+      session.mount(
+        'https://',
+        requests.adapters.HTTPAdapter(
+          max_retries=n_tries
+        )
+      )
+
     if self._use_cache:
       session.mount('http://', cachecontrol.CacheControlAdapter())
       session.mount('https://', cachecontrol.CacheControlAdapter())
     return session
-
 
   def _prepare_url(self, url):
     if self._host is not None:
       #Support old style implementation that take host and scheme in 
       #constructor
       if not url.lower().startswith('http'):
-        url = "{0}://{1}:{2}{3}".format(self._scheme, self._host, self._port, url)
+        url = "{0}://{1}:{2}{3}".format(
+          self._scheme, self._host, self._port, url
+        )
     return url
-    
 
-  def _send_request(self, method, url, 
-                    query=None, 
-                    headers=None,
-                    body=None,
-                    files=None,
-                    fields=None,
-                    n_tries=None, 
-                    dump_path=None):
-    '''Send request and retrieve response.
+  def _send_request(
+    self,
+    method,
+    url,
+    query=None,
+    headers=None,
+    body=None, # TODO: Ignored now. How to handle?
+    files=None,
+    fields=None,
+    n_tries=None,
+    dump_path=None
+  ):
+    """Send request and retrieve response.
 
     Params:
       method (string): HTTP verb. GET, HEAD, PUT, POST or DELETE.
@@ -322,7 +336,7 @@ class RESTClient(object):
       query (dict): URL query parameters.
 
       headers (dict): HTTP headers.
-    '''
+    """
     url = self._prepare_url(url)
     if n_tries is not None:
       if n_tries != self._n_tries:
@@ -390,8 +404,8 @@ class RESTClient(object):
 
 
   def _get_curl_request(self, method, url, query=None, headers=None):
-    '''Get request as cURL command line for debugging.
-    '''
+    """Get request as cURL command line for debugging.
+    """
     if not query is None:
       full_url = u'{0}?{1}'.format(url, d1_common.url.urlencode(query))
     curl = []
