@@ -18,23 +18,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_accesspolicy
 =======================================
 
-Unit tests for serializaton and de-serialization of the AccessPolicy type.
+Unit tests for serialization and de-serialization of the AccessPolicy type.
 
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Stdlib.
 import logging
 import sys
 import unittest
-import datetime
 import xml.sax
 
 # 3rd party.
@@ -112,7 +111,7 @@ u"""<?xml version="1.0" encoding="UTF-8"?>
 class TestAccessPolicy(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      obj = dataoneTypes.CreateFromDocument(doc)
+      dataoneTypes.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
@@ -120,12 +119,12 @@ class TestAccessPolicy(unittest.TestCase):
         raise
 
   def test_serialization_gmn(self):
-    '''Deserialize: XML -> AccessPolicy (GMN)'''
+    """Deserialize: XML -> AccessPolicy (GMN)"""
     util.deserialize_and_check(EG_ACCESSPOLICY_GMN)
     #util.deserialize_and_check(EG_ACCESSPOLICY_GMN_2)
 
   def test_serialization_bad_1(self):
-    '''Deserialize: XML -> AccessPolicy (bad)'''
+    """Deserialize: XML -> AccessPolicy (bad)"""
     util.deserialize_and_check(EG_ACCESSPOLICY_BAD, shouldfail=True)
 
 #===============================================================================

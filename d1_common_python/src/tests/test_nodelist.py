@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_nodelist
 ====================================
 
-:Synopsis: Unit tests for serializaton and de-serialization of the NodeList
+:Synopsis: Unit tests for serialization and de-serialization of the NodeList
   type.
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -302,7 +302,7 @@ EG_BAD_NODELIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
 class TestNodeList(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      obj = dataoneTypes.CreateFromDocument(doc)
+      dataoneTypes.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
@@ -312,19 +312,19 @@ class TestNodeList(unittest.TestCase):
       raise Exception('Did not receive expected exception')
 
   def test_serialization_gmn(self):
-    '''Deserialize: XML -> NodeList (GMN)'''
+    """Deserialize: XML -> NodeList (GMN)"""
     util.deserialize_and_check(EG_NODELIST_GMN)
 
   def test_serialization_knb(self):
-    '''Deserialize: XML -> NodeList (KNB)'''
+    """Deserialize: XML -> NodeList (KNB)"""
     #util.deserialize_and_check(EG_NODELIST_KNB)
 
   def test_serialization_bad_1(self):
-    '''Deserialize: XML -> NodeList (bad 1)'''
+    """Deserialize: XML -> NodeList (bad 1)"""
     util.deserialize_and_check(EG_BAD_NODELIST_1, shouldfail=True)
 
   def test_serialization_bad_2(self):
-    '''Deserialize: XML -> NodeList (bad 2)'''
+    """Deserialize: XML -> NodeList (bad 2)"""
     util.deserialize_and_check(EG_BAD_NODELIST_2, shouldfail=True)
 
 #===============================================================================

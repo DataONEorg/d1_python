@@ -18,17 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_logrecords
 ======================================
 
-Unit tests for serializaton and de-serialization of the LogRecords type.
+Unit tests for serialization and de-serialization of the LogRecords type.
 
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Stdlib.
 import logging
@@ -96,7 +96,7 @@ EG_BAD_LOG_3 = """<?xml version="1.0" ?>
 class TestObjectList(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      obj = dataoneTypes.CreateFromDocument(doc)
+      dataoneTypes.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
@@ -104,26 +104,26 @@ class TestObjectList(unittest.TestCase):
         raise
 
   def test_serialization_gmn(self):
-    '''Deserialize: XML -> Log (GMN)'''
+    """Deserialize: XML -> Log (GMN)"""
     try:
       util.deserialize_and_check(EG_LOG_GMN)
     except Exception as e:
       print e
 
   def test_serialization_knb(self):
-    '''Deserialize: XML -> Log (KNB)'''
+    """Deserialize: XML -> Log (KNB)"""
     self.deserialize_and_check(EG_LOG_KNB)
 
   def test_serialization_bad_1(self):
-    '''Deserialize: XML -> Log (bad 1)'''
+    """Deserialize: XML -> Log (bad 1)"""
     util.deserialize_and_check(EG_BAD_LOG_1, shouldfail=True)
 
   def test_serialization_bad_2(self):
-    '''Deserialize: XML -> Log (bad 2)'''
+    """Deserialize: XML -> Log (bad 2)"""
     util.deserialize_and_check(EG_BAD_LOG_2, shouldfail=True)
 
   def test_serialization_bad_3(self):
-    '''Deserialize: XML -> Log (bad 3)'''
+    """Deserialize: XML -> Log (bad 3)"""
     util.deserialize_and_check(EG_BAD_LOG_3, shouldfail=True)
 
 #===============================================================================

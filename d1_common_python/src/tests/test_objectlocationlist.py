@@ -18,15 +18,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_objectlocationlist
 ==============================================
 
-:Synopsis: Unit tests for serializaton and de-serialization of the
+:Synopsis: Unit tests for serialization and de-serialization of the
   ObjectLocationList type.
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -122,7 +122,7 @@ EG_BAD_OBJECTLOCATIONLIST_2 = """<?xml version="1.0" encoding="UTF-8"?>
 class TestObjectLocationList(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      obj = dataoneTypes.CreateFromDocument(doc)
+      dataoneTypes.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
@@ -130,19 +130,19 @@ class TestObjectLocationList(unittest.TestCase):
         raise
 
   def test_deserialize_gmn(self):
-    '''Deserialize: XML -> ObjectLocationList (GMN)'''
+    """Deserialize: XML -> ObjectLocationList (GMN)"""
     util.deserialize_and_check(EG_OBJECTLOCATIONLIST_GMN)
 
   def test_deserialize_knb(self):
-    '''Deserialize: XML -> ObjectLocationList (KNB)'''
+    """Deserialize: XML -> ObjectLocationList (KNB)"""
     #util.deserialize_and_check(EG_OBJECTLOCATIONLIST_KNB)
 
   def test_deserialize_bad_1(self):
-    '''Deserialize: XML -> ObjectLocationList (bad 1)'''
+    """Deserialize: XML -> ObjectLocationList (bad 1)"""
     util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_1, shouldfail=True)
 
   def test_deserialize_bad_2(self):
-    '''Deserialize: XML -> ObjectLocationList (bad 2)'''
+    """Deserialize: XML -> ObjectLocationList (bad 2)"""
     util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
 
 #===============================================================================

@@ -22,7 +22,7 @@
 Module d1_common.tests.test_systemmetadata
 ==========================================
 
-Unit tests for serializaton and de-serialization of the SystemMetadata type.
+Unit tests for serialization and de-serialization of the SystemMetadata type.
 
 :Created: 2010-06-29
 :Author: DataONE (Vieglais, Dahl)
@@ -40,11 +40,8 @@ import pyxb
 
 # D1.
 from d1_common import xmlrunner
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes as dataoneTypes
 
-# App
-import util
 
 EG_SYSMETA = u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"

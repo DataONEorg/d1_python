@@ -18,17 +18,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_pid
 ===============================
 
-Unit tests for serializaton and de-serialization of the PID type.
+Unit tests for serialization and de-serialization of the PID type.
 
 :Created: 2011-03-03
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Stdlib.
 import logging
@@ -43,8 +43,6 @@ import pyxb
 from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 
-# App
-import util
 
 EG_PID_GMN = (
   """<?xml version="1.0" encoding="UTF-8"?>
@@ -84,20 +82,20 @@ class TestPID(unittest.TestCase):
     self.assertEqual(obj.value(), doc[1])
 
   def test_deserialize_gmn(self):
-    '''Deserialize: XML -> PID (GMN)'''
+    """Deserialize: XML -> PID (GMN)"""
     self.deserialize_pid_and_check(EG_PID_GMN)
 
   def test_deserialize_knb(self):
-    '''Deserialize: XML -> PID (KNB)'''
+    """Deserialize: XML -> PID (KNB)"""
     # TODO.
     #doctest(EG_PID_KNB)
 
   def test_deserialize_bad_1(self):
-    '''Deserialize: XML -> PID (bad 1)'''
+    """Deserialize: XML -> PID (bad 1)"""
     self.deserialize_pid_and_check(EG_BAD_PID_1, shouldfail=True)
 
   def test_deserialize_bad_2(self):
-    '''Deserialize: XML -> PID (bad 2)'''
+    """Deserialize: XML -> PID (bad 2)"""
     self.deserialize_pid_and_check(EG_BAD_PID_2, shouldfail=True)
 
 #===============================================================================

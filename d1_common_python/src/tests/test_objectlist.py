@@ -18,21 +18,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 Module d1_common.tests.test_objectlist
 ======================================
 
-Unit tests for serializaton and de-serialization of the ObjectList type.
+Unit tests for serialization and de-serialization of the ObjectList type.
 
 :Created: 2010-07-21
 :Author: DataONE (Vieglais, Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Stdlib.
 import logging
-import pyxb
 import sys
 import unittest
 import xml.sax
@@ -41,7 +40,6 @@ import xml.sax
 import pyxb
 
 # D1.
-import d1_common
 from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 
@@ -195,7 +193,7 @@ EG_BAD_OBJECTLIST = """<?xml version="1.0" encoding="UTF-8"?>
 class TestObjectList(unittest.TestCase):
   def deserialize_and_check(self, doc, shouldfail=False):
     try:
-      obj = dataoneTypes.CreateFromDocument(doc)
+      dataoneTypes.CreateFromDocument(doc)
     except (pyxb.PyXBException, xml.sax.SAXParseException):
       if shouldfail:
         return
@@ -212,15 +210,15 @@ class TestObjectList(unittest.TestCase):
     util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
   def test_serialization_gmn(self):
-    '''Deserialize: XML -> ObjectList (GMN)'''
+    """Deserialize: XML -> ObjectList (GMN)"""
     util.deserialize_and_check(EG_OBJECTLIST_GMN)
 
   def test_serialization_knb(self):
-    '''Deserialize: XML -> ObjectList (KNB)'''
+    """Deserialize: XML -> ObjectList (KNB)"""
     #util.deserialize_and_check(EG_OBJECTLIST_KNB)
 
   def test_serialization_bad(self):
-    '''Deserialize: XML -> ObjectList (bad)'''
+    """Deserialize: XML -> ObjectList (bad)"""
     util.deserialize_and_check(EG_BAD_OBJECTLIST, shouldfail=True)
 
 #===============================================================================
