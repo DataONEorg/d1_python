@@ -1,7 +1,7 @@
-# ./d1_common/types/generated/dataoneErrors.py
+# ./d1_common/types/raw/dataoneErrors.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2014-08-01 17:18:09.766318 by PyXB version 1.2.3
+# Generated 2016-06-09 19:39:14.224007 by PyXB version 1.2.3
 # Namespace AbsentNamespace0
 
 import pyxb
@@ -13,7 +13,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:19f68be2-19d2-11e4-ad23-000c292ff10e')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:233fbbce-2eac-11e6-be3a-000c292ff10e')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.3'
@@ -71,21 +71,6 @@ def CreateFromDOM (node, default_namespace=None):
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, default_namespace)
 
 
-# Atomic simple type: NonEmptyString
-class NonEmptyString (pyxb.binding.datatypes.string):
-
-    """An atomic simple type."""
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'NonEmptyString')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 45, 2)
-    _Documentation = None
-NonEmptyString._CF_pattern = pyxb.binding.facets.CF_pattern()
-NonEmptyString._CF_pattern.addPattern(pattern=u'[\\s]*[\\S][\\s\\S]*')
-NonEmptyString._CF_minLength = pyxb.binding.facets.CF_minLength(value=pyxb.binding.datatypes.nonNegativeInteger(1L))
-NonEmptyString._InitializeFacetMap(NonEmptyString._CF_pattern,
-   NonEmptyString._CF_minLength)
-Namespace.addCategoryObject('typeBinding', u'NonEmptyString', NonEmptyString)
-
 # Complex type DataONEException with content type ELEMENT_ONLY
 class DataONEException (pyxb.binding.basis.complexTypeDefinition):
     """Defines a structure for serializing DataONE
@@ -94,61 +79,61 @@ class DataONEException (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'DataONEException')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 53, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 35, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element description uses Python identifier description
-    __description = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__AbsentNamespace0_DataONEException_description', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 59, 6), )
+    __description = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, u'description'), 'description', '__AbsentNamespace0_DataONEException_description', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 41, 6), )
 
     
     description = property(__description.value, __description.set, None, None)
 
     
     # Element traceInformation uses Python identifier traceInformation
-    __traceInformation = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, u'traceInformation'), 'traceInformation', '__AbsentNamespace0_DataONEException_traceInformation', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 60, 6), )
+    __traceInformation = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, u'traceInformation'), 'traceInformation', '__AbsentNamespace0_DataONEException_traceInformation', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 42, 6), )
 
     
     traceInformation = property(__traceInformation.value, __traceInformation.set, None, None)
 
     
     # Attribute name uses Python identifier name
-    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__AbsentNamespace0_DataONEException_name', NonEmptyString, required=True)
-    __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 62, 4)
-    __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 62, 4)
+    __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'name'), 'name', '__AbsentNamespace0_DataONEException_name', pyxb.binding.datatypes.string, required=True)
+    __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 44, 4)
+    __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 44, 4)
     
     name = property(__name.value, __name.set, None, None)
 
     
     # Attribute errorCode uses Python identifier errorCode
     __errorCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'errorCode'), 'errorCode', '__AbsentNamespace0_DataONEException_errorCode', pyxb.binding.datatypes.integer, required=True)
-    __errorCode._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 63, 4)
-    __errorCode._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 63, 4)
+    __errorCode._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 45, 4)
+    __errorCode._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 45, 4)
     
     errorCode = property(__errorCode.value, __errorCode.set, None, None)
 
     
     # Attribute detailCode uses Python identifier detailCode
-    __detailCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'detailCode'), 'detailCode', '__AbsentNamespace0_DataONEException_detailCode', NonEmptyString, required=True)
-    __detailCode._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 64, 4)
-    __detailCode._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 64, 4)
+    __detailCode = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'detailCode'), 'detailCode', '__AbsentNamespace0_DataONEException_detailCode', pyxb.binding.datatypes.string, required=True)
+    __detailCode._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 46, 4)
+    __detailCode._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 46, 4)
     
     detailCode = property(__detailCode.value, __detailCode.set, None, None)
 
     
     # Attribute identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__AbsentNamespace0_DataONEException_identifier', NonEmptyString)
-    __identifier._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 65, 4)
-    __identifier._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 65, 4)
+    __identifier = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'identifier'), 'identifier', '__AbsentNamespace0_DataONEException_identifier', pyxb.binding.datatypes.string)
+    __identifier._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 47, 4)
+    __identifier._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 47, 4)
     
     identifier = property(__identifier.value, __identifier.set, None, None)
 
     
     # Attribute nodeId uses Python identifier nodeId
-    __nodeId = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'nodeId'), 'nodeId', '__AbsentNamespace0_DataONEException_nodeId', NonEmptyString)
-    __nodeId._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 66, 4)
-    __nodeId._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 66, 4)
+    __nodeId = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, u'nodeId'), 'nodeId', '__AbsentNamespace0_DataONEException_nodeId', pyxb.binding.datatypes.string)
+    __nodeId._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 48, 4)
+    __nodeId._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 48, 4)
     
     nodeId = property(__nodeId.value, __nodeId.set, None, None)
 
@@ -166,14 +151,14 @@ class DataONEException (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'DataONEException', DataONEException)
 
 
-error = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'error'), DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 69, 2))
+error = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'error'), DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 51, 2))
 Namespace.addCategoryObject('elementBinding', error.name().localName(), error)
 
 
 
-DataONEException._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'description'), pyxb.binding.datatypes.string, scope=DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 59, 6)))
+DataONEException._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'description'), pyxb.binding.datatypes.string, scope=DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 41, 6)))
 
-DataONEException._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'traceInformation'), pyxb.binding.datatypes.anyType, scope=DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 60, 6)))
+DataONEException._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'traceInformation'), pyxb.binding.datatypes.anyType, scope=DataONEException, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 42, 6)))
 
 def _BuildAutomaton ():
     # Remove this helper function from the namespace after it is invoked
@@ -182,19 +167,19 @@ def _BuildAutomaton ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0L, max=1L, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 59, 6))
+    cc_0 = fac.CounterCondition(min=0L, max=1L, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 41, 6))
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(min=0L, max=1L, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 60, 6))
+    cc_1 = fac.CounterCondition(min=0L, max=1L, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 42, 6))
     counters.add(cc_1)
     states = []
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_0, False))
-    symbol = pyxb.binding.content.ElementUse(DataONEException._UseForTag(pyxb.namespace.ExpandedName(None, u'description')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 59, 6))
+    symbol = pyxb.binding.content.ElementUse(DataONEException._UseForTag(pyxb.namespace.ExpandedName(None, u'description')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 41, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_1, False))
-    symbol = pyxb.binding.content.ElementUse(DataONEException._UseForTag(pyxb.namespace.ExpandedName(None, u'traceInformation')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_schemas/dataoneErrors.xsd', 60, 6))
+    symbol = pyxb.binding.content.ElementUse(DataONEException._UseForTag(pyxb.namespace.ExpandedName(None, u'traceInformation')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneErrors.xsd', 42, 6))
     st_1 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_1)
     transitions = []

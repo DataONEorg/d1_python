@@ -21,12 +21,12 @@ BUNDLE_TAG=types
 MODULE_PREFIX=d1_common.${BUNDLE_TAG}
 BUNDLE_ROOT=${D1COMMON_ROOT}/d1_common/${BUNDLE_TAG}
 SCHEMA_DIR=${BUNDLE_ROOT}/schemas
-RAW_DIR=${BUNDLE_ROOT}/raw
-ARCHIVE_DIR=${RAW_DIR}
+GENERATED_DIR=${BUNDLE_ROOT}/generated
+ARCHIVE_DIR=${GENERATED_DIR}
 
-rm -rf ${RAW_DIR}
-mkdir -p ${RAW_DIR}
-touch ${RAW_DIR}/__init__.py
+rm -rf ${GENERATED_DIR}
+mkdir -p ${GENERATED_DIR}
+touch ${GENERATED_DIR}/__init__.py
 
 ( mkdir -p ${SCHEMA_DIR} \
   && cd ${SCHEMA_DIR} \
