@@ -106,7 +106,6 @@ class TestCNClient(TestCaseWithURLCompare):
     mock_read.return_value = 'test'
     response = self.client.listFormats()
     self.assertEqual('test', response)
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
   def test_0050(self, mock_read):
@@ -116,7 +115,6 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       self.client.listFormats()
       mocked_method.assert_called_with()
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listFormatsResponse')
   def test_0060(self, mock_list):
@@ -160,7 +158,6 @@ class TestCNClient(TestCaseWithURLCompare):
     mock_read.return_value = 'test'
     response = self.client.getFormat(1)
     self.assertEqual('test', response)
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
   def test_0110(self, mock_read):
@@ -170,7 +167,6 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       self.client.getFormat(1)
       mocked_method.assert_called_with(1)
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getFormatResponse')
   def test_0120(self, mock_list):
@@ -323,7 +319,6 @@ class TestCNClient(TestCaseWithURLCompare):
         '/obsoletedBy/%(pid)s',
         pid=u'_bogus_pid_845434598734598374534958'
       )
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0250(self, mock_rest):
@@ -398,7 +393,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.return_value = 'test'
       self.client.listNodesResponse()
       mocked_method.assert_called_with('node')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0310(self, mock_rest):
@@ -425,7 +419,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_rest.return_value = 'test'
       self.client.listNodes()
       mocked_method.assert_called_with('test', 1, 0, 'NodeList')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
   def test_0340(self, mock_read):
@@ -460,7 +453,6 @@ class TestCNClient(TestCaseWithURLCompare):
         pid=u'_bogus_pid_845434598734598374534958',
         subject=u'test'
       )
-# #
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0370(self, mock_rest):
@@ -469,7 +461,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_rest.return_value = 'test'
       self.client.hasReservationResponse('_bogus_pid_845434598734598374534958', 'test')
       mocked_method.assert_called_with('test')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'hasReservationResponse')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_404_response')
@@ -488,7 +479,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_response.return_value = 'test'
       self.client.hasReservation('_bogus_pid_845434598734598374534958', 'test')
       mocked_method.assert_called_with('test')
-# #
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_404_response')
   def test_0400(self, mock_read):
@@ -519,7 +509,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'resolve/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0430(self, mock_rest):
@@ -580,7 +569,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'checksum/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0490(self, mock_rest):
@@ -638,7 +626,6 @@ class TestCNClient(TestCaseWithURLCompare):
         'search/%(queryType)s/%(query)s',
         query='test', queryType='solr'
       )
-# #
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0550(self, mock_rest):
@@ -696,7 +683,6 @@ class TestCNClient(TestCaseWithURLCompare):
         'query/%(queryEngine)s/%(query)s',
         query='test', queryEngine='solr'
       )
-# #
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0610(self, mock_rest):
@@ -817,7 +803,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'owner/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
       )
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0710(self, mock_rest):
@@ -854,7 +839,6 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_response.return_value = 'test'
       self.client.setRightsHolder('_bogus_pid_845434598734598374534958', '8454', 'v1')
       mocked_method.assert_called_with('test')
-# #
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
   def test_0740(self, mock_read):
@@ -891,7 +875,6 @@ class TestCNClient(TestCaseWithURLCompare):
         pid=u'_bogus_pid_845434598734598374534958',
         action='create'
       )
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0770(self, mock_rest):
@@ -1010,7 +993,6 @@ class TestCNClient(TestCaseWithURLCompare):
       person = attributeAccessPolicy()
       self.client.registerAccountResponse(person)
       mocked_method.assert_called_with('accounts')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0870(self, mock_rest):
@@ -1040,7 +1022,6 @@ class TestCNClient(TestCaseWithURLCompare):
       person = attributeAccessPolicy()
       self.client.registerAccount(person)
       mocked_method.assert_called_with('test')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
   def test_0900(self, mock_read):
@@ -1071,7 +1052,6 @@ class TestCNClient(TestCaseWithURLCompare):
       person = attributeAccessPolicy()
       self.client.updateAccountResponse(person)
       mocked_method.assert_called_with('accounts/%(subject)s', subject='update')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0930(self, mock_rest):
@@ -1101,7 +1081,6 @@ class TestCNClient(TestCaseWithURLCompare):
       person = attributeAccessPolicy()
       self.client.updateAccount(person)
       mocked_method.assert_called_with('test')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
   def test_0960(self, mock_read):
@@ -1135,7 +1114,6 @@ class TestCNClient(TestCaseWithURLCompare):
         'accounts/verification/%(subject)s',
         subject='update'
       )
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0990(self, mock_rest):
@@ -1165,7 +1143,6 @@ class TestCNClient(TestCaseWithURLCompare):
       subject = attributeAccessPolicy()
       self.client.verifyAccount(subject)
       mocked_method.assert_called_with('test')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
   def test_1020(self, mock_read):
@@ -1197,7 +1174,6 @@ class TestCNClient(TestCaseWithURLCompare):
       subject = attributeAccessPolicy()
       self.client.getSubjectInfoResponse(subject)
       mocked_method.assert_called_with('accounts/%(subject)s', subject='update')
-#
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1050(self, mock_rest):
@@ -1258,7 +1234,6 @@ class TestCNClient(TestCaseWithURLCompare):
       query = 'test'
       self.client.listSubjectsResponse(query, status='begin', start=0, count=1)
       mocked_method.assert_called_with('accounts?query=%(query)s', query='test')
-# #
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1110(self, mock_rest):
@@ -2295,51 +2270,3 @@ class TestCNClient(TestCaseWithURLCompare):
       node = attributeAccessPolicy()
       self.client.register(node.toxml())
       mocked_method.assert_called_with(u'update')
-
-  #=========================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  import optparse
-
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
-  parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
-  )
-
-  (options, arguments) = parser.parse_args()
-
-  if options.debug:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  s = TestCNClient
-  s.options = options
-
-  if options.test != '':
-    suite = unittest.TestSuite(map(s, [options.test]))
-  else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-  unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-  main()

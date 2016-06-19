@@ -31,11 +31,8 @@ Unit tests for solr_client.
 
 # Stdlib.
 import logging
-import random
 import sys
 import unittest
-import uuid
-import StringIO
 
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
@@ -43,7 +40,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 # App.
 sys.path.append('..')
 from d1_client import solr_client
-from settings import *
+import settings
 
 
 class TestSolrClient(TestCaseWithURLCompare):
@@ -67,7 +64,7 @@ class TestSolrClient(TestCaseWithURLCompare):
     # Working in browser, now.
     # https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*
 
-    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
     q = '*:*'
     fq = None
     fields = 'abstract,author,date'
@@ -79,7 +76,7 @@ class TestSolrClient(TestCaseWithURLCompare):
 
   def test_110(self):
     '''SOLRArrayResponseIterator()'''
-    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
     q = '*:*'
     fq = None
     fields = 'lat,lng'
@@ -89,7 +86,7 @@ class TestSolrClient(TestCaseWithURLCompare):
 
   def test_200(self):
     '''SOLRValuesResponseIterator()'''
-    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
     q = '*:*'
     fq = None
     field = 'size'
@@ -102,57 +99,9 @@ class TestSolrClient(TestCaseWithURLCompare):
   # get the list of fields.
   def _test_300(self):
     '''listFields()'''
-    client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
     flds = client.getFields()
     print "%d fields indexed\n" % len(flds['fields'].keys())
     for name in flds['fields'].keys():
       fld = flds['fields'][name]
       print "%s (%s) %d / %d" % (name, fld['type'], fld['distinct'], fld['docs'])
-
-#=========================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  import optparse
-
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
-  parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
-  )
-
-  (options, arguments) = parser.parse_args()
-
-  if options.debug:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  s = TestSolrClient
-  s.options = options
-
-  if options.test != '':
-    suite = unittest.TestSuite(map(s, [options.test]))
-  else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-  unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-  main()

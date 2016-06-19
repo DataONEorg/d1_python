@@ -31,14 +31,9 @@ Unit tests for solr_client.
 
 # Stdlib.
 import logging
-import random
-from xml.dom.minidom import parseString
 import sys
 import unittest
-from datetime import datetime
-import uuid
-import StringIO
-from mock import patch
+import mock
 
 # D1.
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
@@ -46,7 +41,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 # App.
 sys.path.append('..')
 from d1_client import solr_client
-from settings import *
+import settings
 
 
 class rsp(object):
@@ -91,7 +86,7 @@ class search(object):
 class TestSolrClient(TestCaseWithURLCompare):
   def setUp(self):
     logging.basicConfig(level=logging.DEBUG)
-    self.client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+    self.client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
 
   def tearDown(self):
     pass
@@ -109,7 +104,7 @@ class TestSolrClient(TestCaseWithURLCompare):
 #             mocked_method.assert_called_with()
 
   def test_close(self):
-    with patch('httplib.HTTPSConnection.close') as mocked_method:
+    with mock.patch('httplib.HTTPSConnection.close') as mocked_method:
       self.client.close()
       mocked_method.assert_called_once_with()
 
@@ -120,9 +115,9 @@ class TestSolrClient(TestCaseWithURLCompare):
     #         mock_rsp.return_value = rsp()
     TestSolrClient.__errcheck(rsp())
 
-  @patch('solr_client.SolrConnection.__errcheck')
-  @patch('solr_client.httplib.HTTPSConnection.getresponse')
-  @patch('solr_client.httplib.HTTPSConnection.request')
+  @mock.patch('solr_client.SolrConnection.__errcheck')
+  @mock.patch('solr_client.httplib.HTTPSConnection.getresponse')
+  @mock.patch('solr_client.httplib.HTTPSConnection.request')
   def DO_NOT_test_doPost(self, mock_request, mock_get, mock_err):
     mock_err.return_value = 200
     url = 'www.example.com'
@@ -131,8 +126,8 @@ class TestSolrClient(TestCaseWithURLCompare):
     response = self.client.doPost(url, body, headers)
     self.assertEqual(200, response.status)
 
-  @patch.object(solr_client, 'parseString')
-  @patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch.object(solr_client, 'parseString')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
   def test_doUpdateXML(self, mock_post, mock_dom):
     mock_post.return_value = rsp()
     mock_dom.return_value = parsed(200)
@@ -140,23 +135,23 @@ class TestSolrClient(TestCaseWithURLCompare):
     self.assertEqual('<result status="', response)
 
   def test_doUpdateXML_called_doPost(self):
-    with patch.object(solr_client.SolrConnection, 'doPost') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doPost') as mocked_method:
       self.client.doUpdateXML('test')
       mocked_method.assert_called_with('/cn/v1/query/solr/', 'test', {'Content-Type': 'text/xml; charset=utf-8'})
 
-  @patch.object(solr_client, 'parseString')
-  @patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch.object(solr_client, 'parseString')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
   def test_doUpdateXML_called_decoder(self, mock_post, mock_dom):
-    with patch.object(solr_client.codecs, 'getdecoder') as mocked_method:
+    with mock.patch.object(solr_client.codecs, 'getdecoder') as mocked_method:
       mock_post.return_value = rsp()
       mock_dom.return_value = parsed(200)
-      self.client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+      self.client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
       self.client.doUpdateXML('test')
       mocked_method.assert_called_with('utf-8')
 
-  @patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
   def test_doUpdateXML_called_parseString(self, mock_post):
-    with patch.object(solr_client, 'parseString') as mocked_method:
+    with mock.patch.object(solr_client, 'parseString') as mocked_method:
       mock_post.return_value = rsp()
       mocked_method.return_value = parsed(200)
       self.client.doUpdateXML('test')
@@ -167,16 +162,16 @@ class TestSolrClient(TestCaseWithURLCompare):
     term = self.client.escapeQueryTerm(term)
     self.assertEqual('<\?test>', term)
 
-  @patch.object(solr_client.SolrConnection, 'getSolrType')
-  @patch.object(solr_client.SolrConnection, 'escapeQueryTerm')
+  @mock.patch.object(solr_client.SolrConnection, 'getSolrType')
+  @mock.patch.object(solr_client.SolrConnection, 'escapeQueryTerm')
   def test_prepareQueryTerm(self, mock_escape, mock_get):
     mock_get.return_value = True
     mock_escape.return_value = 'term'
     term = self.client.prepareQueryTerm('origin', 'term')
     self.assertEqual('term', term)
 
-  @patch.object(solr_client.SolrConnection, 'getSolrType')
-  @patch.object(solr_client.SolrConnection, 'escapeQueryTerm')
+  @mock.patch.object(solr_client.SolrConnection, 'getSolrType')
+  @mock.patch.object(solr_client.SolrConnection, 'escapeQueryTerm')
   def test_prepareQueryTerm_addstar(self, mock_escape, mock_get):
     mock_get.return_value = True
     mock_escape.return_value = 'term*'
@@ -184,56 +179,56 @@ class TestSolrClient(TestCaseWithURLCompare):
     self.assertEqual('term*', term)
 
   def test_prepareQueryTerm_assert_called_escapeQueryTerm(self):
-    with patch.object(solr_client.SolrConnection, 'escapeQueryTerm') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'escapeQueryTerm') as mocked_method:
       term = self.client.prepareQueryTerm('origin', 'term')
       mocked_method.assert_called_once_with('term')
 
   def test_prepareQueryTerm_assert_called_getSolrType(self):
-    with patch.object(solr_client.SolrConnection, 'getSolrType') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'getSolrType') as mocked_method:
       term = self.client.prepareQueryTerm('origin', 'term')
       mocked_method.assert_called_once_with('origin')
 
-  @patch.object(solr_client.codecs, 'getencoder')
+  @mock.patch.object(solr_client.codecs, 'getencoder')
   def DO_NOT_test_escapeVal(self, mock_encoder):
     mock_encoder.return_value = encoder('test')
-    self.client = solr_client.SolrConnection(host=CN_HOST, solrBase=SOLR_QUERY_ENDPOINT)
+    self.client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
     encoded_val = self.client.escapeVal('<test>')
     self.assertEqual('test', encoded_val)
 
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
-  @patch('solr_client.SolrConnection.escapeVal')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch('solr_client.SolrConnection.escapeVal')
   def test_delete(self, mock_escape, mock_do):
     mock_do.return_value = 'test'
     output = self.client.delete('sci_pid')
     self.assertEqual('test', output)
 
   def test_delete_assert_called_escapeVal(self):
-    with patch.object(solr_client.SolrConnection, 'escapeVal') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'escapeVal') as mocked_method:
       mocked_method.return_value = 'sci_pid'
       self.client.delete('sci_pid')
       mocked_method.assert_called_once_with('sci_pid')
 
   def test_delete_assert_called_doUpdateXML(self):
-    with patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
       mocked_method.return_value = 'sci_pid'
       self.client.delete('sci_pid')
       mocked_method.assert_called_once_with(u'<delete><id>sci_pid</id></delete>')
 
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
-  @patch('solr_client.SolrConnection.escapeVal')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch('solr_client.SolrConnection.escapeVal')
   def test_deleteByQuery(self, mock_escape, mock_do):
     mock_do.return_value = 'test'
     output = self.client.deleteByQuery('query')
     self.assertEqual('test', output)
 
   def test_deleteByQuery_assert_called_escapeVal(self):
-    with patch.object(solr_client.SolrConnection, 'escapeVal') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'escapeVal') as mocked_method:
       mocked_method.return_value = 'sci_pid'
       self.client.deleteByQuery('sci_pid')
       mocked_method.assert_called_once_with('sci_pid')
 
   def deleteByQuerytest_delete_assert_called_doUpdateXML(self):
-    with patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
       mocked_method.return_value = 'sci_pid'
       self.client.deleteByQuery('sci_pid')
       mocked_method.assert_called_once_with(u'<delete><id>sci_pid</id></delete>')
@@ -307,160 +302,113 @@ class TestSolrClient(TestCaseWithURLCompare):
     #         ftype = self.client.__add([], 'string')
     #         self.assertEqual('string',ftype)
 
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
   def test_add(self, mock_xml):
     mock_xml.return_value = '<add><doc></doc></add>'
     doc = self.client.add()
     self.assertEqual('<add><doc></doc></add>', doc)
 
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
   def test_addDocs(self, mock_xml):
     mock_xml.return_value = '<add><doc></doc></add>'
     doc = self.client.addDocs([{'origin': {'field': 'string'}}])
     self.assertEqual('<add><doc></doc></add>', doc)
 
   def test_addDocs_assert_called_doUpdateXML(self):
-    with patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
       self.client.addDocs([{'origin': {'field': 'string'}}])
       mocked_method.assert_called_with(
         '<add><doc><field name="origin">{\'field\': \'string\'}</field></doc></add>'
       )
 
-  @patch('logging.debug')
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch('logging.debug')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
   def test_addMany(self, mock_xml, mock_log):
     mock_xml.return_value = '<add><doc></doc></add>'
     doc = self.client.addMany([{'origin': {'field': 'string'}}])
     self.assertEqual('<add><doc></doc></add>', doc)
 
-  @patch('logging.debug')
+  @mock.patch('logging.debug')
   def test_addMany_assert_called_doUpdateXML(self, mock_log):
-    with patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
       self.client.addMany([{'origin': {'field': 'string'}}])
       mocked_method.assert_called_with(
         '<add><doc><field name="origin">{\'field\': \'string\'}</field></doc></add>'
       )
 
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
   def test_addMany_assert_called_logging(self, mock_log):
-    with patch('logging.debug') as mocked_method:
+    with mock.patch('logging.debug') as mocked_method:
       self.client.addMany([{'origin': {'field': 'string'}}])
       mocked_method.assert_called_with(
         '<add><doc><field name="origin">{\'field\': \'string\'}</field></doc></add>'
       )
 
-  @patch.object(solr_client.SolrConnection, 'doUpdateXML')
+  @mock.patch.object(solr_client.SolrConnection, 'doUpdateXML')
   def test_commit(self, mock_xml):
     mock_xml.return_value = '<add><doc></doc></add>'
     doc = self.client.commit()
     self.assertEqual('<add><doc></doc></add>', doc)
 
   def test_commit_assert_called_doUpdateXML(self):
-    with patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doUpdateXML') as mocked_method:
       self.client.commit([{'origin': {'field': 'string'}}])
       mocked_method.assert_called_with('<commit/>')
 
-  @patch('__builtin__.eval')
-  @patch.object(solr_client.SolrConnection, 'doPost')
-  @patch('solr_client.urllib.urlencode')
+  @mock.patch('__builtin__.eval')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch('solr_client.urllib.urlencode')
   def test_search(self, mock_url, mock_post, mock_eval):
     mock_post.return_value = rsp()
     mock_eval.return_value = 'test'
     output = self.client.search({})
     self.assertEqual('test', output)
 
-  @patch('__builtin__.eval')
-  @patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch('__builtin__.eval')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
   def test_search_assert_called_urlencode(self, mock_post, mock_eval):
-    with patch('solr_client.urllib.urlencode') as mocked_method:
+    with mock.patch('solr_client.urllib.urlencode') as mocked_method:
       mock_post.return_value = rsp()
       mock_eval.return_value = 'test'
       output = self.client.search({})
       self.assertEqual('test', output)
       mocked_method.assert_called_once_with({'wt': 'python'}, doseq=True)
 
-  @patch('__builtin__.eval')
-  @patch('solr_client.urllib.urlencode')
+  @mock.patch('__builtin__.eval')
+  @mock.patch('solr_client.urllib.urlencode')
   def test_search_assert_called_doPost(self, mock_url, mock_eval):
-    with patch.object(solr_client.SolrConnection, 'doPost') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'doPost') as mocked_method:
       mock_eval.return_value = 'test'
       mock_url.return_value = 'test'
       output = self.client.search({})
       self.assertEqual('test', output)
       mocked_method.assert_called_once_with('/cn/v1/query/solr/', 'test', {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'})
 
-  @patch.object(solr_client.SolrConnection, 'doPost')
-  @patch('solr_client.urllib.urlencode')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch('solr_client.urllib.urlencode')
   def test_search_assert_called_eval(self, mock_url, mock_post):
-    with patch('__builtin__.eval') as mocked_method:
+    with mock.patch('__builtin__.eval') as mocked_method:
       mock_post.return_value = rsp()
       mocked_method.return_value = 'test'
       output = self.client.search({})
       self.assertEqual('test', output)
       mocked_method.assert_called_once_with('<result status="')
 
-  @patch.object(solr_client.SolrConnection, 'search')
+  @mock.patch.object(solr_client.SolrConnection, 'search')
   def test_count(self, mock_search):
     mock_search.return_value = search('test')
     output = self.client.count()
     self.assertEqual(10, output)
 
   def test_count_assert_called_search(self):
-    with patch.object(solr_client.SolrConnection, 'search') as mocked_method:
+    with mock.patch.object(solr_client.SolrConnection, 'search') as mocked_method:
       self.client.count()
       mocked_method.assert_called_once_with({'q': '*:*', 'rows': '0'})
 
-  @patch.object(solr_client.SolrConnection, 'doPost')
-  @patch('solr_client.urllib.urlencode')
+  @mock.patch.object(solr_client.SolrConnection, 'doPost')
+  @mock.patch('solr_client.urllib.urlencode')
   def test_getIds(self, mock_url, mock_post):
     mock_url.return_value = 'supertest'
     mock_post.return_value = search('test')
-    with patch('__builtin__.eval') as mocked_method:
+    with mock.patch('__builtin__.eval') as mocked_method:
       output = self.client.getIds()
-#=========================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  import optparse
-
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
-  parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
-  )
-
-  (options, arguments) = parser.parse_args()
-
-  if options.debug:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  s = TestSolrClient
-  s.options = options
-
-  if options.test != '':
-    suite = unittest.TestSuite(map(s, [options.test]))
-  else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-  unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-  main()

@@ -34,6 +34,7 @@ import logging
 import sys
 import unittest
 
+# D1.
 sys.path.append('..')
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.const
@@ -41,7 +42,9 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.types.dataoneTypes as dataoneTypes
 import d1_client.d1baseclient
-from settings import *
+
+# App.
+import settings
 
 
 class TestDataONEBaseClientV1(TestCaseWithURLCompare):
@@ -91,7 +94,7 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def test_040_v1(self):
     '''get_schema_version()'''
-    client = d1_client.d1baseclient.DataONEBaseClient(CN_URL)
+    client = d1_client.d1baseclient.DataONEBaseClient(settings.CN_URL)
     version = client.get_schema_version()
     self.assertTrue(version in ('v1', 'v2', 'v3'))
 
@@ -112,7 +115,7 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def test_120_v1(self):
     '''MNRead.getLogRecords()'''
-    log = self._getLogRecords_v1(MN_URL)
+    log = self._getLogRecords_v1(settings.MN_URL)
     self.assertTrue(len(log.logEntry) >= 2)
 
   # CNCore.ping()
@@ -125,11 +128,11 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def test_200_v1(self):
     '''ping() CN'''
-    self._ping_v1(CN_URL)
+    self._ping_v1(settings.CN_URL)
 
   def test_210_v1(self):
     '''ping() MN'''
-    self._ping_v1(MN_URL)
+    self._ping_v1(settings.MN_URL)
 
   # CNRead.get()
   # MNRead.get()
@@ -145,13 +148,13 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_410(self):
     '''CNRead.get()'''
-    self._get(CN_URL)
-    self.assertRaises(d1_common.types.exceptions.NotFound, self._get, CN_URL, True)
+    self._get(settings.CN_URL)
+    self.assertRaises(d1_common.types.exceptions.NotFound, self._get, settings.CN_URL, True)
 
   def WAITING_FOR_TEST_ENV_test_420(self):
     '''MNRead.get()'''
-    self._get(MN_URL)
-    self.assertRaises(d1_common.types.exceptions.NotFound, self._get, MN_URL, True)
+    self._get(settings.MN_URL)
+    self.assertRaises(d1_common.types.exceptions.NotFound, self._get, settings.MN_URL, True)
 
   # CNRead.getSystemMetadata()
   # MNRead.getSystemMetadata()
@@ -167,16 +170,16 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_510(self):
     '''CNRead.getSystemMetadata()'''
-    self._get_sysmeta(CN_URL)
+    self._get_sysmeta(settings.CN_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_sysmeta, CN_URL, True
+      d1_common.types.exceptions.NotFound, self._get_sysmeta, settings.CN_URL, True
     )
 
   def WAITING_FOR_TEST_ENV_test_520(self):
     '''MNRead.getSystemMetadata()'''
-    self._get_sysmeta(MN_URL)
+    self._get_sysmeta(settings.MN_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_sysmeta, MN_URL, True
+      d1_common.types.exceptions.NotFound, self._get_sysmeta, settings.MN_URL, True
     )
 
   # CNRead.describe()
@@ -192,21 +195,21 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_610(self):
     '''CNRead.describe()'''
-    self._describe(CN_URL)
+    self._describe(settings.CN_URL)
     self.assertRaises(
       d1_common.types.exceptions.ServiceFailure,
       self._describe,
-      CN_URL,
+      settings.CN_URL,
       invalid_pid=True
     )
 
   def WAITING_FOR_TEST_ENV_test_620(self):
     '''MNRead.describe()'''
-    self._describe(MN_URL)
+    self._describe(settings.MN_URL)
     self.assertRaises(
       d1_common.types.exceptions.ServiceFailure,
       self._describe,
-      MN_URL,
+      settings.MN_URL,
       invalid_pid=True
     )
 
@@ -224,16 +227,16 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_710(self):
     '''CNRead.getChecksum()'''
-    self._get_checksum(CN_URL)
+    self._get_checksum(settings.CN_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_checksum, CN_URL, True
+      d1_common.types.exceptions.NotFound, self._get_checksum, settings.CN_URL, True
     )
 
   def WAITING_FOR_TEST_ENV_test_720(self):
     '''MNRead.getChecksum()'''
-    self._get_checksum(MN_URL)
+    self._get_checksum(settings.MN_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._get_checksum, MN_URL, True
+      d1_common.types.exceptions.NotFound, self._get_checksum, settings.MN_URL, True
     )
 
   # CNCore.listObjects()
@@ -259,11 +262,11 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_810(self):
     '''CNCore.listObjects()'''
-    self._listObjects(CN_URL)
+    self._listObjects(settings.CN_URL)
 
   def WAITING_FOR_TEST_ENV_test_820(self):
     '''MNCore.listObjects()'''
-    self._listObjects(MN_URL)
+    self._listObjects(settings.MN_URL)
 
   # CNCore.generateIdentifier()
   # MNStorage.generateIdentifier()
@@ -297,72 +300,14 @@ class TestDataONEBaseClientV1(TestCaseWithURLCompare):
 
   def WAITING_FOR_TEST_ENV_test_910(self):
     '''CNAuthorization.isAuthorized()'''
-    self._is_authorized(CN_URL)
+    self._is_authorized(settings.CN_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._is_authorized, CN_URL, True
+      d1_common.types.exceptions.NotFound, self._is_authorized, settings.CN_URL, True
     )
 
   def WAITING_FOR_TEST_ENV_test_920(self):
     '''MNAuthorization.isAuthorized()'''
-    self._is_authorized(MN_URL)
+    self._is_authorized(settings.MN_URL)
     self.assertRaises(
-      d1_common.types.exceptions.NotFound, self._is_authorized, MN_URL, True
+      d1_common.types.exceptions.NotFound, self._is_authorized, settings.MN_URL, True
     )
-
-#=========================================================================
-
-# def log_setup():
-#     formatter = logging.Formatter(
-#         '%(asctime)s %(levelname)-8s %(message)s',
-#         '%y/%m/%d %H:%M:%S')
-#     console_logger = logging.StreamHandler(sys.stdout)
-#     console_logger.setFormatter(formatter)
-#     logging.getLogger('').addHandler(console_logger)
-
-#=========================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  import optparse
-
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
-  parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
-  )
-
-  (options, arguments) = parser.parse_args()
-
-  if options.debug:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  s = TestDataONEBaseClientV1
-  s.options = options
-
-  if options.test != '':
-    suite = unittest.TestSuite(map(s, [options.test]))
-  else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-  unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-  main()

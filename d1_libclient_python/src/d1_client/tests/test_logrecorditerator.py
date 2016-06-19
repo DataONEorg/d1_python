@@ -94,8 +94,3 @@ class TestLogRecordIterator(unittest.TestCase):
       start=0, count=0, fromDate=from_date,
       toDate=to_date
     ).total
-
-
-if __name__ == '__main__':
-  logging.getLogger("").setLevel(logging.DEBUG)
-  unittest.main()

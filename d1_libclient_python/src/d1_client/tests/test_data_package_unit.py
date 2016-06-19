@@ -160,7 +160,7 @@ class Test_ResourceMapGenerator(TestCaseWithURLCompare):
     def setUp(self):
         #self.baseurl = 'https://localhost/mn/'
 #         self.baseurl = 'http://127.0.0.1:8000'
-        self.ore_doc = open(make_absolute('./example_oai_ore.xml')).read()
+        self.ore_doc = open(make_absolute('./expected_oai_ore.xml')).read()
         self.generator = data_package.ResourceMapGenerator()
 #         self.parser = data_package.ResourceMapParser()
 
@@ -426,53 +426,3 @@ class Test_ResourceMapParser(TestCaseWithURLCompare):
     
     @patch.object(data_package.ResourceMapParser,'get_resource_map_graph')
     def test_get_resource_map_pid(self, mock_graph):
-        
-#=========================================================================
-def log_setup():
-    formatter = logging.Formatter(
-        '%(asctime)s %(levelname)-8s %(message)s',
-        '%y/%m/%d %H:%M:%S')
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-    import optparse
-
-    log_setup()
-
-    # Command line opts.
-    parser = optparse.OptionParser()
-    parser.add_option(
-        '--debug',
-        action='store_true',
-        default=False,
-        dest='debug')
-    parser.add_option(
-        '--test',
-        action='store',
-        default='',
-        dest='test',
-        help='run a single test')
-
-    (options, arguments) = parser.parse_args()
-
-    if options.debug:
-        logging.getLogger('').setLevel(logging.DEBUG)
-    else:
-        logging.getLogger('').setLevel(logging.ERROR)
-
-    s = TestDataPackage
-    s.options = options
-
-    if options.test != '':
-        suite = unittest.TestSuite(map(s, [options.test]))
-    else:
-        suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-    unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-    main()

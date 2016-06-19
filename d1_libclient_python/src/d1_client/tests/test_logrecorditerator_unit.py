@@ -98,8 +98,3 @@ class TestLogRecordIterator(unittest.TestCase):
     mock_iter._log_records.return_value = logrecords()
     log_entry = self.iterator.next()
     self.assertEqual(log_entry, 2)
-
-
-if __name__ == '__main__':
-  logging.getLogger("").setLevel(logging.DEBUG)
-  unittest.main()
