@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2011
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,20 +30,8 @@ Unit tests for TestCaseWithURLCompare.
   - python 2.6
 '''
 
-# Stdlib.
-import sys
-import logging
-import unittest
-
-# 3rd party.
-import pyxb
-
 # D1.
-from d1_common import xmlrunner
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
-
-# App
-import util
 
 
 class Test_URLCompare(TestCaseWithURLCompare):
@@ -57,16 +45,3 @@ class Test_URLCompare(TestCaseWithURLCompare):
     #and these are not
     b = "Http://www.SOME.host:999/a/b/c/;p2;p4;p3?k1=10&k2=abc&k1=20#frag"
     self.failUnlessRaises(AssertionError, self.assertUrlEqual, a, b)
-
-#===============================================================================
-
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)

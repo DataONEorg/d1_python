@@ -47,7 +47,7 @@ from d1_common.types import dataoneTypes
 import util
 
 
-EG_ACCESSPOLICY_GMN = \
+EXPECTED_ACCESSPOLICY_GMN = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -67,7 +67,7 @@ u"""<?xml version="1.0" encoding="UTF-8"?>
 </d1:accessPolicy>
 """
 
-EG_ACCESSPOLICY_GMN_2 = \
+EXPECTED_ACCESSPOLICY_GMN_2 = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v2"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -88,7 +88,7 @@ u"""<?xml version="1.0" encoding="UTF-8"?>
 """
 
 # Invalid permission.
-EG_ACCESSPOLICY_BAD = \
+EXPECTED_ACCESSPOLICY_BAD = \
 u"""<?xml version="1.0" encoding="UTF-8"?>
 <d1:accessPolicy xmlns:d1="http://ns.dataone.org/service/types/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -120,22 +120,8 @@ class TestAccessPolicy(unittest.TestCase):
 
   def test_serialization_gmn(self):
     """Deserialize: XML -> AccessPolicy (GMN)"""
-    util.deserialize_and_check(EG_ACCESSPOLICY_GMN)
-    #util.deserialize_and_check(EG_ACCESSPOLICY_GMN_2)
+    util.deserialize_and_check(EXPECTED_ACCESSPOLICY_GMN)
 
   def test_serialization_bad_1(self):
     """Deserialize: XML -> AccessPolicy (bad)"""
-    util.deserialize_and_check(EG_ACCESSPOLICY_BAD, shouldfail=True)
-
-#===============================================================================
-
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)
+    util.deserialize_and_check(EXPECTED_ACCESSPOLICY_BAD, shouldfail=True)

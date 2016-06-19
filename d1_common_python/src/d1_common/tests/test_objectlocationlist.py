@@ -29,8 +29,6 @@ Module d1_common.tests.test_objectlocationlist
 """
 
 # Stdlib.
-import logging
-import sys
 import unittest
 import xml.sax
 
@@ -38,7 +36,6 @@ import xml.sax
 import pyxb
 
 # D1.
-from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 
 # App
@@ -144,16 +141,3 @@ class TestObjectLocationList(unittest.TestCase):
   def test_deserialize_bad_2(self):
     """Deserialize: XML -> ObjectLocationList (bad 2)"""
     util.deserialize_and_check(EG_BAD_OBJECTLOCATIONLIST_2, shouldfail=True)
-
-#===============================================================================
-
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)

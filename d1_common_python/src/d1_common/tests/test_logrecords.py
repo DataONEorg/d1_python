@@ -31,8 +31,6 @@ Unit tests for serialization and de-serialization of the LogRecords type.
 """
 
 # Stdlib.
-import logging
-import sys
 import unittest
 import xml.sax
 
@@ -40,7 +38,6 @@ import xml.sax
 import pyxb
 
 # D1.
-from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 
 # App
@@ -125,16 +122,3 @@ class TestObjectList(unittest.TestCase):
   def test_serialization_bad_3(self):
     """Deserialize: XML -> Log (bad 3)"""
     util.deserialize_and_check(EG_BAD_LOG_3, shouldfail=True)
-
-#===============================================================================
-if __name__ == "__main__":
-  argv = sys.argv
-  logging.getLogger("pyxb.binding.basis").addHandler(logging.NullHandler())
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)

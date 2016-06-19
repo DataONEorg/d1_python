@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2011
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,10 +35,8 @@ import json
 import StringIO
 
 # 3rd party.
-import pyxb
 
 # D1.
-from d1_common import xmlrunner
 from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 import d1_common.types.exceptions
 
@@ -195,18 +193,3 @@ class TestRESTClient(TestCaseWithURLCompare):
       curl, 'curl -X GET -H "ijkl: 9876" -H "mnop: 5432" '
       'url_selector/a/b?abcd=1234&efgh=5678'
     )
-
-#===============================================================================
-
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  else:
-    logging.basicConfig(level=logging.INFO)
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)

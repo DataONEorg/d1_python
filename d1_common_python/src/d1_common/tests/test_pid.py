@@ -31,8 +31,6 @@ Unit tests for serialization and de-serialization of the PID type.
 """
 
 # Stdlib.
-import logging
-import sys
 import unittest
 import xml.sax
 
@@ -40,7 +38,6 @@ import xml.sax
 import pyxb
 
 # D1.
-from d1_common import xmlrunner
 from d1_common.types import dataoneTypes
 
 
@@ -97,15 +94,3 @@ class TestPID(unittest.TestCase):
   def test_deserialize_bad_2(self):
     """Deserialize: XML -> PID (bad 2)"""
     self.deserialize_pid_and_check(EG_BAD_PID_2, shouldfail=True)
-
-#===============================================================================
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)

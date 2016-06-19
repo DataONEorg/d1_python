@@ -31,8 +31,6 @@ Unit tests for serialization and de-serialization of the DataONEException type.
 """
 
 # Stdlib.
-import logging
-import sys
 import unittest
 import xml.dom.minidom
 
@@ -268,51 +266,3 @@ class TestExceptions(unittest.TestCase):
     self.assertEqual(exc_deser.description, 'description_test')
     # Disabled until we have decided how to encode traceInformation.
     #self.assertEqual(exc_deser.traceInformation, 'test trace information')
-
-    #===============================================================================
-
-
-def log_setup():
-  formatter = logging.Formatter(
-    '%(asctime)s %(levelname)-8s %(message)s', '%y/%m/%d %H:%M:%S'
-  )
-  console_logger = logging.StreamHandler(sys.stdout)
-  console_logger.setFormatter(formatter)
-  logging.getLogger('').addHandler(console_logger)
-
-
-def main():
-  import optparse
-
-  log_setup()
-
-  # Command line opts.
-  parser = optparse.OptionParser()
-  parser.add_option('--debug', action='store_true', default=False, dest='debug')
-  parser.add_option(
-    '--test', action='store',
-    default='',
-    dest='test',
-    help='run a single test'
-  )
-
-  (options, arguments) = parser.parse_args()
-
-  if options.debug:
-    logging.getLogger('').setLevel(logging.DEBUG)
-  else:
-    logging.getLogger('').setLevel(logging.ERROR)
-
-  s = TestExceptions
-  s.options = options
-
-  if options.test != '':
-    suite = unittest.TestSuite(map(s, [options.test]))
-  else:
-    suite = unittest.TestLoader().loadTestsFromTestCase(s)
-
-  unittest.TextTestRunner(verbosity=2).run(suite)
-
-
-if __name__ == '__main__':
-  main()

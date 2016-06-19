@@ -31,19 +31,13 @@ Unit tests for XML document comparison utility.
 '''
 
 # Stdlib.
-import logging
-import sys
 import unittest
 import StringIO
 
 # D1.
-from d1_common import xmlrunner
 import d1_common.xml_compare
 
-# App
-import util
-
-xml_correct = """<?xml version="1.0" ?>
+XML_CORRECT = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -70,7 +64,7 @@ xml_correct = """<?xml version="1.0" ?>
 </ns1:objectList>
 """
 
-xml_correct_swapped_attributes = """<?xml version="1.0" ?>
+XML_CORRECT_SWAPPED_ATTRIBUTES = """<?xml version="1.0" ?>
 <ns1:objectList total="100" start="0" count="5"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -97,7 +91,7 @@ xml_correct_swapped_attributes = """<?xml version="1.0" ?>
 </ns1:objectList>
 """
 
-xml_missing_count = """<?xml version="1.0" ?>
+XML_MISSING_COUNT = """<?xml version="1.0" ?>
 <ns1:objectList start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -124,7 +118,7 @@ xml_missing_count = """<?xml version="1.0" ?>
 </ns1:objectList>
 """
 
-xml_missing_entry = """<?xml version="1.0" ?>
+XML_MISSING_ENTRY = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -144,7 +138,7 @@ xml_missing_entry = """<?xml version="1.0" ?>
 </ns1:objectList>
 """
 
-xml_wrong_order = """<?xml version="1.0" ?>
+XML_WRONG_ORDER = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -171,7 +165,7 @@ xml_wrong_order = """<?xml version="1.0" ?>
 </ns1:objectList>
 """
 
-xml_missing_text = """<?xml version="1.0" ?>
+XML_MISSING_TEXT = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -198,7 +192,7 @@ xml_missing_text = """<?xml version="1.0" ?>
 </ns1:objectList>
 """
 
-xml_syntax_error = """<?xml version="1.0" ?>
+XML_SYNTAX_ERROR = """<?xml version="1.0" ?>
 <ns1:objectList count="5" start="0" total="100"
     xmlns:ns1="http://ns.dataone.org/service/types/v1">
     <objectInfo>
@@ -227,65 +221,51 @@ xml_syntax_error = """<?xml version="1.0" ?>
 
 
 class TestXMLCompare(unittest.TestCase):
-  def test_correct_compare_with_itself(self):
+  def test_100(self):
     '''Compare xml_correct with itself and verify that compare passes.'''
     d1_common.xml_compare.compare(
-      StringIO.StringIO(xml_correct), StringIO.StringIO(
-        xml_correct
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_CORRECT)
+    )
+
+  def test_110(self):
+    '''Compare xml_correct with itself and verify that compare passes.'''
+    d1_common.xml_compare.compare(
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(
+        XML_CORRECT_SWAPPED_ATTRIBUTES
       )
     )
 
-  def test_correct_swapped_attributes(self):
-    '''Compare xml_correct with itself and verify that compare passes.'''
-    d1_common.xml_compare.compare(
-      StringIO.StringIO(xml_correct), StringIO.StringIO(
-        xml_correct_swapped_attributes
-      )
-    )
-
-  def test_error_missing_count(self):
+  def test_120(self):
     '''Verify that comparison fails when an attribute is missing.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
-      StringIO.StringIO(xml_correct), StringIO.StringIO(xml_missing_count)
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_MISSING_COUNT)
     )
 
-  def test_error_missing_entry(self):
+  def test_130(self):
     '''Verify that comparison fails when an element is missing.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
-      StringIO.StringIO(xml_correct), StringIO.StringIO(xml_missing_entry)
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_MISSING_ENTRY)
     )
 
-  def test_error_wrong_order(self):
+  def test_140(self):
     '''Verify that comparison fails when to elements appear in the wrong order.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
-      StringIO.StringIO(xml_correct), StringIO.StringIO(xml_wrong_order)
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_WRONG_ORDER)
     )
 
-  def test_error_missing_text(self):
+  def test_150(self):
     '''Verify that comparison fails when an element is missing text.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
-      StringIO.StringIO(xml_correct), StringIO.StringIO(xml_missing_text)
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_MISSING_TEXT)
     )
 
-  def test_error_xml_syntax_error(self):
+  def test_160(self):
     '''Verify that comparison fails when the document is not well formed.'''
     self.assertRaises(
       d1_common.xml_compare.CompareError, d1_common.xml_compare.compare,
-      StringIO.StringIO(xml_correct), StringIO.StringIO(xml_syntax_error)
+      StringIO.StringIO(XML_CORRECT), StringIO.StringIO(XML_SYNTAX_ERROR)
     )
-
-#===============================================================================
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)

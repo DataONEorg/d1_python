@@ -32,14 +32,12 @@ Unit tests for serialization and de-serialization of the SystemMetadata type.
 
 # Stdlib.
 import logging
-import sys
 import unittest
 
 # 3rd party.
 import pyxb
 
 # D1.
-from d1_common import xmlrunner
 import d1_common.types.dataoneTypes as dataoneTypes
 
 
@@ -169,16 +167,3 @@ class TestSystemMetadata(unittest.TestCase):
       logging.debug(repr(e))
     else:
       self.assertFalse(True)
-
-#===============================================================================
-
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)
