@@ -17,8 +17,8 @@ The clients are arranged into the following class hierarchy:
 .. graphviz::
 
   digraph G {
-    dpi = 60;
-    ratio = "compress";
+    dpi = 72;
+    edge [dir = back];
 
     "REST Client\n(In D1 Common)" -> DataONEBaseClient
 
@@ -32,55 +32,71 @@ The clients are arranged into the following class hierarchy:
     MemberNodeClient -> MemberNodeClient_1_1;
     CoordinatingNodeClient -> CoordinatingNodeClient_1_1;
 
-    MemberNodeClient -> DataONEClient;
-    CoordinatingNodeClient -> DataONEClient;
+    MemberNodeClient -> DataONEBaseClient_1_1 [style=invis];
+    CoordinatingNodeClient -> DataONEBaseClient_1_1 [style=invis];
 
-    DataONEBaseClient_1_1 -> DataONEClient [style=invis, weight=1000]
+    DataONEBaseClient_1_1 -> DataONEBaseClient_2_0 [weight=1000];
+    MemberNodeClient_1_1 -> DataONEBaseClient_2_0 [style=invis];
+    CoordinatingNodeClient_1_1 -> DataONEBaseClient_2_0 [style=invis];
+
+    DataONEBaseClient_2_0 -> MemberNodeClient_2_0;
+    DataONEBaseClient_2_0 -> CoordinatingNodeClient_2_0;
+
+    MemberNodeClient_1_1 -> MemberNodeClient_2_0;
+    CoordinatingNodeClient_1_1 -> CoordinatingNodeClient_2_0;
+
+    MemberNodeClient_2_0 -> DataONEClient;
+    CoordinatingNodeClient_2_0 -> DataONEClient;
   }
 
+The classes without version designators implement functionality defined in v1.0
+of the DataONE service specifications. The classes with version designators
+implement support for the corresponding DataONE service specifications.
 
-The classes without a version designator implement functionality defined in
-v1.0 of the DataONE service specifications. The classes with the v1.1 designator
-extend the v1.0 classes with extra functionality defined in the v1.1 service
-specifications.
+DataONEBaseClient
 
-Because the v1.1 classes are derived from the v1.0 classes, the v1.1 classes
-support both v1.0 and v1.1 APIs.
+  The DataONEBaseClient classes contain methods that allow access to APIs
+  that are common to Coordinating Nodes and Member Nodes.
 
+  * :ref:`d1_client_d1baseclient`
+  * :ref:`d1_client_d1baseclient_1_1`
+  * :ref:`d1_client_d1baseclient_2_0`
 
-:DataONEBaseClient:
-  Implemented in :ref:`d1_client_d1baseclient`. Contains methods that allow
-  access to the v1.0 level APIs that are common to CN and MN clients.
+MemberNodeClient
 
-:DataONEBaseClient_1_1:
-  Implemented in :ref:`d1_client_d1baseclient_1_1`. Adds support for the v1.1
-  level APIs that are common to CN and MN clients.
+  The MemberNodeClient classes contain methods that allow access to APIs that
+  are specific to Member Nodes.
 
-:MemberNodeClient:
-  Implemented in :ref:`d1_client_mnclient`. Contains methods that allow access
-  to the v1.0 level APIs that are specific to MNs.
+  * :ref:`d1_client_mnclient`
+  * :ref:`d1_client_mnclient_1_1`
+  * :ref:`d1_client_mnclient_2_0`
 
-:MemberNodeClient_1_1:
-  Implemented in :ref:`d1_client_mnclient_1_1`. Adds support for the v1.1 level
-  APIs that are specific to MNs.
+CoordinatingNodeClient
 
-:CoordinatingNodeClient:
-  Implemented in :ref:`d1_client_cnclient`. Contains methods that allow access
-  to the v1.0 level APIs that are specific to CNs.
+  The CoordinatingNodeClient classes contain methods that allow access to APIs
+  that are specific to Coordinating Nodes.
 
-:CoordinatingNodeClient_1_1:
-  Implemented in :ref:`d1_client_cnclient_1_1`. Adds support for the v1.1 level
-  APIs that are specific to CNs.
+  * :ref:`d1_client_cnclient`
+  * :ref:`d1_client_cnclient_1_1`
+  * :ref:`d1_client_cnclient_2_0`
 
-:DataONEClient:
-  Implemented in :ref:`d1_client_d1client`. Uses CN- and MN clients to perform
-  high level operations against the DataONE infrastructure.
+DataONEClient
 
-:DataONEObject:
-  Implemented in :ref:`d1_client_d1client`. Wraps a single DataONE Science
-  Object and adds functionality such as resolve and get.
+  The DataONEClient uses CN- and MN clients to perform high level operations
+  against the DataONE infrastructure.
 
-:SolrConnection:
-  Implemented in :ref:`d1_client_solr_client`. Provides functionality for
-  working with DataONE's Solr index, which powers the ONEMercury science data
-  search engine.
+  * :ref:`d1_client_d1client`
+
+DataONEObject
+
+  Wraps a single DataONE Science Object and adds functionality such as resolve
+  and get.
+
+  * :ref:`d1_client_d1client`
+
+SolrConnection
+
+  Provides functionality for working with DataONE's Solr index, which powers the
+  ONEMercury science data search engine.
+
+  * :ref:`d1_client_solr_client`
