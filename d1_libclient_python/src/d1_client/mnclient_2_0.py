@@ -51,33 +51,10 @@ except ImportError as e:
   raise
 
 # App.
-import mnclient
+import d1baseclient_2_0
+import mnclient_1_1
 
 
-
-    # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
-    # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
-
-    @d1_common.util.utf8_to_unicode
-    def updateSystemMetadataResponse(self, pid, sysmeta, vendorSpecific=None):
-        if vendorSpecific is None:
-            vendorSpecific = {}
-
-        url = self._rest_url('meta')
-        mime_multipart_fields = [
-            ('pid', pid.encode('utf-8')),
-        ]
-        mime_multipart_files = [
-            ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
-        ]
-        return self.PUT(url, fields=mime_multipart_fields, files=mime_multipart_files,headers=vendorSpecific)
-
-
-    @d1_common.util.utf8_to_unicode
-    def updateSystemMetadata(self, pid, sysmeta):
-        response = self.updateSystemMetadataResponse(pid, sysmeta)
-        #cn_client =
-        return self._read_boolean_response(response)
 class MemberNodeClient_2_0(d1baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.MemberNodeClient_1_1):
   def __init__(self, *args, **kwargs):
     """See d1baseclient.DataONEBaseClient for args."""
@@ -87,4 +64,27 @@ class MemberNodeClient_2_0(d1baseclient_2_0.DataONEBaseClient_2_0, mnclient_1_1.
     d1baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
     mnclient_1_1.MemberNodeClient_1_1.__init__(self, *args, **kwargs)
 
+  # MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
+  # http://jenkins-1.dataone.org/documentation/unstable/API-Documentation-development/apis/MN_APIs.html#MNStorage.updateSystemMetadata
+
+  @d1_common.util.utf8_to_unicode
+  def updateSystemMetadataResponse(self, pid, sysmeta, vendorSpecific=None):
+      if vendorSpecific is None:
+          vendorSpecific = {}
+
+      url = self._rest_url('meta')
+      mime_multipart_fields = [
+          ('pid', pid.encode('utf-8')),
+      ]
+      mime_multipart_files = [
+          ('sysmeta', 'sysmeta.xml', sysmeta.toxml().encode('utf-8')),
+      ]
+      return self.PUT(url, fields=mime_multipart_fields, files=mime_multipart_files,headers=vendorSpecific)
+
+
+  @d1_common.util.utf8_to_unicode
+  def updateSystemMetadata(self, pid, sysmeta):
+      response = self.updateSystemMetadataResponse(pid, sysmeta)
+      #cn_client =
+      return self._read_boolean_response(response)
 

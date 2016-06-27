@@ -18,7 +18,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''Module d1_client.d1baseclient_1_1
 ====================================
 
@@ -46,6 +45,7 @@
 '''
 
 # Stdlib.
+import logging
 import re
 import urlparse
 import StringIO
@@ -63,7 +63,7 @@ except ImportError as e:
 try:
   import d1_common.const
   import d1_common.restclient
-  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes_v1_1
+  import d1_common.types.dataoneTypes_v1_1
   import d1_common.util
   import d1_common.url
 except ImportError as e:
@@ -71,11 +71,12 @@ except ImportError as e:
   sys.stderr.write('Try: easy_install DataONE_Common\n')
   raise
 
-import d1_client.d1baseclient
+import d1baseclient
 
 #=============================================================================
 
-class DataONEBaseClient_1_1(d1_client.d1baseclient.DataONEBaseClient):
+
+class DataONEBaseClient_1_1(d1baseclient.DataONEBaseClient):
   '''Implements DataONE client functionality common between Member and
   Coordinating nodes by extending the RESTClient.
 
@@ -87,6 +88,7 @@ class DataONEBaseClient_1_1(d1_client.d1baseclient.DataONEBaseClient):
   Unless otherwise indicated, methods with names that end in "Response" return
   the HTTPResponse object, otherwise the deserialized object is returned.
   '''
+
   def __init__(self, *args, **kwargs):
     """See d1baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
@@ -98,33 +100,42 @@ class DataONEBaseClient_1_1(d1_client.d1baseclient.DataONEBaseClient):
   # v1.1 APIs shared between CNs and MNs.
   #=============================================================================
 
-
   # CNRead.query(session, queryEngine, query) → OctetStream
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.query
+  # MNQuery.query(session, queryEngine, query) → OctetStream
+  # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.query
 
   #@d1_common.util.utf8_to_unicode
   def queryResponse(self, queryEngine, query=None, **kwargs):
-    url = self._rest_url('query/%(queryEngine)s/%(query)s', queryEngine=queryEngine,
-                         query=query if query is not None else '')
+    url = self._rest_url(
+      'query/%(queryEngine)s/%(query)s',
+      queryEngine=queryEngine,
+      query=query if query is not None else ''
+    )
     return self.GET(url, query=kwargs)
-
 
   #@d1_common.util.utf8_to_unicode
   def query(self, queryEngine, query=None, **kwargs):
     response = self.queryResponse(queryEngine, query, **kwargs)
     return self._read_stream_response(response)
 
-
   # CNRead.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNRead.getQueryEngineDescription
+  # MNQuery.getQueryEngineDescription(session, queryEngine) → QueryEngineDescription
+  # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.getQueryEngineDescription
 
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescriptionResponse(self, queryEngine, **kwargs):
     url = self._rest_url('query/%(queryEngine)s', queryEngine=queryEngine)
     return self.GET(url, query=kwargs)
 
-
   #@d1_common.util.utf8_to_unicode
   def getQueryEngineDescription(self, queryEngine, **kwargs):
     response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
-    return self._read_dataone_type_response(response, 1, 1, 'QueryEngineDescription')
+    return self._read_dataone_type_response( response, 'QueryEngineDescription')
+
+  # TODO: Implement these:
+  # CNRead.listQueryEngines(session) → QueryEngineList
+  # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/CN_APIs.html#CNRead.listQueryEngines
+  # MNQuery.listQueryEngines(session) → QueryEngineList
+  # http://jenkins-1.dataone.org/jenkins/job/API%20Documentation%20-%20trunk/ws/api-documentation/build/html/apis/MN_APIs.html#MNQuery.listQueryEngines

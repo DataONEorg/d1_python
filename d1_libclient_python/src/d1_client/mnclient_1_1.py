@@ -18,16 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''Module d1_client.mnclient_1_1
 ================================
 
 :Synopsis:
-  This module is currently a stub, as no functionality was added to the
-  MN APIs in 1.1.
+  No functionality was added to the MN APIs in 1.1.
 
-  See the `Member Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/MN_APIs.html>`_
-  details on how to use the methods in this class.
+  This module is a placeholder for consistency in the client hierarchy.
 
 :Created: 2011-01-21
 :Author: DataONE (Vieglais, Dahl)
@@ -40,7 +37,6 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
   import d1_common.util
   import d1_common.date_time
 except ImportError as e:
@@ -50,6 +46,7 @@ except ImportError as e:
 
 # App.
 import d1baseclient_1_1
+import mnclient
 
 
 class MemberNodeClient_1_1(
