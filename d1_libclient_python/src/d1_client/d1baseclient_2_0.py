@@ -90,43 +90,20 @@ class DataONEBaseClient_2_0(d1_client.d1baseclient.DataONEBaseClient):
     the HTTPResponse object, otherwise the deserialized object is returned.
     '''
 
-    def __init__(self, *args, **kwargs):
-        '''Connect to a DataONE Coordinating Node or Member Node.
-
-        :param base_url: DataONE Node REST service BaseURL
-        :type host: string
-        :param timeout: Time in seconds that requests will wait for a response.
-        :type timeout: integer
-        :param defaultHeaders: headers that will be sent with all requests.
-        :type defaultHeaders: dictionary
-        :param cert_path: Path to a PEM formatted certificate file.
-        :type cert_path: string
-        :param key_path: Path to a PEM formatted file that contains the private key
-          for the certificate file. Only required if the certificate file does not
-          itself contain a private key.
-        :type key_path: string
-        :param strict: Raise BadStatusLine if the status line can’t be parsed
-          as a valid HTTP/1.0 or 1.1 status line.
-        :type strict: boolean
-        :param capture_response_body: Capture the response body from the last
-          operation and make it available in last_response_body.
-        :type capture_response_body: boolean
-        :param response_contains_303_redirect: Allow server to return a 303 See Other instead of 200 OK.
-        :type response_contains_303_redirect: boolean
-        :param version: Value to insert in the URL version section.
-        :type version: string
-        :param types: The PyXB bindings to use for XML serialization and
-          deserialization.
-        :type types: PyXB
-        :returns: None
-        '''
-        d1_client.d1baseclient.DataONEBaseClient.__init__(self, *args, **kwargs)
-        self.version = 'v2'
-        self.types = dataoneTypes_v2_0
-
+  Unless otherwise indicated, methods with names that end in "Response" return
+  the HTTPResponse object, otherwise the deserialized object is returned.
+  '''
 
     #=============================================================================
     # v2.0 APIs shared between CNs and MNs.
     #=============================================================================
+  def __init__(self, *args, **kwargs):
+    """See d1baseclient.DataONEBaseClient for args."""
+    self.logger = logging.getLogger(__file__)
+    kwargs.setdefault('api_major', 2)
+    kwargs.setdefault('api_minor', 0)
+    d1_client.d1baseclient_1_1.DataONEBaseClient_1_1.__init__(
+      self, *args, **kwargs
+    )
 
 

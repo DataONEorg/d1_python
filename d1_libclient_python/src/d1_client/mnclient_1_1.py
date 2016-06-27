@@ -52,47 +52,14 @@ except ImportError as e:
 import d1baseclient_1_1
 
 
-class MemberNodeClient(d1baseclient_1_1.DataONEBaseClient_1_1):
-  def __init__(self,
-               base_url,
-               timeout=d1_common.const.RESPONSE_TIMEOUT,
-               defaultHeaders=None,
-               cert_path=None,
-               key_path=None,
-               strict=True,
-               capture_response_body=False,
-               version='v1',
-               types=dataoneTypes):
-    '''Connect to a DataONE Member Node.
-
-    :param base_url: DataONE Node REST service BaseURL
-    :type host: string
-    :param timeout: Time in seconds that requests will wait for a response.
-    :type timeout: integer
-    :param defaultHeaders: headers that will be sent with all requests.
-    :type defaultHeaders: dictionary
-    :param cert_path: Path to a PEM formatted certificate file.
-    :type cert_path: string
-    :param key_path: Path to a PEM formatted file that contains the private key
-      for the certificate file. Only required if the certificate file does not
-      itself contain a private key.
-    :type key_path: string
-    :param strict: Raise BadStatusLine if the status line can’t be parsed
-      as a valid HTTP/1.0 or 1.1 status line.
-    :type strict: boolean
-    :param capture_response_body: Capture the response body from the last
-      operation and make it available in last_response_body.
-    :type capture_response_body: boolean
-    :param version: Value to insert in the URL version section.
-    :type version: string
-    :param types: The PyXB bindings to use for XML serialization and
-      deserialization.
-    :type types: PyXB
-    :returns: None
-    '''
-    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, base_url=base_url,
-      timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
-      key_path=key_path, strict=strict,
-      capture_response_body=capture_response_body, version=version, types=types)
-    self.logger = logging.getLogger('MemberNodeClient')
-    self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
+class MemberNodeClient_1_1(
+  d1baseclient_1_1.DataONEBaseClient_1_1,
+  mnclient.MemberNodeClient,
+):
+  def __init__(self, *args, **kwargs):
+    """See d1baseclient.DataONEBaseClient for args."""
+    self.logger = logging.getLogger(__file__)
+    kwargs.setdefault('api_major', 1)
+    kwargs.setdefault('api_minor', 1)
+    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)
+    mnclient.MemberNodeClient.__init__(self, *args, **kwargs)

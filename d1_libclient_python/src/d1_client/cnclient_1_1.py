@@ -40,8 +40,9 @@ import sys
 # D1.
 try:
   import d1_common.const
-  import d1_common.types.generated.dataoneTypes_1_1 as dataoneTypes_1_1
+  import d1_common.types.dataoneTypes_v2_0
   import d1_common.util
+  import d1_common.date_time
 except ImportError as e:
   sys.stderr.write('Import error: {0}\n'.format(str(e)))
   sys.stderr.write('Try: easy_install DataONE_Common\n')
@@ -49,58 +50,20 @@ except ImportError as e:
 
 # App.
 import d1baseclient_1_1
+import cnclient
 
 
-class CoordinatingNodeClient(d1baseclient_1_1.DataONEBaseClient_1_1):
-  '''Connect to a Coordinating Node and perform REST calls against the CN API
+class CoordinatingNodeClient_1_1(d1baseclient_1_1.DataONEBaseClient_1_1,
+                                 cnclient.CoordinatingNodeClient):
+  '''Connect to a Coordinating Node and perform REST calls against the CN API.
+
+  See the `Coordinating Node APIs <http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html>`_
+  for details on how to use the methods in this class.
+
+  See d1baseclient.DataONEBaseClient for args.
   '''
-  def __init__(self,
-               base_url=d1_common.const.URL_DATAONE_ROOT,
-               timeout=d1_common.const.RESPONSE_TIMEOUT,
-               defaultHeaders=None,
-               cert_path=None,
-               key_path=None,
-               strict=True,
-               capture_response_body=False,
-               version='v1',
-               types=dataoneTypes_1_1):
-    '''Connect to a DataONE Coordinating Node.
-
-    :param base_url: DataONE Node REST service BaseURL
-    :type host: string
-    :param timeout: Time in seconds that requests will wait for a response.
-    :type timeout: integer
-    :param defaultHeaders: headers that will be sent with all requests.
-    :type defaultHeaders: dictionary
-    :param cert_path: Path to a PEM formatted certificate file.
-    :type cert_path: string
-    :param key_path: Path to a PEM formatted file that contains the private key
-      for the certificate file. Only required if the certificate file does not
-      itself contain a private key.
-    :type key_path: string
-    :param strict: Raise BadStatusLine if the status line can’t be parsed
-      as a valid HTTP/1.0 or 1.1 status line.
-    :type strict: boolean
-    :param capture_response_body: Capture the response body from the last
-      operation and make it available in last_response_body.
-    :type capture_response_body: boolean
-    :param version: Value to insert in the URL version section.
-    :type version: string
-    :param types: The PyXB bindings to use for XML serialization and
-      deserialization.
-    :type types: PyXB
-    :returns: None
-    '''
-    self.logger = logging.getLogger('CoordinatingNodeClient')
-    self.logger.debug('Creating client for baseURL: {0}'.format(base_url))
-    if defaultHeaders is None:
-      defaultHeaders = {}
-    # Init the DataONEBaseClient base class.
-    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, base_url,
-      timeout=timeout, defaultHeaders=defaultHeaders, cert_path=cert_path,
-      key_path=key_path, strict=strict,
-      capture_response_body=capture_response_body, version=version, types=types)
-    self.last_response_body = None
-    # Set this to True to preserve a copy of the last response.read() as the
-    # body attribute of self.last_response_body
-    self.capture_response_body = capture_response_body
+  def __init__(self, *args, **kwargs):
+    self.logger = logging.getLogger(__file__)
+    kwargs.setdefault('api_major', 1)
+    kwargs.setdefault('api_minor', 1)
+    d1baseclient_1_1.DataONEBaseClient_1_1.__init__(self, *args, **kwargs)
