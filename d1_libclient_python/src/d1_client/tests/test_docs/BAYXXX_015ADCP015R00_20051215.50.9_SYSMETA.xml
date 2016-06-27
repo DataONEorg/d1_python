@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    This work was created by participants in the DataONE project, and is
+    jointly copyrighted by participating institutions in DataONE. For
+    more information on DataONE, see our web site at http://dataone.org.
+
+      Copyright 2009-2014 DataONE
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<d1:systemMetadata
+ xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 https://repository.dataone.org/software/cicore/tags/D1_SCHEMA_1_0_0/dataoneTypes_v1_1.xsd">
+    <identifier>BAYXXX_015ADCP015R00_20051215.50.9</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.0.1</formatId>
+    <size>34543</size>
+    <checksum algorithm="MD5">884f1452814899d7ba988d187491f493</checksum>
+    <submitter>Dr. Libe Washburn</submitter>
+    <rightsHolder>Partnership for Interdisciplinary Studies of Coastal Oceans (PISCO)</rightsHolder>
+
+    <dateUploaded>2010-05-04T12:13:51.0Z</dateUploaded>
+    <dateSysMetadataModified>2010-05-04T15:13:51.0Z</dateSysMetadataModified>
+    <originMemberNode>r2d2</originMemberNode>
+    <authoritativeMemberNode>r2d2</authoritativeMemberNode>
+</d1:systemMetadata>
