@@ -65,4 +65,19 @@ class CoordinatingNodeClient_2_0(
     d1baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
     cnclient_1_1.CoordinatingNodeClient_1_1.__init__(self, *args, **kwargs)
 
+  #=========================================================================
+  # Core API
+  #=========================================================================
+
+  # CNCore.listFormats() → ObjectFormatList
+  # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNCore.listFormats
+  # v2.0: The structure of v2_0.Types.ObjectFormat has changed.
+
+  def listFormatsResponse(self):
+    url = self._rest_url('formats')
+    return self.GET(url)
+
+  def listFormats(self):
+    response = self.listFormatsResponse()
+    return self._read_dataone_type_response(response, 'ObjectFormatList')
 
