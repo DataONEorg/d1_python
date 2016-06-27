@@ -44,8 +44,9 @@ import d1_client
 
 
 # These tests are disabled because they require a MN that permits access to
-# log records.\
-class client():
+# log records.
+
+class client(object):
   def __init__(self):
     return
 
@@ -70,11 +71,14 @@ class TestLogRecordIterator(unittest.TestCase):
     from_date = datetime.date(2015, 3, 1)
     to_date = datetime.date(2015, 3, 2)
     self.iterator = d1_client.logrecorditerator.LogRecordIterator(
-      self.client, from_date, to_date,
-      start=100, pageSize=2000
+      self.client, from_date,
+      to_date, start=100,
+      pageSize=2000
     )
 
-  def test__iter__(self):
+  @unittest.skip("Need to set up stable test env")
+  def test_0010(self):
+    """Test iterator"""
     log_iter = self.iterator.__iter__()
     self.assertIsNone(log_iter._log_records, None)
     self.assertEqual(log_iter._from_date, datetime.date(2015, 3, 1))
@@ -84,15 +88,19 @@ class TestLogRecordIterator(unittest.TestCase):
     self.assertEqual(log_iter._log_records_idx, 0)
     self.assertEqual(log_iter._n_log_records, 0)
 
+  @unittest.skip("Need to set up stable test env")
   @patch('d1_client.d1baseclient.DataONEBaseClient.getLogRecords')
-  def test_load_more(self, mock_logentry):
+  def test_0020(self, mock_logentry):
+    """Load more"""
     mock_logentry.return_value = logrecords()
     self.iterator._load_more()
     self.assertEqual(self.iterator._start, 104)
 
+  @unittest.skip("Need to set up stable test env")
   @patch.object(d1_client.logrecorditerator, 'LogRecordIterator')
   @patch('d1_client.logrecorditerator.LogRecordIterator._load_more')
-  def DO_NOT_test_next(self, mock_load, mock_iter):
+  def test_0030(self, mock_load, mock_iter):
+    """Next"""
     self.iterator._n_log_records = 1
     self.iterator._log_records_idx = 1
     mock_iter._log_records.return_value = logrecords()

@@ -29,45 +29,50 @@ Unit tests for objectlistiterator.
   - python 2.6
 '''
 
-import logging
-import unittest
-import urlparse
 import sys
+import unittest
 
 sys.path.append('..')
-import d1_client.mnclient
-import d1_client.objectlistiterator
 import d1_common.types.dataoneTypes as dataoneTypes
 
+# 3rd party
 import pyxb.binding
+
+# App
+import d1_client.cnclient
+import d1_client.mnclient
+import d1_client.objectlistiterator
+import shared_context
+import shared_settings
+import shared_utilities
 
 
 class TestObjectListIterator(unittest.TestCase):
   '''
-    '''
+  '''
 
-  def test_objectlistiterator(self):
-    '''Walk over the list of log entries available from a given node.
-        '''
+  def test_0010(self):
+    """Walk over the list of log entries available from a given node.
+    """
     base_url = "https://cn.dataone.org/cn"
     if len(sys.argv) > 1:
       target = sys.argv[1]
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=base_url)
+    client = d1_client.mnclient.MemberNodeClient(base_url=shared_settings.MN_URL)
     ol = d1_client.objectlistiterator.ObjectListIterator(client, max=200)
     counter = 0
     for o in ol:
       counter += 1
-      self.assertTrue(isinstance(o, dataoneTypes.ObjectInfo))
-      self.assertTrue(
-        isinstance(
-          o.identifier.value(), dataoneTypes.NonEmptyNoWhitespaceString800
-        )
+      self.assertIsInstance(o, dataoneTypes.ObjectInfo)
+      self.assertIsInstance(
+        o.identifier.value(), dataoneTypes.NonEmptyNoWhitespaceString800
       )
-      self.assertTrue(
-        isinstance(o.dateSysMetadataModified, pyxb.binding.datatypes.dateTime)
+      self.assertIsInstance(
+        o.dateSysMetadataModified, pyxb.binding.datatypes.dateTime
       )
-      self.assertTrue(isinstance(o.formatId, dataoneTypes.ObjectFormatIdentifier))
-      self.assertTrue(isinstance(o.size, pyxb.binding.datatypes.unsignedLong))
-      self.assertTrue(isinstance(o.checksum.value(), pyxb.binding.datatypes.string))
-      self.assertTrue(isinstance(o.checksum.algorithm, dataoneTypes.ChecksumAlgorithm))
+      self.assertIsInstance(o.formatId, dataoneTypes.ObjectFormatIdentifier)
+      self.assertIsInstance(o.size, pyxb.binding.datatypes.unsignedLong)
+      self.assertIsInstance(o.checksum.value(), pyxb.binding.datatypes.string)
+      self.assertIsInstance(
+        o.checksum.algorithm, dataoneTypes.ChecksumAlgorithm
+      )
     self.assertEqual(counter, 200)

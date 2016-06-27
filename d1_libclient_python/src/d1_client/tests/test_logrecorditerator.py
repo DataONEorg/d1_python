@@ -29,64 +29,82 @@ Unit tests for LogRecordIterator.
   - python 2.6
 '''
 
+# Stdlib.
 import datetime
 import logging
 import unittest
 import urlparse
 import sys
 
+# D1.
 sys.path.append('..')
 import d1_client.mnclient
 import d1_client.logrecorditerator
 import d1_common.types.dataoneTypes as dataoneTypes
 
+# App.
+import d1_client.cnclient
+import shared_settings
+import shared_utilities
+import shared_context
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+
 # These tests are disabled because they require a MN that permits access to
 # log records.
 
+MAX_OBJECTS = 20
 
 class TestLogRecordIterator(unittest.TestCase):
-  '''
-    '''
-
+  """"""
   def setUp(self):
-    self.base_url = "http://127.0.0.1:8000"
+    pass
 
   def test_100(self):
-    '''PageSize=20, start=0'''
-    self._log_record_iterator_test(20, 0)
+    """PageSize=5, start=0"""
+    self._log_record_iterator_test(5, 0)
 
   def _test_110(self):
-    '''PageSize=1, start=63'''
-    self._log_record_iterator_test(1, 63)
-
-  def _test_120(self):
-    '''PageSize=2000, start=0'''
-    self._log_record_iterator_test(2000, 0)
+    """PageSize=1, start=63"""
+    self._log_record_iterator_test(1, 6)
 
   def _test_130(self):
-    '''PageSize=20, start=20, fromDate=2005-01-01'''
-    self._log_record_iterator_test(2000, 0, from_date=datetime.datetime(2005, 1, 1))
+    """PageSize=5, start=10, fromDate=2005-01-01"""
+    self._log_record_iterator_test(
+      2000, 0, from_date=datetime.datetime(2005, 1, 1)
+    )
 
-  def _log_record_iterator_test(self, page_size, start, from_date=None, to_date=None):
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(base_url=self.base_url)
+  def _log_record_iterator_test(
+    self, page_size, start, from_date=None,
+    to_date=None
+  ):
+    client = d1_client.mnclient.MemberNodeClient(base_url=shared_settings.MN_URL)
     total = self._get_log_total_count(client, from_date, to_date)
     log_record_iterator = d1_client.logrecorditerator.LogRecordIterator(
-      client, pageSize=page_size,
+      client,
+      pageSize=page_size,
       start=start,
       fromDate=from_date,
       toDate=to_date
     )
     cnt = 0
     for event in log_record_iterator:
-      self.assertTrue(isinstance(event.event, dataoneTypes.Event))
-      # print "Event    = %s" % event.event
-      # print "Timestamp  = %s" % event.dateLogged.isoformat()
-      # print "IP Addres  = %s" % event.ipAddress
-      # print "Identifier = %s" % event.identifier.value()
-      # print "User agent = %s" % event.userAgent
-      # print "Subject  = %s" % event.subject.value()
-      # print '-' * 79
+      self.assertIsInstance(event.event, dataoneTypes.Event)
+      logging.info("Event      = {}".format(event.event))
+      logging.info("Timestamp  = {}".format(event.dateLogged.isoformat()))
+      logging.info("IP Addres  = {}".format(event.ipAddress))
+      logging.info("Identifier = {}".format(event.identifier.value()))
+      logging.info("User agent = {}".format(event.userAgent))
+      logging.info("Subject    = {}".format(event.subject.value()))
+      logging.info('-' * 79)
       cnt += 1
+
+      if cnt == MAX_OBJECTS:
+        total = MAX_OBJECTS
+        break
+
     self.assertEqual(cnt, total - start)
 
   def _get_log_total_count(self, client, from_date, to_date):

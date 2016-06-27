@@ -39,9 +39,9 @@ from mock import patch
 import pyxb
 
 # D1.
-from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
+import d1_common.testcasewithurlcompare
 import d1_common.types.exceptions
-import d1_common.types.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 import d1_test.instance_generator.accesspolicy
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.person
@@ -51,23 +51,21 @@ import d1_test.instance_generator.subject
 import d1_test.instance_generator.systemmetadata
 
 # App.
-import d1_client.mnclient_2_0 as mnclient_2_0
-from d1_client.systemmetadata import SystemMetadata
-import testing_utilities
-import testing_context
+import d1_client.mnclient
+import shared_context
+import shared_settings
+import shared_utilities
 
 
-class TestMNClient(TestCaseWithURLCompare):
+class TestMNClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def setUp(self):
-    #self.baseurl = 'https://localhost/mn/'
-    self.baseurl = 'http://127.0.0.1:8000'
-    self.client = mnclient_2_0.MemberNodeClient_2_0(
-      self.baseurl, cert_path='./x509up_u1000'
-    )
+    self.client = d1_client.mnclient.MemberNodeClient(shared_settings.MN_URL)
     self.sysmeta_doc = open(
-      './d1_testdocs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
+      './test_docs/BAYXXX_015ADCP015R00_20051215.50.9_SYSMETA.xml'
     ).read()
-    self.sysmeta = SystemMetadata(self.sysmeta_doc)
+    self.sysmeta = d1_common.types.dataoneTypes.CreateFromDocument(
+      self.sysmeta_doc
+    )
     self.obj = 'test'
     self.pid = '1234'
 
@@ -80,7 +78,7 @@ class TestMNClient(TestCaseWithURLCompare):
 
   def test_createResponse(self):
     with patch.object(
-      mnclient_2_0.MemberNodeClient_2_0, 'createResponse'
+      d1_client.mnclient.MemberNodeClient, 'createResponse'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.createResponse(
@@ -89,7 +87,9 @@ class TestMNClient(TestCaseWithURLCompare):
       self.assertEqual(200, response)
 
   def test_create(self):
-    with patch.object(mnclient_2_0.MemberNodeClient_2_0, 'create') as mocked_method:
+    with patch.object(
+      d1_client.mnclient.MemberNodeClient, 'create'
+    ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.create(
         '1234', 'BAYXXX_015ADCP015R00_20051215.50.9', self.sysmeta
@@ -98,25 +98,28 @@ class TestMNClient(TestCaseWithURLCompare):
 
   def test_getCapabilities(self):
     with patch.object(
-      mnclient_2_0.MemberNodeClient_2_0, 'getCapabilities'
+      d1_client.mnclient.MemberNodeClient, 'getCapabilities'
     ) as mocked_method:
       mocked_method.return_value = 200
       response = self.client.getCapabilities()
       self.assertEqual(200, response)
 
-  def test_create_ft(self):
-    response = self.client.create(self.pid, self.obj, self.sysmeta)
-
-  def WAITING_FOR_STABLE_MN_test_1010(self):
+  @unittest.skip(
+    "TODO: Skipped due to waiting for test env. Should set up test env or remove"
+  )
+  def test_1010(self):
     '''MNCore.ping() returns True'''
     ping = self.client.ping()
-    self.assertTrue(isinstance(ping, bool))
+    self.assertIsInstance(ping, bool)
     self.assertTrue(ping)
 
-  def WAITING_FOR_STABLE_MN_test_1020(self):
+  @unittest.skip(
+    "TODO: Skipped due to waiting for test env. Should set up test env or remove"
+  )
+  def test_1020(self):
     '''MNCore.getCapabilities() returns a valid Node'''
     node = self.client.getCapabilities()
-    self.assertTrue(isinstance(node, dataoneTypes_v1_1.Node))
+    self.assertIsInstance(node, d1_common.types.dataoneTypes_v1_1.Node)
 
   # ============================================================================
   # MNRead

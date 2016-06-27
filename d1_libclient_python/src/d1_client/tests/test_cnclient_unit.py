@@ -41,7 +41,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 
 # App.
 import d1_client.cnclient_2_0 as cnclient_2_0
-import settings
+import shared_settings
 
 
 class attributeAccessPolicy(object):
@@ -65,9 +65,11 @@ class TestCNClient(TestCaseWithURLCompare):
 
     # When setting the certificate, remember to use a https baseurl.
     self.cert_path = '/tmp/x509up_u1000'
-    self.client = cnclient_2_0.CoordinatingNodeClient_2_0(settings.CN_URL)
+    self.client = cnclient_2_0.CoordinatingNodeClient_2_0(
+      shared_settings.CN_URL
+    )
     self.authenticated_client = cnclient_2_0.CoordinatingNodeClient_2_0(
-      settings.CN_URL, cert_path=self.cert_path
+      shared_settings.CN_URL, cert_path=self.cert_path
     )
 
   def tearDown(self):
@@ -86,7 +88,9 @@ class TestCNClient(TestCaseWithURLCompare):
 
   def test_0020(self):
     """listFormatsResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       self.client.listFormatsResponse()
       mocked_method.assert_called_with('/cn/v2/formats')
 
@@ -99,15 +103,21 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.listFormatsResponse()
       mocked_method.assert_called_with('formats')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listFormatsResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listFormatsResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0040(self, mock_read, mock_list):
     """listFormats"""
     mock_read.return_value = 'test'
     response = self.client.listFormats()
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0050(self, mock_read):
     """listFormats assert called listFormatsResponse"""
     with mock.patch.object(
@@ -116,7 +126,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.listFormats()
       mocked_method.assert_called_with()
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listFormatsResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listFormatsResponse'
+  )
   def test_0060(self, mock_list):
     """listFormats assert called read dataone type response"""
     with mock.patch.object(
@@ -124,7 +136,7 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.listFormats()
-      mocked_method.assert_called_with('test', 1, 0, 'ObjectFormatList')
+      mocked_method.assert_called_with('test', 'ObjectFormatList')
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET')
@@ -137,7 +149,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0080(self, mock_rest):
     """getFormatResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.getFormatResponse(1)
       mocked_method.assert_called_with('test')
@@ -151,15 +165,21 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.getFormatResponse(1)
       mocked_method.assert_called_with('formats/%(formatId)s', formatId=1)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getFormatResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'getFormatResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0100(self, mock_read, mock_list):
     """getFormat"""
     mock_read.return_value = 'test'
     response = self.client.getFormat(1)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0110(self, mock_read):
     """getFormat assert called getFormatResponse"""
     with mock.patch.object(
@@ -168,7 +188,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.getFormat(1)
       mocked_method.assert_called_with(1)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getFormatResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'getFormatResponse'
+  )
   def test_0120(self, mock_list):
     """getFormat assert called read dataone type response"""
     with mock.patch.object(
@@ -176,7 +198,7 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_list.return_value = 'test'
       self.client.getFormat(1)
-      mocked_method.assert_called_with('test', 1, 0, 'ObjectFormat')
+      mocked_method.assert_called_with('test', 'ObjectFormat')
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST')
@@ -194,33 +216,45 @@ class TestCNClient(TestCaseWithURLCompare):
     with mock.patch.object(
       cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url'
     ) as mocked_method:
-      self.client.reserveIdentifierResponse('_bogus_pid_845434598734598374534958')
+      self.client.reserveIdentifierResponse(
+        '_bogus_pid_845434598734598374534958'
+      )
       mocked_method.assert_called_with('reserve')
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0150(self, mock_rest):
     """reserveIdentifierResponse assert called POST"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'POST'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
-      self.client.reserveIdentifierResponse('_bogus_pid_845434598734598374534958')
+      self.client.reserveIdentifierResponse(
+        '_bogus_pid_845434598734598374534958'
+      )
       mocked_method.assert_called_with(
         'test', fields=[
-          (
-            'pid', '_bogus_pid_845434598734598374534958'
-          )
+          ('pid', '_bogus_pid_845434598734598374534958')
         ]
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'reserveIdentifierResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'reserveIdentifierResponse'
+  )
   def test_0160(self, mock_reserve, mock_read):
     """reserveIdentifier"""
     mock_reserve.return_value = 'test'
     mock_read.return_value = 'test'
-    response = self.client.reserveIdentifier('_bogus_pid_845434598734598374534958')
+    response = self.client.reserveIdentifier(
+      '_bogus_pid_845434598734598374534958'
+    )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0170(self, mock_rest):
     """reserveIdentifier assert called reserveIdentifierResponse"""
     with mock.patch.object(
@@ -230,7 +264,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.reserveIdentifier('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('_bogus_pid_845434598734598374534958')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'reserveIdentifierResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'reserveIdentifierResponse'
+  )
   def test_0180(self, mock_rest):
     """reserveIdentifier assert called read dataone type response"""
     with mock.patch.object(
@@ -238,7 +274,7 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.reserveIdentifier('_bogus_pid_845434598734598374534958')
-      mocked_method.assert_called_with('test', 1, 0, 'Identifier')
+      mocked_method.assert_called_with('test', 'Identifier')
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET')
@@ -260,20 +296,28 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0210(self, mock_rest):
     """listChecksumAlgorithmsResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.listChecksumAlgorithmsResponse()
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listChecksumAlgorithmsResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listChecksumAlgorithmsResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0220(self, mock_read, mock_list):
     """listChecksumAlgorithms"""
     mock_read.return_value = 'test'
     response = self.client.listChecksumAlgorithms()
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listChecksumAlgorithmsResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listChecksumAlgorithmsResponse'
+  )
   def test_0320_listChecksumAlgorithms_assert_called_read_dataone_type_response(
     self, mock_rest
   ):
@@ -282,9 +326,11 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.listChecksumAlgorithms()
-      mocked_method.assert_called_with('test', 1, 0, 'ChecksumAlgorithmList')
+      mocked_method.assert_called_with('test', 'ChecksumAlgorithmList')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0330_listChecksumAlgorithms_assert_called_listChecksumAlgorithmsResponse(
     self, mock_rest
   ):
@@ -301,7 +347,8 @@ class TestCNClient(TestCaseWithURLCompare):
     """setObsoletedByResponse"""
     mock_put.return_value = 'test'
     response = self.client.setObsoletedByResponse(
-      '_bogus_pid_845434598734598374534958', '_bogus_pid_845434598734598374534959', 'v1'
+      '_bogus_pid_845434598734598374534958',
+      '_bogus_pid_845434598734598374534959', 'v1'
     )
     self.assertEqual('test', response)
 
@@ -313,7 +360,8 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mocked_method.return_value = 'test'
       self.client.setObsoletedByResponse(
-        '_bogus_pid_845434598734598374534958', '_bogus_pid_845434598734598374534959', 'v1'
+        '_bogus_pid_845434598734598374534958',
+        '_bogus_pid_845434598734598374534959', 'v1'
       )
       mocked_method.assert_called_with(
         '/obsoletedBy/%(pid)s',
@@ -323,33 +371,40 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0250(self, mock_rest):
     """setObsoletedByResponse assert called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.setObsoletedByResponse(
-        '_bogus_pid_845434598734598374534958', '_bogus_pid_845434598734598374534959', 'v1'
+        '_bogus_pid_845434598734598374534958',
+        '_bogus_pid_845434598734598374534959', 'v1'
       )
       mocked_method.assert_called_with(
         'test',
         fields=[
-          (
-            'obsoletedByPid', '_bogus_pid_845434598734598374534959'
-          ), (
-            'serialVersion', 'v1'
-          )
+          ('obsoletedByPid',
+           '_bogus_pid_845434598734598374534959'), ('serialVersion', 'v1')
         ]
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setObsoletedByResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setObsoletedByResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0260(self, mock_read, mock_list):
     """setObsoletedBy"""
     mock_read.return_value = 'test'
     response = self.client.setObsoletedBy(
-      '_bogus_pid_845434598734598374534958', '_bogus_pid_845434598734598374534959', 'v1'
+      '_bogus_pid_845434598734598374534958',
+      '_bogus_pid_845434598734598374534959', 'v1'
     )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setObsoletedByResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setObsoletedByResponse'
+  )
   def test_0270(self, mock_rest):
     """setObsoletedBy assert called read boolean response"""
     with mock.patch.object(
@@ -357,11 +412,14 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.setObsoletedBy(
-        '_bogus_pid_845434598734598374534958', '_bogus_pid_845434598734598374534959', 'v1'
+        '_bogus_pid_845434598734598374534958',
+        '_bogus_pid_845434598734598374534959', 'v1'
       )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0280(self, mock_rest):
     """setObsoletedBy assert called setObsoletedByResponse"""
     with mock.patch.object(
@@ -369,11 +427,12 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.setObsoletedBy(
-        '_bogus_pid_845434598734598374534958', '_bogus_pid_845434598734598374534959', 'v1'
+        '_bogus_pid_845434598734598374534958',
+        '_bogus_pid_845434598734598374534959', 'v1'
       )
       mocked_method.assert_called_with(
-        '_bogus_pid_845434598734598374534958', u'_bogus_pid_845434598734598374534959',
-        u'v1'
+        '_bogus_pid_845434598734598374534958',
+        u'_bogus_pid_845434598734598374534959', u'v1'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
@@ -397,20 +456,28 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0310(self, mock_rest):
     """listNodesResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.listNodesResponse()
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listNodesResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listNodesResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0320(self, mock_read, mock_list):
     """listNodes"""
     mock_read.return_value = 'test'
     response = self.client.listNodes()
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listNodesResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listNodesResponse'
+  )
   def test_0330(self, mock_rest):
     """listNodes assert called read dataone type response"""
     with mock.patch.object(
@@ -418,9 +485,11 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.listNodes()
-      mocked_method.assert_called_with('test', 1, 0, 'NodeList')
+      mocked_method.assert_called_with('test', 'NodeList')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0340(self, mock_read):
     """listNodes assert called listNodesResponse"""
     with mock.patch.object(
@@ -447,7 +516,9 @@ class TestCNClient(TestCaseWithURLCompare):
       cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url'
     ) as mocked_method:
       mocked_method.return_value = 'test'
-      self.client.hasReservationResponse('_bogus_pid_845434598734598374534958', 'test')
+      self.client.hasReservationResponse(
+        '_bogus_pid_845434598734598374534958', 'test'
+      )
       mocked_method.assert_called_with(
         'reserve/%(pid)s?subject=%(subject)s',
         pid=u'_bogus_pid_845434598734598374534958',
@@ -457,20 +528,32 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0370(self, mock_rest):
     """hasReservationResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
-      self.client.hasReservationResponse('_bogus_pid_845434598734598374534958', 'test')
+      self.client.hasReservationResponse(
+        '_bogus_pid_845434598734598374534958', 'test'
+      )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'hasReservationResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_404_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'hasReservationResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_404_response'
+  )
   def test_0380(self, mock_read, mock_response):
     """hasReservation"""
     mock_read.return_value = 'test'
-    response = self.client.hasReservation('_bogus_pid_845434598734598374534958', 'test')
+    response = self.client.hasReservation(
+      '_bogus_pid_845434598734598374534958', 'test'
+    )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'hasReservationResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'hasReservationResponse'
+  )
   def test_0390(self, mock_response):
     """hasReservation assert called read boolean response"""
     with mock.patch.object(
@@ -480,7 +563,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.hasReservation('_bogus_pid_845434598734598374534958', 'test')
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_404_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_404_response'
+  )
   def test_0400(self, mock_read):
     """hasReservation assert called hasReservationResponse"""
     with mock.patch.object(
@@ -488,14 +573,18 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_read.return_value = 'test'
       self.client.hasReservation('_bogus_pid_845434598734598374534958', 'test')
-      mocked_method.assert_called_with(u'_bogus_pid_845434598734598374534958', u'test')
+      mocked_method.assert_called_with(
+        u'_bogus_pid_845434598734598374534958', u'test'
+      )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET')
   def test_0410(self, mock_get, mock_rest):
     """resolveResponse"""
     mock_get.return_value = 'test'
-    response = self.client.resolveResponse('_bogus_pid_845434598734598374534958')
+    response = self.client.resolveResponse(
+      '_bogus_pid_845434598734598374534958'
+    )
     self.assertEqual('test', response)
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET')
@@ -507,19 +596,24 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.return_value = 'test'
       self.client.resolveResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
-        'resolve/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
+        'resolve/%(pid)s',
+        pid=u'_bogus_pid_845434598734598374534958'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0430(self, mock_rest):
     """resolveResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.resolveResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('test')
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'resolveResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0440(self, mock_read, mock_list):
     """resolve"""
     mock_read.return_value = 'test'
@@ -535,12 +629,13 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_rest.return_value = 'test'
       self.client.resolve('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
-        'test', 1, 0,
-        'ObjectLocationList',
-        response_contains_303_redirect=True
+        'test', 'ObjectLocationList',
+        response_is_303_redirect=True
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0460(self, mock_read):
     """resolve assert called resolveResponse"""
     with mock.patch.object(
@@ -555,7 +650,9 @@ class TestCNClient(TestCaseWithURLCompare):
   def test_0470(self, mock_get, mock_rest):
     """getChecksumResponse"""
     mock_get.return_value = 'test'
-    response = self.client.getChecksumResponse('_bogus_pid_845434598734598374534958')
+    response = self.client.getChecksumResponse(
+      '_bogus_pid_845434598734598374534958'
+    )
     self.assertEqual('test', response)
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET')
@@ -567,26 +664,35 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.return_value = 'test'
       self.client.getChecksumResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with(
-        'checksum/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
+        'checksum/%(pid)s',
+        pid=u'_bogus_pid_845434598734598374534958'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0490(self, mock_rest):
     """getChecksumResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.getChecksumResponse('_bogus_pid_845434598734598374534958')
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getChecksumResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'getChecksumResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0500(self, mock_read, mock_list):
     """getChecksum"""
     mock_read.return_value = 'test'
     response = self.client.getChecksum('_bogus_pid_845434598734598374534958')
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getChecksumResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'getChecksumResponse'
+  )
   def test_0510(self, mock_rest):
     """getChecksum assert called read dataone type response"""
     with mock.patch.object(
@@ -594,9 +700,11 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.getChecksum('_bogus_pid_845434598734598374534958')
-      mocked_method.assert_called_with('test', 1, 0, 'Checksum')
+      mocked_method.assert_called_with('test', 'Checksum')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0520(self, mock_read):
     """getChecksum assert called getChecksumResponse"""
     with mock.patch.object(
@@ -624,19 +732,24 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.searchResponse('solr', 'test')
       mocked_method.assert_called_with(
         'search/%(queryType)s/%(query)s',
-        query='test', queryType='solr'
+        query='test',
+        queryType='solr'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0550(self, mock_rest):
     """searchResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.searchResponse('solr', 'test')
       mocked_method.assert_called_with('test', query={})
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'searchResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0560(self, mock_read, mock_list):
     """search"""
     mock_read.return_value = 'test'
@@ -651,9 +764,11 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.search('solr', 'test')
-      mocked_method.assert_called_with('test', 1, 0, 'ObjectList')
+      mocked_method.assert_called_with('test', 'ObjectList')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0580(self, mock_read):
     """search assert called searchResponse"""
     with mock.patch.object(
@@ -681,19 +796,24 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.queryResponse('solr', 'test')
       mocked_method.assert_called_with(
         'query/%(queryEngine)s/%(query)s',
-        query='test', queryEngine='solr'
+        query='test',
+        queryEngine='solr'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0610(self, mock_rest):
     """queryResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.queryResponse('solr', 'test')
       mocked_method.assert_called_with('test', query={})
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'queryResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_stream_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_stream_response'
+  )
   def test_0620(self, mock_read, mock_response):
     """query"""
     mock_read.return_value = 'test'
@@ -710,7 +830,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.query('solr', 'test')
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_stream_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_stream_response'
+  )
   def test_0640(self, mock_read):
     """query assert called queryResponse"""
     with mock.patch.object(
@@ -736,12 +858,16 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mocked_method.return_value = 'test'
       self.client.getQueryEngineDescriptionResponse('solr')
-      mocked_method.assert_called_with('query/%(queryEngine)s', queryEngine='solr')
+      mocked_method.assert_called_with(
+        'query/%(queryEngine)s', queryEngine='solr'
+      )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0670(self, mock_rest):
     """getQueryEngineDescriptionResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.getQueryEngineDescriptionResponse('solr')
       mocked_method.assert_called_with('test', query={})
@@ -749,7 +875,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(
     cnclient_2_0.CoordinatingNodeClient_2_0, 'getQueryEngineDescriptionResponse'
   )
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0680(self, mock_read, mock_response):
     """getQueryEngineDescription"""
     mock_read.return_value = 'test'
@@ -767,14 +895,17 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_response.return_value = 'test'
       self.client.getQueryEngineDescription('solr')
-      mocked_method.assert_called_with('test', 1, 0, 'QueryEngineDescription')
+      mocked_method.assert_called_with('test', 'QueryEngineDescription')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_0810_getQueryEngineDescription_assert_called_getQueryEngineDescriptionResponse(
     self, mock_read
   ):
     with mock.patch.object(
-      cnclient_2_0.CoordinatingNodeClient_2_0, 'getQueryEngineDescriptionResponse'
+      cnclient_2_0.CoordinatingNodeClient_2_0,
+      'getQueryEngineDescriptionResponse'
     ) as mocked_method:
       mock_read.return_value = 'test'
       self.client.getQueryEngineDescription('solr')
@@ -801,27 +932,32 @@ class TestCNClient(TestCaseWithURLCompare):
         '_bogus_pid_845434598734598374534958', '8454', 'v1'
       )
       mocked_method.assert_called_with(
-        'owner/%(pid)s', pid=u'_bogus_pid_845434598734598374534958'
+        'owner/%(pid)s',
+        pid=u'_bogus_pid_845434598734598374534958'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0710(self, mock_rest):
     """setRightsHolderResponse assert called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       self.client.setRightsHolderResponse(
         '_bogus_pid_845434598734598374534958', '8454', 'v1'
       )
       mocked_method.assert_called_with(
         'test', fields=[
-          ('userId', '8454'), (
-            'serialVersion', 'v1'
-          )
+          ('userId', '8454'), ('serialVersion', 'v1')
         ]
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setRightsHolderResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setRightsHolderResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0720(self, mock_read, mock_response):
     """setRightsHolder"""
     mock_read.return_value = 'test'
@@ -830,24 +966,32 @@ class TestCNClient(TestCaseWithURLCompare):
     )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setRightsHolderResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setRightsHolderResponse'
+  )
   def test_0730(self, mock_response):
     """setRightsHolder assert called read boolean response"""
     with mock.patch.object(
       cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
     ) as mocked_method:
       mock_response.return_value = 'test'
-      self.client.setRightsHolder('_bogus_pid_845434598734598374534958', '8454', 'v1')
+      self.client.setRightsHolder(
+        '_bogus_pid_845434598734598374534958', '8454', 'v1'
+      )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0740(self, mock_read):
     """setRightsHolder assert called setRightsHolderResponse"""
     with mock.patch.object(
       cnclient_2_0.CoordinatingNodeClient_2_0, 'setRightsHolderResponse'
     ) as mocked_method:
       mock_read.return_value = 'test'
-      self.client.setRightsHolder('_bogus_pid_845434598734598374534958', '8454', 'v1')
+      self.client.setRightsHolder(
+        '_bogus_pid_845434598734598374534958', '8454', 'v1'
+      )
       mocked_method.assert_called_with(
         u'_bogus_pid_845434598734598374534958', u'8454', u'v1'
       )
@@ -869,7 +1013,9 @@ class TestCNClient(TestCaseWithURLCompare):
       cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url'
     ) as mocked_method:
       mocked_method.return_value = 'test'
-      self.client.isAuthorizedResponse('_bogus_pid_845434598734598374534958', 'create')
+      self.client.isAuthorizedResponse(
+        '_bogus_pid_845434598734598374534958', 'create'
+      )
       mocked_method.assert_called_with(
         'isAuthorized/%(pid)s?action=%(action)s',
         pid=u'_bogus_pid_845434598734598374534958',
@@ -879,20 +1025,32 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0770(self, mock_rest):
     """isAuthorizedResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
-      self.client.isAuthorizedResponse('_bogus_pid_845434598734598374534958', 'create')
+      self.client.isAuthorizedResponse(
+        '_bogus_pid_845434598734598374534958', 'create'
+      )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'isAuthorizedResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'isAuthorizedResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response'
+  )
   def test_0780(self, mock_read, mock_response):
     """isAuthorized"""
     mock_read.return_value = 'test'
-    response = self.client.isAuthorized('_bogus_pid_845434598734598374534958', '8454')
+    response = self.client.isAuthorized(
+      '_bogus_pid_845434598734598374534958', '8454'
+    )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'isAuthorizedResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'isAuthorizedResponse'
+  )
   def test_0790(self, mock_response):
     """isAuthorized assert called read boolean response"""
     with mock.patch.object(
@@ -902,7 +1060,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.isAuthorized('_bogus_pid_845434598734598374534958', '8454')
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response'
+  )
   def test_0800(self, mock_read):
     """isAuthorized assert called isAuthorizedResponse"""
     with mock.patch.object(
@@ -910,7 +1070,9 @@ class TestCNClient(TestCaseWithURLCompare):
     ) as mocked_method:
       mock_read.return_value = 'test'
       self.client.isAuthorized('_bogus_pid_845434598734598374534958', '8454')
-      mocked_method.assert_called_with(u'_bogus_pid_845434598734598374534958', u'8454')
+      mocked_method.assert_called_with(
+        u'_bogus_pid_845434598734598374534958', u'8454'
+      )
 
   @mock.patch('d1_common.types.dataoneTypes.accessPolicy')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
@@ -945,7 +1107,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0830(self, mock_rest, mock_xml):
     """setAccessPolicyResponse assert called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       access_policy = attributeAccessPolicy()
       self.client.setAccessPolicyResponse(
@@ -954,19 +1118,19 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'test',
         files=[
-          (
-            'accessPolicy', 'accessPolicy.xml', 'update'
-          )
+          ('accessPolicy', 'accessPolicy.xml', 'update')
         ],
         fields=[
-          (
-            'serialVersion', 'v1'
-          )
+          ('serialVersion', 'v1')
         ]
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setAccessPolicyResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setAccessPolicyResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0840(self, mock_read, mock_response):
     """setAccessPolicy"""
     mock_read.return_value = 'test'
@@ -997,14 +1161,24 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0870(self, mock_rest):
     """registerAccountResponse assert called POST"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'POST'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       person = attributeAccessPolicy()
       self.client.registerAccountResponse(person)
-      mocked_method.assert_called_with('test', files=[('person', 'person.xml', 'update')])
+      mocked_method.assert_called_with(
+        'test', files=[
+          ('person', 'person.xml', 'update')
+        ]
+      )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'registerAccountResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'registerAccountResponse'
+  )
   def test_0880(self, mock_response, mock_read):
     """registerAccount"""
     mock_read.return_value = 'test'
@@ -1012,7 +1186,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.registerAccount(person)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'registerAccountResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'registerAccountResponse'
+  )
   def test_0890(self, mock_response):
     """registerAccount assert called read boolean response"""
     with mock.patch.object(
@@ -1023,7 +1199,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.registerAccount(person)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0900(self, mock_read):
     """registerAccount assert called registerAccountResponse"""
     with mock.patch.object(
@@ -1056,14 +1234,24 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0930(self, mock_rest):
     """updateAccountResponse assert called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       person = attributeAccessPolicy()
       self.client.updateAccountResponse(person)
-      mocked_method.assert_called_with('test', files=[('person', 'person.xml', 'update')])
+      mocked_method.assert_called_with(
+        'test', files=[
+          ('person', 'person.xml', 'update')
+        ]
+      )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'updateAccountResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'updateAccountResponse'
+  )
   def test_0940(self, mock_response, mock_read):
     """updateAccount"""
     mock_read.return_value = 'test'
@@ -1071,7 +1259,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.updateAccount(person)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'updateAccountResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'updateAccountResponse'
+  )
   def test_0950(self, mock_response):
     """updateAccount assert called read boolean response"""
     with mock.patch.object(
@@ -1082,7 +1272,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.updateAccount(person)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_0960(self, mock_read):
     """updateAccount assert called updateAccountResponse"""
     with mock.patch.object(
@@ -1118,14 +1310,20 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_0990(self, mock_rest):
     """verifyAccountResponse assert called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.verifyAccountResponse(subject)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'verifyAccountResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'verifyAccountResponse'
+  )
   def test_1000(self, mock_response, mock_read):
     """verifyAccount"""
     mock_read.return_value = 'test'
@@ -1133,7 +1331,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.verifyAccount(subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'verifyAccountResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'verifyAccountResponse'
+  )
   def test_1010(self, mock_response):
     """verifyAccount assert called read boolean response"""
     with mock.patch.object(
@@ -1144,7 +1344,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.verifyAccount(subject)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1020(self, mock_read):
     """verifyAccount assert called verifyAccountResponse"""
     with mock.patch.object(
@@ -1178,14 +1380,20 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1050(self, mock_rest):
     """getSubjectInfoResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.getSubjectInfoResponse(subject)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getSubjectInfoResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'getSubjectInfoResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_1060(self, mock_read, mock_response):
     """getSubjectInfo"""
     mock_read.return_value = 'test'
@@ -1193,7 +1401,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.getSubjectInfo(subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'getSubjectInfoResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'getSubjectInfoResponse'
+  )
   def test_1070(self, mock_response):
     """getSubjectInfo assert called read dataone type response"""
     with mock.patch.object(
@@ -1202,9 +1412,11 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_response.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.getSubjectInfo(subject)
-      mocked_method.assert_called_with('test', 1, 0, 'SubjectInfo')
+      mocked_method.assert_called_with('test', 'SubjectInfo')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_1080(self, mock_read):
     """getSubjectInfo assert called getSubjectInfoResponse"""
     with mock.patch.object(
@@ -1221,7 +1433,9 @@ class TestCNClient(TestCaseWithURLCompare):
     """listSubjectsResponse"""
     mock_get.return_value = 'test'
     query = 'test'
-    response = self.client.listSubjectsResponse(query, status='begin', start=0, count=1)
+    response = self.client.listSubjectsResponse(
+      query, status='begin', start=0, count=1
+    )
     self.assertEqual('test', response)
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET')
@@ -1238,14 +1452,20 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1110(self, mock_rest):
     """listSubjectsResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       query = 'test'
       self.client.listSubjectsResponse(query, status='begin', start=0, count=1)
       mocked_method.assert_called_with('test', query={'status': u'begin', 'start': 0, 'count': 1})
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listSubjectsResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listSubjectsResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_1120(self, mock_read, mock_response):
     """listSubjects"""
     mock_read.return_value = 'test'
@@ -1253,7 +1473,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.listSubjects(query, status='begin', start=0, count=1)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'listSubjectsResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'listSubjectsResponse'
+  )
   def test_1130(self, mock_response):
     """listSubjects assert called read dataone type response"""
     with mock.patch.object(
@@ -1262,9 +1484,11 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_response.return_value = 'test'
       query = 'test'
       self.client.listSubjects(query, status='begin', start=0, count=1)
-      mocked_method.assert_called_with('test', 1, 0, 'SubjectInfo')
+      mocked_method.assert_called_with('test', 'SubjectInfo')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_dataone_type_response'
+  )
   def test_1140(self, mock_read):
     """listSubjects assert called listSubjectsResponse"""
     with mock.patch.object(
@@ -1282,7 +1506,9 @@ class TestCNClient(TestCaseWithURLCompare):
     mock_post.return_value = 'test'
     primary_subject = attributeAccessPolicy()
     secondary_subject = attributeAccessPolicy()
-    response = self.client.mapIdentityResponse(primary_subject, secondary_subject)
+    response = self.client.mapIdentityResponse(
+      primary_subject, secondary_subject
+    )
     self.assertEqual('test', response)
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST')
@@ -1299,7 +1525,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1170(self, mock_rest):
     """mapIdentityResponse assert called POST"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'POST'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       primary_subject = attributeAccessPolicy()
       secondary_subject = attributeAccessPolicy()
@@ -1307,14 +1535,16 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'test',
         fields=[
-          ('primarySubject', 'update'), (
-            'secondarySubject', 'update'
-          )
+          ('primarySubject', 'update'), ('secondarySubject', 'update')
         ]
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'mapIdentityResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'mapIdentityResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1180(self, mock_read, mock_response):
     """mapIdentity"""
     mock_read.return_value = 'test'
@@ -1323,7 +1553,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.mapIdentity(primary_subject, secondary_subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'mapIdentityResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'mapIdentityResponse'
+  )
   def test_1190(self, mock_response):
     """mapIdentity assert called read boolean response"""
     with mock.patch.object(
@@ -1336,7 +1568,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1200(self, mock_read):
     """mapIdentity assert called mapIdentityResponse"""
     with mock.patch.object(
@@ -1345,7 +1579,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mock_read.return_value = 'test'
       primary_subject = attributeAccessPolicy()
       secondary_subject = attributeAccessPolicy()
-      self.client.mapIdentity(primary_subject.toxml(), secondary_subject.toxml())
+      self.client.mapIdentity(
+        primary_subject.toxml(), secondary_subject.toxml()
+      )
       mocked_method.assert_called_with(u'update', u'update')
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
@@ -1366,21 +1602,27 @@ class TestCNClient(TestCaseWithURLCompare):
       subject = attributeAccessPolicy()
       self.client.removeMapIdentityResponse(subject)
       mocked_method.assert_called_with(
-        'accounts/map/%(subject)s', subject=subject.value(
-        )
+        'accounts/map/%(subject)s',
+        subject=subject.value()
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1230(self, mock_rest):
     """removeMapIdentityResponse assert called DELETE"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'DELETE') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'DELETE'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.removeMapIdentityResponse(subject)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'removeMapIdentityResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'removeMapIdentityResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1240(self, mock_read, mock_response):
     """removeMapIdentity"""
     mock_read.return_value = 'test'
@@ -1388,7 +1630,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.removeMapIdentity(subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'removeMapIdentityResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'removeMapIdentityResponse'
+  )
   def test_1250(self, mock_response):
     """removeMapIdentity assert called read boolean response"""
     with mock.patch.object(
@@ -1400,7 +1644,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1260(self, mock_read):
     """removeMapIdentity assert called removeMapIdentityResponse"""
     with mock.patch.object(
@@ -1430,21 +1676,26 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.denyMapIdentityResponse(subject)
       mocked_method.assert_called_with(
         'accounts/pendingmap/%(subject)s',
-        subject=subject.value(
-        )
+        subject=subject.value()
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1290(self, mock_rest):
     """denyMapIdentityResponse assert called DELETE"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'DELETE') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'DELETE'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.denyMapIdentityResponse(subject)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'denyMapIdentityResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'denyMapIdentityResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1300(self, mock_read, mock_response):
     """denyMapIdentity"""
     mock_read.return_value = 'test'
@@ -1452,7 +1703,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.denyMapIdentity(subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'denyMapIdentityResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'denyMapIdentityResponse'
+  )
   def test_1310(self, mock_response):
     """denyMapIdentity assert called read boolean response"""
     with mock.patch.object(
@@ -1464,7 +1717,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1320(self, mock_read):
     """denyMapIdentity assert called denyMapIdentityResponse"""
     with mock.patch.object(
@@ -1497,14 +1752,20 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1350(self, mock_rest):
     """requestMapIdentityResponse assert called POST"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'POST'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.requestMapIdentityResponse(subject)
       mocked_method.assert_called_with('test', fields=[('subject', 'update')])
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'requestMapIdentityResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'requestMapIdentityResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1360(self, mock_read, mock_response):
     """requestMapIdentity"""
     mock_read.return_value = 'test'
@@ -1512,7 +1773,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.requestMapIdentity(subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'requestMapIdentityResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'requestMapIdentityResponse'
+  )
   def test_1370(self, mock_response):
     """requestMapIdentity assert called read boolean response"""
     with mock.patch.object(
@@ -1524,7 +1787,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1380(self, mock_read):
     """requestMapIdentity assert called requestMapIdentityResponse"""
     with mock.patch.object(
@@ -1561,14 +1826,20 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1410(self, mock_rest):
     """confirmMapIdentityResponse assert called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       subject = attributeAccessPolicy()
       self.client.confirmMapIdentityResponse(subject)
       mocked_method.assert_called_with('test', fields=[('subject', 'update')])
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'confirmMapIdentityResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'confirmMapIdentityResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1420(self, mock_read, mock_response):
     """confirmMapIdentity"""
     mock_read.return_value = 'test'
@@ -1576,7 +1847,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.confirmMapIdentity(subject)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'confirmMapIdentityResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'confirmMapIdentityResponse'
+  )
   def test_1430(self, mock_response):
     """confirmMapIdentity assert called read boolean response"""
     with mock.patch.object(
@@ -1588,7 +1861,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1440(self, mock_read):
     """confirmMapIdentity assert called confirmMapIdentityResponse"""
     with mock.patch.object(
@@ -1621,14 +1896,24 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1470(self, mock_rest):
     """createGroupResponse assert called POST"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'POST'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       group = attributeAccessPolicy()
       self.client.createGroupResponse(group)
-      mocked_method.assert_called_with('test', files=[('group', 'group.xml', 'update')])
+      mocked_method.assert_called_with(
+        'test', files=[
+          ('group', 'group.xml', 'update')
+        ]
+      )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'createGroupResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'createGroupResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1480(self, mock_read, mock_response):
     """createGroup"""
     mock_read.return_value = 'test'
@@ -1636,7 +1921,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.createGroup(group)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'createGroupResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'createGroupResponse'
+  )
   def test_1490(self, mock_response):
     """createGroup assert called read boolean response"""
     with mock.patch.object(
@@ -1648,7 +1935,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1500(self, mock_read):
     """createGroup assert called createGroupResponse"""
     with mock.patch.object(
@@ -1681,14 +1970,24 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1530(self, mock_rest):
     """updateGroupResponse called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       group = attributeAccessPolicy()
       self.client.updateGroupResponse(group)
-      mocked_method.assert_called_with('test', files=[('group', 'group.xml', 'update')])
+      mocked_method.assert_called_with(
+        'test', files=[
+          ('group', 'group.xml', 'update')
+        ]
+      )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'updateGroupResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'updateGroupResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1540(self, mock_read, mock_response):
     """updateGroup"""
     mock_read.return_value = 'test'
@@ -1696,7 +1995,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.updateGroup(group)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'updateGroupResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'updateGroupResponse'
+  )
   def test_1550(self, mock_response):
     """updateGroup assert called read boolean response"""
     with mock.patch.object(
@@ -1708,7 +2009,9 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with('test')
 #
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1560(self, mock_read):
     """updateGroup assert called updateGroupResponse"""
     with mock.patch.object(
@@ -1750,7 +2053,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1590(self, mock_rest):
     """setReplicationStatusResponse called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       nodeRef = attributeAccessPolicy()
       status = attributeAccessPolicy()
       mock_rest.return_value = 'test'
@@ -1760,14 +2065,17 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'test',
         fields=[
-          ('nodeRef', 'update'), (
-            'status', 'update'
-          )
-        ], dump_path=None
+          ('nodeRef', 'update'), ('status', 'update')
+        ],
+        dump_path=None
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationStatusResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationStatusResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1600(self, mock_read, mock_response):
     """setReplicationStatus"""
     mock_read.return_value = 'test'
@@ -1776,7 +2084,9 @@ class TestCNClient(TestCaseWithURLCompare):
     )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationStatusResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationStatusResponse'
+  )
   def test_1610(self, mock_response):
     """setReplicationStatus assert called read boolean response"""
     with mock.patch.object(
@@ -1788,7 +2098,9 @@ class TestCNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1690_setReplicationStatus_assert_called_setReplicationStatusResponse(
     self, mock_read
   ):
@@ -1800,7 +2112,8 @@ class TestCNClient(TestCaseWithURLCompare):
         '_bogus_pid_845434598734598374534958', 'nodeRef', 'status', 'failure'
       )
       mocked_method.assert_called_with(
-        u'_bogus_pid_845434598734598374534958', u'nodeRef', u'status', u'failure'
+        u'_bogus_pid_845434598734598374534958', u'nodeRef', u'status',
+        u'failure'
       )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
@@ -1834,7 +2147,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1640(self, mock_rest):
     """updateReplicationMetadataResponse called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       replicaMetadata = attributeAccessPolicy()
       serialVersion = 'v1'
       mock_rest.return_value = 'test'
@@ -1844,21 +2159,19 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'test',
         files=[
-          (
-            'replicaMetadata', 'replicaMetadata.xml', 'update'
-          )
+          ('replicaMetadata', 'replicaMetadata.xml', 'update')
         ],
         fields=[
-          (
-            'serialVersion', 'v1'
-          )
+          ('serialVersion', 'v1')
         ]
       )
 
   @mock.patch.object(
     cnclient_2_0.CoordinatingNodeClient_2_0, 'updateReplicationMetadataResponse'
   )
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1650(self, mock_read, mock_response):
     """updateReplicationMetadata"""
     mock_read.return_value = 'test'
@@ -1882,12 +2195,15 @@ class TestCNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1750_updateReplicationMetadata_assert_called_updateReplicationMetadataResponse(
     self, mock_read
   ):
     with mock.patch.object(
-      cnclient_2_0.CoordinatingNodeClient_2_0, 'updateReplicationMetadataResponse'
+      cnclient_2_0.CoordinatingNodeClient_2_0,
+      'updateReplicationMetadataResponse'
     ) as mocked_method:
       mock_read.return_value = 'test'
       self.client.updateReplicationMetadata(
@@ -1928,7 +2244,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1680(self, mock_rest):
     """setReplicationPolicyResponse called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       replicaMetadata = attributeAccessPolicy()
       serialVersion = 'v1'
       mock_rest.return_value = 'test'
@@ -1938,19 +2256,19 @@ class TestCNClient(TestCaseWithURLCompare):
       mocked_method.assert_called_with(
         'test',
         files=[
-          (
-            'replicaMetadata', 'replicaMetadata.xml', 'update'
-          )
+          ('replicaMetadata', 'replicaMetadata.xml', 'update')
         ],
         fields=[
-          (
-            'serialVersion', 'v1'
-          )
+          ('serialVersion', 'v1')
         ]
       )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationPolicyResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationPolicyResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1690(self, mock_read, mock_response):
     """setReplicationPolicy"""
     mock_read.return_value = 'test'
@@ -1959,7 +2277,9 @@ class TestCNClient(TestCaseWithURLCompare):
     )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationPolicyResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'setReplicationPolicyResponse'
+  )
   def test_1700(self, mock_response):
     """setReplicationPolicy assert called read boolean response"""
     with mock.patch.object(
@@ -1971,7 +2291,9 @@ class TestCNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1820_setReplicationPolicy_assert_called_setReplicationPolicyResponse(
     self, mock_read
   ):
@@ -2020,7 +2342,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1730(self, mock_rest):
     """isNodeAuthorizedResponse assert called GET"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'GET') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'GET'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       query = 'test'
       self.client.isNodeAuthorizedResponse(
@@ -2028,8 +2352,12 @@ class TestCNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'isNodeAuthorizedResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'isNodeAuthorizedResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response'
+  )
   def test_1740(self, mock_read, mock_response):
     """isNodeAuthorized"""
     mock_read.return_value = 'test'
@@ -2038,25 +2366,35 @@ class TestCNClient(TestCaseWithURLCompare):
     )
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'isNodeAuthorizedResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'isNodeAuthorizedResponse'
+  )
   def test_1750(self, mock_response):
     """isNodeAuthorized assert called read boolean response"""
     with mock.patch.object(
       cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response'
     ) as mocked_method:
       mock_response.return_value = 'test'
-      self.client.isNodeAuthorized('nodeRef', '_bogus_pid_845434598734598374534958')
+      self.client.isNodeAuthorized(
+        'nodeRef', '_bogus_pid_845434598734598374534958'
+      )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_401_response'
+  )
   def test_1760(self, mock_read):
     """isNodeAuthorized assert called isNodeAuthorizedResponse"""
     with mock.patch.object(
       cnclient_2_0.CoordinatingNodeClient_2_0, 'isNodeAuthorizedResponse'
     ) as mocked_method:
       mock_read.return_value = 'test'
-      self.client.isNodeAuthorized('nodeRef', '_bogus_pid_845434598734598374534958')
-      mocked_method.assert_called_with(u'nodeRef', u'_bogus_pid_845434598734598374534958')
+      self.client.isNodeAuthorized(
+        'nodeRef', '_bogus_pid_845434598734598374534958'
+      )
+      mocked_method.assert_called_with(
+        u'nodeRef', u'_bogus_pid_845434598734598374534958'
+      )
 
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT')
@@ -2089,7 +2427,9 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1790(self, mock_rest):
     """deleteReplicationMetadataResponse called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       nodeId = attributeAccessPolicy()
       serialVersion = 'v1'
       mock_rest.return_value = 'test'
@@ -2098,16 +2438,16 @@ class TestCNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with(
         'test', fields=[
-          ('nodeId', 'update'), (
-            'serialVersion', 'v1'
-          )
+          ('nodeId', 'update'), ('serialVersion', 'v1')
         ]
       )
 
   @mock.patch.object(
     cnclient_2_0.CoordinatingNodeClient_2_0, 'deleteReplicationMetadataResponse'
   )
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1800(self, mock_read, mock_response):
     """deleteReplicationMetadata"""
     mock_read.return_value = 'test'
@@ -2133,18 +2473,20 @@ class TestCNClient(TestCaseWithURLCompare):
       )
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1940_deleteReplicationMetadata_assert_called_deleteReplicationMetadataResponse(
     self, mock_read
   ):
     with mock.patch.object(
-      cnclient_2_0.CoordinatingNodeClient_2_0, 'deleteReplicationMetadataResponse'
+      cnclient_2_0.CoordinatingNodeClient_2_0,
+      'deleteReplicationMetadataResponse'
     ) as mocked_method:
       mock_read.return_value = 'test'
       nodeId = attributeAccessPolicy()
       self.client.deleteReplicationMetadata(
-        '_bogus_pid_845434598734598374534958', nodeId.toxml(
-        ), 'v1'
+        '_bogus_pid_845434598734598374534958', nodeId.toxml(), 'v1'
       )
       mocked_method.assert_called_with(
         u'_bogus_pid_845434598734598374534958', u'update', u'v1'
@@ -2173,14 +2515,24 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1830(self, mock_rest):
     """updateNodeCapabilitiesResponse called PUT"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'PUT'
+    ) as mocked_method:
       node = attributeAccessPolicy()
       mock_rest.return_value = 'test'
       self.client.updateNodeCapabilitiesResponse('234', node)
-      mocked_method.assert_called_with('test', files=[('node', 'node.xml', 'update')])
+      mocked_method.assert_called_with(
+        'test', files=[
+          ('node', 'node.xml', 'update')
+        ]
+      )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'updateNodeCapabilitiesResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'updateNodeCapabilitiesResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1840(self, mock_read, mock_response):
     """updateNodeCapabilities"""
     mock_read.return_value = 'test'
@@ -2188,7 +2540,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.updateNodeCapabilities('234', node)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'updateNodeCapabilitiesResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'updateNodeCapabilitiesResponse'
+  )
   def test_1990_updateNodeCapabilities_assert_called_read_boolean_response(
     self, mock_response
   ):
@@ -2200,7 +2554,9 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.updateNodeCapabilities('234', node)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_2000_updateNodeCapabilities_assert_called_updateNodeCapabilitiesResponse(
     self, mock_read
   ):
@@ -2234,14 +2590,24 @@ class TestCNClient(TestCaseWithURLCompare):
   @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_rest_url')
   def test_1870(self, mock_rest):
     """registerResponse assert called POST"""
-    with mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'POST') as mocked_method:
+    with mock.patch.object(
+      cnclient_2_0.CoordinatingNodeClient_2_0, 'POST'
+    ) as mocked_method:
       mock_rest.return_value = 'test'
       node = attributeAccessPolicy()
       self.client.registerResponse(node)
-      mocked_method.assert_called_with('test', files=[('node', 'node.xml', 'update')])
+      mocked_method.assert_called_with(
+        'test', files=[
+          ('node', 'node.xml', 'update')
+        ]
+      )
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'registerResponse')
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'registerResponse'
+  )
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1880(self, mock_read, mock_response):
     """register"""
     mock_read.return_value = 'test'
@@ -2249,7 +2615,9 @@ class TestCNClient(TestCaseWithURLCompare):
     response = self.client.register(node)
     self.assertEqual('test', response)
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, 'registerResponse')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, 'registerResponse'
+  )
   def test_1890(self, mock_response):
     """register assert called read boolean response"""
     with mock.patch.object(
@@ -2260,9 +2628,11 @@ class TestCNClient(TestCaseWithURLCompare):
       self.client.register(node)
       mocked_method.assert_called_with('test')
 
-  @mock.patch.object(cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response')
+  @mock.patch.object(
+    cnclient_2_0.CoordinatingNodeClient_2_0, '_read_boolean_response'
+  )
   def test_1900(self, mock_read):
-    """register assert called registerResponse"""
+    """register a ssert called registerResponse"""
     with mock.patch.object(
       cnclient_2_0.CoordinatingNodeClient_2_0, 'registerResponse'
     ) as mocked_method:

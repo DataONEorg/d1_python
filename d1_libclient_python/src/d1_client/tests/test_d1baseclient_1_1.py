@@ -46,12 +46,15 @@ import shared_settings
 
 
 # noinspection PyUnresolvedReferences
-class TestDataONEBaseClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestDataONEBaseClient(
+  d1_common.testcasewithurlcompare.TestCaseWithURLCompare
+):
   def setUp(self):
-    self.client = d1_client.d1baseclient.DataONEBaseClient("http://bogus.target/mn")
+    self.client = d1_client.d1baseclient.DataONEBaseClient(
+      "http://bogus.target/mn"
+    )
 
   def tearDown(self):
     pass
 
   # TODO: Implement or move tests for 1_1 here.
-  

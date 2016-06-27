@@ -43,8 +43,8 @@ import d1_common.xmlrunner
 # App.
 sys.path.append('..')
 # import d1_client.d1client
-# import testing_utilities
-# import testing_context
+# import shared_utilities
+# import shared_context
 
 MEMBER_NODES = {
   'dryad': 'http://dev-dryad-mn.dataone.org/mn',
@@ -52,11 +52,13 @@ MEMBER_NODES = {
   'metacat': 'http://knb-mn.ecoinformatics.org/knb/d1',
 }
 
-COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn', }
+COORDINATING_NODES = {'cn-dev': 'http://cn-dev.dataone.org/cn',}
 
 #=========================================================================
 
 
-class TestDataONEClient(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
+class TestDataONEClient(
+  d1_common.testcasewithurlcompare.TestCaseWithURLCompare
+):
   def setUp(self):
     self.target = MEMBER_NODES['dryad']

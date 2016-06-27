@@ -40,7 +40,7 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 # App.
 sys.path.append('..')
 from d1_client import solr_client
-import settings
+import shared_settings
 
 
 class TestSolrClient(TestCaseWithURLCompare):
@@ -64,34 +64,48 @@ class TestSolrClient(TestCaseWithURLCompare):
     # Working in browser, now.
     # https://cn-dev-unm-1.test.dataone.org/cn/v1/query/solr/?q=*:*
 
-    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(
+      host=shared_settings.CN_HOST,
+      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+    )
     q = '*:*'
     fq = None
     fields = 'abstract,author,date'
     pagesize = 5
     rows = solr_client.SOLRSearchResponseIterator(
-      client, q, fq=fq, fields=fields, pagesize=pagesize
+      client, q, fq=fq, fields=fields,
+      pagesize=pagesize
     )
     self._assert_at_least_one_row_populated(rows)
 
   def test_110(self):
     '''SOLRArrayResponseIterator()'''
-    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(
+      host=shared_settings.CN_HOST,
+      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+    )
     q = '*:*'
     fq = None
     fields = 'lat,lng'
     pagesize = 5
-    rows = solr_client.SOLRArrayResponseIterator(client, q, fq=fq, pagesize=pagesize)
+    rows = solr_client.SOLRArrayResponseIterator(
+      client, q, fq=fq, pagesize=pagesize
+    )
     self._assert_at_least_one_row_populated(rows)
 
   def test_200(self):
     '''SOLRValuesResponseIterator()'''
-    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(
+      host=shared_settings.CN_HOST,
+      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+    )
     q = '*:*'
     fq = None
     field = 'size'
     pagesize = 5
-    rows = solr_client.SOLRValuesResponseIterator(client, field, q, fq, pagesize=pagesize)
+    rows = solr_client.SOLRValuesResponseIterator(
+      client, field, q, fq, pagesize=pagesize
+    )
     self._assert_at_least_one_row_populated(rows)
 
   # Disabled because listFields is based on the Solr Luke handler, which we
@@ -99,9 +113,14 @@ class TestSolrClient(TestCaseWithURLCompare):
   # get the list of fields.
   def _test_300(self):
     '''listFields()'''
-    client = solr_client.SolrConnection(host=settings.CN_HOST, solrBase=settings.SOLR_QUERY_ENDPOINT)
+    client = solr_client.SolrConnection(
+      host=shared_settings.CN_HOST,
+      solrBase=shared_settings.SOLR_QUERY_ENDPOINT
+    )
     flds = client.getFields()
     print "%d fields indexed\n" % len(flds['fields'].keys())
     for name in flds['fields'].keys():
       fld = flds['fields'][name]
-      print "%s (%s) %d / %d" % (name, fld['type'], fld['distinct'], fld['docs'])
+      print "%s (%s) %d / %d" % (
+        name, fld['type'], fld['distinct'], fld['docs']
+      )

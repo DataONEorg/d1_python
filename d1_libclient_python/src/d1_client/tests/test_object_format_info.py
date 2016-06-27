@@ -41,8 +41,8 @@ from d1_common.testcasewithurlcompare import TestCaseWithURLCompare
 # App.
 sys.path.append('..')
 import d1_client.object_format_info
-import testing_utilities
-import testing_context
+import shared_utilities
+import shared_context
 
 # Typical mapping (format id, mimetype, extension):
 
@@ -68,16 +68,22 @@ class TestObjectFormatInfo(TestCaseWithURLCompare):
 
   def test_200(self):
     '''content_type_from_format_id()'''
-    self.assertEqual(self.i.content_type_from_format_id('netCDF-3'), 'application/netcdf')
+    self.assertEqual(
+      self.i.content_type_from_format_id('netCDF-3'), 'application/netcdf'
+    )
 
   def test_300(self):
     '''filename_extension_from_format_id()'''
-    self.assertEqual(self.i.filename_extension_from_format_id('netCDF-3'), '.nc')
+    self.assertEqual(
+      self.i.filename_extension_from_format_id('netCDF-3'), '.nc'
+    )
 
   def test_400(self):
     '''read_csv_file()'''
     self.i.read_csv_file()
-    self.assertEqual(self.i.filename_extension_from_format_id('netCDF-3'), '.nc')
+    self.assertEqual(
+      self.i.filename_extension_from_format_id('netCDF-3'), '.nc'
+    )
 
   def test_500(self):
     '''read_csv_file(new_csv)'''

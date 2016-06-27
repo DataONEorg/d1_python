@@ -71,9 +71,12 @@ class TestObjectListIterator(unittest.TestCase):
     self.assertIsNone(olist._fromDate)
     self.assertEqual(olist._client.return_value, 'mock_mn')
 
+  @unittest.skip("TODO:")
   @patch.object(d1_client.objectlistiterator.ObjectListIterator, '_loadMore')
   def DO_NOT_test_next(self, mock_load):
-    with patch.object(d1_client.objectlistiterator, 'ObjectListIterator') as mock_info:
+    with patch.object(
+      d1_client.objectlistiterator, 'ObjectListIterator'
+    ) as mock_info:
       mock_info.return_value = _object_list()
       next_obj = self.ol.next()
 
@@ -104,7 +107,7 @@ class TestObjectListIterator(unittest.TestCase):
   #         counter = 0
   #         for o in ol:
   #             counter += 1
-  #             self.assertTrue(isinstance(o, dataoneTypes.ObjectInfo))
+  #             self.assertIsInstance(o, dataoneTypes.ObjectInfo)
   #             self.assertTrue(
   #                 isinstance(
   #                     o.identifier.value(),
