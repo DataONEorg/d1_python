@@ -29,13 +29,13 @@
 # Stdlib.
 import random
 
-# D1.
-import d1_x509v3_certificate_extractor
-
-
-def get_x509_subject(cert_path):
-  cert_pem = open(cert_path).read()
-  return d1_x509v3_certificate_extractor.so.extract(cert_pem)[0]
+# # D1.
+# import d1_x509v3_certificate_extractor
+#
+#
+# def get_x509_subject(cert_path):
+#   cert_pem = open(cert_path).read()
+#   return d1_x509v3_certificate_extractor.so.extract(cert_pem)[0]
 
 
 def get_total_number_of_objects(client):
