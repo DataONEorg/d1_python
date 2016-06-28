@@ -84,19 +84,17 @@ class RESTClient(object):
     <?xml-stylesheet type="text/xsl" href="/cn/xslt/dataone.types.v2.xsl"?>
     <d1:objectList xmlns:d1="http://ns.dataone.org/service/types/v1" 
       count="0" start="0" total="1011042"/>
-      
   """
-
   def __init__(self,
                host=None,
                scheme="https",
-               port=443,
-               timeout=d1_common.const.RESPONSE_TIMEOUT,
+               port=None,
+               timeout=d1_common.const.RESPONSE_TIMEOUT, # TODO: Ignored now. How are timeouts managed?
                n_tries=DEFAULT_NUMBER_OF_TRIES,
                defaultHeaders=None,
                cert_path=None,
                key_path=None,
-               strict=True,
+               strict=None, # TODO: Ignored now. Keep for backwards compatibility?
                use_cache=True,
                user_agent=d1_common.const.USER_AGENT):
     """Initialize the RESTClient
@@ -130,25 +128,43 @@ class RESTClient(object):
         This is strongly recommended.
     """
     self.logger = logging.getLogger(__file__)
-    self._host = host
-    self._port = port
-    if self._host is not None:
-      self.logger.warn("Use of 'host' parameter is deprecated.")
-    self._scheme = scheme
+
+    if host is not None:
+      #self.logger.warn("Use of 'host' parameter is deprecated.")
+      pass
+    else:
+      if scheme is None:
+        error_str = "'scheme' must be provided when 'host' is used"
+        self.logger.error(error_str)
+        raise Exception(error_str) # TODO: Convert to D1 exception
+
+      scheme = scheme.lower()
+
+      if scheme not in ('http', 'https'):
+        error_str = "'scheme' must be 'http' or 'https'"
+        self.logger.error(error_str)
+        raise Exception(error_str) # TODO: Convert to D1 exception
+
+    if port is None and scheme is not None:
+      port = 443 if scheme == 'https' else 80
+
     if defaultHeaders is None:
-      defaultHeaders = {
-        u'User-Agent': user_agent,
-      }
-    self.defaultHeaders = defaultHeaders
-    #TODO: Add default keep-alive parameters for headers
-    #TODO: Add default cache-control parameters for headers
-    self.cert_path = cert_path
-    self.key_path  = key_path
+      defaultHeaders = {}
+
+    defaultHeaders.setdefault(u'User-Agent', user_agent)
+
+    self._host = host
+    self._scheme = scheme
+    self._port = port
+    self._defaultHeaders = defaultHeaders
+    # TODO: Add default keep-alive parameters for headers
+    # TODO: Add default cache-control parameters for headers
+    self._cert_path = cert_path
+    self._key_path = key_path
     self._use_cache = use_cache
-    self.connection = None
-    self.connection = self._connect(n_tries=n_tries)
     self._n_tries = n_tries
 
+    self._connection = self._connect(n_tries=n_tries)
 
   def GET(self, url, query=None, headers=None, n_tries=None, dump_path=None):
     """Perform an HTTP request and return the response. 
@@ -340,68 +356,70 @@ class RESTClient(object):
     url = self._prepare_url(url)
     if n_tries is not None:
       if n_tries != self._n_tries:
-        self.connection = self._connect(n_tries=n_tries)
+        self._connection = self._connect(n_tries=n_tries)
     headers = self._merge_default_headers(headers)
     cert = None
-    if self.cert_path is not None:
-      if self.key_path is not None:
-        cert = (self.cert_path, self.key_path)
+    if self._cert_path is not None:
+      if self._key_path is not None:
+        cert = (self._cert_path, self._key_path)
       else:
-        cert = self.cert_path
+        cert = self._cert_path
 
     # In DataONE, all POST data is sent by mime-multipart encoding. Merge the 
     # fields and files to a form expected by the requests library.
-    _files = []
+    file_list = []
     if not files is None:
       for f in files:
         # This is a requests expected structure of:
         # ( (param_name, (file_name, file or body, [optional mime type])) )
         if len(f) == 2 and not isinstance(f[1], basestring):
-          _files.append(f)
+          file_list.append(f)
         else:
           # Old style RESTClient expects a structure of:
           # ( (param_name, file_name, file or body) )
-          _files.append( (f[0],(f[1], f[2])) )
-    #Append anything from fields:
+          file_list.append((f[0], (f[1], f[2])))
+    # Append anything from fields:
     if not fields is None:
       # Is it a dictionary structure?
       if isinstance(fields, dict):
-        for k,v in fields.items():
-          _files.append( (k, (k, v)) )
+        for k, v in fields.items():
+          file_list.append((k, (k, v)))
       else:
         # or maybe a list of tuples?
         for f in fields:
-          _files.append(f)
-    if len(_files) < 1:
-      _files = None
+          file_list.append(f)
+    if len(file_list) < 1:
+      file_list = None
 
-    response = self.connection.request( method, 
-                                        url, 
-                                        params=query,
-                                        headers=headers,
-                                        cert=cert,
-                                        files=_files,
-                                        stream=True,
-                                        allow_redirects=False )
+    response = self._connection.request(
+      method,
+      url,
+      params=query,
+      headers=headers,
+      cert=cert,
+      files=file_list,
+      stream=True,
+      allow_redirects=False
+    )
     if dump_path is not None:
       if _HAS_DUMP_CAPABILITY:
         with open(dump_path, 'wb') as rdump:
-          rdump.write( requests_toolbelt.utils.dump.dump_all(response) )
+          rdump.write(requests_toolbelt.utils.dump.dump_all(response))
       else:
-        self.logger.error("Request / response dump requests but requests_toolbelt not installed!")
+        self.logger.error(
+          "Request / response dump requests but requests_toolbelt not installed!"
+        )
     response.read = types.MethodType(responseRead, response)
     response.__fp = 0
     response.status = response.status_code
     return response
 
-
   def _merge_default_headers(self, headers=None):
     if headers is None:
       headers = {}
-    if self.defaultHeaders is not None:
-      headers.update(self.defaultHeaders)
+    if self._defaultHeaders is not None:
+      headers.update(self._defaultHeaders)
     return headers
-
 
   def _get_curl_request(self, method, url, query=None, headers=None):
     """Get request as cURL command line for debugging.
