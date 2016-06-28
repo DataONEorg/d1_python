@@ -76,12 +76,12 @@ class TestX509v3Generator(unittest.TestCase):
   def test_020(self):
     '''Verify that new certificate contains expected information'''
     try:
-      import d1_x509v3_certificate_extractor
+      import d1_certificate.certificate_extractor
     except ImportError:
       return
     cert = open(cert_out_path, 'rb').read()
     subject_info_correct = open(subject_info_path, 'rb').read()
-    subject_extracted, subject_info_extracted = d1_x509v3_certificate_extractor.extract(
+    subject_extracted, subject_info_extracted = d1_certificate.certificate_extractor.extract(
       cert
     )
     self.assertEqual(subject_extracted, 'DC=com,DC=test,C=US,O=testdomain,CN=Test Name')

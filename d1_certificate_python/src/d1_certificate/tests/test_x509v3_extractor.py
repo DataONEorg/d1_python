@@ -37,7 +37,7 @@ import sys
 import unittest
 
 # D1.
-import d1_x509v3_certificate_extractor
+import d1_certificate.certificate_extractor
 import d1_common.types.generated.dataoneTypes as dataoneTypes
 
 DATAONE_CERT_PEM = '''-----BEGIN RSA PRIVATE KEY-----
@@ -94,7 +94,7 @@ g8ifuwPjG3VHMqXVJY/R89D37w7PzLyMSKKKIQ==
 class TestX509v3Extractor(unittest.TestCase):
   def test_010(self):
     '''Test Session object extraction from PEM formatted X.509 v3 certificate'''
-    subject, subject_info = d1_x509v3_certificate_extractor.extract(DATAONE_CERT_PEM)
+    subject, subject_info = d1_certificate.certificate_extractor.extract(DATAONE_CERT_PEM)
     self.assertEqual(subject, 'DC=org,DC=dataone,C=US,O=DataONE,OU=CN,CN=test')
     self.assertEqual(subject_info, '')
 

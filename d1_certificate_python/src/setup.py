@@ -47,18 +47,11 @@ import os
 import re
 import setuptools
 
-try:
-  import pysvn
-except ImportError:
-  has_svn = False
-else:
-  has_svn = True
-
-import d1_certificate_python
+import d1_certificate
 
 # Metadata.
 name = 'dataone.certificate_extensions'
-version = d1_certificate_python.__version__
+version = d1_certificate.__version__
 description = 'Python extensions for generating and extracting PEM formatted X.509 v3 certificates that contain DataONE Session information'
 author = 'DataONE Project'
 author_email = 'developers@dataone.org'
@@ -69,7 +62,7 @@ license = 'Apache License, Version 2.0'
 x509v3_certificate_extractor = setuptools.Extension(
   'd1_x509v3_certificate_extractor',
   sources=[
-    'extensions/d1_x509v3_certificate_extractor.c'
+    'd1_certificate/extensions/d1_x509v3_certificate_extractor.c'
   ],
   libraries=[
     #'ssl',
@@ -79,7 +72,7 @@ x509v3_certificate_extractor = setuptools.Extension(
 x509v3_certificate_generator = setuptools.Extension(
   'd1_x509v3_certificate_generator',
   sources=[
-    'extensions/d1_x509v3_certificate_generator.c'
+    'd1_certificate/extensions/d1_x509v3_certificate_generator.c'
   ],
   libraries=[
     #'ssl'
@@ -89,9 +82,6 @@ x509v3_certificate_generator = setuptools.Extension(
 
 
 def main():
-  if has_svn:
-    create_manifest_in()
-
   setuptools.setup(
     # Metadata
     name=name,
@@ -114,26 +104,6 @@ def main():
       x509v3_certificate_generator,
     ],
   )
-
-
-def create_manifest_in():
-  with open('MANIFEST.in', 'w') as f:
-    for p in get_unversioned_python_modules():
-      f.write(u'exclude {0}\n'.format(p).encode('utf-8'))
-
-
-def get_unversioned_python_modules():
-  paths = []
-  client = pysvn.Client()
-  for s in client.status('.'):
-    if not os.path.isfile(s.path):
-      continue
-    if not os.path.splitext(s.path)[1] == '.py':
-      continue
-    if s.is_versioned:
-      continue
-    paths.append(s.path)
-  return paths
 
 
 if __name__ == '__main__':

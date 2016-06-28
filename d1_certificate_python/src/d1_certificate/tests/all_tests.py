@@ -19,23 +19,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-:mod:`certificate_extractor`
-============================
+Module d1_certificate_python.tests.all_tests
+============================================
 
-:Synopsis: Extract the subject and subject_info from a certificate.
-:Created: 2012-05-01
+:Synopsis: Run all unit tests.
+:Created: 2011-11-10
 :Author: DataONE (Dahl)
 '''
 
-import d1_x509v3_certificate_extractor
+# Stdlib.
+import sys
+import logging
+import os
+import unittest
 
+sys.path.append('..')
 
-def extract_from_file(path):
-  '''Returns the tuple: (subject, subject_info)'''
-  with open(path, 'rb') as f:
-    return extract_from_buffer(f.read())
+# D1.
+from d1_common import xmlrunner, svnrevision
 
+from test_x509v3_extractor import TestX509v3Extractor
+from test_x509v3_generator import TestX509v3Generator
 
-def extract_from_buffer(certificate_buffer):
-  '''Returns the tuple: (subject, subject_info)'''
-  return d1_x509v3_certificate_extractor.extract(certificate_buffer)
+#===============================================================================
+
+if __name__ == "__main__":
+  argv = sys.argv
+  if "--debug" in argv:
+    logging.basicConfig(level=logging.DEBUG)
+    argv.remove("--debug")
+  if "--with-xunit" in argv:
+    argv.remove("--with-xunit")
+    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
+  else:
+    unittest.main(argv=argv)

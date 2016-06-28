@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2011
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,37 +19,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 '''
-Module d1_certificate_python.tests.all_tests
-============================================
+:mod:`certificate_extractor`
+============================
 
-:Synopsis: Run all unit tests.
-:Created: 2011-11-10
+:Synopsis: Extract the subject and subject_info from a certificate.
+:Created: 2012-05-01
 :Author: DataONE (Dahl)
 '''
 
-# Stdlib.
-import sys
-import logging
-import os
-import unittest
+import d1_certificate.extensions.d1_x509v3_certificate_extractor as cert_ext
 
-sys.path.append('..')
 
-# D1.
-from d1_common import xmlrunner, svnrevision
+def extract(certificate_buffer):
+  '''Extract from string.
+  Returns the tuple: (subject, subject_info)
+  '''
+  return  extract_from_buffer(certificate_buffer)
 
-from test_x509v3_extractor import TestX509v3Extractor
-from test_x509v3_generator import TestX509v3Generator
 
-#===============================================================================
+def extract_from_file(path):
+  '''Returns the tuple: (subject, subject_info)'''
+  with open(path, 'rb') as f:
+    return extract_from_buffer(f.read())
 
-if __name__ == "__main__":
-  argv = sys.argv
-  if "--debug" in argv:
-    logging.basicConfig(level=logging.DEBUG)
-    argv.remove("--debug")
-  if "--with-xunit" in argv:
-    argv.remove("--with-xunit")
-    unittest.main(argv=argv, testRunner=xmlrunner.XmlTestRunner(sys.stdout))
-  else:
-    unittest.main(argv=argv)
+
+def extract_from_buffer(certificate_buffer):
+  '''Returns the tuple: (subject, subject_info)'''
+  return cert_ext.extract(certificate_buffer)
