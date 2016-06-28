@@ -66,7 +66,7 @@ DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
 # Default number of replicas
 DEFAULT_NUMBER_OF_REPLICAS = 3
 
-# Mimetypes.
+# MIME types.
 CONTENT_TYPE_XML = 'application/xml'
 CONTENT_TYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
 CONTENT_TYPE_HTML = 'text/html'
@@ -74,6 +74,7 @@ CONTENT_TYPE_XHTML = 'text/html'
 CONTENT_TYPE_TEXT = 'text/plain'
 CONTENT_TYPE_OCTETSTREAM = 'application/octet-stream'
 
+DATAONE_SCHEMA_ATTRIBUTE_BASE = 'http://ns.dataone.org/service/types/'
 DEFAULT_CHARSET = 'utf-8'
 
 # Designate characters which do not have to be percent-encoded in URLs. The
