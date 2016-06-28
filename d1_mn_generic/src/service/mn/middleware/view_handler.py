@@ -49,38 +49,7 @@ class view_handler():
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
 
-    # Decode view parameters. This is the counterpart to the changes made to
-    # request.path_info detailed in request_handler.py.
-    view_args_list = []
-    for arg in view_args:
-      view_args_list.append(d1_common.url.decodeQueryElement(arg))
-    view_args = tuple(view_args_list)
-    for key, arg in view_kwargs:
-      view_kwargs[key] = d1_common.url.decodePathElement(arg)
-
-    # Since copies of the view_args and view_kwargs were modified, the view must
-    # be called directly with the modified arguments. This short circuits
-    # Django's own processing, so the middleware functions must then be called
-    # manually.
-    try:
-      self.process_session(request)
-      response = view_func(request, *view_args, **view_kwargs)
-    except Exception, e:
-      # If the view raised an exception, run it through exception middleware,
-      # and if the exception middleware returns a response, use that. Otherwise,
-      # reraise the exception.
-      for middleware_method in inspect.currentframe().f_back.f_locals['self']\
-          ._exception_middleware:
-        response = middleware_method(request, e)
-        if response:
-          return response
-      raise
-
-    logging.info('Request successfully processed')
-
-    # The request was successfully processed and the response is returned to
-    # the client.
-    return response
+    self.process_session(request)
 
   def process_session(self, request):
     # For simulating an HTTPS connection with client authentication when
