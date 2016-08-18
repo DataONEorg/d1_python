@@ -5,7 +5,7 @@
 #   1. checkout d1_common_python
 #   2. cd d1_common_python/src
 #   3. export D1COMMON_ROOT=$(pwd)
-#   4. bash ${D1COMMON_ROOT}/d1_common/types/scripts/genbind
+#   4. bash ${D1COMMON_ROOT}/d1_common/types/scripts/genbind.sh
 #
 # - DV
 
