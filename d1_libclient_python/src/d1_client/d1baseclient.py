@@ -78,16 +78,16 @@ except ImportError as e:
 
 class DataONEBaseClient(d1_common.restclient.RESTClient):
   '''Implements DataONE client functionality common between Member and
-    Coordinating nodes by extending the RESTClient.
+  Coordinating nodes by extending the RESTClient.
 
-    Wraps REST methods that have the same signatures on Member Nodes and
-    Coordinating Nodes.
+  Wraps REST methods that have the same signatures on Member Nodes and
+  Coordinating Nodes.
 
-    On error response, an attempt to raise a DataONE exception is made.
+  On error response, an attempt to raise a DataONE exception is made.
 
-    Unless otherwise indicated, methods with names that end in "Response" return
-    the HTTPResponse object, otherwise the deserialized object is returned.
-    '''
+  Unless otherwise indicated, methods with names that end in "Response" return
+  the HTTPResponse object, otherwise the deserialized object is returned.
+  '''
 
   def __init__(
     self,
@@ -259,7 +259,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       'include the expected Content-Type\n'
     )
     msg.write('Status code: {0}\n'.format(response.status))
-    msg.write('Content-Type: {0}\n'.format(response.getheader('Content-Type')))
+    msg.write('Content-Type: {0}\n'.format(response.headers['Content-Type']))
     self._raise_service_failure(
       msg.getvalue(), self._read_and_capture(response)
     )
@@ -423,11 +423,10 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     self._error(response)
 
   def _read_header_response(self, response):
-    headers = dict(response.getheaders())
     if self._status_is_200_ok(response):
       self._read_and_capture(response)
-      return headers
-    raise d1_common.types.exceptions.deserialize_from_headers(headers)
+      return response.headers
+    raise d1_common.types.exceptions.deserialize_from_headers(response.headers)
 
   # ----------------------------------------------------------------------------
   # Misc.
