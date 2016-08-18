@@ -218,10 +218,13 @@ class DataONEException(Exception):
     tag:
       line 1
       line 2
+    Msg is truncated to 1024 chars.
     '''
     if msg is None:
       return
     msg = str(msg).strip()
+    if len(msg) > 1024:
+      msg = msg[:1024] + u' ...'
     if msg == '':
       return
     elif msg.count('\n') <= 1:
