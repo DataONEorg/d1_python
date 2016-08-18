@@ -1,0 +1,12 @@
+<v1:objectFormat xmlns:v1="http://ns.dataone.org/service/types/v1">
+  <formatId>string</formatId>
+  <formatName>string</formatName>
+  <formatType>string</formatType>
+  <!--Optional:-->
+  <mediaType name="string">
+    <!--Zero or more repetitions:-->
+    <property name="string">string</property>
+  </mediaType>
+  <!--Optional:-->
+  <extension>string</extension>
+</v1:objectFormat>

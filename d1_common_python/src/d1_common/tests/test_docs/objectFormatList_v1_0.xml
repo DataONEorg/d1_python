@@ -1,0 +1,15 @@
+<v1:objectFormatList count="3" start="3" total="3" xmlns:v1="http://ns.dataone.org/service/types/v1">
+  <!--1 or more repetitions:-->
+  <objectFormat>
+    <formatId>string</formatId>
+    <formatName>string</formatName>
+    <formatType>string</formatType>
+    <!--Optional:-->
+    <mediaType name="string">
+      <!--Zero or more repetitions:-->
+      <property name="string">string</property>
+    </mediaType>
+    <!--Optional:-->
+    <extension>string</extension>
+  </objectFormat>
+</v1:objectFormatList>

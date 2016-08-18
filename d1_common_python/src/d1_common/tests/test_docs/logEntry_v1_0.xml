@@ -1,0 +1,10 @@
+<v1:logEntry xmlns:v1="http://ns.dataone.org/service/types/v1">
+  <entryId>string</entryId>
+  <identifier>string</identifier>
+  <ipAddress>string</ipAddress>
+  <userAgent>string</userAgent>
+  <subject>string</subject>
+  <event>create</event>
+  <dateLogged>2008-09-28T19:49:45</dateLogged>
+  <nodeIdentifier>string</nodeIdentifier>
+</v1:logEntry>

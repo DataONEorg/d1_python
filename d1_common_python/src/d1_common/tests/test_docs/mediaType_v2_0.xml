@@ -1,0 +1,4 @@
+<v2:mediaType name="string" xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <!--Zero or more repetitions:-->
+  <property name="string">string</property>
+</v2:mediaType>

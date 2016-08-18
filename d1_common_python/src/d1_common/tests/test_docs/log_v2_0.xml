@@ -1,0 +1,34 @@
+<v2:log count="3" start="3" total="3" xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <!--Zero or more repetitions:-->
+  <logEntry>
+    <entryId>string_0</entryId>
+    <identifier>string_0</identifier>
+    <ipAddress>string_0</ipAddress>
+    <userAgent>string_0</userAgent>
+    <subject>string_0</subject>
+    <!-- "update" is also valid for v1 -->
+    <event>update</event>
+    <dateLogged>2008-09-28T19:49:45</dateLogged>
+    <nodeIdentifier>string_0</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>string_1</entryId>
+    <identifier>string_1</identifier>
+    <ipAddress>string_1</ipAddress>
+    <userAgent>string_1</userAgent>
+    <subject>string_1</subject>
+    <event>unbound_v2_event_string_1</event>
+    <dateLogged>2008-09-28T19:49:45</dateLogged>
+    <nodeIdentifier>string_1</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>string_2</entryId>
+    <identifier>string_2</identifier>
+    <ipAddress>string_2</ipAddress>
+    <userAgent>string_2</userAgent>
+    <subject>string_2</subject>
+    <event>unbound_v2_event_string_2</event>
+    <dateLogged>2008-09-28T19:49:45</dateLogged>
+    <nodeIdentifier>string_2</nodeIdentifier>
+  </logEntry>
+</v2:log>

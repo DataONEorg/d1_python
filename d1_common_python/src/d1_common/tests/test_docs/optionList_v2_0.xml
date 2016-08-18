@@ -1,0 +1,4 @@
+<v2:optionList key="string" description="string" xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <!--Zero or more repetitions:-->
+  <option>string</option>
+</v2:optionList>
