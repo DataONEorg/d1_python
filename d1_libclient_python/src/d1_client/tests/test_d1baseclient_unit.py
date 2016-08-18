@@ -331,6 +331,7 @@ class TestDataONEBaseClient(
     response = self.client._read_stream_response(200)
     self.assertEqual(200, response)
 
+  @unittest.skip("TODO: Rewrite for Requests header")
   @mock.patch.object(d1baseclient.DataONEBaseClient, '_status_is_200_ok')
   @mock.patch('requests.Response')
   def test_0250(self, mock_getheaders, mock_status):

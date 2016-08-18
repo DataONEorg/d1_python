@@ -37,7 +37,7 @@ import sys
 # D1.
 try:
     import d1_common.const
-    import d1_common.types.dataoneTypes_v2_0 as dataoneTypes
+    # import d1_common.types.dataoneTypes_v1
     import d1_common.util
     import d1_common.date_time
 except ImportError as e:
