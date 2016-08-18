@@ -107,7 +107,9 @@ class TestRESTClient(TestCaseWithURLCompare):
 
   def test_050(self):
     '''HTTP GET against http://some.bogus.address/ raises exception'''
-    client = d1_common.restclient.RESTClient('some.bogus.address', scheme='http')
+    client = d1_common.restclient.RESTClient(
+      'some.bogus.address', scheme='http'
+    )
     self.assertRaises(Exception, client.GET, '/')
 
   def test_100(self):
@@ -115,12 +117,11 @@ class TestRESTClient(TestCaseWithURLCompare):
     query = {'abcd': '1234', 'efgh': '5678'}
     client = d1_common.restclient.RESTClient('httpbin.org', scheme='http')
     response = client.POST('/post', query=query)
-
-    doc = response.read()
-    logging.info("Test 100 document: " + doc)
-    data = json.loads(doc)
-    self.assertTrue(data['args']['abcd'] == '1234')
-    self.assertTrue(data['args']['efgh'] == '5678')
+    body_str = response.read()
+    logging.info("Response body: {}".format(body_str))
+    data = json.loads(body_str)
+    self.assertEqual(data['args']['abcd'], '1234')
+    self.assertEqual(data['args']['efgh'], '5678')
     self.assertEqual(response.status, 200)
 
   def test_101(self):
@@ -129,15 +130,13 @@ class TestRESTClient(TestCaseWithURLCompare):
     fields = [['post_data_1', '1234'], ['post_data_2', '5678']]
     client = d1_common.restclient.RESTClient('httpbin.org', scheme='http')
     response = client.POST('/post', query=query, fields=fields)
-
-    doc = response.read()
-    logging.info("Test 101 document: " + doc)
-    data = json.loads(doc)
-    #Note that in DataONE, everything is sent as file entries in mime mp
-    self.assertTrue(data['files']['post_data_1'] == '1234')
-    self.assertTrue(data['files']['post_data_2'] == '5678')
-    self.assertTrue(data['args']['abcd'] == '1234')
-    self.assertTrue(data['args']['efgh'] == '5678')
+    body_str = response.read()
+    logging.info("Response body: {}".format(body_str))
+    data = json.loads(body_str)
+    self.assertEqual(data['form']['post_data_1'], '1234')
+    self.assertEqual(data['form']['post_data_2'], '5678')
+    self.assertEqual(data['args']['abcd'], '1234')
+    self.assertEqual(data['args']['efgh'], '5678')
     self.assertEqual(response.status, 200)
 
   def test_102(self):
@@ -148,23 +147,20 @@ class TestRESTClient(TestCaseWithURLCompare):
     files = [
       [
         'metadata', [
-          'sysmeta.xml', StringIO.StringIO(
-            test_file_data
-          ), 'text/xml'
+          'sysmeta.xml', StringIO.StringIO(test_file_data), 'text/xml'
         ]
       ],
     ]
     client = d1_common.restclient.RESTClient('httpbin.org', scheme='http')
     response = client.POST('/post', query=query, fields=fields, files=files)
-
-    doc = response.read()
-    logging.info("Test 102 document: " + doc)
-    data = json.loads(doc)
-    self.assertTrue(data['files']['post_data_1'] == '1234')
-    self.assertTrue(data['files']['post_data_2'] == '5678')
-    self.assertTrue(data['args']['abcd'] == '1234')
-    self.assertTrue(data['args']['efgh'] == '5678')
-    self.assertTrue(data['files']['metadata'] == test_file_data)
+    body_str = response.read()
+    logging.info("Response body: {}".format(body_str))
+    data = json.loads(body_str)
+    self.assertEqual(data['form']['post_data_1'], '1234')
+    self.assertEqual(data['form']['post_data_2'], '5678')
+    self.assertEqual(data['args']['abcd'], '1234')
+    self.assertEqual(data['args']['efgh'], '5678')
+    self.assertEqual(data['files']['metadata'], test_file_data)
     self.assertEqual(response.status, 200)
 
   def test_110(self):
@@ -172,22 +168,23 @@ class TestRESTClient(TestCaseWithURLCompare):
     headers = {'abcd': '1234', 'efgh': '5678'}
     client = d1_common.restclient.RESTClient('httpbin.org', scheme='https')
     response = client.POST('/post', headers=headers)
-    doc = response.read()
-    data = json.loads(doc)
-    logging.info("Test 110 document: " + doc)
-    # Note that headers get capitalized on the way out
-    self.assertTrue(data['headers']['Abcd'] == '1234')
-    self.assertTrue(data['headers']['Efgh'] == '5678')
+    body_str = response.read()
+    logging.info("Response body: {}".format(body_str))
+    data = json.loads(body_str)
+    self.assertEqual(data['headers']['Abcd'], '1234')
+    self.assertEqual(data['headers']['Efgh'], '5678')
     self.assertEqual(response.status, 200)
 
   def test_200(self):
     '''cURL command line retains query parameters and headers'''
     query = {'abcd': '1234', 'efgh': '5678'}
     headers = {'ijkl': '9876', 'mnop': '5432'}
-    client = d1_common.restclient.RESTClient('dev-testing.dataone.org', scheme='http')
+    client = d1_common.restclient.RESTClient(
+      'dev-testing.dataone.org', scheme='http'
+    )
     curl = client._get_curl_request(
-      'GET', 'url_selector/a/b', query=query,
-      headers=headers
+      'GET', 'url_selector/a/b',
+      query=query, headers=headers
     )
     self.assertEqual(
       curl, 'curl -X GET -H "ijkl: 9876" -H "mnop: 5432" '
