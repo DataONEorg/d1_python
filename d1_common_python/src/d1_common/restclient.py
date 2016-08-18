@@ -390,6 +390,12 @@ class RESTClient(object):
           file_list.append(f)
     if len(file_list) < 1:
       file_list = None
+    # Encode any datetime query parameters to ISO8601.
+    if query is not None:
+      if isinstance(query, dict):
+        for k, v in query.items():
+          if isinstance(v, datetime.datetime):
+            query[k] = v.isoformat()
 
     response = self._connection.request(
       method,
