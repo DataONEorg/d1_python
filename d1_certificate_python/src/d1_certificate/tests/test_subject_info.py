@@ -42,7 +42,7 @@ try:
   sys.path.append('../d1_certificate_python/')
   import subject_info
 except ImportError as e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   raise
 
 #===============================================================================
