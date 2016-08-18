@@ -29,12 +29,16 @@ Refactored: 2016-04-04 by Vieglais
 
 # Stdlib.
 from __future__ import absolute_import
+import datetime
 import logging
 import types
 import requests #pip install requests, or apt-get install python-requests
 import cachecontrol #pip install cachecontrol
+
+# D1
 import d1_common.const
 import d1_common.url
+import d1_common.date_time
 
 try:
   import requests_toolbelt.utils.dump
@@ -365,10 +369,35 @@ class RESTClient(object):
       else:
         cert = self._cert_path
 
-    # In DataONE, all POST data is sent by mime-multipart encoding. Merge the 
-    # fields and files to a form expected by the requests library.
-    file_list = []
+    # # In DataONE, all POST data is sent by mime-multipart encoding. Merge the
+    # # fields and files to a form expected by the requests library.
+    # file_list = []
+    # if not files is None:
+    #   for f in files:
+    #     # This is a requests expected structure of:
+    #     # ( (param_name, (file_name, file or body, [optional mime type])) )
+    #     if len(f) == 2 and not isinstance(f[1], basestring):
+    #       file_list.append(f)
+    #     else:
+    #       # Old style RESTClient expects a structure of:
+    #       # ( (param_name, file_name, file or body) )
+    #       file_list.append((f[0], (f[1], f[2])))
+    # # Append anything from fields:
+    # if not fields is None:
+    #   # Is it a dictionary structure?
+    #   if isinstance(fields, dict):
+    #     for k, v in fields.items():
+    #       file_list.append((k, (k, v)))
+    #   else:
+    #     # or maybe a list of tuples?
+    #     for f in fields:
+    #       file_list.append(f)
+    # if len(file_list) < 1:
+    #   file_list = None
+
+    file_list = None
     if not files is None:
+      file_list = []
       for f in files:
         # This is a requests expected structure of:
         # ( (param_name, (file_name, file or body, [optional mime type])) )
@@ -378,18 +407,17 @@ class RESTClient(object):
           # Old style RESTClient expects a structure of:
           # ( (param_name, file_name, file or body) )
           file_list.append((f[0], (f[1], f[2])))
-    # Append anything from fields:
+
+    field_list = None
     if not fields is None:
-      # Is it a dictionary structure?
+      field_list = []
       if isinstance(fields, dict):
         for k, v in fields.items():
-          file_list.append((k, (k, v)))
+          field_list.append((k, (k, v)))
       else:
-        # or maybe a list of tuples?
         for f in fields:
-          file_list.append(f)
-    if len(file_list) < 1:
-      file_list = None
+          field_list.append(f)
+
     # Encode any datetime query parameters to ISO8601.
     if query is not None:
       if isinstance(query, dict):
@@ -404,6 +432,7 @@ class RESTClient(object):
       headers=headers,
       cert=cert,
       files=file_list,
+      data=field_list,
       stream=True,
       allow_redirects=False
     )
