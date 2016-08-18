@@ -77,7 +77,7 @@ VALID_ERROR_DOC_NOTFOUND_3 = """<?xml version="1.0"?>
 #  '3f56de593b6ffc536253b799b429453e3673fc19'
 #)
 
-# Missing detailCode and string is stored directly in traceInformation.
+# Missing detailCode.
 INVALID_ERROR_DOC = (
   """<?xml version="1.0" encoding="UTF-8"?>
   <d1:error xmlns:d1="http://ns.dataone.org/service/types/exceptions"
