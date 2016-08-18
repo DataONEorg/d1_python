@@ -278,14 +278,23 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     trace.write('Deserialize exception:\n{0}\n'.format(deserialize_exception))
     self._raise_service_failure(msg.getvalue(), trace.getvalue())
 
+  # def _assert_correct_dataone_type(self, pyxb_obj, d1_type_name):
+  #   expected_type_str = '{{{}}}{}'.format(
+  #     self._get_expected_schema_type_attribute(), d1_type_name
+  #   )
+  #   received_type_str = str(pyxb_obj._ExpandedName)
+  #   if received_type_str != expected_type_str:
+  #     self._raise_service_failure_incorrect_dataone_type(
+  #       expected_type_str, received_type_str
+  #     )
+
+  # TODO: Find out which namespace to expect for a given type.
+  # For now, we ignore namespace when checking for correct type.
   def _assert_correct_dataone_type(self, pyxb_obj, d1_type_name):
-    expected_type_str = '{{{}}}{}'.format(
-      self._get_expected_schema_type_attribute(), d1_type_name
-    )
-    received_type_str = str(pyxb_obj._ExpandedName)
-    if received_type_str != expected_type_str:
+    s = str(pyxb_obj._ExpandedName).split('}')[-1]
+    if s != d1_type_name:
       self._raise_service_failure_incorrect_dataone_type(
-        expected_type_str, received_type_str
+        d1_type_name, s
       )
 
   def _raise_service_failure_incorrect_dataone_type(
