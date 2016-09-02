@@ -41,7 +41,7 @@ NAMESPACES = {u'cito': u'http://purl.org/spar/cito/',
               u'foaf': u'http://xmlns.com/foaf/0.1/',
               }
 
-# RDFLib wrpapers around the namespaces. Others are defined by RDFLib
+# RDFLib wrappers around the namespaces. Others are defined by RDFLib
 DCTERMS = rdflib.Namespace( NAMESPACES[u'dcterms'] )
 CITO = rdflib.Namespace( NAMESPACES[u'cito'] )
 ORE = rdflib.Namespace( NAMESPACES[u'ore'] )
@@ -103,7 +103,6 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     self.add( (ag, RDF.type, ORE.Aggregation) )
     self.add( (ORE.Aggregation, RDFS.isDefinedBy, ORE.term('')) )
     self.add( (ORE.Aggregation, RDFS.label, rdflib.term.Literal(u'Aggregation')) )
-    
     self._ore_initialized = True
     
   
@@ -124,7 +123,7 @@ class ResourceMap(rdflib.ConjunctiveGraph):
     opid = rdflib.term.Literal(pid)
     res = [o for o in self.subjects( predicate=DCTERMS.identifier,
                                       object=opid) ]
-    logging.debug(res)
+    self._L.debug(res)
     return res[0]
     
 
