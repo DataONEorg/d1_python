@@ -150,7 +150,7 @@ Given the rdf-xml OAI-ORE document from above saved as "test.xml", parse and dum
 C. Create an ORE programmatically in Python
 -------------------------------------------
 
-..code:: python
+.. code:: python
 
   import d1_pyore
 
