@@ -1,7 +1,7 @@
 Create and Consume OAI-ORE Documents
 ====================================
 
-d1_pyore is a DataONE python library for working with `OAI-ORE`_ documents which 
+d1_pyore is a DataONE python library for working with OAI-ORE_ documents which 
 are used by DataONE Member Nodes to describe data packages.
 
 Two commandline scripts ``ore2txt`` and ``pids2ore`` are included to produce a
@@ -12,7 +12,7 @@ Dependencies
 ------------
 
   * rdflib_ >= 4.0
-  * `rdflib-jsonld`_
+  * rdflib-jsonld_
   * requests_
 
 
