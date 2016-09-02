@@ -16,9 +16,9 @@ Dependencies
   * requests_
 
 
-.. OAI-ORE: https://www.openarchives.org/ore/
-.. rdflib: https://github.com/RDFLib/rdflib
-.. rdflib-jsonld: https://github.com/RDFLib/rdflib-jsonld
-.. requests: http://docs.python-requests.org/en/master/
+.. _OAI-ORE: https://www.openarchives.org/ore/
+.. _rdflib: https://github.com/RDFLib/rdflib
+.. _rdflib-jsonld: https://github.com/RDFLib/rdflib-jsonld
+.. _requests: http://docs.python-requests.org/en/master/
 
 
