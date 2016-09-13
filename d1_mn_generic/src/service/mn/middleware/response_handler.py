@@ -141,3 +141,55 @@ class response_handler():
 
   def latest_date(self, query, field):
     return query.aggregate(Max(field))
+  def _assert_correct_return_type(self, request, response):
+    # Pass through: Django HTML Exception page
+    if response['content-type'] == 'text/html':
+      return
+    # Pass through: Streaming HTTP responses
+    if response.streaming:
+      return
+    # Pass through: Anything from the diagnostics API
+    if mn.views.view_util.is_diag_api(request):
+      return
+    # Pass through boolean responses
+    api_verb_str = request.path_info.split('/')[2]
+    if api_verb_str in (
+      'dirtySystemMetadata',
+      'error',
+      'isAuthorized',
+      'meta',
+      'ping',
+      'replicate',
+    ):
+      return
+    if request.method == 'HEAD' and api_verb_str == 'object':
+      return
+    # Anything else has to be a valid XML doc
+    assert response['content-type'] == d1_common.const.CONTENT_TYPE_XML, \
+      u'Invalid content type. content-type="{}"'.format(response['content-type'])
+    assert d1_common.type_conversions.str_is_well_formed(response.content), \
+      u'Not well formed XML. content="{}"'.format(response.content)
+    # The XML doc can be a D1 error or a D1 type corresponding to the API
+
+    if d1_common.type_conversions.str_is_error(response.content):
+      return
+
+    # # v1 only types
+    # if d1_common.type_conversions.str_is_identifier(response.content):
+    #   return
+    # if d1_common.type_conversions.str_is_objectList(response.content):
+    #   return
+
+    return_type_version_match_bool = True
+    if mn.views.view_util.is_v1_api(request) \
+        and not d1_common.type_conversions.str_is_v1(response.content):
+      return_type_version_match_bool = False
+
+    # v2 returns a mix of v1 and v2
+    # if mn.views.view_util.is_v2_api(request) \
+    #     and not d1_common.type_conversions.str_is_v2(response.content):
+    #   return_type_version_match_bool = False
+
+    assert return_type_version_match_bool, \
+      u'Return type version does not correspond to request version. ' \
+      u'content="{}"'.format(response.content)
