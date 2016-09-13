@@ -19,22 +19,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "2.0.dev8"
-
-# __all__ = [
-#   'cnclient',
-#   'cnclient_1_1',
-#   'd1baseclient',
-#   'd1baseclient_1_1',
-#   'd1baseclient_2_0',
-#   'd1client',
-#   'data_package',
-#   'logrecorditerator',
-#   'mnclient',
-#   'mnclient_1_1',
-#   'object_format_info',
-#   'objectlistiterator',
-#   'solr_client',
-#   'svnrevision',
-#   'systemmetadata',
-# ]
+__version__ = "2.0.0"
