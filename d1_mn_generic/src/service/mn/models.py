@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`models`
 =============
 
 :Synopsis: Database models.
 :Author: DataONE (Dahl)
-'''
+"""
 from django.db import models
 
 # D1
@@ -35,32 +35,30 @@ import d1_common.types.exceptions
 
 class IdNamespace(models.Model):
   sid_or_pid = models.CharField(max_length=800, unique=True)
+
 # ------------------------------------------------------------------------------
 # Registered MN objects.
 # ------------------------------------------------------------------------------
-
 
 class ScienceObjectChecksumAlgorithm(models.Model):
   checksum_algorithm = models.CharField(max_length=32, unique=True)
 
 
-# Format = The format of the object.
 class ScienceObjectFormat(models.Model):
   format_id = models.CharField(max_length=128, unique=True)
 
 
 class ScienceObject(models.Model):
-  url = models.CharField(max_length=1024, unique=True)
-  format = models.ForeignKey(ScienceObjectFormat, db_index=True)
+  # System Metadata fields
   pid = models.ForeignKey(IdNamespace, models.CASCADE)
+  serial_version = models.PositiveIntegerField()
+  format = models.ForeignKey(ScienceObjectFormat, models.CASCADE)
   checksum = models.CharField(max_length=128, db_index=True)
-  checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm, db_index=True)
+  checksum_algorithm = models.ForeignKey(
+    ScienceObjectChecksumAlgorithm, models.CASCADE
+  )
   mtime = models.DateTimeField(db_index=True)
   size = models.BigIntegerField(db_index=True)
-  replica = models.BooleanField(db_index=True)
-  system_metadata_refreshed = models.DateTimeField(null=True)
-  serial_version = models.PositiveIntegerField()
-  archived = models.BooleanField()
   obsoletes = models.ForeignKey(
     'self', models.CASCADE, null=True,
     related_name='science_object_obsoletes'
@@ -69,31 +67,20 @@ class ScienceObject(models.Model):
     'self', models.CASCADE, null=True,
     related_name='science_object_obsoleted_by'
   )
+  is_archived = models.BooleanField(db_index=True)
+  # Internal fields
+  url = models.CharField(max_length=1024, unique=True)
+  is_replica = models.BooleanField(db_index=True)
 
-  def set_format(self, format_id):
-    self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
+  # def set_format(self, format_id):
+  #   self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
+  #
+  # def set_checksum_algorithm(self, checksum_algorithm_string):
+  #   self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
+  #     checksum_algorithm=str(checksum_algorithm_string)
+  #   )[0]
 
-  def set_checksum_algorithm(self, checksum_algorithm_string):
-    self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
-      checksum_algorithm=str(checksum_algorithm_string)
-    )[0]
 
-#  def save_unique(self):
-#    '''If attempting to save an object that has the same pid and/or url as an
-#    old object, we delete the old object before saving the new.
-#    TODO: This makes debugging easier but will need change when semantics of
-#    update and delete are finalized.
-#    '''
-#    try:
-#      me = ScienceObject.objects.filter(Q(pid=self.pid) | Q(url=self.url))[0]
-#    except IndexError:
-#      self.save()
-#    else:
-#      logging.warning('Overwriting object with duplicate PID or URL:')
-#      logging.warning('URL: {0}'.format(self.url))
-#      logging.warning('PID: {0}'.format(self.pid))
-#      me.delete()
-#      self.save()
 class SeriesIdToScienceObject(models.Model):
   object = models.ForeignKey(ScienceObject, models.CASCADE)
   sid = models.ForeignKey(IdNamespace, models.CASCADE)
@@ -134,17 +121,22 @@ class EventLogMemberNode(models.Model):
 
 
 class EventLog(models.Model):
-  event = models.ForeignKey(EventLogEvent, db_index=True)
-  ip_address = models.ForeignKey(EventLogIPAddress, db_index=True)
-  user_agent = models.ForeignKey(EventLogUserAgent, db_index=True)
-  subject = models.ForeignKey(EventLogSubject, db_index=True)
   object = models.ForeignKey(ScienceObject, models.CASCADE)
+  event = models.ForeignKey(EventLogEvent, models.CASCADE)
+  ip_address = models.ForeignKey(EventLogIPAddress, models.CASCADE)
+  user_agent = models.ForeignKey(EventLogUserAgent, models.CASCADE)
+  subject = models.ForeignKey(EventLogSubject, models.CASCADE)
   date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
 
   def set_event(self, event_string):
+    # In v2.0, events are no longer restricted to this set. However, GMN still
+    # only records these types of events, so we'll leave it in while that
+    # remains the case.
     if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
       raise d1_common.types.exceptions.ServiceFailure(
-        0, 'Attempted to create invalid type of event: {0}'.format(event_string)
+        0,
+        u'Attempted to create invalid type of event. event="{}"'
+          .format(event_string)
       )
     self.event = EventLogEvent.objects.get_or_create(event=event_string)[0]
 
@@ -175,9 +167,9 @@ class ReplicationQueueSourceNode(models.Model):
 
 
 class ReplicationQueue(models.Model):
-  status = models.ForeignKey(ReplicationQueueStatus)
-  pid = models.CharField(max_length=800)
-  source_node = models.ForeignKey(ReplicationQueueSourceNode)
+  pid = models.ForeignKey(IdNamespace, models.CASCADE)
+  status = models.ForeignKey(ReplicationQueueStatus, models.CASCADE)
+  source_node = models.ForeignKey(ReplicationQueueSourceNode, models.CASCADE)
   timestamp = models.DateTimeField(auto_now=True)
 
   def set_status(self, status_string):
@@ -207,7 +199,7 @@ class SystemMetadataRefreshQueue(models.Model):
   timestamp = models.DateTimeField(auto_now=True)
   serial_version = models.PositiveIntegerField()
   last_modified = models.DateTimeField()
-  status = models.ForeignKey(SystemMetadataRefreshQueueStatus)
+  status = models.ForeignKey(SystemMetadataRefreshQueueStatus, models.CASCADE)
 
   def set_status(self, status):
     self.status = SystemMetadataRefreshQueueStatus.objects.\
@@ -232,13 +224,13 @@ class PermissionSubject(models.Model):
 
 
 class Permission(models.Model):
-  subject = models.ForeignKey(PermissionSubject, db_index=True)
   object = models.ForeignKey(ScienceObject, models.CASCADE)
+  subject = models.ForeignKey(PermissionSubject, models.CASCADE)
   level = models.PositiveSmallIntegerField()
 
 
 class WhitelistForCreateUpdateDelete(models.Model):
-  subject = models.ForeignKey(PermissionSubject, db_index=True)
+  subject = models.ForeignKey(PermissionSubject, models.CASCADE)
 
   def set(self, subject):
     self.subject = PermissionSubject.objects.get_or_create(subject=subject)[0]
