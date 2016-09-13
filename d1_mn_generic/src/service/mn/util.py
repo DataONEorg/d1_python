@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`util`
 ===========
 
 :Synopsis: General utilities.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import base64
@@ -57,8 +57,8 @@ def create_missing_directories(file_path):
     pass
 
 
-def store_path(root, pid, serial_version=None):
-  '''Determine the location in the object or System Metadata store of the file
+def file_path(root, pid, serial_version=None):
+  """Determine the location in the object or System Metadata store of the file
   holding an object's bytes.
 
   Because it may be inefficient to store millions of files in a single folder
@@ -66,82 +66,32 @@ def store_path(root, pid, serial_version=None):
   maintenance, GMN stores the objects in a folder hierarchy of 256 folders, each
   holding 256 folders (for a total of 65536 folders). The location in the
   hierarchy for a given object is based on its PID.
-  '''
+  """
   z = zlib.adler32(pid.encode('utf-8'))
   a = z & 0xff ^ (z >> 8 & 0xff)
   b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
   serial_version_append = '.' + str(serial_version) if serial_version else ''
   return os.path.join(
-    root, '{0:03}'.format(a), '{0:03}'.format(b), '{0}{1}'.format(
+    root, u'{0:02x}'.format(a), u'{0:02x}'.format(b), u'{}{}'.format(
       d1_common.url.encodePathElement(pid), serial_version_append
     )
   )
 
 
 def request_to_string(request):
-  '''Pull some information about the client out from a request object.
-  '''
-  return 'ip_address({0}) user_agent({1})'.format(
+  """Pull some information about the client out from a request object.
+  """
+  return u'ip_address({}) user_agent({})'.format(
     #request.META['REMOTE_ADDR'], request.META['HTTP_USER_AGENT'])
     request.META['REMOTE_ADDR'],
     ''
   )
 
 
-def log_exception(max_traceback_levels=10):
-  logging.error('Exception:')
-  exc_class, exc_msgs, exc_traceback = sys.exc_info()
-  logging.error('  Name: {0}'.format(exc_class.__name__))
-  logging.error('  Value: {0}'.format(exc_msgs))
-  try:
-    exc_args = exc_msgs.__dict__["args"]
-  except KeyError:
-    exc_args = "<no args>"
-  logging.error('  Args: {0}'.format(exc_args))
-  logging.error('  Traceback:')
-  for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
-    logging.error('    {0}'.format(tb))
-
-
-def traceback_to_trace_info():
-  exception_type, exception_value, exception_traceback = sys.exc_info()
-  tb = []
-  while exception_traceback:
-    co = exception_traceback.tb_frame.f_code
-    tb.append(
-      '{0}({1})'.format(
-        str(os.path.basename(co.co_filename)), str(
-          traceback.tb_lineno(exception_traceback)
-        )
-      )
-    )
-    exception_traceback = exception_traceback.tb_next
-  if not isinstance(exception_value, d1_common.types.exceptions.DataONEException):
-    tb.append('Type: {0}'.format(exception_type))
-    tb.append('Value: {0}'.format(exception_value))
-  return tb
-
-
-def traceback_to_text():
-  return '\n'.join(traceback_to_trace_info())
-
-
-def clear_db():
-  '''Clear the database. Used for testing and debugging.
-  '''
-  models.EventLog.objects.all().delete()
-  models.EventLogEvent.objects.all().delete()
-  models.EventLogIPAddress.objects.all().delete()
-  models.ScienceObject.objects.all().delete()
-  models.ScienceObjectChecksumAlgorithm.objects.all().delete()
-  models.ScienceObjectFormat.objects.all().delete()
-
-
 class fixed_chunk_size_iterator(object):
-  '''Create a file iterator that iterates through file-like object using fixed
+  """Create a file iterator that iterates through file-like object using fixed
   size chunks.
-  '''
-
+  """
   def __init__(self, flo, chunk_size=1024**2, len=None):
     self.flo = flo
     self.chunk_size = chunk_size
@@ -163,31 +113,9 @@ class fixed_chunk_size_iterator(object):
     return self
 
 
-def file_to_dict(path):
-  '''Convert a sample MN object to dictionary.
-  '''
-  try:
-    f = open(path, 'r')
-  except EnvironmentError as (errno, strerror):
-    err_msg = 'Internal server error: Could not open: {0}\n'.format(path)
-    err_msg += 'I/O error({0}): {1}'.format(errno, strerror)
-    #exceptions_dataone.return_exception(request, 'ServiceFailure', err_msg)
-
-  d = {}
-
-  for line in f:
-    m = re.match(r'(.+?):(.+)', f)
-    if m:
-      d[m.group(1)] = m.group(2)
-
-  f.close()
-
-  return d
-
-
 # This is from django-piston/piston/utils.py
 def coerce_put_post(request):
-  '''
+  """
   Django doesn't particularly understand REST.
   In case we send data over PUT, Django won't
   actually look at the data and load it. We need
@@ -195,7 +123,7 @@ def coerce_put_post(request):
 
   The try/except abominiation here is due to a bug
   in mod_python. This should fix it.
-  '''
+  """
   if request.method == "PUT":
     # Bug fix: if _load_post_and_files has already been called, for
     # example by middleware accessing request.POST, the below code to
@@ -230,9 +158,9 @@ def add_basic_auth_header_if_enabled(headers):
 
 def _mk_http_basic_auth_header():
   return (
-    'Authorization', 'Basic {0}'.format(
+    'Authorization', u'Basic {}'.format(
       base64.standard_b64encode(
-        '{0}:{1}'.format(
+        u'{}:{}'.format(
           settings.WRAPPED_MODE_BASIC_AUTH_USERNAME,
           settings.WRAPPED_MODE_BASIC_AUTH_PASSWORD
         )
