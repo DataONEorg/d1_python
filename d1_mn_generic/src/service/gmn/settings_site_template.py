@@ -335,7 +335,7 @@ DATABASES = {
   'default': {
     # PostgreSQL
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'gmn',
+    'NAME': 'gmn2',
     # SQLite3
     # 'ENGINE': 'django.db.backends.sqlite3',
     # 'NAME': make_absolute('./gmn.sqlite'),
