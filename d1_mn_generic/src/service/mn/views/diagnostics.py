@@ -205,17 +205,38 @@ def get_setting(request, setting):
 def echo_raw_post_data(request):
   return HttpResponse(request.raw_post_data)
 
+#
+# Delete
+#
 
 @mn.restrict_to_verb.get
 def delete_all_objects(request):
   _delete_all_objects()
-  delete_event_log(request)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
 def _delete_all_objects():
-  for object_ in mn.models.ScienceObject.objects.all():
-    _delete_object(object_.pid)
+  for sci_obj in mn.models.ScienceObject.objects.all():
+    _delete_object_from_filesystem(sci_obj)
+  _clear_db()
+
+
+def _clear_db():
+  """Clear the database. Used for testing and debugging.
+  """
+  # The models.CASCADE property is set on all ForeignKey fields, so tables can
+  # be deleted in any order without breaking constraints.
+  for model in django.apps.apps.get_models():
+    model.objects.all().delete()
+  # mn.models.IdNamespace.objects.filter(sid_or_pid=pid).delete()
+  # The SysMeta object is left orphaned in the filesystem to be cleaned by an
+  # asynchronous process later. If the same object that was just deleted is
+  # recreated, the old SysMeta object will be overwritten instead of being
+  # cleaned up by the async process.
+  #
+  # This causes associated permissions to be deleted, but any subjects
+  # that are no longer needed are not deleted. The orphaned subjects should
+  # not cause any issues and will be reused if they are needed again.
 
 
 def _delete_subjects_and_permissions():
@@ -225,42 +246,25 @@ def _delete_subjects_and_permissions():
 
 @mn.restrict_to_verb.get
 def delete_single_object(request, pid):
-  '''Note: The semantics for this method are different than for the production
+  """Note: The semantics for this method are different than for the production
   method that deletes an object. This method removes all traces that the object
   ever existed.
-  '''
+  """
   _delete_object(pid)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
-def _delete_object(pid):
-  #mn.view_asserts.object_exists(pid)
-  sciobj = mn.models.ScienceObject.objects.get(pid=pid)
-  # If the object is wrapped, only delete the reference. If it's managed, delete
-  # both the object and the reference.
-  url_split = urlparse.urlparse(sciobj.url)
+def _delete_object_from_filesystem(sci_obj):
+  # If the object is wrapped, there's nothing to delete in the filesystem.
+  pid = sci_obj.pid.sid_or_pid
+  url_split = urlparse.urlparse(sci_obj.url)
   if url_split.scheme == 'file':
-    sciobj_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
+    sci_obj_path = mn.util.file_path(settings.OBJECT_STORE_PATH, pid)
     try:
-      os.unlink(sciobj_path)
+      os.unlink(sci_obj_path)
     except EnvironmentError:
+      # TODO: Log this
       pass
-  # At this point, the object was either managed and successfully deleted or
-  # wrapped and ignored. The SysMeta object is left orphaned in the filesystem
-  # to be cleaned by an asynchronous process later. If the same object that
-  # was just deleted is recreated, the old SysMeta object will be overwritten
-  # instead of being cleaned up by the async process.
-  #
-  # Delete the DB entry.
-  #
-  # By default, Django's ForeignKey emulates the SQL constraint ON DELETE
-  # CASCADE. In other words, any objects with foreign keys pointing at the
-  # objects to be deleted will be deleted along with them.
-  #
-  # TODO: This causes associated permissions to be deleted, but any subjects
-  # that are no longer needed are not deleted. The orphaned subjects should
-  # not cause any issues and will be reused if they are needed again.
-  sciobj.delete()
 
 # ------------------------------------------------------------------------------
 # Event Log.
