@@ -41,6 +41,10 @@ dataone_to_python_checksum_algorithm_map = {
 }
 
 
+def is_supported_algorithm(algorithm_str):
+  return algorithm_str in dataone_to_python_checksum_algorithm_map
+
+
 def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
   c = calculate_checksum(o, algorithm)
   c_pyxb = dataoneTypes.checksum(c)
@@ -54,16 +58,22 @@ def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
   return h.hexdigest()
 
 
+def create_checksum_object_from_stream(
+    f, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM
+):
+  c = calculate_checksum_on_stream(f, algorithm)
+  c_pyxb = dataoneTypes.checksum(c)
+  c_pyxb.algorithm = algorithm
+  return c_pyxb
+
+
 def calculate_checksum_on_stream(
   f,
   algorithm=const.DEFAULT_CHECKSUM_ALGORITHM,
   chunk_size=DEFAULT_CHUNK_SIZE
 ):
   h = get_checksum_calculator_by_dataone_designator(algorithm)
-  while True:
-    chunk = f.read(chunk_size)
-    if not chunk:
-      break
+  for chunk in f:
     h.update(chunk)
   return h.hexdigest()
 
