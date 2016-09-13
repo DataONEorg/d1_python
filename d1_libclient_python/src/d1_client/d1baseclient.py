@@ -505,7 +505,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     fromDate=None,
     toDate=None,
     event=None,
-    pidFilter=None,
+    pidFilter=None, # v1
+    idFilter=None, # v2
     start=0,
     count=d1_common.const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
@@ -519,10 +520,14 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       'fromDate': fromDate,
       'toDate': toDate,
       'event': event,
-      'pidFilter': pidFilter,
       'start': int(start),
       'count': int(count)
     }
+    if self.api_major >= 2:
+      query['idFilter'] = idFilter or pidFilter
+    else:
+      query['pidFilter'] = pidFilter or idFilter
+
     return self.GET(url, query=query, headers=vendorSpecific)
 
   @d1_common.util.utf8_to_unicode
@@ -531,7 +536,8 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
     fromDate=None,
     toDate=None,
     event=None,
-    pidFilter=None,
+    pidFilter=None, # v1
+    idFilter=None, # v2
     start=0,
     count=d1_common.const.DEFAULT_LISTOBJECTS,
     vendorSpecific=None
@@ -541,6 +547,7 @@ class DataONEBaseClient(d1_common.restclient.RESTClient):
       toDate=toDate,
       event=event,
       pidFilter=pidFilter,
+      idFilter=idFilter,
       start=start,
       count=count,
       vendorSpecific=vendorSpecific
