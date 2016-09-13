@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`settings_site`
 ====================
 
@@ -27,7 +27,7 @@
   This file contains settings that are specific for an instance of GMN.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import os
@@ -162,8 +162,8 @@ NODE_SYNCHRONIZE = True
 # The schedule on which synchronization should run for this node. The schedule
 # should reflect the frequency at which content is expected to change on the
 # node. The schedule is only a hint to the CNs. The syntax for each time slot
-# follows that of the Quartz Scheduler
-# (http://www.quartz-scheduler.org/api/2.1.0/org/quartz/CronExpression.html).
+# follows that of the Quartz Scheduler:
+# http://www.quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/crontrigger.html
 # These settings are ignored if NODE_SYNCHRONIZE is False.
 # E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*',
 # MINUTE = '0/3', SECOND = '0'.
@@ -172,7 +172,7 @@ NODE_SYNC_SCHEDULE_MONTH = '*'
 NODE_SYNC_SCHEDULE_WEEKDAY = '?'
 NODE_SYNC_SCHEDULE_MONTHDAY = '*'
 NODE_SYNC_SCHEDULE_HOUR = '*'
-NODE_SYNC_SCHEDULE_MINUTE = '0/3'
+NODE_SYNC_SCHEDULE_MINUTE = '42'
 NODE_SYNC_SCHEDULE_SECOND = '0'
 
 # The Subject of this node. The subject is the DataONE compliant serialization
@@ -236,8 +236,8 @@ REPLICATION_MAXOBJECTSIZE = -1
 
 # The total space, in octets (8-bit bytes), that this node is providing for
 # replication. Set to -1 to provide unlimited space (not recommended).
-# E.g. for a total space of 10 TiB: 10 * 1024**4
-REPLICATION_SPACEALLOCATED = 10 * 1024**4
+# E.g. for a total space of 10 GiB: 10 * 1024**3
+REPLICATION_SPACEALLOCATED = 10 * 1024**3
 
 # A list of nodes for which this node is willing to replicate content. To allow
 # objects from any node to be replicated, set to an empty list.
@@ -367,7 +367,7 @@ DATABASES = {
 # stored here. By default, these are below the service folder. Typically,
 # these are changed to use an area that is dedicated for storage, for instance
 # a separate filesystem / disk.
-MEDIA_ROOT = make_absolute('./stores') # relative location
+MEDIA_ROOT = make_absolute('../stores') # relative location
 # MEDIA_ROOT = '/mnt/my_large_disk/dataone/' # example for absolute location
 SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
 OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
@@ -398,7 +398,7 @@ WRAPPED_MODE_BASIC_AUTH_USERNAME = ''
 WRAPPED_MODE_BASIC_AUTH_PASSWORD = ''
 
 # Path to the log file.
-LOG_PATH = make_absolute('./gmn.log')
+LOG_PATH = make_absolute('../gmn.log')
 
 # Set up logging.
 
@@ -431,7 +431,7 @@ LOGGING = {
     },
     'null': {
       'level': LOG_LEVEL,
-      'class': 'django.utils.log.NullHandler',
+      'class': 'logging.NullHandler',
     },
   },
   'loggers': {
@@ -467,7 +467,7 @@ def check_path(path):
   if path is None:
     return
   if not os.path.exists(path):
-    raise Exception('Invalid path: {0}'.format(path))
+    raise Exception('Path does not exist. path="{}"'.format(path))
 
 
 check_path(CLIENT_CERT_PATH)
