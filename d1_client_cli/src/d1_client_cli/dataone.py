@@ -83,7 +83,7 @@ def main():
   if not check_dependencies.check_dependencies():
     raise Exception(u'Dependency check failed')
 
-  print u'DataONE Command Line Interface ({0})'.format(d1_client_cli.__version__)
+  print u'DataONE Command Line Interface ({})'.format(d1_client_cli.__version__)
 
   parser = optparse.OptionParser(
     usage=u'usage: %prog [command] ...',
@@ -472,16 +472,16 @@ def handle_unexpected_exception(max_traceback_levels=100):
 def _print_unexpected_exception(max_traceback_levels=100):
   exc_class, exc_msgs, exc_traceback = sys.exc_info()
   cli_util.print_error(u'Error:')
-  cli_util.print_error(u'  Name: {0}'.format(exc_class.__name__))
-  cli_util.print_error(u'  Value: {0}'.format(exc_msgs))
+  cli_util.print_error(u'  Name: {}'.format(exc_class.__name__))
+  cli_util.print_error(u'  Value: {}'.format(exc_msgs))
   try:
     exc_args = exc_msgs.__dict__["args"]
   except KeyError:
     exc_args = "<no args>"
-  cli_util.print_error(u'  Args: {0}'.format(exc_args))
+  cli_util.print_error(u'  Args: {}'.format(exc_args))
   cli_util.print_error(u'  Traceback:')
   for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
-    cli_util.print_error(u'    {0}'.format(tb))
+    cli_util.print_error(u'    {}'.format(tb))
 
 
 if __name__ == u'__main__':

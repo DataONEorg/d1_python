@@ -59,7 +59,7 @@ class AccessControl():
     try:
       del self.allow[subject]
     except KeyError:
-      raise cli_exceptions.InvalidArguments(u'Subject not in access control list: {0}'\
+      raise cli_exceptions.InvalidArguments(u'Subject not in access control list: {}'\
         .format(subject))
 
   def clear(self):
@@ -100,7 +100,7 @@ class AccessControl():
 
   def _assert_valid_permission(self, permission):
     if permission not in self._get_valid_permissions():
-      msg = u'Invalid permission: {0}. Must be one of: {1}'\
+      msg = u'Invalid permission: {}. Must be one of: {}'\
         .format(permission, u', '.join(self._get_valid_permissions()))
       raise cli_exceptions.InvalidArguments(msg)
 
@@ -109,7 +109,7 @@ class AccessControl():
       'public', 'authenticatedUser', 'verifiedUser'
     ) and permission != 'read':
       if not cli_util.confirm(
-        'It is not recommended to give {0} access to {1}. Continue?'
+        'It is not recommended to give {} access to {}. Continue?'
         .format(permission, subject)
       ):
         raise cli_exceptions.InvalidArguments('Cancelled')

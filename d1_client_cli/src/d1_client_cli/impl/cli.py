@@ -97,7 +97,7 @@ class CLI(cmd.Cmd):
     '''Called on an input line when the command prefix is not recognized.
     '''
     args = self._split_args(line, 0, 99)
-    cli_util.print_error(u'Unknown command: {0}'.format(args[0]))
+    cli_util.print_error(u'Unknown command: {}'.format(args[0]))
 
   def run_command_line_arguments(self, commands):
     for command in commands:
@@ -132,7 +132,7 @@ class CLI(cmd.Cmd):
     n_remaining_operations = len(self._command_processor.get_operation_queue())
     if n_remaining_operations:
       cli_util.print_warn(
-        '''There are {0} unperformed operations in the write operation queue. These will
+        '''There are {} unperformed operations in the write operation queue. These will
 be lost if you exit.'''.format(n_remaining_operations)
       )
       if not cli_util.confirm('Exit?', default='yes'):
@@ -166,7 +166,7 @@ be lost if you exit.'''.format(n_remaining_operations)
     else:
       self._command_processor.get_session().set_with_conversion(session_parameter, value)
       self._print_info_if_verbose(
-        'Set session variable {0} to "{1}"'.format(
+        'Set session variable {} to "{}"'.format(
           session_parameter, value
         )
       )
