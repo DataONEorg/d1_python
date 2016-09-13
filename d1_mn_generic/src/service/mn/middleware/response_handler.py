@@ -50,13 +50,20 @@ import mn.models as models
 
 class response_handler():
   def process_response(self, request, view_result):
-    # If response is a database query, run the query and create a response.
-    if type(view_result) is dict:
-      response = self.serialize_object(request, view_result)
     # If view_result is a HttpResponse, return it unprocessed.
-    else:
+    if isinstance(view_result, django.http.response.HttpResponseBase):
       response = view_result
-    self.debug_mode_responses(request, response)
+    # If response is a database query, run the query and create a response.
+    elif isinstance(view_result, dict):
+      response = self._serialize_object(request, view_result)
+    # If response is a plain or Unicode string, assume that it is a PID.
+    elif isinstance(view_result, basestring):
+      response = self._http_response_with_identifier_type(request, view_result)
+    else:
+      assert False, "Unknown view response type: {} {}".format(
+        type(view_result), str(view_result)
+      )
+    self._debug_mode_responses(request, response)
     return response
 
   def debug_mode_responses(self, request, response):
