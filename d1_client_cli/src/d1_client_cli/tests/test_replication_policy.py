@@ -176,7 +176,7 @@ class TestReplicationPolicy(TestCaseWithURLCompare):
     self.assertTrue(not len(s.get_preferred()))
     self.assertTrue(not len(s.get_blocked()))
     self.assertTrue(s.get_replication_allowed())
-    self.assertTrue(s.get_number_of_replicas() == 3)
+    self.assertEqual(s.get_number_of_replicas() ,  3)
 
 #===============================================================================
 
