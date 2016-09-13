@@ -21,46 +21,14 @@
 """
 :mod:`setup`
 ============
-
-:Synopsis: Create egg.
-:Author: DataONE (Dahl)
-:Notes:
-  The script should be run in the current directory with ./setup.py.
-
-  The setup() parameters are described here:
-  http://pythonhosted.org/setuptools/setuptools.html
-  http://docs.python.org/2/distutils/setupscript.html
-
-  This setup script excludes unversioned python modules from the build if pysvn
-  is installed. The only way I found to do this was to write a list of exclude
-  directives to MANIFEST.in before calling setup().
-
-  Unversioned data packages are automatically excluded as only versioned files
-  are included with the "include_package_data = True" parameter.
-
-  When creating the package, some warnings on the form:
-  warning: no previously-included files found matching '<file>'
-  will be generated, as the MANIFEST.in file will contain exclude directives for
-  files that would not have been included
 """
-import os
-import re
 import setuptools
 
 import d1_certificate
 
-# Metadata.
-name = 'dataone.certificate_extensions'
-version = d1_certificate.__version__
-description = 'Python extensions for generating and extracting PEM formatted X.509 v3 certificates that contain DataONE Session information'
-author = 'DataONE Project'
-author_email = 'developers@dataone.org'
-url = 'http://dataone.org'
-license = 'Apache License, Version 2.0'
-
 # Extensions.
 x509v3_certificate_extractor = setuptools.Extension(
-  'd1_x509v3_certificate_extractor',
+  name='d1_certificate.extensions.d1_x509v3_certificate_extractor',
   sources=[
     'd1_certificate/extensions/d1_x509v3_certificate_extractor.c'
   ],
@@ -69,8 +37,9 @@ x509v3_certificate_extractor = setuptools.Extension(
     'crypto'
   ],
 )
+
 x509v3_certificate_generator = setuptools.Extension(
-  'd1_x509v3_certificate_generator',
+  name='d1_certificate.extensions.d1_x509v3_certificate_generator',
   sources=[
     'd1_certificate/extensions/d1_x509v3_certificate_generator.c'
   ],
@@ -80,25 +49,24 @@ x509v3_certificate_generator = setuptools.Extension(
   ],
 )
 
-
 def main():
   setuptools.setup(
     # Metadata
-    name=name,
-    version=version,
-    description=description,
-    author=author,
-    author_email=author_email,
-    url=url,
-    license=license,
-    # Contents (modified by MANIFEST.in)
+    name='dataone.certificate_extensions',
+    version=d1_certificate.__version__,
+    description='Python extensions for generating and extracting PEM formatted X.509 v3 certificates that contain DataONE Session information',
+    author='DataONE Project',
+    author_email='developers@dataone.org',
+    url='http://dataone.org',
+    license='Apache License, Version 2.0',
+
     packages=setuptools.find_packages(),
     include_package_data=True,
-    # Dependencies that are available through PyPI.
+
     install_requires=[
-      'dataone.common == 1.1.6',
+      'dataone.common == 2.0.0',
     ],
-    # Extensions.
+
     ext_modules=[
       x509v3_certificate_extractor,
       x509v3_certificate_generator,
