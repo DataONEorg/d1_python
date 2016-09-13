@@ -61,6 +61,14 @@ class ScienceObject(models.Model):
   system_metadata_refreshed = models.DateTimeField(null=True)
   serial_version = models.PositiveIntegerField()
   archived = models.BooleanField()
+  obsoletes = models.ForeignKey(
+    'self', models.CASCADE, null=True,
+    related_name='science_object_obsoletes'
+  )
+  obsoleted_by = models.ForeignKey(
+    'self', models.CASCADE, null=True,
+    related_name='science_object_obsoleted_by'
+  )
 
   def set_format(self, format_id):
     self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
@@ -86,7 +94,18 @@ class ScienceObject(models.Model):
 #      logging.warning('PID: {0}'.format(self.pid))
 #      me.delete()
 #      self.save()
+class SeriesIdToScienceObject(models.Model):
   object = models.ForeignKey(ScienceObject, models.CASCADE)
+  sid = models.ForeignKey(IdNamespace, models.CASCADE)
+
+  # def save_unique(self):
+  #   try:
+  #     me = SeriesIdToScienceObject.objects.get(object=self.object)
+  #   except SeriesIdToScienceObject.DoesNotExist:
+  #     self.save()
+  #   else:
+  #     me.delete()
+  #     self.save()
 
 # ------------------------------------------------------------------------------
 # Access Log
