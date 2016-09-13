@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema  targetNamespace="http://ns.dataone.org/service/types/v2.0"
   xmlns:d1="http://ns.dataone.org/service/types/v1"
-    xmlns:d1_v1.1="http://ns.dataone.org/service/types/v1.1"
     xmlns:d1_v2.0="http://ns.dataone.org/service/types/v2.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     version="2.0.0"
@@ -58,8 +57,6 @@ Formatting:
 
   <xs:import namespace="http://ns.dataone.org/service/types/v1" 
         schemaLocation="http://ns.dataone.org/service/types/v1" />
-  <xs:import namespace="http://ns.dataone.org/service/types/v1.1" 
-        schemaLocation="http://ns.dataone.org/service/types/v1.1" />
 
  <!-- MediaTypeProperty extension-->
   <xs:complexType name="MediaTypeProperty">
