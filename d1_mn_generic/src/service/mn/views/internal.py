@@ -52,50 +52,49 @@ import mn.db_filter
 import mn.event_log
 import mn.models
 import mn.psycopg_adapter
-import mn.sysmeta_store
+import mn.sysmeta_file
 import mn.sysmeta_validate
 import mn.util
-import mn.view_asserts
-import mn.view_shared
-import service
+import mn.views.view_asserts
+import mn.views.view_util
 
 
 def home(request):
-  '''Home page. Root of web server should redirect to here.'''
+  """Home page. Root of web server should redirect to here."""
   if request.path.endswith('/'):
     return HttpResponseRedirect(request.path[:-1])
 
   gmn_version = mn.__version__
   django_version = ', '.join(map(str, django.VERSION))
 
-  n_science_objects = group(mn.models.ScienceObject.objects.count())
+  n_science_objects = '{:,}'.format(mn.models.ScienceObject.objects.count())
 
   avg_sci_data_size_bytes = mn.models.ScienceObject.objects\
     .aggregate(Avg('size'))['size__avg'] or 0
-  avg_sci_data_size = group(int(avg_sci_data_size_bytes))
+  avg_sci_data_size = '{:,}'.format(int(avg_sci_data_size_bytes))
 
   n_objects_by_format_id = mn.models.ScienceObject.objects.values(
     'format', 'format__format_id'
   ).annotate(dcount=Count('format'))
 
-  n_connections_total = group(mn.models.EventLog.objects.count())
+  n_connections_total = '{:,}'.format(mn.models.EventLog.objects.count())
 
-  n_connections_in_last_hour = group(
+  n_connections_in_last_hour = '{:,}'.format(
     mn.models.EventLog.objects.filter(
       date_logged__gte=datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     ).count()
   )
 
-  n_unique_subjects = group(mn.models.PermissionSubject.objects.count())
+  n_unique_subjects = '{:,}'.format(mn.models.PermissionSubject.objects.count())
 
   n_storage_used = mn.models.ScienceObject.objects\
     .aggregate(Sum('size'))['size__sum'] or 0
-  n_storage_free = get_free_space(settings.MEDIA_ROOT)
-  storage_space = '{0} GiB / {1} GiB'.format(
+  n_storage_free = _get_free_space(settings.MEDIA_ROOT)
+  storage_space = u'{} GiB / {} GiB'.format(
     n_storage_used / 1024**3, n_storage_free / 1024**3
   )
 
-  n_permissions = group(mn.models.Permission.objects.count())
+  n_permissions = '{:,}'.format(mn.models.Permission.objects.count())
 
   server_time = datetime.datetime.utcnow()
 
@@ -123,18 +122,3 @@ def get_free_space(folder):
   else:
     return os.statvfs(folder).f_bfree * os.statvfs(folder).f_frsize
 
-
-def group(n, sep=','):
-  '''Group digits in number by thousands'''
-  # Python 2.7 has support for grouping (the "," format specifier)
-  s = str(abs(n))[::-1]
-  groups = []
-  i = 0
-  while i < len(s):
-    groups.append(s[i:i + 3])
-    i += 3
-  retval = sep.join(groups)[::-1]
-  if n < 0:
-    return '-%s' % retval
-  else:
-    return retval
