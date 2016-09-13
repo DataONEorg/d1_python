@@ -33,6 +33,8 @@ import d1_common.types.exceptions
 # Django creates automatically:
 # "id" serial NOT NULL PRIMARY KEY
 
+class IdNamespace(models.Model):
+  sid_or_pid = models.CharField(max_length=800, unique=True)
 # ------------------------------------------------------------------------------
 # Registered MN objects.
 # ------------------------------------------------------------------------------
@@ -48,9 +50,9 @@ class ScienceObjectFormat(models.Model):
 
 
 class ScienceObject(models.Model):
-  pid = models.CharField(max_length=800, unique=True)
   url = models.CharField(max_length=1024, unique=True)
   format = models.ForeignKey(ScienceObjectFormat, db_index=True)
+  pid = models.ForeignKey(IdNamespace, models.CASCADE)
   checksum = models.CharField(max_length=128, db_index=True)
   checksum_algorithm = models.ForeignKey(ScienceObjectChecksumAlgorithm, db_index=True)
   mtime = models.DateTimeField(db_index=True)
@@ -84,6 +86,7 @@ class ScienceObject(models.Model):
 #      logging.warning('PID: {0}'.format(self.pid))
 #      me.delete()
 #      self.save()
+  object = models.ForeignKey(ScienceObject, models.CASCADE)
 
 # ------------------------------------------------------------------------------
 # Access Log
@@ -112,11 +115,11 @@ class EventLogMemberNode(models.Model):
 
 
 class EventLog(models.Model):
-  object = models.ForeignKey(ScienceObject)
   event = models.ForeignKey(EventLogEvent, db_index=True)
   ip_address = models.ForeignKey(EventLogIPAddress, db_index=True)
   user_agent = models.ForeignKey(EventLogUserAgent, db_index=True)
   subject = models.ForeignKey(EventLogSubject, db_index=True)
+  object = models.ForeignKey(ScienceObject, models.CASCADE)
   date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
 
   def set_event(self, event_string):
@@ -181,7 +184,7 @@ class SystemMetadataRefreshQueueStatus(models.Model):
 
 
 class SystemMetadataRefreshQueue(models.Model):
-  object = models.ForeignKey(ScienceObject)
+  object = models.ForeignKey(ScienceObject, models.CASCADE)
   timestamp = models.DateTimeField(auto_now=True)
   serial_version = models.PositiveIntegerField()
   last_modified = models.DateTimeField()
@@ -210,8 +213,8 @@ class PermissionSubject(models.Model):
 
 
 class Permission(models.Model):
-  object = models.ForeignKey(ScienceObject, db_index=True)
   subject = models.ForeignKey(PermissionSubject, db_index=True)
+  object = models.ForeignKey(ScienceObject, models.CASCADE)
   level = models.PositiveSmallIntegerField()
 
 
