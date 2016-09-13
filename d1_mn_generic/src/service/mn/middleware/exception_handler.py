@@ -121,3 +121,42 @@ class exception_handler():
     )
     exception.traceInformation = self._traceback_to_text()
     return exception
+
+
+  def _log_exception(self, max_traceback_levels=10):
+    logging.error('Exception:')
+    exc_class, exc_msgs, exc_traceback = sys.exc_info()
+    logging.error(u'  Name: {}'.format(exc_class.__name__))
+    logging.error(u'  Value: {}'.format(exc_msgs))
+    try:
+      exc_args = exc_msgs.__dict__["args"]
+    except KeyError:
+      exc_args = "<no args>"
+    logging.error(u'  Args: {}'.format(exc_args))
+    logging.error(u'  Traceback:')
+    for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
+      logging.error(u'    {}'.format(tb))
+
+
+  def _traceback_to_text(self):
+    return u'\n'.join(self._traceback_to_trace_info())
+
+
+  def _traceback_to_trace_info(self):
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    tb = []
+    while exc_traceback:
+      co = exc_traceback.tb_frame.f_code
+      tb.append(
+        u'{}({})'.format(
+          str(os.path.basename(co.co_filename)), str(
+            traceback.tb_lineno(exc_traceback)
+          )
+        )
+      )
+      exc_traceback = exc_traceback.tb_next
+    if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
+      tb.append(u'Type: {}'.format(exc_type))
+      tb.append(u'Value: {}'.format(exc_value))
+    return tb
+
