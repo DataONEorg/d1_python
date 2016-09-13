@@ -63,12 +63,20 @@ import d1_common.types.generated.dataoneTypes as dataoneTypes
 #pyxb.RequireValidWhenGenerating(False)
 
 
-class Node():
-  def __init__(self):
-    pass
+class Node(object):
+  def __init__(self, binding=None):
+    """binding:
+    d1_common.types.dataoneTypes_v1
+    or
+    d1_common.types.dataoneTypes_v2_0
+    """
+    self._binding = binding or d1_common.types.dataoneTypes_v2_0
+
+  def get_xml_str(self):
+    return self.get().toxml('utf8')
 
   def get(self):
-    node = dataoneTypes.node()
+    node = self._binding.node()
     node.identifier = settings.NODE_IDENTIFIER
     node.name = settings.NODE_NAME
     node.description = settings.NODE_DESCRIPTION
@@ -77,15 +85,17 @@ class Node():
     node.synchronize = settings.NODE_SYNCHRONIZE
     node.type = 'mn'
     node.state = settings.NODE_STATE
-    node.subject.append(dataoneTypes.Subject(settings.NODE_SUBJECT))
-    node.contactSubject.append(dataoneTypes.Subject(settings.NODE_CONTACT_SUBJECT))
-    node.services = self._create_services()
-    node.synchronization = self._create_sync_policy()
-    node.nodeReplicationPolicy = self._create_replication_policy()
+    node.subject.append(self._binding.Subject(settings.NODE_SUBJECT))
+    node.contactSubject.append(self._binding.Subject(settings.NODE_CONTACT_SUBJECT))
+    node.services = self._create_service_list()
+    if settings.NODE_SYNCHRONIZE:
+      node.synchronization = self._create_sync_policy()
+    if settings.TIER >= 4 and settings.NODE_REPLICATE:
+      node.nodeReplicationPolicy = self._create_replication_policy()
     return node
 
   def _create_sync_policy(self):
-    schedule = dataoneTypes.Schedule()
+    schedule = self._binding.Schedule()
     schedule.year = settings.NODE_SYNC_SCHEDULE_YEAR
     schedule.mon = settings.NODE_SYNC_SCHEDULE_MONTH
     schedule.wday = settings.NODE_SYNC_SCHEDULE_WEEKDAY
@@ -93,74 +103,44 @@ class Node():
     schedule.hour = settings.NODE_SYNC_SCHEDULE_HOUR
     schedule.min = settings.NODE_SYNC_SCHEDULE_MINUTE
     schedule.sec = settings.NODE_SYNC_SCHEDULE_SECOND
-    sync = dataoneTypes.Synchronization()
+    sync = self._binding.Synchronization()
     sync.schedule = schedule
     return sync
 
   def _create_replication_policy(self):
-    replication = dataoneTypes.nodeReplicationPolicy()
-
+    replication = self._binding.nodeReplicationPolicy()
     if settings.REPLICATION_MAXOBJECTSIZE != -1:
       replication.maxObjectSize = settings.REPLICATION_MAXOBJECTSIZE
     if settings.REPLICATION_SPACEALLOCATED != -1:
       replication.spaceAllocated = settings.REPLICATION_SPACEALLOCATED
-    #if len(settings.REPLICATION_ALLOWEDNODE):
     for allowed_node in settings.REPLICATION_ALLOWEDNODE:
-      replication.allowedNode.append(dataoneTypes.NodeReference(allowed_node))
-    #if len(settings.REPLICATION_ALLOWEDOBJECTFORMAT):
+      replication.allowedNode.append(self._binding.NodeReference(allowed_node))
     for allowed_object in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
       replication.allowedObjectFormat.append(
-        dataoneTypes.ObjectFormatIdentifier(allowed_object)
+        self._binding.ObjectFormatIdentifier(allowed_object)
       )
-
     return replication
 
-  def _create_services(self):
-    services = dataoneTypes.Services()
+  def _create_service_list(self):
+    service_list = self._binding.services()
+    self._append_services_for_version(service_list, 'v1')
+    self._append_services_for_version(service_list, 'v2')
+    return service_list
+
+  def _append_services_for_version(self, service_list, service_version):
     if settings.TIER >= 1:
-      self._append_tier_1_services(services)
+      self._append_service(service_list, 'MNCore', service_version)
+      self._append_service(service_list, 'MNRead', service_version)
     if settings.TIER >= 2:
-      self._append_tier_2_services(services)
+      self._append_service(service_list, 'MNAuthorization', service_version)
     if settings.TIER >= 3:
-      self._append_tier_3_services(services)
+      self._append_service(service_list, 'MNStorage', service_version)
     if settings.TIER >= 4:
-      self._append_tier_4_services(services)
-    return services
+      self._append_service(service_list, 'MNReplication', service_version)
 
-  def _append_tier_1_services(self, services):
-    # <service name="MNCore" version="v1" available="true"/>
-    service = dataoneTypes.Service()
-    mn.name = dataoneTypes.ServiceName('MNCore')
-    mn.version = dataoneTypes.ServiceVersion('v1')
-    mn.available = True
-    services.append(service)
-    # <service name="MNRead" version="v1" available="true"/>
-    service = dataoneTypes.Service()
-    mn.name = dataoneTypes.ServiceName('MNRead')
-    mn.version = dataoneTypes.ServiceVersion('v1')
-    mn.available = True
-    services.append(service)
-
-  def _append_tier_2_services(self, services):
-    # <service name="MNAuthorization" version="v1" available="true"/>
-    service = dataoneTypes.Service()
-    mn.name = dataoneTypes.ServiceName('MNAuthorization')
-    mn.version = dataoneTypes.ServiceVersion('v1')
-    mn.available = True
-    services.append(service)
-
-  def _append_tier_3_services(self, services):
-    # <service name="MNStorage" version="v1" available="true"/>
-    service = dataoneTypes.Service()
-    mn.name = dataoneTypes.ServiceName('MNStorage')
-    mn.version = dataoneTypes.ServiceVersion('v1')
-    mn.available = True
-    services.append(service)
-
-  def _append_tier_4_services(self, services):
-    # <service name="MNReplication" version="v1" available="true"/>
-    service = dataoneTypes.Service()
-    mn.name = dataoneTypes.ServiceName('MNReplication')
-    mn.version = dataoneTypes.ServiceVersion('v1')
-    mn.available = True
-    services.append(service)
+  def _append_service(self, service_list, service_name, service_version):
+    service = self._binding.Service()
+    service.name = self._binding.ServiceName(service_name)
+    service.version = self._binding.ServiceVersion(service_version)
+    service.available = True
+    service_list.append(service)
