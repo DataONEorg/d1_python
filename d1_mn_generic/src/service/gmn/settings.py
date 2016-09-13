@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`settings`
 ===============
 
@@ -28,7 +28,7 @@
   installing GMN. See settings_site.py for site specific settings.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import os
@@ -42,13 +42,6 @@ def make_absolute(p):
 
 # Add site specific settings.
 from settings_site import *
-
-# Add path to gmn types.
-sys.path.append(make_absolute('./types/generated'))
-
-# GMN does not use templates in production. However, some of the testing
-# functions use them.
-TEMPLATE_DEBUG = True
 
 # Only set cookies when running through SSL.
 SESSION_COOKIE_SECURE = True
@@ -75,19 +68,38 @@ MEDIA_URL = ''
 # Static files (served directly by Apache).
 STATIC_URL = '/static/'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = ('django.template.loaders.filesystem.Loader', )
-
 MIDDLEWARE_CLASSES = (
   # Custom GMN middleware.
-  'mn.middleware.request_handler.request_handler',
-  'mn.middleware.exception_handler.exception_handler',
-  'mn.middleware.response_handler.response_handler',
+  'mn.middleware.request_handler.RequestHandler',
+  'mn.middleware.exception_handler.ExceptionHandler',
+  'mn.middleware.response_handler.ResponseHandler',
   #'mn.middleware.profiling_handler.profiling_handler',
-  'mn.middleware.view_handler.view_handler',
-  'mn.middleware.startup_handler.startup_handler',
+  'mn.middleware.view_handler.ViewHandler',
+  'mn.middleware.startup_handler.StartupHandler',
 )
 
+TEMPLATES = [{
+  'BACKEND': 'django.template.backends.django.DjangoTemplates',
+  'DIRS': [
+    make_absolute('../mn/templates'),
+  ],
+  # 'APP_DIRS': True,
+  'OPTIONS': {
+    'context_processors': [
+      'django.contrib.auth.context_processors.auth',
+      'django.template.context_processors.debug',
+      'django.template.context_processors.i18n',
+      'django.template.context_processors.media',
+      'django.template.context_processors.static',
+      'django.template.context_processors.tz',
+      'django.contrib.messages.context_processors.messages',
+    ],
+    'loaders': [
+      'django.template.loaders.filesystem.Loader',
+      # 'django.template.loaders.app_directories.Loader',
+    ],
+  },
+}, ]
 
 CACHES = {
   'default': {
@@ -98,10 +110,14 @@ CACHES = {
 
 ROOT_URLCONF = 'mn.urls'
 
-TEMPLATE_DIRS = (make_absolute('../mn/templates'), )
-
-INSTALLED_APPS = ('django.contrib.staticfiles', 'mn', )
+INSTALLED_APPS = [
+  'django.contrib.staticfiles',
+  'mn',
+]
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.
 MAX_XML_DOCUMENT_SIZE = 1024**2
+
+# Default chunk size for stream iterators.
+NUM_CHUNK_BYTES = 1024**2
