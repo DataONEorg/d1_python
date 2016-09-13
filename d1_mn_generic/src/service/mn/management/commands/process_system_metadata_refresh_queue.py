@@ -174,7 +174,7 @@ class SysMetaRefresher(object):
 
     # No sanity checking is done on the provided System Metadata. It comes
     # from a CN and is implicitly trusted.
-    sciobj = mn.models.ScienceObject.objects.get(pid=pid)
+    sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
     sciobj.set_format(sys_meta.formatId)
     sciobj.checksum = sys_meta.checksum.value()
     sciobj.set_checksum_algorithm(sys_meta.checksum.algorithm)
