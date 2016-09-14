@@ -125,6 +125,51 @@ class GMNIntegrationTests(unittest.TestCase):
     pass
 
   def assert_object_list_slice(self, object_list, start, count, total):
+  def tearDown(self):
+    """The integration tests typically target a local instance of GMN where
+    Django debug mode is enabled (DEBUG = True in settings_site.py). In this
+    mode, an unhandled exception in GMN will cause Django to return an
+    interactive diagnostics HTML page that is useful for debugging.
+
+    If the server responds with something that cannot be parsed by libclient as
+    a valid response for the particular call, libclient raises a DataONE
+    ServiceFailure exception with the response stored in the traceInformation
+    member. The Django diagnostics page triggers this behavior, so, in order to
+    access the diagnostics page, we check for unhandled DataONEExceptions here
+    and write any provided traceInformation to files to temporary storage,
+    typically /tmp.
+
+    For convenience, we also maintain a link to the latest failure. Together
+    with the "--stop" parameter for Nose, it allows just refreshing the browser
+    to view new errors as they occur.
+
+    When serializing a DataONEException to a string, traceInformation is
+    truncated to 1024 characters, but the files written here will always contain
+    the complete traceInformation.
+    """
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    if isinstance(exc_value, d1_common.types.exceptions.DataONEException):
+      if exc_value.traceInformation:
+        func_name = traceback.extract_tb(exc_traceback)[1][2]
+        file_path = os.path.join(
+          tempfile.gettempdir(), u'traceInformation_{}'.format(func_name)
+        )
+        with open(file_path, 'w') as f:
+          f.write(exc_value.traceInformation.encode('utf8'))
+        link_path = os.path.join(
+          tempfile.gettempdir(), u'traceInformation.html'
+        )
+        self._force_symlink(file_path, link_path)
+        logging.warning(u'Wrote traceInformation to {}'.format(file_path))
+
+  def _force_symlink(self, file_path, link_path):
+    try:
+      os.remove(link_path)
+    except OSError as e:
+      if e.errno != errno.ENOENT:
+        raise
+    os.symlink(file_path, link_path)
+
     self.assertEqual(object_list.start, start)
     self.assertEqual(object_list.count, count)
     self.assertEqual(object_list.total, total)
