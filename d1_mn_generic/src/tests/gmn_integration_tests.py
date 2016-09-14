@@ -842,6 +842,67 @@ class GMNIntegrationTests(unittest.TestCase):
     )
     self.assert_log_slice(log, 0, 0, 0)
 
+  def test_1591_v1(self):
+    """v1 create() of object causes a new create event to be written for the
+    given PID
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_1591(client, v1)
+
+  def test_1591_v2(self):
+    """v2 create() of object causes a new create event to be written for the
+    given PID
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_1591(client, v2)
+
+  def _test_1591(self, client, binding):
+    pid = self._random_id()
+    self._create(client, binding, pid)
+    log = client.getLogRecords(pidFilter=pid, vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    self.assertEqual(len(log.logEntry), 1)
+    self.assertEqual(log.logEntry[0].event, 'create')
+    self.assertEqual(log.logEntry[0].identifier.value(), pid)
+
+  def test_1592_v1(self):
+    """v1 update() of object records an update event on the old object and a
+    create event on the new object
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_1592(client, v1)
+
+  def test_1592_v2(self):
+    """v2 update() of object records an update event on the old object and a
+    create event on the new object
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_1592(client, v2)
+
+  def _test_1592(self, client, binding):
+    pid_create = self._random_id()
+    self._create(client, binding, pid_create)
+    pid_update = self._random_id()
+    self._update(client, binding, pid_create, pid_update)
+    # Old object has a create and an update event
+    log = client.getLogRecords(pidFilter=pid_create, vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    self.assertEqual(len(log.logEntry), 2)
+    # Events are sorted with newest event first.
+    self.assertEqual(log.logEntry[0].event, 'update')
+    self.assertEqual(log.logEntry[0].identifier.value(), pid_create)
+    self.assertEqual(log.logEntry[1].event, 'create')
+    self.assertEqual(log.logEntry[1].identifier.value(), pid_create)
+    # New object has only a update event
+    log = client.getLogRecords(pidFilter=pid_update, vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    self.assertEqual(len(log.logEntry), 1)
+    self.assertEqual(log.logEntry[0].event, 'create')
+    self.assertEqual(log.logEntry[0].identifier.value(), pid_update)
+
   # ----------------------------------------------------------------------------
   # getChecksum()
   # ----------------------------------------------------------------------------
