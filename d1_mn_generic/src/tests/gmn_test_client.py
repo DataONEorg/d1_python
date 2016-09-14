@@ -48,31 +48,20 @@ GMN_TEST_SUBJECT_TRUSTED = 'gmn_test_subject_trusted'
 
 
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
-  def __init__(
-    self,
-    base_url,
-    timeout=d1_common.const.RESPONSE_TIMEOUT,
-    defaultHeaders=None,
-    cert_path=None,
-    key_path=None,
-    strict=True,
-    capture_response_body=False,
-    version='diag'
-  ):
+  def __init__(self, *args, **kwargs):
+    """ Extend MemberNodeClient with GMN specific diagnostics wrappers.
 
-    d1_client.mnclient.MemberNodeClient.__init__(
-      self,
-      base_url=base_url,
-      timeout=timeout,
-      defaultHeaders=defaultHeaders,
-      cert_path=cert_path,
-      key_path=key_path,
-      strict=strict,
-      capture_response_body=capture_response_body,
-      version=version
-    )
+    See d1baseclient.DataONEBaseClient for args.
+    """
+    self.logger = logging.getLogger(__file__)
+    kwargs.setdefault('api_major', 1)
+    kwargs.setdefault('api_minor', 1)
+    d1_client.mnclient.MemberNodeClient.__init__(self, *args, **kwargs)
 
-    self.logger = logging.getLogger(__name__)
+  def _get_api_version_url_element(self):
+    """Override the default API version selection to use GMNs custom /diag/
+    endpoint."""
+    return 'diag'
 
   def gmn_vse_provide_subject(self, subject):
     '''GMN Vendor Specific Extension: Simulate subject.'''
