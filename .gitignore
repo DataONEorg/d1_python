@@ -1,3 +1,11 @@
+# DataONE
+certificates/
+certs/
+settings_site.py
+
+# IntelliJ / PyCharm
+.idea/
+ 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -54,6 +62,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+docutils/
 
 # PyBuilder
 target/
