@@ -35,18 +35,18 @@ def adapt_pyxb_binding(binding):
 
 
 psycopg2.extensions.register_adapter(
-  dataoneTypes.NonEmptyNoWhitespaceString800, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.NonEmptyNoWhitespaceString800, adapt_pyxb_binding
 )
 
-psycopg2.extensions.register_adapter(dataoneTypes.NonEmptyString800, adapt_pyxb_binding)
+psycopg2.extensions.register_adapter(d1_common.types.dataoneTypes.NonEmptyString800, adapt_pyxb_binding)
 
-psycopg2.extensions.register_adapter(dataoneTypes.ChecksumAlgorithm, adapt_pyxb_binding)
+psycopg2.extensions.register_adapter(d1_common.types.dataoneTypes.ChecksumAlgorithm, adapt_pyxb_binding)
 
 psycopg2.extensions.register_adapter(
-  dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
+  d1_common.types.dataoneTypes.ObjectFormatIdentifier, adapt_pyxb_binding
 )
 
-psycopg2.extensions.register_adapter(dataoneTypes.NonEmptyString, adapt_pyxb_binding)
+psycopg2.extensions.register_adapter(d1_common.types.dataoneTypes.NonEmptyString, adapt_pyxb_binding)
 
 psycopg2.extensions.register_adapter(pyxb.binding.datatypes.string, adapt_pyxb_binding)
 
