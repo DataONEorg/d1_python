@@ -259,6 +259,75 @@ class GMNIntegrationTests(unittest.TestCase):
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     return eval(client.get_setting('PUBLIC_OBJECT_LIST'))
 
+  def _now_str(self):
+    return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
+  def _random_str(self, num_chars=10):
+    return ''.join(
+      [random.choice(string.ascii_lowercase) for _ in range(num_chars)]
+    )
+
+  def _random_id(self, pre_str=None):
+    if pre_str is not None:
+      return '{}_{}_{}'.format(pre_str, self._random_str(), self._now_str())
+    else:
+      return '{}_{}'.format(self._random_str(), self._now_str())
+
+  def _create(
+    self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None
+  ):
+    sci_obj_str, sysmeta_obj = self._generate_test_object(
+      binding, pid, obsoletes, obsoleted_by, sid
+    )
+    client.create(
+      pid, StringIO.StringIO(sci_obj_str), sysmeta_obj, vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    return sci_obj_str, sysmeta_obj
+
+  def _update(
+    self, client, binding, old_pid, new_pid, sid=None, obsoletes=None, obsoleted_by=None
+  ):
+    sci_obj_str, sysmeta_obj = self._generate_test_object(
+      binding, new_pid, obsoletes, obsoleted_by, sid
+    )
+    client.update(
+      old_pid, StringIO.StringIO(sci_obj_str), new_pid, sysmeta_obj,
+      vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    return sci_obj_str, sysmeta_obj
+
+  def _get(self, client, sid_or_pid):
+    sysmeta_obj = client.getSystemMetadata(
+      sid_or_pid, vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    response = client.get(
+      sid_or_pid, vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    self._assert_sci_obj_size_matches_sysmeta(response, sysmeta_obj)
+    self._assert_sci_obj_checksum_matches_sysmeta(response, sysmeta_obj)
+    return response.content, sysmeta_obj
+
+  def _assert_sci_obj_size_matches_sysmeta(self, response, sysmeta_obj):
+    self.assertEqual(sysmeta_obj.size, len(response.content))
+
+  def _assert_sci_obj_checksum_matches_sysmeta(self, response, sysmeta_obj):
+    h = self._get_checksum_calculator(sysmeta_obj)
+    c = self._calculate_object_checksum(response, h)
+    self.assertEqual(sysmeta_obj.checksum.value().lower(), c.lower())
+
+  def _get_checksum_calculator(self, sysmeta_obj):
+    return d1_common.checksum.get_checksum_calculator_by_dataone_designator(
+      sysmeta_obj.checksum.algorithm
+    )
+
+  def _calculate_object_checksum(self, response, checksum_calculator):
+    checksum_calculator.update(response.content)
+    return checksum_calculator.hexdigest()
+
   # ============================================================================
   # Preparation.
   # ============================================================================
