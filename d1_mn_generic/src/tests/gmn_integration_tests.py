@@ -1236,6 +1236,369 @@ class GMNIntegrationTests(unittest.TestCase):
       self.assertEqual(sysmeta_obj_retrieved.identifier.value()\
                        .encode('utf-8'), scidata)
 
+  # ----------------------------------------------------------------------------
+  # Chains and SIDs
+  # ----------------------------------------------------------------------------
+
+  def test_3000_v1(self):
+    """MNStorage.create(): Creating a standalone object with new PID and SID
+    does not raise exception.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3000(client, v1)
+
+  def test_3000_v2(self):
+    """MNStorage.create(): Creating a standalone object with new PID and SID
+    does not raise exception.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3000(client, v2)
+
+  def _test_3000(self, client, binding):
+    pid = self._random_id()
+    sid = self._random_id()
+    self._create(client, binding, pid, sid)
+
+  # --
+
+  def test_3010_v1(self):
+    """v1 MNStorage.create(): Attempting to reuse existing SID as PID when creating
+    a standalone object raises IdentifierNotUnique.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3010(client, v1)
+
+  def test_3010_v2(self):
+    """v2 MNStorage.create(): Attempting to reuse existing SID as PID when creating
+    a standalone object raises IdentifierNotUnique.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3010(client, v2)
+
+  def _test_3010(self, client, binding):
+    pid = self._random_id()
+    sid1 = self._random_id()
+    sid2 = self._random_id()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._create(client_v2, v2, pid, sid1)
+    # self._create(client, binding, sid1)
+    # self._create(client, binding, sid1)
+    self.assertRaises(
+      d1_common.types.exceptions.IdentifierNotUnique,
+      self._create,
+      client,
+      binding,
+      sid1,
+      sid2,
+    )
+
+  # --
+
+  def test_3020_v2(self):
+    """v2 MNStorage.create(): Attempting to reuse existing SID as SID when creating
+    a standalone object raises IdentifierNotUnique. This test is not applicable
+    to v1 MNStorage.create() since v1 sysmeta cannot hold a SID.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3020(client, v2)
+
+  def _test_3020(self, client, binding):
+    pid1 = self._random_id()
+    pid2 = self._random_id()
+    sid = self._random_id()
+    self._create(client, binding, pid1, sid)
+    self.assertRaises(
+      d1_common.types.exceptions.IdentifierNotUnique, self._create, client,
+      binding, pid1, pid2
+    )
+
+  # --
+
+  def test_3030_v1(self):
+    """v1 MNStorage.get(): Attempting to pass a SID to v1 get() raises NotFound
+    even though the SID exists (by design, we don't resolve SIDs for v1).
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound,
+      self._test_3030, client, v1
+    )
+
+  def test_3030_v2(self):
+    """v2 MNStorage.get(): Retrieving standalone object by SID resolves to
+    correct PID.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3030(client, v2)
+
+  def _test_3030(self, client, binding):
+    pid = self._random_id()
+    sid = self._random_id()
+    create_sci_obj_str, create_sysmeta_obj = self._create(
+      client, binding, pid, sid
+    )
+    get_sci_obj_str, get_sysmeta_obj = self._get(client, sid)
+    self.assertEqual(create_sci_obj_str, get_sci_obj_str)
+    self.assertEqual(get_sysmeta_obj.identifier.value(), pid)
+    self.assertEqual(get_sysmeta_obj.seriesId.value(), sid)
+
+  # --
+
+  def test_3031_v1(self):
+    """v1 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3031(client, v1)
+
+  def test_3031_v2(self):
+    """v2 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3031(client, v2)
+
+  def _test_3031(self, client, binding):
+    pid1 = self._random_id()
+    sid1 = self._random_id()
+    self._create(client, binding, pid1, sid1)
+    pid2 = self._random_id()
+    sid2 = self._random_id()
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidSystemMetadata,
+      self._create, client, binding, pid2, sid2, obsoletes=pid1
+    )
+
+  # --
+
+  def test_3032_v1(self):
+    """v1 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3032(client, v1)
+
+  def test_3032_v2(self):
+    """v2 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3032(client, v2)
+
+  def _test_3032(self, client, binding):
+    """MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata.
+    """
+    pid = self._random_id()
+    sid = self._random_id()
+    unknown_pid = self._random_id()
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidSystemMetadata,
+      self._create, client, binding, pid, sid,
+      obsoletes=unknown_pid
+    )
+
+  # --
+
+  def test_3033_v1(self):
+    """v1 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3033(client, v1)
+
+  def test_3033_v2(self):
+    """v2 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3033(client, v2)
+
+  def _test_3033(self, client, binding):
+    pid1 = self._random_id()
+    sid1 = self._random_id()
+    self._create(client, binding, pid1, sid1)
+    pid2 = self._random_id()
+    sid2 = self._random_id()
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidSystemMetadata,
+      self._create, client, binding,
+      pid2,
+      sid2,
+      obsoleted_by=pid1,
+    )
+
+  # --
+
+  def test_3034_v1(self):
+    """v1 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3034(client, v1)
+
+  def test_3034_v2(self):
+    """v2 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletedBy pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3034(client, v2)
+
+  def _test_3034(self, client, binding):
+    """MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletedBy pointing to unknown object raises InvalidSystemMetadata.
+    """
+    pid = self._random_id()
+    sid = self._random_id()
+    unknown_pid = self._random_id()
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidSystemMetadata, self._create, client, binding, pid, sid,
+      obsoleted_by=unknown_pid
+    )
+
+  # Update()
+
+  def test_3040_v1(self):
+    """v1 MNStorage.update(): Attempting to update a non-existing object raises
+    NotFound.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3040(client, v1)
+
+  def test_3040_v2(self):
+    """v2 MNStorage.update(): Attempting to update a non-existing object raises
+    NotFound.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3040(client, v2)
+
+  def _test_3040(self, client, binding):
+    old_pid = self._random_id()
+    new_pid = self._random_id()
+    self.assertRaises(
+      d1_common.types.exceptions.NotFound, self._update, client, binding, old_pid, new_pid
+    )
+
+  # --
+
+  def test_3041_v1(self):
+    """v1 MNStorage.update(): Attempting to update an object when sysmeta
+    PID does not match URL PID raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3041(client, v1)
+
+  def test_3041_v2(self):
+    """v2 MNStorage.update(): Attempting to update an object when sysmeta
+    PID does not match URL PID raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3041(client, v2)
+
+  def _test_3041(self, client, binding):
+    # Create valid base obj.
+    base_pid = self._random_id()
+    self._create(client, binding, base_pid)
+    # Attempt update of valid base obj with invalid sysmeta.
+    unk_pid = self._random_id()
+    update_pid = self._random_id()
+    sci_obj_str, sysmeta_obj = self._generate_test_object(binding, unk_pid)
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidSystemMetadata, client.update, base_pid,
+      StringIO.StringIO(sci_obj_str), update_pid, sysmeta_obj,
+      vendorSpecific=self.
+      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
+    return sci_obj_str, sysmeta_obj
+
+  # --
+
+  def test_3042_v1(self):
+    """v1 MNStorage.update(): Attempting to reuse existing PID when updating a
+    standalone object raises IdentifierNotUnique.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3042(client, v1)
+
+  def test_3042_v2(self):
+    """v2 MNStorage.update(): Attempting to reuse existing PID when updating a
+    standalone object raises IdentifierNotUnique.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3042(client, v2)
+
+  def _test_3042(self, client, binding):
+    base_pid = self._random_id()
+    self._create(client, binding, base_pid)
+    self.assertRaises(
+      d1_common.types.exceptions.IdentifierNotUnique, self._update, client, binding, base_pid,
+      base_pid
+    )
+
+  # --
+
+  def test_3043_v1(self):
+    """v1 MNStorage.create(), MNStorage.update(): A chain can be created by
+    updating a standalone object, when neither objects have a SID.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3043(client, v1)
+
+  def test_3043_v2(self):
+    """v2 MNStorage.create(), MNStorage.update(): A chain can be created by
+    updating a standalone object, when neither objects have a SID.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3043(client, v2)
+
+  def _test_3043(self, client, binding):
+    base_pid = self._random_id()
+    update_pid = self._random_id()
+    self._create(client, binding, base_pid)
+    base_obj_str, base_sysmeta_obj = self._get(client, base_pid)
+    self.assertIsNone(base_sysmeta_obj.obsoletes)
+    self.assertIsNone(base_sysmeta_obj.obsoletedBy)
+    self._update(client, binding, base_pid, update_pid)
+    base_obj_str, base_sysmeta_obj = self._get(client, base_pid)
+    self.assertIsNone(base_sysmeta_obj.obsoletes)
+    self.assertEquals(base_sysmeta_obj.obsoletedBy.value(), update_pid)
+
+  # --
+
+  def test_3050_v1(self):
+    """v1 MNStorage.update(): Updating a base object that has a SID without
+    specifying a SID in the update causes the SID to shift to the update.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3050(client, v1)
+
+  def test_3050_v2(self):
+    """v2 MNStorage.update(): Updating a base object that has a SID without
+    specifying a SID in the update causes the SID to shift to the update.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3050(client, v2)
+
+  def _test_3050(self, client, binding):
+    # Create base object with SID
+    base_pid = self._random_id()
+    base_sid = self._random_id()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._create(client_v2, v2, base_pid, base_sid)
+    base_obj_str, base_sysmeta_obj = self._get(client_v2, base_pid)
+    self.assertEquals(base_sysmeta_obj.identifier.value(), base_pid)
+    self.assertEquals(base_sysmeta_obj.seriesId.value(), base_sid)
+    # Update without SID
+    update_pid = self._random_id()
+    self._update(client, binding, base_pid, update_pid)
+    # Retrieve object by base SID and verify that it's the updated object.
+    update_obj_str, update_sysmeta_obj = self._get(client, update_pid)
+    self.assertEquals(update_sysmeta_obj.identifier.value(), update_pid)
+
+  #
+  # Test wrapped mode
+  #
+
   def _create_and_compare(
     self, client, binding, num_sciobj_bytes, redirect_bool
   ):
