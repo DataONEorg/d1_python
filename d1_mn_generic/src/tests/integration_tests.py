@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`integration_tests`
 ========================
 
 :Synopsis: Round-trip test of the ITK and MN.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import csv
@@ -54,9 +54,9 @@ try:
   import d1_common.util
   import d1_common.date_time
   import d1_common.url
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.dataoneTypes
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
@@ -66,7 +66,7 @@ try:
   import d1_client.client
   import d1_client.systemmetadata
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
@@ -124,23 +124,23 @@ class TestSequenceFunctions(unittest.TestCase):
     pass
 
   def assert_counts(self, sci_objects, start, count, total):
-    '''Check start, count and total values
-    '''
+    """Check start, count and total values
+    """
     self.assertEqual(sci_objects.start, start)
     self.assertEqual(sci_objects.count, count)
     self.assertEqual(sci_objects.total, total)
     self.assertEqual(len(sci_objects.objectInfo), count)
 
   def assert_response_headers(self, response):
-    '''Check that required response headers are present.
-    '''
+    """Check that required response headers are present.
+    """
     self.assertIn('Last-Modified', response)
     self.assertIn('Content-Length', response)
     self.assertIn('Content-Type', response)
 
   def assert_xml_equals(self, xml_a, xml_b):
-    '''Compare two XML documents
-    '''
+    """Compare two XML documents
+    """
     obj_a = objectify.fromstring(xml_a)
     str_a = etree.tostring(obj_a)
     obj_b = objectify.fromstring(xml_b)
@@ -149,7 +149,7 @@ class TestSequenceFunctions(unittest.TestCase):
     str_a_orig = str_a
     str_b_orig = str_b
 
-    msg = 'Strings are equal to the point where one is longer than the other: "{0}" != "{1}"'.format(
+    msg = 'Strings are equal to the point where one is longer than the other: "{}" != "{}"'.format(
       str_a_orig, str_b_orig
     )
     if str_a != str_b:
@@ -158,7 +158,7 @@ class TestSequenceFunctions(unittest.TestCase):
       i = 0
       for c in str_a:
         if c != str_b[i]:
-          msg = 'Difference at offset {0} ({1} != {2}): "{3}" != "{4}"'.format(
+          msg = 'Difference at offset {} ({} != {}): "{}" != "{}"'.format(
             i, c, str_b[i], str_a_orig, str_b_orig
           )
           break
@@ -167,8 +167,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEquals(str_a_orig, str_b_orig, msg)
 
   def assert_mn_sci_object_collection_is_empty(self):
-    '''MN: Verify that SciObject collection is empty
-    '''
+    """MN: Verify that SciObject collection is empty
+    """
     logging.info('MN: Verify that SciObject collection is empty')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -185,8 +185,8 @@ class TestSequenceFunctions(unittest.TestCase):
       return True
 
   def assert_mn_event_log_is_empty(self):
-    '''MN: Verify that event log is empty
-    '''
+    """MN: Verify that event log is empty
+    """
     logging.info('MN: Verify that event log is empty')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -197,8 +197,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(len(logRecords.logEntry), 0)
 
   def assert_correct_create_log(self):
-    '''MN: Verify that access log correctly reflects create_object actions
-    '''
+    """MN: Verify that access log correctly reflects create_object actions
+    """
     logging.info('MN: Verify that access log correctly reflects create_object actions')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -220,8 +220,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertTrue(o.subject)
 
   def assert_mn_compare_byte_by_byte(self):
-    '''MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies
-    '''
+    """MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies
+    """
     logging.info(
       'MN: Read set of test SciObjects back from MN and do byte-by-byte comparison with local copies'
     )
@@ -239,8 +239,8 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertEqual(sci_object_str_disk, sci_object_str_d1)
 
   def assert_mn_sci_object_str(self, pid):
-    '''MN: Download a SciObject and compare it byte by byte with a local copy.
-    '''
+    """MN: Download a SciObject and compare it byte by byte with a local copy.
+    """
 
     logging.info('MN: Download a SciObject and compare it byte by byte with a local copy')
 
@@ -251,8 +251,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(sci_object_str_disk, sci_object_str_node)
 
   def assert_cn_sci_object_str(self, pid, cn_url=None):
-    '''MN: Download a SciObject and compare it byte by byte with a local copy.
-    '''
+    """MN: Download a SciObject and compare it byte by byte with a local copy.
+    """
 
     logging.info('MN: Download a SciObject and compare it byte by byte with a local copy')
 
@@ -268,7 +268,7 @@ class TestSequenceFunctions(unittest.TestCase):
 #------------------------------------------------------------------------------
 
   def init_to_known_state(self):
-    '''Initialize system to known state'''
+    """Initialize system to known state"""
     # Clear SciObjects.
     logging.info('MN: BEGIN: init_to_known_state')
     self.mn_delete_all_sci_objects()
@@ -284,8 +284,8 @@ class TestSequenceFunctions(unittest.TestCase):
     logging.info('MN: END: init_to_known_state')
 
   def mn_get_sci_object_by_pid(self, pid):
-    '''MN: Get SciObject by pid.
-    '''
+    """MN: Get SciObject by pid.
+    """
     client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_str_mn = client.get(pid).read()
 
@@ -296,8 +296,8 @@ class TestSequenceFunctions(unittest.TestCase):
     # Compare SciObject with local.
 
   def mn_get_sci_object_info_by_identifer(self, pid):
-    '''MN: Get SciObject information by pid
-    '''
+    """MN: Get SciObject information by pid
+    """
     logging.info('MN: Get SciObject information by pid')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -313,9 +313,9 @@ class TestSequenceFunctions(unittest.TestCase):
     assertTrue(False)
 
   def mn_compare_sci_object_str(self, pid):
-    '''MN: Retrieve an SciObject by pid and compare the SciObject
+    """MN: Retrieve an SciObject by pid and compare the SciObject
     with local copy, byte by byte.
-    '''
+    """
     # Retrieve SciObject.
     client = d1_client.client.DataOneClient(self.opts.mn_url)
     sci_object_str = client.get(o.pid).read()
@@ -325,8 +325,8 @@ class TestSequenceFunctions(unittest.TestCase):
     # MN specific functions.
 
   def mn_delete_all_sci_objects(self):
-    '''MN: Delete all SciObjects
-    '''
+    """MN: Delete all SciObjects
+    """
     logging.info('MN: Delete all SciObjects')
 
     client = d1_client.client.RESTClient()
@@ -339,12 +339,12 @@ class TestSequenceFunctions(unittest.TestCase):
       if res != r'OK':
         raise Exception(res)
     except Exception as e:
-      logging.error('REST call failed: {0}'.format(str(e)))
+      logging.error('REST call failed: {}'.format(str(e)))
       raise
 
   def mn_clear_event_log(self):
-    '''MN: Clear event log
-    '''
+    """MN: Clear event log
+    """
     logging.info('MN: Clear event log')
 
     client = d1_client.client.RESTClient()
@@ -357,12 +357,12 @@ class TestSequenceFunctions(unittest.TestCase):
       if res != r'OK':
         raise Exception(res)
     except Exception as e:
-      logging.error('REST call failed: {0}'.format(str(e)))
+      logging.error('REST call failed: {}'.format(str(e)))
       raise
 
   def mn_inject_fictional_event_log(self):
-    '''MN: Inject a fake event log for testing
-    '''
+    """MN: Inject a fake event log for testing
+    """
     logging.info('MN: Inject a fake event log for testing')
 
     client = d1_client.client.DataOneClient()
@@ -376,18 +376,18 @@ class TestSequenceFunctions(unittest.TestCase):
     status, reason, page = multipart.post(inject_log_url)
 
     self.assertEqual(
-      status, 200, 'Log injection failed. Returned: {0} {1}'.format(reason, page)
+      status, 200, 'Log injection failed. Returned: {} {}'.format(reason, page)
     )
 
   # MN functions.
 
   def mn_populate_with_test_sci_objects(self, register=False):
-    '''MN: Populate with set of test SciObjects.
+    """MN: Populate with set of test SciObjects.
     
     If register is True, an SciObject will be registered instead of created. A
     registered SciObject contain a link to another location instead of SciObject
     bytes (Used by Dryad).
-    '''
+    """
     logging.info('MN: Populate with set of test SciObjects.')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -405,7 +405,7 @@ class TestSequenceFunctions(unittest.TestCase):
       sysmeta_obj = d1_client.systemmetadata.SystemMetadata(sysmeta_xml)
       pid = sysmeta_obj.pid
 
-      if register == True:
+      if register:
         # To create a valid URL, we must quote the pid twice. First, so
         # that the URL will match what's on disk and then again so that the
         # quoting survives being passed to the web server.
@@ -419,8 +419,8 @@ class TestSequenceFunctions(unittest.TestCase):
         client.create(pid, sci_object_file, sysmeta_xml)
 
   def mn_sci_object_properties(self):
-    '''MN: Read complete SciObject collection and compare with values stored in local SysMeta files
-    '''
+    """MN: Read complete SciObject collection and compare with values stored in local SysMeta files
+    """
     logging.info(
       'MN: Read complete SciObject collection and compare with values stored in local SysMeta files'
     )
@@ -448,7 +448,7 @@ class TestSequenceFunctions(unittest.TestCase):
           break
 
       self.assertTrue(
-        found, 'Couldn\'t find SciObject with pid "{0}"'.format(sysmeta_obj.pid)
+        found, 'Couldn\'t find SciObject with pid "{}"'.format(sysmeta_obj.pid)
       )
 
       self.assertEqual(object_info.pid, sysmeta_obj.pid)
@@ -461,8 +461,8 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertEqual(sci_object_info.checksum.algorithm, sysmeta_obj.checksumAlgorithm)
 
   def assert_mn_sci_object_slicing_1(self):
-    '''MN: Verify slicing: Starting at 0 and getting half of the available SciObjects
-    '''
+    """MN: Verify slicing: Starting at 0 and getting half of the available SciObjects
+    """
     logging.info(
       'MN: Verify slicing: Starting at 0 and getting half of the available SciObjects'
     )
@@ -477,8 +477,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(sci_objects, 0, sci_object_cnt_half, sci_object_cnt)
 
   def assert_mn_sci_object_slicing_2(self):
-    '''MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are
-    '''
+    """MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are
+    """
     logging.info(
       'MN: Verify slicing: Starting at SciObject_cnt_half and requesting more SciObjects than there are'
     )
@@ -498,8 +498,8 @@ class TestSequenceFunctions(unittest.TestCase):
     )
 
   def assert_mn_sci_object_slicing_3(self):
-    '''MN: Verify slicing: Starting above number of SciObjects that we have
-    '''
+    """MN: Verify slicing: Starting above number of SciObjects that we have
+    """
     logging.info('MN: Verify slicing: Starting above number of SciObjects that we have')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -511,8 +511,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(sci_objects, sci_object_cnt * 2, 0, sci_object_cnt)
 
   def assert_mn_sci_object_slicing_4(self):
-    '''Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
-    '''
+    """Verify slicing: Requesting more than MAX_LISTOBJECTS should throw
+    """
     logging.info('Verify slicing: Requesting more than MAX_LISTOBJECTS should throw')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -528,8 +528,8 @@ class TestSequenceFunctions(unittest.TestCase):
       self.assertTrue(False)
 
   def assert_mn_sci_object_date_range_1(self):
-    '''MN: Verify date range query: Get all SciObjects from the 1990s
-    '''
+    """MN: Verify date range query: Get all SciObjects from the 1990s
+    """
     logging.info('Verify date range query: Get all SciObjects from the 1990s')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -541,8 +541,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(sci_objects, 0, 4, 4)
 
   def assert_mn_sci_object_date_range_2(self):
-    '''MN: Verify date range query: Get last 2 SciObjects from range
-    '''
+    """MN: Verify date range query: Get last 2 SciObjects from range
+    """
     logging.info('MN: Verify date range query: Get last 2 SciObjects from range')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -556,8 +556,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(sci_objects, 2, 2, 4)
 
   def assert_mn_sci_object_date_range_3(self):
-    '''MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat
-    '''
+    """MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat
+    """
     logging.info(
       'MN: Verify date range query: Get 10 first SciObjects from the 1990s, filtered by objectFormat'
     )
@@ -576,8 +576,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(sci_objects, 0, 1, 1)
 
   def assert_mn_sci_object_date_range_4(self):
-    '''MN: Verify date range query: Get 10 first SciObjects from non-existing date range
-    '''
+    """MN: Verify date range query: Get 10 first SciObjects from non-existing date range
+    """
     logging.info(
       'MN: Verify date range query: Get 10 first SciObjects from non-existing date range'
     )
@@ -596,16 +596,16 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_counts(sci_objects, 0, 0, 0)
 
   def assert_mn_sci_object_count(self):
-    '''MN: Get SciObject count
-    '''
+    """MN: Get SciObject count
+    """
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     sci_objects = client.listObjects(start=0, count=0, )
     self.assert_counts(sci_objects, 0, 0, 17)
 
   def assert_mn_sci_object_by_invalid_pid(self):
-    '''MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_pid_
-    '''
+    """MN: Verify 404 NotFound when attempting to get non-existing SciObject /object/_invalid_pid_
+    """
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     logging.info(
@@ -620,8 +620,8 @@ class TestSequenceFunctions(unittest.TestCase):
       assertTrue(False)
 
   def mn_get_sci_object_by_valid_pid(self):
-    '''Verify successful retrieval of valid SciObject /object/valid_pid
-    '''
+    """Verify successful retrieval of valid SciObject /object/valid_pid
+    """
     client = d1_client.client.DataOneClient(self.opts.mn_url)
 
     try:
@@ -639,8 +639,8 @@ class TestSequenceFunctions(unittest.TestCase):
   # /meta/<pid>
 
   def mn_get_sci_object_by_invalid_pid(self):
-    '''MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_
-    '''
+    """MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_
+    """
     logging.info(
       'MN: Verify 404 NotFound when attempting to get non-existing SysMeta /meta/_invalid_pid_'
     )
@@ -655,8 +655,8 @@ class TestSequenceFunctions(unittest.TestCase):
       assertTrue(False)
 
   def mn_get_meta_by_valid_pid(self):
-    '''MN: Verify successful retrieval of valid SciObject /meta/valid_pid
-    '''
+    """MN: Verify successful retrieval of valid SciObject /meta/valid_pid
+    """
     logging.info('MN: Verify successful retrieval of valid SciObject /meta/valid_pid')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -665,8 +665,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertTrue(response)
 
   def mn_xml_validation(self):
-    '''MN: Verify that returned XML document validates against the ObjectList schema
-    '''
+    """MN: Verify that returned XML document validates against the ObjectList schema
+    """
     logging.info(
       'MN: Verify that returned XML document validates against the ObjectList schema'
     )
@@ -678,12 +678,12 @@ class TestSequenceFunctions(unittest.TestCase):
     d1_common.util.validate_xml(xml_doc)
 
   def mn_pxby_objectlist_xml(self):
-    '''MN: ObjectList deserialization, XML
-    '''
+    """MN: ObjectList deserialization, XML
+    """
     logging.info('MN: ObjectList deserialization, XML')
 
     xml_doc = open('test.xml', 'rb').read()
-    sci_objects_1 = dataoneTypes.CreateFromDocument(xml_doc)
+    sci_objects_1 = d1_common.types.dataoneTypes.CreateFromDocument(xml_doc)
     doc = sci_objects_1.toxml()
 
     sci_objects_2 = d1_common.types.objectlist_serialization.ObjectList()
@@ -693,8 +693,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_xml_equals(xml_doc, xml_doc_out)
 
   def mn_orderby_size(self):
-    '''MN: Verify ObjectList orderby: size
-    '''
+    """MN: Verify ObjectList orderby: size
+    """
     logging.info('MN: Verify ObjectList orderby: size')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -704,8 +704,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(doc['objectInfo'][9]['size'], 2746)
 
   def mn_orderby_size_desc(self):
-    '''MN: Verify ObjectList orderby: desc_size
-    '''
+    """MN: Verify ObjectList orderby: desc_size
+    """
     logging.info('MN: Verify ObjectList orderby: desc_size')
 
     client = d1_client.client.DataOneClient(self.opts.mn_url)
@@ -715,8 +715,8 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assertEqual(doc['objectInfo'][9]['size'], 717851)
 
   def cn_pxby_nodelist_xml(self):
-    '''CN: NodeList validation
-    '''
+    """CN: NodeList validation
+    """
     logging.info('CN: NodeList validation')
 
     client = d1_client.client.DataOneClient(self.opts.cn_url)
@@ -738,10 +738,10 @@ class TestSequenceFunctions(unittest.TestCase):
 #-------------------------------------------------------------------------------
 
   def _test_01_uc_36(self):
-    '''Integration Test: 01 - Use case 36 (resolve)
+    """Integration Test: 01 - Use case 36 (resolve)
     Use Case 36: Query Coordinating Node for location of data SciObject
     http://mule1.dataone.org/ArchitectureDocs/UseCases/36_uc.html
-    '''
+    """
     logging.info('Use Case 36')
     # TODO: Remove buffering.
 
@@ -772,16 +772,16 @@ class TestSequenceFunctions(unittest.TestCase):
         # Fail if we couldn't look up the node.
         self.assertTrue(
           'resolve_node' in locals(),
-          'Unable to find pid({0}) in the Node Registry'.format(location.nodeIdentifier)
+          'Unable to find pid({}) in the Node Registry'.format(location.nodeIdentifier)
         )
         # Check if we can retrieve the object from the3 given location.
         self.assert_cn_sci_object_str(sci_object.pid, resolve_node.baseURL)
 
   def test_02_uc_02(self):
-    '''Integration Test: Use case 2 (query)
+    """Integration Test: Use case 2 (query)
     Use Case 02: List PIDs By Search
     http://mule1.dataone.org/ArchitectureDocs/UseCases/02_uc.html
-    '''
+    """
     logging.info('Use Case 02')
 
     self.init_to_known_state()
@@ -798,19 +798,19 @@ class TestSequenceFunctions(unittest.TestCase):
     self.assert_mn_sci_object_count()
 
   def _test_03_uc_02(self):
-    '''Integration Test: Completing the loop: publish data set, be sure it is
+    """Integration Test: Completing the loop: publish data set, be sure it is
     retrievable exactly as submitted.
-    '''
+    """
     # This is a placeholder as this test has been rolled into test_01 and test_02.
     pass
 
   def _test_04_uc_01(self):
-    '''
+    """
     Integration Test: Use case 1 (get). Note: need to test for non-existant
     ID’s, test access control, test for malicious content.
     Use Case 01: Get Object Identified by PID
     http://mule1.dataone.org/ArchitectureDocs/UseCases/01_uc.html
-    '''
+    """
     logging.info('Use Case 01')
 
     self.init_to_known_state()
@@ -833,16 +833,16 @@ class TestSequenceFunctions(unittest.TestCase):
     # TODO: test for malicious content.
 
   def _test_05(self):
-    '''
+    """
     Integration test: Can a downed CN be revived/repopulated?
-    '''
+    """
     # TODO.
     pass
 
   def _test_06(self):
-    '''
+    """
     Integration test: Test for invalid input and known problems such as XSS and SQL Injection.
-    '''
+    """
     # TODO: Test for Cross-site (XSS) scripting vulnerability.
     # Test for SQL Injection.
 
@@ -1065,16 +1065,16 @@ class TestSequenceFunctions(unittest.TestCase):
     # client.node: No need to check because it takes not parameters.
 
   def _test_zz_uc_03(self):
-    '''Use Case 03 - Register MN
+    """Use Case 03 - Register MN
     http://mule1.dataone.org/ArchitectureDocs/UseCases/03_uc.html
-    '''
+    """
     logging.info('Use Case 03')
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_04(self, obj, sysmeta):
-    '''Use Case 04 - Create New Object
+    """Use Case 04 - Create New Object
     http://mule1.dataone.org/ArchitectureDocs/UseCases/04_uc.html
-    '''
+    """
     logging.info('Use Case 04')
 
     self.init_to_known_state()
@@ -1091,257 +1091,257 @@ class TestSequenceFunctions(unittest.TestCase):
     client.create(pid, sci_object_file, sysmeta_xml)
 
   def _test_zz_uc_05(self):
-    '''Use Case 05 - Update Metadata
+    """Use Case 05 - Update Metadata
     http://mule1.dataone.org/ArchitectureDocs/UseCases/05_uc.html
-    '''
+    """
     logging.info('Use Case 05')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_06(self):
-    '''Use Case 06 - MN Synchronize
+    """Use Case 06 - MN Synchronize
     http://mule1.dataone.org/ArchitectureDocs/UseCases/06_uc.html
-    '''
+    """
     logging.info('Use Case 06')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_07(self):
-    '''Use Case 07 - CN Batch Upload
+    """Use Case 07 - CN Batch Upload
     http://mule1.dataone.org/ArchitectureDocs/UseCases/07_uc.html
-    '''
+    """
     logging.info('Use Case 07')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_08(self):
-    '''Use Case 08 - Replication Policy Communication
+    """Use Case 08 - Replication Policy Communication
     http://mule1.dataone.org/ArchitectureDocs/UseCases/08_uc.html
-    '''
+    """
     logging.info('Use Case 08')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_09(self):
-    '''Use Case 09 - Replicate MN to MN
+    """Use Case 09 - Replicate MN to MN
     http://mule1.dataone.org/ArchitectureDocs/UseCases/09_uc.html
-    '''
+    """
     logging.info('Use Case 09')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_10(self):
-    '''Use Case 10 - MN Status Reports
+    """Use Case 10 - MN Status Reports
     http://mule1.dataone.org/ArchitectureDocs/UseCases/10_uc.html
-    '''
+    """
     logging.info('Use Case 10')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_11(self):
-    '''Use Case 11 - CRUD Workflow Objects
+    """Use Case 11 - CRUD Workflow Objects
     http://mule1.dataone.org/ArchitectureDocs/UseCases/11_uc.html
-    '''
+    """
     logging.info('Use Case 11')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_12(self):
-    '''Use Case 12 - User Authentication
+    """Use Case 12 - User Authentication
     http://mule1.dataone.org/ArchitectureDocs/UseCases/12_uc.html
-    '''
+    """
     logging.info('Use Case 12')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_13(self):
-    '''Use Case 13 - User Authorization
+    """Use Case 13 - User Authorization
     http://mule1.dataone.org/ArchitectureDocs/UseCases/13_uc.html
-    '''
+    """
     logging.info('Use Case 13')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_14(self):
-    '''Use Case 14 - System Authentication and Authorization
+    """Use Case 14 - System Authentication and Authorization
     http://mule1.dataone.org/ArchitectureDocs/UseCases/14_uc.html
-    '''
+    """
     logging.info('Use Case 14')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_15(self):
-    '''Use Case 15 - Account Management
+    """Use Case 15 - Account Management
     http://mule1.dataone.org/ArchitectureDocs/UseCases/15_uc.html
-    '''
+    """
     logging.info('Use Case 15')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_16(self):
-    '''Use Case 16 - Log CRUD Operations
+    """Use Case 16 - Log CRUD Operations
     http://mule1.dataone.org/ArchitectureDocs/UseCases/16_uc.html
-    '''
+    """
     logging.info('Use Case 16')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_17(self):
-    '''Use Case 17 - CRUD Logs Aggregated at CNs
+    """Use Case 17 - CRUD Logs Aggregated at CNs
     http://mule1.dataone.org/ArchitectureDocs/UseCases/17_uc.html
-    '''
+    """
     logging.info('Use Case 17')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_18(self):
-    '''Use Case 18 - MN Retrieve Aggregated Logs
+    """Use Case 18 - MN Retrieve Aggregated Logs
     http://mule1.dataone.org/ArchitectureDocs/UseCases/18_uc.html
-    '''
+    """
     logging.info('Use Case 18')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_19(self):
-    '''Use Case 19 - Retrieve Object Download Summary
+    """Use Case 19 - Retrieve Object Download Summary
     http://mule1.dataone.org/ArchitectureDocs/UseCases/19_uc.html
-    '''
+    """
     logging.info('Use Case 19')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_20(self):
-    '''Use Case 20 - Owner Retrieve Aggregate Logs
+    """Use Case 20 - Owner Retrieve Aggregate Logs
     http://mule1.dataone.org/ArchitectureDocs/UseCases/20_uc.html
-    '''
+    """
     logging.info('Use Case 20')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_21(self):
-    '''Use Case 21 - Owner Subscribe to CRUD Operations
+    """Use Case 21 - Owner Subscribe to CRUD Operations
     http://mule1.dataone.org/ArchitectureDocs/UseCases/21_uc.html
-    '''
+    """
     logging.info('Use Case 21')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_22(self):
-    '''Use Case 22 - Link/Citation Report for Owner
+    """Use Case 22 - Link/Citation Report for Owner
     http://mule1.dataone.org/ArchitectureDocs/UseCases/22_uc.html
-    '''
+    """
     logging.info('Use Case 22')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_23(self):
-    '''Use Case 23 - Owner Expunge Content
+    """Use Case 23 - Owner Expunge Content
     http://mule1.dataone.org/ArchitectureDocs/UseCases/23_uc.html
-    '''
+    """
     logging.info('Use Case 23')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_24(self):
-    '''Use Case 24 - MNs and CNs Support Transactions
+    """Use Case 24 - MNs and CNs Support Transactions
     http://mule1.dataone.org/ArchitectureDocs/UseCases/24_uc.html
-    '''
+    """
     logging.info('Use Case 24')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_25(self):
-    '''Use Case 25 - Detect Damaged Content
+    """Use Case 25 - Detect Damaged Content
     http://mule1.dataone.org/ArchitectureDocs/UseCases/25_uc.html
-    '''
+    """
     logging.info('Use Case 25')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_26(self):
-    '''Use Case 26 - Data Quality Checks
+    """Use Case 26 - Data Quality Checks
     http://mule1.dataone.org/ArchitectureDocs/UseCases/26_uc.html
-    '''
+    """
     logging.info('Use Case 26')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_27(self):
-    '''Use Case 27 - Metadata Version Migration
+    """Use Case 27 - Metadata Version Migration
     http://mule1.dataone.org/ArchitectureDocs/UseCases/27_uc.html
-    '''
+    """
     logging.info('Use Case 27')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_28(self):
-    '''Use Case 28 - Derived Product Original Change Notification
+    """Use Case 28 - Derived Product Original Change Notification
     http://mule1.dataone.org/ArchitectureDocs/UseCases/28_uc.html
-    '''
+    """
     logging.info('Use Case 28')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_29(self):
-    '''Use Case 29 - CN Load Balancing
+    """Use Case 29 - CN Load Balancing
     http://mule1.dataone.org/ArchitectureDocs/UseCases/29_uc.html
-    '''
+    """
     logging.info('Use Case 29')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_30(self):
-    '''Use Case 30 - MN Outage Notification
+    """Use Case 30 - MN Outage Notification
     http://mule1.dataone.org/ArchitectureDocs/UseCases/30_uc.html
-    '''
+    """
     logging.info('Use Case 30')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_31(self):
-    '''Use Case 31 - Manage Access Policies
+    """Use Case 31 - Manage Access Policies
     http://mule1.dataone.org/ArchitectureDocs/UseCases/31_uc.html
-    '''
+    """
     logging.info('Use Case 31')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_32(self):
-    '''Use Case 32 - Transfer Object Ownership
+    """Use Case 32 - Transfer Object Ownership
     http://mule1.dataone.org/ArchitectureDocs/UseCases/32_uc.html
-    '''
+    """
     logging.info('Use Case 32')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_33(self):
-    '''Use Case 33 - Search for Data
+    """Use Case 33 - Search for Data
     http://mule1.dataone.org/ArchitectureDocs/UseCases/33_uc.html
-    '''
+    """
     logging.info('Use Case 33')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_34(self):
-    '''Use Case 34 - CNs Support Other Discovery Mechanisms (e.g. Google)
+    """Use Case 34 - CNs Support Other Discovery Mechanisms (e.g. Google)
     http://mule1.dataone.org/ArchitectureDocs/UseCases/34_uc.html
-    '''
+    """
     logging.info('Use Case 34')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_35(self):
-    '''Use Case 35 - Query Coordinating Node for Metadata Describing a Member Node
+    """Use Case 35 - Query Coordinating Node for Metadata Describing a Member Node
     http://mule1.dataone.org/ArchitectureDocs/UseCases/35_uc.html
-    '''
+    """
     logging.info('Use Case 35')
 
     self.assertTrue(False, 'Not implemented')
 
   def _test_zz_uc_37(self):
-    '''Use Case 37 - Get System Metadata for Object
+    """Use Case 37 - Get System Metadata for Object
     http://mule1.dataone.org/ArchitectureDocs/UseCases/37_uc.html
-    '''
+    """
     logging.info('Use Case 37')
 
     self.init_to_known_state()
@@ -1350,9 +1350,9 @@ class TestSequenceFunctions(unittest.TestCase):
     client_cn = d1_client.client.DataOneClient(self.opts.cn_url)
 
   def _test_zz_uc_38(self):
-    '''Use Case 38 - Reserve an Identifier
+    """Use Case 38 - Reserve an Identifier
     http://mule1.dataone.org/ArchitectureDocs/UseCases/38_uc.html
-    '''
+    """
     logging.info('Use Case 38')
 
     self.init_to_known_state()
