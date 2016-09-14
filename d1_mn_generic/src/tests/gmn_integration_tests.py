@@ -1074,10 +1074,40 @@ class GMNIntegrationTests(unittest.TestCase):
     '''MNStorage.generateIdentifier(): Returns a valid identifier that matches scheme and fragment'''
     self._generate_identifier()
 
-  def test_1860_B(self):
-    '''MNStorage.generateIdentifier(): Returns a different, valid identifier when called second time'''
-    pid1 = self._generate_identifier()
-    pid2 = self._generate_identifier()
+  def test_1860_A_v1(self):
+    """v1 MNStorage.generateIdentifier(): Returns a valid identifier that
+    matches scheme and fragment
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_1860_A(client)
+
+  def test_1860_A_v2(self):
+    """v2 MNStorage.generateIdentifier(): Returns a valid identifier that
+    matches scheme and fragment
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_1860_A(client)
+
+  def _test_1860_A(self, client):
+    self._generate_identifier(client)
+
+  def test_1860_B_v1(self):
+    """v1 MNStorage.generateIdentifier(): Returns a different, valid identifier
+    when called second time
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_1860_B(client)
+
+  def test_1860_B_v2(self):
+    """v2 MNStorage.generateIdentifier(): Returns a different, valid identifier
+    when called second time
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_1860_B(client)
+
+  def _test_1860_B(self, client):
+    pid1 = self._generate_identifier(client)
+    pid2 = self._generate_identifier(client)
     self.assertNotEqual(pid1, pid2)
 
   # ----------------------------------------------------------------------------
