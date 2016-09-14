@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module gmn.tests.test_concurrency
+"""Module gmn.tests.test_concurrency
 ====================================
 
 Unit tests for GMN concurrency.
@@ -27,7 +27,7 @@ Unit tests for GMN concurrency.
 :Author: DataONE (Dahl)
 :Dependencies:
   - python 2.6
-'''
+"""
 
 # Stdlib.
 import unittest
@@ -37,11 +37,11 @@ import time
 
 # D1
 try:
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.dataoneTypes
   import d1_common.types.exceptions
   import d1_common.const
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
@@ -51,7 +51,7 @@ try:
   import d1_client.systemmetadata
   import d1_common.xml_compare
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
@@ -78,7 +78,7 @@ class concurrent_read(threading.Thread):
   def run(self):
     client = gmn_test_client.GMNTestClient(context.gmn_url)
 
-    #print 'starting read({0}, {1}, {2})'.format(self.key,
+    #print 'starting read({}, {}, {})'.format(self.key,
     #                                            self.sleep_before,
     #                                            self.sleep_after)
 
@@ -91,7 +91,7 @@ class concurrent_read(threading.Thread):
 
     self.val = self.response.read()
 
-    #print 'ended read(({0}, {1}, {2})'.format(self.key,
+    #print 'ended read(({}, {}, {})'.format(self.key,
     #                                          self.sleep_before,
     #                                          self.sleep_after)
 
@@ -109,7 +109,7 @@ class concurrent_write(threading.Thread):
   def run(self):
     client = gmn_test_client.GMNTestClient(context.gmn_url)
 
-    #print 'starting write({0}, {1}, {2})'.format(self.key,
+    #print 'starting write({}, {}, {})'.format(self.key,
     #                                             self.sleep_before,
     #                                             self.sleep_after)
 
@@ -121,7 +121,7 @@ class concurrent_write(threading.Thread):
       headers=session(d1_common.const.SUBJECT_TRUSTED)
     )
 
-    #print 'ended write({0}, {1}, {2})'.format(self.key,
+    #print 'ended write({}, {}, {})'.format(self.key,
     #                                          self.sleep_before,
     #                                          self.sleep_after)
 
@@ -165,8 +165,8 @@ class TestConcurrency(unittest.TestCase):
     pass
 
   def test_010_single_locking_object(self):
-    '''Verify that all calls share single locking object.
-    '''
+    """Verify that all calls share single locking object.
+    """
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     n_threads = threading.active_count()
     lock = threading.Lock()
@@ -179,63 +179,63 @@ class TestConcurrency(unittest.TestCase):
     self.assertEqual(len(ids), 1)
 
   def test_020_sync_read(self):
-    '''Series of sync reads on any PID returns <undef>.
-    '''
+    """Series of sync reads on any PID returns <undef>.
+    """
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     for i in range(100):
-      reader = concurrent_read('key_{0}'.format(i), 0, 0)
+      reader = concurrent_read('key_{}'.format(i), 0, 0)
       reader.start()
       reader.join()
       self.assertEqual(reader.val, '<undef>')
 
   def test_030_sync_write_read(self):
-    '''Series of sync write-reads return written values.
-    '''
+    """Series of sync write-reads return written values.
+    """
     client = gmn_test_client.GMNTestClient(context.gmn_url)
     for i in range(100):
-      writer = concurrent_write('key_{0}'.format(i), 'val_{0}'.format(i), 0, 0)
+      writer = concurrent_write('key_{}'.format(i), 'val_{}'.format(i), 0, 0)
       writer.start()
       writer.join()
     for i in range(100):
-      reader = concurrent_read('key_{0}'.format(i), 0, 0)
+      reader = concurrent_read('key_{}'.format(i), 0, 0)
       reader.start()
       reader.join()
-      self.assertEqual(reader.val, 'val_{0}'.format(i))
+      self.assertEqual(reader.val, 'val_{}'.format(i))
 
   def test_040_async_write_read(self):
-    '''Series of async write-reads return written values (writers block readers)
-    '''
+    """Series of async write-reads return written values (writers block readers)
+    """
     n_threads = threading.active_count()
     for i in range(100):
-      write = concurrent_write('key_{0}'.format(i), 'val_{0}'.format(i), 1, 1)
+      write = concurrent_write('key_{}'.format(i), 'val_{}'.format(i), 1, 1)
       write.start()
     readers = []
     for i in range(100):
-      reader = concurrent_read('key_{0}'.format(i), 1, 1)
+      reader = concurrent_read('key_{}'.format(i), 1, 1)
       reader.start()
       readers.append(reader)
     while threading.active_count() != n_threads:
       time.sleep(1)
     for i in range(100):
-      self.assertEqual(readers[i].val, 'val_{0}'.format(i))
+      self.assertEqual(readers[i].val, 'val_{}'.format(i))
 
   def test_050_concurrent_multiple_reads(self):
-    '''Series of async reads return written values (readers do not block readers)
-    '''
+    """Series of async reads return written values (readers do not block readers)
+    """
     n_threads = threading.active_count()
     for i in range(100):
-      write = concurrent_write('key_{0}'.format(i), 'val_{0}'.format(i), 1, 1)
+      write = concurrent_write('key_{}'.format(i), 'val_{}'.format(i), 1, 1)
       write.start()
     readers = []
     for j in range(2):
       for i in range(100):
-        reader = concurrent_read('key_{0}'.format(i), 1, 1)
+        reader = concurrent_read('key_{}'.format(i), 1, 1)
         reader.start()
         readers.append(reader)
     while threading.active_count() != n_threads:
       time.sleep(1)
     for i in range(100):
-      self.assertEqual(readers[i].val, 'val_{0}'.format(i))
+      self.assertEqual(readers[i].val, 'val_{}'.format(i))
 
 
 if __name__ == "__main__":

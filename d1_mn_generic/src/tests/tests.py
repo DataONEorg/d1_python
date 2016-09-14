@@ -449,8 +449,8 @@ class mn_tests(TestCase):
   #  #  try:
   #  #    xsd_file = open(settings.XSD_PATH, 'rb')
   #  #  except EnvironmentError as (errno, strerror):
-  #  #    logging.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-  #  #    logging.error('I/O error({0}): {1}'.format(errno, strerror))
+  #  #    logging.error('XSD could not be opened: {}'.format(settings.XSD_PATH))
+  #  #    logging.error('I/O error({}): {}'.format(errno, strerror))
   #  #    return
   #  #  except:
   #  #    logging.error('Unexpected error: ', sys.exc_info()[0])
@@ -483,7 +483,7 @@ class mn_tests(TestCase):
   #    curl -I http://127.0.0.1:8000/mn/object/<valid pid>
   #    """
   #    
-  #    response = self.client.head('/mn/object/{0}'.format(self.get_valid_pid('data')))
+  #    response = self.client.head('/mn/object/{}'.format(self.get_valid_pid('data')))
   #    self.failUnlessEqual(response.status_code, 200)
   #    self.check_response_headers_present(response)
   #
@@ -507,7 +507,7 @@ class mn_tests(TestCase):
   #  #  curl -X PUT -H "Accept: application/json" http://127.0.0.1:8000/mn/object/<valid pid>/meta
   #  #  """
   #  #  
-  #  #  response = self.client.put('/mn/object/{0}/meta'.format(self.get_valid_pid('data')), {}, HTTP_ACCEPT='application/json')
+  #  #  response = self.client.put('/mn/object/{}/meta'.format(self.get_valid_pid('data')), {}, HTTP_ACCEPT='application/json')
   #  #  self.failUnlessEqual(response.status_code, 200)
   #
   #  #def test_s(self):
@@ -666,15 +666,15 @@ class mn_tests(TestCase):
   #  #  test framework first.
   #  #  """
   #  #  
-  #  #  response = self.client.get('/mn/object/{0}/meta'.format(self.get_valid_pid('data')), {}, HTTP_ACCEPT='application/json')
+  #  #  response = self.client.get('/mn/object/{}/meta'.format(self.get_valid_pid('data')), {}, HTTP_ACCEPT='application/json')
   #  #  self.failUnlessEqual(response.status_code, 200)
   #  #  self.check_response_headers_present(response)
   #  #  # Check that this sysmeta validates against the schema.
   #  #  try:
   #  #    xsd_file = open(settings.XSD_PATH, 'rb')
   #  #  except EnvironmentError as (errno, strerror):
-  #  #    logging.error('XSD could not be opened: {0}'.format(settings.XSD_PATH))
-  #  #    logging.error('I/O error({0}): {1}'.format(errno, strerror))
+  #  #    logging.error('XSD could not be opened: {}'.format(settings.XSD_PATH))
+  #  #    logging.error('I/O error({}): {}'.format(errno, strerror))
   #  #    return
   #  #  except:
   #  #    logging.error('Unexpected error: ', sys.exc_info()[0])

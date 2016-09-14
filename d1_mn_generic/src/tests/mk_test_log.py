@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`mk_test_log_csv`
 ======================
 
 :Synopsis: Prepare a CSV file that contains fake log entries for testing.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import csv
@@ -44,7 +44,7 @@ import urllib
 try:
   from lxml import etree
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write('Try: sudo apt-get install python-lxml\n')
   raise
 

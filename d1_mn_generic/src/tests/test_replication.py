@@ -43,7 +43,7 @@ import glob
 import re
 import subprocess
 
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 from django.test.utils import override_settings
 sys.path.append('/home/mark/d1/d1_python/d1_mn_generic/src/service')
 # D1
@@ -56,7 +56,7 @@ try:
   import d1_common.date_time
   import d1_common.url
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
@@ -66,9 +66,9 @@ try:
   import d1_client.d1client
   import d1_client.mnclient
   import d1_client.systemmetadata
-  import service.mn.sysmeta_store
+  import service.mn.sysmeta_file
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
@@ -108,7 +108,7 @@ def baseurl_by_noderef(opts, node_ref):
     if node.identifier.value() == node_ref:
       return node.baseURL
   # baseurl_by_noderef_url = urlparse.urljoin(opts.d1_root,
-  #   'test_baseurl_by_noderef/{0}'.format(
+  #   'test_baseurl_by_noderef/{}'.format(
   #     d1_common.url.encodePathElement(node_ref)))
   #
   # client_root = d1_client.d1client.DataONEClient(opts.d1_root)
@@ -117,8 +117,8 @@ def baseurl_by_noderef(opts, node_ref):
 
 
 def replicate(opts, args):
-  '''Replication. Requires fake CN.
-  '''
+  """Replication. Requires fake CN.
+  """
   # The object we will replicate.
   #pid = 'hdl:10255/dryad.105/mets.xml'
   # Source and destination node references.
@@ -126,7 +126,7 @@ def replicate(opts, args):
   src_ref = args[1]
   pid = args[2]
 
-  logging.debug('src_ref({0}) dst_ref({1}) pid({2})'.format(src_ref, dst_ref, pid))
+  logging.debug('src_ref({}) dst_ref({}) pid({})'.format(src_ref, dst_ref, pid))
 
   # # Create connections to src and dst.
   # dst_base = baseurl_by_noderef(opts, dst_ref)
@@ -156,7 +156,7 @@ def replicate(opts, args):
   # except SyntaxError:
   #   pass
   # else:
-  #   logging.error('pid({0}): Object already exists on destination'.format(pid))
+  #   logging.error('pid({}): Object already exists on destination'.format(pid))
   #   exit()
 
   # Download the SysMeta doc from the source.
@@ -187,7 +187,7 @@ def replicate(opts, args):
     # The pid is stored in the sysmeta.
     sysmeta_file = open(sysmeta_path, 'r')
     sysmeta_xml = sysmeta_file.read()
-    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+    sysmeta_obj = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
     # sysmeta_obj.rightsHolder = 'test_user_1'
     #
     # # headers = self.include_subjects('test_user_1')
@@ -207,7 +207,7 @@ def replicate(opts, args):
     #   # SysMeta is stored in UTF-8 and CreateFromDocument() does not handle
     #   # native Unicode objects, so the SysMeta is passed to CreateFromDocument()
     #   # as UTF-8.
-    # sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+    # sysmeta_obj = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
     client.create_replication_queue(pid, sysmeta_obj, src_ref)
   # os.chdir('../service')
   # subprocess.call(['python manage.py process_replication_queue'], shell=True)

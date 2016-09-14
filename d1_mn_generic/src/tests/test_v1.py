@@ -1,4 +1,3 @@
-__author__ = 'mark'
 import logging
 import unittest
 import sys
@@ -8,7 +7,7 @@ import httplib
 import datetime
 sys.path.append('/home/mark/d1/d1_python/d1_mn_generic/src/service')
 from service.mn.mn import models
-from service.mn.views import v1
+import service.mn.views
 from mock_django.query import QuerySetMock
 
 
@@ -77,7 +76,7 @@ class Test(unittest.TestCase):
   def tearDown(self):
     pass
 
-  @patch('mn.views.v1.get_object_pid')
+  @patch('mn.views.external.get_object_pid')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object_pid(self, mock_request, mock_get):
     with patch(
@@ -89,7 +88,7 @@ class Test(unittest.TestCase):
       response = v1.dispatch_object_pid(mock_request, self.pid)
       self.assertEqual('test123', response)
 
-  @patch('mn.views.v1.put_object_pid')
+  @patch('mn.views.external.put_object_pid')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object_pid_PUT(self, mock_request, mock_put):
     with patch(
@@ -101,7 +100,7 @@ class Test(unittest.TestCase):
       response = v1.dispatch_object_pid(mock_request, self.pid)
       self.assertEqual('test123', response)
 
-  @patch('mn.views.v1.put_object_pid')
+  @patch('mn.views.external.put_object_pid')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object_pid_HEAD(self, mock_request, mock_head):
     with patch(
@@ -113,7 +112,7 @@ class Test(unittest.TestCase):
       response = v1.dispatch_object_pid(mock_request, self.pid)
       self.assertEqual('test123', response)
 
-  @patch('mn.views.v1.delete_object_pid')
+  @patch('mn.views.external.delete_object_pid')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object_pid_DELETE(self, mock_request, mock_delete):
     with patch(
@@ -125,7 +124,7 @@ class Test(unittest.TestCase):
       response = v1.dispatch_object_pid(mock_request, self.pid)
       self.assertEqual('test123', response)
 
-  @patch('mn.views.v1.get_object_pid')
+  @patch('mn.views.external.get_object_pid')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object_pid_assert_called_HttpResponseNotAllowed(
     self, mock_request, mock_get
@@ -134,13 +133,13 @@ class Test(unittest.TestCase):
       'httplib.HTTPConnection.request',
       new_callable=PropertyMock
     ) as mock_request:
-      with patch('mn.views.v1.HttpResponseNotAllowed') as mocked_method:
+      with patch('mn.views.external.HttpResponseNotAllowed') as mocked_method:
         mock_request.method = 'POST'
         mock_get.return_value = 'test123'
         v1.dispatch_object_pid(mock_request, self.pid)
         mocked_method.assert_called_once_with(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
 
-  @patch('mn.views.v1.get_object')
+  @patch('mn.views.external.get_object')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object(self, mock_request, mock_get):
     with patch(
@@ -152,7 +151,7 @@ class Test(unittest.TestCase):
       response = v1.dispatch_object(mock_request)
       self.assertEqual('test123', response)
 
-  @patch('mn.views.v1.object_post')
+  @patch('mn.views.external.object_post')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_object_post(self, mock_request, mock_post):
     with patch(
@@ -164,7 +163,7 @@ class Test(unittest.TestCase):
       response = v1.object_post(mock_request)
       self.assertEqual('test123', response)
 
-  @patch('mn.views.v1.get_object_pid')
+  @patch('mn.views.external.get_object_pid')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_dispatch_object_assert_called_HttpResponseNotAllowed(
     self, mock_request, mock_get
@@ -173,21 +172,21 @@ class Test(unittest.TestCase):
       'httplib.HTTPConnection.request',
       new_callable=PropertyMock
     ) as mock_request:
-      with patch('mn.views.v1.HttpResponseNotAllowed') as mocked_method:
+      with patch('mn.views.external.HttpResponseNotAllowed') as mocked_method:
         mock_request.method = 'PUT'
         mock_get.return_value = 'test123'
         v1.dispatch_object(mock_request)
         mocked_method.assert_called_once_with(['GET', 'POST'])
 
-  @patch('mn.view_shared.add_http_date_to_response_header')
-  @patch('mn.view_shared.http_response_with_boolean_true_type')
+  @patch('mn.view_util.add_http_date_to_response_header')
+  @patch('mn.view_util.http_response_with_boolean_true_type')
   @patch.object(httplib.HTTPConnection, 'request')
   def test_get_monitor_ping(self, mock_request, mock_response, mock_add):
     with patch(
       'httplib.HTTPConnection.request',
       new_callable=PropertyMock
     ) as mock_request:
-      # output = service.mn.views.v1.dispatch_object_pid()
+      # output = service.mn.views.external.dispatch_object_pid()
       mock_response.return_value = 'OK'
       mock_request.method = 'GET'
       response = v1.get_monitor_ping(mock_request)
@@ -221,7 +220,7 @@ class Test(unittest.TestCase):
         self.assertEqual(response, {'count': 1, 'query': [], 'total': 1, 'type': 'log', 'start': 1})
 
   @patch('mn.node.Node')
-  @patch('mn.views.v1.HttpResponse')
+  @patch('mn.views.external.HttpResponse')
   def test_get_node(self, mock_response, mock_node):
     with patch(
       'httplib.HTTPConnection.request',
@@ -233,16 +232,16 @@ class Test(unittest.TestCase):
       self.assertEqual(node, 'test')
 
   @patch(
-    'mn.views.v1.d1_client.object_format_info.ObjectFormatInfo.content_type_from_format_id'
+    'mn.views.external.d1_client.object_format_info.ObjectFormatInfo.content_type_from_format_id'
   )
   def test_content_type_from_format_id(self, mock_id):
     mock_id.return_value = 'v1'
     response = v1._content_type_from_format_id('test')
     self.assertEqual('v1', response)
 
-    # @patch('mn.view_shared.add_http_date_to_response_header')
+    # @patch('mn.view_util.add_http_date_to_response_header')
     # def test_add_object_properties_to_response_header(self, mock_add):
-    #     with patch('mn.views.v1.datetime.datetime') as mock_datetime:
+    #     with patch('mn.views.external.datetime.datetime') as mock_datetime:
     #         mock_datetime.utcnow.return_value = '2015-03-06 12:56:54.323738'
     #         mock_datetime.isoformat.return_value = '2015-03-06 12:56:54.323738'
     #         response = {}
@@ -251,8 +250,8 @@ class Test(unittest.TestCase):
     #         self.assertEqual(response, {'Content-Length': 1024, 'DataONE-SerialVersion': 'v1.1', 'DataONE-Checksum': 'Sha-2,xyzpdq',
     #  'DataONE-formatId': 2, 'Last-Modified': '2015-03-06 12:56:54.323738','Content-Type': 'application/octet-stream'})
 
-  @patch('mn.views.v1.datetime.datetime')
-  @patch('mn.view_shared.add_http_date_to_response_header')
+  @patch('mn.views.external.datetime.datetime')
+  @patch('mn.view_util.add_http_date_to_response_header')
   def test_add_object_properties_to_response_header(self, mock_add, mock_datetime):
     mock_datetime = NewDate
     # mock_datetime.utcnow.return_value = '2015-03-06 12:56:54.323738'
@@ -263,12 +262,12 @@ class Test(unittest.TestCase):
     self.assertEqual(response, {'Content-Length': 1024, 'DataONE-SerialVersion': 'v1.1', 'DataONE-Checksum': 'Sha-2,xyzpdq',
                                 'DataONE-formatId': 2, 'Last-Modified': '2015-03-06 12:56:54.323738','Content-Type': 'application/octet-stream'})
 
-  @patch('mn.views.v1._content_type_from_format_id')
-  @patch('mn.views.v1._get_object_byte_stream')
+  @patch('mn.views.external._content_type_from_format_id')
+  @patch('mn.views.external._get_object_byte_stream')
   @patch('mn.auth.assert_allowed')
   @patch('mn.event_log.read')
-  @patch('mn.views.v1._add_object_properties_to_response_header')
-  @patch('mn.views.v1.django.http.response.StreamingHttpResponse')
+  @patch('mn.views.external._add_object_properties_to_response_header')
+  @patch('mn.views.external.django.http.response.StreamingHttpResponse')
   @patch('mn.view_asserts.object_exists')
   def DO_NOT_test_get_object_pid(
     self, mock_object, mock_stream, mock_add, mock_read, mock_auth, mock_bytes,

@@ -18,14 +18,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module gmn.tests.test_access_control
+"""Module gmn.tests.test_access_control
 =======================================
 
 Unit tests for GMN access control.
 
 :Created: 2011-06-27
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import datetime
@@ -38,11 +38,11 @@ import xml.parsers.expat
 
 # D1.
 try:
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.dataoneTypes
   import d1_common.types.exceptions
   import d1_common.const
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
@@ -52,7 +52,7 @@ try:
   import d1_client.systemmetadata
   import d1_common.xml_compare
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
@@ -85,13 +85,13 @@ class TestAccessControl(unittest2.TestCase):
     return {'VENDOR_INCLUDE_SUBJECTS': subject}
 
   def gen_sysmeta(self, pid, size, md5, now, owner):
-    sysmeta = dataoneTypes.systemMetadata()
+    sysmeta = d1_common.types.dataoneTypes.systemMetadata()
     sysmeta.identifier = pid
     sysmeta.objectFormat = 'eml://ecoinformatics.org/eml-2.0.0'
     sysmeta.size = size
     sysmeta.submitter = owner
     sysmeta.rightsHolder = owner
-    sysmeta.checksum = dataoneTypes.checksum(md5)
+    sysmeta.checksum = d1_common.types.dataoneTypes.checksum(md5)
     sysmeta.checksum.algorithm = 'MD5'
     sysmeta.dateUploaded = now
     sysmeta.dateSysMetadataModified = now
@@ -100,15 +100,15 @@ class TestAccessControl(unittest2.TestCase):
     return sysmeta
 
   def gen_access_policy(self, rules):
-    access_policy = dataoneTypes.accessPolicy()
+    access_policy = d1_common.types.dataoneTypes.accessPolicy()
     for rule in rules:
       subjects = rule[0]
       actions = rule[1]
-      access_rule = dataoneTypes.AccessRule()
+      access_rule = d1_common.types.dataoneTypes.AccessRule()
       for subject in subjects:
         access_rule.subject.append(subject)
       for action in actions:
-        permission = dataoneTypes.Permission(action)
+        permission = d1_common.types.dataoneTypes.Permission(action)
         access_rule.permission.append(permission)
       access_policy.append(access_rule)
     return access_policy
@@ -119,7 +119,7 @@ class TestAccessControl(unittest2.TestCase):
     client.set_access_policy(pid, access_policy)
 
   def test_010(self):
-    '''Delete all access policies'''
+    """Delete all access policies"""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     client.delete_all_access_policies()
 
@@ -129,7 +129,7 @@ class TestAccessControl(unittest2.TestCase):
     response = client.get_access_policy(pid)
     self.assertEqual(
       response,
-      '''<?xml version="1.0" ?><accessPolicy><allow><subject>8920_skye_fondled</subject><subject>public</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy>'''
+      """<?xml version="1.0" ?><accessPolicy><allow><subject>8920_skye_fondled</subject><subject>public</subject><subject>folding_5087</subject><permission>read</permission></allow></accessPolicy>"""
     )
 
   #  def _test(self):
@@ -150,7 +150,7 @@ class TestAccessControl(unittest2.TestCase):
   #      owner=context.test_owner_1)
 
   def test_020(self):
-    '''Set access policy'''
+    """Set access policy"""
     context.pid = 'AnserMatrix.htm'
     rules = (
       (('test_perm_1', 'test_perm_2'), ('read', )),
@@ -159,8 +159,8 @@ class TestAccessControl(unittest2.TestCase):
     self._set_access_policy(context.pid, rules)
 
   #  def ___test_020(self):
-  #    '''Create object with access policy.
-  #    '''
+  #    """Create object with access policy.
+  #    """
   #    client = gmn_test_client.GMNTestClient(self.options.gmn_url)
   #
   #    # Add the access policy to the SysMeta.
@@ -172,13 +172,13 @@ class TestAccessControl(unittest2.TestCase):
   #      vendorSpecific=self.session(context.test_owner_1))
 
   def test_030(self):
-    '''Access is allowed for owner.'''
+    """Access is allowed for owner."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     obj = client.get(context.pid, vendorSpecific=self.session(context.test_owner_1))
     self.assertEqual(context.obj_str, obj.read())
 
   def ___test_040(self):
-    '''Access is allowed for SUBJECT_TRUSTED.'''
+    """Access is allowed for SUBJECT_TRUSTED."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     obj = client.get(
       context.pid,
@@ -187,25 +187,25 @@ class TestAccessControl(unittest2.TestCase):
     self.assertEqual(context.obj_str, obj.read())
 
   def ___test_050(self):
-    '''Read access is allowed for subject with exact allow rule.'''
+    """Read access is allowed for subject with exact allow rule."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     obj = client.get(context.pid, vendorSpecific=self.session('test_perm_2'))
     self.assertEqual(context.obj_str, obj.read())
 
   def ___test_060(self):
-    '''Read access is allowed for subject with higher level access (1).'''
+    """Read access is allowed for subject with higher level access (1)."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     obj = client.get(context.pid, vendorSpecific=self.session('test_perm_3'))
     self.assertEqual(context.obj_str, obj.read())
 
   def ___test_070(self):
-    '''Read access is allowed for subject with higher level access (2).'''
+    """Read access is allowed for subject with higher level access (2)."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     obj = client.get(context.pid, vendorSpecific=self.session('test_perm_5'))
     self.assertEqual(context.obj_str, obj.read())
 
   def ___test_080(self):
-    '''Read access is denied for SUBJECT_PUBLIC.'''
+    """Read access is denied for SUBJECT_PUBLIC."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized,
@@ -215,8 +215,8 @@ class TestAccessControl(unittest2.TestCase):
     )
 
   def ___test_090(self):
-    '''Read access is denied for regular subject.
-    '''
+    """Read access is denied for regular subject.
+    """
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     self.assertRaises(
       d1_common.types.exceptions.NotAuthorized,
@@ -226,8 +226,8 @@ class TestAccessControl(unittest2.TestCase):
     )
 
   def ___test_200(self):
-    '''Update access policy, denying access for old subjects and allowing
-    access to new subjects.'''
+    """Update access policy, denying access for old subjects and allowing
+    access to new subjects."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
 
     access_policy = self.gen_access_policy(
@@ -241,7 +241,7 @@ class TestAccessControl(unittest2.TestCase):
     )
 
   def ___test_210(self):
-    '''Access policy is correctly reflected in SysMeta.'''
+    """Access policy is correctly reflected in SysMeta."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
 
     sysmeta = client.getSystemMetadata(
@@ -253,7 +253,7 @@ class TestAccessControl(unittest2.TestCase):
     self.assertEqual(sysmeta.accessPolicy.allow[0].permission[0], 'changePermission')
 
   def ___test_220(self):
-    '''Access now denied for previous subjects.'''
+    """Access now denied for previous subjects."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for subject in (
       'test_perm_1', 'test_perm_2', 'test_perm_3', 'test_perm_4', 'test_perm_5',
@@ -267,14 +267,14 @@ class TestAccessControl(unittest2.TestCase):
       )
 
   def ___test_220(self):
-    '''Access allowed for current subjects.'''
+    """Access allowed for current subjects."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for subject in ('test_perm_7', 'test_perm_8'):
       obj = client.get(context.pid, vendorSpecific=self.session(subject))
       self.assertEqual(context.obj_str, obj.read())
 
   def ___test_300(self):
-    '''isAuthorized returns access denied for previous subjects.'''
+    """isAuthorized returns access denied for previous subjects."""
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for subject in (
       'test_perm_1', 'test_perm_2', 'test_perm_3', 'test_perm_4', 'test_perm_5',
@@ -289,15 +289,15 @@ class TestAccessControl(unittest2.TestCase):
       )
 
   def ___test_310(self):
-    '''isAuthorized returns access allowed for current subjects.
-    '''
+    """isAuthorized returns access allowed for current subjects.
+    """
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for subject in ('test_perm_7', 'test_perm_8'):
       obj = client.isAuthorized(context.pid, 'read', vendorSpecific=self.session(subject))
 
   def ___test_320(self):
-    '''isAuthorized returns access denied for levels higher than allowed.
-    '''
+    """isAuthorized returns access denied for levels higher than allowed.
+    """
     client = gmn_test_client.GMNTestClient(self.options.gmn_url)
     for subject in ('test_perm_7', 'test_perm_8'):
       self.assertRaises(
@@ -357,7 +357,7 @@ def main():
   else:
     suite = unittest2.TestLoader().loadTestsFromTestCase(s)
 
-  #  if options.debug == True:
+  #  if options.debug:
   #    unittest2.TextTestRunner(verbosity=2).debug(suite)
   #  else:
   unittest2.TextTestRunner(verbosity=2, failfast=True).run(suite)

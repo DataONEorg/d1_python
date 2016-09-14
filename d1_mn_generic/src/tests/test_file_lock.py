@@ -20,7 +20,7 @@ __author__ = 'mark'
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module gmn.tests.test_file_lock
+"""Module gmn.tests.test_file_lock
 ====================================
 
 Unit tests for GMN concurrency.
@@ -29,7 +29,7 @@ Unit tests for GMN concurrency.
 :Author: DataONE (Flynn)
 :Dependencies:
   - python 2.7
-'''
+"""
 
 # Stdlib.
 import unittest
@@ -47,13 +47,13 @@ sys.path.append(
 )
 # D1
 try:
-  import d1_common.types.generated.dataoneTypes as dataoneTypes
+  import d1_common.types.dataoneTypes
   import d1_common.types.exceptions
   import d1_common.const
   import service.mn.management.commands.process_replication_queue as process_replication_queue
   import service.mn.models as models
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/api-common-python/src/d1_common\n'
   )
@@ -61,7 +61,7 @@ except ImportError, e:
 try:
   import d1_client
 except ImportError, e:
-  sys.stderr.write('Import error: {0}\n'.format(str(e)))
+  sys.stderr.write('Import error: {}\n'.format(str(e)))
   sys.stderr.write(
     'Try: svn co https://repository.dataone.org/software/cicore/trunk/itk/d1-python/src/d1_client\n'
   )
@@ -102,7 +102,7 @@ class TestConcurrency(unittest.TestCase):
       # The pid is stored in the sysmeta.
       sysmeta_file = open(sysmeta_path, 'r')
       sysmeta_xml = sysmeta_file.read()
-      sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+      sysmeta_obj = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
       rep_queue_obj = models.ReplicationQueue()
       rep_queue_obj.status_id = 1
       rep_queue_obj.source_node_id = 2
