@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_mn_generic.tests.gmn_test_client
+"""Module d1_mn_generic.tests.gmn_test_client
 =============================================
 
 This module implements GMNTestClient, which extends
@@ -30,7 +30,7 @@ these methods.
 
 :Created: 2011-03-18
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -40,7 +40,7 @@ import glob
 
 import d1_client.mnclient
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 # Constants.
 GMN_TEST_SUBJECT_PUBLIC = 'public'
@@ -64,19 +64,19 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return 'diag'
 
   def gmn_vse_provide_subject(self, subject):
-    '''GMN Vendor Specific Extension: Simulate subject.'''
+    """GMN Vendor Specific Extension: Simulate subject."""
     return {'VENDOR_INCLUDE_SUBJECTS': subject}
 
   def gmn_vse_enable_sql_profiling(self):
-    '''GMN Vendor Specific Extension: Enable SQL profiling.'''
+    """GMN Vendor Specific Extension: Enable SQL profiling."""
     return {'VENDOR_PROFILE_SQL': 1}
 
   def gmn_vse_enable_python_profiling(self):
-    '''GMN Vendor Specific Extension: Enable Python profiling.'''
+    """GMN Vendor Specific Extension: Enable Python profiling."""
     return {'VENDOR_PROFILE_PYTHON': 1}
 
   def get_resource_path(self, path):
-    '''Get path to test resources.'''
+    """Get path to test resources."""
     resource_path = os.path.abspath(
       os.path.join(
         os.path.dirname(__file__), '../../../../resources/')
@@ -109,6 +109,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
       headers=vendorSpecific
     )
     return self._read_boolean_response(response)
+
   # ----------------------------------------------------------------------------
   # Access Policy.
   # ----------------------------------------------------------------------------
@@ -202,15 +203,15 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
 
   def delete_event_log(self, headers=None):
-    '''Delete event log for all objects.
-    '''
+    """Delete event log for all objects.
+    """
     url = self._rest_url('delete_event_log')
     response = self.GET(url, headers=headers)
     return self._read_boolean_response(response)
 
   def inject_fictional_event_log(self, event_log_csv, headers=None):
-    '''Inject a fake event log.
-    '''
+    """Inject a fake event log.
+    """
     files = [('csv', 'csv', event_log_csv)]
     url = self._rest_url('inject_fictional_event_log')
     response = self.POST(url, files=files, headers=headers)
@@ -221,14 +222,14 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   # ----------------------------------------------------------------------------
 
   def concurrency_clear(self, headers=None):
-    '''Clear test key/vals.
-    '''
+    """Clear test key/vals.
+    """
     url = self._rest_url('concurrency_clear')
     return self.GET(url, headers=headers)
 
   def concurrency_read_lock(self, key, sleep_before, sleep_after, headers=None):
-    '''Test PID read locking.
-    '''
+    """Test PID read locking.
+    """
     url = self._rest_url(
       'concurrency_read_lock/%(key)s/%(sleep_before)s/%(sleep_after)s',
       key=key,
@@ -238,8 +239,8 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self.GET(url, headers=headers)
 
   def concurrency_write_lock(self, key, val, sleep_before, sleep_after, headers=None):
-    '''Test PID write locking.
-    '''
+    """Test PID write locking.
+    """
     url = self._rest_url(
       'concurrency_write_lock/%(key)s/%(val)s/%(sleep_before)s/%(sleep_after)s',
       key=key,
@@ -250,8 +251,8 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
     return self.GET(url, headers=headers)
 
   def concurrency_get_dictionary_id(self, headers=None):
-    '''Get dictionary ID.
-    '''
+    """Get dictionary ID.
+    """
     url = self._rest_url('concurrency_get_dictionary_id')
     return self.GET(url, headers=headers)
 
@@ -273,7 +274,7 @@ def populate_mn(client, filedir):
     # The pid is stored in the sysmeta.
     sysmeta_file = open(sysmeta_path, 'r')
     sysmeta_xml = sysmeta_file.read()
-    sysmeta_obj = dataoneTypes.CreateFromDocument(sysmeta_xml)
+    sysmeta_obj = d1_common.types.dataoneTypes.CreateFromDocument(sysmeta_xml)
     sysmeta_obj.rightsHolder = 'test_user_1'
 
     headers = include_subjects('test_user_1')
@@ -288,8 +289,8 @@ def populate_mn(client, filedir):
 
 
 def rest_call(self, func, python_profile=False, sql_profile=False, *args, **kwargs):
-  '''Wrap a rest call up with automatic handling of vendor specific extensions
-  for profiling and selecting subject.'''
+  """Wrap a rest call up with automatic handling of vendor specific extensions
+  for profiling and selecting subject."""
   vendor_specific = {}
   # When not using certificates, the subject is passed in via a vendor
   # specific extension that is supported by all the REST calls in GMN.
