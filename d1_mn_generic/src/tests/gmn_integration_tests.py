@@ -185,15 +185,14 @@ class GMNIntegrationTests(unittest.TestCase):
     # provided in the slice.
     self.assertEqual(len(log.logEntry), count)
 
-  def assert_response_headers(self, response):
-    '''Required response headers are present.
-    '''
+  def _assert_response_headers(self, response):
+    """Required response headers are present.
+    """
+    self.assertIn('last-modified', response.headers)
+    self.assertIn('content-length', response.headers)
+    self.assertIn('content-type', response.headers)
 
-    self.assertIn('Last-Modified', response)
-    self.assertIn('Content-Length', response)
-    self.assertIn('Content-Type', response)
-
-  def assert_valid_date(self, date_str):
+  def _assert_valid_date(self, date_str):
     self.assertTrue(datetime.datetime(*map(int, date_str.split('-'))))
 
   def find_valid_pid(self, client):
