@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2011
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import logging
 from lxml import etree
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import accesspolicy
@@ -64,7 +64,7 @@ def generate(options=None):
     options = {}
   logging.debug("OPTIONS at sysmeta.generate= %s" % str(options))
 
-  sysmeta = dataoneTypes.systemMetadata()
+  sysmeta = d1_common.types.dataoneTypes.systemMetadata()
   sysmeta.serialVersion = random.randint(1, 100)
   sysmeta.identifier = options.get('identifier', identifier.generate(prefix="id_"))
   sysmeta.dateUploaded = options.get('dateUploaded', dates.now())

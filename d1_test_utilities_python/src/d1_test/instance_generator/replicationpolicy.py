@@ -31,7 +31,7 @@ Module d1_instance_generator.replicationpolicy
 import random
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import dates
@@ -39,7 +39,7 @@ import random_data
 
 
 def generate():
-  res = dataoneTypes.ReplicationPolicy()
+  res = d1_common.types.dataoneTypes.ReplicationPolicy()
   n = random.randint(1, 10)
   nodes = []
   for i in xrange(0, n):

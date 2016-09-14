@@ -13,7 +13,7 @@ Module d1_instance_generator.identifier
 import random
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import random_data
@@ -22,7 +22,7 @@ import random_data
 def generate(prefix=u'', min_len=5, max_len=20):
   '''Generate instance of Identifier holding a random unicode string'''
   s = generate_bare(prefix, min_len, max_len)
-  return dataoneTypes.Identifier(s)
+  return d1_common.types.dataoneTypes.Identifier(s)
 
 
 def generate_bare(prefix=u'', min_len=5, max_len=20):

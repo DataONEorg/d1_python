@@ -31,7 +31,7 @@ Module d1_instance_generator.subject
 import random
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import dates
@@ -39,7 +39,7 @@ import random_data
 
 
 def generate():
-  return dataoneTypes.Subject(generate_bare())
+  return d1_common.types.dataoneTypes.Subject(generate_bare())
 
 
 def generate_bare():

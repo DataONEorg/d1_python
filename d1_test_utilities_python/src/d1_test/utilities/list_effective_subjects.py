@@ -37,13 +37,13 @@ import re
 import sys
 
 # D1.
-import d1_common.types.raw.dataoneTypes_v1 as dataoneTypes_v1
+import d1_common.types.generated.dataoneTypes_v1 as dataoneTypes_v1
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.date_time
 import d1_common.url
 import d1_common.const
-import d1_x509v3_certificate_extractor
+import d1_certificate.certificate_extractor
 
 
 class get_subjects_from_certificate(object):
@@ -117,7 +117,7 @@ class get_subjects_from_certificate(object):
 
   def _extract_session_from_x509_v3_certificate(self):
     try:
-      return d1_x509v3_certificate_extractor.extract(self.cert)
+      return d1_certificate.certificate_extractor.extract(self.cert)
     except Exception as e:
       print 'Error processing certificate: {0}'.format(str(e))
       exit()

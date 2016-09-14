@@ -36,7 +36,7 @@ import re
 import StringIO
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 # 3rd party.
 import pyxb

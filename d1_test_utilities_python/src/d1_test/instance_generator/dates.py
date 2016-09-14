@@ -51,5 +51,5 @@ def now():
 
 
 def generate():
-  '''Generate a dataoneTypes.DateTime with a random datetime'''
-  dt = dataoneTypes.DateTime(random_date())
+  '''Generate a d1_common.types.dataoneTypes.DateTime with a random datetime'''
+  dt = d1_common.types.dataoneTypes.DateTime(random_date())

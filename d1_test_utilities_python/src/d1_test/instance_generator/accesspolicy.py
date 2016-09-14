@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2011
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,16 +48,16 @@ Module d1_instance_generator.accesspolicy
 import random
 
 # D1.
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import random_data
 
 # Map between permission labels and permissions.
 PERMISSIONS = {
-  u'read': dataoneTypes.Permission.read,
-  u'write': dataoneTypes.Permission.write,
-  u'changePermission': dataoneTypes.Permission.changePermission,
+  u'read': d1_common.types.dataoneTypes.Permission.read,
+  u'write': d1_common.types.dataoneTypes.Permission.write,
+  u'changePermission': d1_common.types.dataoneTypes.Permission.changePermission,
 }
 
 
@@ -97,11 +97,11 @@ def random_subjects_with_permission_labels(permissions, min=1, max=100, group_ch
 def generate(min_rules=1, max_rules=5, max_subjects=5):
   '''Generate a random access policy document.
   '''
-  ap = dataoneTypes.AccessPolicy()
+  ap = d1_common.types.dataoneTypes.AccessPolicy()
   n_rules = random.randint(min_rules, max_rules)
   rules = []
   for i in xrange(0, n_rules):
-    ar = dataoneTypes.AccessRule()
+    ar = d1_common.types.dataoneTypes.AccessRule()
     permissions = random_set_of_permissions()
     ar.subject = random_subjects_with_permission_labels(permissions, max=max_subjects)
     ar.permission = permissions

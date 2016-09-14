@@ -36,7 +36,7 @@ import logging
 import d1_common.checksum
 import d1_common.const
 import d1_common.util
-from d1_common.types.generated import dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import random_data
@@ -70,7 +70,7 @@ def generate_from_flo(flo, algorithm=None):
   if algorithm is None:
     algorithm = random_checksum_algorithm()
   hexdigest = calculate_checksum_of_flo(flo, algorithm)
-  checksum = dataoneTypes.checksum(hexdigest)
+  checksum = d1_common.types.dataoneTypes.checksum(hexdigest)
   checksum.algorithm = algorithm
   return checksum
 

@@ -62,12 +62,12 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
         count[item] = 1
       self.assertTrue(len(item) > 0)
     for name, count in count.items():
-      self.assertTrue(count == 1)
+      self.assertEqual(count ,  1)
 
   def test_005(self):
     '''random_bytes()'''
     s = random_data.random_bytes(1000)
-    self.assertTrue(len(s) == 1000)
+    self.assertEqual(len(s) ,  1000)
 
   def test_010(self):
     '''random_unicode_name()'''
@@ -78,7 +78,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def test_020(self):
     '''random_unicode_name_list()'''
     names = random_data.random_unicode_name_list(10)
-    self.assertTrue(len(names) == 10)
+    self.assertEqual(len(names) ,  10)
     for name in names:
       self.assertTrue(len(names) > 0)
       self.assertTrue(isinstance(name, unicode))
@@ -87,7 +87,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''random_unicode_name_unique_list()'''
     for i in range(10):
       names = random_data.random_unicode_name_unique_list(30)
-      self.assertTrue(len(names) == 30)
+      self.assertEqual(len(names) ,  30)
       self.assertTrue(isinstance(names[0], unicode))
       self._assert_unique(names)
 
@@ -106,7 +106,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
   def test_050(self):
     '''random_word_list()'''
     words = random_data.random_word_list(10)
-    self.assertTrue(len(words) == 10)
+    self.assertEqual(len(words) ,  10)
     for word in words:
       self.assertTrue(len(words) > 0)
       self.assertTrue(isinstance(word, unicode))
@@ -115,7 +115,7 @@ class TestRandomData(d1_common.testcasewithurlcompare.TestCaseWithURLCompare):
     '''random_word_unique_list()'''
     for i in range(10):
       names = random_data.random_word_unique_list(30)
-      self.assertTrue(len(names) == 30)
+      self.assertEqual(len(names) ,  30)
       self.assertTrue(isinstance(names[0], unicode))
       self._assert_unique(names)
 
