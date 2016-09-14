@@ -18,12 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`register_node_with_dataone`
+""":mod:`register_node_with_dataone`
 ====================================
 
 :Synopsis: Register a new Member Node with DataONE.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -31,10 +31,10 @@ import optparse
 import sys
 
 # D1.
-import d1_client.cnclient
+import d1_client.cnclient_2_0
 
 # Django.
-from django.core.management.base import NoArgsCommand
+import django.core.management.base
 from django.conf import settings
 
 # App.
@@ -42,30 +42,29 @@ import mn.models
 import mn.node
 
 
-class Command(NoArgsCommand):
-  option_list = NoArgsCommand.option_list + (
-    optparse.make_option(
+class Command(django.core.management.base.BaseCommand):
+  help = 'Register a new GMN instance with DataONE'
+
+  def add_arguments(self, parser):
+    parser.add_argument(
       '--update',
       action='store_true',
       dest='update',
       default=False,
       help='Update an existing Node document'
-    ),
-    optparse.make_option(
+    )
+    parser.add_argument(
       '--view',
       action='store_true',
       dest='view',
       default=False,
       help='Only view generated Node document'
-    ),
-  )
+    )
 
-  help = 'Register a new GMN instance with DataONE'
-
-  def handle_noargs(self, **options):
+  def handle(self, *args, **options):
     self.log_setup()
 
-    logging.info('Running management command: ' 'registe_node_with_dataone')
+    logging.info('Running management command: ' 'register_node_with_dataone')
 
     verbosity = int(options.get('verbosity', 1))
 
@@ -82,7 +81,7 @@ class Command(NoArgsCommand):
     node = self.generate_node_doc()
     client = self.create_client()
     response = client.registerResponse(node)
-    logging.info('Server response:\n{0}'.format(response.read()))
+    logging.info(u'Server response:\n{}'.format(response.text))
     if response.status == 200:
       logging.info('SUCCESSFUL REGISTRATION')
     else:
@@ -92,18 +91,18 @@ class Command(NoArgsCommand):
     node = self.generate_node_doc()
     client = self.create_client()
     response = client.updateNodeCapabilitiesResponse(settings.NODE_IDENTIFIER, node)
-    logging.info('Server response:\n{0}'.format(response.read()))
+    logging.info(u'Server response:\n{}'.format(response.text))
 
   def view(self):
     node = self.generate_node_doc()
-    logging.info('{0}'.format(node.toDOM().toprettyxml(indent='  ')))
+    logging.info(u'{}'.format(node.toDOM().toprettyxml(indent=u'  ')))
 
   def generate_node_doc(self):
     n = mn.node.Node()
     return n.get()
 
   def create_client(self):
-    client = d1_client.cnclient.CoordinatingNodeClient(
+    client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       settings.DATAONE_ROOT,
       cert_path=settings.CLIENT_CERT_PATH,
       key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH

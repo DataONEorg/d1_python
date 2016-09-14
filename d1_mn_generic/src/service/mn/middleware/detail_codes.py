@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`detail_codes`
 =========================
 
 :Synopsis: Get Detail Code for DataONE exception based on REST call path.
 :Author: DataONE (Dahl)
-'''
+"""
 
 import re
 

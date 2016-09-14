@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module middleware.startup_handler
+"""Module middleware.startup_handler
 ====================================
 
 :Synopsis:
@@ -26,13 +26,13 @@
   fully loaded but before any requests have been serviced.
 :Created: 2012-04-25
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Django.
 import django.core.exceptions
 
 
-class startup_handler():
+class StartupHandler(object):
   def __init__(self):
     # The startup_handler is currently just a placeholder.
     raise django.core.exceptions.MiddlewareNotUsed

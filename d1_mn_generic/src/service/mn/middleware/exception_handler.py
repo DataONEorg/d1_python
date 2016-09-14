@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`exception_handler`
 ========================
 
@@ -39,11 +39,14 @@
 
   Responses to HEAD requests can not contain a body, so the exception is
   serialized to a set of HTTP headers for HEAD requests.
-:Author:
-  DataONE (Dahl)
-'''
+
+  For DataONEExceptions,
+"""
 
 # Stdlib.
+import logging
+import os
+import sys
 import traceback
 
 # 3rd party.
@@ -57,21 +60,22 @@ from django.conf import settings
 import d1_common.types.exceptions
 
 # App.
-import mn.util as util
 import detail_codes
 
 
-class exception_handler():
+class ExceptionHandler(object):
   def process_exception(self, request, exception):
-    self.request = request
-    self.exception = exception
+    self._request = request
+    self._exception = exception
 
-    util.log_exception()
+    self._log_exception()
 
     if isinstance(exception, d1_common.types.exceptions.DataONEException):
       return self.handle_dataone_exception()
     else:
-      return self.handle_internal_exception()
+      return self._handle_internal_exception()
+
+  # DataONE exception
 
   def handle_dataone_exception(self):
     self._exception.nodeId = settings.NODE_IDENTIFIER

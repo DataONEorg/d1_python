@@ -35,10 +35,9 @@ import logging
 import os
 import sys
 import tempfile
-import urlparse
 
 # Django.
-from django.core.management.base import NoArgsCommand
+import django.core.management.base
 from django.db import transaction
 from django.conf import settings
 
@@ -54,17 +53,16 @@ import d1_common.url
 
 # App.
 import mn.models
-import mn.view_asserts
+import mn.views.view_asserts
 import mn.auth
-import mn.sysmeta_store
+import mn.sysmeta_file
 
 single_path_file = None
 
-
-class Command(NoArgsCommand):
+class Command(django.core.management.base.BaseCommand):
   help = 'Process the System Metadata refresh queue.'
 
-  def handle_noargs(self, **options):
+  def handle(self, *args, **options):
     verbosity = int(options.get('verbosity', 1))
     self._log_setup(verbosity)
     logging.debug('Running management command: process_system_metadata_refresh_queue')
@@ -125,14 +123,14 @@ class SysMetaRefresher(object):
 
   def _process_refresh_task(self, task):
     self.logger.info('-' * 79)
-    self.logger.info('Processing PID: {0}'.format(task.object.pid))
+    self.logger.info(u'Processing PID: {}'.format(task.object.pid))
     try:
       self._refresh(task)
     except d1_common.types.exceptions.DataONEException as e:
-      self.logger.exception('System Metadata update failed with DataONE Exception:')
+      self.logger.exception(u'System Metadata update failed with DataONE Exception:')
       self._gmn_refresh_task_update(task, str(e))
     except (RefreshError, Exception, object) as e:
-      self.logger.exception('System Metadata update failed with internal exception:')
+      self.logger.exception(u'System Metadata update failed with internal exception:')
       self._gmn_refresh_task_update(task, str(e))
     return True
 
@@ -161,16 +159,16 @@ class SysMetaRefresher(object):
     )
 
   def _get_system_metadata(self, task):
-    self.logger.debug('Calling CNRead.getSystemMetadata(pid={0})'.format(task.object.pid))
+    self.logger.debug(u'Calling CNRead.getSystemMetadata(pid={})'.format(task.object.pid))
     return self.cn_client.getSystemMetadata(task.object.pid)
 
   def _update_sys_meta(self, sys_meta):
-    '''Updates the System Metadata for an existing Science Object. Does not
+    """Updates the System Metadata for an existing Science Object. Does not
     update the replica status on the object.
-    '''
+    """
     pid = sys_meta.identifier.value()
 
-    mn.view_asserts.object_exists(pid)
+    mn.views.view_asserts.object_exists(pid)
 
     # No sanity checking is done on the provided System Metadata. It comes
     # from a CN and is implicitly trusted.
@@ -181,7 +179,7 @@ class SysMetaRefresher(object):
     sciobj.mtime = sys_meta.dateSysMetadataModified
     sciobj.size = sys_meta.size
     sciobj.serial_version = sys_meta.serialVersion
-    sciobj.archived = False
+    sciobj.is_archived = False
     sciobj.save()
 
     # If an access policy was provided in the System Metadata, set it.
@@ -190,11 +188,14 @@ class SysMetaRefresher(object):
     else:
       mn.auth.set_access_policy(pid)
 
-    mn.sysmeta_store.write_sysmeta_to_store(sys_meta)
+    mn.sysmeta_file.write_sysmeta_to_file(sys_meta)
 
     # Log this System Metadata update.
     request = self._make_request_object()
     mn.event_log.update(pid, request)
+
+  def is_existing_pid(self, pid):
+    return
 
   def update_queue_item_status(self, queue_item, status):
     queue_item.set_status(status)
@@ -223,5 +224,5 @@ class RefreshError(Exception):
   def __str__(self):
     msg = str(self.error_msg)
     if self.pid is not None:
-      msg += '\nIdentifier: {0}'.format(self.pid)
+      msg += u'\nIdentifier: {}'.format(self.pid)
     return msg

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`generate_object_list`
+""":mod:`generate_object_list`
 ==============================
 
 :Synopsis:
@@ -26,7 +26,7 @@
   each subject which has read access to the object. The list is used by the
   DataONE Stress Tester.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -38,14 +38,14 @@ _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 import mn.models
 
 # Django.
-from django.core.management.base import BaseCommand
+import django.core.management.base
 from optparse import make_option
 
 # Get an instance of a logger.
 logger = logging.getLogger()
 
 
-class Command(BaseCommand):
+class Command(django.core.management.base.BaseCommand):
   args = '<file name>'
   option_list = BaseCommand.option_list + (
     make_option(
@@ -72,7 +72,7 @@ class Command(BaseCommand):
 
     self.create_object_list(object_list_path, options['public_only'])
 
-    print 'Saved object list to: {0}'.format(object_list_path)
+    print 'Saved object list to: {}'.format(object_list_path)
 
   def create_object_list(self, path, public_only):
     with open(path, 'w') as f:
@@ -83,6 +83,6 @@ class Command(BaseCommand):
         for p in mn.models.Permission.objects.filter(object=o):
           if public_only:
             if p.subject.subject == 'public':
-              f.write('{0}\n'.format(o.pid))
+              f.write('{}\n'.format(o.pid))
           else:
-            f.write('{0}\t{1}\n'.format(o.pid, p.subject.subject))
+            f.write('{}\t{}\n'.format(o.pid, p.subject.subject))

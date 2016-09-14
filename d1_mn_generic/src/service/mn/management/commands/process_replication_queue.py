@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`process_replication_queue`
 ================================
 
@@ -27,7 +27,7 @@
   replicate them.
 :Created: 2011-01-01
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import fcntl
@@ -36,10 +36,9 @@ import os
 import shutil
 import sys
 import tempfile
-import StringIO
 
 # Django.
-from django.core.management.base import NoArgsCommand
+import django.core.management.base
 from django.db import transaction
 from django.conf import settings
 
@@ -60,19 +59,19 @@ sys.path.append(_here('../types/generated'))
 
 # App.
 import mn.models
-import mn.sysmeta_store
-import mn.view_shared
+import mn.sysmeta_file
+import mn.views.view_util
 
 single_path_file = None
 
 
-class Command(NoArgsCommand):
+class Command(django.core.management.base.BaseCommand):
   help = 'Process the queue of replication requests'
 
-  def handle_noargs(self, **options):
+  def handle(self, *args, **options):
     verbosity = int(options.get('verbosity', 1))
     self._log_setup(verbosity)
-    logging.debug('Running management command: process_replication_queue')
+    logging.debug(u'Running management command: process_replication_queue')
     self._abort_if_other_instance_is_running()
     self._abort_if_stand_alone_instance()
     p = ReplicationQueueProcessor()
@@ -130,15 +129,15 @@ class ReplicationQueueProcessor(object):
 
   def _process_replication_task(self, task):
     self.logger.info('-' * 79)
-    self.logger.info('Processing PID: {0}'.format(task.pid))
+    self.logger.info('Processing PID: {}'.format(task.pid))
     try:
       self._replicate(task)
     except d1_common.types.exceptions.DataONEException as e:
-      self.logger.exception('Replication failed with DataONE Exception:')
+      self.logger.exception(u'Replication failed with DataONE Exception:')
       self._cn_replicate_task_update(task, 'failed', e)
       self._gmn_replicate_task_update(task, str(e))
     except (ReplicateError, Exception, object) as e:
-      self.logger.exception('Replication failed with internal exception:')
+      self.logger.exception(u'Replication failed with internal exception:')
       self._cn_replicate_task_update(task, 'failed')
       self._gmn_replicate_task_update(task, str(e))
     return True
@@ -157,8 +156,8 @@ class ReplicationQueueProcessor(object):
       )
     except Exception as e:
       self.logger.exception(
-        'CNReplication.setReplicationStatus() failed with '
-        'the following exception:'
+        u'CNReplication.setReplicationStatus() failed with '
+        u'the following exception:'
       )
 
   def _gmn_replicate_task_update(self, task, status=None):
@@ -179,7 +178,7 @@ class ReplicationQueueProcessor(object):
     )
 
   def _get_system_metadata(self, task):
-    self.logger.debug('Calling CNRead.getSystemMetadata(pid={0})'.format(task.pid))
+    self.logger.debug(u'Calling CNRead.getSystemMetadata(pid={})'.format(task.pid))
     return self.cn_client.getSystemMetadata(task.pid)
 
   def _get_sci_obj_stream(self, task):
@@ -202,8 +201,9 @@ class ReplicationQueueProcessor(object):
       if discovered_node_id == source_node:
         return node.baseURL
     raise ReplicateError(
-      'Unable to resolve Source Node ID: {0}. '
-      'Discovered nodes: {1}'.format(source_node, ', '.join(discovered_nodes))
+      u'Unable to resolve Source Node ID. '
+      u'source_node="{}", discovered_nodes="{}"'
+        .format(source_node, u', '.join(discovered_nodes))
     )
 
   def _get_node_list(self):
@@ -225,7 +225,7 @@ class ReplicationQueueProcessor(object):
   def _store_sys_meta(self, pid, sys_meta):
     if not sys_meta.serialVersion:
       sys_meta.serialVersion = 0
-    mn.sysmeta_store.write_sysmeta_to_store(sys_meta)
+    mn.sysmeta_file.write_sysmeta_to_file(sys_meta)
 
   def _store_science_object_bytes(self, pid, sci_obj):
     object_path = mn.util.store_path(settings.OBJECT_STORE_PATH, pid)
@@ -234,18 +234,25 @@ class ReplicationQueueProcessor(object):
       shutil.copyfileobj(sci_obj, f)
 
   def _assert_pid_does_not_exist(self, pid):
-    if mn.models.ScienceObject.objects.filter(pid=pid).exists():
+    if mn.models.ScienceObject.objects.filter(pid__sid_or_pid=pid).exists():
       raise ReplicateError(
-        'Another object with the identifier has already been created. GMN '
-        'attempts to prevent this from happening by rejecting regular '
-        'MNStorage.create() for objects with pids for which there are accepted '
-        'replication requests that have not yet been processed.', pid
+        u'Another object with the identifier has already been created. GMN '
+        u'attempts to prevent this from happening by rejecting regular '
+        u'MNStorage.create() for objects with pids for which there are accepted '
+        u'replication requests that have not yet been processed.', pid
       )
+    # TODO: Identifiers are now factored out to a separate table. By using the
+    # same table for replication requests, I can now ensure that this does not
+    # happen, at the database level.
 
   def _create_database_entry_for_science_object(self, pid, sci_obj, sys_meta):
+    id_obj = mn.models.IdNamespace()
+    id_obj.sid_or_pid = sys_meta.identifier.value()
+    id_obj.save()
+
     sci_obj = mn.models.ScienceObject()
-    sci_obj.pid = sys_meta.identifier.value()
-    sci_obj.url = 'file:///{0}'.format(d1_common.url.encodePathElement(pid))
+    sci_obj.pid = id_obj
+    sci_obj.url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     sci_obj.set_format(sys_meta.formatId)
     sci_obj.checksum = sys_meta.checksum.value()
     sci_obj.set_checksum_algorithm(sys_meta.checksum.algorithm)
@@ -253,7 +260,7 @@ class ReplicationQueueProcessor(object):
     sci_obj.size = sys_meta.size
     sci_obj.replica = True
     sci_obj.serial_version = sys_meta.serialVersion
-    sci_obj.archived = False
+    sci_obj.is_archived = False
     sci_obj.save()
     return sci_obj
 
@@ -283,5 +290,5 @@ class ReplicateError(Exception):
   def __str__(self):
     msg = str(self.error_msg)
     if self.pid is not None:
-      msg += '\nIdentifier: {0}'.format(self.pid)
+      msg += u'\nIdentifier: {}'.format(self.pid)
     return msg

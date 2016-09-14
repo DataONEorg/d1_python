@@ -34,7 +34,7 @@ import hotshot
 import hotshot.stats
 
 
-class profiling_handler():
+class ProfilingHandler(object):
   def __init__(self):
     # Disable this middleware layer if Django is not running in debug mode.
     if settings.DEBUG == False:
@@ -78,4 +78,4 @@ class profiling_handler():
 
     # Return the profiler report. This prevents the regular view
     # handler from being called.
-    return HttpResponse('<pre>%s</pre>' % std_new.getvalue(), 'text/plain')
+    return HttpResponse(u'<pre>%s</pre>' % std_new.getvalue(), 'text/plain')

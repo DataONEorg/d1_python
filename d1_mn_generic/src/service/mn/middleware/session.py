@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`session`
 ==============
 
@@ -68,21 +68,21 @@ algorithm:
       - If Group is found:
         - Iterate over hasMember:
           - Recursively add those subjects.
-'''
+"""
 
 # Stdlib.
 import logging
 
 # D1.
 import d1_common.const
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import d1_x509v3_certificate_extractor
+import d1_certificate.certificate_extractor
 
 
 class process_session(object):
   def __init__(self, request):
-    '''Process the session in the certificate and store the result in the
+    """Process the session in the certificate and store the result in the
     request object.
     - The primary subject is the certificate subject DN, serialized to a
       DataONE compliant subject string.
@@ -91,7 +91,7 @@ class process_session(object):
       group memberships) is stored in request.subjects.
     - In addition, the primary subject is stored separately in
       request.primary_subject.
-    '''
+    """
     self.request = request
     self.request.subjects = set()
     self.subjects = self.request.subjects
@@ -131,19 +131,20 @@ class process_session(object):
 
   def _extract_session_from_x509_v3_certificate(self):
     try:
-      return d1_x509v3_certificate_extractor.extract(self.request.META['SSL_CLIENT_CERT'])
+      return d1_certificate.certificate_extractor.extract(self.request.META['SSL_CLIENT_CERT'])
     except Exception as e:
       raise d1_common.types.exceptions.InvalidToken(
-        0, 'Error extracting session from certificate: {0}'.format(str(e))
+        0, u'Error extracting session from certificate. error="{}"'.format(str(e))
       )
 
   def _deserialize_subject_info(self, subject_info_xml):
     try:
-      return dataoneTypes.CreateFromDocument(subject_info_xml)
+      return d1_common.types.dataoneTypes.CreateFromDocument(subject_info_xml)
     except Exception as e:
       raise d1_common.types.exceptions.InvalidToken(
-        0, 'Error deserializing SubjectInfo: {0}\n{1}'.format(
-          str(e), subject_info_xml)
+        0,
+        u'Could not deserialize SubjectInfo. subject_info="{}", error="{}"'
+          .format(subject_info_xml, str(e))
       )
 
   def _add_symbolic_subject_authenticated(self):
@@ -218,12 +219,12 @@ class process_session(object):
       self._add_subject(member.value())
 
   def _log_session(self):
-    logging.info('Session:')
-    logging.info('  {0} (primary)'.format(self.request.primary_subject))
+    logging.info(u'Session:')
+    logging.info(u'  {} (primary)'.format(self.request.primary_subject))
     for subject in self.request.subjects:
-      logging.info('  {0}'.format(subject))
-    logging.debug('SubjectInfo:')
+      logging.info(u'  {}'.format(subject))
+    logging.debug(u'SubjectInfo:')
     if self.subject_info:
-      logging.debug(u'  {0}'.format(self.subject_info.toxml()))
+      logging.debug(u'  {}'.format(self.subject_info.toxml()))
     else:
       logging.debug(u'  <none>')

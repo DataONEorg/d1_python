@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`event_log`
 ================
 
 :Synopsis: Log DataONE object accesses.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # D1
 import d1_common.types.exceptions
@@ -35,9 +35,9 @@ import auth
 
 
 def _log(pid, request, event, timestamp=None):
-  '''Log an object access.
+  """Log an object access.
   :return:
-  '''
+  """
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']
   subject = auth.get_trusted_subjects_string()
@@ -48,7 +48,8 @@ def _log(pid, request, event, timestamp=None):
     try:
       object_row = models.ScienceObject.objects.filter(pid__sid_or_pid=pid)[0]
     except IndexError:
-      err_msg = 'Attempted to create event log for non-existing object: {0}'.format((pid))
+      err_msg = u'Attempted to create event log for non-existing object. pid="{}"'\
+        .format((pid))
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
   # Create log entry.

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`views.internal`
+""":mod:`views.internal`
 ========================
 
 :Synopsis:
@@ -26,7 +26,7 @@
   to be available when the MN is in production.
 
 :Author: DataONE (Dahl)
-'''
+"""
 # Stdlib.
 import ctypes
 import datetime
@@ -35,7 +35,7 @@ import platform
 
 # Django.
 import django
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.db.models import Avg, Count, Sum
 from django.conf import settings
@@ -44,7 +44,7 @@ from django.conf import settings
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
 import mn.auth
@@ -107,12 +107,10 @@ def home(request):
     content_type=d1_common.const.CONTENT_TYPE_XHTML
   )
 
-# Util.
 
-
-def get_free_space(folder):
-  '''Return folder/drive free space (in bytes)
-  '''
+def _get_free_space(folder):
+  """Return folder/drive free space (in bytes)
+  """
   if platform.system() == 'Windows':
     free_bytes = ctypes.c_ulonglong(0)
     ctypes.windll.kernel32.GetDiskFreeSpaceExW(

@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`request_handler`
 ======================
 
 :Synopsis: Django request handler middleware.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -41,12 +41,12 @@ import d1_common.const
 import d1_common.types.exceptions
 
 
-class request_handler():
+class RequestHandler(object):
   def process_request(self, request):
-    if settings.GMN_DEBUG == True and settings.ECHO_REQUEST_OBJECT:
+    if settings.GMN_DEBUG and settings.ECHO_REQUEST_OBJECT:
       pp = pprint.PrettyPrinter(indent=2)
       return HttpResponse(pp.pformat(request), d1_common.const.CONTENT_TYPE_TEXT)
 
-#    logging.info('REQUEST: {0}'.format(request_uri))
+#    logging.info('REQUEST: {}'.format(request_uri))
 
     return None

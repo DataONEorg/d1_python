@@ -34,13 +34,13 @@
 import logging
 
 # Django.
-from django.core.management.base import NoArgsCommand
+import django.core.management.base
 
 # App.
 import mn.models
 
 
-class Command(NoArgsCommand):
+class Command(django.core.management.base.BaseCommand):
   help = 'Set the whitelist for create, update and delete operations'
 
   def handle(self, *args, **options):
@@ -58,7 +58,7 @@ class Command(NoArgsCommand):
 
     n_subjects = self.set_whitelist(args[0])
 
-    print 'Successfully whitelisted {0} subjects'.format(n_subjects)
+    print u'Successfully whitelisted {} subjects'.format(n_subjects)
 
   def set_whitelist(self, whitelist_path):
     with open(whitelist_path) as f:

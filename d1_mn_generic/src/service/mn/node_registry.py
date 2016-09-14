@@ -33,7 +33,7 @@ import d1_client.cnclient
 
 # App.
 import d1_common.types.exceptions
-'''
+"""
 :mod:`node_registry`
 ====================
 
@@ -42,7 +42,7 @@ import d1_common.types.exceptions
   in which this MN is registered.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 
 def get_cn_subjects():
@@ -51,10 +51,10 @@ def get_cn_subjects():
     return cn_subjects
 
   if settings.STAND_ALONE:
-    logging.info('Running in stand-alone mode. Skipping node registry download.')
+    logging.info(u'Running in stand-alone mode. Skipping node registry download.')
     set_empty_cn_subjects_cache()
   else:
-    logging.info('Running in environment: {0}'.format(settings.DATAONE_ROOT))
+    logging.info(u'Running in environment: {}'.format(settings.DATAONE_ROOT))
     set_cn_subjects_for_environment()
 
   return django.core.cache.cache.get('cn_subjects')
@@ -62,7 +62,7 @@ def get_cn_subjects():
 
 def set_empty_cn_subjects_cache():
   django.core.cache.cache.set('cn_subjects', set())
-  logging.info('CN Subjects set to empty list')
+  logging.info(u'CN Subjects set to empty list')
 
 
 def set_cn_subjects_for_environment():
@@ -74,22 +74,22 @@ def set_cn_subjects_for_environment():
     d1_common.types.exceptions.DataONEException, httplib.HTTPException, socket.error
   ) as e:
     logging.warn(
-      'Unable to get CN Subjects from the DataONE environment. '
-      'If this server is being used for testing, see the STAND_ALONE setting. '
-      '\nError: {0}\nEnvironment: {1}'.format(
+      u'Unable to get CN Subjects from the DataONE environment. '
+      u'If this server is being used for testing, see the STAND_ALONE setting. '
+      u'\nError: {}\nEnvironment: {}'.format(
         str(e), settings.DATAONE_ROOT)
     )
     cn_subjects = []
   else:
     logging.info(
-      'CN Subjects successfully retrieved from the DataONE environment: {0}'
-      .format(', '.join(cn_subjects))
+      u'CN Subjects successfully retrieved from the DataONE environment: {}'
+      .format(u', '.join(cn_subjects))
     )
   django.core.cache.cache.set('cn_subjects', set(cn_subjects))
 
 
 def get_cn_subjects_string():
-  return ', '.join(sorted(list(get_cn_subjects())))
+  return u', '.join(sorted(list(get_cn_subjects())))
 
 
 def get_cn_subjects_from_dataone_root():
@@ -102,7 +102,7 @@ def get_cn_subjects_from_dataone_root():
       pass
     else:
       for service in services:
-        if mn.name == 'CNCore':
+        if service.name == 'CNCore':
           for subject in node.subject:
             cn_subjects.add(subject.value())
           break
@@ -111,7 +111,7 @@ def get_cn_subjects_from_dataone_root():
 
 def download_node_registry():
   logging.info(
-    'Downloading node registry from environment: {0}'.format(settings.DATAONE_ROOT)
+    u'Downloading node registry from environment: {}'.format(settings.DATAONE_ROOT)
   )
   client = create_root_cn_client()
   return client.listNodes()

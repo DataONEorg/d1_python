@@ -21,13 +21,13 @@
 
 import psycopg2.extensions
 import pyxb.binding.datatypes
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 
 def adapt_pyxb_binding(binding):
-  return psycopg2.extensions.AsIs(u"'{0}'"\
+  return psycopg2.extensions.AsIs(u"'{}'"\
     .format(unicode(binding).replace('\'', '\'\'')))
   # An example uses adapt() here, but I could not get that to work with
   # casting to unicode. It works with casting to str.

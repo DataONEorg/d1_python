@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`node`
 ===========
 
@@ -26,7 +26,7 @@
   Generate Node document.
 :Author:
   DataONE (Dahl)
-'''
+"""
 
 # Example Node document:
 #
@@ -55,7 +55,10 @@
 from django.conf import settings
 
 # D1.
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes_v2_0
+
+# App
+import mn.views.view_util
 
 # For debugging the population of PyXB objects, it can be convenient to turn off
 # PyXB's validation.

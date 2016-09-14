@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`view_handler`
 ===================
 
 :Synopsis: Sanity checking on system state before view is executed.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -41,28 +41,27 @@ import d1_common.url
 import session
 
 
-class view_handler():
+class ViewHandler(object):
   def process_view(self, request, view_func, view_args, view_kwargs):
     # Log which view is about the be called.
     logging.info(
-      'View: func_name({0}) method({1}) args({2}) kwargs({3})'
+      u'View: func_name={}, method={}, args={}, kwargs={}'
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
-
     self.process_session(request)
 
   def process_session(self, request):
     # For simulating an HTTPS connection with client authentication when
     # debugging via regular HTTP, two mechanisms are supported. (1) A full
-    # client side certificate can be included and (2) a list of subjects can
-    # be included, both as vendor specific extensions (HTTP headers that start
-    # with the string "VENDOR_".) In some testing scenarios, it is convenient
-    # to submit lists of subjects without having to generate certificates. In
-    # other scenarios, it is desirable to simulate an HTTPS interaction as
-    # closely as possible by providing a complete certificate.
+    # client side certificate can be included and (2) a list of subjects can be
+    # included. Both use vendor specific extensions (HTTP headers that start
+    # with the string "VENDOR_".) In some testing scenarios, it is convenient to
+    # submit lists of subjects without having to generate certificates. In other
+    # scenarios, it is desirable to simulate an HTTPS interaction as closely as
+    # possible by providing a complete certificate.
 
     # Handle complete certificate in vendor specific extension.
-    if settings.GMN_DEBUG == True:
+    if settings.GMN_DEBUG:
       if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
         request.META['SSL_CLIENT_CERT'] = \
           self.pem_in_http_header_to_pem_in_string(
@@ -72,7 +71,7 @@ class view_handler():
     session.process_session(request)
 
     # Handle list of subjects in vendor specific extension:
-    if settings.GMN_DEBUG == True:
+    if settings.GMN_DEBUG:
       # If this is used together with TLS, the list is added to the one derived
       # from any included client side certificate. The public symbolic principal
       # is always included in the subject list.

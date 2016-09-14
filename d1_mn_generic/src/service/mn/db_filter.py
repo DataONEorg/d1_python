@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''
+"""
 :mod:`db_filter`
 ================
 
 :Synopsis: Database query filters.
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import re
@@ -35,13 +35,13 @@ import d1_common.date_time
 import d1_common.types.exceptions
 
 # App.
-import mn.view_asserts
+import mn.views.view_asserts
 
 # 3/27/12: Wildcard filter removed. Available in SVN.
 
 
 def add_access_policy_filter(query, request, column_name):
-  '''Add access control filter to a QuerySet.
+  """Add access control filter to a QuerySet.
   :param query: The query to which to add the filters.
   :type query: QuerySet
   :param request: The request object to get parameter from.
@@ -50,10 +50,10 @@ def add_access_policy_filter(query, request, column_name):
   :type column_name: string
   :return: Filtered query.
   :return type: QuerySet
-  '''
+  """
   q = mn.models.PermissionSubject.objects.filter(subject__in=request.subjects)\
     .values('permission__object')
-  filter_arg = '{0}__in'.format(column_name)
+  filter_arg = '{}__in'.format(column_name)
   return query.filter(**{filter_arg: q})
 
 
@@ -63,14 +63,14 @@ def add_bool_filter(query, request, column_name, param_name):
     return query
   if bool_val not in (True, False, 1, 0, 'True', 'False', 'true', 'false', '1', '0'):
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid boolean format: {0}'.format(bool_val)
+      0, u'Invalid boolean. value="{}"'.format(str(bool_val))
     )
-  filter_arg = '{0}'.format(column_name)
+  filter_arg = column_name
   return query.filter(**{filter_arg: bool_val})
 
 
 def add_datetime_filter(query, request, column_name, param_name, operator):
-  '''Add datetime filter to a QuerySet. If the provided parameter name is
+  """Add datetime filter to a QuerySet. If the provided parameter name is
   not present in the request, no filtering is performed.
   :param query: The query to which to add the filters.
   :type query: QuerySet
@@ -82,7 +82,7 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
   :type column_name: string
   :return: Filtered query.
   :return type: QuerySet
-  '''
+  """
   date_str = request.GET.get(param_name, None)
   if date_str is None:
     return query
@@ -94,16 +94,17 @@ def add_datetime_filter(query, request, column_name, param_name, operator):
     date = d1_common.date_time.from_iso8601(date_str)
   except d1_common.date_time.iso8601.ParseError, e:
     raise d1_common.types.exceptions.InvalidRequest(
-      0, 'Invalid date format, "{0}": {1}'.format(date_str, str(e))
+      0,
+      u'Invalid date format. date="{}", parse_error="{}"'.format(date_str, str(e))
     )
-  mn.view_asserts.date_is_utc(date)
+  mn.views.view_asserts.date_is_utc(date)
   date = d1_common.date_time.strip_timezone(date)
-  filter_arg = '{0}__{1}'.format(column_name, operator)
+  filter_arg = '{}__{}'.format(column_name, operator)
   return query.filter(**{filter_arg: date})
 
 
 def add_string_filter(query, request, column_name, param_name):
-  '''Add a string filter to a QuerySet. If the provided parameter name is
+  """Add a string filter to a QuerySet. If the provided parameter name is
   not present in the request, no filtering is performed.
   :param query: The query to which to add the filters.
   :type query: QuerySet
@@ -115,7 +116,7 @@ def add_string_filter(query, request, column_name, param_name):
   :type column_name: string
   :return: Filtered query.
   :return type: QuerySet
-  '''
+  """
   value = request.GET.get(param_name, None)
   if value is None:
     return query
@@ -123,7 +124,7 @@ def add_string_filter(query, request, column_name, param_name):
 
 
 def add_string_begins_with_filter(query, request, column_name, param_name):
-  '''Add a string filter to a QuerySet. If the provided parameter name is
+  """Add a string filter to a QuerySet. If the provided parameter name is
   not present in the request, no filtering is performed.
   :param query: The query to which to add the filters.
   :type query: QuerySet
@@ -135,17 +136,17 @@ def add_string_begins_with_filter(query, request, column_name, param_name):
   :type column_name: string
   :return: Filtered query.
   :return type: QuerySet
-  '''
+  """
   value = request.GET.get(param_name, None)
   if value is None:
     return query
-  filter_arg = '{0}__startswith'.format(column_name)
+  filter_arg = '{}__startswith'.format(column_name)
   return query.filter(**{filter_arg: value})
 
 
 def add_slice_filter(query, request):
-  '''Create a slice of a query based on request start and count parameters.
-  '''
+  """Create a slice of a query based on request start and count parameters.
+  """
   # Get and validate the 'start' argument, used for setting the first
   # record to retrieve. Silently set invalid value to 0.
   try:

@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-''':mod:`views.diagnostics`
+""":mod:`views.diagnostics`
 ===========================
 
 :Synopsis:
@@ -26,13 +26,12 @@
   These are used in various diagnostics, debugging and testing scenarios.
   Access is unrestricted in debug mode. Disabled in production.
 :Author: DataONE (Dahl)
-'''
+"""
 # Stdlib.
 import cgi
 import csv
 import os
 import pprint
-import time
 import urlparse
 
 # Django.
@@ -40,15 +39,16 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.db.models import Q
 from django.conf import settings
+import django.apps
 
 # D1.
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.types.generated.dataoneTypes as dataoneTypes
+import d1_common.types.dataoneTypes
 
 # App.
-import mn.view_asserts
+import mn.views.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -56,10 +56,10 @@ import mn.models
 import mn.node_registry
 import mn.psycopg_adapter
 import mn.restrict_to_verb
-import mn.sysmeta_store
-import mn.urls
+import mn.sysmeta_base
+import mn.sysmeta_file
 import mn.util
-import mn.view_shared
+import mn.views.view_util
 
 # ------------------------------------------------------------------------------
 # Diagnostics portal.
@@ -70,8 +70,7 @@ import mn.view_shared
 def diagnostics(request):
   if 'clear_db' in request.GET:
     _delete_all_objects()
-    _clear_replication_queue()
-    _delete_subjects_and_permissions()
+    _clear_db()
   if request.path.endswith('/'):
     return HttpResponseRedirect(request.path[:-1])
   return render_to_response('diag.html', d1_common.const.CONTENT_TYPE_XHTML)
@@ -79,7 +78,6 @@ def diagnostics(request):
 # ------------------------------------------------------------------------------
 # Replication.
 # ------------------------------------------------------------------------------
-
 
 @mn.restrict_to_verb.get
 def get_replication_queue(request):
@@ -95,7 +93,7 @@ def get_replication_queue(request):
 @mn.restrict_to_verb.get
 def clear_replication_queue(request):
   _clear_replication_queue()
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
 def _clear_replication_queue():
@@ -108,19 +106,20 @@ def _clear_replication_queue():
 
 @mn.restrict_to_verb.get
 def set_access_policy(request, pid):
-  mn.view_asserts.object_exists(pid)
-  mn.view_asserts.post_has_mime_parts(request, (('file', 'access_policy'), ))
-  access_policy_xml = request.FILES['access_policy'].read()
-  access_policy = dataoneTypes.CreateFromDocument(access_policy_xml)
+  mn.views.view_asserts.object_exists(pid)
+  mn.views.view_asserts.post_has_mime_parts(request, (('file', 'access_policy'),))
+  access_policy_xml = mn.views.view_util.read_utf8_xml(request.FILES['access_policy'])
+  access_policy = d1_common.types.dataoneTypes.CreateFromDocument(access_policy_xml)
   mn.auth.set_access_policy(pid, access_policy)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.get
 def delete_all_access_policies(request):
-  # The deletes are cascaded so all subjects are also deleted.
+  # The models.CASCADE property is set on all ForeignKey fields, so deletes
+  # on Permission are cascaded to subjects.
   mn.models.Permission.objects.all().delete()
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
 # Authentication.
@@ -147,44 +146,42 @@ def trusted_subjects(request):
 
 
 def create(request, pid):
-  '''Version of create() that performs no locking, testing or validation.
-  Used for inserting test objects.'''
-  sysmeta_xml = request.FILES['sysmeta'].read().decode('utf-8')
-  sysmeta = mn.view_shared.deserialize_system_metadata(sysmeta_xml)
-  mn.view_shared.create(request, pid, sysmeta)
-  return mn.view_shared.http_response_with_boolean_true_type()
+  """Minimal version of create() used for inserting test objects."""
+  sysmeta_xml = mn.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
+  sysmeta = mn.sysmeta_base.deserialize(sysmeta_xml)
+  mn.views.view_util.create(request, sysmeta)
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.get
 def slash(request, p1, p2, p3):
-  '''Test that GMN correctly handles three arguments separated by slashes'''
+  """Test that GMN correctly handles three arguments separated by slashes"""
   return render_to_response('test_slash.html', {'p1': p1, 'p2': p2, 'p3': p3})
 
 
 @mn.restrict_to_verb.get
 def exception(request, exception_type):
-  '''Test that GMN correctly catches and serializes exceptions raised by views'''
+  """Test that GMN correctly catches and serializes exceptions raised by views"""
   if exception_type == 'python':
     raise Exception("Test Python Exception")
   elif exception_type == 'dataone':
     raise d1_common.types.exceptions.InvalidRequest(0, 'Test DataONE Exception')
-
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.get
 def echo_request_object(request):
   pp = pprint.PrettyPrinter(indent=2)
-  return HttpResponse('<pre>{0}</pre>'.format(cgi.escape(pp.pformat(request))))
+  return HttpResponse(u'<pre>{}</pre>'.format(cgi.escape(pp.pformat(request))))
 
 
 @mn.restrict_to_verb.get
 def permissions_for_object(request, pid):
-  mn.view_asserts.object_exists(pid)
+  mn.views.view_asserts.object_exists(pid)
   subjects = []
-  permissions = mn.models.Permission.objects.filter(object__pid=pid)
+  permissions = mn.models.Permission.objects.filter(object__pid__sid_or_pid=pid)
   for permission in permissions:
-    action = mn.auth.level_action_map[permission.level]
+    action = mn.auth.LEVEL_ACTION_MAP[permission.level]
     subjects.append((permission.subject.subject, action))
   return render_to_response(
     'permissions_for_object.xhtml',
@@ -195,7 +192,7 @@ def permissions_for_object(request, pid):
 
 @mn.restrict_to_verb.get
 def get_setting(request, setting):
-  '''Get a value from settings.py or settings_site.py'''
+  """Get a value from settings.py or settings_site.py"""
   return HttpResponse(
     getattr(settings, setting, '<UNKNOWN SETTING>'), d1_common.const.CONTENT_TYPE_TEXT
   )
@@ -275,12 +272,12 @@ def delete_event_log(request):
   mn.models.EventLog.objects.all().delete()
   mn.models.EventLogIPAddress.objects.all().delete()
   mn.models.EventLogEvent.objects.all().delete()
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
 
 
 @mn.restrict_to_verb.post
 def inject_fictional_event_log(request):
-  mn.view_asserts.post_has_mime_parts(request, (('file', 'csv'), ))
+  mn.views.view_asserts.post_has_mime_parts(request, (('file', 'csv'),))
 
   # Create event log entries.
   csv_reader = csv.reader(request.FILES['csv'])
@@ -305,4 +302,4 @@ def inject_fictional_event_log(request):
 
     mn.event_log._log(pid, request, event, d1_common.date_time.strip_timezone(timestamp))
 
-  return mn.view_shared.http_response_with_boolean_true_type()
+  return mn.views.view_util.http_response_with_boolean_true_type()
