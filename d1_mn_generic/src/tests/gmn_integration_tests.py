@@ -275,11 +275,14 @@ class GMNIntegrationTests(unittest.TestCase):
       [random.choice(string.ascii_lowercase) for _ in range(num_chars)]
     )
 
-  def _random_id(self, pre_str=None):
-    if pre_str is not None:
-      return '{}_{}_{}'.format(pre_str, self._random_str(), self._now_str())
-    else:
+  def _random_id(self):
       return '{}_{}'.format(self._random_str(), self._now_str())
+
+  def _random_pid(self):
+      return 'PID_{}'.format(self._random_id())
+
+  def _random_sid(self):
+      return 'SID_{}'.format(self._random_id())
 
   def _create(
     self, client, binding, pid, sid=None, obsoletes=None, obsoleted_by=None
@@ -1200,7 +1203,7 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_1591(client, v2)
 
   def _test_1591(self, client, binding):
-    pid = self._random_id()
+    pid = self._random_pid()
     self._create(client, binding, pid)
     log = client.getLogRecords(pidFilter=pid, vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
@@ -1224,9 +1227,9 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_1592(client, v2)
 
   def _test_1592(self, client, binding):
-    pid_create = self._random_id()
+    pid_create = self._random_pid()
     self._create(client, binding, pid_create)
-    pid_update = self._random_id()
+    pid_update = self._random_pid()
     self._update(client, binding, pid_create, pid_update)
     # Old object has a create and an update event
     log = client.getLogRecords(pidFilter=pid_create, vendorSpecific=self.
@@ -1575,7 +1578,7 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_1900(client, v2)
 
   def _test_1900(self, client, binding):
-    known_pid = self._random_id()
+    known_pid = self._random_pid()
     scidata, sysmeta = self._generate_test_object(binding, known_pid)
     client.replicate(
       sysmeta, 'test_source_node', vendorSpecific=self.
@@ -1685,7 +1688,7 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_2010_A(client, v2, 'anterior1.jpg')
 
   def _test_2010_A(self, client, binding, old_pid):
-    new_pid = self._random_id()
+    new_pid = self._random_pid()
     sci_obj, sys_meta = self._generate_test_object(binding, new_pid)
     client.update(
       old_pid, StringIO.StringIO(sci_obj), new_pid, sys_meta,
@@ -1872,8 +1875,8 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3000(client, v2)
 
   def _test_3000(self, client, binding):
-    pid = self._random_id()
-    sid = self._random_id()
+    pid = self._random_pid()
+    sid = self._random_sid()
     self._create(client, binding, pid, sid)
 
   # --
@@ -1893,9 +1896,9 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3010(client, v2)
 
   def _test_3010(self, client, binding):
-    pid = self._random_id()
-    sid1 = self._random_id()
-    sid2 = self._random_id()
+    pid = self._random_pid()
+    sid1 = self._random_pid()
+    sid2 = self._random_pid()
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._create(client_v2, v2, pid, sid1)
     # self._create(client, binding, sid1)
@@ -1911,18 +1914,45 @@ class GMNIntegrationTests(unittest.TestCase):
 
   # --
 
+  def test_3020_v1(self):
+    """v1 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
+    """
+    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
+    self._test_3020(client, v1)
+
   def test_3020_v2(self):
-    """v2 MNStorage.create(): Attempting to reuse existing SID as SID when creating
-    a standalone object raises IdentifierNotUnique. This test is not applicable
-    to v1 MNStorage.create() since v1 sysmeta cannot hold a SID.
+    """v2 MNStorage.create(): Attempt to create standalone object with
+    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
     """
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._test_3020(client, v2)
 
   def _test_3020(self, client, binding):
-    pid1 = self._random_id()
-    pid2 = self._random_id()
-    sid = self._random_id()
+    pid1 = self._random_pid()
+    sid1 = self._random_sid()
+    self._create(client, binding, pid1, sid1)
+    pid2 = self._random_pid()
+    sid2 = self._random_sid()
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidSystemMetadata,
+      self._create, client, binding, pid2, sid2, obsoletes=pid1
+    )
+
+  # --
+
+  def test_3025_v2(self):
+    """v2 MNStorage.create(): Attempting to reuse existing SID as SID when creating
+    a standalone object raises IdentifierNotUnique. This test is not applicable
+    to v1 MNStorage.create() since v1 sysmeta cannot hold a SID.
+    """
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._test_3025(client, v2)
+
+  def _test_3025(self, client, binding):
+    pid1 = self._random_pid()
+    pid2 = self._random_pid()
+    sid = self._random_sid()
     self._create(client, binding, pid1, sid)
     self.assertRaises(
       d1_common.types.exceptions.IdentifierNotUnique, self._create, client,
@@ -1949,8 +1979,8 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3030(client, v2)
 
   def _test_3030(self, client, binding):
-    pid = self._random_id()
-    sid = self._random_id()
+    pid = self._random_pid()
+    sid = self._random_sid()
     create_sci_obj_str, create_sysmeta_obj = self._create(
       client, binding, pid, sid
     )
@@ -1958,33 +1988,6 @@ class GMNIntegrationTests(unittest.TestCase):
     self.assertEqual(create_sci_obj_str, get_sci_obj_str)
     self.assertEqual(get_sysmeta_obj.identifier.value(), pid)
     self.assertEqual(get_sysmeta_obj.seriesId.value(), sid)
-
-  # --
-
-  def test_3031_v1(self):
-    """v1 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
-    """
-    client = d1_client.mnclient.MemberNodeClient(GMN_URL)
-    self._test_3031(client, v1)
-
-  def test_3031_v2(self):
-    """v2 MNStorage.create(): Attempt to create standalone object with
-    sysmeta.obsoletes pointing to known object raises InvalidSystemMetadata.
-    """
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
-    self._test_3031(client, v2)
-
-  def _test_3031(self, client, binding):
-    pid1 = self._random_id()
-    sid1 = self._random_id()
-    self._create(client, binding, pid1, sid1)
-    pid2 = self._random_id()
-    sid2 = self._random_id()
-    self.assertRaises(
-      d1_common.types.exceptions.InvalidSystemMetadata,
-      self._create, client, binding, pid2, sid2, obsoletes=pid1
-    )
 
   # --
 
@@ -2006,9 +2009,9 @@ class GMNIntegrationTests(unittest.TestCase):
     """MNStorage.create(): Attempt to create standalone object with
     sysmeta.obsoletes pointing to unknown object raises InvalidSystemMetadata.
     """
-    pid = self._random_id()
-    sid = self._random_id()
-    unknown_pid = self._random_id()
+    pid = self._random_pid()
+    sid = self._random_sid()
+    unknown_pid = self._random_pid()
     self.assertRaises(
       d1_common.types.exceptions.InvalidSystemMetadata,
       self._create, client, binding, pid, sid,
@@ -2032,11 +2035,11 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3033(client, v2)
 
   def _test_3033(self, client, binding):
-    pid1 = self._random_id()
-    sid1 = self._random_id()
+    pid1 = self._random_pid()
+    sid1 = self._random_sid()
     self._create(client, binding, pid1, sid1)
-    pid2 = self._random_id()
-    sid2 = self._random_id()
+    pid2 = self._random_pid()
+    sid2 = self._random_sid()
     self.assertRaises(
       d1_common.types.exceptions.InvalidSystemMetadata,
       self._create, client, binding,
@@ -2065,9 +2068,9 @@ class GMNIntegrationTests(unittest.TestCase):
     """MNStorage.create(): Attempt to create standalone object with
     sysmeta.obsoletedBy pointing to unknown object raises InvalidSystemMetadata.
     """
-    pid = self._random_id()
-    sid = self._random_id()
-    unknown_pid = self._random_id()
+    pid = self._random_pid()
+    sid = self._random_sid()
+    unknown_pid = self._random_pid()
     self.assertRaises(
       d1_common.types.exceptions.InvalidSystemMetadata, self._create, client, binding, pid, sid,
       obsoleted_by=unknown_pid
@@ -2090,8 +2093,8 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3040(client, v2)
 
   def _test_3040(self, client, binding):
-    old_pid = self._random_id()
-    new_pid = self._random_id()
+    old_pid = self._random_pid()
+    new_pid = self._random_pid()
     self.assertRaises(
       d1_common.types.exceptions.NotFound, self._update, client, binding, old_pid, new_pid
     )
@@ -2114,11 +2117,11 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_3041(self, client, binding):
     # Create valid base obj.
-    base_pid = self._random_id()
+    base_pid = self._random_pid()
     self._create(client, binding, base_pid)
     # Attempt update of valid base obj with invalid sysmeta.
-    unk_pid = self._random_id()
-    update_pid = self._random_id()
+    unk_pid = self._random_pid()
+    update_pid = self._random_pid()
     sci_obj_str, sysmeta_obj = self._generate_test_object(binding, unk_pid)
     self.assertRaises(
       d1_common.types.exceptions.InvalidSystemMetadata, client.update, base_pid,
@@ -2145,7 +2148,7 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3042(client, v2)
 
   def _test_3042(self, client, binding):
-    base_pid = self._random_id()
+    base_pid = self._random_pid()
     self._create(client, binding, base_pid)
     self.assertRaises(
       d1_common.types.exceptions.IdentifierNotUnique, self._update, client, binding, base_pid,
@@ -2169,8 +2172,8 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_3043(client, v2)
 
   def _test_3043(self, client, binding):
-    base_pid = self._random_id()
-    update_pid = self._random_id()
+    base_pid = self._random_pid()
+    update_pid = self._random_pid()
     self._create(client, binding, base_pid)
     base_obj_str, base_sysmeta_obj = self._get(client, base_pid)
     self.assertIsNone(base_sysmeta_obj.obsoletes)
@@ -2198,15 +2201,15 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_3050(self, client, binding):
     # Create base object with SID
-    base_pid = self._random_id()
-    base_sid = self._random_id()
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._create(client_v2, v2, base_pid, base_sid)
     base_obj_str, base_sysmeta_obj = self._get(client_v2, base_pid)
     self.assertEquals(base_sysmeta_obj.identifier.value(), base_pid)
     self.assertEquals(base_sysmeta_obj.seriesId.value(), base_sid)
     # Update without SID
-    update_pid = self._random_id()
+    update_pid = self._random_pid()
     self._update(client, binding, base_pid, update_pid)
     # Retrieve object by base SID and verify that it's the updated object.
     update_obj_str, update_sysmeta_obj = self._get(client, update_pid)
@@ -2219,7 +2222,7 @@ class GMNIntegrationTests(unittest.TestCase):
   def _create_and_compare(
     self, client, binding, num_sciobj_bytes, redirect_bool
   ):
-    pid = self._random_id()
+    pid = self._random_pid()
     created_sciobj_str, created_sysmeta_obj = self._create_wrapped_sciobj_httpbin(
       client, binding, pid, num_sciobj_bytes, redirect_bool=redirect_bool
     )
@@ -2285,7 +2288,7 @@ class GMNIntegrationTests(unittest.TestCase):
       return urlparse.urljoin(HTTPBIN_SERVER_STR, redirect_to_object_path)
 
   def _assert_not_retrievable(self, url):
-    pid = self._random_id()
+    pid = self._random_pid()
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     sysmeta_obj = self._generate_sysmeta(
       v1, pid, pid, gmn_test_client.GMN_TEST_SUBJECT_PUBLIC
