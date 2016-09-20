@@ -203,6 +203,7 @@ def _add_object_properties_to_response_header(response, sciobj):
     response, datetime.datetime.utcnow()
   )
 
+@mn.restrict_to_verb.get
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def get_object(request, pid):
@@ -270,6 +271,7 @@ def get_meta(request, pid):
   )
 
 
+@mn.restrict_to_verb.head
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def head_object(request, pid):
@@ -388,6 +390,7 @@ def post_error(request):
 @mn.restrict_to_verb.get
 @mn.views.view_util.resolve_sid
 # Access control is performed within function.
+@mn.restrict_to_verb.get
 def get_replica(request, pid):
   """MNReplication.getReplica(session, sid_or_pid) → OctetStream
   """
@@ -513,6 +516,7 @@ def post_refresh_system_metadata(request):
 # actual exception is not included.
 
 
+@mn.restrict_to_verb.post
 @mn.auth.decorator_assert_create_update_delete_permission
 def post_object_list(request):
   """MNStorage.create(session, sid_or_pid, object, sysmeta) → Identifier
@@ -530,6 +534,7 @@ def post_object_list(request):
   return new_pid
 
 
+@mn.restrict_to_verb.put
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_write_permission # OLD object
 def put_object(request, old_pid):
@@ -587,6 +592,7 @@ def post_generate_identifier(request):
       return pid
 
 
+@mn.restrict_to_verb.delete
 @mn.views.view_util.resolve_sid
 @mn.auth.decorator_assert_create_update_delete_permission
 def delete_object(request, pid):
