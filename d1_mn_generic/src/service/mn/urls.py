@@ -113,23 +113,23 @@ if settings.GMN_DEBUG or settings.MONITOR:
 if settings.GMN_DEBUG:
   urlpatterns.extend([
     # Diagnostics portal.
-    url(r'^diag/?$', mn.views.diagnostics.diagnostics),
+    url(r'^diag$', mn.views.diagnostics.diagnostics),
     # Replication.
-    url(r'^diag/get_replication_queue/?$', mn.views.diagnostics.get_replication_queue),
-    url(r'^diag/clear_replication_queue/?$', mn.views.diagnostics.clear_replication_queue),
+    url(r'^diag/get_replication_queue$', mn.views.diagnostics.get_replication_queue),
+    url(r'^diag/clear_replication_queue$', mn.views.diagnostics.clear_replication_queue),
     # Access Policy.
-    url(r'^diag/set_access_policy/(.+?)/?$', mn.views.diagnostics.set_access_policy),
-    url(r'^diag/delete_all_access_policies/?$', mn.views.diagnostics.delete_all_access_policies),
+    url(r'^diag/set_access_policy/(.+?)$', mn.views.diagnostics.set_access_policy),
+    url(r'^diag/delete_all_access_policies$', mn.views.diagnostics.delete_all_access_policies),
     # Misc.
     url(r'^diag/create/(.+)$', mn.views.diagnostics.create),
-    url(r'^diag/slash/(.+?)/(.+?)/(.+?)/?$', mn.views.diagnostics.slash),
-    url(r'^diag/exception/(.+?)/?$', mn.views.diagnostics.exception),
-    url(r'^diag/delete_all_objects/?$', mn.views.diagnostics.delete_all_objects),
-    url(r'^diag/delete_single_object/(.+?)/?$', mn.views.diagnostics.delete_single_object),
-    url(r'^diag/trusted_subjects/?$', mn.views.diagnostics.trusted_subjects),
-    url(r'^diag/permissions_for_object/(.+?)/?$', mn.views.diagnostics.permissions_for_object),
+    url(r'^diag/slash/(.+?)/(.+?)/(.+?)$', mn.views.diagnostics.slash),
+    url(r'^diag/exception/(.+?)$', mn.views.diagnostics.exception),
+    url(r'^diag/delete_all_objects$', mn.views.diagnostics.delete_all_objects),
+    url(r'^diag/delete_single_object/(.+?)$', mn.views.diagnostics.delete_single_object),
+    url(r'^diag/trusted_subjects$', mn.views.diagnostics.trusted_subjects),
+    url(r'^diag/permissions_for_object/(.+?)$', mn.views.diagnostics.permissions_for_object),
     url(r'^diag/get_setting/(.+)$', mn.views.diagnostics.get_setting),
     # Event Log.
-    url(r'^diag/delete_event_log/?$', mn.views.diagnostics.delete_event_log),
-    url(r'^diag/inject_fictional_event_log/?$', mn.views.diagnostics.inject_fictional_event_log),
+    url(r'^diag/delete_event_log$', mn.views.diagnostics.delete_event_log),
+    url(r'^diag/inject_fictional_event_log$', mn.views.diagnostics.inject_fictional_event_log),
   ])

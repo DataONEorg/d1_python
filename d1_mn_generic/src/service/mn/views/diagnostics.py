@@ -71,8 +71,6 @@ def diagnostics(request):
   if 'clear_db' in request.GET:
     _delete_all_objects()
     _clear_db()
-  if request.path.endswith('/'):
-    return HttpResponseRedirect(request.path[:-1])
   return render_to_response('diag.html', d1_common.const.CONTENT_TYPE_XHTML)
 
 # ------------------------------------------------------------------------------
