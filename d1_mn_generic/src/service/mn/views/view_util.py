@@ -142,6 +142,7 @@ def http_response_with_boolean_true_type():
 def add_http_date_to_response_header(response, date_time):
   response['Date'] = d1_common.date_time.to_http_datetime(date_time)
 
+  functools.wraps(f)
 # ------------------------------------------------------------------------------
 # Series ID (SID)
 # ------------------------------------------------------------------------------
@@ -155,6 +156,7 @@ def resolve_sid(f):
     resolve it as a SID and, if successful, return the new PID. Else, raise
     NotFound exception.
   """
+  functools.wraps(f)
   def wrap(request, sid_or_pid, *args, **kwargs):
     pid = resolve_sid_func(request, sid_or_pid)
     return f(request, pid, *args, **kwargs)

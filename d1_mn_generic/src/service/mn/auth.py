@@ -25,6 +25,10 @@
 :Author: DataONE (Dahl)
 """
 
+# Stdlib
+import logging
+import functools
+
 # Django.
 import django.core.cache
 from django.conf import settings
@@ -35,6 +39,7 @@ import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
 import d1_certificate.certificate_extractor
 import d1_common.types.dataoneTypes
+
 # App.
 import mn.models
 import mn.node_registry
@@ -236,6 +241,7 @@ def format_active_subjects(request):
 def assert_trusted_permission(f):
   """Access only by D1 infrastructure.
   """
+  functools.wraps(f)
   def wrap(request, *args, **kwargs):
     assert_trusted(request)
     return f(request, *args, **kwargs)
@@ -247,6 +253,7 @@ def assert_trusted_permission(f):
 def assert_list_objects_access(f):
   """Access to listObjects() controlled by settings.PUBLIC_OBJECT_LIST.
   """
+  functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if not settings.PUBLIC_OBJECT_LIST:
       assert_trusted(request)
@@ -259,6 +266,7 @@ def assert_list_objects_access(f):
 def assert_get_log_records_access(f):
   """Access to getLogRecords() controlled by settings.PUBLIC_LOG_RECORDS.
   """
+  functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if not settings.PUBLIC_LOG_RECORDS:
       assert_trusted(request)
@@ -283,6 +291,7 @@ def decorator_assert_create_update_delete_permission(f):
   """Access only by subjects with Create/Update/Delete permission and by
   trusted infrastructure (CNs).
   """
+  functools.wraps(f)
   def wrap(request, *args, **kwargs):
     assert_create_update_delete_permission(request)
     return f(request, *args, **kwargs)
@@ -293,6 +302,7 @@ def decorator_assert_create_update_delete_permission(f):
 def assert_authenticated(f):
   """Access only with a valid session.
   """
+  functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if d1_common.const.SUBJECT_AUTHENTICATED not in request.subjects:
       raise d1_common.types.exceptions.NotAuthorized(
@@ -312,6 +322,7 @@ def assert_authenticated(f):
 def assert_verified(f):
   """Access only with a valid session where the primary subject is verified.
   """
+  functools.wraps(f)
   def wrap(request, *args, **kwargs):
     if d1_common.const.SUBJECT_VERIFIED not in request.subjects:
       raise d1_common.types.exceptions.NotAuthorized(
@@ -329,6 +340,7 @@ def assert_verified(f):
 def assert_required_permission(f, level):
   """Assert that subject has access at given level or higher for object.
   """
+  functools.wraps(f)
   def wrap(request, pid, *args, **kwargs):
     assert_allowed(request, level, pid)
     return f(request, pid, *args, **kwargs)
@@ -340,16 +352,19 @@ def assert_required_permission(f, level):
 def assert_changepermission_permission(f):
   """Assert that subject has changePermission or high for object.
   """
+  functools.wraps(f)
   return assert_required_permission(f, CHANGEPERMISSION_LEVEL)
 
 
 def assert_write_permission(f):
   """Assert that subject has write permission or higher for object.
   """
+  functools.wraps(f)
   return assert_required_permission(f, WRITE_LEVEL)
 
 
 def assert_read_permission(f):
   """Assert that subject has read permission or higher for object.
   """
+  functools.wraps(f)
   return assert_required_permission(f, READ_LEVEL)
