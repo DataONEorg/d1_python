@@ -205,6 +205,21 @@ def assert_allowed(request, level, pid):
       )
     )
 
+
+def format_active_subjects(request):
+  """Create a string listing active subjects for this connection, suitable
+  for appending to authentication error messages.
+  """
+  decorated_subjects = []
+  for subject in request.subjects:
+    if subject == request.primary_subject:
+      decorated_subjects.append(subject + u' (primary)')
+    elif subject == d1_common.const.SUBJECT_VERIFIED:
+      decorated_subjects.append(subject + u' (verified)')
+    else:
+      decorated_subjects.append(subject + u' (equivalent)')
+  return u'Active subjects: {}'.format(u', '.join(decorated_subjects))
+
 # ------------------------------------------------------------------------------
 # Decorators.
 # ------------------------------------------------------------------------------
@@ -338,18 +353,3 @@ def assert_read_permission(f):
   """Assert that subject has read permission or higher for object.
   """
   return assert_required_permission(f, READ_LEVEL)
-
-
-def format_active_subjects(request):
-  """Create a string listing active subjects for this connection, suitable
-  for appending to authentication error messages.
-  """
-  decorated_subjects = []
-  for subject in request.subjects:
-    if subject == request.primary_subject:
-      decorated_subjects.append(subject + u' (primary)')
-    elif subject == d1_common.const.SUBJECT_VERIFIED:
-      decorated_subjects.append(subject + u' (verified)')
-    else:
-      decorated_subjects.append(subject + u' (equivalent)')
-  return u'Active subjects: {}'.format(u', '.join(decorated_subjects))
