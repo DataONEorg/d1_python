@@ -28,6 +28,7 @@
 
 # Stdlib.
 import base64
+import inspect
 import logging
 import os
 import re
@@ -167,3 +168,9 @@ def _mk_http_basic_auth_header():
       )
     )
   )
+
+
+def dump_stack():
+  frame = inspect.currentframe()
+  stack_trace = traceback.format_stack(frame)
+  logging.debug(''.join(stack_trace))

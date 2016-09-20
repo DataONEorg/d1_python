@@ -132,7 +132,7 @@ def is_pid(sid_or_pid):
   if not mn.sysmeta_db.is_pid(sid_or_pid):
     raise d1_common.types.exceptions.NotFound(
       0,
-      u'Identifier is {}. Expected a Persistent ID (PID). '
+      u'Identifier is {}. Expected an existing Persistent ID (PID). '
       u'id="{}"'.format(
         _get_identifier_type(
           sid_or_pid

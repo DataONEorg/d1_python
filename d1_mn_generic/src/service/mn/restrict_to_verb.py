@@ -43,6 +43,10 @@ def get(f):
   return _allow_only_verbs(f, ['GET'])
 
 
+def head(f):
+  return _allow_only_verbs(f, ['HEAD'])
+
+
 def put(f):
   return _allow_only_verbs(f, ['PUT'])
 

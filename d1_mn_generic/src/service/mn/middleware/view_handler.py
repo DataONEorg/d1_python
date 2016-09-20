@@ -21,9 +21,6 @@
 """
 :mod:`view_handler`
 ===================
-
-:Synopsis: Sanity checking on system state before view is executed.
-:Author: DataONE (Dahl)
 """
 
 # Stdlib.
