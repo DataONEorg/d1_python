@@ -22,19 +22,23 @@
 :mod:`view_util`
 ================
 """
+# Stdlib
+import logging
+import functools
 
 # Django.
 from django.conf import settings
 from django.http import HttpResponse
 
 # D1
-import d1_common.type_conversions
 import d1_common.const
 import d1_common.date_time
+import d1_common.type_conversions
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
+import d1_common.url
 
 # App.
 import mn.auth
@@ -142,7 +146,24 @@ def http_response_with_boolean_true_type():
 def add_http_date_to_response_header(response, date_time):
   response['Date'] = d1_common.date_time.to_http_datetime(date_time)
 
+
+def decode_id(f):
+  """Decorator that decodes the SID or PID extracted from URL path segment
+  by Django.
+  """
+  # TODO: Currently, Django passes percent-encoded params to views when they
+  # were extracted from URL path segments by the Django URL regex parser and
+  # dispatcher. IMO, that's a bug and I'm working with Django devs to see if
+  # this can be fixed. Update this accordingly.
   functools.wraps(f)
+  def wrap(request, sid_or_pid, *args, **kwargs):
+    return f(request, d1_common.url.decodeQueryElement(sid_or_pid),
+             *args, **kwargs)
+  wrap.__doc__ = f.__doc__
+  wrap.__name__ = f.__name__
+  return wrap
+
+
 # ------------------------------------------------------------------------------
 # Series ID (SID)
 # ------------------------------------------------------------------------------
@@ -165,7 +186,7 @@ def resolve_sid(f):
   return wrap
 
 
-def resolve_sid_func(request,  sid_or_pid):
+def resolve_sid_func(request, sid_or_pid):
     if is_v1_api(request):
       view_asserts.is_pid(sid_or_pid)
       return sid_or_pid

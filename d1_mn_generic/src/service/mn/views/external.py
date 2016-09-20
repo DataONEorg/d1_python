@@ -204,6 +204,7 @@ def _add_object_properties_to_response_header(response, sciobj):
   )
 
 @mn.restrict_to_verb.get
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def get_object(request, pid):
@@ -259,6 +260,7 @@ def _get_sciobj_stream_remote(url):
 
 
 @mn.restrict_to_verb.get
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def get_meta(request, pid):
@@ -272,6 +274,7 @@ def get_meta(request, pid):
 
 
 @mn.restrict_to_verb.head
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def head_object(request, pid):
@@ -286,6 +289,7 @@ def head_object(request, pid):
 
 
 @mn.restrict_to_verb.get
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def get_checksum(request, pid):
@@ -355,8 +359,8 @@ def get_object_list(request):
   }
 
 
-@mn.auth.assert_trusted_permission
 @mn.restrict_to_verb.post
+@mn.auth.assert_trusted_permission
 def post_error(request):
   """MNRead.synchronizationFailed(session, message)
   """
@@ -387,10 +391,10 @@ def post_error(request):
   return mn.views.view_util.http_response_with_boolean_true_type()
 
 
-@mn.restrict_to_verb.get
-@mn.views.view_util.resolve_sid
 # Access control is performed within function.
 @mn.restrict_to_verb.get
+@mn.views.view_util.decode_id
+@mn.views.view_util.resolve_sid
 def get_replica(request, pid):
   """MNReplication.getReplica(session, sid_or_pid) → OctetStream
   """
@@ -427,6 +431,7 @@ def _assert_node_is_authorized(request, pid):
 
 # Unrestricted.
 @mn.restrict_to_verb.get
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 def get_is_authorized(request, pid):
   """MNAuthorization.isAuthorized(sid_or_pid, action) -> Boolean
@@ -535,6 +540,7 @@ def post_object_list(request):
 
 
 @mn.restrict_to_verb.put
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_write_permission # OLD object
 def put_object(request, old_pid):
@@ -593,6 +599,7 @@ def post_generate_identifier(request):
 
 
 @mn.restrict_to_verb.delete
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.decorator_assert_create_update_delete_permission
 def delete_object(request, pid):
@@ -626,6 +633,7 @@ def _delete_object_from_database(pid):
 
 
 @mn.restrict_to_verb.put
+@mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_write_permission
 def put_archive(request, pid):
