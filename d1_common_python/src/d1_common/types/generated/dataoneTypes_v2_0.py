@@ -1,7 +1,7 @@
 # ./d1_common/types/raw/dataoneTypes_v2_0.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:cdd9555a55a103332598275a87c4a7c1422c46ed
-# Generated 2016-09-07 13:31:51.261782 by PyXB version 1.2.4 using Python 2.7.6.final.0
+# Generated 2016-09-21 15:41:10.235109 by PyXB version 1.2.5 using Python 2.7.12.final.0
 # Namespace http://ns.dataone.org/service/types/v2.0
 
 from __future__ import unicode_literals
@@ -13,15 +13,18 @@ import pyxb.utils.utility
 import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
-
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:b9ac4f2a-7531-11e6-a62e-000c292ff10e')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:1bf6786e-8044-11e6-bfa7-001cbf46b1be')
 
 # Version of PyXB used to generate the bindings
-_PyXBVersion = '1.2.4'
+_PyXBVersion = '1.2.5'
 # Generated bindings are not compatible across PyXB versions
 if pyxb.__version__ != _PyXBVersion:
     raise pyxb.PyXBVersionError(_PyXBVersion)
+
+# A holder for module-level binding classes so we can access them from
+# inside class definitions where property names may conflict.
+_module_typeBindings = pyxb.utils.utility.Object()
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -82,15 +85,15 @@ class MediaTypeProperty (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'MediaTypeProperty')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 62, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 62, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.string
     
     # Attribute name uses Python identifier name
     __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'name'), 'name', '__httpns_dataone_orgservicetypesv2_0_MediaTypeProperty_name', pyxb.binding.datatypes.string, required=True)
-    __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 69, 10)
-    __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 69, 10)
+    __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 69, 10)
+    __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 69, 10)
     
     name = property(__name.value, __name.set, None, 'The property name for this entry. \n                ')
 
@@ -100,6 +103,7 @@ class MediaTypeProperty (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap.update({
         __name.name() : __name
     })
+_module_typeBindings.MediaTypeProperty = MediaTypeProperty
 Namespace.addCategoryObject('typeBinding', 'MediaTypeProperty', MediaTypeProperty)
 
 
@@ -120,13 +124,13 @@ class MediaType (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'MediaType')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 80, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 80, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element property uses Python identifier property_
-    __property = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'property'), 'property_', '__httpns_dataone_orgservicetypesv2_0_MediaType_property', True, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6), )
+    __property = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'property'), 'property_', '__httpns_dataone_orgservicetypesv2_0_MediaType_property', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6), )
 
     
     property_ = property(__property.value, __property.set, None, 'Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          ')
@@ -134,8 +138,8 @@ class MediaType (pyxb.binding.basis.complexTypeDefinition):
     
     # Attribute name uses Python identifier name
     __name = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'name'), 'name', '__httpns_dataone_orgservicetypesv2_0_MediaType_name', pyxb.binding.datatypes.string, required=True)
-    __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 107, 4)
-    __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 107, 4)
+    __name._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 107, 4)
+    __name._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 107, 4)
     
     name = property(__name.value, __name.set, None, "The value of the media-type specified as a \n          required 'name' attribute of the mediaType element.\n        ")
 
@@ -145,6 +149,7 @@ class MediaType (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap.update({
         __name.name() : __name
     })
+_module_typeBindings.MediaType = MediaType
 Namespace.addCategoryObject('typeBinding', 'MediaType', MediaType)
 
 
@@ -158,13 +163,13 @@ class NodeList (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'NodeList')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 190, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 190, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element node uses Python identifier node
-    __node = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'node'), 'node', '__httpns_dataone_orgservicetypesv2_0_NodeList_node', True, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 199, 6), )
+    __node = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'node'), 'node', '__httpns_dataone_orgservicetypesv2_0_NodeList_node', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 199, 6), )
 
     
     node = property(__node.value, __node.set, None, None)
@@ -175,6 +180,7 @@ class NodeList (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap.update({
         
     })
+_module_typeBindings.NodeList = NodeList
 Namespace.addCategoryObject('typeBinding', 'NodeList', NodeList)
 
 
@@ -188,23 +194,23 @@ class Property (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_SIMPLE
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Property')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 233, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 233, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.string
     
     # Attribute key uses Python identifier key
     __key = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'key'), 'key', '__httpns_dataone_orgservicetypesv2_0_Property_key', pyxb.binding.datatypes.string, required=True)
-    __key._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 242, 10)
-    __key._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 242, 10)
+    __key._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 242, 10)
+    __key._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 242, 10)
     
     key = property(__key.value, __key.set, None, 'The property key for this entry. Should be \n                  unique within the Node element.')
 
     
     # Attribute type uses Python identifier type
     __type = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'type'), 'type', '__httpns_dataone_orgservicetypesv2_0_Property_type', pyxb.binding.datatypes.string)
-    __type._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 248, 10)
-    __type._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 248, 10)
+    __type._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 248, 10)
+    __type._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 248, 10)
     
     type = property(__type.value, __type.set, None, 'The optional type for the property. Can be \n                  used to indicate if a controlled vocabulary is used for the\n                  property key to better facilitate machine interpretation.\n                ')
 
@@ -215,6 +221,7 @@ class Property (pyxb.binding.basis.complexTypeDefinition):
         __key.name() : __key,
         __type.name() : __type
     })
+_module_typeBindings.Property = Property
 Namespace.addCategoryObject('typeBinding', 'Property', Property)
 
 
@@ -226,62 +233,62 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'LogEntry')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 325, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 325, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element entryId uses Python identifier entryId
-    __entryId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'entryId'), 'entryId', '__httpns_dataone_orgservicetypesv2_0_LogEntry_entryId', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 331, 6), )
+    __entryId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'entryId'), 'entryId', '__httpns_dataone_orgservicetypesv2_0_LogEntry_entryId', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 331, 6), )
 
     
     entryId = property(__entryId.value, __entryId.set, None, 'A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.')
 
     
     # Element identifier uses Python identifier identifier
-    __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv2_0_LogEntry_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 340, 6), )
+    __identifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'identifier'), 'identifier', '__httpns_dataone_orgservicetypesv2_0_LogEntry_identifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 340, 6), )
 
     
     identifier = property(__identifier.value, __identifier.set, None, 'The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.')
 
     
     # Element ipAddress uses Python identifier ipAddress
-    __ipAddress = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'ipAddress'), 'ipAddress', '__httpns_dataone_orgservicetypesv2_0_LogEntry_ipAddress', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 347, 6), )
+    __ipAddress = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'ipAddress'), 'ipAddress', '__httpns_dataone_orgservicetypesv2_0_LogEntry_ipAddress', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 347, 6), )
 
     
     ipAddress = property(__ipAddress.value, __ipAddress.set, None, 'The IP address, as reported by the service receiving\n          the request, of the request origin.')
 
     
     # Element userAgent uses Python identifier userAgent
-    __userAgent = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'userAgent'), 'userAgent', '__httpns_dataone_orgservicetypesv2_0_LogEntry_userAgent', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 354, 6), )
+    __userAgent = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'userAgent'), 'userAgent', '__httpns_dataone_orgservicetypesv2_0_LogEntry_userAgent', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 354, 6), )
 
     
     userAgent = property(__userAgent.value, __userAgent.set, None, 'The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.')
 
     
     # Element subject uses Python identifier subject
-    __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv2_0_LogEntry_subject', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 361, 6), )
+    __subject = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'subject'), 'subject', '__httpns_dataone_orgservicetypesv2_0_LogEntry_subject', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 361, 6), )
 
     
     subject = property(__subject.value, __subject.set, None, 'The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.')
 
     
     # Element event uses Python identifier event
-    __event = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'event'), 'event', '__httpns_dataone_orgservicetypesv2_0_LogEntry_event', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 370, 6), )
+    __event = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'event'), 'event', '__httpns_dataone_orgservicetypesv2_0_LogEntry_event', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 370, 6), )
 
     
     event = property(__event.value, __event.set, None, 'A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          ')
 
     
     # Element dateLogged uses Python identifier dateLogged
-    __dateLogged = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'dateLogged'), 'dateLogged', '__httpns_dataone_orgservicetypesv2_0_LogEntry_dateLogged', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 379, 6), )
+    __dateLogged = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'dateLogged'), 'dateLogged', '__httpns_dataone_orgservicetypesv2_0_LogEntry_dateLogged', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 379, 6), )
 
     
     dateLogged = property(__dateLogged.value, __dateLogged.set, None, 'A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.')
 
     
     # Element nodeIdentifier uses Python identifier nodeIdentifier
-    __nodeIdentifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'nodeIdentifier'), 'nodeIdentifier', '__httpns_dataone_orgservicetypesv2_0_LogEntry_nodeIdentifier', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 387, 6), )
+    __nodeIdentifier = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'nodeIdentifier'), 'nodeIdentifier', '__httpns_dataone_orgservicetypesv2_0_LogEntry_nodeIdentifier', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 387, 6), )
 
     
     nodeIdentifier = property(__nodeIdentifier.value, __nodeIdentifier.set, None, 'The unique identifier for the node where the log\n          message was generated.')
@@ -299,6 +306,7 @@ class LogEntry (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap.update({
         
     })
+_module_typeBindings.LogEntry = LogEntry
 Namespace.addCategoryObject('typeBinding', 'LogEntry', LogEntry)
 
 
@@ -316,13 +324,13 @@ class OptionList (pyxb.binding.basis.complexTypeDefinition):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'OptionList')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 398, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 398, 2)
     _ElementMap = {}
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
     # Element option uses Python identifier option
-    __option = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'option'), 'option', '__httpns_dataone_orgservicetypesv2_0_OptionList_option', True, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6), )
+    __option = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'option'), 'option', '__httpns_dataone_orgservicetypesv2_0_OptionList_option', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6), )
 
     
     option = property(__option.value, __option.set, None, "The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped.")
@@ -330,16 +338,16 @@ class OptionList (pyxb.binding.basis.complexTypeDefinition):
     
     # Attribute key uses Python identifier key
     __key = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'key'), 'key', '__httpns_dataone_orgservicetypesv2_0_OptionList_key', pyxb.binding.datatypes.string, required=True)
-    __key._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 423, 4)
-    __key._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 423, 4)
+    __key._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 423, 4)
+    __key._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 423, 4)
     
     key = property(__key.value, __key.set, None, 'A value that can be used with a DataONE service. Key\n        values must not contain any characters that need to be URL escaped, and\n        should be short and informative. \n        ')
 
     
     # Attribute description uses Python identifier description
     __description = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'description'), 'description', '__httpns_dataone_orgservicetypesv2_0_OptionList_description', pyxb.binding.datatypes.string, required=True)
-    __description._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 431, 4)
-    __description._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 431, 4)
+    __description._DeclarationLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 431, 4)
+    __description._UseLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 431, 4)
     
     description = property(__description.value, __description.set, None, 'The description of an option, indicating its intended \n          use and impact on a DataONE service invocation.')
 
@@ -350,6 +358,7 @@ class OptionList (pyxb.binding.basis.complexTypeDefinition):
         __key.name() : __key,
         __description.name() : __description
     })
+_module_typeBindings.OptionList = OptionList
 Namespace.addCategoryObject('typeBinding', 'OptionList', OptionList)
 
 
@@ -365,7 +374,7 @@ class SystemMetadata (_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMet
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'SystemMetadata')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 118, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 118, 2)
     _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata._ElementMap.copy()
     _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata._AttributeMap.copy()
     # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMetadata
@@ -405,21 +414,21 @@ class SystemMetadata (_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMet
     # Element replica (replica) inherited from {http://ns.dataone.org/service/types/v1}SystemMetadata
     
     # Element seriesId uses Python identifier seriesId
-    __seriesId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'seriesId'), 'seriesId', '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_seriesId', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12), )
+    __seriesId = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'seriesId'), 'seriesId', '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_seriesId', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12), )
 
     
     seriesId = property(__seriesId.value, __seriesId.set, None, 'The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.')
 
     
     # Element mediaType uses Python identifier mediaType
-    __mediaType = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'mediaType'), 'mediaType', '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_mediaType', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14), )
+    __mediaType = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'mediaType'), 'mediaType', '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_mediaType', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14), )
 
     
     mediaType = property(__mediaType.value, __mediaType.set, None, 'When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.')
 
     
     # Element fileName uses Python identifier fileName
-    __fileName = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'fileName'), 'fileName', '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_fileName', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14), )
+    __fileName = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'fileName'), 'fileName', '__httpns_dataone_orgservicetypesv2_0_SystemMetadata_fileName', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14), )
 
     
     fileName = property(__fileName.value, __fileName.set, None, 'Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  ')
@@ -432,6 +441,7 @@ class SystemMetadata (_ImportedBinding_d1_common_types_dataoneTypes_v1.SystemMet
     _AttributeMap.update({
         
     })
+_module_typeBindings.SystemMetadata = SystemMetadata
 Namespace.addCategoryObject('typeBinding', 'SystemMetadata', SystemMetadata)
 
 
@@ -444,7 +454,7 @@ class ObjectFormat (_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectForma
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ObjectFormat')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 261, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 261, 2)
     _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat._ElementMap.copy()
     _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat._AttributeMap.copy()
     # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectFormat
@@ -456,14 +466,14 @@ class ObjectFormat (_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectForma
     # Element formatType (formatType) inherited from {http://ns.dataone.org/service/types/v1}ObjectFormat
     
     # Element mediaType uses Python identifier mediaType
-    __mediaType = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'mediaType'), 'mediaType', '__httpns_dataone_orgservicetypesv2_0_ObjectFormat_mediaType', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10), )
+    __mediaType = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'mediaType'), 'mediaType', '__httpns_dataone_orgservicetypesv2_0_ObjectFormat_mediaType', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10), )
 
     
     mediaType = property(__mediaType.value, __mediaType.set, None, 'The IANA Media Type for this object format.\n                ')
 
     
     # Element extension uses Python identifier extension
-    __extension = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'extension'), 'extension', '__httpns_dataone_orgservicetypesv2_0_ObjectFormat_extension', False, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8), )
+    __extension = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'extension'), 'extension', '__httpns_dataone_orgservicetypesv2_0_ObjectFormat_extension', False, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8), )
 
     
     extension = property(__extension.value, __extension.set, None, 'Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).')
@@ -475,6 +485,7 @@ class ObjectFormat (_ImportedBinding_d1_common_types_dataoneTypes_v1.ObjectForma
     _AttributeMap.update({
         
     })
+_module_typeBindings.ObjectFormat = ObjectFormat
 Namespace.addCategoryObject('typeBinding', 'ObjectFormat', ObjectFormat)
 
 
@@ -487,13 +498,13 @@ class ObjectFormatList (_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'ObjectFormatList')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 289, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 289, 2)
     _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._ElementMap.copy()
     _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._AttributeMap.copy()
     # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice
     
     # Element objectFormat uses Python identifier objectFormat
-    __objectFormat = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'objectFormat'), 'objectFormat', '__httpns_dataone_orgservicetypesv2_0_ObjectFormatList_objectFormat', True, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 298, 10), )
+    __objectFormat = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'objectFormat'), 'objectFormat', '__httpns_dataone_orgservicetypesv2_0_ObjectFormatList_objectFormat', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 298, 10), )
 
     
     objectFormat = property(__objectFormat.value, __objectFormat.set, None, None)
@@ -510,6 +521,7 @@ class ObjectFormatList (_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
     _AttributeMap.update({
         
     })
+_module_typeBindings.ObjectFormatList = ObjectFormatList
 Namespace.addCategoryObject('typeBinding', 'ObjectFormatList', ObjectFormatList)
 
 
@@ -522,13 +534,13 @@ class Log (_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Log')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 308, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 308, 2)
     _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._ElementMap.copy()
     _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice._AttributeMap.copy()
     # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.Slice
     
     # Element logEntry uses Python identifier logEntry
-    __logEntry = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'logEntry'), 'logEntry', '__httpns_dataone_orgservicetypesv2_0_Log_logEntry', True, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10), )
+    __logEntry = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'logEntry'), 'logEntry', '__httpns_dataone_orgservicetypesv2_0_Log_logEntry', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10), )
 
     
     logEntry = property(__logEntry.value, __logEntry.set, None, None)
@@ -545,6 +557,7 @@ class Log (_ImportedBinding_d1_common_types_dataoneTypes_v1.Slice):
     _AttributeMap.update({
         
     })
+_module_typeBindings.Log = Log
 Namespace.addCategoryObject('typeBinding', 'Log', Log)
 
 
@@ -557,7 +570,7 @@ class Node (_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
     _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
     _Abstract = False
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'Node')
-    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 208, 2)
+    _XSDLocation = pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 208, 2)
     _ElementMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Node._ElementMap.copy()
     _AttributeMap = _ImportedBinding_d1_common_types_dataoneTypes_v1.Node._AttributeMap.copy()
     # Base type is _ImportedBinding_d1_common_types_dataoneTypes_v1.Node
@@ -583,7 +596,7 @@ class Node (_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
     # Element contactSubject (contactSubject) inherited from {http://ns.dataone.org/service/types/v1}Node
     
     # Element property uses Python identifier property_
-    __property = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'property'), 'property_', '__httpns_dataone_orgservicetypesv2_0_Node_property', True, pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10), )
+    __property = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'property'), 'property_', '__httpns_dataone_orgservicetypesv2_0_Node_property', True, pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10), )
 
     
     property_ = property(__property.value, __property.set, None, 'Allows additional attributes be added to the \n                Node document as needed.')
@@ -602,42 +615,43 @@ class Node (_ImportedBinding_d1_common_types_dataoneTypes_v1.Node):
     _AttributeMap.update({
         
     })
+_module_typeBindings.Node = Node
 Namespace.addCategoryObject('typeBinding', 'Node', Node)
 
 
-optionList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'optionList'), OptionList, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 452, 2))
+optionList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'optionList'), OptionList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 452, 2))
 Namespace.addCategoryObject('elementBinding', optionList.name().localName(), optionList)
 
-property = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'property'), Property, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 454, 2))
+property = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'property'), Property, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 454, 2))
 Namespace.addCategoryObject('elementBinding', property.name().localName(), property)
 
-nodeList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'nodeList'), NodeList, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 456, 2))
+nodeList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'nodeList'), NodeList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 456, 2))
 Namespace.addCategoryObject('elementBinding', nodeList.name().localName(), nodeList)
 
-logEntry = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'logEntry'), LogEntry, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 460, 2))
+logEntry = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'logEntry'), LogEntry, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 460, 2))
 Namespace.addCategoryObject('elementBinding', logEntry.name().localName(), logEntry)
 
-mediaType = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'mediaType'), MediaType, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 461, 2))
+mediaType = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'mediaType'), MediaType, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 461, 2))
 Namespace.addCategoryObject('elementBinding', mediaType.name().localName(), mediaType)
 
-systemMetadata = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'systemMetadata'), SystemMetadata, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 453, 2))
+systemMetadata = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'systemMetadata'), SystemMetadata, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 453, 2))
 Namespace.addCategoryObject('elementBinding', systemMetadata.name().localName(), systemMetadata)
 
-objectFormat = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'objectFormat'), ObjectFormat, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 457, 2))
+objectFormat = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'objectFormat'), ObjectFormat, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 457, 2))
 Namespace.addCategoryObject('elementBinding', objectFormat.name().localName(), objectFormat)
 
-objectFormatList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'objectFormatList'), ObjectFormatList, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 458, 2))
+objectFormatList = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'objectFormatList'), ObjectFormatList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 458, 2))
 Namespace.addCategoryObject('elementBinding', objectFormatList.name().localName(), objectFormatList)
 
-log = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'log'), Log, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 459, 2))
+log = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'log'), Log, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 459, 2))
 Namespace.addCategoryObject('elementBinding', log.name().localName(), log)
 
-node = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'node'), Node, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 455, 2))
+node = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, 'node'), Node, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 455, 2))
 Namespace.addCategoryObject('elementBinding', node.name().localName(), node)
 
 
 
-MediaType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'property'), MediaTypeProperty, scope=MediaType, documentation='Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          ', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6)))
+MediaType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'property'), MediaTypeProperty, scope=MediaType, documentation='Media-type parameter(s) as specified by the \n            respective RFC for the media-type.\n          ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6)))
 
 def _BuildAutomaton ():
     # Remove this helper function from the namespace after it is invoked
@@ -646,12 +660,12 @@ def _BuildAutomaton ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6))
+    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6))
     counters.add(cc_0)
     states = []
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_0, False))
-    symbol = pyxb.binding.content.ElementUse(MediaType._UseForTag(pyxb.namespace.ExpandedName(None, 'property')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6))
+    symbol = pyxb.binding.content.ElementUse(MediaType._UseForTag(pyxb.namespace.ExpandedName(None, 'property')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 96, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     transitions = []
@@ -664,7 +678,7 @@ MediaType._Automaton = _BuildAutomaton()
 
 
 
-NodeList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'node'), Node, scope=NodeList, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 199, 6)))
+NodeList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'node'), Node, scope=NodeList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 199, 6)))
 
 def _BuildAutomaton_ ():
     # Remove this helper function from the namespace after it is invoked
@@ -675,7 +689,7 @@ def _BuildAutomaton_ ():
     counters = set()
     states = []
     final_update = set()
-    symbol = pyxb.binding.content.ElementUse(NodeList._UseForTag(pyxb.namespace.ExpandedName(None, 'node')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 199, 6))
+    symbol = pyxb.binding.content.ElementUse(NodeList._UseForTag(pyxb.namespace.ExpandedName(None, 'node')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 199, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     transitions = []
@@ -688,21 +702,21 @@ NodeList._Automaton = _BuildAutomaton_()
 
 
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'entryId'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString, scope=LogEntry, documentation='A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 331, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'entryId'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString, scope=LogEntry, documentation='A unique identifier for this log entry. The\n          identifier should be unique for a particular node; This is not drawn\n          from the same value space as other identifiers in DataONE, and so is\n          not subject to the same restrictions.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 331, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'identifier'), _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier, scope=LogEntry, documentation='The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 340, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'identifier'), _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier, scope=LogEntry, documentation='The :term:`identifier` of the object that was the\n          target of the operation which generated this log entry.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 340, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'ipAddress'), pyxb.binding.datatypes.string, scope=LogEntry, documentation='The IP address, as reported by the service receiving\n          the request, of the request origin.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 347, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'ipAddress'), pyxb.binding.datatypes.string, scope=LogEntry, documentation='The IP address, as reported by the service receiving\n          the request, of the request origin.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 347, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'userAgent'), pyxb.binding.datatypes.string, scope=LogEntry, documentation='The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 354, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'userAgent'), pyxb.binding.datatypes.string, scope=LogEntry, documentation='The user agent of the client making the request, as\n          reported in the User-Agent HTTP header.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 354, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'subject'), _ImportedBinding_d1_common_types_dataoneTypes_v1.Subject, scope=LogEntry, documentation='The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 361, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'subject'), _ImportedBinding_d1_common_types_dataoneTypes_v1.Subject, scope=LogEntry, documentation='The :term:`Subject` used for making the request.\n          This may be the DataONE :term:`public` user if the request is not\n          authenticated, otherwise it will be the *subject* of the certificate\n          used for authenticating the request.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 361, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'event'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString, scope=LogEntry, documentation='A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          ', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 370, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'event'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString, scope=LogEntry, documentation='A non-empty string indicating the type of event \n            logged. A value from the :class:`Types.Event` enumeration is \n            recommended though no longer required for Version 2.x.\n          ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 370, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'dateLogged'), pyxb.binding.datatypes.dateTime, scope=LogEntry, documentation='A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 379, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'dateLogged'), pyxb.binding.datatypes.dateTime, scope=LogEntry, documentation='A :class:`Types.DateTime` time stamp indicating when\n          the event triggering the log message ocurred. Note that all time\n          stamps in DataONE are in UTC.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 379, 6)))
 
-LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'nodeIdentifier'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NodeReference, scope=LogEntry, documentation='The unique identifier for the node where the log\n          message was generated.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 387, 6)))
+LogEntry._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'nodeIdentifier'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NodeReference, scope=LogEntry, documentation='The unique identifier for the node where the log\n          message was generated.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 387, 6)))
 
 def _BuildAutomaton_2 ():
     # Remove this helper function from the namespace after it is invoked
@@ -713,35 +727,35 @@ def _BuildAutomaton_2 ():
     counters = set()
     states = []
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'entryId')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 331, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'entryId')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 331, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'identifier')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 340, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'identifier')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 340, 6))
     st_1 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_1)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'ipAddress')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 347, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'ipAddress')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 347, 6))
     st_2 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_2)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'userAgent')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 354, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'userAgent')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 354, 6))
     st_3 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_3)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'subject')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 361, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'subject')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 361, 6))
     st_4 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_4)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'event')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 370, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'event')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 370, 6))
     st_5 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_5)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'dateLogged')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 379, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'dateLogged')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 379, 6))
     st_6 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_6)
     final_update = set()
-    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'nodeIdentifier')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 387, 6))
+    symbol = pyxb.binding.content.ElementUse(LogEntry._UseForTag(pyxb.namespace.ExpandedName(None, 'nodeIdentifier')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 387, 6))
     st_7 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_7)
     transitions = []
@@ -780,7 +794,7 @@ LogEntry._Automaton = _BuildAutomaton_2()
 
 
 
-OptionList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'option'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString, scope=OptionList, documentation="The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped.", location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6)))
+OptionList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'option'), _ImportedBinding_d1_common_types_dataoneTypes_v1.NonEmptyString, scope=OptionList, documentation="The key to be used within an API call to a DataONE \n          service, including a description of the key and its impact on the \n          service. For example, a key 'default' can be provided as the theme for \n          the MNView.view service.  Keys must not contain characters that will \n          need to be URL escaped.", location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6)))
 
 def _BuildAutomaton_3 ():
     # Remove this helper function from the namespace after it is invoked
@@ -789,12 +803,12 @@ def _BuildAutomaton_3 ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6))
+    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6))
     counters.add(cc_0)
     states = []
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_0, False))
-    symbol = pyxb.binding.content.ElementUse(OptionList._UseForTag(pyxb.namespace.ExpandedName(None, 'option')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6))
+    symbol = pyxb.binding.content.ElementUse(OptionList._UseForTag(pyxb.namespace.ExpandedName(None, 'option')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 410, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     transitions = []
@@ -807,11 +821,11 @@ OptionList._Automaton = _BuildAutomaton_3()
 
 
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'seriesId'), _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier, scope=SystemMetadata, documentation='The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12)))
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'seriesId'), _ImportedBinding_d1_common_types_dataoneTypes_v1.Identifier, scope=SystemMetadata, documentation='The :term:`seriesId` is an optional, unique\n                  Unicode string that identifies an object revision chain. A\n                  seriesId will resolve to the latest version of an object. A seriesId can not appear in any other revision chain.\n                  The values used for seriesId must be unique \n                  within DataONE and cannot be the same as the :term:`primary \n                  identifier` of an object. The same encoding rules used for identifier \n                  values apply to seriesId values.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12)))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'mediaType'), MediaType, scope=SystemMetadata, documentation='When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14)))
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'mediaType'), MediaType, scope=SystemMetadata, documentation='When specified, indicates the IANA Media \n                    Type (aka MIME-Type) of the object. When specified, this \n                    value overrides the default value specified in the version \n                    2.0 ObjectFormat structure. The value should include the \n                    media type and subtype (e.g. text/csv). The mediaType value \n                    is not case sensitive.The purpose of this value is to provide \n                      more detailed information about the specific media type \n                      of the associated object than may be available through \n                      the associated ObjectFormat.\n                    When specified, the mediaType value here \n                      overrides the value recorded in the referenced\n                      :class:`ObjectFormat`.\n                    This value SHOULD be set by the content \n                    creator. It MAY be set by any receiving agent if the value \n                    is not already set, the value in the ObjectFormat is less \n                    specific, and a correct value is specified elsewhere such \n                    as by a HTTP Content-Type parameter.\n                    This value MAY be changed to correct an\n                    erroneous entry.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14)))
 
-SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'fileName'), pyxb.binding.datatypes.string, scope=SystemMetadata, documentation='Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  ', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14)))
+SystemMetadata._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'fileName'), pyxb.binding.datatypes.string, scope=SystemMetadata, documentation='Optional though recommended value providing \n                    a suggested file name for the object. Values should\n                    conform to cross platform file naming conventions.\n                  This value SHOULD be set by the content \n                    creator.This value MAY be set by any receiving agent\n                    Changing the value is discouraged once set, unless by the \n                    authoritative Member Node of content owner.\n                  ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14)))
 
 def _BuildAutomaton_4 ():
     # Remove this helper function from the namespace after it is invoked
@@ -820,128 +834,128 @@ def _BuildAutomaton_4 ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1354, 6))
+    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1354, 6))
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1422, 6))
+    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1422, 6))
     counters.add(cc_1)
-    cc_2 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1451, 6))
+    cc_2 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1451, 6))
     counters.add(cc_2)
-    cc_3 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1466, 6))
+    cc_3 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1466, 6))
     counters.add(cc_3)
-    cc_4 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1478, 6))
+    cc_4 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1478, 6))
     counters.add(cc_4)
-    cc_5 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1488, 6))
+    cc_5 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1488, 6))
     counters.add(cc_5)
-    cc_6 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1499, 6))
+    cc_6 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1499, 6))
     counters.add(cc_6)
-    cc_7 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1510, 6))
+    cc_7 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1510, 6))
     counters.add(cc_7)
-    cc_8 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1522, 6))
+    cc_8 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1522, 6))
     counters.add(cc_8)
-    cc_9 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1533, 6))
+    cc_9 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1533, 6))
     counters.add(cc_9)
-    cc_10 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1541, 6))
+    cc_10 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1541, 6))
     counters.add(cc_10)
-    cc_11 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1554, 6))
+    cc_11 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1554, 6))
     counters.add(cc_11)
-    cc_12 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12))
+    cc_12 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12))
     counters.add(cc_12)
-    cc_13 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14))
+    cc_13 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14))
     counters.add(cc_13)
-    cc_14 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14))
+    cc_14 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14))
     counters.add(cc_14)
     states = []
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'serialVersion')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1354, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'serialVersion')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1354, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'identifier')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1366, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'identifier')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1366, 6))
     st_1 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_1)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'formatId')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1392, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'formatId')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1392, 6))
     st_2 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_2)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'size')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1407, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'size')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1407, 6))
     st_3 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_3)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'checksum')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1413, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'checksum')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1413, 6))
     st_4 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_4)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'submitter')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1422, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'submitter')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1422, 6))
     st_5 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_5)
     final_update = set()
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'rightsHolder')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1435, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'rightsHolder')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1435, 6))
     st_6 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_6)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_2, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'accessPolicy')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1451, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'accessPolicy')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1451, 6))
     st_7 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_7)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_3, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'replicationPolicy')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1466, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'replicationPolicy')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1466, 6))
     st_8 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_8)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_4, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'obsoletes')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1478, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'obsoletes')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1478, 6))
     st_9 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_9)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_5, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'obsoletedBy')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1488, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'obsoletedBy')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1488, 6))
     st_10 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_10)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_6, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'archived')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1499, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'archived')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1499, 6))
     st_11 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_11)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_7, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'dateUploaded')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1510, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'dateUploaded')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1510, 6))
     st_12 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_12)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_8, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'dateSysMetadataModified')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1522, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'dateSysMetadataModified')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1522, 6))
     st_13 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_13)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_9, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'originMemberNode')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1533, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'originMemberNode')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1533, 6))
     st_14 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_14)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_10, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'authoritativeMemberNode')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1541, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'authoritativeMemberNode')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1541, 6))
     st_15 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_15)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_11, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'replica')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1554, 6))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'replica')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 1554, 6))
     st_16 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_16)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_12, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'seriesId')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'seriesId')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 130, 12))
     st_17 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_17)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_13, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'mediaType')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'mediaType')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 143, 14))
     st_18 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_18)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_14, False))
-    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'fileName')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14))
+    symbol = pyxb.binding.content.ElementUse(SystemMetadata._UseForTag(pyxb.namespace.ExpandedName(None, 'fileName')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 170, 14))
     st_19 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_19)
     transitions = []
@@ -1216,9 +1230,9 @@ SystemMetadata._Automaton = _BuildAutomaton_4()
 
 
 
-ObjectFormat._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'mediaType'), MediaType, scope=ObjectFormat, documentation='The IANA Media Type for this object format.\n                ', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10)))
+ObjectFormat._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'mediaType'), MediaType, scope=ObjectFormat, documentation='The IANA Media Type for this object format.\n                ', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10)))
 
-ObjectFormat._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'extension'), pyxb.binding.datatypes.string, scope=ObjectFormat, documentation='Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8)))
+ObjectFormat._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'extension'), pyxb.binding.datatypes.string, scope=ObjectFormat, documentation='Suggested file name extension to be used \n                  when serializing this type of object to a file. The value \n                  should not include the period (.).', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8)))
 
 def _BuildAutomaton_5 ():
     # Remove this helper function from the namespace after it is invoked
@@ -1227,31 +1241,31 @@ def _BuildAutomaton_5 ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10))
+    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10))
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8))
+    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8))
     counters.add(cc_1)
     states = []
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'formatId')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 730, 6))
+    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'formatId')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 730, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'formatName')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 739, 6))
+    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'formatName')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 739, 6))
     st_1 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_1)
     final_update = set()
-    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'formatType')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 748, 6))
+    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'formatType')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 748, 6))
     st_2 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_2)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_0, False))
-    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'mediaType')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10))
+    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'mediaType')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 270, 10))
     st_3 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_3)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_1, False))
-    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'extension')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8))
+    symbol = pyxb.binding.content.ElementUse(ObjectFormat._UseForTag(pyxb.namespace.ExpandedName(None, 'extension')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 276, 8))
     st_4 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_4)
     transitions = []
@@ -1284,7 +1298,7 @@ ObjectFormat._Automaton = _BuildAutomaton_5()
 
 
 
-ObjectFormatList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'objectFormat'), ObjectFormat, scope=ObjectFormatList, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 298, 10)))
+ObjectFormatList._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'objectFormat'), ObjectFormat, scope=ObjectFormatList, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 298, 10)))
 
 def _BuildAutomaton_6 ():
     # Remove this helper function from the namespace after it is invoked
@@ -1295,7 +1309,7 @@ def _BuildAutomaton_6 ():
     counters = set()
     states = []
     final_update = set()
-    symbol = pyxb.binding.content.ElementUse(ObjectFormatList._UseForTag(pyxb.namespace.ExpandedName(None, 'objectFormat')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 298, 10))
+    symbol = pyxb.binding.content.ElementUse(ObjectFormatList._UseForTag(pyxb.namespace.ExpandedName(None, 'objectFormat')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 298, 10))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     transitions = []
@@ -1308,7 +1322,7 @@ ObjectFormatList._Automaton = _BuildAutomaton_6()
 
 
 
-Log._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'logEntry'), LogEntry, scope=Log, location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10)))
+Log._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'logEntry'), LogEntry, scope=Log, location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10)))
 
 def _BuildAutomaton_7 ():
     # Remove this helper function from the namespace after it is invoked
@@ -1317,12 +1331,12 @@ def _BuildAutomaton_7 ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10))
+    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10))
     counters.add(cc_0)
     states = []
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_0, False))
-    symbol = pyxb.binding.content.ElementUse(Log._UseForTag(pyxb.namespace.ExpandedName(None, 'logEntry')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10))
+    symbol = pyxb.binding.content.ElementUse(Log._UseForTag(pyxb.namespace.ExpandedName(None, 'logEntry')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 317, 10))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     transitions = []
@@ -1335,7 +1349,7 @@ Log._Automaton = _BuildAutomaton_7()
 
 
 
-Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'property'), Property, scope=Node, documentation='Allows additional attributes be added to the \n                Node document as needed.', location=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10)))
+Node._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'property'), Property, scope=Node, documentation='Allows additional attributes be added to the \n                Node document as needed.', location=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10)))
 
 def _BuildAutomaton_8 ():
     # Remove this helper function from the namespace after it is invoked
@@ -1344,62 +1358,62 @@ def _BuildAutomaton_8 ():
     import pyxb.utils.fac as fac
 
     counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 551, 6))
+    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 551, 6))
     counters.add(cc_0)
-    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 558, 6))
+    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 558, 6))
     counters.add(cc_1)
-    cc_2 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 568, 6))
+    cc_2 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 568, 6))
     counters.add(cc_2)
-    cc_3 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 579, 6))
+    cc_3 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 579, 6))
     counters.add(cc_3)
-    cc_4 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 585, 6))
+    cc_4 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 585, 6))
     counters.add(cc_4)
-    cc_5 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10))
+    cc_5 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10))
     counters.add(cc_5)
     states = []
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'identifier')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 516, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'identifier')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 516, 6))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'name')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 526, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'name')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 526, 6))
     st_1 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_1)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'description')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 533, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'description')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 533, 6))
     st_2 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_2)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'baseURL')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 542, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'baseURL')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 542, 6))
     st_3 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_3)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'services')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 551, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'services')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 551, 6))
     st_4 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_4)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'synchronization')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 558, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'synchronization')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 558, 6))
     st_5 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_5)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'nodeReplicationPolicy')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 568, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'nodeReplicationPolicy')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 568, 6))
     st_6 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_6)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'ping')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 579, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'ping')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 579, 6))
     st_7 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_7)
     final_update = None
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'subject')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 585, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'subject')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 585, 6))
     st_8 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_8)
     final_update = set()
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'contactSubject')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 599, 6))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'contactSubject')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes.xsd', 599, 6))
     st_9 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_9)
     final_update = set()
     final_update.add(fac.UpdateInstruction(cc_5, False))
-    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'property')), pyxb.utils.utility.Location('/home/dahl/d1-git/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10))
+    symbol = pyxb.binding.content.ElementUse(Node._UseForTag(pyxb.namespace.ExpandedName(None, 'property')), pyxb.utils.utility.Location('/home/dahl/d1/d1_python/d1_common_python/src/d1_common/types/schemas/dataoneTypes_v2.0.xsd', 217, 10))
     st_10 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_10)
     transitions = []
