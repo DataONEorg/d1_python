@@ -408,8 +408,9 @@ def _update_access_policy(sci_row, sysmeta_obj):
   # permissions is hidden in Django's implicit view transaction
   # (ATOMIC_REQUESTS).
   #
-  # The models.CASCADE property is set on all ForeignKey fields, so most object
-  # related info is deleted when deleting the IdNamespace "root".
+  # The models.CASCADE property is set on all ForeignKey fields, so we all
+  # Permission related records most object
+  # related info is deleted when deleting the root.
   mn.models.Permission.objects.filter(
     object__pid__sid_or_pid=sysmeta_obj.identifier.value()
   ).delete()
@@ -484,3 +485,9 @@ def _insert_permission_rows_transaction(sci_row, allow_rule, top_level):
     )
 
   mn.models.Permission.objects.bulk_create(permission_create_rows)
+
+###
+
+def make_access_policy_xml(sci_row, sysmeta_obj):
+
+  sci_row, sysmeta_obj

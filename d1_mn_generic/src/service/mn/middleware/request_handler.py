@@ -29,7 +29,6 @@
 # Stdlib.
 import logging
 import pprint
-import re
 
 # Django.
 from django.http import HttpResponse
@@ -44,9 +43,7 @@ import d1_common.types.exceptions
 class RequestHandler(object):
   def process_request(self, request):
     if settings.GMN_DEBUG and settings.ECHO_REQUEST_OBJECT:
+      logging.warning('settings.ECHO_REQUEST_OBJECT=True')
       pp = pprint.PrettyPrinter(indent=2)
       return HttpResponse(pp.pformat(request), d1_common.const.CONTENT_TYPE_TEXT)
-
-#    logging.info('REQUEST: {}'.format(request_uri))
-
     return None

@@ -223,7 +223,7 @@ def format_active_subjects(request):
       decorated_subjects.append(subject + u' (verified)')
     else:
       decorated_subjects.append(subject + u' (equivalent)')
-  return u'Active subjects: {}'.format(u', '.join(decorated_subjects))
+  return u'{}'.format(u', '.join(decorated_subjects))
 
 # ------------------------------------------------------------------------------
 # Decorators.

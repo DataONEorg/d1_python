@@ -45,6 +45,7 @@ class ViewHandler(object):
       u'View: func_name={}, method={}, args={}, kwargs={}'
       .format(view_func.func_name, request.method, view_args, view_kwargs)
     )
+    # logging.debug(request.headers)
     self.process_session(request)
 
   def process_session(self, request):
