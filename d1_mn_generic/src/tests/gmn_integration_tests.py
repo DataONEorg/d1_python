@@ -265,7 +265,7 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _has_public_object_list(self):
     client = gmn_test_client.GMNTestClient(GMN_URL)
-    return eval(client.get_setting('PUBLIC_OBJECT_LIST'))
+    return client.get_setting('PUBLIC_OBJECT_LIST')
 
   def _now_str(self):
     return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -347,13 +347,25 @@ class GMNIntegrationTests(unittest.TestCase):
     """GMN must be in debug mode when running the integration tests.
     """
     client = gmn_test_client.GMNTestClient(GMN_URL)
-    self.assertEqual(client.get_setting('GMN_DEBUG'), 'True')
+    self.assertTrue(client.get_setting('GMN_DEBUG'))
 
   def test_1000_B(self):
     """GMN must be set to allow running destructive integration tests.
     """
     client = gmn_test_client.GMNTestClient(GMN_URL)
-    self.assertEqual(client.get_setting('ALLOW_INTEGRATION_TESTS'), 'True')
+    self.assertTrue(client.get_setting('ALLOW_INTEGRATION_TESTS'))
+
+  def test_1000_C(self):
+    """GMN must be set to trust GMN_TEST_SUBJECT_TRUSTED.
+    """
+    client = gmn_test_client.GMNTestClient(GMN_URL)
+    trusted_subject_set = client.get_setting('DATAONE_TRUSTED_SUBJECTS')
+    self.assertIn(
+      gmn_test_client.GMN_TEST_SUBJECT_TRUSTED,
+      trusted_subject_set,
+      'Add the {} subject to GMN_TEST_SUBJECT_TRUSTED in settings_site.py'
+        .format(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+    )
 
   def test_1020_A(self):
     """Delete all objects.
@@ -382,6 +394,11 @@ class GMNIntegrationTests(unittest.TestCase):
     client.clear_replication_queue(
       headers=self._include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
+
+  def test_1020_D(self):
+    """Add test subject to the GMN whitelist for Create/Update/Delete"""
+    client = gmn_test_client.GMNTestClient(GMN_URL)
+    client.whitelist_subject('test_user_1')
 
   # ----------------------------------------------------------------------------
   # Set up test objects.

@@ -33,14 +33,15 @@ these methods.
 """
 
 # Stdlib.
-import logging
-import re
-import os
 import glob
+import json
+import logging
+import os
+import re
 
 import d1_client.mnclient
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 
 # Constants.
 GMN_TEST_SUBJECT_PUBLIC = 'public'
@@ -90,7 +91,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def get_replication_queue(self, headers=None):
     url = self._rest_url('get_replication_queue')
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
 
   def clear_replication_queue(self, headers=None):
     url = self._rest_url('clear_replication_queue')
@@ -127,7 +128,7 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def get_access_policy(self, pid, headers=None):
     url = self._rest_url('get_access_policy/%(pid)s', pid=pid)
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
 
   # ----------------------------------------------------------------------------
   # Authentication.
@@ -136,7 +137,17 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def echo_session(self, headers=None):
     url = self._rest_url('echo_session')
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
+
+  
+  def whitelist_subject(self, subject_str, headers=None):
+    """Add a subject to the whitelist"""
+    url = self._rest_url('whitelist_subject')
+    field_dict = {
+      'subject': subject_str,
+    }
+    response = self.POST(url, fields=field_dict, headers=headers)
+    return response.content
 
   # ----------------------------------------------------------------------------
   # Misc.
@@ -166,22 +177,22 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
       arg3=arg3
     )
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
 
   def exception(self, exception_type):
     url = self._rest_url('exception/%(exception_type)s', exception_type=exception_type)
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
 
   def echo_request_object(self, headers=None):
     url = self._rest_url('echo_request_object')
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
 
   def echo_raw_post_data(self, headers=None):
     url = self._rest_url('echo_raw_post_data')
     response = self.GET(url, headers=headers)
-    return response.read()
+    return response.content
 
   def delete_all_objects(self, headers=None):
     url = self._rest_url('delete_all_objects')
@@ -196,7 +207,9 @@ class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def get_setting(self, setting, headers=None):
     url = self._rest_url('get_setting/%(setting)s', setting=setting)
     response = self.GET(url, headers=headers)
-    return response.read()
+    setting_json = response.content
+    setting_obj = json.loads(setting_json)
+    return setting_obj
 
   # ----------------------------------------------------------------------------
   # Event Log.
