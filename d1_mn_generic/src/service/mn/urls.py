@@ -127,6 +127,7 @@ if settings.GMN_DEBUG:
     url(r'^diag/delete_all_objects$', mn.views.diagnostics.delete_all_objects),
     url(r'^diag/delete_single_object/(.+?)$', mn.views.diagnostics.delete_single_object),
     url(r'^diag/trusted_subjects$', mn.views.diagnostics.trusted_subjects),
+    url(r'^diag/whitelist_subject$', mn.views.diagnostics.whitelist_subject),
     url(r'^diag/permissions_for_object/(.+?)$', mn.views.diagnostics.permissions_for_object),
     url(r'^diag/get_setting/(.+)$', mn.views.diagnostics.get_setting),
     # Event Log.

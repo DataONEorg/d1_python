@@ -30,6 +30,7 @@
 # Stdlib.
 import cgi
 import csv
+import json
 import os
 import pprint
 import urlparse
@@ -138,6 +139,16 @@ def trusted_subjects(request):
                         settings.DATAONE_TRUSTED_SUBJECTS) },
     content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
+
+@mn.restrict_to_verb.post
+def whitelist_subject(request):
+  """Add a subject to the whitelist"""
+  subject_str = request.POST['subject']
+  w = mn.models.WhitelistForCreateUpdateDelete()
+  w.set(subject_str)
+  w.save()
+  return mn.views.view_util.http_response_with_boolean_true_type()
+
 # ------------------------------------------------------------------------------
 # Misc.
 # ------------------------------------------------------------------------------
@@ -191,10 +202,11 @@ def permissions_for_object(request, pid):
 @mn.restrict_to_verb.get
 def get_setting(request, setting):
   """Get a value from settings.py or settings_site.py"""
-  return HttpResponse(
-    getattr(settings, setting, '<UNKNOWN SETTING>'), d1_common.const.CONTENT_TYPE_TEXT
-  )
-
+  setting_obj = getattr(settings, setting, '<UNKNOWN SETTING>')
+  if isinstance(setting_obj, set):
+    setting_obj = sorted(list(setting_obj))
+  setting_json = json.dumps(setting_obj)
+  return HttpResponse(setting_json, d1_common.const.CONTENT_TYPE_JSON)
 
 #@mn.restrict_to_verb.post
 def echo_raw_post_data(request):
