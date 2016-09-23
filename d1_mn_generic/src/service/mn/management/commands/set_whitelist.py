@@ -20,7 +20,7 @@
 # limitations under the License.
 """
 :mod:`set_whitelist`
-=============================================
+====================
 
 :Synopsis:
   When running in production, GMN requires that subjects that wish to create,
@@ -43,22 +43,16 @@ import mn.models
 class Command(django.core.management.base.BaseCommand):
   help = 'Set the whitelist for create, update and delete operations'
 
+  def add_arguments(self, parser):
+    parser.add_argument(
+      'path',
+      type=str,
+      help='Path to file containing subjects to whitelist'
+    )
+
   def handle(self, *args, **options):
-    if len(args) != 1:
-      print(
-        'Must specify the path to a file that contains a list of subjects '
-        'to whitelist'
-      )
-      exit()
-
-    verbosity = int(options.get('verbosity', 1))
-
-    if verbosity <= 1:
-      logging.getLogger('').setLevel(logging.ERROR)
-
-    n_subjects = self.set_whitelist(args[0])
-
-    print u'Successfully whitelisted {} subjects'.format(n_subjects)
+    n_subjects = self.set_whitelist(options['path'])
+    print u'Whitelisted {} subjects'.format(n_subjects)
 
   def set_whitelist(self, whitelist_path):
     with open(whitelist_path) as f:
