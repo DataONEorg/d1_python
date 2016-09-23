@@ -67,12 +67,13 @@ DEFAULT_CHECKSUM_ALGORITHM = 'SHA-1'
 DEFAULT_NUMBER_OF_REPLICAS = 3
 
 # MIME types.
+CONTENT_TYPE_HTML = 'text/html'
+CONTENT_TYPE_JSON = 'application/json'
+CONTENT_TYPE_OCTETSTREAM = 'application/octet-stream'
+CONTENT_TYPE_TEXT = 'text/plain'
+CONTENT_TYPE_XHTML = 'text/html'
 CONTENT_TYPE_XML = 'application/xml'
 CONTENT_TYPE_XML_MEDIA_TYPES = 'application/xml', 'text/xml'
-CONTENT_TYPE_HTML = 'text/html'
-CONTENT_TYPE_XHTML = 'text/html'
-CONTENT_TYPE_TEXT = 'text/plain'
-CONTENT_TYPE_OCTETSTREAM = 'application/octet-stream'
 
 DATAONE_SCHEMA_ATTRIBUTE_BASE = 'http://ns.dataone.org/service/types/'
 DEFAULT_CHARSET = 'utf-8'

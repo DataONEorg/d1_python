@@ -73,7 +73,7 @@ MIDDLEWARE_CLASSES = (
   'mn.middleware.request_handler.RequestHandler',
   'mn.middleware.exception_handler.ExceptionHandler',
   'mn.middleware.response_handler.ResponseHandler',
-  #'mn.middleware.profiling_handler.profiling_handler',
+  'mn.middleware.profiling_handler.ProfilingHandler',
   'mn.middleware.view_handler.ViewHandler',
   'mn.middleware.startup_handler.StartupHandler',
 )
