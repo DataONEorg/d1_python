@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d1:systemMetadata xmlns:d1="http://ns.dataone.org/service/types/v1"
+ xmlns:d1_v1.1="http://ns.dataone.org/service/types/v1.1"
+ xmlns="http://ns.dataone.org/service/types/v2.0"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/Users/servilla/svn/DataONE/software/cicore/d1_schemas/dataoneTypes_v2.0.xsd">
+    <serialVersion xmlns="">50</serialVersion>
+    <identifier xmlns="">identifier0</identifier>
+    <formatId xmlns="">formatId0</formatId>
+    <size xmlns="">50</size>
+    <checksum xmlns="" algorithm="algorithm0">checksum0</checksum>
+    <submitter xmlns="">submitter0</submitter>
+    <rightsHolder xmlns="">rightsHolder0</rightsHolder>
+    <accessPolicy xmlns="">
+        <allow>
+            <subject>subject0</subject>
+            <subject>subject1</subject>
+            <permission>read</permission>
+            <permission>read</permission>
+        </allow>
+        <allow>
+            <subject>subject2</subject>
+            <subject>subject3</subject>
+            <permission>read</permission>
+            <permission>read</permission>
+        </allow>
+    </accessPolicy>
+    <replicationPolicy xmlns="" replicationAllowed="false" numberReplicas="0">
+        <preferredMemberNode>preferredMemberNode0</preferredMemberNode>
+        <preferredMemberNode>preferredMemberNode1</preferredMemberNode>
+        <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
+        <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
+    </replicationPolicy>
+    <obsoletes xmlns="">obsoletes0</obsoletes>
+    <obsoletedBy xmlns="">obsoletedBy0</obsoletedBy>
+    <archived xmlns="">false</archived>
+    <dateUploaded xmlns="">2006-05-04T18:13:51.0</dateUploaded>
+    <dateSysMetadataModified xmlns="">2006-05-04T18:13:51.0</dateSysMetadataModified>
+    <originMemberNode xmlns="">originMemberNode0</originMemberNode>
+    <authoritativeMemberNode xmlns="">authoritativeMemberNode0</authoritativeMemberNode>
+    <replica xmlns="">
+        <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
+        <replicationStatus>queued</replicationStatus>
+        <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
+    </replica>
+    <replica xmlns="">
+        <replicaMemberNode>replicaMemberNode1</replicaMemberNode>
+        <replicationStatus>queued</replicationStatus>
+        <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
+    </replica>
+</d1:systemMetadata>
