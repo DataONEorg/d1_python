@@ -123,7 +123,7 @@ class SysMetaRefresher(object):
 
   def _process_refresh_task(self, task):
     self.logger.info('-' * 79)
-    self.logger.info(u'Processing PID: {}'.format(task.object.pid))
+    self.logger.info(u'Processing PID: {}'.format(task.sciobj.pid))
     try:
       self._refresh(task)
     except d1_common.types.exceptions.DataONEException as e:
@@ -143,7 +143,7 @@ class SysMetaRefresher(object):
   def _gmn_refresh_task_update(self, task, status=None):
     if status is None or status == '':
       status = 'Unknown error. See process_system_metadata_refresh_queue log.'
-    task.set_status(status)
+    task.status = mn.models.sysmeta_refresh_status(status)
     task.save()
 
   def _remove_completed_tasks_from_queue(self):
@@ -159,8 +159,8 @@ class SysMetaRefresher(object):
     )
 
   def _get_system_metadata(self, task):
-    self.logger.debug(u'Calling CNRead.getSystemMetadata(pid={})'.format(task.object.pid))
-    return self.cn_client.getSystemMetadata(task.object.pid)
+    self.logger.debug(u'Calling CNRead.getSystemMetadata(pid={})'.format(task.sciobj.pid))
+    return self.cn_client.getSystemMetadata(task.sciobj.pid)
 
   def _update_sys_meta(self, sys_meta):
     """Updates the System Metadata for an existing Science Object. Does not
@@ -175,8 +175,8 @@ class SysMetaRefresher(object):
     sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
     sciobj.set_format(sys_meta.formatId)
     sciobj.checksum = sys_meta.checksum.value()
-    sciobj.set_checksum_algorithm(sys_meta.checksum.algorithm)
-    sciobj.mtime = sys_meta.dateSysMetadataModified
+    sciobj.checksum_algorithm = mn.models.checksum_algorithm(sys_meta.checksum.algorithm)
+    sciobj.modified_timestamp = sys_meta.dateSysMetadataModified
     sciobj.size = sys_meta.size
     sciobj.serial_version = sys_meta.serialVersion
     sciobj.is_archived = False
@@ -198,7 +198,7 @@ class SysMetaRefresher(object):
     return
 
   def update_queue_item_status(self, queue_item, status):
-    queue_item.set_status(status)
+    queue_item.status = mn.models.sysmeta_refresh_status(status)
     queue_item.save()
 
   def delete_completed_queue_items_from_db(self):

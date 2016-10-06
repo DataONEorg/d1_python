@@ -43,7 +43,6 @@ import d1_common.types.dataoneTypes
 # App.
 import mn.models
 import mn.node_registry
-import mn.sysmeta_file
 
 # ------------------------------------------------------------------------------
 # Helpers.
@@ -168,7 +167,7 @@ def is_allowed(request, level, pid):
   # - The permission must be for an action level that is the same or higher than
   # the requested action level.
   return mn.models.Permission.objects.filter(
-    object__pid__sid_or_pid=pid,
+    sciobj__pid__sid_or_pid=pid,
     subject__subject__in=request.subjects,
     level__gte=level
   ).exists()

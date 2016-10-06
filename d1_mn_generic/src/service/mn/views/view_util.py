@@ -23,8 +23,9 @@
 ================
 """
 # Stdlib
-import logging
+import datetime
 import functools
+import logging
 
 # Django.
 from django.conf import settings
@@ -47,8 +48,7 @@ import mn.event_log
 import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta
-import mn.sysmeta_db
-import mn.sysmeta_file
+import mn.sysmeta_sid
 import mn.util
 import view_asserts
 
@@ -89,8 +89,9 @@ def read_utf8_xml(stream_obj):
   raise d1_common.types.exceptions.ServiceFailure(0, msg)
 
 
-def get_sysmeta_matching_api_version(request, pid, serial_version):
-  sysmeta_xml_str = mn.sysmeta_file.read_sysmeta_from_file(pid, serial_version)
+def generate_sysmeta_xml_matching_api_version(request, pid):
+  sysmeta_pyxb = mn.sysmeta.model_to_pyxb(pid)
+  sysmeta_xml_str = mn.sysmeta.serialize(sysmeta_pyxb)
   if is_v1_api(request):
     sysmeta_xml_str = d1_common.type_conversions.str_to_v1_str(sysmeta_xml_str)
   elif is_v2_api(request):
@@ -104,6 +105,16 @@ def get_sysmeta_matching_api_version(request, pid, serial_version):
 # SysMeta versions here.
 def deserialize(request, sysmeta_xml):
   return mn.sysmeta_base.deserialize(sysmeta_xml)
+
+
+def update_sysmeta_with_mn_values(request, sysmeta_obj):
+  sysmeta_obj.submitter = request.primary_subject
+  sysmeta_obj.originMemberNode = settings.NODE_IDENTIFIER
+  sysmeta_obj.authoritativeMemberNode = settings.NODE_IDENTIFIER
+  now = datetime.datetime.utcnow()
+  sysmeta_obj.dateUploaded = now
+  sysmeta_obj.dateSysMetadataModified = now
+  sysmeta_obj.serialVersion = 1
 
 
 def create(request, sysmeta_obj, is_replica=False):
@@ -191,10 +202,10 @@ def resolve_sid_func(request, sid_or_pid):
       view_asserts.is_pid(sid_or_pid)
       return sid_or_pid
     elif is_v2_api(request):
-      if mn.sysmeta_db.is_pid(sid_or_pid):
+      if mn.sysmeta.is_pid(sid_or_pid):
         return sid_or_pid
-      elif mn.sysmeta_db.is_sid(sid_or_pid):
-        return mn.sysmeta_db.resolve_sid(sid_or_pid)
+      elif mn.sysmeta_sid.is_sid(sid_or_pid):
+        return mn.sysmeta_sid.resolve_sid(sid_or_pid)
       else:
         raise d1_common.types.exceptions.NotFound(
           0,

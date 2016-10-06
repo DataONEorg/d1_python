@@ -76,9 +76,7 @@ def set_cn_subjects_for_environment():
     logging.warn(
       u'Unable to get CN Subjects from the DataONE environment. '
       u'If this server is being used for testing, see the STAND_ALONE setting. '
-      u'\nError: {}\nEnvironment: {}'.format(
-        str(e), settings.DATAONE_ROOT)
-    )
+      u'error="{}" env="{}"'.format(str(e), settings.DATAONE_ROOT))
     cn_subjects = []
   else:
     logging.info(

@@ -57,8 +57,6 @@ import mn.models
 import mn.node_registry
 import mn.psycopg_adapter
 import mn.restrict_to_verb
-import mn.sysmeta_base
-import mn.sysmeta_file
 import mn.util
 import mn.views.view_util
 
@@ -143,10 +141,10 @@ def trusted_subjects(request):
 @mn.restrict_to_verb.post
 def whitelist_subject(request):
   """Add a subject to the whitelist"""
-  subject_str = request.POST['subject']
-  w = mn.models.WhitelistForCreateUpdateDelete()
-  w.set(subject_str)
-  w.save()
+  subject_model = mn.models.subject(request.POST['subject'])
+  whitelist_model = mn.models.WhitelistForCreateUpdateDelete()
+  whitelist_model.subject = subject_model
+  whitelist_model.save()
   return mn.views.view_util.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
@@ -157,7 +155,7 @@ def whitelist_subject(request):
 def create(request, pid):
   """Minimal version of create() used for inserting test objects."""
   sysmeta_xml = mn.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = mn.sysmeta_base.deserialize(sysmeta_xml)
+  sysmeta = mn.sysmeta.deserialize(sysmeta_xml)
   mn.views.view_util.create(request, sysmeta)
   return mn.views.view_util.http_response_with_boolean_true_type()
 
@@ -188,7 +186,7 @@ def echo_request_object(request):
 def permissions_for_object(request, pid):
   mn.views.view_asserts.object_exists(pid)
   subjects = []
-  permissions = mn.models.Permission.objects.filter(object__pid__sid_or_pid=pid)
+  permissions = mn.models.Permission.objects.filter(sciobj__pid__sid_or_pid=pid)
   for permission in permissions:
     action = mn.auth.LEVEL_ACTION_MAP[permission.level]
     subjects.append((permission.subject.subject, action))
@@ -248,7 +246,7 @@ def _clear_db():
 
 def _delete_subjects_and_permissions():
   mn.models.Permission.objects.all().delete()
-  mn.models.PermissionSubject.objects.all().delete()
+  mn.models.Subject.objects.all().delete()
 
 
 @mn.restrict_to_verb.get
@@ -279,9 +277,10 @@ def _delete_object_from_filesystem(sci_obj):
 
 
 def delete_event_log(request):
+  mn.models.Event.objects.all().delete()
+  mn.models.IpAddress.objects.all().delete()
+  mn.models.UserAgent.objects.all().delete()
   mn.models.EventLog.objects.all().delete()
-  mn.models.EventLogIPAddress.objects.all().delete()
-  mn.models.EventLogEvent.objects.all().delete()
   return mn.views.view_util.http_response_with_boolean_true_type()
 
 

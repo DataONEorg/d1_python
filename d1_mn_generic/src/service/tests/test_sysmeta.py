@@ -33,6 +33,7 @@ import d1_common.util
 # App
 import mn.sysmeta
 import mn.models
+import mn.sysmeta_util
 import util
 
 
@@ -51,7 +52,7 @@ class TestSysMeta(django.test.TestCase):
     sciobj_model.is_replica = False
     sciobj_model.modified_timestamp = datetime.datetime.now()
     sciobj_model.uploaded_timestamp = datetime.datetime.now()
-    sciobj_model.pid = mn.sysmeta.create_id_row('test')
+    sciobj_model.pid = mn.sysmeta_util.create_id_row('test')
     sciobj_model.serial_version = 1
     sciobj_model.size = 1
 
@@ -93,7 +94,7 @@ class TestSysMeta(django.test.TestCase):
   def test_050(self):
     orig_sysmeta_pyxb = util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = mn.models.ScienceObject()
-    sciobj_model.pid = mn.sysmeta.create_id_row(orig_sysmeta_pyxb.identifier.value())
+    sciobj_model.pid = mn.sysmeta_util.create_id_row(orig_sysmeta_pyxb.identifier.value())
     mn.sysmeta._base_pyxb_to_model(
       sciobj_model,
       orig_sysmeta_pyxb,

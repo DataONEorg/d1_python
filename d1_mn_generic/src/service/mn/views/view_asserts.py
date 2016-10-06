@@ -33,6 +33,7 @@ import httplib
 import urlparse
 
 # Django.
+import mn.sysmeta_util
 from django.conf import settings
 
 # 3rd party.
@@ -47,9 +48,9 @@ import mn.db_filter
 import mn.event_log
 import mn.models
 import mn.psycopg_adapter
-import mn.sysmeta_base
-import mn.sysmeta_db
-import mn.sysmeta_file
+import mn.sysmeta
+import mn.sysmeta_obsolescence
+import mn.sysmeta_sid
 import mn.util
 
 # ------------------------------------------------------------------------------
@@ -65,19 +66,13 @@ def is_unused(sid_or_pid):
   - Must not exist as a PID or SID.
   - Must not have been accepted for replication.
   """
-  if mn.sysmeta_db.is_identifier(sid_or_pid):
+  if mn.sysmeta.is_identifier(sid_or_pid):
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0,
       u'Identifier is already in use as {}. id="{}"'
       .format(_get_identifier_type(sid_or_pid), sid_or_pid),
       identifier=sid_or_pid
     )
-
-
-def is_unused_sid_if_specified(sysmeta_obj):
-  sid = mn.sysmeta_base.get_value(sysmeta_obj, 'seriesId')
-  if sid is not None:
-    is_unused(sid)
 
 
 def is_valid_for_update(pid):
@@ -89,7 +84,7 @@ def is_valid_for_update(pid):
   - Must not be a replica.
   - Must not be archived.
   """
-  mn.sysmeta_db.is_pid_of_existing_object(pid)
+  mn.sysmeta.is_pid_of_existing_object(pid)
   is_not_replica(pid)
   is_not_archived(pid)
 
@@ -101,10 +96,10 @@ def is_valid_sid_for_chain_if_specified(sysmeta_obj, pid):
   - If the chain does not have a SID, the new SID must be previously unused.
   - If the chain already has a SID, the new SID must match the existing SID.
   """
-  sid = mn.sysmeta_base.get_value(sysmeta_obj, 'seriesId')
+  sid = mn.sysmeta_util.get_value(sysmeta_obj, 'seriesId')
   if sid is None:
     return
-  existing_sid = mn.sysmeta_db.get_sid_by_pid(pid)
+  existing_sid = mn.sysmeta.get_sid_by_pid(pid)
   if existing_sid is None:
     is_unused(new_sid)
   else:
@@ -120,7 +115,7 @@ def is_valid_sid_for_chain_if_specified(sysmeta_obj, pid):
 
 
 def is_identifier(sid_or_pid):
-  if mn.sysmeta_db.is_identifier(sid_or_pid):
+  if mn.sysmeta.is_identifier(sid_or_pid):
     raise d1_common.types.exceptions.NotFound(
       0,
       u'Unknown identifier. id="{}"'.format(sid_or_pid),
@@ -129,7 +124,7 @@ def is_identifier(sid_or_pid):
 
 
 def is_pid(sid_or_pid):
-  if not mn.sysmeta_db.is_pid(sid_or_pid):
+  if not mn.sysmeta.is_pid(sid_or_pid):
     raise d1_common.types.exceptions.NotFound(
       0,
       u'Identifier is {}. Expected an existing Persistent ID (PID). '
@@ -143,7 +138,7 @@ def is_pid(sid_or_pid):
 
 
 def is_pid_of_existing_object(sid_or_pid):
-  if not mn.sysmeta_db.is_pid_of_existing_object(sid_or_pid):
+  if not mn.sysmeta.is_pid_of_existing_object(sid_or_pid):
     raise d1_common.types.exceptions.NotFound(
       0,
       u'Identifier is {}. Expected a Persistent ID (PID) for an existing '
@@ -157,7 +152,7 @@ def is_pid_of_existing_object(sid_or_pid):
 
 
 def is_pid_in_replication_queue(sid_or_pid):
-  if not mn.sysmeta_db.is_pid_in_replication_queue(sid_or_pid):
+  if not mn.sysmeta.is_pid_in_replication_queue(sid_or_pid):
     raise d1_common.types.exceptions.NotFound(
       0,
       u'Identifier is {}. Expected a Persistent ID (PID) for an object in the '
@@ -169,7 +164,7 @@ def is_pid_in_replication_queue(sid_or_pid):
 
 
 def is_not_pid_in_replication_queue(pid):
-  if mn.sysmeta_db.is_pid_in_replication_queue(pid):
+  if mn.sysmeta.is_pid_in_replication_queue(pid):
     raise d1_common.types.exceptions.IdentifierNotUnique(
       0,
       u'Persistent ID (PID) has already been reserved for an object that is '
@@ -179,7 +174,7 @@ def is_not_pid_in_replication_queue(pid):
 
 
 def is_sid(sid_or_pid):
-  if not mn.sysmeta_db.is_sid(sid_or_pid):
+  if not mn.sysmeta.is_sid(sid_or_pid):
     raise d1_common.types.exceptions.NotFound(
       0,
       u'Identifier is {}. Expected a Series ID (SID). id="{}"'.format(
@@ -190,7 +185,7 @@ def is_sid(sid_or_pid):
 
 
 def is_not_replica(pid):
-  if mn.sysmeta_db.is_replica(pid):
+  if mn.sysmeta.is_replica(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Object is a replica and cannot be updated on this Member Node. '
@@ -201,7 +196,7 @@ def is_not_replica(pid):
 
 
 def is_not_archived(pid):
-  if mn.sysmeta_db.is_archived(pid):
+  if mn.sysmeta.is_archived(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'The object has been archived and cannot be updated. '
@@ -211,13 +206,13 @@ def is_not_archived(pid):
 
 
 def _get_identifier_type(sid_or_pid):
-  if not mn.sysmeta_db.is_identifier(sid_or_pid):
+  if not mn.sysmeta.is_identifier(sid_or_pid):
     return u"unknown"
-  elif mn.sysmeta_db.is_pid_of_existing_object(sid_or_pid):
+  elif mn.sysmeta.is_pid_of_existing_object(sid_or_pid):
     return u'a Persistent ID (PID) for an existing object'
-  elif mn.sysmeta_db.is_pid_in_replication_queue(sid_or_pid):
+  elif mn.sysmeta.is_pid_in_replication_queue(sid_or_pid):
     return u'a Persistent ID (PID) for an object in the replication queue'
-  elif mn.sysmeta_db.is_sid(sid_or_pid):
+  elif mn.sysmeta_sid.is_sid(sid_or_pid):
     return u'a Series ID (SID)'
   else:
     assert False, u"Unable to classify identifier"
@@ -281,7 +276,7 @@ def _check_pid_exists_if_specified(sysmeta_obj, sysmeta_attr):
 
 
 def is_not_obsoleted(pid):
-  if mn.sysmeta_db.is_obsoleted(pid):
+  if mn.sysmeta_obsolescence.is_obsoleted(pid):
     raise d1_common.types.exceptions.InvalidRequest(
       0,
       u'Object has already been obsoleted. pid="{}"'.format(pid),
@@ -290,7 +285,7 @@ def is_not_obsoleted(pid):
 
 
 # def is_sid_in_obsolescence_chain(sid, pid):
-#   chain_list = mn.sysmeta_db.get_pids_in_obsolescence_chain(pid)
+#   chain_list = mn.sysmeta.get_pids_in_obsolescence_chain(pid)
 #   # Allow a SID to be assigned to a single science object that is not (yet) part
 #   # of an obsolescence chain.
 #   if len(chain_list) == 1:

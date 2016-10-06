@@ -163,7 +163,7 @@ class ReplicationQueueProcessor(object):
   def _gmn_replicate_task_update(self, task, status=None):
     if status is None or status == '':
       status = 'Unknown error. See replication log.'
-    task.set_status(status)
+    task.status = mn.models.replication_queue_status(status)
     task.save()
 
   def _remove_completed_tasks_from_queue(self):
@@ -255,8 +255,8 @@ class ReplicationQueueProcessor(object):
     sci_obj.url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     sci_obj.set_format(sys_meta.formatId)
     sci_obj.checksum = sys_meta.checksum.value()
-    sci_obj.set_checksum_algorithm(sys_meta.checksum.algorithm)
-    sci_obj.mtime = sys_meta.dateSysMetadataModified
+    sci_obj.checksum_algorithm = mn.models.checksum_algorithm(sys_meta.checksum.algorithm)
+    sci_obj.modified_timestamp = sys_meta.dateSysMetadataModified
     sci_obj.size = sys_meta.size
     sci_obj.replica = True
     sci_obj.serial_version = sys_meta.serialVersion
@@ -266,11 +266,11 @@ class ReplicationQueueProcessor(object):
 
   def _create_database_entry_for_object_create_event(self, sci_obj_row):
     event_log_row = mn.models.EventLog()
-    event_log_row.object = sci_obj_row
-    event_log_row.set_event('create')
+    event_log_row.sciobj = sci_obj_row
+    event_log_row.event = mn.models.event('create')
     event_log_row.set_ip_address('[replica]')
     event_log_row.set_user_agent('[replica]')
-    event_log_row.set_subject('[replica]')
+    event_log_row.subject = mn.models.subject('[replica]')
     event_log_row.save()
 
   def _set_sys_meta_access_policy(self, pid, sys_meta):

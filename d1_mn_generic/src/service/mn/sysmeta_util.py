@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This work was created by participants in the DataONE project, and is
+# jointly copyrighted by participating institutions in DataONE. For
+# more information on DataONE, see our web site at http://dataone.org.
+#
+#   Copyright 2009-2012 DataONE
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import mn.models
+
+
+def create_id_row(sid_or_pid):
+  """Create a new SID or PID.
+
+  Preconditions:
+  - {sid_or_pid} is verified to be unused. E.g., with view_asserts.is_unused().
+  """
+  id_row = mn.models.IdNamespace()
+  id_row.sid_or_pid = sid_or_pid
+  id_row.save()
+  return id_row
+
+
+def get_sci_row(pid):
+  return mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+
+
+def get_value(sysmeta_obj, sysmeta_attr):
+  try:
+    return getattr(sysmeta_obj, sysmeta_attr).value()
+  except (ValueError, AttributeError):
+    return None

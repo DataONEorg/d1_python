@@ -52,7 +52,6 @@ import mn.db_filter
 import mn.event_log
 import mn.models
 import mn.psycopg_adapter
-import mn.sysmeta_file
 import mn.sysmeta_validate
 import mn.util
 import mn.views.view_asserts
@@ -73,19 +72,19 @@ def home(request):
     .aggregate(Avg('size'))['size__avg'] or 0
   avg_sci_data_size = '{:,}'.format(int(avg_sci_data_size_bytes))
 
-  n_objects_by_format_id = mn.models.ScienceObject.objects.values(
-    'format', 'format__format_id'
+  n_objects_by_format = mn.models.ScienceObject.objects.values(
+    'format', 'format__format'
   ).annotate(dcount=Count('format'))
 
   n_connections_total = '{:,}'.format(mn.models.EventLog.objects.count())
 
   n_connections_in_last_hour = '{:,}'.format(
     mn.models.EventLog.objects.filter(
-      date_logged__gte=datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+      timestamp__gte=datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     ).count()
   )
 
-  n_unique_subjects = '{:,}'.format(mn.models.PermissionSubject.objects.count())
+  n_unique_subjects = '{:,}'.format(mn.models.Subject.objects.count())
 
   n_storage_used = mn.models.ScienceObject.objects\
     .aggregate(Sum('size'))['size__sum'] or 0

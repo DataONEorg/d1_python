@@ -1727,7 +1727,7 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_2010_B(client, v2)
 
   def _test_2010_B(self, client, binding):
-    new_pid = 'update_object_pid_2'
+    new_pid = self._random_pid()
     old_pid = 'AnserMatrix.htm'
     sci_obj, sys_meta = self._generate_test_object(binding, new_pid)
     self.assertRaises(
@@ -1914,8 +1914,8 @@ class GMNIntegrationTests(unittest.TestCase):
 
   def _test_3010(self, client, binding):
     pid = self._random_pid()
-    sid1 = self._random_pid()
-    sid2 = self._random_pid()
+    sid1 = self._random_sid()
+    sid2 = self._random_sid()
     client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
     self._create(client_v2, v2, pid, sid1)
     # self._create(client, binding, sid1)

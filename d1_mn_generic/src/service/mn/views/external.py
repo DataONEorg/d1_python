@@ -37,6 +37,7 @@ import uuid
 
 # Django.
 import django.core.cache
+import mn.sysmeta_util
 from django.db.models import Sum
 from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
 from django.conf import settings
@@ -62,9 +63,8 @@ import mn.node
 import mn.psycopg_adapter
 import mn.restrict_to_verb
 import mn.sysmeta
-import mn.sysmeta_base
-import mn.sysmeta_file
-import mn.sysmeta_db
+import mn.sysmeta_obsolescence
+import mn.sysmeta_sid
 import mn.sysmeta_validate
 import mn.util
 import mn.views.view_asserts
@@ -131,14 +131,14 @@ def get_log(request):
   """MNCore.getLogRecords(session[, fromDate][, toDate][, idFilter][, event]
   [, start=0][, count=1000]) → Log
   """
-  query = mn.models.EventLog.objects.order_by('-date_logged').select_related()
+  query = mn.models.EventLog.objects.order_by('-timestamp').select_related()
   if not mn.auth.is_trusted_subject(request):
-    query = mn.db_filter.add_access_policy_filter(query, request, 'object__id')
+    query = mn.db_filter.add_access_policy_filter(query, request, 'sciobj__id')
   query = mn.db_filter.add_datetime_filter(
-    query, request, 'date_logged', 'fromDate', 'gte'
+    query, request, 'timestamp', 'fromDate', 'gte'
   )
   query = mn.db_filter.add_datetime_filter(
-    query, request, 'date_logged', 'toDate', 'lt'
+    query, request, 'timestamp', 'toDate', 'lt'
   )
   query = mn.db_filter.add_string_filter(
     query, request, 'event__event', 'event'
@@ -155,7 +155,7 @@ def get_log(request):
   # if sid_or_pid is not None:
   #   request.GET[id_filter_str] = mn.views.view_asserts.resolve_sid_func(sid_or_pid)
   query = mn.db_filter.add_string_begins_with_filter(
-    query, request, 'object__pid__sid_or_pid', id_filter_str
+    query, request, 'sciobj__pid__sid_or_pid', id_filter_str
   )
   query_unsliced = query
   query, start, count = mn.db_filter.add_slice_filter(query, request)
@@ -181,20 +181,20 @@ def get_node(request):
 # Public API: Tier 1: Read API
 # ------------------------------------------------------------------------------
 
-def _content_type_from_format_id(format_id):
+def _content_type_from_format(format):
   try:
-    return OBJECT_FORMAT_INFO.content_type_from_format_id(format_id)
+    return OBJECT_FORMAT_INFO.content_type_from_format_id(format)
   except KeyError:
     return d1_common.const.CONTENT_TYPE_OCTETSTREAM
 
 
 def _add_object_properties_to_response_header(response, sciobj):
   response['Content-Length'] = sciobj.size
-  response['Content-Type'] = _content_type_from_format_id(
-    sciobj.format.format_id
+  response['Content-Type'] = _content_type_from_format(
+    sciobj.format.format
   )
-  response['Last-Modified'] = datetime.datetime.isoformat(sciobj.mtime)
-  response['DataONE-formatId'] = sciobj.format.format_id
+  response['Last-Modified'] = datetime.datetime.isoformat(sciobj.modified_timestamp)
+  response['DataONE-formatId'] = sciobj.format.format
   response['DataONE-Checksum'] = '{},{}'.format(
     sciobj.checksum_algorithm.checksum_algorithm, sciobj.checksum
   )
@@ -211,7 +211,7 @@ def get_object(request, pid):
   """MNRead.get(session, sid_or_pid) → OctetStream
   """
   sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
-  content_type_str = _content_type_from_format_id(sciobj.format.format_id)
+  content_type_str = _content_type_from_format(sciobj.format.format)
   response = StreamingHttpResponse(
     _get_sciobj_stream(sciobj),
     content_type_str
@@ -267,9 +267,8 @@ def get_meta(request, pid):
   """MNRead.getSystemMetadata(session, pid) → SystemMetadata
   """
   mn.event_log.read(pid, request)
-  sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
-  return mn.views.view_util.get_sysmeta_matching_api_version(
-    request, pid, sciobj.serial_version
+  return mn.views.view_util.generate_sysmeta_xml_matching_api_version(
+    request, pid
   )
 
 
@@ -332,20 +331,20 @@ def get_object_list(request):
   """MNRead.listObjects(session[, fromDate][, toDate][, formatId]
   [, replicaStatus][, start=0][, count=1000]) → ObjectList
   """
-  # The ObjectList is returned ordered by mtime ascending. The order has
+  # The ObjectList is returned ordered by modified_timestamp ascending. The order has
   # been left undefined in the spec, to allow MNs to select what is optimal
   # for them.
-  query = mn.models.ScienceObject.objects.order_by('mtime').select_related()
+  query = mn.models.ScienceObject.objects.order_by('modified_timestamp').select_related()
   if not mn.auth.is_trusted_subject(request):
     query = mn.db_filter.add_access_policy_filter(query, request, 'id')
   query = mn.db_filter.add_datetime_filter(
-    query, request, 'mtime', 'fromDate', 'gte'
+    query, request, 'modified_timestamp', 'fromDate', 'gte'
   )
   query = mn.db_filter.add_datetime_filter(
-    query, request, 'mtime', 'toDate', 'lt'
+    query, request, 'modified_timestamp', 'toDate', 'lt'
   )
   query = mn.db_filter.add_string_filter(
-    query, request, 'format__format_id', 'formatId'
+    query, request, 'format__format', 'formatId'
   )
   mn.db_filter.add_bool_filter(query, request, 'is_replica', 'replicaStatus')
   query_unsliced = query
@@ -461,16 +460,16 @@ def post_refresh_system_metadata(request):
     )
   )
   mn.views.view_asserts.is_pid_of_existing_object(request.POST['pid'])
-  refresh_queue = mn.models.SystemMetadataRefreshQueue()
-  refresh_queue.object = mn.models.ScienceObject.objects.get(
-    pid__sid_or_pid=request.POST['pid']
-  )
-  refresh_queue.serial_version = request.POST['serialVersion']
-  refresh_queue.last_modified = d1_common.date_time.from_iso8601(
-    request.POST['dateSysMetaLastModified']
-  )
-  refresh_queue.set_status('new')
-  refresh_queue.save_unique()
+  mn.models.SystemMetadataRefreshQueue(
+    sciobj=mn.models.ScienceObject.objects.get(
+      pid__sid_or_pid=request.POST['pid']
+    ),
+    serial_version=request.POST['serialVersion'],
+    modified_timestamp=d1_common.date_time.from_iso8601(
+      request.POST['dateSysMetaLastModified']
+    ),
+    status=mn.models.sysmeta_refresh_status('new'),
+  ).save()
   return mn.views.view_util.http_response_with_boolean_true_type()
 
 # ------------------------------------------------------------------------------
@@ -530,12 +529,15 @@ def post_object_list(request):
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
   )
   sysmeta_xml = mn.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = mn.sysmeta_base.deserialize(sysmeta_xml)
+  sysmeta = mn.sysmeta.deserialize(sysmeta_xml)
   mn.views.view_asserts.obsoletes_not_specified(sysmeta)
-  mn.views.view_asserts.is_unused_sid_if_specified(sysmeta)
   new_pid = request.POST['pid']
+  mn.views.view_asserts.is_unused(new_pid)
   _create(request, sysmeta, new_pid)
-  mn.sysmeta_db.create_sid_if_specified(sysmeta)
+  if mn.sysmeta_sid.has_sid(sysmeta):
+    sid = mn.sysmeta_sid.get_sid(sysmeta)
+    mn.views.view_asserts.is_unused(sid)
+    mn.sysmeta_sid.create_sid(sid, new_pid)
   return new_pid
 
 
@@ -555,7 +557,7 @@ def put_object(request, old_pid):
   mn.views.view_asserts.is_valid_for_update(old_pid)
   mn.views.view_asserts.is_not_obsoleted(old_pid)
   sysmeta_xml = mn.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = mn.sysmeta_base.deserialize(sysmeta_xml)
+  sysmeta = mn.sysmeta.deserialize(sysmeta_xml)
   mn.views.view_asserts.obsoletes_matches_pid_if_specified(sysmeta, old_pid)
   mn.views.view_asserts.is_valid_sid_for_chain_if_specified(sysmeta, old_pid)
   sysmeta.obsoletes = old_pid
@@ -564,19 +566,22 @@ def put_object(request, old_pid):
   # The create event for the new object is added in _create(). The update event
   # on the old object is added here.
   mn.event_log.update(old_pid, request)
-  mn.sysmeta.set_obsoleted_by(old_pid, new_pid)
-  mn.sysmeta.move_sid_to_last_object_in_chain(new_pid)
+  mn.sysmeta_obsolescence.set_obsolescence(old_pid, obsoleted_by_pid=new_pid)
+  if mn.sysmeta_sid.has_sid(sysmeta):
+    sid = mn.sysmeta_sid.get_sid(sysmeta)
+    if mn.sysmeta_sid.is_sid(sid):
+      mn.sysmeta_sid.update_sid(sid, new_pid)
   return new_pid
 
 
 def _create(request, sysmeta, new_pid):
   mn.views.view_asserts.is_unused(new_pid)
-  # mn.views.view_asserts.is_unused(mn.sysmeta_base.get_value(sysmeta, 'seriesId'))
+  # mn.views.view_asserts.is_unused(mn.sysmeta.get_value(sysmeta, 'seriesId'))
   mn.views.view_asserts.url_pid_matches_sysmeta(sysmeta, new_pid)
   mn.views.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
   mn.views.view_asserts.obsoleted_by_not_specified(sysmeta)
   mn.sysmeta_validate.validate_sysmeta_against_uploaded(request, sysmeta)
-  mn.sysmeta.update_sysmeta_with_mn_values(request, sysmeta)
+  mn.views.view_util.update_sysmeta_with_mn_values(request, sysmeta)
   #d1_common.date_time.is_utc(sysmeta.dateSysMetadataModified)
   mn.views.view_util.create(request, sysmeta)
 
@@ -608,7 +613,6 @@ def delete_object(request, pid):
   sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
   url_split = urlparse.urlparse(sciobj.url)
   _delete_object_from_filesystem(url_split, pid)
-  mn.sysmeta_file.delete_sysmeta_file(pid, sciobj.serial_version)
   _delete_object_from_database(pid)
   return pid
 
@@ -660,7 +664,7 @@ def post_replicate(request):
   )
   sysmeta_xml = \
     mn.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
-  sysmeta = mn.sysmeta_base.deserialize(sysmeta_xml)
+  sysmeta = mn.sysmeta.deserialize(sysmeta_xml)
   _assert_request_complies_with_replication_policy(sysmeta)
   pid = sysmeta.identifier.value()
   mn.views.view_asserts.is_unused(pid)
@@ -735,7 +739,7 @@ def _get_total_size_of_replicated_objects():
 
 def _create_replication_work_item(request, sysmeta):
   replication_item = mn.models.ReplicationQueue()
-  replication_item.set_status('new')
-  replication_item.set_source_node(request.POST['sourceNode'])
-  replication_item.pid = mn.sysmeta_db.create_id_row(sysmeta.identifier.value())
+  replication_item.status = mn.models.replication_queue_status('new')
+  replication_item.source_node = mn.models.node(request.POST['sourceNode'])
+  replication_item.pid = mn.sysmeta_util.create_id_row(sysmeta.identifier.value())
   replication_item.save()

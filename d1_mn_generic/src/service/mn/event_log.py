@@ -54,11 +54,11 @@ def _log(pid, request, event, timestamp=None):
 
   # Create log entry.
   event_log_row = models.EventLog()
-  event_log_row.object = object_row
-  event_log_row.set_event(event)
-  event_log_row.set_ip_address(ip_address)
-  event_log_row.set_user_agent(user_agent)
-  event_log_row.set_subject(subject)
+  event_log_row.sciobj = object_row
+  event_log_row.event = models.event(event)
+  event_log_row.ip_address = models.ip_address(ip_address)
+  event_log_row.user_agent = models.user_agent(user_agent)
+  event_log_row.subject = models.subject(subject)
   event_log_row.save()
 
   # The datetime is an optional parameter. If it is not provided, a
@@ -66,7 +66,7 @@ def _log(pid, request, event, timestamp=None):
   # disadvantage to this approach is that we have to update the timestamp in a
   # separate step if we want to set it to anything other than Now.
   if timestamp is not None:
-    event_log_row.date_logged = timestamp
+    event_log_row.timestamp = timestamp
     event_log_row.save()
 
 

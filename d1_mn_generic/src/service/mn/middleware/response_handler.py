@@ -89,8 +89,8 @@ class ResponseHandler(object):
   def _serialize_object(self, request, view_result):
     response = django.http.HttpResponse()
     name_to_func_map = {
-      'object': (self._generate_object_list, 'mtime'),
-      'log': (self._generate_log_records, 'date_logged'),
+      'object': (self._generate_object_list, 'modified_timestamp'),
+      'log': (self._generate_log_records, 'timestamp'),
     }
     d1_type_generator, d1_type_date_field = name_to_func_map[view_result['type']
                                                              ]
@@ -109,12 +109,12 @@ class ResponseHandler(object):
     for row in db_query:
       objectInfo = mn.views.view_util.dataoneTypes(request).ObjectInfo()
       objectInfo.identifier = row.pid.sid_or_pid
-      objectInfo.formatId = row.format.format_id
+      objectInfo.formatId = row.format.format
       checksum = mn.views.view_util.dataoneTypes(request).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
       objectInfo.checksum = checksum
       objectInfo.dateSysMetadataModified = datetime.datetime.isoformat(
-        row.mtime
+        row.modified_timestamp
       )
       objectInfo.size = row.size
       objectList.objectInfo.append(objectInfo)
@@ -128,12 +128,12 @@ class ResponseHandler(object):
     for row in db_query:
       logEntry = mn.views.view_util.dataoneTypes(request).LogEntry()
       logEntry.entryId = str(row.id)
-      logEntry.identifier = row.object.pid.sid_or_pid
+      logEntry.identifier = row.sciobj.pid.sid_or_pid
       logEntry.ipAddress = row.ip_address.ip_address
       logEntry.userAgent = row.user_agent.user_agent
       logEntry.subject = row.subject.subject
       logEntry.event = row.event.event
-      logEntry.dateLogged = row.date_logged
+      logEntry.dateLogged = row.timestamp
       logEntry.nodeIdentifier = settings.NODE_IDENTIFIER
       log.logEntry.append(logEntry)
     log.start = start
@@ -146,8 +146,8 @@ class ResponseHandler(object):
     pid_xml = pid_pyxb.toxml()
     return django.http.HttpResponse(pid_xml, d1_common.const.CONTENT_TYPE_XML)
 
-  def _set_headers(self, response, content_last_modified, content_length):
-    response['Last-Modified'] = content_last_modified
+  def _set_headers(self, response, content_modified_timestamp, content_length):
+    response['Last-Modified'] = content_modified_timestamp
     response['Content-Length'] = content_length
     response['Content-Type'] = d1_common.const.CONTENT_TYPE_XML
 

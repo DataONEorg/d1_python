@@ -37,6 +37,7 @@ import tempfile
 
 # Django.
 import django.core.management.base
+import mn.sysmeta_util
 from django.db import transaction
 from django.conf import settings
 
@@ -60,9 +61,6 @@ import mn.views.view_asserts
 import mn.views.diagnostics
 import mn.auth
 import mn.sysmeta
-import mn.sysmeta_file
-import mn.sysmeta_db
-import mn.sysmeta_base
 
 
 CONNECTION_STR = "host=''"
@@ -181,7 +179,7 @@ class V2Migration(object):
       sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_obj.obsoletedBy = None
-      mn.sysmeta_db.create(
+      mn.sysmeta.create(
         sysmeta_obj, sciobj_row['url'], sciobj_row['replica']
       )
 
@@ -200,9 +198,9 @@ class V2Migration(object):
         sciobj_model.save()
 
   def _identifiers(self, sysmeta_obj):
-    pid = mn.sysmeta_base.get_value(sysmeta_obj, 'identifier')
-    obsoletes_pid = mn.sysmeta_base.get_value(sysmeta_obj, 'obsoletes')
-    obsoleted_by_pid = mn.sysmeta_base.get_value(sysmeta_obj, 'obsoletedBy')
+    pid = mn.sysmeta_util.get_value(sysmeta_obj, 'identifier')
+    obsoletes_pid = mn.sysmeta_util.get_value(sysmeta_obj, 'obsoletes')
+    obsoleted_by_pid = mn.sysmeta_util.get_value(sysmeta_obj, 'obsoletedBy')
     return pid, obsoletes_pid, obsoleted_by_pid
 
   def _topological_sort(self, unsorted_list):
@@ -260,14 +258,14 @@ class V2Migration(object):
         pid__sid_or_pid=event_row['pid']
       )
       event_log_model = mn.models.EventLog()
-      event_log_model.object = sciobj_model
-      event_log_model.set_event(event_row['event'])
-      event_log_model.set_ip_address(event_row['ip_address'])
+      event_log_model.sciobj = sciobj_model
+      event_log_model.event = mn.models.event(event_row['event'])
+      event_log_model.ip_address = mn.models.ip_address(event_row['ip_address'])
       event_log_model.set_user_agent(event_row['user_agent'])
-      event_log_model.set_subject(event_row['subject'])
+      event_log_model.subject = mn.models.subject(event_row['subject'])
       event_log_model.save()
       # Must update timestamp separately due to auto_now_add=True
-      event_log_model.date_logged = event_row['date_logged']
+      event_log_model.timestamp = event_row['timestamp']
       event_log_model.save()
 
   # Whitelist

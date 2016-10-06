@@ -30,131 +30,177 @@ from django.db import models
 # D1
 import d1_common.types.exceptions
 
-# Django creates automatically:
-# "id" serial NOT NULL PRIMARY KEY
+# Django automatically creates:
+# - "id" serial NOT NULL PRIMARY KEY
+# - Index on primary key  
+# - Index on ForeignKey
+# - Index on unique=True
+
 
 class IdNamespace(models.Model):
   sid_or_pid = models.CharField(max_length=800, unique=True)
 
+def sid_or_pid(id_str):
+  return IdNamespace.objects.get_or_create(sid_or_pid=id_str)[0]
+
 # ------------------------------------------------------------------------------
-# Registered MN objects.
+# DataONE Node
 # ------------------------------------------------------------------------------
+
+
+class Node(models.Model):
+  urn = models.CharField(max_length=64, unique=True)
+
+
+def node(node_urn):
+  return Node.objects.get_or_create(urn=node_urn)[0]
+
+# ------------------------------------------------------------------------------
+# DataONE Subject
+# ------------------------------------------------------------------------------
+
+
+class Subject(models.Model):
+  subject = models.CharField(max_length=1024, unique=True)
+
+
+def subject(subject_str):
+  return Subject.objects.get_or_create(subject=subject_str)[0]
+
+# ------------------------------------------------------------------------------
+# Checksum
+# ------------------------------------------------------------------------------
+
 
 class ScienceObjectChecksumAlgorithm(models.Model):
   checksum_algorithm = models.CharField(max_length=32, unique=True)
 
 
+def checksum_algorithm(checksum_algorithm_str):
+  return ScienceObjectChecksumAlgorithm.objects.get_or_create(
+    checksum_algorithm=checksum_algorithm_str
+  )[0]
+
+# ------------------------------------------------------------------------------
+# Object format
+# ------------------------------------------------------------------------------
+
+
 class ScienceObjectFormat(models.Model):
-  format_id = models.CharField(max_length=128, unique=True)
+  format = models.CharField(max_length=128, unique=True)
+
+def format(format_str):
+  return ScienceObjectFormat.objects.get_or_create(format=format_str)[0]
+
+# ------------------------------------------------------------------------------
+# Science Object Base
+# ------------------------------------------------------------------------------
 
 
 class ScienceObject(models.Model):
   # System Metadata fields
   pid = models.ForeignKey(IdNamespace, models.CASCADE)
   serial_version = models.PositiveIntegerField()
+  modified_timestamp = models.DateTimeField(db_index=True)
+  uploaded_timestamp = models.DateTimeField(db_index=True)
   format = models.ForeignKey(ScienceObjectFormat, models.CASCADE)
   checksum = models.CharField(max_length=128, db_index=True)
   checksum_algorithm = models.ForeignKey(
     ScienceObjectChecksumAlgorithm, models.CASCADE
   )
-  mtime = models.DateTimeField(db_index=True)
   size = models.BigIntegerField(db_index=True)
+  submitter = models.ForeignKey(
+    Subject, models.CASCADE,
+    related_name='%(class)s_submitter'
+  )
+  rights_holder = models.ForeignKey(
+    Subject, models.CASCADE,
+    related_name='%(class)s_rights_holder'
+  )
+  origin_member_node = models.ForeignKey(
+    Node, models.CASCADE,
+    related_name='%(class)s_origin_member_node'
+  )
+  authoritative_member_node = models.ForeignKey(
+    Node, models.CASCADE,
+    related_name='%(class)s_authoritative_member_node'
+  )
+  # TODO: Due to this change, can't find if PID is in use only by checking IdNamespace
+  # obsoletes = models.ForeignKey(
+  #   'self', models.CASCADE, null=True, related_name='science_object_obsoletes'
+  # )
+  # obsoleted_by = models.ForeignKey(
+  #   'self', models.CASCADE, null=True,
+  #   related_name='science_object_obsoleted_by'
+  # )
   obsoletes = models.ForeignKey(
-    'self', models.CASCADE, null=True,
-    related_name='science_object_obsoletes'
+    IdNamespace, models.CASCADE, null=True,
+    related_name='%(class)s_obsoletes'
   )
   obsoleted_by = models.ForeignKey(
-    'self', models.CASCADE, null=True,
-    related_name='science_object_obsoleted_by'
+    IdNamespace, models.CASCADE, null=True,
+    related_name='%(class)s_obsoleted_by'
   )
   is_archived = models.BooleanField(db_index=True)
-  # Internal fields
+  # Internal fields (not used in System Metadata)
   url = models.CharField(max_length=1024, unique=True)
   is_replica = models.BooleanField(db_index=True)
 
-  # def set_format(self, format_id):
-  #   self.format = ScienceObjectFormat.objects.get_or_create(format_id=format_id)[0]
-  #
-  # def set_checksum_algorithm(self, checksum_algorithm_string):
-  #   self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
-  #     checksum_algorithm=str(checksum_algorithm_string)
-  #   )[0]
+
+# ------------------------------------------------------------------------------
+# SID / SeriesID
+# ------------------------------------------------------------------------------
 
 
 class SeriesIdToScienceObject(models.Model):
-  object = models.ForeignKey(ScienceObject, models.CASCADE)
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
   sid = models.ForeignKey(IdNamespace, models.CASCADE)
-
-  # def save_unique(self):
-  #   try:
-  #     me = SeriesIdToScienceObject.objects.get(object=self.object)
-  #   except SeriesIdToScienceObject.DoesNotExist:
-  #     self.save()
-  #   else:
-  #     me.delete()
-  #     self.save()
 
 # ------------------------------------------------------------------------------
 # Access Log
 # ------------------------------------------------------------------------------
 
 
-class EventLogEvent(models.Model):
+class Event(models.Model):
   event = models.CharField(max_length=128, unique=True)
 
 
-class EventLogIPAddress(models.Model):
+def event(event_str):
+  # In v2.0, events are no longer restricted to this set. However, GMN still
+  # only records these types of events, so we'll leave it in while that
+  # remains the case.
+  assert event_str in ['create', 'read', 'update', 'delete', 'replicate',
+                       'synchronization_failed', 'replication_failed'], \
+    u'Invalid event type. event="{}'
+  return Event.objects.get_or_create(event=event_str)[0]
+
+
+class IpAddress(models.Model):
   ip_address = models.CharField(max_length=32, unique=True)
 
 
-class EventLogUserAgent(models.Model):
+def ip_address(ip_address_str):
+  return IpAddress.objects.get_or_create(ip_address=ip_address_str)[0]
+
+
+class UserAgent(models.Model):
   user_agent = models.CharField(max_length=1024, unique=True)
 
 
-class EventLogSubject(models.Model):
-  # TODO: Reference Subject table instead.
-  subject = models.CharField(max_length=1024, unique=True)
-
-
-class EventLogMemberNode(models.Model):
-  member_node = models.CharField(max_length=128, unique=True)
+def user_agent(user_agent_str):
+  return UserAgent.objects.get_or_create(user_agent=user_agent_str)[0]
 
 
 class EventLog(models.Model):
-  object = models.ForeignKey(ScienceObject, models.CASCADE)
-  event = models.ForeignKey(EventLogEvent, models.CASCADE)
-  ip_address = models.ForeignKey(EventLogIPAddress, models.CASCADE)
-  user_agent = models.ForeignKey(EventLogUserAgent, models.CASCADE)
-  subject = models.ForeignKey(EventLogSubject, models.CASCADE)
-  date_logged = models.DateTimeField(auto_now_add=True, db_index=True)
-
-  def set_event(self, event_string):
-    # In v2.0, events are no longer restricted to this set. However, GMN still
-    # only records these types of events, so we'll leave it in while that
-    # remains the case.
-    if event_string not in ['create', 'read', 'update', 'delete', 'replicate']:
-      raise d1_common.types.exceptions.ServiceFailure(
-        0,
-        u'Attempted to create invalid type of event. event="{}"'
-          .format(event_string)
-      )
-    self.event = EventLogEvent.objects.get_or_create(event=event_string)[0]
-
-  def set_ip_address(self, ip_address_string):
-    self.ip_address = EventLogIPAddress.objects.get_or_create(
-      ip_address=ip_address_string
-    )[0]
-
-  def set_user_agent(self, user_agent_string):
-    self.user_agent = EventLogUserAgent.objects.get_or_create(
-      user_agent=user_agent_string
-    )[0]
-
-  def set_subject(self, subject_string):
-    self.subject = EventLogSubject.objects.get_or_create(subject=subject_string)[0]
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  event = models.ForeignKey(Event, models.CASCADE)
+  ip_address = models.ForeignKey(IpAddress, models.CASCADE)
+  user_agent = models.ForeignKey(UserAgent, models.CASCADE)
+  subject = models.ForeignKey(Subject, models.CASCADE)
+  timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
 # ------------------------------------------------------------------------------
-# Science Object replication work queue.
+# Science Object replication work queue
 # ------------------------------------------------------------------------------
 
 
@@ -162,28 +208,15 @@ class ReplicationQueueStatus(models.Model):
   status = models.CharField(max_length=1024, unique=True)
 
 
-class ReplicationQueueSourceNode(models.Model):
-  source_node = models.CharField(max_length=32, unique=True)
+def replication_queue_status(status_str):
+  return ReplicationQueueStatus.objects.get_or_create(status=status_str)[0]
 
 
 class ReplicationQueue(models.Model):
   pid = models.ForeignKey(IdNamespace, models.CASCADE)
   status = models.ForeignKey(ReplicationQueueStatus, models.CASCADE)
-  source_node = models.ForeignKey(ReplicationQueueSourceNode, models.CASCADE)
+  source_node = models.ForeignKey(Node, models.CASCADE)
   timestamp = models.DateTimeField(auto_now=True)
-
-  def set_status(self, status_string):
-    self.status = ReplicationQueueStatus.objects.get_or_create(status=status_string)[0]
-
-  def set_source_node(self, source_node_string):
-    self.source_node = ReplicationQueueSourceNode.objects.get_or_create(
-      source_node=source_node_string
-    )[0]
-
-  def set_checksum_algorithm(self, checksum_algorithm_string):
-    self.checksum_algorithm = ScienceObjectChecksumAlgorithm.objects.get_or_create(
-      checksum_algorithm=checksum_algorithm_string
-    )[0]
 
 # ------------------------------------------------------------------------------
 # System Metadata refresh queue
@@ -194,43 +227,95 @@ class SystemMetadataRefreshQueueStatus(models.Model):
   status = models.CharField(max_length=1024, unique=True)
 
 
+def sysmeta_refresh_status(status_str):
+  return SystemMetadataRefreshQueueStatus.objects.get_or_create(
+    status=status_str
+  )[0]
+
+
 class SystemMetadataRefreshQueue(models.Model):
-  object = models.ForeignKey(ScienceObject, models.CASCADE)
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
   timestamp = models.DateTimeField(auto_now=True)
   serial_version = models.PositiveIntegerField()
-  last_modified = models.DateTimeField()
+  modified_timestamp = models.DateTimeField()
   status = models.ForeignKey(SystemMetadataRefreshQueueStatus, models.CASCADE)
 
-  def set_status(self, status):
-    self.status = SystemMetadataRefreshQueueStatus.objects.\
-      get_or_create(status=status)[0]
 
-  def save_unique(self):
-    try:
-      me = SystemMetadataRefreshQueue.objects.get(object=self.object)
-    except SystemMetadataRefreshQueue.DoesNotExist:
-      self.save()
-    else:
-      me.delete()
-      self.save()
+def sysmeta_refresh_queue(pid, serial_version, modified_timestamp, status_model):
+  sciobj_model = ScienceObject.objects.get(pid__sid_or_pid=pid)
+  return SystemMetadataRefreshQueue.objects.get_or_create(
+    sciobj=sciobj_model,
+    serial_version=serial_version,
+    modified_timestamp=modified_timestamp,
+    status=status_model,
+  )
 
 # ------------------------------------------------------------------------------
 # Access Control
 # ------------------------------------------------------------------------------
 
 
-class PermissionSubject(models.Model):
-  subject = models.CharField(max_length=1024, unique=True)
-
-
 class Permission(models.Model):
-  object = models.ForeignKey(ScienceObject, models.CASCADE)
-  subject = models.ForeignKey(PermissionSubject, models.CASCADE)
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  subject = models.ForeignKey(Subject, models.CASCADE)
   level = models.PositiveSmallIntegerField()
 
 
 class WhitelistForCreateUpdateDelete(models.Model):
-  subject = models.ForeignKey(PermissionSubject, models.CASCADE)
+  subject = models.ForeignKey(Subject, models.CASCADE)
 
-  def set(self, subject):
-    self.subject = PermissionSubject.objects.get_or_create(subject=subject)[0]
+# ------------------------------------------------------------------------------
+# Replication Policy
+# ------------------------------------------------------------------------------
+
+# <replicationPolicy xmlns="" replicationAllowed="false" numberReplicas="0">
+#     <preferredMemberNode>preferredMemberNode0</preferredMemberNode>
+#     <preferredMemberNode>preferredMemberNode1</preferredMemberNode>
+#     <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
+#     <blockedMemberNode>blockedMemberNode1</blockedMemberNode>
+# </replicationPolicy>
+
+
+class ReplicationPolicy(models.Model):
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  replication_is_allowed = models.BooleanField(db_index=True)
+  desired_number_of_replicas = models.PositiveIntegerField()
+
+
+class PreferredMemberNode(models.Model):
+  node = models.ForeignKey(Node, models.CASCADE)
+  replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
+
+
+class BlockedMemberNode(models.Model):
+  node = models.ForeignKey(Node, models.CASCADE)
+  replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
+
+
+# ------------------------------------------------------------------------------
+# Replica
+# ------------------------------------------------------------------------------
+
+# <replica xmlns="">
+#     <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
+#     <replicationStatus>queued</replicationStatus>
+#     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
+# </replica>
+
+class ReplicaStatus(models.Model):
+  status = models.CharField(max_length=16, unique=True)
+
+
+def replica_status(status_str):
+  assert status_str in ['queued', 'requested', 'completed', 'failed', 'invalidated'], \
+    u'Invalid replication status. status="{}"'.format(status_str)
+  return ReplicaStatus.objects.get_or_create(
+    status=status_str
+  )[0]
+
+
+class Replica(models.Model):
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  member_node = models.ForeignKey(Node, models.CASCADE)
+  status = models.ForeignKey(ReplicaStatus, models.CASCADE)
+  verified_timestamp = models.DateTimeField(db_index=True, null=True)
