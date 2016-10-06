@@ -2,6 +2,7 @@
 certificates/
 certs/
 settings_site.py
+stores/
 
 # IntelliJ / PyCharm
 .idea/

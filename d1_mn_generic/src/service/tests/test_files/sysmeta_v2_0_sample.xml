@@ -4,10 +4,10 @@
  xmlns="http://ns.dataone.org/service/types/v2.0"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://ns.dataone.org/service/types/v1 file:/Users/servilla/svn/DataONE/software/cicore/d1_schemas/dataoneTypes_v2.0.xsd">
-    <serialVersion xmlns="">50</serialVersion>
+    <serialVersion xmlns="">55</serialVersion>
     <identifier xmlns="">identifier0</identifier>
     <formatId xmlns="">formatId0</formatId>
-    <size xmlns="">50</size>
+    <size xmlns="">66</size>
     <checksum xmlns="" algorithm="algorithm0">checksum0</checksum>
     <submitter xmlns="">submitter0</submitter>
     <rightsHolder xmlns="">rightsHolder0</rightsHolder>
@@ -16,16 +16,15 @@
             <subject>subject0</subject>
             <subject>subject1</subject>
             <permission>read</permission>
-            <permission>read</permission>
+            <permission>changePermission</permission>
         </allow>
         <allow>
             <subject>subject2</subject>
             <subject>subject3</subject>
-            <permission>read</permission>
-            <permission>read</permission>
+            <permission>write</permission>
         </allow>
     </accessPolicy>
-    <replicationPolicy xmlns="" replicationAllowed="false" numberReplicas="0">
+    <replicationPolicy xmlns="" replicationAllowed="true" numberReplicas="42">
         <preferredMemberNode>preferredMemberNode0</preferredMemberNode>
         <preferredMemberNode>preferredMemberNode1</preferredMemberNode>
         <blockedMemberNode>blockedMemberNode0</blockedMemberNode>
@@ -45,7 +44,7 @@
     </replica>
     <replica xmlns="">
         <replicaMemberNode>replicaMemberNode1</replicaMemberNode>
-        <replicationStatus>queued</replicationStatus>
-        <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
+        <replicationStatus>completed</replicationStatus>
+        <replicaVerified>2007-05-04T18:13:51.0</replicaVerified>
     </replica>
 </d1:systemMetadata>
