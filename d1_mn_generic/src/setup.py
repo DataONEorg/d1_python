@@ -46,11 +46,12 @@ def main():
       'dataone.libclient == 2.0.0',
       'dataone.certificate_extensions == 1.2.0',
       'django == 1.10.1',
-      'pyxb == 1.2.4',
+      'pyxb == 1.2.5',
       'iso8601 == 0.1.11',
       'psycopg2 == 2.5.2',
+      'pyjwt == 1.4.2',
       # GMN does not use the CLI programmatically -- it's just included because
-      # the CLI is a convenient way to interact with GMN . So the latest version
+      # the CLI is a convenient way to interact with GMN. So the latest version
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
     ],
