@@ -150,15 +150,18 @@ def packageToText(pkg, fto=sys.stdout):
     i += 1
   
     
-def main(url):
+def main(url, format):
   ore_doc = downloadDocument(url)
   pkg = d1_pyore.ResourceMap()
   pkg.parse(data=ore_doc)
-  packageToText(pkg)
+  if args.format == "text":
+    packageToText(pkg)
+    return
+  print pkg.serialize( format=format )
 
 
 if __name__ == "__main__":
-  parser = argparse.ArgumentParser(description='Show OAI-ORE object as text')
+  parser = argparse.ArgumentParser(description='Show OAI-ORE object as text or serialized as json-ld, n3, xml')
 
   parser.add_argument('-l', '--log',
     default=logging.WARN,
@@ -167,6 +170,10 @@ if __name__ == "__main__":
   
   parser.add_argument('url',
     help="Full URL to ORE object, path to ORE file, or '-' to read from stdin")
+
+  parser.add_argument('-f', '--format',
+                      default="text",
+                      help="Format for output. Can be text or any of the standard serialization formats.")
   
   args = parser.parse_args()
   
@@ -176,5 +183,5 @@ if __name__ == "__main__":
   else:
     logging.basicConfig( level=args.log )
 
-  main(args.url)
+  main(args.url, args.format.lower())
 
