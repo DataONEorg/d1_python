@@ -284,8 +284,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
   def getAggregatedScienceMetadataPids(self):
     '''Return PIDs of all science metadata documents in ORE document.
     
-    Equivalent SPARQL:
-    
+    '''
+    q = '''
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
       PREFIX dcterms: <http://purl.org/dc/terms/>
       PREFIX cito: <http://purl.org/spar/cito/>
@@ -297,15 +297,16 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         ?o dcterms:identifier ?pid .
       }
     '''
-    return map(str, [o[0] for o in self.objects( ORE.aggregates, 
-                                                 CITO.documents )])
+    return map(str, [o[0] for o in self.query(q)])
+    #return map(str, [o[0] for o in self.objects( ORE.aggregates,
+    #                                             CITO.documents )])
 
 
   def getAggregatedScienceDataPids(self):
     '''Return PIDs of all the data documents in the ORE document.
-    
-    Equivalent SPARQL:
-    
+
+    '''
+    q = '''
       PREFIX ore: <http://www.openarchives.org/ore/terms/>
       PREFIX dcterms: <http://purl.org/dc/terms/>
       PREFIX cito: <http://purl.org/spar/cito/>
@@ -317,8 +318,9 @@ class ResourceMap(rdflib.ConjunctiveGraph):
         ?o dcterms:identifier ?pid .
       }
     '''
-    return map(str, [o[0] for o in self.objects( ORE.aggregates, 
-                                                 CITO.isDocumentedBy )])
+    return map(str, [o[0] for o in self.query(q)])
+    #return map(str, [o[0] for o in self.objects( ORE.aggregates,
+    #                                             CITO.isDocumentedBy )])
 
 
   def asGraphvizDot(self, stream):
