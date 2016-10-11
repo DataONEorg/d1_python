@@ -8,7 +8,7 @@ Two commandline scripts ``ore2txt`` and ``pids2ore`` are included to produce a
 more human readable representation of an OAI-ORE document and to create an OAI-ORE 
 document from a list of identifiers respectively.
 
-A brief tutorial_ is also provided.
+A brief tutorial_ is provided.
 
 Dependencies
 ------------
