@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ import sys
 # the function is called.
 def make_absolute(p):
   return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
+BASE_DIR = os.path.dirname(os.path.dirname(make_absolute((''))))
 
 # Add site specific settings.
 from settings_site import *
