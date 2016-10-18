@@ -72,7 +72,23 @@ DEBUG = False
 #   see ALLOW_INTEGRATION_TESTS.
 # False (default):
 # - Use for production.
-GMN_DEBUG = False
+DEBUG_GMN = False
+
+# Enable PyCharm debugging.
+# True:
+# - If GMN encounters an unhandled internal exception, GMN will attempt to move
+#   the cursor in the PyCharm IDE to the code that was being executed when the
+#   exception was raised. The exception is then handled as normal.
+# False (default):
+# - GMN handles exceptions as normal.
+DEBUG_PYCHARM = True
+
+# Path to the PyCharm IDE binary.
+# - Only used if DEBUG_PYCHARM = True.
+# - If PyCharm is in the path, can typically left at 'pycharm.sh'
+# - If PyCharm is not in path, can be set to an absolute path. E.g.
+#   '~/JetBrains/pycharm'
+PYCHARM_BIN = 'pycharm.sh'
 
 # Enable request echo.
 # True:
@@ -83,7 +99,7 @@ GMN_DEBUG = False
 #   GMN.
 # False (default):
 # - GMN processes all requests as normal.
-# Only available when GMN_DEBUG is set to True.
+# Only available when DEBUG_GMN is set to True.
 ECHO_REQUEST_OBJECT = False
 
 # Allow integration tests.
@@ -94,9 +110,9 @@ ECHO_REQUEST_OBJECT = False
 # GMN comes with a set of integration tests, in gmn_integration_tests.py. These
 # are destructive. They put the MN into a known state by erasing all objects and
 # populating the MN with a specific set of test objects. The integration tests
-# check that both GMN_DEBUG and this setting are set to True before running.
+# check that both DEBUG_GMN and this setting are set to True before running.
 # This helps prevent accidental deletion of objects on a MN that is in the
-# process of being deployed, and still has GMN_DEBUG set to True while also
+# process of being deployed, and still has DEBUG_GMN set to True while also
 # holding objects that are intended to be used in production.
 ALLOW_INTEGRATION_TESTS = True
 
@@ -117,7 +133,7 @@ STAND_ALONE = True
 # - Prevent public subjects from accessing monitoring functions.
 # This function does not expose any sensitive information and should
 # be safe to keep enabled in production.
-# When GMN_DEBUG is True, this setting is ignored and monitoring is always
+# When DEBUG_GMN is True, this setting is ignored and monitoring is always
 # enabled.
 MONITOR = True
 
@@ -248,6 +264,13 @@ REPLICATION_ALLOWEDNODE = ()
 # To allow any object type to be replicated, set to an empty list.
 # E.g.: ('eml://ecoinformatics.org/eml-2.0.0', 'CF-1.0')
 REPLICATION_ALLOWEDOBJECTFORMAT = ()
+
+# The maximum number of attempts to complete a CN replication request. When this
+# number is exceeded, the CN is notified that the requested replica could not be
+# created and the request is recorded as failed. By default, replication
+# processing occurs once per hour, so a value of 24 (default) causes replication
+# to be retried for 24 hours.
+REPLICATION_MAX_ATTEMPTS = 24
 
 # On startup, GMN connects to the DataONE root CN to get the subject strings of
 # the CNs in the environment. For a production instance of GMN, this should be
@@ -405,7 +428,7 @@ LOG_PATH = make_absolute('../gmn.log')
 
 # Set the level of logging that GMN should perform. Choices are:
 # DEBUG, INFO, WARNING, ERROR, CRITICAL or NOTSET.
-if DEBUG or GMN_DEBUG:
+if DEBUG or DEBUG_GMN:
   LOG_LEVEL = 'DEBUG'
 else:
   LOG_LEVEL = 'WARNING'
