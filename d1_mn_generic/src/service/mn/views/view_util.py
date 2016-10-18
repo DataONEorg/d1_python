@@ -66,15 +66,15 @@ def dataoneTypes(request):
 
 
 def is_v1_api(request):
-  return request.path_info.startswith('/v1/')
+  return re.match(r'/v1(/|$)', request.path_info)
 
 
 def is_v2_api(request):
-  return request.path_info.startswith('/v2/')
+  return re.match(r'/v2(/|$)', request.path_info)
 
 
 def is_diag_api(request):
-  return request.path_info.startswith('/diag/')
+  return re.match(r'/diag(/|$)', request.path_info)
 
 
 def read_utf8_xml(stream_obj):
