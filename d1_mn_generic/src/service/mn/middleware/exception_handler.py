@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,22 +30,21 @@
   http://mule1.dataone.org/ArchitectureDocs/html
 
   An MN is required to always return a DataONE exception on errors. When running
-  in production mode (settings.DEBUG = False and settings.GMN_DEBUG = False),
-  GMN complies with this by wrapping any non-DataONE exception in a DataONE
-  exception.
+  in production mode (settings.DEBUG = False and settings.DEBUG_GMN = False),
+  GMN complies with this by wrapping any unhandled internal exception in a
+  DataONE exception.
 
   When running in Django debug mode (settings.DEBUG = True), non-DataONE
   exceptions are returned as Django HTML exception pages.
 
   Responses to HEAD requests can not contain a body, so the exception is
   serialized to a set of HTTP headers for HEAD requests.
-
-  For DataONEExceptions,
 """
 
 # Stdlib.
 import logging
 import os
+import subprocess
 import sys
 import traceback
 
@@ -129,19 +128,19 @@ class ExceptionHandler(object):
     return exception
 
 
-  def _log_exception(self, max_traceback_levels=10):
+  def _log_exception(self):
     logging.error('Exception:')
     exc_class, exc_msgs, exc_traceback = sys.exc_info()
     logging.error(u'  Name: {}'.format(exc_class.__name__))
     logging.error(u'  Value: {}'.format(exc_msgs))
-    try:
-      exc_args = exc_msgs.__dict__["args"]
-    except KeyError:
+    if 'args' in exc_msgs.__dict__:
+      exc_args = exc_msgs.__dict__['args']
+    else:
       exc_args = "<no args>"
     logging.error(u'  Args: {}'.format(exc_args))
-    logging.error(u'  Traceback:')
-    for tb in traceback.format_tb(exc_traceback, max_traceback_levels):
-      logging.error(u'    {}'.format(tb))
+    logging.error(u'  TraceInfo:')
+    for location_str in self._traceback_to_trace_info():
+      logging.error(u'    {}'.format(location_str))
 
 
   def _traceback_to_text(self):
@@ -150,21 +149,20 @@ class ExceptionHandler(object):
 
   def _traceback_to_trace_info(self):
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    tb = []
+    trace_info_list = []
     while exc_traceback:
       co = exc_traceback.tb_frame.f_code
-      tb.append(
+      trace_info_list.append(
         u'{}({})'.format(
-          str(os.path.basename(co.co_filename)), str(
-            traceback.tb_lineno(exc_traceback)
-          )
+          os.path.basename(co.co_filename),
+          traceback.tb_lineno(exc_traceback),
         )
       )
       exc_traceback = exc_traceback.tb_next
     if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
-      tb.append(u'Type: {}'.format(exc_type))
-      tb.append(u'Value: {}'.format(exc_value))
-    return tb
+      trace_info_list.append(u'Type: {}'.format(exc_type))
+      trace_info_list.append(u'Value: {}'.format(exc_value))
+    return trace_info_list
 
   # PyCharm debugging
 
