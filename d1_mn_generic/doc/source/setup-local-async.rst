@@ -22,13 +22,16 @@ Set up cron jobs
     $ sudo crontab -e -u gmn
 
   Add::
+    GMN_ROOT = /var/local/dataone/gmn
+    SERVICE_ROOT = $GMN_ROOT/lib/python2.7/site-packages/service
+    PYTHON_BIN = $GMN_ROOT/bin/python
 
-    # Process the replication queue.
-    * * * * * cd /var/local/dataone/gmn/lib/python2.7/site-packages/service && /var/local/dataone/gmn/bin/python ./manage.py process_replication_queue >>gmn_replication.log 2>&1
-    # Process the System Metadata refresh queue.
-    * * * * * cd /var/local/dataone/gmn/lib/python2.7/site-packages/service && /var/local/dataone/gmn/bin/python ./manage.py process_system_metadata_refresh_queue >>gmn_sysmeta.log 2>&1
+    # Process the replication request queue
+    0  * * * * sleep $(expr $RANDOM \% $(( 30 * 60 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_replication_queue >> gmn_replication.log 2>&1
+    # Process the System Metadata refresh queue
+    30 * * * * sleep $(expr $RANDOM \% $(( 30 * 60 ))) && cd $SERVICE_ROOT && $PYTHON_BIN ./manage.py process_refresh_queue >> gmn_sysmeta.log 2>&1
 
-  This sets the processes to run every minute. To alter the schedule, consult
+  This sets the processes to run once every hour, with a random delay that distributes network traffic and CN load over time. To alter the schedule, consult
   the crontab manual::
 
     $ man 5 crontab
