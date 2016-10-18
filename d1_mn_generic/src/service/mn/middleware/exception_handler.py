@@ -107,6 +107,8 @@ class ExceptionHandler(object):
   # Internal exception
 
   def _handle_internal_exception(self):
+    if settings.DEBUG_PYCHARM:
+      self._open_exception_location_in_pycharm()
     if settings.DEBUG:
       return self._django_html_exception_page()
     else:
@@ -164,3 +166,39 @@ class ExceptionHandler(object):
       tb.append(u'Value: {}'.format(exc_value))
     return tb
 
+  # PyCharm debugging
+
+  def _open_exception_location_in_pycharm(self):
+    src_path, src_line_num = self._get_project_location()
+    try:
+      subprocess.call([
+        os.path.expanduser(settings.PYCHARM_BIN),
+        '--line', src_line_num,
+        src_path]
+      )
+    except subprocess.CalledProcessError as e:
+      logging.warning(
+        'PyCharm debugging is enabled but opening the location of the exception '
+        'in PyCharm failed. error="{}" src_path="{}", src_line={}'.format(
+          e.message, src_path, src_line_num
+        )
+      )
+    else:
+      logging.info(
+        'Opened location of exception in PyCharm. src_path="{}", src_line={}'
+        .format(src_path, src_line_num)
+      )
+
+
+  def _get_project_location(self):
+    """Return the abs path and line number of the line of project code that was
+    being executed when the exception was raised.
+    """
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    location_tup = ()
+    while exc_traceback:
+      co = exc_traceback.tb_frame.f_code
+      if co.co_filename.startswith(settings.BASE_DIR):
+        location_tup = co.co_filename, str(traceback.tb_lineno(exc_traceback))
+      exc_traceback = exc_traceback.tb_next
+    return location_tup
