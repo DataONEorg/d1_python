@@ -18,14 +18,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`generate_object_list`
-==============================
 
-:Synopsis:
-  Create a list of the objects that exist on the MN and, for each object,
-  each subject which has read access to the object. The list is used by the
-  DataONE Stress Tester.
-:Author: DataONE (Dahl)
+"""Export a list of the objects that exist on the MN and, for each object, each
+subject which has access to the object. The list is used by the DataONE Stress
+Tester.
 """
 
 # Stdlib.
@@ -33,46 +29,43 @@ import logging
 import os
 import sys
 
-# App.
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-import mn.models
-
 # Django.
 import django.core.management.base
 from optparse import make_option
 
-# Get an instance of a logger.
-logger = logging.getLogger()
+# App.
+import mn.models
+import util
 
 
 class Command(django.core.management.base.BaseCommand):
-  args = '<file name>'
-  option_list = BaseCommand.option_list + (
-    make_option(
+  help = 'Export all objects and their associated subjects'
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--debug',
+      action='store_true',
+      default=False,
+      help='debug level logging',
+    )
+    parser.add_argument(
       '--public',
       action='store_true',
-      dest='public_only',
       default=False,
-      help='Create list containing only public subjects'
-    ),
-  )
-  help = 'Create list of all objects and their associated subjects'
+      help='export only public subjects',
+    )
+    parser.add_argument(
+      'path', type=str, help='path to export file'
+    )
 
   def handle(self, *args, **options):
-    if len(args) != 1:
-      print('Must specify the path to a file in which to store the object list')
-      exit()
-
-    verbosity = int(options.get('verbosity', 1))
-
-    if verbosity <= 1:
-      logging.getLogger('').setLevel(logging.ERROR)
-
-    object_list_path = args[0]
-
-    self.create_object_list(object_list_path, options['public_only'])
-
-    print 'Saved object list to: {}'.format(object_list_path)
+    util.log_setup(options['debug'])
+    logging.info(
+      u'Running management command: {}'.format(util.get_command_name())
+    )
+    util.abort_if_other_instance_is_running()
+    self.create_object_list(options['path'], options['public'])
+    print u'Exported object list to: {}'.format(object_list_path)
 
   def create_object_list(self, path, public_only):
     with open(path, 'w') as f:

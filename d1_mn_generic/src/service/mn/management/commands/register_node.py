@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`register_node_with_dataone`
-====================================
 
-:Synopsis: Register a new Member Node with DataONE.
-:Author: DataONE (Dahl)
+"""Register a new Member Node with DataONE.
 """
 
 # Stdlib.
@@ -47,29 +44,31 @@ class Command(django.core.management.base.BaseCommand):
 
   def add_arguments(self, parser):
     parser.add_argument(
+      '--debug',
+      action='store_true',
+      default=False,
+      help='debug level logging',
+    )
+    parser.add_argument(
       '--update',
       action='store_true',
-      dest='update',
       default=False,
-      help='Update an existing Node document'
+      help='update an existing Node document'
     )
     parser.add_argument(
       '--view',
       action='store_true',
-      dest='view',
       default=False,
-      help='Only view generated Node document'
+      help='only view generated Node document'
     )
 
   def handle(self, *args, **options):
-    self.log_setup()
-
-    logging.info('Running management command: ' 'register_node_with_dataone')
-
-    verbosity = int(options.get('verbosity', 1))
-
-    self.set_verbosity(verbosity)
-
+    util.log_setup(options['debug'])
+    logging.info(
+      u'Running management command: {}'.format(util.get_command_name())
+    )
+    util.abort_if_other_instance_is_running()
+    util.abort_if_stand_alone_instance()
     if options['view']:
       self.view()
     elif options['update']:
@@ -81,17 +80,15 @@ class Command(django.core.management.base.BaseCommand):
     node = self.generate_node_doc()
     client = self.create_client()
     response = client.registerResponse(node)
-    logging.info(u'Server response:\n{}'.format(response.text))
-    if response.status == 200:
-      logging.info('SUCCESSFUL REGISTRATION')
-    else:
-      logging.info('REGISTRATION FAILED')
+    log_status(response)
 
   def update(self):
     node = self.generate_node_doc()
     client = self.create_client()
-    response = client.updateNodeCapabilitiesResponse(settings.NODE_IDENTIFIER, node)
-    logging.info(u'Server response:\n{}'.format(response.text))
+    response = client.updateNodeCapabilitiesResponse(
+      settings.NODE_IDENTIFIER, node
+    )
+    log_status(response)
 
   def view(self):
     node = self.generate_node_doc()
@@ -103,26 +100,15 @@ class Command(django.core.management.base.BaseCommand):
 
   def create_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-      settings.DATAONE_ROOT,
-      cert_path=settings.CLIENT_CERT_PATH,
+      settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
       key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client
 
-  def log_setup(self):
-    # Set up logging.
-    # We output everything to both file and stdout.
-    logging.getLogger('').setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
-    )
-    # Console.
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
-
-  def set_verbosity(self, verbosity):
-    if verbosity > 0:
-      logging.getLogger('').setLevel(logging.DEBUG)
+  def log_status(self, response):
+    logging.debug(u'Server response: {}'.format(response.text))
+    logging.debug('')
+    if response.status == 200:
+      logging.info('Operation successful')
     else:
-      logging.getLogger('').setLevel(logging.INFO)
+      logging.warning('Operation failed')

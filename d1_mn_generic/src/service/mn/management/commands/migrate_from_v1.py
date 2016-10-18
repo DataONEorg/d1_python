@@ -18,16 +18,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`migrate_from_v1`
-======================
 
-:Synopsis:
-  Populate GMN v2 database from existing v1 database.
+"""Populate GMN v2 database from existing v1 database.
 """
 
 # Stdlib.
-import fcntl
 import logging
 import os
 import pprint
@@ -61,7 +56,8 @@ import mn.views.view_asserts
 import mn.views.diagnostics
 import mn.auth
 import mn.sysmeta
-
+import mn.sysmeta_obsolescence
+import mn.util
 
 CONNECTION_STR = "host=''"
 VERSION_FILE_NAME = 'version.txt'
@@ -72,44 +68,36 @@ class Command(django.core.management.base.BaseCommand):
 
   def add_arguments(self, parser):
     parser.add_argument(
-          '--verbose',
-          action='store_true',
-          dest='verbose',
-          default=False,
-          help='Display debug logs',
+      '--debug',
+      action='store_true',
+      default=False,
+      help='debug level logging',
     )
     parser.add_argument(
-          '--force',
-          action='store_true',
-          dest='force',
-          default=False,
-          help='Overwrite existing v2 database',
+      '--force',
+      action='store_true',
+      # dest='force',
+      default=False,
+      help='Overwrite existing v2 database',
     )
 
   def handle(self, *args, **options):
-    self._log_setup(options['verbose'])
+    self._log_setup(options['debug'])
+    logging.info(
+      u'Running management command: {}'.format(util.get_command_name())
+    )
+    util.abort_if_other_instance_is_running()
     m = V2Migration()
     if not options['force'] and not m.db_is_empty():
-      logging.error(u'There is already data in the v2 database. Use --force to overwrite.')
+      logging.error(
+        u'There is already data in the v2 database. Use --force to overwrite.'
+      )
       return
-    # mn.views.diagnostics._clear_db()
+    mn.views.diagnostics._clear_db()
     m.migrate()
 
-  def _log_setup(self, verbose_bool):
-    # Set up logging. We output only to stdout. Instead of also writing to a log
-    # file, redirect stdout to a log file when the script is executed from cron.
-    formatter = logging.Formatter(
-      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
-    )
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
-    if verbose_bool:
-      logging.getLogger('').setLevel(logging.DEBUG)
-    else:
-      logging.getLogger('').setLevel(logging.INFO)
-
 #===============================================================================
+
 
 class V2Migration(object):
   def __init__(self):
@@ -119,9 +107,9 @@ class V2Migration(object):
     try:
       # self._migrate_filesystem(settings.SYSMETA_STORE_PATH)
       # self._migrate_filesystem(settings.OBJECT_STORE_PATH )
-      # self._migrate_sciobj()
+      self._migrate_sciobj()
       self._migrate_events()
-      # self._migrate_whitelist()
+      self._migrate_whitelist()
     except MigrateError as e:
       logging.error('Migration failed: {}'.format(e.message))
 
@@ -130,7 +118,9 @@ class V2Migration(object):
   def _migrate_filesystem(self, root_path):
     if not self._get_object_store_version(root_path) == 'v1':
       return
-    for parent_dir_path, dir_list, file_list in os.walk(root_path, topdown=False):
+    for parent_dir_path, dir_list, file_list in os.walk(
+      root_path, topdown=False
+    ):
       for dir_name in dir_list:
         dir_path = os.path.join(parent_dir_path, dir_name)
         try:
@@ -157,13 +147,17 @@ class V2Migration(object):
 
   def _get_obsolescence_list(self):
     obsolescence_list = []
-    self.v1_cursor.execute("""
+    self.v1_cursor.execute(
+      """
       select pid, serial_version from mn_scienceobject;
-    """)
+    """
+    )
     sciobj_row_list = self.v1_cursor.fetchall()
     n = len(sciobj_row_list)
     for i, sciobj_row in enumerate(sciobj_row_list):
-      self._log_pid_info('Retrieving obsolescence chains', i, n, sciobj_row['pid'])
+      self._log_pid_info(
+        'Retrieving obsolescence chains', i, n, sciobj_row['pid']
+      )
       sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
       obsolescence_list.append(self._identifiers(sysmeta_obj))
     return obsolescence_list
@@ -171,17 +165,17 @@ class V2Migration(object):
   def _create_sciobj(self, topo_obsolescence_list):
     n = len(topo_obsolescence_list)
     for i, pid in enumerate(topo_obsolescence_list):
-      self.v1_cursor.execute("""
+      self.v1_cursor.execute(
+        """
         select * from mn_scienceobject where pid = %s;
-      """, (pid,))
+      """, (pid,)
+      )
       sciobj_row = self.v1_cursor.fetchone()
       self._log_pid_info('Creating Sci Obj', i, n, pid)
       sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_obj.obsoletedBy = None
-      mn.sysmeta.create(
-        sysmeta_obj, sciobj_row['url'], sciobj_row['replica']
-      )
+      mn.sysmeta.create(sysmeta_obj, sciobj_row['url'], sciobj_row['replica'])
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)
@@ -189,13 +183,7 @@ class V2Migration(object):
       pid, obsoleted_by_pid = pid_tup
       if obsoleted_by_pid is not None:
         self._log_pid_info('Updating obsoletedBy', i, n, pid)
-        sciobj_model = mn.models.ScienceObject.objects.get(
-          pid__sid_or_pid=pid
-        )
-        sciobj_model.obsoleted_by = mn.models.ScienceObject.objects.get(
-          pid__sid_or_pid=obsoleted_by_pid
-        )
-        sciobj_model.save()
+        mn.sysmeta_obsolescence.set_obsolescence(pid, None, obsoleted_by_pid)
 
   def _identifiers(self, sysmeta_obj):
     pid = mn.sysmeta_util.get_value(sysmeta_obj, 'identifier')
@@ -204,10 +192,10 @@ class V2Migration(object):
     return pid, obsoletes_pid, obsoleted_by_pid
 
   def _topological_sort(self, unsorted_list):
-    """Perform a "brute force" topological sort by repeatedly iterating over an
-    unsorted list of pids and moving pids to the sorted list as they become
-    available. An pid is available to be moved to the sorted list if it does not
-    obsolete a pid or if the pid it obsoletes is already in the sorted list.
+    """Perform a topological sort by repeatedly iterating over an unsorted list
+    of PIDs and moving PIDs to the sorted list as they become available. A PID
+    is available to be moved to the sorted list if it does not obsolete a PID or
+    if the PID it obsoletes is already in the sorted list.
     """
     sorted_list = []
     sorted_set = set()
@@ -225,20 +213,24 @@ class V2Migration(object):
     return sorted_list
 
   def _log_pid_info(self, msg, i, n, pid):
-    logging.info('{} - {}/{} ({:.2f}%) - {}'.format(
-      msg, i + 1, n, (i + 1) / float(n) * 100, pid)
+    logging.info(
+      '{} - {}/{} ({:.2f}%) - {}'.
+      format(msg, i + 1, n, (i + 1) / float(n) * 100, pid)
     )
 
   def _sysmeta_obj_by_sciobj_row(self, sciobj_row):
-      sysmeta_xml = mn.sysmeta_file.read_sysmeta_from_file(
-        sciobj_row['pid'], sciobj_row['serial_version']
-      )
-      return mn.sysmeta_base.deserialize(sysmeta_xml)
+    sysmeta_xml_path = mn.util.file_path(
+      settings.SYSMETA_STORE_PATH, sciobj_row['pid']
+    )
+    with open(sysmeta_xml_path + '.' + str(sciobj_row['serial_version']), 'rb'
+              ) as f:
+      return mn.sysmeta.deserialize(f.read())
 
   # Events
 
   def _migrate_events(self):
-    self.v1_cursor.execute("""
+    self.v1_cursor.execute(
+      """
       select *
       from mn_eventlog log
       join mn_scienceobject sciobj on log.object_id = sciobj.id
@@ -247,41 +239,48 @@ class V2Migration(object):
       join mn_eventloguseragent agent on log.user_agent_id = agent.id
       join mn_eventlogsubject subject on log.subject_id = subject.id
       ;
-    """)
+    """
+    )
     event_row_list = self.v1_cursor.fetchall()
     n = len(event_row_list)
     for i, event_row in enumerate(event_row_list):
-      self._log_pid_info('Processing event logs', i, n, '{} {}'.format(
-        event_row['event'], event_row['pid']
-      ))
+      self._log_pid_info(
+        'Processing event logs', i, n,
+        '{} {}'.format(event_row['event'], event_row['pid'])
+      )
       sciobj_model = mn.models.ScienceObject.objects.get(
-        pid__sid_or_pid=event_row['pid']
+        pid__did=event_row['pid']
       )
       event_log_model = mn.models.EventLog()
       event_log_model.sciobj = sciobj_model
       event_log_model.event = mn.models.event(event_row['event'])
       event_log_model.ip_address = mn.models.ip_address(event_row['ip_address'])
-      event_log_model.set_user_agent(event_row['user_agent'])
+      event_log_model.user_agent = mn.models.user_agent(event_row['user_agent'])
       event_log_model.subject = mn.models.subject(event_row['subject'])
       event_log_model.save()
       # Must update timestamp separately due to auto_now_add=True
-      event_log_model.timestamp = event_row['timestamp']
+      event_log_model.timestamp = event_row['date_logged']
       event_log_model.save()
 
   # Whitelist
 
   def _migrate_whitelist(self):
     mn.models.WhitelistForCreateUpdateDelete.objects.all().delete()
-    self.v1_cursor.execute("""
+    self.v1_cursor.execute(
+      """
       select * from mn_whitelistforcreateupdatedelete w
       join mn_permissionsubject s on s.id = w.subject_id
       ;
-    """)
+    """
+    )
     whitelist_row_list = self.v1_cursor.fetchall()
     for whitelist_row in whitelist_row_list:
-        w = mn.models.WhitelistForCreateUpdateDelete()
-        w.set(whitelist_row['subject'])
-        w.save()
+      logging.info(
+        'Migrating whitelist subject: {}'.format(whitelist_row['subject'])
+      )
+      w = mn.models.WhitelistForCreateUpdateDelete()
+      w.subject = mn.models.subject(whitelist_row['subject'])
+      w.save()
 
   def db_is_empty(self):
     q = mn.models.IdNamespace.objects.all()

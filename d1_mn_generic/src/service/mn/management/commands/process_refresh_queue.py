@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,19 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`process_system_metadata_refresh_queue`
-============================================
 
-:Synopsis:
-  Iterate over queue of objects registered to have their System Metadata
-  refreshed and refresh them by pulling the latest version from a CN.
-:Created: 2011-11-8
-:Author: DataONE (Dahl)
+"""Iterate over queue of objects registered to have their System Metadata
+refreshed and refresh them by pulling the latest version from a CN.
 """
 
 # Stdlib.
-import fcntl
 import logging
 import os
 import sys
@@ -52,85 +45,69 @@ import d1_common.date_time
 import d1_common.url
 
 # App.
-import mn.models
-import mn.views.view_asserts
 import mn.auth
+import mn.models
 import mn.sysmeta_file
+import mn.views.view_asserts
+import util
 
-single_path_file = None
+single_lock_file = None
+
 
 class Command(django.core.management.base.BaseCommand):
   help = 'Process the System Metadata refresh queue.'
 
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--debug',
+      action='store_true',
+      default=False,
+      help='debug level logging',
+    )
+
   def handle(self, *args, **options):
-    verbosity = int(options.get('verbosity', 1))
-    self._log_setup(verbosity)
-    logging.debug('Running management command: process_system_metadata_refresh_queue')
-    self._abort_if_other_instance_is_running()
-    self._abort_if_stand_alone_instance()
+    util.log_setup(options['debug'])
+    logging.info(
+      u'Running management command: {}'.format(util.get_command_name())
+    )
+    util.abort_if_other_instance_is_running()
+    util.abort_if_stand_alone_instance()
     p = SysMetaRefresher()
     p.process_refresh_queue()
 
-  def _log_setup(self, verbosity):
-    # Set up logging. We output only to stdout. Instead of also writing to a log
-    # file, redirect stdout to a log file when the script is executed from cron.
-    formatter = logging.Formatter(
-      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
-    )
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
-    if verbosity >= 1:
-      logging.getLogger('').setLevel(logging.DEBUG)
-    else:
-      logging.getLogger('').setLevel(logging.INFO)
-
-  def _abort_if_other_instance_is_running(self):
-    global single_path_file
-    single_path = os.path.join(
-      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
-    )
-    single_path_file = open(single_path, 'w')
-    try:
-      fcntl.lockf(single_path_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
-      logging.info('Aborted: Another instance is still running')
-      exit(0)
-
-  def _abort_if_stand_alone_instance(self):
-    if settings.STAND_ALONE:
-      logging.info(
-        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
-      )
-      exit(0)
 
 #===============================================================================
 
 
 class SysMetaRefresher(object):
   def __init__(self):
-    self.logger = logging.getLogger(self.__class__.__name__)
     self.cn_client = self._create_cn_client()
 
   def process_refresh_queue(self):
-    q = mn.models.SystemMetadataRefreshQueue.objects.exclude(status__status='completed')
+    q = mn.models.SystemMetadataRefreshQueue.objects.exclude(
+      status__status='completed'
+    )
     if not len(q):
-      self.logger.debug('No System Metadata update requests to process')
+      logging.debug('No System Metadata update requests to process')
       return
     for task in q:
       self._process_refresh_task(task)
     self._remove_completed_tasks_from_queue()
 
   def _process_refresh_task(self, task):
-    self.logger.info('-' * 79)
-    self.logger.info(u'Processing PID: {}'.format(task.sciobj.pid))
+    logging.info('-' * 79)
+    logging.info(u'Processing PID: {}'.format(task.sciobj.pid))
     try:
       self._refresh(task)
     except d1_common.types.exceptions.DataONEException as e:
-      self.logger.exception(u'System Metadata update failed with DataONE Exception:')
+      logging.exception(
+        u'System Metadata update failed with DataONE Exception:'
+      )
       self._gmn_refresh_task_update(task, str(e))
     except (RefreshError, Exception, object) as e:
-      self.logger.exception(u'System Metadata update failed with internal exception:')
+      logging.exception(
+        u'System Metadata update failed with internal exception:'
+      )
       self._gmn_refresh_task_update(task, str(e))
     return True
 
@@ -147,19 +124,22 @@ class SysMetaRefresher(object):
     task.save()
 
   def _remove_completed_tasks_from_queue(self):
-    q = mn.models.SystemMetadataRefreshQueue.objects.filter(status__status='completed')
+    q = mn.models.SystemMetadataRefreshQueue.objects.filter(
+      status__status='completed'
+    )
     q.delete()
 
   def _create_cn_client(self):
     #return d1_client.mnclient.MemberNodeClient(base_url='http://127.0.0.1:8000')
     return d1_client.cnclient.CoordinatingNodeClient(
-      base_url=settings.DATAONE_ROOT,
-      cert_path=settings.CLIENT_CERT_PATH,
+      base_url=settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
       key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 
   def _get_system_metadata(self, task):
-    self.logger.debug(u'Calling CNRead.getSystemMetadata(pid={})'.format(task.sciobj.pid))
+    logging.debug(
+      u'Calling CNRead.getSystemMetadata(pid={})'.format(task.sciobj.pid)
+    )
     return self.cn_client.getSystemMetadata(task.sciobj.pid)
 
   def _update_sys_meta(self, sys_meta):
@@ -172,10 +152,12 @@ class SysMetaRefresher(object):
 
     # No sanity checking is done on the provided System Metadata. It comes
     # from a CN and is implicitly trusted.
-    sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+    sciobj = mn.models.ScienceObject.objects.get(pid__did=pid)
     sciobj.set_format(sys_meta.formatId)
     sciobj.checksum = sys_meta.checksum.value()
-    sciobj.checksum_algorithm = mn.models.checksum_algorithm(sys_meta.checksum.algorithm)
+    sciobj.checksum_algorithm = mn.models.checksum_algorithm(
+      sys_meta.checksum.algorithm
+    )
     sciobj.modified_timestamp = sys_meta.dateSysMetadataModified
     sciobj.size = sys_meta.size
     sciobj.serial_version = sys_meta.serialVersion
@@ -203,14 +185,18 @@ class SysMetaRefresher(object):
 
   def delete_completed_queue_items_from_db(self):
     mn.models.SystemMetadataRefreshQueue.objects.filter(
-      status__status='completed').delete()
+      status__status='completed'
+    ).delete()
 
   def _make_request_object(self):
     class Object(object):
       pass
 
     o = Object()
-    o.META = {'REMOTE_ADDR': 'systemMetadataChanged()', 'HTTP_USER_AGENT': 'N/A', }
+    o.META = {
+      'REMOTE_ADDR': 'systemMetadataChanged()',
+      'HTTP_USER_AGENT': 'N/A',
+    }
     return o
 
 # ==============================================================================
