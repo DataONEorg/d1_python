@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 import datetime
 import functools
 import logging
+import re
 
 # Django.
 from django.conf import settings
@@ -117,7 +118,7 @@ def update_sysmeta_with_mn_values(request, sysmeta_obj):
   sysmeta_obj.serialVersion = 1
 
 
-def create(request, sysmeta_obj, is_replica=False):
+def create(request, sysmeta_obj):
   """Create a new native object.
 
   Preconditions:
@@ -137,7 +138,7 @@ def create(request, sysmeta_obj, is_replica=False):
     pid = sysmeta_obj.identifier.value()
     url = u'file:///{}'.format(d1_common.url.encodePathElement(pid))
     _object_pid_post_store_local(request, pid)
-  mn.sysmeta.create(sysmeta_obj, url, is_replica)
+  mn.sysmeta.create(sysmeta_obj, url)
   # Log the create event for this object.
   mn.event_log.create(sysmeta_obj.identifier.value(), request)
 
@@ -167,8 +168,8 @@ def decode_id(f):
   # dispatcher. IMO, that's a bug and I'm working with Django devs to see if
   # this can be fixed. Update this accordingly.
   functools.wraps(f)
-  def wrap(request, sid_or_pid, *args, **kwargs):
-    return f(request, d1_common.url.decodeQueryElement(sid_or_pid),
+  def wrap(request, did, *args, **kwargs):
+    return f(request, d1_common.url.decodeQueryElement(did),
              *args, **kwargs)
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
@@ -182,35 +183,35 @@ def decode_id(f):
 
 def resolve_sid(f):
   """Decorator that adds SID resolve and PID validation to view handlers.
-  - For v1 calls, assume that {sid_or_pid} is a pid and raise NotFound exception
+  - For v1 calls, assume that {did} is a pid and raise NotFound exception
     if it's not valid.
   - For v2 calls, if pid_or_sid is a valid PID, return it. If not, try to
     resolve it as a SID and, if successful, return the new PID. Else, raise
     NotFound exception.
   """
   functools.wraps(f)
-  def wrap(request, sid_or_pid, *args, **kwargs):
-    pid = resolve_sid_func(request, sid_or_pid)
+  def wrap(request, did, *args, **kwargs):
+    pid = resolve_sid_func(request, did)
     return f(request, pid, *args, **kwargs)
   wrap.__doc__ = f.__doc__
   wrap.__name__ = f.__name__
   return wrap
 
 
-def resolve_sid_func(request, sid_or_pid):
+def resolve_sid_func(request, did):
     if is_v1_api(request):
-      view_asserts.is_pid(sid_or_pid)
-      return sid_or_pid
+      view_asserts.is_pid_of_existing_object(did)
+      return did
     elif is_v2_api(request):
-      if mn.sysmeta.is_pid(sid_or_pid):
-        return sid_or_pid
-      elif mn.sysmeta_sid.is_sid(sid_or_pid):
-        return mn.sysmeta_sid.resolve_sid(sid_or_pid)
+      if mn.sysmeta.is_pid(did):
+        return did
+      elif mn.sysmeta_sid.is_sid(did):
+        return mn.sysmeta_sid.resolve_sid(did)
       else:
         raise d1_common.types.exceptions.NotFound(
           0,
-          u'Unknown identifier. id="{}"'.format(sid_or_pid),
-          identifier=sid_or_pid
+          u'Unknown identifier. id="{}"'.format(did),
+          identifier=did
         )
     else:
       assert False, u'Unable to determine API version'
