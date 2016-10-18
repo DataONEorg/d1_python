@@ -30,6 +30,7 @@ Module d1_common.util
 import email.message
 import email.utils
 import hashlib
+import re
 import xml.dom.minidom
 
 # App.
@@ -48,7 +49,10 @@ def pretty_xml(xml_doc):
     xml_obj = xml.dom.minidom.parseString(xml_doc)
   except TypeError:
     xml_obj = xml.dom.minidom.parse(xml_doc)
-  return xml_obj.toprettyxml()
+  pretty_xml_str = xml_obj.toprettyxml(indent="  ")
+  # A bug in toprettyxml causes empty lines in the result.
+  return re.sub(r'^\s*$\n', '', pretty_xml_str, flags=re.MULTILINE)
+
 
 
 def get_content_type(content_type):
