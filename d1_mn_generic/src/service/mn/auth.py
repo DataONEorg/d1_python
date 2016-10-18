@@ -167,7 +167,7 @@ def is_allowed(request, level, pid):
   # - The permission must be for an action level that is the same or higher than
   # the requested action level.
   return mn.models.Permission.objects.filter(
-    sciobj__pid__sid_or_pid=pid,
+    sciobj__pid__did=pid,
     subject__subject__in=request.subjects,
     level__gte=level
   ).exists()
@@ -196,7 +196,7 @@ def assert_allowed(request, level, pid):
   Raise NotFound if object does not exist.
   Return NoneType if subject is allowed.
   """
-  if not mn.models.ScienceObject.objects.filter(pid__sid_or_pid=pid).exists():
+  if not mn.models.ScienceObject.objects.filter(pid__did=pid).exists():
     raise d1_common.types.exceptions.NotFound(
       0,
       u'Attempted to perform operation on non-existing object. pid="{}"'.format(pid)

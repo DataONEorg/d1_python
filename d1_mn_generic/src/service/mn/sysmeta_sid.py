@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,9 +48,9 @@ import mn.util
 import sysmeta_util
 
 
-def is_sid(sid_or_pid):
+def is_sid(did):
   return mn.models.SeriesIdToScienceObject.objects.filter(
-    sid__sid_or_pid=sid_or_pid
+    sid__did=did
   ).exists()
 
 
@@ -93,8 +93,8 @@ def resolve_sid(sid):
   - {sid} is verified to exist. E.g., with view_asserts.is_sid().
   """
   return mn.models.SeriesIdToScienceObject.objects.get(
-    sid__sid_or_pid=sid
-  ).sciobj.pid.sid_or_pid
+    sid__did=sid
+  ).sciobj.pid.did
 
 
 def get_sid_by_pid(pid):
@@ -107,8 +107,8 @@ def get_sid_by_pid(pid):
   """
   try:
     return mn.models.SeriesIdToScienceObject.objects.get(
-    sciobj__pid__sid_or_pid=pid
-  ).sid.sid_or_pid
+    sciobj__pid__did=pid
+  ).sid.did
   except mn.models.SeriesIdToScienceObject.DoesNotExist:
     return None
 
@@ -120,13 +120,13 @@ def _create_sid(sid, sci_row):
   """Create a new {sid} that resolves to {sci_row}."""
   sid_row = mn.models.SeriesIdToScienceObject()
   sid_row.sciobj = sci_row
-  sid_row.sid = mn.models.sid_or_pid(sid)
+  sid_row.sid = mn.models.did(sid)
   sid_row.save()
 
 
 def _update_sid(sid, sci_row):
   """Change an existing {sid} to resolve to {sci_row}"""
-  sid_row = mn.models.SeriesIdToScienceObject.objects.get(sid__sid_or_pid=sid)
+  sid_row = mn.models.SeriesIdToScienceObject.objects.get(sid__did=sid)
   sid_row.sciobj = sci_row
   sid_row.save()
 

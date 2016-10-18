@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ class ViewHandler(object):
     # possible by providing a complete certificate.
 
     # Handle complete certificate in vendor specific extension.
-    if settings.GMN_DEBUG:
+    if settings.DEBUG_GMN:
       if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
         request.META['SSL_CLIENT_CERT'] = \
           self.pem_in_http_header_to_pem_in_string(
@@ -69,7 +69,7 @@ class ViewHandler(object):
     session.process_session(request)
 
     # Handle list of subjects in vendor specific extension:
-    if settings.GMN_DEBUG:
+    if settings.DEBUG_GMN:
       # If this is used together with TLS, the list is added to the one derived
       # from any included client side certificate. The public symbolic principal
       # is always included in the subject list.

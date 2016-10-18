@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,8 +31,9 @@ import django.test
 import d1_common.util
 
 # App
-import mn.sysmeta
 import mn.models
+import mn.sysmeta
+import mn.sysmeta_replica
 import mn.sysmeta_util
 import util
 
@@ -49,7 +50,6 @@ class TestSysMeta(django.test.TestCase):
     sciobj_model.checksum_algorithm = mn.models.checksum_algorithm('SHA-1')
     sciobj_model.format = mn.models.format('test')
     sciobj_model.is_archived = False
-    sciobj_model.is_replica = False
     sciobj_model.modified_timestamp = datetime.datetime.now()
     sciobj_model.uploaded_timestamp = datetime.datetime.now()
     sciobj_model.pid = mn.sysmeta_util.create_id_row('test')
@@ -99,7 +99,6 @@ class TestSysMeta(django.test.TestCase):
       sciobj_model,
       orig_sysmeta_pyxb,
       url='file://test',
-      is_replica_bool=False
     )
     gen_sciobj_pyxb = mn.sysmeta._base_model_to_pyxb(sciobj_model)
 
@@ -178,8 +177,8 @@ class TestSysMeta(django.test.TestCase):
   def test_300(self):
     orig_sysmeta_pyxb = util.read_test_xml('sysmeta_v2_0_sample.xml')
     sciobj_model = self._create_sci_obj_base()
-    mn.sysmeta._replica_pyxb_to_model(sciobj_model, orig_sysmeta_pyxb)
-    gen_replica_pyxb_list = mn.sysmeta._replica_model_to_pyxb(
+    mn.sysmeta_replica.replica_pyxb_to_model(sciobj_model, orig_sysmeta_pyxb)
+    gen_replica_pyxb_list = mn.sysmeta_replica.replica_model_to_pyxb(
       sciobj_model
     )
     self.assertEqual(len(gen_replica_pyxb_list), 2)

@@ -46,7 +46,7 @@ def _log(pid, request, event, timestamp=None):
   object_row = None
   if pid is not None:
     try:
-      object_row = models.ScienceObject.objects.filter(pid__sid_or_pid=pid)[0]
+      object_row = models.ScienceObject.objects.filter(pid__did=pid)[0]
     except IndexError:
       err_msg = u'Attempted to create event log for non-existing object. pid="{}"'\
         .format((pid))

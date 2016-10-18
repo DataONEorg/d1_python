@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +25,11 @@
 :Synopsis: Database models.
 :Author: DataONE (Dahl)
 """
+
+# Stdlib
+import datetime
+
+# Django
 from django.db import models
 
 # D1
@@ -36,12 +41,16 @@ import d1_common.types.exceptions
 # - Index on ForeignKey
 # - Index on unique=True
 
+# Any information we need to keep about a PID without having a native object
+# is related directly to IdNamespace. The remaining information is related
+# to ScienceObject. A ScienceObject is a replica if there is a LocalReplica
+# related to its PID in IdNamespace.
 
 class IdNamespace(models.Model):
-  sid_or_pid = models.CharField(max_length=800, unique=True)
+  did = models.CharField(max_length=800, unique=True)
 
-def sid_or_pid(id_str):
-  return IdNamespace.objects.get_or_create(sid_or_pid=id_str)[0]
+def did(id_str):
+  return IdNamespace.objects.get_or_create(did=id_str)[0]
 
 # ------------------------------------------------------------------------------
 # DataONE Node
@@ -98,8 +107,7 @@ def format(format_str):
 
 
 class ScienceObject(models.Model):
-  # System Metadata fields
-  pid = models.ForeignKey(IdNamespace, models.CASCADE)
+  pid = models.OneToOneField(IdNamespace, models.CASCADE)
   serial_version = models.PositiveIntegerField()
   modified_timestamp = models.DateTimeField(db_index=True)
   uploaded_timestamp = models.DateTimeField(db_index=True)
@@ -125,26 +133,121 @@ class ScienceObject(models.Model):
     Node, models.CASCADE,
     related_name='%(class)s_authoritative_member_node'
   )
-  # TODO: Due to this change, can't find if PID is in use only by checking IdNamespace
-  # obsoletes = models.ForeignKey(
-  #   'self', models.CASCADE, null=True, related_name='science_object_obsoletes'
-  # )
-  # obsoleted_by = models.ForeignKey(
-  #   'self', models.CASCADE, null=True,
-  #   related_name='science_object_obsoleted_by'
-  # )
-  obsoletes = models.ForeignKey(
+  obsoletes = models.OneToOneField(
     IdNamespace, models.CASCADE, null=True,
     related_name='%(class)s_obsoletes'
   )
-  obsoleted_by = models.ForeignKey(
+  obsoleted_by = models.OneToOneField(
     IdNamespace, models.CASCADE, null=True,
     related_name='%(class)s_obsoleted_by'
   )
   is_archived = models.BooleanField(db_index=True)
   # Internal fields (not used in System Metadata)
   url = models.CharField(max_length=1024, unique=True)
-  is_replica = models.BooleanField(db_index=True)
+
+# ------------------------------------------------------------------------------
+# Replicas
+# ------------------------------------------------------------------------------
+
+# Reserve PIDs in the local identifier namespace for objects referenced in the
+# obsoletes and obsoletedBy fields by replicas.
+
+class ReplicaObsolescenceChainReference(models.Model):
+  pid = models.OneToOneField(IdNamespace, models.CASCADE)
+
+
+class ReplicaStatus(models.Model):
+  status = models.CharField(max_length=16, unique=True)
+
+
+def replica_status(status_str):
+  assert status_str in ['queued', 'requested', 'completed', 'failed', 'invalidated'], \
+    u'Invalid replication status. status="{}"'.format(status_str)
+  return ReplicaStatus.objects.get_or_create(
+    status=status_str
+  )[0]
+
+
+class ReplicaInfo(models.Model):
+  status = models.ForeignKey(ReplicaStatus, models.CASCADE)
+  member_node = models.ForeignKey(Node, models.CASCADE)
+  timestamp = models.DateTimeField(db_index=True, null=True)
+
+
+def replica_info(status_str, source_node_urn, timestamp=None):
+    replica_info_model = ReplicaInfo(
+      status=replica_status(status_str),
+      member_node=node(source_node_urn),
+      timestamp=timestamp or datetime.datetime.now(),
+    )
+    replica_info_model.save()
+    return replica_info_model
+
+
+def update_replica_status(replica_info_model, status_str, timestamp=None):
+  replica_info_model.status = replica_status(status_str)
+  replica_info_model.timestamp = timestamp or datetime.datetime.now()
+  replica_info_model.save()
+
+
+class LocalReplica(models.Model):
+  # Relate directly to IdNamespace because tracking of local replicas starts
+  # before there is a local object (when the replica is first requested by the
+  # CN).
+  pid = models.OneToOneField(IdNamespace, models.CASCADE)
+  info = models.OneToOneField(ReplicaInfo, models.CASCADE)
+
+
+def local_replica(pid, replica_info_model):
+  local_replica_model = LocalReplica(
+    pid=did(pid),
+    info=replica_info_model,
+  )
+  local_replica_model.save()
+  return local_replica_model
+
+
+class ReplicationQueue(models.Model):
+  local_replica = models.OneToOneField(LocalReplica, models.CASCADE)
+  # A copy of the size of replicas is kept here, so that total size restriction
+  # for all replicas can be enforced at the time when replicas are accepted and
+  # do not yet have any local system metadata.
+  size = models.BigIntegerField(db_index=True)
+  # Keep track of the number of attempts that have been made to complete the
+  # replication request in order to stop retrying after some time.
+  replication_attempts = models.PositiveSmallIntegerField()
+
+
+def replication_queue(local_replica_model, size):
+  replication_queue_model = ReplicationQueue(
+    local_replica=local_replica_model,
+    size=size,
+    replication_attempts=0,
+  )
+  replication_queue_model.save()
+  return replication_queue_model
+
+
+# <replica xmlns="">
+#     <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
+#     <replicationStatus>queued</replicationStatus>
+#     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
+# </replica>
+
+class RemoteReplica(models.Model):
+  # Relate to ScienceObject because tracking of remote replicas is only done for
+  # existing local objects. The local sciobj may itself be a replica and may
+  # have multiple replicas (ForeignKey, not OneToOneField).
+  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  info = models.OneToOneField(ReplicaInfo, models.CASCADE)
+
+def remote_replica(sciobj_model, replica_info_model):
+  remote_replica_model = RemoteReplica(
+    sciobj=sciobj_model,
+    info=replica_info_model,
+  )
+  remote_replica_model.save()
+  return remote_replica_model
 
 
 # ------------------------------------------------------------------------------
@@ -153,8 +256,12 @@ class ScienceObject(models.Model):
 
 
 class SeriesIdToScienceObject(models.Model):
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  sid = models.ForeignKey(IdNamespace, models.CASCADE)
+  # Relate to ScienceObject because SID mapping is only done for existing local
+  # objects. OneToOneField because a SID can only resolve to a single object and
+  # an object can only have one SID resolving to it.
+  sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
+  sid = models.OneToOneField(IdNamespace, models.CASCADE)
+
 
 # ------------------------------------------------------------------------------
 # Access Log
@@ -171,7 +278,7 @@ def event(event_str):
   # remains the case.
   assert event_str in ['create', 'read', 'update', 'delete', 'replicate',
                        'synchronization_failed', 'replication_failed'], \
-    u'Invalid event type. event="{}'
+    u'Invalid event type. event="{}"'.format(event_str)
   return Event.objects.get_or_create(event=event_str)[0]
 
 
@@ -192,31 +299,15 @@ def user_agent(user_agent_str):
 
 
 class EventLog(models.Model):
+  # Relate to ScienceObject because events are only recorded and kept for
+  # existing native objects. The spec currently does not define if events should
+  # be kept for objects after they are deleted.
   sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
   event = models.ForeignKey(Event, models.CASCADE)
   ip_address = models.ForeignKey(IpAddress, models.CASCADE)
   user_agent = models.ForeignKey(UserAgent, models.CASCADE)
   subject = models.ForeignKey(Subject, models.CASCADE)
   timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
-
-# ------------------------------------------------------------------------------
-# Science Object replication work queue
-# ------------------------------------------------------------------------------
-
-
-class ReplicationQueueStatus(models.Model):
-  status = models.CharField(max_length=1024, unique=True)
-
-
-def replication_queue_status(status_str):
-  return ReplicationQueueStatus.objects.get_or_create(status=status_str)[0]
-
-
-class ReplicationQueue(models.Model):
-  pid = models.ForeignKey(IdNamespace, models.CASCADE)
-  status = models.ForeignKey(ReplicationQueueStatus, models.CASCADE)
-  source_node = models.ForeignKey(Node, models.CASCADE)
-  timestamp = models.DateTimeField(auto_now=True)
 
 # ------------------------------------------------------------------------------
 # System Metadata refresh queue
@@ -234,21 +325,25 @@ def sysmeta_refresh_status(status_str):
 
 
 class SystemMetadataRefreshQueue(models.Model):
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  timestamp = models.DateTimeField(auto_now=True)
-  serial_version = models.PositiveIntegerField()
-  modified_timestamp = models.DateTimeField()
+  # Relate to ScienceObject because system metadata can only be refreshed on
+  # are only recorded and kept for existing native objects.
+  sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
   status = models.ForeignKey(SystemMetadataRefreshQueueStatus, models.CASCADE)
+  serial_version = models.PositiveIntegerField()
+  timestamp = models.DateTimeField(auto_now=True)
+  sysmeta_timestamp = models.DateTimeField()
 
 
-def sysmeta_refresh_queue(pid, serial_version, modified_timestamp, status_model):
-  sciobj_model = ScienceObject.objects.get(pid__sid_or_pid=pid)
-  return SystemMetadataRefreshQueue.objects.get_or_create(
-    sciobj=sciobj_model,
-    serial_version=serial_version,
-    modified_timestamp=modified_timestamp,
-    status=status_model,
-  )
+def sysmeta_refresh_queue(pid, serial_version, sysmeta_timestamp, status):
+  q = SystemMetadataRefreshQueue.objects.get_or_create(
+    sciobj=ScienceObject.objects.get(pid__did=pid),
+    defaults={
+      'serial_version': serial_version,
+      'sysmeta_timestamp': sysmeta_timestamp,
+      'status': sysmeta_refresh_status(status),
+    }
+  )[0]
+  return q
 
 # ------------------------------------------------------------------------------
 # Access Control
@@ -262,7 +357,12 @@ class Permission(models.Model):
 
 
 class WhitelistForCreateUpdateDelete(models.Model):
-  subject = models.ForeignKey(Subject, models.CASCADE)
+  subject = models.OneToOneField(Subject, models.CASCADE)
+
+def whitelist_for_create_update_delete(subject_str):
+  WhitelistForCreateUpdateDelete(
+    subject=subject(subject_str)
+  ).save()
 
 # ------------------------------------------------------------------------------
 # Replication Policy
@@ -277,9 +377,9 @@ class WhitelistForCreateUpdateDelete(models.Model):
 
 
 class ReplicationPolicy(models.Model):
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
+  sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
   replication_is_allowed = models.BooleanField(db_index=True)
-  desired_number_of_replicas = models.PositiveIntegerField()
+  desired_number_of_replicas = models.PositiveSmallIntegerField()
 
 
 class PreferredMemberNode(models.Model):
@@ -291,31 +391,3 @@ class BlockedMemberNode(models.Model):
   node = models.ForeignKey(Node, models.CASCADE)
   replication_policy = models.ForeignKey(ReplicationPolicy, models.CASCADE)
 
-
-# ------------------------------------------------------------------------------
-# Replica
-# ------------------------------------------------------------------------------
-
-# <replica xmlns="">
-#     <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
-#     <replicationStatus>queued</replicationStatus>
-#     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
-# </replica>
-
-class ReplicaStatus(models.Model):
-  status = models.CharField(max_length=16, unique=True)
-
-
-def replica_status(status_str):
-  assert status_str in ['queued', 'requested', 'completed', 'failed', 'invalidated'], \
-    u'Invalid replication status. status="{}"'.format(status_str)
-  return ReplicaStatus.objects.get_or_create(
-    status=status_str
-  )[0]
-
-
-class Replica(models.Model):
-  sciobj = models.ForeignKey(ScienceObject, models.CASCADE)
-  member_node = models.ForeignKey(Node, models.CASCADE)
-  status = models.ForeignKey(ReplicaStatus, models.CASCADE)
-  verified_timestamp = models.DateTimeField(db_index=True, null=True)

@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,14 +64,14 @@ class ResponseHandler(object):
         type(view_result), str(view_result)
       )
     self._debug_mode_responses(request, response)
-    # if settings.GMN_DEBUG:
+    # if settings.DEBUG_GMN:
     #   self._assert_correct_return_type(request, response)
     return response
 
   def _debug_mode_responses(self, request, response):
     """Extra functionality available in debug mode.
     """
-    if settings.GMN_DEBUG:
+    if settings.DEBUG_GMN:
       # If pretty printed output was requested, force the content type to text.
       # This causes the browser to not try to format the output in any way.
       if 'pretty' in request.GET:
@@ -108,7 +108,7 @@ class ResponseHandler(object):
     objectList = mn.views.view_util.dataoneTypes(request).objectList()
     for row in db_query:
       objectInfo = mn.views.view_util.dataoneTypes(request).ObjectInfo()
-      objectInfo.identifier = row.pid.sid_or_pid
+      objectInfo.identifier = row.pid.did
       objectInfo.formatId = row.format.format
       checksum = mn.views.view_util.dataoneTypes(request).Checksum(row.checksum)
       checksum.algorithm = row.checksum_algorithm.checksum_algorithm
@@ -128,7 +128,7 @@ class ResponseHandler(object):
     for row in db_query:
       logEntry = mn.views.view_util.dataoneTypes(request).LogEntry()
       logEntry.entryId = str(row.id)
-      logEntry.identifier = row.sciobj.pid.sid_or_pid
+      logEntry.identifier = row.sciobj.pid.did
       logEntry.ipAddress = row.ip_address.ip_address
       logEntry.userAgent = row.user_agent.user_agent
       logEntry.subject = row.subject.subject

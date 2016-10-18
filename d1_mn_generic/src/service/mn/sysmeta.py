@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import mn.models
 import mn.util
 import pyxb
 import sysmeta_obsolescence
+import sysmeta_replica
 import sysmeta_sid
 import sysmeta_util
 
@@ -93,16 +94,14 @@ def serialize(sysmeta_obj):
 
 # ------------------------------------------------------------------------------
 
-def create(sysmeta_obj, url, is_replica_bool=False):
+def create(sysmeta_obj, url):
   """Create database representation of a System Metadata object and closely
   related internal state.
 
   Preconditions:
-  - PID is verified not to exist as a PID, SID or object accepted for
-  replication. E.g., with view_asserts.is_unused(pid).
+  - PID is verified not to exist. E.g., with view_asserts.is_unused(pid).
   - Any supplied SID is verified to be valid for the given operation. E.g., with
-  view_asserts.is_valid_sid_for_chain_if_specified() or
-  view_asserts.is_unused().
+  view_asserts.is_valid_sid_for_chain_if_specified().
 
   Postconditions:
   - New rows are created in ScienceObject, Permission and related tables as
@@ -119,8 +118,8 @@ def create(sysmeta_obj, url, is_replica_bool=False):
   """
   pid = sysmeta_obj.identifier.value()
   sci_row = mn.models.ScienceObject()
-  sci_row.pid = mn.models.sid_or_pid(pid)
-  _base_pyxb_to_model(sci_row, sysmeta_obj, url, is_replica_bool)
+  sci_row.pid = mn.models.did(pid)
+  _base_pyxb_to_model(sci_row, sysmeta_obj, url)
   sci_row.save()
   _access_policy_pyxb_to_model(sci_row, sysmeta_obj)
   # _update_obsolescence_chain(sci_row, sysmeta_obj)
@@ -128,21 +127,21 @@ def create(sysmeta_obj, url, is_replica_bool=False):
   # _update_modified_timestamp(sci_row, sysmeta_obj)
 
 
-def update(sysmeta_obj, url=None, is_replica_bool=None):
+def update(sysmeta_obj, url=None):
   """Update database representation of a System Metadata object. The System
   Metadata must already be verified to be correct and suitable for the
   operation which is being performed.
   """
   pid = sysmeta_obj.identifier.value()
   sci_row = sysmeta_util.get_sci_row(pid)
-  _base_pyxb_to_model(sci_row, sysmeta_obj, url=url, is_replica_bool=is_replica_bool)
+  _base_pyxb_to_model(sci_row, sysmeta_obj, url=url)
   _access_policy_pyxb_to_model(sci_row, sysmeta_obj)
 
 
-def update_sci_row(sysmeta_obj, url=None, is_replica_bool=None):
+def update_sci_row(sysmeta_obj, url=None):
   pid = sysmeta_obj.identifier.value()
   sci_row = sysmeta_util.get_sci_row(pid)
-  _base_pyxb_to_model(sci_row, sysmeta_obj, url=url, is_replica_bool=is_replica_bool)
+  _base_pyxb_to_model(sci_row, sysmeta_obj, url=url)
 
 
 def update_access_policy(sysmeta_obj):
@@ -151,30 +150,30 @@ def update_access_policy(sysmeta_obj):
   _access_policy_pyxb_to_model(sci_row, sysmeta_obj)
 
 
-def is_identifier(sid_or_pid):
-  return mn.models.IdNamespace.objects.filter(sid_or_pid=sid_or_pid).exists()
+def is_did(did):
+  return mn.models.IdNamespace.objects.filter(
+    did=did).exists()
 
 
-def is_pid(sid_or_pid):
-  return is_pid_of_existing_object(sid_or_pid) or is_pid_in_replication_queue(sid_or_pid)
+def is_pid(did):
+  """An identifier is a PID if it exists in IdNamespace and is not a SID.
+  Includes unprocessed replicas and obsolescence chain placeholders for remote
+  objects.
+  """
+  return is_did(did) and not mn.sysmeta_sid.is_sid(did)
 
 
-def is_pid_of_existing_object(sid_or_pid):
+def is_pid_of_existing_object(pid):
+  """Excludes SIDs, unprocessed replicas and obsolescence chain placeholders for
+  remote objects.
+  """
   return mn.models.ScienceObject.objects.filter(
-    pid__sid_or_pid=sid_or_pid).exists()
-
-
-def is_pid_in_replication_queue(sid_or_pid):
-  return mn.models.ReplicationQueue.objects.filter(
-    pid__sid_or_pid=sid_or_pid).exists()
-
-
-def is_replica(pid):
-  return sysmeta_util.get_sci_row(pid).is_replica
+    pid__did=pid).exists()
 
 
 def is_archived(pid):
-  return sysmeta_util.get_sci_row(pid).is_archived
+  return is_pid_of_existing_object(pid) \
+         and sysmeta_util.get_sci_row(pid).is_archived
 
 
 def update_modified_timestamp(pid):
@@ -182,12 +181,29 @@ def update_modified_timestamp(pid):
   _update_modified_timestamp(sci_row)
 
 
-def pyxb_to_model(sysmeta_obj, url=None, is_replica_bool=None):
-  return _pyxb_to_model(sysmeta_obj, url, is_replica_bool)
+def pyxb_to_model(sysmeta_obj, url=None):
+  return _pyxb_to_model(sysmeta_obj, url)
 
 
 def model_to_pyxb(pid):
   return _model_to_pyxb(pid)
+
+
+def get_identifier_type(did):
+  if not mn.sysmeta.is_did(did):
+    return u'unused on this Member Node'
+  elif mn.sysmeta_sid.is_sid(did):
+    return u'a Series ID (SID)'
+  elif mn.sysmeta.is_pid_of_existing_object(did):
+    return u'a Persistent ID (PID) of an existing local object'
+  elif mn.sysmeta_re.is_local_replica(did):
+    return u'a Persistent ID (PID) of a local replica'
+  elif mn.sysmeta.is_obsolescence_chain_placeholder(did):
+    return \
+      u'a Persistent ID (PID) that is reserved due to being referenced in ' \
+      u'the obsolescence chain of a local replica'
+  else:
+    assert False, u'Unable to classify identifier'
 
 #
 # Private
@@ -199,7 +215,7 @@ def model_to_pyxb(pid):
 # _update_modified_timestamp(sci_row, sysmeta_obj)
 
 
-def _pyxb_to_model(sysmeta_obj, url=None, is_replica_bool=None):
+def _pyxb_to_model(sysmeta_obj, url=None):
   # Depends on Django's implicit view transactions (ATOMIC_REQUESTS).
   sciobj_model = sysmeta_util.get_sci_row(sysmeta_obj.identifier.value())
   _base_pyxb_to_model(sciobj_model, sysmeta_obj, url, is_replica_bool)
@@ -218,11 +234,11 @@ def _model_to_pyxb(pid):
     sysmeta_obj.accessPolicy = access_policy_pyxb
   if _has_replication_policy(sciobj_model):
     sysmeta_obj.replicationPolicy = _replication_policy_model_to_pyxb(sciobj_model)
-  sysmeta_obj.replica = _replica_model_to_pyxb(sciobj_model)
+  sysmeta_obj.replica = sysmeta_replica.replica_model_to_pyxb(sciobj_model)
   return sysmeta_obj
 
 
-def _base_pyxb_to_model(sci_row, sysmeta_obj, url=None, is_replica_bool=None):
+def _base_pyxb_to_model(sci_row, sysmeta_obj, url=None):
   # The PID is used for looking up the sci_row so will always match and does
   # need to be updated.
   #
@@ -255,18 +271,15 @@ def _base_pyxb_to_model(sci_row, sysmeta_obj, url=None, is_replica_bool=None):
   # Internal fields
   if url is not None:
     sci_row.url = url
-  if is_replica_bool is not None:
-    sci_row.is_replica = is_replica_bool
-
 
 def _base_model_to_pyxb(sciobj_model):
   def sub_sciobj(sub_sciobj_model):
     if sub_sciobj_model is None:
       return None
-    return sub_sciobj_model.sid_or_pid
+    return sub_sciobj_model.did
 
   base_pyxb = d1_common.types.dataoneTypes.systemMetadata()
-  base_pyxb.identifier = d1_common.types.dataoneTypes.Identifier(sciobj_model.pid.sid_or_pid)
+  base_pyxb.identifier = d1_common.types.dataoneTypes.Identifier(sciobj_model.pid.did)
   base_pyxb.serialVersion = sciobj_model.serial_version
   base_pyxb.dateSysMetadataModified = sciobj_model.modified_timestamp
   base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
@@ -281,7 +294,7 @@ def _base_model_to_pyxb(sciobj_model):
   base_pyxb.obsoletes = sub_sciobj(sciobj_model.obsoletes)
   base_pyxb.obsoletedBy = sub_sciobj(sciobj_model.obsoleted_by)
   base_pyxb.archived = sciobj_model.is_archived
-  base_pyxb.seriesId = sysmeta_sid.get_sid_by_pid(sciobj_model.pid.sid_or_pid)
+  base_pyxb.seriesId = sysmeta_sid.get_sid_by_pid(sciobj_model.pid.did)
 
   return base_pyxb
 
@@ -315,7 +328,7 @@ def _access_policy_pyxb_to_model(sci_row, sysmeta_obj):
       level.
   """
   mn.models.Permission.objects.filter(
-    sciobj__pid__sid_or_pid=sysmeta_obj.identifier.value()
+    sciobj__pid__did=sysmeta_obj.identifier.value()
   ).delete()
 
   # Add an implicit allow rule with all permissions for the rights holder.
@@ -423,36 +436,6 @@ def _replication_policy_model_to_pyxb(sciobj_model):
   add(replication_policy_pyxb.blockedMemberNode, mn.models.BlockedMemberNode)
 
   return replication_policy_pyxb
-
-# ------------------------------------------------------------------------------
-# Replica
-# ------------------------------------------------------------------------------
-
-# <replica xmlns="">
-#     <replicaMemberNode>replicaMemberNode0</replicaMemberNode>
-#     <replicationStatus>queued</replicationStatus>
-#     <replicaVerified>2006-05-04T18:13:51.0</replicaVerified>
-# </replica>
-
-def _replica_pyxb_to_model(sciobj_model, sysmeta_obj):
-  for replica_pyxb in sysmeta_obj.replica:
-    replica_model = mn.models.Replica()
-    replica_model.sciobj = sciobj_model
-    replica_model.member_node = mn.models.node(replica_pyxb.replicaMemberNode.value())
-    replica_model.status = mn.models.replica_status(replica_pyxb.replicationStatus)
-    replica_model.verified_timestamp = replica_pyxb.replicaVerified
-    replica_model.save()
-
-
-def _replica_model_to_pyxb(sciobj_model):
-  replica_pyxb_list = []
-  for replica_model in mn.models.Replica.objects.filter(sciobj=sciobj_model):
-    replica_pyxb = d1_common.types.dataoneTypes.Replica()
-    replica_pyxb.replicaMemberNode = replica_model.member_node.urn
-    replica_pyxb.replicationStatus = replica_model.status.status
-    replica_pyxb.replicaVerified = replica_model.verified_timestamp
-    replica_pyxb_list.append(replica_pyxb)
-  return replica_pyxb_list
 
 
 def _update_modified_timestamp(sci_row):

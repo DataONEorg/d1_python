@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,37 +53,37 @@ urlpatterns = [
   url(r'^v[12]/node/?$', mn.views.external.get_node),
 
   # Tier 1: Read API (MNRead)
-  # MNRead.get() - GET /object/{sid_or_pid}
+  # MNRead.get() - GET /object/{did}
   url(r'^v[12]/object/(.+)$', mn.views.external.dispatch_object),
-  # MNRead.getSystemMetadata() - GET /meta/{sid_or_pid}
+  # MNRead.getSystemMetadata() - GET /meta/{did}
   url(r'^v[12]/meta/(.+)$', mn.views.external.get_meta),
-  # MNRead.describe() - HEAD /object/{sid_or_pid}
+  # MNRead.describe() - HEAD /object/{did}
   # (handled by object dispatcher)
-  # MNRead.getChecksum() - GET /checksum/{sid_or_pid}
+  # MNRead.getChecksum() - GET /checksum/{did}
   url(r'^v[12]/checksum/(.+)$', mn.views.external.get_checksum),
   # MNRead.listObjects() - GET /object
   url(r'^v[12]/object/?$', mn.views.external.dispatch_object_list),
   # MNRead.synchronizationFailed() - POST /error
   url(r'^v[12]/error/?$', mn.views.external.post_error),
-  # MNRead.getReplica() - GET /replica/{sid_or_pid}
+  # MNRead.getReplica() - GET /replica/{did}
   url(r'^v[12]/replica/(.+)/?$', mn.views.external.get_replica),
 
   # Tier 2: Authorization API  (MNAuthorization)
-  # MNAuthorization.isAuthorized() - GET /isAuthorized/{sid_or_pid}
+  # MNAuthorization.isAuthorized() - GET /isAuthorized/{did}
   url(r'^v[12]/isAuthorized/(.+)/?$', mn.views.external.get_is_authorized),
-  # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{sid_or_pid}
+  # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{did}
   url(r'^v[12]/dirtySystemMetadata/?$', mn.views.external.post_refresh_system_metadata),
 
   # Tier 3: Storage API (MNStorage)
   # MNStorage.create() - POST /object
   # (handled by object dispatcher)
-  # MNStorage.update() - PUT /object/{sid_or_pid}
+  # MNStorage.update() - PUT /object/{did}
   # (handled by object dispatcher)
   # MNStorage.generateIdentifier()
   url(r'^v[12]/generate/?$', mn.views.external.post_generate_identifier),
-  # MNStorage.delete() - DELETE /object/{sid_or_pid}
+  # MNStorage.delete() - DELETE /object/{did}
   # (handled by object dispatcher)
-  # MNStorage.archive() - PUT /archive/{sid_or_pid}
+  # MNStorage.archive() - PUT /archive/{did}
   url(r'^v[12]/archive/(.+)/?$', mn.views.external.put_archive),
 
   # Tier 4: Replication API (MNReplication)
@@ -97,7 +97,7 @@ urlpatterns.extend([
 
 # Diagnostic APIs that can be made available in production.
 
-if settings.GMN_DEBUG or settings.MONITOR:
+if settings.DEBUG_GMN or settings.MONITOR:
   urlpatterns.extend([
     # Replication.
     url(r'^diag/get_replication_queue/?$', mn.views.diagnostics.get_replication_queue),
@@ -110,7 +110,7 @@ if settings.GMN_DEBUG or settings.MONITOR:
 
 # Diagnostic APIs that should only be available in debug mode.
 
-if settings.GMN_DEBUG:
+if settings.DEBUG_GMN:
   urlpatterns.extend([
     # Diagnostics portal.
     url(r'^diag$', mn.views.diagnostics.diagnostics),

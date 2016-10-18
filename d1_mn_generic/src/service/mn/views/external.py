@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import uuid
 # Django.
 import django.core.cache
 import mn.sysmeta_util
-from django.db.models import Sum
 from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
 from django.conf import settings
 
@@ -64,6 +63,7 @@ import mn.psycopg_adapter
 import mn.restrict_to_verb
 import mn.sysmeta
 import mn.sysmeta_obsolescence
+import mn.sysmeta_replica
 import mn.sysmeta_sid
 import mn.sysmeta_validate
 import mn.util
@@ -81,15 +81,15 @@ OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 # ==============================================================================
 
 
-def dispatch_object(request, sid_or_pid):
+def dispatch_object(request, did):
   if request.method == 'GET':
-    return get_object(request, sid_or_pid)
+    return get_object(request, did)
   elif request.method == 'HEAD':
-    return head_object(request, sid_or_pid)
+    return head_object(request, did)
   elif request.method == 'PUT':
-    return put_object(request, sid_or_pid)
+    return put_object(request, did)
   elif request.method == 'DELETE':
-    return delete_object(request, sid_or_pid)
+    return delete_object(request, did)
   else:
     return HttpResponseNotAllowed(['GET', 'HEAD', 'POST', 'PUT', 'DELETE'])
 
@@ -151,11 +151,11 @@ def get_log(request):
     id_filter_str = 'idFilter'
   else:
     assert False, u'Unable to determine API version'
-  # sid_or_pid = request.GET.get('idFilter', None)
-  # if sid_or_pid is not None:
-  #   request.GET[id_filter_str] = mn.views.view_asserts.resolve_sid_func(sid_or_pid)
+  # did = request.GET.get('idFilter', None)
+  # if did is not None:
+  #   request.GET[id_filter_str] = mn.views.view_asserts.resolve_sid_func(did)
   query = mn.db_filter.add_string_begins_with_filter(
-    query, request, 'sciobj__pid__sid_or_pid', id_filter_str
+    query, request, 'sciobj__pid__did', id_filter_str
   )
   query_unsliced = query
   query, start, count = mn.db_filter.add_slice_filter(query, request)
@@ -208,9 +208,9 @@ def _add_object_properties_to_response_header(response, sciobj):
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def get_object(request, pid):
-  """MNRead.get(session, sid_or_pid) → OctetStream
+  """MNRead.get(session, did) → OctetStream
   """
-  sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid__did=pid)
   content_type_str = _content_type_from_format(sciobj.format.format)
   response = StreamingHttpResponse(
     _get_sciobj_stream(sciobj),
@@ -232,7 +232,7 @@ def _get_sciobj_stream(sciobj):
   if is_wrapped_remote(sciobj.url):
     return _get_sciobj_stream_remote(sciobj.url)
   else:
-    return _get_sciobj_stream_local(sciobj.pid.sid_or_pid)
+    return _get_sciobj_stream_local(sciobj.pid.did)
 
 
 def is_wrapped_remote(url):
@@ -277,9 +277,9 @@ def get_meta(request, pid):
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def head_object(request, pid):
-  """MNRead.describe(session, sid_or_pid) → DescribeResponse
+  """MNRead.describe(session, did) → DescribeResponse
   """
-  sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid__did=pid)
   response = HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   # Log the access of this object.
@@ -292,7 +292,7 @@ def head_object(request, pid):
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_read_permission
 def get_checksum(request, pid):
-  """MNRead.getChecksum(session, sid_or_pid[, checksumAlgorithm]) → Checksum
+  """MNRead.getChecksum(session, did[, checksumAlgorithm]) → Checksum
   """
   # MNRead.getChecksum() requires that a new checksum be calculated. Cannot
   # simply return the checksum from the sysmeta.
@@ -313,7 +313,7 @@ def get_checksum(request, pid):
       )
     )
 
-  sciobj_row = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+  sciobj_row = mn.models.ScienceObject.objects.get(pid__did=pid)
   sciobj_stream = _get_sciobj_stream(sciobj_row)
 
   checksum_obj = d1_common.checksum.create_checksum_object_from_stream(
@@ -395,10 +395,10 @@ def post_error(request):
 @mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 def get_replica(request, pid):
-  """MNReplication.getReplica(session, sid_or_pid) → OctetStream
+  """MNReplication.getReplica(session, did) → OctetStream
   """
   _assert_node_is_authorized(request, pid)
-  sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid__did=pid)
   response = HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
   response._container = _get_sciobj_stream(sciobj)
@@ -433,7 +433,7 @@ def _assert_node_is_authorized(request, pid):
 @mn.views.view_util.decode_id
 @mn.views.view_util.resolve_sid
 def get_is_authorized(request, pid):
-  """MNAuthorization.isAuthorized(sid_or_pid, action) -> Boolean
+  """MNAuthorization.isAuthorized(did, action) -> Boolean
   """
   if 'action' not in request.GET:
     raise d1_common.types.exceptions.InvalidRequest(
@@ -449,7 +449,7 @@ def get_is_authorized(request, pid):
 @mn.restrict_to_verb.post
 @mn.auth.assert_trusted_permission
 def post_refresh_system_metadata(request):
-  """MNStorage.systemMetadataChanged(session, sid_or_pid, serialVersion,
+  """MNStorage.systemMetadataChanged(session, did, serialVersion,
                                      dateSysMetaLastModified) → boolean
   """
   mn.views.view_asserts.post_has_mime_parts(
@@ -460,15 +460,11 @@ def post_refresh_system_metadata(request):
     )
   )
   mn.views.view_asserts.is_pid_of_existing_object(request.POST['pid'])
-  mn.models.SystemMetadataRefreshQueue(
-    sciobj=mn.models.ScienceObject.objects.get(
-      pid__sid_or_pid=request.POST['pid']
-    ),
-    serial_version=request.POST['serialVersion'],
-    modified_timestamp=d1_common.date_time.from_iso8601(
-      request.POST['dateSysMetaLastModified']
-    ),
-    status=mn.models.sysmeta_refresh_status('new'),
+  mn.models.sysmeta_refresh_queue(
+    request.POST['pid'],
+    request.POST['serialVersion'],
+    request.POST['dateSysMetaLastModified'],
+    'new',
   ).save()
   return mn.views.view_util.http_response_with_boolean_true_type()
 
@@ -523,7 +519,7 @@ def post_refresh_system_metadata(request):
 @mn.restrict_to_verb.post
 @mn.auth.decorator_assert_create_update_delete_permission
 def post_object_list(request):
-  """MNStorage.create(session, sid_or_pid, object, sysmeta) → Identifier
+  """MNStorage.create(session, did, object, sysmeta) → Identifier
   """
   mn.views.view_asserts.post_has_mime_parts(
     request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
@@ -599,7 +595,7 @@ def post_generate_identifier(request):
   fragment = request.POST.get('fragment', None)
   while True:
     pid = (fragment if fragment else u'') + uuid.uuid4().hex
-    if not mn.models.ScienceObject.objects.filter(pid__sid_or_pid=pid).exists():
+    if not mn.models.ScienceObject.objects.filter(pid__did=pid).exists():
       return pid
 
 
@@ -608,9 +604,9 @@ def post_generate_identifier(request):
 @mn.views.view_util.resolve_sid
 @mn.auth.decorator_assert_create_update_delete_permission
 def delete_object(request, pid):
-  """MNStorage.delete(session, sid_or_pid) → Identifier
+  """MNStorage.delete(session, did) → Identifier
   """
-  sciobj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+  sciobj = mn.models.ScienceObject.objects.get(pid__did=pid)
   url_split = urlparse.urlparse(sciobj.url)
   _delete_object_from_filesystem(url_split, pid)
   _delete_object_from_database(pid)
@@ -633,7 +629,7 @@ def _delete_object_from_database(pid):
   # TODO: This causes associated permissions to be deleted, but any subjects
   # that are no longer needed are not deleted. The orphaned subjects should not
   # cause any issues and will be reused if they are needed again.
-  mn.models.IdNamespace.objects.filter(sid_or_pid=pid).delete()
+  mn.models.IdNamespace.objects.filter(did=pid).delete()
 
 
 @mn.restrict_to_verb.put
@@ -641,7 +637,7 @@ def _delete_object_from_database(pid):
 @mn.views.view_util.resolve_sid
 @mn.auth.assert_write_permission
 def put_archive(request, pid):
-  """MNStorage.archive(session, sid_or_pid) → Identifier
+  """MNStorage.archive(session, did) → Identifier
   """
   mn.views.view_asserts.is_not_replica(pid)
   mn.views.view_asserts.is_not_archived(pid)
@@ -665,81 +661,8 @@ def post_replicate(request):
   sysmeta_xml = \
     mn.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
   sysmeta = mn.sysmeta.deserialize(sysmeta_xml)
-  _assert_request_complies_with_replication_policy(sysmeta)
+  mn.sysmeta_replica.assert_request_complies_with_replication_policy(sysmeta)
   pid = sysmeta.identifier.value()
   mn.views.view_asserts.is_unused(pid)
-  _create_replication_work_item(request, sysmeta)
+  mn.sysmeta_replica.add_to_replication_queue(request.POST['sourceNode'], sysmeta)
   return mn.views.view_util.http_response_with_boolean_true_type()
-
-
-def _assert_request_complies_with_replication_policy(sysmeta):
-  if not settings.NODE_REPLICATE:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'This node does not currently accept replicas. The replicate '
-      u'attribute in the node element of the Node document is set to false. '
-    )
-
-  if settings.TIER < 4:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0,
-      u'This node has been set up as a tier {} Node and so cannot accept '
-      u'replicas. MNReplication is not included in the services list in the '
-      u'Node document.'
-      .format(settings.TIER)
-    )
-
-  if settings.REPLICATION_MAXOBJECTSIZE != -1:
-    if sysmeta.size > settings.REPLICATION_MAXOBJECTSIZE:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0,
-        u'The object is over the size limit accepted by this node. '
-        u'object_size={}, max_size={}'
-        .format(settings.REPLICATION_MAXOBJECTSIZE, sysmeta.size)
-      )
-
-  if settings.REPLICATION_SPACEALLOCATED != -1:
-    total = _get_total_size_of_replicated_objects()
-    if total > settings.REPLICATION_SPACEALLOCATED:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0,
-        u'The total size allocated for replicas on this node has been exceeded. '
-        u'used={} bytes, allowed={} bytes'
-        .format(total, settings.REPLICATION_MAXOBJECTSIZE)
-      )
-
-  if len(settings.REPLICATION_ALLOWEDNODE):
-    if sysmeta.originMemberNode.value() not in settings.REPLICATION_ALLOWEDNODE:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0,
-        u'This node does not allow replicas from originating node. '
-        u'originating_node="{}"'
-        .format(sysmeta.originMemberNode.value())
-      )
-
-  if len(settings.REPLICATION_ALLOWEDOBJECTFORMAT):
-    if sysmeta.formatId.value() not in settings.REPLICATION_ALLOWEDOBJECTFORMAT:
-      raise d1_common.types.exceptions.InvalidRequest(
-        0, u'This node does not allow objects of specified format. format="{}"'
-        .format(sysmeta.formatId.value())
-      )
-
-
-def _get_total_size_of_replicated_objects():
-  total = django.core.cache.cache.get('replicated_objects_total')
-  if total is not None:
-    return total
-  total = mn.models.ScienceObject.objects.filter(is_replica=True)\
-    .aggregate(Sum('size'))['size__sum']
-  if total is None:
-    total = 0
-  django.core.cache.cache.set('replicated_objects_total', total)
-  return total
-
-
-def _create_replication_work_item(request, sysmeta):
-  replication_item = mn.models.ReplicationQueue()
-  replication_item.status = mn.models.replication_queue_status('new')
-  replication_item.source_node = mn.models.node(request.POST['sourceNode'])
-  replication_item.pid = mn.sysmeta_util.create_id_row(sysmeta.identifier.value())
-  replication_item.save()

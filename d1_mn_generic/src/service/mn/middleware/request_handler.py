@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import d1_common.types.exceptions
 
 class RequestHandler(object):
   def process_request(self, request):
-    if settings.GMN_DEBUG and settings.ECHO_REQUEST_OBJECT:
+    if settings.DEBUG_GMN and settings.ECHO_REQUEST_OBJECT:
       logging.warning('settings.ECHO_REQUEST_OBJECT=True')
       pp = pprint.PrettyPrinter(indent=2)
       return HttpResponse(pp.pformat(request), d1_common.const.CONTENT_TYPE_TEXT)

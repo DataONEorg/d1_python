@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -89,12 +89,14 @@ def get_replication_queue(request):
 
 @mn.restrict_to_verb.get
 def clear_replication_queue(request):
-  _clear_replication_queue()
+  rep_queue_queryset = mn.models.LocalReplica.objects.filter(
+    info__status__status='queued'
+  )
+  mn.models.IdNamespace.objects.filter(
+    pk__in=rep_queue_queryset
+  )
   return mn.views.view_util.http_response_with_boolean_true_type()
 
-
-def _clear_replication_queue():
-  mn.models.ReplicationQueue.objects.all().delete()
 
 # ------------------------------------------------------------------------------
 # Access Policy.
@@ -186,7 +188,7 @@ def echo_request_object(request):
 def permissions_for_object(request, pid):
   mn.views.view_asserts.object_exists(pid)
   subjects = []
-  permissions = mn.models.Permission.objects.filter(sciobj__pid__sid_or_pid=pid)
+  permissions = mn.models.Permission.objects.filter(sciobj__pid__did=pid)
   for permission in permissions:
     action = mn.auth.LEVEL_ACTION_MAP[permission.level]
     subjects.append((permission.subject.subject, action))
@@ -233,7 +235,7 @@ def _clear_db():
   # be deleted in any order without breaking constraints.
   for model in django.apps.apps.get_models():
     model.objects.all().delete()
-  # mn.models.IdNamespace.objects.filter(sid_or_pid=pid).delete()
+  # mn.models.IdNamespace.objects.filter(did=pid).delete()
   # The SysMeta object is left orphaned in the filesystem to be cleaned by an
   # asynchronous process later. If the same object that was just deleted is
   # recreated, the old SysMeta object will be overwritten instead of being
@@ -261,7 +263,7 @@ def delete_single_object(request, pid):
 
 def _delete_object_from_filesystem(sci_obj):
   # If the object is wrapped, there's nothing to delete in the filesystem.
-  pid = sci_obj.pid.sid_or_pid
+  pid = sci_obj.pid.did
   url_split = urlparse.urlparse(sci_obj.url)
   if url_split.scheme == 'file':
     sci_obj_path = mn.util.file_path(settings.OBJECT_STORE_PATH, pid)

@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,20 +21,20 @@
 import mn.models
 
 
-def create_id_row(sid_or_pid):
+def create_id_row(did):
   """Create a new SID or PID.
 
   Preconditions:
-  - {sid_or_pid} is verified to be unused. E.g., with view_asserts.is_unused().
+  - {did} is verified to be unused. E.g., with view_asserts.is_unused().
   """
   id_row = mn.models.IdNamespace()
-  id_row.sid_or_pid = sid_or_pid
+  id_row.did = did
   id_row.save()
   return id_row
 
 
 def get_sci_row(pid):
-  return mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+  return mn.models.ScienceObject.objects.get(pid__did=pid)
 
 
 def get_value(sysmeta_obj, sysmeta_attr):

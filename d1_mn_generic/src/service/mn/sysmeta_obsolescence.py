@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -115,8 +115,8 @@ def _cut_embedded_from_chain(sciobj_row):
 
 
 def _set_obsolescence(sciobj_row, obsoletes_pid, obsoleted_by_pid):
-  sciobj_row.obsoletes = mn.models.sid_or_pid(obsoletes_pid) if obsoletes_pid else None
-  sciobj_row.obsoleted_by = mn.models.sid_or_pid(obsoleted_by_pid) if obsoleted_by_pid else None
+  sciobj_row.obsoletes = mn.models.did(obsoletes_pid) if obsoletes_pid else None
+  sciobj_row.obsoleted_by = mn.models.did(obsoleted_by_pid) if obsoleted_by_pid else None
 
 
 
@@ -129,16 +129,16 @@ def _set_obsolescence(sciobj_row, obsoletes_pid, obsoleted_by_pid):
 
  #    if sysmeta.obsoletes is not None:
  # chain_pid_list = [pid]
- #  sci_obj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+ #  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
  #  while sci_obj.obsoletes:
  #    obsoletes_pid = sysmeta_obj.obsoletes.value()
  #    chain_pid_list.append(obsoletes_pid)
- #    sci_obj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=obsoletes_pid)
- #  sci_obj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+ #    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoletes_pid)
+ #  sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
  #  while sci_obj.obsoleted_by:
  #    obsoleted_by_pid = sysmeta_obj.obsoleted_by.value()
  #    chain_pid_list.append(obsoleted_by_pid)
- #    sci_obj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=obsoleted_by_pid)
+ #    sci_obj = mn.models.ScienceObject.objects.get(pid__did=obsoleted_by_pid)
  #  return chain_pid_list
 
 
@@ -158,11 +158,11 @@ def get_pids_in_obsolescence_chain(pid):
   """
   sci_row = sysmeta_util.get_sci_row(pid)
   while sci_row.obsoletes:
-    sci_row = sysmeta_util.get_sci_row(sci_row.obsoletes.pid.sid_or_pid)
-  chain_pid_list = [sci_row.pid.sid_or_pid]
+    sci_row = sysmeta_util.get_sci_row(sci_row.obsoletes.pid.did)
+  chain_pid_list = [sci_row.pid.did]
   while sci_row.obsoleted_by:
-    sci_row = sysmeta_util.get_sci_row(sci_row.obsoleted_by.pid.sid_or_pid)
-    chain_pid_list.append(sci_row.pid.sid_or_pid)
+    sci_row = sysmeta_util.get_sci_row(sci_row.obsoleted_by.pid.did)
+    chain_pid_list.append(sci_row.pid.did)
   return chain_pid_list
 
 
@@ -189,15 +189,15 @@ def get_sid_by_pid(pid):
   for chain_pid in chain_pid_list:
     try:
       return mn.models.SeriesIdToScienceObject.objects.get(
-        sciobj__pid__sid_or_pid=chain_pid
-      ).sid.sid_or_pid
+        sciobj__pid__did=chain_pid
+      ).sid.did
     except mn.models.SeriesIdToScienceObject.DoesNotExist:
       pass
 
 # def update_chaining_info(pid, obsoletes_pid=None, obsoleted_by_pid=None, sid=None):
 #   """Update the chain related fields.
 #   """
-#   sci_obj = mn.models.ScienceObject.objects.get(pid__sid_or_pid=pid)
+#   sci_obj = mn.models.ScienceObject.objects.get(pid__did=pid)
 #   if obsoletes_pid:
 #     sci_obj.obsoletes = obsoletes_pid
 #   if obsoleted_by_pid:
