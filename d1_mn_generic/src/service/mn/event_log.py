@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,12 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`event_log`
-================
 
-:Synopsis: Log DataONE object accesses.
-:Author: DataONE (Dahl)
+"""Event Log utilities
+
+The Event Log is a log of all operations performed on sciobjs. It is retrieved
+with MNCore.getLogRecords() and aggregated by CNs.
 """
 
 # D1

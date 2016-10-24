@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -19,7 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utilities for handling Java Web Tokens (JWT)"""
+"""Validate Java Web Token (JWT) and extract subject
+"""
 
 # Stdlib
 import httplib

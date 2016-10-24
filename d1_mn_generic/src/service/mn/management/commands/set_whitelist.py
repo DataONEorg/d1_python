@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -19,9 +18,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""When running in production, GMN requires that subjects that wish to create,
-update or delete science objects are registered in a whitelist. This management
-command manages the whitelist.
+"""Update the CRUD whitelist
+
+When running in production, GMN requires that subjects that wish to create,
+update or delete science objects are registered in a whitelist. This command
+manages the whitelist.
 """
 
 # Stdlib.

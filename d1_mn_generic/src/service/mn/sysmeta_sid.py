@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -19,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utilities for manipulating Series ID (SID).
+"""Utilities for manipulating Series ID (SID)
 """
 
 # App.

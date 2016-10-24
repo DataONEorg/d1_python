@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -79,63 +78,57 @@ class SysMetaRefresher(object):
     self.cn_client = self._create_cn_client()
 
   def process_refresh_queue(self):
-    q = mn.models.SystemMetadataRefreshQueue.objects.exclude(
+    queue_queryset = mn.models.SystemMetadataRefreshQueue.objects.exclude(
       status__status='completed'
     )
-    if not len(q):
+    if not len(queue_queryset):
       logging.debug('No System Metadata update requests to process')
       return
-    for task in q:
-      self._process_refresh_task(task)
-    self._remove_completed_tasks_from_queue()
+    for queue_model in queue_queryset:
+      self._process_refresh_request(queue_model)
+    self._remove_completed_requests_from_queue()
 
-  def _process_refresh_task(self, task):
+  def _process_refresh_request(self, queue_model):
     logging.info('-' * 79)
-    logging.info(u'Processing PID: {}'.format(task.sciobj.pid))
+    logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid))
     try:
-      self._refresh(task)
-    except d1_common.types.exceptions.DataONEException as e:
+      self._refresh(queue_model)
+    except Exception as e:
       logging.exception(
-        u'System Metadata update failed with DataONE Exception:'
+        u'System Metadata update failed with exception:'
       )
-      self._gmn_refresh_task_update(task, str(e))
-    except (RefreshError, Exception, object) as e:
-      logging.exception(
-        u'System Metadata update failed with internal exception:'
-      )
-      self._gmn_refresh_task_update(task, str(e))
+      self._gmn_refresh_queue_model_update(queue_model, str(e))
     return True
 
-  def _refresh(self, task):
-    sys_meta = self._get_system_metadata(task)
+  def _refresh(self, queue_model):
+    sys_meta = self._get_system_metadata(queue_model)
     with transaction.atomic():
       self._update_sys_meta(sys_meta)
-      self._gmn_refresh_task_update(task, 'completed')
+      self._gmn_refresh_queue_model_update(queue_model, 'completed')
 
-  def _gmn_refresh_task_update(self, task, status=None):
+  def _gmn_refresh_queue_model_update(self, queue_model, status=None):
     if status is None or status == '':
       status = 'Unknown error. See process_system_metadata_refresh_queue log.'
-    task.status = mn.models.sysmeta_refresh_status(status)
-    task.save()
+    queue_model.status = mn.models.sysmeta_refresh_status(status)
+    queue_model.save()
 
-  def _remove_completed_tasks_from_queue(self):
+  def _remove_completed_requests_from_queue(self):
     q = mn.models.SystemMetadataRefreshQueue.objects.filter(
       status__status='completed'
     )
     q.delete()
 
   def _create_cn_client(self):
-    #return d1_client.mnclient.MemberNodeClient(base_url='http://127.0.0.1:8000')
     return d1_client.cnclient.CoordinatingNodeClient(
       base_url=settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
       key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
 
-  def _get_system_metadata(self, task):
+  def _get_system_metadata(self, queue_model):
     logging.debug(
-      u'Calling CNRead.getSystemMetadata(pid={})'.format(task.sciobj.pid)
+      u'Calling CNRead.getSystemMetadata(pid={})'.format(queue_model.sciobj.pid)
     )
-    return self.cn_client.getSystemMetadata(task.sciobj.pid)
+    return self.cn_client.getSystemMetadata(queue_model.sciobj.pid)
 
   def _update_sys_meta(self, sys_meta):
     """Updates the System Metadata for an existing Science Object. Does not
@@ -198,12 +191,4 @@ class SysMetaRefresher(object):
 
 
 class RefreshError(Exception):
-  def __init__(self, error_msg, pid=None):
-    self.error_msg = error_msg
-    self.pid = pid
-
-  def __str__(self):
-    msg = str(self.error_msg)
-    if self.pid is not None:
-      msg += u'\nIdentifier: {}'.format(self.pid)
-    return msg
+  pass

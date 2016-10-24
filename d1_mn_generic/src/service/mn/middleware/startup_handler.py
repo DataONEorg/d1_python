@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,14 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module middleware.startup_handler
-====================================
 
-:Synopsis:
-  This module contains code that should run once, after Django and GMN has been
-  fully loaded but before any requests have been serviced.
-:Created: 2012-04-25
-:Author: DataONE (Dahl)
+"""Startup handler middleware
+
+This module contains code that should run once, after Django and GMN has been
+fully loaded but before any requests have been serviced.
 """
 
 # Django.

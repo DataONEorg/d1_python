@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,15 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`views.diagnostics`
-===========================
 
-:Synopsis:
-  REST call handlers for GMN diagnostic APIs.
-  These are used in various diagnostics, debugging and testing scenarios.
-  Access is unrestricted in debug mode. Disabled in production.
-:Author: DataONE (Dahl)
+"""Views for GMN diagnostic APIs
+
+These are used in various diagnostics, debugging and testing scenarios. Access
+is unrestricted in debug mode. Disabled in production.
 """
+
 # Stdlib.
 import cgi
 import csv

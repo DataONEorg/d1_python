@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -19,6 +18,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Node Registry cache
+
+- Retrieve, hold and update a cache of the Node Registry for the DataONE
+environment in which this MN is registered.
+- Query the Node Registry.
+"""
+
 # Stdlib.
 import httplib
 import logging
@@ -33,17 +39,6 @@ import d1_client.cnclient
 
 # App.
 import d1_common.types.exceptions
-
-"""
-:mod:`node_registry`
-====================
-
-:Synopsis:
-  Perform operations against the Node Registry for the DataONE environment
-  in which this MN is registered.
-:Author:
-  DataONE (Dahl)
-"""
 
 
 def get_cn_subjects():

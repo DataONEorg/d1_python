@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,12 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`views.external`
-========================
 
-:Synopsis: REST call handlers for the DataONE Member Node APIs.
-:Author: DataONE (Dahl)
-
+"""REST call handlers for DataONE Member Node APIs
 """
 
 # Stdlib.

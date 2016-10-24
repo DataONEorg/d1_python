@@ -17,20 +17,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`settings_site`
-====================
 
-:Synopsis:
-  Site specific app level settings.
-  This file contains settings that are specific for an instance of GMN.
-:Author:
-  DataONE (Dahl)
+"""Global settings for GMN
+
+This file contains settings that are specific for an instance of GMN.
 """
 
 # Stdlib.
 import os
-import sys
 
 # D1.
 import d1_common.const

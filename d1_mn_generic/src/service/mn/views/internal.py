@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,15 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`views.internal`
-========================
 
-:Synopsis:
-  Functionality that is not part of the DataONE Member Node API yet is designed
-  to be available when the MN is in production.
+"""Views for GMN web pages
 
-:Author: DataONE (Dahl)
+Functionality that is not part of the DataONE Member Node API yet is designed to
+be available when the MN is in production.
 """
+
 # Stdlib.
 import ctypes
 import datetime

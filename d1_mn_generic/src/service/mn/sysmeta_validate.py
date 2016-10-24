@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -19,13 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-:mod:`sysmeta_validate`
-=======================
-
-:Synopsis:
-  Validate that system metadata matches the corresponding science data object.
-:Author: DataONE (Dahl)
+"""Validate that System Metadata matches the corresponding science data object
 """
 
 # D1.

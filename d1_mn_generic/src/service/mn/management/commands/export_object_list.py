@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -20,8 +19,9 @@
 # limitations under the License.
 
 """Export a list of the objects that exist on the MN and, for each object, each
-subject which has access to the object. The list is used by the DataONE Stress
-Tester.
+subject which has access to the object.
+
+The list is used by the DataONE Stress Tester.
 """
 
 # Stdlib.

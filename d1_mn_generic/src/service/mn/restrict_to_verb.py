@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,11 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`restrict_to_verb`
-==========================
 
-:Synopsis: Limit views to be called only with specific verb.
-:Author: DataONE (Dahl)
+"""Limit views to be called only with specific verbs
+
+Decorator used on views to specify which verbs they may be called with. An
+attempt to call the view with another verb causes a HttpResponseNotAllowed
+response.
 """
 
 # Django

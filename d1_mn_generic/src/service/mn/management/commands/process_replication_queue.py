@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,8 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Iterate over queue of objects registered for replication and attempt to
-replicate them.
+
+"""Process queue of replications requested by the Coordinating Nodes
+
+Coordinating Nodes call MNReplication.replicate() to request the creation of
+replicas. GMN queues the requests and processes them asynchronously. This
+command iterates over the requests and attempts to create the replicas.
 """
 
 # Stdlib.

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,12 +17,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`session`
-==============
 
-:Synopsis: Session handling
-:Author: DataONE (Dahl)
+"""Extract a list of subjects from a DataONE client side certificate
 
 The DataONE infrastructure uses X.509 v3 certificates to represent sessions. A
 session contains assertions about the identity of the caller. In particular, the

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,11 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`auth`
-==============
 
-:Synopsis: Authentication and authorization.
-:Author: DataONE (Dahl)
+"""Authentication and authorization
+
+Decorators and functions that verify that a user has the permissions required
+for performing the attempted operation.
 """
 
 # Stdlib
@@ -43,9 +42,6 @@ import d1_common.types.exceptions
 import mn.models
 import mn.node_registry
 
-# ------------------------------------------------------------------------------
-# Helpers.
-# ------------------------------------------------------------------------------
 
 # Actions have a relationship where each action implicitly includes the actions
 # of lower levels. The relationship is as follows:

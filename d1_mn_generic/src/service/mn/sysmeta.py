@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -19,7 +18,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utilities for manipulating System Metadata.
+"""Utilities for manipulating System Metadata
+
+- Translate System Metadata between XML and PyXB.
+- Translate System Metadata between PyXB and GMN database representations.
+- Query the database for System Metadata properties.
 """
 
 # Stdlib.

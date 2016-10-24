@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,14 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`response_handler`
-=======================
 
-:Synopsis:
-  Serialize DataONE response objects according to Accept header and set header
-  (Size and Content-Type) accordingly.
-:Author: DataONE (Dahl)
+"""Response handler middleware
+
+Serialize DataONE response objects according to Accept header and set header
+(Size and Content-Type) accordingly.
 """
 
 # Stdlib.

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,21 +17,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`settings`
-===============
 
-:Synopsis:
-  App level settings.
-  This file contains settings that do not normally need to be modified when
-  installing GMN. See settings_site.py for site specific settings.
-:Author:
-  DataONE (Dahl)
+"""Global settings for GMN
+
+This file contains settings that do not normally need to be modified when
+installing GMN. See settings_site.py for site specific settings.
 """
 
 # Stdlib.
 import os
-import sys
 
 
 # Create absolute path from path that is relative to the module from which

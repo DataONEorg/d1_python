@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,12 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`models`
-=============
 
-:Synopsis: Database models.
-:Author: DataONE (Dahl)
+"""Database models
+
+- Specify the GMN database schema via the Django Object Relational Model (ORM).
+- Wrappers for creating frequently used models (adding rows to tables).
 """
 
 # Stdlib

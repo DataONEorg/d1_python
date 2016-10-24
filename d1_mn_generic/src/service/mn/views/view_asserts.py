@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,15 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""":mod:`view_asserts`
-======================
 
-:Synopsis:
-  Asserts used in the views.
-  These directly return a DataONE Exception to the client if a test
-  condition is not true.
-:Author: DataONE (Dahl)
+"""Asserts used in views
+
+These directly return a DataONE Exception to the client if a test condition is
+not true.
 """
+
 # Stdlib.
 import contextlib
 import urlparse

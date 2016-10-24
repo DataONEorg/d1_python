@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -18,27 +17,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`exception_handler`
-========================
 
-:Synopsis:
-  Catch, log and serialize exceptions that are raised when processing a request.
+"""Exception handler middleware
 
-  Implements the system for returning information about exceptional conditions
-  (errors) as described in Raised by MN and CN APIs
-  http://mule1.dataone.org/ArchitectureDocs/html
+Catch, log and serialize exceptions that are raised when processing a request.
 
-  An MN is required to always return a DataONE exception on errors. When running
-  in production mode (settings.DEBUG = False and settings.DEBUG_GMN = False),
-  GMN complies with this by wrapping any unhandled internal exception in a
-  DataONE exception.
+Implements the system for returning information about exceptional conditions
+(errors) as described in Raised by MN and CN APIs
+http://mule1.dataone.org/ArchitectureDocs/html
 
-  When running in Django debug mode (settings.DEBUG = True), non-DataONE
-  exceptions are returned as Django HTML exception pages.
+An MN is required to always return a DataONE exception on errors. When running
+in production mode (settings.DEBUG = False and settings.DEBUG_GMN = False), GMN
+complies with this by wrapping any unhandled internal exception in a DataONE
+exception.
 
-  Responses to HEAD requests can not contain a body, so the exception is
-  serialized to a set of HTTP headers for HEAD requests.
+When running in Django debug mode (settings.DEBUG = True), non-DataONE
+exceptions are returned as Django HTML exception pages.
+
+Responses to HEAD requests can not contain a body, so the exception is
+serialized to a set of HTTP headers for HEAD requests.
 """
 
 # Stdlib.
