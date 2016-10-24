@@ -280,6 +280,13 @@ REPLICATION_ALLOWEDOBJECTFORMAT = ()
 # to be retried for 24 hours.
 REPLICATION_MAX_ATTEMPTS = 24
 
+# The maximum number of attempts to complete a CN System Metadata refresh
+# request. When this number is exceeded, the request is recorded as failed and
+# permanently removed. By default, System Metadata refresh processing occurs
+# once per hour, so a value of 24 (default) causes the refresh to be retried for
+# 24 hours.
+SYSMETA_REFRESH_MAX_ATTEMPTS = 24
+
 # On startup, GMN connects to the DataONE root CN to get the subject strings of
 # the CNs in the environment. For a production instance of GMN, this should be
 # set to the default DataONE root for production systems. For a test instance,

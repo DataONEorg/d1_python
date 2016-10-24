@@ -219,14 +219,14 @@ class ReplicationQueue(models.Model):
   size = models.BigIntegerField(db_index=True)
   # Keep track of the number of attempts that have been made to complete the
   # replication request in order to stop retrying after some time.
-  replication_attempts = models.PositiveSmallIntegerField()
+  failed_attempts = models.PositiveSmallIntegerField()
 
 
 def replication_queue(local_replica_model, size):
   replication_queue_model = ReplicationQueue(
     local_replica=local_replica_model,
     size=size,
-    replication_attempts=0,
+    failed_attempts=0,
   )
   replication_queue_model.save()
   return replication_queue_model
@@ -323,6 +323,8 @@ class SystemMetadataRefreshQueueStatus(models.Model):
 
 
 def sysmeta_refresh_status(status_str):
+  assert status_str in ['queued', 'completed', 'failed'], \
+    u'Invalid replication status. status="{}"'.format(status_str)
   return SystemMetadataRefreshQueueStatus.objects.get_or_create(
     status=status_str
   )[0]
@@ -336,18 +338,20 @@ class SystemMetadataRefreshQueue(models.Model):
   serial_version = models.PositiveIntegerField()
   timestamp = models.DateTimeField(auto_now=True)
   sysmeta_timestamp = models.DateTimeField()
+  failed_attempts = models.PositiveSmallIntegerField()
 
 
 def sysmeta_refresh_queue(pid, serial_version, sysmeta_timestamp, status):
-  q = SystemMetadataRefreshQueue.objects.get_or_create(
+  return SystemMetadataRefreshQueue.objects.get_or_create(
     sciobj=ScienceObject.objects.get(pid__did=pid),
     defaults={
+      'status': sysmeta_refresh_status(status),
       'serial_version': serial_version,
       'sysmeta_timestamp': sysmeta_timestamp,
-      'status': sysmeta_refresh_status(status),
+      'failed_attempts': 0,
     }
   )[0]
-  return q
+
 
 # ------------------------------------------------------------------------------
 # Access Control

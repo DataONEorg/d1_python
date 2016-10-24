@@ -233,7 +233,6 @@ def _model_to_pyxb(pid):
   sciobj_model = sysmeta_util.get_sci_row(pid)
   sysmeta_obj = _base_model_to_pyxb(sciobj_model)
   access_policy_pyxb = _access_policy_model_to_pyxb(sciobj_model)
-  print access_policy_pyxb.allow
   if len(access_policy_pyxb.allow):
     sysmeta_obj.accessPolicy = access_policy_pyxb
   if _has_replication_policy(sciobj_model):

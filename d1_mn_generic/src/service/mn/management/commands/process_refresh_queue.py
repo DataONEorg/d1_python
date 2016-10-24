@@ -34,17 +34,11 @@ from django.conf import settings
 import d1_client.cnclient
 import d1_client.d1client
 import d1_client.mnclient
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
 
 # App.
 import mn.auth
 import mn.models
-import mn.sysmeta_file
-import mn.views.view_asserts
+import mn.sysmeta
 import util
 
 
@@ -66,23 +60,23 @@ class Command(django.core.management.base.BaseCommand):
     )
     util.abort_if_other_instance_is_running()
     util.abort_if_stand_alone_instance()
-    p = SysMetaRefresher()
+    p = SysMetaRefreshQueueProcessor()
     p.process_refresh_queue()
 
 
 #===============================================================================
 
 
-class SysMetaRefresher(object):
+class SysMetaRefreshQueueProcessor(object):
   def __init__(self):
     self.cn_client = self._create_cn_client()
 
   def process_refresh_queue(self):
-    queue_queryset = mn.models.SystemMetadataRefreshQueue.objects.exclude(
-      status__status='completed'
+    queue_queryset = mn.models.SystemMetadataRefreshQueue.objects.filter(
+      status__status='queued'
     )
     if not len(queue_queryset):
-      logging.debug('No System Metadata update requests to process')
+      logging.debug('No System Metadata refresh requests to process')
       return
     for queue_model in queue_queryset:
       self._process_refresh_request(queue_model)
@@ -90,33 +84,58 @@ class SysMetaRefresher(object):
 
   def _process_refresh_request(self, queue_model):
     logging.info('-' * 79)
-    logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid))
+    logging.info(u'Processing PID: {}'.format(queue_model.sciobj.pid.did))
     try:
       self._refresh(queue_model)
-    except Exception as e:
+    except Exception:
       logging.exception(
-        u'System Metadata update failed with exception:'
+        u'System Metadata refresh failed with exception:'
       )
-      self._gmn_refresh_queue_model_update(queue_model, str(e))
+      num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
+      if num_failed_attempts < settings.SYSMETA_REFRESH_MAX_ATTEMPTS:
+        logging.warning(
+          u'SysMeta refresh failed and will be retried during next processing. '
+          u'failed_attempts={}, max_attempts={}'.
+          format(num_failed_attempts, settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
+        )
+      else:
+        logging.warning(
+          u'SysMeta refresh failed and has reached the maximum number of '
+          u'attempts. Recording the request as permanently failed and '
+          u'removing from queue. failed_attempts={}, max_attempts={}'.
+          format(num_failed_attempts, settings.SYSMETA_REFRESH_MAX_ATTEMPTS)
+        )
+        self._update_request_status(queue_model, 'failed')
     return True
 
   def _refresh(self, queue_model):
-    sys_meta = self._get_system_metadata(queue_model)
+    sysmeta_pyxb = self._get_system_metadata(queue_model)
+    pid = queue_model.sciobj.pid.did
+    self._assert_is_pid_of_native_object(pid)
+    self._assert_pid_matches_request(sysmeta_pyxb, pid)
     with transaction.atomic():
-      self._update_sys_meta(sys_meta)
-      self._gmn_refresh_queue_model_update(queue_model, 'completed')
+      self._update_sysmeta(sysmeta_pyxb)
+      self._update_request_status(queue_model, 'completed')
+      mn.event_log.create_log_entry(
+        queue_model.sciobj, 'update', '0.0.0.0', '[refresh]', '[refresh]'
+      )
 
-  def _gmn_refresh_queue_model_update(self, queue_model, status=None):
-    if status is None or status == '':
-      status = 'Unknown error. See process_system_metadata_refresh_queue log.'
-    queue_model.status = mn.models.sysmeta_refresh_status(status)
+  def _update_request_status(self, queue_model, status_str):
+    queue_model.status = mn.models.sysmeta_refresh_status(status_str)
     queue_model.save()
 
+  def _inc_and_get_failed_attempts(self, queue_model):
+    # refresh_queue_model = mn.models.SystemMetadataRefreshQueue.objects.get(
+    #   local_replica=queue_model.local_replica
+    # )
+    queue_model.failed_attempts += 1
+    queue_model.save()
+    return queue_model.failed_attempts
+
   def _remove_completed_requests_from_queue(self):
-    q = mn.models.SystemMetadataRefreshQueue.objects.filter(
-      status__status='completed'
-    )
-    q.delete()
+    mn.models.SystemMetadataRefreshQueue.objects.filter(
+      status__status__in=('completed', 'failed')
+    ).delete()
 
   def _create_cn_client(self):
     return d1_client.cnclient.CoordinatingNodeClient(
@@ -128,64 +147,33 @@ class SysMetaRefresher(object):
     logging.debug(
       u'Calling CNRead.getSystemMetadata(pid={})'.format(queue_model.sciobj.pid)
     )
-    return self.cn_client.getSystemMetadata(queue_model.sciobj.pid)
+    return self.cn_client.getSystemMetadata(queue_model.sciobj.pid.did)
 
-  def _update_sys_meta(self, sys_meta):
-    """Updates the System Metadata for an existing Science Object. Does not
-    update the replica status on the object.
+  def _update_sysmeta(self, sysmeta_obj):
+    """Update the System Metadata for an existing Science Object.
+
+    No sanity checking is done on the provided System Metadata. It comes from a
+    CN and is implicitly trusted.
     """
-    pid = sys_meta.identifier.value()
+    mn.sysmeta.update(sysmeta_obj)
 
-    mn.views.view_asserts.object_exists(pid)
+  def _assert_is_pid_of_native_object(self, pid):
+    if not mn.sysmeta.is_pid_of_existing_object(pid):
+      raise RefreshError(
+        u'Object referenced by PID does not exist or is not valid target for'
+        u'System Metadata refresh. pid="{}"'.format(pid)
+      )
 
-    # No sanity checking is done on the provided System Metadata. It comes
-    # from a CN and is implicitly trusted.
-    sciobj = mn.models.ScienceObject.objects.get(pid__did=pid)
-    sciobj.set_format(sys_meta.formatId)
-    sciobj.checksum = sys_meta.checksum.value()
-    sciobj.checksum_algorithm = mn.models.checksum_algorithm(
-      sys_meta.checksum.algorithm
-    )
-    sciobj.modified_timestamp = sys_meta.dateSysMetadataModified
-    sciobj.size = sys_meta.size
-    sciobj.serial_version = sys_meta.serialVersion
-    sciobj.is_archived = False
-    sciobj.save()
+  def _assert_pid_matches_request(self, sysmeta_pyxb, pid):
+    if sysmeta_pyxb.identifier.value() != pid:
+      raise RefreshError(
+        u'PID in retrieved System Metadata does not match the object for which '
+        u'refresh was requested. pid="{}"'.format(pid)
+      )
 
-    # If an access policy was provided in the System Metadata, set it.
-    if sys_meta.accessPolicy:
-      mn.auth.set_access_policy(pid, sys_meta.accessPolicy)
-    else:
-      mn.auth.set_access_policy(pid)
+  def _assert_sysmeta_is_complete(self, sysmeta_pyxb):
+    pass
 
-    mn.sysmeta_file.write_sysmeta_to_file(sys_meta)
-
-    # Log this System Metadata update.
-    request = self._make_request_object()
-    mn.event_log.update(pid, request)
-
-  def is_existing_pid(self, pid):
-    return
-
-  def update_queue_item_status(self, queue_item, status):
-    queue_item.status = mn.models.sysmeta_refresh_status(status)
-    queue_item.save()
-
-  def delete_completed_queue_items_from_db(self):
-    mn.models.SystemMetadataRefreshQueue.objects.filter(
-      status__status='completed'
-    ).delete()
-
-  def _make_request_object(self):
-    class Object(object):
-      pass
-
-    o = Object()
-    o.META = {
-      'REMOTE_ADDR': 'systemMetadataChanged()',
-      'HTTP_USER_AGENT': 'N/A',
-    }
-    return o
 
 # ==============================================================================
 
