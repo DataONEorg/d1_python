@@ -61,18 +61,24 @@ class Command(django.core.management.base.BaseCommand):
       u'Running management command: {}'.format(util.get_command_name())
     )
     util.abort_if_other_instance_is_running()
-    self.create_object_list(options['path'], options['public'])
-    print u'Exported object list to: {}'.format(object_list_path)
+    self.export_object_list(options['path'], options['public'])
+    logging.info(
+      u'Exported object list to: {}'.format(options['path'])
+    )
 
-  def create_object_list(self, path, public_only):
+  def export_object_list(self, path, public_only):
     with open(path, 'w') as f:
-      for o in mn.models.ScienceObject.objects.all():
+      for sciobj_model in mn.models.ScienceObject.objects.all():
         # Permissions are cumulative, so if a subject has permissions for an
         # object, that permissions are guaranteed to include "read", the
         # lowest level permission.
-        for p in mn.models.Permission.objects.filter(object=o):
+        for permission_model in mn.models.Permission.objects.filter(
+            sciobj=sciobj_model
+        ):
           if public_only:
-            if p.subject.subject == 'public':
-              f.write('{}\n'.format(o.pid))
+            if permission_model.subject.subject == 'public':
+              f.write('{}\n'.format(sciobj_model.pid.did))
           else:
-            f.write('{}\t{}\n'.format(o.pid, p.subject.subject))
+            f.write('{}\t{}\n'.format(
+              sciobj_model.pid.did, permission_model.subject.subject)
+            )

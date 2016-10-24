@@ -101,19 +101,19 @@ class ReplicationQueueProcessor(object):
       self._replicate(queue_model)
     except Exception as e:
       logging.exception(u'Replication failed with exception:')
-      num_attempts = self._inc_and_get_replication_attempts(queue_model)
-      if num_attempts < settings.REPLICATION_MAX_ATTEMPTS:
+      num_failed_attempts = self._inc_and_get_failed_attempts(queue_model)
+      if num_failed_attempts < settings.REPLICATION_MAX_ATTEMPTS:
         logging.warning(
           u'Replication failed and will be retried during next processing. '
           u'failed_attempts={}, max_attempts={}'.
-          format(num_attempts, settings.REPLICATION_MAX_ATTEMPTS)
+          format(num_failed_attempts, settings.REPLICATION_MAX_ATTEMPTS)
         )
       else:
         logging.warning(
           u'Replication failed and has reached the maximum number of attempts. '
           u'Recording the request as permanently failed and notifying the CN. '
           u'failed_attempts={}, max_attempts={}'.
-          format(num_attempts, settings.REPLICATION_MAX_ATTEMPTS)
+          format(num_failed_attempts, settings.REPLICATION_MAX_ATTEMPTS)
         )
         self._update_request_status(
           queue_model, 'failed', e if
@@ -138,13 +138,13 @@ class ReplicationQueueProcessor(object):
     if sysmeta_obj.serialVersion is None:
       sysmeta_obj.serialVersion = 1
 
-  def _inc_and_get_replication_attempts(self, queue_model):
+  def _inc_and_get_failed_attempts(self, queue_model):
     replication_queue_model = mn.models.ReplicationQueue.objects.get(
       local_replica=queue_model.local_replica
     )
-    replication_queue_model.replication_attempts += 1
+    replication_queue_model.failed_attempts += 1
     replication_queue_model.save()
-    return replication_queue_model.replication_attempts
+    return replication_queue_model.failed_attempts
 
   def _update_request_status(self, queue_model, status_str, dataone_error=None):
     self._update_local_request_status(queue_model, status_str)

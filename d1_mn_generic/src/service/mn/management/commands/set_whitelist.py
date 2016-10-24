@@ -56,7 +56,7 @@ class Command(django.core.management.base.BaseCommand):
     )
     util.abort_if_other_instance_is_running()
     num_subjects = self.set_whitelist(options['path'])
-    print u'Whitelisted {} subjects'.format(num_subjects)
+    logging.info(u'Whitelisted {} subjects'.format(num_subjects))
 
   def set_whitelist(self, whitelist_path):
     with open(whitelist_path) as f:
