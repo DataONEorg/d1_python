@@ -369,35 +369,10 @@ class RESTClient(object):
       else:
         cert = self._cert_path
 
-    # # In DataONE, all POST data is sent by mime-multipart encoding. Merge the
-    # # fields and files to a form expected by the requests library.
-    # file_list = []
-    # if not files is None:
-    #   for f in files:
-    #     # This is a requests expected structure of:
-    #     # ( (param_name, (file_name, file or body, [optional mime type])) )
-    #     if len(f) == 2 and not isinstance(f[1], basestring):
-    #       file_list.append(f)
-    #     else:
-    #       # Old style RESTClient expects a structure of:
-    #       # ( (param_name, file_name, file or body) )
-    #       file_list.append((f[0], (f[1], f[2])))
-    # # Append anything from fields:
-    # if not fields is None:
-    #   # Is it a dictionary structure?
-    #   if isinstance(fields, dict):
-    #     for k, v in fields.items():
-    #       file_list.append((k, (k, v)))
-    #   else:
-    #     # or maybe a list of tuples?
-    #     for f in fields:
-    #       file_list.append(f)
-    # if len(file_list) < 1:
-    #   file_list = None
-
-    file_list = None
+    # In DataONE, all POST data is sent by mime-multipart encoding. Merge the
+    # fields and files to a form expected by the requests library.
+    file_list = []
     if not files is None:
-      file_list = []
       for f in files:
         # This is a requests expected structure of:
         # ( (param_name, (file_name, file or body, [optional mime type])) )
@@ -407,16 +382,23 @@ class RESTClient(object):
           # Old style RESTClient expects a structure of:
           # ( (param_name, file_name, file or body) )
           file_list.append((f[0], (f[1], f[2])))
-
-    field_list = None
+    # Append anything from fields:
     if not fields is None:
-      field_list = []
+      # Is it a dictionary structure?
       if isinstance(fields, dict):
         for k, v in fields.items():
-          field_list.append((k, (k, v)))
+          file_list.append((k, (k, v)))
       else:
+        # or maybe a list of tuples?
         for f in fields:
-          field_list.append(f)
+          if len(f) == 2:
+            file_list.append((f[0], (None, f[1])))
+          elif len(f) == 3:
+            file_list.append(f)
+          else:
+            assert False, 'Invalid field tuple length'
+    if len(file_list) < 1:
+      file_list = None
 
     # Encode any datetime query parameters to ISO8601.
     if query is not None:
@@ -432,21 +414,24 @@ class RESTClient(object):
       headers=headers,
       cert=cert,
       files=file_list,
-      data=field_list,
+      # data=field_list,
       stream=True,
       allow_redirects=False
     )
+
     if dump_path is not None:
       if _HAS_DUMP_CAPABILITY:
         with open(dump_path, 'wb') as rdump:
           rdump.write(requests_toolbelt.utils.dump.dump_all(response))
       else:
         self.logger.error(
-          "Request / response dump requests but requests_toolbelt not installed!"
+          'Request / response dump requested but requests_toolbelt not installed'
         )
+
     response.read = types.MethodType(responseRead, response)
     response.__fp = 0
     response.status = response.status_code
+
     return response
 
   def _merge_default_headers(self, headers=None):

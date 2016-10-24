@@ -46,16 +46,16 @@ def is_supported_algorithm(algorithm_str):
 
 
 def create_checksum_object(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
-  c = calculate_checksum(o, algorithm)
-  c_pyxb = dataoneTypes.checksum(c)
-  c_pyxb.algorithm = algorithm
-  return c_pyxb
+  checksum_str = calculate_checksum(o, algorithm)
+  checksum_pyxb = dataoneTypes.checksum(checksum_str)
+  checksum_pyxb.algorithm = algorithm
+  return checksum_pyxb
 
 
 def calculate_checksum(o, algorithm=const.DEFAULT_CHECKSUM_ALGORITHM):
-  h = get_checksum_calculator_by_dataone_designator(algorithm)
-  h.update(o)
-  return h.hexdigest()
+  checksum_calculator = get_checksum_calculator_by_dataone_designator(algorithm)
+  checksum_calculator.update(o)
+  return checksum_calculator.hexdigest()
 
 
 def create_checksum_object_from_stream(
