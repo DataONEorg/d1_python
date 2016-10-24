@@ -26,13 +26,9 @@
 # Stdlib.
 import logging
 import StringIO
-import inspect
 
 # Django.
 from django.conf import settings
-
-# D1.
-import d1_common.url
 
 # App.
 import session

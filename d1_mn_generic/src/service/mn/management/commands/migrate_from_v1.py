@@ -27,13 +27,10 @@ import logging
 import os
 import pprint
 import shutil
-import sys
-import tempfile
 
 # Django.
 import django.core.management.base
 import mn.sysmeta_util
-from django.db import transaction
 from django.conf import settings
 
 # 3rd party.
@@ -41,14 +38,6 @@ import psycopg2
 import psycopg2.extras
 
 # D1.
-import d1_client.cnclient
-import d1_client.d1client
-import d1_client.mnclient
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.util
-import d1_common.date_time
-import d1_common.url
 
 # App.
 import mn.models

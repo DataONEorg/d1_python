@@ -18,6 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
 :mod:`sysmeta_validate`
 =======================
@@ -26,12 +27,6 @@
   Validate that system metadata matches the corresponding science data object.
 :Author: DataONE (Dahl)
 """
-
-# Stdlib.
-import datetime
-
-# Django.
-from django.conf import settings
 
 # D1.
 import d1_common.checksum

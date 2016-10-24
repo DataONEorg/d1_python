@@ -26,19 +26,18 @@
 """
 
 # Stdlib
-import logging
 import functools
 
 # Django.
-import django.core.cache
 from django.conf import settings
+import django.core.cache
 
 # D1.
-import d1_common.const
-import d1_common.types.exceptions
-import d1_common.types.dataoneTypes
 import d1_certificate.certificate_extractor
+import d1_common.const
 import d1_common.types.dataoneTypes
+import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 
 # App.
 import mn.models

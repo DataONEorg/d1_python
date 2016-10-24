@@ -30,7 +30,6 @@
 
 # Stdlib.
 import datetime
-import logging
 
 # Django.
 import django.db

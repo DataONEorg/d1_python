@@ -24,8 +24,6 @@
 
 # Stdlib.
 import logging
-import optparse
-import sys
 
 # D1.
 import d1_client.cnclient_2_0

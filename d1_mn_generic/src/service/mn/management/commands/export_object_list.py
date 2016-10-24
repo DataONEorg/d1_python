@@ -26,12 +26,9 @@ Tester.
 
 # Stdlib.
 import logging
-import os
-import sys
 
 # Django.
 import django.core.management.base
-from optparse import make_option
 
 # App.
 import mn.models

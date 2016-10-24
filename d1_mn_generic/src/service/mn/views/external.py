@@ -36,10 +36,9 @@ import urlparse
 import uuid
 
 # Django.
-import django.core.cache
-import mn.sysmeta_util
-from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
 from django.conf import settings
+from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
+import mn.sysmeta_util
 
 # 3rd party
 import requests
@@ -50,8 +49,8 @@ import d1_client.object_format_info
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes_v1_1
+import d1_common.types.exceptions
 
 # App.
 import mn.auth

@@ -24,9 +24,7 @@ replicate them.
 
 # Stdlib.
 import logging
-import os
 import shutil
-import sys
 
 # Django.
 import django.core.management.base

@@ -58,12 +58,6 @@ from django.conf import settings
 import d1_common.types.dataoneTypes_v2_0
 
 # App
-import mn.views.view_util
-
-# For debugging the population of PyXB objects, it can be convenient to turn off
-# PyXB's validation.
-#import pyxb
-#pyxb.RequireValidWhenGenerating(False)
 
 
 class Node(object):

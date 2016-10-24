@@ -27,15 +27,14 @@
 """
 
 # Django
-#from django.conf.urls.defaults import *
-#import django.conf.urls.defaults
 from django.conf.urls import url
 from django.conf import settings
 
 # App
+import mn.views.diagnostics
 import mn.views.external
 import mn.views.internal
-import mn.views.diagnostics
+
 
 urlpatterns = [
   # Django's URL dispatcher does not take HTTP verb into account, so in the

@@ -74,10 +74,10 @@ algorithm:
 import logging
 
 # D1.
+import d1_certificate.certificate_extractor
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
-import d1_certificate.certificate_extractor
 
 
 class ProcessSession(object):

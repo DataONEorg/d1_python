@@ -37,8 +37,6 @@ import d1_common.types.exceptions
 # App.
 import mn.views.view_asserts
 
-# 3/27/12: Wildcard filter removed. Available in SVN.
-
 
 def add_access_policy_filter(query, request, column_name):
   """Add access control filter to a QuerySet.

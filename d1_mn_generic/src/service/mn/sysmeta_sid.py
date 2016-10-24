@@ -22,25 +22,6 @@
 """Utilities for manipulating Series ID (SID).
 """
 
-# Stdlib.
-import datetime
-import os
-import time
-
-# Django.
-import django.db
-import django.db.transaction
-import mn.sysmeta_util
-from django.conf import settings
-
-# 3rd party
-import pyxb
-
-# D1.
-import d1_common.date_time
-import d1_common.types.dataoneTypes
-import d1_common.types.exceptions
-
 # App.
 import mn.auth
 import mn.models
@@ -59,7 +40,7 @@ def has_sid(sysmeta_obj):
 
 
 def get_sid(sysmeta_obj):
-  return mn.sysmeta_util.get_value(sysmeta_obj, 'seriesId')
+  return sysmeta_util.get_value(sysmeta_obj, 'seriesId')
 
 
 def create_sid(sid, pid):

@@ -25,7 +25,6 @@
 # Stdlib
 import datetime
 import functools
-import logging
 import re
 
 # Django.

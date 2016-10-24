@@ -19,6 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Utilities for handling Java Web Tokens (JWT)"""
+
 # Stdlib
 import httplib
 import logging
@@ -32,16 +34,16 @@ import django.core.cache
 import logging
 
 # 3rd party
-# sudo pip install cryptography pyjwt
-import jwt
 import cryptography.hazmat.backends
 import cryptography.x509
+import jwt
 
 # D1
 import d1_common.const
 import d1_common.types.exceptions
 
 # App
+
 
 def validate_jwt_and_get_subject_list(jwt_base64):
   """Validate any JWT in the request and return a list of authenticated

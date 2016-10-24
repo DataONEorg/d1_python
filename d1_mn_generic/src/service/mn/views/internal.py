@@ -34,17 +34,17 @@ import os
 import platform
 
 # Django.
-import django
+from django.conf import settings
+from django.db.models import Avg, Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from django.db.models import Avg, Count, Sum
-from django.conf import settings
+import django
 
 # DataONE APIs.
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 
 # App.
 import mn.auth

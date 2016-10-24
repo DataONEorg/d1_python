@@ -25,10 +25,11 @@
 :Author: DataONE (Dahl)
 """
 
+# Django
 import django.http
 
 
-def _allow_only_verbs(f, verbs):
+def allow_only_verbs(f, verbs):
   def wrap(request, *args, **kwargs):
     if request.method not in verbs:
       return django.http.HttpResponseNotAllowed(verbs)
@@ -40,20 +41,20 @@ def _allow_only_verbs(f, verbs):
 
 
 def get(f):
-  return _allow_only_verbs(f, ['GET'])
+  return allow_only_verbs(f, ['GET'])
 
 
 def head(f):
-  return _allow_only_verbs(f, ['HEAD'])
+  return allow_only_verbs(f, ['HEAD'])
 
 
 def put(f):
-  return _allow_only_verbs(f, ['PUT'])
+  return allow_only_verbs(f, ['PUT'])
 
 
 def post(f):
-  return _allow_only_verbs(f, ['POST'])
+  return allow_only_verbs(f, ['POST'])
 
 
 def delete(f):
-  return _allow_only_verbs(f, ['DELETE'])
+  return allow_only_verbs(f, ['DELETE'])

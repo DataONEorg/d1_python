@@ -36,20 +36,19 @@ import pprint
 import urlparse
 
 # Django.
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.db.models import Q
 from django.conf import settings
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
 import django.apps
 
 # D1.
 import d1_common.const
 import d1_common.date_time
-import d1_common.types.exceptions
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 
 # App.
-import mn.views.view_asserts
 import mn.auth
 import mn.db_filter
 import mn.event_log
@@ -58,6 +57,7 @@ import mn.node_registry
 import mn.psycopg_adapter
 import mn.restrict_to_verb
 import mn.util
+import mn.views.view_asserts
 import mn.views.view_util
 
 # ------------------------------------------------------------------------------

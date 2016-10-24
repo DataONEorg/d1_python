@@ -35,8 +35,7 @@ import auth
 
 
 def _log(pid, request, event, timestamp=None):
-  """Log an object access.
-  :return:
+  """Log an operation that was performed on a sciobj.
   """
   ip_address = request.META['REMOTE_ADDR']
   user_agent = request.META['HTTP_USER_AGENT']

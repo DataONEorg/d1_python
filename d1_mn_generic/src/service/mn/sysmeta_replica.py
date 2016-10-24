@@ -19,14 +19,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stdlib.
-import datetime
 
 # Django.
 from django.conf import settings
 from django.db.models import Sum
-import django.core.cache
-import django.db.transaction
 
 # D1.
 import d1_common.checksum

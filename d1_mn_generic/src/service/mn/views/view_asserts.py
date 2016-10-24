@@ -29,12 +29,11 @@
 """
 # Stdlib.
 import contextlib
-import httplib
 import urlparse
 
 # Django.
-import mn.sysmeta_util
 from django.conf import settings
+import mn.sysmeta_util
 
 # 3rd party.
 import requests

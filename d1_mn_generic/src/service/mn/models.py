@@ -33,7 +33,6 @@ import datetime
 from django.db import models
 
 # D1
-import d1_common.types.exceptions
 
 # Django automatically creates:
 # - "id" serial NOT NULL PRIMARY KEY

@@ -25,9 +25,6 @@ refreshed and refresh them by pulling the latest version from a CN.
 
 # Stdlib.
 import logging
-import os
-import sys
-import tempfile
 
 # Django.
 import django.core.management.base
@@ -50,8 +47,6 @@ import mn.models
 import mn.sysmeta_file
 import mn.views.view_asserts
 import util
-
-single_instance_lock_file = None
 
 
 class Command(django.core.management.base.BaseCommand):
