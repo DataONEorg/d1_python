@@ -126,6 +126,21 @@ ALLOW_INTEGRATION_TESTS = True
 # - Use for production.
 STAND_ALONE = True
 
+# Enable Slender Node mode.
+# True:
+# - GMN allows clients to set System Metadata fields that are normally intended
+#   to be set only by MNs when calling MNStorage.create() and
+#   MNStorage.update(). This is because, in a Slender Node setup, the client is
+#   a Slender Node Connector which is itself part of the Member Node. Any fields
+#   not set by the client are set as normal by GMN. The effected fields are:
+#   submitter, originMemberNode, authoritativeMemberNode, dateUploaded,
+#   dateSysMetadataModified, serialVersion.
+# False (default):
+# - GMN overrides any values passed in the fields listed above. E.g., the
+#   submitter field is set to the primary subject of the certificate with which
+#   the call was made.
+SLENDER_NODE = False
+
 # Enable monitoring.
 # True (default):
 # - Aspects of internal GMN operations can be monitored by public subjects.
