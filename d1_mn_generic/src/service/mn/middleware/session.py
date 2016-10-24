@@ -80,7 +80,7 @@ import d1_common.types.exceptions
 import d1_certificate.certificate_extractor
 
 
-class process_session(object):
+class ProcessSession(object):
   def __init__(self, request):
     """Process the session in the certificate and store the result in the
     request object.
@@ -102,8 +102,10 @@ class process_session(object):
   def _process_session(self):
     self._add_symbolic_subject_public()
     if self._is_certificate_provided():
+      logging.info('Certificate was submitted')
       self._process_authenticated_session()
     else:
+      logging.info('No certificate submitted')
       self._process_unauthenticated_session()
 
   def _is_certificate_provided(self):

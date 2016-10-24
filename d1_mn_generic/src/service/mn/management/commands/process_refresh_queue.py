@@ -51,7 +51,7 @@ import mn.sysmeta_file
 import mn.views.view_asserts
 import util
 
-single_lock_file = None
+single_instance_lock_file = None
 
 
 class Command(django.core.management.base.BaseCommand):

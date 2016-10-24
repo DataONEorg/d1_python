@@ -45,5 +45,8 @@ class RequestHandler(object):
     if settings.DEBUG_GMN and settings.ECHO_REQUEST_OBJECT:
       logging.warning('settings.ECHO_REQUEST_OBJECT=True')
       pp = pprint.PrettyPrinter(indent=2)
-      return HttpResponse(pp.pformat(request), d1_common.const.CONTENT_TYPE_TEXT)
+      return HttpResponse(
+        pp.pformat(request.read()),
+        d1_common.const.CONTENT_TYPE_TEXT
+      )
     return None

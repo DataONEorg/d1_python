@@ -66,7 +66,7 @@ class ViewHandler(object):
             request.META['HTTP_VENDOR_INCLUDE_CERTIFICATE'])
 
     # Always run regular certificate processing.
-    session.process_session(request)
+    session.ProcessSession(request)
 
     # Handle list of subjects in vendor specific extension:
     if settings.DEBUG_GMN:
