@@ -122,6 +122,7 @@ def create(sysmeta_obj, url):
   _base_pyxb_to_model(sci_row, sysmeta_obj, url)
   sci_row.save()
   _access_policy_pyxb_to_model(sci_row, sysmeta_obj)
+  return sci_row
   # _update_obsolescence_chain(sci_row, sysmeta_obj)
   # _update_sid(sci_row, sysmeta_obj).
   # _update_modified_timestamp(sci_row, sysmeta_obj)

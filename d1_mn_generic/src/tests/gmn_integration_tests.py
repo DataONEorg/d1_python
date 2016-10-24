@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -309,13 +309,13 @@ class GMNIntegrationTests(unittest.TestCase):
     )
     return sci_obj_str, sysmeta_obj
 
-  def _get(self, client, sid_or_pid):
+  def _get(self, client, did):
     sysmeta_obj = client.getSystemMetadata(
-      sid_or_pid, vendorSpecific=self.
+      did, vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     response = client.get(
-      sid_or_pid, vendorSpecific=self.
+      did, vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
     )
     self._assert_sci_obj_size_matches_sysmeta(response, sysmeta_obj)
@@ -347,7 +347,7 @@ class GMNIntegrationTests(unittest.TestCase):
     """GMN must be in debug mode when running the integration tests.
     """
     client = gmn_test_client.GMNTestClient(GMN_URL)
-    self.assertTrue(client.get_setting('GMN_DEBUG'))
+    self.assertTrue(client.get_setting('DEBUG_GMN'))
 
   def test_1000_B(self):
     """GMN must be set to allow running destructive integration tests.
@@ -459,7 +459,10 @@ class GMNIntegrationTests(unittest.TestCase):
     """Event log is empty.
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
-    logRecords = client.getLogRecords()
+    logRecords = client.getLogRecords(
+      vendorSpecific=self.
+        _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
+    )
     self.assertEqual(len(logRecords.logEntry), 0)
 
   def test_1100_C(self):
@@ -477,8 +480,9 @@ class GMNIntegrationTests(unittest.TestCase):
     """
     client = d1_client.mnclient.MemberNodeClient(GMN_URL)
     logRecords = client.getLogRecords(
-      count=d1_common.const.MAX_LISTOBJECTS, vendorSpecific=self.
-      _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)
+      count=d1_common.const.MAX_LISTOBJECTS,
+      vendorSpecific=self.
+        _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED),
     )
     self.assertEqual(len(logRecords.logEntry), EVENTS_TOTAL)
     found = False
@@ -1595,8 +1599,8 @@ class GMNIntegrationTests(unittest.TestCase):
     self._test_1900(client, v2)
 
   def _test_1900(self, client, binding):
-    known_pid = self._random_pid()
-    scidata, sysmeta = self._generate_test_object(binding, known_pid)
+    pid = self._random_pid()
+    scidata, sysmeta = self._generate_test_object(binding, pid)
     client.replicate(
       sysmeta, 'test_source_node', vendorSpecific=self.
       _include_subjects(gmn_test_client.GMN_TEST_SUBJECT_TRUSTED)

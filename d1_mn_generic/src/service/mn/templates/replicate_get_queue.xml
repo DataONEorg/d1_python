@@ -2,10 +2,10 @@
 <replication_queue>
   {% for replication_item in replication_queue %}
   <replication_item>
-	<status>{{ replication_item.status.status }}</status>
-	<pid>{{ replication_item.pid }}</pid>
-	<source_node>{{ replication_item.source_node.source_node }}</source_node>
-	<timestamp>{{ replication_item.timestamp }}</timestamp>
+	<status>{{ replication_item.local_replica.info.status.status }}</status>
+	<pid>{{ replication_item.local_replica.pid.did }}</pid>
+	<source_node>{{ replication_item.local_replica.info.member_node.urn }}</source_node>
+	<timestamp>{{ replication_item.local_replica.info.timestamp }}</timestamp>
   </replication_item>
   {% endfor %}
 </replication_queue>

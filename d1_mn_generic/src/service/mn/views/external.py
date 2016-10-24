@@ -412,10 +412,6 @@ def _assert_node_is_authorized(request, pid):
   try:
     client = d1_client.cnclient.CoordinatingNodeClient(settings.DATAONE_ROOT)
     client.isNodeAuthorized(request.primary_subject, pid)
-  except socket.gaierror:
-    raise d1_common.types.exceptions.ServiceFailure(
-      0, u'getaddrinfo() failed. url="{}"'.format(settings.DATAONE_ROOT)
-    )
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(
       0,
@@ -423,6 +419,11 @@ def _assert_node_is_authorized(request, pid):
       u'target_mn="{}", pid="{}", cn_error="{}"'
         .format(request.primary_subject, pid, str(e))
       )
+  except Exception as e:
+    raise d1_common.types.exceptions.ServiceFailure(
+      0, u'isNodeAuthorized() failed. base_url="{}", error="{}"'.format(
+        settings.DATAONE_ROOT, e.message)
+    )
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 2: Authorization API

@@ -46,6 +46,14 @@ def is_local_replica(pid):
     pid__did=pid).exists()
 
 
+def is_unprocessed_local_replica(pid):
+  """Is local replica with status "queued"."""
+  return mn.models.LocalReplica.objects.filter(
+    pid__did=pid,
+    info__status__status='queued',
+  ).exists()
+
+
 def is_obsolescence_chain_placeholder(pid):
   """For replicas, the PIDs referenced in obsolence chains are reserved for
   use by other replicas."""

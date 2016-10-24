@@ -156,6 +156,13 @@ class ReplicaObsolescenceChainReference(models.Model):
   pid = models.OneToOneField(IdNamespace, models.CASCADE)
 
 
+def replica_obsolescence_chain_reference(pid):
+  pid_model = did(pid)
+  ref_model = ReplicaObsolescenceChainReference(pid=pid_model)
+  ref_model.save()
+  return ref_model
+
+
 class ReplicaStatus(models.Model):
   status = models.CharField(max_length=16, unique=True)
 

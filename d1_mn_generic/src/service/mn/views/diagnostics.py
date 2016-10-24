@@ -80,7 +80,8 @@ def diagnostics(request):
 def get_replication_queue(request):
   q = mn.models.ReplicationQueue.objects.all()
   if 'excludecompleted' in request.GET:
-    q = mn.models.ReplicationQueue.objects.filter(~Q(status__status='completed'))
+    q = mn.models.ReplicationQueue.objects.filter(~Q(
+      local_replica__info__status__status='completed'))
   return render_to_response(
     'replicate_get_queue.xml', {'replication_queue': q},
     content_type=d1_common.const.CONTENT_TYPE_XML
@@ -89,12 +90,12 @@ def get_replication_queue(request):
 
 @mn.restrict_to_verb.get
 def clear_replication_queue(request):
-  rep_queue_queryset = mn.models.LocalReplica.objects.filter(
-    info__status__status='queued'
-  )
-  mn.models.IdNamespace.objects.filter(
-    pk__in=rep_queue_queryset
-  )
+  for rep_queue_model in mn.models.ReplicationQueue.objects.filter(
+    local_replica__info__status__status='queued'
+  ):
+    mn.models.IdNamespace.objects.filter(
+      did=rep_queue_model.local_replica.pid.did
+    ).delete()
   return mn.views.view_util.http_response_with_boolean_true_type()
 
 

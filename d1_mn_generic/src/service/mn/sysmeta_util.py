@@ -38,7 +38,11 @@ def get_sci_row(pid):
 
 
 def get_value(sysmeta_obj, sysmeta_attr):
+  """PyXB validation will fail if required elements are missing. Optional
+  elements that are not present are represented with attributes
+  that are present but set to None."""
   try:
     return getattr(sysmeta_obj, sysmeta_attr).value()
   except (ValueError, AttributeError):
     return None
+
