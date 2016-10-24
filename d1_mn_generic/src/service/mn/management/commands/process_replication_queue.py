@@ -5,7 +5,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2012 DataONE
+#   Copyright 2009-2016 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,28 +18,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`process_replication_queue`
-================================
-
-:Synopsis:
-  Iterate over queue of objects registered for replication and attempt to
-  replicate them.
-:Created: 2011-01-01
-:Author: DataONE (Dahl)
+"""Iterate over queue of objects registered for replication and attempt to
+replicate them.
 """
 
 # Stdlib.
-import fcntl
 import logging
 import os
 import shutil
 import sys
-import tempfile
 
 # Django.
 import django.core.management.base
-from django.db import transaction
+import django.db
 from django.conf import settings
 
 # D1.
@@ -52,70 +43,41 @@ import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
 
-# Add some GMN paths to include path.
-_here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-sys.path.append(_here('../'))
-sys.path.append(_here('../types/generated'))
-
 # App.
+import mn.event_log
 import mn.models
-import mn.sysmeta_file
+import mn.sysmeta
+import mn.sysmeta_replica
 import mn.views.view_util
-
-single_path_file = None
+import util
 
 
 class Command(django.core.management.base.BaseCommand):
   help = 'Process the queue of replication requests'
 
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--debug',
+      action='store_true',
+      default=False,
+      help='debug level logging',
+    )
+
   def handle(self, *args, **options):
-    verbosity = int(options.get('verbosity', 1))
-    self._log_setup(verbosity)
-    logging.debug(u'Running management command: process_replication_queue')
-    self._abort_if_other_instance_is_running()
-    self._abort_if_stand_alone_instance()
+    util.log_setup(options['debug'])
+    logging.info(
+      u'Running management command: {}'.format(util.get_command_name())
+    )
+    util.abort_if_other_instance_is_running()
+    util.abort_if_stand_alone_instance()
     p = ReplicationQueueProcessor()
     p.process_replication_queue()
-
-  def _log_setup(self, verbosity):
-    # Set up logging. We output only to stdout. Instead of also writing to a log
-    # file, redirect stdout to a log file when the script is executed from cron.
-    formatter = logging.Formatter(
-      '%(asctime)s %(levelname)-8s %(name)s %(module)s %(message)s', '%Y-%m-%d %H:%M:%S'
-    )
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
-    if verbosity >= 1:
-      logging.getLogger('').setLevel(logging.DEBUG)
-    else:
-      logging.getLogger('').setLevel(logging.INFO)
-
-  def _abort_if_other_instance_is_running(self):
-    global single_path_file
-    single_path = os.path.join(
-      tempfile.gettempdir(), os.path.splitext(__file__)[0] + '.single'
-    )
-    single_path_file = open(single_path, 'w')
-    try:
-      fcntl.lockf(single_path_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
-      logging.info('Aborted: Another instance is still running')
-      exit(0)
-
-  def _abort_if_stand_alone_instance(self):
-    if settings.STAND_ALONE:
-      logging.info(
-        'Aborted: Stand-alone instance cannot be a replication target. See settings_site.STAND_ALONE.'
-      )
-      exit(0)
 
 #===============================================================================
 
 
 class ReplicationQueueProcessor(object):
   def __init__(self):
-    self.logger = logging.getLogger(self.__class__.__name__)
     self.cn_client = self._create_cn_client()
 
   def process_replication_queue(self):
