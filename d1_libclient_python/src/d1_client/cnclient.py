@@ -524,25 +524,29 @@ class CoordinatingNodeClient(d1baseclient.DataONEBaseClient):
   # http://mule1.dataone.org/ArchitectureDocs-current/apis/CN_APIs.html#CNReplication.setReplicationStatus
 
   @d1_common.util.utf8_to_unicode
-  def setReplicationStatusResponse(self, pid, nodeRef, status, failure=None):
+  def setReplicationStatusResponse(self, pid, nodeRef, status, dataone_error=None):
     url = self._rest_url('replicaNotifications/%(pid)s', pid=pid)
     mime_multipart_fields = [
       ('nodeRef', nodeRef.encode('utf-8')),
       ('status', status.encode('utf-8')),
     ]
-    #    mime_multipart_files = [
-    #      ('failure', 'failure.xml', failure.serialize().encode('utf-8') if failure
-    #       else '')
-    #    ]
+    mime_multipart_files = []
+    if dataone_error is not None:
+      mime_multipart_files.append((
+          'failure',
+          'failure.xml',
+          dataone_error.serialize(),
+      ))
     return self.PUT(
       url,
       fields=mime_multipart_fields,
-      dump_path=None # 'out.dump'
-    ) # files=mime_multipart_files
+      files=mime_multipart_files,
+      # dump_path='/tmp/dump.txt',
+    )
 
   @d1_common.util.utf8_to_unicode
-  def setReplicationStatus(self, pid, nodeRef, status, failure=None):
-    response = self.setReplicationStatusResponse(pid, nodeRef, status, failure)
+  def setReplicationStatus(self, pid, nodeRef, status, dataone_error=None):
+    response = self.setReplicationStatusResponse(pid, nodeRef, status, dataone_error)
     return self._read_boolean_response(response)
 
   # CNReplication.updateReplicationMetadata(session, pid, replicaMetadata, serialVersion) → boolean
