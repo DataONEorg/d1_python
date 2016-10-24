@@ -50,6 +50,7 @@ import mn.models
 import mn.psycopg_adapter
 import mn.sysmeta
 import mn.sysmeta_sid
+import mn.sysmeta_util
 import mn.util
 import view_asserts
 
@@ -102,20 +103,24 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
   return HttpResponse(sysmeta_xml_str, d1_common.const.CONTENT_TYPE_XML)
 
 
-# Keep this here for now because we will probably need to convert between
-# SysMeta versions here.
-def deserialize(request, sysmeta_xml):
-  return mn.sysmeta_base.deserialize(sysmeta_xml)
-
-
 def update_sysmeta_with_mn_values(request, sysmeta_obj):
-  sysmeta_obj.submitter = request.primary_subject
-  sysmeta_obj.originMemberNode = settings.NODE_IDENTIFIER
-  sysmeta_obj.authoritativeMemberNode = settings.NODE_IDENTIFIER
+  """If SLENDER_NODE is True, client is allowed to supply System Metadata
+  parameters that are normally set only by GMN."""
   now = datetime.datetime.utcnow()
-  sysmeta_obj.dateUploaded = now
-  sysmeta_obj.dateSysMetadataModified = now
-  sysmeta_obj.serialVersion = 1
+  _pyxb_set_with_override(sysmeta_obj, 'submitter', request.primary_subject)
+  _pyxb_set_with_override(sysmeta_obj, 'originMemberNode', settings.NODE_IDENTIFIER)
+  _pyxb_set_with_override(sysmeta_obj, 'authoritativeMemberNode', settings.NODE_IDENTIFIER)
+  _pyxb_set_with_override(sysmeta_obj, 'dateUploaded', now)
+  _pyxb_set_with_override(sysmeta_obj, 'dateSysMetadataModified', now)
+  _pyxb_set_with_override(sysmeta_obj, 'serialVersion', 1)
+
+
+def _pyxb_set_with_override(pyxb, attr_str, value):
+  if settings.SLENDER_NODE:
+    if mn.sysmeta_util.get_value(pyxb, attr_str) is None:
+      setattr(pyxb, attr_str, value)
+  else:
+    setattr(pyxb, attr_str, value)
 
 
 def create(request, sysmeta_obj):
