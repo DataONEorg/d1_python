@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # This work was created by participants in the DataONE project, and is
@@ -483,7 +482,7 @@ LOGGING = {
     # Django uses this logger.
     'django': {
       'handlers': ['file'],
-      'propagate': True,
+      'propagate': False,
       'level': LOG_LEVEL
     },
     # Messages relating to the interaction of code with the database. For
