@@ -17,70 +17,69 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Test JSON Web Token parsing and validation"""
 
 # Stdlib
-import datetime
-import os
-import sys
+import mock
 
 # Django
 import django.test
 
-# 3rd party
-import cryptography
-import cryptography.hazmat.backends
-
-# D1
-import d1_common.util
-
 # App
-import mn.middleware.session_jwt as session_jwt
+import mn.middleware.session_jwt
 import util
 
 
 class TestJwt(django.test.TestCase):
-  """Test JSON Web Tokens"""
   def setUp(self):
     pass
 
   def tearDown(self):
     pass
 
-
   @django.test.override_settings(
     STAND_ALONE=False,
     DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
   )
   def test_100(self):
-    """_get_cn_cert()"""
-    cert_obj = session_jwt.get_cn_cert()
+    """_get_cn_cert() successfully retrieves CN server cert from cn-stage"""
+    cert_obj = mn.middleware.session_jwt._get_cn_cert()
     self.assertIn(u'*.test.dataone.org', [v.value for v in cert_obj.subject])
 
+  def _parse_test_token(self):
+    jwt_base64 = util.read_test_file('test_token_2.base64')
+    return mn.middleware.session_jwt._validate_jwt_and_get_subject_list(
+      jwt_base64
+    )
 
   @django.test.override_settings(
     STAND_ALONE=False,
     DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
   )
   def test_200(self):
-    """_decode_and_validate_jwt()"""
-    jwt_base64 = util.read_test_file('test_token_2.base64')
-    subject_dict = session_jwt._decode_and_validate_jwt(jwt_base64)
-    self.assertEqual(
-      subject_dict['sub'],
-      u'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
-    )
+    """_validate_jwt_and_get_subject_list() silently returns an empty subject
+    list when parsing the token fails to failed validation. The token expired on
+    2016-10-06.
+    """
+    subject_list = self._parse_test_token()
+    self.assertListEqual(subject_list, [])
 
-
+  @django.test.tag("test")
   @django.test.override_settings(
     STAND_ALONE=False,
     DATAONE_ROOT='https://cn-stage.test.dataone.org/cn',
   )
-  def test_300(self):
-    """_validate_jwt_and_get_subject_list()"""
-    jwt_base64 = util.read_test_file('test_token_2.base64')
-    subject_list = session_jwt.validate_jwt_and_get_subject_list(jwt_base64)
-    self.assertEqual(
-      subject_list,
-      [u'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org']
-    )
-
+  def test_210(self):
+    """_validate_jwt_and_get_subject_list() successfully returns the expected
+    subject list when PyJWS' call to calendar.timegm() is mocked to return a
+    time just before the token expired.
+    """
+    with mock.patch(
+      'mn.middleware.session_jwt.jwt.api_jwt.timegm'
+    ) as mock_date:
+      awt_exp_ts = 1475786896
+      mock_date.return_value = awt_exp_ts - 1
+      subject_list = self._parse_test_token()
+      self.assertListEqual(
+        subject_list, [u'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org']
+      )
