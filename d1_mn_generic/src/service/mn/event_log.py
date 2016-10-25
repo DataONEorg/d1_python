@@ -49,7 +49,9 @@ def _log(pid, request, event, timestamp=None):
         .format((pid))
       raise d1_common.types.exceptions.ServiceFailure(0, err_msg)
 
-  create_log_entry(object_row, event, ip_address, user_agent, subject)
+  event_log_row = create_log_entry(
+    object_row, event, ip_address, user_agent, subject
+  )
 
   # The datetime is an optional parameter. If it is not provided, a
   # "auto_now_add=True" value in the the model defaults it to Now. The
@@ -68,7 +70,7 @@ def create_log_entry(object_row, event, ip_address, user_agent, subject):
   event_log_row.user_agent = models.user_agent(user_agent)
   event_log_row.subject = models.subject(subject)
   event_log_row.save()
-
+  return event_log_row
 
 def create(pid, request, timestamp=None):
   return _log(pid, request, 'create', timestamp)

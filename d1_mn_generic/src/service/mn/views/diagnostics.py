@@ -126,7 +126,7 @@ def delete_all_access_policies(request):
 @mn.restrict_to_verb.get
 def echo_session(request):
   return render_to_response('echo_session.xhtml',
-                            {'subjects': sorted(request.subjects) },
+                            {'subjects': sorted(request.all_subjects_set) },
                             content_type=d1_common.const.CONTENT_TYPE_XHTML)
 
 

@@ -17,17 +17,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Test conversions of System Metadata between PyXB and database
+"""
 
 # Stdlib
 import datetime
-import os
-import sys
 
 # Django
 import django.test
-
-# D1
-import d1_common.util
 
 # App
 import mn.models
@@ -100,10 +97,6 @@ class TestSysMeta(django.test.TestCase):
       url='file://test',
     )
     gen_sciobj_pyxb = mn.sysmeta._base_model_to_pyxb(sciobj_model)
-
-    # print d1_common.util.pretty_xml(orig_sysmeta_pyxb.toxml())
-    # print d1_common.util.pretty_xml(gen_sciobj_pyxb.toxml())
-
     self._compare_base_pyxb(orig_sysmeta_pyxb, gen_sciobj_pyxb)
 
   # Access Policy

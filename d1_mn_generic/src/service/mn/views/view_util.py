@@ -105,7 +105,7 @@ def update_sysmeta_with_mn_values(request, sysmeta_obj):
   """If SLENDER_NODE is True, client is allowed to supply System Metadata
   parameters that are normally set only by GMN."""
   now = datetime.datetime.utcnow()
-  _pyxb_set_with_override(sysmeta_obj, 'submitter', request.primary_subject)
+  _pyxb_set_with_override(sysmeta_obj, 'submitter', request.primary_subject_str)
   _pyxb_set_with_override(sysmeta_obj, 'originMemberNode', settings.NODE_IDENTIFIER)
   _pyxb_set_with_override(sysmeta_obj, 'authoritativeMemberNode', settings.NODE_IDENTIFIER)
   _pyxb_set_with_override(sysmeta_obj, 'dateUploaded', now)

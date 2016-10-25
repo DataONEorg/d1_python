@@ -405,13 +405,13 @@ def get_replica(request, pid):
 def _assert_node_is_authorized(request, pid):
   try:
     client = d1_client.cnclient.CoordinatingNodeClient(settings.DATAONE_ROOT)
-    client.isNodeAuthorized(request.primary_subject, pid)
+    client.isNodeAuthorized(request.primary_subject_str, pid)
   except d1_common.types.exceptions.DataONEException as e:
     raise d1_common.types.exceptions.NotAuthorized(
       0,
       u'A CN has not authorized the target MN to create a replica of object. '
       u'target_mn="{}", pid="{}", cn_error="{}"'
-        .format(request.primary_subject, pid, str(e))
+        .format(request.primary_subject_str, pid, str(e))
       )
   except Exception as e:
     raise d1_common.types.exceptions.ServiceFailure(
@@ -459,7 +459,7 @@ def post_refresh_system_metadata(request):
     request.POST['pid'],
     request.POST['serialVersion'],
     request.POST['dateSysMetaLastModified'],
-    'new',
+    'queued',
   ).save()
   return mn.views.view_util.http_response_with_boolean_true_type()
 

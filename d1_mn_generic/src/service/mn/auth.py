@@ -107,7 +107,7 @@ def get_trusted_subjects_string():
 
 
 def is_trusted_subject(request):
-  return not request.subjects.isdisjoint(get_trusted_subjects())
+  return not request.all_subjects_set.isdisjoint(get_trusted_subjects())
 
 
 def _get_client_side_certificate_subject():
@@ -163,14 +163,14 @@ def is_allowed(request, level, pid):
   # the requested action level.
   return mn.models.Permission.objects.filter(
     sciobj__pid__did=pid,
-    subject__subject__in=request.subjects,
+    subject__subject__in=request.all_subjects_set,
     level__gte=level
   ).exists()
 
 
 def has_create_update_delete_permission(request):
   return mn.models.WhitelistForCreateUpdateDelete.objects.filter(
-    subject__subject__in=request.subjects).exists() \
+    subject__subject__in=request.all_subjects_set).exists() \
       or is_trusted_subject(request)
 
 
@@ -209,15 +209,11 @@ def format_active_subjects(request):
   """Create a string listing active subjects for this connection, suitable
   for appending to authentication error messages.
   """
-  decorated_subjects = []
-  for subject in request.subjects:
-    if subject == request.primary_subject:
-      decorated_subjects.append(subject + u' (primary)')
-    elif subject == d1_common.const.SUBJECT_VERIFIED:
-      decorated_subjects.append(subject + u' (verified)')
-    else:
-      decorated_subjects.append(subject + u' (equivalent)')
-  return u'{}'.format(u', '.join(decorated_subjects))
+  decorated_subject_list = [request.primary_subject_str + u' (primary)']
+  for subject in request.all_subjects_set:
+    if subject != request.primary_subject_str:
+      decorated_subject_list.append(subject)
+  return u', '.join(decorated_subject_list)
 
 # ------------------------------------------------------------------------------
 # Decorators.
@@ -298,7 +294,7 @@ def assert_authenticated(f):
   """
   functools.wraps(f)
   def wrap(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_AUTHENTICATED not in request.subjects:
+    if d1_common.const.SUBJECT_AUTHENTICATED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
         0, u'Access allowed only for authenticated subjects. Please reconnect with '
         u'a valid DataONE session certificate. active_subjects="{}"'.format(
@@ -318,7 +314,7 @@ def assert_verified(f):
   """
   functools.wraps(f)
   def wrap(request, *args, **kwargs):
-    if d1_common.const.SUBJECT_VERIFIED not in request.subjects:
+    if d1_common.const.SUBJECT_VERIFIED not in request.all_subjects_set:
       raise d1_common.types.exceptions.NotAuthorized(
         0, u'Access allowed only for verified accounts. Please reconnect with a '
         u'valid DataONE session certificate in which the identity of the '

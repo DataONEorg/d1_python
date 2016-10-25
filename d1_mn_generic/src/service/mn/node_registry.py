@@ -66,9 +66,7 @@ def set_cn_subjects_for_environment():
   # environment of which this MN is a member.
   try:
     cn_subjects = get_cn_subjects_from_dataone_root()
-  except (
-    d1_common.types.exceptions.DataONEException, httplib.HTTPException, socket.error
-  ) as e:
+  except Exception as e:
     logging.warn(
       u'Unable to get CN Subjects from the DataONE environment. '
       u'If this server is being used for testing, see the STAND_ALONE setting. '

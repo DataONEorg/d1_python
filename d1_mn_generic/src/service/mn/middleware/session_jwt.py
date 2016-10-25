@@ -44,8 +44,32 @@ import d1_common.types.exceptions
 
 # App
 
+def validate_jwt_and_get_subject_list(request):
+  if not _has_jwt_header(request):
+    return []
+  if settings.STAND_ALONE:
+    logging.info(
+      u'Running in stand-alone mode. Skipping certificate download and '
+      u'ignoring included JWT.'
+    )
+    return []
+  return _validate_jwt_and_get_subject_list(_get_jwt_header(request))
 
-def validate_jwt_and_get_subject_list(jwt_base64):
+
+#
+# Private
+#
+
+
+def _has_jwt_header(request):
+  return 'Authorization' in request.META
+
+
+def _get_jwt_header(request):
+  return request.META['Authorization']
+
+
+def _validate_jwt_and_get_subject_list(jwt_base64):
   """Validate any JWT in the request and return a list of authenticated
   subjects.
 
@@ -66,36 +90,11 @@ def validate_jwt_and_get_subject_list(jwt_base64):
   empty.
   """
   jwt_dict = _decode_and_validate_jwt(jwt_base64)
-  if jwt_dict is None:
-    return []
-  return [jwt_dict['sub']]
+  subject_list = []
+  if jwt_dict is not None:
+    subject_list.append(jwt_dict['sub'])
+  return subject_list
 
-
-def get_cn_cert():
-  """Get the current DataONE root CN TLS/SSL X.509 certificate
-  
-  If in stand-alone mode, or if certificate retrieval fails, return None.
-  If successful, returns cryptography.Certificate().
-  
-  If certificate retrieval fails, a new attempt to retrieve the certificate
-  is performed after the cache expires (settings.CACHES.default.TIMEOUT).
-  """
-  if settings.STAND_ALONE:
-    logging.info(u'Running in stand-alone mode. Skipping certificate download.')
-    return None
-  return _get_cn_cert()
-
-
-def has_jwt_header(request):
-  return 'Authorization' in request.META
-
-
-def get_jwt_header(request):
-  return request.META['Authorization']
-
-#
-# Private
-#
 
 def _fix_base64_jwt(jwt_base64):
   header_json, payload_json, signature_str = jwt_base64.split('.')
@@ -134,6 +133,11 @@ def _decode_and_validate_jwt(jwt_base64):
 def _get_cn_cert():
   """Get the public TLS/SSL X.509 certificate from the root CN of the DataONE
   environment. The certificate is used for validating the signature of the JWTs.
+
+  If certificate retrieval fails, a new attempt to retrieve the certificate
+  is performed after the cache expires (settings.CACHES.default.TIMEOUT).
+
+  If successful, returns cryptography.Certificate().
   """
   try:
     return django.core.cache.cache.cn_cert_obj
