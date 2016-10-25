@@ -259,19 +259,19 @@ class ReplicationTester(object):
     self._http_server.stop()
 
   def test_src_mn(self):
-    # self._log_debug_header('Source MNRead.getReplica(PID_UNKNOWN)')
-    # self._test_getReplica_with_unknown_pid()
-    # self._log_debug_header('Source MNRead.getReplica(PID_EXISTING_REJECT)')
-    # self._test_getReplica_with_rejected_pid()
-    # self._log_debug_header('Source MNRead.getReplica(PID_EXISTING_APPROVE)')
-    # self._test_getReplica_with_approved_pid()
+    self._log_debug_header('Source MNRead.getReplica(PID_UNKNOWN)')
+    self._test_getReplica_with_unknown_pid()
+    self._log_debug_header('Source MNRead.getReplica(PID_EXISTING_REJECT)')
+    self._test_getReplica_with_rejected_pid()
+    self._log_debug_header('Source MNRead.getReplica(PID_EXISTING_APPROVE)')
+    self._test_getReplica_with_approved_pid()
     pass
 
   def test_dst_mn(self):
-    # self._log_debug_header('Destination MNReplication.replicate(PID_EXISTING)')
-    # self._test_MNReplication_replicate_with_existing_pid()
-    # self._log_debug_header('Destination MNReplication.replicate(PID_NOT_AUTHORIZED)')
-    # self._test_MNReplication_replicate_with_unauthorized_pid()
+    self._log_debug_header('Destination MNReplication.replicate(PID_EXISTING)')
+    self._test_MNReplication_replicate_with_existing_pid()
+    self._log_debug_header('Destination MNReplication.replicate(PID_NOT_AUTHORIZED)')
+    self._test_MNReplication_replicate_with_unauthorized_pid()
     self._log_debug_header('Destination MNReplication.replicate(PID_KNOWN_AND_AUTHORIZED)')
     self._test_MNReplication_replicate_with_authorized_pid()
     pass
