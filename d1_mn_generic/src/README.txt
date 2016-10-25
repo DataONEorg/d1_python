@@ -1,7 +1,6 @@
-The DataONE Generic Member Node (GMN) is a complete implementation of a DataONE
-Member Node (MN). It provides an implementation of all MN APIs and can be used
-by organizations to expose their science data to DataONE if they do not wish to
-create their own, native MN.
+The DataONE Generic Member Node (GMN) is an implementation of a DataONE Member
+Node (MN). It can be used by organizations to expose their science data to
+DataONE without having to create their own, native MN.
 
 GMN can be used as a standalone MN or it can be used for exposing data that is
 already available on the web, to DataONE. When used in this way, GMN provides a

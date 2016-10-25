@@ -17,18 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Module d1_mn_generic.tests.gmn_test_client
-=============================================
-
-This module implements GMNTestClient, which extends
+"""This module implements GMNTestClient, which extends
 d1_client.mnclient.MemberNodeClient with GMN specific test functionality. The
 REST interfaces on GMN that provide this functionality are prefixed with
-"/test/" and are only enabled when GMN runs in debug mode. The interfaces are
+"/diag/" and are only enabled when GMN runs in debug mode. The interfaces are
 not versioned, and so there is no version tag (such as "v1") in the URL for
 these methods.
-
-:Created: 2011-03-18
-:Author: DataONE (Dahl)
 """
 
 # Stdlib.
@@ -38,6 +32,7 @@ import logging
 import os
 import re
 
+# D1
 import d1_client.mnclient
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
@@ -49,8 +44,7 @@ GMN_TEST_SUBJECT_TRUSTED = 'gmn_test_subject_trusted'
 
 class GMNTestClient(d1_client.mnclient.MemberNodeClient):
   def __init__(self, *args, **kwargs):
-    """ Extend MemberNodeClient with GMN specific diagnostics wrappers.
-
+    """Extend MemberNodeClient with GMN specific diagnostics wrappers.
     See d1baseclient.DataONEBaseClient for args.
     """
     self.logger = logging.getLogger(__file__)

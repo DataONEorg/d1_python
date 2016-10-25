@@ -18,13 +18,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Generic Member Node (GMN) package
 """
-:mod:`setup`
-============
-"""
+
 import setuptools
 
 import service.mn
+
 
 def main():
   setuptools.setup(
