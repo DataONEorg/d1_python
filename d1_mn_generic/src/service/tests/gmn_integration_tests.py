@@ -58,7 +58,6 @@ import errno
 import glob
 import hashlib
 import logging
-import optparse
 import os
 import random
 import re
@@ -90,8 +89,8 @@ import gmn_test_client
 
 # Configuration
 
-GMN_URL = 'http://0.0.0.0:8000'
-# GMN_URL = 'http://192.168.1.128'
+#GMN_URL = 'http://0.0.0.0:8000'
+GMN_URL = 'https://192.168.1.128'
 OBJ_PATH = './test_objects'
 OBJ_URL = 'http://localhost/test_objects/'
 
