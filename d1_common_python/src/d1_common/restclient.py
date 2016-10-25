@@ -89,18 +89,21 @@ class RESTClient(object):
     <d1:objectList xmlns:d1="http://ns.dataone.org/service/types/v1" 
       count="0" start="0" total="1011042"/>
   """
-  def __init__(self,
-               host=None,
-               scheme="https",
-               port=None,
-               timeout=d1_common.const.RESPONSE_TIMEOUT, # TODO: Ignored now. How are timeouts managed?
-               n_tries=DEFAULT_NUMBER_OF_TRIES,
-               defaultHeaders=None,
-               cert_path=None,
-               key_path=None,
-               strict=None, # TODO: Ignored now. Keep for backwards compatibility?
-               use_cache=True,
-               user_agent=d1_common.const.USER_AGENT):
+  def __init__(
+    self,
+    host=None,
+    scheme="https",
+    port=None,
+    timeout=d1_common.const.RESPONSE_TIMEOUT, # TODO: Ignored now. How are timeouts managed?
+    n_tries=DEFAULT_NUMBER_OF_TRIES,
+    defaultHeaders=None,
+    cert_path=None,
+    key_path=None,
+    strict=None, # TODO: Ignored now. Keep for backwards compatibility?
+    use_cache=True,
+    user_agent=d1_common.const.USER_AGENT,
+    verify_tls=True,
+  ):
     """Initialize the RESTClient
 
     Args:
@@ -130,6 +133,9 @@ class RESTClient(object):
 
       use_cache (bool): Use cachecontrol library to support request caching. 
         This is strongly recommended.
+
+      verify_tls (bool): Set to False to disable verification of server side
+        certificate.
     """
     self.logger = logging.getLogger(__file__)
 
@@ -167,6 +173,7 @@ class RESTClient(object):
     self._key_path = key_path
     self._use_cache = use_cache
     self._n_tries = n_tries
+    self._verify_tls = verify_tls
 
     self._connection = self._connect(n_tries=n_tries)
 
@@ -188,11 +195,7 @@ class RESTClient(object):
       requests.Response: The server response to the HTTP request
     """
     return self._send_request(
-      'GET',
-      url,
-      query=query,
-      headers=headers,
-      n_tries=n_tries,
+      'GET', url, query=query, headers=headers, n_tries=n_tries,
       dump_path=dump_path
     )
 
@@ -200,11 +203,7 @@ class RESTClient(object):
     """Perform a HTTP HEAD request.
     """
     return self._send_request(
-      'HEAD',
-      url,
-      query=query,
-      headers=headers,
-      n_tries=n_tries,
+      'HEAD', url, query=query, headers=headers, n_tries=n_tries,
       dump_path=dump_path
     )
 
@@ -212,22 +211,12 @@ class RESTClient(object):
     """Perform a HTTP DELETE request
     """
     return self._send_request(
-      'DELETE',
-      url,
-      query=query,
-      headers=headers,
-      n_tries=n_tries,
+      'DELETE', url, query=query, headers=headers, n_tries=n_tries,
       dump_path=dump_path
     )
 
   def POST(
-    self,
-    url,
-    query=None,
-    headers=None,
-    fields=None,
-    files=None,
-    n_tries=None,
+    self, url, query=None, headers=None, fields=None, files=None, n_tries=None,
     dump_path=None
   ):
     """Perform a POST request using multipart encoding.
@@ -252,37 +241,19 @@ class RESTClient(object):
         written to the specified file.
     """
     return self._send_request(
-      'POST',
-      url,
-      query=query,
-      headers=headers,
-      files=files,
-      fields=fields,
-      n_tries=n_tries,
-      dump_path=dump_path
+      'POST', url, query=query, headers=headers, files=files, fields=fields,
+      n_tries=n_tries, dump_path=dump_path
     )
 
   def PUT(
-    self,
-    url,
-    query=None,
-    headers=None,
-    fields=None,
-    files=None,
-    n_tries=None,
+    self, url, query=None, headers=None, fields=None, files=None, n_tries=None,
     dump_path=None
   ):
     """Perform a HTTP PUT request.
     """
     return self._send_request(
-      'PUT',
-      url,
-      query=query,
-      headers=headers,
-      fields=fields,
-      files=files,
-      n_tries=n_tries,
-      dump_path=dump_path
+      'PUT', url, query=query, headers=headers, fields=fields, files=files,
+      n_tries=n_tries, dump_path=dump_path
     )
 
   ##########################################
@@ -306,15 +277,10 @@ class RESTClient(object):
     if n_tries is not None:
       self._n_tries = n_tries
       session.mount(
-        'http://', requests.adapters.HTTPAdapter(
-          max_retries=n_tries
-        )
+        'http://', requests.adapters.HTTPAdapter(max_retries=n_tries)
       )
       session.mount(
-        'https://',
-        requests.adapters.HTTPAdapter(
-          max_retries=n_tries
-        )
+        'https://', requests.adapters.HTTPAdapter(max_retries=n_tries)
       )
 
     if self._use_cache:
@@ -408,15 +374,8 @@ class RESTClient(object):
             query[k] = v.isoformat()
 
     response = self._connection.request(
-      method,
-      url,
-      params=query,
-      headers=headers,
-      cert=cert,
-      files=file_list,
-      # data=field_list,
-      stream=True,
-      allow_redirects=False
+      method, url, params=query, headers=headers, cert=cert, files=file_list,
+      stream=True, allow_redirects=False, verify=self._verify_tls
     )
 
     if dump_path is not None:
