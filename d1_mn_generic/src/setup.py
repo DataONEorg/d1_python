@@ -23,13 +23,13 @@
 
 import setuptools
 
-import service.mn
+import gmn.app
 
 
 def main():
   setuptools.setup(
     name='dataone.generic_member_node',
-    version=service.mn.__version__,
+    version=gmn.app.__version__,
     description='DataONE Generic Member Node (GMN)',
     author='DataONE Project',
     author_email='developers@dataone.org',
