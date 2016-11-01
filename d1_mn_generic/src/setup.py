@@ -28,7 +28,7 @@ import gmn.app
 
 def main():
   setuptools.setup(
-    name='dataone.generic_member_node',
+    name='dataone.gmn',
     version=gmn.app.__version__,
     description='DataONE Generic Member Node (GMN)',
     author='DataONE Project',
@@ -50,10 +50,15 @@ def main():
       'iso8601 == 0.1.11',
       'psycopg2 == 2.5.2',
       'pyjwt == 1.4.2',
+      'cryptography == 1.5.2',
       # GMN does not use the CLI programmatically -- it's just included because
       # the CLI is a convenient way to interact with GMN. So the latest version
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
+    ],
+
+    setup_requires=[
+      'setuptools_git >= 1.1'
     ],
   )
 

@@ -18,13 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`setup`
-============
+"""DataONE Common Library package
 """
 import setuptools
 
 import d1_common
+
 
 def main():
   setuptools.setup(
@@ -35,15 +34,16 @@ def main():
     author_email='developers@dataone.org',
     url='http://dataone.org',
     license='Apache License, Version 2.0',
-
     packages=setuptools.find_packages(),
     include_package_data=True,
-
     install_requires=[
       'iso8601 == 0.1.11',
       'pyxb == 1.2.5',
       'requests == 2.11.1',
       'cachecontrol == 0.11.6',
+    ],
+    setup_requires=[
+      'setuptools_git >= 1.1'
     ],
   )
 

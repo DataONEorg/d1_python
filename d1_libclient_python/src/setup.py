@@ -18,13 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`setup`
-============
+"""DataONE Client Library package
 """
 import setuptools
 
 import d1_client
+
 
 def main():
   setuptools.setup(
@@ -35,22 +34,16 @@ def main():
     author_email='developers@dataone.org',
     url='http://dataone.org',
     license='Apache License, Version 2.0',
-
     packages=setuptools.find_packages(),
     include_package_data=True,
-
-    package_data={
-      '': ['mime_mappings.csv'],
-    },
-    # data_files=[
-    #   ('', ['d1_client/mime_mappings.csv']),
-    # ],
-
     install_requires=[
       'dataone.common == 2.0.0',
       'rdflib == 4.0.1',
       'google.foresite-toolkit == 1.3',
       'python-dateutil == 2.1',
+    ],
+    setup_requires=[
+      'setuptools_git >= 1.1'
     ],
   )
 

@@ -18,15 +18,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-:mod:`setup`
-============
+"""DataONE Python X.509 v3 Certificate Extensions package
 """
 import setuptools
 
 import d1_certificate
 
-# Extensions.
 x509v3_certificate_extractor = setuptools.Extension(
   name='d1_certificate.extensions.d1_x509v3_certificate_extractor',
   sources=[
@@ -49,6 +46,7 @@ x509v3_certificate_generator = setuptools.Extension(
   ],
 )
 
+
 def main():
   setuptools.setup(
     # Metadata
@@ -59,17 +57,17 @@ def main():
     author_email='developers@dataone.org',
     url='http://dataone.org',
     license='Apache License, Version 2.0',
-
     packages=setuptools.find_packages(),
     include_package_data=True,
-
     install_requires=[
       'dataone.common == 2.0.0',
     ],
-
     ext_modules=[
       x509v3_certificate_extractor,
       x509v3_certificate_generator,
+    ],
+    setup_requires=[
+      'setuptools_git >= 1.1'
     ],
   )
 
