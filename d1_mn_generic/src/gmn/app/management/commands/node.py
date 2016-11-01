@@ -17,27 +17,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Register a new Member Node with DataONE
+"""View Node doc, register or update Member Node
 """
 
 # Stdlib.
 import logging
 
-# D1.
-import d1_client.cnclient_2_0
-
 # Django.
 import django.core.management.base
 from django.conf import settings
 
+# D1.
+import d1_common.util
+import d1_common.types.exceptions
+import d1_client.cnclient_2_0
+
 # App.
 import app.models
 import app.node
+import util
 
 
 class Command(django.core.management.base.BaseCommand):
-  help = 'Register a new GMN instance with DataONE'
+  help = 'View Node doc, register or update Member Node'
+
+  missing_args_message = (
+    '<command> must be one of:\n'
+    'view: Generate and view Node doc based on current settings\n'
+    'register: Generate Node doc and submit it to CN for registration of new MN\n'
+    'update: Generate Node doc and submit it to CN for update of existing MN registration\n'
+  )
 
   def add_arguments(self, parser):
     parser.add_argument(
@@ -47,65 +56,54 @@ class Command(django.core.management.base.BaseCommand):
       help='debug level logging',
     )
     parser.add_argument(
-      '--update',
-      action='store_true',
-      default=False,
-      help='update an existing Node document'
-    )
-    parser.add_argument(
-      '--view',
-      action='store_true',
-      default=False,
-      help='only view generated Node document'
+      'command',
+      help='valid commands: view, register, update',
     )
 
   def handle(self, *args, **options):
     util.log_setup(options['debug'])
-    logging.info(
-      u'Running management command: {}'.format(util.get_command_name())
-    )
-    util.abort_if_other_instance_is_running()
-    util.abort_if_stand_alone_instance()
-    if options['view']:
-      self.view()
-    elif options['update']:
-      self.update()
+    if options['command'] not in ('view', 'register', 'update'):
+      logging.info(self.missing_args_message)
+      return
+    try:
+      self._handle(options['command'])
+    except d1_common.types.exceptions.DataONEException as e:
+      raise django.core.management.base.CommandError(str(e))
+
+  def _handle(self, command_str):
+    node_pyxb = app.node.get_pyxb()
+    if command_str == 'view':
+      logging.info(d1_common.util.pretty_xml(node_pyxb.toxml()))
+    elif command_str == 'register':
+      self._register(node_pyxb)
+    elif command_str == 'update':
+      self._update(node_pyxb)
     else:
-      self.register()
+      raise django.core.management.base.CommandError('Unknown command')
 
-  def register(self):
-    node = self.generate_node_doc()
-    client = self.create_client()
-    response = client.registerResponse(node)
-    log_status(response)
+  def _register(self, node_pyxb):
+    util.abort_if_stand_alone_instance()
+    client = self._create_client()
+    success_bool = client.register(node_pyxb)
+    if not success_bool:
+      raise django.core.management.base.CommandError(
+        'Call returned failure but did not raise exception'
+      )
 
-  def update(self):
-    node = self.generate_node_doc()
-    client = self.create_client()
-    response = client.updateNodeCapabilitiesResponse(
-      settings.NODE_IDENTIFIER, node
+  def _update(self, node_pyxb):
+    util.abort_if_stand_alone_instance()
+    client = self._create_client()
+    success_bool = client.updateNodeCapabilities(
+      settings.NODE_IDENTIFIER, node_pyxb
     )
-    log_status(response)
+    if not success_bool:
+      raise django.core.management.base.CommandError(
+        'Call returned failure but did not raise exception'
+      )
 
-  def view(self):
-    node = self.generate_node_doc()
-    logging.info(u'{}'.format(node.toDOM().toprettyxml(indent=u'  ')))
-
-  def generate_node_doc(self):
-    n = app.node.Node()
-    return n.get()
-
-  def create_client(self):
+  def _create_client(self):
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
       settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
       key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
     )
     return client
-
-  def log_status(self, response):
-    logging.debug(u'Server response: {}'.format(response.text))
-    logging.debug('')
-    if response.status == 200:
-      logging.info('Operation successful')
-    else:
-      logging.warning('Operation failed')
