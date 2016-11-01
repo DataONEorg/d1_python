@@ -45,6 +45,8 @@ completing the current page.
 .. toctree::
   :maxdepth: 2
 
+  setup-migrate
+
   setup-local
   setup-env
   setup-extra
