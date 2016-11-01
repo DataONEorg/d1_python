@@ -87,3 +87,22 @@ def is_subject_in_whitelist(subject_str):
   return app.models.WhitelistForCreateUpdateDelete.objects.filter(
     subject=app.models.subject(subject_str)
   ).exists()
+
+
+# ==============================================================================
+
+class EventCounter(object):
+  def __init__(self):
+    self._event_dict = {}
+
+  def count(self, event_str, inc_int=1):
+    try:
+      self._event_dict[event_str] += inc_int
+    except KeyError:
+      self._event_dict[event_str] = inc_int
+
+  def log(self):
+    logging.info('Counted events:')
+    for event_str in sorted(self._event_dict):
+      logging.info('  {}: {}'.format(event_str, self._event_dict[event_str]))
+

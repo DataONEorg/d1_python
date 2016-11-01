@@ -25,7 +25,6 @@
 import json
 import logging
 import os
-import pprint
 import shutil
 import zlib
 
@@ -58,12 +57,13 @@ GMN_V1_SERVICE_PATH = os.path.join(ROOT_PATH, 'gmn/lib/python2.7/site-packages/s
 GMN_V1_SYSMETA_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/sysmeta')
 GMN_V1_OBJ_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/object')
 GMN_V2_OBJ_PATH = os.path.join(ROOT_PATH, 'gmn_object_store')
+
 UNCONNECTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'skipped_unconnected_chains.json')
 UNSORTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'unsorted_chains.json')
 
 
 class Command(django.core.management.base.BaseCommand):
-  help = 'Migrate GMN v1 objects to v2'
+  help = 'Migrate the contents of a GMN v1 instance to this v2 instance'
 
   def add_arguments(self, parser):
     parser.add_argument(
@@ -92,7 +92,7 @@ class Command(django.core.management.base.BaseCommand):
         u'There is already data in the v2 database. Use --force to overwrite.'
       )
       return
-    # app.views.diagnostics._clear_db()
+    app.views.diagnostics._clear_db()
     m.migrate()
 
 #===============================================================================
@@ -100,81 +100,76 @@ class Command(django.core.management.base.BaseCommand):
 
 class V2Migration(object):
   def __init__(self):
-    self.v1_cursor = self._create_v1_cursor()
+    self._v1_cursor = self._create_v1_cursor()
+    self._events = util.EventCounter()
 
   def migrate(self):
     try:
       self._validate()
-      # self._migrate_filesystem()
-      # self._migrate_sciobj()
+      self._migrate_filesystem()
+      self._migrate_sciobj()
       self._migrate_events()
       self._migrate_whitelist()
     except MigrateError as e:
       logging.error('Migration failed: {}'.format(e.message))
-
+    self._events.log()
 
   def _validate(self):
+    self._assert_path_is_dir(ROOT_PATH)
+    self._assert_path_is_dir(GMN_V1_SERVICE_PATH)
+    self._assert_path_is_dir(GMN_V1_SYSMETA_PATH)
+    self._assert_path_is_dir(GMN_V1_OBJ_PATH)
 
-    for root_path, dir_list, file_list in os.walk(I_PATH):
-      for file_name in file_list:
-        file_path = os.path.join(root_path, file_name)
-        pid = d1_common.url.decodePathElement(file_name)
-        new_file_path = calc_file_path(O_PATH, pid)
-        new_dir_path = os.path.dirname(new_file_path)
-        try:
-          os.makedirs(new_dir_path)
-        except:
-          pass
-        os.rename(file_path, new_file_path)
-        print pid
-        print file_path
-        print new_file_path
-        print
-
-      os.link(source, link_name)
-      Create a hard link pointing to source named link_name.
-
-      Availability: Unix.
+  def _assert_path_is_dir(self, dir_path):
+    if not os.path.isdir(dir_path):
+      raise django.core.management.base.CommandError(
+        'Invalid dir path. Adjust in command script. path="{}"'.format(dir_path)
+      )
 
   # Filesystem
 
   def _migrate_filesystem(self):
-    for parent_dir_path, dir_list, file_list in os.walk(
-      GMN_V2_OBJ_PATH, topdown=False
+    for dir_path, dir_list, file_list in os.walk(
+      GMN_V1_OBJ_PATH, topdown=False
     ):
-      for dir_name in dir_list:
-        dir_path = os.path.join(parent_dir_path, dir_name)
-        try:
-          new_dir_name = u'{0:04x}'.format(int(dir_name))
-        except ValueError:
-          continue
-        new_dir_path = os.path.join(parent_dir_path, new_dir_name)
-        shutil.move(dir_path, new_dir_path)
+      for file_name in file_list:
+        pid = d1_common.url.decodePathElement(file_name)
+        old_file_path = os.path.join(dir_path, file_name)
+        new_file_path = app.util.file_path(GMN_V2_OBJ_PATH, pid)
+        app.util.create_missing_directories(new_file_path)
+        new_dir_path = os.path.dirname(new_file_path)
+        if not os.path.exists(new_dir_path):
+          if self._are_on_same_disk(old_file_path, new_dir_path):
+            os.link(old_file_path, new_file_path)
+            self._events.count('Created hard links')
+          else:
+            shutil.copyfile(old_file_path, new_file_path)
+            self._events.count('Copied files')
 
   # Science Objects
 
   def _migrate_sciobj(self):
-    #obsolescence_list = self._get_obsolescence_list()
-    obsolescence_list = self._load_json(UNSORTED_CHAINS_PATH)
-    #self._dump_json(obsolescence_list, UNSORTED_CHAINS_PATH)
+    obsolescence_list = self._get_obsolescence_list()
+    # obsolescence_list = self._load_json(UNSORTED_CHAINS_PATH)
+    # self._dump_json(obsolescence_list, UNSORTED_CHAINS_PATH)
     obsoletes_pid_list = []
     obsoleted_by_pid_list = []
     for pid, obsoletes_pid, obsoleted_by_pid in obsolescence_list:
       obsoletes_pid_list.append((pid, obsoletes_pid))
       obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    # logging.info('Sorting obsolescence chains...')
-    # topo_obsolescence_list = self._topological_sort(obsoletes_pid_list)
-    # self._create_sciobj(topo_obsolescence_list)
+    logging.info('Sorting obsolescence chains...')
+    topo_obsolescence_list = self._topological_sort(obsoletes_pid_list)
+    self._create_sciobj(topo_obsolescence_list)
     self._update_obsoleted_by(obsoleted_by_pid_list)
 
   def _get_obsolescence_list(self):
     obsolescence_list = []
-    self.v1_cursor.execute(
+    self._v1_cursor.execute(
       """
       select pid, serial_version from mn_scienceobject;
     """
     )
-    sciobj_row_list = self.v1_cursor.fetchall()
+    sciobj_row_list = self._v1_cursor.fetchall()
     n = len(sciobj_row_list)
     for i, sciobj_row in enumerate(sciobj_row_list):
       self._log_pid_info(
@@ -182,22 +177,24 @@ class V2Migration(object):
       )
       sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
       obsolescence_list.append(self._identifiers(sysmeta_obj))
+      self._events.count('Retrieved obsolescence chains for objects')
     return obsolescence_list
 
   def _create_sciobj(self, topo_obsolescence_list):
     n = len(topo_obsolescence_list)
     for i, pid in enumerate(topo_obsolescence_list):
-      self.v1_cursor.execute(
-        """
+      self._v1_cursor.execute(
+      """
         select * from mn_scienceobject where pid = %s;
       """, (pid,)
       )
-      sciobj_row = self.v1_cursor.fetchone()
+      sciobj_row = self._v1_cursor.fetchone()
       self._log_pid_info('Creating Sci Obj', i, n, pid)
       sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_obj.obsoletedBy = None
       app.sysmeta.create(sysmeta_obj, sciobj_row['url'])
+      self._events.count('Created SysMeta objects in database')
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)
@@ -207,6 +204,7 @@ class V2Migration(object):
         if app.sysmeta.is_did(pid) and app.sysmeta.is_did(obsoleted_by_pid):
           self._log_pid_info('Updating obsoletedBy', i, n, pid)
           app.sysmeta_obsolescence.set_obsolescence(pid, None, obsoleted_by_pid)
+          self._events.count('Updated obsoletedBy on objects')
 
   def _identifiers(self, sysmeta_obj):
     pid = app.sysmeta_util.get_value(sysmeta_obj, 'identifier')
@@ -236,6 +234,7 @@ class V2Migration(object):
           'Skipped one or more unconnected obsolescence chains. '
           'See {}'.format(UNCONNECTED_CHAINS_PATH))
         self._dump_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
+        self._events.count('Objects skipped due to unconnected chains')
         break
     return sorted_list
 
@@ -277,7 +276,7 @@ class V2Migration(object):
   # Events
 
   def _migrate_events(self):
-    self.v1_cursor.execute(
+    self._v1_cursor.execute(
       """
       select *
       from mn_eventlog log
@@ -290,9 +289,9 @@ class V2Migration(object):
     """
     )
     # event_row_list = self.v1_cursor.fetchall()
-    for i, event_row in enumerate(self.v1_cursor):
+    for i, event_row in enumerate(self._v1_cursor):
       self._log_pid_info(
-        'Processing event logs', i, self.v1_cursor.rowcount,
+        'Processing event logs', i, self._v1_cursor.rowcount,
         '{} {}'.format(event_row['event'], event_row['pid'])
       )
       if app.sysmeta.is_did(event_row['pid']):
@@ -309,19 +308,20 @@ class V2Migration(object):
         # Must update timestamp separately due to auto_now_add=True
         event_log_model.timestamp = event_row['date_logged']
         event_log_model.save()
+        self._events.count('Created Event Log records')
 
   # Whitelist
 
   def _migrate_whitelist(self):
     app.models.WhitelistForCreateUpdateDelete.objects.all().delete()
-    self.v1_cursor.execute(
+    self._v1_cursor.execute(
       """
       select * from mn_whitelistforcreateupdatedelete w
       join mn_permissionsubject s on s.id = w.subject_id
       ;
     """
     )
-    whitelist_row_list = self.v1_cursor.fetchall()
+    whitelist_row_list = self._v1_cursor.fetchall()
     for whitelist_row in whitelist_row_list:
       logging.info(
         'Migrating whitelist subject: {}'.format(whitelist_row['subject'])
@@ -329,6 +329,8 @@ class V2Migration(object):
       w = app.models.WhitelistForCreateUpdateDelete()
       w.subject = app.models.subject(whitelist_row['subject'])
       w.save()
+      self._events.count('Whitelisted subjects')
+
 
   def db_is_empty(self):
     q = app.models.IdNamespace.objects.all()
@@ -337,6 +339,9 @@ class V2Migration(object):
   def _create_v1_cursor(self):
     connection = psycopg2.connect(CONNECTION_STR)
     return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+  def _are_on_same_disk(self, path_1, path_2):
+    return os.stat(path_1).st_dev == os.stat(path_2).st_dev
 
 # ==============================================================================
 
