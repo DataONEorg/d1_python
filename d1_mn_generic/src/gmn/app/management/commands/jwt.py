@@ -17,18 +17,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""View or whitelist the DataONE subjects in an X.509 cert.
+"""View or whitelist the DataONE subject in a JSON Web Token (JWT).
 
-- When viewing, subjects from the the DataONE SubjectInfo extension, if any, is
-included.
-- When whitelisting, only the certificate's primary subject (retrieved from the
-DN) is whitelisted.
-- The cert must be in PEM format.
-- The DN subject is serialized according to DataONE's specification.
-- The certificate is not verified.
-- If the certificate is used when connecting to a DataONE Node and passes
+- The JWT must be in base64 format.
+- The JWT is not verified.
+- If the JWT is used when connecting to a DataONE Node and passes
 verification on the node, the calls made through the connection are
-authenticated for the subjects.
+authenticated for the subject.
 """
 
 # Stdlib.
@@ -37,23 +32,26 @@ import logging
 # Django.
 import django.core.management.base
 
+# 3rd party.
+import jwt
+
 # D1.
 import d1_common.types.exceptions
 import d1_common.util
 
 # App.
-import app.middleware.session_cert
+import app.middleware.session_jwt
 import app.models
 import util
 
 
 class Command(django.core.management.base.BaseCommand):
-  help = 'View or whitelist DataONE subjects in X.509 PEM certificate'
+  help = 'View or whitelist DataONE subjects in a JSON Web Token'
 
   missing_args_message = (
     '<command> must be one of:\n'
-    'view <cert-path>: View DataONE subjects in X.509 PEM certificate\n'
-    'whitelist <cert-path>: Add primary DataONE subject in X.509 PEM certificate to whitelist for create, update and delete\n'
+    'view <jwt-path>: View DataONE subject in a JWT\n'
+    'whitelist <jwt-path>: Add DataONE subject in JWT to whitelist for create, update and delete\n'
   )
 
   def add_arguments(self, parser):
@@ -68,8 +66,8 @@ class Command(django.core.management.base.BaseCommand):
       help='valid commands: view, whitelist',
     )
     parser.add_argument(
-      'pem_cert_path',
-      help='path to DataONE X.509 PEM certificate',
+      'jwt_path',
+      help='path to JWT',
     )
 
   def handle(self, *args, **options):
@@ -78,29 +76,33 @@ class Command(django.core.management.base.BaseCommand):
       logging.info(self.missing_args_message)
       return
     try:
-      self._handle(options['command'], options['pem_cert_path'])
+      self._handle(options['command'], options['jwt_path'])
     except d1_common.types.exceptions.DataONEException as e:
       raise django.core.management.base.CommandError(str(e))
 
-  def _handle(self, command_str, pem_cert_path):
-    cert_pem = self._read_pem_cert(pem_cert_path)
-    primary_str, equivalent_set = app.middleware.session_cert\
-      .get_authenticated_subjects(cert_pem)
+  def _handle(self, command_str, jwt_path):
+    jwt_base64 = self._read_jwt(jwt_path)
+    try:
+      primary_list = app.middleware.session_jwt.get_subject_list_without_validate(
+        jwt_base64
+      )
+      if not primary_list:
+        raise jwt.InvalidTokenError('No subject')
+    except jwt.InvalidTokenError as e:
+      raise django.core.management.base.CommandError(
+        'Unable to decode JWT. error="{}"'.format(str(e))
+      )
+    primary_str = primary_list[0]
     if command_str == 'view':
-      self._view(primary_str, equivalent_set)
+      self._view(primary_str)
     elif command_str == 'whitelist':
       self._whitelist(primary_str)
     else:
       raise django.core.management.base.CommandError('Unknown command')
 
-  def _view(self, primary_str, equivalent_set):
+  def _view(self, primary_str):
     logging.info(u'Primary subject:')
     logging.info(u'  {}'.format(primary_str))
-    if equivalent_set:
-      logging.info(u'Equivalent subjects:')
-      for subject_str in sorted(equivalent_set):
-        if subject_str != primary_str:
-          logging.info(u'  {}'.format(subject_str))
 
   def _whitelist(self, primary_str):
     if app.models.WhitelistForCreateUpdateDelete.objects.filter(
@@ -115,11 +117,11 @@ class Command(django.core.management.base.BaseCommand):
       u'Enabled create, update and delete for subject: {}'.format(primary_str)
     )
 
-  def _read_pem_cert(self, pem_cert_path):
+  def _read_jwt(self, jwt_path):
     try:
-      with open(pem_cert_path, 'r') as f:
+      with open(jwt_path, 'r') as f:
         return f.read()
     except EnvironmentError as e:
       raise django.core.management.base.CommandError(
-        'Unable to read cert. error="{}"'.format(str(e))
+        'Unable to read JWT. error="{}"'.format(str(e))
       )

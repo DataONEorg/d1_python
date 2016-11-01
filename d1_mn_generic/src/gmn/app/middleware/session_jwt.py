@@ -56,6 +56,10 @@ def validate_jwt_and_get_subject_list(request):
   return _validate_jwt_and_get_subject_list(_get_jwt_header(request))
 
 
+def get_subject_list_without_validate(jwt_base64):
+  return _get_subject_list_without_validate(jwt_base64)
+
+
 #
 # Private
 #
@@ -128,6 +132,45 @@ def _decode_and_validate_jwt(jwt_base64):
       e.message
     ))
     return None
+
+
+def _validate_jwt_and_get_subject_list(jwt_base64):
+  """Validate any JWT in the request and return a list of authenticated
+  subjects.
+
+  The JWT is validated by checking that it was signed with a CN certificate.
+  If validation fails for any reason, errors are logged and an empty list is
+  returned. Possible errors include:
+
+  - GMN is in stand-alone mode (settings_site.STAND_ALONE).
+  - GMN could not establish a trusted (TLS/SSL) connection to the root CN in
+  the env.
+  - The certificate could not be retrieved from the root CN.
+  - The JWT could not be decoded.
+  - The JWT signature signature was invalid.
+  - The JWT claim set contains invalid "Not Before" or "Expiration Time" claims.
+  Currently, DataONE issues JWTs with only the primary subject. Equivalent
+  identities and groups, as set up in the DataONE identity portal, are not
+  represented. So the the list will contain either a single subject or be
+  empty.
+  """
+  jwt_dict = _decode_and_validate_jwt(jwt_base64)
+  subject_list = []
+  if jwt_dict is not None:
+    subject_list.append(jwt_dict['sub'])
+  return subject_list
+
+
+def _get_subject_list_without_validate(jwt_base64):
+  jwt_dict = _decode_without_validate(jwt_base64)
+  subject_list = []
+  if jwt_dict is not None:
+    subject_list.append(jwt_dict['sub'])
+  return subject_list
+
+
+def _decode_without_validate(jwt_base64):
+  return jwt.decode(_fix_base64_jwt(jwt_base64), verify=False, algorithms=['RS256'])
 
 
 def _get_cn_cert():
