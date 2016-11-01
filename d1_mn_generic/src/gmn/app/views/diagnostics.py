@@ -260,7 +260,7 @@ def delete_single_object(request, pid):
 
 
 def _delete_object_from_filesystem(sci_obj):
-  # If the object is wrapped, there's nothing to delete in the filesystem.
+  # If the object is proxied, there's nothing to delete in the filesystem.
   pid = sci_obj.pid.did
   url_split = urlparse.urlparse(sci_obj.url)
   if url_split.scheme == 'file':

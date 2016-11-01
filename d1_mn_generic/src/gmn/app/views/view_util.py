@@ -131,7 +131,7 @@ def create(request, sysmeta_obj):
   Postconditions:
   - Files and database rows are added as necessary to add a new object.
   """
-  # "wrapped mode" vendor specific extension.
+  # Proxy object vendor specific extension.
   if 'HTTP_VENDOR_GMN_REMOTE_URL' in request.META:
     url = request.META['HTTP_VENDOR_GMN_REMOTE_URL']
     view_asserts.url_is_http_or_https(url)

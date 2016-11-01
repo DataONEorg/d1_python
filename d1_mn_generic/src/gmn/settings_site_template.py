@@ -397,9 +397,8 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # URL of the object on a 3rd party server be provided instead. In that case, GMN
 # will stream the object bytes from the remote server while handling all other
 # object related operations like usual. An object that is created using this
-# extension is said to be "wrapped" while an object for which GMN also stores
-# the data bytes (the most common usage) is referred to as "managed". GMN can
-# stream wrapped objects from HTTP and HTTPS.
+# extension is said to be proxied. GMN can stream proxied objects from HTTP and
+# HTTPS.
 #
 # GMN provides limited support for streaming objects that are access controlled
 # on the remote server. GMN has the ability to supply credentials to the remote
@@ -410,13 +409,13 @@ OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 # secure if ALL subjects that have permission to create objects on this GMN
 # instance also have full access to ALL objects on the remote server. The attack
 # vector would be that someone could gain access to an object on the remote
-# server for which they do not have access by creating a wrapped object on GMN,
+# server for which they do not have access by creating a proxied object on GMN,
 # supplying the URL for the access controlled object together with an access
 # control list that lets them access the object on GMN.
-WRAPPED_MODE_BASIC_AUTH_ENABLED = False
-WRAPPED_MODE_BASIC_AUTH_USERNAME = ''
-WRAPPED_MODE_BASIC_AUTH_PASSWORD = ''
-WRAPPED_MODE_STREAM_TIMEOUT = 30
+PROXY_MODE_BASIC_AUTH_ENABLED = False
+PROXY_MODE_BASIC_AUTH_USERNAME = ''
+PROXY_MODE_BASIC_AUTH_PASSWORD = ''
+PROXY_MODE_STREAM_TIMEOUT = 30
 
 # Path to the log file.
 LOG_PATH = make_absolute('../gmn.log')

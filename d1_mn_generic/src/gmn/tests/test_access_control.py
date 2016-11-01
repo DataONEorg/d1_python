@@ -70,7 +70,7 @@ class options():
   def __init__(self):
     self.gmn_url = 'http://127.0.0.1:8000'
     self.obj_path = '/home/mark/d1/d1_python/d1_mn_generic/src/tests/test_objects'
-    self.wrapped = False
+    self.proxied = False
     self.obj_url = 'http://127.0.0.1:8000'
 
 

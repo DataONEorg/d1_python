@@ -223,13 +223,13 @@ def get_object(request, pid):
 
 
 def _get_sciobj_stream(sciobj):
-  if is_wrapped_remote(sciobj.url):
+  if is_proxy_url(sciobj.url):
     return _get_sciobj_stream_remote(sciobj.url)
   else:
     return _get_sciobj_stream_local(sciobj.pid.did)
 
 
-def is_wrapped_remote(url):
+def is_proxy_url(url):
   url_split = urlparse.urlparse(url)
   return url_split.scheme in ('http', 'https')
 
@@ -244,10 +244,10 @@ def _get_sciobj_stream_local(pid):
 
 def _get_sciobj_stream_remote(url):
   try:
-    response = requests.get(url, stream=True, timeout=settings.WRAPPED_MODE_STREAM_TIMEOUT)
+    response = requests.get(url, stream=True, timeout=settings.PROXY_MODE_STREAM_TIMEOUT)
   except requests.RequestException as e:
     raise d1_common.types.exceptions.ServiceFailure(
-      0, u'Unable to open wrapped object for streaming. error="{}"'.format(e.message)
+      0, u'Unable to open proxied object for streaming. error="{}"'.format(e.message)
     )
   else:
     return response.iter_content(chunk_size=settings.NUM_CHUNK_BYTES)

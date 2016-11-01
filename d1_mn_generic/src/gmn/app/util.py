@@ -144,7 +144,7 @@ def coerce_put_post(request):
 
 
 def add_basic_auth_header_if_enabled(headers):
-  if settings.WRAPPED_MODE_BASIC_AUTH_ENABLED:
+  if settings.PROXY_MODE_BASIC_AUTH_ENABLED:
     headers._update((_mk_http_basic_auth_header(),))
 
 
@@ -153,8 +153,8 @@ def _mk_http_basic_auth_header():
     'Authorization', u'Basic {}'.format(
       base64.standard_b64encode(
         u'{}:{}'.format(
-          settings.WRAPPED_MODE_BASIC_AUTH_USERNAME,
-          settings.WRAPPED_MODE_BASIC_AUTH_PASSWORD
+          settings.PROXY_MODE_BASIC_AUTH_USERNAME,
+          settings.PROXY_MODE_BASIC_AUTH_PASSWORD
         )
       )
     )
