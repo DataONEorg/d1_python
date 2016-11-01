@@ -65,6 +65,7 @@ algorithm:
 """
 
 # Stdlib.
+import logging
 
 # 3rd party
 import pyxb
@@ -84,9 +85,22 @@ def get_subjects(request):
   compliant subject string.
   """
   if _is_certificate_provided(request):
-    return _get_authenticated_subjects(request.META['SSL_CLIENT_CERT'])
+    return get_authenticated_subjects(request.META['SSL_CLIENT_CERT'])
   else:
     return d1_common.const.SUBJECT_PUBLIC, set()
+
+
+def get_authenticated_subjects(cert_pem):
+  primary_str, subject_info_pyxb = _get_subjects_from_certificate(cert_pem)
+  equivalent_set = {
+    d1_common.const.SUBJECT_PUBLIC,
+    d1_common.const.SUBJECT_AUTHENTICATED,
+  }
+  if subject_info_pyxb is not None:
+    equivalent_set |= _get_subject_info_sets(
+      subject_info_pyxb, primary_str
+    )
+  return primary_str, equivalent_set
 
 
 def _is_certificate_provided(request):
@@ -94,17 +108,11 @@ def _is_certificate_provided(request):
     request.META['SSL_CLIENT_CERT'] != ''
 
 
-def _get_authenticated_subjects(cert_pem):
-  primary_str, subject_info_pyxb = _get_subjects_from_certificate(cert_pem)
-  equivalent_set = _get_subject_info_sets(subject_info_pyxb, primary_str)
-  equivalent_set.add(d1_common.const.SUBJECT_AUTHENTICATED)
-  return primary_str, equivalent_set
-
-
 def _get_subjects_from_certificate(cert_pem):
   subject, subject_info_xml = _extract_session_from_x509_v3_certificate(
     cert_pem
   )
+  logging.debug(subject_info_xml)
   if subject_info_xml == '':
     return subject, None
   else:
@@ -164,6 +172,7 @@ def _add_person_subject(equivalent_set, subject_info_pyxb, subject_str):
 
 
 def _find_person_by_subject(subject_info_pyxb, subject_str):
+  print subject_info_pyxb, subject_str
   for person_pyxb in subject_info_pyxb.person:
     if person_pyxb.subject.value() == subject_str:
       return person_pyxb

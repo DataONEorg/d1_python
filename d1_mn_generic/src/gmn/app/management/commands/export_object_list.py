@@ -20,8 +20,6 @@
 
 """Export a list of the objects that exist on the MN and, for each object, each
 subject which has access to the object.
-
-The list is used by the DataONE Stress Tester.
 """
 
 # Stdlib.

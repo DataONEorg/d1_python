@@ -30,6 +30,10 @@ import tempfile
 
 # Django
 from django.conf import settings
+import django.core.management.base
+
+# App
+import app.models
 
 
 single_instance_lock_file = None
@@ -62,18 +66,24 @@ def abort_if_other_instance_is_running():
   try:
     fcntl.lockf(single_instance_lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
   except IOError:
-    logging.info(u'Aborted: Another instance is still running')
-    sys.exit(0)
+    raise django.core.management.base.CommandError(
+      u'Aborted: Another instance is still running'
+    )
 
 
 def abort_if_stand_alone_instance():
   if settings.STAND_ALONE:
-    logging.info(
+    raise django.core.management.base.CommandError(
       u'Aborted: Command not applicable in stand-alone instance of GMN. '
       u'See STAND_ALONE in settings_site.py.'
     )
-    sys.exit(0)
 
 
 def get_command_name():
   return sys.argv[1]
+
+
+def is_subject_in_whitelist(subject_str):
+  return app.models.WhitelistForCreateUpdateDelete.objects.filter(
+    subject=app.models.subject(subject_str)
+  ).exists()

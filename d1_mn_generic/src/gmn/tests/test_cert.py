@@ -41,7 +41,7 @@ class TestCert(django.test.TestCase):
     This does not perform validation.
     """
     cert_pem = util.read_test_file('x509up_u1000')
-    primary_str, equivalent_set = app.middleware.session_cert._get_authenticated_subjects(
+    primary_str, equivalent_set = app.middleware.session_cert.get_authenticated_subjects(
       cert_pem
     )
     self.assertEqual(

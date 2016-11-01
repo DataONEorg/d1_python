@@ -92,7 +92,7 @@ class ViewHandler(object):
       # from any included client side certificate. The public symbolic principal
       # is always included in the subject list.
       if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
-        request.all_subjects_set.update(
+        request.all_subjects_set._update(
           request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t')
         )
 

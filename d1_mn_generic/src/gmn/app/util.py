@@ -145,7 +145,7 @@ def coerce_put_post(request):
 
 def add_basic_auth_header_if_enabled(headers):
   if settings.WRAPPED_MODE_BASIC_AUTH_ENABLED:
-    headers.update((_mk_http_basic_auth_header(), ))
+    headers._update((_mk_http_basic_auth_header(),))
 
 
 def _mk_http_basic_auth_header():
