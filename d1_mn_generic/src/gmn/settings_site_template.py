@@ -218,16 +218,6 @@ NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
 # 'down': This node is currently not in operation.
 NODE_STATE = 'up'
 
-# Set the Tier for this node.
-# For information on selecting a tier, see http://pythonhosted.org/dataone.generic_member_node/setup-env-tier.html
-# Tier 1: Read, public objects
-# Tier 2: Access controlled objects (authentication and authorization)
-# Tier 3: Write (create, update and delete objects)
-# Tier 4: Replication target
-# Each tier includes all lower tiers.
-# E.g.: 4
-TIER = 4
-
 # Create a unique string for this node and do not share it.
 SECRET_KEY = 'MySecretKey'
 
@@ -244,14 +234,11 @@ CLIENT_CERT_PRIVATE_KEY_PATH = '/var/local/dataone/certs/client/client_key_nopas
 # Enable this node to be used as a replication target.
 # True:
 # - DataONE can use this node to store replicas of science objects.
-# False:
+# False (default):
 # - This node will advertise that it is not available as a replication target
 #   in the Replication Policy section of the Node document. It will also enforce
 #   this setting by refusing calls to MNReplication.replicate().
-# This setting is ignored if TIER is set to less than 4. It is intended for
-# temporarily disabling replication. For permanently disabling replication, set
-# the TIER lower than 4 in the setting below.
-NODE_REPLICATE = True
+NODE_REPLICATE = False
 
 # The maximum size, in octets (8-bit bytes), of each object this node is willing to
 # accept for replication. Set to -1 to allow objects of any size.
@@ -336,7 +323,7 @@ ADMINS = (('My Name', 'my_address@my_email.tld'), )
 # discover objects directly on the node by iterating over the object list. This
 # is disabled by default because the call can be expensive (as it must create a
 # filtered list of all objects on the node for each page that is returned).
-# These are also the reasons that DataONE specified implementation of access
+# These arez also the reasons that DataONE specified implementation of access
 # control for public and regular users to be optional for this API.
 PUBLIC_OBJECT_LIST = True
 

@@ -111,14 +111,9 @@ def assert_request_complies_with_replication_policy(sysmeta):
   if not settings.NODE_REPLICATE:
     raise d1_common.types.exceptions.InvalidRequest(
       0, u'This node does not currently accept replicas. The replicate '
-      u'attribute in the node element of the Node document is set to false. '
-    )
-
-  if settings.TIER < 4:
-    raise d1_common.types.exceptions.InvalidRequest(
-      0, u'This node has been set up as a tier {} Node and so cannot accept '
-      u'replicas. MNReplication is not included in the services list in the '
-      u'Node document.'.format(settings.TIER)
+      u'attribute in the node element of the Node document is set to false '
+      u'and MNReplication is not included in the services list in the '
+      u'Node document.'
     )
 
   if settings.REPLICATION_MAXOBJECTSIZE != -1:

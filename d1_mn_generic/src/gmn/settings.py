@@ -76,7 +76,7 @@ MIDDLEWARE_CLASSES = (
 TEMPLATES = [{
   'BACKEND': 'django.template.backends.django.DjangoTemplates',
   'DIRS': [
-    make_absolute('../mn/templates'),
+    make_absolute('./app/templates'),
   ],
   # 'APP_DIRS': True,
   'OPTIONS': {
@@ -112,7 +112,7 @@ INSTALLED_APPS = [
 
 # Because the entire XML document must be in memory while being deserialized,
 # limit the size that can be handled.
-MAX_XML_DOCUMENT_SIZE = 1024**2
+MAX_XML_DOCUMENT_SIZE = 10 * 1024**2
 
 # Default chunk size for stream iterators.
 NUM_CHUNK_BYTES = 1024**2

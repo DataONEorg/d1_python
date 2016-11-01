@@ -31,7 +31,7 @@ import django.core.handlers.wsgi
 # Discover the path of this module
 _here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'service.gmn.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'gmn.settings'
 
 # Add the service folder to the search path.
 sys.path.append(_here('.'))

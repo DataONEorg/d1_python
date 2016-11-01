@@ -80,7 +80,7 @@ def _get_pyxb(major_version_int):
   node_pyxb.services = _create_service_list(binding, major_version_int)
   if settings.NODE_SYNCHRONIZE:
     node_pyxb.synchronization = _create_sync_policy(binding)
-  if settings.TIER >= 4 and settings.NODE_REPLICATE:
+  if settings.NODE_REPLICATE:
     node_pyxb.nodeReplicationPolicy = _create_replication_policy(binding)
   return node_pyxb
 
@@ -124,15 +124,11 @@ def _create_service_list(binding, major_version_int):
 
 def _create_service_list_for_version(binding, service_version):
   service_list = []
-  if settings.TIER >= 1:
-    service_list.append(_create_service(binding, 'MNCore', service_version))
-    service_list.append(_create_service(binding, 'MNRead', service_version))
-  if settings.TIER >= 2:
-    service_list.append(_create_service(binding, 'MNAuthorization', service_version))
-  if settings.TIER >= 3:
-    service_list.append(_create_service(binding, 'MNStorage', service_version))
-  if settings.TIER >= 4:
-    service_list.append(_create_service(binding, 'MNReplication', service_version))
+  service_list.append(_create_service(binding, 'MNCore', service_version))
+  service_list.append(_create_service(binding, 'MNRead', service_version))
+  service_list.append(_create_service(binding, 'MNAuthorization', service_version))
+  service_list.append(_create_service(binding, 'MNStorage', service_version))
+  service_list.append(_create_service(binding, 'MNReplication', service_version))
   return service_list
 
 
