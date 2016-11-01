@@ -401,14 +401,9 @@ DATABASES = {
   }
 }
 
-# Paths to the GMN data stores. The bytes of all the objects handled by GMN are
-# stored here. By default, these are below the service folder. Typically,
-# these are changed to use an area that is dedicated for storage, for instance
-# a separate filesystem / disk.
-MEDIA_ROOT = make_absolute('../stores') # relative location
-# MEDIA_ROOT = '/mnt/my_large_disk/dataone/' # example for absolute location
-SYSMETA_STORE_PATH = os.path.join(MEDIA_ROOT, 'sysmeta')
-OBJECT_STORE_PATH = os.path.join(MEDIA_ROOT, 'object')
+# Paths to the GMN object store. The bytes of all the objects handled by GMN are
+# stored in a directory hierarchy that starts below this folder.
+OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
 
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of
 # providing an object for GMN to manage, the object can be left empty and the
