@@ -22,21 +22,23 @@
 """
 
 # Stdlib.
+import json
 import logging
 import os
 import pprint
 import shutil
+import zlib
 
 # Django.
 import django.core.management.base
 import app.sysmeta_util
-from django.conf import settings
 
 # 3rd party.
 import psycopg2
 import psycopg2.extras
 
 # D1.
+import d1_common.url
 
 # App.
 import app.models
@@ -46,13 +48,22 @@ import app.auth
 import app.sysmeta
 import app.sysmeta_obsolescence
 import app.util
+import util
+
 
 CONNECTION_STR = "host=''"
-VERSION_FILE_NAME = 'version.txt'
+
+ROOT_PATH = '/var/local/dataone'
+GMN_V1_SERVICE_PATH = os.path.join(ROOT_PATH, 'gmn/lib/python2.7/site-packages/service')
+GMN_V1_SYSMETA_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/sysmeta')
+GMN_V1_OBJ_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/object')
+GMN_V2_OBJ_PATH = os.path.join(ROOT_PATH, 'gmn_object_store')
+UNCONNECTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'skipped_unconnected_chains.json')
+UNSORTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'unsorted_chains.json')
 
 
 class Command(django.core.management.base.BaseCommand):
-  help = 'Populate GMN v2 database from existing v1 database'
+  help = 'Migrate GMN v1 objects to v2'
 
   def add_arguments(self, parser):
     parser.add_argument(
@@ -64,13 +75,13 @@ class Command(django.core.management.base.BaseCommand):
     parser.add_argument(
       '--force',
       action='store_true',
-      # dest='force',
+      dest='force',
       default=False,
       help='Overwrite existing v2 database',
     )
 
   def handle(self, *args, **options):
-    self._log_setup(options['debug'])
+    util.log_setup(options['debug'])
     logging.info(
       u'Running management command: {}'.format(util.get_command_name())
     )
@@ -81,7 +92,7 @@ class Command(django.core.management.base.BaseCommand):
         u'There is already data in the v2 database. Use --force to overwrite.'
       )
       return
-    app.views.diagnostics._clear_db()
+    # app.views.diagnostics._clear_db()
     m.migrate()
 
 #===============================================================================
@@ -93,44 +104,67 @@ class V2Migration(object):
 
   def migrate(self):
     try:
-      # self._migrate_filesystem(settings.SYSMETA_STORE_PATH)
-      # self._migrate_filesystem(settings.OBJECT_STORE_PATH )
-      self._migrate_sciobj()
+      self._validate()
+      # self._migrate_filesystem()
+      # self._migrate_sciobj()
       self._migrate_events()
       self._migrate_whitelist()
     except MigrateError as e:
       logging.error('Migration failed: {}'.format(e.message))
 
+
+  def _validate(self):
+
+    for root_path, dir_list, file_list in os.walk(I_PATH):
+      for file_name in file_list:
+        file_path = os.path.join(root_path, file_name)
+        pid = d1_common.url.decodePathElement(file_name)
+        new_file_path = calc_file_path(O_PATH, pid)
+        new_dir_path = os.path.dirname(new_file_path)
+        try:
+          os.makedirs(new_dir_path)
+        except:
+          pass
+        os.rename(file_path, new_file_path)
+        print pid
+        print file_path
+        print new_file_path
+        print
+
+      os.link(source, link_name)
+      Create a hard link pointing to source named link_name.
+
+      Availability: Unix.
+
   # Filesystem
 
-  def _migrate_filesystem(self, root_path):
-    if not self._get_object_store_version(root_path) == 'v1':
-      return
+  def _migrate_filesystem(self):
     for parent_dir_path, dir_list, file_list in os.walk(
-      root_path, topdown=False
+      GMN_V2_OBJ_PATH, topdown=False
     ):
       for dir_name in dir_list:
         dir_path = os.path.join(parent_dir_path, dir_name)
         try:
-          new_dir_name = u'{0:02x}'.format(int(dir_name))
+          new_dir_name = u'{0:04x}'.format(int(dir_name))
         except ValueError:
           continue
         new_dir_path = os.path.join(parent_dir_path, new_dir_name)
         shutil.move(dir_path, new_dir_path)
-    self._set_object_store_version(root_path, 'v2')
 
   # Science Objects
 
   def _migrate_sciobj(self):
-    obsolescence_list = self._get_obsolescence_list()
+    #obsolescence_list = self._get_obsolescence_list()
+    obsolescence_list = self._load_json(UNSORTED_CHAINS_PATH)
+    #self._dump_json(obsolescence_list, UNSORTED_CHAINS_PATH)
     obsoletes_pid_list = []
     obsoleted_by_pid_list = []
     for pid, obsoletes_pid, obsoleted_by_pid in obsolescence_list:
       obsoletes_pid_list.append((pid, obsoletes_pid))
       obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    logging.info('Sorting obsolescence chains...')
-    topo_obsolescence_list = self._topological_sort(obsoletes_pid_list)
-    self._create_sciobj(topo_obsolescence_list)
+    # logging.info('Sorting obsolescence chains...')
+    # topo_obsolescence_list = self._topological_sort(obsoletes_pid_list)
+    # self._create_sciobj(topo_obsolescence_list)
     self._update_obsoleted_by(obsoleted_by_pid_list)
 
   def _get_obsolescence_list(self):
@@ -163,15 +197,16 @@ class V2Migration(object):
       sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_obj.obsoletedBy = None
-      app.sysmeta.create(sysmeta_obj, sciobj_row['url'], sciobj_row['replica'])
+      app.sysmeta.create(sysmeta_obj, sciobj_row['url'])
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)
     for i, pid_tup in enumerate(obsoleted_by_pid_list):
       pid, obsoleted_by_pid = pid_tup
       if obsoleted_by_pid is not None:
-        self._log_pid_info('Updating obsoletedBy', i, n, pid)
-        app.sysmeta_obsolescence.set_obsolescence(pid, None, obsoleted_by_pid)
+        if app.sysmeta.is_did(pid) and app.sysmeta.is_did(obsoleted_by_pid):
+          self._log_pid_info('Updating obsoletedBy', i, n, pid)
+          app.sysmeta_obsolescence.set_obsolescence(pid, None, obsoleted_by_pid)
 
   def _identifiers(self, sysmeta_obj):
     pid = app.sysmeta_util.get_value(sysmeta_obj, 'identifier')
@@ -197,8 +232,22 @@ class V2Migration(object):
           sorted_set.add(pid)
           del unsorted_dict[pid]
       if not is_connected:
-        raise MigrateError('One or more broken obsolescence chains')
+        logging.warning(
+          'Skipped one or more unconnected obsolescence chains. '
+          'See {}'.format(UNCONNECTED_CHAINS_PATH))
+        self._dump_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
+        break
     return sorted_list
+
+  def _dump_json(self, unsorted_dict, json_path):
+    with open(json_path, 'w') as f:
+      json.dump(
+        unsorted_dict, f, sort_keys=True, indent=2, separators=(',', ': ')
+      )
+
+  def _load_json(self, json_path):
+    with open(json_path, 'r') as f:
+      return json.load(f)
 
   def _log_pid_info(self, msg, i, n, pid):
     logging.info(
@@ -207,12 +256,23 @@ class V2Migration(object):
     )
 
   def _sysmeta_obj_by_sciobj_row(self, sciobj_row):
-    sysmeta_xml_path = app.util.file_path(
-      settings.SYSMETA_STORE_PATH, sciobj_row['pid']
+    sysmeta_xml_path = self._file_path(
+      GMN_V1_SYSMETA_PATH, sciobj_row['pid']
     )
-    with open(sysmeta_xml_path + '.' + str(sciobj_row['serial_version']), 'rb'
-              ) as f:
+    with open(sysmeta_xml_path + '.' + str(sciobj_row['serial_version']), 'rb') as f:
       return app.sysmeta.deserialize(f.read())
+
+  def _file_path(self, root, pid):
+    z = zlib.adler32(pid.encode('utf-8'))
+    a = z & 0xff ^ (z >> 8 & 0xff)
+    b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
+    return os.path.join(
+      root,
+      u'{0:03d}'.format(a),
+      u'{0:03d}'.format(b),
+      d1_common.url.encodePathElement(pid),
+    )
+
 
   # Events
 
@@ -229,26 +289,26 @@ class V2Migration(object):
       ;
     """
     )
-    event_row_list = self.v1_cursor.fetchall()
-    n = len(event_row_list)
-    for i, event_row in enumerate(event_row_list):
+    # event_row_list = self.v1_cursor.fetchall()
+    for i, event_row in enumerate(self.v1_cursor):
       self._log_pid_info(
-        'Processing event logs', i, n,
+        'Processing event logs', i, self.v1_cursor.rowcount,
         '{} {}'.format(event_row['event'], event_row['pid'])
       )
-      sciobj_model = app.models.ScienceObject.objects.get(
-        pid__did=event_row['pid']
-      )
-      event_log_model = app.models.EventLog()
-      event_log_model.sciobj = sciobj_model
-      event_log_model.event = app.models.event(event_row['event'])
-      event_log_model.ip_address = app.models.ip_address(event_row['ip_address'])
-      event_log_model.user_agent = app.models.user_agent(event_row['user_agent'])
-      event_log_model.subject = app.models.subject(event_row['subject'])
-      event_log_model.save()
-      # Must update timestamp separately due to auto_now_add=True
-      event_log_model.timestamp = event_row['date_logged']
-      event_log_model.save()
+      if app.sysmeta.is_did(event_row['pid']):
+        sciobj_model = app.models.ScienceObject.objects.get(
+          pid__did=event_row['pid']
+        )
+        event_log_model = app.models.EventLog()
+        event_log_model.sciobj = sciobj_model
+        event_log_model.event = app.models.event(event_row['event'])
+        event_log_model.ip_address = app.models.ip_address(event_row['ip_address'])
+        event_log_model.user_agent = app.models.user_agent(event_row['user_agent'])
+        event_log_model.subject = app.models.subject(event_row['subject'])
+        event_log_model.save()
+        # Must update timestamp separately due to auto_now_add=True
+        event_log_model.timestamp = event_row['date_logged']
+        event_log_model.save()
 
   # Whitelist
 
@@ -277,18 +337,6 @@ class V2Migration(object):
   def _create_v1_cursor(self):
     connection = psycopg2.connect(CONNECTION_STR)
     return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-  def _get_object_store_version(self, root_path):
-    version_file_path = os.path.join(root_path, VERSION_FILE_NAME)
-    if not os.path.exists(version_file_path):
-      return 'v1'
-    with open(version_file_path, 'r') as f:
-      return f.read().strip()
-
-  def _set_object_store_version(self, root_path, version_str):
-    version_file_path = os.path.join(root_path, VERSION_FILE_NAME)
-    with open(version_file_path, 'w') as f:
-      f.write(version_str + '\n')
 
 # ==============================================================================
 
