@@ -48,11 +48,12 @@ class TestCert(django.test.TestCase):
       primary_str,
       'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
     )
-    self.assertEqual(
+    self.assertListEqual(
       sorted(equivalent_set),
       [
         'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
         'authenticatedUser',
+        'public',
         'verifiedUser',
       ],
     )

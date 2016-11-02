@@ -353,19 +353,14 @@ PUBLIC_LOG_RECORDS = True
 # - Any user that has write permission on an object can update it.
 REQUIRE_WHITELIST_FOR_UPDATE = True
 
-# Database connection.
-# GMN supports PostgreSQL and SQLite3. MySQL is NOT supported. Oracle is
-# untested.
+# PostgreSQL database connection.
 DATABASES = {
   'default': {
     # PostgreSQL
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'gmn2',
-    # SQLite3
-    # 'ENGINE': 'django.db.backends.sqlite3',
-    # 'NAME': make_absolute('./gmn.sqlite'),
     # By default, GMN uses PostgreSQL Peer authentication, which does not
-    # require a username and password. These are not used for SQLite3.
+    # require a username and password.
     'USER': '',
     'PASSWORD': '',
     # Set HOST to empty string for localhost.
@@ -418,7 +413,7 @@ PROXY_MODE_BASIC_AUTH_PASSWORD = ''
 PROXY_MODE_STREAM_TIMEOUT = 30
 
 # Path to the log file.
-LOG_PATH = make_absolute('../gmn.log')
+LOG_PATH = make_absolute('./gmn.log')
 
 # Set up logging.
 

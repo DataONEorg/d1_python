@@ -38,6 +38,7 @@ import psycopg2.extras
 
 # D1.
 import d1_common.url
+import d1_common.types.exceptions
 
 # App.
 import app.models
@@ -92,7 +93,7 @@ class Command(django.core.management.base.BaseCommand):
         u'There is already data in the v2 database. Use --force to overwrite.'
       )
       return
-    app.views.diagnostics._clear_db()
+    app.views.diagnostics.delete_all_objects()
     m.migrate()
 
 #===============================================================================
@@ -110,8 +111,8 @@ class V2Migration(object):
       self._migrate_sciobj()
       self._migrate_events()
       self._migrate_whitelist()
-    except MigrateError as e:
-      logging.error('Migration failed: {}'.format(e.message))
+    except django.core.management.base.CommandError as e:
+      self._log(str(e))
     self._events.log()
 
   def _validate(self):
@@ -135,16 +136,15 @@ class V2Migration(object):
       for file_name in file_list:
         pid = d1_common.url.decodePathElement(file_name)
         old_file_path = os.path.join(dir_path, file_name)
-        new_file_path = app.util.file_path(GMN_V2_OBJ_PATH, pid)
+        new_file_path = app.util.sciobj_file_path(pid)
         app.util.create_missing_directories(new_file_path)
         new_dir_path = os.path.dirname(new_file_path)
-        if not os.path.exists(new_dir_path):
-          if self._are_on_same_disk(old_file_path, new_dir_path):
-            os.link(old_file_path, new_file_path)
-            self._events.count('Created hard links')
-          else:
-            shutil.copyfile(old_file_path, new_file_path)
-            self._events.count('Copied files')
+        if self._are_on_same_disk(old_file_path, new_dir_path):
+          self._log('Creating SciObj hard link')
+          os.link(old_file_path, new_file_path)
+        else:
+          self._log('Copying SciObj file')
+          shutil.copyfile(old_file_path, new_file_path)
 
   # Science Objects
 
@@ -175,9 +175,12 @@ class V2Migration(object):
       self._log_pid_info(
         'Retrieving obsolescence chains', i, n, sciobj_row['pid']
       )
-      sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
+      try:
+        sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
+      except django.core.management.base.CommandError as e:
+        self._log(str(e))
+        continue
       obsolescence_list.append(self._identifiers(sysmeta_obj))
-      self._events.count('Retrieved obsolescence chains for objects')
     return obsolescence_list
 
   def _create_sciobj(self, topo_obsolescence_list):
@@ -189,12 +192,15 @@ class V2Migration(object):
       """, (pid,)
       )
       sciobj_row = self._v1_cursor.fetchone()
-      self._log_pid_info('Creating Sci Obj', i, n, pid)
-      sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
+      try:
+        sysmeta_obj = self._sysmeta_obj_by_sciobj_row(sciobj_row)
+      except django.core.management.base.CommandError as e:
+        self._log(str(e))
+        continue
       # "obsoletedBy" back references are fixed in a second pass.
       sysmeta_obj.obsoletedBy = None
+      self._log_pid_info('Creating SciObj DB representation', i, n, pid)
       app.sysmeta.create(sysmeta_obj, sciobj_row['url'])
-      self._events.count('Created SysMeta objects in database')
 
   def _update_obsoleted_by(self, obsoleted_by_pid_list):
     n = len(obsoleted_by_pid_list)
@@ -204,7 +210,6 @@ class V2Migration(object):
         if app.sysmeta.is_did(pid) and app.sysmeta.is_did(obsoleted_by_pid):
           self._log_pid_info('Updating obsoletedBy', i, n, pid)
           app.sysmeta_obsolescence.set_obsolescence(pid, None, obsoleted_by_pid)
-          self._events.count('Updated obsoletedBy on objects')
 
   def _identifiers(self, sysmeta_obj):
     pid = app.sysmeta_util.get_value(sysmeta_obj, 'identifier')
@@ -230,11 +235,9 @@ class V2Migration(object):
           sorted_set.add(pid)
           del unsorted_dict[pid]
       if not is_connected:
-        logging.warning(
-          'Skipped one or more unconnected obsolescence chains. '
-          'See {}'.format(UNCONNECTED_CHAINS_PATH))
         self._dump_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
-        self._events.count('Objects skipped due to unconnected chains')
+        self._log('Skipped one or more unconnected obsolescence chains. '
+                  'See {}'.format(UNCONNECTED_CHAINS_PATH))
         break
     return sorted_list
 
@@ -253,13 +256,27 @@ class V2Migration(object):
       '{} - {}/{} ({:.2f}%) - {}'.
       format(msg, i + 1, n, (i + 1) / float(n) * 100, pid)
     )
+    self._events.count(msg)
+
+  def _log(self, msg):
+    logging.info(msg)
+    self._events.count(msg)
 
   def _sysmeta_obj_by_sciobj_row(self, sciobj_row):
     sysmeta_xml_path = self._file_path(
       GMN_V1_SYSMETA_PATH, sciobj_row['pid']
     )
-    with open(sysmeta_xml_path + '.' + str(sciobj_row['serial_version']), 'rb') as f:
-      return app.sysmeta.deserialize(f.read())
+    sysmeta_xml_ver_path = '{}.{}'.format(
+      sysmeta_xml_path,
+      sciobj_row['serial_version'],
+    )
+    try:
+      with open(sysmeta_xml_ver_path, 'rb') as f:
+        return app.sysmeta.deserialize(f.read())
+    except (EnvironmentError, d1_common.types.exceptions.DataONEException) as e:
+      raise django.core.management.base.CommandError(
+        'Unable to read SysMeta. error="{}"'.format(str(e))
+      )
 
   def _file_path(self, root, pid):
     z = zlib.adler32(pid.encode('utf-8'))
@@ -308,7 +325,6 @@ class V2Migration(object):
         # Must update timestamp separately due to auto_now_add=True
         event_log_model.timestamp = event_row['date_logged']
         event_log_model.save()
-        self._events.count('Created Event Log records')
 
   # Whitelist
 
@@ -329,7 +345,7 @@ class V2Migration(object):
       w = app.models.WhitelistForCreateUpdateDelete()
       w.subject = app.models.subject(whitelist_row['subject'])
       w.save()
-      self._events.count('Whitelisted subjects')
+      self._events.count('Whitelisted subject')
 
 
   def db_is_empty(self):
@@ -342,9 +358,3 @@ class V2Migration(object):
 
   def _are_on_same_disk(self, path_1, path_2):
     return os.stat(path_1).st_dev == os.stat(path_2).st_dev
-
-# ==============================================================================
-
-
-class MigrateError(Exception):
-  pass

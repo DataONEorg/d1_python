@@ -23,22 +23,11 @@
 
 # Stdlib.
 import datetime
-import httplib
 import logging
 import os
-import socket
 import urlparse
 import uuid
 
-# Django.
-from django.conf import settings
-from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
-import app.sysmeta_util
-
-# 3rd party
-import requests
-
-# DataONE APIs.
 import d1_client.cnclient
 import d1_client.object_format_info
 import d1_common.checksum
@@ -46,8 +35,10 @@ import d1_common.const
 import d1_common.date_time
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.exceptions
+import requests
+from django.conf import settings
+from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotAllowed
 
-# App.
 import app.auth
 import app.db_filter
 import app.event_log
@@ -59,14 +50,12 @@ import app.sysmeta
 import app.sysmeta_obsolescence
 import app.sysmeta_replica
 import app.sysmeta_sid
+import app.sysmeta_util
 import app.sysmeta_validate
 import app.util
 import app.views.view_asserts
 import app.views.view_util
 
-
-# ObjectFormatInfo is expensive to create because it reads a csv file from
-# disk. So it is created here, since this is not a class.
 OBJECT_FORMAT_INFO = d1_client.object_format_info.ObjectFormatInfo()
 
 
@@ -167,9 +156,9 @@ def get_log(request):
 def get_node(request):
   """MNCore.getCapabilities() → Node
   """
-  d1_type_binding = app.views.view_util.dataoneTypes(request)
-  node_obj = app.node.Node(d1_type_binding)
-  return HttpResponse(node_obj.get_xml_str(), d1_common.const.CONTENT_TYPE_XML)
+  major_version_int = 2 if app.views.view_util.is_v2_api(request) else 1
+  node_pretty_xml = app.node.get_pretty_xml(major_version_int)
+  return HttpResponse(node_pretty_xml, d1_common.const.CONTENT_TYPE_XML)
 
 # ------------------------------------------------------------------------------
 # Public API: Tier 1: Read API
@@ -207,7 +196,7 @@ def get_object(request, pid):
   sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
   content_type_str = _content_type_from_format(sciobj.format.format)
   response = StreamingHttpResponse(
-    _get_sciobj_stream(sciobj),
+    _get_sciobj_iter(sciobj),
     content_type_str
   )
   _add_object_properties_to_response_header(response, sciobj)
@@ -222,27 +211,22 @@ def get_object(request, pid):
   return response
 
 
-def _get_sciobj_stream(sciobj):
-  if is_proxy_url(sciobj.url):
-    return _get_sciobj_stream_remote(sciobj.url)
+def _get_sciobj_iter(sciobj):
+  if app.util.is_proxy_url(sciobj.url):
+    return _get_sciobj_iter_remote(sciobj.url)
   else:
-    return _get_sciobj_stream_local(sciobj.pid.did)
+    return _get_sciobj_iter_local(sciobj.pid.did)
 
 
-def is_proxy_url(url):
-  url_split = urlparse.urlparse(url)
-  return url_split.scheme in ('http', 'https')
-
-
-def _get_sciobj_stream_local(pid):
-  file_in_path = app.util.file_path(settings.OBJECT_STORE_PATH, pid)
+def _get_sciobj_iter_local(pid):
+  file_in_path = app.util.sciobj_file_path(pid)
   # Can't use "with".
   sciobj_file = open(file_in_path, 'rb')
   # Return an iterator that iterates over the raw bytes of the object in chunks.
   return app.util.fixed_chunk_size_iterator(sciobj_file)
 
 
-def _get_sciobj_stream_remote(url):
+def _get_sciobj_iter_remote(url):
   try:
     response = requests.get(url, stream=True, timeout=settings.PROXY_MODE_STREAM_TIMEOUT)
   except requests.RequestException as e:
@@ -308,10 +292,9 @@ def get_checksum(request, pid):
     )
 
   sciobj_row = app.models.ScienceObject.objects.get(pid__did=pid)
-  sciobj_stream = _get_sciobj_stream(sciobj_row)
-
-  checksum_obj = d1_common.checksum.create_checksum_object_from_stream(
-    sciobj_stream, algorithm
+  sciobj_iter = _get_sciobj_iter(sciobj_row)
+  checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
+    sciobj_iter, algorithm
   )
   # Log the access of this object.
   # TODO: look into log type other than 'read'
@@ -395,7 +378,7 @@ def get_replica(request, pid):
   sciobj = app.models.ScienceObject.objects.get(pid__did=pid)
   response = HttpResponse()
   _add_object_properties_to_response_header(response, sciobj)
-  response._container = _get_sciobj_stream(sciobj)
+  response._container = _get_sciobj_iter(sciobj)
   response._is_str = False
   # Log the replication of this object.
   app.event_log.replicate(pid, request)
@@ -610,7 +593,7 @@ def delete_object(request, pid):
 
 def _delete_object_from_filesystem(url_split, pid):
   if url_split.scheme == 'file':
-    sciobj_path = app.util.file_path(settings.OBJECT_STORE_PATH, pid)
+    sciobj_path = app.util.sciobj_file_path(pid)
     try:
       os.unlink(sciobj_path)
     except EnvironmentError:

@@ -23,22 +23,16 @@
 
 # Stdlib.
 import base64
+import hashlib
 import inspect
 import logging
 import os
 import traceback
-import zlib
+import urlparse
 
 # Django.
 from django.conf import settings
 
-# D1.
-import d1_common.const
-import d1_common.date_time
-import d1_common.date_time
-import d1_common.types.exceptions
-import d1_common.url
-import d1_common.util
 
 # App.
 
@@ -50,23 +44,18 @@ def create_missing_directories(file_path):
     pass
 
 
-def file_path(root, pid):
+def sciobj_file_path(pid):
   """Determine the local path to the file holding an object's bytes.
 
   Because it may be inefficient to store millions of files in a single folder
   and because such a folder is hard to deal with when performing backups and
   maintenance, GMN stores the objects in a folder hierarchy of 256 folders, each
-  holding 256 folders (for a total of 65536 folders). The location in the
+  holding 256 folders, for a total of 65536 folders. The location in the
   hierarchy for a given object is based on its PID.
   """
-  z = zlib.adler32(pid.encode('utf-8'))
-  a = z & 0xff ^ (z >> 8 & 0xff)
-  b = z >> 16 & 0xff ^ (z >> 24 & 0xff)
+  hash_str = hashlib.sha1(pid.encode('utf-8')).hexdigest()
   return os.path.join(
-    root,
-    u'{0:02x}'.format(a),
-    u'{0:02x}'.format(b),
-    d1_common.url.encodePathElement(pid)
+    settings.OBJECT_STORE_PATH, hash_str[:2], hash_str[2:4], hash_str,
   )
 
 
@@ -165,3 +154,8 @@ def dump_stack():
   frame = inspect.currentframe()
   stack_trace = traceback.format_stack(frame)
   logging.debug(''.join(stack_trace))
+
+
+def is_proxy_url(url):
+  url_split = urlparse.urlparse(url)
+  return url_split.scheme in ('http', 'https')

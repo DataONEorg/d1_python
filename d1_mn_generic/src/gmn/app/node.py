@@ -55,7 +55,12 @@ import d1_common.util
 
 
 def get_pretty_xml(major_version_int=2):
-  return d1_common.util.pretty_xml(_get_pyxb(major_version_int))
+  node_xml = get_xml(major_version_int)
+  return d1_common.util.pretty_xml(node_xml)
+
+
+def get_xml(major_version_int):
+  return _get_pyxb(major_version_int).toxml()
 
 
 def get_pyxb(major_version_int=2):

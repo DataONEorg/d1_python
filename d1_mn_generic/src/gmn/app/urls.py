@@ -118,7 +118,7 @@ if settings.DEBUG_GMN:
     url(r'^diag/create/(.+)$', app.views.diagnostics.create),
     url(r'^diag/slash/(.+?)/(.+?)/(.+?)$', app.views.diagnostics.slash),
     url(r'^diag/exception/(.+?)$', app.views.diagnostics.exception),
-    url(r'^diag/delete_all_objects$', app.views.diagnostics.delete_all_objects),
+    url(r'^diag/delete_all_objects$', app.views.diagnostics.delete_all_objects_view),
     url(r'^diag/delete_single_object/(.+?)$', app.views.diagnostics.delete_single_object),
     url(r'^diag/trusted_subjects$', app.views.diagnostics.trusted_subjects),
     url(r'^diag/whitelist_subject$', app.views.diagnostics.whitelist_subject),

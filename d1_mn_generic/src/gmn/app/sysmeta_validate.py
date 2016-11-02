@@ -68,5 +68,5 @@ def _get_checksum_calculator(sysmeta):
 
 def _calculate_object_checksum(request, checksum_calculator):
   for chunk in request.FILES['object'].chunks():
-    checksum_calculator._update(chunk)
+    checksum_calculator.update(chunk)
   return checksum_calculator.hexdigest()

@@ -75,7 +75,7 @@ class TestJwt(django.test.TestCase):
     time just before the token expired.
     """
     with mock.patch(
-      'mn.middleware.session_jwt.jwt.api_jwt.timegm'
+      'app.middleware.session_jwt.jwt.api_jwt.timegm'
     ) as mock_date:
       awt_exp_ts = 1475786896
       mock_date.return_value = awt_exp_ts - 1

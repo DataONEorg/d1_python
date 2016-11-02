@@ -30,6 +30,7 @@ import csv
 import json
 import os
 import pprint
+import shutil
 import urlparse
 
 # Django.
@@ -65,7 +66,7 @@ import app.views.view_util
 @app.restrict_to_verb.get
 def diagnostics(request):
   if 'clear_db' in request.GET:
-    _delete_all_objects()
+    delete_all_objects()
     _clear_db()
   return render_to_response('diag.html', d1_common.const.CONTENT_TYPE_XHTML)
 
@@ -215,15 +216,14 @@ def echo_raw_post_data(request):
 #
 
 @app.restrict_to_verb.get
-def delete_all_objects(request):
-  _delete_all_objects()
+def delete_all_objects_view(request):
+  delete_all_objects()
   return app.views.view_util.http_response_with_boolean_true_type()
 
 
-def _delete_all_objects():
-  for sci_obj in app.models.ScienceObject.objects.all():
-    _delete_object_from_filesystem(sci_obj)
+def delete_all_objects():
   _clear_db()
+  _delete_all_sciobj_files()
 
 
 def _clear_db():
@@ -242,6 +242,12 @@ def _clear_db():
   # This causes associated permissions to be deleted, but any subjects
   # that are no longer needed are not deleted. The orphaned subjects should
   # not cause any issues and will be reused if they are needed again.
+
+
+def _delete_all_sciobj_files():
+  if os.path.exists(settings.OBJECT_STORE_PATH):
+    shutil.rmtree(settings.OBJECT_STORE_PATH)
+  app.util.create_missing_directories(settings.OBJECT_STORE_PATH)
 
 
 def _delete_subjects_and_permissions():
@@ -264,7 +270,7 @@ def _delete_object_from_filesystem(sci_obj):
   pid = sci_obj.pid.did
   url_split = urlparse.urlparse(sci_obj.url)
   if url_split.scheme == 'file':
-    sci_obj_path = app.util.file_path(settings.OBJECT_STORE_PATH, pid)
+    sci_obj_path = app.util.sciobj_file_path(pid)
     try:
       os.unlink(sci_obj_path)
     except EnvironmentError:

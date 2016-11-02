@@ -135,7 +135,9 @@ def main():
 
   (options, args) = parser.parse_args()
 
-  logging.getLogger('').setLevel(logging.DEBUG if options.debug else logging.INFO)
+  logging.getLogger('').setLevel(
+    logging.DEBUG if options.debug else logging.INFO
+  )
 
   if options.use_v1:
     mn_client = d1_client.mnclient.MemberNodeClient(
@@ -158,14 +160,20 @@ def main():
         use_v1_bool=options.use_v1,
     )
     try:
-      mn_client.create(pid, StringIO.StringIO(sciobj_str), sysmeta_pyxb)
+      mn_client.create(
+        pid,
+        StringIO.StringIO(sciobj_str),
+        sysmeta_pyxb,
+      )
     except d1_common.types.exceptions.DataONEException as e:
       logging.exception('MNStorage.create() failed with exception:')
-      if len(e.traceInformation) >= 100:
+      if e.traceInformation and len(e.traceInformation) >= 100:
         trace_path = 'traceInformation.out'
         with open(trace_path, 'wb') as f:
           f.write(e.traceInformation)
-          logging.error('Dumped traceInformation to file: {}'.format(trace_path))
+          logging.error(
+            'Dumped traceInformation to file: {}'.format(trace_path)
+          )
           sys.exit()
 
 

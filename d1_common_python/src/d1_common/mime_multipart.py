@@ -39,7 +39,7 @@ import StringIO
 import d1_common.const
 
 
-class multipart(object):
+class MultipartIterator(object):
   '''Generate a MIME Multipart document based on a set of files and fields.
 
   The document can either be automatically posted to a web server with HTTP
@@ -76,7 +76,7 @@ class multipart(object):
     :returns: length
     :returns type: integer
     '''
-    m = multipart(self.fields, [(f[0], f[1], '') for f in self.files])
+    m = MultipartIterator(self.fields, [(f[0], f[1], '') for f in self.files])
     content_length = len(m.read())
     for f in self.files:
       content_length += self._get_len(f)

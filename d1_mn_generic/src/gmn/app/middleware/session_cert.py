@@ -172,7 +172,6 @@ def _add_person_subject(equivalent_set, subject_info_pyxb, subject_str):
 
 
 def _find_person_by_subject(subject_info_pyxb, subject_str):
-  print subject_info_pyxb, subject_str
   for person_pyxb in subject_info_pyxb.person:
     if person_pyxb.subject.value() == subject_str:
       return person_pyxb

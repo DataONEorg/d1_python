@@ -88,11 +88,9 @@ class ViewHandler(object):
 
     # Handle list of subjects in vendor specific extension:
     if settings.DEBUG_GMN:
-      # If this is used together with TLS, the list is added to the one derived
-      # from any included client side certificate. The public symbolic principal
-      # is always included in the subject list.
+      # This is added to any subjects obtained from cert and/or JWT.
       if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
-        request.all_subjects_set._update(
+        request.all_subjects_set.update(
           request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t')
         )
 
