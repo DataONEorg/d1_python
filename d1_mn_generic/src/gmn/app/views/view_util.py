@@ -28,6 +28,7 @@ import re
 
 # Django.
 from django.conf import settings
+import django.core.files.move
 from django.http import HttpResponse
 
 # D1
@@ -147,11 +148,23 @@ def create(request, sysmeta_obj):
 
 
 def _object_pid_post_store_local(request, pid):
-  object_path = app.util.file_path(settings.OBJECT_STORE_PATH, pid)
-  app.util.create_missing_directories(object_path)
-  with open(object_path, 'wb') as f:
-    for chunk in request.FILES['object'].chunks():
-      f.write(chunk)
+  """Django stores small uploads in memory and streams large uploads directly to
+  disk. Uploads stored in memory are represented by UploadedFile and on disk,
+  TemporaryUploadedFile. To store an UploadedFile on disk, it's iterated and
+  saved in chunks. To store a TemporaryUploadedFile, it's moved from the
+  temporary to the final location. Django automatically handles this when using
+  the file related fields in the models.
+  """
+  sciobj_path = app.util.sciobj_file_path(pid)
+  app.util.create_missing_directories(sciobj_path)
+  try:
+    django.core.files.move.file_move_safe(
+      request.FILES['object'].temporary_file_path(), sciobj_path
+    )
+  except AttributeError:
+    with open(sciobj_path, 'wb') as f:
+      for chunk in request.FILES['object'].chunks():
+        f.write(chunk)
 
 
 def http_response_with_boolean_true_type():
