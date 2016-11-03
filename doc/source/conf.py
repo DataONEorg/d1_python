@@ -50,7 +50,7 @@ today_fmt = '%Y-%m-%d'
 
 # Theme
 
-html_logo = '../docutils/sphinx_themes/dataone/static/dataone_logo.png'
+html_logo = 'dataone_logo.png'
 
 # html_theme = 'dataone'
 # html_theme_options = {
