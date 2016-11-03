@@ -1,6 +1,0 @@
-random_data.random_3_words
-==========================
-
-.. currentmodule:: random_data
-
-.. autofunction:: random_3_words

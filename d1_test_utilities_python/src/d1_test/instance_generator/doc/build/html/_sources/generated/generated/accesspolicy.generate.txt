@@ -1,6 +1,0 @@
-accesspolicy.generate
-=====================
-
-.. currentmodule:: accesspolicy
-
-.. autofunction:: generate

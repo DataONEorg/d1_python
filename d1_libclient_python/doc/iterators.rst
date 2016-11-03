@@ -8,9 +8,6 @@ result sets retrieved from Nodes; Object Lists and Log Records.
 ObjectListIterator
 ~~~~~~~~~~~~~~~~~~
 
-See :ref:`d1_client_objectlistiterator` for details on how to create a
-ObjectListOperator.
-
 The ObjectListIterator takes a CoordinatingNodeClient or MemberNodeClient
 together with filters to select a set of objects. It returns an iterator object
 which enables using a Python ``for`` loop for iterating over the matching
@@ -97,9 +94,6 @@ Output::
 
 LogRecordIterator
 ~~~~~~~~~~~~~~~~~
-
-See :ref:`d1_client_logrecorditerator` for details on how to create a
-LogRecordIterator.
 
 The LogRecordIterator takes a CoordinatingNodeClient or MemberNodeClient
 together with filters to select a set of log records. It returns an iterator

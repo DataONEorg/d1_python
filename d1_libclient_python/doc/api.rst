@@ -5,7 +5,6 @@ API
   :numbered:
   :maxdepth: 2
 
-  overview
   clients
   iterators
   solr_client

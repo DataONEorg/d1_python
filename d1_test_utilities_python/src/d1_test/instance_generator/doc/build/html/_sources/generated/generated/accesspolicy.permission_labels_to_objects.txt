@@ -1,6 +1,0 @@
-accesspolicy.permission_labels_to_objects
-=========================================
-
-.. currentmodule:: accesspolicy
-
-.. autofunction:: permission_labels_to_objects

@@ -1,4 +1,4 @@
-The `DataONE Common Library for Python`_ provides functionality commonly needed
+The :doc:`/common/index` provides functionality commonly needed
 by projects that interact with the :term:`DataONE` infrastructure via Python.
 
 The main functionality provided by the DataONE Common Library for Python is
@@ -12,4 +12,3 @@ attempts to submit incomplete or syntactically incorrect information to a
 DataONE node cause local errors that are easy to debug, rather than less
 specific errors returned from the target node.
 
-.. _`DataONE Common Library for Python`: http://pythonhosted.org/dataone.common/

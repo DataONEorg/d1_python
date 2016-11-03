@@ -6,8 +6,6 @@ SystemMetadata
 This class simplifies access to the individual values in a SystemMetadata
 object.
 
-Reference: :ref:`d1_client_systemmetadata`
-
 Example
 ~~~~~~~
 

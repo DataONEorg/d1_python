@@ -1,6 +1,0 @@
-words.countlines
-================
-
-.. currentmodule:: words
-
-.. autofunction:: countlines

@@ -1,5 +1,5 @@
-DataONE Certificate Extensions for Python
-=========================================
+DataONE ONEDrive
+================
 
 See :doc:`/index` for an overview of the DataONE libraries and
 other products implemented in Python.
@@ -15,11 +15,12 @@ Contents
   :maxdepth: 2
 
   setup
-  setup-windows
-  api
-  generated-tests
-  local-ca
-  impl
+  run
+  architecture
+  mockups/index
+  windows_setup
+  local_glossary
+  /glossary
 
 
 Indices and tables

@@ -1,6 +1,0 @@
-dates.random_date
-=================
-
-.. currentmodule:: dates
-
-.. autofunction:: random_date

@@ -1,6 +1,0 @@
-random_data.random_bytes
-========================
-
-.. currentmodule:: random_data
-
-.. autofunction:: random_bytes

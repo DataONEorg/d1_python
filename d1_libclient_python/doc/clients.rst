@@ -58,45 +58,45 @@ DataONEBaseClient
   The DataONEBaseClient classes contain methods that allow access to APIs
   that are common to Coordinating Nodes and Member Nodes.
 
-  * :ref:`d1_client_d1baseclient`
-  * :ref:`d1_client_d1baseclient_1_1`
-  * :ref:`d1_client_d1baseclient_2_0`
+  * d1_client.d1baseclient
+  * d1_client.d1baseclient_1_1
+  * d1_client.d1baseclient_2_0
 
 MemberNodeClient
 
   The MemberNodeClient classes contain methods that allow access to APIs that
   are specific to Member Nodes.
 
-  * :ref:`d1_client_mnclient`
-  * :ref:`d1_client_mnclient_1_1`
-  * :ref:`d1_client_mnclient_2_0`
+  * d1_client.mnclient
+  * d1_client.mnclient_1_1
+  * d1_client.mnclient_2_0
 
 CoordinatingNodeClient
 
   The CoordinatingNodeClient classes contain methods that allow access to APIs
   that are specific to Coordinating Nodes.
 
-  * :ref:`d1_client_cnclient`
-  * :ref:`d1_client_cnclient_1_1`
-  * :ref:`d1_client_cnclient_2_0`
+  * d1_client.cnclient
+  * d1_client.cnclient_1_1
+  * d1_client.cnclient_2_0
 
 DataONEClient
 
   The DataONEClient uses CN- and MN clients to perform high level operations
   against the DataONE infrastructure.
 
-  * :ref:`d1_client_d1client`
+  * d1_client.d1client
 
 DataONEObject
 
   Wraps a single DataONE Science Object and adds functionality such as resolve
   and get.
 
-  * :ref:`d1_client_d1client`
+  * d1_client.d1client
 
 SolrConnection
 
   Provides functionality for working with DataONE's Solr index, which powers the
   ONEMercury science data search engine.
 
-  * :ref:`d1_client_solr_client`
+  * d1_client.solr_client

@@ -15,8 +15,6 @@ Contents
   :numbered:
   :maxdepth: 2
 
-  generated-api
-  generated-tests
 
 
 Indices and tables

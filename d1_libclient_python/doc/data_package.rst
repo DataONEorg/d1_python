@@ -14,8 +14,6 @@ See `Data Packaging
 <http://mule1.dataone.org/ArchitectureDocs-current/design/DataPackage.html>`_
 for more information about how Resource Maps are used in DataONE.
 
-Reference: :ref:`d1_client_data_package`
-
 
 ResourceMapGenerator
 ~~~~~~~~~~~~~~~~~~~~

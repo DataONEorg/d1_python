@@ -1,6 +1,0 @@
-subject.generate
-================
-
-.. currentmodule:: subject
-
-.. autofunction:: generate

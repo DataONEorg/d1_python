@@ -11,6 +11,3 @@ performing such mappings.
 
 By default, ObjectFormatInfo uses DataONE's standard table of mappings. If
 desired, a custom table can be provided.
-
-Reference: :ref:`d1_client_object_format_info`
-

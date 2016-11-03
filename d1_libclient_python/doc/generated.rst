@@ -6,4 +6,3 @@ Reference
   :numbered:
   :glob:
 
-  generated/*

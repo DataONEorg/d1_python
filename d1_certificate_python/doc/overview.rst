@@ -1,4 +1,4 @@
-The `DataONE Certificate Extensions for Python`_ provides Python extensions for
+The :doc:`/certificate/index` provides Python extensions for
 parsing and generating PEM formatted :term:`X.509` v3 certificates as used for
 authentication within the DataONE infrastructure.
 
@@ -11,4 +11,3 @@ authorization within DataONE.
 
 The library is a high performance C extension based on :term:`OpenSSL`.
 
-.. _`DataONE Certificate Extensions for Python`: http://pythonhosted.org/dataone.certificate_extensions/

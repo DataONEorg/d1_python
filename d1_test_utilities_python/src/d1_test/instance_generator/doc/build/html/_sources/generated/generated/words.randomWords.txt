@@ -1,6 +1,0 @@
-words.randomWords
-=================
-
-.. currentmodule:: words
-
-.. autofunction:: randomWords

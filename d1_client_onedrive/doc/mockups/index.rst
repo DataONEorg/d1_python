@@ -23,6 +23,6 @@ citation manager.
 .. toctree::
   :maxdepth: 1
 
-  native-integration/index.rst
-  onemercury-integration/index.rst
-  standalone/index.rst
+  native-integration/index
+  onemercury-integration/index
+  standalone/index

@@ -1,5 +1,5 @@
-The `DataONE Client Library for Python`_ works together with the `DataONE Common
-Library for Python`_ to provide functionality commonly needed by client software
+The :doc:`/client/index` works together with the :doc:`/common/index`
+to provide functionality commonly needed by client software
 that connects to DataONE nodes.
 
 The main functionality provided by this library is a complete set of wrappers
@@ -12,7 +12,3 @@ and return native Python objects.
 The wrappers also convert any errors received from the nodes into native
 exceptions, enabling clients to use Python's concise exception handling system
 to handle errors.
-
-.. _`DataONE Client Library for Python`: http://pythonhosted.org/dataone.libclient/
-
-.. _`DataONE Common Library for Python`: http://pythonhosted.org/dataone.common/
