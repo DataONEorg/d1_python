@@ -41,7 +41,6 @@ def main():
     install_requires=[
       'multi-mechanize',
       'dataone.libclient == 1.2.5',
-      'dataone.certificate_extensions == 1.1.1',
     ],
     setup_requires=[
       'setuptools_git >= 1.1'

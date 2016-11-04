@@ -64,13 +64,6 @@ DataONE Client Library for Python
 
 \
 
-DataONE Certificate Extensions for Python
-`````````````````````````````````````````
-
-.. include:: ./certificate/overview.rst
-
-\
-
 DataONE Workspace Client for Python
 ```````````````````````````````````
 

@@ -17,7 +17,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Populate GMN v2 database from existing v1 database
 """
 
@@ -29,8 +28,9 @@ import shutil
 import zlib
 
 # Django.
-import django.core.management.base
+from django.conf import settings
 import app.sysmeta_util
+import django.core.management.base
 
 # 3rd party.
 import psycopg2
@@ -39,27 +39,31 @@ import psycopg2.extras
 # D1.
 import d1_common.url
 import d1_common.types.exceptions
+import d1_client.cnclient_2_0
 
 # App.
-import app.models
-import app.views.view_asserts
-import app.views.diagnostics
 import app.auth
+import app.models
+import app.node
 import app.sysmeta
 import app.sysmeta_obsolescence
 import app.util
+import app.views.diagnostics
+import app.views.view_asserts
 import util
-
 
 CONNECTION_STR = "host=''"
 
 ROOT_PATH = '/var/local/dataone'
-GMN_V1_SERVICE_PATH = os.path.join(ROOT_PATH, 'gmn/lib/python2.7/site-packages/service')
+GMN_V1_SERVICE_PATH = os.path.join(
+  ROOT_PATH, 'gmn/lib/python2.7/site-packages/service'
+)
 GMN_V1_SYSMETA_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/sysmeta')
 GMN_V1_OBJ_PATH = os.path.join(GMN_V1_SERVICE_PATH, 'stores/object')
-GMN_V2_OBJ_PATH = os.path.join(ROOT_PATH, 'gmn_object_store')
 
-UNCONNECTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'skipped_unconnected_chains.json')
+UNCONNECTED_CHAINS_PATH = os.path.join(
+  ROOT_PATH, 'skipped_unconnected_chains.json'
+)
 UNSORTED_CHAINS_PATH = os.path.join(ROOT_PATH, 'unsorted_chains.json')
 
 
@@ -88,13 +92,17 @@ class Command(django.core.management.base.BaseCommand):
     )
     util.abort_if_other_instance_is_running()
     m = V2Migration()
-    if not options['force'] and not m.db_is_empty():
+    if not options['force'] and not self._db_is_empty():
       logging.error(
         u'There is already data in the v2 database. Use --force to overwrite.'
       )
       return
     app.views.diagnostics.delete_all_objects()
     m.migrate()
+
+  def _db_is_empty(self):
+    q = app.models.IdNamespace.objects.all()
+    return not len(q)
 
 #===============================================================================
 
@@ -111,6 +119,7 @@ class V2Migration(object):
       self._migrate_sciobj()
       self._migrate_events()
       self._migrate_whitelist()
+      self._update_node_doc()
     except django.core.management.base.CommandError as e:
       self._log(str(e))
     self._events.log()
@@ -124,7 +133,8 @@ class V2Migration(object):
   def _assert_path_is_dir(self, dir_path):
     if not os.path.isdir(dir_path):
       raise django.core.management.base.CommandError(
-        'Invalid dir path. Adjust in command script. path="{}"'.format(dir_path)
+        'Invalid dir path. Adjust in command script. path="{}"'.
+        format(dir_path)
       )
 
   # Filesystem
@@ -157,7 +167,6 @@ class V2Migration(object):
     for pid, obsoletes_pid, obsoleted_by_pid in obsolescence_list:
       obsoletes_pid_list.append((pid, obsoletes_pid))
       obsoleted_by_pid_list.append((pid, obsoleted_by_pid))
-    logging.info('Sorting obsolescence chains...')
     topo_obsolescence_list = self._topological_sort(obsoletes_pid_list)
     self._create_sciobj(topo_obsolescence_list)
     self._update_obsoleted_by(obsoleted_by_pid_list)
@@ -187,7 +196,7 @@ class V2Migration(object):
     n = len(topo_obsolescence_list)
     for i, pid in enumerate(topo_obsolescence_list):
       self._v1_cursor.execute(
-      """
+        """
         select * from mn_scienceobject where pid = %s;
       """, (pid,)
       )
@@ -230,14 +239,17 @@ class V2Migration(object):
       is_connected = False
       for pid, obsoletes_pid in unsorted_dict.items():
         if obsoletes_pid is None or obsoletes_pid in sorted_set:
+          self._log('Sorting obsolescence chains')
           is_connected = True
           sorted_list.append(pid)
           sorted_set.add(pid)
           del unsorted_dict[pid]
       if not is_connected:
         self._dump_json(unsorted_dict, UNCONNECTED_CHAINS_PATH)
-        self._log('Skipped one or more unconnected obsolescence chains. '
-                  'See {}'.format(UNCONNECTED_CHAINS_PATH))
+        self._log(
+          'Skipped one or more unconnected obsolescence chains. '
+          'See {}'.format(UNCONNECTED_CHAINS_PATH)
+        )
         break
     return sorted_list
 
@@ -263,9 +275,7 @@ class V2Migration(object):
     self._events.count(msg)
 
   def _sysmeta_obj_by_sciobj_row(self, sciobj_row):
-    sysmeta_xml_path = self._file_path(
-      GMN_V1_SYSMETA_PATH, sciobj_row['pid']
-    )
+    sysmeta_xml_path = self._file_path(GMN_V1_SYSMETA_PATH, sciobj_row['pid'])
     sysmeta_xml_ver_path = '{}.{}'.format(
       sysmeta_xml_path,
       sciobj_row['serial_version'],
@@ -288,7 +298,6 @@ class V2Migration(object):
       u'{0:03d}'.format(b),
       d1_common.url.encodePathElement(pid),
     )
-
 
   # Events
 
@@ -318,8 +327,12 @@ class V2Migration(object):
         event_log_model = app.models.EventLog()
         event_log_model.sciobj = sciobj_model
         event_log_model.event = app.models.event(event_row['event'])
-        event_log_model.ip_address = app.models.ip_address(event_row['ip_address'])
-        event_log_model.user_agent = app.models.user_agent(event_row['user_agent'])
+        event_log_model.ip_address = app.models.ip_address(
+          event_row['ip_address']
+        )
+        event_log_model.user_agent = app.models.user_agent(
+          event_row['user_agent']
+        )
         event_log_model.subject = app.models.subject(event_row['subject'])
         event_log_model.save()
         # Must update timestamp separately due to auto_now_add=True
@@ -347,14 +360,43 @@ class V2Migration(object):
       w.save()
       self._events.count('Whitelisted subject')
 
-
-  def db_is_empty(self):
-    q = app.models.IdNamespace.objects.all()
-    return not len(q)
-
   def _create_v1_cursor(self):
     connection = psycopg2.connect(CONNECTION_STR)
     return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
   def _are_on_same_disk(self, path_1, path_2):
     return os.stat(path_1).st_dev == os.stat(path_2).st_dev
+
+  # Update CN registration to show new v2 services
+
+  def _update_node_doc(self):
+    if not (
+      (not settings.STAND_ALONE) and settings.NODE_IDENTIFIER and
+      settings.DATAONE_ROOT and settings.CLIENT_CERT_PATH and
+      settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    ):
+      self._log(
+        'Skipped Node registry update on CN because this MN does not appear '
+        'to be registered in a DataONE environment yet.'
+      )
+      return
+    client = self._create_cn_client()
+    node_pyxb = app.node.get_pyxb()
+    try:
+      success_bool = client.updateNodeCapabilities(
+        settings.NODE_IDENTIFIER, node_pyxb
+      )
+      if not success_bool:
+        raise Exception('Call returned failure but did not raise exception')
+    except Exception as e:
+      raise django.core.management.base.CommandError(
+        'Node registry update failed. error="{}"'.format(str(e))
+      )
+    self._log('Successful Node registry update')
+
+  def _create_cn_client(self):
+    client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
+      settings.DATAONE_ROOT, cert_path=settings.CLIENT_CERT_PATH,
+      key_path=settings.CLIENT_CERT_PRIVATE_KEY_PATH
+    )
+    return client

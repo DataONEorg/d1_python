@@ -31,18 +31,17 @@ import util
 
 class TestCert(django.test.TestCase):
   def setUp(self):
-    pass
+    self.cert_simple_subject_info_pem = util.read_test_file('cert_with_simple_subject_info.pem')
 
   def tearDown(self):
     pass
 
   def test_100(self):
-    """Successfully parses primary and equivalent subjects from certificate.
-    This does not perform validation.
+    """Extract primary and equivalent subjects from certificate. This does not
+    perform validation.
     """
-    cert_pem = util.read_test_file('x509up_u1000')
     primary_str, equivalent_set = app.middleware.session_cert.get_authenticated_subjects(
-      cert_pem
+      self.cert_simple_subject_info_pem
     )
     self.assertEqual(
       primary_str,
