@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d1:subjectInfo xmlns:d1="http://ns.dataone.org/service/types/v1">
+  <person>
+    <subject>CN=Robert Waltz A610,O=Google,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Robert</givenName>
+    <familyName>Waltz</familyName>
+    <email>rpwaltz@gmail.com</email>
+    <equivalentIdentity>cn=Benjamin Leinfelder A515,o=University of
+      Chicago,c=US,dc=cilogon,dc=org</equivalentIdentity>
+    <verified>true</verified>
+  </person>
+  <person>
+    <subject>CN=Benjamin Leinfelder A515,O=University of
+      Chicago,C=US,DC=cilogon,DC=org</subject>
+    <givenName>Ben</givenName>
+    <familyName>Leinfelder</familyName>
+    <email>leinfelder@nceas.ucsb.edu</email>
+    <isMemberOf>CN=testGroup,DC=cilogon,DC=org</isMemberOf>
+    <equivalentIdentity>cn=Robert Waltz
+      A610,o=Google,c=US,dc=cilogon,dc=org</equivalentIdentity>
+    <verified>true</verified>
+  </person>
+</d1:subjectInfo>

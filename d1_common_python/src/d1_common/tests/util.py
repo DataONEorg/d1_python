@@ -30,9 +30,33 @@ import d1_common.types.dataoneTypes as dataoneTypes
 import d1_common.types.dataoneErrors as dataoneErrors
 
 
+# Stdlib
+import os
+
+# D1
+import d1_common.types.dataoneTypes_v2_0 as v2
+
+
+def make_absolute(p):
+  return os.path.join(os.path.abspath(os.path.dirname(__file__)), p)
+
+
+def read_test_file(filename, mode_str='rb'):
+  with open(
+    os.path.join(make_absolute('test_docs'), filename), mode_str
+  ) as f:
+    return f.read()
+
+
+def read_test_xml(filename, mode_str='r'):
+  xml_str = read_test_file(filename, mode_str)
+  xml_obj = v2.CreateFromDocument(xml_str)
+  return xml_obj
+
+
 def deserialize_and_check(doc, shouldfail=False):
   try:
-    obj = dataoneTypes.CreateFromDocument(doc)
+    dataoneTypes.CreateFromDocument(doc)
   except (pyxb.PyXBException, xml.sax.SAXParseException):
     if shouldfail:
       return
