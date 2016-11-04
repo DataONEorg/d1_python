@@ -163,6 +163,7 @@ class RESTClient(object):
 
     defaultHeaders.setdefault(u'User-Agent', user_agent)
 
+    self.status_code = 0
     self._host = host
     self._scheme = scheme
     self._port = port
@@ -389,8 +390,8 @@ class RESTClient(object):
 
     response.read = types.MethodType(responseRead, response)
     response.__fp = 0
+    self.status_code = response.status_code
     response.status = response.status_code
-
     return response
 
   def _merge_default_headers(self, headers=None):
