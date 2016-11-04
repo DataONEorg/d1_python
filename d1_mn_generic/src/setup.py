@@ -44,7 +44,6 @@ def main():
       # let it be included by dataone.libclient.
       #'dataone.common',
       'dataone.libclient == 2.0.0',
-      'dataone.certificate_extensions == 1.2.0',
       'django == 1.10.1',
       'pyxb == 1.2.5',
       'iso8601 == 0.1.11',

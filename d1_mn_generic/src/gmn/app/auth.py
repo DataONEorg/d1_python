@@ -32,7 +32,7 @@ from django.conf import settings
 import django.core.cache
 
 # D1.
-import d1_certificate.certificate_extractor
+import d1_common.cert.subjects
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.dataoneTypes
@@ -94,9 +94,11 @@ def level_to_action(level):
 
 
 def get_trusted_subjects():
-  return settings.DATAONE_TRUSTED_SUBJECTS | app.node_registry.get_cn_subjects() \
-    | set([_get_client_side_certificate_subject()])
-
+  return (
+    app.node_registry.get_cn_subjects() |
+    settings.DATAONE_TRUSTED_SUBJECTS |
+    {_get_client_side_certificate_subject()}
+  )
 
 def get_trusted_subjects_string():
   return u', '.join(sorted(get_trusted_subjects()))
@@ -134,7 +136,7 @@ def _get_client_side_certificate_pem():
 
 def _extract_subject_from_pem(cert_pem):
   try:
-    return d1_certificate.certificate_extractor.extract(cert_pem)[0]
+    return d1_common.cert.subjects.extract_subjects(cert_pem)[0]
   except Exception as e:
     raise d1_common.types.exceptions.InvalidToken(
       0, u'Could not extract session from certificate. error="{}"'.format(str(e))

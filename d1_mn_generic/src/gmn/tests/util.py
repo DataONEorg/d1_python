@@ -30,9 +30,10 @@ def make_absolute(p):
 
 
 def read_test_file(filename, mode_str='r'):
-  return open(
+  with open(
     os.path.join(make_absolute('test_files'), filename), mode_str
-  ).read()
+  ) as f:
+    return f.read()
 
 
 def read_test_xml(filename, mode_str='r'):
