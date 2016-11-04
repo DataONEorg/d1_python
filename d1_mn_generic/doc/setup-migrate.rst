@@ -55,7 +55,7 @@ Switch the GMN version served by Apache to v1::
     $ sudo a2dissite gmn2-ssl
     $ sudo a2ensite gmn-ssl
 
-Disable v2 services for this MN in the CN Node registry:
+Disable v2 services for this MN in the CN Node registry::
 
     $ sudo -u gmn /var/local/dataone/gmn/bin/python \
     /var/local/dataone/gmn/lib/python2.7/site-packages/service/manage.py \
