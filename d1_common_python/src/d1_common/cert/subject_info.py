@@ -21,16 +21,15 @@
 
 Subjects are extracted from the SubjectInfo using the following algorithm:
  
-- Start with empty list of subjects
-
+- Start with empty set of subjects
 - Perform recursive search with detection of circular dependencies, starting
   with Subject.
-  - If subject is not in list of subjects:
-    - Add subject to list of subjects.
+  - If subject is not in set of subjects:
+    - Add subject to set of subjects.
     - Search for Person with subject.
       - If Person is found:
-        - If the Person has the verified flag set and if "verifiedUser" has not
-          already been added, add it.
+        - If the Person has the verified flag:
+          - Add "verifiedUser"
         - Iterate over isMemberOf and equivalentIdentity:
           - Recursively add those subjects.
     - Search for Group with Subject.

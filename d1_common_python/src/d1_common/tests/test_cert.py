@@ -98,6 +98,7 @@ class TestCert(unittest.TestCase):
       ],
     )
 
+
   def test_450(self):
     """Extract primary and equivalent subjects from certificate, SubjectInfo
     missing
