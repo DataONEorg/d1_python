@@ -376,7 +376,8 @@ class RESTClient(object):
 
     response = self._connection.request(
       method, url, params=query, headers=headers, cert=cert, files=file_list,
-      stream=True, allow_redirects=False, verify=self._verify_tls
+      stream=True, allow_redirects=False, verify=self._verify_tls,
+      timeout=self.timeout
     )
 
     if dump_path is not None:
