@@ -94,7 +94,7 @@ class RESTClient(object):
     host=None,
     scheme="https",
     port=None,
-    timeout=d1_common.const.RESPONSE_TIMEOUT, # TODO: Ignored now. How are timeouts managed?
+    timeout=d1_common.const.RESPONSE_TIMEOUT, # http://docs.python-requests.org/en/master/user/quickstart/#timeouts
     n_tries=DEFAULT_NUMBER_OF_TRIES,
     defaultHeaders=None,
     cert_path=None,
