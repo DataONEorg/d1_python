@@ -175,7 +175,7 @@ class RESTClient(object):
     self._use_cache = use_cache
     self._n_tries = n_tries
     self._verify_tls = verify_tls
-
+    self._timeout = timeout #timeout value is applied to all requests
     self._connection = self._connect(n_tries=n_tries)
 
   def GET(self, url, query=None, headers=None, n_tries=None, dump_path=None):
@@ -377,7 +377,7 @@ class RESTClient(object):
     response = self._connection.request(
       method, url, params=query, headers=headers, cert=cert, files=file_list,
       stream=True, allow_redirects=False, verify=self._verify_tls,
-      timeout=self.timeout
+      timeout=self._timeout
     )
 
     if dump_path is not None:
