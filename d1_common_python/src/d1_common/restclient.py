@@ -374,6 +374,7 @@ class RESTClient(object):
           if isinstance(v, datetime.datetime):
             query[k] = v.isoformat()
 
+    # http://docs.python-requests.org/en/master/api/
     response = self._connection.request(
       method, url, params=query, headers=headers, cert=cert, files=file_list,
       stream=True, allow_redirects=False, verify=self._verify_tls,
