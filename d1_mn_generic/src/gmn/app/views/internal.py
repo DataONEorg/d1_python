@@ -85,7 +85,7 @@ def home(request):
 
   n_storage_used = app.models.ScienceObject.objects\
     .aggregate(Sum('size'))['size__sum'] or 0
-  n_storage_free = _get_free_space(settings.MEDIA_ROOT)
+  n_storage_free = _get_free_space(settings.OBJECT_STORE_PATH)
   storage_space = u'{} GiB / {} GiB'.format(
     n_storage_used / 1024**3, n_storage_free / 1024**3
   )
