@@ -39,8 +39,6 @@ def main():
     install_requires=[
       'iso8601 == 0.1.11',
       'pyxb == 1.2.5',
-      'requests == 2.11.1',
-      'cachecontrol == 0.11.6',
     ],
     setup_requires=[
       'setuptools_git >= 1.1'
