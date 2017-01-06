@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Module d1_client.cnclient_1_1_2_0
+"""Module d1_client.cnclient_1_1_2_0
 ================================
 
 :Synopsis:
@@ -32,7 +32,7 @@
   for details on how to use the methods in this class.
 :Created: 2014-08-18
 :Author: DataONE (Dahl)
-'''
+"""
 
 # Stdlib.
 import logging
@@ -49,20 +49,20 @@ except ImportError as e:
   raise
 
 # App.
-import d1baseclient_2_0
+import baseclient_2_0
 import cnclient_1_1
 
 
 class CoordinatingNodeClient_2_0(
-  d1baseclient_2_0.DataONEBaseClient_2_0,
+  baseclient_2_0.DataONEBaseClient_2_0,
   cnclient_1_1.CoordinatingNodeClient_1_1,
 ):
   def __init__(self, *args, **kwargs):
-    """See d1baseclient.DataONEBaseClient for args."""
+    """See baseclient.DataONEBaseClient for args."""
     self.logger = logging.getLogger(__file__)
     kwargs.setdefault('api_major', 2)
     kwargs.setdefault('api_minor', 0)
-    d1baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
+    baseclient_2_0.DataONEBaseClient_2_0.__init__(self, *args, **kwargs)
     cnclient_1_1.CoordinatingNodeClient_1_1.__init__(self, *args, **kwargs)
 
   #=========================================================================
@@ -75,7 +75,7 @@ class CoordinatingNodeClient_2_0(
 
   def listFormatsResponse(self):
     url = self._rest_url('formats')
-    return self.GET(url)
+    return self.get(url)
 
   def listFormats(self):
     response = self.listFormatsResponse()
