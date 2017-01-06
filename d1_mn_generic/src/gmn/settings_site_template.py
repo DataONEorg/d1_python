@@ -74,7 +74,7 @@ DEBUG_GMN = False
 #   exception was raised. The exception is then handled as normal.
 # False (default):
 # - GMN handles exceptions as normal.
-DEBUG_PYCHARM = True
+DEBUG_PYCHARM = False
 
 # Path to the PyCharm IDE binary.
 # - Only used if DEBUG_PYCHARM = True.

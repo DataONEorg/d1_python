@@ -33,7 +33,7 @@ def main():
     description='DataONE Generic Member Node (GMN)',
     author='DataONE Project',
     author_email='developers@dataone.org',
-    url='http://dataone.org',
+    url='http://dataone-python.readthedocs.io/en/latest/gmn/index.html',
     license='Apache License, Version 2.0',
 
     packages=setuptools.find_packages(),
@@ -54,6 +54,8 @@ def main():
       # the CLI is a convenient way to interact with GMN. So the latest version
       # is installed instead of a specific version.
       'dataone.cli >= 1.0.0',
+      # Temporary, until upgrading libclient to 2.0.1.
+      'requests[security] == 2.12.4',
     ],
 
     setup_requires=[
