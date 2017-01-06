@@ -38,12 +38,10 @@
   log. The test then runs through a series of tests where the GMN is queried,
   through the ITK, about all aspects of the object collection and the associated
   events and the results are compared with the known correct responses.
-
-:Created: 2010-06-14
-:Author: DataONE (Dahl)
 """
 
 # Stdlib.
+import StringIO
 import codecs
 import datetime
 import errno
@@ -54,9 +52,9 @@ import os
 import random
 import re
 import string
-import StringIO
 import sys
 import tempfile
+import time
 import traceback
 import unittest
 import urllib
@@ -2224,6 +2222,52 @@ class GMNIntegrationTests(unittest.TestCase):
     # Retrieve object by base SID and verify that it's the updated object.
     update_obj_str, update_sysmeta_obj = self._get(client, update_pid)
     self.assertEquals(update_sysmeta_obj.identifier.value(), update_pid)
+
+  # --
+
+  # MNStorage.updateSystemMetadata(). Method was added in v2.
+
+  def test_3060_v2_1(self):
+    """v2 MNStorage.updateSystemMetadata()
+    Update blocked due to modified timestamp mismatch
+    """
+    # Create base object with SID
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._create(client_v2, v2, base_pid, base_sid)
+    # Get sysmeta
+    sciobj_str, sysmeta_obj = self._get(client_v2, base_pid)
+    self.assertEqual(sysmeta_obj.submitter.value(), 'public')
+    # Change something
+    time.sleep(1)
+    sysmeta_obj.dateSysMetadataModified = datetime.datetime.now()
+    sysmeta_obj.submitter = 'new_submitter'
+    # Update
+    self.assertRaises(
+      d1_common.types.exceptions.InvalidRequest, client_v2.updateSystemMetadata,
+      base_pid, sysmeta_obj
+    )
+
+  def test_3060_v2_2(self):
+    """v2 MNStorage.updateSystemMetadata()
+    Successful update
+    """
+    # Create base object with SID
+    base_pid = self._random_pid()
+    base_sid = self._random_sid()
+    client_v2 = d1_client.mnclient_2_0.MemberNodeClient_2_0(GMN_URL)
+    self._create(client_v2, v2, base_pid, base_sid)
+    # Get sysmeta
+    sciobj_str, sysmeta_obj = self._get(client_v2, base_pid)
+    # Update rightsHolder
+    self.assertEqual(sysmeta_obj.rightsHolder.value(), 'public')
+    sysmeta_obj.rightsHolder = 'newRightsHolder'
+    isOk = client_v2.updateSystemMetadata(base_pid, sysmeta_obj)
+    self.assertTrue(isOk)
+    # Verify
+    sciobj_str, new_sysmeta_obj = self._get(client_v2, base_pid)
+    self.assertEqual(new_sysmeta_obj.rightsHolder.value(), 'newRightsHolder')
 
   #
   # Test wrapped mode
