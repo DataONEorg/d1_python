@@ -165,7 +165,7 @@ the previous step.
   generated::
 
     $ su gmn
-    $ python /var/local/dataone/gmn/lib/python2.7/site-packages/service/manage.py register_node_with_dataone --view
+    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py register_node_with_dataone --view
 
   If the Node document is successfully generated, an XML document will be
   displayed. For more information about this document, refer to
@@ -179,7 +179,7 @@ the previous step.
 
   ::
 
-    $ python lib/python2.7/site-packages/service/manage.py register_node_with_dataone
+    $ python lib/python2.7/site-packages/gmn/manage.py register_node_with_dataone
 
   * Check for a message saying that the registration was successful.
 

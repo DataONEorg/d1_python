@@ -7,6 +7,9 @@ completed.
 Completing this section will enable the stand-alone instance of GMN to be joined
 to the DataONE infrastructure.
 
+Contents
+~~~~~~~~
+
 .. toctree::
   :maxdepth: 2
 
@@ -15,4 +18,4 @@ to the DataONE infrastructure.
   setup-env-authn-ca
   setup-env-registration
   setup-env-tier
-
+  setup-env-final

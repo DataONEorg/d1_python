@@ -6,7 +6,7 @@ GMN.
 
   Create a copy of the GMN site settings template::
 
-    $ cd /var/local/dataone/gmn/lib/python2.7/site-packages/service
+    $ cd /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn
     $ sudo cp settings_site_template.py settings_site.py
 
 Django requires a unique, secret key to be set up for each application.

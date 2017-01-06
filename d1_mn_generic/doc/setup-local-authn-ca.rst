@@ -35,7 +35,7 @@ other) instance of GMN.
 
   Copy custom OpenSSL configuration file::
 
-    $ sudo cp /var/local/dataone/gmn/lib/python2.7/site-packages/deployment/openssl.cnf .
+    $ sudo cp /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/deployment/openssl.cnf .
 
   Create the certificate database file::
 
@@ -120,13 +120,13 @@ can be convenient to split out the public key.
 
 You now have a local CA root certificate and a certificate signed by that root:
 
-| ``ca_cert.pem``: The CA root certificate
-| ``private/ca_key.pem``: The CA root cert private key
-|
-| ``client_cert.pem``: The client side certificate
-| ``private/client_key.pem``: The client side certificate private key
-| ``private/client_key_nopassword.pem``: The client side certificate private key without password
-| ``client_public_key.pem``: The client side certificate public key
+  | ``ca_cert.pem``: The CA root certificate
+  | ``private/ca_key.pem``: The CA root cert private key
+  |
+  | ``client_cert.pem``: The client side certificate
+  | ``private/client_key.pem``: The client side certificate private key
+  | ``private/client_key_nopassword.pem``: The client side certificate private key without password
+  | ``client_public_key.pem``: The client side certificate public key
 
 
 Set GMN up to trust the local CA root certificate

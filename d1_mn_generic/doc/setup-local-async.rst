@@ -22,8 +22,9 @@ Set up cron jobs
     $ sudo crontab -e -u gmn
 
   Add::
-    GMN_ROOT = /var/local/dataone/gmn
-    SERVICE_ROOT = $GMN_ROOT/lib/python2.7/site-packages/service
+
+    GMN_ROOT = /var/local/dataone/gmn_venv
+    SERVICE_ROOT = $GMN_ROOT/lib/python2.7/site-packages/gmn
     PYTHON_BIN = $GMN_ROOT/bin/python
 
     # Process the replication request queue
@@ -35,3 +36,4 @@ Set up cron jobs
   the crontab manual::
 
     $ man 5 crontab
+

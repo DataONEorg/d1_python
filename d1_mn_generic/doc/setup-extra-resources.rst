@@ -70,5 +70,5 @@ invalid sessions by using "valid" and "invalid" strings in the Common Names.
 
   Copy the keys to the integration tests::
 
-    cp test_valid.nopassword.key /var/local/dataone/gmn/src/tests
-    cp test_invalid.nopassword.key /var/local/dataone/gmn/src/tests
+    cp test_valid.nopassword.key /var/local/dataone/gmn_venv/src/tests
+    cp test_invalid.nopassword.key /var/local/dataone/gmn_venv/src/tests

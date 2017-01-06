@@ -44,6 +44,6 @@ following into account:
 
 When you have determined which tier to use, edit ``settings_site.py``::
 
-  $ sudo nano /var/local/dataone/gmn/lib/python2.7/site-packages/service/settings_site.py
+  $ sudo nano /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/settings_site.py
 
 * Set TIER to 1, 2, 3 or 4.

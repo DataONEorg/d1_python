@@ -46,9 +46,9 @@ Verify successful upgrade:
 Roll back to GMN v1
 ~~~~~~~~~~~~~~~~~~~
 
-If there are any issues with GMN v2 or the migration procedure, please contact
-us for assistance. While the issues are being resolved, the following procedure
-will roll back to v1.
+If there are any issues with GMN v2 or the migration procedure, please contact us for assistance. While the issues are being resolved, the following procedure will roll back to v1.
+
+This procedure should not be performed after any new objects have been added to v2, as they will become unavailable in v1.
 
 Switch the GMN version served by Apache to v1::
 
@@ -57,9 +57,7 @@ Switch the GMN version served by Apache to v1::
 
 Disable v2 services for this MN in the CN Node registry::
 
-    $ sudo -u gmn /var/local/dataone/gmn/bin/python \
-    /var/local/dataone/gmn/lib/python2.7/site-packages/service/manage.py \
+    $ sudo -u gmn /var/local/dataone/gmn_venv/bin/python \
+    /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py \
     register_node_with_dataone --update
 
-This procedure should not be performed after any new objects have been added
-to v2, as these are not available in v1.

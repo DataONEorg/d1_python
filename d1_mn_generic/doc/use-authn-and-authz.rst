@@ -84,10 +84,10 @@ not in GMNs whitelist for create, update and delete.
 
 To create a whitelist with this subject, first create a file, for instance,
 ``whitelist.txt``. The most convenient location for this file is in the
-``service`` folder::
+``gmn`` folder::
 
   $ sudo su gmn
-  $ cd /var/local/dataone/gmn/lib/python2.7/site-packages/service
+  $ cd /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn
   $ nano whitelist.txt
 
 In this file, add a line with an exact copy of the subject string marked as

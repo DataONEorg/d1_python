@@ -17,12 +17,13 @@ The default peer authentication is used for the superuser and GMN users.
     $ sudo passwd -d postgres
     $ sudo su postgres -c passwd
 
-  When prompted for the password, enter <your superuser password>.
+  When prompted for the password, enter a new superuser password (and remember it :-).
 
   Create GMN user::
 
-    $ sudo -u postgres createuser gmn
+    $ sudo -u postgres createuser gmn2
 
   Create a database for GMN::
 
-    $ sudo -u postgres createdb -E UTF8 gmn
+    $ sudo -u postgres createdb -E UTF8 gmn2
+

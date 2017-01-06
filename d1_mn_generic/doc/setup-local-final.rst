@@ -9,22 +9,13 @@ Filesystem permissions
     $ sudo chown -R gmn:www-data /var/local/dataone/
     $ sudo chmod -R g+w /var/local/dataone/
 
-Unlike the certificates, the contents of the private keys are sensitive. Set
-them to be readable only by gmn and follow best practices for security to keep
-root or gmn from being compromised.
-
-  Set the private keys to be readable only by the gmn user::
-
-    $ sudo chmod 400 `find /var/local/dataone/certs -name '*_key*'`
-
-
 Initialize the database
 ~~~~~~~~~~~~~~~~~~~~~~~
 
   ::
 
     $ sudo su gmn
-    $ python /var/local/dataone/gmn/lib/python2.7/site-packages/service/manage.py syncdb
+    $ python /var/local/dataone/gmn_venv/lib/python2.7/site-packages/gmn/manage.py migrate --run-syncdb
     $ exit
 
 
