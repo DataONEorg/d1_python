@@ -20,6 +20,9 @@ implemented the concept of a DataONE Workspace.
 The fourth implementation replaced the DataONE Workspace concept with the Zotero
 citation manager.
 
+Contents
+~~~~~~~~
+
 .. toctree::
   :maxdepth: 1
 

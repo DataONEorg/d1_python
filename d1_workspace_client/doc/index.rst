@@ -6,11 +6,6 @@ DataONE Workspace Client Library
 
 .. include:: overview.rst
 
-Contents
-~~~~~~~~
-
-<todo>
-
 
 Indices and tables
 ~~~~~~~~~~~~~~~~~~

@@ -254,8 +254,8 @@ ONEDrive could detect updates in Zotoro while it is running and dynamically
 update itself. Currently, ONEDrive only refreshes its caches during startup.
 
 
-Index
------
+Contents
+--------
 
 .. toctree::
   :numbered:

@@ -78,3 +78,16 @@ DataONE Test Utilities
 
 \
 
+Contents
+~~~~~~~~
+
+.. toctree::
+  :maxdepth: 2
+
+  onedrive/index
+  cli/index
+  gmn/index
+  common/index
+  client/index
+  workspace/index
+  test/index

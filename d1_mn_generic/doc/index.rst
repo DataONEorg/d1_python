@@ -19,7 +19,6 @@ Contents
   troubleshooting
   performance
   impl
-  generated
   /glossary
 
 

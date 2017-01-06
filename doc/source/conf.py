@@ -23,22 +23,11 @@
 import sys
 import os
 
+import better
+
+
 project = u'DataONE Python Products'
 copyright = u'2016 Participating institutions in DataONE'
-
-autosummary_generate = False
-
-extensions = [
-  'sphinx.ext.autodoc',
-  'sphinx.ext.doctest',
-  'sphinx.ext.todo',
-  'sphinx.ext.graphviz',
-  'sphinx.ext.autosummary',
-  'sphinx.ext.pngmath',
-  'sphinx.ext.ifconfig',
-  'sphinx.ext.inheritance_diagram',
-  'sphinx.ext.extlinks',
-]
 
 source_suffix = '.rst'
 master_doc = 'index'
@@ -48,18 +37,69 @@ exclude_trees = ['_build', '_templates']
 pygments_style = 'sphinx'
 today_fmt = '%Y-%m-%d'
 
-# Theme
+extensions = [
+  'sphinx.ext.autodoc',
+  'sphinx.ext.doctest',
+  'sphinx.ext.todo',
+  'sphinx.ext.graphviz',
+  'sphinx.ext.autosummary',
+  'sphinx.ext.imgmath',
+  'sphinx.ext.ifconfig',
+  'sphinx.ext.inheritance_diagram',
+  'sphinx.ext.extlinks',
+]
 
 html_logo = 'dataone_logo.png'
-
-# html_theme = 'dataone'
-# html_theme_options = {
-#   'collapsiblesidebar': 'true',
-#   'render_epad_comments': 'false',
-# }
-# html_theme_path = ['../docutils/sphinx_themes',]
-
-
-from better import better_theme_path
-html_theme_path = [better_theme_path]
+html_theme_path = [better.better_theme_path]
 html_theme = 'better'
+html_short_title = "Home"
+
+html_theme_options = {
+  # show sidebar on the right instead of on the left
+  'rightsidebar': False,
+
+  # inline CSS to insert into the page if you're too lazy to make a
+  # separate file
+  'inlinecss': '',
+
+  # CSS files to include after all other CSS files
+  # (refer to by relative path from conf.py directory, or link to a
+  # remote file)
+  'cssfiles': [],  # default is empty list
+
+  # show a big text header with the value of html_title
+  'showheader': True,
+
+  # show the breadcrumbs and index|next|previous links at the top of
+  # the page
+  'showrelbartop': True,
+  # same for bottom of the page
+  'showrelbarbottom': False,
+
+  # show the self-serving link in the footer
+  'linktotheme': True,
+
+  # width of the sidebar. page width is determined by a CSS rule.
+  # I prefer to define things in rem because it scales with the
+  # global font size rather than pixels or the local font size.
+  'sidebarwidth': '15rem',
+
+  # color of all body text
+  'textcolor': '#000000',
+
+  # color of all headings (<h1> tags); defaults to the value of
+  # textcolor, which is why it's defined here at all.
+  'headtextcolor': '',
+
+  # color of text in the footer, including links; defaults to the
+  # value of textcolor
+  'footertextcolor': '',
+
+  # Google Analytics info
+  'ga_ua': '',
+  'ga_domain': '',
+}
+
+# html_sidebars = {
+#   '**': ['localtoc.html', 'sourcelink.html', 'searchbox.html'],
+# }

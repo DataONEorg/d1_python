@@ -27,7 +27,7 @@ Finally, an installer is built for the executable and all dependencies.
 
   Close then reopen the command prompt (to activate the new path).
 
-#. Install pip::
+#. Install pip:
 
   Download get-pip.py::
 

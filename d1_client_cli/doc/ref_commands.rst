@@ -423,7 +423,7 @@ listnodes
 ---------
 Display all known DataONE Nodes
 
-.. _search:
+.. _search_query:
 
 search [query]
 Comprehensive search for Science Data Objects across all available MNs

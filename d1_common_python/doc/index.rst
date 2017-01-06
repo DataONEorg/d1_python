@@ -21,8 +21,8 @@ DataONE's custom SubjectInfo extension is present in the certificate, related
 subjects for which the primary subject should also be authenticated are
 automatically included.
 
-Index
------
+Contents
+~~~~~~~~
 
 .. toctree::
   :numbered:

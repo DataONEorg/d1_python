@@ -6,8 +6,8 @@ other products implemented in Python.
 
 .. include:: overview.rst
 
-Index
------
+Contents
+~~~~~~~~
 
 .. toctree::
   :numbered:

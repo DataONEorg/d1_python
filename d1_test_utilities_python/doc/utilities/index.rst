@@ -9,11 +9,7 @@ Various utilities useful for testing within the DataONE infrastructure.
 Contents
 ~~~~~~~~
 
-.. toctree::
-  :maxdepth: 2
-
-  misc
-  replication_tester
+<TODO>
 
 
 Indices and tables

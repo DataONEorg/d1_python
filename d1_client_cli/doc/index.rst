@@ -16,6 +16,7 @@ Contents
   examples
   reference
   implementation
+  ref_options
   /glossary
 
 
