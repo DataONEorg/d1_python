@@ -139,8 +139,8 @@ def update(sysmeta_obj, url=None):
   pid = sysmeta_obj.identifier.value()
   sci_row = sysmeta_util.get_sci_row(pid)
   _base_pyxb_to_model(sci_row, sysmeta_obj, url=url)
+  sci_row.save()
   _access_policy_pyxb_to_model(sci_row, sysmeta_obj)
-
 
 def update_sci_row(sysmeta_obj, url=None):
   pid = sysmeta_obj.identifier.value()

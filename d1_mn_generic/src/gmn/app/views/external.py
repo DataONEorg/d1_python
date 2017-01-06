@@ -402,6 +402,32 @@ def _assert_node_is_authorized(request, pid):
         settings.DATAONE_ROOT, e.message)
     )
 
+@app.restrict_to_verb.put
+def put_meta(request):
+  """MNStorage.updateSystemMetadata(session, pid, sysmeta) → boolean
+  """
+  app.util.coerce_put_post(request)
+  app.views.view_asserts.post_has_mime_parts(
+    request, (('field', 'pid'), ('file', 'sysmeta'))
+  )
+  pid = request.POST['pid']
+  app.auth.assert_allowed(request, app.auth.WRITE_LEVEL, pid)
+  app.views.view_asserts.is_valid_for_update(pid)
+  app.views.view_asserts.xml_document_not_too_large(request.FILES['sysmeta'])
+  sysmeta_xml = app.views.view_util.read_utf8_xml(request.FILES['sysmeta'])
+  new_sysmeta_obj = app.sysmeta.deserialize(sysmeta_xml)
+  app.views.view_asserts.has_matching_modified_timestamp(new_sysmeta_obj)
+  app.views.view_asserts.is_valid_sid_for_chain_if_specified(new_sysmeta_obj, pid)
+  # TODO: Need to clarify desired functionality.
+  app.views.view_util.update_sysmeta_with_mn_values(request, new_sysmeta_obj)
+  if app.sysmeta_sid.has_sid(new_sysmeta_obj):
+    sid = app.sysmeta_sid.get_sid(new_sysmeta_obj)
+    if app.sysmeta_sid.is_sid(sid):
+      app.sysmeta_sid.update_sid(sid, pid)
+  app.sysmeta.update(new_sysmeta_obj)
+  app.event_log.update(pid, request)
+  return app.views.view_util.http_response_with_boolean_true_type()
+
 # ------------------------------------------------------------------------------
 # Public API: Tier 2: Authorization API
 # ------------------------------------------------------------------------------

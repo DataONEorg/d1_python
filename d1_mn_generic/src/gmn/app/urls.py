@@ -51,6 +51,8 @@ urlpatterns = [
   url(r'^v[12]/object/(.+)$', app.views.external.dispatch_object),
   # MNRead.getSystemMetadata() - GET /meta/{did}
   url(r'^v[12]/meta/(.+)$', app.views.external.get_meta),
+  # MNStorage.updateSystemMetadata() - PUT /meta
+  url(r'^v2/meta$', app.views.external.put_meta),
   # MNRead.describe() - HEAD /object/{did}
   # (handled by object dispatcher)
   # MNRead.getChecksum() - GET /checksum/{did}

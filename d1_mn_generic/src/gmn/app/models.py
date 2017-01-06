@@ -331,8 +331,8 @@ def sysmeta_refresh_status(status_str):
 
 
 class SystemMetadataRefreshQueue(models.Model):
-  # Relate to ScienceObject because system metadata can only be refreshed on
-  # are only recorded and kept for existing native objects.
+  # Relate to ScienceObject because system metadata is only recorded and kept
+  # for existing native objects.
   sciobj = models.OneToOneField(ScienceObject, models.CASCADE)
   status = models.ForeignKey(SystemMetadataRefreshQueueStatus, models.CASCADE)
   serial_version = models.PositiveIntegerField()

@@ -97,7 +97,7 @@ def is_valid_sid_for_chain_if_specified(sysmeta_obj, pid):
   sid = app.sysmeta_util.get_value(sysmeta_obj, 'seriesId')
   if sid is None:
     return
-  existing_sid = app.sysmeta.get_sid_by_pid(pid)
+  existing_sid = app.sysmeta_sid.get_sid_by_pid(pid)
   if existing_sid is None:
     is_unused(sid)
   else:
@@ -165,6 +165,21 @@ def is_not_archived(pid):
       u'pid="{}"'.format(pid),
       identifier=pid
     )
+
+
+def has_matching_modified_timestamp(new_sysmeta_obj):
+  pid = new_sysmeta_obj.identifier.value()
+  old_sysmeta_model = app.sysmeta_util.get_sci_row(pid)
+  old_ts = old_sysmeta_model.modified_timestamp
+  new_ts = new_sysmeta_obj.dateSysMetadataModified
+  if old_ts != new_ts:
+    raise d1_common.types.exceptions.InvalidRequest(
+      0,
+      u'dateSysMetadataModified of updated System Metadata must match existing. '
+      u'pid="{}" old_ts="{}" new_ts="{}"'.format(pid, old_ts, new_ts),
+      identifier=pid
+    )
+
 
 
 # ------------------------------------------------------------------------------
