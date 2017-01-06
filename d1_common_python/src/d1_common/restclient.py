@@ -94,7 +94,7 @@ class RESTClient(object):
     host=None,
     scheme="https",
     port=None,
-    timeout=d1_common.const.RESPONSE_TIMEOUT, # TODO: Ignored now. How are timeouts managed?
+    timeout=d1_common.const.RESPONSE_TIMEOUT, # http://docs.python-requests.org/en/master/user/quickstart/#timeouts
     n_tries=DEFAULT_NUMBER_OF_TRIES,
     defaultHeaders=None,
     cert_path=None,
@@ -175,7 +175,7 @@ class RESTClient(object):
     self._use_cache = use_cache
     self._n_tries = n_tries
     self._verify_tls = verify_tls
-
+    self._timeout = timeout #timeout value is applied to all requests
     self._connection = self._connect(n_tries=n_tries)
 
   def GET(self, url, query=None, headers=None, n_tries=None, dump_path=None):
@@ -374,9 +374,11 @@ class RESTClient(object):
           if isinstance(v, datetime.datetime):
             query[k] = v.isoformat()
 
+    # http://docs.python-requests.org/en/master/api/
     response = self._connection.request(
       method, url, params=query, headers=headers, cert=cert, files=file_list,
-      stream=True, allow_redirects=False, verify=self._verify_tls
+      stream=True, allow_redirects=False, verify=self._verify_tls,
+      timeout=self._timeout
     )
 
     if dump_path is not None:

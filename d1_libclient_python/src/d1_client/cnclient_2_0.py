@@ -81,3 +81,72 @@ class CoordinatingNodeClient_2_0(
     response = self.listFormatsResponse()
     return self._read_dataone_type_response(response, 'ObjectFormatList')
 
+
+  @d1_common.util.utf8_to_unicode
+  def deleteObjectResponse(self, pid):
+    url = self._rest_url('object/%(pid)s', pid=pid)
+    return self.DELETE(url)
+
+
+  @d1_common.util.utf8_to_unicode
+  def deleteObject(self, pid):
+    response = self.deleteObjectResponse( pid )
+    return self._read_dataone_type_response(response, d1_common.types.dataoneTypes_v2_0.Identifier)
+
+  #=========================================================================
+  # Read API
+  #=========================================================================
+
+  @d1_common.util.utf8_to_unicode
+  def listObjectsResponse(
+      self,
+      fromDate=None,
+      toDate=None,
+      objectFormat=None,
+      replicaStatus=None,
+      nodeId=None,
+      start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None
+  ):
+    if vendorSpecific is None:
+      vendorSpecific = {}
+    self._slice_sanity_check(start, count)
+    self._date_span_sanity_check(fromDate, toDate)
+    url = self._rest_url('object')
+    query = {
+      'fromDate': fromDate,
+      'toDate': toDate,
+      'formatId': objectFormat,
+      'replicaStatus': replicaStatus,
+      'nodeId': nodeId,
+      'start': int(start),
+      'count': int(count)
+    }
+    return self.GET(url, query=query, headers=vendorSpecific)
+
+
+  @d1_common.util.utf8_to_unicode
+  def listObjects(
+      self,
+      fromDate=None,
+      toDate=None,
+      objectFormat=None,
+      replicaStatus=None,
+      nodeId=None,
+      start=0,
+      count=d1_common.const.DEFAULT_LISTOBJECTS,
+      vendorSpecific=None
+  ):
+    response = self.listObjectsResponse(
+      fromDate=fromDate,
+      toDate=toDate,
+      objectFormat=objectFormat,
+      replicaStatus=replicaStatus,
+      nodeId=nodeId,
+      start=start,
+      count=count,
+      vendorSpecific=vendorSpecific
+    )
+    return self._read_dataone_type_response(response, 'ObjectList')
+
