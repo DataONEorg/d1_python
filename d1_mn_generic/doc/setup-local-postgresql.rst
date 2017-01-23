@@ -21,7 +21,7 @@ The default peer authentication is used for the superuser and GMN users.
 
   Create GMN user::
 
-    $ sudo -u postgres createuser gmn2
+    $ sudo -u postgres createuser gmn
 
   Create a database for GMN::
 
