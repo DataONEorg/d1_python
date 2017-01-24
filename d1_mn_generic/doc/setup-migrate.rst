@@ -24,7 +24,7 @@ Create virtual environment for GMN v2::
 
 Install GMN v2 from PyPI::
 
-    $ sudo -u gmn --set-home /var/local/dataone/gmn_venv/bin/pip install dataone.gmn==2.0.0
+    $ sudo -u gmn --set-home /var/local/dataone/gmn_venv/bin/pip install dataone.gmn
 
 Configure GMN v2 instance and migrate settings from GMN v1::
 
