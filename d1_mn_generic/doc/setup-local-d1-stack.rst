@@ -46,13 +46,14 @@ the Foresite Toolkit, which handles parsing of OAI-ORE Resource Maps.
 
   Install the GMN software stack from PyPI into a Python virtual environment::
 
-    $ sudo apt-get --yes install python-pip; sudo pip install pip --upgrade; \
+    $ sudo apt-get --yes install python-pip; sudo pip install pip; \
     sudo pip install virtualenv; sudo mkdir -p /var/local/dataone/gmn_venv; \
     sudo mkdir -p /var/local/dataone/gmn_object_store; \
-    cd /var/local/dataone; sudo chown gmn:www-data gmn_venv; sudo su gmn;
+    cd /var/local/dataone; sudo chown gmn:www-data gmn_venv; sudo su gmn
 
     $ virtualenv --distribute gmn_venv; . ./gmn_venv/bin/activate; \
-    pip install cachecontrol==0.11.7; pip install dataone.gmn==2.0.1
+    pip install --upgrade setuptools==33.1.1; pip install cachecontrol==0.11.7; \
+    pip install dataone.gmn
 
     $ exit
 
